@@ -337,6 +337,10 @@ const CareonysAPI = {
         cbu: row.bank_info || '',
         referencia: row.reference_info || {},
         educacion: row.education_info || {},
+        fechaNacimiento: row.birthdate || '',
+        genero: row.gender || '',
+        nacionalidad: row.nationality || '',
+        valorHora: row.hourly_rate || '',
         estado: row.verification_status,
         fechaRegistro: row.created_at ? row.created_at.split('T')[0] : ''
       };
@@ -373,6 +377,10 @@ const CareonysAPI = {
       if (data.cbu !== undefined) row.bank_info = data.cbu;
       if (data.referencia !== undefined) row.reference_info = data.referencia;
       if (data.educacion !== undefined) row.education_info = data.educacion;
+      if (data.fechaNacimiento !== undefined) row.birthdate = data.fechaNacimiento || null;
+      if (data.genero !== undefined) row.gender = data.genero;
+      if (data.nacionalidad !== undefined) row.nationality = data.nacionalidad;
+      if (data.valorHora !== undefined) row.hourly_rate = data.valorHora || null;
       if (data.estado !== undefined) row.verification_status = data.estado;
       return row;
     }

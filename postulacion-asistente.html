@@ -214,6 +214,18 @@
           <div class="form-group"><label for="email">Correo Electrónico</label><input type="email" id="email" required /></div>
           <div class="form-group"><label for="celular">Celular (WhatsApp)</label><input type="tel" id="celular" placeholder="11 2345 6789" required /></div>
           <div class="form-group"><label for="cuit-cuil">CUIT / CUIL (Facturación y Seguros)</label><input type="number" id="cuit-cuil" placeholder="11 dígitos sin guiones" required /></div>
+          <div class="form-group"><label for="fecha-nacimiento">Fecha de Nacimiento</label><input type="date" id="fecha-nacimiento" required /></div>
+          <div class="form-group">
+            <label for="genero">Género</label>
+            <select id="genero" required>
+              <option value="">— Seleccionar —</option>
+              <option value="Femenino" selected>Femenino</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Otro">Otro / Indistinto</option>
+              <option value="NoContesta">Prefiero no decirlo</option>
+            </select>
+          </div>
+          <div class="form-group"><label for="nacionalidad">Nacionalidad</label><input type="text" id="nacionalidad" placeholder="Ej: Argentina" required /></div>
           <div class="form-group">
             <label for="afip-tipo">Condición de Registro AFIP</label>
             <select id="afip-tipo" required>
@@ -278,6 +290,7 @@
         <div style="background:var(--bg-light);border-radius:12px;padding:20px;border:1px solid var(--border-light);margin-bottom:20px;">
           <h4 style="font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:16px;"><i class="fas fa-shield-alt" style="color:var(--magenta);"></i> Adjuntar Documentación (Requisito APK)</h4>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group" style="grid-column: 1 / -1;"><label style="font-size:12px;">📸 Foto de Perfil Profesional (Rostro tipo carnet)</label><input type="file" id="foto-perfil" accept="image/*" style="font-size:12px;" required /></div>
             <div class="form-group"><label style="font-size:12px;">🛡️ Foto de DNI (Frente y Dorso)</label><input type="file" accept="image/*,.pdf" style="font-size:12px;" required /></div>
             <div class="form-group"><label style="font-size:12px;">📋 Certificado de Antecedentes Penales (Vigente)</label><input type="file" accept="image/*,.pdf" style="font-size:12px;" required /></div>
             <div class="form-group" style="grid-column: 1 / -1;"><label style="font-size:12px;">📜 Título / Certificado de Cursos / Matrícula</label><input type="file" accept="image/*,.pdf" style="font-size:12px;" required /></div>
@@ -333,6 +346,10 @@
             <label style="cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox" name="modalidad" value="retiro" checked /> Con Retiro (Jornada Completa)</label>
             <label style="cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox" name="modalidad" value="sin-retiro" /> Cama Adentro / Sin Retiro</label>
             <label style="cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox" name="modalidad" value="urgencia" checked /> Reemplazos Urgentes (<2hs)</label>
+          </div>
+          <div class="form-group" style="margin-top:16px;max-width:300px;">
+            <label for="valor-hora">Valor Hora Deseado ($ ARS / hora)</label>
+            <input type="number" id="valor-hora" placeholder="Ej: 3500" required />
           </div>
 
           <p style="font-size:13px;font-weight:700;color:var(--text-dark);margin-bottom:12px;">Agenda Horaria Semanal (Click en cada celda para marcar disponible):</p>
@@ -598,6 +615,9 @@
       email: document.getElementById('email').value,
       telefono: document.getElementById('celular').value,
       cuit: document.getElementById('cuit-cuil').value,
+      fechaNacimiento: document.getElementById('fecha-nacimiento').value,
+      genero: document.getElementById('genero').value,
+      nacionalidad: document.getElementById('nacionalidad').value,
       domicilio: document.getElementById('domicilio').value,
       cbu: document.getElementById('cbu-alias').value,
       profesion: document.getElementById('profesion').value,
@@ -608,6 +628,7 @@
         nivelEstudios: document.getElementById('nivel-estudios').value,
         cursosCompletados: cursos
       },
+      valorHora: document.getElementById('valor-hora').value,
       referencia: {
         nombre: document.getElementById('ref-nombre').value,
         telefono: document.getElementById('ref-telefono').value
