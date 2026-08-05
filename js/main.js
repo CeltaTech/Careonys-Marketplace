@@ -184,38 +184,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const wizardForm = document.getElementById('wizard-care-search-form');
   if (wizardForm) {
-    wizardForm.addEventListener('submit', (e) => {
+    wizardForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const successMsg = document.getElementById('wizard-success-msg');
       const btnSubmit = document.getElementById('btn-submit-wizard');
 
-      // Guardar búsqueda en localStorage para alimentar el Feed de Ofertas
       const title = document.getElementById('w-title')?.value || 'Cuidadora para adulto mayor';
       const desc = document.getElementById('w-desc')?.value || 'Asistencia en tareas diarias';
       const patientAge = document.getElementById('w-patient-age')?.value || '80';
       const patientGender = document.getElementById('w-patient-gender')?.value || 'Femenino';
       
       const newSearch = {
-        id: Date.now(),
-        title,
-        desc,
-        patientAge,
-        patientGender,
-        date: new Date().toLocaleDateString('es-AR')
+        paciente: `Paciente de ${patientAge} años (${patientGender}) - ${title}`,
+        patologias: [],
+        horarios: 'flexible',
+        grillaHorarios: {},
+        estado: 'activa'
       };
 
-      let currentSearches = JSON.parse(localStorage.getItem('careonys_searches') || '[]');
-      currentSearches.unshift(newSearch);
-      localStorage.setItem('careonys_searches', JSON.stringify(currentSearches));
-
-      if (successMsg) successMsg.style.display = 'block';
-      if (btnSubmit) btnSubmit.style.display = 'none';
+      if (window.CareonysAPI) {
+        try {
+          await CareonysAPI.crearBusquedaFamilia(newSearch);
+          if (successMsg) successMsg.style.display = 'block';
+          if (btnSubmit) btnSubmit.style.display = 'none';
+        } catch (err) {
+          alert('Error al guardar la búsqueda en Supabase: ' + err.message);
+        }
+      } else {
+        let currentSearches = JSON.parse(localStorage.getItem('careonys_searches') || '[]');
+        currentSearches.unshift({
+          id: Date.now(),
+          title,
+          desc,
+          patientAge,
+          patientGender,
+          date: new Date().toLocaleDateString('es-AR')
+        });
+        localStorage.setItem('careonys_searches', JSON.stringify(currentSearches));
+        if (successMsg) successMsg.style.display = 'block';
+        if (btnSubmit) btnSubmit.style.display = 'none';
+      }
     });
   }
 
-  // ---- MANEJADOR DE REGISTRO COMPLETO DE CUIDADOR ----
+  // ---- MANEJADOR DE REGISTRO COMPLETO DE CUIDADOR (Delegado a postulacion-asistente.html si existe CareonysAPI) ----
   const caregiverRegForm = document.getElementById('form-registro-cuidador-completo');
-  if (caregiverRegForm) {
+  if (caregiverRegForm && !window.CareonysAPI) {
     caregiverRegForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const successMsg = caregiverRegForm.querySelector('#form-success');
