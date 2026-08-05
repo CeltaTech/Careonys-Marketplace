@@ -307,22 +307,28 @@
     
     // Validación manual básica
     let valid = true;
+    let firstInvalidField = null;
     form.querySelectorAll('[required]').forEach(field => {
-      if (!field.value.trim() && field.type !== 'checkbox') {
+      if (field.type !== 'checkbox' && !field.value.trim()) {
         valid = false;
         field.style.borderColor = '#e53935';
+        if (!firstInvalidField) firstInvalidField = field;
         field.addEventListener('input', () => { field.style.borderColor = ''; }, { once: true });
       }
     });
 
-    const termsCheckbox = document.getElementById('acepto-terminos');
-    if (!termsCheckbox.checked) {
-      valid = false;
-      alert('Debes aceptar los Términos y Condiciones.');
+    if (!valid) {
+      alert('Por favor, completa todos los campos requeridos marcados en rojo.');
+      if (firstInvalidField) firstInvalidField.focus();
       return;
     }
 
-    if (!valid) return;
+    const termsCheckbox = document.getElementById('acepto-terminos');
+    if (!termsCheckbox || !termsCheckbox.checked) {
+      alert('Debes aceptar los Términos y Condiciones para enviar la postulación.');
+      if (termsCheckbox) termsCheckbox.focus();
+      return;
+    }
 
     const patologias = Array.from(form.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
     const tareas = Array.from(form.querySelectorAll('input[name="tarea"]:checked')).map(cb => cb.value);
