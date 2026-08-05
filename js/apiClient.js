@@ -1,60 +1,108 @@
 /* ===================================================
    CAREONYS MARKETPLACE — API Client Abstraction Layer
    Desarrollado por CeltaTech (SaaS)
-   Nota: Actualmente opera en modo Supabase nativo vía REST.
+   Nota: Soporta arquitectura Multi-Tenant dinámica conectada a Supabase.
 =================================================== */
 
 const CareonysAPI = {
   useSupabase: true,
   supabaseUrl: 'https://pfbvpncavvlgmmvqkgbo.supabase.co',
   supabaseKey: 'sb_publishable_rmhuO0J5QsE5mw-5fgf-Hw_9tCHd1di',
+  currentTenant: null,
+
+  // --- RESOLVER MULTI-TENANT DINÁMICO ---
+  async initTenant() {
+    // 1. Detectar slug desde query param (?tenant=presdemo) o subdominio
+    const urlParams = new URLSearchParams(window.location.search);
+    let slug = urlParams.get('tenant') || urlParams.get('t');
+
+    if (!slug) {
+      const hostname = window.location.hostname;
+      const parts = hostname.split('.');
+      if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'localhost') {
+        slug = parts[0];
+      }
+    }
+
+    // Default fallback para demo local
+    if (!slug) {
+      slug = 'presdemo';
+    }
+
+    try {
+      if (this.useSupabase) {
+        // Obtener configuración del tenant de Supabase
+        const res = await this._supabaseRequest('GET', 'tenants', null, { slug: `eq.${slug}` });
+        if (res && res[0]) {
+          this.currentTenant = res[0];
+        }
+      }
+      
+      // Fallback a mock si no se pudo cargar
+      if (!this.currentTenant) {
+        this.currentTenant = {
+          id: 'tenant-presdemo',
+          slug: 'presdemo',
+          name: 'PresDemo — Servicios de Cuidado',
+          primary_color: '#1A365D',
+          accent_color: '#E53E3E',
+          logo_url: 'assets/images/logo_presdemo.png'
+        };
+      }
+
+      // Aplicar branding dinámicamente en el DOM
+      this._applyBranding(this.currentTenant);
+    } catch (err) {
+      console.error('Error al inicializar el tenant:', err);
+    }
+  },
+
+  _applyBranding(tenant) {
+    // Inyectar variables CSS de colores al root
+    if (tenant.primary_color) {
+      document.documentElement.style.setProperty('--color-primary', tenant.primary_color);
+    }
+    if (tenant.accent_color) {
+      document.documentElement.style.setProperty('--color-accent', tenant.accent_color);
+    }
+
+    // Reemplazar logos e imágenes de marca
+    const logoUrl = tenant.logo_url || 'assets/images/logo_presdemo.png';
+    document.querySelectorAll('.logo-brand, .tenant-logo, .navbar-brand img').forEach(img => {
+      // Ajustar ruta relativa según profundidad
+      const pathDepth = window.location.pathname.includes('/presdemo/') ? '../' : '';
+      img.src = pathDepth + logoUrl;
+    });
+
+    // Reemplazar nombres y textos de marca
+    document.querySelectorAll('.tenant-name').forEach(el => {
+      el.textContent = tenant.name;
+    });
+  },
 
   // --- MÓDULO 1: RECLUTAMIENTO Y LEGAJOS (CUIDADORES) ---
   async getAspirantes(filter = {}) {
     if (this.useSupabase) {
-      return await this._supabaseGet('caregivers', filter);
+      // Filtrar automáticamente por el tenant activo
+      const activeFilter = { ...filter };
+      if (this.currentTenant) {
+        activeFilter.tenant_id = this.currentTenant.id;
+      }
+      return await this._supabaseGet('caregivers', activeFilter);
     }
+    
     // Mock Local Data
     let data = JSON.parse(localStorage.getItem('careonys_aspirantes') || '[]');
-    if (data.length === 0) {
-      data = [
-        {
-          id: 'asp-101',
-          nombre: 'Claudia González',
-          dni: '35422573',
-          telefono: '11 4589 1234',
-          email: 'claudia.gonzalez@email.com',
-          profesion: 'Cuidadora Domiciliaria',
-          zona: 'Palermo, CABA',
-          patologias: ['Alzheimer', 'Parkinson'],
-          tareas: ['Higiene y confort', 'Control de signos vitales'],
-          documentos: { dni: 'dni_claudia.pdf', penales: 'penales_claudia.pdf', titulo: 'titulo_gerontologia.pdf' },
-          estado: 'en_revision',
-          fechaRegistro: '2026-08-04'
-        },
-        {
-          id: 'asp-102',
-          nombre: 'Roberto Gómez',
-          dni: '32114902',
-          telefono: '11 3902 4411',
-          email: 'roberto.gomez@email.com',
-          profesion: 'Enfermero Universitario',
-          zona: 'Belgrano, CABA',
-          patologias: ['ACV', 'Diabetes', 'Pacientes Postrados'],
-          tareas: ['Aplicación de inyecciones', 'Control de signos vitales', 'Administración medicación'],
-          documentos: { dni: 'dni_roberto.pdf', penales: 'penales_roberto.pdf', titulo: 'titulo_enfermeria.pdf' },
-          estado: 'validado_prestadora',
-          fechaRegistro: '2026-08-01'
-        }
-      ];
-      localStorage.setItem('careonys_aspirantes', JSON.stringify(data));
-    }
     return data;
   },
 
   async registrarAspirante(postulacionData) {
     if (this.useSupabase) {
-      return await this._supabasePost('caregivers', postulacionData);
+      const dbData = { ...postulacionData };
+      if (this.currentTenant) {
+        dbData.tenant_id = this.currentTenant.id;
+      }
+      return await this._supabasePost('caregivers', dbData);
     }
     let data = await this.getAspirantes();
     const nuevo = {
@@ -87,7 +135,11 @@ const CareonysAPI = {
   // --- MÓDULO 2: BÚSQUEDAS Y SOLICITUDES DE FAMILIAS ---
   async getBusquedasFamilia() {
     if (this.useSupabase) {
-      return await this._supabaseGet('care_searches');
+      const filter = {};
+      if (this.currentTenant) {
+        filter.tenant_id = this.currentTenant.id;
+      }
+      return await this._supabaseGet('care_searches', filter);
     }
     let data = JSON.parse(localStorage.getItem('careonys_searches') || '[]');
     return data;
@@ -95,7 +147,11 @@ const CareonysAPI = {
 
   async crearBusquedaFamilia(busquedaData) {
     if (this.useSupabase) {
-      return await this._supabasePost('care_searches', busquedaData);
+      const dbData = { ...busquedaData };
+      if (this.currentTenant) {
+        dbData.tenant_id = this.currentTenant.id;
+      }
+      return await this._supabasePost('care_searches', dbData);
     }
     let data = await this.getBusquedasFamilia();
     const nueva = {
@@ -191,6 +247,9 @@ const CareonysAPI = {
     if (filter.estado) {
       queryParams.verification_status = `eq.${filter.estado}`;
     }
+    if (filter.tenant_id) {
+      queryParams.tenant_id = `eq.${filter.tenant_id}`;
+    }
     const res = await this._supabaseRequest('GET', table, null, queryParams);
     return res.map(row => this._mapFromDatabase(table, row));
   },
@@ -242,6 +301,7 @@ const CareonysAPI = {
   _mapToDatabase(table, data) {
     if (table === 'caregivers') {
       const row = {};
+      if (data.tenant_id !== undefined) row.tenant_id = data.tenant_id;
       if (data.nombre !== undefined) row.full_name = data.nombre;
       if (data.dni !== undefined) row.dni = data.dni;
       if (data.telefono !== undefined) row.phone = data.telefono;
@@ -256,6 +316,7 @@ const CareonysAPI = {
     }
     if (table === 'care_searches') {
       const row = {};
+      if (data.tenant_id !== undefined) row.tenant_id = data.tenant_id;
       if (data.paciente !== undefined) row.patient_name = data.paciente;
       if (data.patologias !== undefined) row.pathologies_required = data.patologias;
       if (data.horarios !== undefined) row.schedule_type = data.horarios;
@@ -266,5 +327,10 @@ const CareonysAPI = {
     return data;
   }
 };
+
+// Inicializar el Tenant automáticamente al cargar el script
+document.addEventListener('DOMContentLoaded', () => {
+  CareonysAPI.initTenant();
+});
 
 window.CareonysAPI = CareonysAPI;
