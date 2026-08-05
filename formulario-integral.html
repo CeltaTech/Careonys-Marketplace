@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Formularios Oficiales de la App — Careonys</title>
+  <meta name="description" content="Recopilación idéntica de los formularios oficiales que se utilizan en la plataforma Careonys." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <img src="assets/images/logo_careonys.png" alt="Careonys logo" />
+      <span>Careonys</span>
+    </a>
+    <div class="navbar-links">
+      <a href="solicitar-asistente.html">Solicitar Asistente</a>
+      <a href="postulacion-asistente.html">Postularme como Asistente</a>
+      <a href="directorio.html">Red de Asistentes</a>
+      <a href="cursos.html">Cursos</a>
+    </div>
+    <div class="navbar-social">
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      <a href="#"><i class="fab fa-youtube"></i></a>
+      <a href="mailto:contacto@careonys.com"><i class="fas fa-envelope"></i></a>
+    </div>
+    <button class="hamburger"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mobile-menu">
+    <a href="solicitar-asistente.html">Solicitar Asistente</a>
+    <a href="postulacion-asistente.html">Postularme como Asistente</a>
+    <a href="directorio.html">Red de Asistentes</a>
+    <a href="cursos.html">Cursos</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="inner-hero">
+  <div class="inner-hero-content">
+    <p class="eyebrow">Formularios Oficiales & Wizard Interactivo</p>
+    <h1>Publicación de Búsqueda y Formularios Careonys</h1>
+    <p>Wizard de 6 pasos para publicar solicitudes de cuidado y formularios oficiales de la plataforma.</p>
+  </div>
+</section>
+
+<!-- WIZARD INTERACTIVO DE 6 PASOS (INSPIRADO EN CUIDARLOS) -->
+<section class="container" style="margin-top:-30px;margin-bottom:60px;">
+  <div class="wizard-container">
+    <div style="text-align:center;margin-bottom:24px;">
+      <span class="eyebrow" style="color:var(--magenta);font-weight:700;font-size:12px;text-transform:uppercase;">Wizard de Publicación</span>
+      <h2 style="font-size:24px;font-weight:800;color:var(--purple-dark);margin-top:4px;">Publicar una Búsqueda de Cuidado</h2>
+    </div>
+
+    <!-- BARRA DE PROGRESO DE 6 PASOS -->
+    <div class="wizard-progress">
+      <div class="wizard-step-node active" data-step="1">
+        <div class="wizard-step-circle">1</div>
+        <span class="wizard-step-label">Paciente</span>
+      </div>
+      <div class="wizard-step-node" data-step="2">
+        <div class="wizard-step-circle">2</div>
+        <span class="wizard-step-label">Tareas</span>
+      </div>
+      <div class="wizard-step-node" data-step="3">
+        <div class="wizard-step-circle">3</div>
+        <span class="wizard-step-label">Perfil</span>
+      </div>
+      <div class="wizard-step-node" data-step="4">
+        <div class="wizard-step-circle">4</div>
+        <span class="wizard-step-label">Horarios</span>
+      </div>
+      <div class="wizard-step-node" data-step="5">
+        <div class="wizard-step-circle">5</div>
+        <span class="wizard-step-label">Detalles</span>
+      </div>
+      <div class="wizard-step-node" data-step="6">
+        <div class="wizard-step-circle">6</div>
+        <span class="wizard-step-label">Confirmación</span>
+      </div>
+    </div>
+
+    <!-- FORMULARIO WIZARD -->
+    <form id="wizard-care-search-form" onsubmit="event.preventDefault();">
+      
+      <!-- PASO 1: PACIENTE Y URGENCIA -->
+      <div class="wizard-step-pane" id="step-pane-1">
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text-dark);">Paso 1: Datos del Paciente y Urgencia</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="form-group">
+            <label for="w-patient-age">Edad del paciente</label>
+            <input type="number" id="w-patient-age" placeholder="Ej. 82" required />
+          </div>
+          <div class="form-group">
+            <label for="w-patient-gender">Género del paciente</label>
+            <select id="w-patient-gender" required>
+              <option value="">Seleccionar...</option>
+              <option value="femenino">Femenino</option>
+              <option value="masculino">Masculino</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="form-group">
+            <label for="w-pref-gender">Preferencia de género del cuidador</label>
+            <select id="w-pref-gender">
+              <option value="indistinto">Indistinto</option>
+              <option value="femenino">Femenino únicamente</option>
+              <option value="masculino">Masculino únicamente</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>¿Es un reemplazo o contratación urgente?</label>
+            <div style="display:flex;gap:16px;margin-top:8px;">
+              <label style="cursor:pointer;"><input type="radio" name="w-urgent" value="si" /> <span class="badge-verified urgent"><i class="fas fa-bolt"></i> SÍ (Urgente)</span></label>
+              <label style="cursor:pointer;"><input type="radio" name="w-urgent" value="no" checked /> No</label>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:24px;">
+          <button type="button" class="btn btn-magenta btn-next-step" data-next="2">Siguiente Paso <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+        </div>
+      </div>
+
+      <!-- PASO 2: TAREAS DE CUIDADO REQUERIDAS -->
+      <div class="wizard-step-pane" id="step-pane-2" style="display:none;">
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;color:var(--text-dark);">Paso 2: Tareas de Cuidado Requeridas</h3>
+        <p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">Seleccioná todas las tareas que el asistente deberá realizar:</p>
+        
+        <div class="card-select-grid">
+          <div class="select-card" data-task="higiene">
+            <i class="fas fa-bath"></i>
+            <h4>Higiene y Confort</h4>
+            <p>Baño, cambio de pañales, aseo personal</p>
+          </div>
+          <div class="select-card" data-task="signos">
+            <i class="fas fa-heartbeat"></i>
+            <h4>Signos Vitales</h4>
+            <p>Presión, glucemia, saturación</p>
+          </div>
+          <div class="select-card" data-task="medicacion">
+            <i class="fas fa-pills"></i>
+            <h4>Medicamentos</h4>
+            <p>Recordatorio y administración de dosis</p>
+          </div>
+          <div class="select-card" data-task="movilidad">
+            <i class="fas fa-wheelchair"></i>
+            <h4>Movilidad / Traslados</h4>
+            <p>Silla de ruedas, paseos, transferencias</p>
+          </div>
+          <div class="select-card" data-task="cocina">
+            <i class="fas fa-utensils"></i>
+            <h4>Alimentación</h4>
+            <p>Cocina ligera, dieta especial</p>
+          </div>
+          <div class="select-card" data-task="cognitivo">
+            <i class="fas fa-brain"></i>
+            <h4>Estimulación Cognitiva</h4>
+            <p>Acompañamiento, juegos de memoria</p>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-top:24px;">
+          <button type="button" class="btn btn-outline-white btn-prev-step" data-prev="1" style="border-color:var(--border-light);color:var(--text-mid);"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> Anterior</button>
+          <button type="button" class="btn btn-magenta btn-next-step" data-next="3">Siguiente Paso <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+        </div>
+      </div>
+
+      <!-- PASO 3: PERFIL PROFESIONAL REQUERIDO -->
+      <div class="wizard-step-pane" id="step-pane-3" style="display:none;">
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;color:var(--text-dark);">Paso 3: Perfil Profesional Requerido</h3>
+        <p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">Seleccioná la especialidad o nivel de formación deseado:</p>
+        
+        <div class="card-select-grid">
+          <div class="select-card" data-prof="domiciliario">
+            <i class="fas fa-user-nurse"></i>
+            <h4>Cuidador/a Domiciliario/a</h4>
+            <p>Asistencia integral en el hogar</p>
+          </div>
+          <div class="select-card" data-prof="at">
+            <i class="fas fa-hands-helping"></i>
+            <h4>Acompañante Terapéutico</h4>
+            <p>Soporte emocional y conductual</p>
+          </div>
+          <div class="select-card" data-prof="enfermero">
+            <i class="fas fa-stethoscope"></i>
+            <h4>Enfermero/a Profesional</h4>
+            <p>Cuidados clínicos y curaciones</p>
+          </div>
+          <div class="select-card" data-prof="gerontologo">
+            <i class="fas fa-ribbon"></i>
+            <h4>Especialista en Gerontología</h4>
+            <p>Atención especializada en adultos mayores</p>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-top:24px;">
+          <button type="button" class="btn btn-outline-white btn-prev-step" data-prev="2" style="border-color:var(--border-light);color:var(--text-mid);"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> Anterior</button>
+          <button type="button" class="btn btn-magenta btn-next-step" data-next="4">Siguiente Paso <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+        </div>
+      </div>
+
+      <!-- PASO 4: MODALIDAD Y HORARIOS -->
+      <div class="wizard-step-pane" id="step-pane-4" style="display:none;">
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text-dark);">Paso 4: Modalidad y Horarios</h3>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="form-group">
+            <label>Modalidad de Trabajo</label>
+            <select id="w-modality">
+              <option value="con-retiro">Con Retiro (Por horas)</option>
+              <option value="sin-retiro">Sin Retiro (Cama adentro / 24hs)</option>
+              <option value="guardia-12">Guardia de 12 horas</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Frecuencia</label>
+            <select id="w-frequency">
+              <option value="recurrente">Recurrente (Días fijos a la semana)</option>
+              <option value="eventual">Eventual (Por única vez)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Días de la Semana Requeridos</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+            <label class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-dark);padding:8px 16px;font-size:12px;"><input type="checkbox" name="w-day" value="L" checked /> Lunes</label>
+            <label class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-dark);padding:8px 16px;font-size:12px;"><input type="checkbox" name="w-day" value="M" checked /> Martes</label>
+            <label class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-dark);padding:8px 16px;font-size:12px;"><input type="checkbox" name="w-day" value="X" checked /> Miércoles</label>
+            <label class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-dark);padding:8px 16px;font-size:12px;"><input type="checkbox" name="w-day" value="J" checked /> Jueves</label>
+            <label class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-dark);padding:8px 16px;font-size:12px;"><input type="checkbox" name="w-day" value="V" checked /> Viernes</label>
+            <label class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-dark);padding:8px 16px;font-size:12px;"><input type="checkbox" name="w-day" value="S" /> Sábado</label>
+            <label class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-dark);padding:8px 16px;font-size:12px;"><input type="checkbox" name="w-day" value="D" /> Domingo</label>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-top:24px;">
+          <button type="button" class="btn btn-outline-white btn-prev-step" data-prev="3" style="border-color:var(--border-light);color:var(--text-mid);"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> Anterior</button>
+          <button type="button" class="btn btn-magenta btn-next-step" data-next="5">Siguiente Paso <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+        </div>
+      </div>
+
+      <!-- PASO 5: TITULO Y DESCRIPCIÓN -->
+      <div class="wizard-step-pane" id="step-pane-5" style="display:none;">
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text-dark);">Paso 5: Detalles de la Búsqueda</h3>
+        
+        <div class="form-group">
+          <label for="w-title">Título de la Publicación</label>
+          <input type="text" id="w-title" placeholder="Ej: Cuidadora para asistencia general a señora de 82 años en Belgrano" required />
+        </div>
+
+        <div class="form-group">
+          <label for="w-desc">Descripción Detallada del Caso</label>
+          <textarea id="w-desc" rows="4" placeholder="Describí el diagnóstico del paciente, movilidad, costumbres o detalles relevantes para el asistente..." required></textarea>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-top:24px;">
+          <button type="button" class="btn btn-outline-white btn-prev-step" data-prev="4" style="border-color:var(--border-light);color:var(--text-mid);"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> Anterior</button>
+          <button type="button" class="btn btn-magenta btn-next-step" data-next="6">Ver Resumen <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+        </div>
+      </div>
+
+      <!-- PASO 6: CONFIRMACIÓN -->
+      <div class="wizard-step-pane" id="step-pane-6" style="display:none;">
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text-dark);">Paso 6: Confirmación y Vista Previa</h3>
+        
+        <div style="background:var(--bg-light);border-radius:12px;padding:20px;margin-bottom:20px;">
+          <h4 id="summary-title" style="font-size:16px;color:var(--purple-dark);margin-bottom:8px;">Cuidadora para asistencia general</h4>
+          <p id="summary-desc" style="font-size:13px;color:var(--text-mid);margin-bottom:12px;">Se requiere asistencia para adulto mayor en zona de Buenos Aires.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span class="badge-verified cert"><i class="fas fa-check"></i> Oferta Verificada</span>
+            <span class="badge-verified dni"><i class="fas fa-clock"></i> Horario Flexible</span>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-top:24px;">
+          <button type="button" class="btn btn-outline-white btn-prev-step" data-prev="5" style="border-color:var(--border-light);color:var(--text-mid);"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> Anterior</button>
+          <button type="submit" class="btn btn-purple" id="btn-submit-wizard">PUBLICAR BÚSQUEDA AHORA</button>
+        </div>
+        <div id="wizard-success-msg" style="display:none;margin-top:16px;background:#e8f5e9;color:#2e7d32;padding:12px;border-radius:8px;font-weight:700;text-align:center;">
+          ✓ ¡Búsqueda publicada con éxito! Recibirás postulaciones de asistentes verificados.
+        </div>
+      </div>
+
+    </form>
+  </div>
+</section>
+
+<!-- 1. FORMULARIO DE SOLICITUD PARA FAMILIAS (De solicitar-asistente.html) -->
+<section class="contact-section" id="solicitud-familias" style="border-bottom: 2px solid var(--border-light);">
+  <div class="contact-layout">
+    <div class="contact-image fade-in">
+      <img src="assets/images/mujer_consultando.png" alt="Solicitar Asistente" />
+    </div>
+    <div class="contact-form fade-in">
+      <p class="eyebrow" style="color:var(--magenta);font-weight:700;font-size:13px;text-transform:uppercase;margin-bottom:8px;">Formulario 1 — Familias</p>
+      <h2>Podemos ayudarte (Solicitar Asistente)</h2>
+      <p>Si sos familiar y tenés dudas o querés solicitar un asistente, déjanos tus datos para asistirte.</p>
+      <form id="form-solicitud-familia" novalidate>
+        <div class="form-group">
+          <label for="familia-nombre">Nombre y apellido</label>
+          <input type="text" id="familia-nombre" placeholder="Ingresá tu nombre completo" required />
+        </div>
+        <div class="form-group">
+          <label for="familia-email">Tu correo electrónico</label>
+          <input type="email" id="familia-email" placeholder="ejemplo@correo.com" required />
+        </div>
+        <div class="form-group">
+          <label for="familia-celular">Tu número de celular</label>
+          <input type="tel" id="familia-celular" placeholder="11 9876 5432" required />
+        </div>
+        <div class="form-group">
+          <label for="familia-consulta">¿Cuál es tu consulta?</label>
+          <select id="familia-consulta" required>
+            <option value="">— Por favor, elige una opción —</option>
+            <option value="busco-cuidador">Busco un asistente / cuidador</option>
+            <option value="acompanamiento">Soporte y Asesoramiento Remoto</option>
+            <option value="cursos">Cursos para familias</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>¿Te suscribís al newsletter?</label>
+          <div class="radio-group">
+            <label><input type="radio" name="newsletter-fam" value="si" checked /> Sí</label>
+            <label><input type="radio" name="newsletter-fam" value="no" /> No</label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-purple">ENVIAR CONSULTA</button>
+        <div class="form-success" style="display:none;margin-top:12px;color:green;font-weight:600;">✓ ¡Gracias! Nos pondremos en contacto a la brevedad.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- 2. FORMULARIO DE REGISTRO / POSTULACIÓN PARA ASISTENTES (De postulacion-asistente.html) -->
+<section class="contact-section" id="registro-asistentes" style="background:#fff;border-bottom: 2px solid var(--border-light);">
+  <div class="contact-layout">
+    <div class="contact-image fade-in">
+      <img src="assets/images/vida_activa.png" alt="Postularme como Asistente" />
+    </div>
+    <div class="contact-form fade-in">
+      <p class="eyebrow" style="color:var(--magenta);font-weight:700;font-size:13px;text-transform:uppercase;margin-bottom:8px;">Formulario 2 — Profesionales</p>
+      <h2>Registrate como Asistente</h2>
+      <p>Completá tus datos y nos pondremos en contacto para guiarte en el proceso de verificación e incorporación a la red.</p>
+      <form id="form-registro-asistente" novalidate>
+        <div class="form-group">
+          <label for="asistente-nombre">Nombre y apellido</label>
+          <input type="text" id="asistente-nombre" placeholder="Ingresá tu nombre completo" required />
+        </div>
+        <div class="form-group">
+          <label for="asistente-email">Tu correo electrónico</label>
+          <input type="email" id="asistente-email" placeholder="ejemplo@correo.com" required />
+        </div>
+        <div class="form-group">
+          <label for="asistente-celular">Tu número de celular</label>
+          <input type="tel" id="asistente-celular" placeholder="11 9876 5432" required />
+        </div>
+        <div class="form-group">
+          <label for="asistente-profesion">Tu profesión / formación</label>
+          <select id="asistente-profesion" required>
+            <option value="">— Seleccioná tu perfil —</option>
+            <option value="cuidadora">Asistente / Cuidador/a Domiciliario/a</option>
+            <option value="enfermera">Enfermera/o Universitaria/o</option>
+            <option value="auxiliar_enfermeria">Auxiliar de Enfermería</option>
+            <option value="acomp_terapeutico">Acompañante Terapéutico</option>
+            <option value="gerontologa">Gerontóloga/o</option>
+            <option value="voluntaria">Voluntaria/o</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="asistente-zona">Tu zona / barrio de cobertura</label>
+          <input type="text" id="asistente-zona" placeholder="Ej: Palermo, Buenos Aires / Zona Norte" />
+        </div>
+        <div class="form-group">
+          <label>¿Te suscribís al newsletter?</label>
+          <div class="radio-group">
+            <label><input type="radio" name="newsletter-asis" value="si" checked /> Sí</label>
+            <label><input type="radio" name="newsletter-asis" value="no" /> No</label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-purple">ENVIAR SOLICITUD DE REGISTRO</button>
+        <div class="form-success" style="display:none;margin-top:12px;color:green;font-weight:600;">✓ ¡Solicitud recibida! Te contactaremos pronto.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- 3. FORMULARIO DE FILTROS Y BÚSQUEDA DEL DIRECTORIO (De directorio.html) -->
+<section class="contact-section" id="busqueda-directorio" style="background:var(--bg-light);">
+  <div style="max-width:1000px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <p class="eyebrow" style="color:var(--magenta);font-weight:700;font-size:13px;text-transform:uppercase;margin-bottom:8px;">Formulario 3 — Catálogo & Filtros</p>
+      <h2 style="font-size:32px;font-weight:800;color:var(--text-dark);">Filtro y Búsqueda en la Red de Asistentes</h2>
+      <p style="color:var(--text-mid);max-width:600px;margin:0 auto;">Campos de consulta utilizados para filtrar asistentes por zona, modalidad, disponibilidad y experiencia.</p>
+    </div>
+
+    <form id="form-filtro-directorio" class="contact-form" style="background:#fff;padding:36px;border-radius:var(--radius);box-shadow:var(--shadow-sm);" novalidate>
+      <div style="display:grid;grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));gap:20px;">
+        
+        <div class="form-group">
+          <label for="filtro-zona"><i class="fas fa-location-dot"></i> Zona / Localidad</label>
+          <select id="filtro-zona">
+            <option value="">Todas las zonas</option>
+            <option value="caba">CABA (Palermo, Belgrano, Recoleta, etc.)</option>
+            <option value="zona-norte">Zona Norte (San Isidro, Vicente López)</option>
+            <option value="zona-sur">Zona Sur (Quilmes, Avellaneda, Lomas)</option>
+            <option value="zona-oeste">Zona Oeste (Morón, Ramos Mejía)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="filtro-especialidad"><i class="fas fa-user-md"></i> Especialidad / Perfil</label>
+          <select id="filtro-especialidad">
+            <option value="">Todas las especialidades</option>
+            <option value="cuidador">Cuidado Domiciliario</option>
+            <option value="enfermeria">Enfermería</option>
+            <option value="acomp_terapeutico">Acompañamiento Terapéutico</option>
+            <option value="gerontologia">Atención Gerontológica</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="filtro-jornada"><i class="fas fa-clock"></i> Modalidad de Jornada</label>
+          <select id="filtro-jornada">
+            <option value="">Cualquier modalidad</option>
+            <option value="por-horas">Por Horas</option>
+            <option value="con-retiro">Con Retiro (Turno Diario)</option>
+            <option value="sin-retiro">Cama Adentro / Sin Retiro</option>
+            <option value="guardias">Guardia de Fin de Semana</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="filtro-experiencia"><i class="fas fa-award"></i> Nivel de Experiencia</label>
+          <select id="filtro-experiencia">
+            <option value="">Cualquier nivel</option>
+            <option value="bronce">Asistente Verificado (Bronce)</option>
+            <option value="plata">Asistente Senior (Plata)</option>
+            <option value="oro">Asistente Destacado (Oro)</option>
+          </select>
+        </div>
+
+        <!-- ACEPTACIÓN DE TÉRMINOS Y CONDICIONES Y POLÍTICAS DE PRIVACIDAD PARA FAMILIAS -->
+        <div style="margin:16px 0;font-size:12px;color:var(--text-dark);display:flex;align-items:flex-start;gap:8px;grid-column:1 / -1;">
+          <input type="checkbox" id="acepto-terminos-wizard" required style="margin-top:3px;width:16px;height:16px;cursor:pointer;" />
+          <label for="acepto-terminos-wizard" style="cursor:pointer;line-height:1.4;">
+            He leído y acepto los <a href="docs/terminos_y_condiciones_familias.md" target="_blank" style="color:var(--magenta);font-weight:700;text-decoration:underline;">Términos, Condiciones de Uso, Membresías y Exención Sanitaria para Familias</a> (incluye políticas de renovación de membresías y responsabilidad exclusiva de la prestadora elegida).
+          </label>
+        </div>
+
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:20px;">
+        <button type="reset" class="btn" style="background:#e2e8f0;color:#334155;padding:12px 24px;border-radius:8px;font-weight:600;border:none;cursor:pointer;">Limpiar Filtros</button>
+        <button type="submit" class="btn btn-purple" style="padding:12px 32px;"><i class="fas fa-search"></i> APLICAR BÚSQUEDA</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo"><img src="assets/images/logo_careonys.png" alt="Careonys" /><span>Careonys</span></div>
+      <p>Conectamos familias con cuidadores calificados.</p>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i class="fab fa-youtube"></i></a>
+        <a href="mailto:contacto@careonys.com"><i class="fas fa-envelope"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Para Familias</h4>
+      <a href="solicitar-asistente.html">Solicitar Asistente</a>
+      <a href="directorio.html">Directorio</a>
+      <a href="soporte-remoto.html">Acompañamiento</a>
+      <a href="cursos.html">Cursos</a>
+    </div>
+    <div class="footer-col">
+      <h4>Para Cuidadores</h4>
+      <a href="postulacion-asistente.html">Postularme como Asistente</a>
+      <a href="postulacion-asistente.html#registro">Registrarme</a>
+    </div>
+    <div class="footer-col">
+      <h4>Empresa</h4>
+      <a href="#">Sobre Careonys</a><a href="#">Contacto</a><a href="docs/legales_y_terminos_careonys_marketplace.md" target="_blank">Términos y Condiciones</a>
+    </div>
+  </div>
+  <div class="footer-bottom"><p>© 2024 Careonys. Todos los derechos reservados.</p></div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

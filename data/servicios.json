@@ -1,0 +1,23 @@
+[
+  {
+    "id": "serv-001",
+    "tenant_id": "tenant-presdemo",
+    "titulo": "Cuidado Domiciliario Integral",
+    "descripcion": "Asistencia completa en higiene, alimentación, movilidad y administración de medicamentos en el hogar.",
+    "categoria": "Cuidados Domiciliarios"
+  },
+  {
+    "id": "serv-002",
+    "tenant_id": "tenant-presdemo",
+    "titulo": "Acompañamiento Online y Teleasistencia",
+    "descripcion": "Orientación, videollamadas periódicas y contención profesional remota para adultos mayores y sus familias.",
+    "categoria": "Teleasistencia"
+  },
+  {
+    "id": "serv-003",
+    "tenant_id": "tenant-presdemo",
+    "titulo": "Estimulación Cognitiva",
+    "descripcion": "Ejercicios y actividades terapéuticas diseñadas para mantener y reforzar las capacidades cognitivas.",
+    "categoria": "Terapia y Rehabilitación"
+  }
+]

@@ -1,0 +1,1841 @@
+Módulo 1: Acceso y Selección
+
+Foto 1: Pantalla de Acceso (Login / Registro)
+
+Esta es la puerta de entrada principal. Aquí es donde el usuario decide si va por la vía del registro nuevo o si ya tiene cuenta.
+
+Logo: En la parte superior aparece el logo de "cuidarlos".
+
+Acción de Registro: Arriba hay un botón grande en color fucsia que dice "Registrarse". Al tocarlo, el flujo se deriva a la creación de cuenta nueva (que es lo que veremos en las fotos siguientes).
+
+Sección de Login: Abajo dice "Iniciar sesión" con dos campos:
+
+Campo 1: "Ingresá tu correo electrónico" (con un icono de sobre).
+
+Campo 2: "Ingresá tu contraseña" (con un icono de llave y un "ojo" a la derecha para ver lo que escribís).
+
+Recuperación: Debajo de la contraseña está el link "¿Olvidaste tu contraseña?".
+
+Acción de Ingreso: Botón celeste que dice "Ingresá".
+
+Opciones Sociales: Dos botones blancos para entrar rápido usando Google o Facebook.
+
+Avales (Pie de pantalla): Aparece el logo del Auspiciante 1 a la izquierda y el del Auspiciante 2 a la derecha (esto es importante porque da respaldo legal y académico).
+
+Flujo:
+
+Si el usuario ya tiene cuenta: Completa datos e ingresa a la corriente principal (Dashboard).
+
+Si el usuario es nuevo: Toca "Registrarse" y se deriva al flujo de Onboarding (paso a paso).
+
+Foto 2: Selección de Rol
+
+Título: "¿Cómo quisieras ingresar?".
+
+Opción 1 (Familiar): * Imagen: Una joven ayudando a una persona mayor en un sillón.
+
+Texto: "Como familiar - Soy una persona que busca un cuidador para una persona mayor".
+
+Función: Al elegirla, te lleva al flujo de contratación y búsqueda.
+
+Opción 2 (Cuidador): * Imagen: Una cuidadora profesional con uniforme junto a un adulto mayor en silla de ruedas.
+
+Texto: "Como cuidador - Soy una persona que busca trabajar como cuidadora de un paciente".
+
+Función: Esta es la que nos interesa. Al elegirla, se activa el flujo de registro profesional (onboarding) que estamos analizando.
+
+Acción: Botón "Confirmar" en la parte inferior. Solo se habilita una vez que seleccionaste una de las dos tarjetas.
+
+Nota técnica: Esta pantalla es un filtro de entrada. Cada opción carga un set de datos y pantallas totalmente distinto en la base de datos de la app.
+
+Módulo 2: Credenciales de Seguridad 
+
+Foto 3: Datos de la cuenta
+
+Esta es la pantalla donde se formaliza el registro del usuario. Es una pantalla de validación doble para evitar errores en las credenciales.
+
+Barra de Progreso: En la parte superior aparece una línea naranja muy delgada que indica que el proceso de carga recién comienza (aproximadamente un 10%).
+
+Título: "Datos de la cuenta".
+
+Campos de Correo: * Correo electrónico: Se ingresa la dirección de email. Aparece un tilde verde a la derecha que indica que el formato es válido.
+
+Repetir correo electrónico: Campo de confirmación para asegurar que no hay errores de tipeo.
+
+Campos de Contraseña:
+
+Contraseña: El usuario define su clave. Incluye el icono del ojo tachado para ocultar o mostrar los caracteres.
+
+Repetir contraseña: Campo de confirmación.
+
+Legales: Un checkbox marcado obligatoriamente que dice: "He leído y acepto los Términos, Condiciones de uso y Políticas de privacidad de Cuidarlos". Los links están subrayados para que el usuario pueda abrirlos.
+
+Navegación:
+
+Botón Atrás (Celeste): Para volver a la selección de rol.
+
+Botón Siguiente (Fucsia): Se habilita cuando todos los campos coinciden y el checkbox está marcado.
+
+Requerimiento técnico: El sistema debe validar que Email 1 == Email 2 y que Password 1 == Password 2 antes de permitir avanzar.
+
+Módulo 3: Perfil Personal
+
+Foto 4: Identidad Básica
+
+Esta pantalla inicia la recolección de los datos personales del cuidador. Es una interfaz muy limpia y directa.
+
+Barra de Progreso: La línea naranja avanzó un poco más (se nota el movimiento respecto a la anterior), indicando que el usuario está progresando en el primer bloque de datos.
+
+Título: "¿Cómo te llamás?".
+
+Campos de texto:
+
+Nombre: Campo de entrada simple. Aparece un Placeholder.
+
+Apellido: Campo de entrada simple. Aparece un Placeholder.
+
+Navegación:
+
+Botón Atrás (Celeste): Permite regresar a la configuración de la cuenta (email/contraseña).
+
+Botón Siguiente (Fucsia): Se activa una vez que ambos campos tienen texto, permitiendo avanzar al siguiente paso de identidad.
+
+Detalle funcional: Estos campos suelen tener una validación básica para evitar números o caracteres especiales, asegurando que se ingrese un nombre real para el perfil profesional.
+
+Foto 5: Fecha de Nacimiento
+
+En esta pantalla se solicita la edad del usuario, un dato clave para la validación legal y el perfil profesional.
+
+Barra de Progreso: Continúa avanzando de forma lineal. Ya se encuentra cubriendo aproximadamente un 25% de la parte superior.
+
+Título: "¿Cuándo naciste?".
+
+Campo de entrada:
+
+Fecha de nacimiento: Es un campo con un icono de calendario a la derecha. Al tocarlo, se despliega el selector de fecha (date-picker) para elegir día, mes y año.
+
+Navegación:
+
+Botón Atrás (Celeste): Vuelve a la pantalla de Nombre y Apellido.
+
+Botón Siguiente (Fucsia): Solo se activa una vez seleccionada una fecha válida.
+
+Dato importante: Generalmente, estas aplicaciones tienen una validación de mayoría de edad (18 años) para poder continuar con el registro como cuidador.
+
+Foto 6: Género
+
+En esta pantalla el usuario define su identidad de género. Es un paso estándar de perfilamiento.
+
+Barra de Progreso: Ha avanzado un paso más, situándose cerca del 30% del total del primer bloque.
+
+Título: "¿Cuál es tu género?".
+
+Campo de entrada (Selector):
+
+Es un menú desplegable (dropdown). En la imagen se ve abierto, mostrando las opciones disponibles:
+
+Indistinto
+
+Masculino
+
+Femenino
+
+Prefiero no contestar
+
+Navegación:
+
+Botón Atrás (Celeste): Regresa a la fecha de nacimiento.
+
+Botón Siguiente (Fucsia): Se habilita una vez seleccionada una de las opciones.
+
+Observación técnica: La opción "Indistinto" o "Prefiero no contestar" garantiza la privacidad y la inclusión en el diseño de la interfaz (UX).
+
+Foto 7: Nacionalidad
+
+Esta pantalla continúa con el perfil demográfico del usuario. Al igual que la anterior, utiliza un componente de selección para estandarizar los datos.
+
+Barra de Progreso: Ha cruzado la mitad del primer bloque. Ya se encuentra aproximadamente al 55%.
+
+Título: "¿Cuál es tu nacionalidad?".
+
+Campo de entrada (Selector):
+
+Es un menú desplegable (dropdown) que se muestra abierto.
+
+Contenido: Lista de nacionalidades (Argentina, Francesa, Boliviana, Brasileira, Chilena, Colombiana, etc.).
+
+Tiene una barra de desplazamiento (scroll) a la derecha, lo que indica que hay muchas más opciones hacia abajo.
+
+Navegación:
+
+Botón Atrás (Celeste): Regresa a la selección de género.
+
+Botón Siguiente (Fucsia): Se habilita una vez que el usuario elige una opción de la lista.
+
+Lógica de diseño: El uso de una lista cerrada en lugar de un campo de texto libre evita errores de ortografía y facilita el filtrado posterior en la base de datos de cuidadores.
+
+Foto 8: Identificación y Datos Fiscales
+
+Esta pantalla es crítica para la validación legal del trabajador en Argentina, ya que vincula la identidad civil con la situación impositiva.
+
+Barra de Progreso: Ha avanzado significativamente, situándose aproximadamente en un 75% del primer bloque.
+
+Título: "¿Cómo te identificamos?".
+
+Campos de entrada:
+
+Número de DNI:* Campo numérico. El placeholder indica "Sin puntos", lo que sugiere una validación de solo caracteres numéricos. El asterisco indica que es obligatorio.
+
+Número de CUIT/CUIL: Campo numérico. El placeholder aclara "Sin guiones ni espacios".
+
+Situación Fiscal (Selector):
+
+Título del campo: "Tipo de registro AFIP".
+
+Es un menú desplegable (dropdown) abierto con las siguientes opciones:
+
+No inscripto
+
+Monotributo social
+
+Monotributista
+
+Responsable inscripto
+
+Navegación:
+
+Botón Atrás (Celeste): Regresa a la pantalla de Nacionalidad.
+
+Botón Siguiente (Fucsia): Se habilita cuando se completan los campos de ID y se selecciona una opción fiscal.
+
+Observación técnica: La aplicación requiere estos datos para asegurar que el cuidador pueda facturar sus servicios o estar en regla con las normativas laborales vigentes.
+
+Foto 9: Foto de Perfil
+
+Esta pantalla es el cierre del primer bloque de identidad visual. Aquí el usuario debe subir una imagen que lo represente profesionalmente en la plataforma.
+
+Barra de Progreso: Está llegando al final del primer tramo, aproximadamente en un 85%.
+
+Título: "Foto de perfil".
+
+Instrucciones: Debajo del título hay un texto aclaratorio: "Se sugiere que la foto sea con la cámara frontal, sin anteojos, sin sombrero y sin barbijo". Estas pautas buscan asegurar que el rostro sea claramente identificable para las familias contratantes.
+
+Contenedor de Carga: * Un recuadro central con bordes punteados y un icono de "subir" que dice "Cargar foto". Esto suele abrir la galería del teléfono.
+
+Debajo del recuadro, hay un botón específico con un icono de "Cámara", que permite disparar la foto en el momento.
+
+Navegación:
+
+Botón Atrás (Celeste): Regresa a la pantalla de Identificación y AFIP.
+
+Botón Siguiente (Fucsia): Se encuentra deshabilitado (en un tono más claro) porque todavía no se ha cargado ninguna imagen. Se activará una vez que el sistema detecte el archivo subido.
+
+Función clave: La foto de perfil es el elemento que genera confianza inicial. El sistema suele utilizar algoritmos básicos para detectar que haya un rostro antes de permitir el avance.
+
+Foto 10: Contacto de Comunicación
+
+Esta pantalla cierra la parte de datos personales básicos asegurando los canales de comunicación directos con el cuidador.
+
+Barra de Progreso: Está casi al final del primer tramo, aproximadamente en un 95%.
+
+Título: "¿Cuál es tu número de teléfono?".
+
+Campos de entrada:
+
+Número de celular:* Campo numérico obligatorio (marcado con asterisco). El placeholder muestra el formato ejemplo 11-2345-6789.
+
+Número de teléfono alternativo: Campo opcional. Tiene el mismo formato de ejemplo. Se utiliza como respaldo si el celular principal no está disponible.
+
+Navegación:
+
+Botón Atrás (Celeste): Regresa a la carga de la Foto de Perfil.
+
+Botón Siguiente (Fucsia): Se activará en cuanto se ingrese el número de celular obligatorio.
+
+Dato de UX: Los placeholders sugieren que el sistema espera el código de área sin el "0" y el número sin el "15", que es el estándar para aplicaciones móviles en Argentina.
+
+Foto 11: Ubicación Residencial
+
+Esta pantalla inicia un nuevo bloque de información: la geolocalización. Es fundamental para que el sistema pueda emparejar al cuidador con familias que vivan en zonas cercanas.
+
+Barra de Progreso: Se ha completado el primer tramo. La línea fucsia ahora cubre el 100% de la parte superior del bloque anterior, indicando que se ha iniciado una nueva sección del registro.
+
+Título: "¿Dónde vivís?".
+
+Campo de entrada:
+
+Dirección: Es un campo de búsqueda predictiva (estilo Google Maps). El placeholder muestra un ejemplo: Ciudad, Provincia.
+
+Navegación:
+
+Botón Atrás (Celeste): Regresa a la pantalla de Números de Teléfono.
+
+Botón Siguiente (Fucsia): Se activará una vez que el usuario seleccione una dirección válida de la lista de sugerencias que se despliega al escribir.
+
+Lógica funcional: Al elegir una dirección específica de una base de datos de mapas, la aplicación puede calcular automáticamente las distancias de viaje y mostrar ofertas laborales que sean logísticamente posibles para el cuidador.
+
+Foto 12: Confirmación en el Mapa
+
+Esta pantalla es la validación visual de la dirección ingresada en el paso anterior. Utiliza la interfaz de Google Maps para que el usuario confirme que el punto marcado es exacto.
+
+Título: "Ubicación".
+
+Interfaz de Mapa:
+
+Se observa un mapa interactivo centrado en una zona residencial.
+
+Un pin rojo marca la ubicación exacta sobre la calle.
+
+Se alcanzan a ver referencias locales como el "Barrio Privado Tal y Cual" y la cercanía con lugares emblemáticos y conocidos, situando la dirección en la zona de Ciudad, Municipio.
+
+Barra de búsqueda superior:
+
+Muestra la dirección procesada: Calle, Numero, Código Postal....
+
+A la izquierda, la bandera de Argentina confirma el contexto del país.
+
+A la derecha, un botón verde de "Siguiente" integrado en la barra para avanzar tras la confirmación.
+
+Soporte: Debajo de la dirección aparece un texto de ayuda en rojo: "¿Tenés problemas encontrando una dirección?", que probablemente abre un chat de soporte o un método de carga manual si el GPS falla.
+
+Botón de Cerrar (X): En la esquina superior derecha, para cancelar la selección y volver atrás.
+
+Importancia del paso: Esta confirmación evita que el cuidador reciba ofertas de trabajo basadas en una interpretación errónea de su domicilio por parte del buscador de texto.
+
+Foto 13: Dirección Confirmada
+
+Esta pantalla es el cierre del bloque de ubicación, donde se muestra el dato final ya procesado por el mapa.
+
+Barra de Progreso: La línea fucsia se mantiene al 100%, lo que indica que estamos completando este módulo de geolocalización.
+
+Título: "¿Dónde vivís?".
+
+Campo de texto:
+
+Dirección: Ahora el campo ya no tiene el placeholder, sino la dirección real seleccionada: Calle “Tal” 1234 Nombre Ciudad, Provincia.
+
+El texto aparece en un gris más oscuro, indicando que el dato ya fue capturado con éxito.
+
+Navegación:
+
+Botón Atrás (Celeste): Permite volver al mapa si el usuario detectó que la dirección no es del todo exacta.
+
+Botón Siguiente (Fucsia): Ahora está plenamente activo (color fucsia vibrante), permitiendo avanzar al siguiente bloque del registro.
+
+Nota de flujo: Al presionar "Siguiente", el sistema guarda las coordenadas (latitud y longitud) vinculadas a esa dirección para el motor de búsqueda de la app.
+
+Foto 13-1: Confirmación de Registro y Validación de ID
+
+Esta pantalla aparece inmediatamente después de confirmar la ubicación. Es el mensaje de "éxito" parcial que da paso a la validación legal.
+
+Indicador Visual: Un círculo verde grande con un tilde (check), que confirma que los datos anteriores se guardaron correctamente.
+
+Mensaje Principal: "¡Te has registrado con éxito!".
+
+Instrucción de Validación: Debajo explica el siguiente paso crítico: "Para poder validar tu identidad es necesario que subas fotos de tu DNI, frente y dorso".
+
+Acción Principal: Botón fucsia que dice "Cargar fotos". Al tocarlo, se disparará la cámara o el selector de archivos para el documento de identidad.
+
+Foto 14: Validación Documental (DNI)
+
+Esta es una pantalla de captura de archivos dividida en dos secciones críticas. Es una interfaz funcional pura, diseñada para que no haya errores en la carga de documentos oficiales.
+
+Título: "Valida tu DNI".
+
+Sección Superior (Frente del DNI):
+
+Un recuadro punteado para previsualizar la imagen.
+
+Dos botones de acción: "Cámara" (para sacar la foto en vivo) y "Galería" (por si ya tenés la foto guardada).
+
+Sección Inferior (Dorso del DNI):
+
+Mismo formato de recuadro punteado.
+
+Repite los botones de "Cámara" y "Galería". Es obligatorio cargar ambas caras para que el sistema de validación (que suele usar OCR para leer los datos) funcione.
+
+Navegación:
+
+Botón Guardar (Fucsia): Se activará únicamente cuando ambos recuadros tengan una imagen cargada.
+
+Botón Cancelar (Celeste): Te devuelve a la pantalla de éxito anterior (la 13-2).
+
+Cerrar (X): Un botón adicional arriba a la derecha para salir del modal de carga.
+
+Validación de Competencias.
+
+Aquí es donde la aplicación deja de pedir datos personales y empieza a construir el perfil profesional del cuidador.
+
+Módulo 4: Validación de Competencias
+
+Foto 15: Perfil Profesional
+
+Esta pantalla es un selector múltiple que define el alcance técnico del trabajador.
+
+Barra de Progreso: Se reinició el tramo. Ahora vemos una línea fucsia corta sobre un fondo gris claro, lo que indica que hemos comenzado el segundo gran módulo del registro (Formación).
+
+Título: "¿Cuál es tu profesión?".
+
+Instrucción Crítica: Debajo del título hay un aviso legal y técnico: "Los campos indicados con * requieren ser avalados con una foto del título que acredite su finalización". Esto significa que la app no solo confía en la palabra del usuario, sino que activará una pantalla de carga de archivos (similar a la del DNI) para cada opción marcada con asterisco.
+
+Listado de Opciones (Checkboxes):
+
+Cuidador/a Domiciliario/a
+
+Acompañante Terapéutico*
+
+Enfermero/a*
+
+Auxiliar de Enfermería*
+
+Voluntario/a
+
+Asistente Gerontológico/a*
+
+Asistente Acompañante Terapéutico*
+
+Promotor de Salud*
+
+Navegación:
+
+Botón Atrás (Celeste): Regresa al flujo de identidad/DNI.
+
+Botón Siguiente (Fucsia): Se habilita al seleccionar al menos una opción.
+
+Análisis de UX: El sistema diferencia entre roles de "oficio" (como Cuidador o Voluntario) y roles que requieren matrícula o título habilitante. Esto permite a la plataforma segmentar a los profesionales y ofrecer mayor seguridad a las familias que buscan cuidados complejos (ej. enfermería).
+
+Foto 16: Estudios y Cursos
+
+Esta es una pantalla de carga dinámica. A diferencia de los datos fijos (como la fecha de nacimiento), aquí el usuario puede añadir múltiples entradas.
+
+Barra de Progreso: Ha avanzado un pequeño tramo dentro del segundo bloque de "Formación", situándose aproximadamente en un 20% de esta nueva etapa.
+
+Título: "Estudios y cursos".
+
+Estado Inicial: Se muestra un mensaje aclaratorio: "Aún no tenés ningún estudio/curso cargado. No es necesario cargar dicha información en caso de no poseer estudios".
+
+Esto es clave para la accesibilidad: permite que personas con mucha experiencia práctica pero sin títulos formales puedan seguir adelante.
+
+Acción Principal: Un botón celeste grande con el signo (+) Agregar.
+
+Al tocarlo, probablemente se despliegue un formulario para poner el nombre de la institución, el título obtenido y, como vimos en la pantalla anterior, la foto del certificado si corresponde.
+
+Navegación:
+
+Botón Atrás (Celeste): Vuelve a la selección de Profesión (Foto 15).
+
+Botón Siguiente (Fucsia): Está activo. Al ser una sección opcional, el usuario puede avanzar aunque la lista esté vacía.
+
+Foto 17: Formulario de Nuevo Estudio/Curso
+
+Este es un modal de carga de datos con desplazamiento vertical que asegura que cada estudio mencionado por el cuidador sea verificable mediante evidencia documental.
+
+Campos Obligatorios (Marcados con *):
+
+Institución/establecimiento*: Un menú desplegable o campo de texto para identificar dónde se realizó la formación.
+
+Título obtenido*: Campo para especificar la certificación recibida.
+
+Año de finalización: * Incluye un selector de calendario.
+
+Nota de flexibilidad: El texto aclara que, si el usuario está cursando actualmente, no es necesario completar este campo.
+
+Detalle del estudio (Checkboxes): * Permite categorizar rápidamente la formación entre las opciones de 
+
+Cuidador, 
+
+Auxiliar de enfermería
+
+Asistente geriátrico
+
+Acompañante terapéutico
+
+Otro: Campo abierto para detallar especialidades o cursos que no figuren en la lista predefinida.
+
+Validación Documental:
+
+Foto del título obtenido*: Sección crítica para subir la prueba física del estudio.
+
+Métodos de carga: El usuario puede capturar la imagen en el momento usando la "Cámara" o seleccionar un archivo previo desde su "Galería".
+
+Acciones de Finalización:
+
+Botón Guardar (Fucsia): Procesa y almacena la información completa del curso en el perfil profesional.
+
+Botón Cerrar (X): Ubicado en la esquina superior derecha, permite cancelar la operación y regresar al listado general sin salvar los cambios.
+
+El proceso de "Cuidarlos" vincula la declaración jurada del usuario con el respaldo documental inmediato.
+
+Foto 19: Experiencia Laboral
+
+Esta pantalla inicia el módulo dedicado a validar la trayectoria práctica del cuidador. Es el espacio donde el usuario debe demostrar su experiencia previa con familias o instituciones.
+
+Barra de Progreso: La línea fucsia ha avanzado dentro del segundo bloque, situándose aproximadamente en un 40%. Esto indica que, tras la formación académica, la experiencia laboral es el siguiente paso de peso en este módulo.
+
+Título: "Experiencia laboral".
+
+Estado Inicial: Al igual que en la sección de estudios, se muestra un mensaje informativo: "Aún no tenés experiencia laboral cargada".
+
+Acción Principal: Un botón celeste central con el icono (+) Agregar.
+
+Al activarlo, es altamente probable que se abra un formulario (similar al de estudios) solicitando: nombre del empleador o familia, periodo de tiempo, tareas realizadas y, fundamentalmente, un contacto de referencia.
+
+Navegación:
+
+Botón Atrás (Celeste): Regresa al listado de Estudios y Cursos (Foto 16).
+
+Botón Siguiente (Fucsia): Ya se encuentra habilitado. Esto permite que personas que están buscando su primer empleo en el sector puedan avanzar en el registro sin cargar experiencias previas obligatoriamente.
+
+Importancia estratégica: Para las familias que utilizan la app, este apartado suele ser el más consultado. Un perfil con experiencias cargadas y referencias verificables tiene muchísimas más probabilidades de ser contratado.
+
+Foto 20: Formulario de Nueva Experiencia Laboral
+
+Este formulario permite al cuidador describir sus roles anteriores, asegurando que las familias tengan una visión clara de sus capacidades prácticas.
+
+Puesto / Ocupación*:
+
+Presenta una lista de selección única para definir el rol principal desempeñado: 
+
+Cuidador, 
+
+Auxiliar de enfermería, 
+
+Asistente geriátrico, 
+
+Acompañante terapéutico o 
+
+Empleada doméstica.
+
+Incluye la opción "Otro" para roles que no encajen en las categorías mencionadas.
+
+Fecha de inicio y finalización:
+
+Contiene dos selectores de calendario para delimitar el periodo de tiempo del empleo.
+
+Nota de flexibilidad: El sistema indica que, si se trata de un trabajo actual, no es necesario completar la fecha de finalización.
+
+Detalle de tareas realizadas:
+
+Ofrece una serie de checkboxes para marcar funciones específicas, facilitando la lectura del perfil: 
+
+Limpieza en el hogar,  
+
+Cocina para el paciente 
+
+Salidas/Paseos 
+
+Acompañamiento a turnos médicos.
+
+Pacientes sin movilidad 
+
+Pacientes con demencia.
+
+Compras para el hogar 
+
+Trámites ante obra social.
+
+Otras tareas: Campo de texto abierto para describir actividades adicionales o responsabilidades específicas que no estén contempladas en la lista de selección.
+
+Referencias:
+
+Sección fundamental para la validación del perfil. Solicita el nombre, apellido y teléfono de contacto del empleador anterior para que la plataforma pueda verificar la idoneidad y el desempeño del cuidador.
+
+Navegación y Cierre:
+
+Cerrar (X): Ubicado en la esquina superior derecha para cancelar la carga y volver al listado general de experiencia.
+
+Botón Guardar (Fucsia): Situado al final del scroll, confirma y almacena toda la información de la experiencia laboral en el perfil.
+
+Foto 23: Gestión de Referencias
+
+Esta pantalla actúa como un repositorio de los contactos que pueden dar fe del trabajo del cuidador. Aunque el formulario de experiencia laboral ya pedía referencias, esta sección permite gestionarlas de forma independiente o reforzarlas.
+
+Barra de Progreso: La línea fucsia ha avanzado significativamente, situándose cerca del 60% del bloque profesional.
+
+Título: "¿Tenés alguna referencia?".
+
+Estado Inicial: Se muestra el mensaje por defecto: "Aún no tenés referencias cargadas".
+
+Acción Principal: Un botón celeste central con el icono (+) Agregar.
+
+Al tocarlo, se abre un formulario para ingresar los datos de contacto de empleadores anteriores o personas que puedan validar la idoneidad del cuidador.
+
+Es probable que el sistema utilice estos datos para enviar una validación automática o para que el equipo de la app realice una verificación manual.
+
+Navegación:
+
+Botón Atrás (Celeste): Permite regresar al módulo de Experiencia Laboral (Foto 19) para revisar lo cargado.
+
+Botón Siguiente (Fucsia): Está activo, lo que indica que, aunque es muy recomendable tener referencias para ganar confianza con las familias, el sistema permite avanzar sin ellas si el cuidador está comenzando su carrera.
+
+Nota sobre la integridad del perfil: En aplicaciones de cuidado domiciliario, las referencias son el activo más valioso. Un perfil con referencias cargadas en esta sección suele recibir un distintivo o "check" de verificación mayor que aquellos que solo completan la parte académica.
+
+Foto 24: Formulario Nueva Referencia 
+
+Esta pantalla presenta el modal de carga, que se abre al apretar el botón agregar de la foto anterior, para individualizar cada referencia laboral, permitiendo que la aplicación verifique la trayectoria del cuidador mediante contacto directo con empleadores previos.
+
+Campos Obligatorios de Contacto (Marcados con *):
+
+Nombre y apellido*: Espacio para identificar al referente.
+
+Número celular*: Campo crítico para la validación, incluyendo un ejemplo de formato local para evitar errores de carga.
+
+Información Adicional:
+
+Comentarios: Un campo de texto abierto donde el cuidador puede añadir contexto sobre la relación laboral o el tipo de cuidado brindado a ese referente en particular.
+
+Acciones del Formulario:
+
+Botón Guardar (Fucsia): Al presionarlo, la referencia se vincula formalmente al perfil y aparecerá en el listado general.
+
+Cerrar (X): Ubicado en la esquina superior derecha para descartar los datos y volver a la pantalla de gestión de referencias.
+
+Foto 25: Habilidades y Aptitudes - Experiencia en Discapacidades
+
+Esta pantalla funciona como un filtro de especialización. Permite que el algoritmo de la app conecte al cuidador con familias que tengan necesidades médicas o de asistencia específicas.
+
+Barra de Progreso: Ha superado el 75% del bloque profesional. Estamos muy cerca de finalizar este gran módulo de competencias.
+
+Título: "Habilidades y aptitudes".
+
+Subtítulo de contexto: "Tengo experiencia con estas discapacidades".
+
+Listado de Selección (Checkboxes):
+
+Discapacidad Motora
+
+Discapacidad Visceral
+
+Discapacidad Auditiva
+
+Discapacidad Mental
+
+Discapacidad Visual
+
+Indicador de Carrusel (Paginación interna): Debajo del listado se observan puntos de navegación (con el primero en naranja). Esto indica que esta es solo la primera de varias pantallas dentro de "Habilidades y aptitudes". Es muy probable que las siguientes traten sobre manejo de patologías (ej. Alzheimer, Parkinson) o uso de dispositivos (ej. sillas de ruedas, sondas).
+
+Navegación:
+
+Botón Atrás (Celeste): Regresa al módulo de Referencias.
+
+Botón Siguiente (Fucsia): Permite avanzar tras seleccionar las opciones correspondientes.
+
+Foto 26: Selección de Habilidades y Aptitudes
+
+Esta pantalla es la ejecución de la Foto 25, donde se observa el proceso de marcado de competencias específicas.
+
+Interacción del Usuario: Se observa, a modo de ejemplo, que el/la postulante ha marcado el checkbox de "Discapacidad Motora", lo que activará este atributo en su perfil público para que las familias con pacientes con movilidad reducida puedan encontrarla más fácilmente.
+
+Barra de Progreso: Se mantiene estable en el bloque de Competencias Profesionales, indicando que aún estamos dentro del carrusel de aptitudes.
+
+Paginación (Carrusel): El indicador de puntos en la parte inferior muestra que todavía estamos en la primera pantalla de cinco (1/5) del sub-módulo de habilidades. Esto sugiere que el sistema es extremadamente detallista para categorizar al personal.
+
+Navegación:
+
+Botón Siguiente (Fucsia): Ahora que hay al menos una opción seleccionada, el usuario puede avanzar con seguridad a la siguiente categoría de aptitudes.
+
+Foto 27: Habilidades y Aptitudes - Experiencia en Patologías
+
+Esta pantalla representa el segundo paso del carrusel de competencias (indicado por el segundo punto naranja en la base). Es un formulario de selección múltiple con desplazamiento vertical diseñado para identificar el conocimiento práctico del cuidador ante cuadros clínicos específicos.
+
+Listado de Selección (Checkboxes):
+
+Deterioro Cognitivo
+
+Patologías Psiquiátricas
+
+ACV
+
+Epilepsia/Convulsiones
+
+Paciente Oncológico
+
+Obesos
+
+Ceguera
+
+Postrados
+
+Amputados
+
+Diabéticos
+
+Cuidados Paliativos
+
+Síncope
+
+Enfermedades coronarias
+
+Anticuagulados
+
+Hipertensos
+
+Epoc
+
+Arritmias
+
+Barra de Progreso: Se mantiene estable, reflejando que el usuario sigue profundizando en la validación de sus competencias técnicas dentro del bloque profesional.
+
+Navegación:
+
+Atrás: Permite revisar la pantalla anterior de discapacidades.
+
+Siguiente (Botón Fucsia): Una vez seleccionadas las patologías correspondientes, habilita el paso a la tercera pantalla del carrusel (3 de 5).
+
+Análisis de Seguridad: Esta sección es vital para el emparejamiento con las familias, ya que asegura que un cuidador asignado a un paciente con necesidades específicas posea la experiencia necesaria declarada previamente.
+
+Foto 29: Habilidades y Aptitudes - Tareas de Acompañamiento
+
+Esta es la tercera pantalla del carrusel (indicado por el tercer punto naranja en la base). En esta sección, el perfil del cuidador se define por su capacidad de autonomía y gestión en el entorno cotidiano del paciente.
+
+Barra de Progreso: Continúa avanzando dentro del bloque profesional, indicando que el perfil técnico está casi completo.
+
+Título: "Habilidades y aptitudes".
+
+Subtítulo de contexto: "Tareas de acompañamiento que puedo realizar".
+
+Listado de Selección (Checkboxes):
+
+Acompañar a turnos médicos
+
+Pasear con el paciente
+
+Realizar trámites
+
+Indicador de Carrusel: Se observa el tercer punto activo de un total de cinco (3 de 5).
+
+Navegación:
+
+Atrás (Celeste): Regresa al listado de patologías (Foto 27/28).
+
+Siguiente (Fucsia): Habilita el paso a la cuarta pantalla del carrusel, centrada probablemente en el manejo de herramientas o entornos domésticos específicos.
+
+Análisis del Flujo
+
+A diferencia de las pantallas anteriores que validaban conocimientos sobre salud (Discapacidades y Patologías), esta sección valida la disponibilidad funcional. Para una familia, saber que el cuidador puede "Realizar trámites" o "Acompañar a turnos" es crucial para delegar la gestión administrativa y médica fuera del hogar.
+
+Foto 30: Habilidades y Aptitudes - Tareas de Cuidado
+
+Esta sección es crítica, ya que define el nivel de complejidad sanitaria que el cuidador está dispuesto a asumir. Aquí se separan las tareas de asistencia básica de las de enfermería o cuidado avanzado.
+
+Barra de Progreso: Ha cruzado la barrera del 80% del bloque profesional. Estamos a un paso de terminar la configuración de competencias.
+
+Título: "Habilidades y aptitudes".
+
+Subtítulo de contexto: "Tareas de cuidado que puedo realizar".
+
+Listado de Selección (Checkboxes):
+
+Aplicación de inyecciones
+
+Higiene y confort
+
+Control de signos vitales
+
+Administración de la medicación
+
+Solo acompañamiento
+
+Indicador de Carrusel: Se activa el cuarto punto naranja, confirmando que estamos en la recta final de este módulo (4 de 5).
+
+Navegación:
+
+Botón Atrás (Celeste): Regresa a las tareas de acompañamiento (Foto 29).
+
+Botón Siguiente (Fucsia): Habilita el paso a la última pantalla del carrusel de aptitudes.
+
+Análisis de Valor
+
+Esta pantalla es la que realmente "segmenta" el mercado para la familia. Por ejemplo:
+
+Si un usuario marca "Solo acompañamiento", el sistema probablemente lo filtre de búsquedas que requieran "Higiene y confort" (bañado del paciente, cambio de pañales, etc.).
+
+La "Aplicación de inyecciones" es una tarea de alta responsabilidad que suele requerir el título de enfermería que cargamos anteriormente en la Foto 17.
+
+Foto 31: Habilidades y Aptitudes - Tareas Domésticas
+
+Esta pantalla cierra el carrusel de competencias (indicado por el quinto punto naranja en la base). Aquí el cuidador define su disposición para colaborar con el mantenimiento y la higiene del hogar donde presta servicio.
+
+Barra de Progreso: La línea fucsia ha alcanzado casi el final de la sección, lo que indica que el bloque de Competencias Profesionales está prácticamente concluido.
+
+Título: "Habilidades y aptitudes".
+
+Subtítulo de contexto: "Tareas domésticas que puedo realizar".
+
+Listado de Selección (Checkboxes):
+
+Cocinar
+
+Limpieza del hogar
+
+Lavado de ropa
+
+Tendido de cama
+
+Planchado de ropa
+
+Indicador de Carrusel: Se activa el quinto punto, finalizando la serie (5 de 5).
+
+Navegación:
+
+Botón Atrás (Celeste): Regresa a las tareas de cuidado directo (Foto 30).
+
+Botón Siguiente (Fucsia): Al ser la última pantalla del carrusel, este botón guardará todas las aptitudes seleccionadas y permitirá avanzar al siguiente gran módulo del registro.
+
+Foto 32: Disponibilidad y Estado
+
+Esta pantalla permite configurar la modalidad de trabajo y los horarios específicos del cuidador. Es una herramienta de filtrado en tiempo real para las familias.
+
+Barra de Progreso: Ha avanzado notablemente, situándose cerca del 90% del registro total.
+
+Título: "Disponibilidad y estado".
+
+Modalidad de Trabajo (Checkboxes):
+
+Disponible para urgencias: Indica disposición para cubrir reemplazos o eventos inesperados.
+
+Disponible para trabajos con retiro: Modalidad por horas o jornada diaria regresando al hogar.
+
+Disponible para trabajos sin retiro: Modalidad de "cama adentro" o pernocte en el domicilio del paciente.
+
+Grilla de Disponibilidad Horaria:
+
+Organizada por columnas de días (L, M, M, J, V, S, D) y filas de franjas horarias:
+
+Mañana (6 a 14): Se observa, a modo de ejemplo, que se ha marcado de martes a sábado.
+
+Tarde (14 a 22)
+
+Noche (22 a 6)
+
+Este sistema de grilla permite una visualización rápida de los huecos en la agenda del profesional.
+
+Navegación:
+
+Atrás: Regresa al carrusel de Habilidades (Foto 31).
+
+Siguiente (Fucsia): Habilita el paso a la configuración de zonas de trabajo o pretensión económica.
+
+Foto 33: Confirmación de Perfil Completo
+
+Esta es la pantalla de éxito que marca la transición de un "Usuario en Registro" a un "Cuidador Activo" dentro de la plataforma.
+
+Indicador Visual: Un círculo verde con un "check" (tilde) central que señaliza la finalización exitosa de todos los pasos obligatorios.
+
+Mensaje Principal: "¡Terminaste de completar tu perfil con éxito!".
+
+Instrucción de Seguridad: Se informa al usuario que se ha enviado un correo electrónico para confirmar la cuenta. Este es un paso estándar de verificación para asegurar que el email ingresado es válido y pertenece al cuidador.
+
+Acción Final (Call to Action):
+
+Botón Ir a Cuidarlos (Fucsia): Al presionarlo, el aspirante ingresará por primera vez al panel principal (Dashboard) de la aplicación, donde podrá empezar a ver ofertas laborales, gestionar su agenda o recibir mensajes de familias interesadas. 
+AQUÍ HAY UNA DIFERENCIA FUNDAMENTAL: SENDLER TOMARA ESTA BASE DE DATOS Y PROCEDERA A LAS ENTREVISTA DE VALIDACION, ETC PARA DESPUES, UNA VEZ APROBADOS LOS ASPIRANTES SER INCORPORADOS EN LA BASE DE DATOS DEL PLANTEL 
+
+Esta imagen corresponde a una sección interna de la aplicación (el "Inicio" del perfil de usuario). Aquí tienes la transcripción completa, incluyendo el cuadro de diálogo (pop-up) que aparece en primer plano:
+
+Transcripción de Contenido pag 35: Pantalla de Inicio / Validaciones 
+
+Barra Superior y Estado
+
+Título: Inicio
+
+Menú: Icono de tres líneas (hamburguesa) a la izquierda.
+
+Sección: Disponibilidad y estado.
+
+Etiqueta de Estado: No Validado (Texto blanco sobre fondo rojo redondeado).
+
+Sección: Validaciones faltantes (Fondo)
+
+Título de sección: Validaciones faltantes
+
+Caja de aviso: * "Tu perfil no fue verificado todavía"
+
+   IMPORTANTE: Necesitamos que completes toda la información que la aplicación te solicita en las tarjetas que aparecen mas abajo, hasta tanto no esté completo no podremos activar tu cuenta y tu perfil no se mostrará en las búsquedas de cuidador.
+
+  Información de proceso:
+
+Una vez que hayas cargado toda la información nos tomará menos de 24hs validar tus datos. Si tenés alguna duda podés chatear con nosotros desde aquí mismo.
+
+Botón de acción: Chatear con un asistente (Texto blanco sobre fondo magenta).
+
+Sección Inferior (Lista de tareas)
+
+Título: Verificaciones faltantes
+
+Ítem 1: Verificá tu correo electrónico.
+
+Detalle: Te enviamos un email a la siguiente... (texto cortado).
+
+Barra de Navegación Inferior (Tab Bar)
+
+Inicio (Icono de casa, activo en color magenta).
+
+Avisos (Icono de diario/noticias).
+
+Pacientes (Icono de dos personas).
+
+Chats (Icono de burbuja con notificación "1").
+
+Cursos (Icono de birrete con notificación "8").
+
+Notas para el desarrollo de la interfaz:
+
+Componente Modal: El pop-up es un "Alert Dialog" estándar con las esquinas muy redondeadas.
+
+Sistema de Notificaciones: La barra inferior utiliza badges (círculos rojos con números) para indicar contenido pendiente en "Chats" y "Cursos".
+
+Consistencia de Color: Se sigue manteniendo el magenta como color principal para las acciones positivas (Aceptar, Inicio activo, Botones).
+
+Transcripción de Contenido pag 36: Detalle de Verificaciones
+
+Sección: Verificá tu correo electrónico
+
+Texto: Te enviamos un email a la siguiente dirección de correo electrónico:
+
+Email: xxxx@xxx.com editar (el enlace "editar" está en color magenta).
+
+Instrucción: Revisá tu bandeja de entrada y validá tu correo desde ahí.
+
+Botones:
+
+Ya lo validé (Botón en azul muy claro/celeste con texto azul).
+
+Reenviar correo (Botón en color magenta con texto blanco).
+
+Sección: Verificá tu celular
+
+Texto: Para poder verificar tu número telefónico, es importante que solicites tu código.
+
+Número: +54 1137874193 editar (el enlace "editar" está en color magenta).
+
+Notas de Interfaz (UI):
+
+Tarjetas Independientes: Cada proceso de verificación (Email y Celular) está contenido en su propia tarjeta blanca con bordes redondeados, separadas por un espacio sutil.
+
+Acciones Secundarias: Los botones de "Ya lo validé" y "Reenviar correo" están alineados horizontalmente, ocupando el mismo ancho dentro de la tarjeta.
+
+Consistencia: Se mantiene el uso del color magenta para las acciones interactivas críticas (como "editar" o "reenviar").
+
+Transcripción de Contenido pag 37: Verificaciones faltantes
+
+Sección: Verificá tu correo electrónico
+
+Encabezado: Verificá tu correo electrónico
+
+Texto instructivo: Te enviamos un email a la siguiente dirección de correo electrónico:
+
+Dato: xxxx@xxx.com editar (en magenta).
+
+Aviso: Revisá tu bandeja de entrada y validá tu correo desde ahí.
+
+Acciones:
+
+Ya lo validé (Botón con fondo celeste claro y texto azul).
+
+Reenviar correo (Botón con fondo magenta y texto blanco).
+
+Sección: Verificá tu celular
+
+Encabezado: Verificá tu celular
+
+Texto instructivo: Para poder verificar tu número telefónico, es importante que solicites tu código.
+
+Dato: +54 123456789 editar (en magenta).
+
+Análisis de Interfaz (UI/UX)
+
+Estructura de Tarjetas: Se utilizan contenedores con bordes redondeados y un sutil sombreado o borde para separar las tareas de validación del fondo.
+
+Jerarquía de Botones: El botón de Reenviar correo tiene un peso visual mayor (magenta sólido) que el de Ya lo validé (celeste pastel), lo que sugiere que la aplicación prioriza la acción de reintento si el usuario aún está en esa pantalla.
+
+Microcopy: El uso de la palabra "editar" junto a los datos permite una corrección rápida sin navegar a otra sección de ajustes.
+
+Con estas transcripciones hemos cubierto:
+
+Landing Page (Precios, métodos de pago, footer y descarga).
+
+Dashboard Interno (Alertas, pop-ups y procesos de validación
+
+Transcripción de Contenido pag 38: Validación Celular e Información de Perfil
+
+Sección: Verificá tu celular (Continuación)
+
+Dato: +54 11 2345 6789 editar (en magenta).
+
+Instrucciones:
+
+Una vez que recibas el código a tu teléfono, ingresalo en el recuadro celeste y presioná el botón confirmar.
+
+Acción vinculada: Solicitar código (Texto en magenta, centrado).
+
+Campo de entrada (Input): "Ingresar código" (Texto de ayuda dentro de un recuadro de bordes redondeados).
+
+Botón de acción: Confirmar (Botón gris, sugiriendo que está deshabilitado hasta que se ingrese el código).
+
+Sección: Información del perfil faltante
+
+Título de sección: Información del perfil faltante
+
+Estado: Faltan completar datos de tu perfil (Texto dentro de una tarjeta con fondo gris claro).
+
+Análisis de la Lógica de Interfaz (UI)
+
+Botones de Estado: El botón Confirmar en color gris es un patrón de diseño clásico para indicar que la acción no está disponible (disabled) hasta que el campo de texto superior contenga información.
+
+Flujo de Usuario: La aplicación separa claramente la Solicitud (el disparador del SMS) de la Confirmación (la entrada del código), evitando que el usuario intente validar antes de tener el dato.
+
+Navegación: Se mantiene la barra inferior con los indicadores de notificación en "Chats" (1) y "Cursos" (8), lo que sugiere que el usuario ya tiene actividad en la plataforma a pesar de no estar validado.
+
+Transcripción de Contenido pag 39: Información del perfil y Documentos
+
+Sección: Información del perfil faltante
+
+Texto: Faltan completar datos de tu perfil.
+
+Texto: Faltan completar los siguientes datos:
+
+Ítem: Fotos de DNI >
+
+Aviso legal: * Las fotos del DNI solicitadas son a solo efectos de validar la cuenta y no se mostrarán en ningún lugar de la plataforma.
+
+Sección: Documentos faltantes
+
+Texto: Cargá los documentos y mejorá tu ranking.
+
+Ítem 1: Certificado de Domicilio >
+
+Ítem 2: Antecedentes Penales >
+
+Acción: Gestionar certificado online (en color naranja/magenta).
+
+Nota informativa (debajo de la tarjeta): No es necesario cargarlos ahora. Podés hacerlo más adelante desde esta tarjeta o desde tu perfil.
+
+Sección: Mis pacientes
+
+Subtítulo: Eventos recientes
+
+Estado: No hay eventos recientes.
+
+Botones de acción (Magenta sólido):
+
+Calendario
+
+Mi perfil
+
+Cambios Notables y Estructura Visual
+
+Continuidad: Ahora la tarjeta de "Documentos faltantes" incluye la nota aclaratoria externa ("No es necesario cargarlos ahora...") justo antes de dar paso a la sección operativa de "Mis pacientes".
+
+Jerarquía Operativa: Los botones de Calendario y Mi perfil aparecen como las acciones principales una vez que el usuario hace scroll hacia abajo, indicando que el flujo de gestión diaria comienza después de los avisos de validación.
+
+Barra Inferior: Se mantiene el estado con notificaciones en Chats (1) y Cursos (8).
+
+Detalles de UI (Interfaz de Usuario)
+
+Lista de Navegación: Los ítems como "Fotos de DNI" o "Certificado de Domicilio" funcionan como celdas de una lista (list items) que, al tener la flecha a la derecha, indican que abren una nueva pantalla o un selector de archivos.
+
+Privacidad: El uso del asterisco * para la nota del DNI es un elemento de confianza (trust signal) diseñado para tranquilizar al usuario sobre el manejo de sus datos sensibles.
+
+Gamificación: La frase "mejorá tu ranking" vincula la carga de documentos legales con un beneficio directo en la visibilidad del trabajador dentro de la plataforma.
+
+Análisis de Flujo y Diseño (UI/UX)
+
+Flexibilidad en el Registro: El texto informativo bajo la sección de documentos es clave para la experiencia del usuario (UX), ya que reduce la fricción al permitir que el usuario explore la aplicación sin haber completado la carga burocrática de inmediato.
+
+Componentes de Botones: Los botones "Calendario" y "Mi perfil" son de ancho completo dentro de su contenedor, manteniendo la estética de bordes muy redondeados (estilo pills).
+
+Navegación Inferior (Tab Bar): Se mantiene constante con los indicadores de notificación:
+
+Chats: 1 notificación.
+
+Cursos: 8 notificaciones.
+
+Espaciado: Se observa un uso generoso de espacios en blanco (white space) para separar las categorías principales, lo que facilita la lectura en dispositivos móviles.
+
+. Transcripción: Correo de Verificación (Imagen 41.jpeg)
+
+Esta captura muestra la bandeja de entrada de Gmail con el correo de validación necesario para activar el perfil que vimos en las pantallas anteriores.
+
+Remitente: Cuidarlos
+
+Asunto: Cuidarlos - Confirmá tu email - ¡Bienvenido/aa Cuidarlos! Validá tu cuenta presionando el siguiente botón VALIDAR Cuidarlos es la...
+
+Hora de recepción: 8:42 PM
+
+2. Recopilación de la Landing Page (Imágenes 34-13, 34-14, 34-16)
+
+He consolidado el contenido de la landing page principal para que tengas el flujo completo de ventas y soporte:
+
+Sección de Producto (Curso 2)
+
+Encabezado: INSCRIBITE
+
+Título: CURSO 2
+
+Precio: $ 10000 / Por única vez (Precio lanzamiento).
+
+Beneficios:
+
+Acceso a la base de cuidadores.
+
+Mejora de ranking en la plataforma.
+
+Ampliación de conocimientos.
+
+Obtención del Certificado Hirsch.
+
+Botón: COMPRAR (Estilo outline púrpura).
+
+Sección: Formas de Pago
+
+Desde Cuidarlos: Pago con tarjeta de crédito/débito directamente en la App (sección Cursos). El curso es online y asincrónico.
+
+Mercado Pago: Enlace directo a través de un botón azul sólido.
+
+Requisito: Perfil activo y validado para realizar el curso.
+
+Sección: Descarga y Pie de Página
+
+Call to Action (CTA): "Descargá la App y comenzá a capacitarte".
+
+Botones: "PARA ANDROID" y "PARA IPHONE" (Amarillo con texto blanco).
+
+Footer Navigation: Incluye enlaces a "Necesito Cuidador", "Soy Cuidador", "Preguntas Frecuentes", "Términos y Condiciones", entre otros.
+
+Copyright: © 2026 Cuidarlos.
+
+Análisis para la Reconstrucción (Development Insights)
+
+Consistencia Visual: El uso del magenta/púrpura (#C2185B aproximadamente) es el hilo conductor entre la App y la Landing. Los botones de descarga rompen esta paleta con amarillo, lo cual es una técnica de UX para resaltar la acción principal (descarga).
+
+Flujo Crítico: El correo de la imagen 41 es el "puente" que resuelve el estado de "No Validado" que vimos en las capturas del dashboard (imágenes 35 a 40). Sin esa validación de email, el usuario no puede acceder a los beneficios del "Curso 2" ni mejorar su ranking.
+
+Limpieza de Contenido: Al maquetar, recuerda eliminar los textos de relleno "Este es un elemento de encabezado personalizado" que aparecen en las secciones de Mercado Pago y el Footer, ya que son remanentes del editor visual original.
+
+Transcripción: Correo de Bienvenida (Imagen 42.jpeg)
+
+Asunto (visual): ¡Bienvenido/a a Cuidarlos!
+
+Cuerpo del mensaje:
+
+Validá tu cuenta presionando el siguiente botón:
+
+Botón: [ VALIDAR ] (Botón rojo con bordes redondeados y texto blanco).
+
+Texto descriptivo: Cuidarlos es la APP de los Cuidadores domiciliarios.
+
+En nuestra App vas a poder postularte a las ofertas laborales que publican los familiares en forma directa!
+
+Vas a poder capacitarte tomando cursos gratuitos desde la misma app.
+
+Vas a aparecer en las búsquedas que cada día realizan los familiares que utilizan la plataforma.
+
+Pie del correo:
+
+Iconos de redes sociales: Facebook, Instagram, LinkedIn.
+
+Consultas: info@cuidarlos.com
+
+Resumen del Ecosistema "Cuidarlos" (Basado en tus imágenes)
+
+Ahora que procesamos todo, este es el mapa de lo que tenemos reconstruido:
+
+Landing Page de Venta: El "Curso 2" como gancho de capacitación y mejora de ranking.
+
+Pasarela de Pagos: Integración con Mercado Pago y stores oficiales.
+
+App - Registro: Pantallas de "No Validado" con tareas pendientes (Email, Celular, DNI y Antecedentes).
+
+App - Operativa: Secciones de "Mis Pacientes", "Calendario" y "Cursos" (donde el usuario tiene 8 pendientes).
+
+Comunicación Transaccional: El flujo de email que "desbloquea" al usuario.
+
+Transcripción: Confirmación de Verificación (Imagen 43.jpeg)
+
+Mensaje Central (Pop-up de confirmación):
+
+Título: Email verificado exitosamente
+
+Botón de acción: VISITAR CUIDARLOS (Botón púrpura con texto en blanco)
+
+Fondo y Contexto Visual:
+
+Se observa una fotografía de una familia (adultos mayores y jóvenes) compartiendo un momento frente a una computadora, reforzando el concepto de cuidado familiar.
+
+En la parte inferior, se visualiza el footer institucional de la plataforma con el logotipo de Cuidarlos y los enlaces de navegación ya identificados anteriormente (Necesito Cuidador, Soy Cuidador, Cursos, etc.).
+
+Estado Final del Flujo de Usuario
+
+Con este paso cumplido, el estado del perfil debería cambiar en la aplicación:
+
+Cambio de Estado: La etiqueta roja de "No Validado" que vimos en las pantallas de inicio debería actualizarse, permitiendo al usuario avanzar en la plataforma.
+
+Acceso a Capacitación: El usuario ahora cumple con el requisito de tener el "perfil activo y validado" para poder realizar el CURSO 2 u otros cursos disponibles en la sección correspondiente.
+
+Visibilidad: Según la descripción del correo de bienvenida, ahora el perfil podrá aparecer en las búsquedas que realizan los familiares.
+
+Transcripción: Verificá tu celular (Imagen 45.jpg)
+
+Sección: Verificaciones faltantes
+
+Título de la tarjeta: Verificá tu celular
+
+Texto instructivo: Para poder verificar tu número telefónico, es importante que solicites tu código.
+
+Número telefónico: +54 1137874193 editar (el enlace "editar" está en color magenta).
+
+Instrucción de seguimiento: Una vez que recibas el código a tu teléfono, ingresalo en el recuadro celeste y presioná el botón confirmar.
+
+Estado del envío: Código enviado (Texto en color magenta, ubicado sobre el campo de entrada).
+
+Campo de entrada (Input): Contiene el número 4479.
+
+Botón de acción: Confirmar (Botón con fondo magenta sólido y texto blanco).
+
+Sección Inferior: Información del perfil faltante
+
+Encabezado: Información del perfil faltante
+
+Tarjeta de aviso: Faltan completar datos de tu perfil
+
+Texto: Faltan completar los siguientes datos:
+
+Barra de Navegación Inferior (Tab Bar)
+
+Inicio: Icono de casa (color magenta, indicando sección activa).
+
+Avisos: Icono de documento.
+
+Pacientes: Icono de dos personas.
+
+Chats: Icono de burbuja de diálogo con un círculo rojo y el número 1.
+
+Cursos: Icono de birrete con un círculo rojo y el número 8.
+
+Observación clave: En la imagen anterior (44.jpg), el botón de "Confirmar" se veía gris (deshabilitado), pero en esta captura (45.jpg), al estar el código 4479 ingresado, el botón cambia a magenta, indicando que ya se puede procesar la validación.
+
+Transcripción de Contenido pag 46 y 47
+
+Inicio (encabezado central) Disponibilidad y estado [Botón rojo: No Validado]
+
+Validaciones faltantes
+
+Tu perfil no fue verificado todavía
+
+IMPORTANTE: Necesitamos que completes toda la información que la aplicación te solicita en las tarjetas que aparecen mas abajo, hasta tanto no esté completo no podremos activar tu cuenta y tu perfil no se mostrará en las búsquedas de cuidador.
+
+Una vez que hayas cargado toda la información nos tomará menos de 24hs validar tus datos. Si tenés alguna duda podés chatear con nosotros desde aquí mismo.
+
+[Botón magenta: Chatear con un asistente]
+
+Información del perfil faltante
+
+Faltan completar datos de tu perfil
+
+Faltan completar los siguientes datos:
+
+Comentarios y Observaciones
+
+Sobre el Flujo de Usuario (UX)
+
+Seguridad Progresiva: La aplicación implementa un sistema de validación de tres capas (Email, SMS y DNI). Esto genera confianza tanto para el cuidador como para las familias que buscan servicios.
+
+Reducción de Fricción: Aunque la validación es estricta, la nota que indica "No es necesario cargarlos ahora. Podés hacerlo más adelante..." permite que el usuario explore la interfaz antes de realizar trámites burocráticos como los antecedentes penales.
+
+Gamificación del Perfil: El uso del término "mejorá tu ranking" al incentivar la carga de documentos (como el certificado de domicilio) es una estrategia efectiva para que los usuarios mantengan sus perfiles completos.
+
+Sobre la Interfaz (UI)
+
+Consistencia Cromática: El uso del magenta (#C2185B aprox.) para acciones positivas y el rojo para alertas ("No Validado") está bien definido y facilita la navegación intuitiva.
+
+Indicadores de Actividad: La barra inferior muestra notificaciones activas en "Chats" (1) y "Cursos" (8), lo que sugiere que hay contenido esperando al usuario apenas termine su proceso de alta.
+
+Adaptabilidad: El diseño de los correos electrónicos y la landing page web mantiene la misma identidad visual que la aplicación móvil, asegurando una experiencia de marca coherente.
+
+APP v2.0
+
+Parece que tras finalizar el registro, la aplicación presenta inmediatamente una oportunidad de capacitación. Con la Foto 34, vemos un modal publicitario o informativo sobre formación continua, diseñado para incentivar la profesionalización del cuidador recién registrado.
+
+Aquí tienes el análisis unificado de esta pantalla:
+
+Foto 34: Oferta de Capacitación - Curso 2
+
+Este es un modal informativo que aparece sobre el menú principal (Dashboard) una vez completado el perfil. El objetivo es ofrecer herramientas adicionales que mejoren el posicionamiento del cuidador dentro de la plataforma.
+
+Título del Curso: "CURSO 2: NUEVAS HERRAMIENTAS PARA EL CUIDADO DE PERSONAS MAYORES".
+
+Detalles de la Modalidad: * Formato: 100% online.
+
+Fecha: Inicia el 5 de mayo (con inscripción abierta).
+
+Institución Avaladora: Contenidos dictados por el Centro Hirsch, destacando su trayectoria de más de 80 años en servicios de cuidado y rehabilitación.
+
+Beneficios del Curso:
+
+Destacar el Perfil: Ayuda a acceder a más búsquedas y oportunidades laborales.
+
+Sistema de Gamificación: Permite sumar hasta 400 Puntos Cuidarlos, lo que mejora directamente el ranking del cuidador en los resultados de búsqueda de las familias.
+
+Costo: El curso tiene un valor de $2.000.
+
+Interacción y Navegación:
+
+Cerrar (X): En la esquina superior derecha para descartar el anuncio y ver el panel principal.
+
+Botón Mas Información (Fucsia): Acción principal para profundizar en el programa o inscribirse.
+
+Menú Inferior (Tab Bar): Por detrás del modal se alcanzan a ver las secciones principales de la app para un usuario activo: Inicio, Avisos, Pacientes, Chats y Cursos.
+
+Estado del Perfil: Este paso demuestra que la plataforma no solo funciona como un tablón de anuncios, sino como un ecosistema de formación. Para un perfil como el de Claudia, realizar estos cursos es la forma más efectiva de subir posiciones en el ranking sin depender únicamente de la antigüedad.
+
+Módulo: Cursos de Formación
+
+1. Transcripción de Textos
+
+Pantalla Modal (Foto 34):
+
+CURSO 2: NUEVAS HERRAMIENTAS PARA EL CUIDADO DE PERSONAS MAYORES.
+
+Modalidad del curso 100% online. Inicia el 5 de mayo pero ya podés inscribirte!
+
+Contenidos dictados por Centro Hirsch Con más de 80 años de trayectoria, brindando servicios de cuidado de personas mayores y rehabilitación.
+
+Oportunidad única en formación on line Te ayudará a destacar tu perfil y acceder a más búsquedas y oportunidades de trabajo.
+
+Sumá puntos Cuidarlos Mejorá tu ranking sumando hasta 400 Puntos Cuidarlos.
+
+Costo del curso El curso tiene un costo de $2.000.
+
+Botón: Mas Información
+
+Pantalla de Destino / Landing (Foto 34-1):
+
+cuidarlos (Logo con menú hamburguesa)
+
+Cursos de formación para el cuidado domiciliario de personas mayores (Encabezado sobre bloque violeta)
+
+Nueva capacitación ¿Querés ampliar tus oportunidades y que más familias te contacten sin intermediarios?
+
+Formate con los mejores especialistas del cuidado de las personas mayores en la argentina accediendo a dos nuevos cursos únicos.
+
+2. Análisis de lo mostrado en página
+
+A diferencia del flujo de registro, esta sección introduce elementos de interfaz de navegación libre y estrategias de conversión:
+
+Jerarquía Visual de Venta: La aplicación utiliza un "Pop-up" o modal (Foto 34) como primer impacto tras el registro. Este utiliza iconos de ayuda (i), tildes de validación (✓) y un signo de alerta (!) para el costo, guiando la lectura de los beneficios antes que el precio.
+
+Sistema de Scoring (Puntos Cuidarlos): Se hace explícita la existencia de un Ranking. La página muestra que el sistema no es estático; los "Puntos Cuidarlos" actúan como una unidad de medida de la relevancia del perfil, vinculando la capacitación directamente con la visibilidad ante clientes.
+
+Validación de Terceros: La mención del Centro Hirsch funciona como un sello de autoridad. Lo que se muestra es una alianza estratégica para delegar la creación de contenido técnico en una institución reconocida, otorgando seriedad académica a la plataforma.
+
+Interfaz Web-App: En la Foto 34-1, se observa una transición hacia un formato de lectura vertical (Scroll). El menú superior (hamburguesa) y el logo centrado indican que el usuario ha salido del flujo lineal de carga de datos para entrar en una sección de contenidos.
+
+Segmentación de la Oferta: Aunque el título habla de "Cursos", el texto especifica el acceso a "dos nuevos cursos únicos", lo que evidencia una oferta paquetizada para el profesional de cuidado.
+
+Navegación Inferior Permanente: Se visualiza por primera vez el menú de acceso directo con cinco secciones clave:
+
+Inicio: Acceso al panel principal.
+
+Avisos: Tablero de ofertas laborales.
+
+Pacientes: Gestión de servicios activos.
+
+Chats: Mensajería con familias o soporte.
+
+Cursos: Acceso a la academia de formación.
+
+Este análisis confirma que la plataforma, en este punto, deja de ser un formulario y se convierte en un centro de gestión profesional y capacitación.
+
+2. Análisis de lo mostrado en página
+
+Esta captura profundiza en la estrategia de conversión y el modelo de red de la aplicación:
+
+Refuerzo de la Propuesta de Valor: El texto centraliza el beneficio en la visibilidad. No se vende el curso solo por el conocimiento, sino como la "llave" para entrar en la base de datos más grande del sector.
+
+Modelo "Direct-to-Family": Se hace hincapié nuevamente en la ausencia de intermediarios. Esto es un factor clave para los cuidadores, ya que implica que no hay agencias de por medio que retengan parte de su salario, otorgándoles autonomía económica.
+
+Consistencia Estética: El uso de bloques de color fucsia para destacar los beneficios principales mantiene la línea gráfica de los botones de acción ("Siguiente") de toda la aplicación, asociando inconscientemente ese color con el "avance" en la carrera profesional del usuario.
+
+Uso de Imagen Editorial: Se repite la estética de la captura anterior (34-1), utilizando fotografías que humanizan el servicio. En este caso, el foco está en la mirada y el contacto, reforzando la idea de un cuidado empático y profesional.
+
+1. Transcripción de Textos (Foto 34-3)
+
+Realizá en Cuidarlos los cursos de formación totalmente online y obtené los siguientes beneficios:
+
+Accedé a la base más grande de cuidadores: Más familias podrán contactarte sin intermediarios. INSCRIBIRME [Ícono]
+
+Mejorá tu ranking Cuidarlos. Realizá los cursos y sumá hasta 400 puntos Cuidarlos a tu perfil accediendo a más oportunidades. INSCRIBIRME [Ícono]
+
+2. Análisis de lo mostrado en página
+
+Considerando que esta es la página 3 de 18, queda claro que la landing está diseñada con un enfoque de "Venta de Larga Distancia" (Long-form sales page), desglosando minuciosamente cada ventaja:
+
+Estructura de Bloques Repetitivos: La página utiliza una estructura de bloques con fondos contrastados (fucsia y blanco) para separar los beneficios. Cada bloque cierra con un enlace directo de "INSCRIBIRME", permitiendo que el usuario tome la decisión en cualquier punto del scroll sin tener que llegar al final.
+
+Tangibilidad del Beneficio (Ranking): Se refuerza la cifra de 400 puntos. Al ponerle un número concreto al beneficio, el curso deja de ser algo "abstracto" y se convierte en un activo medible para el currículum digital del cuidador.
+
+Diseño Mobile-First: El texto es grande y los bloques ocupan casi toda la pantalla, facilitando la lectura y la interacción táctil en dispositivos móviles. El uso de tipografía en color fucsia para palabras clave como "ranking" y "puntos" guía la vista hacia los elementos de gamificación.
+
+Persistencia del Menú de Navegación: Aunque estamos en una landing de venta, se mantiene la barra inferior de la aplicación, lo que permite al usuario arrepentirse o navegar hacia sus "Chats" o "Avisos" en cualquier momento.
+
+Observación de Producto
+
+El hecho de que existan 18 páginas (o secciones) de scroll indica que la plataforma le da una importancia crítica a la formación. No es un simple banner, sino un embudo de conversión (funnel) completo que busca convencer al cuidador de que la inversión de $2.000 es la mejor forma de asegurar trabajo a futuro.
+
+1. Transcripción de Textos (Foto 34-4)
+
+Certificado Hirsch [Firma en cursiva] Destacá tu perfil en las búsquedas y avisos a los que apliques. INSCRIBIRME
+
+Ampliá tus conocimientos. Al realizar los cursos te formarás con especialistas de primer nivel y jerarquizarás tu trabajo. INSCRIBIRME
+
+QUIERO INSCRIBIRME [Botón principal en fucsia]
+
+2. Análisis de lo mostrado en página
+
+Esta sección de la landing page (continuación de la página 3 de 18) está diseñada para otorgar legitimidad y un sentido de profesionalismo al cuidador:
+
+Validación Mediante Certificación: La página resalta el "Certificado Hirsch". El uso de una firma estilizada y el nombre de una institución de trayectoria actúa como una prueba social y técnica que promete mejorar la competitividad del perfil en el mercado laboral de la app.
+
+Jerarquización del Trabajo: El lenguaje utilizado apela al estatus profesional del cuidador. Al mencionar que los cursos permiten "jerarquizar tu trabajo", la plataforma se aleja del concepto de cuidado informal para posicionarlo como una carrera con especialistas de "primer nivel".
+
+Refuerzo de la Conversión (CTA): Se observa una redundancia estratégica de botones. Además de los enlaces de texto "INSCRIBIRME" al final de cada bloque, aparece un botón de gran tamaño con el texto "QUIERO INSCRIBIRME" en el color fucsia característico de la aplicación. Este diseño facilita la conversión táctil rápida desde el móvil.
+
+Diseño de Bloques de Información: Se mantiene la alternancia de colores (blanco para beneficios individuales y fucsia para llamados generales a la acción), lo que ayuda a digerir la gran cantidad de información que compone esta landing page extensa.
+
+Cierre del módulo de capacitación: Con estas capturas (34 a 34-4), queda documentado el ecosistema de formación continua que la aplicación ofrece post-registro. Aunque es una funcionalidad de Versión 2, está integrada de manera fluida para que el cuidador perciba que su éxito en la plataforma depende tanto de su experiencia previa como de su actualización constante a través de estos cursos pagos.
+
+1. Transcripción de Textos (Foto 34-5)
+
+QUIERO INSCRIBIRME [Botón]
+
+Curso brindado por especialistas del Centro Hirsch
+
+En nuestro país, al igual que en el resto del mundo, cada vez son más las personas que se benefician del sistema de cuidados informales en sus domicilios, ya sea por un familiar, amigo o personal de la salud. Esta modalidad asistencial es de suma importancia y debe ser impartida por alguien formado en disciplinas vinculadas con salud, cuidado y contención tanto de pacientes, como de adultos mayores.
+
+Centro Hirsch es una asociación civil sin fines de lucro con más de 80 años de trayectoria, brindando servicios de cuidado de personas mayores y rehabilitación.
+
+2. Análisis de lo mostrado en página
+
+Esta sección de la landing page utiliza una estrategia de justificación de mercado y validación institucional:
+
+Contextualización de la Demanda: El texto utiliza un argumento de tendencia global y local ("En nuestro país, al igual que en el resto del mundo") para validar la necesidad de la formación. Establece que, ante el aumento de los cuidados domiciliarios, la profesionalización ya no es opcional, sino una "suma importancia" para garantizar la salud y contención del paciente.
+
+Transferencia de Autoridad: Se profundiza en el perfil del Centro Hirsch, presentándolo no solo como un dictante de cursos, sino como una "asociación civil sin fines de lucro" con un respaldo histórico específico: más de 80 años en rehabilitación y cuidado. Esto refuerza la percepción de calidad del contenido que el usuario está por adquirir.
+
+Persistencia de la Conversión: El botón "QUIERO INSCRIBIRME" aparece nuevamente al inicio de este bloque. Al ser una landing tan extensa (18 páginas), la aplicación asegura que el usuario tenga un punto de entrada al pago inmediatamente después de cada argumento de venta.
+
+Diseño de Lectura: A diferencia de las páginas anteriores cargadas de iconos y bloques cortos, esta sección presenta un cuerpo de texto más denso. El objetivo es puramente informativo y educativo, buscando apelar a la conciencia profesional del cuidador antes de pasar al siguiente beneficio o detalle técnico.
+
+1. Transcripción de Textos (Foto 34-6)
+
+¿Qué obtendrás al realizar el curso?
+
+Constancia de participación otorgada por Hirsch
+
+Aumentar tu formación y capacitación
+
+Sumar puntos Cuidarlos
+
+Jerarquizar tu perfil en Cuidarlos
+
+Acceder a nuevas oportunidades laborales
+
+INSCRIBITE [Botón]
+
+2. Análisis de lo mostrado en página
+
+Esta sección de la landing page (V2) funciona como un resumen ejecutivo de beneficios, utilizando un formato de lista para facilitar la lectura rápida (escaneabilidad):
+
+Tangibilidad del Logro: El primer punto refuerza la "Constancia de participación". A diferencia de las páginas anteriores que hablaban de "Certificado", aquí se utiliza un término que sugiere un documento oficial que avala la asistencia y el compromiso del cuidador.
+
+Refuerzo del Ecosistema (Puntos y Ranking): Se menciona nuevamente la suma de puntos y la jerarquización del perfil. Esto confirma que el principal motor de venta no es solo el conocimiento adquirido, sino la ventaja competitiva algorítmica dentro de la propia aplicación.
+
+Diseño de Alto Contraste: El bloque violeta con texto blanco y viñetas fucsias está diseñado para resaltar sobre el resto del scroll. El botón "INSCRIBITE" vuelve a aparecer en un lugar central, manteniendo la estrategia de conversión constante a lo largo de las 18 páginas.
+
+Humanización: La parte inferior de la captura muestra el inicio de una nueva sección con la fotografía de una cuidadora. Esto mantiene el tono empático y profesional que busca proyectar la marca, asociando el éxito laboral con rostros humanos y cercanos.
+
+Resumen del Flujo de Venta
+
+Hasta este punto (página 5 o 6 de la landing), el usuario ha pasado por:
+
+Concientización: La importancia del cuidado domiciliario (Foto 34-5).
+
+Autoridad: El respaldo del Centro Hirsch (Foto 34-4/5).
+
+Beneficios Directos: Ranking, puntos y visibilidad (Foto 34-3/6).
+
+1. Transcripción de Textos (Foto 34-7)
+
+¡Dos cursos online para que los hagas en tus tiempos! Sumá puntos y mejorá tu ranking para tener más oportunidades.
+
+¿A quién esta dirigido el curso?
+
+A todo cuidador de personas mayores, interesado en aumentar su formación y profesionalismo.
+
+A toda persona ocupada en un rol tan trascendente como es el de cuidar a otro.
+
+INSCRIBITE [Botón]
+
+2. Análisis de lo mostrado en página
+
+Esta sección de la landing page busca generar identificación y validación emocional en el usuario, además de flexibilidad operativa:
+
+Promesa de Flexibilidad: La frase "para que los hagas en tus tiempos" aborda una de las principales barreras de los cuidadores: la falta de horarios fijos. Al enfatizar la modalidad asincrónica, se elimina la fricción de la agenda.
+
+Segmentación Amplia: El curso no se limita solo a profesionales con título previo. Al incluir a "toda persona ocupada en un rol tan trascendente", la aplicación abre el embudo de ventas a cuidadores informales o familiares que buscan herramientas de contención, ampliando así su mercado potencial.
+
+Refuerzo de Identidad: El uso de la palabra "trascedente" eleva el estatus del trabajo de cuidado. No se trata solo de una tarea técnica, sino de una misión con valor social, lo cual refuerza el compromiso del usuario con la plataforma.
+
+Gamificación como Gancho Persistente: Se menciona nuevamente el "ranking" y los "puntos". Esta repetición a lo largo de las múltiples páginas de la landing asegura que el usuario no olvide el beneficio práctico (conseguir más trabajo) mientras lee los beneficios académicos o sociales.
+
+Consistencia de Interfaz: Se mantiene el botón de acción "INSCRIBITE" en fucsia sobre el fondo violeta, garantizando que el punto de conversión esté siempre al alcance del pulgar durante el scroll.
+
+Transcripción de Textos (Foto 34-8)
+
+INSCRIBITE [Botón]
+
+[Imagen de una cuidadora sonriendo mientras interactúa con una persona mayor en un entorno exterior/jardín]
+
+¡SUMÁ HASTA 400 PUNTOS CUIDARLOS REALIZANDO LOS CURSOS!
+
+Análisis de lo mostrado en página (Foto 34-8)
+
+Esta sección de la landing page funciona como un reforzador visual y de gamificación:
+
+Asociación Positiva: La fotografía utilizada (una interacción cálida al aire libre) refuerza la idea de que la capacitación no es solo técnica, sino que impacta en la calidad de vida y el bienestar emocional tanto del cuidador como del asistido.
+
+Call to Action (CTA) Persistente: El botón "INSCRIBITE" se mantiene en la parte superior del bloque, asegurando que el usuario pueda convertir en cualquier momento del scroll.
+
+Cierre de Beneficio Algorítmico: Se vuelve a destacar en mayúsculas la cifra de 400 puntos. Esto deja claro que el valor principal de la landing (más allá del conocimiento) es el posicionamiento dentro del ranking de la plataforma para obtener más trabajo.
+
+1. Transcripción de Textos
+
+Módulo Informativo (Foto 34):
+
+Título: CURSO 2: NUEVAS HERRAMIENTAS PARA EL CUIDADO DE PERSONAS MAYORES.
+
+Modalidad del curso: 100% online. Inicia el 5 de mayo pero ya podés inscribirte!
+
+Contenidos dictados por Centro Hirsch: Con más de 80 años de trayectoria, brindando servicios de cuidado de personas mayores y rehabilitación.
+
+Oportunidad única en formación on line: Te ayudará a destacar tu perfil y acceder a más búsquedas y oportunidades de trabajo.
+
+Sumá puntos Cuidarlos: Mejorá tu ranking sumando hasta 400 Puntos Cuidarlos.
+
+Costo del curso: El curso tiene un costo de $2.000.
+
+Landing Page de Cursos (Fotos 34-1, 34-2, 34-3):
+
+Encabezado: Cursos de formación para el cuidado domiciliario de personas mayores.
+
+Pregunta de captación: ¿Querés ampliar tus oportunidades y que más familias te contacten sin intermediarios?
+
+Propuesta: Formate con los mejores especialistas del cuidado de las personas mayores en la argentina accediendo a dos nuevos cursos únicos.
+
+Beneficios destacados:
+
+Realizá en Cuidarlos los cursos de formación totalmente online y obtené los siguientes beneficios:
+
+Accedé a la base más grande de cuidadores: Más familias podrán contactarte sin intermediarios.
+
+Mejorá tu ranking Cuidarlos: Realizá los cursos y sumá hasta 400 puntos Cuidarlos a tu perfil accediendo a más oportunidades.
+
+Contenido del Curso 1 (Foto 34-9):
+
+Título: CURSO 1: Cuidados domiciliarios de personas mayores. YA DISPONIBLE.
+
+Programa de contenidos:
+
+La persona mayor: cambios propios del envejecimiento.
+
+La persona mayor: síndromes geriátricos.
+
+Familia y cuidados de larga duración.
+
+Cuidados esenciales I: higiene y confort.
+
+Cuidados esenciales II: piel, esfínteres y vestimenta.
+
+Prevención de caídas: el rol del cuidador.
+
+Alimentación y nutrición de la persona mayor.
+
+El acto de dar de comer.
+
+En casa: ¿ediliciamente, qué tener en cuenta?
+
+Derecho mayor.
+
+2. Análisis de lo mostrado en la página
+
+Estrategia de Profesionalización y Visibilidad: La página vincula directamente la formación académica con el éxito laboral dentro de la plataforma. El beneficio principal no es solo el conocimiento, sino la mejora del "ranking" mediante la suma de 400 puntos, lo que otorga mayor visibilidad ante las familias.
+
+Validación Institucional: La utilización del Centro Hirsch como entidad dictante funciona como un sello de calidad y trayectoria, buscando dar seriedad y respaldo oficial a la capacitación ofrecida.
+
+Modelo de Negocio Directo: Se enfatiza repetidamente la posibilidad de ser contactado "sin intermediarios", posicionando a la aplicación como una herramienta de autogestión para el cuidador.
+
+Estructura Curricular Detallada: El Curso 1 presenta un programa integral que abarca desde aspectos biológicos (envejecimiento) y técnicos (higiene, nutrición) hasta aspectos legales (derecho mayor) y de infraestructura (seguridad en el hogar), demostrando un enfoque multidimensional del cuidado.
+
+Diseño Orientado a la Conversión: La interfaz utiliza bloques de color contrastantes y botones de "Inscribirme" distribuidos a lo largo del scroll para facilitar la suscripción inmediata del usuario mientras lee los beneficios.
+
+1. Transcripción de Textos
+
+Módulo Informativo y Beneficios (Fotos 34, 34-1, 34-2, 34-3, 34-4, 34-6):
+
+Título del Curso: CURSO 2: NUEVAS HERRAMIENTAS PARA EL CUIDADO DE PERSONAS MAYORES.
+
+Modalidad: 100% online. Inicia el 5 de mayo.
+
+Institución: Contenidos dictados por Centro Hirsch, con más de 80 años de trayectoria en cuidado y rehabilitación.
+
+Ventajas laborales:
+
+Acceso a la base más grande de cuidadores para contacto directo con familias sin intermediarios.
+
+Suma de hasta 400 puntos Cuidarlos para mejorar el ranking del perfil.
+
+Obtención de una constancia de participación otorgada por Hirsch.
+
+Costo: $2.000.
+
+Contenido del Curso 1: Cuidados domiciliarios de personas mayores (Foto 34-9):
+
+La persona mayor: cambios propios del envejecimiento.
+
+La persona mayor: síndromes geriátricos.
+
+Familia y cuidados de larga duración.
+
+Cuidados esenciales I y II: higiene, confort, piel, esfínteres y vestimenta.
+
+Prevención de caídas: el rol del cuidador.
+
+Alimentación y nutrición; el acto de dar de comer.
+
+Consideraciones edilicias en el hogar.
+
+Derecho mayor.
+
+Contenido del Curso 2: Nuevas herramientas para el cuidado (Foto 34-10):
+
+El adulto mayor como persona.
+
+Evaluación, diagnóstico y rehabilitación de la deglución.
+
+Audición, lenguaje y voz.
+
+Redes de apoyo y comunicación con cuidadores.
+
+Salidas en la comunidad: ¿qué considerar?.
+
+Abordaje conductual de demencia.
+
+Musicoterapia: recursos musicales para el cuidado.
+
+Consideraciones especiales en rehabilitación e importancia de la recreación.
+
+2. Análisis de lo mostrado en la página
+
+Propuesta de Profesionalización: La página posiciona la capacitación no solo como una adquisición de conocimientos, sino como una herramienta de marketing personal para el cuidador. Se destaca explícitamente que realizar estos cursos permite "jerarquizar tu trabajo" y "destacar tu perfil" en las búsquedas.
+
+Integración con el Algoritmo (Ranking): Se observa una conexión directa entre la formación y la visibilidad dentro de la app. Los "400 puntos Cuidarlos" funcionan como un incentivo de gamificación que impacta directamente en las posibilidades de contratación del usuario.
+
+Enfoque Multidisciplinario: El temario revelado muestra un espectro amplio que va desde lo fisiológico y nutricional hasta lo social y recreativo (como la musicoterapia), sugiriendo que la plataforma busca perfiles de cuidado integral.
+
+Estrategia de Conversión: La landing page utiliza una estructura de scroll largo con múltiples llamados a la acción ("INSCRIBIRME" o "QUIERO INSCRIBIRME") ubicados estratégicamente tras la exposición de cada beneficio.
+
+Alianza Estratégica: El respaldo de una asociación civil sin fines de lucro con décadas de experiencia (Centro Hirsch) se utiliza como el principal argumento de autoridad para validar la calidad de la enseñanza.
+
+1. Transcripción de Textos
+
+Módulo de Disponibilidad y Éxito (Fotos 32 y 33):
+
+Disponibilidad y estado: Estas opciones estarán disponible para modificarse en cualquier momento.
+
+Modalidades: Disponible para urgencias (Checked), Disponible para trabajos con retiro (Checked), Disponible para trabajos sin retiro (Unchecked).
+
+Grilla horaria: Mañana 6 a 14 (Martes a Sábado marcados).
+
+Finalización: ¡Terminaste de completar tu perfil con éxito! Te enviamos un mail para que puedas confirmar tu cuenta.
+
+Propuesta Educativa y Costos (Fotos 34, 34-5, 34-11):
+
+Institución: Curso brindado por especialistas del Centro Hirsch, asociación civil sin fines de lucro con más de 80 años de trayectoria.
+
+Fundamentación: Esta modalidad asistencial es de suma importancia y debe ser impartida por alguien formado en disciplinas vinculadas con salud, cuidado y contención.
+
+Inscripción y Precios:
+
+Modalidad: 100% online.
+
+Precio Lanzamiento (Foto 34-11): CURSO 1: $10.000 / Por única vez. (Nota: Existe una discrepancia con la Foto 34 que indica un costo de $2.000).
+
+Beneficios: Accedé a la base más grande de cuidadores y sobresalí mejorando tu ranking Cuidarlos.
+
+2. Análisis de lo mostrado en la página
+
+Configuración Logística: La interfaz de disponibilidad (Foto 32) permite una segmentación precisa por franjas horarias y días de la semana, lo que facilita el "matcheo" algorítmico entre la necesidad de la familia y la oferta del cuidador. La exclusión de los días lunes y domingos en el perfil de Claudia indica una personalización total de la agenda.
+
+Validación del Profesionalismo: La landing page de cursos no solo busca vender capacitación, sino que utiliza un lenguaje de concientización social. Establece que el cuidado domiciliario es una "disciplina vinculada con la salud", elevando el estatus del cuidador de un rol informal a uno profesional y formado.
+
+Estrategia de Pricing y Urgencia: Se observa el uso de conceptos como "Precio de Lanzamiento" y "Por única vez" (Foto 34-11) para incentivar la compra inmediata. La mención de "Acceder a la base más grande" funciona como el principal motor de conversión, vinculando el pago del curso con la obtención directa de empleo.
+
+Consistencia en la Identidad Visual: A lo largo de todo el flujo, desde el registro hasta la landing de ventas, se mantiene el uso del fucsia para los botones de acción principal (CTA), lo que genera una experiencia de usuario coherente y orientada al avance constante (Siguiente -> Inscribirme).
+
+Sistema de Gamificación Post-Registro: La aplicación introduce el concepto de "Ranking Cuidarlos" inmediatamente después de que el usuario finaliza su perfil, transformando la plataforma en un entorno competitivo donde la formación continua es la clave para la visibilidad laboral.
+
+Transcripción de Contenido 34-13
+
+Encabezado (Logo/Menú):
+
+C cuidarlos (Logo en la parte superior izquierda).
+
+Icono de menú de hamburguesa (tres líneas horizontales) a la derecha.
+
+Banner de Acción:
+
+INSCRIBITE (Texto en blanco sobre fondo púrpura/magenta).
+
+Cuerpo Principal (Tarjeta de Producto):
+
+CURSO 2
+
+$ 10000 / Por única vez
+
+PRECIO LANZAMIENTO POR ÚNICA VEZ
+
+Lista de Beneficios:
+
+Accedé a la base más grande de cuidadores.
+
+Sobresalí mejorando tu ranking Cuidarlos.
+
+Ampliá tus conocimientos.
+
+Obtené el Certificado Hirsch.
+
+Botón de Acción:
+
+COMPRAR (Texto en púrpura dentro de un botón de bordes redondeados).
+
+Notas de Diseño para la Maquetación:
+
+Colores: Predomina un tono púrpura/magenta para los banners y el texto resaltado. El fondo es gris muy claro o blanco roto.
+
+Tipografía: Es una fuente de tipo sans-serif, limpia y moderna.
+
+Botón: Estilo "outline" (solo borde) con esquinas totalmente redondeadas (border-radius alto).
+
+Transcripción de Contenido 34-14: Formas de pago 
+
+Encabezado principal
+
+Formas de pago
+
+Sección 1: Desde Cuidarlos
+
+Subtítulo: Desde Cuidarlos (en color púrpura).
+
+Cuerpo de texto: * Con tarjeta de crédito o débito desde la App Cuidarlos. Una vez registrado, entrá a la sección Cursos, buscá el curso de formación I y compralo directamente desde los stores. Quedarás registrado automáticamente.
+
+Recordá que el curso se realiza de manera online y asincrónica desde la Aplicación Cuidarlos. (Texto en negrita).
+
+Nota: puede existir alguna diferencia en los importes cobrados por los stores ya que depende del tipo de cambio de la tarjeta al momento del pago.
+
+Sección de Requisitos (Separador)
+
+Texto: Es requisito para poder realizar el curso tener el perfil activo y validado. Si ya estás inscripto en Cuidarlos, revisá tu perfil.
+
+Sección 2: Con Mercado Pago
+
+Subtítulo: Con Mercado Pago (en color púrpura).
+
+Instrucción: Ingresá a este link de pago:
+
+Botón: MERCADO PAGO (Texto en blanco sobre botón azul redondeado).
+
+Texto de relleno/error (Placeholder): Este es un elemento de encabezado personalizado.
+
+Sección Informativa Final
+
+Cuerpo de texto: * Si todavía no tenés la App Cuidarlos, tenés que descargarla en tu celular, registrarte como cuidador, seguir los pasos y tener tu perfil validado y activo para poder realizar los cursos.
+
+Texto de relleno/error (Placeholder en la base): Este es un elemento de encabezado personalizado (en color púrpura).
+
+Observaciones para el desarrollo:
+
+Placeholders: Notarás que el texto "Este es un elemento de encabezado personalizado" parece ser un texto por defecto de algún constructor de sitios (como Elementor o Divi) que quedó sin editar. Para la versión final de la landing, probablemente quieras eliminarlo o reemplazarlo.
+
+Botón Mercado Pago: A diferencia del botón "Comprar" de la imagen anterior (que era de estilo outline), este es un botón sólido con el azul institucional de Mercado Pago.
+
+Jerarquía: Se mantiene el uso de colores púrpura para los títulos de sección y el mismo estilo de fuente sans-serif.
+
+Transcripción de Contenido 34-16: Call to Action y Footer
+
+Sección Superior (Texto de relleno)
+
+Este es un elemento de encabezado personalizado (Texto en púrpura sobre fondo gris claro).
+
+Sección: Descarga de App
+
+Fondo: Magenta / Rosa fuerte.
+
+Título: Descargá la App y comenzá a capacitarte.
+
+Subtítulo: Registrate como Cuidador y accedé a nuevas oportunidades laborales.
+
+Botones (Amarillos con texto blanco):
+
+PARA ANDROID
+
+PARA IPHONE
+
+Sección: Footer (Menú de navegación)
+
+Logo: cuidarlos (en blanco sobre fondo degradado púrpura).
+
+Enlaces de navegación (en blanco):
+
+NECESITO CUIDADOR
+
+CONOCÉ LA APP
+
+SOY CUIDADOR
+
+BASE DE CUIDADORES
+
+PREGUNTAS FRECUENTES
+
+AYUDA
+
+(Espacio divisor)
+
+AVISOS
+
+BUSCAR POR ZONAS
+
+CURSOS
+
+ACTIVIDADES
+
+CARTA DEL EQUIPO
+
+TERMINOS Y CONDICIONES
+
+Sección: Footer (Créditos y Redes)
+
+Fondo: Magenta / Rosa fuerte.
+
+Copyright: © 2026 Cuidarlos. Todos los derechos reservados.
+
+Iconos de Redes Sociales: Aparecen 5 iconos (aunque en la captura se ven como cuadros de error de carga o glifos no renderizados, corresponden a los enlaces a redes).
+
+Consideraciones Técnicas Finales:
+
+Contraste: Esta sección introduce el amarillo para los botones de descarga, lo cual genera un contraste alto con el fondo magenta.
+
+Degradados: El fondo del menú principal del footer parece tener un ligero degradado vertical entre tonos de púrpura.
+
+Consistencia: Al igual que en la imagen anterior, se repite el placeholder "Este es un elemento de encabezado personalizado", lo que confirma que es un bloque que debe removerse o sustituirse por contenido real.
+

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Red de Asistentes — Careonys</title>
+  <meta name="description" content="Encontrá al cuidador ideal para tu familiar. Filtrá por zona, especialidad y disponibilidad entre cientos de cuidadores calificados." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <img src="assets/images/logo_careonys.png" alt="Careonys logo" />
+      <span>Careonys</span>
+    </a>
+    <div class="navbar-links">
+      <a href="solicitar-asistente.html">Solicitar Asistente</a>
+      <a href="postulacion-asistente.html">Postularme como Asistente</a>
+      <a href="directorio.html" class="active">Red de Asistentes</a>
+      <a href="formulario-integral.html">Publicar Búsqueda (Wizard)</a>
+    </div>
+    <div class="navbar-social">
+      <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+      <a href="mailto:contacto@careonys.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+    </div>
+    <button class="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu">
+    <a href="solicitar-asistente.html">Solicitar Asistente</a>
+    <a href="postulacion-asistente.html">Postularme como Asistente</a>
+    <a href="directorio.html">Red de Asistentes</a>
+    <a href="formulario-integral.html">Publicar Búsqueda (Wizard)</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="directory-hero">
+  <h1>Red de Asistentes</h1>
+  <p>Encontrá al cuidador ideal para tu ser querido. Todos nuestros cuidadores están verificados y calificados.</p>
+  <a href="solicitar-asistente.html" class="btn btn-yellow">Publicar un aviso</a>
+</section>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-inner" style="flex-wrap:wrap;gap:12px;">
+    <input type="text" id="dir-search" placeholder="🔍 Buscar por nombre o zona..." style="flex:2;min-width:220px;" />
+    <select id="dir-zone" style="flex:1;min-width:140px;">
+      <option value="">Todas las zonas</option>
+      <option value="grand bourg">Grand Bourg</option>
+      <option value="villa urquiza">Villa Urquiza</option>
+      <option value="palermo">Palermo</option>
+      <option value="san telmo">San Telmo</option>
+      <option value="belgrano">Belgrano</option>
+      <option value="caballito">Caballito</option>
+      <option value="flores">Flores</option>
+      <option value="nuñez">Núñez</option>
+    </select>
+    <select id="dir-type" style="flex:1;min-width:140px;">
+      <option value="">Todos los perfiles</option>
+      <option value="domiciliaria">Cuidadora Domiciliaria</option>
+      <option value="enfermera">Enfermera / Auxiliar</option>
+      <option value="geriatria">Geriatría / Adultos Mayores</option>
+      <option value="voluntaria">Voluntaria / Acompañante</option>
+    </select>
+    <select id="dir-specialty" style="flex:1;min-width:140px;">
+      <option value="">Todas las especialidades</option>
+      <option value="deterioro cognitivo">Alzheimer / Deterioro Cognitivo</option>
+      <option value="parkinson">Parkinson</option>
+      <option value="acv">ACV / Rehabilitación</option>
+      <option value="postrados">Pacientes Postrados</option>
+      <option value="oncologico">Paciente Oncológico</option>
+      <option value="medicos">Controles Médicos / Inyectables</option>
+    </select>
+    <select id="dir-verified" style="flex:1;min-width:130px;">
+      <option value="">Verificación</option>
+      <option value="dni">DNI Validado</option>
+      <option value="penales">Penales Limpios</option>
+      <option value="titulo">Título Acreditado</option>
+    </select>
+  </div>
+</div>
+
+<!-- DIRECTORY GRID -->
+<section class="directory-grid-section">
+  <p style="max-width:1100px;margin:0 auto 24px;font-size:14px;color:var(--text-light);padding:0 12px;" id="results-count">Mostrando 8 cuidadores</p>
+  <div class="directory-grid" id="directory-grid">
+
+    <!-- CUIDADORA 1: Marisa Miranda -->
+    <div class="caregiver-card fade-in"
+         data-name="marisa miranda"
+         data-zone="grand bourg"
+         data-type="domiciliaria voluntaria">
+      <div class="card-header-strip"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <img src="assets/images/perfil_marisa.png" class="card-avatar" alt="Marisa Miranda" />
+          <div class="card-meta">
+            <h3>MARISA MIRANDA</h3>
+            <p class="sub">30 años | Grand Bourg</p>
+            <div class="stars">
+              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+              <span class="pts">(1220 ptos)</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Cuidadora Domiciliaria, Voluntaria.</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div class="card-badge" style="margin-bottom:0;">Disponible para Reemplazo Urgente</div>
+          <span style="background:#fff3e0;color:#e65100;font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px;"><i class="fas fa-bolt"></i> 98% Match</span>
+        </div>
+        
+        <!-- Badges de Verificación de 4 Niveles + Auditoría Institucional de la Prestadora -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px 0;">
+          <span class="badge-sendler-verified" title="Perfil auditado y validado bajo exclusiva responsabilidad de la prestadora cliente (ej: PresDemo)"><i class="fas fa-user-check"></i> Validado por Prestadora</span>
+          <span style="background:#e6f4ea;color:#137333;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;" title="DNI Validado vía RENAPER"><i class="fas fa-check-circle"></i> DNI Validado</span>
+          <span style="background:#e6f4ea;color:#137333;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;" title="Antecedentes Penales Limpios"><i class="fas fa-shield-alt"></i> Penales OK</span>
+          <span style="background:#e6f4ea;color:#137333;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;" title="Título o Certificado de Formación Verificado"><i class="fas fa-graduation-cap"></i> Título Gerontológico</span>
+          <span style="background:#e6f4ea;color:#137333;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;" title="Referencias Laborales Auditadas"><i class="fas fa-phone-volume"></i> Ref. Comprobadas</span>
+        </div>
+        <div class="specialties">
+          <span class="specialty-tag">Deterioro Cognitivo</span>
+          <span class="specialty-tag">Postrados</span>
+          <span class="specialty-tag">Paciente Oncológico</span>
+          <span class="specialty-tag">Médicos</span>
+          <span class="specialty-tag">Ceguera</span>
+          <span class="specialty-tag">Paseos</span>
+        </div>
+        <div class="card-availability">
+          <span class="retiro-badge">Con/Sin Retiro</span>
+          <div class="days-badges">
+            <span class="day-badge">L</span><span class="day-badge">M</span>
+            <span class="day-badge">J</span><span class="day-badge">V</span>
+            <span class="day-badge">S</span><span class="day-badge">D</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="perfil.html?id=1" class="btn btn-magenta">Ver perfil</a>
+        <a href="perfil.html?id=1#contactar" class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+      </div>
+    </div>
+
+    <!-- CUIDADORA 2: Carmen Iglesias -->
+    <div class="caregiver-card fade-in"
+         data-name="carmen iglesias"
+         data-zone="villa urquiza"
+         data-type="domiciliaria enfermera">
+      <div class="card-header-strip"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <img src="assets/images/perfil_carmen.png" class="card-avatar" alt="Carmen Iglesias" />
+          <div class="card-meta">
+            <h3>CARMEN IGLESIAS</h3>
+            <p class="sub">58 años | Villa Urquiza</p>
+            <div class="stars">
+              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+              <span class="pts">(1200 ptos)</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Cuidadora Domiciliaria, Enfermero/a, Auxiliar Enfermería, Voluntaria.</p>
+        <div class="card-badge">Activa hoy</div>
+        <div class="specialties">
+          <span class="specialty-tag">Deterioro Cognitivo</span>
+          <span class="specialty-tag">Postrados</span>
+          <span class="specialty-tag">Paciente Oncológico</span>
+          <span class="specialty-tag">Médicos</span>
+          <span class="specialty-tag">Ceguera</span>
+        </div>
+        <div class="card-availability">
+          <span class="retiro-badge">Con Retiro</span>
+          <div class="days-badges">
+            <span class="day-badge">L</span><span class="day-badge">M</span>
+            <span class="day-badge">M</span><span class="day-badge">J</span>
+            <span class="day-badge">V</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="perfil.html?id=2" class="btn btn-magenta">Ver perfil</a>
+        <a href="perfil.html?id=2#contactar" class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+      </div>
+    </div>
+
+    <!-- CUIDADORA 3: María Rodríguez -->
+    <div class="caregiver-card fade-in"
+         data-name="maría rodríguez"
+         data-zone="palermo"
+         data-type="domiciliaria">
+      <div class="card-header-strip"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <img src="assets/images/perfil_maria.png" class="card-avatar" alt="María Rodríguez" />
+          <div class="card-meta">
+            <h3>MARÍA RODRÍGUEZ</h3>
+            <p class="sub">45 años | Palermo</p>
+            <div class="stars">
+              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star" style="color:#ccc;">★</span>
+              <span class="pts">(980 ptos)</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Cuidadora Domiciliaria. Especialista en pacientes postrados.</p>
+        <div class="card-badge">Activa hoy</div>
+        <div class="specialties">
+          <span class="specialty-tag">Postrados</span>
+          <span class="specialty-tag">Alzheimer</span>
+          <span class="specialty-tag">Deterioro Cognitivo</span>
+          <span class="specialty-tag">Paseos</span>
+        </div>
+        <div class="card-availability">
+          <span class="retiro-badge">Sin Retiro</span>
+          <div class="days-badges">
+            <span class="day-badge">L</span><span class="day-badge">M</span>
+            <span class="day-badge">M</span><span class="day-badge">J</span>
+            <span class="day-badge">V</span><span class="day-badge">S</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="perfil.html?id=3" class="btn btn-magenta">Ver perfil</a>
+        <a href="perfil.html?id=3#contactar" class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+      </div>
+    </div>
+
+    <!-- CUIDADORA 4: Laura Gómez -->
+    <div class="caregiver-card fade-in"
+         data-name="laura gómez"
+         data-zone="san telmo"
+         data-type="geriatria domiciliaria">
+      <div class="card-header-strip"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <img src="assets/images/perfil_laura.png" class="card-avatar" alt="Laura Gómez" />
+          <div class="card-meta">
+            <h3>LAURA GÓMEZ</h3>
+            <p class="sub">38 años | San Telmo</p>
+            <div class="stars">
+              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+              <span class="pts">(1100 ptos)</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Gerontóloga, Cuidadora Domiciliaria. Especialista en Alzheimer y demencias.</p>
+        <div class="card-badge">Disponible para Reemplazo Urgente</div>
+        <div class="specialties">
+          <span class="specialty-tag">Alzheimer</span>
+          <span class="specialty-tag">Demencias</span>
+          <span class="specialty-tag">Deterioro Cognitivo</span>
+          <span class="specialty-tag">Paciente Oncológico</span>
+          <span class="specialty-tag">Médicos</span>
+        </div>
+        <div class="card-availability">
+          <span class="retiro-badge">Con/Sin Retiro</span>
+          <div class="days-badges">
+            <span class="day-badge">L</span><span class="day-badge">M</span>
+            <span class="day-badge">J</span><span class="day-badge">V</span>
+            <span class="day-badge">S</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="perfil.html?id=4" class="btn btn-magenta">Ver perfil</a>
+        <a href="perfil.html?id=4#contactar" class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+      </div>
+    </div>
+
+    <!-- CUIDADORA 5: Ana Martínez -->
+    <div class="caregiver-card fade-in"
+         data-name="ana martínez"
+         data-zone="belgrano"
+         data-type="domiciliaria voluntaria">
+      <div class="card-header-strip"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <img src="assets/images/perfil_ana.png" class="card-avatar" alt="Ana Martínez" />
+          <div class="card-meta">
+            <h3>ANA MARTÍNEZ</h3>
+            <p class="sub">52 años | Belgrano</p>
+            <div class="stars">
+              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star" style="color:#ccc;">★</span>
+              <span class="pts">(870 ptos)</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Cuidadora Domiciliaria, Voluntaria. Amplia experiencia en adultos mayores.</p>
+        <div class="card-badge">Activa esta semana</div>
+        <div class="specialties">
+          <span class="specialty-tag">Cuidado General</span>
+          <span class="specialty-tag">Paseos</span>
+          <span class="specialty-tag">Compañía</span>
+          <span class="specialty-tag">Tareas del Hogar</span>
+          <span class="specialty-tag">Medicamentos</span>
+        </div>
+        <div class="card-availability">
+          <span class="retiro-badge">Sin Retiro</span>
+          <div class="days-badges">
+            <span class="day-badge">L</span><span class="day-badge">M</span>
+            <span class="day-badge">M</span><span class="day-badge">J</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="perfil.html?id=5" class="btn btn-magenta">Ver perfil</a>
+        <a href="perfil.html?id=5#contactar" class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+      </div>
+    </div>
+
+    <!-- CUIDADORA 6: Sandra López -->
+    <div class="caregiver-card fade-in"
+         data-name="sandra lópez"
+         data-zone="caballito"
+         data-type="enfermera domiciliaria">
+      <div class="card-header-strip"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <img src="assets/images/perfil_sandra.png" class="card-avatar" alt="Sandra López" />
+          <div class="card-meta">
+            <h3>SANDRA LÓPEZ</h3>
+            <p class="sub">41 años | Caballito</p>
+            <div class="stars">
+              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+              <span class="pts">(1050 ptos)</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Enfermera Universitaria, Cuidadora Domiciliaria. Especialista en Deterioro Cognitivo.</p>
+        <div class="card-badge">Disponible para Reemplazo Urgente</div>
+        <div class="specialties">
+          <span class="specialty-tag">Deterioro Cognitivo</span>
+          <span class="specialty-tag">Enfermería</span>
+          <span class="specialty-tag">Medicamentos</span>
+          <span class="specialty-tag">Postrados</span>
+          <span class="specialty-tag">Paciente Oncológico</span>
+        </div>
+        <div class="card-availability">
+          <span class="retiro-badge">Con Retiro</span>
+          <div class="days-badges">
+            <span class="day-badge">L</span><span class="day-badge">M</span>
+            <span class="day-badge">M</span><span class="day-badge">J</span>
+            <span class="day-badge">V</span><span class="day-badge">S</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="perfil.html?id=6" class="btn btn-magenta">Ver perfil</a>
+        <a href="perfil.html?id=6#contactar" class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+      </div>
+    </div>
+
+    <!-- CUIDADORA 7: Patricia Fernández -->
+    <div class="caregiver-card fade-in"
+         data-name="patricia fernández"
+         data-zone="flores"
+         data-type="domiciliaria enfermera">
+      <div class="card-header-strip"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <img src="assets/images/perfil_patricia.png" class="card-avatar" alt="Patricia Fernández" />
+          <div class="card-meta">
+            <h3>PATRICIA FERNÁNDEZ</h3>
+            <p class="sub">49 años | Flores</p>
+            <div class="stars">
+              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star" style="color:#ccc;">★</span>
+              <span class="pts">(760 ptos)</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Cuidadora Domiciliaria, Auxiliar de Enfermería. 15 años de experiencia.</p>
+        <div class="card-badge">Activa hoy</div>
+        <div class="specialties">
+          <span class="specialty-tag">Cuidado General</span>
+          <span class="specialty-tag">Aux. Enfermería</span>
+          <span class="specialty-tag">Postrados</span>
+          <span class="specialty-tag">Compañía</span>
+          <span class="specialty-tag">Paseos</span>
+        </div>
+        <div class="card-availability">
+          <span class="retiro-badge">Sin Retiro</span>
+          <div class="days-badges">
+            <span class="day-badge">L</span><span class="day-badge">M</span>
+            <span class="day-badge">J</span><span class="day-badge">V</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="perfil.html?id=7" class="btn btn-magenta">Ver perfil</a>
+        <a href="perfil.html?id=7#contactar" class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+      </div>
+    </div>
+
+    <!-- CUIDADORA 8: Claudia Suárez -->
+    <div class="caregiver-card fade-in"
+         data-name="claudia suárez"
+         data-zone="nuñez"
+         data-type="domiciliaria">
+      <div class="card-header-strip"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <img src="assets/images/perfil_claudia.png" class="card-avatar" alt="Claudia Suárez" />
+          <div class="card-meta">
+            <h3>CLAUDIA SUÁREZ</h3>
+            <p class="sub">35 años | Núñez</p>
+            <div class="stars">
+              <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+              <span class="pts">(1180 ptos)</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Cuidadora Domiciliaria. Especialista en pacientes postrados y paseos terapéuticos.</p>
+        <div class="card-badge">Disponible para Reemplazo Urgente</div>
+        <div class="specialties">
+          <span class="specialty-tag">Postrados</span>
+          <span class="specialty-tag">Paseos</span>
+          <span class="specialty-tag">Deterioro Cognitivo</span>
+          <span class="specialty-tag">Compañía</span>
+          <span class="specialty-tag">Medicamentos</span>
+        </div>
+        <div class="card-availability">
+          <span class="retiro-badge">Con/Sin Retiro</span>
+          <div class="days-badges">
+            <span class="day-badge">L</span><span class="day-badge">M</span>
+            <span class="day-badge">M</span><span class="day-badge">J</span>
+            <span class="day-badge">V</span><span class="day-badge">S</span>
+            <span class="day-badge">D</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="perfil.html?id=8" class="btn btn-magenta">Ver perfil</a>
+        <a href="perfil.html?id=8#contactar" class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+      </div>
+    </div>
+
+  </div><!-- /directory-grid -->
+</section>
+
+<!-- CTA FINAL -->
+<div class="cta-banner">
+  <a href="solicitar-asistente.html" class="btn btn-yellow">PUBLICAR UN AVISO</a>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo">
+        <img src="assets/images/logo_careonys.png" alt="Careonys" />
+        <span>Careonys</span>
+      </div>
+      <p>Conectamos familias con cuidadores calificados.</p>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+        <a href="mailto:contacto@careonys.com"><i class="fas fa-envelope"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Para Familias</h4>
+      <a href="solicitar-asistente.html">Solicitar Asistente</a>
+      <a href="directorio.html">Directorio</a>
+      <a href="soporte-remoto.html">Acompañamiento</a>
+      <a href="cursos.html">Cursos</a>
+    </div>
+    <div class="footer-col">
+      <h4>Para Cuidadores</h4>
+      <a href="postulacion-asistente.html">Postularme como Asistente</a>
+      <a href="postulacion-asistente.html#registro">Registrarme</a>
+    </div>
+    <div class="footer-col">
+      <h4>Empresa</h4>
+      <a href="#">Sobre Careonys</a>
+      <a href="#">Contacto</a>
+      <a href="#">Términos</a>
+      <a href="#">Privacidad</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2024 Careonys. Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+  // Update results count on filter
+  const grid = document.getElementById('directory-grid');
+  const countEl = document.getElementById('results-count');
+  const observer = new MutationObserver(() => {
+    const visible = grid.querySelectorAll('.caregiver-card:not([style*="display: none"])').length;
+    countEl.textContent = `Mostrando ${visible} cuidadores`;
+  });
+  observer.observe(grid, { attributes: true, childList: true, subtree: true });
+</script>
+</body>
+</html>
+

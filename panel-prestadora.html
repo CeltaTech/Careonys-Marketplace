@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de la Prestadora — Careonys SaaS</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body { background: #f1f5f9; }
+    .tenant-header { background: var(--purple-dark); color: #fff; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .tenant-brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 18px; }
+    .tenant-badge { background: var(--magenta); color: #fff; font-size: 11px; padding: 3px 10px; border-radius: 50px; text-transform: uppercase; }
+    .admin-layout { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 64px); }
+    .admin-sidebar { background: #ffffff; border-right: 1px solid #e2e8f0; padding: 20px 12px; }
+    .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+    .sidebar-menu li a { display: flex; align-items: center; gap: 10px; padding: 12px 16px; color: #475569; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; margin-bottom: 4px; transition: var(--transition); }
+    .sidebar-menu li a.active, .sidebar-menu li a:hover { background: #f8fafc; color: var(--purple-dark); font-weight: 700; }
+    .admin-content { padding: 28px; }
+    .card-dashboard { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 24px; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .kpi-card { background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 16px; text-align: center; }
+    .kpi-val { font-size: 28px; font-weight: 900; color: var(--purple-dark); }
+    .kpi-label { font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; }
+    .aspirantes-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+    .aspirantes-table th, .aspirantes-table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    .aspirantes-table th { background: #f8fafc; color: #475569; font-weight: 700; }
+    .status-pill { padding: 4px 10px; border-radius: 50px; font-size: 11px; font-weight: 800; display: inline-block; }
+    .status-revision { background: #fff3e0; color: #e65100; }
+    .status-validado { background: #e8f5e9; color: #2e7d32; }
+    .modal-legajo { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-box { background: #fff; border-radius: 16px; max-width: 720px; width: 90%; max-height: 90vh; overflow-y: auto; padding: 24px; }
+  </style>
+</head>
+<body>
+
+  <header class="tenant-header">
+    <div class="tenant-brand">
+      <i class="fas fa-hospital-user" style="color:var(--cyan-bright);"></i>
+      <span>PresDemo Salud</span>
+      <span class="tenant-badge">Tenant Careonys SaaS</span>
+    </div>
+    <div style="font-size:13px;">
+      <i class="fas fa-user-shield"></i> Operador: RRHH PresDemo | <a href="index.html" style="color:#fff;text-decoration:underline;">Volver al Portal</a>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <ul class="sidebar-menu">
+        <li><a href="#" class="active"><i class="fas fa-users-cog"></i> Reclutamiento & Legajos</a></li>
+        <li><a href="#"><i class="fas fa-calendar-alt"></i> Entrevistas de Selección</a></li>
+        <li><a href="#"><i class="fas fa-map-marker-alt"></i> Presentismo GPS Vivo</a></li>
+        <li><a href="#"><i class="fas fa-search-dollar"></i> Búsquedas de Familias</a></li>
+        <li><a href="#"><i class="fas fa-file-invoice-dollar"></i> Facturación & Liquidación</a></li>
+      </ul>
+    </aside>
+
+    <main class="admin-content">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-val" id="kpi-revision">1</div>
+          <div class="kpi-label">Legajos En Revisión</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-val" id="kpi-validados">1</div>
+          <div class="kpi-label">Cuidadoras Validadas</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-val" style="color:#2e7d32;">100%</div>
+          <div class="kpi-label">Presentismo GPS Hoy</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-val" style="color:var(--magenta);">0</div>
+          <div class="kpi-label">Alertas Urgentes</div>
+        </div>
+      </div>
+
+      <div class="card-dashboard">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <div>
+            <h3 style="margin:0;font-size:18px;color:var(--purple-dark);"><i class="fas fa-clipboard-check"></i> Postulaciones de Cuidadoras para Auditoría</h3>
+            <p style="margin:4px 0 0 0;font-size:13px;color:#64748b;">Legajos digitales enviados desde Careonys Marketplace para la revisión y entrevista de la prestadora.</p>
+          </div>
+          <button class="btn btn-purple" onclick="cargarAspirantes();" style="font-size:12px;padding:8px 16px;"><i class="fas fa-sync-alt"></i> Actualizar</button>
+        </div>
+
+        <table class="aspirantes-table">
+          <thead>
+            <tr>
+              <th>Aspirante / DNI</th>
+              <th>Especialidad</th>
+              <th>Zona</th>
+              <th>Documentación Cargada</th>
+              <th>Estado de Auditoría</th>
+              <th>Acción de Selección</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-aspirantes-body">
+            <!-- Renderizado dinámico desde apiClient.js -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL DE AUDITORÍA Y OTORGAMIENTO DE AVAL DE PRESTADORA -->
+  <div id="modal-auditoria" class="modal-legajo">
+    <div class="modal-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #e2e8f0;padding-bottom:12px;">
+        <h3 style="margin:0;color:var(--purple-dark);"><i class="fas fa-id-card"></i> Auditoría de Legajo & Entrevista de Selección</h3>
+        <button onclick="document.getElementById('modal-auditoria').style.display='none';" style="background:none;border:none;font-size:20px;cursor:pointer;">&times;</button>
+      </div>
+
+      <div id="detalles-aspirante-content" style="font-size:13px;line-height:1.6;color:#334155;">
+        <!-- Contenido inyectado por JS -->
+      </div>
+
+      <div style="background:#f8fafc;padding:16px;border-radius:12px;margin:16px 0;border:1px solid #e2e8f0;">
+        <h4 style="margin:0 0 8px 0;font-size:14px;color:var(--purple-dark);"><i class="fas fa-user-check"></i> Resolución de la Prestadora PresDemo:</h4>
+        <div style="margin-bottom:12px;">
+          <label style="font-weight:700;font-size:12px;">Notas de la Entrevista Psicotécnica y Evaluación:</label>
+          <textarea id="nota-entrevista" style="width:100%;height:60px;padding:8px;font-size:12px;border-radius:6px;border:1px solid #cbd5e1;margin-top:4px;" placeholder="Ej: Entrevista aprobada vía videollamada. Excelente manejo en demencias. DNI y Penales verificados."></textarea>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <button class="btn" style="background:#2e7d32;color:#fff;font-weight:800;font-size:13px;flex:1;" onclick="aprobarAspirante();">
+            <i class="fas fa-check-circle"></i> OTORGAR AVAL: "VALIDADO POR PRESTADORA"
+          </button>
+          <button class="btn" style="background:#dc2626;color:#fff;font-weight:700;font-size:13px;" onclick="rechazarAspirante();">
+            Rechazar
+          </button>
+        </div>
+      </div>
+
+      <p style="font-size:11px;color:#64748b;margin:0;">* Nota legal: Careonys provee únicamente el software SaaS. El otorgamiento del aval y la selección son responsabilidad exclusiva de PresDemo.</p>
+    </div>
+  </div>
+
+  <script src="js/apiClient.js"></script>
+  <script>
+    let aspiranteSeleccionadoId = null;
+
+    async function cargarAspirantes() {
+      const data = await CareonysAPI.getAspirantes();
+      const tbody = document.getElementById('tabla-aspirantes-body');
+      tbody.innerHTML = '';
+
+      let rev = 0, val = 0;
+
+      data.forEach(a => {
+        if (a.estado === 'en_revision') rev++;
+        if (a.estado === 'validado_prestadora') val++;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <strong>${a.nombre}</strong><br/>
+            <span style="font-size:11px;color:#64748b;">DNI: ${a.dni} | Tel: ${a.telefono}</span>
+          </td>
+          <td>${a.profesion}</td>
+          <td>${a.zona}</td>
+          <td>
+            <span style="color:#2563eb;font-size:11px;font-weight:700;"><i class="fas fa-file-pdf"></i> DNI, Penales, Título</span>
+          </td>
+          <td>
+            ${a.estado === 'en_revision' ? 
+              '<span class="status-pill status-revision">🔴 En Revisión</span>' : 
+              '<span class="status-pill status-validado">🟢 Validado por Prestadora</span>'}
+          </td>
+          <td>
+            <button class="btn btn-purple" style="font-size:11px;padding:6px 12px;" onclick="abrirAuditoria('${a.id}')">
+              <i class="fas fa-search-plus"></i> Auditar Legajo
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('kpi-revision').innerText = rev;
+      document.getElementById('kpi-validados').innerText = val;
+    }
+
+    async function abrirAuditoria(id) {
+      aspiranteSeleccionadoId = id;
+      const data = await CareonysAPI.getAspirantes();
+      const a = data.find(item => item.id === id);
+      if (!a) return;
+
+      const html = `
+        <p><strong>Nombre completo:</strong> ${a.nombre}</p>
+        <p><strong>DNI:</strong> ${a.dni} | <strong>Email:</strong> ${a.email} | <strong>Teléfono:</strong> ${a.telefono}</p>
+        <p><strong>Perfil Profesional:</strong> ${a.profesion} (${a.zona})</p>
+        <p><strong>Patologías con Experiencia:</strong> ${(a.patologias || []).join(', ')}</p>
+        <p><strong>Tareas Declaradas:</strong> ${(a.tareas || []).join(', ')}</p>
+        <div style="background:#eef2ff;padding:10px;border-radius:8px;margin-top:10px;">
+          <strong>Documentos adjuntos para verificar:</strong><br/>
+          🛡️ DNI Frente/Dorso: <a href="#" onclick="alert('Simulación: Visualizando DNI original en alta resolución.');return false;">Ver Documento</a> | 
+          📋 Antecedentes Penales: <a href="#" onclick="alert('Simulación: Certificado de Penales sin antecedentes.');return false;">Ver PDF</a> | 
+          📜 Título/Matrícula: <a href="#" onclick="alert('Simulación: Título de Enfermería/Gerontología verificado.');return false;">Ver Título</a>
+        </div>
+      `;
+
+      document.getElementById('detalles-aspirante-content').innerHTML = html;
+      document.getElementById('modal-auditoria').style.display = 'flex';
+    }
+
+    async function aprobarAspirante() {
+      if (!aspiranteSeleccionadoId) return;
+      const nota = document.getElementById('nota-entrevista').value || 'Aprobado por el equipo de RRHH PresDemo.';
+      await CareonysAPI.cambiarEstadoAspirante(aspiranteSeleccionadoId, 'validado_prestadora', nota);
+      alert('✓ Legajo auditado exitosamente. Se ha asignado el sello "Validado por Prestadora" y habilitado en el plantel activo.');
+      document.getElementById('modal-auditoria').style.display = 'none';
+      cargarAspirantes();
+    }
+
+    async function rechazarAspirante() {
+      if (!aspiranteSeleccionadoId) return;
+      await CareonysAPI.cambiarEstadoAspirante(aspiranteSeleccionadoId, 'rechazado', 'No cumple requisitos.');
+      alert('Solicitud rechazada.');
+      document.getElementById('modal-auditoria').style.display = 'none';
+      cargarAspirantes();
+    }
+
+    document.addEventListener('DOMContentLoaded', cargarAspirantes);
+  </script>
+</body>
+</html>

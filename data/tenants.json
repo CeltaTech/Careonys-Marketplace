@@ -1,0 +1,16 @@
+[
+  {
+    "id": "tenant-presdemo",
+    "slug": "presdemo",
+    "nombre": "PresDemo — Servicios de Cuidado",
+    "descripcion": "Empresa demo prestadora de servicios de cuidado en la plataforma Careonys.",
+    "subdominio": "presdemo.careonys.com",
+    "branding": {
+      "primaryColor": "#1A365D",
+      "accentColor": "#E53E3E",
+      "logoUrl": "../assets/images/logo_presdemo.png"
+    },
+    "estado": "activo",
+    "creado_at": "2026-08-04T10:00:00Z"
+  }
+]
