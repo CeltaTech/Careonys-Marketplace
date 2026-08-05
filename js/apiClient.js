@@ -6,9 +6,9 @@
 =================================================== */
 
 const CareonysAPI = {
-  useSupabase: false, // Cambiar a true cuando se configuren las credenciales de Supabase
-  supabaseUrl: '',
-  supabaseKey: '',
+  useSupabase: true, // Cambiar a true cuando se configuren las credenciales de Supabase
+  supabaseUrl: 'https://pfbvpncavvlgmmvqkgbo.supabase.co',
+  supabaseKey: 'sb_publishable_rmhuO0J5QsE5mw-5fgf-Hw_9tCHd1di',
 
   // --- MÓDULO 1: RECLUTAMIENTO Y LEGAJOS (CUIDADORES) ---
   async getAspirantes(filter = {}) {
