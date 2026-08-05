@@ -298,7 +298,62 @@
   </div>
   <div class="footer-bottom"><p>© 2024 Careonys. Todos los derechos reservados.</p></div>
 </footer>
+<script src="js/apiClient.js"></script>
 <script src="js/main.js"></script>
+<script>
+  document.getElementById('form-registro-cuidador-completo').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    
+    // Validación manual básica
+    let valid = true;
+    form.querySelectorAll('[required]').forEach(field => {
+      if (!field.value.trim() && field.type !== 'checkbox') {
+        valid = false;
+        field.style.borderColor = '#e53935';
+        field.addEventListener('input', () => { field.style.borderColor = ''; }, { once: true });
+      }
+    });
+
+    const termsCheckbox = document.getElementById('acepto-terminos');
+    if (!termsCheckbox.checked) {
+      valid = false;
+      alert('Debes aceptar los Términos y Condiciones.');
+      return;
+    }
+
+    if (!valid) return;
+
+    const patologias = Array.from(form.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
+    const tareas = Array.from(form.querySelectorAll('input[name="tarea"]:checked')).map(cb => cb.value);
+
+    const data = {
+      nombre: document.getElementById('nombre').value,
+      dni: document.getElementById('dni-num').value,
+      email: document.getElementById('email').value,
+      telefono: document.getElementById('celular').value,
+      profesion: document.getElementById('profesion').value,
+      zona: document.getElementById('zona').value,
+      patologias: patologias,
+      tareas: tareas,
+      documentos: {
+        dni: 'DNI_Cargado.pdf',
+        penales: 'Penales_Cargado.pdf',
+        titulo: 'Titulo_Cargado.pdf'
+      }
+    };
+
+    try {
+      await CareonysAPI.registrarAspirante(data);
+      const successMsg = document.getElementById('form-success');
+      successMsg.style.display = 'block';
+      form.reset();
+      setTimeout(() => { successMsg.style.display = 'none'; }, 6000);
+    } catch (err) {
+      alert('Error al enviar la postulación a la base de datos: ' + err.message);
+    }
+  });
+</script>
 </body>
 </html>
 
