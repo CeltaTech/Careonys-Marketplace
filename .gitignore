@@ -1,0 +1,4 @@
+# Evitar subir credenciales y archivos temporales
+/No commit/
+No commit/
+*.log
