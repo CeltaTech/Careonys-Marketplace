@@ -1,0 +1,177 @@
+[
+  {
+    "id": "cuid-001",
+    "tenant_id": "tenant-presdemo",
+    "nombre": "MARISA MIRANDA",
+    "edad": 30,
+    "avatar": "../assets/images/perfil_marisa.png",
+    "titulo": "Cuidadora Domiciliaria Certificada",
+    "roles": ["Cuidadora Domiciliaria", "Voluntaria en Gerontología"],
+    "especialidades": [
+      "Deterioro Cognitivo",
+      "Paciente Postrado",
+      "Paciente Oncológico",
+      "Acompañamiento Médico",
+      "Ceguera / Discapacidad Visual",
+      "Paseos Terapéuticos",
+      "Hidratación y Nutrición",
+      "Higiene Personal y Baño",
+      "Compañía y Contención"
+    ],
+    "zona": "Grand Bourg, CABA (Palermo, Recoleta, Belgrano)",
+    "tarifaHora": 5200,
+    "puntos": 1220,
+    "valoracion": 5.0,
+    "resenasCount": 28,
+    "nivel": "CUIDADOR ORO",
+    "nivelBar": "ORO",
+    "verificado": true,
+    "experienciaAnos": 8,
+    "urgente": true,
+    "retiro": "Con/Sin Retiro",
+    "disponibilidadDias": ["L", "M", "J", "V", "S", "D"],
+    "bio": "Soy Marisa Miranda, cuidadora domiciliaria con más de 8 años de experiencia en el cuidado de adultos mayores. Me caracterizo por mi vocación de servicio, paciencia y compromiso con el bienestar de cada paciente. Cuento con formación continua en cuidados gerontológicos y primeros auxilios.",
+    "estudios": [
+      "• Cuidadora Domiciliaria Certificada (AMIA, 2018)",
+      "• Auxiliar de Enfermería (Cruz Roja Argentina, 2019)",
+      "• Curso de Primeros Auxilios (Cruz Roja, 2021)",
+      "• Capacitación en Alzheimer y Demencias (FLACSO, 2022)"
+    ],
+    "experienciaLaboral": "• 8 años en el sector de cuidados de adultos mayores\n• Asistencia a pacientes con movilidad reducida y rehabilitación motriz\n• Voluntariado en Hogar de Ancianos San Pedro (5 años)",
+    "certificacionesVerificadas": [
+      { "label": "Foto de perfil cargada y verificada", "ok": true },
+      { "label": "DNI verificado con Renaper / Registro", "ok": true },
+      { "label": "Correo electrónico verificado", "ok": true },
+      { "label": "Cuidadora certificada por AMIA / Cruz Roja", "ok": true },
+      { "label": "Antecedentes Penales verificados", "ok": true },
+      { "label": "Certificado de Domicilio presentado", "ok": true },
+      { "label": "Vacuna Covid-19 esquema completo", "ok": true },
+      { "label": "Teléfono verificado por SMS", "ok": true }
+    ],
+    "caracteristicasCuidado": "• Tipo de cuidado: Domiciliario Integral\n• Perfil del paciente: Adulto mayor, paciente neurológico\n• Nivel cognitivo: Normal a Moderado\n• Actividades: Higiene, medicamentos, paseos, cocina gerontológica\n• Manejo de silla de ruedas y transferencias: Sí"
+  },
+  {
+    "id": "cuid-002",
+    "tenant_id": "tenant-presdemo",
+    "nombre": "CARMEN IGLESIAS",
+    "edad": 58,
+    "avatar": "../assets/images/perfil_carmen.png",
+    "titulo": "Enfermera Profesional / Cuidadora Senior",
+    "roles": ["Cuidadora Domiciliaria", "Enfermera", "Auxiliar Enfermería", "Voluntaria"],
+    "especialidades": [
+      "Deterioro Cognitivo",
+      "Paciente Postrado",
+      "Paciente Oncológico",
+      "Acompañamiento Médico",
+      "Sondaje y Control de Signos Vitales",
+      "Primeros Auxilios"
+    ],
+    "zona": "Villa Urquiza, Belgrano, Colegiales",
+    "tarifaHora": 5500,
+    "puntos": 1200,
+    "valoracion": 5.0,
+    "resenasCount": 35,
+    "nivel": "CUIDADOR ORO",
+    "nivelBar": "ORO",
+    "verificado": true,
+    "experienciaAnos": 12,
+    "urgente": false,
+    "retiro": "Con Retiro",
+    "disponibilidadDias": ["L", "M", "M", "J", "V"],
+    "bio": "Enfermera profesional con 12 años de trayectoria. Experiencia avanzada en cuidados de alta complejidad, medicación subcutánea e intramuscular, y acompañamiento a pacientes con Alzheimer.",
+    "estudios": [
+      "• Enfermera Profesional (Universidad de Buenos Aires, 2012)",
+      "• Posgrado en Gerontología y Cuidado Integral (UBA, 2016)",
+      "• Seminario de Nutrición Enteral y Sondaje (Hospital Italiano, 2020)"
+    ],
+    "experienciaLaboral": "• 12 años en cuidados de adultos mayores a domicilio e institucional\n• 5 años en Clínica Gerontológica Especializada\n• Asistencia en internación domiciliaria",
+    "certificacionesVerificadas": [
+      { "label": "Matrícula Profesional Verificada (MN 45892)", "ok": true },
+      { "label": "DNI verificado", "ok": true },
+      { "label": "Antecedentes Penales verificados", "ok": true },
+      { "label": "Título Universitario de Enfermería", "ok": true },
+      { "label": "Teléfono y Correo validados", "ok": true }
+    ],
+    "caracteristicasCuidado": "• Tipo de cuidado: Cuidados de Complejidad Media/Alta\n• Control estricto de medicación y constantes vitales\n• Manejo de oxigenoterapia y sondas"
+  },
+  {
+    "id": "cuid-003",
+    "tenant_id": "tenant-presdemo",
+    "nombre": "MARÍA RODRÍGUEZ",
+    "edad": 45,
+    "avatar": "../assets/images/perfil_maria.png",
+    "titulo": "Asistente Gerontológica",
+    "roles": ["Cuidadora Domiciliaria", "Estimulación Cognitiva"],
+    "especialidades": [
+      "Estimulación Cognitiva",
+      "Parkinson",
+      "Rehabilitación Motriz",
+      "Compañía y Contención",
+      "Paseos Terapéuticos"
+    ],
+    "zona": "Palermo, Almagro, Caballito",
+    "tarifaHora": 4800,
+    "puntos": 980,
+    "valoracion": 4.8,
+    "resenasCount": 19,
+    "nivel": "CUIDADOR PLATA",
+    "nivelBar": "PLATA",
+    "verificado": true,
+    "experienciaAnos": 6,
+    "urgente": false,
+    "retiro": "Con Retiro",
+    "disponibilidadDias": ["L", "M", "J", "V", "S"],
+    "bio": "Especializada en acompañamiento activo y actividades de estimulación cognitiva para adultos mayores en etapas tempranas y moderadas de Parkinson.",
+    "estudios": [
+      "• Asistente Gerontológica (Asociación Gerontológica Argentina, 2019)",
+      "• Taller de Estimulación Cognitiva (INECO, 2021)"
+    ],
+    "experienciaLaboral": "• 6 años cuidando adultos mayores en domicilio particular\n• Acompañamiento a talleres de memoria y actividades sociales",
+    "certificacionesVerificadas": [
+      { "label": "DNI verificado", "ok": true },
+      { "label": "Certificación Gerontológica validada", "ok": true },
+      { "label": "Antecedentes Penales al día", "ok": true }
+    ],
+    "caracteristicasCuidado": "• Tipo de cuidado: Acompañamiento y Autonomía\n• Estimulación de la memoria y lectura compartida\n• Apoyo en tareas del hogar livianas"
+  },
+  {
+    "id": "cuid-004",
+    "tenant_id": "tenant-presdemo",
+    "nombre": "LAURA GÓMEZ",
+    "edad": 38,
+    "avatar": "../assets/images/perfil_laura.png",
+    "titulo": "Acompañante Terapéutica",
+    "roles": ["Acompañante Terapéutica", "Cuidadora Domiciliaria"],
+    "especialidades": [
+      "Demencia Senil",
+      "Apoyo Psicológico",
+      "Rehabilitación Motriz",
+      "Actividades de Recreación",
+      "Higiene Personal"
+    ],
+    "zona": "San Telmo, Monserrat, Constitución",
+    "tarifaHora": 4900,
+    "puntos": 1100,
+    "valoracion": 4.9,
+    "resenasCount": 24,
+    "nivel": "CUIDADOR ORO",
+    "nivelBar": "ORO",
+    "verificado": true,
+    "experienciaAnos": 7,
+    "urgente": true,
+    "retiro": "Con/Sin Retiro",
+    "disponibilidadDias": ["L", "M", "J", "V", "S", "D"],
+    "bio": "Acompañante terapéutica recibida. Vocación por el trabajo interdisciplinario con médicos tratantes y psicólogos para el bienestar emocional del adulto mayor.",
+    "estudios": [
+      "• Acompañante Terapéutica (Universidad Maimónides, 2017)",
+      "• Curso de Abordaje en Crisis y Salud Mental (UBA, 2020)"
+    ],
+    "experienciaLaboral": "• 7 años en dispositivos de acompañamiento terapéutico gerontológico",
+    "certificacionesVerificadas": [
+      { "label": "Título AT Verificado", "ok": true },
+      { "label": "DNI y Domicilio Verificados", "ok": true },
+      { "label": "Antecedentes limpios", "ok": true }
+    ],
+    "caracteristicasCuidado": "• Abordaje terapéutico del lazo social y la rutina diaria\n• Contención en momentos de desorientación o ansiedad"
+  }
+]

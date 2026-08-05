@@ -1,0 +1,20 @@
+[
+  {
+    "id": "curso-001",
+    "tenant_id": "tenant-presdemo",
+    "titulo": "Herramientas Básicas para Cuidadores Familiares",
+    "duracion": "4 semanas (16 hrs)",
+    "modalidad": "100% Online",
+    "nivel": "Inicial",
+    "descripcion": "Aprendé técnicas de movilización segura, higiene y prevención de accidentes en el hogar."
+  },
+  {
+    "id": "curso-002",
+    "tenant_id": "tenant-presdemo",
+    "titulo": "Manejo del Alzheimer y Demencias en Casa",
+    "duracion": "6 semanas (24 hrs)",
+    "modalidad": "En vivo + Clases grabadas",
+    "nivel": "Intermedio",
+    "descripcion": "Estrategias de comunicación efectiva, manejo de conductas complejas y apoyo al cuidador principal."
+  }
+]
