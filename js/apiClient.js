@@ -68,16 +68,53 @@ const CareonysAPI = {
 
     // Reemplazar logos e imágenes de marca
     const logoUrl = tenant.logo_url || 'assets/images/logo_presdemo.png';
-    document.querySelectorAll('.logo-brand, .tenant-logo, .navbar-brand img').forEach(img => {
-      // Ajustar ruta relativa según profundidad
-      const pathDepth = window.location.pathname.includes('/presdemo/') ? '../' : '';
-      img.src = pathDepth + logoUrl;
+    const logoSelectors = '.logo-brand, .tenant-logo, .navbar-logo img, .logo img';
+    document.querySelectorAll(logoSelectors).forEach(img => {
+      img.src = logoUrl;
     });
 
     // Reemplazar nombres y textos de marca
-    document.querySelectorAll('.tenant-name').forEach(el => {
+    const nameSelectors = '.tenant-name, .navbar-logo span, .logo span';
+    document.querySelectorAll(nameSelectors).forEach(el => {
       el.textContent = tenant.name;
     });
+
+    // Inyectar la insignia "Powered by Careonys" discretamente si el tenant es secundario
+    if (tenant.slug !== 'careonys') {
+      // 1. En el Navbar
+      const navLogo = document.querySelector('.navbar-logo');
+      if (navLogo && !navLogo.querySelector('.powered-by-tag')) {
+        const tag = document.createElement('span');
+        tag.className = 'powered-by-tag';
+        tag.style.cssText = 'font-size: 8px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; display: block; opacity: 0.85;';
+        tag.innerHTML = 'Powered by <span style="color:var(--color-accent, #E53E3E)">Careonys</span>';
+        navLogo.appendChild(tag);
+        
+        navLogo.style.display = 'flex';
+        navLogo.style.flexDirection = 'column';
+        navLogo.style.alignItems = 'flex-start';
+        
+        const origSpan = navLogo.querySelector('span:not(.powered-by-tag)');
+        if (origSpan) {
+          origSpan.style.marginTop = '4px';
+          origSpan.style.fontSize = '16px';
+        }
+      }
+
+      // 2. En el Footer
+      const footerLogo = document.querySelector('.footer-brand .logo, .footer .logo');
+      if (footerLogo && !footerLogo.querySelector('.powered-by-tag')) {
+        const tag = document.createElement('span');
+        tag.className = 'powered-by-tag';
+        tag.style.cssText = 'font-size: 9px; font-weight: 700; color: #94a3b8; margin-top: 4px; display: block;';
+        tag.innerHTML = 'Powered by <span style="color:var(--color-accent, #E53E3E)">Careonys</span>';
+        footerLogo.appendChild(tag);
+        
+        footerLogo.style.display = 'flex';
+        footerLogo.style.flexDirection = 'column';
+        footerLogo.style.alignItems = 'flex-start';
+      }
+    }
   },
 
   // --- MÓDULO 1: RECLUTAMIENTO Y LEGAJOS (CUIDADORES) ---
