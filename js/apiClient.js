@@ -332,6 +332,10 @@ const CareonysAPI = {
         patologias: row.pathologies || [],
         tareas: row.tasks || [],
         documentos: row.documents || {},
+        cuit: row.cuit || '',
+        domicilio: row.address || '',
+        cbu: row.bank_info || '',
+        referencia: row.reference_info || {},
         estado: row.verification_status,
         fechaRegistro: row.created_at ? row.created_at.split('T')[0] : ''
       };
@@ -363,6 +367,10 @@ const CareonysAPI = {
       if (data.patologias !== undefined) row.pathologies = data.patologias;
       if (data.tareas !== undefined) row.tasks = data.tareas;
       if (data.documentos !== undefined) row.documents = data.documentos;
+      if (data.cuit !== undefined) row.cuit = data.cuit;
+      if (data.domicilio !== undefined) row.address = data.domicilio;
+      if (data.cbu !== undefined) row.bank_info = data.cbu;
+      if (data.referencia !== undefined) row.reference_info = data.referencia;
       if (data.estado !== undefined) row.verification_status = data.estado;
       return row;
     }
