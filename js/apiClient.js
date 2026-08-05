@@ -19,7 +19,12 @@ const CareonysAPI = {
     if (!slug) {
       const hostname = window.location.hostname;
       const parts = hostname.split('.');
-      if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'localhost') {
+      // Ignorar subdominios de primer nivel en plataformas de deploy como vercel.app
+      if (hostname.endsWith('.vercel.app')) {
+        if (parts.length > 3) {
+          slug = parts[0];
+        }
+      } else if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'localhost') {
         slug = parts[0];
       }
     }
@@ -38,10 +43,10 @@ const CareonysAPI = {
         }
       }
       
-      // Fallback a mock si no se pudo cargar
+      // Fallback a mock con UUID válido de base de datos si no se pudo cargar
       if (!this.currentTenant) {
         this.currentTenant = {
-          id: 'tenant-presdemo',
+          id: '2197bc14-d545-4939-9a98-979e69a120dc', // UUID real de 'presdemo' en Supabase
           slug: 'presdemo',
           name: 'PresDemo — Servicios de Cuidado',
           primary_color: '#1A365D',
@@ -54,6 +59,16 @@ const CareonysAPI = {
       this._applyBranding(this.currentTenant);
     } catch (err) {
       console.error('Error al inicializar el tenant:', err);
+      // Asegurar que al menos tengamos el fallback con UUID válido si falla la conexión
+      this.currentTenant = {
+        id: '2197bc14-d545-4939-9a98-979e69a120dc',
+        slug: 'presdemo',
+        name: 'PresDemo — Servicios de Cuidado',
+        primary_color: '#1A365D',
+        accent_color: '#E53E3E',
+        logo_url: 'assets/images/logo_presdemo.png'
+      };
+      this._applyBranding(this.currentTenant);
     }
   },
 
