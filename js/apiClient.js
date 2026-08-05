@@ -336,6 +336,7 @@ const CareonysAPI = {
         domicilio: row.address || '',
         cbu: row.bank_info || '',
         referencia: row.reference_info || {},
+        educacion: row.education_info || {},
         estado: row.verification_status,
         fechaRegistro: row.created_at ? row.created_at.split('T')[0] : ''
       };
@@ -371,6 +372,7 @@ const CareonysAPI = {
       if (data.domicilio !== undefined) row.address = data.domicilio;
       if (data.cbu !== undefined) row.bank_info = data.cbu;
       if (data.referencia !== undefined) row.reference_info = data.referencia;
+      if (data.educacion !== undefined) row.education_info = data.educacion;
       if (data.estado !== undefined) row.verification_status = data.estado;
       return row;
     }
