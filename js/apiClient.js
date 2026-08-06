@@ -262,6 +262,19 @@ const CareonysAPI = {
     return nuevaEntry;
   },
 
+  async getBitacoraDiaria(searchId = null) {
+    if (this.useSupabase) {
+      const queryParams = {};
+      if (searchId) {
+        queryParams.search_id = `eq.${searchId}`;
+      }
+      queryParams.order = 'created_at.desc';
+      return await this._supabaseRequest('GET', 'logbook_entries', null, queryParams);
+    }
+    let data = JSON.parse(localStorage.getItem('careonys_bitacora') || '[]');
+    return data.reverse();
+  },
+
   // --- INTEGRACIÓN REST DE SUPABASE ---
   async _supabaseRequest(method, table, data = null, queryParams = {}) {
     const urlObj = new URL(`${this.supabaseUrl}/rest/v1/${table}`);
