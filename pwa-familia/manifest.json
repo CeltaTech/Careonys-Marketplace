@@ -1,0 +1,16 @@
+{
+  "name": "Careonys Familia",
+  "short_name": "CareonysFamilia",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#fafafb",
+  "theme_color": "#E53E3E",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "../assets/images/logo_careonys.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
