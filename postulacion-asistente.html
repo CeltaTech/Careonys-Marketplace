@@ -506,18 +506,25 @@
     let firstInvalidField = null;
     
     pane.querySelectorAll('[required]').forEach(field => {
-      if (field.offsetParent !== null) { // Solo validar si el campo está visible
-        if (field.type !== 'checkbox' && !field.value.trim()) {
+      // Validar input de tipo file (archivos cargados)
+      if (field.type === 'file') {
+        if (!field.files || field.files.length === 0) {
           valid = false;
-          field.style.borderColor = '#e53935';
+          field.style.outline = '2px solid #e53935';
+          field.style.borderRadius = '4px';
           if (!firstInvalidField) firstInvalidField = field;
-          field.addEventListener('input', () => { field.style.borderColor = ''; }, { once: true });
+          field.addEventListener('change', () => { field.style.outline = ''; }, { once: true });
         }
+      } else if (field.type !== 'checkbox' && !field.value.trim()) {
+        valid = false;
+        field.style.borderColor = '#e53935';
+        if (!firstInvalidField) firstInvalidField = field;
+        field.addEventListener('input', () => { field.style.borderColor = ''; }, { once: true });
       }
     });
 
     if (!valid) {
-      alert('Por favor, completa todos los campos requeridos marcados en rojo en este paso.');
+      alert('Por favor, completa todos los campos y archivos obligatorios marcados en rojo antes de continuar.');
       if (firstInvalidField) firstInvalidField.focus();
     }
     return valid;
@@ -554,11 +561,11 @@
     document.querySelector('.wizard-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  // Eventos de botones Siguiente
+  // Eventos de botones Siguiente (Validan paso actual)
   document.querySelectorAll('.btn-next-step').forEach(btn => {
     btn.addEventListener('click', () => {
-      const currentStep = parseInt(btn.closest('.wizard-step-pane').id.replace('step-pane-', ''));
-      if (validatePane(`step-pane-${currentStep}`)) {
+      const currentPaneId = btn.closest('.wizard-step-pane').id;
+      if (validatePane(currentPaneId)) {
         const nextStep = parseInt(btn.getAttribute('data-next'));
         goToStep(nextStep);
       }
@@ -578,8 +585,13 @@
     e.preventDefault();
     const form = e.target;
 
-    // Validar el último pane
-    if (!validatePane('step-pane-5')) return;
+    // Validar paso por paso (del 1 al 5) para asegurar que nada quedó vacío
+    for (let i = 1; i <= 5; i++) {
+      if (!validatePane(`step-pane-${i}`)) {
+        goToStep(i);
+        return;
+      }
+    }
 
     // Validar términos y condiciones
     const termsCheckbox = document.getElementById('acepto-terminos');
@@ -645,8 +657,11 @@
 
     try {
       await CareonysAPI.registrarAspirante(data);
+      alert('¡Postulación recibida con éxito!\nTu legajo ha ingresado al proceso de auditoría y entrevistas del plantel.');
+      
       const successMsg = document.getElementById('form-success');
-      successMsg.style.display = 'block';
+      if (successMsg) successMsg.style.display = 'block';
+      
       form.reset();
       
       // Limpiar slots de grilla
@@ -658,9 +673,10 @@
         slot.textContent = '—';
       });
 
+      goToStep(1); // Reiniciar al paso 1
+      
       setTimeout(() => { 
-        successMsg.style.display = 'none';
-        goToStep(1); // Reiniciar al paso 1
+        if (successMsg) successMsg.style.display = 'none';
       }, 6000);
     } catch (err) {
       alert('Error al enviar la postulación a la base de datos: ' + err.message);
