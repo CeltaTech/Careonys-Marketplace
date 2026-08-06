@@ -780,6 +780,21 @@
         <i class="fas fa-chevron-right" style="font-size:12px;color:#856404;"></i>
       </div>
 
+      <!-- WIDGET FICHADO GPS -->
+      <div style="background:#e0f2fe; border:1px solid #bae6fd; border-radius:16px; padding:14px 16px; margin:0 16px 16px 16px; display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <i class="fas fa-map-marker-alt" style="color:#0369a1; font-size:20px;"></i>
+          <div>
+            <h5 style="margin:0; font-size:13px; font-weight:700; color:#0369a1;">Fichaje de Asistencia (GPS)</h5>
+            <p id="gps-status" style="margin:2px 0 0 0; font-size:11px; color:#0e7490;">Marcar clock-in / clock-out</p>
+          </div>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <button id="btn-gps-in" style="background:#0284c7; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-size:10px; font-weight:700; cursor:pointer;">Entrada</button>
+          <button id="btn-gps-out" style="background:#ef4444; color:#fff; border:none; padding:6px 10px; border-radius:8px; font-size:10px; font-weight:700; cursor:pointer;">Salida</button>
+        </div>
+      </div>
+
       <!-- GRID DE SERVICIOS (7 BOTONES) -->
       <div class="grid-services">
         <a class="service-btn" href="directorio.html">
@@ -885,7 +900,7 @@
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
         <h1>Cuaderno de Cuidado</h1>
-        <button class="btn-back" onclick="alert('Nueva bitácora agregada.')"><i class="fas fa-plus"></i></button>
+        <button class="btn-back" onclick="document.getElementById('modal-bitacora').style.display='flex'"><i class="fas fa-plus"></i></button>
       </div>
 
       <div class="cuaderno-header">
@@ -899,34 +914,9 @@
         </div>
       </div>
 
-      <!-- HISTORIAL DIARIO (TIMELINE) -->
-      <div class="timeline-log">
-        <div class="log-item">
-          <div class="log-dot"><i class="fas fa-check" style="font-size:8px;color:var(--color-accent, #E53E3E);"></i></div>
-          <div class="log-content">
-            <span class="time">19:30 hs</span>
-            <h5>Administración de Medicación</h5>
-            <p>Se administró Donepecilo 10mg. Rosa cenó adecuadamente (sopa y compota de manzana).</p>
-          </div>
-        </div>
-
-        <div class="log-item">
-          <div class="log-dot"><i class="fas fa-heartbeat" style="font-size:8px;color:var(--color-accent, #E53E3E);"></i></div>
-          <div class="log-content">
-            <span class="time">17:15 hs</span>
-            <h5>Control de Presión Arterial</h5>
-            <p>Presión registrada: 120/80 mmHg. Frecuencia cardíaca: 72 lpm. Estado estable y cooperativo.</p>
-          </div>
-        </div>
-
-        <div class="log-item">
-          <div class="log-dot"><i class="fas fa-walking" style="font-size:8px;color:var(--color-accent, #E53E3E);"></i></div>
-          <div class="log-content">
-            <span class="time">15:00 hs</span>
-            <h5>Actividad y Paseo</h5>
-            <p>Caminamos 15 minutos en el jardín de la casa. Rosa reconoció algunas flores y estuvo animada.</p>
-          </div>
-        </div>
+      <!-- HISTORIAL DIARIO DINÁMICO (TIMELINE CONECTADO A SUPABASE) -->
+      <div class="timeline-log" id="timeline-log-list">
+        <!-- Cargado dinámicamente -->
       </div>
 
       <!-- BARRA DE TABS INFERIOR -->
@@ -947,6 +937,21 @@
           <i class="fas fa-book-medical"></i>
           <span>Bitácora</span>
         </a>
+      </div>
+    </div>
+
+    <!-- MODAL NUEVA NOVEDAD BITÁCORA -->
+    <div id="modal-bitacora" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:300; justify-content:center; align-items:center;">
+      <div style="background:#fff; width:90%; max-width:360px; padding:20px; border-radius:20px; box-shadow:0 10px 25px rgba(0,0,0,0.1); box-sizing:border-box;">
+        <h4 style="margin:0 0 16px 0; color:var(--color-primary); font-size:16px; font-weight:800; display:flex; justify-content:space-between; align-items:center;">
+          <span>Nueva Novedad</span>
+          <button onclick="document.getElementById('modal-bitacora').style.display='none'" style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
+        </h4>
+        <div class="form-group" style="margin-bottom:12px;"><label style="font-size:11px; font-weight:700;">Presión Arterial</label><input type="text" id="bit-presion" placeholder="Ej: 120/80" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; font-size:12px; box-sizing:border-box;" /></div>
+        <div class="form-group" style="margin-bottom:12px;"><label style="font-size:11px; font-weight:700;">Glucemia</label><input type="text" id="bit-glucemia" placeholder="Ej: 95 mg/dl" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; font-size:12px; box-sizing:border-box;" /></div>
+        <div class="form-group" style="margin-bottom:12px;"><label style="font-size:11px; font-weight:700;">Medicamentos Suministrados</label><input type="text" id="bit-medicamentos" placeholder="Ej: Donepecilo 10mg" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; font-size:12px; box-sizing:border-box;" /></div>
+        <div class="form-group" style="margin-bottom:16px;"><label style="font-size:11px; font-weight:700;">Notas Diarias / Novedades</label><textarea id="bit-notas" placeholder="¿Cómo pasó el día el paciente?" style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; font-size:12px; box-sizing:border-box; height:60px;" required></textarea></div>
+        <button id="btn-save-bitacora" class="btn-login" style="width:100%;">Guardar Novedad</button>
       </div>
     </div>
 
@@ -994,7 +999,130 @@
         screen.classList.remove('active');
       });
       document.getElementById(`screen-${screenId}`).classList.add('active');
+      
+      // Si navegamos al cuaderno de cuidado, cargar novedades reales de Supabase
+      if (screenId === 'cuaderno') {
+        cargarBitacora();
+      }
     }
+
+    // CARGAR BITÁCORA DINÁMICAMENTE DESDE SUPABASE
+    async function cargarBitacora() {
+      const listEl = document.getElementById('timeline-log-list');
+      listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:#94a3b8;padding:20px;">Cargando bitácora diaria...</p>';
+      
+      try {
+        const logs = await CareonysAPI.getBitacoraDiaria();
+        listEl.innerHTML = '';
+        
+        if (!logs || logs.length === 0) {
+          listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:#94a3b8;padding:20px;">No hay registros en la bitácora para hoy.</p>';
+          return;
+        }
+        
+        logs.forEach(log => {
+          const item = document.createElement('div');
+          item.className = 'log-item';
+          
+          let iconClass = 'fa-check';
+          if (log.blood_pressure) iconClass = 'fa-heartbeat';
+          else if (log.glycemia) iconClass = 'fa-stethoscope';
+          
+          const timeStr = log.created_at ? new Date(log.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' hs' : 'Recién';
+          
+          item.innerHTML = `
+            <div class="log-dot"><i class="fas ${iconClass}" style="font-size:8px;color:var(--color-accent, #E53E3E);"></i></div>
+            <div class="log-content">
+              <span class="time">${timeStr}</span>
+              <h5>${log.blood_pressure ? 'Control de Signos Vitales' : 'Nota de Cuidado'}</h5>
+              <p>${log.daily_notes}</p>
+              ${log.blood_pressure ? `<p style="margin-top:4px;font-size:11px;color:#0284c7;">🩺 P.A.: ${log.blood_pressure} | Glucemia: ${log.glycemia || 'N/A'}</p>` : ''}
+              ${log.medications_administered ? `<p style="margin-top:2px;font-size:10px;color:#10b981;">💊 Medicamento: ${log.medications_administered}</p>` : ''}
+            </div>
+          `;
+          listEl.appendChild(item);
+        });
+      } catch (err) {
+        listEl.innerHTML = `<p style="text-align:center;font-size:12px;color:#ef4444;padding:20px;">Error al cargar bitácora: ${err.message}</p>`;
+      }
+    }
+
+    // REGISTRAR NUEVA NOVEDAD EN LA BITÁCORA
+    document.getElementById('btn-save-bitacora').addEventListener('click', async () => {
+      const presion = document.getElementById('bit-presion').value;
+      const glucemia = document.getElementById('bit-glucemia').value;
+      const medicamentos = document.getElementById('bit-medicamentos').value;
+      const notas = document.getElementById('bit-notas').value;
+
+      if (!notas.trim()) {
+        alert('Por favor, describe la novedad o reporte del cuidado.');
+        return;
+      }
+
+      const data = {
+        presion,
+        glucemia,
+        medicamentos,
+        notas,
+        // Usamos el ID del cuidador de prueba registrado en Supabase
+        caregiverId: '2197bc14-d545-4939-9a98-979e69a120dc'
+      };
+
+      try {
+        await CareonysAPI.registrarBitacoraDiaria(data);
+        alert('¡Novedad guardada exitosamente en Supabase!');
+        document.getElementById('modal-bitacora').style.display = 'none';
+        
+        // Limpiar formulario
+        document.getElementById('bit-presion').value = '';
+        document.getElementById('bit-glucemia').value = '';
+        document.getElementById('bit-medicamentos').value = '';
+        document.getElementById('bit-notas').value = '';
+        
+        cargarBitacora();
+      } catch (err) {
+        alert('Error al guardar novedad: ' + err.message);
+      }
+    });
+
+    // FICHADO GPS DE ASISTENCIA (CLOCK-IN / CLOCK-OUT REAL)
+    async function ficharGPS(tipo) {
+      const statusEl = document.getElementById('gps-status');
+      statusEl.textContent = 'Obteniendo localización GPS...';
+      
+      if (!navigator.geolocation) {
+        alert('Tu navegador no soporta geolocalización.');
+        statusEl.textContent = 'GPS no soportado';
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        
+        statusEl.textContent = `Enviando fichado (${tipo})...`;
+        
+        try {
+          await CareonysAPI.registrarFichadoGPS({
+            caregiverId: '2197bc14-d545-4939-9a98-979e69a120dc',
+            lat: lat,
+            lng: lng,
+            event_type: tipo
+          });
+          alert(`¡Fichado de ${tipo} registrado con éxito!\nCoordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+          statusEl.textContent = `Último fichado: ${tipo} (${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})})`;
+        } catch (err) {
+          alert('Error al registrar fichado: ' + err.message);
+          statusEl.textContent = 'Error en fichado';
+        }
+      }, (err) => {
+        alert('No pudimos acceder a tu ubicación. Por favor, habilita los permisos de GPS.');
+        statusEl.textContent = 'Permiso GPS denegado';
+      });
+    }
+
+    document.getElementById('btn-gps-in').addEventListener('click', () => ficharGPS('Entrada'));
+    document.getElementById('btn-gps-out').addEventListener('click', () => ficharGPS('Salida'));
 
     // LOGIN ACCIÓN
     document.getElementById('btn-action-login').addEventListener('click', () => {
@@ -1045,10 +1173,8 @@
     // Confirmar Rol
     document.getElementById('btn-signup-confirm').addEventListener('click', () => {
       if (selectedRole === 'cuidador') {
-        // Redirigir a registro de cuidador (wizard que programamos)
         window.location.href = 'postulacion-asistente.html';
       } else {
-        // Familiar ingresa directo a publicar búsqueda o dashboard
         window.location.href = 'formulario-integral.html';
       }
     });
