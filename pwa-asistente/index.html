@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Careonys Asistente — PWA Portal</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      background: #f1f5f9;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    #phone-container {
+      width: 100%;
+      max-width: 420px;
+      height: 100vh;
+      max-height: 840px;
+      background: #fff;
+      position: relative;
+      box-shadow: 0 12px 40px rgba(15, 23, 42, 0.15);
+      border-radius: 32px;
+      overflow: hidden;
+      border: 8px solid #0f172a;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #phone-container ::-webkit-scrollbar {
+      display: none;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        background: #fff;
+      }
+      #phone-container {
+        max-width: 100%;
+        height: 100vh;
+        max-height: 100%;
+        border-radius: 0;
+        border: none;
+      }
+    }
+
+    .app-screen {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      overflow-y: auto;
+      background: #fafafb;
+      position: relative;
+    }
+
+    .app-screen.active {
+      display: flex;
+    }
+
+    /* CABECERAS */
+    .app-header {
+      background: #fff;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .app-header h1 {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--color-primary, #1A365D);
+      margin: 0;
+    }
+
+    .app-header .btn-back {
+      font-size: 18px;
+      color: #64748b;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+
+    /* LOGIN */
+    #screen-intro {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      padding: 24px;
+      box-sizing: border-box;
+      justify-content: center;
+    }
+
+    .intro-logo-container {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .intro-logo-container img {
+      height: 60px;
+      margin-bottom: 12px;
+    }
+
+    .intro-logo-container h2 {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--color-primary, #1A365D);
+      margin: 0;
+    }
+
+    .login-card {
+      background: #fff;
+      padding: 24px;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+      border: 1px solid #e2e8f0;
+    }
+
+    .input-wrapper {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1.5px solid #cbd5e1;
+      font-size: 14px;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
+
+    .input-wrapper input:focus {
+      border-color: var(--color-accent, #E53E3E);
+      background: #fff;
+      outline: none;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--color-primary, #1A365D);
+      color: #fff;
+      font-weight: 700;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(26, 54, 93, 0.2);
+    }
+
+    /* DASHBOARD */
+    .dashboard-header {
+      background: #fff;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    /* WIDGET FICHADO */
+    .gps-widget {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      text-align: center;
+    }
+
+    .gps-widget i {
+      font-size: 32px;
+      color: var(--color-primary, #1A365D);
+      margin-bottom: 10px;
+    }
+
+    .gps-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .btn-gps {
+      flex: 1;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 13px;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    /* STATUS DE VERIFICACIÓN */
+    .status-badge-container {
+      background: #e2e8f0;
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin: 0 16px 16px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* FORM NOVEDADES */
+    .novedades-form {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 0 16px 16px 16px;
+    }
+
+    .form-group-pwa {
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .form-group-pwa label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #475569;
+      margin-bottom: 4px;
+    }
+
+    .form-group-pwa input, .form-group-pwa textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1.5px solid #cbd5e1;
+      font-size: 13px;
+      box-sizing: border-box;
+    }
+
+    /* BOTTOM TAB BAR */
+    .bottom-tab-bar {
+      height: 64px;
+      background: #fff;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      box-sizing: border-box;
+      z-index: 100;
+    }
+
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: #94a3b8;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .tab-item.active {
+      color: var(--color-primary, #1A365D);
+    }
+
+    .tab-item i {
+      font-size: 18px;
+    }
+
+    .tab-item span {
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    /* SIDEBAR */
+    .sidebar-drawer {
+      position: absolute;
+      top: 0;
+      left: -280px;
+      width: 280px;
+      height: 100%;
+      background: #fff;
+      box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+      z-index: 200;
+      transition: left 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-drawer.open {
+      left: 0;
+    }
+
+    .drawer-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      z-index: 199;
+      display: none;
+    }
+
+    .drawer-overlay.open {
+      display: block;
+    }
+
+    .drawer-header {
+      background: linear-gradient(135deg, var(--color-primary, #1A365D) 0%, #1e1e2d 100%);
+      color: #fff;
+      padding: 30px 20px;
+    }
+
+    .drawer-header img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      margin-bottom: 10px;
+    }
+
+    .drawer-header h4 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .drawer-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 20px;
+      color: #334155;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="phone-container">
+    
+    <div class="drawer-overlay" id="overlay"></div>
+
+    <!-- DRAWER SIDEBAR -->
+    <div class="sidebar-drawer" id="drawer">
+      <div class="drawer-header">
+        <img src="../assets/images/perfil_maria.png" onerror="this.src='https://via.placeholder.com/100'" alt="Avatar" />
+        <h4 id="menu-user-name">Asistente de Prueba</h4>
+        <p id="menu-user-email" style="margin:2px 0 0 0;font-size:11px;opacity:0.8;">cuidador@careonys.com</p>
+      </div>
+      <div style="flex:1;padding:16px 0;">
+        <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home" style="width:20px;color:#64748b;"></i> Inicio</a>
+        <a class="drawer-menu-item" href="../cursos.html"><i class="fas fa-graduation-cap" style="width:20px;color:#64748b;"></i> Mis Capacitaciones</a>
+        <div style="border-top:1px solid #f1f5f9;margin:8px 0;"></div>
+        <a class="drawer-menu-item" id="btn-logout" style="color:#ef4444;"><i class="fas fa-sign-out-alt" style="width:20px;color:#ef4444;"></i> Cerrar sesión</a>
+      </div>
+      <div style="padding:16px;text-align:center;font-size:10px;color:#94a3b8;border-top:1px solid #f1f5f9;">
+        Powered by <strong style="color:var(--color-accent, #E53E3E)">Careonys</strong>
+      </div>
+    </div>
+
+    <!-- 1. VISTA: LOGIN -->
+    <div class="app-screen active" id="screen-intro">
+      <div class="intro-logo-container">
+        <img src="../assets/images/logo_careonys.png" class="tenant-logo" alt="Logo Tenant" />
+        <h2 class="tenant-name">PresDemo</h2>
+        <p>Servicios de Cuidado Domiciliario</p>
+      </div>
+
+      <div class="login-card">
+        <div class="input-wrapper">
+          <input type="email" id="login-email" placeholder="Correo electrónico" value="cuidador@careonys.com" required />
+        </div>
+        <div class="input-wrapper">
+          <input type="password" id="login-pass" placeholder="Contraseña" value="123456" required />
+        </div>
+        <button type="button" class="btn-login" id="btn-action-login" style="width:100%;">Ingresá a Careonys Asistente</button>
+        <div style="text-align:center;margin-top:20px;font-size:12px;color:#64748b;">
+          ¿Querés postularte? <a href="../postulacion-asistente.html" style="color:var(--color-primary, #1A365D);font-weight:700;text-decoration:none;">Registrate acá</a>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:auto;font-size:10px;color:#94a3b8;padding-top:20px;">
+        Powered by <strong style="color:var(--color-accent, #E53E3E)">Careonys</strong>
+      </div>
+    </div>
+
+    <!-- 2. VISTA: DASHBOARD -->
+    <div class="app-screen" id="screen-dashboard" style="padding-bottom:64px;">
+      <div class="dashboard-header">
+        <button class="btn-back" id="btn-open-menu" style="font-size:20px;"><i class="fas fa-bars"></i></button>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <img src="../assets/images/logo_careonys.png" class="tenant-logo" style="height:24px;" alt="Logo" />
+          <span class="tenant-name" style="font-size:14px;font-weight:800;color:var(--color-primary, #1A365D);">PresDemo</span>
+        </div>
+        <div style="width:24px;"></div>
+      </div>
+
+      <!-- ESTADO DE LEGAJO -->
+      <div class="status-badge-container" id="status-container" style="margin-top:16px;background:#e0f2fe;border:1px solid #bae6fd;">
+        <i class="fas fa-user-check" style="color:#0369a1;font-size:20px;"></i>
+        <div style="flex:1;text-align:left;">
+          <h5 style="margin:0;font-size:13px;color:#0369a1;font-weight:700;">Estado del Legajo</h5>
+          <p id="legajo-estado-txt" style="margin:2px 0 0 0;font-size:11px;color:#0e7490;">Cargando estado...</p>
+        </div>
+      </div>
+
+      <!-- FICHADO GPS -->
+      <div class="gps-widget">
+        <i class="fas fa-map-marked-alt"></i>
+        <h4 style="margin:0;font-size:15px;color:#1e293b;font-weight:800;">Fichador GPS Laboral</h4>
+        <p id="gps-status" style="margin:4px 0 0 0;font-size:12px;color:#64748b;">Presioná para marcar entrada o salida en el domicilio.</p>
+        <div class="gps-actions">
+          <button class="btn-gps" id="btn-gps-in" style="background:#0284c7;">Marcar Entrada</button>
+          <button class="btn-gps" id="btn-gps-out" style="background:#ef4444;">Marcar Salida</button>
+        </div>
+      </div>
+
+      <!-- FORM NOVEDADES BITÁCORA -->
+      <div class="novedades-form">
+        <h4 style="margin:0 0 16px 0;font-size:14px;font-weight:800;color:var(--color-primary);"><i class="fas fa-notes-medical"></i> Registrar Novedad en Bitácora</h4>
+        
+        <div class="form-group-pwa">
+          <label>Presión Arterial (P.A.)</label>
+          <input type="text" id="bit-presion" placeholder="Ej: 120/80" />
+        </div>
+        <div class="form-group-pwa">
+          <label>Glucemia</label>
+          <input type="text" id="bit-glucemia" placeholder="Ej: 95 mg/dl" />
+        </div>
+        <div class="form-group-pwa">
+          <label>Medicamentos Administrados</label>
+          <input type="text" id="bit-medicamentos" placeholder="Ej: Donepecilo 10mg" />
+        </div>
+        <div class="form-group-pwa">
+          <label>Notas Diarias / Reporte del Servicio</label>
+          <textarea id="bit-notas" placeholder="Escribe el estado del paciente, alimentación, novedades..." style="height:60px;"></textarea>
+        </div>
+        <button type="button" class="btn-login" id="btn-save-bitacora" style="margin-top:8px;">Guardar Novedad</button>
+      </div>
+
+      <div style="text-align:center;padding:12px 0 24px 0;font-size:10px;color:#94a3b8;">
+        Powered by <strong style="color:var(--color-accent, #E53E3E)">Careonys</strong>
+      </div>
+
+      <div class="bottom-tab-bar">
+        <a class="tab-item active" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span>Inicio</span></a>
+        <a class="tab-item" href="../cursos.html"><i class="fas fa-graduation-cap"></i><span>Capacitación</span></a>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="../js/apiClient.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('Service Worker de Asistente registrado.'))
+        .catch(err => console.error('Error al registrar Service Worker:', err));
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await CareonysAPI.initTenant();
+      cargarEstadoLegajo();
+    });
+
+    async function cargarEstadoLegajo() {
+      const statusTxt = document.getElementById('legajo-estado-txt');
+      try {
+        const aspirantes = await CareonysAPI.getAspirantes();
+        if (aspirantes && aspirantes.length > 0) {
+          // Tomar el primero para la demo
+          const asp = aspirantes[0];
+          statusTxt.textContent = asp.estado === 'validado' ? '🟢 Validado por Prestadora (Habilitado)' : '🔴 En revisión (RRHH RRHH)';
+        } else {
+          statusTxt.textContent = '🔴 Legajo no cargado';
+        }
+      } catch (err) {
+        statusTxt.textContent = 'En revisión';
+      }
+    }
+
+    function navigate(screenId) {
+      document.querySelectorAll('.app-screen').forEach(screen => screen.classList.remove('active'));
+      document.getElementById(`screen-${screenId}`).classList.add('active');
+    }
+
+    // FICHADO GPS REAL
+    async function ficharGPS(tipo) {
+      const statusEl = document.getElementById('gps-status');
+      statusEl.textContent = 'Obteniendo localización GPS...';
+      
+      if (!navigator.geolocation) {
+        alert('Tu dispositivo no tiene soporte de localización GPS.');
+        statusEl.textContent = 'GPS no soportado';
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        statusEl.textContent = `Registrando ${tipo}...`;
+        try {
+          await CareonysAPI.registrarFichadoGPS({
+            caregiverId: '2197bc14-d545-4939-9a98-979e69a120dc',
+            lat: lat,
+            lng: lng,
+            event_type: tipo
+          });
+          alert(`¡Fichado de ${tipo} registrado con éxito!\nCoordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+          statusEl.textContent = `Último registro: ${tipo} (${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})})`;
+        } catch (err) {
+          alert('Error de red al fichar: ' + err.message);
+          statusEl.textContent = 'Error al registrar';
+        }
+      }, () => {
+        alert('Habilite los permisos de localización GPS para fichar asistencia.');
+        statusEl.textContent = 'Permiso GPS denegado';
+      });
+    }
+
+    document.getElementById('btn-gps-in').addEventListener('click', () => ficharGPS('Entrada'));
+    document.getElementById('btn-gps-out').addEventListener('click', () => ficharGPS('Salida'));
+
+    // GUARDAR NOVEDAD EN BITÁCORA
+    document.getElementById('btn-save-bitacora').addEventListener('click', async () => {
+      const presion = document.getElementById('bit-presion').value;
+      const glucemia = document.getElementById('bit-glucemia').value;
+      const medicamentos = document.getElementById('bit-medicamentos').value;
+      const notas = document.getElementById('bit-notas').value;
+
+      if (!notas.trim()) {
+        alert('Por favor, escribe un reporte o nota de cuidado.');
+        return;
+      }
+
+      const data = {
+        presion,
+        glucemia,
+        medicamentos,
+        notas,
+        caregiverId: '2197bc14-d545-4939-9a98-979e69a120dc'
+      };
+
+      try {
+        await CareonysAPI.registrarBitacoraDiaria(data);
+        alert('¡Novedad registrada exitosamente en la bitácora familiar!');
+        document.getElementById('bit-presion').value = '';
+        document.getElementById('bit-glucemia').value = '';
+        document.getElementById('bit-medicamentos').value = '';
+        document.getElementById('bit-notas').value = '';
+      } catch (err) {
+        alert('Error al registrar novedad: ' + err.message);
+      }
+    });
+
+    document.getElementById('btn-action-login').addEventListener('click', () => {
+      const email = document.getElementById('login-email').value;
+      if (email) {
+        document.getElementById('menu-user-email').textContent = email;
+        document.getElementById('menu-user-name').textContent = email.split('@')[0].toUpperCase();
+        navigate('dashboard');
+      }
+    });
+
+    const drawer = document.getElementById('drawer');
+    const overlay = document.getElementById('overlay');
+    document.getElementById('btn-open-menu').addEventListener('click', () => {
+      drawer.classList.add('open');
+      overlay.classList.add('open');
+    });
+    overlay.addEventListener('click', () => {
+      drawer.classList.remove('open');
+      overlay.classList.remove('open');
+    });
+
+    const origNavigate = navigate;
+    navigate = function(screenId) {
+      origNavigate(screenId);
+      drawer.classList.remove('open');
+      overlay.classList.remove('open');
+    };
+
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      if (confirm('¿Cerrar sesión?')) navigate('intro');
+    });
+  </script>
+</body>
+</html>
