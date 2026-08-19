@@ -14,8 +14,8 @@
 <nav class="navbar">
   <div class="navbar-inner">
     <a href="index.html" class="navbar-logo">
-      <img src="assets/images/logo_careonys.png" alt="Careonys logo" />
-      <span>Careonys</span>
+      <img src="assets/images/logo_presdemo.png" alt="PresDemo logo" />
+      <span>PresDemo — Servicios de Cuidado</span>
     </a>
     <div class="navbar-links">
       <a href="solicitar-asistente.html">Solicitar Asistente</a>
@@ -454,8 +454,8 @@
   <div class="footer-inner">
     <div class="footer-brand">
       <div class="logo">
-        <img src="assets/images/logo_careonys.png" alt="Careonys" />
-        <span>Careonys</span>
+        <img src="assets/images/logo_presdemo.png" alt="PresDemo" />
+        <span>PresDemo — Servicios de Cuidado</span>
       </div>
       <p>Conectamos familias con cuidadores calificados.</p>
       <div class="footer-social">
@@ -487,14 +487,75 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2024 Careonys. Todos los derechos reservados.</p>
+    <p>© 2025 PresDemo — Servicios de Cuidado. Todos los derechos reservados.</p>
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/apiClient.js"></script>
+<script src="js/auth.js"></script>
 <script src="js/main.js"></script>
 <script>
-  // Update results count on filter
+  // ── Carga dinámica de cuidadores desde Supabase ──────────────────────
+  // Si hay datos reales en la BD, reemplaza las tarjetas estáticas mock.
+  // Si la BD está vacía o falla, se mantienen las tarjetas estáticas.
+  (async () => {
+    await CareonysAPI.initTenant();
+    try {
+      const aspirantes = await CareonysAPI.getAspirantes({ estado: 'validado_prestadora' });
+      if (aspirantes && aspirantes.length > 0) {
+        const grid = document.getElementById('directory-grid');
+        grid.innerHTML = ''; // Reemplazar mocks
+        aspirantes.forEach(a => {
+          const patologias = (a.patologias || []).slice(0, 4).map(p =>
+            `<span class="specialty-tag">${p}</span>`).join('');
+          const avatar = a.fotoUrl || a.documentos?.foto_perfil || 'assets/images/perfil_maria.png';
+          const card = document.createElement('div');
+          card.className = 'caregiver-card fade-in';
+          card.dataset.name = (a.nombre || '').toLowerCase();
+          card.dataset.zone = (a.zona || '').toLowerCase();
+          card.dataset.type = (a.profesion || 'domiciliaria').toLowerCase();
+          card.innerHTML = `
+            <div class="card-header-strip"></div>
+            <div class="card-body">
+              <div class="card-top">
+                <img src="${avatar}" class="card-avatar" alt="${a.nombre}" onerror="this.src='https://via.placeholder.com/70'" />
+                <div class="card-meta">
+                  <h3>${(a.nombre || 'Asistente').toUpperCase()}</h3>
+                  <p class="sub">${a.zona || 'Sin zona'}</p>
+                  <div class="stars">
+                    <span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                    <span class="star">★</span><span class="star">★</span>
+                    <span class="pts">(Verificado)</span>
+                  </div>
+                </div>
+              </div>
+              <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">${a.profesion || 'Asistente Domiciliario'}</p>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px 0;">
+                <span class="badge-sendler-verified"><i class="fas fa-user-check"></i> Validado por Prestadora</span>
+              </div>
+              <div class="specialties">${patologias}</div>
+            </div>
+            <div class="card-footer">
+              <a href="perfil.html?id=${a.id}" class="btn btn-magenta">Ver perfil</a>
+              <a href="app.html" class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+        // Actualizar conteo
+        document.getElementById('results-count').textContent = `Mostrando ${aspirantes.length} cuidadores`;
+        // Re-observar para los filtros
+        document.querySelectorAll('.caregiver-card').forEach(el => {
+          el.classList.add('visible'); // fade-in inmediato
+        });
+      }
+    } catch (err) {
+      console.warn('Directorio: usando datos estáticos (BD no disponible).', err.message);
+    }
+  })();
+
+  // Contador observable para cuando los filtros ocultan/muestran tarjetas
   const grid = document.getElementById('directory-grid');
   const countEl = document.getElementById('results-count');
   const observer = new MutationObserver(() => {

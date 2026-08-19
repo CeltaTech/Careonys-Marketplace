@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Careonys Familia — PWA Portal</title>
   <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="../css/styles.css" />
+  <!-- CSS LOCAL (dentro del scope del Service Worker) -->
+  <link rel="stylesheet" href="css/styles-pwa.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     body {
@@ -609,10 +610,10 @@
           <div class="icon-box" style="background:#10b981;"><i class="fas fa-book-medical"></i></div>
           <span>Cuaderno Diario</span>
         </div>
-        <a class="service-btn" href="../cursos.html">
-          <div class="icon-box" style="background:#f59e0b;"><i class="fas fa-graduation-cap"></i></div>
-          <span>Cursos</span>
-        </a>
+        <div class="service-btn" onclick="navigate('publicar')">
+          <div class="icon-box" style="background:#f59e0b;"><i class="fas fa-plus-circle"></i></div>
+          <span>Nueva Búsqueda</span>
+        </div>
         <div class="service-btn" onclick="alert('Vida Activa: Estimulación Cognitiva.')">
           <div class="icon-box" style="background:#ec4899;"><i class="fas fa-running"></i></div>
           <span>Vida Activa</span>
@@ -638,7 +639,7 @@
 
       <div class="bottom-tab-bar">
         <a class="tab-item active" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span>Inicio</span></a>
-        <a class="tab-item" href="../formulario-integral.html"><i class="fas fa-plus-circle"></i><span>Publicar</span></a>
+        <a class="tab-item" onclick="navigate('publicar')"><i class="fas fa-plus-circle"></i><span>Publicar</span></a>
         <a class="tab-item" href="../directorio.html"><i class="fas fa-users"></i><span>Asistentes</span></a>
         <a class="tab-item" onclick="navigate('cuaderno')"><i class="fas fa-book-medical"></i><span>Bitácora</span></a>
       </div>
@@ -669,15 +670,136 @@
 
       <div class="bottom-tab-bar">
         <a class="tab-item" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span>Inicio</span></a>
-        <a class="tab-item" href="../formulario-integral.html"><i class="fas fa-plus-circle"></i><span>Publicar</span></a>
+        <a class="tab-item" onclick="navigate('publicar')"><i class="fas fa-plus-circle"></i><span>Publicar</span></a>
         <a class="tab-item" href="../directorio.html"><i class="fas fa-users"></i><span>Asistentes</span></a>
         <a class="tab-item active" onclick="navigate('cuaderno')"><i class="fas fa-book-medical"></i><span>Bitácora</span></a>
       </div>
     </div>
 
+    <!-- 4. VISTA: PUBLICAR NUEVA BÚSQUEDA DE CUIDADOR (Inline — Offline Safe) -->
+    <div class="app-screen" id="screen-publicar" style="padding-bottom:64px;">
+      <div class="app-header">
+        <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
+        <h1><i class="fas fa-plus-circle" style="color:var(--color-accent, #E53E3E);"></i> Nueva Búsqueda</h1>
+        <div style="width:24px;"></div>
+      </div>
+
+      <div style="padding:16px;">
+        <p style="font-size:12px;color:#64748b;margin:0 0 16px 0;">Completá los datos del cuidado que necesitás y te encontramos el asistente ideal.</p>
+
+        <form id="form-nueva-busqueda" novalidate>
+
+          <!-- Datos del Paciente -->
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px;margin-bottom:12px;">
+            <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--color-primary,#1A365D);">
+              <i class="fas fa-user-injured" style="margin-right:6px;"></i>Datos del Paciente
+            </h4>
+            <div style="margin-bottom:10px;">
+              <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">Nombre del Paciente</label>
+              <input type="text" id="pb-nombre" placeholder="Ej: Abuela Rosa" required
+                style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid #cbd5e1;font-size:13px;box-sizing:border-box;background:#f8fafc;" />
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+              <div>
+                <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">Edad</label>
+                <input type="number" id="pb-edad" placeholder="80" min="50" max="110"
+                  style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid #cbd5e1;font-size:13px;box-sizing:border-box;background:#f8fafc;" />
+              </div>
+              <div>
+                <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">Zona / Barrio</label>
+                <input type="text" id="pb-zona" placeholder="Ej: Palermo" required
+                  style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid #cbd5e1;font-size:13px;box-sizing:border-box;background:#f8fafc;" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Tipo de Cuidado -->
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px;margin-bottom:12px;">
+            <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--color-primary,#1A365D);">
+              <i class="fas fa-calendar-alt" style="margin-right:6px;"></i>Tipo de Cuidado
+            </h4>
+            <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">Modalidad de Servicio</label>
+            <select id="pb-tipo" required
+              style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid #cbd5e1;font-size:13px;box-sizing:border-box;background:#f8fafc;margin-bottom:10px;">
+              <option value="">— Seleccionar —</option>
+              <option value="por_horas">Por Horas (sin retiro)</option>
+              <option value="con_retiro">Con Retiro (8hs – lunes a viernes)</option>
+              <option value="sin_retiro">Sin Retiro (cama adentro)</option>
+              <option value="urgencia">Urgencia — necesito alguien hoy</option>
+            </select>
+            <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:6px;">Turnos Requeridos</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;">
+                <input type="checkbox" name="pb-turno" value="mañana" style="width:16px;height:16px;"> Mañana
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;">
+                <input type="checkbox" name="pb-turno" value="tarde" style="width:16px;height:16px;"> Tarde
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;">
+                <input type="checkbox" name="pb-turno" value="noche" style="width:16px;height:16px;"> Noche
+              </label>
+            </div>
+          </div>
+
+          <!-- Patologías -->
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px;margin-bottom:16px;">
+            <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--color-primary,#1A365D);">
+              <i class="fas fa-notes-medical" style="margin-right:6px;"></i>Condición del Paciente
+            </h4>
+            <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:8px;">Patologías presentes (seleccioná todas las que apliquen):</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;">
+                <input type="checkbox" name="pb-pat" value="alzheimer" style="width:16px;height:16px;"> Alzheimer / Demencia
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;">
+                <input type="checkbox" name="pb-pat" value="parkinson" style="width:16px;height:16px;"> Parkinson
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;">
+                <input type="checkbox" name="pb-pat" value="acv" style="width:16px;height:16px;"> ACV / Rehabilitación
+              </label>
+              <label style="display:flex;align-items:center;gap=6px;font-size:11px;font-weight:600;">
+                <input type="checkbox" name="pb-pat" value="diabetes" style="width:16px;height:16px;"> Diabetes
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;">
+                <input type="checkbox" name="pb-pat" value="postrados" style="width:16px;height:16px;"> Paciente Postrado
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;">
+                <input type="checkbox" name="pb-pat" value="paliativos" style="width:16px;height:16px;"> Cuidados Paliativos
+              </label>
+            </div>
+            <div style="margin-top:12px;">
+              <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">Descripción adicional (opcional)</label>
+              <textarea id="pb-descripcion" placeholder="Contanos más sobre la situación del paciente..." rows="3"
+                style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid #cbd5e1;font-size:13px;box-sizing:border-box;background:#f8fafc;"></textarea>
+            </div>
+          </div>
+
+          <!-- Botón Enviar -->
+          <button type="submit" id="btn-enviar-busqueda"
+            style="width:100%;padding:14px;border-radius:14px;background:var(--color-accent,#E53E3E);color:#fff;font-weight:800;font-size:14px;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(229,62,62,0.25);">
+            <i class="fas fa-search"></i> Buscar mi Asistente Ideal
+          </button>
+          <div id="pb-success"
+            style="display:none;background:#e8f5e9;color:#2e7d32;padding:14px;border-radius:12px;font-weight:700;text-align:center;font-size:13px;border:1px solid #c8e6c9;margin-top:12px;">
+            ✓ ¡Búsqueda publicada! Te contactaremos a la brevedad con los mejores perfiles.
+          </div>
+        </form>
+      </div>
+
+      <div class="bottom-tab-bar">
+        <a class="tab-item" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span>Inicio</span></a>
+        <a class="tab-item active" onclick="navigate('publicar')"><i class="fas fa-plus-circle"></i><span>Publicar</span></a>
+        <a class="tab-item" href="../directorio.html"><i class="fas fa-users"></i><span>Asistentes</span></a>
+        <a class="tab-item" onclick="navigate('cuaderno')"><i class="fas fa-book-medical"></i><span>Bitácora</span></a>
+      </div>
+    </div>
+
   </div>
 
-  <script src="../js/apiClient.js"></script>
+  <!-- JS LOCAL (dentro del scope del Service Worker) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/apiClient.js"></script>
+  <script src="js/auth.js"></script>
   <script>
     // Registro del Service Worker para soporte offline
     if ('serviceWorker' in navigator) {
@@ -689,6 +811,15 @@
     document.addEventListener('DOMContentLoaded', async () => {
       await CareonysAPI.initTenant();
       cargarRecomendados();
+
+      // Restaurar sesión activa automáticamente
+      const session = await CareonysAuth.getSession();
+      if (session) {
+        document.getElementById('menu-user-email').textContent = session.user.email;
+        document.getElementById('menu-user-name').textContent =
+          (session.user.user_metadata?.full_name || session.user.email.split('@')[0]).toUpperCase();
+        navigate('dashboard');
+      }
     });
 
     async function cargarRecomendados() {
@@ -757,12 +888,25 @@
       }
     }
 
-    document.getElementById('btn-action-login').addEventListener('click', () => {
-      const email = document.getElementById('login-email').value;
-      if (email) {
-        document.getElementById('menu-user-email').textContent = email;
-        document.getElementById('menu-user-name').textContent = email.split('@')[0].toUpperCase();
+    // Login real con Supabase Auth
+    document.getElementById('btn-action-login').addEventListener('click', async () => {
+      const email    = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-pass').value;
+      const btn      = document.getElementById('btn-action-login');
+      if (!email || !password) { alert('Ingresá email y contraseña.'); return; }
+      btn.textContent = 'Ingresando...';
+      btn.disabled = true;
+      try {
+        const user = await CareonysAuth.login(email, password);
+        document.getElementById('menu-user-email').textContent = user.email;
+        document.getElementById('menu-user-name').textContent =
+          (user.user_metadata?.full_name || user.email.split('@')[0]).toUpperCase();
         navigate('dashboard');
+      } catch (err) {
+        alert('Error al iniciar sesión: ' + err.message);
+      } finally {
+        btn.textContent = 'Ingresar';
+        btn.disabled = false;
       }
     });
 
@@ -784,8 +928,54 @@
       overlay.classList.remove('open');
     };
 
-    document.getElementById('btn-logout').addEventListener('click', () => {
-      if (confirm('¿Cerrar sesión?')) navigate('intro');
+    document.getElementById('btn-logout').addEventListener('click', async () => {
+      if (confirm('¿Cerrar sesión?')) {
+        await CareonysAuth.logout();
+        navigate('intro');
+      }
+    });
+
+    // ── Formulario Nueva Búsqueda de Cuidador (Inline — Offline Safe) ──────
+    document.getElementById('form-nueva-busqueda').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById('pb-nombre').value.trim();
+      const zona   = document.getElementById('pb-zona').value.trim();
+      const tipo   = document.getElementById('pb-tipo').value;
+      if (!nombre || !zona || !tipo) {
+        alert('Por favor completá el nombre del paciente, zona y modalidad de servicio.');
+        return;
+      }
+      const turnos = Array.from(document.querySelectorAll('input[name="pb-turno"]:checked')).map(cb => cb.value);
+      const patologias = Array.from(document.querySelectorAll('input[name="pb-pat"]:checked')).map(cb => cb.value);
+      const descripcion = document.getElementById('pb-descripcion').value;
+
+      const btn = document.getElementById('btn-enviar-busqueda');
+      btn.textContent = 'Publicando...';
+      btn.disabled = true;
+
+      try {
+        const session = await CareonysAuth.getSession();
+        await CareonysAPI.crearBusqueda({
+          patientName: nombre,
+          zona,
+          scheduleType: tipo,
+          gridSchedule7x3: { turnos },
+          pathologiesRequired: patologias,
+          description: descripcion,
+          familyUserId: session?.user?.id || null
+        });
+        document.getElementById('pb-success').style.display = 'block';
+        document.getElementById('form-nueva-busqueda').reset();
+        setTimeout(() => {
+          document.getElementById('pb-success').style.display = 'none';
+          navigate('dashboard');
+        }, 4000);
+      } catch (err) {
+        alert('Error al publicar la búsqueda: ' + err.message);
+      } finally {
+        btn.textContent = '🔍 Buscar mi Asistente Ideal';
+        btn.disabled = false;
+      }
     });
   </script>
 </body>

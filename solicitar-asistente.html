@@ -14,8 +14,8 @@
 <nav class="navbar">
   <div class="navbar-inner">
     <a href="index.html" class="navbar-logo">
-      <img src="assets/images/logo_careonys.png" alt="Careonys logo" />
-      <span>Careonys</span>
+      <img src="assets/images/logo_presdemo.png" alt="PresDemo logo" />
+      <span>PresDemo — Servicios de Cuidado</span>
     </a>
     <div class="navbar-links">
       <a href="solicitar-asistente.html" class="active">Solicitar Asistente</a>
@@ -296,7 +296,7 @@
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-brand">
-      <div class="logo"><img src="assets/images/logo_careonys.png" alt="Careonys" /><span>Careonys</span></div>
+      <div class="logo"><img src="assets/images/logo_presdemo.png" alt="PresDemo" /><span>PresDemo — Servicios de Cuidado</span></div>
       <p>Conectamos familias con cuidadores calificados.</p>
       <div class="footer-social">
         <a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-instagram"></i></a>
@@ -321,10 +321,57 @@
       <a href="#">Sobre Careonys</a><a href="#">Contacto</a><a href="#">Términos</a>
     </div>
   </div>
-  <div class="footer-bottom"><p>© 2024 Careonys. Todos los derechos reservados.</p></div>
+  <div class="footer-bottom"><p>© 2025 PresDemo — Servicios de Cuidado. Todos los derechos reservados.</p></div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/apiClient.js"></script>
+<script src="js/auth.js"></script>
 <script src="js/main.js"></script>
+<script>
+  document.getElementById('contact-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    const successEl = document.getElementById('form-success');
+
+    const nombre   = document.getElementById('nombre').value.trim();
+    const email    = document.getElementById('email').value.trim();
+    const celular  = document.getElementById('celular').value.trim();
+    const consulta = document.getElementById('consulta').value;
+
+    if (!nombre || !email || !celular || !consulta) {
+      alert('Por favor complet� todos los campos.');
+      return;
+    }
+
+    btn.textContent = 'Enviando...';
+    btn.disabled = true;
+
+    try {
+      // Obtener sesi�n si el usuario est� logueado
+      const session = await CareonysAuth.getSession().catch(() => null);
+      const familyUserId = session?.user?.id || null;
+
+      await CareonysAPI.crearBusquedaFamilia({
+        paciente:     nombre,
+        patologias:   [consulta],
+        horarios:     'A coordinar',
+        family_user_id: familyUserId,
+        // Datos de contacto en el JSON de patologias como metadata extra
+        contacto: { nombre, email, celular }
+      });
+
+      successEl.style.display = 'block';
+      e.target.reset();
+      setTimeout(() => { successEl.style.display = 'none'; }, 6000);
+    } catch (err) {
+      alert('Error al enviar la solicitud: ' + err.message);
+    } finally {
+      btn.textContent = 'ENVIAR';
+      btn.disabled = false;
+    }
+  });
+</script>
 </body>
 </html>
+
 

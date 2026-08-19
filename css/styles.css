@@ -126,7 +126,7 @@ ul { list-style: none; }
   gap: 8px;
 }
 .navbar-logo img {
-  height: 36px;
+  height: 48px;
   width: auto;
 }
 .navbar-logo span {
@@ -686,7 +686,7 @@ ul { list-style: none; }
   gap: 8px;
   margin-bottom: 12px;
 }
-.footer-brand .logo img { height: 32px; }
+.footer-brand .logo img { height: 40px; }
 .footer-brand .logo span { font-size: 20px; font-weight: 800; }
 .footer-brand p {
   font-size: 13px;

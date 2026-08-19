@@ -14,8 +14,8 @@
 <nav class="navbar">
   <div class="navbar-inner">
     <a href="index.html" class="navbar-logo">
-      <img src="assets/images/logo_careonys.png" alt="Careonys logo" />
-      <span>Careonys</span>
+      <img src="assets/images/logo_presdemo.png" alt="PresDemo logo" />
+      <span>PresDemo — Servicios de Cuidado</span>
     </a>
     <div class="navbar-links">
       <a href="solicitar-asistente.html">Solicitar Asistente</a>
@@ -411,7 +411,34 @@
           <h4 style="font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:12px;"><i class="fas fa-address-book" style="color:var(--magenta);"></i> Referencia Laboral Anterior (Obligatoria)</h4>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
             <div class="form-group"><label for="ref-nombre">Nombre de Referente Comercial/Familiar anterior</label><input type="text" id="ref-nombre" placeholder="Nombre completo" required /></div>
-            <div class="form-group"><label for="ref-telefono">Teléfono del Referente (WhatsApp)</label><input type="tel" id="ref-telefono" placeholder="Ej: 11 9876 5432" required /></div>
+            <div class="ref-telefono"><label for="ref-telefono">Teléfono del Referente (WhatsApp)</label><input type="tel" id="ref-telefono" placeholder="Ej: 11 9876 5432" required /></div>
+          </div>
+        </div>
+
+        <!-- CARGA DE DOCUMENTOS: DNI, PENALES, TÍTULO -->
+        <div style="background:var(--bg-light);border-radius:12px;padding:20px;border:1px solid var(--border-light);margin-bottom:20px;">
+          <h4 style="font-size:14px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;"><i class="fas fa-file-upload" style="color:var(--magenta);"></i> Documentación Digital (Obligatoria)</h4>
+          <p style="font-size:12px;color:#64748b;margin:0 0 14px 0;">Todos los documentos se almacenan de forma encriptada. Máximo 10MB por archivo. Formatos: JPG, PNG, PDF.</p>
+
+          <div class="form-group" style="margin-bottom:14px;">
+            <label style="font-weight:700;font-size:13px;"><i class="fas fa-id-card" style="color:var(--magenta);"></i> DNI Frente + Dorso <span style="color:#ef4444;">*</span></label>
+            <input type="file" id="file-dni" name="file-dni" accept="image/*,.pdf" multiple required
+              style="display:block;width:100%;margin-top:6px;padding:8px;border:1.5px dashed #cbd5e1;border-radius:8px;font-size:12px;cursor:pointer;background:#fff;" />
+            <p id="file-dni-status" style="font-size:11px;color:#10b981;margin:4px 0 0 0;display:none;"><i class="fas fa-check-circle"></i> Archivo listo para subir</p>
+          </div>
+
+          <div class="form-group" style="margin-bottom:14px;">
+            <label style="font-weight:700;font-size:13px;"><i class="fas fa-shield-alt" style="color:var(--magenta);"></i> Certificado de Antecedentes Penales <span style="color:#ef4444;">*</span></label>
+            <input type="file" id="file-penales" name="file-penales" accept="image/*,.pdf" required
+              style="display:block;width:100%;margin-top:6px;padding:8px;border:1.5px dashed #cbd5e1;border-radius:8px;font-size:12px;cursor:pointer;background:#fff;" />
+            <p id="file-penales-status" style="font-size:11px;color:#10b981;margin:4px 0 0 0;display:none;"><i class="fas fa-check-circle"></i> Archivo listo para subir</p>
+          </div>
+
+          <div class="form-group">
+            <label style="font-weight:700;font-size:13px;"><i class="fas fa-graduation-cap" style="color:var(--magenta);"></i> Título o Certificado de Formación <span style="color:#ef4444;">*</span></label>
+            <input type="file" id="file-titulo" name="file-titulo" accept="image/*,.pdf" required
+              style="display:block;width:100%;margin-top:6px;padding:8px;border:1.5px dashed #cbd5e1;border-radius:8px;font-size:12px;cursor:pointer;background:#fff;" />
+            <p id="file-titulo-status" style="font-size:11px;color:#10b981;margin:4px 0 0 0;display:none;"><i class="fas fa-check-circle"></i> Archivo listo para subir</p>
           </div>
         </div>
 
@@ -447,7 +474,7 @@
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-brand">
-      <div class="logo"><img src="assets/images/logo_careonys.png" alt="Careonys" /><span>Careonys</span></div>
+      <div class="logo"><img src="assets/images/logo_presdemo.png" alt="PresDemo" /><span>PresDemo — Servicios de Cuidado</span></div>
       <p>Conectamos familias con cuidadores calificados.</p>
       <div class="footer-social">
         <a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-instagram"></i></a>
@@ -473,9 +500,11 @@
       <a href="#">Sobre Careonys</a><a href="#">Contacto</a><a href="docs/legales_y_terminos_careonys_marketplace.md" target="_blank">Términos y Condiciones</a>
     </div>
   </div>
-  <div class="footer-bottom"><p>© 2024 Careonys. Todos los derechos reservados.</p></div>
+  <div class="footer-bottom"><p>© 2025 PresDemo — Servicios de Cuidado. Todos los derechos reservados.</p></div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/apiClient.js"></script>
+<script src="js/auth.js"></script>
 <script src="js/main.js"></script>
 <script>
   // INTERACTIVIDAD DE LA GRILLA HORARIA 7x3
@@ -580,8 +609,19 @@
     });
   });
 
-  // ENVÍO FINAL DEL FORMULARIO
-  document.getElementById('form-registro-cuidador-completo').addEventListener('submit', async (e) => {
+    // Feedback visual al seleccionar archivos
+    ['file-dni', 'file-penales', 'file-titulo'].forEach(id => {
+      const input = document.getElementById(id);
+      if (input) {
+        input.addEventListener('change', () => {
+          const status = document.getElementById(id + '-status');
+          if (status && input.files.length > 0) status.style.display = 'block';
+        });
+      }
+    });
+
+    // ENVIO FINAL DEL FORMULARIO con Upload real a Supabase Storage
+    document.getElementById('form-registro-cuidador-completo').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
 
@@ -596,75 +636,117 @@
     // Validar términos y condiciones
     const termsCheckbox = document.getElementById('acepto-terminos');
     if (!termsCheckbox || !termsCheckbox.checked) {
-      alert('Debes aceptar los Términos y Condiciones para enviar la postulación.');
+      alert('Debés aceptar los Términos y Condiciones para enviar la postulación.');
       if (termsCheckbox) termsCheckbox.focus();
       return;
     }
 
-    // Extraer Patologías
-    const patologias = Array.from(form.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
-
-    // Extraer Tareas
-    const tareas = Array.from(form.querySelectorAll('input[name="tarea"]:checked')).map(cb => cb.value);
-
-    // Extraer Cursos de Academy
-    const cursos = Array.from(form.querySelectorAll('input[name="curso-certificado"]:checked')).map(cb => cb.value);
-
-    // Extraer Grilla Horaria Interactiva
-    const grillaHorarios = {};
-    document.querySelectorAll('.schedule-grid-7x3 .select-slot').forEach(slot => {
-      const day = slot.getAttribute('data-day');
-      const shift = slot.getAttribute('data-shift');
-      if (!grillaHorarios[day]) {
-        grillaHorarios[day] = {};
-      }
-      grillaHorarios[day][shift] = slot.classList.contains('active');
-    });
-
-    const data = {
-      nombre: document.getElementById('nombre').value,
-      dni: document.getElementById('dni-num').value,
-      email: document.getElementById('email').value,
-      telefono: document.getElementById('celular').value,
-      cuit: document.getElementById('cuit-cuil').value,
-      fechaNacimiento: document.getElementById('fecha-nacimiento').value,
-      genero: document.getElementById('genero').value,
-      nacionalidad: document.getElementById('nacionalidad').value,
-      domicilio: document.getElementById('domicilio').value,
-      cbu: document.getElementById('cbu-alias').value,
-      profesion: document.getElementById('profesion').value,
-      zona: document.getElementById('zona').value,
-      patologias: patologias,
-      tareas: tareas,
-      educacion: {
-        nivelEstudios: document.getElementById('nivel-estudios').value,
-        cursosCompletados: cursos
-      },
-      valorHora: document.getElementById('valor-hora').value,
-      referencia: {
-        nombre: document.getElementById('ref-nombre').value,
-        telefono: document.getElementById('ref-telefono').value
-      },
-      documentos: {
-        dni: 'DNI_Cargado.pdf',
-        penales: 'Penales_Cargado.pdf',
-        titulo: 'Titulo_Cargado.pdf'
-      }
-    };
-
-    // Agregar la grilla horaria mapeada
-    data.grillaHorarios = grillaHorarios;
+    const submitBtn = document.getElementById('btn-submit-cuidador');
+    submitBtn.textContent = 'Enviando...';
+    submitBtn.disabled = true;
 
     try {
+      // 1. Crear cuenta en Supabase Auth para el asistente
+      const email    = document.getElementById('email').value;
+      const password = document.getElementById('dni-num').value; // DNI como contraseña inicial
+      let userId = 'demo-' + Date.now();
+      try {
+        const user = await CareonysAuth.signup(email, password, {
+          full_name: document.getElementById('nombre').value,
+          role: 'caregiver'
+        });
+        if (user) userId = user.id;
+      } catch (authErr) {
+        // Si ya existe la cuenta, continuar de todas formas
+        console.warn('Auth signup error (may already exist):', authErr.message);
+      }
+
+      // 2. Subir documentos a Supabase Storage
+      const docUrls = {
+        dni: 'pendiente',
+        penales: 'pendiente',
+        titulo: 'pendiente'
+      };
+
+      const fileDni     = document.getElementById('file-dni')?.files[0];
+      const filePenales = document.getElementById('file-penales')?.files[0];
+      const fileTitulo  = document.getElementById('file-titulo')?.files[0];
+
+      if (fileDni) {
+        try {
+          docUrls.dni = await CareonysAuth.uploadFile(
+            'documentos-cuidadores',
+            `${userId}/dni_frente.${fileDni.name.split('.').pop()}`,
+            fileDni
+          );
+        } catch (e) { console.warn('DNI upload error:', e.message); }
+      }
+      if (filePenales) {
+        try {
+          docUrls.penales = await CareonysAuth.uploadFile(
+            'documentos-cuidadores',
+            `${userId}/penales.${filePenales.name.split('.').pop()}`,
+            filePenales
+          );
+        } catch (e) { console.warn('Penales upload error:', e.message); }
+      }
+      if (fileTitulo) {
+        try {
+          docUrls.titulo = await CareonysAuth.uploadFile(
+            'documentos-cuidadores',
+            `${userId}/titulo.${fileTitulo.name.split('.').pop()}`,
+            fileTitulo
+          );
+        } catch (e) { console.warn('Titulo upload error:', e.message); }
+      }
+
+      // 3. Extraer datos del formulario
+      const patologias = Array.from(form.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
+      const tareas     = Array.from(form.querySelectorAll('input[name="tarea"]:checked')).map(cb => cb.value);
+      const cursos     = Array.from(form.querySelectorAll('input[name="curso-certificado"]:checked')).map(cb => cb.value);
+      const grillaHorarios = {};
+      document.querySelectorAll('.schedule-grid-7x3 .select-slot').forEach(slot => {
+        const day = slot.getAttribute('data-day');
+        const shift = slot.getAttribute('data-shift');
+        if (!grillaHorarios[day]) grillaHorarios[day] = {};
+        grillaHorarios[day][shift] = slot.classList.contains('active');
+      });
+
+      // 4. Registrar en Supabase (tabla caregivers)
+      const data = {
+        nombre:          document.getElementById('nombre').value,
+        dni:             document.getElementById('dni-num').value,
+        email:           email,
+        telefono:        document.getElementById('celular').value,
+        cuit:            document.getElementById('cuit-cuil').value,
+        fechaNacimiento: document.getElementById('fecha-nacimiento').value,
+        genero:          document.getElementById('genero').value,
+        nacionalidad:    document.getElementById('nacionalidad').value,
+        domicilio:       document.getElementById('domicilio').value,
+        cbu:             document.getElementById('cbu-alias').value,
+        profesion:       document.getElementById('profesion').value,
+        zona:            document.getElementById('zona').value,
+        patologias,
+        tareas,
+        educacion: {
+          nivelEstudios:     document.getElementById('nivel-estudios').value,
+          cursosCompletados: cursos
+        },
+        valorHora:  document.getElementById('valor-hora').value,
+        referencia: {
+          nombre:   document.getElementById('ref-nombre').value,
+          telefono: document.getElementById('ref-telefono').value
+        },
+        documentos:     docUrls,   // URLs reales de Supabase Storage
+        grillaHorarios
+      };
+
       await CareonysAPI.registrarAspirante(data);
-      alert('¡Postulación recibida con éxito!\nTu legajo ha ingresado al proceso de auditoría y entrevistas del plantel.');
-      
+
+      // 5. Confirmar al usuario
       const successMsg = document.getElementById('form-success');
       if (successMsg) successMsg.style.display = 'block';
-      
       form.reset();
-      
-      // Limpiar slots de grilla
       document.querySelectorAll('.schedule-grid-7x3 .select-slot').forEach(slot => {
         slot.classList.remove('active');
         slot.style.background = '#f1f5f9';
@@ -672,19 +754,19 @@
         slot.style.borderColor = '#e2e8f0';
         slot.textContent = '—';
       });
+      goToStep(1);
+      setTimeout(() => { if (successMsg) successMsg.style.display = 'none'; }, 6000);
 
-      goToStep(1); // Reiniciar al paso 1
-      
-      setTimeout(() => { 
-        if (successMsg) successMsg.style.display = 'none';
-      }, 6000);
     } catch (err) {
-      alert('Error al enviar la postulación a la base de datos: ' + err.message);
+      alert('Error al enviar la postulación: ' + err.message);
+    } finally {
+      submitBtn.textContent = 'COMPLETAR REGISTRO Y SOLICITAR AUDITORÍA DE LEGAJO';
+      submitBtn.disabled = false;
     }
   });
-
   // Inicializar círculos de progreso en paso 1 al cargar
   goToStep(1);
+
 </script>
 </body>
 </html>

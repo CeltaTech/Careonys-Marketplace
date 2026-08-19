@@ -136,7 +136,9 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/apiClient.js"></script>
+  <script src="js/auth.js"></script>
   <script>
     let aspiranteSeleccionadoId = null;
 
@@ -186,6 +188,11 @@
       const a = data.find(item => item.id === id);
       if (!a) return;
 
+      const docs = a.documentos || {};
+      const linkDni     = docs.dni     && docs.dni !== 'pendiente'     ? `<a href="${docs.dni}" target="_blank" style="color:#2563eb;font-weight:700;">Ver DNI</a>`           : '<span style="color:#94a3b8">Pendiente</span>';
+      const linkPenales = docs.penales && docs.penales !== 'pendiente' ? `<a href="${docs.penales}" target="_blank" style="color:#2563eb;font-weight:700;">Ver Penales</a>`     : '<span style="color:#94a3b8">Pendiente</span>';
+      const linkTitulo  = docs.titulo  && docs.titulo !== 'pendiente'  ? `<a href="${docs.titulo}" target="_blank" style="color:#2563eb;font-weight:700;">Ver Título</a>`       : '<span style="color:#94a3b8">Pendiente</span>';
+
       const html = `
         <p><strong>Nombre completo:</strong> ${a.nombre}</p>
         <p><strong>DNI:</strong> ${a.dni} | <strong>Email:</strong> ${a.email} | <strong>Teléfono:</strong> ${a.telefono}</p>
@@ -194,9 +201,9 @@
         <p><strong>Tareas Declaradas:</strong> ${(a.tareas || []).join(', ')}</p>
         <div style="background:#eef2ff;padding:10px;border-radius:8px;margin-top:10px;">
           <strong>Documentos adjuntos para verificar:</strong><br/>
-          🛡️ DNI Frente/Dorso: <a href="#" onclick="alert('Simulación: Visualizando DNI original en alta resolución.');return false;">Ver Documento</a> | 
-          📋 Antecedentes Penales: <a href="#" onclick="alert('Simulación: Certificado de Penales sin antecedentes.');return false;">Ver PDF</a> | 
-          📜 Título/Matrícula: <a href="#" onclick="alert('Simulación: Título de Enfermería/Gerontología verificado.');return false;">Ver Título</a>
+          🛡️ DNI Frente/Dorso: ${linkDni} |
+          📋 Antecedentes Penales: ${linkPenales} |
+          📜 Título/Matrícula: ${linkTitulo}
         </div>
       `;
 
