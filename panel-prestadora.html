@@ -1,185 +1,12 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Panel de la Prestadora — PresDemo</title>
+  <title>Panel de la Prestadora â€” PresDemo</title>
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <style>
-    body {
-      background: #f1f5f9;
-    }
-
-    .tenant-header {
-      background: var(--purple-dark);
-      color: #fff;
-      padding: 16px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .tenant-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 800;
-      font-size: 18px;
-    }
-
-    .tenant-badge {
-      background: var(--magenta);
-      color: #fff;
-      font-size: 11px;
-      padding: 3px 10px;
-      border-radius: 50px;
-      text-transform: uppercase;
-    }
-
-    .admin-layout {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      min-height: calc(100vh - 64px);
-    }
-
-    .admin-sidebar {
-      background: #ffffff;
-      border-right: 1px solid #e2e8f0;
-      padding: 20px 12px;
-    }
-
-    .sidebar-menu {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .sidebar-menu li a {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      color: #475569;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 14px;
-      margin-bottom: 4px;
-      transition: var(--transition);
-    }
-
-    .sidebar-menu li a.active,
-    .sidebar-menu li a:hover {
-      background: #f8fafc;
-      color: var(--purple-dark);
-      font-weight: 700;
-    }
-
-    .admin-content {
-      padding: 28px;
-    }
-
-    .card-dashboard {
-      background: #fff;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-      margin-bottom: 24px;
-    }
-
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .kpi-card {
-      background: #fff;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
-      padding: 16px;
-      text-align: center;
-    }
-
-    .kpi-val {
-      font-size: 28px;
-      font-weight: 900;
-      color: var(--purple-dark);
-    }
-
-    .kpi-label {
-      font-size: 12px;
-      color: #64748b;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .aspirantes-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      margin-top: 12px;
-    }
-
-    .aspirantes-table th,
-    .aspirantes-table td {
-      padding: 12px 14px;
-      text-align: left;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    .aspirantes-table th {
-      background: #f8fafc;
-      color: #475569;
-      font-weight: 700;
-    }
-
-    .status-pill {
-      padding: 4px 10px;
-      border-radius: 50px;
-      font-size: 11px;
-      font-weight: 800;
-      display: inline-block;
-    }
-
-    .status-revision {
-      background: #fff3e0;
-      color: #e65100;
-    }
-
-    .status-validado {
-      background: #e8f5e9;
-      color: #2e7d32;
-    }
-
-    .modal-legajo {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(4px);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-box {
-      background: #fff;
-      border-radius: 16px;
-      max-width: 720px;
-      width: 90%;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 24px;
-    }
-  </style>
 </head>
 
 <body>
@@ -200,10 +27,10 @@
     <aside class="admin-sidebar">
       <ul class="sidebar-menu">
         <li><a href="#" class="active"><i class="fas fa-users-cog"></i> Reclutamiento & Legajos</a></li>
-        <li><a href="#"><i class="fas fa-calendar-alt"></i> Entrevistas de Selección</a></li>
+        <li><a href="#"><i class="fas fa-calendar-alt"></i> Entrevistas de SelecciÃ³n</a></li>
         <li><a href="#"><i class="fas fa-map-marker-alt"></i> Presentismo GPS Vivo</a></li>
-        <li><a href="#"><i class="fas fa-search-dollar"></i> Búsquedas de Familias</a></li>
-        <li><a href="#"><i class="fas fa-file-invoice-dollar"></i> Facturación & Liquidación</a></li>
+        <li><a href="#"><i class="fas fa-search-dollar"></i> BÃºsquedas de Familias</a></li>
+        <li><a href="#"><i class="fas fa-file-invoice-dollar"></i> FacturaciÃ³n & LiquidaciÃ³n</a></li>
       </ul>
     </aside>
 
@@ -211,7 +38,7 @@
       <div class="kpi-grid">
         <div class="kpi-card">
           <div class="kpi-val" id="kpi-revision">1</div>
-          <div class="kpi-label">Legajos En Revisión</div>
+          <div class="kpi-label">Legajos En RevisiÃ³n</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-val" id="kpi-validados">1</div>
@@ -231,9 +58,9 @@
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
           <div>
             <h3 style="margin:0;font-size:18px;color:var(--purple-dark);"><i class="fas fa-clipboard-check"></i>
-              Postulaciones de Cuidadoras para Auditoría</h3>
+              Postulaciones de Cuidadoras para AuditorÃ­a</h3>
             <p style="margin:4px 0 0 0;font-size:13px;color:#64748b;">Legajos digitales enviados desde Careonys
-              Marketplace para la revisión y entrevista de la prestadora.</p>
+              Marketplace para la revisiÃ³n y entrevista de la prestadora.</p>
           </div>
           <button class="btn btn-purple" onclick="cargarAspirantes();" style="font-size:12px;padding:8px 16px;"><i
               class="fas fa-sync-alt"></i> Actualizar</button>
@@ -245,26 +72,26 @@
               <th>Aspirante / DNI</th>
               <th>Especialidad</th>
               <th>Zona</th>
-              <th>Documentación Cargada</th>
-              <th>Estado de Auditoría</th>
-              <th>Acción de Selección</th>
+              <th>DocumentaciÃ³n Cargada</th>
+              <th>Estado de AuditorÃ­a</th>
+              <th>AcciÃ³n de SelecciÃ³n</th>
             </tr>
           </thead>
           <tbody id="tabla-aspirantes-body">
-            <!-- Renderizado dinámico desde apiClient.js -->
+            <!-- Renderizado dinÃ¡mico desde apiClient.js -->
           </tbody>
         </table>
       </div>
     </main>
   </div>
 
-  <!-- MODAL DE AUDITORÍA Y OTORGAMIENTO DE AVAL DE PRESTADORA -->
+  <!-- MODAL DE AUDITORÃA Y OTORGAMIENTO DE AVAL DE PRESTADORA -->
   <div id="modal-auditoria" class="modal-legajo">
     <div class="modal-box">
       <div
         style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid #e2e8f0;padding-bottom:12px;">
-        <h3 style="margin:0;color:var(--purple-dark);"><i class="fas fa-id-card"></i> Auditoría de Legajo & Entrevista
-          de Selección</h3>
+        <h3 style="margin:0;color:var(--purple-dark);"><i class="fas fa-id-card"></i> AuditorÃ­a de Legajo & Entrevista
+          de SelecciÃ³n</h3>
         <button onclick="document.getElementById('modal-auditoria').style.display='none';"
           style="background:none;border:none;font-size:20px;cursor:pointer;">&times;</button>
       </div>
@@ -275,12 +102,12 @@
 
       <div style="background:#f8fafc;padding:16px;border-radius:12px;margin:16px 0;border:1px solid #e2e8f0;">
         <h4 style="margin:0 0 8px 0;font-size:14px;color:var(--purple-dark);"><i class="fas fa-user-check"></i>
-          Resolución de la Prestadora PresDemo:</h4>
+          ResoluciÃ³n de la Prestadora PresDemo:</h4>
         <div style="margin-bottom:12px;">
-          <label style="font-weight:700;font-size:12px;">Notas de la Entrevista Psicotécnica y Evaluación:</label>
+          <label style="font-weight:700;font-size:12px;">Notas de la Entrevista PsicotÃ©cnica y EvaluaciÃ³n:</label>
           <textarea id="nota-entrevista"
             style="width:100%;height:60px;padding:8px;font-size:12px;border-radius:6px;border:1px solid #cbd5e1;margin-top:4px;"
-            placeholder="Ej: Entrevista aprobada vía videollamada. Excelente manejo en demencias. DNI y Penales verificados."></textarea>
+            placeholder="Ej: Entrevista aprobada vÃ­a videollamada. Excelente manejo en demencias. DNI y Penales verificados."></textarea>
         </div>
         <div style="display:flex;gap:12px;">
           <button class="btn" style="background:#2e7d32;color:#fff;font-weight:800;font-size:13px;flex:1;"
@@ -294,8 +121,8 @@
         </div>
       </div>
 
-      <p style="font-size:11px;color:#64748b;margin:0;">* Nota legal: Careonys provee únicamente el software SaaS. El
-        otorgamiento del aval y la selección son responsabilidad exclusiva de PresDemo.</p>
+      <p style="font-size:11px;color:#64748b;margin:0;">* Nota legal: Careonys provee Ãºnicamente el software SaaS. El
+        otorgamiento del aval y la selecciÃ³n son responsabilidad exclusiva de PresDemo.</p>
     </div>
   </div>
 
@@ -325,12 +152,12 @@
           <td>${a.profesion}</td>
           <td>${a.zona}</td>
           <td>
-            <span style="color:#2563eb;font-size:11px;font-weight:700;"><i class="fas fa-file-pdf"></i> DNI, Penales, Título</span>
+            <span style="color:#2563eb;font-size:11px;font-weight:700;"><i class="fas fa-file-pdf"></i> DNI, Penales, TÃ­tulo</span>
           </td>
           <td>
             ${a.estado === 'en_revision' ?
-            '<span class="status-pill status-revision">🔴 En Revisión</span>' :
-            '<span class="status-pill status-validado">🟢 Validado por Prestadora</span>'}
+            '<span class="status-pill status-revision">ðŸ”´ En RevisiÃ³n</span>' :
+            '<span class="status-pill status-validado">ðŸŸ¢ Validado por Prestadora</span>'}
           </td>
           <td>
             <button class="btn btn-purple" style="font-size:11px;padding:6px 12px;" onclick="abrirAuditoria('${a.id}')">
@@ -354,19 +181,19 @@
       const docs = a.documentos || {};
       const linkDni = docs.dni && docs.dni !== 'pendiente' ? `<a href="${docs.dni}" target="_blank" style="color:#2563eb;font-weight:700;">Ver DNI</a>` : '<span style="color:#94a3b8">Pendiente</span>';
       const linkPenales = docs.penales && docs.penales !== 'pendiente' ? `<a href="${docs.penales}" target="_blank" style="color:#2563eb;font-weight:700;">Ver Penales</a>` : '<span style="color:#94a3b8">Pendiente</span>';
-      const linkTitulo = docs.titulo && docs.titulo !== 'pendiente' ? `<a href="${docs.titulo}" target="_blank" style="color:#2563eb;font-weight:700;">Ver Título</a>` : '<span style="color:#94a3b8">Pendiente</span>';
+      const linkTitulo = docs.titulo && docs.titulo !== 'pendiente' ? `<a href="${docs.titulo}" target="_blank" style="color:#2563eb;font-weight:700;">Ver TÃ­tulo</a>` : '<span style="color:#94a3b8">Pendiente</span>';
 
       const html = `
         <p><strong>Nombre completo:</strong> ${a.nombre}</p>
-        <p><strong>DNI:</strong> ${a.dni} | <strong>Email:</strong> ${a.email} | <strong>Teléfono:</strong> ${a.telefono}</p>
+        <p><strong>DNI:</strong> ${a.dni} | <strong>Email:</strong> ${a.email} | <strong>TelÃ©fono:</strong> ${a.telefono}</p>
         <p><strong>Perfil Profesional:</strong> ${a.profesion} (${a.zona})</p>
-        <p><strong>Patologías con Experiencia:</strong> ${(a.patologias || []).join(', ')}</p>
+        <p><strong>PatologÃ­as con Experiencia:</strong> ${(a.patologias || []).join(', ')}</p>
         <p><strong>Tareas Declaradas:</strong> ${(a.tareas || []).join(', ')}</p>
         <div style="background:#eef2ff;padding:10px;border-radius:8px;margin-top:10px;">
           <strong>Documentos adjuntos para verificar:</strong><br/>
-          🛡️ DNI Frente/Dorso: ${linkDni} |
-          📋 Antecedentes Penales: ${linkPenales} |
-          📜 Título/Matrícula: ${linkTitulo}
+          ðŸ›¡ï¸ DNI Frente/Dorso: ${linkDni} |
+          ðŸ“‹ Antecedentes Penales: ${linkPenales} |
+          ðŸ“œ TÃ­tulo/MatrÃ­cula: ${linkTitulo}
         </div>
       `;
 
@@ -378,7 +205,7 @@
       if (!aspiranteSeleccionadoId) return;
       const nota = document.getElementById('nota-entrevista').value || 'Aprobado por el equipo de RRHH PresDemo.';
       await CareonysAPI.cambiarEstadoAspirante(aspiranteSeleccionadoId, 'validado_prestadora', nota);
-      alert('✓ Legajo auditado exitosamente. Se ha asignado el sello "Validado por Prestadora" y habilitado en el plantel activo.');
+      alert('âœ“ Legajo auditado exitosamente. Se ha asignado el sello "Validado por Prestadora" y habilitado en el plantel activo.');
       document.getElementById('modal-auditoria').style.display = 'none';
       cargarAspirantes();
     }
