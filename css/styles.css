@@ -175,7 +175,7 @@ ul {
 }
 
 .navbar-logo img {
-  height: 200px;
+  height: 48px;
   width: auto;
 }
 
@@ -301,8 +301,19 @@ ul {
 
 .mobile-social {
   display: flex;
-  gap: 16px;
+  justify-content: center;
+  gap: 20px;
   padding-top: 8px;
+}
+
+.mobile-social a {
+  font-size: 18px;
+  color: var(--text-dark);
+  transition: color var(--transition);
+}
+
+.mobile-social a:hover {
+  color: var(--magenta);
 }
 
 /* ---- Hero Section ---- */
