@@ -107,16 +107,11 @@ if (hallazgos.length) {
   );
 }
 
-const original = readFileSync(join(raiz, COPIAS_IDENTIDAD[0]));
-for (const copia of COPIAS_IDENTIDAD.slice(1)) {
-  if (!readFileSync(join(raiz, copia)).equals(original)) {
-    problemas.push(
-      copia.split(sep).join('/') + ' se separó de js/identidad.js.\n' +
-      'Las tres copias tienen que ser iguales byte a byte: cada PWA necesita la suya\n' +
-      'porque su service worker solo alcanza su propia carpeta.'
-    );
-  }
-}
+// Las tres copias de js/identidad.js tienen que ser iguales byte a byte. Quien
+// las compara es scripts/verificar_copias.mjs, que hace lo mismo con los otros
+// cuatro archivos repetidos: la comparación vive en un solo lugar.
+const { verificarCopias } = await import('./verificar_copias.mjs');
+problemas.push(...verificarCopias('js/identidad.js').problemas);
 
 const { revisarManifiestos } = await import('./generar_manifiestos.mjs');
 const desactualizados = revisarManifiestos(false);
