@@ -1,4 +1,20 @@
 # Careonys Platform — Módulo de Cuidados (PresDemo)
+
+> [!WARNING]
+> **Material de diseño, no plan de ejecución.** Verificado contra el código el 2026-08-23.
+>
+> **La arquitectura que este documento propone está descartada** —monorepo Turborepo, React
+> Native, Tauri, Expo—. El destino decidido es React 18 + Vite, alineado con Careonys. Nada de la
+> sección de arquitectura se ejecuta.
+>
+> **Lo que sigue vigente es el modelo de datos**, y es el insumo más completo que tiene el
+> proyecto: 22 tablas en 1.528 renglones. Se usa como entrada al diseñar el esquema nuevo.
+>
+> Tres advertencias de vocabulario antes de copiar un nombre (ver `docs/GLOSARIO.md`):
+> `cuidadores` es **Asistente**; `especialidades` es **Tipo de Asistente**; y `profiles` es el
+> único nombre en inglés del documento, además de una tabla que el código actual no usa.
+>
+> El estado real del producto lo dice `docs/ALCANCE.md`, no este archivo.
 ### Plataforma Multi-Tenant SaaS · Marketplace de Cuidadores · Web · iOS · Android · Windows
 
 ---

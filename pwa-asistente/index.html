@@ -7,6 +7,10 @@
   <meta name="description" content="Aplicación del Asistente de Cuidado Careonys. Fichado GPS, bitácora médica y postulación de legajo." />
   <link rel="manifest" href="manifest.json" />
   <!-- CSS LOCAL (dentro del scope del Service Worker) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles-pwa.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
@@ -18,7 +22,7 @@
     }
     #phone-container {
       width: 100%; max-width: 420px; height: 100vh; max-height: 840px;
-      background: #fff; position: relative;
+      background: var(--superficie); position: relative;
       box-shadow: 0 12px 40px rgba(15, 23, 42, 0.15);
       border-radius: 32px; overflow: hidden;
       border: 8px solid #0f172a; display: flex; flex-direction: column;
@@ -26,7 +30,7 @@
     #phone-container ::-webkit-scrollbar { display: none; }
 
     @media (max-width: 480px) {
-      body { background: #fff; }
+      body { background: var(--superficie); }
       #phone-container { max-width: 100%; height: 100vh; max-height: 100%; border-radius: 0; border: none; }
     }
 
@@ -37,25 +41,25 @@
     .app-screen.active { display: flex; }
 
     .app-header {
-      background: #fff; padding: 14px 18px;
+      background: var(--superficie); padding: 14px 18px;
       display: flex; align-items: center; justify-content: space-between;
       border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100;
     }
-    .app-header h1 { font-size: 16px; font-weight: 800; color: var(--color-primary, #1A365D); margin: 0; }
+    .app-header h1 { font-size: 16px; font-weight: 800; color: var(--marca-prestadora); margin: 0; }
     .app-header .btn-back {
       font-size: 18px; color: #64748b; cursor: pointer; background: none; border: none; padding: 4px;
     }
 
     /* LOGIN */
     #screen-intro {
-      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      background: linear-gradient(135deg, var(--fondo-app) 0%, var(--superficie-hover) 100%);
       padding: 24px; box-sizing: border-box; justify-content: center;
     }
     .intro-logo-container { text-align: center; margin-bottom: 30px; }
     .intro-logo-container img { height: 60px; margin-bottom: 12px; }
-    .intro-logo-container h2 { font-size: 24px; font-weight: 800; color: var(--color-primary, #1A365D); margin: 0; }
+    .intro-logo-container h2 { font-size: 24px; font-weight: 800; color: var(--marca-prestadora); margin: 0; }
     .login-card {
-      background: #fff; padding: 24px; border-radius: 20px;
+      background: var(--superficie); padding: 24px; border-radius: 20px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: 1px solid #e2e8f0;
     }
     .input-wrapper { position: relative; margin-bottom: 16px; }
@@ -64,34 +68,34 @@
       border: 1.5px solid #cbd5e1; font-size: 14px; box-sizing: border-box;
       transition: all 0.3s ease; background: #f8fafc;
     }
-    .input-wrapper input:focus { border-color: var(--color-accent, #E53E3E); background: #fff; outline: none; }
+    .input-wrapper input:focus { border-color: var(--marca-prestadora-acento); background: var(--superficie); outline: none; }
     .btn-login {
       width: 100%; padding: 12px; border-radius: 12px;
-      background: var(--color-primary, #1A365D); color: #fff; font-weight: 700; border: none;
+      background: var(--marca-prestadora); color: #fff; font-weight: 700; border: none;
       font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(26, 54, 93, 0.2);
     }
     .btn-register-link {
       text-align: center; margin-top: 16px; font-size: 12px; color: #64748b;
     }
     .btn-register-link a {
-      color: var(--color-primary, #1A365D); font-weight: 700; cursor: pointer;
+      color: var(--marca-prestadora); font-weight: 700; cursor: pointer;
       text-decoration: underline;
     }
 
     /* DASHBOARD */
     .dashboard-header {
-      background: #fff; padding: 14px 18px;
+      background: var(--superficie); padding: 14px 18px;
       display: flex; align-items: center; justify-content: space-between;
       border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100;
     }
 
     /* WIDGET FICHADO GPS */
     .gps-widget {
-      background: #fff; border: 1px solid #e2e8f0; border-radius: 20px;
+      background: var(--superficie); border: 1px solid #e2e8f0; border-radius: 20px;
       padding: 20px; margin: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.02); text-align: center;
     }
-    .gps-widget i { font-size: 32px; color: var(--color-primary, #1A365D); margin-bottom: 10px; }
+    .gps-widget i { font-size: 32px; color: var(--marca-prestadora); margin-bottom: 10px; }
     .gps-actions { display: flex; gap: 10px; margin-top: 16px; }
     .btn-gps {
       flex: 1; padding: 12px; border-radius: 12px;
@@ -107,7 +111,7 @@
 
     /* FORM NOVEDADES BITÁCORA */
     .novedades-form {
-      background: #fff; border: 1px solid #e2e8f0; border-radius: 20px;
+      background: var(--superficie); border: 1px solid #e2e8f0; border-radius: 20px;
       padding: 20px; margin: 0 16px 16px 16px;
     }
     .form-group-pwa { margin-bottom: 12px; text-align: left; }
@@ -119,19 +123,19 @@
 
     /* BOTTOM TAB BAR */
     .bottom-tab-bar {
-      height: 64px; background: #fff; border-top: 1px solid #e2e8f0;
+      height: 64px; background: var(--superficie); border-top: 1px solid #e2e8f0;
       display: flex; justify-content: space-around; align-items: center;
       position: absolute; bottom: 0; width: 100%; box-sizing: border-box; z-index: 100;
     }
-    .tab-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94a3b8; cursor: pointer; text-decoration: none; }
-    .tab-item.active { color: var(--color-primary, #1A365D); }
+    .tab-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color:var(--texto-secundario); cursor: pointer; text-decoration: none; }
+    .tab-item.active { color: var(--marca-prestadora); }
     .tab-item i { font-size: 18px; }
     .tab-item span { font-size: 10px; font-weight: 700; }
 
     /* SIDEBAR */
     .sidebar-drawer {
       position: absolute; top: 0; left: -280px; width: 280px; height: 100%;
-      background: #fff; box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+      background: var(--superficie); box-shadow: 10px 0 30px rgba(0,0,0,0.1);
       z-index: 200; transition: left 0.3s ease; display: flex; flex-direction: column;
     }
     .sidebar-drawer.open { left: 0; }
@@ -141,7 +145,7 @@
     }
     .drawer-overlay.open { display: block; }
     .drawer-header {
-      background: linear-gradient(135deg, var(--color-primary, #1A365D) 0%, #1e1e2d 100%);
+      background: linear-gradient(135deg, var(--marca-prestadora) 0%, #1e1e2d 100%);
       color: #fff; padding: 30px 20px;
     }
     .drawer-header img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #fff; margin-bottom: 10px; }
@@ -156,7 +160,7 @@
     ================================================ */
     #screen-registro { background: #fafafb; }
     .wizard-header-bar {
-      background: var(--color-primary, #1A365D);
+      background: var(--marca-prestadora);
       color: #fff; padding: 16px 18px;
       display: flex; align-items: center; gap: 12px;
       position: sticky; top: 0; z-index: 100;
@@ -176,14 +180,14 @@
     }
     .wstep-circle {
       width: 28px; height: 28px; border-radius: 50%;
-      background: #e2e8f0; color: #94a3b8;
+      background: #e2e8f0; color:var(--texto-secundario);
       display: flex; align-items: center; justify-content: center;
       margin: 0 auto 4px auto; font-size: 11px; font-weight: 800;
       transition: all 0.3s ease; position: relative; z-index: 1;
     }
     .wstep-circle.active { background: #E53E3E; color: #fff; }
     .wstep-circle.done { background: #0284c7; color: #fff; }
-    .wstep-label { font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+    .wstep-label { font-size: 9px; font-weight: 700; color:var(--texto-secundario); text-transform: uppercase; }
     .wstep-label.active { color: #E53E3E; }
 
     .wpane { display: none; }
@@ -191,7 +195,7 @@
 
     .wpane h3 {
       font-size: 14px; font-weight: 800;
-      color: var(--color-primary, #1A365D);
+      color: var(--marca-prestadora);
       margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
     }
     .wpane .wfield { margin-bottom: 12px; }
@@ -205,7 +209,7 @@
     }
     .wpane .wfield input:focus,
     .wpane .wfield select:focus,
-    .wpane .wfield textarea:focus { border-color: #1A365D; background: #fff; outline: none; }
+    .wpane .wfield textarea:focus { border-color: #1A365D; background: var(--superficie); outline: none; }
 
     .wgrid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .wgrid-2-full { grid-column: 1 / -1; }
@@ -217,12 +221,12 @@
     .wschedule-grid {
       display: grid; grid-template-columns: repeat(8, 1fr);
       gap: 2px; text-align: center; font-size: 9px;
-      background: #fff; padding: 8px; border-radius: 10px; border: 1px solid #e2e8f0;
+      background: var(--superficie); padding: 8px; border-radius: 10px; border: 1px solid #e2e8f0;
       margin-top: 8px;
     }
     .wschedule-grid .gh { font-weight: 700; background: #f8fafc; padding: 5px 0; border-radius: 3px; font-size: 9px; }
     .wschedule-grid .gt { padding: 6px 0; background: #f8fafc; font-weight: 700; border-radius: 3px; font-size: 8px; display: flex; align-items: center; justify-content: center; }
-    .wschedule-grid .gs { padding: 6px 0; background: #f1f5f9; color: #94a3b8; border-radius: 3px; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.15s; }
+    .wschedule-grid .gs { padding: 6px 0; background: #f1f5f9; color:var(--texto-secundario); border-radius: 3px; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.15s; }
     .wschedule-grid .gs.on { background: #e8f5e9; color: #2e7d32; font-weight: 900; border-color: #c8e6c9; }
 
     .winfo-box {
@@ -237,7 +241,7 @@
     }
     .wbtn-next {
       flex: 1; padding: 12px; border-radius: 12px;
-      background: var(--color-primary, #1A365D); color: #fff;
+      background: var(--marca-prestadora); color: #fff;
       font-weight: 700; font-size: 13px; border: none; cursor: pointer;
     }
     .wbtn-prev {
@@ -278,8 +282,8 @@
         <div style="border-top:1px solid #f1f5f9;margin:8px 0;"></div>
         <a class="drawer-menu-item" id="btn-logout" style="color:#ef4444;"><i class="fas fa-sign-out-alt" style="width:20px;color:#ef4444;"></i> Cerrar sesión</a>
       </div>
-      <div style="padding:16px;text-align:center;font-size:10px;color:#94a3b8;border-top:1px solid #f1f5f9;">
-        Powered by <strong style="color:var(--color-accent, #E53E3E)">Careonys</strong>
+      <div style="padding:16px;text-align:center;font-size:10px;color:var(--texto-secundario);border-top:1px solid #f1f5f9;">
+        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
       </div>
     </div>
 
@@ -302,8 +306,8 @@
           ¿No tenés cuenta? <a onclick="navigate('registro')">Postulate como Asistente</a>
         </div>
       </div>
-      <div style="text-align:center;margin-top:auto;font-size:10px;color:#94a3b8;padding-top:20px;">
-        Powered by <strong style="color:var(--color-accent, #E53E3E)">Careonys</strong>
+      <div style="text-align:center;margin-top:auto;font-size:10px;color:var(--texto-secundario);padding-top:20px;">
+        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
       </div>
     </div>
 
@@ -313,7 +317,7 @@
         <button class="btn-back" id="btn-open-menu" style="font-size:20px;"><i class="fas fa-bars"></i></button>
         <div style="display:flex;align-items:center;gap:6px;">
           <img src="../assets/images/logo_careonys.png" class="tenant-logo" style="height:24px;" alt="Logo" onerror="this.style.display='none'" />
-          <span class="tenant-name" style="font-size:14px;font-weight:800;color:var(--color-primary, #1A365D);">PresDemo</span>
+          <span class="tenant-name" style="font-size:14px;font-weight:800;color:var(--marca-prestadora);">PresDemo</span>
         </div>
         <div style="width:24px;"></div>
       </div>
@@ -341,7 +345,7 @@
 
       <!-- FORM NOVEDADES BITÁCORA -->
       <div class="novedades-form">
-        <h4 style="margin:0 0 16px 0;font-size:14px;font-weight:800;color:var(--color-primary);"><i class="fas fa-notes-medical"></i> Registrar Novedad en Bitácora</h4>
+        <h4 style="margin:0 0 16px 0;font-size:14px;font-weight:800;color:var(--marca-prestadora);"><i class="fas fa-notes-medical"></i> Registrar Novedad en Bitácora</h4>
         <div class="form-group-pwa">
           <label>Presión Arterial (P.A.)</label>
           <input type="text" id="bit-presion" placeholder="Ej: 120/80" />
@@ -361,8 +365,8 @@
         <button type="button" class="btn-login" id="btn-save-bitacora" style="margin-top:8px;">Guardar Novedad</button>
       </div>
 
-      <div style="text-align:center;padding:12px 0 24px 0;font-size:10px;color:#94a3b8;">
-        Powered by <strong style="color:var(--color-accent, #E53E3E)">Careonys</strong>
+      <div style="text-align:center;padding:12px 0 24px 0;font-size:10px;color:var(--texto-secundario);">
+        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
       </div>
 
       <div class="bottom-tab-bar">

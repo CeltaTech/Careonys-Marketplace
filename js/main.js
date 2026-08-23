@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.innerHTML = `
           <div class="video-modal-card">
             <div style="display:flex;justify-content:space-between;align-items:center;">
-              <h3 style="margin:0;font-size:18px;color:var(--purple-dark);"><i class="fas fa-video" style="color:var(--magenta);margin-right:8px;"></i> Entrevista por Videollamada (Careonys Live)</h3>
+              <h3 style="margin:0;font-size:18px;color:var(--texto-titulo);"><i class="fas fa-video" style="color:var(--azul-medio-texto);margin-right:8px;"></i> Entrevista por Videollamada (Careonys Live)</h3>
               <button class="btn-close-video" style="background:none;border:none;font-size:20px;cursor:pointer;">&times;</button>
             </div>
             <div class="video-screen-placeholder">

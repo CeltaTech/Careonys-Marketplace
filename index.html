@@ -7,6 +7,10 @@
   <title>PrestDemo — Buscá y encontrá al cuidador que necesitás</title>
   <meta name="description"
     content="PrestDemo te facilita el acceso a cientos de cuidadores calificados con múltiples herramientas que te facilitan la búsqueda y gestión del cuidado de tu ser querido." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -130,7 +134,7 @@
         </div>
       </a>
       <!-- Card 8: Productos para el hogar (PRÓXIMAMENTE) -->
-      <div class="service-card fade-in" style="background:#2d0a22;cursor:default;">
+      <div class="service-card fade-in" style="background:var(--azul-oscuro);cursor:default;">
         <div class="badge-proximamente">PRÓXIMAMENTE</div>
         <div class="service-card-overlay" style="background:none;position:relative;padding:40px 24px;">
           <h3>Productos para el hogar</h3>
@@ -138,7 +142,7 @@
         </div>
       </div>
       <!-- Card 9: Home (PRÓXIMAMENTE) -->
-      <div class="service-card fade-in" style="background:#2d0a22;cursor:default;">
+      <div class="service-card fade-in" style="background:var(--azul-oscuro);cursor:default;">
         <div class="badge-proximamente">PRÓXIMAMENTE</div>
         <div class="service-card-overlay" style="background:none;position:relative;padding:40px 24px;">
           <h3>Home</h3>
@@ -150,8 +154,8 @@
 
   <!-- ==================== CTA BUTTONS ==================== -->
   <div class="cta-block">
-    <a href="solicitar-asistente.html" class="btn btn-yellow">DESCARGA LA APP</a>
-    <a href="#contact" class="btn btn-magenta">¿TE ASESORAMOS?</a>
+    <a href="solicitar-asistente.html" class="btn btn-atencion">DESCARGA LA APP</a>
+    <a href="#contact" class="btn btn-primario">¿TE ASESORAMOS?</a>
   </div>
 
   <!-- ==================== 3 PASOS ==================== -->
@@ -163,8 +167,8 @@
           <!-- Mockup de celular con CSS -->
           <div
             style="background:#1e1e1e;border-radius:40px;padding:14px;max-width:280px;margin:0 auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-            <div style="background:#fff;border-radius:28px;overflow:hidden;min-height:500px;">
-              <div style="background:linear-gradient(to right,#00c853,#aeea00,#ffd600,#ff6d00,#e91e8c);height:4px;">
+            <div style="background: var(--superficie);border-radius:28px;overflow:hidden;min-height:500px;">
+              <div style="background:linear-gradient(to right, var(--verde-exito), var(--naranja-alerta), var(--azul-medio));height:4px;">
               </div>
               <div style="padding:16px;">
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
@@ -172,8 +176,8 @@
                     style="width:48px;height:48px;border-radius:50%;object-fit:cover;" alt="" />
                   <div>
                     <div style="font-weight:700;font-size:14px;">MARISA MIRANDA</div>
-                    <div style="font-size:11px;color:#888;">30 años | Grand Bourg</div>
-                    <div style="color:#f5c518;font-size:14px;">★★★★★<span style="color:#888;font-size:11px;"> (1220
+                    <div style="font-size:11px;color:var(--texto-secundario);">30 años | Grand Bourg</div>
+                    <div style="color:var(--naranja-alerta-texto);font-size:14px;">★★★★★<span style="color:var(--texto-secundario);font-size:11px;"> (1220
                         ptos)</span></div>
                   </div>
                 </div>
@@ -191,17 +195,17 @@
                   Con/Sin Retiro</div>
                 <div style="display:flex;gap:4px;">
                   <span
-                    style="background:#5c1049;color:#fff;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;">L</span>
+                    style="background:var(--azul-oscuro);color:#fff;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;">L</span>
                   <span
-                    style="background:#5c1049;color:#fff;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;">M</span>
+                    style="background:var(--azul-oscuro);color:#fff;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;">M</span>
                   <span
-                    style="background:#5c1049;color:#fff;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;">J</span>
+                    style="background:var(--azul-oscuro);color:#fff;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;">J</span>
                   <span
-                    style="background:#5c1049;color:#fff;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;">V</span>
+                    style="background:var(--azul-oscuro);color:#fff;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;">V</span>
                   <span
-                    style="background:#5c1049;color:#fff;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;">S</span>
+                    style="background:var(--azul-oscuro);color:#fff;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;">S</span>
                   <span
-                    style="background:#5c1049;color:#fff;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;">D</span>
+                    style="background:var(--azul-oscuro);color:#fff;width:22px;height:22px;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;">D</span>
                 </div>
               </div>
             </div>
@@ -237,7 +241,7 @@
 
   <!-- ==================== CTA BANNER MAGENTA ==================== -->
   <div class="cta-banner">
-    <a href="solicitar-asistente.html" class="btn btn-yellow">DESCARGA LA APP</a>
+    <a href="solicitar-asistente.html" class="btn btn-atencion">DESCARGA LA APP</a>
   </div>
 
   <!-- ==================== APP SHOWCASE ==================== -->
@@ -249,27 +253,27 @@
       <!-- Showcase visual con 5 celulares CSS -->
       <div class="phones-display fade-in">
         <div
-          style="background:#fff;border-radius:32px;border:3px solid #222;padding:10px;width:160px;box-shadow:0 16px 40px rgba(0,0,0,0.15);transform:rotate(-8deg) translateY(30px);">
+          style="background: var(--superficie);border-radius:32px;border:3px solid #222;padding:10px;width:160px;box-shadow:0 16px 40px rgba(0,0,0,0.15);transform:rotate(-8deg) translateY(30px);">
           <img src="assets/images/perfil_carmen.png"
             style="width:100%;border-radius:22px;height:200px;object-fit:cover;" alt="" />
         </div>
         <div
-          style="background:#fff;border-radius:32px;border:3px solid #222;padding:10px;width:180px;box-shadow:0 16px 40px rgba(0,0,0,0.15);transform:rotate(-4deg) translateY(15px);">
+          style="background: var(--superficie);border-radius:32px;border:3px solid #222;padding:10px;width:180px;box-shadow:0 16px 40px rgba(0,0,0,0.15);transform:rotate(-4deg) translateY(15px);">
           <img src="assets/images/perfil_laura.png" style="width:100%;border-radius:22px;height:240px;object-fit:cover;"
             alt="" />
         </div>
         <div
-          style="background:#fff;border-radius:32px;border:3px solid #222;padding:20px;width:200px;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
+          style="background: var(--superficie);border-radius:32px;border:3px solid #222;padding:20px;width:200px;box-shadow:0 20px 60px rgba(0,0,0,0.25);">
           <img src="assets/images/logo_presdemo.png"
             style="width:100%;border-radius:16px;height:240px;object-fit:contain;" alt="PresDemo" />
         </div>
         <div
-          style="background:#fff;border-radius:32px;border:3px solid #222;padding:10px;width:180px;box-shadow:0 16px 40px rgba(0,0,0,0.15);transform:rotate(4deg) translateY(15px);">
+          style="background: var(--superficie);border-radius:32px;border:3px solid #222;padding:10px;width:180px;box-shadow:0 16px 40px rgba(0,0,0,0.15);transform:rotate(4deg) translateY(15px);">
           <img src="assets/images/perfil_maria.png" style="width:100%;border-radius:22px;height:240px;object-fit:cover;"
             alt="" />
         </div>
         <div
-          style="background:#fff;border-radius:32px;border:3px solid #222;padding:10px;width:160px;box-shadow:0 16px 40px rgba(0,0,0,0.15);transform:rotate(8deg) translateY(30px);">
+          style="background: var(--superficie);border-radius:32px;border:3px solid #222;padding:10px;width:160px;box-shadow:0 16px 40px rgba(0,0,0,0.15);transform:rotate(8deg) translateY(30px);">
           <img src="assets/images/perfil_ana.png" style="width:100%;border-radius:22px;height:200px;object-fit:cover;"
             alt="" />
         </div>
@@ -316,7 +320,7 @@
               <label><input type="radio" name="newsletter" value="no" /> No</label>
             </div>
           </div>
-          <button type="submit" class="btn btn-purple">ENVIAR</button>
+          <button type="submit" class="btn btn-secundario">ENVIAR</button>
           <div id="form-success" class="form-success">✓ ¡Gracias! Nos pondremos en contacto a la brevedad.</div>
         </form>
       </div>
@@ -324,7 +328,7 @@
   </section>
 
   <!-- ==================== 5 PASOS (Postularme como Asistente) ==================== -->
-  <section class="steps-section" style="background:#fff;">
+  <section class="steps-section" style="background: var(--superficie);">
     <div class="container">
       <h2 class="fade-in">Conseguí cuidador domiciliario en 5 pasos.</h2>
       <div class="steps-layout">
@@ -354,14 +358,14 @@
           <div class="step-item fade-in">
             <div class="step-number">1</div>
             <div class="step-content">
-              <h4 style="color:var(--magenta);">Tu perfil</h4>
+              <h4 style="color:var(--azul-medio-texto);">Tu perfil</h4>
               <p>Completás tu perfil con toda tu información y experiencia de cuidado.</p>
             </div>
           </div>
           <div class="step-item fade-in">
             <div class="step-number">2</div>
             <div class="step-content">
-              <h4 style="color:var(--magenta);">Buscalo</h4>
+              <h4 style="color:var(--azul-medio-texto);">Buscalo</h4>
               <p>Publicá un aviso específicamente con tus necesidades. Los cuidadores calificados se postularán y podrás
                 hacer una selección.</p>
             </div>
@@ -369,21 +373,21 @@
           <div class="step-item fade-in">
             <div class="step-number">3</div>
             <div class="step-content">
-              <h4 style="color:var(--magenta);">Evaluá postulados</h4>
+              <h4 style="color:var(--azul-medio-texto);">Evaluá postulados</h4>
               <p>Revisá los perfiles de los cuidadores postulados y sus calificaciones.</p>
             </div>
           </div>
           <div class="step-item fade-in">
             <div class="step-number">4</div>
             <div class="step-content">
-              <h4 style="color:var(--magenta);">Entrevistá</h4>
+              <h4 style="color:var(--azul-medio-texto);">Entrevistá</h4>
               <p>Entrevistá a los candidatos por Chat o Video Conferencia desde la app.</p>
             </div>
           </div>
           <div class="step-item fade-in">
             <div class="step-number">5</div>
             <div class="step-content">
-              <h4 style="color:var(--magenta);">Acordá</h4>
+              <h4 style="color:var(--azul-medio-texto);">Acordá</h4>
               <p>Lleguen a un acuerdo y gestioná todo desde la plataforma Careonys.</p>
             </div>
           </div>
@@ -393,42 +397,42 @@
   </section>
 
   <!-- ==================== FEATURE: SEGURIDAD ==================== -->
-  <section class="feature-section" style="background:var(--bg-light);">
+  <section class="feature-section" style="background:var(--superficie-hover);">
     <div class="feature-layout">
       <div class="feature-text fade-in">
         <p class="eyebrow">Seguridad y transparencia</p>
         <h2>Careonys te facilita el acceso a cientos de cuidadores calificados.</h2>
         <p>Cada cuidador completa su perfil incorporando la información necesaria para que el familiar pueda
           verificarlo: antecedentes penales, referencias laborales y recomendaciones de otros usuarios.</p>
-        <a href="directorio.html" class="btn btn-magenta">Ver directorio</a>
+        <a href="directorio.html" class="btn btn-primario">Ver directorio</a>
       </div>
       <div class="feature-image fade-in">
         <img src="assets/images/perfil_patricia.png" alt="Seguridad y transparencia"
-          style="height:380px;object-fit:cover;border-radius:var(--radius);" />
+          style="height:380px;object-fit:cover;border-radius:var(--redondeo-grande);" />
       </div>
     </div>
   </section>
 
   <!-- ==================== FEATURE: ORGANIZÁ ==================== -->
-  <section class="feature-section feature-layout reverse" style="background:#fff;padding:80px 24px;">
+  <section class="feature-section feature-layout reverse" style="background: var(--superficie);padding:80px 24px;">
     <div class="feature-layout" style="max-width:1100px;margin:0 auto;">
       <div class="feature-image fade-in">
         <img src="assets/images/monitoreo_cuidado.png" alt="Organizá el cuidado"
-          style="height:380px;object-fit:cover;border-radius:var(--radius);" />
+          style="height:380px;object-fit:cover;border-radius:var(--redondeo-grande);" />
       </div>
       <div class="feature-text fade-in">
         <p class="eyebrow">Gestión inteligente</p>
         <h2>Organizá y gestioná el cuidado de tu familiar desde tu celular las 24 horas del día.</h2>
         <p>Todos los eventos que sucedan o estén programados para el día pueden ser consultados y gestionados por vos o
           por tus familiares en tiempo real desde el tablero de control.</p>
-        <a href="solicitar-asistente.html" class="btn btn-yellow">Empezar ahora</a>
+        <a href="solicitar-asistente.html" class="btn btn-atencion">Empezar ahora</a>
       </div>
     </div>
   </section>
 
   <!-- ==================== CTA BANNER 2 ==================== -->
   <div class="cta-banner">
-    <a href="solicitar-asistente.html" class="btn btn-yellow">DESCARGA LA APP</a>
+    <a href="solicitar-asistente.html" class="btn btn-atencion">DESCARGA LA APP</a>
   </div>
 
   <!-- ==================== AYUDA SECTION ==================== -->

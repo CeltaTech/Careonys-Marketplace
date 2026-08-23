@@ -7,6 +7,10 @@
   <title>Red de Asistentes — PresDemo</title>
   <meta name="description"
     content="Encontrá al cuidador ideal para tu familiar. Filtrá por zona, especialidad y disponibilidad entre cientos de cuidadores calificados." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -48,7 +52,7 @@
   <section class="directory-hero">
     <h1>Red de Asistentes</h1>
     <p>Encontrá al cuidador ideal para tu ser querido. Todos nuestros cuidadores están verificados y calificados.</p>
-    <a href="solicitar-asistente.html" class="btn btn-yellow">Publicar un aviso</a>
+    <a href="solicitar-asistente.html" class="btn btn-atencion">Publicar un aviso</a>
   </section>
 
   <!-- FILTER BAR -->
@@ -93,7 +97,7 @@
 
   <!-- DIRECTORY GRID -->
   <section class="directory-grid-section">
-    <p style="max-width:1100px;margin:0 auto 24px;font-size:14px;color:var(--text-light);padding:0 12px;"
+    <p style="max-width:1100px;margin:0 auto 24px;font-size:14px;color:var(--texto-secundario);padding:0 12px;"
       id="results-count">Mostrando 8 cuidadores</p>
     <div class="directory-grid" id="directory-grid">
 
@@ -114,17 +118,17 @@
               </div>
             </div>
           </div>
-          <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Cuidadora Domiciliaria, Voluntaria.</p>
+          <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:10px;">Cuidadora Domiciliaria, Voluntaria.</p>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
             <div class="card-badge" style="margin-bottom:0;">Disponible para Reemplazo Urgente</div>
             <span
-              style="background:#fff3e0;color:#e65100;font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px;"><i
+              style="background:var(--tono-atencion-fondo);color:var(--tono-atencion-texto);font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px;"><i
                 class="fas fa-bolt"></i> 98% Match</span>
           </div>
 
           <!-- Badges de Verificación de 4 Niveles + Auditoría Institucional de la Prestadora -->
           <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px 0;">
-            <span class="badge-sendler-verified"
+            <span class="insignia-validada"
               title="Perfil auditado y validado bajo exclusiva responsabilidad de la prestadora cliente (ej: PresDemo)"><i
                 class="fas fa-user-check"></i> Validado por Prestadora</span>
             <span
@@ -159,9 +163,9 @@
           </div>
         </div>
         <div class="card-footer">
-          <a href="perfil.html?id=1" class="btn btn-magenta">Ver perfil</a>
-          <a href="perfil.html?id=1#contactar" class="btn btn-outline-white"
-            style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+          <a href="perfil.html?id=1" class="btn btn-primario">Ver perfil</a>
+          <a href="perfil.html?id=1#contactar" class="btn btn-sobre-oscuro"
+            style="border-color:var(--borde-card);color:var(--texto-secundario);">Contactar</a>
         </div>
       </div>
 
@@ -182,7 +186,7 @@
               </div>
             </div>
           </div>
-          <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Cuidadora Domiciliaria, Enfermero/a,
+          <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:10px;">Cuidadora Domiciliaria, Enfermero/a,
             Auxiliar Enfermería, Voluntaria.</p>
           <div class="card-badge">Activa hoy</div>
           <div class="specialties">
@@ -202,9 +206,9 @@
           </div>
         </div>
         <div class="card-footer">
-          <a href="perfil.html?id=2" class="btn btn-magenta">Ver perfil</a>
-          <a href="perfil.html?id=2#contactar" class="btn btn-outline-white"
-            style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+          <a href="perfil.html?id=2" class="btn btn-primario">Ver perfil</a>
+          <a href="perfil.html?id=2#contactar" class="btn btn-sobre-oscuro"
+            style="border-color:var(--borde-card);color:var(--texto-secundario);">Contactar</a>
         </div>
       </div>
 
@@ -219,12 +223,12 @@
               <p class="sub">45 años | Palermo</p>
               <div class="stars">
                 <span class="star">★</span><span class="star">★</span><span class="star">★</span><span
-                  class="star">★</span><span class="star" style="color:#ccc;">★</span>
+                  class="star">★</span><span class="star" style="color:var(--borde-card);">★</span>
                 <span class="pts">(980 ptos)</span>
               </div>
             </div>
           </div>
-          <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Cuidadora Domiciliaria. Especialista en
+          <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:10px;">Cuidadora Domiciliaria. Especialista en
             pacientes postrados.</p>
           <div class="card-badge">Activa hoy</div>
           <div class="specialties">
@@ -243,9 +247,9 @@
           </div>
         </div>
         <div class="card-footer">
-          <a href="perfil.html?id=3" class="btn btn-magenta">Ver perfil</a>
-          <a href="perfil.html?id=3#contactar" class="btn btn-outline-white"
-            style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+          <a href="perfil.html?id=3" class="btn btn-primario">Ver perfil</a>
+          <a href="perfil.html?id=3#contactar" class="btn btn-sobre-oscuro"
+            style="border-color:var(--borde-card);color:var(--texto-secundario);">Contactar</a>
         </div>
       </div>
 
@@ -266,7 +270,7 @@
               </div>
             </div>
           </div>
-          <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Gerontóloga, Cuidadora Domiciliaria.
+          <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:10px;">Gerontóloga, Cuidadora Domiciliaria.
             Especialista en Alzheimer y demencias.</p>
           <div class="card-badge">Disponible para Reemplazo Urgente</div>
           <div class="specialties">
@@ -286,9 +290,9 @@
           </div>
         </div>
         <div class="card-footer">
-          <a href="perfil.html?id=4" class="btn btn-magenta">Ver perfil</a>
-          <a href="perfil.html?id=4#contactar" class="btn btn-outline-white"
-            style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+          <a href="perfil.html?id=4" class="btn btn-primario">Ver perfil</a>
+          <a href="perfil.html?id=4#contactar" class="btn btn-sobre-oscuro"
+            style="border-color:var(--borde-card);color:var(--texto-secundario);">Contactar</a>
         </div>
       </div>
 
@@ -304,12 +308,12 @@
               <p class="sub">52 años | Belgrano</p>
               <div class="stars">
                 <span class="star">★</span><span class="star">★</span><span class="star">★</span><span
-                  class="star">★</span><span class="star" style="color:#ccc;">★</span>
+                  class="star">★</span><span class="star" style="color:var(--borde-card);">★</span>
                 <span class="pts">(870 ptos)</span>
               </div>
             </div>
           </div>
-          <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Cuidadora Domiciliaria, Voluntaria. Amplia
+          <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:10px;">Cuidadora Domiciliaria, Voluntaria. Amplia
             experiencia en adultos mayores.</p>
           <div class="card-badge">Activa esta semana</div>
           <div class="specialties">
@@ -328,9 +332,9 @@
           </div>
         </div>
         <div class="card-footer">
-          <a href="perfil.html?id=5" class="btn btn-magenta">Ver perfil</a>
-          <a href="perfil.html?id=5#contactar" class="btn btn-outline-white"
-            style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+          <a href="perfil.html?id=5" class="btn btn-primario">Ver perfil</a>
+          <a href="perfil.html?id=5#contactar" class="btn btn-sobre-oscuro"
+            style="border-color:var(--borde-card);color:var(--texto-secundario);">Contactar</a>
         </div>
       </div>
 
@@ -351,7 +355,7 @@
               </div>
             </div>
           </div>
-          <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Enfermera Universitaria, Cuidadora
+          <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:10px;">Enfermera Universitaria, Cuidadora
             Domiciliaria. Especialista en Deterioro Cognitivo.</p>
           <div class="card-badge">Disponible para Reemplazo Urgente</div>
           <div class="specialties">
@@ -371,9 +375,9 @@
           </div>
         </div>
         <div class="card-footer">
-          <a href="perfil.html?id=6" class="btn btn-magenta">Ver perfil</a>
-          <a href="perfil.html?id=6#contactar" class="btn btn-outline-white"
-            style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+          <a href="perfil.html?id=6" class="btn btn-primario">Ver perfil</a>
+          <a href="perfil.html?id=6#contactar" class="btn btn-sobre-oscuro"
+            style="border-color:var(--borde-card);color:var(--texto-secundario);">Contactar</a>
         </div>
       </div>
 
@@ -389,12 +393,12 @@
               <p class="sub">49 años | Flores</p>
               <div class="stars">
                 <span class="star">★</span><span class="star">★</span><span class="star">★</span><span
-                  class="star">★</span><span class="star" style="color:#ccc;">★</span>
+                  class="star">★</span><span class="star" style="color:var(--borde-card);">★</span>
                 <span class="pts">(760 ptos)</span>
               </div>
             </div>
           </div>
-          <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Cuidadora Domiciliaria, Auxiliar de
+          <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:10px;">Cuidadora Domiciliaria, Auxiliar de
             Enfermería. 15 años de experiencia.</p>
           <div class="card-badge">Activa hoy</div>
           <div class="specialties">
@@ -413,9 +417,9 @@
           </div>
         </div>
         <div class="card-footer">
-          <a href="perfil.html?id=7" class="btn btn-magenta">Ver perfil</a>
-          <a href="perfil.html?id=7#contactar" class="btn btn-outline-white"
-            style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+          <a href="perfil.html?id=7" class="btn btn-primario">Ver perfil</a>
+          <a href="perfil.html?id=7#contactar" class="btn btn-sobre-oscuro"
+            style="border-color:var(--borde-card);color:var(--texto-secundario);">Contactar</a>
         </div>
       </div>
 
@@ -435,7 +439,7 @@
               </div>
             </div>
           </div>
-          <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">Cuidadora Domiciliaria. Especialista en
+          <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:10px;">Cuidadora Domiciliaria. Especialista en
             pacientes postrados y paseos terapéuticos.</p>
           <div class="card-badge">Disponible para Reemplazo Urgente</div>
           <div class="specialties">
@@ -456,9 +460,9 @@
           </div>
         </div>
         <div class="card-footer">
-          <a href="perfil.html?id=8" class="btn btn-magenta">Ver perfil</a>
-          <a href="perfil.html?id=8#contactar" class="btn btn-outline-white"
-            style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+          <a href="perfil.html?id=8" class="btn btn-primario">Ver perfil</a>
+          <a href="perfil.html?id=8#contactar" class="btn btn-sobre-oscuro"
+            style="border-color:var(--borde-card);color:var(--texto-secundario);">Contactar</a>
         </div>
       </div>
 
@@ -467,7 +471,7 @@
 
   <!-- CTA FINAL -->
   <div class="cta-banner">
-    <a href="solicitar-asistente.html" class="btn btn-yellow">PUBLICAR UN AVISO</a>
+    <a href="solicitar-asistente.html" class="btn btn-atencion">PUBLICAR UN AVISO</a>
   </div>
 
   <!-- FOOTER -->
@@ -551,15 +555,15 @@
                   </div>
                 </div>
               </div>
-              <p style="font-size:13px;color:var(--text-mid);margin-bottom:10px;">${a.profesion || 'Asistente Domiciliario'}</p>
+              <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:10px;">${a.profesion || 'Asistente Domiciliario'}</p>
               <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px 0;">
-                <span class="badge-sendler-verified"><i class="fas fa-user-check"></i> Validado por Prestadora</span>
+                <span class="insignia-validada"><i class="fas fa-user-check"></i> Validado por Prestadora</span>
               </div>
               <div class="specialties">${patologias}</div>
             </div>
             <div class="card-footer">
-              <a href="perfil.html?id=${a.id}" class="btn btn-magenta">Ver perfil</a>
-              <a href="mockup-app.html" class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-mid);">Contactar</a>
+              <a href="perfil.html?id=${a.id}" class="btn btn-primario">Ver perfil</a>
+              <a href="mockup-app.html" class="btn btn-sobre-oscuro" style="border-color:var(--borde-card);color:var(--texto-secundario);">Contactar</a>
             </div>
           `;
             grid.appendChild(card);

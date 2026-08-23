@@ -1,5 +1,16 @@
 # Términos y Condiciones de Uso para Cuidadores y Asistentes (Software Careonys SaaS - CeltaTech)
 
+> [!WARNING]
+> **Borrador legal sin revisión profesional.** Revisado el 2026-08-23.
+>
+> **El contenido necesita revisión de un abogado**, no de este proyecto — sobre todo el deslinde
+> de relación laboral, que es el punto más sensible del rubro en Argentina. No se publica ni se
+> muestra a ninguna persona usuaria hasta esa revisión.
+>
+> **El vocabulario está fuera del glosario** y hay que corregirlo: "Cuidadores" es **Asistentes**,
+> "persona asistida" es **Paciente**, "Empresa Prestadora Cliente" es **Prestadora**. Ver
+> `docs/GLOSARIO.md`.
+
 **Documento Legal Específico para el Aspirante y Cuidador**  
 **Fecha de Actualización**: 4 de Agosto de 2026  
 **Desarrollador del Software**: **CeltaTech**  

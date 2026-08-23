@@ -1,10 +1,14 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Presdemo â€” Portal MÃ³vil</title>
+  <title>Presdemo — Portal Móvil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/mockup-app.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -31,13 +35,13 @@
         <a class="drawer-menu-item" onclick="navigate('cuaderno')"><i class="fas fa-book-medical"></i> Cuaderno de
           Cuidado</a>
         <a class="drawer-menu-item" href="cursos.html"><i class="fas fa-graduation-cap"></i> Cursos</a>
-        <a class="drawer-menu-item" href="soporte-remoto.html"><i class="fas fa-headset"></i> AcompaÃ±amiento Online</a>
+        <a class="drawer-menu-item" href="soporte-remoto.html"><i class="fas fa-headset"></i> Acompañamiento Online</a>
         <div style="border-top:1px solid #f1f5f9;margin:8px 0;"></div>
         <a class="drawer-menu-item" id="btn-logout" style="color:#ef4444;"><i class="fas fa-sign-out-alt"
-            style="color:#ef4444;"></i> Cerrar sesiÃ³n</a>
+            style="color:#ef4444;"></i> Cerrar sesión</a>
       </div>
-      <div style="padding:16px;text-align:center;font-size:10px;color:#94a3b8;border-top:1px solid #f1f5f9;">
-        Powered by <strong style="color:var(--color-accent, #E53E3E)">Careonys</strong>
+      <div style="padding:16px;text-align:center;font-size:10px;color:var(--texto-secundario);border-top:1px solid #f1f5f9;">
+        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
       </div>
     </div>
 
@@ -51,40 +55,40 @@
 
       <div class="login-card">
         <div class="input-wrapper">
-          <input type="email" id="login-email" placeholder="Correo electrÃ³nico" required />
+          <input type="email" id="login-email" placeholder="Correo electrónico" required />
         </div>
         <div class="input-wrapper">
           <i class="fas fa-lock"></i>
-          <input type="password" id="login-pass" placeholder="ContraseÃ±a" required />
+          <input type="password" id="login-pass" placeholder="Contraseña" required />
           <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility()"></i>
         </div>
 
         <div style="text-align:right;margin-bottom:16px;">
-          <a href="#" style="font-size:11px;color:#64748b;text-decoration:none;font-weight:700;">Â¿Olvidaste tu
-            contraseÃ±a?</a>
+          <a href="#" style="font-size:11px;color:#64748b;text-decoration:none;font-weight:700;">¿Olvidaste tu
+            contraseña?</a>
         </div>
 
-        <button type="button" class="btn-login" id="btn-action-login">IngresÃ¡</button>
+        <button type="button" class="btn-login" id="btn-action-login">Ingresá</button>
 
-        <div style="text-align:center;margin:16px 0;font-size:11px;color:#94a3b8;font-weight:700;">O</div>
+        <div style="text-align:center;margin:16px 0;font-size:11px;color:var(--texto-secundario);font-weight:700;">O</div>
 
-        <button type="button" class="social-btn"><i class="fab fa-google" style="color:#ea4335;"></i> IngresÃ¡ con
+        <button type="button" class="social-btn"><i class="fab fa-google" style="color:#ea4335;"></i> Ingresá con
           Google</button>
-        <button type="button" class="social-btn"><i class="fab fa-facebook-f" style="color:#1877f2;"></i> IngresÃ¡ con
+        <button type="button" class="social-btn"><i class="fab fa-facebook-f" style="color:#1877f2;"></i> Ingresá con
           Facebook</button>
 
         <div style="text-align:center;margin-top:20px;font-size:12px;color:#64748b;">
-          Â¿No tenÃ©s cuenta? <a href="#" id="link-go-signup"
-            style="color:var(--color-accent, #E53E3E);font-weight:700;text-decoration:none;">Registrate</a>
+          ¿No tenés cuenta? <a href="#" id="link-go-signup"
+            style="color:var(--marca-prestadora-acento);font-weight:700;text-decoration:none;">Registrate</a>
         </div>
       </div>
 
-      <div style="text-align:center;margin-top:auto;font-size:10px;color:#94a3b8;padding-top:20px;">
-        Powered by <strong style="color:var(--color-accent, #E53E3E)">Careonys</strong>
+      <div style="text-align:center;margin-top:auto;font-size:10px;color:var(--texto-secundario);padding-top:20px;">
+        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
       </div>
     </div>
 
-    <!-- 2. VISTA: SELECCIÃ“N DE ROL / SIGNUP -->
+    <!-- 2. VISTA: SELECCIÓN DE ROL / SIGNUP -->
     <div class="app-screen" id="screen-signup">
       <div class="app-header">
         <button class="btn-back" id="btn-signup-back"><i class="fas fa-arrow-left"></i></button>
@@ -93,26 +97,27 @@
       </div>
 
       <div style="padding:20px 0;text-align:center;">
-        <h3 style="font-size:18px;font-weight:800;color:var(--color-primary, #1A365D);margin:0 0 6px 0;">Â¿CÃ³mo quisieras
+        <h3 style="font-size:18px;font-weight:800;color:var(--marca-prestadora);margin:0 0 6px 0;">¿Cómo
+          quisieras
           ingresar?</h3>
-        <p style="font-size:12px;color:#64748b;margin:0;">SeleccionÃ¡ tu tipo de cuenta para comenzar</p>
+        <p style="font-size:12px;color:#64748b;margin:0;">Seleccioná tu tipo de cuenta para comenzar</p>
       </div>
 
       <div class="role-card" data-role="familiar">
-        <h4><i class="fas fa-users" style="color:var(--color-accent, #E53E3E);"></i> Como familiar</h4>
+        <h4><i class="fas fa-users" style="color:var(--marca-prestadora-acento);"></i> Como familiar</h4>
         <p>Soy una persona que busca un cuidador calificado para asistir a un familiar o ser querido mayor.</p>
         <div class="circle-select"></div>
       </div>
 
       <div class="role-card" data-role="cuidador">
-        <h4><i class="fas fa-user-md" style="color:var(--color-primary, #1A365D);"></i> Como cuidador</h4>
+        <h4><i class="fas fa-user-md" style="color:var(--marca-prestadora);"></i> Como cuidador</h4>
         <p>Soy un profesional que busca postularse para trabajar brindando servicios de cuidado domiciliario.</p>
         <div class="circle-select"></div>
       </div>
 
       <div style="margin-top:auto;padding-bottom:20px;">
         <button type="button" class="btn-login" id="btn-signup-confirm"
-          style="display:none;background:var(--color-primary, #1A365D);box-shadow:none;">Confirmar SelecciÃ³n</button>
+          style="display:none;background:var(--marca-prestadora);box-shadow:none;">Confirmar Selección</button>
       </div>
     </div>
 
@@ -125,7 +130,7 @@
         <div style="display:flex;align-items:center;gap:6px;">
           <img src="assets/images/logo_careonys.png" class="tenant-logo" style="height:24px;" alt="Logo" />
           <span class="tenant-name"
-            style="font-size:14px;font-weight:800;color:var(--color-primary, #1A365D);">PresDemo</span>
+            style="font-size:14px;font-weight:800;color:var(--marca-prestadora);">PresDemo</span>
         </div>
         <div style="position:relative;cursor:pointer;">
           <i class="fas fa-bell" style="font-size:18px;color:#64748b;"></i>
@@ -138,8 +143,8 @@
       <div class="verification-widget" style="margin-top:16px;">
         <i class="fas fa-exclamation-triangle"></i>
         <div style="flex:1;">
-          <h5>CompletÃ¡ las Verificaciones</h5>
-          <p>Email: âœ“ Validado | Celular: âŒ› Pendiente</p>
+          <h5>Completá las Verificaciones</h5>
+          <p>Email: ✓ Validado | Celular: ⌛ Pendiente</p>
         </div>
         <i class="fas fa-chevron-right" style="font-size:12px;color:#856404;"></i>
       </div>
@@ -170,7 +175,7 @@
         </a>
         <a class="service-btn" href="soporte-remoto.html">
           <div class="icon-box" style="background:#06b6d4;"><i class="fas fa-headset"></i></div>
-          <span>AcompaÃ±ante Online</span>
+          <span>Acompañante Online</span>
         </a>
         <div class="service-btn" onclick="navigate('cuaderno')">
           <div class="icon-box" style="background:#10b981;"><i class="fas fa-book-medical"></i></div>
@@ -180,15 +185,15 @@
           <div class="icon-box" style="background:#f59e0b;"><i class="fas fa-graduation-cap"></i></div>
           <span>Cursos</span>
         </a>
-        <div class="service-btn" onclick="alert('MÃ³dulo de EstimulaciÃ³n Cognitiva y Actividades en desarrollo.')">
-          <div class="icon-box" style="background:#ec4899;"><i class="fas fa-running"></i></div>
+        <div class="service-btn" onclick="alert('Módulo de Estimulación Cognitiva y Actividades en desarrollo.')">
+          <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-running"></i></div>
           <span>Vida Activa</span>
         </div>
         <div class="service-btn" onclick="alert('Contactando con tu Gestor de Cuidados asignado...')">
-          <div class="icon-box" style="background:#8b5cf6;"><i class="fas fa-user-tie"></i></div>
+          <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-user-tie"></i></div>
           <span>Gestor</span>
         </div>
-        <div class="service-btn" onclick="alert('Accediendo al catÃ¡logo de Alquiler de Camas y Sillas de ruedas...')">
+        <div class="service-btn" onclick="alert('Accediendo al catálogo de Alquiler de Camas y Sillas de ruedas...')">
           <div class="icon-box" style="background:#3b82f6;"><i class="fas fa-shopping-cart"></i></div>
           <span>Productos</span>
         </div>
@@ -201,17 +206,17 @@
       </div>
 
       <div class="horizontal-slider" id="recommended-caregivers-list">
-        <!-- Render dinÃ¡mico desde Supabase o mock -->
+        <!-- Render dinámico desde Supabase o mock -->
         <div class="caregiver-card">
           <img src="assets/images/perfil_maria.png" onerror="this.src='https://via.placeholder.com/60'" />
-          <h5>MarÃ­a GÃ³mez</h5>
-          <p>Enfermera | 45 aÃ±os</p>
+          <h5>María Gómez</h5>
+          <p>Enfermera | 45 años</p>
           <span class="badge-match">98% Match</span>
         </div>
         <div class="caregiver-card">
           <img src="assets/images/perfil_ana.png" onerror="this.src='https://via.placeholder.com/60'" />
-          <h5>Ana RodrÃ­guez</h5>
-          <p>Cuidadora | 38 aÃ±os</p>
+          <h5>Ana Rodríguez</h5>
+          <p>Cuidadora | 38 años</p>
           <span class="badge-match">92% Match</span>
         </div>
       </div>
@@ -224,22 +229,22 @@
 
       <div class="horizontal-slider">
         <a href="cursos.html" class="caregiver-card" style="width:160px;min-width:160px;text-align:left;">
-          <h6 style="margin:0;font-size:11px;color:var(--color-accent, #E53E3E);text-transform:uppercase;">Gratuito</h6>
-          <h5 style="margin:4px 0 0 0;font-size:12px;white-space:normal;height:32px;overflow:hidden;">IntroducciÃ³n al
+          <h6 style="margin:0;font-size:11px;color:var(--marca-prestadora-acento);text-transform:uppercase;">Gratuito</h6>
+          <h5 style="margin:4px 0 0 0;font-size:12px;white-space:normal;height:32px;overflow:hidden;">Introducción al
             Cuidado de Alzheimer</h5>
-          <span style="font-size:9px;color:#94a3b8;font-weight:700;"><i class="far fa-clock"></i> 4 hs. estimadas</span>
+          <span style="font-size:9px;color:var(--texto-secundario);font-weight:700;"><i class="far fa-clock"></i> 4 hs. estimadas</span>
         </a>
         <a href="cursos.html" class="caregiver-card" style="width:160px;min-width:160px;text-align:left;">
-          <h6 style="margin:0;font-size:11px;color:var(--color-accent, #E53E3E);text-transform:uppercase;">Academy</h6>
+          <h6 style="margin:0;font-size:11px;color:var(--marca-prestadora-acento);text-transform:uppercase;">Academy</h6>
           <h5 style="margin:4px 0 0 0;font-size:12px;white-space:normal;height:32px;overflow:hidden;">RCP y Primeros
             Auxilios Domiciliarios</h5>
-          <span style="font-size:9px;color:#94a3b8;font-weight:700;"><i class="far fa-clock"></i> 8 hs. estimadas</span>
+          <span style="font-size:9px;color:var(--texto-secundario);font-weight:700;"><i class="far fa-clock"></i> 8 hs. estimadas</span>
         </a>
       </div>
 
       <!-- FOOTER DISCRETO -->
-      <div style="text-align:center;padding:24px 0;font-size:10px;color:#94a3b8;">
-        Powered by <strong style="color:var(--color-accent, #E53E3E)">Careonys</strong>
+      <div style="text-align:center;padding:24px 0;font-size:10px;color:var(--texto-secundario);">
+        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
       </div>
 
       <!-- BARRA DE TABS INFERIOR -->
@@ -264,7 +269,7 @@
         </a>
         <a class="tab-item" onclick="navigate('cuaderno')">
           <i class="fas fa-book-medical"></i>
-          <span>BitÃ¡cora</span>
+          <span>Bitácora</span>
         </a>
       </div>
 
@@ -274,7 +279,7 @@
     <div class="app-screen" id="screen-chat" style="padding-bottom:64px;display:none;flex-direction:column;">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
-        <h1><i class="fas fa-comments" style="color:var(--color-accent);"></i> Chat con Asistente</h1>
+        <h1><i class="fas fa-comments" style="color:var(--marca-prestadora-acento);"></i> Chat con Asistente</h1>
         <div style="width:24px;"></div>
       </div>
 
@@ -285,23 +290,24 @@
           style="width:40px;height:40px;border-radius:50%;object-fit:cover;" />
         <div>
           <p id="chat-contact-name" style="margin:0;font-size:13px;font-weight:800;color:#1e293b;">Asistente activa</p>
-          <p id="chat-contact-status" style="margin:0;font-size:11px;color:#10b981;">âš« Online</p>
+          <p id="chat-contact-status" style="margin:0;font-size:11px;color:#10b981;">⚫ Online</p>
         </div>
       </div>
 
-      <!-- Ãrea de mensajes -->
+      <!-- Área de mensajes -->
       <div id="chat-messages-area"
         style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#fafafb;">
-        <div style="text-align:center;font-size:11px;color:#94a3b8;padding:8px 0;">â€” Inicio de la conversaciÃ³n â€”</div>
+        <div style="text-align:center;font-size:11px;color:var(--texto-secundario);padding:8px 0;">— Inicio de la conversación —
+        </div>
       </div>
 
       <!-- Input de mensaje -->
       <div
-        style="padding:10px 12px;background:#fff;border-top:1px solid #e2e8f0;display:flex;align-items:center;gap:8px;">
-        <input type="text" id="chat-input" placeholder="EscribÃ­ un mensaje..."
+        style="padding:10px 12px;background: var(--superficie);border-top:1px solid #e2e8f0;display:flex;align-items:center;gap:8px;">
+        <input type="text" id="chat-input" placeholder="Escribí un mensaje..."
           style="flex:1;padding:9px 14px;border-radius:20px;border:1.5px solid #e2e8f0;font-size:13px;outline:none;" />
         <button id="chat-send-btn"
-          style="background:var(--color-primary,#1A365D);color:#fff;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i
+          style="background:var(--marca-prestadora);color:#fff;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i
             class="fas fa-paper-plane" style="font-size:14px;"></i></button>
       </div>
 
@@ -311,11 +317,11 @@
         <a class="tab-item" href="formulario-integral.html"><i class="fas fa-plus-circle"></i><span>Publicar</span></a>
         <a class="tab-item" href="directorio.html"><i class="fas fa-users"></i><span>Asistentes</span></a>
         <a class="tab-item active" onclick="navigate('chat')"><i class="fas fa-comments"></i><span>Chat</span></a>
-        <a class="tab-item" onclick="navigate('cuaderno')"><i class="fas fa-book-medical"></i><span>BitÃ¡cora</span></a>
+        <a class="tab-item" onclick="navigate('cuaderno')"><i class="fas fa-book-medical"></i><span>Bitácora</span></a>
       </div>
     </div>
 
-    <!-- 4. VISTA: CUADERNO DE CUIDADO / BITÃCORA DIARIA -->
+    <!-- 4. VISTA: CUADERNO DE CUIDADO / BITÁCORA DIARIA -->
     <div class="app-screen" id="screen-cuaderno" style="padding-bottom:64px;">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
@@ -329,15 +335,15 @@
         <div class="cuaderno-paciente">
           <img src="assets/images/paciente_default.png" onerror="this.src='https://via.placeholder.com/60'" />
           <div>
-            <p style="margin:0;font-size:12px;opacity:0.9;">DiagnÃ³stico: Alzheimer Moderado</p>
-            <p style="margin:2px 0 0 0;font-size:11px;opacity:0.7;">Cuidadora: MarÃ­a GÃ³mez</p>
+            <p style="margin:0;font-size:12px;opacity:0.9;">Diagnóstico: Alzheimer Moderado</p>
+            <p style="margin:2px 0 0 0;font-size:11px;opacity:0.7;">Cuidadora: María Gómez</p>
           </div>
         </div>
       </div>
 
-      <!-- HISTORIAL DIARIO DINÃMICO (TIMELINE CONECTADO A SUPABASE) -->
+      <!-- HISTORIAL DIARIO DINÁMICO (TIMELINE CONECTADO A SUPABASE) -->
       <div class="timeline-log" id="timeline-log-list">
-        <!-- Cargado dinÃ¡micamente -->
+        <!-- Cargado dinámicamente -->
       </div>
 
       <!-- BARRA DE TABS INFERIOR -->
@@ -356,23 +362,23 @@
         </a>
         <a class="tab-item active" onclick="navigate('cuaderno')">
           <i class="fas fa-book-medical"></i>
-          <span>BitÃ¡cora</span>
+          <span>Bitácora</span>
         </a>
       </div>
     </div>
 
-    <!-- MODAL NUEVA NOVEDAD BITÃCORA -->
+    <!-- MODAL NUEVA NOVEDAD BITÁCORA -->
     <div id="modal-bitacora"
       style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:300; justify-content:center; align-items:center;">
       <div
-        style="background:#fff; width:90%; max-width:360px; padding:20px; border-radius:20px; box-shadow:0 10px 25px rgba(0,0,0,0.1); box-sizing:border-box;">
+        style="background: var(--superficie); width:90%; max-width:360px; padding:20px; border-radius:20px; box-shadow:0 10px 25px rgba(0,0,0,0.1); box-sizing:border-box;">
         <h4
-          style="margin:0 0 16px 0; color:var(--color-primary); font-size:16px; font-weight:800; display:flex; justify-content:space-between; align-items:center;">
+          style="margin:0 0 16px 0; color:var(--marca-prestadora); font-size:16px; font-weight:800; display:flex; justify-content:space-between; align-items:center;">
           <span>Nueva Novedad</span>
           <button onclick="document.getElementById('modal-bitacora').style.display='none'"
             style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
         </h4>
-        <div class="form-group" style="margin-bottom:12px;"><label style="font-size:11px; font-weight:700;">PresiÃ³n
+        <div class="form-group" style="margin-bottom:12px;"><label style="font-size:11px; font-weight:700;">Presión
             Arterial</label><input type="text" id="bit-presion" placeholder="Ej: 120/80"
             style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; font-size:12px; box-sizing:border-box;" />
         </div>
@@ -386,7 +392,7 @@
             style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; font-size:12px; box-sizing:border-box;" />
         </div>
         <div class="form-group" style="margin-bottom:16px;"><label style="font-size:11px; font-weight:700;">Notas
-            Diarias / Novedades</label><textarea id="bit-notas" placeholder="Â¿CÃ³mo pasÃ³ el dÃ­a el paciente?"
+            Diarias / Novedades</label><textarea id="bit-notas" placeholder="¿Cómo pasó el día el paciente?"
             style="width:100%; padding:8px; border-radius:8px; border:1px solid #cbd5e1; font-size:12px; box-sizing:border-box; height:60px;"
             required></textarea></div>
         <button id="btn-save-bitacora" class="btn-login" style="width:100%;">Guardar Novedad</button>
@@ -395,16 +401,16 @@
 
   </div>
 
-  <!-- Supabase SDK v2 (CDN) + mÃ³dulos locales -->
+  <!-- Supabase SDK v2 (CDN) + módulos locales -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script>
-    // INICIALIZACIÃ“N DE BRANDING DINÃMICO DESDE SUPABASE
+    // INICIALIZACIÓN DE BRANDING DINÁMICO DESDE SUPABASE
     document.addEventListener('DOMContentLoaded', async () => {
       await CareonysAPI.initTenant();
 
-      // Cargar Cuidadores Recomendados dinÃ¡micamente desde Supabase
+      // Cargar Cuidadores Recomendados dinámicamente desde Supabase
       try {
         const aspirantes = await CareonysAPI.getAspirantes();
         const recommendedList = document.getElementById('recommended-caregivers-list');
@@ -434,7 +440,7 @@
       }
     });
 
-    // NAVEGACIÃ“N ENTRE PANTALLAS DE LA APP (SPA)
+    // NAVEGACIÓN ENTRE PANTALLAS DE LA APP (SPA)
     function navigate(screenId) {
       document.querySelectorAll('.app-screen').forEach(screen => {
         screen.classList.remove('active');
@@ -447,17 +453,17 @@
       }
     }
 
-    // CARGAR BITÃCORA DINÃMICAMENTE DESDE SUPABASE
+    // CARGAR BITÁCORA DINÁMICAMENTE DESDE SUPABASE
     async function cargarBitacora() {
       const listEl = document.getElementById('timeline-log-list');
-      listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:#94a3b8;padding:20px;">Cargando bitÃ¡cora diaria...</p>';
+      listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">Cargando bitácora diaria...</p>';
 
       try {
         const logs = await CareonysAPI.getBitacoraDiaria();
         listEl.innerHTML = '';
 
         if (!logs || logs.length === 0) {
-          listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:#94a3b8;padding:20px;">No hay registros en la bitÃ¡cora para hoy.</p>';
+          listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">No hay registros en la bitácora para hoy.</p>';
           return;
         }
 
@@ -469,26 +475,26 @@
           if (log.blood_pressure) iconClass = 'fa-heartbeat';
           else if (log.glycemia) iconClass = 'fa-stethoscope';
 
-          const timeStr = log.created_at ? new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' hs' : 'ReciÃ©n';
+          const timeStr = log.created_at ? new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' hs' : 'Recién';
 
           item.innerHTML = `
-            <div class="log-dot"><i class="fas ${iconClass}" style="font-size:8px;color:var(--color-accent, #E53E3E);"></i></div>
+            <div class="log-dot"><i class="fas ${iconClass}" style="font-size:8px;color:var(--marca-prestadora-acento);"></i></div>
             <div class="log-content">
               <span class="time">${timeStr}</span>
               <h5>${log.blood_pressure ? 'Control de Signos Vitales' : 'Nota de Cuidado'}</h5>
               <p>${log.daily_notes}</p>
-              ${log.blood_pressure ? `<p style="margin-top:4px;font-size:11px;color:#0284c7;">ðŸ©º P.A.: ${log.blood_pressure} | Glucemia: ${log.glycemia || 'N/A'}</p>` : ''}
-              ${log.medications_administered ? `<p style="margin-top:2px;font-size:10px;color:#10b981;">ðŸ’Š Medicamento: ${log.medications_administered}</p>` : ''}
+              ${log.blood_pressure ? `<p style="margin-top:4px;font-size:11px;color:#0284c7;">🩺 P.A.: ${log.blood_pressure} | Glucemia: ${log.glycemia || 'N/A'}</p>` : ''}
+              ${log.medications_administered ? `<p style="margin-top:2px;font-size:10px;color:#10b981;">💊 Medicamento: ${log.medications_administered}</p>` : ''}
             </div>
           `;
           listEl.appendChild(item);
         });
       } catch (err) {
-        listEl.innerHTML = `<p style="text-align:center;font-size:12px;color:#ef4444;padding:20px;">Error al cargar bitÃ¡cora: ${err.message}</p>`;
+        listEl.innerHTML = `<p style="text-align:center;font-size:12px;color:#ef4444;padding:20px;">Error al cargar bitácora: ${err.message}</p>`;
       }
     }
 
-    // REGISTRAR NUEVA NOVEDAD EN LA BITÃCORA
+    // REGISTRAR NUEVA NOVEDAD EN LA BITÁCORA
     document.getElementById('btn-save-bitacora').addEventListener('click', async () => {
       const presion = document.getElementById('bit-presion').value;
       const glucemia = document.getElementById('bit-glucemia').value;
@@ -511,7 +517,7 @@
 
       try {
         await CareonysAPI.registrarBitacoraDiaria(data);
-        alert('Â¡Novedad guardada exitosamente en Supabase!');
+        alert('¡Novedad guardada exitosamente en Supabase!');
         document.getElementById('modal-bitacora').style.display = 'none';
 
         // Limpiar formulario
@@ -529,10 +535,10 @@
     // FICHADO GPS DE ASISTENCIA (CLOCK-IN / CLOCK-OUT REAL)
     async function ficharGPS(tipo) {
       const statusEl = document.getElementById('gps-status');
-      statusEl.textContent = 'Obteniendo localizaciÃ³n GPS...';
+      statusEl.textContent = 'Obteniendo localización GPS...';
 
       if (!navigator.geolocation) {
-        alert('Tu navegador no soporta geolocalizaciÃ³n.');
+        alert('Tu navegador no soporta geolocalización.');
         statusEl.textContent = 'GPS no soportado';
         return;
       }
@@ -550,14 +556,14 @@
             lng: lng,
             event_type: tipo
           });
-          alert(`Â¡Fichado de ${tipo} registrado con Ã©xito!\nCoordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
-          statusEl.textContent = `Ãšltimo fichado: ${tipo} (${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`;
+          alert(`¡Fichado de ${tipo} registrado con éxito!\nCoordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+          statusEl.textContent = `Último fichado: ${tipo} (${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`;
         } catch (err) {
           alert('Error al registrar fichado: ' + err.message);
           statusEl.textContent = 'Error en fichado';
         }
       }, (err) => {
-        alert('No pudimos acceder a tu ubicaciÃ³n. Por favor, habilita los permisos de GPS.');
+        alert('No pudimos acceder a tu ubicación. Por favor, habilita los permisos de GPS.');
         statusEl.textContent = 'Permiso GPS denegado';
       });
     }
@@ -565,12 +571,12 @@
     document.getElementById('btn-gps-in').addEventListener('click', () => ficharGPS('Entrada'));
     document.getElementById('btn-gps-out').addEventListener('click', () => ficharGPS('Salida'));
 
-    // LOGIN REAL â€” Supabase Auth con routing por rol
+    // LOGIN REAL — Supabase Auth con routing por rol
     document.getElementById('btn-action-login').addEventListener('click', async () => {
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-pass').value;
       const btn = document.getElementById('btn-action-login');
-      if (!email || !password) { alert('CompletÃ¡ email y contraseÃ±a.'); return; }
+      if (!email || !password) { alert('Completá email y contraseña.'); return; }
       btn.textContent = 'Ingresando...';
       btn.disabled = true;
       try {
@@ -588,14 +594,14 @@
           navigate('dashboard');
         }
       } catch (err) {
-        alert('Error al iniciar sesiÃ³n: ' + err.message);
+        alert('Error al iniciar sesión: ' + err.message);
       } finally {
-        btn.textContent = 'IngresÃ¡';
+        btn.textContent = 'Ingresá';
         btn.disabled = false;
       }
     });
 
-    // VISIBILIDAD DE CONTRASEÃ‘A
+    // VISIBILIDAD DE CONTRASEÑA
     function togglePasswordVisibility() {
       const passInput = document.getElementById('login-pass');
       const eyeIcon = document.querySelector('.toggle-password');
@@ -608,7 +614,7 @@
       }
     }
 
-    // REGISTRO FLUJO SELECCIÃ“N DE ROL
+    // REGISTRO FLUJO SELECCIÓN DE ROL
     document.getElementById('link-go-signup').addEventListener('click', (e) => {
       e.preventDefault();
       navigate('signup');
@@ -618,7 +624,7 @@
       navigate('intro');
     });
 
-    // SelecciÃ³n de Tarjeta de Rol
+    // Selección de Tarjeta de Rol
     let selectedRole = null;
     document.querySelectorAll('.role-card').forEach(card => {
       card.addEventListener('click', () => {
@@ -654,7 +660,7 @@
       overlay.classList.remove('open');
     });
 
-    // Navegar y cerrar menÃº
+    // Navegar y cerrar menú
     const origNavigate = navigate;
     navigate = function (screenId) {
       origNavigate(screenId);
@@ -664,13 +670,13 @@
 
     // LOGOUT REAL
     document.getElementById('btn-logout').addEventListener('click', async () => {
-      if (confirm('Â¿EstÃ¡s seguro de que querÃ©s cerrar sesiÃ³n?')) {
+      if (confirm('¿Estás seguro de que querés cerrar sesión?')) {
         await CareonysAuth.logout();
         navigate('intro');
       }
     });
 
-    // â”€â”€ CHAT CON SUPABASE REALTIME â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── CHAT CON SUPABASE REALTIME ──────────────────────────────────────
     let chatConversacionId = null;
     let chatChannel = null;
 
@@ -679,7 +685,7 @@
       const div = document.createElement('div');
       div.style.cssText = `display:flex;justify-content:${esPropio ? 'flex-end' : 'flex-start'};`;
       div.innerHTML = `
-        <div style="max-width:70%;padding:10px 13px;border-radius:${esPropio ? '16px 16px 4px 16px' : '16px 16px 16px 4px'};background:${esPropio ? 'var(--color-primary,#1A365D)' : '#fff'};color:${esPropio ? '#fff' : '#1e293b'};font-size:13px;line-height:1.4;box-shadow:0 2px 6px rgba(0,0,0,0.05);">
+        <div style="max-width:70%;padding:10px 13px;border-radius:${esPropio ? '16px 16px 4px 16px' : '16px 16px 16px 4px'};background:${esPropio ? 'var(--marca-prestadora)' : '#fff'};color:${esPropio ? '#fff' : '#1e293b'};font-size:13px;line-height:1.4;box-shadow:0 2px 6px rgba(0,0,0,0.05);">
           ${msg.contenido || msg.content || ''}
           <div style="font-size:9px;opacity:0.6;margin-top:4px;text-align:right;">${new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
         </div>
@@ -707,7 +713,7 @@
 
       conversaciones.forEach(msg => renderMensaje(msg, msg.author_id === userId));
 
-      // SubscripciÃ³n Realtime a nuevos mensajes
+      // Subscripción Realtime a nuevos mensajes
       if (chatChannel) chatChannel.unsubscribe();
       chatChannel = CareonysAuth.subscribeToTable(
         'messages',
@@ -761,7 +767,7 @@
       }
     };
 
-    // â”€â”€ VERIFICAR SESIÃ“N AL INICIO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ── VERIFICAR SESIÓN AL INICIO ────────────────────────────────────
     (async () => {
       const session = await CareonysAuth.getSession();
       if (session) {

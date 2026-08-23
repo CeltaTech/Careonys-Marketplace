@@ -7,6 +7,10 @@
   <title>Formularios Oficiales de la App — PresDemo</title>
   <meta name="description"
     content="Recopilación idéntica de los formularios oficiales que se utilizan en la plataforma Careonys." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -56,9 +60,9 @@
     <div class="wizard-container">
       <div style="text-align:center;margin-bottom:24px;">
         <span class="eyebrow"
-          style="color:var(--magenta);font-weight:700;font-size:12px;text-transform:uppercase;">Wizard de
+          style="color:var(--azul-medio-texto);font-weight:700;font-size:12px;text-transform:uppercase;">Wizard de
           Publicación</span>
-        <h2 style="font-size:24px;font-weight:800;color:var(--purple-dark);margin-top:4px;">Publicar una Búsqueda de
+        <h2 style="font-size:24px;font-weight:800;color:var(--texto-titulo);margin-top:4px;">Publicar una Búsqueda de
           Cuidado</h2>
       </div>
 
@@ -95,7 +99,7 @@
 
         <!-- PASO 1: PACIENTE Y URGENCIA -->
         <div class="wizard-step-pane" id="step-pane-1">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text-dark);">Paso 1: Datos del
+          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-principal);">Paso 1: Datos del
             Paciente y Urgencia</h3>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
             <div class="form-group">
@@ -131,16 +135,16 @@
             </div>
           </div>
           <div style="display:flex;justify-content:flex-end;margin-top:24px;">
-            <button type="button" class="btn btn-magenta btn-next-step" data-next="2">Siguiente Paso <i
+            <button type="button" class="btn btn-primario btn-next-step" data-next="2">Siguiente Paso <i
                 class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
           </div>
         </div>
 
         <!-- PASO 2: TAREAS DE CUIDADO REQUERIDAS -->
         <div class="wizard-step-pane" id="step-pane-2" style="display:none;">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;color:var(--text-dark);">Paso 2: Tareas de Cuidado
+          <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;color:var(--texto-principal);">Paso 2: Tareas de Cuidado
             Requeridas</h3>
-          <p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">Seleccioná todas las tareas que el
+          <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:16px;">Seleccioná todas las tareas que el
             asistente deberá realizar:</p>
 
           <div class="card-select-grid">
@@ -177,19 +181,19 @@
           </div>
 
           <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-outline-white btn-prev-step" data-prev="1"
-              style="border-color:var(--border-light);color:var(--text-mid);"><i class="fas fa-arrow-left"
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="1"
+              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
                 style="margin-right:8px;"></i> Anterior</button>
-            <button type="button" class="btn btn-magenta btn-next-step" data-next="3">Siguiente Paso <i
+            <button type="button" class="btn btn-primario btn-next-step" data-next="3">Siguiente Paso <i
                 class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
           </div>
         </div>
 
         <!-- PASO 3: PERFIL PROFESIONAL REQUERIDO -->
         <div class="wizard-step-pane" id="step-pane-3" style="display:none;">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;color:var(--text-dark);">Paso 3: Perfil
+          <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;color:var(--texto-principal);">Paso 3: Perfil
             Profesional Requerido</h3>
-          <p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">Seleccioná la especialidad o nivel de
+          <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:16px;">Seleccioná la especialidad o nivel de
             formación deseado:</p>
 
           <div class="card-select-grid">
@@ -216,17 +220,17 @@
           </div>
 
           <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-outline-white btn-prev-step" data-prev="2"
-              style="border-color:var(--border-light);color:var(--text-mid);"><i class="fas fa-arrow-left"
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="2"
+              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
                 style="margin-right:8px;"></i> Anterior</button>
-            <button type="button" class="btn btn-magenta btn-next-step" data-next="4">Siguiente Paso <i
+            <button type="button" class="btn btn-primario btn-next-step" data-next="4">Siguiente Paso <i
                 class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
           </div>
         </div>
 
         <!-- PASO 4: MODALIDAD Y HORARIOS -->
         <div class="wizard-step-pane" id="step-pane-4" style="display:none;">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text-dark);">Paso 4: Modalidad y
+          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-principal);">Paso 4: Modalidad y
             Horarios</h3>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
@@ -250,42 +254,42 @@
           <div class="form-group">
             <label>Días de la Semana Requeridos</label>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
-              <label class="btn btn-outline-white"
-                style="border-color:var(--border-light);color:var(--text-dark);padding:8px 16px;font-size:12px;"><input
+              <label class="btn btn-sobre-oscuro"
+                style="border-color:var(--borde-card);color:var(--texto-principal);padding:8px 16px;font-size:12px;"><input
                   type="checkbox" name="w-day" value="L" checked /> Lunes</label>
-              <label class="btn btn-outline-white"
-                style="border-color:var(--border-light);color:var(--text-dark);padding:8px 16px;font-size:12px;"><input
+              <label class="btn btn-sobre-oscuro"
+                style="border-color:var(--borde-card);color:var(--texto-principal);padding:8px 16px;font-size:12px;"><input
                   type="checkbox" name="w-day" value="M" checked /> Martes</label>
-              <label class="btn btn-outline-white"
-                style="border-color:var(--border-light);color:var(--text-dark);padding:8px 16px;font-size:12px;"><input
+              <label class="btn btn-sobre-oscuro"
+                style="border-color:var(--borde-card);color:var(--texto-principal);padding:8px 16px;font-size:12px;"><input
                   type="checkbox" name="w-day" value="X" checked /> Miércoles</label>
-              <label class="btn btn-outline-white"
-                style="border-color:var(--border-light);color:var(--text-dark);padding:8px 16px;font-size:12px;"><input
+              <label class="btn btn-sobre-oscuro"
+                style="border-color:var(--borde-card);color:var(--texto-principal);padding:8px 16px;font-size:12px;"><input
                   type="checkbox" name="w-day" value="J" checked /> Jueves</label>
-              <label class="btn btn-outline-white"
-                style="border-color:var(--border-light);color:var(--text-dark);padding:8px 16px;font-size:12px;"><input
+              <label class="btn btn-sobre-oscuro"
+                style="border-color:var(--borde-card);color:var(--texto-principal);padding:8px 16px;font-size:12px;"><input
                   type="checkbox" name="w-day" value="V" checked /> Viernes</label>
-              <label class="btn btn-outline-white"
-                style="border-color:var(--border-light);color:var(--text-dark);padding:8px 16px;font-size:12px;"><input
+              <label class="btn btn-sobre-oscuro"
+                style="border-color:var(--borde-card);color:var(--texto-principal);padding:8px 16px;font-size:12px;"><input
                   type="checkbox" name="w-day" value="S" /> Sábado</label>
-              <label class="btn btn-outline-white"
-                style="border-color:var(--border-light);color:var(--text-dark);padding:8px 16px;font-size:12px;"><input
+              <label class="btn btn-sobre-oscuro"
+                style="border-color:var(--borde-card);color:var(--texto-principal);padding:8px 16px;font-size:12px;"><input
                   type="checkbox" name="w-day" value="D" /> Domingo</label>
             </div>
           </div>
 
           <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-outline-white btn-prev-step" data-prev="3"
-              style="border-color:var(--border-light);color:var(--text-mid);"><i class="fas fa-arrow-left"
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="3"
+              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
                 style="margin-right:8px;"></i> Anterior</button>
-            <button type="button" class="btn btn-magenta btn-next-step" data-next="5">Siguiente Paso <i
+            <button type="button" class="btn btn-primario btn-next-step" data-next="5">Siguiente Paso <i
                 class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
           </div>
         </div>
 
         <!-- PASO 5: TITULO Y DESCRIPCIÓN -->
         <div class="wizard-step-pane" id="step-pane-5" style="display:none;">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text-dark);">Paso 5: Detalles de la
+          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-principal);">Paso 5: Detalles de la
             Búsqueda</h3>
 
           <div class="form-group">
@@ -302,23 +306,23 @@
           </div>
 
           <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-outline-white btn-prev-step" data-prev="4"
-              style="border-color:var(--border-light);color:var(--text-mid);"><i class="fas fa-arrow-left"
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="4"
+              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
                 style="margin-right:8px;"></i> Anterior</button>
-            <button type="button" class="btn btn-magenta btn-next-step" data-next="6">Ver Resumen <i
+            <button type="button" class="btn btn-primario btn-next-step" data-next="6">Ver Resumen <i
                 class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
           </div>
         </div>
 
         <!-- PASO 6: CONFIRMACIÓN -->
         <div class="wizard-step-pane" id="step-pane-6" style="display:none;">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text-dark);">Paso 6: Confirmación y
+          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-principal);">Paso 6: Confirmación y
             Vista Previa</h3>
 
-          <div style="background:var(--bg-light);border-radius:12px;padding:20px;margin-bottom:20px;">
-            <h4 id="summary-title" style="font-size:16px;color:var(--purple-dark);margin-bottom:8px;">Cuidadora para
+          <div style="background:var(--superficie-hover);border-radius:12px;padding:20px;margin-bottom:20px;">
+            <h4 id="summary-title" style="font-size:16px;color:var(--texto-titulo);margin-bottom:8px;">Cuidadora para
               asistencia general</h4>
-            <p id="summary-desc" style="font-size:13px;color:var(--text-mid);margin-bottom:12px;">Se requiere asistencia
+            <p id="summary-desc" style="font-size:13px;color:var(--texto-secundario);margin-bottom:12px;">Se requiere asistencia
               para adulto mayor en zona de Buenos Aires.</p>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
               <span class="badge-verified cert"><i class="fas fa-check"></i> Oferta Verificada</span>
@@ -327,10 +331,10 @@
           </div>
 
           <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-outline-white btn-prev-step" data-prev="5"
-              style="border-color:var(--border-light);color:var(--text-mid);"><i class="fas fa-arrow-left"
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="5"
+              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
                 style="margin-right:8px;"></i> Anterior</button>
-            <button type="submit" class="btn btn-purple" id="btn-submit-wizard">PUBLICAR BÚSQUEDA AHORA</button>
+            <button type="submit" class="btn btn-secundario" id="btn-submit-wizard">PUBLICAR BÚSQUEDA AHORA</button>
           </div>
           <div id="wizard-success-msg"
             style="display:none;margin-top:16px;background:#e8f5e9;color:#2e7d32;padding:12px;border-radius:8px;font-weight:700;text-align:center;">
@@ -343,14 +347,14 @@
   </section>
 
   <!-- 1. FORMULARIO DE SOLICITUD PARA FAMILIAS (De solicitar-asistente.html) -->
-  <section class="contact-section" id="solicitud-familias" style="border-bottom: 2px solid var(--border-light);">
+  <section class="contact-section" id="solicitud-familias" style="border-bottom: 2px solid var(--borde-card);">
     <div class="contact-layout">
       <div class="contact-image fade-in">
         <img src="assets/images/mujer_consultando.png" alt="Solicitar Asistente" />
       </div>
       <div class="contact-form fade-in">
         <p class="eyebrow"
-          style="color:var(--magenta);font-weight:700;font-size:13px;text-transform:uppercase;margin-bottom:8px;">
+          style="color:var(--azul-medio-texto);font-weight:700;font-size:13px;text-transform:uppercase;margin-bottom:8px;">
           Formulario 1 — Familias</p>
         <h2>Podemos ayudarte (Solicitar Asistente)</h2>
         <p>Si sos familiar y tenés dudas o querés solicitar un asistente, déjanos tus datos para asistirte.</p>
@@ -384,7 +388,7 @@
               <label><input type="radio" name="newsletter-fam" value="no" /> No</label>
             </div>
           </div>
-          <button type="submit" class="btn btn-purple">ENVIAR CONSULTA</button>
+          <button type="submit" class="btn btn-secundario">ENVIAR CONSULTA</button>
           <div class="form-success" style="display:none;margin-top:12px;color:green;font-weight:600;">✓ ¡Gracias! Nos
             pondremos en contacto a la brevedad.</div>
         </form>
@@ -394,14 +398,14 @@
 
   <!-- 2. FORMULARIO DE REGISTRO / POSTULACIÓN PARA ASISTENTES (De postulacion-asistente.html) -->
   <section class="contact-section" id="registro-asistentes"
-    style="background:#fff;border-bottom: 2px solid var(--border-light);">
+    style="background: var(--superficie);border-bottom: 2px solid var(--borde-card);">
     <div class="contact-layout">
       <div class="contact-image fade-in">
         <img src="assets/images/vida_activa.png" alt="Postularme como Asistente" />
       </div>
       <div class="contact-form fade-in">
         <p class="eyebrow"
-          style="color:var(--magenta);font-weight:700;font-size:13px;text-transform:uppercase;margin-bottom:8px;">
+          style="color:var(--azul-medio-texto);font-weight:700;font-size:13px;text-transform:uppercase;margin-bottom:8px;">
           Formulario 2 — Profesionales</p>
         <h2>Registrate como Asistente</h2>
         <p>Completá tus datos y nos pondremos en contacto para guiarte en el proceso de verificación e incorporación a
@@ -443,7 +447,7 @@
               <label><input type="radio" name="newsletter-asis" value="no" /> No</label>
             </div>
           </div>
-          <button type="submit" class="btn btn-purple">ENVIAR SOLICITUD DE REGISTRO</button>
+          <button type="submit" class="btn btn-secundario">ENVIAR SOLICITUD DE REGISTRO</button>
           <div class="form-success" style="display:none;margin-top:12px;color:green;font-weight:600;">✓ ¡Solicitud
             recibida! Te contactaremos pronto.</div>
         </form>
@@ -452,20 +456,20 @@
   </section>
 
   <!-- 3. FORMULARIO DE FILTROS Y BÚSQUEDA DEL DIRECTORIO (De directorio.html) -->
-  <section class="contact-section" id="busqueda-directorio" style="background:var(--bg-light);">
+  <section class="contact-section" id="busqueda-directorio" style="background:var(--superficie-hover);">
     <div style="max-width:1000px;margin:0 auto;">
       <div style="text-align:center;margin-bottom:32px;">
         <p class="eyebrow"
-          style="color:var(--magenta);font-weight:700;font-size:13px;text-transform:uppercase;margin-bottom:8px;">
+          style="color:var(--azul-medio-texto);font-weight:700;font-size:13px;text-transform:uppercase;margin-bottom:8px;">
           Formulario 3 — Catálogo & Filtros</p>
-        <h2 style="font-size:32px;font-weight:800;color:var(--text-dark);">Filtro y Búsqueda en la Red de Asistentes
+        <h2 style="font-size:32px;font-weight:800;color:var(--texto-principal);">Filtro y Búsqueda en la Red de Asistentes
         </h2>
-        <p style="color:var(--text-mid);max-width:600px;margin:0 auto;">Campos de consulta utilizados para filtrar
+        <p style="color:var(--texto-secundario);max-width:600px;margin:0 auto;">Campos de consulta utilizados para filtrar
           asistentes por zona, modalidad, disponibilidad y experiencia.</p>
       </div>
 
       <form id="form-filtro-directorio" class="contact-form"
-        style="background:#fff;padding:36px;border-radius:var(--radius);box-shadow:var(--shadow-sm);" novalidate>
+        style="background: var(--superficie);padding:36px;border-radius:var(--redondeo-grande);box-shadow:var(--sombra-suave);" novalidate>
         <div style="display:grid;grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));gap:20px;">
 
           <div class="form-group">
@@ -513,12 +517,12 @@
 
           <!-- ACEPTACIÓN DE TÉRMINOS Y CONDICIONES Y POLÍTICAS DE PRIVACIDAD PARA FAMILIAS -->
           <div
-            style="margin:16px 0;font-size:12px;color:var(--text-dark);display:flex;align-items:flex-start;gap:8px;grid-column:1 / -1;">
+            style="margin:16px 0;font-size:12px;color:var(--texto-principal);display:flex;align-items:flex-start;gap:8px;grid-column:1 / -1;">
             <input type="checkbox" id="acepto-terminos-wizard" required
               style="margin-top:3px;width:16px;height:16px;cursor:pointer;" />
             <label for="acepto-terminos-wizard" style="cursor:pointer;line-height:1.4;">
               He leído y acepto los <a href="docs/terminos_y_condiciones_familias.md" target="_blank"
-                style="color:var(--magenta);font-weight:700;text-decoration:underline;">Términos, Condiciones de Uso,
+                style="color:var(--azul-medio-texto);font-weight:700;text-decoration:underline;">Términos, Condiciones de Uso,
                 Membresías y Exención Sanitaria para Familias</a> (incluye políticas de renovación de membresías y
               responsabilidad exclusiva de la prestadora elegida).
             </label>
@@ -530,7 +534,7 @@
           <button type="reset" class="btn"
             style="background:#e2e8f0;color:#334155;padding:12px 24px;border-radius:8px;font-weight:600;border:none;cursor:pointer;">Limpiar
             Filtros</button>
-          <button type="submit" class="btn btn-purple" style="padding:12px 32px;"><i class="fas fa-search"></i> APLICAR
+          <button type="submit" class="btn btn-secundario" style="padding:12px 32px;"><i class="fas fa-search"></i> APLICAR
             BÚSQUEDA</button>
         </div>
       </form>

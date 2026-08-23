@@ -9,6 +9,7 @@ const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
+  './css/tokens.css',
   './css/styles-pwa.css',
   './js/apiClient.js',
   './js/auth.js'

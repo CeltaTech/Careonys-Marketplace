@@ -55,8 +55,6 @@ const CareonysAPI = {
           id: '2197bc14-d545-4939-9a98-979e69a120dc', // UUID real de 'presdemo' en Supabase
           slug: 'presdemo',
           name: 'PresDemo — Servicios de Cuidado',
-          primary_color: '#1A365D',
-          accent_color: '#E53E3E',
           logo_url: 'assets/images/logo_presdemo.png'
         };
       }
@@ -70,8 +68,6 @@ const CareonysAPI = {
         id: '2197bc14-d545-4939-9a98-979e69a120dc',
         slug: 'presdemo',
         name: 'PresDemo — Servicios de Cuidado',
-        primary_color: '#1A365D',
-        accent_color: '#E53E3E',
         logo_url: 'assets/images/logo_presdemo.png'
       };
       this._applyBranding(this.currentTenant);
@@ -81,10 +77,10 @@ const CareonysAPI = {
   _applyBranding(tenant) {
     // Inyectar variables CSS de colores al root
     if (tenant.primary_color) {
-      document.documentElement.style.setProperty('--color-primary', tenant.primary_color);
+      document.documentElement.style.setProperty('--marca-prestadora', tenant.primary_color);
     }
     if (tenant.accent_color) {
-      document.documentElement.style.setProperty('--color-accent', tenant.accent_color);
+      document.documentElement.style.setProperty('--marca-prestadora-acento', tenant.accent_color);
     }
 
     // Reemplazar logos e imágenes de marca
@@ -106,8 +102,8 @@ const CareonysAPI = {
       if (footerLogo && !footerLogo.querySelector('.powered-by-tag')) {
         const tag = document.createElement('span');
         tag.className = 'powered-by-tag';
-        tag.style.cssText = 'font-size: 11px; font-weight: 700; color: #94a3b8; margin-top: 6px; display: block; letter-spacing: 0.3px;';
-        tag.innerHTML = 'Powered by <span style="color:var(--color-accent, #E53E3E); font-weight: 900;">Careonys</span>';
+        tag.style.cssText = 'font-size: 11px; font-weight: 700; color: var(--texto-secundario); margin-top: 6px; display: block; letter-spacing: 0.3px;';
+        tag.innerHTML = 'Powered by <span style="color:var(--marca-prestadora-acento); font-weight: 900;">Careonys</span>';
         footerLogo.appendChild(tag);
 
         footerLogo.style.display = 'flex';

@@ -6,6 +6,10 @@
   <title>Careonys Familia — PWA Portal</title>
   <link rel="manifest" href="manifest.json" />
   <!-- CSS LOCAL (dentro del scope del Service Worker) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles-pwa.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
@@ -13,7 +17,7 @@
       background: #f1f5f9;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-family: var(--font-body);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -26,7 +30,7 @@
       max-width: 420px;
       height: 100vh;
       max-height: 840px;
-      background: #fff;
+      background: var(--superficie);
       position: relative;
       box-shadow: 0 12px 40px rgba(15, 23, 42, 0.15);
       border-radius: 32px;
@@ -42,7 +46,7 @@
 
     @media (max-width: 480px) {
       body {
-        background: #fff;
+        background: var(--superficie);
       }
       #phone-container {
         max-width: 100%;
@@ -69,7 +73,7 @@
 
     /* CABECERAS */
     .app-header {
-      background: #fff;
+      background: var(--superficie);
       padding: 14px 18px;
       display: flex;
       align-items: center;
@@ -83,7 +87,7 @@
     .app-header h1 {
       font-size: 16px;
       font-weight: 800;
-      color: var(--color-primary, #1A365D);
+      color: var(--marca-prestadora);
       margin: 0;
       display: flex;
       align-items: center;
@@ -101,7 +105,7 @@
 
     /* INTRO / LOGIN */
     #screen-intro {
-      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      background: linear-gradient(135deg, var(--fondo-app) 0%, var(--superficie-hover) 100%);
       padding: 24px;
       box-sizing: border-box;
       justify-content: center;
@@ -120,7 +124,7 @@
     .intro-logo-container h2 {
       font-size: 24px;
       font-weight: 800;
-      color: var(--color-primary, #1A365D);
+      color: var(--marca-prestadora);
       margin: 0;
     }
 
@@ -131,7 +135,7 @@
     }
 
     .login-card {
-      background: #fff;
+      background: var(--superficie);
       padding: 24px;
       border-radius: 20px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.04);
@@ -155,8 +159,8 @@
     }
 
     .input-wrapper input:focus {
-      border-color: var(--color-accent, #E53E3E);
-      background: #fff;
+      border-color: var(--marca-prestadora-acento);
+      background: var(--superficie);
       outline: none;
     }
 
@@ -164,7 +168,7 @@
       width: 100%;
       padding: 12px;
       border-radius: 12px;
-      background: var(--color-accent, #E53E3E);
+      background: var(--marca-prestadora-acento);
       color: #fff;
       font-weight: 700;
       border: none;
@@ -175,7 +179,7 @@
 
     /* DASHBOARD FAMILIA */
     .dashboard-header {
-      background: #fff;
+      background: var(--superficie);
       padding: 14px 18px;
       display: flex;
       align-items: center;
@@ -194,7 +198,7 @@
     }
 
     .service-btn {
-      background: #fff;
+      background: var(--superficie);
       border: 1px solid #e2e8f0;
       border-radius: 16px;
       padding: 14px 8px;
@@ -265,7 +269,7 @@
     .section-title {
       font-size: 15px;
       font-weight: 800;
-      color: var(--color-primary, #1A365D);
+      color: var(--marca-prestadora);
       padding: 0 16px;
       margin: 16px 0 8px 0;
       display: flex;
@@ -275,7 +279,7 @@
 
     .section-title a {
       font-size: 11px;
-      color: var(--color-accent, #E53E3E);
+      color: var(--marca-prestadora-acento);
       font-weight: 700;
       text-decoration: none;
     }
@@ -290,7 +294,7 @@
     .caregiver-card {
       min-width: 140px;
       width: 140px;
-      background: #fff;
+      background: var(--superficie);
       border: 1px solid #e2e8f0;
       border-radius: 16px;
       padding: 12px;
@@ -339,7 +343,7 @@
     /* BARRA TABS */
     .bottom-tab-bar {
       height: 64px;
-      background: #fff;
+      background: var(--superficie);
       border-top: 1px solid #e2e8f0;
       display: flex;
       justify-content: space-around;
@@ -356,13 +360,13 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      color: #94a3b8;
+      color:var(--texto-secundario);
       cursor: pointer;
       text-decoration: none;
     }
 
     .tab-item.active {
-      color: var(--color-accent, #E53E3E);
+      color: var(--marca-prestadora-acento);
     }
 
     .tab-item i {
@@ -376,7 +380,7 @@
 
     /* TIMELINE CUADERNO */
     .cuaderno-header {
-      background: var(--color-primary, #1A365D);
+      background: var(--marca-prestadora);
       color: #fff;
       padding: 20px;
       border-radius: 0 0 24px 24px;
@@ -423,8 +427,8 @@
       width: 24px;
       height: 24px;
       border-radius: 50%;
-      background: #fff;
-      border: 3px solid var(--color-accent, #E53E3E);
+      background: var(--superficie);
+      border: 3px solid var(--marca-prestadora-acento);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -433,7 +437,7 @@
 
     .log-content {
       flex: 1;
-      background: #fff;
+      background: var(--superficie);
       border: 1px solid #e2e8f0;
       padding: 12px;
       border-radius: 12px;
@@ -456,7 +460,7 @@
 
     .log-content span.time {
       font-size: 10px;
-      color: #94a3b8;
+      color:var(--texto-secundario);
       font-weight: 600;
       float: right;
     }
@@ -468,7 +472,7 @@
       left: -280px;
       width: 280px;
       height: 100%;
-      background: #fff;
+      background: var(--superficie);
       box-shadow: 10px 0 30px rgba(0,0,0,0.1);
       z-index: 200;
       transition: left 0.3s ease;
@@ -496,7 +500,7 @@
     }
 
     .drawer-header {
-      background: linear-gradient(135deg, var(--color-primary, #1A365D) 0%, #1e1e2d 100%);
+      background: linear-gradient(135deg, var(--marca-prestadora) 0%, #1e1e2d 100%);
       color: #fff;
       padding: 30px 20px;
     }
@@ -550,8 +554,8 @@
         <div style="border-top:1px solid #f1f5f9;margin:8px 0;"></div>
         <a class="drawer-menu-item" id="btn-logout" style="color:#ef4444;"><i class="fas fa-sign-out-alt" style="width:20px;color:#ef4444;"></i> Cerrar sesión</a>
       </div>
-      <div style="padding:16px;text-align:center;font-size:10px;color:#94a3b8;border-top:1px solid #f1f5f9;">
-        Powered by <strong style="color:var(--color-accent, #E53E3E)">Careonys</strong>
+      <div style="padding:16px;text-align:center;font-size:10px;color:var(--texto-secundario);border-top:1px solid #f1f5f9;">
+        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
       </div>
     </div>
 
@@ -572,8 +576,8 @@
         </div>
         <button type="button" class="btn-login" id="btn-action-login" style="width:100%;">Ingresá a Careonys Familia</button>
       </div>
-      <div style="text-align:center;margin-top:auto;font-size:10px;color:#94a3b8;padding-top:20px;">
-        Powered by <strong style="color:var(--color-accent, #E53E3E)">Careonys</strong>
+      <div style="text-align:center;margin-top:auto;font-size:10px;color:var(--texto-secundario);padding-top:20px;">
+        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
       </div>
     </div>
 
@@ -583,7 +587,7 @@
         <button class="btn-back" id="btn-open-menu" style="font-size:20px;"><i class="fas fa-bars"></i></button>
         <div style="display:flex;align-items:center;gap:6px;">
           <img src="../assets/images/logo_careonys.png" class="tenant-logo" style="height:24px;" alt="Logo" />
-          <span class="tenant-name" style="font-size:14px;font-weight:800;color:var(--color-primary, #1A365D);">PresDemo</span>
+          <span class="tenant-name" style="font-size:14px;font-weight:800;color:var(--marca-prestadora);">PresDemo</span>
         </div>
         <div><i class="fas fa-bell" style="font-size:18px;color:#64748b;"></i></div>
       </div>
@@ -615,11 +619,11 @@
           <span>Nueva Búsqueda</span>
         </div>
         <div class="service-btn" onclick="alert('Vida Activa: Estimulación Cognitiva.')">
-          <div class="icon-box" style="background:#ec4899;"><i class="fas fa-running"></i></div>
+          <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-running"></i></div>
           <span>Vida Activa</span>
         </div>
         <div class="service-btn" onclick="alert('Contactando a tu Gestor de Cuidados asignado...')">
-          <div class="icon-box" style="background:#8b5cf6;"><i class="fas fa-user-tie"></i></div>
+          <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-user-tie"></i></div>
           <span>Gestor</span>
         </div>
       </div>
@@ -633,8 +637,8 @@
         <p style="font-size:12px;color:#64748b;padding:0 16px;">Cargando cuidadores...</p>
       </div>
 
-      <div style="text-align:center;padding:24px 0;font-size:10px;color:#94a3b8;">
-        Powered by <strong style="color:var(--color-accent, #E53E3E)">Careonys</strong>
+      <div style="text-align:center;padding:24px 0;font-size:10px;color:var(--texto-secundario);">
+        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
       </div>
 
       <div class="bottom-tab-bar">
@@ -680,7 +684,7 @@
     <div class="app-screen" id="screen-publicar" style="padding-bottom:64px;">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
-        <h1><i class="fas fa-plus-circle" style="color:var(--color-accent, #E53E3E);"></i> Nueva Búsqueda</h1>
+        <h1><i class="fas fa-plus-circle" style="color:var(--marca-prestadora-acento);"></i> Nueva Búsqueda</h1>
         <div style="width:24px;"></div>
       </div>
 
@@ -690,8 +694,8 @@
         <form id="form-nueva-busqueda" novalidate>
 
           <!-- Datos del Paciente -->
-          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px;margin-bottom:12px;">
-            <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--color-primary,#1A365D);">
+          <div style="background: var(--superficie);border:1px solid #e2e8f0;border-radius:16px;padding:16px;margin-bottom:12px;">
+            <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--marca-prestadora);">
               <i class="fas fa-user-injured" style="margin-right:6px;"></i>Datos del Paciente
             </h4>
             <div style="margin-bottom:10px;">
@@ -714,8 +718,8 @@
           </div>
 
           <!-- Tipo de Cuidado -->
-          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px;margin-bottom:12px;">
-            <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--color-primary,#1A365D);">
+          <div style="background: var(--superficie);border:1px solid #e2e8f0;border-radius:16px;padding:16px;margin-bottom:12px;">
+            <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--marca-prestadora);">
               <i class="fas fa-calendar-alt" style="margin-right:6px;"></i>Tipo de Cuidado
             </h4>
             <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">Modalidad de Servicio</label>
@@ -742,8 +746,8 @@
           </div>
 
           <!-- Patologías -->
-          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:16px;margin-bottom:16px;">
-            <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--color-primary,#1A365D);">
+          <div style="background: var(--superficie);border:1px solid #e2e8f0;border-radius:16px;padding:16px;margin-bottom:16px;">
+            <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--marca-prestadora);">
               <i class="fas fa-notes-medical" style="margin-right:6px;"></i>Condición del Paciente
             </h4>
             <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:8px;">Patologías presentes (seleccioná todas las que apliquen):</label>
@@ -776,7 +780,7 @@
 
           <!-- Botón Enviar -->
           <button type="submit" id="btn-enviar-busqueda"
-            style="width:100%;padding:14px;border-radius:14px;background:var(--color-accent,#E53E3E);color:#fff;font-weight:800;font-size:14px;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(229,62,62,0.25);">
+            style="width:100%;padding:14px;border-radius:14px;background:var(--marca-prestadora-acento);color:#fff;font-weight:800;font-size:14px;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(229,62,62,0.25);">
             <i class="fas fa-search"></i> Buscar mi Asistente Ideal
           </button>
           <div id="pb-success"
@@ -849,12 +853,12 @@
 
     async function cargarBitacora() {
       const listEl = document.getElementById('timeline-log-list');
-      listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:#94a3b8;padding:20px;">Cargando novedades...</p>';
+      listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">Cargando novedades...</p>';
       try {
         const logs = await CareonysAPI.getBitacoraDiaria();
         listEl.innerHTML = '';
         if (!logs || logs.length === 0) {
-          listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:#94a3b8;padding:20px;">No hay registros en la bitácora todavía.</p>';
+          listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">No hay registros en la bitácora todavía.</p>';
           return;
         }
         logs.forEach(log => {
@@ -864,7 +868,7 @@
           if (log.blood_pressure) iconClass = 'fa-heartbeat';
           const timeStr = log.created_at ? new Date(log.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' hs' : 'Recién';
           item.innerHTML = `
-            <div class="log-dot"><i class="fas ${iconClass}" style="font-size:8px;color:var(--color-accent, #E53E3E);"></i></div>
+            <div class="log-dot"><i class="fas ${iconClass}" style="font-size:8px;color:var(--marca-prestadora-acento);"></i></div>
             <div class="log-content">
               <span class="time">${timeStr}</span>
               <h5>${log.blood_pressure ? 'Control de Signos Vitales' : 'Nota de Cuidado'}</h5>

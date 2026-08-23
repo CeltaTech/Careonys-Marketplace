@@ -1,8 +1,27 @@
-# Evitar subir credenciales y archivos temporales
-/No commit/
-No commit/
-*.log
+node_modules/
+dist/
 
+# Cualquier archivo de variables de entorno, con una sola excepción declarada: el molde.
+# El patrón es amplio a propósito: `.env` y `.env.local` exactos dejarían pasar una variante
+# como `.env.nube` con las claves reales adentro.
+.env
+.env.*
+!.env.example
+
+*.log
+.DS_Store
+Thumbs.db
+
+# Credenciales y datos sensibles — nunca commitear (ver CLAUDE.md §4).
+# El nombre de la carpeta es exactamente este; no agregar variantes que no existen.
+/No commit/
+
+# Configuración local de Claude Code. Tiene rutas absolutas de esta máquina, no sirve en otra.
+# Cada quien arma la suya. Contiene además la lista de permisos concedidos al agente.
+.claude/
+
+# Estado local de la CLI de Vercel. Es de la máquina de quien desarrolla, no del proyecto.
 .vercel
 
+# Material descartado que no se borra todavía.
 assets/images/fuera de uso/

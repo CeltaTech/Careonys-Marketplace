@@ -1,0 +1,149 @@
+{
+  "servicios": [
+    {
+      "clave": "busco_asistente",
+      "es-AR": "Busco Asistente",
+      "descripcion": "Acceso a Asistentes calificados, con herramientas para buscar y para gestionar el día a día del cuidado de un ser querido.",
+      "estado": "publicado"
+    },
+    {
+      "clave": "acompanamiento_online",
+      "es-AR": "Acompañamiento online",
+      "descripcion": "Orientación especializada para mejorar la calidad de vida de la persona cuidada y de su familia.",
+      "estado": "publicado"
+    },
+    {
+      "clave": "cursos",
+      "es-AR": "Cursos para familias",
+      "descripcion": "Formación para familiares de personas mayores y para cualquiera de su entorno que quiera entender el momento vital y cuidar del otro y de sí mismo.",
+      "estado": "publicado"
+    },
+    {
+      "clave": "monitoreo",
+      "es-AR": "Monitoreo del cuidado",
+      "descripcion": "Organización diaria del cuidado, para que no se lleve el tiempo que hace falta para lo esencial.",
+      "estado": "publicado"
+    },
+    {
+      "clave": "asistente_virtual",
+      "es-AR": "Asistente virtual",
+      "descripcion": "Respuestas a las dudas de quien acompaña a un familiar.",
+      "estado": "publicado"
+    },
+    {
+      "clave": "vida_activa",
+      "es-AR": "Vida activa",
+      "descripcion": "Bienestar físico, psíquico y social de la persona mayor.",
+      "estado": "publicado"
+    },
+    {
+      "clave": "gestor_cuidado",
+      "es-AR": "Gestor del cuidado",
+      "descripcion": "Un especialista que ayuda a gestionar y monitorear todo el cuidado en el domicilio.",
+      "estado": "proximamente"
+    },
+    {
+      "clave": "productos_hogar",
+      "es-AR": "Productos para el hogar",
+      "descripcion": "Provisión de alimentos y servicios en el domicilio.",
+      "estado": "proximamente"
+    }
+  ],
+  "cursos": [
+    {
+      "clave": "introduccion",
+      "es-AR": "Introducción al cuidado del adulto mayor",
+      "descripcion": "Conceptos fundamentales del envejecimiento, necesidades básicas y cómo acompañar a un familiar en el día a día.",
+      "horas": 8,
+      "nivel": "basico",
+      "modalidad": "online",
+      "certificado": true
+    },
+    {
+      "clave": "demencias",
+      "es-AR": "Alzheimer y otras demencias: qué esperar y cómo actuar",
+      "descripcion": "Guía práctica para entender el deterioro cognitivo, manejar situaciones difíciles y sostener la calidad de vida de la persona cuidada.",
+      "horas": 12,
+      "nivel": "intermedio",
+      "modalidad": "online",
+      "certificado": true
+    },
+    {
+      "clave": "bienestar_cuidador",
+      "es-AR": "El bienestar de quien cuida",
+      "descripcion": "Herramientas para prevenir el síndrome del cuidador, manejar el estrés y sostener la propia salud emocional.",
+      "horas": 6,
+      "nivel": "basico",
+      "modalidad": "online",
+      "certificado": true
+    },
+    {
+      "clave": "medicamentos",
+      "es-AR": "Administración de medicamentos y control de salud en el hogar",
+      "descripcion": "Organizar la medicación, reconocer señales de alerta y coordinar con el equipo médico.",
+      "horas": 5,
+      "nivel": "intermedio",
+      "modalidad": "online",
+      "certificado": true
+    },
+    {
+      "clave": "comunicacion",
+      "es-AR": "Comunicación empática con un familiar mayor",
+      "descripcion": "Técnicas de comunicación adaptadas al envejecimiento, cómo dar malas noticias y cómo manejar conflictos familiares.",
+      "horas": 4,
+      "nivel": "basico",
+      "modalidad": "online",
+      "certificado": true
+    },
+    {
+      "clave": "cuidados_avanzados",
+      "es-AR": "Cuidados avanzados: pacientes postrados y cuidados paliativos",
+      "descripcion": "Movilización, prevención de escaras, cuidados al final de la vida y acompañamiento emocional.",
+      "horas": 16,
+      "nivel": "avanzado",
+      "modalidad": "online",
+      "certificado": true
+    }
+  ],
+  "evaluaciones": [
+    {
+      "clave": "gerontologico_primeros_auxilios",
+      "es-AR": "Cuidado gerontológico y primeros auxilios",
+      "puntos_reputacion": 250,
+      "preguntas": [
+        {
+          "clave": "posicion_alimentacion",
+          "es-AR": "¿Cuál es la posición recomendada para alimentar a un paciente postrado?",
+          "opciones": [
+            {
+              "clave": "fowler",
+              "es-AR": "Posición Fowler (semisentado, 45 a 90°)",
+              "correcta": true
+            },
+            {
+              "clave": "acostado",
+              "es-AR": "Completamente acostado",
+              "correcta": false
+            }
+          ]
+        },
+        {
+          "clave": "baja_presion",
+          "es-AR": "Ante una baja repentina de presión en un adulto mayor, ¿qué corresponde hacer?",
+          "opciones": [
+            {
+              "clave": "trendelenburg",
+              "es-AR": "Recostarlo y elevarle las piernas a 45° (Trendelenburg)",
+              "correcta": true
+            },
+            {
+              "clave": "caminar",
+              "es-AR": "Hacerlo caminar rápidamente",
+              "correcta": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

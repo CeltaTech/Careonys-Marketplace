@@ -1,0 +1,562 @@
+{
+  "vocabularios": {
+    "genero": {
+      "titulo": "Género de la persona",
+      "cerrada": true,
+      "usado_en": [
+        "postulacion-asistente.html:264",
+        "formulario-integral.html:111",
+        "pwa-asistente/index.html:410"
+      ],
+      "items": [
+        {
+          "clave": "femenino",
+          "es-AR": "Femenino"
+        },
+        {
+          "clave": "masculino",
+          "es-AR": "Masculino"
+        },
+        {
+          "clave": "otro",
+          "es-AR": "Otro"
+        },
+        {
+          "clave": "sin_declarar",
+          "es-AR": "Prefiero no decirlo"
+        }
+      ],
+      "nota": "Tres pantallas tenían tres listas distintas: una sin «Prefiero no decirlo», otra que lo fusionaba con «Otro». Se unifica en cuatro."
+    },
+    "genero_preferido": {
+      "titulo": "Género de Asistente que la Familia prefiere",
+      "cerrada": true,
+      "usado_en": [
+        "formulario-integral.html:122"
+      ],
+      "items": [
+        {
+          "clave": "indistinto",
+          "es-AR": "Indistinto"
+        },
+        {
+          "clave": "femenino",
+          "es-AR": "Femenino únicamente"
+        },
+        {
+          "clave": "masculino",
+          "es-AR": "Masculino únicamente"
+        }
+      ]
+    },
+    "perfil_profesional": {
+      "titulo": "Perfil profesional del Asistente",
+      "cerrada": true,
+      "usado_en": [
+        "postulacion-asistente.html:307",
+        "formulario-integral.html:428",
+        "pwa-asistente/index.html:430",
+        "directorio.html:73"
+      ],
+      "items": [
+        {
+          "clave": "cuidador_domiciliario",
+          "es-AR": "Asistente / Cuidador domiciliario"
+        },
+        {
+          "clave": "enfermero_universitario",
+          "es-AR": "Enfermero universitario"
+        },
+        {
+          "clave": "auxiliar_enfermeria",
+          "es-AR": "Auxiliar de enfermería"
+        },
+        {
+          "clave": "acompanante_terapeutico",
+          "es-AR": "Acompañante terapéutico"
+        },
+        {
+          "clave": "gerontologo",
+          "es-AR": "Especialista en gerontología"
+        },
+        {
+          "clave": "voluntario",
+          "es-AR": "Voluntario / Acompañante"
+        },
+        {
+          "clave": "otro",
+          "es-AR": "Otro"
+        }
+      ],
+      "nota": "Cuatro pantallas, cuatro listas distintas: dos incluían «Voluntario», dos no; dos incluían «Otro», dos no; «Gerontólogo» aparecía con tres nombres. Se unifica en siete."
+    },
+    "condicion_fiscal": {
+      "titulo": "Condición frente a AFIP",
+      "cerrada": true,
+      "usado_en": [
+        "postulacion-asistente.html:276"
+      ],
+      "items": [
+        {
+          "clave": "monotributo_social",
+          "es-AR": "Monotributo social"
+        },
+        {
+          "clave": "monotributo_general",
+          "es-AR": "Monotributo general"
+        },
+        {
+          "clave": "responsable_inscripto",
+          "es-AR": "Responsable inscripto"
+        },
+        {
+          "clave": "no_inscripto",
+          "es-AR": "No inscripto / En trámite"
+        }
+      ]
+    },
+    "nivel_educativo": {
+      "titulo": "Nivel educativo alcanzado",
+      "cerrada": true,
+      "usado_en": [
+        "postulacion-asistente.html:318",
+        "pwa-asistente/index.html:441"
+      ],
+      "items": [
+        {
+          "clave": "secundario",
+          "es-AR": "Secundario completo"
+        },
+        {
+          "clave": "terciario",
+          "es-AR": "Terciario o tecnólogo universitario"
+        },
+        {
+          "clave": "universitario_en_curso",
+          "es-AR": "Universitario en curso"
+        },
+        {
+          "clave": "universitario_graduado",
+          "es-AR": "Universitario graduado"
+        }
+      ],
+      "nota": "La PWA se comía «Universitario en curso», así que quien estaba estudiando no tenía dónde marcarlo."
+    },
+    "patologia": {
+      "titulo": "Patologías con las que el Asistente trabaja",
+      "cerrada": false,
+      "usado_en": [
+        "postulacion-asistente.html:391",
+        "pwa-asistente/index.html:472",
+        "pwa-familia/index.html:756",
+        "directorio.html:80"
+      ],
+      "items": [
+        {
+          "clave": "alzheimer",
+          "es-AR": "Alzheimer / Demencia"
+        },
+        {
+          "clave": "parkinson",
+          "es-AR": "Parkinson"
+        },
+        {
+          "clave": "acv",
+          "es-AR": "ACV / Rehabilitación"
+        },
+        {
+          "clave": "diabetes",
+          "es-AR": "Diabetes / Control de insulina"
+        },
+        {
+          "clave": "postrados",
+          "es-AR": "Pacientes postrados"
+        },
+        {
+          "clave": "paliativos",
+          "es-AR": "Cuidados paliativos"
+        },
+        {
+          "clave": "oncologico",
+          "es-AR": "Paciente oncológico"
+        }
+      ],
+      "nota": "Las claves ya coincidían en las cuatro pantallas; el texto visible no. «Paciente oncológico» existía sólo en el filtro del directorio, así que se podía buscar pero ningún Asistente podía declararlo."
+    },
+    "tarea_cuidado": {
+      "titulo": "Tareas de cuidado que el Asistente realiza",
+      "cerrada": false,
+      "usado_en": [
+        "postulacion-asistente.html:410",
+        "pwa-asistente/index.html:481"
+      ],
+      "items": [
+        {
+          "clave": "higiene",
+          "es-AR": "Higiene y confort del paciente"
+        },
+        {
+          "clave": "signos",
+          "es-AR": "Control de signos vitales"
+        },
+        {
+          "clave": "medicacion",
+          "es-AR": "Administración de medicación"
+        },
+        {
+          "clave": "inyecciones",
+          "es-AR": "Aplicación de inyecciones y sondas"
+        },
+        {
+          "clave": "tramites",
+          "es-AR": "Acompañamiento a turnos y paseos"
+        },
+        {
+          "clave": "cocina",
+          "es-AR": "Cocina adaptada y nutrición"
+        }
+      ]
+    },
+    "modalidad_contratacion": {
+      "titulo": "Modalidad de contratación",
+      "cerrada": false,
+      "usado_en": [
+        "postulacion-asistente.html:444",
+        "pwa-asistente/index.html:499",
+        "formulario-integral.html:239",
+        "pwa-familia/index.html:726"
+      ],
+      "items": [
+        {
+          "clave": "horas",
+          "es-AR": "Por horas / Jornada parcial"
+        },
+        {
+          "clave": "retiro",
+          "es-AR": "Con retiro (jornada completa)"
+        },
+        {
+          "clave": "sin_retiro",
+          "es-AR": "Sin retiro (cama adentro, 24 h)"
+        },
+        {
+          "clave": "guardia_12",
+          "es-AR": "Guardia de 12 horas"
+        },
+        {
+          "clave": "urgencia",
+          "es-AR": "Reemplazo urgente"
+        }
+      ],
+      "nota": "Cuatro listas distintas. «Guardia de 12 horas» sólo se podía pedir y nadie podía ofrecerla; «Reemplazo urgente» sólo se podía ofrecer y nadie podía pedirlo. La clave del tercero se escribía «sin-retiro» con guion medio y no coincide con el resto de las claves del proyecto: se normaliza a «sin_retiro»."
+    },
+    "frecuencia": {
+      "titulo": "Frecuencia del servicio",
+      "cerrada": true,
+      "usado_en": [
+        "formulario-integral.html:247"
+      ],
+      "items": [
+        {
+          "clave": "recurrente",
+          "es-AR": "Recurrente (días fijos por semana)"
+        },
+        {
+          "clave": "eventual",
+          "es-AR": "Eventual (por única vez)"
+        }
+      ]
+    },
+    "dia_semana": {
+      "titulo": "Días de la semana",
+      "cerrada": false,
+      "usado_en": [
+        "formulario-integral.html:258"
+      ],
+      "items": [
+        {
+          "clave": "lunes",
+          "es-AR": "Lunes"
+        },
+        {
+          "clave": "martes",
+          "es-AR": "Martes"
+        },
+        {
+          "clave": "miercoles",
+          "es-AR": "Miércoles"
+        },
+        {
+          "clave": "jueves",
+          "es-AR": "Jueves"
+        },
+        {
+          "clave": "viernes",
+          "es-AR": "Viernes"
+        },
+        {
+          "clave": "sabado",
+          "es-AR": "Sábado"
+        },
+        {
+          "clave": "domingo",
+          "es-AR": "Domingo"
+        }
+      ],
+      "nota": "Estaban guardados como «L M X J V S D». Una letra suelta no se traduce a otro idioma ni se ordena sola."
+    },
+    "turno": {
+      "titulo": "Franja horaria",
+      "cerrada": false,
+      "usado_en": [
+        "pwa-familia/index.html:737"
+      ],
+      "items": [
+        {
+          "clave": "manana",
+          "es-AR": "Mañana"
+        },
+        {
+          "clave": "tarde",
+          "es-AR": "Tarde"
+        },
+        {
+          "clave": "noche",
+          "es-AR": "Noche"
+        }
+      ],
+      "nota": "Las claves tenían eñe («mañana»). Una clave con eñe se rompe en direcciones web y en nombres de columna."
+    },
+    "nivel_reputacion": {
+      "titulo": "Nivel del Asistente en el catálogo",
+      "cerrada": true,
+      "usado_en": [
+        "formulario-integral.html:510",
+        "cursos.html:131"
+      ],
+      "items": [
+        {
+          "clave": "bronce",
+          "es-AR": "Asistente verificado (Bronce)"
+        },
+        {
+          "clave": "plata",
+          "es-AR": "Asistente senior (Plata)"
+        },
+        {
+          "clave": "oro",
+          "es-AR": "Asistente destacado (Oro)"
+        }
+      ],
+      "nota": "Se sube de nivel con puntos de reputación. Cuántos hacen falta para pasar de uno a otro no está escrito en ninguna parte del proyecto."
+    },
+    "verificacion": {
+      "titulo": "Comprobaciones sobre el Asistente",
+      "cerrada": false,
+      "usado_en": [
+        "directorio.html:89"
+      ],
+      "items": [
+        {
+          "clave": "dni",
+          "es-AR": "DNI validado"
+        },
+        {
+          "clave": "penales",
+          "es-AR": "Certificado de antecedentes penales"
+        },
+        {
+          "clave": "titulo",
+          "es-AR": "Título acreditado"
+        }
+      ]
+    },
+    "certificacion": {
+      "titulo": "Cursos acreditados que el Asistente declara",
+      "cerrada": false,
+      "usado_en": [
+        "postulacion-asistente.html:335",
+        "pwa-asistente/index.html:450"
+      ],
+      "items": [
+        {
+          "clave": "curso_gerontologico",
+          "es-AR": "Curso general de asistente de cuidado domiciliario"
+        },
+        {
+          "clave": "deterioro_cognitivo",
+          "es-AR": "Especialización en deterioro cognitivo y Alzheimer"
+        },
+        {
+          "clave": "primeros_auxilios",
+          "es-AR": "Primeros auxilios y soporte vital básico (RCP)"
+        },
+        {
+          "clave": "nutricion",
+          "es-AR": "Nutrición, dietética y cocina adaptada"
+        },
+        {
+          "clave": "pacientes_complejos",
+          "es-AR": "Cuidado de pacientes postrados y manejo de sondas"
+        }
+      ],
+      "nota": "La cuarta clave se escribía «nutricion_cocina» en una pantalla y «nutricion» en la otra: el mismo curso guardado con dos nombres distintos."
+    },
+    "motivo_consulta": {
+      "titulo": "Motivo por el que una Familia escribe",
+      "cerrada": true,
+      "usado_en": [
+        "index.html:308",
+        "formulario-integral.html:376",
+        "solicitar-asistente.html:337",
+        "soporte-remoto.html:143"
+      ],
+      "items": [
+        {
+          "clave": "busco_asistente",
+          "es-AR": "Busco un Asistente"
+        },
+        {
+          "clave": "acompanamiento_online",
+          "es-AR": "Acompañamiento y asesoramiento online"
+        },
+        {
+          "clave": "cursos",
+          "es-AR": "Cursos para familias"
+        },
+        {
+          "clave": "orientacion",
+          "es-AR": "Orientación para cuidar a un familiar"
+        },
+        {
+          "clave": "apoyo_cuidador",
+          "es-AR": "Apoyo emocional para quien cuida"
+        },
+        {
+          "clave": "entender_salud",
+          "es-AR": "Entender la situación de salud de un familiar"
+        },
+        {
+          "clave": "coordinar",
+          "es-AR": "Coordinar cuidados entre varios familiares"
+        },
+        {
+          "clave": "otro",
+          "es-AR": "Otro"
+        }
+      ],
+      "nota": "Cuatro formularios con cuatro listas. Tres compartían las mismas tres opciones con nombres distintos; el de acompañamiento online tenía cuatro propias. Se unifican en ocho y cada pantalla muestra el subconjunto que le corresponde."
+    },
+    "zona": {
+      "titulo": "Zona de cobertura",
+      "cerrada": true,
+      "usado_en": [
+        "directorio.html:62",
+        "formulario-integral.html:477"
+      ],
+      "nota": "Las dos pantallas listaban zonas de distinto tamaño: una, barrios; la otra, regiones enteras. No son dos listas rivales sino dos escalones de la misma, así que cada barrio queda colgado de su región. Qué barrios y partidos cubre el servicio de verdad no está escrito en el proyecto: esta lista es la que estaba en las pantallas, no un mapa de cobertura.",
+      "items": [
+        {
+          "clave": "caba",
+          "es-AR": "Ciudad de Buenos Aires",
+          "region": null
+        },
+        {
+          "clave": "palermo",
+          "es-AR": "Palermo",
+          "region": "caba"
+        },
+        {
+          "clave": "belgrano",
+          "es-AR": "Belgrano",
+          "region": "caba"
+        },
+        {
+          "clave": "recoleta",
+          "es-AR": "Recoleta",
+          "region": "caba"
+        },
+        {
+          "clave": "villa_urquiza",
+          "es-AR": "Villa Urquiza",
+          "region": "caba"
+        },
+        {
+          "clave": "nunez",
+          "es-AR": "Núñez",
+          "region": "caba"
+        },
+        {
+          "clave": "caballito",
+          "es-AR": "Caballito",
+          "region": "caba"
+        },
+        {
+          "clave": "flores",
+          "es-AR": "Flores",
+          "region": "caba"
+        },
+        {
+          "clave": "san_telmo",
+          "es-AR": "San Telmo",
+          "region": "caba"
+        },
+        {
+          "clave": "zona_norte",
+          "es-AR": "Zona Norte",
+          "region": null
+        },
+        {
+          "clave": "san_isidro",
+          "es-AR": "San Isidro",
+          "region": "zona_norte"
+        },
+        {
+          "clave": "vicente_lopez",
+          "es-AR": "Vicente López",
+          "region": "zona_norte"
+        },
+        {
+          "clave": "grand_bourg",
+          "es-AR": "Grand Bourg",
+          "region": "zona_norte"
+        },
+        {
+          "clave": "zona_sur",
+          "es-AR": "Zona Sur",
+          "region": null
+        },
+        {
+          "clave": "quilmes",
+          "es-AR": "Quilmes",
+          "region": "zona_sur"
+        },
+        {
+          "clave": "avellaneda",
+          "es-AR": "Avellaneda",
+          "region": "zona_sur"
+        },
+        {
+          "clave": "lomas",
+          "es-AR": "Lomas de Zamora",
+          "region": "zona_sur"
+        },
+        {
+          "clave": "zona_oeste",
+          "es-AR": "Zona Oeste",
+          "region": null
+        },
+        {
+          "clave": "moron",
+          "es-AR": "Morón",
+          "region": "zona_oeste"
+        },
+        {
+          "clave": "ramos_mejia",
+          "es-AR": "Ramos Mejía",
+          "region": "zona_oeste"
+        }
+      ]
+    }
+  }
+}

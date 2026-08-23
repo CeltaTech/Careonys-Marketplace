@@ -7,6 +7,10 @@
   <title>Solicitar Asistente — PresDemo</title>
   <meta name="description"
     content="Encontrá al cuidador ideal para tu familiar mayor. Publicá tu aviso y recibí postulaciones de cuidadores calificados en tu zona." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -48,13 +52,13 @@
     <p>Careonys te facilita el acceso a cientos de cuidadores calificados con múltiples herramientas que te facilitan la
       búsqueda y gestión del día a día en el cuidado de tu ser querido.</p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
-      <a href="directorio.html" class="btn btn-yellow">Ver cuidadores disponibles</a>
-      <a href="#como-funciona" class="btn btn-outline-white">Cómo funciona</a>
+      <a href="directorio.html" class="btn btn-atencion">Ver cuidadores disponibles</a>
+      <a href="#como-funciona" class="btn btn-sobre-oscuro">Cómo funciona</a>
     </div>
   </section>
 
   <!-- SERVICIOS -->
-  <section class="services-grid" style="background:var(--purple-dark);padding:60px 24px;">
+  <section class="services-grid" style="background:var(--azul-oscuro);padding:60px 24px;">
     <div style="text-align:center;margin-bottom:40px;">
       <h2 style="color:#fff;font-size:28px;font-weight:800;">Nuestros servicios para familias</h2>
     </div>
@@ -105,34 +109,34 @@
   </section>
 
   <!-- REINTEGROS DE OBRA SOCIAL Y FACTURACIÓN -->
-  <section class="insurance-section" style="background:#ffffff;padding:50px 24px;border-bottom:1px solid #e2e8f0;">
+  <section class="insurance-section" style="background: var(--superficie);padding:50px 24px;border-bottom:1px solid #e2e8f0;">
     <div style="max-width:960px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;">
       <div>
         <span class="eyebrow"
-          style="color:var(--magenta);font-weight:700;font-size:13px;text-transform:uppercase;">Facturación &
+          style="color:var(--azul-medio-texto);font-weight:700;font-size:13px;text-transform:uppercase;">Facturación &
           Cobertura</span>
-        <h2 style="font-size:26px;font-weight:800;color:var(--text-dark);margin:8px 0 12px 0;">¿Contás con Obra Social o
+        <h2 style="font-size:26px;font-weight:800;color:var(--texto-principal);margin:8px 0 12px 0;">¿Contás con Obra Social o
           Prepaga?</h2>
-        <p style="color:var(--text-mid);font-size:14px;line-height:1.6;margin-bottom:20px;">Te brindamos el
+        <p style="color:var(--texto-secundario);font-size:14px;line-height:1.6;margin-bottom:20px;">Te brindamos el
           asesoramiento legal y los comprobantes de facturación oficial necesarios para gestionar el **reintegro total o
           parcial del costo de cuidado** ante tu cobertura médica (OSDE, Swiss Medical, Galeno, PAMI, etc.).</p>
         <ul
-          style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--text-dark);font-weight:600;">
-          <li><i class="fas fa-check-circle" style="color:var(--magenta);margin-right:8px;"></i> Facturación Electrónica
+          style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--texto-principal);font-weight:600;">
+          <li><i class="fas fa-check-circle" style="color:var(--azul-medio-texto);margin-right:8px;"></i> Facturación Electrónica
             AFIP Acreditada.</li>
-          <li><i class="fas fa-check-circle" style="color:var(--magenta);margin-right:8px;"></i> Resumen de Horas y
+          <li><i class="fas fa-check-circle" style="color:var(--azul-medio-texto);margin-right:8px;"></i> Resumen de Horas y
             Bitácora Médica Firmada.</li>
-          <li><i class="fas fa-check-circle" style="color:var(--magenta);margin-right:8px;"></i> Asesoramiento para
+          <li><i class="fas fa-check-circle" style="color:var(--azul-medio-texto);margin-right:8px;"></i> Asesoramiento para
             Amparos y Coberturas Especiales.</li>
         </ul>
       </div>
       <div
-        style="background:#f8fafc;border:1px solid #e2e8f0;padding:28px;border-radius:var(--radius);text-align:center;">
-        <i class="fas fa-file-invoice-dollar" style="font-size:42px;color:var(--purple-dark);margin-bottom:12px;"></i>
+        style="background:#f8fafc;border:1px solid #e2e8f0;padding:28px;border-radius:var(--redondeo-grande);text-align:center;">
+        <i class="fas fa-file-invoice-dollar" style="font-size:42px;color:var(--texto-titulo);margin-bottom:12px;"></i>
         <h4 style="margin:0 0 8px 0;font-size:16px;font-weight:700;">Solicitar Asesoría de Reintegro</h4>
-        <p style="font-size:12px;color:var(--text-mid);margin-bottom:18px;">Nuestro equipo analiza tu cobertura y te
+        <p style="font-size:12px;color:var(--texto-secundario);margin-bottom:18px;">Nuestro equipo analiza tu cobertura y te
           indica la documentación requerida.</p>
-        <a href="#contact" class="btn btn-purple" style="font-size:13px;padding:10px 24px;">Consultar Cobertura</a>
+        <a href="#contact" class="btn btn-secundario" style="font-size:13px;padding:10px 24px;">Consultar Cobertura</a>
       </div>
     </div>
   </section>
@@ -143,11 +147,11 @@
     <div style="max-width:960px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;">
       <div class="fade-in">
         <span class="eyebrow"
-          style="color:var(--magenta);font-weight:700;font-size:13px;text-transform:uppercase;">Supervisión
+          style="color:var(--azul-medio-texto);font-weight:700;font-size:13px;text-transform:uppercase;">Supervisión
           Personalizada</span>
-        <h2 style="font-size:28px;font-weight:800;color:var(--text-dark);margin:8px 0 12px 0;">Gestor del Cuidado
+        <h2 style="font-size:28px;font-weight:800;color:var(--texto-principal);margin:8px 0 12px 0;">Gestor del Cuidado
           Asignado</h2>
-        <p style="color:var(--text-mid);font-size:14px;line-height:1.6;margin-bottom:20px;">Un especialista
+        <p style="color:var(--texto-secundario);font-size:14px;line-height:1.6;margin-bottom:20px;">Un especialista
           gerontológico dedicado a tu familia que elabora el plan de cuidado, realiza el seguimiento diario y supervisa
           al asistente en el domicilio.</p>
         <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
@@ -158,14 +162,14 @@
             style="background:#ecfdf5;color:#065f46;font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;"><i
               class="fas fa-user-check"></i> Supervisión Semanal</span>
         </div>
-        <button onclick="document.getElementById('modal-videollamada').style.display='flex';" class="btn btn-purple"
+        <button onclick="document.getElementById('modal-videollamada').style.display='flex';" class="btn btn-secundario"
           style="font-size:14px;padding:12px 28px;"><i class="fas fa-calendar-check"></i> Agendar Videollamada con un
           Gestor</button>
       </div>
 
       <!-- TARJETA DE ALERTA DE REEMPLAZO URGENTE EN <2hs -->
       <div
-        style="background:linear-gradient(135deg, #1e293b 0%, #0f172a 100%);color:#ffffff;padding:32px;border-radius:var(--radius);box-shadow:0 10px 25px rgba(0,0,0,0.15);"
+        style="background:var(--azul-oscuro);color:var(--texto-sobre-color);padding:32px;border-radius:var(--redondeo-grande);box-shadow:var(--sombra-alta);"
         class="fade-in">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
           <span
@@ -178,7 +182,7 @@
           tu domicilio en menos de 2 horas.</p>
         <button
           onclick="alert('✓ Alerta de Reemplazo Urgente activada. Notificando a asistentes disponibles en un radio de 5km.');"
-          class="btn btn-yellow" style="width:100%;text-align:center;font-weight:800;"><i class="fas fa-ambulance"></i>
+          class="btn btn-atencion" style="width:100%;text-align:center;font-weight:800;"><i class="fas fa-ambulance"></i>
           SOLICITAR REEMPLAZO URGENTE (&lt;2HS)</button>
       </div>
     </div>
@@ -188,12 +192,12 @@
   <div id="modal-videollamada"
     style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:999;align-items:center;justify-content:center;">
     <div
-      style="background:#fff;padding:32px;border-radius:16px;max-width:480px;width:90%;position:relative;box-shadow:0 20px 50px rgba(0,0,0,0.3);">
+      style="background: var(--superficie);padding:32px;border-radius:16px;max-width:480px;width:90%;position:relative;box-shadow:0 20px 50px rgba(0,0,0,0.3);">
       <button onclick="document.getElementById('modal-videollamada').style.display='none';"
         style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;">&times;</button>
-      <h3 style="margin-top:0;font-size:20px;font-weight:800;color:var(--purple-dark);"><i class="fas fa-video"
-          style="color:var(--magenta);"></i> Agendar Videollamada con Gestor</h3>
-      <p style="font-size:13px;color:var(--text-mid);margin-bottom:20px;">Seleccioná la fecha y horario para tu sesión
+      <h3 style="margin-top:0;font-size:20px;font-weight:800;color:var(--texto-titulo);"><i class="fas fa-video"
+          style="color:var(--azul-medio-texto);"></i> Agendar Videollamada con Gestor</h3>
+      <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:20px;">Seleccioná la fecha y horario para tu sesión
         de evaluación inicial gratuita:</p>
       <form
         onsubmit="event.preventDefault(); alert('✓ ¡Videollamada agendada exitosamente! Te enviamos el enlace de conexión por email y WhatsApp.'); document.getElementById('modal-videollamada').style.display='none';">
@@ -209,7 +213,7 @@
             <option value="17">17:00 hs — Turno Tarde</option>
           </select>
         </div>
-        <button type="submit" class="btn btn-purple" style="width:100%;">CONFIRMAR CITA VIRTUAL</button>
+        <button type="submit" class="btn btn-secundario" style="width:100%;">CONFIRMAR CITA VIRTUAL</button>
       </form>
     </div>
   </div>
@@ -222,11 +226,11 @@
         <div class="steps-phone fade-in">
           <div
             style="background:#1e1e1e;border-radius:40px;padding:14px;max-width:280px;margin:0 auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-            <div style="background:#fff;border-radius:28px;overflow:hidden;min-height:400px;padding:16px;">
+            <div style="background: var(--superficie);border-radius:28px;overflow:hidden;min-height:400px;padding:16px;">
               <div
-                style="background:linear-gradient(to right,#00c853,#ffd600,#e91e8c);height:4px;border-radius:2px;margin-bottom:12px;">
+                style="background:linear-gradient(to right, var(--verde-exito), var(--naranja-alerta), var(--azul-medio));height:4px;border-radius:2px;margin-bottom:12px;">
               </div>
-              <h4 style="font-size:14px;font-weight:800;text-align:center;color:var(--purple-dark);margin-bottom:10px;">
+              <h4 style="font-size:14px;font-weight:800;text-align:center;color:var(--texto-titulo);margin-bottom:10px;">
                 Nuevo Aviso</h4>
               <div style="font-size:11px;color:#555;margin-bottom:6px;">Tipo de cuidado:</div>
               <div style="border:1px solid #e0e0e0;border-radius:6px;padding:8px;font-size:12px;margin-bottom:8px;">
@@ -236,10 +240,10 @@
                 Buenos Aires, CABA</div>
               <div style="font-size:11px;color:#555;margin-bottom:6px;">Características del paciente:</div>
               <div
-                style="border:1px solid #e0e0e0;border-radius:6px;padding:8px;font-size:12px;height:50px;margin-bottom:12px;color:#888;">
+                style="border:1px solid #e0e0e0;border-radius:6px;padding:8px;font-size:12px;height:50px;margin-bottom:12px;color:var(--texto-secundario);">
                 Adulto mayor con deterioro...</div>
               <div
-                style="background:var(--purple-dark);color:#fff;border-radius:6px;padding:10px;text-align:center;font-size:12px;font-weight:700;">
+                style="background:var(--azul-oscuro);color:#fff;border-radius:6px;padding:10px;text-align:center;font-size:12px;font-weight:700;">
                 CONFIRMAR AVISO</div>
             </div>
           </div>
@@ -275,7 +279,7 @@
 
   <!-- CTA BANNER -->
   <div class="cta-banner">
-    <a href="directorio.html" class="btn btn-yellow">VER CUIDADORES DISPONIBLES</a>
+    <a href="directorio.html" class="btn btn-atencion">VER CUIDADORES DISPONIBLES</a>
   </div>
 
   <!-- SEGURIDAD -->
@@ -286,28 +290,28 @@
         <h2>Careonys te facilita el acceso a cientos de cuidadores calificados.</h2>
         <p>Cada cuidador completa su perfil incorporando la información necesaria para que el familiar pueda
           verificarlo: antecedentes penales, referencias laborales y recomendaciones de otros usuarios.</p>
-        <a href="directorio.html" class="btn btn-magenta">Ver directorio</a>
+        <a href="directorio.html" class="btn btn-primario">Ver directorio</a>
       </div>
       <div class="feature-image fade-in">
         <img src="assets/images/perfil_sandra.png" alt="Cuidadores calificados"
-          style="height:400px;object-fit:cover;border-radius:var(--radius);" />
+          style="height:400px;object-fit:cover;border-radius:var(--redondeo-grande);" />
       </div>
     </div>
   </section>
 
   <!-- GESTOR -->
-  <section class="feature-section" style="background:#fff;" id="gestor">
+  <section class="feature-section" style="background: var(--superficie);" id="gestor">
     <div class="feature-layout" style="max-width:1100px;margin:0 auto;">
       <div class="feature-image fade-in">
         <img src="assets/images/gestor_medicamentos.png" alt="Gestor del cuidado"
-          style="height:380px;object-fit:cover;border-radius:var(--radius);" />
+          style="height:380px;object-fit:cover;border-radius:var(--redondeo-grande);" />
       </div>
       <div class="feature-text fade-in">
         <p class="eyebrow">Gestión inteligente</p>
         <h2>Gestor del cuidado</h2>
         <p>Un especialista que nos ayuda a gestionar y monitorear todo el cuidado en nuestras casa. La organización
           diaria del cuidado genera estrés y falta de tiempo para dedicar a lo verdaderamente esencial.</p>
-        <a href="#como-funciona" class="btn btn-yellow">Empezar ahora</a>
+        <a href="#como-funciona" class="btn btn-atencion">Empezar ahora</a>
       </div>
     </div>
   </section>
@@ -345,7 +349,7 @@
               <label><input type="radio" name="newsletter" value="no" /> No</label>
             </div>
           </div>
-          <button type="submit" class="btn btn-purple">ENVIAR</button>
+          <button type="submit" class="btn btn-secundario">ENVIAR</button>
           <div id="form-success" class="form-success">✓ ¡Gracias! Nos pondremos en contacto a la brevedad.</div>
         </form>
       </div>

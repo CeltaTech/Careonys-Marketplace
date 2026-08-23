@@ -1,5 +1,16 @@
 # Modelo de Negocios de la Empresa Prestadora / Licenciataria (Tenant)
 
+> [!WARNING]
+> **Material de diseño con una decisión sin resolver.** Revisado el 2026-08-23.
+>
+> Este documento pone planes, comisiones, precios y facturación **adentro del producto**. El
+> `CLAUDE.md` de Careonys decidió lo contrario: nada comercial vive del lado del producto, eso
+> pertenece al panel de CeltaTech. Son dos decisiones distintas tomadas en momentos distintos, y
+> una tiene que ceder antes de la fusión.
+>
+> **Hasta que se decida, no se construye lógica comercial en este proyecto** — ninguna tabla de
+> precios ni de planes. Detalle en `docs/ALCANCE.md` §4.
+
 Este documento detalla el esquema comercial, fuentes de ingresos, estructura de costos y márgenes de ganancia de la **Empresa Prestadora / Licenciataria** (ej. *Sendler Group / PresDemo*) que opera la plataforma sobre la infraestructura de **Careonys**.
 
 ---

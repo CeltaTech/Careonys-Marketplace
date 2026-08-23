@@ -7,6 +7,10 @@
   <title id="page-title">Perfil de Asistente — PresDemo</title>
   <meta name="description"
     content="Conocé el perfil completo del cuidador, sus certificaciones, especialidades y disponibilidad." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -45,10 +49,10 @@
   </nav>
 
   <!-- Breadcrumb -->
-  <div style="background:var(--bg-light);padding:12px 24px;border-bottom:1px solid var(--border-light);">
-    <div style="max-width:900px;margin:0 auto;font-size:13px;color:var(--text-light);">
-      <a href="index.html" style="color:var(--magenta);">Inicio</a> &gt;
-      <a href="directorio.html" style="color:var(--magenta);">Directorio</a> &gt;
+  <div style="background:var(--superficie-hover);padding:12px 24px;border-bottom:1px solid var(--borde-card);">
+    <div style="max-width:900px;margin:0 auto;font-size:13px;color:var(--texto-secundario);">
+      <a href="index.html" style="color:var(--azul-medio-texto);">Inicio</a> &gt;
+      <a href="directorio.html" style="color:var(--azul-medio-texto);">Directorio</a> &gt;
       <span id="breadcrumb-name">Cargando...</span>
     </div>
   </div>
@@ -103,13 +107,13 @@
 
         <div class="profile-section fade-in">
           <h3>Profesión y formación</h3>
-          <div id="profile-profession" style="font-size:14px;color:var(--text-mid);line-height:1.8;"></div>
+          <div id="profile-profession" style="font-size:14px;color:var(--texto-secundario);line-height:1.8;"></div>
         </div>
 
         <div class="profile-section fade-in">
           <h3>Disponibilidad y horarios (Grilla 7x3)</h3>
           <div id="profile-schedule-detail"
-            style="font-size:14px;color:var(--text-mid);line-height:1.8;margin-bottom:12px;"></div>
+            style="font-size:14px;color:var(--texto-secundario);line-height:1.8;margin-bottom:12px;"></div>
 
           <!-- GRILLA SEMANAL 7x3 — Disponibilidad Horaria del Asistente -->
           <div class="schedule-grid-7x3">
@@ -156,7 +160,7 @@
 
         <div class="profile-section fade-in">
           <h3>Referencias y experiencia</h3>
-          <div id="profile-references" style="font-size:14px;color:var(--text-mid);line-height:1.8;"></div>
+          <div id="profile-references" style="font-size:14px;color:var(--texto-secundario);line-height:1.8;"></div>
         </div>
 
       </div><!-- /left column -->
@@ -165,11 +169,11 @@
       <div>
 
         <div class="profile-actions fade-in" id="contactar">
-          <a href="#contact-form" class="btn btn-magenta"><i class="fas fa-comment" style="margin-right:8px;"></i>
+          <a href="#contact-form" class="btn btn-primario"><i class="fas fa-comment" style="margin-right:8px;"></i>
             Chat</a>
-          <a href="#contact-form" class="btn btn-yellow" style="color:var(--text-dark);"><i class="fas fa-video"
+          <a href="#contact-form" class="btn btn-atencion" style="color:var(--texto-principal);"><i class="fas fa-video"
               style="margin-right:8px;"></i> Video Conferencia</a>
-          <a href="#" class="btn btn-outline-white" style="border-color:var(--border-light);color:var(--text-mid);"><i
+          <a href="#" class="btn btn-sobre-oscuro" style="border-color:var(--borde-card);color:var(--texto-secundario);"><i
               class="far fa-heart" style="margin-right:8px;"></i> Guardar en favoritos</a>
         </div>
 
@@ -178,7 +182,7 @@
           <div class="level-bar">
             <div class="level-label" id="profile-level-bar">ORO</div>
             <div
-              style="background:linear-gradient(to right,#00c853,#aeea00,#ffd600,#ff6d00,#e91e8c);height:6px;border-radius:3px;margin:8px 0;">
+              style="background:linear-gradient(to right, var(--verde-exito), var(--naranja-alerta), var(--azul-medio));height:6px;border-radius:3px;margin:8px 0;">
             </div>
             <div class="level-sublabel">Perfil completamente verificado</div>
           </div>
@@ -187,40 +191,40 @@
 
         <div class="profile-section fade-in">
           <h3>Características del cuidado</h3>
-          <div id="profile-care-chars" style="font-size:14px;color:var(--text-mid);line-height:2.0;"></div>
+          <div id="profile-care-chars" style="font-size:14px;color:var(--texto-secundario);line-height:2.0;"></div>
         </div>
 
       </div><!-- /right column -->
 
       <!-- MÓDULO DE BITÁCORA DIGITAL & HISTORIA CLINICA SIMULADA -->
       <div class="profile-section fade-in"
-        style="margin-top:24px;background:#ffffff;border:1px solid var(--border-light);border-radius:var(--radius);padding:24px;">
+        style="margin-top:24px;background: var(--superficie);border:1px solid var(--borde-card);border-radius:var(--redondeo-grande);padding:24px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-          <h3 style="margin:0;font-size:18px;font-weight:800;color:var(--purple-dark);"><i class="fas fa-heartbeat"
-              style="color:var(--magenta);"></i> Módulo de Registro & Bitácora Digital de Salud</h3>
+          <h3 style="margin:0;font-size:18px;font-weight:800;color:var(--texto-titulo);"><i class="fas fa-heartbeat"
+              style="color:var(--azul-medio-texto);"></i> Módulo de Registro & Bitácora Digital de Salud</h3>
           <span
             style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;"><i
               class="fas fa-satellite-dish"></i> Monitoreo en Tiempo Real</span>
         </div>
-        <p style="font-size:13px;color:var(--text-mid);margin-bottom:20px;">Reportes diarios que este asistente registra
+        <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:20px;">Reportes diarios que este asistente registra
           desde la app para el seguimiento de la familia:</p>
 
         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px;">
           <div style="background:#f8fafc;border:1px solid #e2e8f0;padding:16px;border-radius:10px;text-align:center;">
-            <i class="fas fa-stethoscope" style="font-size:24px;color:var(--magenta);margin-bottom:8px;"></i>
-            <div style="font-size:12px;font-weight:700;color:var(--text-dark);">Signos Vitales</div>
-            <div style="font-size:11px;color:var(--text-mid);margin-top:4px;">Presión, Pulso, Glucemia y Temperatura
+            <i class="fas fa-stethoscope" style="font-size:24px;color:var(--azul-medio-texto);margin-bottom:8px;"></i>
+            <div style="font-size:12px;font-weight:700;color:var(--texto-principal);">Signos Vitales</div>
+            <div style="font-size:11px;color:var(--texto-secundario);margin-top:4px;">Presión, Pulso, Glucemia y Temperatura
             </div>
           </div>
           <div style="background:#f8fafc;border:1px solid #e2e8f0;padding:16px;border-radius:10px;text-align:center;">
             <i class="fas fa-pills" style="font-size:24px;color:#0284c7;margin-bottom:8px;"></i>
-            <div style="font-size:12px;font-weight:700;color:var(--text-dark);">Control de Dosis</div>
-            <div style="font-size:11px;color:var(--text-mid);margin-top:4px;">Alertas & Foto de Medicación</div>
+            <div style="font-size:12px;font-weight:700;color:var(--texto-principal);">Control de Dosis</div>
+            <div style="font-size:11px;color:var(--texto-secundario);margin-top:4px;">Alertas & Foto de Medicación</div>
           </div>
           <div style="background:#f8fafc;border:1px solid #e2e8f0;padding:16px;border-radius:10px;text-align:center;">
             <i class="fas fa-map-marker-alt" style="font-size:24px;color:#16a34a;margin-bottom:8px;"></i>
-            <div style="font-size:12px;font-weight:700;color:var(--text-dark);">Asistencia GPS</div>
-            <div style="font-size:11px;color:var(--text-mid);margin-top:4px;">Check-in / Check-out Validado</div>
+            <div style="font-size:12px;font-weight:700;color:var(--texto-principal);">Asistencia GPS</div>
+            <div style="font-size:11px;color:var(--texto-secundario);margin-top:4px;">Check-in / Check-out Validado</div>
           </div>
         </div>
       </div>
@@ -228,7 +232,7 @@
       <!-- MINI CONTACT FORM -->
       <div class="profile-section fade-in" id="contact-form" style="margin-top:20px;">
         <h3>Contactar a <span id="contact-name">la cuidadora</span></h3>
-        <p style="font-size:14px;color:var(--text-mid);margin-bottom:20px;">Enviá un mensaje o solicitá una video
+        <p style="font-size:14px;color:var(--texto-secundario);margin-bottom:20px;">Enviá un mensaje o solicitá una video
           entrevista.</p>
         <form id="profile-contact-form" novalidate>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="form-two-col">
@@ -247,9 +251,9 @@
               placeholder="Contanos brevemente qué tipo de cuidado necesitás..."></textarea>
           </div>
           <div style="display:flex;gap:12px;flex-wrap:wrap;">
-            <button type="submit" class="btn btn-magenta">Enviar mensaje</button>
-            <a href="directorio.html" class="btn btn-outline-white"
-              style="border-color:var(--border-light);color:var(--text-mid);">← Volver al directorio</a>
+            <button type="submit" class="btn btn-primario">Enviar mensaje</button>
+            <a href="directorio.html" class="btn btn-sobre-oscuro"
+              style="border-color:var(--borde-card);color:var(--texto-secundario);">← Volver al directorio</a>
           </div>
           <div id="profile-form-success" class="form-success" style="margin-top:12px;">✓ ¡Mensaje enviado! Recibirás una
             respuesta a la brevedad.</div>
@@ -260,7 +264,7 @@
 
     <!-- CTA BANNER -->
     <div class="cta-banner">
-      <a href="directorio.html" class="btn btn-yellow">VER MÁS CUIDADORES</a>
+      <a href="directorio.html" class="btn btn-atencion">VER MÁS CUIDADORES</a>
     </div>
 
     <!-- FOOTER -->
@@ -573,7 +577,7 @@
         for (let i = 1; i <= 5; i++) {
           const star = document.createElement('span');
           star.className = 'star';
-          star.style.color = i <= c.starsCount ? '#f5c518' : '#ccc';
+          star.style.color = i <= c.starsCount ? 'var(--naranja-alerta-texto)' : 'var(--borde-card)';
           star.textContent = '★';
           starsEl.appendChild(star);
         }
@@ -610,7 +614,7 @@
         const certEl = document.getElementById('profile-certifications');
         certEl.innerHTML = c.certifications.map(cert => `
     <div class="cert-item">
-      <div class="cert-icon" style="${cert.ok ? 'background:#e8f5e9;color:#2e7d32;' : 'background:#fce4ec;color:#c62828;'}">
+      <div class="cert-icon" style="${cert.ok ? 'background:#e8f5e9;color:#2e7d32;' : 'background:var(--tono-info-fondo);color:#c62828;'}">
         ${cert.ok ? '✓' : '✗'}
       </div>
       <span>${cert.label}</span>
