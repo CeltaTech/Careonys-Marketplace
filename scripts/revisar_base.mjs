@@ -30,7 +30,7 @@
    Careonys está en producción y no se toca desde acá (CLAUDE.md §1).
 =================================================== */
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -78,6 +78,14 @@ function tablasDelCodigo() {
     for (const m of texto.matchAll(/from\('([a-z_]+)'\)/g)) nombres.add(m[1]);
     for (const m of texto.matchAll(/rest\/v1\/([a-z_]+)/g)) nombres.add(m[1]);
   }
+  // Y las vistas que crean las migraciones: son direcciones web igual que las
+  // tablas, y la sonda tiene que mirarlas aunque el código todavía no las use.
+  try {
+    for (const arch of readdirSync(join(raiz, 'supabase', 'migrations'))) {
+      const sql = readFileSync(join(raiz, 'supabase', 'migrations', arch), 'utf8');
+      for (const m of sql.matchAll(/create (?:or replace )?view public\.([a-z_]+)/gi)) nombres.add(m[1]);
+    }
+  } catch { /* todavía no hay migraciones */ }
   return [...nombres].sort();
 }
 
@@ -154,7 +162,10 @@ console.log('');
 // contenido no se mira ni se imprime.
 const SENSIBLES = ['dni', 'cuit', 'cuil', 'bank', 'iban', 'cbu', 'address', 'direccion',
   'phone', 'telefono', 'email', 'correo', 'birth', 'nacimiento', 'salary', 'sueldo',
-  'rate', 'document', 'passport', 'pasaporte', 'health', 'salud', 'diagnos'];
+  'document', 'passport', 'pasaporte', 'health', 'salud', 'diagnos'];
+// `hourly_rate` no está en la lista a propósito: una tarifa por hora en una
+// vidriera es un precio publicado, no un dato personal. `salary`/`sueldo` sí,
+// porque eso es lo que cobra una persona.
 const conDatosPersonales = abiertas
   .map((a) => ({
     tabla: a.tabla,
