@@ -19,7 +19,7 @@
     <div class="tenant-brand">
       <i class="fas fa-hospital-user" style="color:var(--azul-medio-texto);"></i>
       <span>PresDemo Salud</span>
-      <span class="tenant-badge">Tenant Careonys SaaS</span>
+      <span class="tenant-badge">Organización: {{producto}}</span>
     </div>
     <div style="font-size:13px;">
       <i class="fas fa-user-shield"></i> Operador: RRHH PresDemo | <a href="index.html"
@@ -63,7 +63,7 @@
           <div>
             <h3 style="margin:0;font-size:18px;color:var(--texto-titulo);"><i class="fas fa-clipboard-check"></i>
               Postulaciones de Cuidadoras para Auditoría</h3>
-            <p style="margin:4px 0 0 0;font-size:13px;color:#64748b;">Legajos digitales enviados desde Careonys
+            <p style="margin:4px 0 0 0;font-size:13px;color:#64748b;">Legajos digitales enviados desde {{producto}}
               Marketplace para la revisión y entrevista de la prestadora.</p>
           </div>
           <button class="btn btn-secundario" onclick="cargarAspirantes();" style="font-size:12px;padding:8px 16px;"><i
@@ -125,19 +125,20 @@
         </div>
       </div>
 
-      <p style="font-size:11px;color:#64748b;margin:0;">* Nota legal: Careonys provee únicamente el software SaaS. El
+      <p style="font-size:11px;color:#64748b;margin:0;">* Nota legal: {{producto}} provee únicamente el software SaaS. El
         otorgamiento del aval y la selección son responsabilidad exclusiva de PresDemo.</p>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/identidad.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script>
     let aspiranteSeleccionadoId = null;
 
     async function cargarAspirantes() {
-      const data = await CareonysAPI.getAspirantes();
+      const data = await ClienteDatos.getAspirantes();
       const tbody = document.getElementById('tabla-aspirantes-body');
       tbody.innerHTML = '';
 
@@ -178,7 +179,7 @@
 
     async function abrirAuditoria(id) {
       aspiranteSeleccionadoId = id;
-      const data = await CareonysAPI.getAspirantes();
+      const data = await ClienteDatos.getAspirantes();
       const a = data.find(item => item.id === id);
       if (!a) return;
 
@@ -208,7 +209,7 @@
     async function aprobarAspirante() {
       if (!aspiranteSeleccionadoId) return;
       const nota = document.getElementById('nota-entrevista').value || 'Aprobado por el equipo de RRHH PresDemo.';
-      await CareonysAPI.cambiarEstadoAspirante(aspiranteSeleccionadoId, 'validado_prestadora', nota);
+      await ClienteDatos.cambiarEstadoAspirante(aspiranteSeleccionadoId, 'validado_prestadora', nota);
       alert('✓ Legajo auditado exitosamente. Se ha asignado el sello "Validado por Prestadora" y habilitado en el plantel activo.');
       document.getElementById('modal-auditoria').style.display = 'none';
       cargarAspirantes();
@@ -216,7 +217,7 @@
 
     async function rechazarAspirante() {
       if (!aspiranteSeleccionadoId) return;
-      await CareonysAPI.cambiarEstadoAspirante(aspiranteSeleccionadoId, 'rechazado', 'No cumple requisitos.');
+      await ClienteDatos.cambiarEstadoAspirante(aspiranteSeleccionadoId, 'rechazado', 'No cumple requisitos.');
       alert('Solicitud rechazada.');
       document.getElementById('modal-auditoria').style.display = 'none';
       cargarAspirantes();

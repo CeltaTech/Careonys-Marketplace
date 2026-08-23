@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Careonys Familia — PWA Portal</title>
+  <title>{{producto}} Familia — PWA Portal</title>
   <link rel="manifest" href="manifest.json" />
   <!-- CSS LOCAL (dentro del scope del Service Worker) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -543,7 +543,7 @@
       <div class="drawer-header">
         <img src="../assets/images/foto_familiar_default.png" onerror="this.src='https://via.placeholder.com/100'" alt="Avatar" />
         <h4 id="menu-user-name">Familiar de Prueba</h4>
-        <p id="menu-user-email" style="margin:2px 0 0 0;font-size:11px;opacity:0.8;">familiar@careonys.com</p>
+        <p id="menu-user-email" style="margin:2px 0 0 0;font-size:11px;opacity:0.8;">familiar@ejemplo.com</p>
       </div>
       <div style="flex:1;padding:16px 0;">
         <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home" style="width:20px;color:#64748b;"></i> Inicio</a>
@@ -555,29 +555,29 @@
         <a class="drawer-menu-item" id="btn-logout" style="color:#ef4444;"><i class="fas fa-sign-out-alt" style="width:20px;color:#ef4444;"></i> Cerrar sesión</a>
       </div>
       <div style="padding:16px;text-align:center;font-size:10px;color:var(--texto-secundario);border-top:1px solid #f1f5f9;">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
+        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
       </div>
     </div>
 
     <!-- 1. VISTA: LOGIN -->
     <div class="app-screen active" id="screen-intro">
       <div class="intro-logo-container">
-        <img src="../assets/images/logo_careonys.png" class="tenant-logo" alt="Logo Tenant" />
+        <img src="../assets/images/logotipo.png" class="tenant-logo" alt="Logo Tenant" />
         <h2 class="tenant-name">PresDemo</h2>
         <p>Servicios de Cuidado Domiciliario</p>
       </div>
 
       <div class="login-card">
         <div class="input-wrapper">
-          <input type="email" id="login-email" placeholder="Correo electrónico" value="familiar@careonys.com" required />
+          <input type="email" id="login-email" placeholder="Correo electrónico" value="familiar@ejemplo.com" required />
         </div>
         <div class="input-wrapper">
           <input type="password" id="login-pass" placeholder="Contraseña" value="123456" required />
         </div>
-        <button type="button" class="btn-login" id="btn-action-login" style="width:100%;">Ingresá a Careonys Familia</button>
+        <button type="button" class="btn-login" id="btn-action-login" style="width:100%;">Ingresar a {{producto}} Familia</button>
       </div>
       <div style="text-align:center;margin-top:auto;font-size:10px;color:var(--texto-secundario);padding-top:20px;">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
+        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
       </div>
     </div>
 
@@ -586,7 +586,7 @@
       <div class="dashboard-header">
         <button class="btn-back" id="btn-open-menu" style="font-size:20px;"><i class="fas fa-bars"></i></button>
         <div style="display:flex;align-items:center;gap:6px;">
-          <img src="../assets/images/logo_careonys.png" class="tenant-logo" style="height:24px;" alt="Logo" />
+          <img src="../assets/images/logotipo.png" class="tenant-logo" style="height:24px;" alt="Logo" />
           <span class="tenant-name" style="font-size:14px;font-weight:800;color:var(--marca-prestadora);">PresDemo</span>
         </div>
         <div><i class="fas fa-bell" style="font-size:18px;color:#64748b;"></i></div>
@@ -638,7 +638,7 @@
       </div>
 
       <div style="text-align:center;padding:24px 0;font-size:10px;color:var(--texto-secundario);">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
+        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
       </div>
 
       <div class="bottom-tab-bar">
@@ -802,6 +802,7 @@
 
   <!-- JS LOCAL (dentro del scope del Service Worker) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/identidad.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script>
@@ -813,11 +814,11 @@
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
-      await CareonysAPI.initTenant();
+      await ClienteDatos.initTenant();
       cargarRecomendados();
 
       // Restaurar sesión activa automáticamente
-      const session = await CareonysAuth.getSession();
+      const session = await Sesion.getSession();
       if (session) {
         document.getElementById('menu-user-email').textContent = session.user.email;
         document.getElementById('menu-user-name').textContent =
@@ -828,7 +829,7 @@
 
     async function cargarRecomendados() {
       try {
-        const aspirantes = await CareonysAPI.getAspirantes();
+        const aspirantes = await ClienteDatos.getAspirantes();
         const recommendedList = document.getElementById('recommended-caregivers-list');
         if (aspirantes && aspirantes.length > 0) {
           recommendedList.innerHTML = '';
@@ -855,7 +856,7 @@
       const listEl = document.getElementById('timeline-log-list');
       listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">Cargando novedades...</p>';
       try {
-        const logs = await CareonysAPI.getBitacoraDiaria();
+        const logs = await ClienteDatos.getBitacoraDiaria();
         listEl.innerHTML = '';
         if (!logs || logs.length === 0) {
           listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">No hay registros en la bitácora todavía.</p>';
@@ -901,7 +902,7 @@
       btn.textContent = 'Ingresando...';
       btn.disabled = true;
       try {
-        const user = await CareonysAuth.login(email, password);
+        const user = await Sesion.login(email, password);
         document.getElementById('menu-user-email').textContent = user.email;
         document.getElementById('menu-user-name').textContent =
           (user.user_metadata?.full_name || user.email.split('@')[0]).toUpperCase();
@@ -934,7 +935,7 @@
 
     document.getElementById('btn-logout').addEventListener('click', async () => {
       if (confirm('¿Cerrar sesión?')) {
-        await CareonysAuth.logout();
+        await Sesion.logout();
         navigate('intro');
       }
     });
@@ -958,8 +959,8 @@
       btn.disabled = true;
 
       try {
-        const session = await CareonysAuth.getSession();
-        await CareonysAPI.crearBusqueda({
+        const session = await Sesion.getSession();
+        await ClienteDatos.crearBusqueda({
           patientName: nombre,
           zona,
           scheduleType: tipo,

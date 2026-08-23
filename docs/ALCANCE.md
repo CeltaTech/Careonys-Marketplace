@@ -19,8 +19,43 @@
 | Portal de postulación de Asistentes | Maquetado |
 | Formulario integral de datos del Paciente | Maquetado, paso a paso |
 | Cliente de datos (`js/apiClient.js`) | Funciona en modo local y modo Supabase |
+| Identidad del producto (`js/identidad.js`) | Funciona y está verificada. Ver abajo |
 
 **Maquetado** significa que la pantalla existe y se navega, no que la lógica detrás esté escrita.
+
+### El nombre del producto salió del código
+
+**Cerrado el 23 de agosto de 2026.** Estaba escrito a mano 273 veces. Hoy vive en un solo archivo,
+`js/identidad.js:24-27`, y no aparece en ninguna otra parte del código.
+
+Cómo quedó:
+
+- **El texto visible usa marcadores** —`{{producto}}`, `{{productoCorto}}`, `{{dominio}}`,
+  `{{contacto}}`— y `js/identidad.js` los resuelve al cargar la página. Hay 59 repartidos en las 12
+  pantallas, y las 12 cargan el archivo.
+- **Lo que persiste se nombra por su función**, según la regla 13 heredada. El identificador
+  técnico del producto es `plataforma` y no la marca (`js/identidad.js:35`); el logotipo es
+  `assets/images/logotipo.png`; las claves guardadas en el navegador pasaron a `aspirantes`,
+  `busquedas`, `fichadas`, `bitacora` y las cachés a `asistente-v4` y `familia-v4`. Esas se
+  renombraron **antes** de que la base guardara nada: renombrarlas después habría sido una
+  migración de datos, no un cambio de nombre.
+- **Los identificadores del código** dejaron de llevar la marca: `CareonysAPI` es `ClienteDatos` y
+  `CareonysAuth` es `Sesion`.
+- **Los dos `manifest.json` se generan**, con `scripts/generar_manifiestos.mjs`. No pueden llevar
+  marcadores: el navegador los lee como archivo y ahí no corre JavaScript.
+- **Un chequeo lo sostiene.** `scripts/verificar_identidad.mjs` falla si la marca reaparece escrita
+  a mano, si alguna de las tres copias de `js/identidad.js` se separa, o si los manifiestos quedaron
+  viejos. Se probaron los tres casos rompiendo cada cosa a propósito y el chequeo falló en los tres:
+  una prueba que no puede fallar no prueba nada.
+
+  Hoy se corre a mano —`node scripts/verificar_identidad.mjs`— porque este proyecto no tiene
+  compilación: es HTML servido tal cual, sin `package.json`. **Un chequeo que hay que acordarse de
+  correr no sostiene nada solo**: se engancha a la compilación en cuanto la migración a React la
+  traiga. Está anotado en el pendiente 17.
+
+Lo que **no** cierra esto: el nombre de la **Prestadora de ejemplo**, «PresDemo», sigue escrito a
+mano 111 veces en 18 archivos. Es otro problema —el nombre de un cliente, no el del producto— y es
+el pendiente 11.
 
 ---
 

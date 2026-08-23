@@ -27,7 +27,7 @@
         <img src="assets/images/foto_familiar_default.png" onerror="this.src='https://via.placeholder.com/100'"
           alt="Avatar" />
         <h4 id="menu-user-name">Familiar de Prueba</h4>
-        <p id="menu-user-email">familiar@careonys.com</p>
+        <p id="menu-user-email">familiar@ejemplo.com</p>
       </div>
       <div class="drawer-menu">
         <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home"></i> Inicio</a>
@@ -41,14 +41,14 @@
             style="color:#ef4444;"></i> Cerrar sesión</a>
       </div>
       <div style="padding:16px;text-align:center;font-size:10px;color:var(--texto-secundario);border-top:1px solid #f1f5f9;">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
+        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
       </div>
     </div>
 
     <!-- 1. VISTA: INTRO / LOGIN -->
     <div class="app-screen active" id="screen-intro">
       <div class="intro-logo-container">
-        <img src="assets/images/logo_careonys.png" class="tenant-logo" alt="Logo Tenant" />
+        <img src="assets/images/logotipo.png" class="tenant-logo" alt="Logo Tenant" />
         <h2 class="tenant-name">PresDemo</h2>
         <p>Servicios de Cuidado Domiciliario</p>
       </div>
@@ -84,7 +84,7 @@
       </div>
 
       <div style="text-align:center;margin-top:auto;font-size:10px;color:var(--texto-secundario);padding-top:20px;">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
+        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
       </div>
     </div>
 
@@ -128,7 +128,7 @@
       <div class="dashboard-header">
         <button class="btn-back" id="btn-open-menu" style="font-size:20px;"><i class="fas fa-bars"></i></button>
         <div style="display:flex;align-items:center;gap:6px;">
-          <img src="assets/images/logo_careonys.png" class="tenant-logo" style="height:24px;" alt="Logo" />
+          <img src="assets/images/logotipo.png" class="tenant-logo" style="height:24px;" alt="Logo" />
           <span class="tenant-name"
             style="font-size:14px;font-weight:800;color:var(--marca-prestadora);">PresDemo</span>
         </div>
@@ -244,7 +244,7 @@
 
       <!-- FOOTER DISCRETO -->
       <div style="text-align:center;padding:24px 0;font-size:10px;color:var(--texto-secundario);">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
+        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
       </div>
 
       <!-- BARRA DE TABS INFERIOR -->
@@ -403,16 +403,17 @@
 
   <!-- Supabase SDK v2 (CDN) + módulos locales -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/identidad.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script>
     // INICIALIZACIÓN DE BRANDING DINÁMICO DESDE SUPABASE
     document.addEventListener('DOMContentLoaded', async () => {
-      await CareonysAPI.initTenant();
+      await ClienteDatos.initTenant();
 
       // Cargar Cuidadores Recomendados dinámicamente desde Supabase
       try {
-        const aspirantes = await CareonysAPI.getAspirantes();
+        const aspirantes = await ClienteDatos.getAspirantes();
         const recommendedList = document.getElementById('recommended-caregivers-list');
 
         if (aspirantes && aspirantes.length > 0) {
@@ -459,7 +460,7 @@
       listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">Cargando bitácora diaria...</p>';
 
       try {
-        const logs = await CareonysAPI.getBitacoraDiaria();
+        const logs = await ClienteDatos.getBitacoraDiaria();
         listEl.innerHTML = '';
 
         if (!logs || logs.length === 0) {
@@ -516,7 +517,7 @@
       };
 
       try {
-        await CareonysAPI.registrarBitacoraDiaria(data);
+        await ClienteDatos.registrarBitacoraDiaria(data);
         alert('¡Novedad guardada exitosamente en Supabase!');
         document.getElementById('modal-bitacora').style.display = 'none';
 
@@ -550,7 +551,7 @@
         statusEl.textContent = `Enviando fichado (${tipo})...`;
 
         try {
-          await CareonysAPI.registrarFichadoGPS({
+          await ClienteDatos.registrarFichadoGPS({
             caregiverId: '2197bc14-d545-4939-9a98-979e69a120dc',
             lat: lat,
             lng: lng,
@@ -580,7 +581,7 @@
       btn.textContent = 'Ingresando...';
       btn.disabled = true;
       try {
-        const user = await CareonysAuth.login(email, password);
+        const user = await Sesion.login(email, password);
         document.getElementById('menu-user-email').textContent = user.email;
         document.getElementById('menu-user-name').textContent =
           (user.user_metadata?.full_name || user.email.split('@')[0]).toUpperCase();
@@ -671,7 +672,7 @@
     // LOGOUT REAL
     document.getElementById('btn-logout').addEventListener('click', async () => {
       if (confirm('¿Estás seguro de que querés cerrar sesión?')) {
-        await CareonysAuth.logout();
+        await Sesion.logout();
         navigate('intro');
       }
     });
@@ -695,7 +696,7 @@
     }
 
     async function initChat() {
-      const session = await CareonysAuth.getSession();
+      const session = await Sesion.getSession();
       const userId = session ? session.user.id : 'demo-user';
 
       // Crear o recuperar conversacion para demo
@@ -703,8 +704,8 @@
       let conversaciones = [];
       try {
         const res = await fetch(
-          `${CareonysAPI.supabaseUrl}/rest/v1/messages?order=created_at.asc&limit=50`,
-          { headers: { 'apikey': CareonysAPI.supabaseKey, 'Authorization': `Bearer ${CareonysAPI.currentAuthToken || CareonysAPI.supabaseKey}` } }
+          `${ClienteDatos.supabaseUrl}/rest/v1/messages?order=created_at.asc&limit=50`,
+          { headers: { 'apikey': ClienteDatos.supabaseKey, 'Authorization': `Bearer ${ClienteDatos.currentAuthToken || ClienteDatos.supabaseKey}` } }
         );
         if (res.ok) {
           conversaciones = await res.json();
@@ -715,7 +716,7 @@
 
       // Subscripción Realtime a nuevos mensajes
       if (chatChannel) chatChannel.unsubscribe();
-      chatChannel = CareonysAuth.subscribeToTable(
+      chatChannel = Sesion.subscribeToTable(
         'messages',
         undefined,
         (newMsg) => {
@@ -730,7 +731,7 @@
       const texto = input.value.trim();
       if (!texto) return;
       input.value = '';
-      const session = await CareonysAuth.getSession();
+      const session = await Sesion.getSession();
       const userId = session ? session.user.id : 'demo-user-' + Date.now();
       const msg = { contenido: texto, author_id: userId, created_at: new Date().toISOString() };
       // Mostrar inmediatamente (optimistic UI)
@@ -738,12 +739,12 @@
       // Persistir en Supabase
       try {
         await fetch(
-          `${CareonysAPI.supabaseUrl}/rest/v1/messages`,
+          `${ClienteDatos.supabaseUrl}/rest/v1/messages`,
           {
             method: 'POST',
             headers: {
-              'apikey': CareonysAPI.supabaseKey,
-              'Authorization': `Bearer ${CareonysAPI.currentAuthToken || CareonysAPI.supabaseKey}`,
+              'apikey': ClienteDatos.supabaseKey,
+              'Authorization': `Bearer ${ClienteDatos.currentAuthToken || ClienteDatos.supabaseKey}`,
               'Content-Type': 'application/json',
               'Prefer': 'return=minimal'
             },
@@ -769,7 +770,7 @@
 
     // ── VERIFICAR SESIÓN AL INICIO ────────────────────────────────────
     (async () => {
-      const session = await CareonysAuth.getSession();
+      const session = await Sesion.getSession();
       if (session) {
         document.getElementById('menu-user-email').textContent = session.user.email;
         document.getElementById('menu-user-name').textContent = (session.user.user_metadata?.full_name || session.user.email.split('@')[0]).toUpperCase();

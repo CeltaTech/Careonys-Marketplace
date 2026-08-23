@@ -1,16 +1,17 @@
 /* ===================================================
-   Careonys PWA Asistente — Service Worker v3
+   PWA del Asistente — Service Worker v4
    Corregido: Solo cachea assets dentro del scope /pwa-asistente/
    Los assets de directorios padre (../css, ../js) NO pueden ser
    interceptados por este SW según la política de seguridad del navegador.
 =================================================== */
-const CACHE_NAME = 'careonys-asistente-v3';
+const CACHE_NAME = 'asistente-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
   './css/tokens.css',
   './css/styles-pwa.css',
+  './js/identidad.js',
   './js/apiClient.js',
   './js/auth.js'
 ];

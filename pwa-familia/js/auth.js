@@ -1,5 +1,5 @@
 /* ===================================================
-   CAREONYS AUTH MODULE — Supabase Auth v2
+   SESIÓN — Supabase Auth v2
    Maneja login, signup, logout, sesión y guard de rutas.
    Requiere: @supabase/supabase-js v2 cargado antes que este script.
 =================================================== */
@@ -16,7 +16,7 @@ const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
   }
 });
 
-const CareonysAuth = {
+const Sesion = {
 
   client: _sb,
 
@@ -38,8 +38,8 @@ const CareonysAuth = {
     if (error) throw new Error(error.message);
     // Propagar token al apiClient para que todas las peticiones REST
     // usen el JWT del usuario en lugar de la anon key
-    if (data.session && window.CareonysAPI) {
-      CareonysAPI.setAuthToken(data.session.access_token);
+    if (data.session && window.ClienteDatos) {
+      ClienteDatos.setAuthToken(data.session.access_token);
     }
     return data.user;
   },
@@ -58,7 +58,7 @@ const CareonysAuth = {
   // ── Cerrar sesión ──────────────────────────────────────
   async logout() {
     await _sb.auth.signOut();
-    if (window.CareonysAPI) CareonysAPI.setAuthToken(null);
+    if (window.ClienteDatos) ClienteDatos.setAuthToken(null);
   },
 
   // ── Guard: redirige si no hay sesión ──────────────────
@@ -68,15 +68,15 @@ const CareonysAuth = {
       window.location.href = redirectTo;
       return null;
     }
-    if (window.CareonysAPI) CareonysAPI.setAuthToken(session.access_token);
+    if (window.ClienteDatos) ClienteDatos.setAuthToken(session.access_token);
     return session;
   },
 
   // ── Escuchar cambios de sesión (login / logout) ───────
   onAuthStateChange(callback) {
     return _sb.auth.onAuthStateChange((event, session) => {
-      if (window.CareonysAPI) {
-        CareonysAPI.setAuthToken(session ? session.access_token : null);
+      if (window.ClienteDatos) {
+        ClienteDatos.setAuthToken(session ? session.access_token : null);
       }
       callback(event, session);
     });
@@ -112,11 +112,11 @@ const CareonysAuth = {
 
 // ── Al cargar: restaurar sesión y propagar token ─────────
 (async () => {
-  const session = await CareonysAuth.getSession();
-  if (session && window.CareonysAPI) {
-    CareonysAPI.setAuthToken(session.access_token);
+  const session = await Sesion.getSession();
+  if (session && window.ClienteDatos) {
+    ClienteDatos.setAuthToken(session.access_token);
   }
 })();
 
-window.CareonysAuth = CareonysAuth;
+window.Sesion = Sesion;
 window._sb = _sb; // Expuesto para uso directo de Realtime en páginas

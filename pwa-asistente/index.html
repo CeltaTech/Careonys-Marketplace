@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Careonys Asistente — Portal Móvil</title>
-  <meta name="description" content="Aplicación del Asistente de Cuidado Careonys. Fichado GPS, bitácora médica y postulación de legajo." />
+  <title>{{producto}} Asistente — Portal Móvil</title>
+  <meta name="description" content="Aplicación del Asistente de Cuidado de {{producto}}. Fichado GPS, bitácora médica y postulación de legajo." />
   <link rel="manifest" href="manifest.json" />
   <!-- CSS LOCAL (dentro del scope del Service Worker) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -273,7 +273,7 @@
       <div class="drawer-header">
         <img src="../assets/images/perfil_maria.png" onerror="this.src='https://via.placeholder.com/100'" alt="Avatar" />
         <h4 id="menu-user-name">Asistente de Prueba</h4>
-        <p id="menu-user-email" style="margin:2px 0 0 0;font-size:11px;opacity:0.8;">cuidador@careonys.com</p>
+        <p id="menu-user-email" style="margin:2px 0 0 0;font-size:11px;opacity:0.8;">cuidador@ejemplo.com</p>
       </div>
       <div style="flex:1;padding:16px 0;">
         <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home" style="width:20px;color:#64748b;"></i> Inicio</a>
@@ -283,31 +283,31 @@
         <a class="drawer-menu-item" id="btn-logout" style="color:#ef4444;"><i class="fas fa-sign-out-alt" style="width:20px;color:#ef4444;"></i> Cerrar sesión</a>
       </div>
       <div style="padding:16px;text-align:center;font-size:10px;color:var(--texto-secundario);border-top:1px solid #f1f5f9;">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
+        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
       </div>
     </div>
 
     <!-- 1. VISTA: LOGIN -->
     <div class="app-screen active" id="screen-intro">
       <div class="intro-logo-container">
-        <img src="../assets/images/logo_careonys.png" class="tenant-logo" alt="Logo" onerror="this.style.display='none'" />
+        <img src="../assets/images/logotipo.png" class="tenant-logo" alt="Logo" onerror="this.style.display='none'" />
         <h2 class="tenant-name">PresDemo</h2>
         <p>Portal del Asistente de Cuidado</p>
       </div>
       <div class="login-card">
         <div class="input-wrapper">
-          <input type="email" id="login-email" placeholder="Correo electrónico" value="cuidador@careonys.com" required />
+          <input type="email" id="login-email" placeholder="Correo electrónico" value="cuidador@ejemplo.com" required />
         </div>
         <div class="input-wrapper">
           <input type="password" id="login-pass" placeholder="Contraseña" value="123456" required />
         </div>
-        <button type="button" class="btn-login" id="btn-action-login">Ingresá a Careonys Asistente</button>
+        <button type="button" class="btn-login" id="btn-action-login">Ingresar a {{producto}} Asistente</button>
         <div class="btn-register-link">
           ¿No tenés cuenta? <a onclick="navigate('registro')">Postulate como Asistente</a>
         </div>
       </div>
       <div style="text-align:center;margin-top:auto;font-size:10px;color:var(--texto-secundario);padding-top:20px;">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
+        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
       </div>
     </div>
 
@@ -316,7 +316,7 @@
       <div class="dashboard-header">
         <button class="btn-back" id="btn-open-menu" style="font-size:20px;"><i class="fas fa-bars"></i></button>
         <div style="display:flex;align-items:center;gap:6px;">
-          <img src="../assets/images/logo_careonys.png" class="tenant-logo" style="height:24px;" alt="Logo" onerror="this.style.display='none'" />
+          <img src="../assets/images/logotipo.png" class="tenant-logo" style="height:24px;" alt="Logo" onerror="this.style.display='none'" />
           <span class="tenant-name" style="font-size:14px;font-weight:800;color:var(--marca-prestadora);">PresDemo</span>
         </div>
         <div style="width:24px;"></div>
@@ -366,7 +366,7 @@
       </div>
 
       <div style="text-align:center;padding:12px 0 24px 0;font-size:10px;color:var(--texto-secundario);">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">Careonys</strong>
+        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
       </div>
 
       <div class="bottom-tab-bar">
@@ -445,7 +445,7 @@
                 <option value="universitario_completo">Universitario Graduado</option>
               </select>
             </div>
-            <p style="font-size:12px;font-weight:700;color:#334155;margin:12px 0 6px;">Cursos y Certificaciones (Careonys Academy):</p>
+            <p style="font-size:12px;font-weight:700;color:#334155;margin:12px 0 6px;">Cursos y Certificaciones ({{producto}} Academy):</p>
             <div class="wcheck-group">
               <label><input type="checkbox" name="w-curso" value="curso_gerontologico" checked /> Cuidado Domiciliario</label>
               <label><input type="checkbox" name="w-curso" value="deterioro_cognitivo" checked /> Deterioro Cognitivo / Alzheimer</label>
@@ -532,7 +532,7 @@
             </div>
             <div style="display:flex;align-items:flex-start;gap:8px;margin:12px 0;font-size:12px;color:#334155;">
               <input type="checkbox" id="w-terminos" required style="width:18px;height:18px;margin-top:2px;flex-shrink:0;" />
-              <label for="w-terminos" style="cursor:pointer;">Acepto los Términos y Condiciones de Legajo para Asistentes de Careonys.</label>
+              <label for="w-terminos" style="cursor:pointer;">Acepto los Términos y Condiciones de Legajo para Asistentes de {{producto}}.</label>
             </div>
             <div class="wnav">
               <button type="button" class="wbtn-prev" onclick="wPrev(4)"><i class="fas fa-arrow-left"></i></button>
@@ -549,6 +549,7 @@
 
   <!-- JS LOCAL (dentro del scope del Service Worker) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/identidad.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script>
@@ -561,11 +562,11 @@
 
     // ── Inicialización ─────────────────────────────
     document.addEventListener('DOMContentLoaded', async () => {
-      await CareonysAPI.initTenant();
+      await ClienteDatos.initTenant();
       initScheduleGrid();
 
       // Restaurar sesión activa automáticamente
-      const session = await CareonysAuth.getSession();
+      const session = await Sesion.getSession();
       if (session) {
         document.getElementById('menu-user-email').textContent = session.user.email;
         document.getElementById('menu-user-name').textContent =
@@ -588,11 +589,11 @@
     async function cargarEstadoLegajo(userId) {
       const statusTxt = document.getElementById('legajo-estado-txt');
       try {
-        const aspirantes = await CareonysAPI.getAspirantes();
+        const aspirantes = await ClienteDatos.getAspirantes();
         if (aspirantes && aspirantes.length > 0) {
           // Buscar el legajo del usuario actual si hay userId
           const asp = userId
-            ? (aspirantes.find(a => a.email === (await CareonysAuth.getSession())?.user?.email) || aspirantes[0])
+            ? (aspirantes.find(a => a.email === (await Sesion.getSession())?.user?.email) || aspirantes[0])
             : aspirantes[0];
           statusTxt.textContent = asp.estado === 'validado' || asp.estado === 'validado_prestadora'
             ? '🟢 Validado — Habilitado para trabajar'
@@ -619,9 +620,9 @@
         const lng = position.coords.longitude;
         statusEl.textContent = `Registrando ${tipo}...`;
         try {
-          const session = await CareonysAuth.getSession();
+          const session = await Sesion.getSession();
           const caregiverId = session ? session.user.id : '2197bc14-d545-4939-9a98-979e69a120dc';
-          await CareonysAPI.registrarFichadoGPS({ caregiverId, lat, lng, event_type: tipo });
+          await ClienteDatos.registrarFichadoGPS({ caregiverId, lat, lng, event_type: tipo });
           alert(`¡Fichado de ${tipo} registrado!\nCoordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
           statusEl.textContent = `Último registro: ${tipo} (${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})})`;
         } catch (err) {
@@ -644,8 +645,8 @@
       const notas = document.getElementById('bit-notas').value;
       if (!notas.trim()) { alert('Escribí un reporte o nota de cuidado.'); return; }
       try {
-        const session = await CareonysAuth.getSession();
-        await CareonysAPI.registrarBitacoraDiaria({
+        const session = await Sesion.getSession();
+        await ClienteDatos.registrarBitacoraDiaria({
           presion, glucemia, medicamentos, notas,
           caregiverId: session.user.id
         });
@@ -668,7 +669,7 @@
       btn.textContent = 'Ingresando...';
       btn.disabled = true;
       try {
-        const user = await CareonysAuth.login(email, password);
+        const user = await Sesion.login(email, password);
         document.getElementById('menu-user-email').textContent = user.email;
         document.getElementById('menu-user-name').textContent =
           (user.user_metadata?.full_name || user.email.split('@')[0]).toUpperCase();
@@ -695,7 +696,7 @@
     });
     document.getElementById('btn-logout').addEventListener('click', async () => {
       if (confirm('¿Cerrar sesión?')) {
-        await CareonysAuth.logout();
+        await Sesion.logout();
         navigate('intro');
       }
     });
@@ -787,7 +788,7 @@
 
       // Crear cuenta en Supabase Auth si no existe
       try {
-        await CareonysAuth.signup(
+        await Sesion.signup(
           document.getElementById('w-email').value,
           document.getElementById('w-dni').value,
           { full_name: document.getElementById('w-nombre').value, role: 'caregiver' }
@@ -797,7 +798,7 @@
       }
 
       try {
-        await CareonysAPI.registrarAspirante(data);
+        await ClienteDatos.registrarAspirante(data);
         document.getElementById('w-success').style.display = 'block';
         document.getElementById('form-legajo-pwa').reset();
         // Limpiar slots

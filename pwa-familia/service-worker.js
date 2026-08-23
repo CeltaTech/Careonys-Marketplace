@@ -1,16 +1,17 @@
 /* ===================================================
-   Careonys PWA Familia — Service Worker v3
+   PWA de la Familia — Service Worker v4
    Corregido: Solo cachea assets dentro del scope /pwa-familia/
    Los assets de directorios padre (../css, ../js) NO pueden ser
    interceptados por este SW según la política de seguridad del navegador.
 =================================================== */
-const CACHE_NAME = 'careonys-familia-v3';
+const CACHE_NAME = 'familia-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
   './css/tokens.css',
   './css/styles-pwa.css',
+  './js/identidad.js',
   './js/apiClient.js',
   './js/auth.js'
 ];

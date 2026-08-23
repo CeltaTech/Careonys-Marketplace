@@ -31,7 +31,7 @@
       <div class="navbar-social">
         <a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-instagram"></i></a>
         <a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i class="fab fa-youtube"></i></a>
-        <a href="mailto:contacto@careonys.com"><i class="fas fa-envelope"></i></a>
+        <a href="mailto:{{contacto}}"><i class="fas fa-envelope"></i></a>
       </div>
       <button class="hamburger"><span></span><span></span><span></span></button>
     </div>
@@ -126,7 +126,7 @@
         class="fade-in">
         <div style="text-align:center;margin-bottom:30px;">
           <span class="eyebrow"
-            style="color:var(--azul-medio-texto);font-weight:700;font-size:13px;text-transform:uppercase;">Careonys
+            style="color:var(--azul-medio-texto);font-weight:700;font-size:13px;text-transform:uppercase;">{{producto}}
             Academy</span>
           <h2 style="font-size:26px;font-weight:800;color:var(--texto-principal);margin:6px 0 10px 0;">Evaluación de
             Competencias & Puntos Reputacionales</h2>
@@ -302,7 +302,7 @@
         <h4>Para Cuidadores</h4><a href="postulacion-asistente.html">Postularme como Asistente</a>
       </div>
       <div class="footer-col">
-        <h4>Empresa</h4><a href="#">Sobre Careonys</a><a href="#">Contacto</a>
+        <h4>Empresa</h4><a href="#">Sobre {{producto}}</a><a href="#">Contacto</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -310,6 +310,7 @@
     </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/identidad.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>

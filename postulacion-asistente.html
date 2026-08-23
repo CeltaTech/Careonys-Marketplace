@@ -34,7 +34,7 @@
         <a href="#"><i class="fab fa-instagram"></i></a>
         <a href="#"><i class="fab fa-linkedin-in"></i></a>
         <a href="#"><i class="fab fa-youtube"></i></a>
-        <a href="mailto:contacto@careonys.com"><i class="fas fa-envelope"></i></a>
+        <a href="mailto:{{contacto}}"><i class="fas fa-envelope"></i></a>
       </div>
       <button class="hamburger"><span></span><span></span><span></span></button>
     </div>
@@ -49,7 +49,7 @@
   <!-- HERO -->
   <section class="inner-hero">
     <h1>Postularme como Asistente</h1>
-    <p>Registrate en Careonys, completá tu perfil con documentación verificada y conectate con cientos de familias que
+    <p>Regístrese en {{producto}}, complete su perfil con documentación verificada y conéctese con cientos de familias que
       necesitan tus servicios.</p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
       <a href="#registro" class="btn btn-atencion">Registrarme ahora</a>
@@ -60,7 +60,7 @@
   <!-- BENEFICIOS -->
   <section class="help-section" id="beneficios">
     <div class="container">
-      <h2 class="fade-in">¿Por qué unirte a Careonys?</h2>
+      <h2 class="fade-in">¿Por qué sumarse a {{producto}}?</h2>
       <div class="help-grid">
         <div class="help-card fade-in">
           <div class="icon">💼</div>
@@ -325,12 +325,12 @@
             </div>
           </div>
 
-          <!-- CURSOS ACADÉMICOS DE CAREONYS ACADEMY -->
+          <!-- CURSOS ACADÉMICOS -->
           <div
             style="background: var(--superficie);border-radius:12px;padding:20px;border:1px solid var(--borde-card);margin-bottom:20px;">
             <h4 style="font-size:14px;font-weight:700;color:var(--texto-titulo);margin-bottom:12px;"><i
                 class="fas fa-graduation-cap" style="color:var(--azul-medio-texto);"></i> Cursos y Certificaciones Realizados
-              (Careonys Academy o Afines)</h4>
+              ({{producto}} Academy o afines)</h4>
             <div style="display:grid;grid-template-columns:1fr;gap:10px;font-size:13px;">
               <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"
                   name="curso-certificado" value="curso_gerontologico" checked style="width:18px;height:18px;" /> Curso
@@ -643,7 +643,7 @@
               He leído y acepto los <a href="docs/terminos_y_condiciones_cuidadores.md" target="_blank"
                 style="color:var(--azul-medio-texto);font-weight:700;text-decoration:underline;">Términos, Condiciones de Uso y
                 Políticas de Legajo para Cuidadores</a> (incluye la exención de relación laboral con el software
-              Careonys SaaS y la autorización de transmisión de legajo a la prestadora).
+              {{producto}} y la autorización de transmisión de legajo a la prestadora).
             </label>
           </div>
 
@@ -676,7 +676,7 @@
         <div class="footer-social">
           <a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-instagram"></i></a>
           <a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i class="fab fa-youtube"></i></a>
-          <a href="mailto:contacto@careonys.com"><i class="fas fa-envelope"></i></a>
+          <a href="mailto:{{contacto}}"><i class="fas fa-envelope"></i></a>
         </div>
       </div>
       <div class="footer-col">
@@ -694,7 +694,7 @@
       </div>
       <div class="footer-col">
         <h4>Empresa</h4>
-        <a href="#">Sobre Careonys</a><a href="#">Contacto</a><a href="docs/legales_y_terminos_careonys_marketplace.md"
+        <a href="#">Sobre {{producto}}</a><a href="#">Contacto</a><a href="docs/terminos_y_condiciones_familias.md"
           target="_blank">Términos y Condiciones</a>
       </div>
     </div>
@@ -703,6 +703,7 @@
     </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/identidad.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
@@ -851,7 +852,7 @@
         const password = document.getElementById('dni-num').value; // DNI como contraseña inicial
         let userId = 'demo-' + Date.now();
         try {
-          const user = await CareonysAuth.signup(email, password, {
+          const user = await Sesion.signup(email, password, {
             full_name: document.getElementById('nombre').value,
             role: 'caregiver'
           });
@@ -874,7 +875,7 @@
 
         if (fileDni) {
           try {
-            docUrls.dni = await CareonysAuth.uploadFile(
+            docUrls.dni = await Sesion.uploadFile(
               'documentos-cuidadores',
               `${userId}/dni_frente.${fileDni.name.split('.').pop()}`,
               fileDni
@@ -883,7 +884,7 @@
         }
         if (filePenales) {
           try {
-            docUrls.penales = await CareonysAuth.uploadFile(
+            docUrls.penales = await Sesion.uploadFile(
               'documentos-cuidadores',
               `${userId}/penales.${filePenales.name.split('.').pop()}`,
               filePenales
@@ -892,7 +893,7 @@
         }
         if (fileTitulo) {
           try {
-            docUrls.titulo = await CareonysAuth.uploadFile(
+            docUrls.titulo = await Sesion.uploadFile(
               'documentos-cuidadores',
               `${userId}/titulo.${fileTitulo.name.split('.').pop()}`,
               fileTitulo
@@ -941,7 +942,7 @@
           grillaHorarios
         };
 
-        await CareonysAPI.registrarAspirante(data);
+        await ClienteDatos.registrarAspirante(data);
 
         // 5. Confirmar al usuario
         const successMsg = document.getElementById('form-success');

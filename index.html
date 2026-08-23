@@ -34,7 +34,7 @@
         <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
         <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
         <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-        <a href="mailto:contacto@careonys.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+        <a href="mailto:{{contacto}}" aria-label="Email"><i class="fas fa-envelope"></i></a>
       </div>
       <button class="hamburger" aria-label="Menú">
         <span></span><span></span><span></span>
@@ -50,7 +50,7 @@
         <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
         <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
         <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-        <a href="mailto:contacto@careonys.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+        <a href="mailto:{{contacto}}" aria-label="Email"><i class="fas fa-envelope"></i></a>
       </div>
     </div>
   </nav>
@@ -65,7 +65,7 @@
           <img src="assets/images/hero_cuidadores.png" alt="Busco Cuidador" />
           <div class="service-card-overlay">
             <h3>Busco Cuidador</h3>
-            <p>Careonys te facilita el acceso a cientos de cuidadores calificados con múltiples herramientas que te
+            <p>{{producto}} te facilita el acceso a cientos de cuidadores calificados con múltiples herramientas que te
               facilitan la búsqueda y gestión del día a día en el cuidado de tu ser querido.</p>
           </div>
         </a>
@@ -215,7 +215,7 @@
           <div class="step-item fade-in">
             <div class="step-number">1</div>
             <div class="step-content">
-              <h4>Descargá Careonys en tu celular</h4>
+              <h4>Descargue {{producto}} en su celular</h4>
               <p>Te registrás y completás tu perfil de familiar.</p>
             </div>
           </div>
@@ -388,7 +388,7 @@
             <div class="step-number">5</div>
             <div class="step-content">
               <h4 style="color:var(--azul-medio-texto);">Acordá</h4>
-              <p>Lleguen a un acuerdo y gestioná todo desde la plataforma Careonys.</p>
+              <p>Lleguen a un acuerdo y gestioná todo desde la plataforma {{producto}}.</p>
             </div>
           </div>
         </div>
@@ -401,7 +401,7 @@
     <div class="feature-layout">
       <div class="feature-text fade-in">
         <p class="eyebrow">Seguridad y transparencia</p>
-        <h2>Careonys te facilita el acceso a cientos de cuidadores calificados.</h2>
+        <h2>{{producto}} te facilita el acceso a cientos de cuidadores calificados.</h2>
         <p>Cada cuidador completa su perfil incorporando la información necesaria para que el familiar pueda
           verificarlo: antecedentes penales, referencias laborales y recomendaciones de otros usuarios.</p>
         <a href="directorio.html" class="btn btn-primario">Ver directorio</a>
@@ -505,7 +505,7 @@
         <div class="press-card fade-in">
           <div class="press-card-header orange">Pymes</div>
           <div class="press-card-body">
-            <p>"Careonys: una app que capacita a los cuidadores y los vincula con las familias."</p>
+            <p>"{{producto}}: una app que capacita a los cuidadores y los vincula con las familias."</p>
           </div>
         </div>
       </div>
@@ -526,7 +526,7 @@
           <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
           <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
           <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-          <a href="mailto:contacto@careonys.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+          <a href="mailto:{{contacto}}" aria-label="Email"><i class="fas fa-envelope"></i></a>
         </div>
       </div>
       <div class="footer-col">
@@ -544,20 +544,21 @@
       </div>
       <div class="footer-col">
         <h4>Empresa</h4>
-        <a href="#">Sobre Careonys</a>
+        <a href="#">Sobre {{producto}}</a>
         <a href="#">Blog</a>
         <a href="#">Prensa</a>
         <a href="#contact">Contacto</a>
-        <a href="docs/legales_y_terminos_careonys_marketplace.md" target="_blank">Términos y Condiciones</a>
+        <a href="docs/terminos_y_condiciones_familias.md" target="_blank">Términos y Condiciones</a>
         <a href="#">Política de Privacidad</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 Powered by Careonys.</p>
+      <p>© 2026 Powered by {{producto}}.</p>
     </div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/identidad.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>

@@ -1,10 +1,10 @@
 /* ===================================================
-   CAREONYS MARKETPLACE — API Client Abstraction Layer
-   Desarrollado por CeltaTech (SaaS)
-   Nota: Soporta arquitectura Multi-Tenant dinámica conectada a Supabase.
+   CAPA DE ACCESO A DATOS
+   Desarrollado por CeltaTech.
+   Lectura y escritura contra Supabase, con resolución de Organización.
 =================================================== */
 
-const CareonysAPI = {
+const ClienteDatos = {
   useSupabase: true,
   supabaseUrl: 'https://pfbvpncavvlgmmvqkgbo.supabase.co',
   supabaseKey: 'sb_publishable_rmhuO0J5QsE5mw-5fgf-Hw_9tCHd1di',
@@ -96,14 +96,15 @@ const CareonysAPI = {
       el.textContent = tenant.name;
     });
 
-    // Inyectar la insignia "Powered by Careonys" solo en el Footer (no en el Header)
-    if (tenant.slug !== 'careonys') {
+    // La insignia del producto va solo en el pie, y solo cuando lo que se muestra
+    // es una Prestadora cliente y no el producto mismo.
+    if (!Identidad.esProductoPropio(tenant)) {
       const footerLogo = document.querySelector('.footer-brand .logo, .footer .logo');
       if (footerLogo && !footerLogo.querySelector('.powered-by-tag')) {
         const tag = document.createElement('span');
         tag.className = 'powered-by-tag';
         tag.style.cssText = 'font-size: 11px; font-weight: 700; color: var(--texto-secundario); margin-top: 6px; display: block; letter-spacing: 0.3px;';
-        tag.innerHTML = 'Powered by <span style="color:var(--marca-prestadora-acento); font-weight: 900;">Careonys</span>';
+        tag.innerHTML = 'Powered by <span style="color:var(--marca-prestadora-acento); font-weight: 900;">' + Identidad.datos.nombre + '</span>';
         footerLogo.appendChild(tag);
 
         footerLogo.style.display = 'flex';
@@ -125,7 +126,7 @@ const CareonysAPI = {
     }
     
     // Mock Local Data
-    let data = JSON.parse(localStorage.getItem('careonys_aspirantes') || '[]');
+    let data = JSON.parse(localStorage.getItem('aspirantes') || '[]');
     return data;
   },
 
@@ -145,7 +146,7 @@ const CareonysAPI = {
       fechaRegistro: new Date().toISOString().split('T')[0]
     };
     data.push(nuevo);
-    localStorage.setItem('careonys_aspirantes', JSON.stringify(data));
+    localStorage.setItem('aspirantes', JSON.stringify(data));
     return nuevo;
   },
 
@@ -159,7 +160,7 @@ const CareonysAPI = {
       data[index].estado = nuevoEstado;
       data[index].notaPrestadora = notaInterna;
       data[index].fechaValidacion = new Date().toISOString();
-      localStorage.setItem('careonys_aspirantes', JSON.stringify(data));
+      localStorage.setItem('aspirantes', JSON.stringify(data));
       return data[index];
     }
     throw new Error('Aspirante no encontrado');
@@ -174,7 +175,7 @@ const CareonysAPI = {
       }
       return await this._supabaseGet('care_searches', filter);
     }
-    let data = JSON.parse(localStorage.getItem('careonys_searches') || '[]');
+    let data = JSON.parse(localStorage.getItem('busquedas') || '[]');
     return data;
   },
 
@@ -194,7 +195,7 @@ const CareonysAPI = {
       fechaCreacion: new Date().toISOString()
     };
     data.push(nueva);
-    localStorage.setItem('careonys_searches', JSON.stringify(data));
+    localStorage.setItem('busquedas', JSON.stringify(data));
     return nueva;
   },
 
@@ -221,14 +222,14 @@ const CareonysAPI = {
       };
       return await this._supabaseRequest('POST', 'clock_ins', dbData);
     }
-    let data = JSON.parse(localStorage.getItem('careonys_clockins') || '[]');
+    let data = JSON.parse(localStorage.getItem('fichadas') || '[]');
     const nuevoFichado = {
       id: 'clock-' + Date.now(),
       ...fichadoData,
       timestamp: new Date().toISOString()
     };
     data.push(nuevoFichado);
-    localStorage.setItem('careonys_clockins', JSON.stringify(data));
+    localStorage.setItem('fichadas', JSON.stringify(data));
     return nuevoFichado;
   },
 
@@ -244,14 +245,14 @@ const CareonysAPI = {
       };
       return await this._supabaseRequest('POST', 'logbook_entries', dbData);
     }
-    let data = JSON.parse(localStorage.getItem('careonys_bitacora') || '[]');
+    let data = JSON.parse(localStorage.getItem('bitacora') || '[]');
     const nuevaEntry = {
       id: 'log-' + Date.now(),
       ...entryData,
       timestamp: new Date().toISOString()
     };
     data.push(nuevaEntry);
-    localStorage.setItem('careonys_bitacora', JSON.stringify(data));
+    localStorage.setItem('bitacora', JSON.stringify(data));
     return nuevaEntry;
   },
 
@@ -264,7 +265,7 @@ const CareonysAPI = {
       queryParams.order = 'created_at.desc';
       return await this._supabaseRequest('GET', 'logbook_entries', null, queryParams);
     }
-    let data = JSON.parse(localStorage.getItem('careonys_bitacora') || '[]');
+    let data = JSON.parse(localStorage.getItem('bitacora') || '[]');
     return data.reverse();
   },
 
@@ -409,7 +410,7 @@ const CareonysAPI = {
 
 // Inicializar el Tenant automáticamente al cargar el script
 document.addEventListener('DOMContentLoaded', () => {
-  CareonysAPI.initTenant();
+  ClienteDatos.initTenant();
 });
 
-window.CareonysAPI = CareonysAPI;
+window.ClienteDatos = ClienteDatos;

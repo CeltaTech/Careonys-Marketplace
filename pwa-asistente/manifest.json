@@ -8,7 +8,7 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "../assets/images/logo_careonys.png",
+      "src": "../assets/images/logotipo.png",
       "sizes": "512x512",
       "type": "image/png"
     }

@@ -78,20 +78,30 @@ del navegador.
 
 ### 2.1 Archivos propios
 
-Hay **4 archivos JavaScript distintos**, pero están copiados en tres carpetas, así que en disco
-se ven 10.
+Hay **5 archivos JavaScript distintos**, pero están copiados en tres carpetas, así que en disco
+se ven 13. Aparte hay dos guiones que no corren en el navegador sino en la línea de comandos.
 
 | Archivo | Renglones | Qué hace |
 |---|---:|---|
+| `js/identidad.js` | 108 | El único lugar donde está escrito el nombre comercial. Resuelve los marcadores `{{producto}}`, `{{productoCorto}}`, `{{dominio}}` y `{{contacto}}` al cargar cada página. |
 | `js/apiClient.js` | 419 | Capa de acceso a datos. Resolución de inquilino (multi-cliente), lectura y escritura contra Supabase, traducción de nombres de campos y modo alternativo con almacenamiento local. |
 | `js/auth.js` | 122 | Ingreso, registro, cierre de sesión, subida de archivos y suscripción en tiempo real, todo sobre el SDK de Supabase. |
 | `js/main.js` | 307 | Comportamiento global del sitio: menú, desplazamiento suave, validación de formularios, filtros del directorio, asistente de 6 pasos y ventana simulada de videollamada. |
 | `pwa-asistente/service-worker.js` | 73 | Caché para uso sin conexión de la aplicación de asistentes. |
 | `pwa-familia/service-worker.js` | 73 | Ídem para la de familias. |
 
+Los dos guiones de línea de comandos:
+
+| Archivo | Qué hace |
+|---|---|
+| `scripts/generar_manifiestos.mjs` | Escribe los dos `manifest.json` desde la identidad. Hacen falta generados porque el navegador los lee como archivo, sin pasar por ninguna página: ahí no hay JavaScript que resuelva un marcador. |
+| `scripts/verificar_identidad.mjs` | Falla —código de salida 1— si el nombre, el dominio o el correo aparecen escritos a mano fuera de `js/identidad.js`. Verifica además que las tres copias de ese archivo sean iguales byte a byte y que los manifiestos estén al día. Ignora la documentación y los comentarios del código. |
+
 **Duplicación verificada por firma digital**: `js/apiClient.js`, `pwa-asistente/js/apiClient.js`
 y `pwa-familia/js/apiClient.js` son **idénticos byte a byte**. Lo mismo pasa con las tres copias
-de `auth.js` y con las dos copias de `css/styles-pwa.css`. Son 1.082 renglones de copias exactas
+de `auth.js`, con las tres de `identidad.js` y con las dos copias de `css/styles-pwa.css`. Las de
+`identidad.js` son el único caso donde la copia está verificada: `scripts/verificar_identidad.mjs`
+falla si alguna se separa. Son 1.082 renglones de copias exactas
 que hoy hay que mantener en tres lugares a la vez.
 
 ### 2.2 JavaScript escrito adentro del HTML

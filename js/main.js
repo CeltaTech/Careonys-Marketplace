@@ -1,5 +1,5 @@
 // ===================================================
-// CAREONYS — JavaScript global
+// JavaScript global del sitio
 // ===================================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -202,16 +202,16 @@ document.addEventListener('DOMContentLoaded', () => {
         estado: 'activa'
       };
 
-      if (window.CareonysAPI) {
+      if (window.ClienteDatos) {
         try {
-          await CareonysAPI.crearBusquedaFamilia(newSearch);
+          await ClienteDatos.crearBusquedaFamilia(newSearch);
           if (successMsg) successMsg.style.display = 'block';
           if (btnSubmit) btnSubmit.style.display = 'none';
         } catch (err) {
           alert('Error al guardar la búsqueda en Supabase: ' + err.message);
         }
       } else {
-        let currentSearches = JSON.parse(localStorage.getItem('careonys_searches') || '[]');
+        let currentSearches = JSON.parse(localStorage.getItem('busquedas') || '[]');
         currentSearches.unshift({
           id: Date.now(),
           title,
@@ -220,16 +220,16 @@ document.addEventListener('DOMContentLoaded', () => {
           patientGender,
           date: new Date().toLocaleDateString('es-AR')
         });
-        localStorage.setItem('careonys_searches', JSON.stringify(currentSearches));
+        localStorage.setItem('busquedas', JSON.stringify(currentSearches));
         if (successMsg) successMsg.style.display = 'block';
         if (btnSubmit) btnSubmit.style.display = 'none';
       }
     });
   }
 
-  // ---- MANEJADOR DE REGISTRO COMPLETO DE CUIDADOR (Delegado a postulacion-asistente.html si existe CareonysAPI) ----
+  // ---- MANEJADOR DE REGISTRO COMPLETO DE CUIDADOR (Delegado a postulacion-asistente.html si existe ClienteDatos) ----
   const caregiverRegForm = document.getElementById('form-registro-cuidador-completo');
-  if (caregiverRegForm && !window.CareonysAPI) {
+  if (caregiverRegForm && !window.ClienteDatos) {
     caregiverRegForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const successMsg = caregiverRegForm.querySelector('#form-success');
@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.innerHTML = `
           <div class="video-modal-card">
             <div style="display:flex;justify-content:space-between;align-items:center;">
-              <h3 style="margin:0;font-size:18px;color:var(--texto-titulo);"><i class="fas fa-video" style="color:var(--azul-medio-texto);margin-right:8px;"></i> Entrevista por Videollamada (Careonys Live)</h3>
+              <h3 style="margin:0;font-size:18px;color:var(--texto-titulo);"><i class="fas fa-video" style="color:var(--azul-medio-texto);margin-right:8px;"></i> Entrevista por Videollamada</h3>
               <button class="btn-close-video" style="background:none;border:none;font-size:20px;cursor:pointer;">&times;</button>
             </div>
             <div class="video-screen-placeholder">

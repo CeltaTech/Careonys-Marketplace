@@ -34,7 +34,7 @@
         <a href="#"><i class="fab fa-instagram"></i></a>
         <a href="#"><i class="fab fa-linkedin-in"></i></a>
         <a href="#"><i class="fab fa-youtube"></i></a>
-        <a href="mailto:contacto@careonys.com"><i class="fas fa-envelope"></i></a>
+        <a href="mailto:{{contacto}}"><i class="fas fa-envelope"></i></a>
       </div>
       <button class="hamburger"><span></span><span></span><span></span></button>
     </div>
@@ -49,7 +49,7 @@
   <!-- HERO -->
   <section class="inner-hero">
     <h1>Solicitar Asistente</h1>
-    <p>Careonys te facilita el acceso a cientos de cuidadores calificados con múltiples herramientas que te facilitan la
+    <p>{{producto}} te facilita el acceso a cientos de cuidadores calificados con múltiples herramientas que te facilitan la
       búsqueda y gestión del día a día en el cuidado de tu ser querido.</p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
       <a href="directorio.html" class="btn btn-atencion">Ver cuidadores disponibles</a>
@@ -252,7 +252,7 @@
           <div class="step-item fade-in">
             <div class="step-number">1</div>
             <div class="step-content">
-              <h4>Descargá Careonys en tu celular</h4>
+              <h4>Descargue {{producto}} en su celular</h4>
               <p>Te registrás y completás tu perfil de familiar con los datos de tu ser querido.</p>
             </div>
           </div>
@@ -287,7 +287,7 @@
     <div class="feature-layout">
       <div class="feature-text fade-in">
         <p class="eyebrow">Seguridad y transparencia</p>
-        <h2>Careonys te facilita el acceso a cientos de cuidadores calificados.</h2>
+        <h2>{{producto}} te facilita el acceso a cientos de cuidadores calificados.</h2>
         <p>Cada cuidador completa su perfil incorporando la información necesaria para que el familiar pueda
           verificarlo: antecedentes penales, referencias laborales y recomendaciones de otros usuarios.</p>
         <a href="directorio.html" class="btn btn-primario">Ver directorio</a>
@@ -366,7 +366,7 @@
         <div class="footer-social">
           <a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-instagram"></i></a>
           <a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i class="fab fa-youtube"></i></a>
-          <a href="mailto:contacto@careonys.com"><i class="fas fa-envelope"></i></a>
+          <a href="mailto:{{contacto}}"><i class="fas fa-envelope"></i></a>
         </div>
       </div>
       <div class="footer-col">
@@ -383,7 +383,7 @@
       </div>
       <div class="footer-col">
         <h4>Empresa</h4>
-        <a href="#">Sobre Careonys</a><a href="#">Contacto</a><a href="#">Términos</a>
+        <a href="#">Sobre {{producto}}</a><a href="#">Contacto</a><a href="#">Términos</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -391,6 +391,7 @@
     </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/identidad.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
@@ -415,10 +416,10 @@
 
       try {
         // Obtener sesi�n si el usuario est� logueado
-        const session = await CareonysAuth.getSession().catch(() => null);
+        const session = await Sesion.getSession().catch(() => null);
         const familyUserId = session?.user?.id || null;
 
-        await CareonysAPI.crearBusquedaFamilia({
+        await ClienteDatos.crearBusquedaFamilia({
           paciente: nombre,
           patologias: [consulta],
           horarios: 'A coordinar',
