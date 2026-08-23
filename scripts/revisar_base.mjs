@@ -9,8 +9,10 @@
    Qué contesta, en este orden:
 
      1. ¿La base responde?
-     2. ¿Qué tablas y vistas puede enumerar alguien sin sesión? Eso lo publica
-        PostgREST solo, y es la lista de lo que hay para atacar.
+     2. ¿Puede alguien sin sesión pedir la lista entera de tablas? PostgREST la
+        publica en `/rest/v1/`. Si contesta 401 está bien: ya no se puede sacar
+        el mapa de la base con la clave que viaja al navegador. Cuando no se
+        puede enumerar, se prueban igual las tablas que nombra el código.
      3. De esas, ¿cuáles devuelven filas sin sesión? Una tabla que contesta con
         datos a quien no inició sesión está abierta, tenga o no políticas.
      4. De las que devuelven filas, ¿aparecen dos Prestadoras distintas? Eso es
@@ -61,6 +63,24 @@ async function pedir(camino, extra = {}) {
   return res;
 }
 
+// Nombres de tabla que aparecen en el código de las pantallas. Se usan cuando
+// la base no deja enumerar, que es el caso bueno.
+function tablasDelCodigo() {
+  const nombres = new Set();
+  const archivos = ['js/apiClient.js', 'js/auth.js', 'mockup-app.html',
+    'pwa-asistente/index.html', 'pwa-familia/index.html'];
+  for (const rel of archivos) {
+    let texto;
+    try { texto = readFileSync(join(raiz, rel), 'utf8'); } catch { continue; }
+    for (const m of texto.matchAll(/_supabase(?:Get|Post|Patch)\('([a-z_]+)'/g)) nombres.add(m[1]);
+    for (const m of texto.matchAll(/table === '([a-z_]+)'/g)) nombres.add(m[1]);
+    for (const m of texto.matchAll(/_supabaseRequest\('[A-Z]+', *'([a-z_]+)'/g)) nombres.add(m[1]);
+    for (const m of texto.matchAll(/from\('([a-z_]+)'\)/g)) nombres.add(m[1]);
+    for (const m of texto.matchAll(/rest\/v1\/([a-z_]+)/g)) nombres.add(m[1]);
+  }
+  return [...nombres].sort();
+}
+
 console.log('Servidor: ' + servidor);
 console.log('Sesión: ninguna (es a propósito: se mide qué ve un anónimo)\n');
 
@@ -75,20 +95,30 @@ try {
   console.error('cuál cuenta se entra.');
   process.exit(1);
 }
-if (!raiz_res.ok) {
-  console.error('La base responde pero rechaza la clave publicable (' + raiz_res.status + ').');
-  process.exit(1);
-}
 console.log('1. La base responde.\n');
 
-// --- 2. Qué puede enumerar un anónimo --------------------------------------
-const spec = await raiz_res.json();
-const expuestas = Object.keys(spec.definitions || spec.components?.schemas || {}).sort();
-console.log('2. Tablas y vistas que un anónimo puede enumerar: ' + expuestas.length);
-if (expuestas.length === 0) {
-  console.log('   Ninguna. Es el mejor resultado posible de este punto.\n');
+// --- 2. ¿Puede un anónimo pedir el mapa de la base? ------------------------
+// Ojo con este punto: que conteste 401 NO es un problema de clave. Supabase
+// pide clave secreta para esta dirección, y la publicable no lo es. Es la
+// respuesta buena: quien tiene la clave del navegador no puede sacar la lista
+// de tablas. Cuando pasa eso, se prueban las que nombra el código.
+let expuestas = [];
+let seEnumero = false;
+
+if (raiz_res.ok) {
+  const spec = await raiz_res.json();
+  expuestas = Object.keys(spec.definitions || spec.components?.schemas || {}).sort();
+  seEnumero = true;
+  console.log('2. Un anónimo PUEDE pedir la lista entera: ' + expuestas.length + ' tablas y vistas.');
+  console.log('   ' + expuestas.join(', '));
+  console.log('   Eso le da el mapa de qué hay para atacar, sin adivinar nada.\n');
 } else {
-  console.log('   ' + expuestas.join(', ') + '\n');
+  console.log('2. Un anónimo no puede pedir la lista entera (' + raiz_res.status + '). Está bien.');
+  expuestas = tablasDelCodigo();
+  console.log('   Se prueban entonces las ' + expuestas.length + ' que nombra el código:');
+  console.log('   ' + expuestas.join(', '));
+  console.log('   Aviso: esta lista no es la de la base. Puede haber tablas que el código');
+  console.log('   no nombra y que igual estén abiertas — este guion no las ve.\n');
 }
 
 // --- 3. Cuáles devuelven filas sin sesión ----------------------------------
@@ -103,21 +133,46 @@ for (const tabla of expuestas) {
   } catch { negadas.push(tabla + ' (no se pudo consultar)'); continue; }
 
   if (res.status === 401 || res.status === 403) { negadas.push(tabla); continue; }
+  if (res.status === 404) { continue; }   // no existe en esta base
   if (!res.ok) { negadas.push(tabla + ' (' + res.status + ')'); continue; }
 
   const rango = res.headers.get('content-range') || '';
   const total = rango.split('/')[1];
   const filas = await res.json();
-  if (Array.isArray(filas) && filas.length > 0) abiertas.push({ tabla, total });
+  if (Array.isArray(filas) && filas.length > 0) abiertas.push({ tabla, total, columnas: Object.keys(filas[0]) });
   else vacias.push(tabla);
 }
 
-console.log('3. De esas, sin sesión:');
+console.log('3. De esas, sin sesión:' + (seEnumero ? '' : ' (lista sacada del código)'));
 console.log('   devuelven datos: ' + abiertas.length);
 abiertas.forEach((a) => console.log('      ' + a.tabla + '  (' + (a.total || '?') + ' filas)'));
 console.log('   contestan vacío: ' + vacias.length + (vacias.length ? '  ' + vacias.join(', ') : ''));
 console.log('   rechazan:        ' + negadas.length + (negadas.length ? '  ' + negadas.join(', ') : ''));
 console.log('');
+// De todo lo abierto, lo que más importa es si hay datos que identifican a una
+// persona. Se buscan por el nombre de la columna, no por el contenido: el
+// contenido no se mira ni se imprime.
+const SENSIBLES = ['dni', 'cuit', 'cuil', 'bank', 'iban', 'cbu', 'address', 'direccion',
+  'phone', 'telefono', 'email', 'correo', 'birth', 'nacimiento', 'salary', 'sueldo',
+  'rate', 'document', 'passport', 'pasaporte', 'health', 'salud', 'diagnos'];
+const conDatosPersonales = abiertas
+  .map((a) => ({
+    tabla: a.tabla,
+    cols: (a.columnas || []).filter((c) => SENSIBLES.some((s) => c.toLowerCase().includes(s)))
+  }))
+  .filter((a) => a.cols.length);
+
+if (conDatosPersonales.length) {
+  console.log('   GRAVE: hay datos personales a la vista de cualquiera.');
+  conDatosPersonales.forEach((a) => {
+    console.log('      ' + a.tabla + ': ' + a.cols.join(', '));
+  });
+  console.log('   Se muestran los nombres de columna, nunca su contenido. Con una fila');
+  console.log('   ficticia esto no le cuesta a nadie; con un legajo de verdad adentro, es');
+  console.log('   la identidad de una persona publicada en internet.');
+  console.log('');
+}
+
 if (abiertas.length) {
   console.log('   Una tabla que le devuelve datos a quien no inició sesión está abierta.');
   console.log('   Si alguna guarda legajos, pacientes o datos de contacto, eso se cierra');
