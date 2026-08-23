@@ -90,11 +90,12 @@ se ven 13. Aparte hay dos guiones que no corren en el navegador sino en la líne
 | `pwa-asistente/service-worker.js` | 73 | Caché para uso sin conexión de la aplicación de asistentes. |
 | `pwa-familia/service-worker.js` | 73 | Ídem para la de familias. |
 
-Los dos guiones de línea de comandos:
+Los tres guiones de línea de comandos:
 
 | Archivo | Qué hace |
 |---|---|
 | `scripts/generar_manifiestos.mjs` | Escribe los dos `manifest.json` desde la identidad. Hacen falta generados porque el navegador los lee como archivo, sin pasar por ninguna página: ahí no hay JavaScript que resuelva un marcador. |
+| `scripts/revisar_base.mjs` | Sonda de solo lectura: pregunta qué tablas puede enumerar y leer alguien **sin sesión**, y si alguna le muestra dos Prestadoras distintas. Se corre en el momento en que la base vuelva a responder, antes de cargar el primer dato. No escribe ni borra nada, y se niega a correr contra una base que no sea la de este proyecto. |
 | `scripts/verificar_identidad.mjs` | Falla —código de salida 1— si el nombre, el dominio o el correo aparecen escritos a mano fuera de `js/identidad.js`. Verifica además que las tres copias de ese archivo sean iguales byte a byte y que los manifiestos estén al día. Ignora la documentación y los comentarios del código. |
 
 **Duplicación verificada por firma digital**: `js/apiClient.js`, `pwa-asistente/js/apiClient.js`
