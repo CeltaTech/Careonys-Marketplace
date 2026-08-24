@@ -33,6 +33,11 @@
    muestra a nadie. Se clasifica el error, se muestra la frase que corresponde, y
    el texto técnico queda en la consola.
 
+   Es el único clasificador del proyecto, como pide la regla 7. Vivió un tiempo
+   en `js/auth.js` con el nombre `Sesion.mensajeDeError` y se mudó acá porque un
+   mensaje de error es texto y no es sesión, y porque `js/texto.js` lo cargan
+   las catorce pantallas y `js/auth.js` no.
+
    Hay una copia idéntica de este archivo en cada PWA, porque el service worker
    de cada una solo alcanza su propia carpeta. `scripts/verificar_copias.mjs`
    comprueba que las tres sean iguales byte a byte.
@@ -52,23 +57,40 @@ const Texto = {
 
   /**
    * Traduce una falla a una frase que se puede mostrar. El detalle técnico va a
-   * la consola y nunca a la pantalla.
+   * la consola y nunca a la pantalla. El orden importa: lo específico primero,
+   * porque «password» aparece también adentro de «invalid login credentials».
    */
   mensajeDeError(error, queSeIntentaba = '') {
     if (error) console.error(queSeIntentaba || 'Falla:', error);
 
-    const crudo = String((error && (error.message || error.error_description)) || '');
-    const sinRed = /Failed to fetch|NetworkError|ERR_INTERNET|ERR_NAME_NOT_RESOLVED/i;
-    const sinPermiso = /\b401\b|\b403\b|JWT|permission denied|row-level security|not authorized/i;
-    const noEsta = /\b404\b|does not exist|not found/i;
-    const repetido = /duplicate key|already registered|already exists|\b409\b/i;
-    const invalido = /\b400\b|\b422\b|invalid input|violates check constraint/i;
+    const crudo = String(
+      (error && (error.message || error.error_description)) || ''
+    ).toLowerCase();
+    const dice = (...trozos) => trozos.some((trozo) => crudo.includes(trozo));
 
-    if (sinRed.test(crudo)) return 'No hay conexión con el servidor. Conviene reintentar en un momento.';
-    if (sinPermiso.test(crudo)) return 'La sesión no tiene permiso para esta operación, o venció. Conviene volver a ingresar.';
-    if (repetido.test(crudo)) return 'Ese dato ya estaba registrado.';
-    if (noEsta.test(crudo)) return 'No se encontró lo que se estaba buscando.';
-    if (invalido.test(crudo)) return 'Alguno de los datos enviados no es válido. Conviene revisar el formulario.';
+    // Ingreso y alta de cuenta.
+    if (dice('invalid login credentials')) return 'El correo o la contraseña no coinciden.';
+    if (dice('email not confirmed')) return 'La cuenta existe, pero falta confirmar el correo. El enlace está en la casilla.';
+    if (dice('already registered', 'already been registered')) return 'Ya hay una cuenta con ese correo. Se puede entrar desde la pantalla de acceso.';
+    if (dice('rate limit', 'too many')) return 'Hubo demasiados intentos seguidos. Conviene esperar unos minutos.';
+    if (dice('password')) return 'La contraseña no cumple con lo que pide el servidor. Conviene elegir una más larga.';
+
+    // Archivos del legajo.
+    if (dice('maximum allowed size', 'payload too large')) return 'El archivo pesa demasiado. El límite es 10 MB para documentos y 5 MB para la foto.';
+    if (dice('mime type', 'invalid_mime')) return 'Ese tipo de archivo no se acepta. Se admiten imágenes (JPG, PNG, WEBP) y PDF.';
+
+    // Los cuatro avisos que puede devolver rendir_evaluacion (migración 0008).
+    if (dice('sin_legajo')) return 'Para rendir hace falta tener el legajo cargado. Se completa desde «Mi Legajo».';
+    if (dice('sin_intentos')) return 'Ya se usaron todos los intentos de esta evaluación.';
+    if (dice('evaluacion_vacia', 'evaluacion_inexistente')) return 'Esta evaluación no está disponible en este momento.';
+
+    // Lo genérico, que cubre cualquier tabla y cualquier pantalla.
+    if (dice('failed to fetch', 'networkerror', 'err_internet', 'err_name_not_resolved')) return 'No hay conexión con el servidor. Conviene reintentar en un momento.';
+    if (dice('row-level security', 'violates row', 'permission denied', 'unauthorized', 'not authorized', 'jwt') || /40[13]/.test(crudo)) return 'La sesión no tiene permiso para esta operación, o venció. Conviene volver a ingresar.';
+    if (dice('duplicate key', 'already exists') || /409/.test(crudo)) return 'Ese dato ya estaba registrado.';
+    if (dice('does not exist', 'not found') || /404/.test(crudo)) return 'No se encontró lo que se estaba buscando.';
+    if (dice('invalid input', 'violates check constraint') || /4(00|22)/.test(crudo)) return 'Alguno de los datos enviados no es válido. Conviene revisar el formulario.';
+
     return 'No se pudo completar la operación. Si vuelve a pasar, conviene avisar al soporte.';
   }
 };

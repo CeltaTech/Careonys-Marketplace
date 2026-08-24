@@ -414,6 +414,7 @@ const ClienteDatos = {
         id: row.id,
         paciente: row.patient_name,
         patologias: row.pathologies_required || [],
+        contacto: row.contact_info || null,
         horarios: row.schedule_type,
         grillaHorarios: row.grid_schedule_7x3 || {},
         estado: row.status,
@@ -457,7 +458,7 @@ const ClienteDatos = {
       if (data.patologias !== undefined) row.pathologies_required = data.patologias;
       if (data.horarios !== undefined) row.schedule_type = data.horarios;
       if (data.grillaHorarios !== undefined) row.grid_schedule_7x3 = data.grillaHorarios;
-      if (data.contacto !== undefined) row.pathologies_required = [...(Array.isArray(data.patologias) ? data.patologias : []), { contacto: data.contacto }];
+      if (data.contacto !== undefined) row.contact_info = data.contacto;
       if (data.estado !== undefined) row.status = data.estado;
       return row;
     }

@@ -876,7 +876,7 @@
           (user.user_metadata?.full_name || user.email.split('@')[0]).toUpperCase();
         navigate('dashboard');
       } catch (err) {
-        alert('Error al iniciar sesión: ' + err.message);
+        alert(Texto.mensajeDeError(err, 'iniciar sesión'));
       } finally {
         btn.textContent = 'Ingresar';
         btn.disabled = false;
@@ -944,7 +944,7 @@
           navigate('dashboard');
         }, 4000);
       } catch (err) {
-        alert('Error al publicar la búsqueda: ' + err.message);
+        alert(Texto.mensajeDeError(err, 'publicar la búsqueda'));
       } finally {
         btn.textContent = '🔍 Buscar mi Asistente Ideal';
         btn.disabled = false;

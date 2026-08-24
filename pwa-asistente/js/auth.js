@@ -82,52 +82,6 @@ const Sesion = {
     return data;
   },
 
-  // ── El error técnico, traducido ────────────────────────
-  // Regla 5.1: ninguna pantalla muestra lo que devuelve la base tal cual. Acá
-  // se clasifica una vez y lo usan todas; el texto crudo queda en la consola.
-  mensajeDeError(err) {
-    const crudo = ((err && err.message) || '').toLowerCase();
-    if (crudo.includes('invalid login credentials')) {
-      return 'El correo o la contraseña no coinciden.';
-    }
-    if (crudo.includes('email not confirmed')) {
-      return 'La cuenta existe, pero falta confirmar el correo. El enlace está en la casilla.';
-    }
-    if (crudo.includes('already registered') || crudo.includes('already been registered')) {
-      return 'Ya hay una cuenta con ese correo. Se puede entrar desde la pantalla de acceso.';
-    }
-    if (crudo.includes('rate limit') || crudo.includes('too many')) {
-      return 'Hubo demasiados intentos seguidos. Conviene esperar unos minutos.';
-    }
-    if (crudo.includes('password')) {
-      return 'La contraseña no cumple con lo que pide el servidor: al menos ocho caracteres.';
-    }
-    if (crudo.includes('failed to fetch') || crudo.includes('networkerror')) {
-      return 'No se pudo conectar con el servidor. Puede ser la conexión de este equipo.';
-    }
-    if (crudo.includes('maximum allowed size') || crudo.includes('payload too large')) {
-      return 'El archivo pesa demasiado. El límite es 10 MB para documentos y 5 MB para la foto.';
-    }
-    if (crudo.includes('mime type') || crudo.includes('invalid_mime')) {
-      return 'Ese tipo de archivo no se acepta. Se admiten imágenes (JPG, PNG, WEBP) y PDF.';
-    }
-    // Los cuatro avisos que puede devolver rendir_evaluacion (migración 0008).
-    if (crudo.includes('sin_legajo')) {
-      return 'Para rendir hace falta tener el legajo cargado. Se completa desde «Mi Legajo».';
-    }
-    if (crudo.includes('sin_intentos')) {
-      return 'Ya se usaron todos los intentos de esta evaluación.';
-    }
-    if (crudo.includes('evaluacion_vacia') || crudo.includes('evaluacion_inexistente')) {
-      return 'Esta evaluación no está disponible en este momento.';
-    }
-    if (crudo.includes('row-level security') || crudo.includes('violates row')
-        || crudo.includes('permission denied') || crudo.includes('unauthorized')) {
-      return 'La sesión no tiene permiso para esta operación. Conviene volver a entrar.';
-    }
-    return 'No se pudo completar la operación. Conviene intentar de nuevo en un momento.';
-  },
-
   // ── Cerrar sesión ──────────────────────────────────────
   async logout() {
     await _sb.auth.signOut();

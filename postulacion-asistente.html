@@ -931,7 +931,7 @@
           userId = alta.user ? alta.user.id : null;
         } catch (authErr) {
           console.error('Alta de Asistente, cuenta:', authErr);
-          alert(Sesion.mensajeDeError(authErr));
+          alert(Texto.mensajeDeError(authErr));
           return;
         }
 
@@ -982,7 +982,7 @@
             );
           } catch (errArchivo) {
             console.error('Alta de Asistente, ' + adj.clave + ':', errArchivo);
-            adjuntosFallados.push({ nombre: adj.nombre, motivo: Sesion.mensajeDeError(errArchivo) });
+            adjuntosFallados.push({ nombre: adj.nombre, motivo: Texto.mensajeDeError(errArchivo) });
           }
         }
 
@@ -1055,7 +1055,7 @@
                 adjuntosFallados.push({
                   nombre: (clave === 'matriculas' ? 'el archivo de una matrícula'
                                                   : 'el archivo de un estudio'),
-                  motivo: Sesion.mensajeDeError(errArchivo)
+                  motivo: Texto.mensajeDeError(errArchivo)
                 });
               }
             }

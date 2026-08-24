@@ -587,7 +587,7 @@
           alert(`¡Fichado de ${tipo} registrado!\nCoordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
           statusEl.textContent = `Último registro: ${tipo} (${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})})`;
         } catch (err) {
-          alert('Error de red al fichar: ' + err.message);
+          alert(Texto.mensajeDeError(err, 'registrar el fichado'));
           statusEl.textContent = 'Error al registrar';
         }
       }, () => {
@@ -617,7 +617,7 @@
         document.getElementById('bit-medicamentos').value = '';
         document.getElementById('bit-notas').value = '';
       } catch (err) {
-        alert('Error al registrar novedad: ' + err.message);
+        alert(Texto.mensajeDeError(err, 'registrar la novedad'));
       }
     });
 
@@ -637,7 +637,7 @@
         navigate('dashboard');
         cargarEstadoLegajo(user.id);
       } catch (err) {
-        alert('Error al iniciar sesión: ' + err.message);
+        alert(Texto.mensajeDeError(err, 'iniciar sesión'));
       } finally {
         btn.textContent = 'Ingresar';
         btn.disabled = false;
@@ -767,7 +767,7 @@
         wGoTo(1);
         setTimeout(() => { document.getElementById('w-success').style.display = 'none'; }, 6000);
       } catch (err) {
-        alert('Error al enviar el legajo: ' + err.message);
+        alert(Texto.mensajeDeError(err, 'enviar el legajo'));
       }
     });
   </script>

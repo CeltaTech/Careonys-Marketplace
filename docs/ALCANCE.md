@@ -168,6 +168,41 @@ escribe ahí mismo.
 mismo módulo —y cuyos datos ya van escapados allá—, la línea lleva un comentario que empieza con
 `seguro:` y explica por qué. Hay dos, los dos en `js/fichas-legajo.js`.
 
+---
+
+### El error que ve una persona ya no es el que devuelve la base
+
+Cerró el pendiente 28, el 24 de agosto de 2026, y con él la mitad de la regla 5.1 que había
+quedado abierta.
+
+- **El contacto de una Familia tiene su propia columna.** `solicitar-asistente.html` pide nombre,
+  correo y celular a quien busca un Asistente, y `js/apiClient.js` los mandaba adentro de
+  `pathologies_required`, la columna de las patologías, con un comentario que los llamaba
+  «metadata extra» — que es como se llama a un dato cuando no se le hizo lugar. La migración
+  `0009_contacto_de_la_busqueda.sql` crea `contact_info` y rescata las filas que hubieran quedado
+  mal escritas. **Está escrita y todavía no aplicada** (pendiente 30): hasta que corra, esa
+  pantalla guarda en una columna que la base no tiene. El pendiente decía que ninguna pantalla mandaba contacto; sí lo mandaba, y era la
+  pantalla pública.
+- **Un solo clasificador de errores, no dos.** Al cerrar el pendiente 22 quedaron conviviendo
+  `Sesion.mensajeDeError` en `js/auth.js` y `Texto.mensajeDeError` en `js/texto.js`: la misma
+  decisión en dos lugares, que es justo lo que prohíbe la regla 7. Se unificaron en `js/texto.js`,
+  que es donde va —un mensaje de error es texto, no es sesión— y que además lo cargan las catorce
+  pantallas, cosa que `js/auth.js` no. Los siete llamadores pasaron al nombre nuevo.
+- **Ocho avisos mostraban el texto crudo de la base.** Quedaban `alert('Error al ...: ' +
+  err.message)` en `pwa-asistente/index.html`, `pwa-familia/index.html` y
+  `solicitar-asistente.html`. Ahora todos pasan por `Texto.mensajeDeError`, que deja el detalle
+  técnico en la consola y muestra la frase que corresponde.
+- **El chequeo lo sostiene.** `scripts/verificar_escapado.mjs` avisa cuando un `.message` o un
+  `.error_description` aparece en la misma sentencia que un `alert`, un `confirm`, un `innerHTML`
+  o un `textContent`. Su autoprueba pasó de diecisiete casos a veintidós, y fue ella la que
+  encontró que la primera versión del detector no veía el crudo cuando venía adentro de una
+  plantilla. Se probó además plantando un aviso con el error crudo en un archivo de prueba, y
+  avisó en el renglón exacto.
+- **Una frase decía un número que nadie verificó.** El aviso de contraseña afirmaba «al menos ocho
+  caracteres»; `supabase/config.toml:187` dice seis, y el servidor remoto puede decir otra cosa
+  (es el pendiente 21). Ahora no dice ningún número: el largo lo pone el servidor, y la regla 5.1
+  no deja escribir un valor operativo adentro del código.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,

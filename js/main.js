@@ -211,8 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // pantalla anunciaba éxito: la búsqueda no llegaba a ninguna parte y
         // nadie se enteraba. Ahora va a la base o se dice que no se pudo.
         console.error('Publicar la búsqueda:', err);
-        alert(window.Sesion ? Sesion.mensajeDeError(err)
-          : 'No se pudo publicar la búsqueda. Conviene intentar de nuevo en un momento.');
+        alert(Texto.mensajeDeError(err, 'publicar la búsqueda'));
         if (btnSubmit) btnSubmit.disabled = false;
       }
     });

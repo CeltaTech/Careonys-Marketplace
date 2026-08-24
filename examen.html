@@ -468,7 +468,7 @@
         verResultado(resultado);
       } catch (err) {
         console.error('Examen, corrección:', err);
-        avisar('aviso-examen', Sesion.mensajeDeError(err), 'critico');
+        avisar('aviso-examen', Texto.mensajeDeError(err), 'critico');
         boton.disabled = false;
       } finally {
         texto.textContent = textoOriginal;

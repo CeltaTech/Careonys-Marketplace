@@ -90,12 +90,12 @@ PWA y los guiones de línea de comandos.
 | Archivo | Renglones | Qué hace |
 |---|---:|---|
 | `js/identidad.js` | 108 | El único lugar donde está escrito el nombre comercial. Resuelve los marcadores `{{producto}}`, `{{productoCorto}}`, `{{dominio}}` y `{{contacto}}` al cargar cada página. |
-| `js/texto.js` | 77 | El único lugar donde se escapa un dato antes de meterlo en HTML, y el único que traduce una falla a una frase mostrable. Lo cargan las catorce pantallas. |
-| `js/apiClient.js` | 473 | Capa de acceso a datos. Resolución de inquilino (multi-cliente), y lectura y escritura contra Supabase con traducción de nombres de campos. Es la única fuente de datos de personas desde que se sacó el camino de imitación. |
-| `js/auth.js` | 217 | Ingreso, registro, cierre de sesión, subida de archivos y suscripción en tiempo real, todo sobre el SDK de Supabase. |
+| `js/texto.js` | 99 | El único lugar donde se escapa un dato antes de meterlo en HTML, y el único que traduce una falla a una frase mostrable. Lo cargan las catorce pantallas. El clasificador de errores vivía en `js/auth.js` y se mudó acá: un mensaje de error es texto, no es sesión. |
+| `js/apiClient.js` | 474 | Capa de acceso a datos. Resolución de inquilino (multi-cliente), y lectura y escritura contra Supabase con traducción de nombres de campos. Es la única fuente de datos de personas desde que se sacó el camino de imitación. |
+| `js/auth.js` | 171 | Ingreso, registro, cierre de sesión, subida de archivos y suscripción en tiempo real, todo sobre el SDK de Supabase. |
 | `js/catalogo.js` | 422 | Lee los archivos de `data/` y llena con ellos las listas, las grillas y los textos declarados en las pantallas. Pone los textos con `textContent`, nunca armando marcado. |
 | `js/fichas-legajo.js` | 265 | Arma las fichas del legajo del asistente a partir de su definición en el catálogo. |
-| `js/main.js` | 285 | Comportamiento global del sitio: menú, desplazamiento suave, validación de formularios, filtros del directorio, asistente de 6 pasos y ventana simulada de videollamada. |
+| `js/main.js` | 284 | Comportamiento global del sitio: menú, desplazamiento suave, validación de formularios, filtros del directorio, asistente de 6 pasos y ventana simulada de videollamada. |
 | `pwa-asistente/service-worker.js` | 78 | Caché para uso sin conexión de la aplicación de asistentes. Guarda también `js/texto.js`: sin él las pantallas no dibujan nada. |
 | `pwa-familia/service-worker.js` | 78 | Ídem para la de familias. |
 
@@ -108,7 +108,7 @@ Los siete guiones de línea de comandos:
 | `scripts/revisar_base.mjs` | Sonda de solo lectura: pregunta qué tablas puede enumerar y leer alguien **sin sesión**, y si alguna le muestra dos Prestadoras distintas. Se corre en el momento en que la base vuelva a responder, antes de cargar el primer dato. No escribe ni borra nada, y se niega a correr contra una base que no sea la de este proyecto. |
 | `scripts/verificar_guiones.mjs` | Falla si algún bloque `<script>` escrito adentro de una pantalla, o algún archivo de `js/`, tiene un error de sintaxis. Existe porque el navegador, ante un error así, descarta el bloque entero y sigue: la pantalla se dibuja igual y no funciona nada, sin aviso. Encontró uno el 24 de agosto de 2026. |
 | `scripts/verificar_trato.mjs` | Falla si el texto visible tutea a quien lo lee (regla 5.1). Mira el texto entre etiquetas, los atributos que se ven, las cadenas de los bloques `<script>`, las de `js/` y las del catálogo. No mira el imperativo en tú sin acento, que es idéntico a una tercera persona y necesita ojos. |
-| `scripts/verificar_escapado.mjs` | Falla si una plantilla que arma HTML mete adentro un dato sin pasarlo por `Texto.escapar`, o si un `onclick` escrito en el marcado interpola algo —ahí escapar no sirve, porque el navegador deshace el escapado del atributo antes de leerlo como código—. Deja pasar lo que el propio programa decide: un `condición ? 'esto' : 'aquello'` devuelve siempre uno de los dos textos escritos a la vista. No sigue el rastro de una variable, así que un dato copiado antes a una variable local se le escapa. |
+| `scripts/verificar_escapado.mjs` | Falla si una plantilla que arma HTML mete adentro un dato sin pasarlo por `Texto.escapar`, si el texto crudo de un error llega a la pantalla en vez de a la consola, o si un `onclick` escrito en el marcado interpola algo —ahí escapar no sirve, porque el navegador deshace el escapado del atributo antes de leerlo como código—. Deja pasar lo que el propio programa decide: un `condición ? 'esto' : 'aquello'` devuelve siempre uno de los dos textos escritos a la vista. No sigue el rastro de una variable, así que un dato copiado antes a una variable local se le escapa. |
 | `scripts/verificar_identidad.mjs` | Falla —código de salida 1— si el nombre, el dominio o el correo aparecen escritos a mano fuera de `js/identidad.js`. Verifica además que los manifiestos estén al día, y le pide a `verificar_copias.mjs` la comparación de las tres copias del archivo de identidad, para no tener dos veces escrita la misma revisión. Ignora la documentación y los comentarios del código. |
 
 **Duplicación verificada por firma digital**: `js/apiClient.js`, `pwa-asistente/js/apiClient.js`
@@ -259,7 +259,7 @@ y `avatares`. Se usa en `postulacion-asistente.html:873-891` para subir document
 antecedentes y título.
 
 **Tiempo real** — conexión permanente del SDK, escuchando altas en la tabla `messages`
-(`auth.js:99-112`, usada en `mockup-app.html:714`).
+(`auth.js:149-158`, usada en `mockup-app.html:721`).
 
 **Fuera de Supabase**: el directorio usa `https://via.placeholder.com/70` como imagen de
 reemplazo cuando falla una foto.
@@ -278,7 +278,7 @@ reemplazo cuando falla una foto.
 ## 4. Autenticación
 
 **Sí existe, y es real**: Supabase Auth versión 2, con correo y contraseña, a través del SDK
-oficial cargado desde un CDN. Toda la implementación son los 122 renglones de `js/auth.js`.
+oficial cargado desde un CDN. Toda la implementación son los 171 renglones de `js/auth.js`.
 
 **Cómo funciona.** `auth.js` crea el cliente con `persistSession: true`, `autoRefreshToken: true`
 y `detectSessionInUrl: true`, es decir: la sesión sobrevive al cierre del navegador y el permiso

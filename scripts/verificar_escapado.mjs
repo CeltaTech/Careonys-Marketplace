@@ -1,8 +1,9 @@
 /* ===================================================
-   VERIFICA QUE NINGÚN DATO ENTRE EN UNA PANTALLA SIN ESCAPAR
+   VERIFICA QUE NADA ENTRE EN UNA PANTALLA COMO NO CORRESPONDE
 
    Falla —con código de salida 1— si una plantilla que arma HTML mete adentro un
-   dato sin pasarlo por `Texto.escapar`.
+   dato sin pasarlo por `Texto.escapar`, o si el texto crudo de un error llega a
+   la pantalla en vez de a la consola.
 
        node scripts/verificar_escapado.mjs
 
@@ -28,6 +29,14 @@
       `addEventListener`, no con `Texto.escapar`.
 
    3. **El HTML armado con `+`**, que es la forma vieja de lo mismo.
+
+   4. **El texto crudo de un error que llega a la vista.** La regla 5.1 de
+      `CLAUDE.md` dice que un mensaje de error es texto visible: lo que devuelven
+      el navegador o la base nombra tablas, columnas y restricciones, y eso no se
+      le muestra a nadie. Se avisa cuando un `.message` o un `.error_description`
+      aparece en la misma sentencia que un `alert`, un `confirm`, un `innerHTML`
+      o un `textContent`. Va a la consola con `console.error`, y a la pantalla va
+      lo que devuelve `Texto.mensajeDeError`.
 
    Cuando un caso sea legítimo de verdad, se marca adentro de la interpolación
    con un comentario que empiece por `seguro:` y siga con la razón. El comentario
@@ -74,6 +83,43 @@ function sinCadenas(expresion) {
       }
       fuera += ' ';
       i++;
+      continue;
+    }
+    fuera += c;
+    i++;
+  }
+  return fuera;
+}
+
+/** Reemplaza los comentarios por espacios, dejando las cadenas intactas. */
+function sinComentarios(codigo) {
+  let fuera = '';
+  let i = 0;
+  while (i < codigo.length) {
+    const c = codigo[i];
+    if (c === "'" || c === '"' || c === '`') {
+      // Una comilla suelta —la de una expresión regular, por ejemplo— no abre
+      // ningún literal: si no cierra, se la trata como un carácter más. Sin
+      // esto el recorrido vuelve al principio y no termina nunca.
+      const fin = finDeLiteral(codigo, i);
+      if (fin > i) {
+        fuera += codigo.slice(i, fin + 1);
+        i = fin + 1;
+        continue;
+      }
+    }
+    if (c === '/' && codigo[i + 1] === '/') {
+      const fin = codigo.indexOf('\n', i);
+      const hasta = fin < 0 ? codigo.length : fin;
+      fuera += ' '.repeat(hasta - i);
+      i = hasta;
+      continue;
+    }
+    if (c === '/' && codigo[i + 1] === '*') {
+      const fin = codigo.indexOf('*/', i);
+      const hasta = fin < 0 ? codigo.length : fin + 2;
+      fuera += codigo.slice(i, hasta).replace(/[^\n]/g, ' ');
+      i = hasta;
       continue;
     }
     fuera += c;
@@ -245,6 +291,25 @@ export function revisarCodigo(codigo, base = 0) {
     });
   }
 
+  /* El texto crudo del error va a la consola; a la pantalla va la frase. Se
+     mira la sentencia entera y no sólo la llamada, porque el crudo suele venir
+     pegado con `+` o metido en una plantilla unos caracteres más allá. */
+  const A_LA_VISTA = /\balert\s*\(|\bconfirm\s*\(|\.(?:inner|outer)HTML\b|\.(?:textContent|innerText)\b/;
+  const CRUDO = /\.(?:message|error_description)\b/g;
+  const limpio = sinComentarios(codigo);
+  for (const a of limpio.matchAll(CRUDO)) {
+    const abre = Math.max(limpio.lastIndexOf('\n', a.index), limpio.lastIndexOf(';', a.index)) + 1;
+    let cierra = limpio.indexOf('\n', a.index);
+    if (cierra < 0) cierra = limpio.length;
+    if (!A_LA_VISTA.test(limpio.slice(abre, cierra))) continue;
+    reparos.push({
+      renglon: renglon(a.index),
+      motivo: 'el texto crudo de un error llega a la pantalla',
+      muestra: codigo.slice(abre, cierra).trim().replace(/\s+/g, ' ').slice(0, 70),
+      remedio: 'a la pantalla va Texto.mensajeDeError(err, qué se intentaba); el crudo, a console.error'
+    });
+  }
+
   return reparos;
 }
 
@@ -259,7 +324,9 @@ const MALOS = [
   ['manejador escrito en el marcado', 'el.innerHTML = `<button onclick="ver(\'${a.id}\')">Ver</button>`;'],
   ['marcado pegado con +', "el.innerHTML = '<span>' + Identidad.datos.nombre + '</span>';"],
   ['una rama del ternario es dato', 'el.innerHTML = `<p>${a.ok ? a.nombre : \'\'}</p>`;'],
-  ['el respaldo es fijo pero el dato no', 'el.innerHTML = `<p>${a.zona || \'Cobertura\'}</p>`;']
+  ['el respaldo es fijo pero el dato no', 'el.innerHTML = `<p>${a.zona || \'Cobertura\'}</p>`;'],
+  ['el error crudo en un aviso', "alert('No se pudo guardar: ' + err.message);"],
+  ['el error crudo escapado sigue siendo crudo', "el.innerHTML = `<p>${Texto.escapar(err.message)}</p>`;"]
 ];
 const BUENOS = [
   ['dato escapado', 'el.innerHTML = `<h5>${Texto.escapar(asp.nombre)}</h5>`;'],
@@ -271,7 +338,10 @@ const BUENOS = [
   ['excepción con su razón', 'el.innerHTML = `<div>${/* seguro: lo arma este mismo módulo */ this._bloque(i)}</div>`;'],
   ['plantilla que no es marcado', 'const q = `eq.${busqueda.id}`;'],
   ['texto plano por textContent', 'el.textContent = asp.nombre;'],
-  ['marcado fijo sin datos', "el.innerHTML = '<p>No hay registros todavía.</p>';"]
+  ['marcado fijo sin datos', "el.innerHTML = '<p>No hay registros todavía.</p>';"],
+  ['el error crudo va a la consola', "console.error('Publicar la búsqueda:', err.message);"],
+  ['el error clasificado antes de mostrarse', "alert(Texto.mensajeDeError(err, 'guardar la novedad'));"],
+  ['el error se relanza con su texto', "if (error) throw new Error(error.message);"]
 ];
 
 const noDetecta = MALOS.filter(([, c]) => revisarCodigo(c).length === 0).map(([n]) => n);
@@ -320,11 +390,11 @@ for (const camino of archivos(raiz)) {
 }
 
 if (fallas.length > 0) {
-  console.error('Datos que entran en una pantalla sin escapar:\n');
+  console.error('Lo que llega a una pantalla pasa antes por Texto:\n');
   for (const falla of fallas) console.error('  - ' + falla + '\n');
   const plural = fallas.length === 1 ? 'lugar' : 'lugares';
-  console.error(`${fallas.length} ${plural}. Lo que se dibuja con datos pasa por Texto.escapar().`);
+  console.error(`${fallas.length} ${plural}. Un dato se escapa; un error se clasifica.`);
   process.exit(1);
 }
 
-console.log(`Escapado verificado: ${revisados} archivos sin datos crudos en el marcado.`);
+console.log(`Escapado verificado: ${revisados} archivos sin datos ni errores crudos en la pantalla.`);

@@ -388,7 +388,8 @@
           patologias: [consulta],
           horarios: 'A coordinar',
           family_user_id: familyUserId,
-          // Datos de contacto en el JSON de patologias como metadata extra
+          // Va a su propia columna, `contact_info` (migración 0009): son datos
+          // de una persona y tienen que estar donde se los pueda encontrar.
           contacto: { nombre, email, celular }
         });
 
@@ -396,7 +397,7 @@
         e.target.reset();
         setTimeout(() => { successEl.style.display = 'none'; }, 6000);
       } catch (err) {
-        alert('Error al enviar la solicitud: ' + err.message);
+        alert(Texto.mensajeDeError(err, 'enviar la solicitud'));
       } finally {
         btn.textContent = 'ENVIAR';
         btn.disabled = false;

@@ -227,7 +227,7 @@
         window.location.href = destino(await Sesion.perfil());
       } catch (err) {
         console.error('Acceso, inicio de sesión:', err);
-        avisar('aviso-error-acceso', Sesion.mensajeDeError(err));
+        avisar('aviso-error-acceso', Texto.mensajeDeError(err));
         boton.disabled = false;
         texto.textContent = textoOriginal;
       }
