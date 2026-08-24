@@ -32,7 +32,9 @@ const require = createRequire(import.meta.url);
 const { IDENTIDAD } = require(join(raiz, 'js', 'identidad.js'));
 
 const CARPETAS_SALTEADAS = new Set([
-  'node_modules', '.git', '.vercel', 'docs', 'No commit', 'fuera de uso'
+  'node_modules', '.git', '.vercel', 'docs', 'No commit', 'fuera de uso',
+  // Estado local del CLI de Supabase. No va al repositorio y no es código nuestro.
+  '.temp', '.branches'
 ]);
 const EXTENSIONES = ['.html', '.js', '.css', '.json', '.webmanifest', '.txt'];
 const COPIAS_IDENTIDAD = [

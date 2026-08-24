@@ -516,70 +516,20 @@
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/identidad.js"></script>
-  <script src="js/apiClient.js"></script>
-  <script src="js/auth.js"></script>
+  <!-- Esta página es demostrativa: no consulta la base. Por eso no carga el cliente
+       de datos ni el de sesión, que se conectaban solos al abrirla. -->
   <script src="js/main.js"></script>
   <script>
-    // ── Carga dinámica de cuidadores desde Supabase ──────────────────────
-    // Si hay datos reales en la BD, reemplaza las tarjetas estáticas mock.
-    // Si la BD está vacía o falla, se mantienen las tarjetas estáticas.
-    (async () => {
-      await ClienteDatos.initTenant();
-      try {
-        const aspirantes = await ClienteDatos.getAspirantes({ estado: 'validado_prestadora' });
-        if (aspirantes && aspirantes.length > 0) {
-          const grid = document.getElementById('directory-grid');
-          grid.innerHTML = ''; // Reemplazar mocks
-          aspirantes.forEach(a => {
-            const patologias = (a.patologias || []).slice(0, 4).map(p =>
-              `<span class="specialty-tag">${p}</span>`).join('');
-            const avatar = a.fotoUrl || a.documentos?.foto_perfil || 'assets/images/perfil_maria.png';
-            const card = document.createElement('div');
-            card.className = 'caregiver-card fade-in';
-            card.dataset.name = (a.nombre || '').toLowerCase();
-            card.dataset.zone = (a.zona || '').toLowerCase();
-            card.dataset.type = (a.profesion || 'domiciliaria').toLowerCase();
-            card.innerHTML = `
-            <div class="card-header-strip"></div>
-            <div class="card-body">
-              <div class="card-top">
-                <img src="${avatar}" class="card-avatar" alt="${a.nombre}" onerror="this.src='https://via.placeholder.com/70'" />
-                <div class="card-meta">
-                  <h3>${(a.nombre || 'Asistente').toUpperCase()}</h3>
-                  <p class="sub">${a.zona || 'Sin zona'}</p>
-                  <div class="stars">
-                    <span class="star">★</span><span class="star">★</span><span class="star">★</span>
-                    <span class="star">★</span><span class="star">★</span>
-                    <span class="pts">(Verificado)</span>
-                  </div>
-                </div>
-              </div>
-              <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:10px;">${a.profesion || 'Asistente Domiciliario'}</p>
-              <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px 0;">
-                <span class="insignia-validada"><i class="fas fa-user-check"></i> Validado por Prestadora</span>
-              </div>
-              <div class="specialties">${patologias}</div>
-            </div>
-            <div class="card-footer">
-              <a href="perfil.html?id=${a.id}" class="btn btn-primario">Ver perfil</a>
-              <a href="mockup-app.html" class="btn btn-sobre-oscuro" style="border-color:var(--borde-card);color:var(--texto-secundario);">Contactar</a>
-            </div>
-          `;
-            grid.appendChild(card);
-          });
-          // Actualizar conteo
-          document.getElementById('results-count').textContent = `Mostrando ${aspirantes.length} cuidadores`;
-          // Re-observar para los filtros
-          document.querySelectorAll('.caregiver-card').forEach(el => {
-            el.classList.add('visible'); // fade-in inmediato
-          });
-        }
-      } catch (err) {
-        console.warn('Directorio: usando datos estáticos (BD no disponible).', err.message);
-      }
-    })();
+    // ── Esta página es demostrativa, y no consulta la base ───────────────
+    // Las tarjetas de acá abajo son una foto de cómo se vería el directorio:
+    // ocho personas inventadas, escritas a mano en este mismo archivo. Sirven
+    // para mostrar el producto a quien todavía no tiene cuenta.
+    //
+    // Antes esta página le preguntaba a la base y, si había filas, borraba las
+    // ocho y mostraba legajos de verdad a cualquiera que abriera el enlace. Eso
+    // se sacó el 23 de agosto de 2026: lo operativo vive detrás de una sesión,
+    // en el panel y en las dos aplicaciones. Acá no se agrega ninguna consulta.
 
     // Contador observable para cuando los filtros ocultan/muestran tarjetas
     const grid = document.getElementById('directory-grid');
