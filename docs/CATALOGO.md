@@ -6,8 +6,8 @@ otro lado:
 
 | Archivo | Qué guarda |
 |---|---|
-| `data/catalogo-vocabularios.json` | 21 listas de opciones, 130 opciones en total |
-| `data/catalogo-oferta.json` | 8 servicios, 6 cursos y la evaluación con sus 2 preguntas |
+| `data/catalogo-vocabularios.json` | 22 listas de opciones, 133 opciones en total |
+| `data/catalogo-oferta.json` | 9 servicios, 6 cursos y la evaluación con sus 2 preguntas |
 | `data/catalogo-banderas.json` | 2 banderas del legajo y el paso de cierre del alta |
 | `data/catalogo-fichas.json` | 4 fichas repetibles: matrícula, estudio, experiencia y referencia |
 | `data/catalogo-verificaciones.json` | Qué bloquea el alta, qué bloquea la publicación, y con qué plazos |
@@ -76,11 +76,11 @@ cada barrio quedó colgado de su región, con `region` apuntando al de arriba.
 las pantallas. Qué barrios y qué partidos cubre el servicio de verdad no está escrito en ninguna
 parte del proyecto, y no se puede deducir del código.
 
-## El otro archivo de `data/`
+## El archivo de perfiles que había en `data/`
 
-`data/cuidadores.json` guarda cuatro perfiles con nombre de persona (el directorio muestra ocho:
-los otros cuatro están escritos adentro del HTML). No es catálogo: son datos de muestra de
-PresDemo, la Prestadora de ejemplo, inventados de punta a punta.
+Había un `data/cuidadores.json` con cuatro perfiles con nombre de persona, inventados de punta a
+punta. No era catálogo —eran datos de muestra— y no lo leía ninguna pantalla: los perfiles que se
+ven siguen escritos adentro del HTML. Se borró el 24 de agosto de 2026, con el pendiente 14.
 
 ## Lo que se corrigió contra un competidor en actividad
 

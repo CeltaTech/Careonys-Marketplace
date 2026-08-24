@@ -60,7 +60,6 @@ O sea: el mecanismo existe y funciona. Lo que falta es cobertura, no invención.
 |---|---|---|
 | El archivo del logotipo se llama `logo_presdemo.png` | `assets/images/`, enlazado 17 veces | Un nombre de archivo con la marca adentro obliga a renombrar archivos cuando cambia el cliente. Mismo error que ya se corrigió con `logotipo.png`. |
 | El identificador `presdemo` y su UUID escritos en el remiendo | `js/apiClient.js:40, 55-58, 69-71`, ×3 copias | Cuando la base no responde, el programa **inventa** esta Prestadora y sigue sin avisar. Es el pendiente 2. |
-| `data/cuidadores.json` guarda `"tenant_id": "tenant-presdemo"` | 4 filas | Son datos de muestra; se van con el pendiente 14. |
 | Dos comentarios | `css/mockup-app.css:3`, `css/styles.css:1507` | No se ven. Se corrigen de paso. |
 
 ---
@@ -102,7 +101,8 @@ y hay que elegir una:
 - El remiendo de `js/apiClient.js:53` deja de inventar una Prestadora. **Ese es el pendiente 2 y no
   se arregla acá**, pero conviene hacerlos juntos: mientras el remiendo exista, sacar el nombre de
   las pantallas no cambia lo que se ve.
-- Los dos comentarios y `data/cuidadores.json` se corrigen de paso.
+- Los dos comentarios se corrigen de paso. `data/cuidadores.json`, que también nombraba a la
+  Prestadora de ejemplo, ya no está: se borró el 24 de agosto de 2026 con el pendiente 14.
 
 ### Paso 4 — Que no vuelva
 

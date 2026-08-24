@@ -4,48 +4,71 @@
       "clave": "busco_asistente",
       "es-AR": "Busco Asistente",
       "descripcion": "Acceso a Asistentes calificados, con herramientas para buscar y para gestionar el día a día del cuidado de un ser querido.",
-      "estado": "publicado"
+      "estado": "publicado",
+      "imagen": "assets/images/hero_cuidadores.png",
+      "enlace": "solicitar-asistente.html"
     },
     {
       "clave": "acompanamiento_online",
       "es-AR": "Acompañamiento online",
       "descripcion": "Orientación especializada para mejorar la calidad de vida de la persona cuidada y de su familia.",
-      "estado": "publicado"
+      "estado": "publicado",
+      "imagen": "assets/images/acompanamiento_online.png",
+      "enlace": "soporte-remoto.html"
     },
     {
       "clave": "cursos",
       "es-AR": "Cursos para familias",
       "descripcion": "Formación para familiares de personas mayores y para cualquiera de su entorno que quiera entender el momento vital y cuidar del otro y de sí mismo.",
-      "estado": "publicado"
+      "estado": "publicado",
+      "imagen": "assets/images/cursos_familias.png",
+      "enlace": "cursos.html"
     },
     {
       "clave": "monitoreo",
       "es-AR": "Monitoreo del cuidado",
       "descripcion": "Organización diaria del cuidado, para que no se lleve el tiempo que hace falta para lo esencial.",
-      "estado": "publicado"
+      "estado": "publicado",
+      "imagen": "assets/images/monitoreo_cuidado.png",
+      "enlace": "solicitar-asistente.html#monitoreo",
+      "ancla": "monitoreo"
     },
     {
       "clave": "asistente_virtual",
       "es-AR": "Asistente virtual",
       "descripcion": "Respuestas a las dudas de quien acompaña a un familiar.",
-      "estado": "publicado"
+      "estado": "publicado",
+      "imagen": "assets/images/asistente_telefono.png",
+      "enlace": "solicitar-asistente.html#asistente",
+      "ancla": "asistente"
     },
     {
       "clave": "vida_activa",
       "es-AR": "Vida activa",
       "descripcion": "Bienestar físico, psíquico y social de la persona mayor.",
-      "estado": "publicado"
+      "estado": "publicado",
+      "imagen": "assets/images/vida_activa.png",
+      "enlace": "solicitar-asistente.html#vida-activa",
+      "ancla": "vida-activa"
     },
     {
       "clave": "gestor_cuidado",
       "es-AR": "Gestor del cuidado",
       "descripcion": "Un especialista que ayuda a gestionar y monitorear todo el cuidado en el domicilio.",
-      "estado": "proximamente"
+      "estado": "publicado",
+      "imagen": "assets/images/gestor_medicamentos.png",
+      "enlace": "solicitar-asistente.html#gestor"
     },
     {
       "clave": "productos_hogar",
       "es-AR": "Productos para el hogar",
       "descripcion": "Provisión de alimentos y servicios en el domicilio.",
+      "estado": "proximamente"
+    },
+    {
+      "clave": "home",
+      "es-AR": "Home",
+      "descripcion": "Circuito de dispositivos integrados para el monitoreo en el domicilio.",
       "estado": "proximamente"
     }
   ],
@@ -57,7 +80,9 @@
       "horas": 8,
       "nivel": "basico",
       "modalidad": "online",
-      "certificado": true
+      "certificado": true,
+      "imagen": "assets/images/monitoreo_cuidado.png",
+      "etiqueta": "Nivel básico"
     },
     {
       "clave": "demencias",
@@ -66,7 +91,9 @@
       "horas": 12,
       "nivel": "intermedio",
       "modalidad": "online",
-      "certificado": true
+      "certificado": true,
+      "imagen": "assets/images/acompanamiento_online.png",
+      "etiqueta": "Intermedio"
     },
     {
       "clave": "bienestar_cuidador",
@@ -75,7 +102,9 @@
       "horas": 6,
       "nivel": "basico",
       "modalidad": "online",
-      "certificado": true
+      "certificado": true,
+      "imagen": "assets/images/vida_activa.png",
+      "etiqueta": "Bienestar"
     },
     {
       "clave": "medicamentos",
@@ -84,7 +113,9 @@
       "horas": 5,
       "nivel": "intermedio",
       "modalidad": "online",
-      "certificado": true
+      "certificado": true,
+      "imagen": "assets/images/gestor_medicamentos.png",
+      "etiqueta": "Salud"
     },
     {
       "clave": "comunicacion",
@@ -93,7 +124,9 @@
       "horas": 4,
       "nivel": "basico",
       "modalidad": "online",
-      "certificado": true
+      "certificado": true,
+      "imagen": "assets/images/asistente_telefono.png",
+      "etiqueta": "Comunicación"
     },
     {
       "clave": "cuidados_avanzados",
@@ -102,7 +135,9 @@
       "horas": 16,
       "nivel": "avanzado",
       "modalidad": "online",
-      "certificado": true
+      "certificado": true,
+      "imagen": "assets/images/hero_cuidadores.png",
+      "etiqueta": "Avanzado"
     }
   ],
   "evaluaciones": [

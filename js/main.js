@@ -190,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const btnSubmit = document.getElementById('btn-submit-wizard');
 
       const title = document.getElementById('w-title')?.value || 'Cuidadora para adulto mayor';
-      const desc = document.getElementById('w-desc')?.value || 'Asistencia en tareas diarias';
       const patientAge = document.getElementById('w-patient-age')?.value || '80';
       const patientGender = document.getElementById('w-patient-gender')?.value || 'Femenino';
       
@@ -202,27 +201,19 @@ document.addEventListener('DOMContentLoaded', () => {
         estado: 'activa'
       };
 
-      if (window.ClienteDatos) {
-        try {
-          await ClienteDatos.crearBusquedaFamilia(newSearch);
-          if (successMsg) successMsg.style.display = 'block';
-          if (btnSubmit) btnSubmit.style.display = 'none';
-        } catch (err) {
-          alert('Error al guardar la búsqueda en Supabase: ' + err.message);
-        }
-      } else {
-        let currentSearches = JSON.parse(localStorage.getItem('busquedas') || '[]');
-        currentSearches.unshift({
-          id: Date.now(),
-          title,
-          desc,
-          patientAge,
-          patientGender,
-          date: new Date().toLocaleDateString('es-AR')
-        });
-        localStorage.setItem('busquedas', JSON.stringify(currentSearches));
+      if (btnSubmit) btnSubmit.disabled = true;
+      try {
+        await ClienteDatos.crearBusquedaFamilia(newSearch);
         if (successMsg) successMsg.style.display = 'block';
         if (btnSubmit) btnSubmit.style.display = 'none';
+      } catch (err) {
+        // Antes, sin ClienteDatos, esto se guardaba en el navegador y la
+        // pantalla anunciaba éxito: la búsqueda no llegaba a ninguna parte y
+        // nadie se enteraba. Ahora va a la base o se dice que no se pudo.
+        console.error('Publicar la búsqueda:', err);
+        alert(window.Sesion ? Sesion.mensajeDeError(err)
+          : 'No se pudo publicar la búsqueda. Conviene intentar de nuevo en un momento.');
+        if (btnSubmit) btnSubmit.disabled = false;
       }
     });
   }

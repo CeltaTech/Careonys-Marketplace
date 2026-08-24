@@ -140,14 +140,7 @@
               required /></div>
           <div class="form-group">
             <label for="consulta">¿Cuál es tu situación?</label>
-            <select id="consulta" required>
-              <option value="">— Por favor, elige una opción —</option>
-              <option>Necesito orientación para cuidar a un familiar</option>
-              <option>Busco apoyo emocional como cuidador</option>
-              <option>Quiero entender la situación de salud de mi familiar</option>
-              <option>Necesito coordinar cuidados entre varios familiares</option>
-              <option>Otro</option>
-            </select>
+            <select id="consulta" required data-catalogo="motivo_consulta" data-catalogo-vacio="— Por favor, elija una opción —"></select>
           </div>
           <div class="form-group">
             <label>¿Te suscribís al newsletter?</label>
@@ -193,6 +186,7 @@
     </div>
   </footer>
   <script src="js/identidad.js"></script>
+  <script src="js/catalogo.js"></script>
   <!-- Esta página es demostrativa: no consulta la base. Por eso no carga el cliente
        de datos ni el de sesión, que se conectaban solos al abrirla. -->
   <script src="js/main.js"></script>

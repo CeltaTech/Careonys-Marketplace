@@ -59,96 +59,59 @@
   <section class="hero">
     <h1>Buscá y encontrá al cuidador que necesitás.</h1>
     <div class="services-grid" style="background:transparent;padding:0;">
-      <div class="grid">
-        <!-- Card 1: Busco Cuidador -->
-        <a href="solicitar-asistente.html" class="service-card fade-in">
-          <img src="assets/images/hero_cuidadores.png" alt="Busco Cuidador" />
-          <div class="service-card-overlay">
-            <h3>Busco Cuidador</h3>
-            <p>{{producto}} te facilita el acceso a cientos de cuidadores calificados con múltiples herramientas que te
-              facilitan la búsqueda y gestión del día a día en el cuidado de tu ser querido.</p>
-          </div>
-        </a>
-        <!-- Card 2: Acompañamiento online -->
-        <a href="soporte-remoto.html" class="service-card fade-in">
-          <img src="assets/images/acompanamiento_online.png" alt="Acompañamiento online" />
-          <div class="service-card-overlay">
-            <h3>Acompañamiento online</h3>
-            <p>Mejorá tu calidad de vida y las de tus familiares a través del acompañamiento y orientación
-              especializado.</p>
-          </div>
-        </a>
-        <!-- Card 3: Cursos para familias -->
-        <a href="cursos.html" class="service-card fade-in">
-          <img src="assets/images/cursos_familias.png" alt="Cursos para familias" />
-          <div class="service-card-overlay">
-            <h3>Cursos para familias</h3>
-            <p>Para familiares de personas mayores y cualquier persona de su entorno que desee adquirir herramientas
-              para entender el momento vital, cuidar del otro y de sí mismo adecuadamente.</p>
-          </div>
-        </a>
+      <div class="grid" data-oferta="servicios"
+        data-oferta-solo="busco_asistente,acompanamiento_online,cursos">
+        <template>
+          <a class="service-card fade-in" data-attr-href="enlace">
+            <img data-attr-src="imagen" data-attr-alt="nombre" />
+            <div class="service-card-overlay">
+              <h3 data-campo="nombre"></h3>
+              <p data-campo="descripcion"></p>
+            </div>
+          </a>
+        </template>
       </div>
     </div>
   </section>
 
   <!-- ==================== SERVICES GRID ROW 2 ==================== -->
   <section class="services-grid">
-    <div class="grid">
-      <!-- Card 4: Monitoreo -->
-      <a href="solicitar-asistente.html#monitoreo" class="service-card fade-in">
-        <img src="assets/images/monitoreo_cuidado.png" alt="Monitoreo del cuidado" />
-        <div class="service-card-overlay">
-          <h3>Monitoreo del cuidado</h3>
-          <p>La organización diaria del cuidado genera estrés y falta de tiempo para dedicar a lo verdaderamente
-            esencial.</p>
-        </div>
-      </a>
-      <!-- Card 5: Asistente -->
-      <a href="solicitar-asistente.html#asistente" class="service-card fade-in">
-        <img src="assets/images/asistente_telefono.png" alt="Asistente" />
-        <div class="service-card-overlay">
-          <h3>Asistente</h3>
-          <p>Si sos familiar y tenés dudas, podemos asistirte.</p>
-        </div>
-      </a>
-      <!-- Card 6: Vida activa -->
-      <a href="solicitar-asistente.html#vida-activa" class="service-card fade-in">
-        <img src="assets/images/vida_activa.png" alt="Vida activa" />
-        <div class="service-card-overlay">
-          <h3>Vida activa</h3>
-          <p>El balanceado bienestar físico, psíquico y social de los adultos mayores mejora su calidad de vida.</p>
-        </div>
-      </a>
+    <div class="grid" data-oferta="servicios"
+      data-oferta-solo="monitoreo,asistente_virtual,vida_activa">
+      <template>
+        <a class="service-card fade-in" data-attr-href="enlace">
+          <img data-attr-src="imagen" data-attr-alt="nombre" />
+          <div class="service-card-overlay">
+            <h3 data-campo="nombre"></h3>
+            <p data-campo="descripcion"></p>
+          </div>
+        </a>
+      </template>
     </div>
   </section>
 
   <!-- ==================== SERVICES GRID ROW 3 ==================== -->
   <section class="services-grid" style="padding-top:20px;">
-    <div class="grid">
-      <!-- Card 7: Gestor del cuidado -->
-      <a href="solicitar-asistente.html#gestor" class="service-card fade-in">
-        <img src="assets/images/gestor_medicamentos.png" alt="Gestor del cuidado" />
-        <div class="service-card-overlay">
-          <h3>Gestor del cuidado</h3>
-          <p>Un especialista que nos ayuda a gestionar y monitorear todo el cuidado en nuestras casa.</p>
+    <div class="grid" data-oferta="servicios"
+      data-oferta-solo="gestor_cuidado,productos_hogar,home">
+      <template>
+        <a class="service-card fade-in" data-attr-href="enlace">
+          <img data-attr-src="imagen" data-attr-alt="nombre" />
+          <div class="service-card-overlay">
+            <h3 data-campo="nombre"></h3>
+            <p data-campo="descripcion"></p>
+          </div>
+        </a>
+      </template>
+      <template data-para="proximamente">
+        <div class="service-card fade-in" style="background:var(--azul-oscuro);cursor:default;">
+          <div class="badge-proximamente">PRÓXIMAMENTE</div>
+          <div class="service-card-overlay" style="background:none;position:relative;padding:40px 24px;">
+            <h3 data-campo="nombre"></h3>
+            <p data-campo="descripcion"></p>
+          </div>
         </div>
-      </a>
-      <!-- Card 8: Productos para el hogar (PRÓXIMAMENTE) -->
-      <div class="service-card fade-in" style="background:var(--azul-oscuro);cursor:default;">
-        <div class="badge-proximamente">PRÓXIMAMENTE</div>
-        <div class="service-card-overlay" style="background:none;position:relative;padding:40px 24px;">
-          <h3>Productos para el hogar</h3>
-          <p>Una de las principales desafíos de los familiares es gestionar alimento y los servicios en domicilio.</p>
-        </div>
-      </div>
-      <!-- Card 9: Home (PRÓXIMAMENTE) -->
-      <div class="service-card fade-in" style="background:var(--azul-oscuro);cursor:default;">
-        <div class="badge-proximamente">PRÓXIMAMENTE</div>
-        <div class="service-card-overlay" style="background:none;position:relative;padding:40px 24px;">
-          <h3>Home</h3>
-          <p>Circuito de dispositivos integrados para el monitoreo en domicilio.</p>
-        </div>
-      </div>
+      </template>
     </div>
   </section>
 
@@ -305,13 +268,7 @@
           </div>
           <div class="form-group">
             <label for="consulta">¿Cuál es tu consulta?</label>
-            <select id="consulta" name="consulta" required>
-              <option value="">— Por favor, elige una opción —</option>
-              <option value="busco-cuidador">Busco un cuidador</option>
-              <option value="acompanamiento">Acompañamiento online</option>
-              <option value="cursos">Cursos para familias</option>
-              <option value="otro">Otro</option>
-            </select>
+            <select id="consulta" name="consulta" required data-catalogo="motivo_consulta" data-catalogo-vacio="— Por favor, elija una opción —"></select>
           </div>
           <div class="form-group">
             <label>¿Te suscribís al newsletter?</label>
@@ -558,6 +515,7 @@
   </footer>
 
   <script src="js/identidad.js"></script>
+  <script src="js/catalogo.js"></script>
   <!-- Esta página es demostrativa: no consulta la base. Por eso no carga el cliente
        de datos ni el de sesión, que se conectaban solos al abrirla. -->
   <script src="js/main.js"></script>

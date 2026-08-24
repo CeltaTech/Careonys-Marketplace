@@ -39,23 +39,23 @@ del navegador.
 
 | Archivo | Renglones | Función |
 |---|---:|---|
-| `index.html` | 561 | Portada. Presentación del servicio, secciones informativas y formulario de contacto. |
-| `directorio.html` | 589 | Listado de asistentes con buscador y cuatro filtros (zona, tipo, especialidad, verificación). |
-| `perfil.html` | 644 | Ficha pública de un asistente. Se elige con `?id=` en la dirección. |
-| `solicitar-asistente.html` | 438 | Página informativa para familias, con formulario de solicitud que sí graba en la base. |
-| `postulacion-asistente.html` | 968 | Alta de asistentes. Asistente paso a paso de 5 pasos con carga de documentos. |
-| `formulario-integral.html` | 581 | Asistente paso a paso de 6 pasos para publicar una búsqueda de cuidado. |
-| `cursos.html` | 313 | Listado de cursos. Contenido fijo escrito en el HTML. |
-| `soporte-remoto.html` | 196 | Página informativa de acompañamiento online. Contenido fijo. |
+| `index.html` | 524 | Portada. Presentación del servicio, secciones informativas y formulario de contacto. |
+| `directorio.html` | 550 | Listado de asistentes con buscador y cuatro filtros (zona, tipo, especialidad, verificación). |
+| `perfil.html` | 654 | Ficha pública de un asistente. Se elige con `?id=` en la dirección. |
+| `solicitar-asistente.html` | 407 | Página informativa para familias, con formulario de solicitud que sí graba en la base. |
+| `postulacion-asistente.html` | 1101 | Alta de asistentes. Asistente paso a paso de 5 pasos con carga de documentos. |
+| `formulario-integral.html` | 514 | Asistente paso a paso de 6 pasos para publicar una búsqueda de cuidado. |
+| `cursos.html` | 197 | Listado de cursos. Los seis cursos y el desplegable de inscripción salen del catálogo. |
+| `soporte-remoto.html` | 195 | Página informativa de acompañamiento online. Contenido fijo salvo el desplegable, que sale del catálogo. |
 
 ### 1.2 Pantallas de aplicación
 
 | Archivo | Renglones | Función |
 |---|---:|---|
-| `mockup-app.html` | 777 | Aplicación móvil simulada dentro de una sola página: ingreso, registro, inicio, cuaderno de cuidado, fichado por GPS y chat. Cambia de pantalla mostrando y ocultando bloques. |
-| `panel-prestadora.html` | 224 | Panel interno. Tabla de postulantes, indicadores y ventana de auditoría de legajos con aprobar/rechazar. |
-| `pwa-asistente/index.html` | 809 | Aplicación instalable para asistentes: ingreso, estado del legajo, fichado GPS, cuaderno médico y postulación. |
-| `pwa-familia/index.html` | 982 | Aplicación instalable para familias: ingreso, recomendados, cuaderno de cuidado y publicación de búsquedas. |
+| `mockup-app.html` | 783 | Aplicación móvil simulada dentro de una sola página: ingreso, registro, inicio, cuaderno de cuidado, fichado por GPS y chat. Cambia de pantalla mostrando y ocultando bloques. |
+| `panel-prestadora.html` | 309 | Panel interno. Tabla de postulantes, indicadores y ventana de auditoría de legajos con aprobar/rechazar. |
+| `pwa-asistente/index.html` | 775 | Aplicación instalable para asistentes: ingreso, estado del legajo, fichado GPS, cuaderno médico y postulación. |
+| `pwa-familia/index.html` | 953 | Aplicación instalable para familias: ingreso, recomendados, cuaderno de cuidado y publicación de búsquedas. |
 
 ### 1.3 Cómo se navega
 
@@ -195,38 +195,38 @@ no de traducción de código.
 
 ### 3.1 De dónde salen
 
-Salen de cuatro lugares distintos a la vez, y conviven sin un criterio único:
+Salen de dos lugares distintos a la vez. Eran cuatro: el 24 de agosto de 2026 se suprimieron el camino de imitación con almacenamiento del navegador y el último JSON suelto de perfiles (pendiente 14).
 
-**a) Supabase, por interfaz REST.** `js/apiClient.js:8` fija `useSupabase: true`, así que el
-código la trata como fuente principal. **Pero esa base no contesta**: comprobado el 23 de agosto
-de 2026, la dirección escrita en el código no resuelve en el sistema de nombres. Todo lo que
-parece venir de la base viene en realidad del remiendo de `js/apiClient.js:53`, que inventa una
-Prestadora y sigue sin avisar. Pendiente 2.
+**a) Supabase, por interfaz REST.** Es la única fuente de datos de personas. `js/apiClient.js`
+ya no tiene bandera para apagarla: la que había (`useSupabase`) valía siempre `true` y cada método
+llevaba detrás una copia que escribía en el navegador. Esa copia nunca corría, así que envejecía
+sin que nadie lo notara, y en un caso sí corría y era peor: `js/main.js` guardaba la búsqueda de
+la familia en el navegador y la pantalla anunciaba éxito. Se sacaron las dos cosas.
 
-**b) Escritos adentro del HTML.** Es la fuente de la mayoría de lo que se ve:
+**b) Escritos adentro del HTML.** Sigue siendo la fuente de las dos pantallas de la vidriera,
+y no se toca hasta que se decida el pendiente 2:
 
 - `perfil.html` lleva **8 fichas completas de asistentes escritas como objeto JavaScript adentro
   del HTML**: unos 230 renglones con nombre, edad, zona, biografía, estudios, especialidades,
   referencias y certificaciones. Esta página **nunca consulta Supabase**.
 - `directorio.html` trae 8 tarjetas de asistentes escritas a mano en el HTML, que sólo se
   reemplazan si Supabase devuelve registros.
-- `cursos.html` y `soporte-remoto.html` son enteramente contenido fijo.
+- `cursos.html` ya no: sus seis cursos y su desplegable salen del catálogo.
+- `soporte-remoto.html` es contenido fijo salvo su desplegable, que sale del catálogo.
 
-**c) Archivos JSON locales en `data/`.** Ninguna página los lee todavía.
+**c) Archivos JSON locales en `data/`.** Son catálogo declarado, no datos de personas, y las
+pantallas ya los leen. `data/cuidadores.json` —cuatro perfiles de muestra que no leía nadie— se
+borró el 24 de agosto de 2026.
 
 | Archivo | Registros | Qué es |
 |---|---:|---|
-| `data/catalogo-vocabularios.json` | 16 listas, 91 opciones | El catálogo del producto: perfiles profesionales, zonas, patologías, tareas, modalidades, niveles. Explicado en `docs/CATALOGO.md` |
-| `data/catalogo-oferta.json` | 8 servicios, 6 cursos, 1 evaluación | Lo que el producto ofrece |
-| `data/cuidadores.json` | 4 | Perfiles de muestra de PresDemo, la Prestadora de ejemplo. Datos y fotos inventados |
+| `data/catalogo-vocabularios.json` | 22 listas, 133 opciones | El catálogo del producto: perfiles profesionales, zonas, patologías, tareas, modalidades, niveles. Explicado en `docs/CATALOGO.md` |
+| `data/catalogo-oferta.json` | 9 servicios, 6 cursos, 1 evaluación | Lo que el producto ofrece |
+| `data/catalogo-fichas.json`, `data/catalogo-banderas.json`, `data/catalogo-verificaciones.json` | — | Definiciones de las fichas del legajo |
 
-**d) Almacenamiento local del navegador**, como respaldo cuando Supabase está apagado — que
-hoy es siempre. Ver sección 7.
-
-Conviene notar que hay **tres modelos de datos distintos para la misma cosa**: el de
-`data/cuidadores.json` (con `tarifaHora`, `puntos`, `valoracion`), el de `perfil.html` (con
-`pts`, `starsCount`, `levelBar`) y el de la base traducido por `_mapFromDatabase` (con `estado`,
-`documentos`, `valorHora`). No coinciden entre sí.
+Quedan **dos modelos de datos distintos para la misma cosa**: el de `perfil.html` (con `pts`,
+`starsCount`, `levelBar`) y el de la base traducido por `_mapFromDatabase` (con `estado`,
+`documentos`, `valorHora`). No coinciden, y el primero se va con el pendiente 2.
 
 ### 3.2 Direcciones de red
 
@@ -405,18 +405,12 @@ de alcance para los tres service workers y tres cabeceras de seguridad (`X-Conte
 **Casi no hay estado compartido, y ése es el punto.** Como cada pantalla es una carga completa
 del navegador, todo lo que vive en memoria se pierde al cambiar de página.
 
-**Almacenamiento local (`localStorage`).** Cuatro claves, todas escritas y leídas **sólo por el
-camino alternativo que hoy está apagado** (`useSupabase: true`), y por lo tanto hoy nunca se usan:
+**Almacenamiento local (`localStorage`).** El proyecto ya no escribe ninguna clave propia. Había
+cuatro (`aspirantes`, `busquedas`, `fichadas`, `bitacora`), todas del camino de imitación que se
+suprimió el 24 de agosto de 2026 junto con la bandera `useSupabase`.
 
-| Clave | Escrita en |
-|---|---|
-| `careonys_aspirantes` | `apiClient.js:132, 152, 166` |
-| `careonys_searches` | `apiClient.js:181, 201` y `main.js:214, 223` |
-| `careonys_clockins` | `apiClient.js:228, 235` |
-| `careonys_bitacora` | `apiClient.js:251, 258, 271` |
-
-A esas se suma la **clave de sesión que administra el SDK de Supabase**, que sí está en uso real
-y es lo único que efectivamente persiste entre pantallas.
+Queda la **clave de sesión que administra el SDK de Supabase**, que sí está en uso real y es lo
+único que efectivamente persiste entre pantallas.
 
 **Almacenamiento de sesión (`sessionStorage`): no se usa.** Se buscó y no aparece.
 
@@ -457,10 +451,12 @@ pedazo de lógica de negocio del proyecto que ya está bien separado.
 
 **El HTML de las páginas informativas.** `soporte-remoto.html`, `cursos.html` y las secciones de
 contenido de la portada son marcado con contenido fijo: se convierten a JSX casi mecánicamente
-(cambiando `class` por `className` y cerrando las etiquetas sueltas).
+(cambiando `class` por `className` y cerrando las etiquetas sueltas). Lo que ahí sale del catálogo
+—las listas, las tarjetas de servicio y las de curso— no se convierte: se declara igual, porque un
+componente que recibe una lista y la dibuja es lo mismo de un lado y del otro.
 
-**El catálogo de `data/`.** Los dos archivos de catálogo no dependen de nada y son la semilla
-de las tablas: las pantallas nuevas leen de ahí en vez de traer sus opciones escritas a mano.
+**El catálogo de `data/`.** Los cinco archivos de catálogo no dependen de nada y son la semilla
+de las tablas: las pantallas ya leen de ahí en vez de traer sus opciones escritas a mano.
 
 **La configuración de publicación.** Las cabeceras de seguridad de `vercel.json` se conservan;
 las reglas de service worker cambian porque Vite genera los suyos.

@@ -209,3 +209,19 @@ summary:focus-visible,
   outline-offset: 2px;
   box-shadow: var(--anillo-foco);
 }
+
+/* Cada casilla de un vocabulario del catálogo. El estilo estaba escrito a mano en cada una de
+   las más de cincuenta etiquetas del proyecto; ahora `js/catalogo.js` las dibuja con esta clase
+   y el estilo vive en un solo lugar. */
+.catalogo-casilla {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.catalogo-casilla input {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}

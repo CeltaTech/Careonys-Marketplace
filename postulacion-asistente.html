@@ -281,31 +281,19 @@
                 id="fecha-nacimiento" required /></div>
             <div class="form-group">
               <label for="genero">Género</label>
-              <select id="genero" required>
-                <option value="">— Seleccionar —</option>
-                <option value="Femenino" selected>Femenino</option>
-                <option value="Masculino">Masculino</option>
-                <option value="Otro">Otro / Indistinto</option>
-                <option value="NoContesta">Prefiero no decirlo</option>
-              </select>
+              <select id="genero" required data-catalogo="genero" data-catalogo-vacio="— Seleccionar —"></select>
             </div>
             <div class="form-group"><label for="nacionalidad">Nacionalidad</label><input type="text" id="nacionalidad"
                 placeholder="Ej: Argentina" required /></div>
             <div class="form-group">
               <label for="afip-tipo">Condición de Registro AFIP</label>
-              <select id="afip-tipo" required>
-                <option value="">— Seleccionar —</option>
-                <option value="monotributo_social" selected>Monotributo Social</option>
-                <option value="monotributo">Monotributo General</option>
-                <option value="no_inscripto">No inscripto / En trámite</option>
-                <option value="responsable_inscripto">Responsable Inscripto</option>
-              </select>
+              <select id="afip-tipo" required data-catalogo="condicion_fiscal" data-catalogo-vacio="— Seleccionar —"></select>
             </div>
             <div class="form-group" style="grid-column:1 / -1;"><label for="domicilio">Domicilio Completo (Calle, Nro,
                 Piso, Localidad)</label><input type="text" id="domicilio"
                 placeholder="Ej: Av. Santa Fe 1234, Palermo, CABA" required /></div>
-            <div class="form-group"><label for="zona">Barrio o Zona de Cobertura</label><input type="text" id="zona"
-                placeholder="Ej: Palermo, Belgrano, Zona Norte" required /></div>
+            <div class="form-group"><label for="zona">Barrio o zona de cobertura</label><select id="zona"
+                data-catalogo="zona" data-catalogo-vacio="— Seleccionar —" required></select></div>
             <div class="form-group"><label for="cbu-alias">CBU o Alias Bancario (Liquidación)</label><input type="text"
                 id="cbu-alias" placeholder="22 dígitos de CBU o tu Alias" required /></div>
           </div>
@@ -324,19 +312,11 @@
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
             <div class="form-group" style="grid-column:1 / -1;">
               <label for="profesion">Perfil Profesional / Especialidad Principal</label>
-              <select id="profesion" required>
-                <option value="">— Seleccionar —</option>
-              </select>
+              <select id="profesion" required data-catalogo="perfil_profesional" data-catalogo-vacio="— Seleccionar —"></select>
             </div>
             <div class="form-group" style="grid-column:1 / -1;">
               <label for="nivel-estudios">Nivel de Estudios Formales Alcanzado</label>
-              <select id="nivel-estudios" required>
-                <option value="">— Seleccionar —</option>
-                <option value="secundario_completo" selected>Secundario Completo</option>
-                <option value="terciario_tecnico">Terciario o Tecnólogo Universitario</option>
-                <option value="universitario_incompleto">Universitario en Curso</option>
-                <option value="universitario_completo">Universitario Graduado</option>
-              </select>
+              <select id="nivel-estudios" required data-catalogo="nivel_educativo" data-catalogo-vacio="— Seleccionar —"></select>
             </div>
           </div>
 
@@ -346,23 +326,7 @@
             <h4 style="font-size:14px;font-weight:700;color:var(--texto-titulo);margin-bottom:12px;"><i
                 class="fas fa-graduation-cap" style="color:var(--azul-medio-texto);"></i> Cursos y Certificaciones Realizados
               ({{producto}} Academy o afines)</h4>
-            <div style="display:grid;grid-template-columns:1fr;gap:10px;font-size:13px;">
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"
-                  name="curso-certificado" value="curso_gerontologico" checked style="width:18px;height:18px;" /> Curso
-                General de Asistente de Cuidado Domiciliario</label>
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"
-                  name="curso-certificado" value="deterioro_cognitivo" checked style="width:18px;height:18px;" />
-                Especialización en Deterioro Cognitivo y Alzheimer</label>
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"
-                  name="curso-certificado" value="primeros_auxilios" style="width:18px;height:18px;" /> Primeros
-                Auxilios y Soporte Vital Básico / RCP</label>
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"
-                  name="curso-certificado" value="nutricion_cocina" style="width:18px;height:18px;" /> Nutrición,
-                Dietética y Cocina Adaptada para la Tercera Edad</label>
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"
-                  name="curso-certificado" value="pacientes_complejos" style="width:18px;height:18px;" /> Cuidado
-                Integral de Pacientes Postrados y Manejo de Sondas</label>
-            </div>
+            <div style="display:grid;grid-template-columns:1fr;gap:10px;font-size:13px;" data-catalogo="certificacion" data-catalogo-como="casillas" data-catalogo-nombre="certificacion" data-catalogo-clase="catalogo-casilla"></div>
           </div>
 
           <!-- CARGA DE DOCUMENTOS -->
@@ -396,39 +360,11 @@
             style="background: var(--superficie);border-radius:12px;padding:20px;border:1px solid var(--borde-card);margin-bottom:20px;">
             <p style="font-size:14px;font-weight:700;color:var(--texto-principal);margin-bottom:12px;">Patologías atendidas
               con experiencia real comprobable:</p>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;margin-bottom:20px;">
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"
-                  name="patologia" value="alzheimer" checked style="width:18px;height:18px;" /> Alzheimer /
-                Demencia</label>
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"
-                  name="patologia" value="parkinson" checked style="width:18px;height:18px;" /> Parkinson</label>
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"
-                  name="patologia" value="acv" style="width:18px;height:18px;" /> ACV / Rehabilitación</label>
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"
-                  name="patologia" value="diabetes" style="width:18px;height:18px;" /> Diabetes / Control
-                Insulina</label>
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"
-                  name="patologia" value="postrados" style="width:18px;height:18px;" /> Pacientes Postrados</label>
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"
-                  name="patologia" value="paliativos" style="width:18px;height:18px;" /> Cuidados Paliativos</label>
-            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;margin-bottom:20px;" data-catalogo="patologia" data-catalogo-como="casillas" data-catalogo-nombre="patologia" data-catalogo-clase="catalogo-casilla"></div>
 
             <p style="font-size:14px;font-weight:700;color:var(--texto-principal);margin-bottom:12px;">Tareas de Cuidado
               Autorizadas a realizar:</p>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;">
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" name="tarea"
-                  value="higiene" checked style="width:18px;height:18px;" /> Higiene y confort del paciente</label>
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" name="tarea"
-                  value="signos" checked style="width:18px;height:18px;" /> Control de signos vitales</label>
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" name="tarea"
-                  value="medicacion" checked style="width:18px;height:18px;" /> Administración de medicación</label>
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" name="tarea"
-                  value="inyecciones" style="width:18px;height:18px;" /> Aplicación de inyecciones / sondas</label>
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" name="tarea"
-                  value="tramites" style="width:18px;height:18px;" /> Acompañamiento a turnos/paseos</label>
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" name="tarea"
-                  value="cocina" style="width:18px;height:18px;" /> Cocina adaptada y nutrición</label>
-            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;" data-catalogo="tarea_cuidado" data-catalogo-como="casillas" data-catalogo-nombre="tarea_cuidado" data-catalogo-clase="catalogo-casilla"></div>
           </div>
 
           <div style="display:flex;justify-content:space-between;margin-top:24px;">
@@ -449,16 +385,9 @@
             style="background:var(--superficie-hover);border-radius:12px;padding:20px;border:1px solid var(--borde-card);margin-bottom:20px;">
             <p style="font-size:13px;font-weight:700;color:var(--texto-principal);margin-bottom:12px;">Modalidades de
               contratación aceptadas:</p>
-            <div style="display:flex;gap:20px;margin-bottom:24px;flex-wrap:wrap;font-size:13px;">
-              <label style="cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox"
-                  name="modalidad" value="horas" checked /> Por Horas / Jornada Parcial</label>
-              <label style="cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox"
-                  name="modalidad" value="retiro" checked /> Con Retiro (Jornada Completa)</label>
-              <label style="cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox"
-                  name="modalidad" value="sin-retiro" /> Cama Adentro / Sin Retiro</label>
-              <label style="cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox"
-                  name="modalidad" value="urgencia" checked /> Reemplazos urgentes (menos de 2 h)</label>
-            </div>
+            <div style="display:flex;gap:20px;margin-bottom:24px;flex-wrap:wrap;font-size:13px;" data-catalogo="modalidad_contratacion" data-catalogo-como="casillas" data-catalogo-nombre="modalidad_contratacion" data-catalogo-clase="catalogo-casilla" data-catalogo-marcados="horas"></div>
+            <p style="font-size:13px;font-weight:700;color:var(--texto-principal);margin-bottom:12px;">Con retiro o sin retiro del domicilio:</p>
+            <div style="display:flex;gap:20px;margin-bottom:24px;flex-wrap:wrap;font-size:13px;" data-catalogo="retiro" data-catalogo-como="casillas" data-catalogo-nombre="retiro" data-catalogo-clase="catalogo-casilla" data-catalogo-marcados="con_retiro"></div>
             <div class="form-group" style="margin-top:16px;max-width:300px;">
               <label for="valor-hora">Valor Hora Deseado ($ ARS / hora)</label>
               <input type="number" id="valor-hora" placeholder="Ej: 3500" required />
@@ -738,6 +667,7 @@
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/identidad.js"></script>
+  <script src="js/catalogo.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
@@ -1055,8 +985,8 @@
 
         // 3. Extraer datos del formulario
         const patologias = Array.from(form.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
-        const tareas = Array.from(form.querySelectorAll('input[name="tarea"]:checked')).map(cb => cb.value);
-        const cursos = Array.from(form.querySelectorAll('input[name="curso-certificado"]:checked')).map(cb => cb.value);
+        const tareas = Array.from(form.querySelectorAll('input[name="tarea_cuidado"]:checked')).map(cb => cb.value);
+        const cursos = Array.from(form.querySelectorAll('input[name="certificacion"]:checked')).map(cb => cb.value);
         const grillaHorarios = {};
         document.querySelectorAll('.schedule-grid-7x3 .select-slot').forEach(slot => {
           const day = slot.getAttribute('data-day');

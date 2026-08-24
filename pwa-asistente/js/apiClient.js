@@ -5,7 +5,6 @@
 =================================================== */
 
 const ClienteDatos = {
-  useSupabase: true,
   supabaseUrl: 'https://pfbvpncavvlgmmvqkgbo.supabase.co',
   supabaseKey: 'sb_publishable_rmhuO0J5QsE5mw-5fgf-Hw_9tCHd1di',
   currentTenant: null,
@@ -67,7 +66,7 @@ const ClienteDatos = {
         }
       }
 
-      if (slug && this.useSupabase) {
+      if (slug) {
         const res = await this._supabaseRequest('GET', 'tenants', null, { slug: `eq.${slug}` });
         if (res && res[0]) {
           this.currentTenant = res[0];
@@ -90,13 +89,11 @@ const ClienteDatos = {
   // Prestadora que devuelve la base. Es una decisión de presentación y no de
   // permisos: sin sesión no se llega a ningún dato de nadie.
   async _prestadoraDeRespaldo() {
-    if (this.useSupabase) {
-      try {
-        const res = await this._supabaseRequest('GET', 'tenants', null, { limit: '1' });
-        if (res && res[0]) return res[0];
-      } catch (err) {
-        console.error('No se pudo leer ninguna Prestadora:', err);
-      }
+    try {
+      const res = await this._supabaseRequest('GET', 'tenants', null, { limit: '1' });
+      if (res && res[0]) return res[0];
+    } catch (err) {
+      console.error('No se pudo leer ninguna Prestadora:', err);
     }
     return null;
   },
@@ -144,38 +141,20 @@ const ClienteDatos = {
 
   // --- MÓDULO 1: RECLUTAMIENTO Y LEGAJOS (CUIDADORES) ---
   async getAspirantes(filter = {}) {
-    if (this.useSupabase) {
-      // Filtrar automáticamente por el tenant activo
-      const activeFilter = { ...filter };
-      if (this.currentTenant) {
-        activeFilter.tenant_id = this.currentTenant.id;
-      }
-      return await this._supabaseGet('caregivers', activeFilter);
+    // Filtrar automáticamente por el tenant activo
+    const activeFilter = { ...filter };
+    if (this.currentTenant) {
+      activeFilter.tenant_id = this.currentTenant.id;
     }
-    
-    // Mock Local Data
-    let data = JSON.parse(localStorage.getItem('aspirantes') || '[]');
-    return data;
+    return await this._supabaseGet('caregivers', activeFilter);
   },
 
   async registrarAspirante(postulacionData) {
-    if (this.useSupabase) {
-      const dbData = { ...postulacionData };
-      if (this.currentTenant) {
-        dbData.tenant_id = this.currentTenant.id;
-      }
-      return await this._supabasePost('caregivers', dbData);
+    const dbData = { ...postulacionData };
+    if (this.currentTenant) {
+      dbData.tenant_id = this.currentTenant.id;
     }
-    let data = await this.getAspirantes();
-    const nuevo = {
-      id: 'asp-' + Date.now(),
-      ...postulacionData,
-      estado: 'en_revision',
-      fechaRegistro: new Date().toISOString().split('T')[0]
-    };
-    data.push(nuevo);
-    localStorage.setItem('aspirantes', JSON.stringify(data));
-    return nuevo;
+    return await this._supabasePost('caregivers', dbData);
   },
 
   // Guarda el legajo del Asistente: las cuatro fichas repetibles y las dos
@@ -188,13 +167,6 @@ const ClienteDatos = {
       experiencia: 'experiencia_laboral_asistente',
       referencias: 'referencias_asistente'
     };
-
-    if (!this.useSupabase) {
-      const guardados = JSON.parse(localStorage.getItem('legajos') || '{}');
-      guardados[caregiverId] = legajo;
-      localStorage.setItem('legajos', JSON.stringify(guardados));
-      return guardados[caregiverId];
-    }
 
     const tenantId = this.currentTenant ? this.currentTenant.id : null;
     const marcar = fila => ({ ...fila, caregiver_id: caregiverId, tenant_id: tenantId });
@@ -216,52 +188,24 @@ const ClienteDatos = {
   },
 
   async cambiarEstadoAspirante(id, nuevoEstado, notaInterna = '') {
-    if (this.useSupabase) {
-      return await this._supabasePatch('caregivers', id, { estado: nuevoEstado, notaPrestadora: notaInterna });
-    }
-    let data = await this.getAspirantes();
-    const index = data.findIndex(a => a.id === id);
-    if (index !== -1) {
-      data[index].estado = nuevoEstado;
-      data[index].notaPrestadora = notaInterna;
-      data[index].fechaValidacion = new Date().toISOString();
-      localStorage.setItem('aspirantes', JSON.stringify(data));
-      return data[index];
-    }
-    throw new Error('Aspirante no encontrado');
+    return await this._supabasePatch('caregivers', id, { estado: nuevoEstado, notaPrestadora: notaInterna });
   },
 
   // --- MÓDULO 2: BÚSQUEDAS Y SOLICITUDES DE FAMILIAS ---
   async getBusquedasFamilia() {
-    if (this.useSupabase) {
-      const filter = {};
-      if (this.currentTenant) {
-        filter.tenant_id = this.currentTenant.id;
-      }
-      return await this._supabaseGet('care_searches', filter);
+    const filter = {};
+    if (this.currentTenant) {
+      filter.tenant_id = this.currentTenant.id;
     }
-    let data = JSON.parse(localStorage.getItem('busquedas') || '[]');
-    return data;
+    return await this._supabaseGet('care_searches', filter);
   },
 
   async crearBusquedaFamilia(busquedaData) {
-    if (this.useSupabase) {
-      const dbData = { ...busquedaData };
-      if (this.currentTenant) {
-        dbData.tenant_id = this.currentTenant.id;
-      }
-      return await this._supabasePost('care_searches', dbData);
+    const dbData = { ...busquedaData };
+    if (this.currentTenant) {
+      dbData.tenant_id = this.currentTenant.id;
     }
-    let data = await this.getBusquedasFamilia();
-    const nueva = {
-      id: 'req-' + Date.now(),
-      ...busquedaData,
-      estado: 'activa',
-      fechaCreacion: new Date().toISOString()
-    };
-    data.push(nueva);
-    localStorage.setItem('busquedas', JSON.stringify(data));
-    return nueva;
+    return await this._supabasePost('care_searches', dbData);
   },
 
   // Alias con campos camelCase — usado por pwa-familia/index.html (screen-publicar)
@@ -278,60 +222,32 @@ const ClienteDatos = {
 
   // --- MÓDULO 3: FICHADO GPS Y BITÁCORA MÉDICA ---
   async registrarFichadoGPS(fichadoData) {
-    if (this.useSupabase) {
-      const dbData = {
-        caregiver_id: fichadoData.caregiverId || fichadoData.cuidadorId,
-        latitude: fichadoData.latitude || fichadoData.lat,
-        longitude: fichadoData.longitude || fichadoData.lng,
-        event_type: fichadoData.tipoEvent || fichadoData.event_type || fichadoData.estado
-      };
-      return await this._supabaseRequest('POST', 'clock_ins', dbData);
-    }
-    let data = JSON.parse(localStorage.getItem('fichadas') || '[]');
-    const nuevoFichado = {
-      id: 'clock-' + Date.now(),
-      ...fichadoData,
-      timestamp: new Date().toISOString()
-    };
-    data.push(nuevoFichado);
-    localStorage.setItem('fichadas', JSON.stringify(data));
-    return nuevoFichado;
+    return await this._supabaseRequest('POST', 'clock_ins', {
+      caregiver_id: fichadoData.caregiverId || fichadoData.cuidadorId,
+      latitude: fichadoData.latitude || fichadoData.lat,
+      longitude: fichadoData.longitude || fichadoData.lng,
+      event_type: fichadoData.tipoEvent || fichadoData.event_type || fichadoData.estado
+    });
   },
 
   async registrarBitacoraDiaria(entryData) {
-    if (this.useSupabase) {
-      const dbData = {
-        search_id: entryData.searchId || entryData.busquedaId,
-        caregiver_id: entryData.caregiverId || entryData.cuidadorId,
-        blood_pressure: entryData.presion || entryData.blood_pressure,
-        glycemia: entryData.glucemia || entryData.glycemia,
-        medications_administered: entryData.medicamentos || entryData.medications,
-        daily_notes: entryData.notas || entryData.daily_notes
-      };
-      return await this._supabaseRequest('POST', 'logbook_entries', dbData);
-    }
-    let data = JSON.parse(localStorage.getItem('bitacora') || '[]');
-    const nuevaEntry = {
-      id: 'log-' + Date.now(),
-      ...entryData,
-      timestamp: new Date().toISOString()
-    };
-    data.push(nuevaEntry);
-    localStorage.setItem('bitacora', JSON.stringify(data));
-    return nuevaEntry;
+    return await this._supabaseRequest('POST', 'logbook_entries', {
+      search_id: entryData.searchId || entryData.busquedaId,
+      caregiver_id: entryData.caregiverId || entryData.cuidadorId,
+      blood_pressure: entryData.presion || entryData.blood_pressure,
+      glycemia: entryData.glucemia || entryData.glycemia,
+      medications_administered: entryData.medicamentos || entryData.medications,
+      daily_notes: entryData.notas || entryData.daily_notes
+    });
   },
 
   async getBitacoraDiaria(searchId = null) {
-    if (this.useSupabase) {
-      const queryParams = {};
-      if (searchId) {
-        queryParams.search_id = `eq.${searchId}`;
-      }
-      queryParams.order = 'created_at.desc';
-      return await this._supabaseRequest('GET', 'logbook_entries', null, queryParams);
+    const queryParams = {};
+    if (searchId) {
+      queryParams.search_id = `eq.${searchId}`;
     }
-    let data = JSON.parse(localStorage.getItem('bitacora') || '[]');
-    return data.reverse();
+    queryParams.order = 'created_at.desc';
+    return await this._supabaseRequest('GET', 'logbook_entries', null, queryParams);
   },
 
   // --- EL EXAMEN ---

@@ -407,12 +407,7 @@
               <div class="wfield"><label>Fecha de Nacimiento</label><input type="date" id="w-fecha-nac" required /></div>
               <div class="wfield">
                 <label>Género</label>
-                <select id="w-genero" required>
-                  <option value="">— Seleccionar —</option>
-                  <option value="Femenino">Femenino</option>
-                  <option value="Masculino">Masculino</option>
-                  <option value="Otro">Otro</option>
-                </select>
+                <select id="w-genero" required data-catalogo="genero" data-catalogo-vacio="— Seleccionar —"></select>
               </div>
               <div class="wfield"><label>Nacionalidad</label><input type="text" id="w-nac" placeholder="Ej: Argentina" required /></div>
               <div class="wfield wgrid-2-full"><label>Domicilio Completo</label><input type="text" id="w-domicilio" placeholder="Calle, Nro, Localidad" required /></div>
@@ -427,32 +422,14 @@
             <h3><i class="fas fa-file-invoice"></i> Paso 2: Nivel Profesional y Documentación</h3>
             <div class="wfield">
               <label>Perfil Profesional Principal</label>
-              <select id="w-profesion" required>
-                <option value="">— Seleccioná tu perfil —</option>
-                <option value="domiciliaria">Cuidadora Domiciliaria</option>
-                <option value="enfermera">Enfermera/o Universitaria/o</option>
-                <option value="auxiliar">Auxiliar de Enfermería</option>
-                <option value="at">Acompañante Terapéutico (AT)</option>
-                <option value="gerontologo">Especialista en Gerontología</option>
-              </select>
+              <select id="w-profesion" required data-catalogo="perfil_profesional" data-catalogo-vacio="— Seleccione su perfil —"></select>
             </div>
             <div class="wfield">
               <label>Nivel de Estudios</label>
-              <select id="w-estudios" required>
-                <option value="">— Seleccionar —</option>
-                <option value="secundario_completo">Secundario Completo</option>
-                <option value="terciario_tecnico">Terciario / Tecnólogo</option>
-                <option value="universitario_completo">Universitario Graduado</option>
-              </select>
+              <select id="w-estudios" required data-catalogo="nivel_educativo" data-catalogo-vacio="— Seleccionar —"></select>
             </div>
             <p style="font-size:12px;font-weight:700;color:#334155;margin:12px 0 6px;">Cursos y Certificaciones ({{producto}} Academy):</p>
-            <div class="wcheck-group">
-              <label><input type="checkbox" name="w-curso" value="curso_gerontologico" checked /> Cuidado Domiciliario</label>
-              <label><input type="checkbox" name="w-curso" value="deterioro_cognitivo" checked /> Deterioro Cognitivo / Alzheimer</label>
-              <label><input type="checkbox" name="w-curso" value="primeros_auxilios" /> Primeros Auxilios / RCP</label>
-              <label><input type="checkbox" name="w-curso" value="nutricion" /> Nutrición y Cocina Adaptada</label>
-              <label><input type="checkbox" name="w-curso" value="pacientes_complejos" /> Pacientes Postrados</label>
-            </div>
+            <div class="wcheck-group" data-catalogo="certificacion" data-catalogo-como="casillas" data-catalogo-nombre="certificacion" data-catalogo-clase="catalogo-casilla"></div>
             <p style="font-size:11px;font-weight:700;color:#475569;margin:12px 0 6px;"><i class="fas fa-shield-alt" style="color:#E53E3E;"></i> Documentación requerida:</p>
             <div class="wfield"><label>📸 Foto de Perfil (tipo carnet)</label><input type="file" id="w-foto" accept="image/*" /></div>
             <div class="wfield"><label>🛡️ Foto DNI (Frente y Dorso)</label><input type="file" accept="image/*,.pdf" /></div>
@@ -468,23 +445,9 @@
           <div class="wpane" id="wp3">
             <h3><i class="fas fa-clipboard-list"></i> Paso 3: Experiencia y Aptitudes</h3>
             <p style="font-size:12px;font-weight:700;color:#334155;margin-bottom:8px;">Patologías atendidas con experiencia comprobable:</p>
-            <div class="wcheck-group" style="margin-bottom:16px;">
-              <label><input type="checkbox" name="w-pat" value="alzheimer" checked /> Alzheimer / Demencia</label>
-              <label><input type="checkbox" name="w-pat" value="parkinson" checked /> Parkinson</label>
-              <label><input type="checkbox" name="w-pat" value="acv" /> ACV / Rehabilitación</label>
-              <label><input type="checkbox" name="w-pat" value="diabetes" /> Diabetes / Insulina</label>
-              <label><input type="checkbox" name="w-pat" value="postrados" /> Pacientes Postrados</label>
-              <label><input type="checkbox" name="w-pat" value="paliativos" /> Cuidados Paliativos</label>
-            </div>
+            <div class="wcheck-group" style="margin-bottom:16px;" data-catalogo="patologia" data-catalogo-como="casillas" data-catalogo-nombre="patologia" data-catalogo-clase="catalogo-casilla"></div>
             <p style="font-size:12px;font-weight:700;color:#334155;margin-bottom:8px;">Tareas autorizadas a realizar:</p>
-            <div class="wcheck-group">
-              <label><input type="checkbox" name="w-tarea" value="higiene" checked /> Higiene y confort</label>
-              <label><input type="checkbox" name="w-tarea" value="signos" checked /> Signos vitales</label>
-              <label><input type="checkbox" name="w-tarea" value="medicacion" checked /> Medicación</label>
-              <label><input type="checkbox" name="w-tarea" value="inyecciones" /> Inyecciones / sondas</label>
-              <label><input type="checkbox" name="w-tarea" value="tramites" /> Turnos / paseos</label>
-              <label><input type="checkbox" name="w-tarea" value="cocina" /> Cocina adaptada</label>
-            </div>
+            <div class="wcheck-group" data-catalogo="tarea_cuidado" data-catalogo-como="casillas" data-catalogo-nombre="tarea_cuidado" data-catalogo-clase="catalogo-casilla"></div>
             <div class="wnav">
               <button type="button" class="wbtn-prev" onclick="wPrev(2)"><i class="fas fa-arrow-left"></i></button>
               <button type="button" class="wbtn-next" onclick="wNext(4)">Siguiente <i class="fas fa-arrow-right"></i></button>
@@ -495,12 +458,9 @@
           <div class="wpane" id="wp4">
             <h3><i class="fas fa-calendar-alt"></i> Paso 4: Disponibilidad Horaria</h3>
             <p style="font-size:12px;font-weight:700;color:#334155;margin-bottom:6px;">Modalidades de contratación aceptadas:</p>
-            <div class="wcheck-group" style="margin-bottom:14px;">
-              <label><input type="checkbox" name="w-modal" value="horas" checked /> Por Horas</label>
-              <label><input type="checkbox" name="w-modal" value="retiro" checked /> Con Retiro</label>
-              <label><input type="checkbox" name="w-modal" value="sin-retiro" /> Sin Retiro</label>
-              <label><input type="checkbox" name="w-modal" value="urgencia" checked /> Urgencias &lt;2hs</label>
-            </div>
+            <div class="wcheck-group" style="margin-bottom:14px;" data-catalogo="modalidad_contratacion" data-catalogo-como="casillas" data-catalogo-nombre="modalidad_contratacion" data-catalogo-clase="catalogo-casilla" data-catalogo-marcados="horas"></div>
+            <p style="font-size:12px;font-weight:700;color:#334155;margin-bottom:6px;">Con retiro o sin retiro:</p>
+            <div class="wcheck-group" style="margin-bottom:14px;" data-catalogo="retiro" data-catalogo-como="casillas" data-catalogo-nombre="retiro" data-catalogo-clase="catalogo-casilla" data-catalogo-marcados="con_retiro"></div>
             <div class="wfield" style="max-width:180px;">
               <label>Valor Hora ($ ARS)</label>
               <input type="number" id="w-valor-hora" placeholder="Ej: 3500" required />
@@ -550,6 +510,7 @@
   <!-- JS LOCAL (dentro del scope del Service Worker) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/identidad.js"></script>
+  <script src="js/catalogo.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script>
@@ -747,9 +708,9 @@
       const terminos = document.getElementById('w-terminos');
       if (!terminos.checked) { alert('Debés aceptar los Términos y Condiciones.'); return; }
 
-      const patologias = Array.from(document.querySelectorAll('input[name="w-pat"]:checked')).map(cb => cb.value);
-      const tareas = Array.from(document.querySelectorAll('input[name="w-tarea"]:checked')).map(cb => cb.value);
-      const cursos = Array.from(document.querySelectorAll('input[name="w-curso"]:checked')).map(cb => cb.value);
+      const patologias = Array.from(document.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
+      const tareas = Array.from(document.querySelectorAll('input[name="tarea_cuidado"]:checked')).map(cb => cb.value);
+      const cursos = Array.from(document.querySelectorAll('input[name="certificacion"]:checked')).map(cb => cb.value);
 
       const grillaHorarios = {};
       document.querySelectorAll('#wschedule .gs').forEach(slot => {

@@ -108,22 +108,13 @@
             </div>
             <div class="form-group">
               <label for="w-patient-gender">Género del paciente</label>
-              <select id="w-patient-gender" required>
-                <option value="">Seleccionar...</option>
-                <option value="femenino">Femenino</option>
-                <option value="masculino">Masculino</option>
-                <option value="otro">Otro</option>
-              </select>
+              <select id="w-patient-gender" required data-catalogo="genero" data-catalogo-vacio="— Seleccionar —"></select>
             </div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
             <div class="form-group">
               <label for="w-pref-gender">Preferencia de género del cuidador</label>
-              <select id="w-pref-gender">
-                <option value="indistinto">Indistinto</option>
-                <option value="femenino">Femenino únicamente</option>
-                <option value="masculino">Masculino únicamente</option>
-              </select>
+              <select id="w-pref-gender" data-catalogo="genero_preferido"></select>
             </div>
             <div class="form-group">
               <label>¿Es un reemplazo o contratación urgente?</label>
@@ -236,46 +227,17 @@
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
             <div class="form-group">
               <label>Modalidad de Trabajo</label>
-              <select id="w-modality">
-                <option value="con-retiro">Con Retiro (Por horas)</option>
-                <option value="sin-retiro">Sin Retiro (Cama adentro / 24hs)</option>
-                <option value="guardia-12">Guardia de 12 horas</option>
-              </select>
+              <select id="w-modality" data-catalogo="modalidad_contratacion"></select>
             </div>
             <div class="form-group">
               <label>Frecuencia</label>
-              <select id="w-frequency">
-                <option value="recurrente">Recurrente (Días fijos a la semana)</option>
-                <option value="eventual">Eventual (Por única vez)</option>
-              </select>
+              <select id="w-frequency" data-catalogo="frecuencia"></select>
             </div>
           </div>
 
           <div class="form-group">
             <label>Días de la Semana Requeridos</label>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
-              <label class="btn btn-sobre-oscuro"
-                style="border-color:var(--borde-card);color:var(--texto-principal);padding:8px 16px;font-size:12px;"><input
-                  type="checkbox" name="w-day" value="L" checked /> Lunes</label>
-              <label class="btn btn-sobre-oscuro"
-                style="border-color:var(--borde-card);color:var(--texto-principal);padding:8px 16px;font-size:12px;"><input
-                  type="checkbox" name="w-day" value="M" checked /> Martes</label>
-              <label class="btn btn-sobre-oscuro"
-                style="border-color:var(--borde-card);color:var(--texto-principal);padding:8px 16px;font-size:12px;"><input
-                  type="checkbox" name="w-day" value="X" checked /> Miércoles</label>
-              <label class="btn btn-sobre-oscuro"
-                style="border-color:var(--borde-card);color:var(--texto-principal);padding:8px 16px;font-size:12px;"><input
-                  type="checkbox" name="w-day" value="J" checked /> Jueves</label>
-              <label class="btn btn-sobre-oscuro"
-                style="border-color:var(--borde-card);color:var(--texto-principal);padding:8px 16px;font-size:12px;"><input
-                  type="checkbox" name="w-day" value="V" checked /> Viernes</label>
-              <label class="btn btn-sobre-oscuro"
-                style="border-color:var(--borde-card);color:var(--texto-principal);padding:8px 16px;font-size:12px;"><input
-                  type="checkbox" name="w-day" value="S" /> Sábado</label>
-              <label class="btn btn-sobre-oscuro"
-                style="border-color:var(--borde-card);color:var(--texto-principal);padding:8px 16px;font-size:12px;"><input
-                  type="checkbox" name="w-day" value="D" /> Domingo</label>
-            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;" data-catalogo="dia_semana" data-catalogo-como="casillas" data-catalogo-nombre="dia_semana" data-catalogo-clase="catalogo-casilla" data-catalogo-marcados="lunes,martes,miercoles,jueves,viernes"></div>
           </div>
 
           <div style="display:flex;justify-content:space-between;margin-top:24px;">
@@ -373,13 +335,7 @@
           </div>
           <div class="form-group">
             <label for="familia-consulta">¿Cuál es tu consulta?</label>
-            <select id="familia-consulta" required>
-              <option value="">— Por favor, elige una opción —</option>
-              <option value="busco-cuidador">Busco un asistente / cuidador</option>
-              <option value="acompanamiento">Soporte y Asesoramiento Remoto</option>
-              <option value="cursos">Cursos para familias</option>
-              <option value="otro">Otro</option>
-            </select>
+            <select id="familia-consulta" required data-catalogo="motivo_consulta" data-catalogo-vacio="— Por favor, elija una opción —"></select>
           </div>
           <div class="form-group">
             <label>¿Te suscribís al newsletter?</label>
@@ -425,16 +381,7 @@
           </div>
           <div class="form-group">
             <label for="asistente-profesion">Tu profesión / formación</label>
-            <select id="asistente-profesion" required>
-              <option value="">— Seleccioná tu perfil —</option>
-              <option value="cuidadora">Asistente / Cuidador/a Domiciliario/a</option>
-              <option value="enfermera">Enfermera/o Universitaria/o</option>
-              <option value="auxiliar_enfermeria">Auxiliar de Enfermería</option>
-              <option value="acomp_terapeutico">Acompañante Terapéutico</option>
-              <option value="gerontologa">Gerontóloga/o</option>
-              <option value="voluntaria">Voluntaria/o</option>
-              <option value="otro">Otro</option>
-            </select>
+            <select id="asistente-profesion" required data-catalogo="perfil_profesional" data-catalogo-vacio="— Seleccione su perfil —"></select>
           </div>
           <div class="form-group">
             <label for="asistente-zona">Tu zona / barrio de cobertura</label>
@@ -474,45 +421,22 @@
 
           <div class="form-group">
             <label for="filtro-zona"><i class="fas fa-location-dot"></i> Zona / Localidad</label>
-            <select id="filtro-zona">
-              <option value="">Todas las zonas</option>
-              <option value="caba">CABA (Palermo, Belgrano, Recoleta, etc.)</option>
-              <option value="zona-norte">Zona Norte (San Isidro, Vicente López)</option>
-              <option value="zona-sur">Zona Sur (Quilmes, Avellaneda, Lomas)</option>
-              <option value="zona-oeste">Zona Oeste (Morón, Ramos Mejía)</option>
-            </select>
+            <select id="filtro-zona" data-catalogo="zona" data-catalogo-vacio="Todas las zonas"></select>
           </div>
 
           <div class="form-group">
             <label for="filtro-especialidad"><i class="fas fa-user-md"></i> Especialidad / Perfil</label>
-            <select id="filtro-especialidad">
-              <option value="">Todas las especialidades</option>
-              <option value="cuidador">Cuidado Domiciliario</option>
-              <option value="enfermeria">Enfermería</option>
-              <option value="acomp_terapeutico">Acompañamiento Terapéutico</option>
-              <option value="gerontologia">Atención Gerontológica</option>
-            </select>
+            <select id="filtro-especialidad" data-catalogo="perfil_profesional" data-catalogo-vacio="Todas las especialidades"></select>
           </div>
 
           <div class="form-group">
             <label for="filtro-jornada"><i class="fas fa-clock"></i> Modalidad de Jornada</label>
-            <select id="filtro-jornada">
-              <option value="">Cualquier modalidad</option>
-              <option value="por-horas">Por Horas</option>
-              <option value="con-retiro">Con Retiro (Turno Diario)</option>
-              <option value="sin-retiro">Cama Adentro / Sin Retiro</option>
-              <option value="guardias">Guardia de Fin de Semana</option>
-            </select>
+            <select id="filtro-jornada" data-catalogo="modalidad_contratacion" data-catalogo-vacio="Cualquier modalidad"></select>
           </div>
 
           <div class="form-group">
             <label for="filtro-experiencia"><i class="fas fa-award"></i> Nivel de Experiencia</label>
-            <select id="filtro-experiencia">
-              <option value="">Cualquier nivel</option>
-              <option value="bronce">Asistente Verificado (Bronce)</option>
-              <option value="plata">Asistente Senior (Plata)</option>
-              <option value="oro">Asistente Destacado (Oro)</option>
-            </select>
+            <select id="filtro-experiencia" data-catalogo="nivel_reputacion" data-catalogo-vacio="Cualquier nivel"></select>
           </div>
 
           <!-- ACEPTACIÓN DE TÉRMINOS Y CONDICIONES Y POLÍTICAS DE PRIVACIDAD PARA FAMILIAS -->
@@ -577,7 +501,11 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/identidad.js"></script>
+  <script src="js/catalogo.js"></script>
+  <script src="js/apiClient.js"></script>
+  <script src="js/auth.js"></script>
   <!-- Esta página es demostrativa: no consulta la base. Por eso no carga el cliente
        de datos ni el de sesión, que se conectaban solos al abrirla. -->
   <script src="js/main.js"></script>

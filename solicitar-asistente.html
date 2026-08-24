@@ -62,49 +62,17 @@
     <div style="text-align:center;margin-bottom:40px;">
       <h2 style="color:#fff;font-size:28px;font-weight:800;">Nuestros servicios para familias</h2>
     </div>
-    <div class="grid" style="max-width:1200px;margin:0 auto;">
-      <a href="directorio.html" class="service-card fade-in">
-        <img src="assets/images/hero_cuidadores.png" alt="Busco Cuidador" />
-        <div class="service-card-overlay">
-          <h3>Busco Cuidador</h3>
-          <p>Accedé a cientos de cuidadores calificados y verificados en tu zona.</p>
-        </div>
-      </a>
-      <a href="soporte-remoto.html" class="service-card fade-in">
-        <img src="assets/images/acompanamiento_online.png" alt="Acompañamiento" />
-        <div class="service-card-overlay">
-          <h3>Acompañamiento Online</h3>
-          <p>Orientación y soporte especializado para familias cuidadoras.</p>
-        </div>
-      </a>
-      <a href="cursos.html" class="service-card fade-in">
-        <img src="assets/images/cursos_familias.png" alt="Cursos" />
-        <div class="service-card-overlay">
-          <h3>Cursos para Familias</h3>
-          <p>Herramientas para cuidar mejor a tu ser querido.</p>
-        </div>
-      </a>
-      <a href="#monitoreo" class="service-card fade-in" id="monitoreo">
-        <img src="assets/images/monitoreo_cuidado.png" alt="Monitoreo" />
-        <div class="service-card-overlay">
-          <h3>Monitoreo del Cuidado</h3>
-          <p>Gestioná el cuidado de tu familiar en tiempo real desde la app.</p>
-        </div>
-      </a>
-      <a href="#asistente" class="service-card fade-in" id="asistente">
-        <img src="assets/images/asistente_telefono.png" alt="Asistente" />
-        <div class="service-card-overlay">
-          <h3>Asistente Virtual</h3>
-          <p>Si sos familiar y tenés dudas, nuestro equipo puede asistirte.</p>
-        </div>
-      </a>
-      <a href="#vida-activa" class="service-card fade-in" id="vida-activa">
-        <img src="assets/images/vida_activa.png" alt="Vida activa" />
-        <div class="service-card-overlay">
-          <h3>Vida Activa</h3>
-          <p>Promovemos el bienestar físico, psíquico y social de los adultos mayores.</p>
-        </div>
-      </a>
+    <div class="grid" style="max-width:1200px;margin:0 auto;" data-oferta="servicios"
+      data-oferta-solo="busco_asistente,acompanamiento_online,cursos,monitoreo,asistente_virtual,vida_activa">
+      <template>
+        <a class="service-card fade-in" data-attr-href="enlace" data-attr-id="ancla">
+          <img data-attr-src="imagen" data-attr-alt="nombre" />
+          <div class="service-card-overlay">
+            <h3 data-campo="nombre"></h3>
+            <p data-campo="descripcion"></p>
+          </div>
+        </a>
+      </template>
     </div>
   </section>
 
@@ -334,13 +302,7 @@
               required /></div>
           <div class="form-group">
             <label for="consulta">¿Cuál es tu consulta?</label>
-            <select id="consulta" required>
-              <option value="">— Por favor, elige una opción —</option>
-              <option value="busco-cuidador">Busco un cuidador</option>
-              <option value="acompanamiento">Acompañamiento online</option>
-              <option value="cursos">Cursos para familias</option>
-              <option value="otro">Otro</option>
-            </select>
+            <select id="consulta" required data-catalogo="motivo_consulta" data-catalogo-vacio="— Por favor, elija una opción —"></select>
           </div>
           <div class="form-group">
             <label>¿Te suscribís al newsletter?</label>
@@ -392,6 +354,7 @@
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/identidad.js"></script>
+  <script src="js/catalogo.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>

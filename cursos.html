@@ -75,107 +75,23 @@
     <div style="max-width:1100px;margin:0 auto;">
       <h2 style="font-size:28px;font-weight:800;margin-bottom:40px;text-align:center;" class="fade-in">Cursos
         disponibles</h2>
-      <div class="courses-grid">
-
-        <div class="course-card fade-in">
-          <div class="course-card-img"><img src="assets/images/monitoreo_cuidado.png" alt="Cuidado básico" /></div>
-          <div class="course-card-body">
-            <span class="course-tag">Nivel básico</span>
-            <h3>Introducción al cuidado del adulto mayor</h3>
-            <p>Conceptos fundamentales del envejecimiento, necesidades básicas y cómo acompañar a tu familiar en el
-              día
-              a día.</p>
-            <div class="course-meta">
-              <span><i class="fas fa-clock"></i> 8 horas</span>
-              <span><i class="fas fa-video"></i> Online</span>
-              <span><i class="fas fa-certificate"></i> Certificado</span>
+      <div class="courses-grid" data-oferta="cursos">
+        <template>
+          <div class="course-card fade-in">
+            <div class="course-card-img"><img data-attr-src="imagen" data-attr-alt="nombre" /></div>
+            <div class="course-card-body">
+              <span class="course-tag" data-campo="etiqueta"></span>
+              <h3 data-campo="nombre"></h3>
+              <p data-campo="descripcion"></p>
+              <div class="course-meta">
+                <span><i class="fas fa-clock"></i> <span data-campo="horas"></span> horas</span>
+                <span><i class="fas fa-video"></i> <span data-campo="modalidad@modalidad_curso"></span></span>
+                <span data-si="certificado"><i class="fas fa-certificate"></i> Certificado</span>
+              </div>
+              <a href="#inscribirse" class="btn btn-primario" style="font-size:12px;padding:10px 20px;">Inscribirse</a>
             </div>
-            <a href="#inscribirse" class="btn btn-primario" style="font-size:12px;padding:10px 20px;">Inscribirse</a>
           </div>
-        </div>
-
-        <div class="course-card fade-in">
-          <div class="course-card-img"><img src="assets/images/acompanamiento_online.png" alt="Alzheimer" /></div>
-          <div class="course-card-body">
-            <span class="course-tag">Intermedio</span>
-            <h3>Alzheimer y otras demencias: qué esperar y cómo actuar</h3>
-            <p>Guía práctica para entender el deterioro cognitivo, manejar situaciones difíciles y mantener la
-              calidad
-              de vida del paciente.</p>
-            <div class="course-meta">
-              <span><i class="fas fa-clock"></i> 12 horas</span>
-              <span><i class="fas fa-video"></i> Online</span>
-              <span><i class="fas fa-certificate"></i> Certificado</span>
-            </div>
-            <a href="#inscribirse" class="btn btn-primario" style="font-size:12px;padding:10px 20px;">Inscribirse</a>
-          </div>
-        </div>
-
-        <div class="course-card fade-in">
-          <div class="course-card-img"><img src="assets/images/vida_activa.png" alt="Bienestar" /></div>
-          <div class="course-card-body">
-            <span class="course-tag">Bienestar</span>
-            <h3>El bienestar de quien cuida</h3>
-            <p>Herramientas para prevenir el síndrome del cuidador, manejar el estrés y sostener la
-              propia salud emocional.</p>
-            <div class="course-meta">
-              <span><i class="fas fa-clock"></i> 6 horas</span>
-              <span><i class="fas fa-video"></i> Online</span>
-              <span><i class="fas fa-certificate"></i> Certificado</span>
-            </div>
-            <a href="#inscribirse" class="btn btn-primario" style="font-size:12px;padding:10px 20px;">Inscribirse</a>
-          </div>
-        </div>
-
-        <div class="course-card fade-in">
-          <div class="course-card-img"><img src="assets/images/gestor_medicamentos.png" alt="Medicamentos" /></div>
-          <div class="course-card-body">
-            <span class="course-tag">Salud</span>
-            <h3>Administración de medicamentos y control de salud en el hogar</h3>
-            <p>Aprende a organizar medicamentos, reconocer señales de alerta y coordinar con el equipo médico de forma
-              efectiva.</p>
-            <div class="course-meta">
-              <span><i class="fas fa-clock"></i> 5 horas</span>
-              <span><i class="fas fa-video"></i> Online</span>
-              <span><i class="fas fa-certificate"></i> Certificado</span>
-            </div>
-            <a href="#inscribirse" class="btn btn-primario" style="font-size:12px;padding:10px 20px;">Inscribirse</a>
-          </div>
-        </div>
-
-        <div class="course-card fade-in">
-          <div class="course-card-img"><img src="assets/images/asistente_telefono.png" alt="Comunicación" /></div>
-          <div class="course-card-body">
-            <span class="course-tag">Comunicación</span>
-            <h3>Cómo hablar con tu familiar mayor: comunicación empática</h3>
-            <p>Técnicas de comunicación adaptadas al envejecimiento, cómo dar malas noticias y cómo gestionar conflictos
-              familiares.</p>
-            <div class="course-meta">
-              <span><i class="fas fa-clock"></i> 4 horas</span>
-              <span><i class="fas fa-video"></i> Online</span>
-              <span><i class="fas fa-certificate"></i> Certificado</span>
-            </div>
-            <a href="#inscribirse" class="btn btn-primario" style="font-size:12px;padding:10px 20px;">Inscribirse</a>
-          </div>
-        </div>
-
-        <div class="course-card fade-in">
-          <div class="course-card-img"><img src="assets/images/hero_cuidadores.png" alt="Cuidados avanzados" /></div>
-          <div class="course-card-body">
-            <span class="course-tag">Avanzado</span>
-            <h3>Cuidados avanzados: pacientes postrados y cuidados paliativos</h3>
-            <p>Técnicas de movilización, prevención de escaras, cuidados al final de la vida y apoyo espiritual y
-              emocional.
-            </p>
-            <div class="course-meta">
-              <span><i class="fas fa-clock"></i> 16 horas</span>
-              <span><i class="fas fa-video"></i> Online</span>
-              <span><i class="fas fa-certificate"></i> Certificado</span>
-            </div>
-            <a href="#inscribirse" class="btn btn-primario" style="font-size:12px;padding:10px 20px;">Inscribirse</a>
-          </div>
-        </div>
-
+        </template>
       </div><!-- /courses-grid -->
 
       <!-- EVALUACIONES -->
@@ -221,14 +137,9 @@
               required /></div>
           <div class="form-group">
             <label for="curso">Curso de interés</label>
-            <select id="curso" required>
-              <option value="">— Seleccioná el curso —</option>
-              <option>Introducción al cuidado del adulto mayor</option>
-              <option>Alzheimer y otras demencias</option>
-              <option>El bienestar del cuidador</option>
-              <option>Administración de medicamentos</option>
-              <option>Comunicación empática</option>
-              <option>Cuidados avanzados y paliativos</option>
+            <select id="curso" required data-oferta="cursos">
+              <option value="">— Seleccionar el curso —</option>
+              <template><option data-attr-value="clave" data-campo="nombre"></option></template>
             </select>
           </div>
           <div class="form-group">
@@ -277,6 +188,7 @@
     </div>
   </footer>
   <script src="js/identidad.js"></script>
+  <script src="js/catalogo.js"></script>
   <!-- Esta página es demostrativa: no consulta la base. Por eso no carga el cliente
        de datos ni el de sesión, que se conectaban solos al abrirla. -->
   <script src="js/main.js"></script>
