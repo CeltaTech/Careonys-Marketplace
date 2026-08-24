@@ -50,7 +50,7 @@ respuesta es sí, es compartido. Si es no, se queda de este lado.
 | **Filtros de búsqueda** | Deja combinar tipo, zona, patología, disponibilidad | Existe porque hay alguien buscando |
 | **Aviso y postulación** | La Familia publica lo que necesita; el Asistente se ofrece | En prestación directa el trabajo se asigna, no se postula |
 | **Orden de aparición** | Con qué criterio se ordena lo que la vidriera muestra | Sin vidriera no hay orden que decidir |
-| **Interruptor de visibilidad** | Si el Asistente aparece, ante quién, y si comparte su teléfono | Nadie aparece en ningún lado en prestación directa |
+| **Interruptor de visibilidad** | Si el Asistente aparece en la vidriera | Nadie aparece en ningún lado en prestación directa. **No incluye el teléfono**: eso no se muestra nunca, en ninguna modalidad, y por eso no es un interruptor sino una regla —ver `docs/CATALOGO.md` |
 | **Contacto y su costo** | Cómo una Familia llega a un Asistente y qué se cobra por eso | Y además: hasta que no se resuelva `docs/ALCANCE.md` §4, acá no se construye nada comercial |
 
 ## Los tres casos que limitan

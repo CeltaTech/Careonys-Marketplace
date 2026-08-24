@@ -8,7 +8,7 @@ otro lado:
 |---|---|
 | `data/catalogo-vocabularios.json` | 21 listas de opciones, 130 opciones en total |
 | `data/catalogo-oferta.json` | 8 servicios, 6 cursos y la evaluación con sus 2 preguntas |
-| `data/catalogo-banderas.json` | 4 banderas del legajo y el paso de cierre del alta |
+| `data/catalogo-banderas.json` | 2 banderas del legajo y el paso de cierre del alta |
 | `data/catalogo-fichas.json` | 4 fichas repetibles: matrícula, estudio, experiencia y referencia |
 
 Los dos primeros son listas de opciones. Los dos últimos, del 24 de agosto de 2026, no son
@@ -107,14 +107,33 @@ Tres cosas aparecieron en el relevamiento, hacen falta, y **no entran en `catalo
 no son opciones para elegir, son campos del legajo. **Están declaradas, en sus dos archivos
 propios.** Lo que sigue explica qué son y por qué se decidieron así.
 
-**Banderas del legajo del Asistente** — se responden con sí o no, no con una opción de lista:
+**Banderas del legajo del Asistente** — se responden con sí o no, no con una opción de lista. Son dos:
 
-- Disponible para reemplazos urgentes.
-- Visible para las Familias.
-- Visible en la vidriera pública y para los buscadores.
-- Comparte su teléfono con quien lo contacta.
+- **Publicar mi perfil**, que es el consentimiento para que se muestre.
+- **Disponible para reemplazos urgentes.**
 
-Las tres últimas son el consentimiento de la persona para ser publicada. Sin ellas, publicar un
+### Las dos que se propusieron y se descartaron
+
+**Decidido por el Desarrollador el 24 de agosto de 2026.** El relevamiento trajo otras dos —aparecer
+en los buscadores de internet, y compartir el teléfono al ser contactado— y las dos se sacaron.
+
+**No por privacidad: porque regalan el negocio.** Si el perfil se indexa en un buscador, la Familia
+llega al Asistente sin pasar por la plataforma. Si el teléfono se comparte, el segundo contacto
+tampoco pasa. El competidor relevado tiene las dos encendidas, y por eso cobra el contacto una
+sola vez y después mira.
+
+De ahí salen dos reglas:
+
+- **El teléfono no se muestra nunca, y no es una preferencia del Asistente.** Se guarda en el
+  legajo, la Prestadora lo usa, y ninguna pantalla lo muestra a ninguna Familia. La Familia
+  contacta por la plataforma.
+- **La vidriera no puede quedar abierta a los buscadores.** Va con `noindex`, o directamente
+  detrás de la sesión. Toca el pendiente 2.
+
+Ninguna de las dos se vuelve a proponer como casilla de un formulario. Si alguna vez hay que
+discutirlo, se discute como decisión comercial.
+
+La primera es el consentimiento de la persona para ser publicada. Sin ellas, publicar un
 legajo es una decisión que toma el sistema por alguien que no la tomó. Tocan directamente el
 pendiente 2. El interruptor es de esta modalidad y el registro del consentimiento es del legajo:
 ver `docs/MODULOS.md`.
