@@ -151,8 +151,9 @@ De ahí salen dos reglas:
 - **El teléfono no se muestra nunca, y no es una preferencia del Asistente.** Se guarda en el
   legajo, la Prestadora lo usa, y ninguna pantalla lo muestra a ninguna Familia. La Familia
   contacta por la plataforma.
-- **La vidriera no puede quedar abierta a los buscadores.** Va con `noindex`, o directamente
-  detrás de la sesión. Toca el pendiente 2.
+- **La vidriera no puede quedar abierta a los buscadores.** **Hecho el 24 de agosto de 2026:**
+  `directorio.html` y `perfil.html` llevan `noindex, nofollow`. Si además va detrás de la sesión
+  sigue abierto, y es lo único que queda del pendiente 2.
 
 Ninguna de las dos se vuelve a proponer como casilla de un formulario. Si alguna vez hay que
 discutirlo, se discute como decisión comercial.

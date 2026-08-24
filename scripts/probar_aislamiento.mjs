@@ -45,6 +45,15 @@
         administración para ascender a alguien a coordinador, y la clave que los
         da existe únicamente en el entorno local.)
 
+   Y sobre la vidriera (migración 0007), que es lo único que se ve sin sesión:
+
+    17. Un legajo validado, pero sin banderas, no se muestra.
+    18. Con la bandera en «no», tampoco.
+    19. Con la bandera en «sí», recién ahí aparece.
+    20. La vidriera no devuelve ningún dato personal ni ningún camino del
+        depósito privado. (17 a 20 también necesitan --local, por lo mismo:
+        validar un legajo es trabajo del personal de la Prestadora.)
+
    Todo con datos inventados. No toca ni una fila que ya estuviera cargada, y
    borra lo que crea. No muestra ninguna clave: usa la publicable, que es la
    que ya viaja al navegador.
@@ -369,6 +378,64 @@ if (!coordinador) {
     ajeno >= 400, 'respuesta ' + ajeno);
 }
 
+// --- 17 a 20: la vidriera ---------------------------------------------------
+// La vidriera es la única puerta que se abre sin sesión, así que acá se pregunta
+// con la clave pública y nada más. Dos condiciones tienen que cumplirse a la vez
+// para aparecer: que la Prestadora haya validado el legajo, y que la persona haya
+// dicho que sí. Se prueban por separado, porque una sola de las dos no alcanza.
+console.log('');
+console.log('La vidriera');
+
+if (!coordinador) {
+  console.log('   (salteadas) las cuatro de la vidriera: validar un legajo es trabajo del');
+  console.log('               personal de la Prestadora, y esa cuenta sólo existe en local.');
+} else {
+  const a = cuentas[0];
+
+  // Validar el legajo. Es lo que hoy alcanzaba para publicarlo, y ya no.
+  await rest('/rest/v1/caregivers?id=eq.' + a.legajoId, {
+    method: 'PATCH',
+    body: JSON.stringify({ verification_status: 'validado_prestadora' })
+  }, coordinador.token);
+
+  const enVidriera = async () => {
+    const { cuerpo } = await rest('/rest/v1/caregivers_publicos?select=id&id=eq.' + a.legajoId);
+    return Array.isArray(cuerpo) && cuerpo.length === 1;
+  };
+
+  const sinContestar = await enVidriera();
+  comprobar('Validado pero sin contestar: la vidriera no lo muestra',
+    sinContestar === false, sinContestar ? 'aparece igual' : 'no aparece');
+
+  const banderas = async publicado => rest('/rest/v1/banderas_asistente', {
+    method: 'POST',
+    headers: { Prefer: 'resolution=merge-duplicates' },
+    body: JSON.stringify({
+      caregiver_id: a.legajoId, tenant_id: a.prestadora.id,
+      perfil_publicado: publicado, respondido_el: new Date().toISOString()
+    })
+  }, a.token);
+
+  await banderas(false);
+  const dijoQueNo = await enVidriera();
+  comprobar('Contestó que no: la vidriera tampoco lo muestra',
+    dijoQueNo === false, dijoQueNo ? 'aparece igual' : 'no aparece');
+
+  await banderas(true);
+  const dijoQueSi = await enVidriera();
+  comprobar('Contestó que sí: recién ahí aparece en la vidriera',
+    dijoQueSi === true, dijoQueSi ? 'aparece' : 'no aparece');
+
+  const { cuerpo: fila } = await rest('/rest/v1/caregivers_publicos?id=eq.' + a.legajoId);
+  const columnas = Array.isArray(fila) && fila[0] ? Object.keys(fila[0]) : [];
+  const prohibidas = ['dni', 'phone', 'email', 'address', 'bank_info', 'cuit',
+                      'documents', 'birthdate', 'reference_info', 'education_info'];
+  const filtradas = prohibidas.filter(k => columnas.includes(k));
+  comprobar('La vidriera no devuelve ningún dato personal',
+    filtradas.length === 0,
+    filtradas.length ? 'devuelve ' + filtradas.join(', ') : columnas.length + ' columnas, ninguna personal');
+}
+
 // --- Limpieza ---------------------------------------------------------------
 console.log('');
 for (const c of cuentas) {
@@ -393,7 +460,8 @@ console.log('un dominio que por norma no existe: no le llegó ni le puede llegar
 
 console.log('');
 if (fallos === 0) {
-  console.log('Pasaron todas. El límite lo pone la sesión, y vale igual para los archivos.');
+  console.log('Pasaron todas. El límite lo pone la sesión: vale para las tablas, para los');
+  console.log('archivos y para la vidriera, que además exige que la persona haya dicho que sí.');
 } else {
   console.log(fallos + ' comprobación(es) fallaron. El aislamiento NO está.');
   process.exitCode = 1;

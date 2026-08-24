@@ -1,7 +1,7 @@
 {
   "_lea_esto_primero": {
     "que_es": "Las banderas del legajo del Asistente: preguntas que se contestan con sí o no, una casilla de verificación cada una. No son listas de opciones y por eso no viven en catalogo-vocabularios.json.",
-    "por_que_existe": "Cierra el pendiente 18. Sin estas banderas, publicar el legajo de una persona es una decisión que toma el sistema por alguien que no la tomó.",
+    "por_que_existe": "Cerró el pendiente 18, el 24 de agosto de 2026: el otro extremo es la migración 0007, que cruza la vidriera contra estas respuestas. Sin estas banderas, publicar el legajo de una persona es una decisión que toma el sistema por alguien que no la tomó.",
     "como_se_usa": "Ninguna pantalla escribe estos textos a mano. La pantalla lee de acá y dibuja una casilla por bandera, con su pregunta y con la ayuda que corresponda al estado en que quedó.",
     "de_que_lado_de_la_linea": "El interruptor es de esta modalidad; el registro de que la persona dio el consentimiento es del legajo y va del lado compartido. Ver docs/MODULOS.md.",
     "el_valor_inicial_es_no": "Toda bandera de publicación arranca en `false`. Un valor inicial en sí sería un consentimiento que nadie prestó.",
