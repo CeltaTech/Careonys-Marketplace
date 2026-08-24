@@ -1,0 +1,250 @@
+{
+  "_lea_esto_primero": {
+    "que_es": "Las fichas repetibles del legajo del Asistente. Una ficha no es un campo con opciones: es un registro que la persona agrega de a uno, tantas veces como haga falta. Cuatro estudios, tres experiencias, dos referencias.",
+    "por_que_existe": "Cierra el pendiente 19. El catálogo ya dice qué tipos de Asistente exigen Matrícula, y hasta ahora no había dónde guardarla: el único lugar para un estudio era `nivel_educativo`, una lista cerrada de cuatro opciones. Un tipo que exige Matrícula y no la puede cargar no se puede habilitar.",
+    "como_se_usa": "Ninguna pantalla escribe estos campos a mano. La pantalla lee de acá y dibuja el formulario. Regla 5.1 del CLAUDE.md: los formularios se declaran, no se dibujan.",
+    "de_que_lado_de_la_linea": "Las cuatro fichas son del legajo y van del lado compartido: son verdad sobre la persona independientemente de cómo llegó el trabajo. Ver docs/MODULOS.md.",
+    "de_donde_salieron": "Del relevamiento de un competidor en actividad, agosto de 2026. Su lista de instituciones sólo se sirve a usuarios registrados y no se pudo leer, así que acá la institución es texto libre hasta que exista una lista propia.",
+    "el_archivo_no_es_opcional_cuando_respalda": "Un estudio que respalda un tipo de Asistente que exige Matrícula lleva foto del título sí o sí. Sin el archivo, la verificación no tiene qué mirar y el legajo no se puede validar."
+  },
+
+  "fichas": {
+    "matricula": {
+      "ambito": "compartido",
+      "repetible": true,
+      "obligatoria_cuando": "perfil_profesional.requiere_matricula == true",
+      "nota": "El glosario la define con número, vigencia y archivo, y esos tres son los que faltaban. Vence: una Matrícula vencida inhabilita para atender, en cualquier modalidad.",
+      "es-AR": { "titulo": "Matrícula", "titulo_nuevo": "Agregar matrícula", "titulo_editar": "Editar matrícula" },
+      "en": { "titulo": "Professional licence", "titulo_nuevo": "Add licence", "titulo_editar": "Edit licence" },
+      "pt-BR": { "titulo": "Matrícula", "titulo_nuevo": "Adicionar matrícula", "titulo_editar": "Editar matrícula" },
+      "campos": [
+        {
+          "clave": "organismo",
+          "tipo": "texto",
+          "obligatorio": true,
+          "maximo": 255,
+          "es-AR": { "etiqueta": "Organismo que la emitió", "ayuda": "El colegio profesional o el organismo que otorgó la matrícula." },
+          "en": { "etiqueta": "Issuing body", "ayuda": "The professional association or authority that issued the licence." },
+          "pt-BR": { "etiqueta": "Órgão emissor", "ayuda": "O conselho profissional ou órgão que concedeu a matrícula." }
+        },
+        {
+          "clave": "numero",
+          "tipo": "texto",
+          "obligatorio": true,
+          "maximo": 60,
+          "es-AR": { "etiqueta": "Número de matrícula", "ayuda": "Tal como figura en la credencial." },
+          "en": { "etiqueta": "Licence number", "ayuda": "Exactly as it appears on the credential." },
+          "pt-BR": { "etiqueta": "Número da matrícula", "ayuda": "Exatamente como consta na credencial." }
+        },
+        {
+          "clave": "vencimiento",
+          "tipo": "fecha",
+          "obligatorio": true,
+          "vigencia": true,
+          "es-AR": { "etiqueta": "Vence el", "ayuda": "Se avisa antes de que venza. Una matrícula vencida inhabilita para atender." },
+          "en": { "etiqueta": "Expires on", "ayuda": "You are notified before it expires. An expired licence prevents you from working." },
+          "pt-BR": { "etiqueta": "Vence em", "ayuda": "Você é avisado antes do vencimento. Uma matrícula vencida impede o atendimento." }
+        },
+        {
+          "clave": "archivo",
+          "tipo": "archivo",
+          "obligatorio": true,
+          "formatos": ["jpg", "png", "pdf"],
+          "es-AR": { "etiqueta": "Foto o copia de la credencial", "ayuda": "Se usa sólo para verificar. No se muestra en su perfil." },
+          "en": { "etiqueta": "Photo or copy of the credential", "ayuda": "Used only for verification. It is not shown on your profile." },
+          "pt-BR": { "etiqueta": "Foto ou cópia da credencial", "ayuda": "Usada apenas para verificação. Não é exibida no seu perfil." }
+        }
+      ]
+    },
+
+    "estudio": {
+      "ambito": "compartido",
+      "repetible": true,
+      "nota": "`nivel_educativo` se conserva como nivel alcanzado. Esta ficha es el estudio concreto, con su respaldo.",
+      "es-AR": { "titulo": "Estudios y cursos", "titulo_nuevo": "Agregar estudio o curso", "titulo_editar": "Editar estudio o curso" },
+      "en": { "titulo": "Education and courses", "titulo_nuevo": "Add education or course", "titulo_editar": "Edit education or course" },
+      "pt-BR": { "titulo": "Estudos e cursos", "titulo_nuevo": "Adicionar estudo ou curso", "titulo_editar": "Editar estudo ou curso" },
+      "campos": [
+        {
+          "clave": "institucion",
+          "tipo": "texto",
+          "obligatorio": true,
+          "maximo": 255,
+          "nota": "Texto libre por ahora. Cuando exista una lista propia de instituciones, pasa a lista con opción «Otra».",
+          "es-AR": { "etiqueta": "Institución o establecimiento", "ayuda": "Dónde cursó." },
+          "en": { "etiqueta": "Institution", "ayuda": "Where you studied." },
+          "pt-BR": { "etiqueta": "Instituição ou estabelecimento", "ayuda": "Onde você estudou." }
+        },
+        {
+          "clave": "titulo_obtenido",
+          "tipo": "texto",
+          "obligatorio": true,
+          "maximo": 255,
+          "es-AR": { "etiqueta": "Título obtenido", "ayuda": "Tal como figura en el certificado." },
+          "en": { "etiqueta": "Qualification obtained", "ayuda": "Exactly as it appears on the certificate." },
+          "pt-BR": { "etiqueta": "Título obtido", "ayuda": "Exatamente como consta no certificado." }
+        },
+        {
+          "clave": "en_curso",
+          "tipo": "casilla",
+          "obligatorio": false,
+          "es-AR": { "etiqueta": "Lo estoy cursando", "ayuda": "Si lo marca, no hace falta completar el año de finalización." },
+          "en": { "etiqueta": "Currently studying", "ayuda": "If you tick this, the year of completion is not required." },
+          "pt-BR": { "etiqueta": "Estou cursando", "ayuda": "Se marcar, não é necessário informar o ano de conclusão." }
+        },
+        {
+          "clave": "anio_finalizacion",
+          "tipo": "anio",
+          "obligatorio": true,
+          "no_obligatorio_si": "en_curso == true",
+          "es-AR": { "etiqueta": "Año de finalización", "ayuda": "" },
+          "en": { "etiqueta": "Year of completion", "ayuda": "" },
+          "pt-BR": { "etiqueta": "Ano de conclusão", "ayuda": "" }
+        },
+        {
+          "clave": "respalda_perfil",
+          "tipo": "lista",
+          "vocabulario": "perfil_profesional",
+          "obligatorio": false,
+          "es-AR": { "etiqueta": "¿Respalda alguno de sus perfiles profesionales?", "ayuda": "Si este título es el que lo habilita como enfermero, acompañante terapéutico u otro perfil que exige matrícula, elíjalo acá." },
+          "en": { "etiqueta": "Does it back one of your professional profiles?", "ayuda": "If this qualification is what qualifies you as a nurse, therapeutic companion or another profile requiring a licence, select it here." },
+          "pt-BR": { "etiqueta": "Respalda algum dos seus perfis profissionais?", "ayuda": "Se este título é o que o habilita como enfermeiro, acompanhante terapêutico ou outro perfil que exige matrícula, selecione-o aqui." }
+        },
+        {
+          "clave": "archivo",
+          "tipo": "archivo",
+          "obligatorio": false,
+          "obligatorio_si": "respalda_perfil.requiere_matricula == true",
+          "formatos": ["jpg", "png", "pdf"],
+          "es-AR": { "etiqueta": "Foto del título", "ayuda": "Se usa sólo para verificar. No se muestra en su perfil." },
+          "en": { "etiqueta": "Photo of the qualification", "ayuda": "Used only for verification. It is not shown on your profile." },
+          "pt-BR": { "etiqueta": "Foto do título", "ayuda": "Usada apenas para verificação. Não é exibida no seu perfil." }
+        }
+      ]
+    },
+
+    "experiencia_laboral": {
+      "ambito": "compartido",
+      "repetible": true,
+      "es-AR": { "titulo": "Experiencia laboral", "titulo_nuevo": "Agregar experiencia", "titulo_editar": "Editar experiencia" },
+      "en": { "titulo": "Work experience", "titulo_nuevo": "Add experience", "titulo_editar": "Edit experience" },
+      "pt-BR": { "titulo": "Experiência profissional", "titulo_nuevo": "Adicionar experiência", "titulo_editar": "Editar experiência" },
+      "campos": [
+        {
+          "clave": "puesto",
+          "tipo": "lista",
+          "vocabulario": "puesto_experiencia",
+          "obligatorio": true,
+          "es-AR": { "etiqueta": "Puesto", "ayuda": "" },
+          "en": { "etiqueta": "Position", "ayuda": "" },
+          "pt-BR": { "etiqueta": "Cargo", "ayuda": "" }
+        },
+        {
+          "clave": "puesto_otro",
+          "tipo": "texto",
+          "obligatorio": false,
+          "obligatorio_si": "puesto == 'otro'",
+          "maximo": 255,
+          "es-AR": { "etiqueta": "¿Cuál?", "ayuda": "" },
+          "en": { "etiqueta": "Which one?", "ayuda": "" },
+          "pt-BR": { "etiqueta": "Qual?", "ayuda": "" }
+        },
+        {
+          "clave": "inicio",
+          "tipo": "mes_anio",
+          "obligatorio": true,
+          "es-AR": { "etiqueta": "Desde", "ayuda": "" },
+          "en": { "etiqueta": "From", "ayuda": "" },
+          "pt-BR": { "etiqueta": "De", "ayuda": "" }
+        },
+        {
+          "clave": "trabajo_actual",
+          "tipo": "casilla",
+          "obligatorio": false,
+          "es-AR": { "etiqueta": "Es mi trabajo actual", "ayuda": "Si lo marca, no hace falta completar la fecha de finalización." },
+          "en": { "etiqueta": "This is my current job", "ayuda": "If you tick this, the end date is not required." },
+          "pt-BR": { "etiqueta": "É meu trabalho atual", "ayuda": "Se marcar, não é necessário informar a data de término." }
+        },
+        {
+          "clave": "fin",
+          "tipo": "mes_anio",
+          "obligatorio": true,
+          "no_obligatorio_si": "trabajo_actual == true",
+          "es-AR": { "etiqueta": "Hasta", "ayuda": "" },
+          "en": { "etiqueta": "To", "ayuda": "" },
+          "pt-BR": { "etiqueta": "Até", "ayuda": "" }
+        },
+        {
+          "clave": "tareas",
+          "tipo": "lista_multiple",
+          "vocabulario": ["tarea_cuidado", "tarea_hogar", "tarea_acompanamiento"],
+          "obligatorio": true,
+          "nota": "Usa las mismas tres listas que el Asistente contesta sobre sí mismo, a propósito: es lo que permite cruzar lo que dice saber hacer con lo que dice haber hecho. Un competidor mantiene dos vocabularios paralelos que no se corresponden y por eso no puede cruzarlos.",
+          "es-AR": { "etiqueta": "Tareas que realizaba", "ayuda": "Marque todas las que correspondan." },
+          "en": { "etiqueta": "Tasks you performed", "ayuda": "Tick all that apply." },
+          "pt-BR": { "etiqueta": "Tarefas que realizava", "ayuda": "Marque todas as que se aplicam." }
+        },
+        {
+          "clave": "detalle",
+          "tipo": "texto_largo",
+          "obligatorio": false,
+          "maximo": 1000,
+          "es-AR": { "etiqueta": "Algo más que quiera contar", "ayuda": "" },
+          "en": { "etiqueta": "Anything else you want to add", "ayuda": "" },
+          "pt-BR": { "etiqueta": "Algo mais que queira contar", "ayuda": "" }
+        }
+      ]
+    },
+
+    "referencia": {
+      "ambito": "compartido",
+      "repetible": true,
+      "nota": "Una referencia trae el dato de otra persona, que no está usando el sistema y no aceptó nada. Por eso lleva su propia advertencia y no se muestra nunca en el perfil público.",
+      "es-AR": { "titulo": "Referencias", "titulo_nuevo": "Agregar referencia", "titulo_editar": "Editar referencia" },
+      "en": { "titulo": "References", "titulo_nuevo": "Add reference", "titulo_editar": "Edit reference" },
+      "pt-BR": { "titulo": "Referências", "titulo_nuevo": "Adicionar referência", "titulo_editar": "Editar referência" },
+      "advertencia": {
+        "es-AR": "Antes de cargar una referencia, avísele a esa persona. Su nombre y su teléfono quedan guardados y alguien de la Prestadora puede llamarla para confirmar. No se muestran en su perfil ni los ve ninguna Familia.",
+        "en": "Before adding a reference, let that person know. Their name and phone number are stored and someone from the provider may call to confirm. They are not shown on your profile and no family sees them.",
+        "pt-BR": "Antes de cadastrar uma referência, avise essa pessoa. O nome e o telefone ficam armazenados e alguém da prestadora pode ligar para confirmar. Não são exibidos no seu perfil nem vistos por nenhuma família."
+      },
+      "campos": [
+        {
+          "clave": "nombre",
+          "tipo": "texto",
+          "obligatorio": true,
+          "maximo": 255,
+          "es-AR": { "etiqueta": "Nombre y apellido", "ayuda": "" },
+          "en": { "etiqueta": "Full name", "ayuda": "" },
+          "pt-BR": { "etiqueta": "Nome e sobrenome", "ayuda": "" }
+        },
+        {
+          "clave": "telefono",
+          "tipo": "telefono",
+          "obligatorio": true,
+          "es-AR": { "etiqueta": "Teléfono", "ayuda": "" },
+          "en": { "etiqueta": "Phone number", "ayuda": "" },
+          "pt-BR": { "etiqueta": "Telefone", "ayuda": "" }
+        },
+        {
+          "clave": "relacion",
+          "tipo": "texto",
+          "obligatorio": true,
+          "maximo": 255,
+          "es-AR": { "etiqueta": "De qué la conoce", "ayuda": "Por ejemplo: fue su empleadora, o el coordinador de la institución donde trabajó." },
+          "en": { "etiqueta": "How you know them", "ayuda": "For example: she was your employer, or the coordinator where you worked." },
+          "pt-BR": { "etiqueta": "De onde a conhece", "ayuda": "Por exemplo: foi sua empregadora, ou o coordenador da instituição onde trabalhou." }
+        },
+        {
+          "clave": "comentarios",
+          "tipo": "texto_largo",
+          "obligatorio": false,
+          "maximo": 1000,
+          "es-AR": { "etiqueta": "Comentarios", "ayuda": "" },
+          "en": { "etiqueta": "Comments", "ayuda": "" },
+          "pt-BR": { "etiqueta": "Comentários", "ayuda": "" }
+        }
+      ]
+    }
+  }
+}

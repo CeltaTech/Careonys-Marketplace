@@ -1,0 +1,138 @@
+{
+  "_lea_esto_primero": {
+    "que_es": "Las banderas del legajo del Asistente: preguntas que se contestan con sí o no, una casilla de verificación cada una. No son listas de opciones y por eso no viven en catalogo-vocabularios.json.",
+    "por_que_existe": "Cierra el pendiente 18. Sin estas banderas, publicar el legajo de una persona es una decisión que toma el sistema por alguien que no la tomó.",
+    "como_se_usa": "Ninguna pantalla escribe estos textos a mano. La pantalla lee de acá y dibuja una casilla por bandera, con su pregunta y con la ayuda que corresponda al estado en que quedó.",
+    "de_que_lado_de_la_linea": "El interruptor es de esta modalidad; el registro de que la persona dio el consentimiento es del legajo y va del lado compartido. Ver docs/MODULOS.md.",
+    "el_valor_inicial_es_no": "Toda bandera de publicación arranca en `false`. Un valor inicial en sí sería un consentimiento que nadie prestó.",
+    "cuando_se_pregunta": "Al terminar de cargar los datos, como último paso del alta. No es una opción escondida en el perfil: es la pregunta con la que se cierra la carga, y hasta que no se conteste el legajo no queda dado de alta.",
+    "por_que_al_final": "Porque recién al final la persona sabe qué está autorizando a publicar. Si la pregunta va al principio, contesta sobre datos que todavía no cargó."
+  },
+  "paso_de_cierre": {
+    "clave": "cierre_del_alta",
+    "cuando": "ultimo_paso",
+    "obligatorio": true,
+    "banderas": [
+      "perfil_publicado",
+      "perfil_en_buscadores",
+      "comparte_telefono",
+      "disponible_urgencias"
+    ],
+    "si_no_contesta": "Las casillas arrancan sin marcar y así se guardan. Quien cierra el alta sin tocarlas queda sin publicar, que es el resultado seguro: **la falta de respuesta nunca puede terminar en un perfil publicado.**",
+    "es-AR": {
+      "titulo": "Antes de terminar: ¿qué se muestra de usted?",
+      "bajada": "Ya cargó sus datos. Falta decidir qué se hace visible y para quién. Marque lo que quiera y deje sin marcar lo que no. Todo esto se puede cambiar después, cuando quiera, desde su perfil.",
+      "recordatorio": "Nunca se muestran su documento, su correo ni su domicilio, marque lo que marque.",
+      "boton": "Terminar el alta"
+    },
+    "en": {
+      "titulo": "Before you finish: what is shown about you?",
+      "bajada": "Your details are saved. What remains is deciding what becomes visible, and to whom. Tick what you want and leave the rest unticked. All of this can be changed later, at any time, from your profile.",
+      "recordatorio": "Your ID number, email and home address are never shown, whatever you tick.",
+      "boton": "Finish registration"
+    },
+    "pt-BR": {
+      "titulo": "Antes de terminar: o que é exibido sobre você?",
+      "bajada": "Seus dados já foram salvos. Falta decidir o que fica visível e para quem. Marque o que quiser e deixe sem marcar o que não quiser. Tudo isso pode ser alterado depois, quando quiser, no seu perfil.",
+      "recordatorio": "Seu documento, seu e-mail e seu endereço nunca são exibidos, marque o que marcar.",
+      "boton": "Concluir o cadastro"
+    }
+  },
+  "banderas": {
+    "perfil_publicado": {
+      "ambito": "compartido",
+      "valor_inicial": false,
+      "es-AR": {
+        "etiqueta": "Publicar mi perfil",
+        "pregunta": "¿Desea que su perfil sea visible para las Familias que buscan Asistente?",
+        "ayuda_si": "Su perfil se muestra a las Familias de su Prestadora. No se muestran su documento, su teléfono, su correo ni su domicilio.",
+        "ayuda_no": "Su perfil no se muestra a ninguna Familia. Puede cambiarlo cuando quiera."
+      },
+      "en": {
+        "etiqueta": "Publish my profile",
+        "pregunta": "Do you want your profile to be visible to families looking for an assistant?",
+        "ayuda_si": "Your profile is shown to families at your provider. Your ID number, phone, email and home address are not shown.",
+        "ayuda_no": "Your profile is not shown to any family. You can change this at any time."
+      },
+      "pt-BR": {
+        "etiqueta": "Publicar meu perfil",
+        "pregunta": "Deseja que seu perfil fique visível para as famílias que procuram um assistente?",
+        "ayuda_si": "Seu perfil é exibido às famílias da sua prestadora. Não são exibidos seu documento, seu telefone, seu e-mail nem seu endereço.",
+        "ayuda_no": "Seu perfil não é exibido a nenhuma família. Você pode alterar isso quando quiser."
+      },
+      "se_pregunta_en": "cierre_del_alta"
+    },
+    "perfil_en_buscadores": {
+      "ambito": "esta_modalidad",
+      "valor_inicial": false,
+      "depende_de": "perfil_publicado",
+      "nota_depende": "Sin perfil publicado esta casilla se muestra apagada y no se puede marcar: no hay nada que un buscador pueda encontrar.",
+      "es-AR": {
+        "etiqueta": "Aparecer en los buscadores de internet",
+        "pregunta": "¿Desea que su perfil también se encuentre desde Google y otros buscadores?",
+        "ayuda_si": "Su perfil puede aparecer en los resultados de un buscador, sin su documento, su teléfono, su correo ni su domicilio.",
+        "ayuda_no": "Su perfil se ve dentro de la plataforma, pero no aparece en ningún buscador de internet."
+      },
+      "en": {
+        "etiqueta": "Appear in internet search engines",
+        "pregunta": "Do you also want your profile to be found through Google and other search engines?",
+        "ayuda_si": "Your profile may appear in search engine results, without your ID number, phone, email or home address.",
+        "ayuda_no": "Your profile is visible inside the platform, but does not appear in any internet search engine."
+      },
+      "pt-BR": {
+        "etiqueta": "Aparecer nos buscadores da internet",
+        "pregunta": "Deseja que seu perfil também seja encontrado pelo Google e outros buscadores?",
+        "ayuda_si": "Seu perfil pode aparecer nos resultados de um buscador, sem seu documento, seu telefone, seu e-mail nem seu endereço.",
+        "ayuda_no": "Seu perfil é visível dentro da plataforma, mas não aparece em nenhum buscador da internet."
+      },
+      "se_pregunta_en": "cierre_del_alta"
+    },
+    "comparte_telefono": {
+      "ambito": "esta_modalidad",
+      "valor_inicial": false,
+      "depende_de": "perfil_publicado",
+      "es-AR": {
+        "etiqueta": "Compartir mi teléfono al ser contactado",
+        "pregunta": "¿Desea que la Familia que lo contacte pueda ver su teléfono?",
+        "ayuda_si": "La Familia que lo contacte ve su teléfono. Ninguna otra lo ve.",
+        "ayuda_no": "Nadie ve su teléfono. La Familia lo contacta por la plataforma y usted decide si le responde."
+      },
+      "en": {
+        "etiqueta": "Share my phone number when contacted",
+        "pregunta": "Do you want the family that contacts you to be able to see your phone number?",
+        "ayuda_si": "The family that contacts you sees your phone number. No other family does.",
+        "ayuda_no": "Nobody sees your phone number. Families contact you through the platform and you decide whether to reply."
+      },
+      "pt-BR": {
+        "etiqueta": "Compartilhar meu telefone ao ser contatado",
+        "pregunta": "Deseja que a família que entrar em contato possa ver seu telefone?",
+        "ayuda_si": "A família que entrar em contato vê seu telefone. Nenhuma outra o vê.",
+        "ayuda_no": "Ninguém vê seu telefone. As famílias entram em contato pela plataforma e você decide se responde."
+      },
+      "se_pregunta_en": "cierre_del_alta"
+    },
+    "disponible_urgencias": {
+      "ambito": "compartido",
+      "valor_inicial": false,
+      "es-AR": {
+        "etiqueta": "Disponible para reemplazos urgentes",
+        "pregunta": "¿Está disponible para cubrir un reemplazo urgente?",
+        "ayuda_si": "Se le puede avisar de un reemplazo que empieza en pocas horas. Avisar no es asignar: siempre puede decir que no.",
+        "ayuda_no": "No se le avisa de reemplazos urgentes."
+      },
+      "en": {
+        "etiqueta": "Available for urgent cover",
+        "pregunta": "Are you available to cover an urgent replacement?",
+        "ayuda_si": "You may be notified of a replacement starting within a few hours. Being notified is not being assigned: you can always decline.",
+        "ayuda_no": "You are not notified of urgent replacements."
+      },
+      "pt-BR": {
+        "etiqueta": "Disponível para substituições urgentes",
+        "pregunta": "Está disponível para cobrir uma substituição urgente?",
+        "ayuda_si": "Você pode ser avisado de uma substituição que começa em poucas horas. Avisar não é atribuir: você sempre pode recusar.",
+        "ayuda_no": "Você não é avisado sobre substituições urgentes."
+      },
+      "se_pregunta_en": "cierre_del_alta"
+    }
+  }
+}

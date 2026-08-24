@@ -8,6 +8,13 @@ otro lado:
 |---|---|
 | `data/catalogo-vocabularios.json` | 21 listas de opciones, 130 opciones en total |
 | `data/catalogo-oferta.json` | 8 servicios, 6 cursos y la evaluación con sus 2 preguntas |
+| `data/catalogo-banderas.json` | 4 banderas del legajo y el paso de cierre del alta |
+| `data/catalogo-fichas.json` | 4 fichas repetibles: matrícula, estudio, experiencia y referencia |
+
+Los dos primeros son listas de opciones. Los dos últimos, del 24 de agosto de 2026, no son
+listas: uno guarda preguntas de sí o no y el otro, formularios repetibles. Están declarados
+con su texto en los tres idiomas, porque la regla 2 no admite construir en uno solo «para
+traducir después».
 
 Antes estaban escritas a mano adentro del HTML, repetidas pantalla por pantalla. Ninguna
 pantalla las lee todavía: eso pasa al portarla.
@@ -96,9 +103,9 @@ de nuestras pantallas.
 
 ## Lo que no es una lista, y por eso no está acá
 
-Tres cosas aparecieron en el relevamiento, hacen falta, y **no entran en este archivo**: no son
-opciones para elegir, son campos del legajo. Se anotan acá para que no se pierdan al diseñar el
-esquema.
+Tres cosas aparecieron en el relevamiento, hacen falta, y **no entran en `catalogo-vocabularios.json`**:
+no son opciones para elegir, son campos del legajo. **Están declaradas, en sus dos archivos
+propios.** Lo que sigue explica qué son y por qué se decidieron así.
 
 **Banderas del legajo del Asistente** — se responden con sí o no, no con una opción de lista:
 
@@ -107,21 +114,39 @@ esquema.
 - Visible en la vidriera pública y para los buscadores.
 - Comparte su teléfono con quien lo contacta.
 
-Las tres últimas son el consentimiento de la persona para ser publicada. **Hoy no existen, y sin
-ellas publicar un legajo es una decisión que toma el sistema por ella.** Tocan directamente el
+Las tres últimas son el consentimiento de la persona para ser publicada. Sin ellas, publicar un
+legajo es una decisión que toma el sistema por alguien que no la tomó. Tocan directamente el
 pendiente 2. El interruptor es de esta modalidad y el registro del consentimiento es del legajo:
 ver `docs/MODULOS.md`.
 
-**Fichas repetibles** — no es un campo con opciones, es una lista de registros que la persona
-agrega de a uno:
+**Se preguntan al terminar de cargar los datos, como último paso del alta.** No son una opción
+escondida en el perfil: son la pregunta con la que se cierra la carga. Van al final porque
+recién ahí la persona sabe qué está autorizando a publicar; si la pregunta va al principio,
+contesta sobre datos que todavía no cargó.
 
-- **Estudio o curso**: institución, título obtenido, año de finalización, foto del título.
-  `nivel_educativo` se conserva como nivel alcanzado, pero no alcanza para esto: **una Matrícula
-  necesita número, vigencia y archivo**, y en una lista cerrada de cuatro opciones no hay dónde
-  ponerlos.
-- **Experiencia laboral**: puesto, inicio, finalización, tareas realizadas, referencia del
-  empleador. El puesto sí tiene lista cerrada, `puesto_experiencia`.
-- **Referencia**: nombre, teléfono, comentarios.
+**Las casillas arrancan sin marcar y así se guardan.** Quien cierra el alta sin tocarlas queda
+sin publicar. Es a propósito: la falta de respuesta nunca puede terminar en un perfil
+publicado.
+
+**Fichas repetibles** — no es un campo con opciones, es una lista de registros que la persona
+agrega de a uno. Son cuatro, no tres: la Matrícula es la que faltaba y la que bloqueaba.
+
+- **Matrícula**: organismo que la emitió, número, vencimiento y archivo. Es obligatoria cuando el
+  tipo de Asistente la exige, y ese dato ya lo guarda `perfil_profesional.requiere_matricula`.
+  **Vence**, y vencida inhabilita para atender en cualquier modalidad.
+- **Estudio o curso**: institución, título obtenido, año de finalización, qué perfil respalda y foto
+  del título. `nivel_educativo` se conserva como nivel alcanzado, pero no alcanza para esto: en
+  una lista cerrada de cuatro opciones no hay dónde poner un título con su respaldo. **La foto es
+  obligatoria sólo cuando el estudio respalda un perfil que exige Matrícula**: sin el archivo, la
+  verificación no tiene qué mirar.
+- **Experiencia laboral**: puesto, desde, hasta y tareas realizadas. **Las tareas usan las mismas
+  tres listas que el Asistente contesta sobre sí mismo**, a propósito: es lo que permite cruzar lo
+  que dice saber hacer con lo que dice haber hecho. El competidor mantiene dos vocabularios
+  paralelos que no se corresponden, y por eso no puede cruzarlos.
+- **Referencia**: nombre, teléfono, de qué la conoce y comentarios. **Lleva su propia
+  advertencia**, porque trae el dato de una persona que no está usando el sistema y no aceptó
+  nada: se le avisa a quien carga que a esa persona hay que avisarle. No se muestra en el perfil
+  público ni la ve ninguna Familia.
 
 **Cuáles verificaciones bloquean el alta y cuáles son opcionales** es una decisión de negocio, no
 un dato de catálogo. Está sin tomar.
