@@ -16,7 +16,8 @@
 | Autenticación con Supabase Auth | Funciona. **Ninguna pantalla está protegida**: `requireAuth()` existe en `js/auth.js` y no la llama nadie |
 | Directorio de Asistentes con filtros | Maquetado y navegable |
 | Perfil público del Asistente | Maquetado |
-| Portal de postulación de Asistentes | Maquetado |
+| Portal de postulación de Asistentes | Maquetado, con el legajo funcionando: `postulacion-asistente.html` guarda las cuatro fichas repetibles y las dos banderas en las tablas de la migración 0004 |
+| Motor de fichas del legajo (`js/fichas-legajo.js`) | Funciona. Dibuja, valida y recolecta Matrícula, estudio, experiencia y referencia leyendo `data/catalogo-fichas.json` y `data/catalogo-vocabularios.json`. Ninguna de las cuatro está escrita en la pantalla |
 | Formulario integral de datos del Paciente | Maquetado, paso a paso |
 | Cliente de datos (`js/apiClient.js`) | Funciona en modo local y modo Supabase |
 | Identidad del producto (`js/identidad.js`) | Funciona y está verificada. Ver abajo |

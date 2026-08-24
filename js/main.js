@@ -227,19 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ---- MANEJADOR DE REGISTRO COMPLETO DE CUIDADOR (Delegado a postulacion-asistente.html si existe ClienteDatos) ----
-  const caregiverRegForm = document.getElementById('form-registro-cuidador-completo');
-  if (caregiverRegForm && !window.ClienteDatos) {
-    caregiverRegForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const successMsg = caregiverRegForm.querySelector('#form-success');
-      if (successMsg) {
-        successMsg.style.display = 'block';
-        caregiverRegForm.reset();
-      }
-    });
-  }
-
   // ---- MODAL SIMULADO DE VIDEOLLAMADA DE ENTREVISTA ----
   const videoBtns = document.querySelectorAll('a[href*="video"], .btn-video-call');
   videoBtns.forEach(btn => {

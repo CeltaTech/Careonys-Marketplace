@@ -17,8 +17,16 @@ listas: uno guarda preguntas de sí o no y el otro, formularios repetibles. Est�
 con su texto en los tres idiomas, porque la regla 2 no admite construir en uno solo «para
 traducir después».
 
-Antes estaban escritas a mano adentro del HTML, repetidas pantalla por pantalla. Ninguna
-pantalla las lee todavía: eso pasa al portarla.
+Antes estaban escritas a mano adentro del HTML, repetidas pantalla por pantalla. La mayoría
+de las pantallas todavía no las lee: eso pasa al portar cada una.
+
+**La primera que sí las lee es `postulacion-asistente.html`, desde el 24 de agosto de 2026.**
+Su paso 5 dibuja las cuatro fichas repetibles desde `data/catalogo-fichas.json` con el motor
+`js/fichas-legajo.js`, su paso 7 arma el cierre desde `data/catalogo-banderas.json`, y el
+perfil profesional del paso 2 sale del vocabulario `perfil_profesional`. Nada de eso está
+escrito en la pantalla, ni siquiera la regla de cuándo la Matrícula es obligatoria: eso lo
+decide la propiedad `requiere_matricula` de cada perfil del vocabulario. Agregar un perfil
+profesional que exija Matrícula hoy no toca una sola línea de código.
 
 ## Por qué había que sacarlas de ahí
 

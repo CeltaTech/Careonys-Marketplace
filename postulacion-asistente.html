@@ -199,7 +199,7 @@
           móvil (APK).</p>
       </div>
 
-      <!-- BARRA DE PROGRESO DE 5 PASOS -->
+      <!-- BARRA DE PROGRESO DE 7 PASOS -->
       <div class="wizard-progress"
         style="display:flex;justify-content:space-between;margin-bottom:40px;position:relative;">
         <div class="wizard-step-node active" data-step="1" style="flex:1;text-align:center;z-index:2;">
@@ -214,7 +214,7 @@
             style="width:36px;height:36px;border-radius:50%;background:#e2e8f0;color:#64748b;display:flex;align-items:center;justify-content:center;margin:0 auto 8px auto;font-weight:700;transition:all 0.3s ease;">
             2</div>
           <span class="wizard-step-label"
-            style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Legajo</span>
+            style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Formación</span>
         </div>
         <div class="wizard-step-node" data-step="3" style="flex:1;text-align:center;z-index:2;">
           <div class="wizard-step-circle"
@@ -235,7 +235,21 @@
             style="width:36px;height:36px;border-radius:50%;background:#e2e8f0;color:#64748b;display:flex;align-items:center;justify-content:center;margin:0 auto 8px auto;font-weight:700;transition:all 0.3s ease;">
             5</div>
           <span class="wizard-step-label"
-            style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Confirmar</span>
+            style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Legajo</span>
+        </div>
+        <div class="wizard-step-node" data-step="6" style="flex:1;text-align:center;z-index:2;">
+          <div class="wizard-step-circle"
+            style="width:36px;height:36px;border-radius:50%;background:#e2e8f0;color:#64748b;display:flex;align-items:center;justify-content:center;margin:0 auto 8px auto;font-weight:700;transition:all 0.3s ease;">
+            6</div>
+          <span class="wizard-step-label"
+            style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Documentos</span>
+        </div>
+        <div class="wizard-step-node" data-step="7" style="flex:1;text-align:center;z-index:2;">
+          <div class="wizard-step-circle"
+            style="width:36px;height:36px;border-radius:50%;background:#e2e8f0;color:#64748b;display:flex;align-items:center;justify-content:center;margin:0 auto 8px auto;font-weight:700;transition:all 0.3s ease;">
+            7</div>
+          <span class="wizard-step-label"
+            style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Cierre</span>
         </div>
       </div>
 
@@ -299,18 +313,13 @@
         <!-- PASO 2: FORMACIÓN Y DOCUMENTACIÓN -->
         <div class="wizard-step-pane" id="step-pane-2" style="display:none;">
           <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-titulo);"><i
-              class="fas fa-file-invoice"></i> Paso 2: Nivel Profesional y Documentación</h3>
+              class="fas fa-file-invoice"></i> Paso 2: Formación</h3>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
             <div class="form-group" style="grid-column:1 / -1;">
               <label for="profesion">Perfil Profesional / Especialidad Principal</label>
               <select id="profesion" required>
-                <option value="">— Seleccioná tu perfil —</option>
-                <option value="domiciliaria" selected>Cuidadora Domiciliaria</option>
-                <option value="enfermera">Enfermera/o Universitaria/o</option>
-                <option value="auxiliar">Auxiliar de Enfermería</option>
-                <option value="at">Acompañante Terapéutico (AT)</option>
-                <option value="gerontologo">Especialista en Gerontología</option>
+                <option value="">— Seleccionar —</option>
               </select>
             </div>
             <div class="form-group" style="grid-column:1 / -1;">
@@ -354,18 +363,12 @@
           <div
             style="background:var(--superficie-hover);border-radius:12px;padding:20px;border:1px solid var(--borde-card);margin-bottom:20px;">
             <h4 style="font-size:14px;font-weight:700;color:var(--texto-titulo);margin-bottom:16px;"><i
-                class="fas fa-shield-alt" style="color:var(--azul-medio-texto);"></i> Adjuntar Documentación (Requisito APK)</h4>
+                class="fas fa-shield-alt" style="color:var(--azul-medio-texto);"></i> Foto de perfil</h4>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
               <div class="form-group" style="grid-column: 1 / -1;"><label style="font-size:12px;">📸 Foto de Perfil
                   Profesional (Rostro tipo carnet)</label><input type="file" id="foto-perfil" accept="image/*"
                   style="font-size:12px;" required /></div>
-              <div class="form-group"><label style="font-size:12px;">🛡️ Foto de DNI (Frente y Dorso)</label><input
-                  type="file" accept="image/*,.pdf" style="font-size:12px;" required /></div>
-              <div class="form-group"><label style="font-size:12px;">📋 Certificado de Antecedentes Penales
-                  (Vigente)</label><input type="file" accept="image/*,.pdf" style="font-size:12px;" required /></div>
-              <div class="form-group" style="grid-column: 1 / -1;"><label style="font-size:12px;">📜 Título /
-                  Certificado de Cursos / Matrícula</label><input type="file" accept="image/*,.pdf"
-                  style="font-size:12px;" required /></div>
+              <div class="form-group" style="grid-column: 1 / -1;"><p style="font-size:12px;color:var(--texto-secundario);margin:0;">El documento de identidad, los antecedentes penales y el título se cargan en el paso 6. La matrícula, si corresponde, en el paso 5.</p></div>
             </div>
           </div>
 
@@ -566,24 +569,32 @@
           </div>
         </div>
 
-        <!-- PASO 5: REFERENCIAS Y CONFIRMACIÓN -->
+        <!-- PASO 5: LEGAJO — FICHAS REPETIBLES (matrícula, estudios, experiencia, referencias) -->
+        <!-- Se dibuja desde data/catalogo-fichas.json vía js/fichas-legajo.js (regla 5.1: formularios declarados, no dibujados). -->
         <div class="wizard-step-pane" id="step-pane-5" style="display:none;">
           <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-titulo);"><i
-              class="fas fa-user-check"></i> Paso 5: Referencias y Aval</h3>
+              class="fas fa-folder-open"></i> Paso 5: Legajo</h3>
+          <p id="ficha-matricula-obligatoria-aviso" style="display:none;font-size:12.5px;color:#92400e;background:#fef3c7;border-radius:8px;padding:10px;margin-bottom:16px;">
+            El perfil profesional que eligió exige Matrícula vigente y verificada para poder publicarse. Cárguela acá.
+          </p>
+          <div id="ficha-matricula" style="margin-bottom:24px;"></div>
+          <div id="ficha-estudio" style="margin-bottom:24px;"></div>
+          <div id="ficha-experiencia_laboral" style="margin-bottom:24px;"></div>
+          <div id="ficha-referencia" style="margin-bottom:24px;"></div>
 
-          <!-- REFERENCIA LABORAL -->
-          <div
-            style="background:var(--superficie-hover);border-radius:12px;padding:20px;border:1px solid var(--borde-card);margin-bottom:20px;">
-            <h4 style="font-size:14px;font-weight:700;color:var(--texto-titulo);margin-bottom:12px;"><i
-                class="fas fa-address-book" style="color:var(--azul-medio-texto);"></i> Referencia Laboral Anterior (Obligatoria)
-            </h4>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-              <div class="form-group"><label for="ref-nombre">Nombre de Referente Comercial/Familiar
-                  anterior</label><input type="text" id="ref-nombre" placeholder="Nombre completo" required /></div>
-              <div class="ref-telefono"><label for="ref-telefono">Teléfono del Referente (WhatsApp)</label><input
-                  type="tel" id="ref-telefono" placeholder="Ej: 11 9876 5432" required /></div>
-            </div>
+          <div style="display:flex;justify-content:space-between;margin-top:24px;">
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="4"
+              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
+                style="margin-right:8px;"></i> Anterior</button>
+            <button type="button" class="btn btn-primario btn-next-step" data-next="6">Siguiente Paso <i
+                class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
           </div>
+        </div>
+
+        <!-- PASO 6: REFERENCIAS Y CONFIRMACIÓN -->
+        <div class="wizard-step-pane" id="step-pane-6" style="display:none;">
+          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-titulo);"><i
+              class="fas fa-user-check"></i> Paso 6: Documentación y Aval</h3>
 
           <!-- CARGA DE DOCUMENTOS: DNI, PENALES, TÍTULO -->
           <div
@@ -634,9 +645,26 @@
             <strong>"Validado por Prestadora"</strong> en el directorio visible para las familias.
           </div>
 
-          <!-- ACEPTACIÓN DE TÉRMINOS Y CONDICIONES Y POLÍTICAS DE PRIVACIDAD PARA CUIDADORES -->
-          <div
-            style="margin:20px 0;font-size:12.5px;color:var(--texto-principal);display:flex;align-items:flex-start;gap:8px;">
+          <div style="display:flex;justify-content:space-between;margin-top:24px;">
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="5"
+              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
+                style="margin-right:8px;"></i> Anterior</button>
+            <button type="button" class="btn btn-primario btn-next-step" data-next="7">Siguiente Paso <i
+                class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+          </div>
+        </div>
+
+        <!-- PASO 7: CIERRE — BANDERAS DE PUBLICACIÓN -->
+        <!-- Texto, orden y valor inicial vienen de data/catalogo-banderas.json (pendiente 18). -->
+        <div class="wizard-step-pane" id="step-pane-7" style="display:none;">
+          <h3 id="cierre-titulo" style="font-size:18px;font-weight:700;margin-bottom:8px;color:var(--texto-titulo);"><i
+              class="fas fa-flag-checkered"></i></h3>
+          <p id="cierre-bajada" style="font-size:13.5px;color:var(--texto-secundario);margin-bottom:16px;"></p>
+          <p id="cierre-recordatorio" style="font-size:12.5px;color:#1b5e20;background:#e8f5e9;border-radius:8px;padding:10px;margin-bottom:20px;"></p>
+
+          <div id="banderas-container"></div>
+
+          <div style="margin:20px 0;font-size:12.5px;color:var(--texto-principal);display:flex;align-items:flex-start;gap:8px;">
             <input type="checkbox" id="acepto-terminos" required
               style="margin-top:3px;width:18px;height:18px;cursor:pointer;" />
             <label for="acepto-terminos" style="cursor:pointer;line-height:1.4;">
@@ -648,11 +676,11 @@
           </div>
 
           <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="4"
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="6"
               style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
                 style="margin-right:8px;"></i> Anterior</button>
             <button type="submit" class="btn btn-secundario" id="btn-submit-cuidador" style="padding:12px 32px;"><i
-                class="fas fa-check-circle"></i> COMPLETAR REGISTRO Y SOLICITAR AUDITORÍA DE LEGAJO</button>
+                class="fas fa-check-circle"></i> <span id="cierre-boton">Terminar el alta</span></button>
           </div>
 
           <div id="form-success" class="form-success"
@@ -707,6 +735,7 @@
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/fichas-legajo.js"></script>
   <script>
     // INTERACTIVIDAD DE LA GRILLA HORARIA 7x3
     document.querySelectorAll('.schedule-grid-7x3 .select-slot').forEach(slot => {
@@ -728,6 +757,71 @@
         }
       });
     });
+
+    // LEGAJO: FICHAS REPETIBLES Y BANDERAS DE CIERRE (pendientes 18 y 19)
+    // Se dibujan desde data/catalogo-fichas.json y data/catalogo-banderas.json, nunca a mano.
+    let fichasListas = false;
+
+    function montarFichas() {
+      if (!FichasLegajo.fichas) return;
+      FichasLegajo.montarSeccion('ficha-matricula', 'matricula');
+      FichasLegajo.montarSeccion('ficha-estudio', 'estudio', { obligatoriaAlMontar: true });
+      FichasLegajo.montarSeccion('ficha-experiencia_laboral', 'experiencia_laboral', { obligatoriaAlMontar: true });
+      FichasLegajo.montarSeccion('ficha-referencia', 'referencia', { obligatoriaAlMontar: true });
+    }
+
+    async function inicializarLegajo() {
+      await FichasLegajo.cargar();
+      montarFichas();
+      fichasListas = true;
+
+      const profesionSelect = document.getElementById('profesion');
+      const elegido = profesionSelect.value;
+      FichasLegajo.opcionesVocabulario('perfil_profesional').forEach(item => {
+        const opcion = document.createElement('option');
+        opcion.value = item.clave;
+        opcion.textContent = item[FichasLegajo.idioma] || item['es-AR'];
+        profesionSelect.appendChild(opcion);
+      });
+      profesionSelect.value = elegido;
+
+      const actualizarAvisoMatricula = () => {
+        const exige = FichasLegajo.requiereMatricula(profesionSelect.value);
+        document.getElementById('ficha-matricula-obligatoria-aviso').style.display = exige ? 'block' : 'none';
+      };
+      profesionSelect.addEventListener('change', actualizarAvisoMatricula);
+      actualizarAvisoMatricula();
+
+      const banderasRes = await fetch('data/catalogo-banderas.json').then(r => r.json());
+      const idioma = 'es-AR';
+      const paso = banderasRes.paso_de_cierre[idioma];
+      document.getElementById('cierre-titulo').append(' ' + paso.titulo);
+      document.getElementById('cierre-bajada').textContent = paso.bajada;
+      document.getElementById('cierre-recordatorio').textContent = paso.recordatorio;
+      document.getElementById('cierre-boton').textContent = paso.boton;
+
+      const contenedorBanderas = document.getElementById('banderas-container');
+      banderasRes.paso_de_cierre.banderas.forEach(clave => {
+        const bandera = banderasRes.banderas[clave][idioma];
+        const bloque = document.createElement('div');
+        bloque.style.cssText = 'background:var(--superficie-hover);border-radius:12px;padding:16px;border:1px solid var(--borde-card);margin-bottom:12px;';
+        bloque.innerHTML = `
+          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-weight:700;font-size:13.5px;">
+            <input type="checkbox" id="bandera-${clave}" data-bandera="${clave}" style="width:18px;height:18px;margin-top:2px;" />
+            ${bandera.etiqueta}
+          </label>
+          <p style="font-size:12px;color:var(--texto-secundario);margin:6px 0 0 28px;">${bandera.pregunta}</p>
+          <p id="bandera-${clave}-ayuda" style="font-size:11.5px;color:#64748b;margin:6px 0 0 28px;">${bandera.ayuda_no}</p>
+        `;
+        contenedorBanderas.appendChild(bloque);
+        const input = bloque.querySelector(`#bandera-${clave}`);
+        const ayuda = bloque.querySelector(`#bandera-${clave}-ayuda`);
+        input.addEventListener('change', () => {
+          ayuda.textContent = input.checked ? bandera.ayuda_si : bandera.ayuda_no;
+        });
+      });
+    }
+    inicializarLegajo();
 
     // NAVEGACIÓN Y VALIDACIÓN DEL WIZARD STEP-BY-STEP
     function validatePane(paneId) {
@@ -753,8 +847,22 @@
         }
       });
 
+      // Paso 5 (Legajo): las fichas ya validan sus propios bloques, y la Matrícula
+      // es obligatoria sólo cuando el perfil profesional elegido la exige (pendiente 19).
+      if (paneId === 'step-pane-5' && fichasListas) {
+        ['matricula', 'estudio', 'experiencia_laboral', 'referencia'].forEach(tipo => {
+          if (!FichasLegajo.validarSeccion(`ficha-${tipo}`, tipo)) valid = false;
+        });
+        const exigeMatricula = FichasLegajo.requiereMatricula(document.getElementById('profesion').value);
+        const tieneMatricula = FichasLegajo.recolectar('ficha-matricula', 'matricula').length > 0;
+        if (exigeMatricula && !tieneMatricula) {
+          valid = false;
+          document.getElementById('ficha-matricula-obligatoria-aviso').style.background = '#fecaca';
+        }
+      }
+
       if (!valid) {
-        alert('Por favor, completa todos los campos y archivos obligatorios marcados en rojo antes de continuar.');
+        alert('Faltan completar campos o archivos obligatorios. Están marcados en rojo.');
         if (firstInvalidField) firstInvalidField.focus();
       }
       return valid;
@@ -826,8 +934,8 @@
       e.preventDefault();
       const form = e.target;
 
-      // Validar paso por paso (del 1 al 5) para asegurar que nada quedó vacío
-      for (let i = 1; i <= 5; i++) {
+      // Validar paso por paso (del 1 al 7) para asegurar que nada quedó vacío
+      for (let i = 1; i <= 7; i++) {
         if (!validatePane(`step-pane-${i}`)) {
           goToStep(i);
           return;
@@ -837,13 +945,15 @@
       // Validar términos y condiciones
       const termsCheckbox = document.getElementById('acepto-terminos');
       if (!termsCheckbox || !termsCheckbox.checked) {
-        alert('Debés aceptar los Términos y Condiciones para enviar la postulación.');
+        alert('Para terminar el alta hay que aceptar los Términos y Condiciones.');
         if (termsCheckbox) termsCheckbox.focus();
         return;
       }
 
       const submitBtn = document.getElementById('btn-submit-cuidador');
-      submitBtn.textContent = 'Enviando...';
+      const textoBoton = document.getElementById('cierre-boton');
+      const textoBotonOriginal = textoBoton.textContent;
+      textoBoton.textContent = 'Enviando...';
       submitBtn.disabled = true;
 
       try {
@@ -864,15 +974,26 @@
 
         // 2. Subir documentos a Supabase Storage
         const docUrls = {
+          foto: 'pendiente',
           dni: 'pendiente',
           penales: 'pendiente',
           titulo: 'pendiente'
         };
 
+        const fileFoto = document.getElementById('foto-perfil')?.files[0];
         const fileDni = document.getElementById('file-dni')?.files[0];
         const filePenales = document.getElementById('file-penales')?.files[0];
         const fileTitulo = document.getElementById('file-titulo')?.files[0];
 
+        if (fileFoto) {
+          try {
+            docUrls.foto = await Sesion.uploadFile(
+              'documentos-cuidadores',
+              `${userId}/foto_perfil.${fileFoto.name.split('.').pop()}`,
+              fileFoto
+            );
+          } catch (e) { console.warn('Foto upload error:', e.message); }
+        }
         if (fileDni) {
           try {
             docUrls.dni = await Sesion.uploadFile(
@@ -934,17 +1055,47 @@
             cursosCompletados: cursos
           },
           valorHora: document.getElementById('valor-hora').value,
-          referencia: {
-            nombre: document.getElementById('ref-nombre').value,
-            telefono: document.getElementById('ref-telefono').value
-          },
           documentos: docUrls,   // URLs reales de Supabase Storage
           grillaHorarios
         };
 
-        await ClienteDatos.registrarAspirante(data);
+        const aspirante = await ClienteDatos.registrarAspirante(data);
 
-        // 5. Confirmar al usuario
+        // 5. Legajo: las cuatro fichas repetibles y las dos banderas (migración 0004)
+        const legajo = {
+          matriculas: FichasLegajo.recolectar('ficha-matricula', 'matricula'),
+          estudios: FichasLegajo.recolectar('ficha-estudio', 'estudio'),
+          experiencia: FichasLegajo.recolectar('ficha-experiencia_laboral', 'experiencia_laboral'),
+          referencias: FichasLegajo.recolectar('ficha-referencia', 'referencia'),
+          banderas: {}
+        };
+        document.querySelectorAll('#banderas-container [data-bandera]').forEach(casilla => {
+          legajo.banderas[casilla.getAttribute('data-bandera')] = casilla.checked;
+        });
+
+        // Los archivos de matrícula y estudio van a Storage; en la tabla queda la dirección.
+        for (const clave of ['matriculas', 'estudios']) {
+          for (let i = 0; i < legajo[clave].length; i++) {
+            const fila = legajo[clave][i];
+            fila.archivo_url = null;
+            if (fila.archivo) {
+              try {
+                fila.archivo_url = await Sesion.uploadFile(
+                  'documentos-cuidadores',
+                  `${userId}/${clave}_${i}.${fila.archivo.name.split('.').pop()}`,
+                  fila.archivo
+                );
+              } catch (errArchivo) { console.warn('Legajo upload error:', errArchivo.message); }
+            }
+            delete fila.archivo;
+          }
+        }
+
+        if (aspirante && aspirante.id) {
+          await ClienteDatos.guardarLegajoAsistente(aspirante.id, legajo);
+        }
+
+        // 6. Confirmar al usuario
         const successMsg = document.getElementById('form-success');
         if (successMsg) successMsg.style.display = 'block';
         form.reset();
@@ -955,13 +1106,15 @@
           slot.style.borderColor = '#e2e8f0';
           slot.textContent = '—';
         });
+        montarFichas();
         goToStep(1);
         setTimeout(() => { if (successMsg) successMsg.style.display = 'none'; }, 6000);
 
       } catch (err) {
-        alert('Error al enviar la postulación: ' + err.message);
+        console.error('Alta de Asistente:', err);
+        alert('No se pudo completar el alta. Los datos cargados siguen en pantalla: se puede reintentar en un momento.');
       } finally {
-        submitBtn.textContent = 'COMPLETAR REGISTRO Y SOLICITAR AUDITORÍA DE LEGAJO';
+        textoBoton.textContent = textoBotonOriginal;
         submitBtn.disabled = false;
       }
     });

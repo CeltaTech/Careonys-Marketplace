@@ -150,6 +150,43 @@ const ClienteDatos = {
     return nuevo;
   },
 
+  // Guarda el legajo del Asistente: las cuatro fichas repetibles y las dos
+  // banderas de consentimiento (migracion 0004). Las claves de cada fila salen
+  // de data/catalogo-fichas.json y coinciden con las columnas de la tabla.
+  async guardarLegajoAsistente(caregiverId, legajo) {
+    const tablas = {
+      matriculas: 'matriculas_asistente',
+      estudios: 'estudios_asistente',
+      experiencia: 'experiencia_laboral_asistente',
+      referencias: 'referencias_asistente'
+    };
+
+    if (!this.useSupabase) {
+      const guardados = JSON.parse(localStorage.getItem('legajos') || '{}');
+      guardados[caregiverId] = legajo;
+      localStorage.setItem('legajos', JSON.stringify(guardados));
+      return guardados[caregiverId];
+    }
+
+    const tenantId = this.currentTenant ? this.currentTenant.id : null;
+    const marcar = fila => ({ ...fila, caregiver_id: caregiverId, tenant_id: tenantId });
+    const guardado = {};
+
+    for (const clave of Object.keys(tablas)) {
+      const filas = (legajo[clave] || []).map(marcar);
+      if (filas.length > 0) {
+        guardado[clave] = await this._supabaseRequest('POST', tablas[clave], filas);
+      }
+    }
+
+    if (legajo.banderas) {
+      guardado.banderas = await this._supabaseRequest('POST', 'banderas_asistente',
+        marcar({ ...legajo.banderas, respondido_el: new Date().toISOString() }));
+    }
+
+    return guardado;
+  },
+
   async cambiarEstadoAspirante(id, nuevoEstado, notaInterna = '') {
     if (this.useSupabase) {
       return await this._supabasePatch('caregivers', id, { estado: nuevoEstado, notaPrestadora: notaInterna });
