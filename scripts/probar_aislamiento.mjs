@@ -54,6 +54,17 @@
         depósito privado. (17 a 20 también necesitan --local, por lo mismo:
         validar un legajo es trabajo del personal de la Prestadora.)
 
+   Y sobre el examen (migración 0008), que es lo que acredita que alguien sabe
+   cuidar:
+
+    21. La respuesta correcta no se puede leer con sesión iniciada.
+    22. Las opciones sí se leen, y llegan sin la respuesta adentro.
+    23. Contestando mal, la base dice que no aprobó.
+    24. Contestando bien, aprueba.
+    25. Un intento aprobado no se puede escribir a mano.
+    26. Cada quien ve sus intentos y ninguno de otra persona.
+    27. Cuando se acaban los intentos, no deja rendir otra vez.
+
    Todo con datos inventados. No toca ni una fila que ya estuviera cargada, y
    borra lo que crea. No muestra ninguna clave: usa la publicable, que es la
    que ya viaja al navegador.
@@ -436,6 +447,109 @@ if (!coordinador) {
     filtradas.length ? 'devuelve ' + filtradas.join(', ') : columnas.length + ' columnas, ninguna personal');
 }
 
+// --- 21 a 27: el examen -----------------------------------------------------
+// Un examen sirve si es imposible aprobarlo sin saber la respuesta. Eso son
+// tres cosas separadas, y acá se prueban las tres: que la respuesta correcta no
+// salga de la base, que la corrección la haga la base, y que el resultado no se
+// pueda escribir a mano.
+//
+// Las claves de las respuestas buenas —`fowler`, `trendelenburg`— están puestas
+// acá a mano, sacadas de la migración 0008. No hay otra forma: si la prueba
+// pudiera averiguarlas preguntándole a la base, el examen ya estaría roto.
+console.log('');
+console.log('El examen');
+
+const asistente = cuentas[0];
+const otroAsistente = cuentas[1];
+
+const { cuerpo: evaluaciones } = await rest(
+  '/rest/v1/evaluaciones?select=id,clave,porcentaje_para_aprobar' +
+  '&clave=eq.gerontologico_primeros_auxilios', {}, asistente.token);
+const evaluacion = Array.isArray(evaluaciones) ? evaluaciones[0] : null;
+
+const { cuerpo: preguntas } = evaluacion
+  ? await rest('/rest/v1/preguntas_evaluacion?select=id,clave&order=orden' +
+               '&evaluacion_id=eq.' + evaluacion.id, {}, asistente.token)
+  : { cuerpo: null };
+
+if (!evaluacion || !Array.isArray(preguntas) || preguntas.length !== 2) {
+  comprobar('La evaluación de muestra está cargada con sus dos preguntas', false,
+    evaluacion ? 'preguntas: ' + (Array.isArray(preguntas) ? preguntas.length : 'ninguna')
+               : 'no se encontró la evaluación');
+} else {
+  const cruda = await rest('/rest/v1/opciones_pregunta?select=*', {}, asistente.token);
+  comprobar('La tabla con la respuesta correcta no se lee ni con sesión',
+    cruda.estado >= 400, 'devolvió ' + cruda.estado);
+
+  const { cuerpo: opciones } = await rest(
+    '/rest/v1/opciones_para_responder?select=*', {}, asistente.token);
+  const listaOpciones = Array.isArray(opciones) ? opciones : [];
+  const seFiltro = listaOpciones.some(o => 'es_correcta' in o);
+  comprobar('Las opciones llegan sin la respuesta correcta adentro',
+    listaOpciones.length > 0 && !seFiltro,
+    seFiltro ? 'la vista devuelve es_correcta'
+             : listaOpciones.length + ' opciones, ninguna con la respuesta');
+
+  // Arma el objeto que espera la función: identificador de pregunta →
+  // identificador de la opción elegida.
+  const respuestasCon = (primera, segunda) => {
+    const elegida = (preguntaClave, opcionClave) => {
+      const pregunta = preguntas.find(x => x.clave === preguntaClave);
+      const opcion = listaOpciones.find(o => o.pregunta_id === pregunta.id && o.clave === opcionClave);
+      return [pregunta.id, opcion ? opcion.id : null];
+    };
+    const [p1, o1] = elegida('posicion_alimentacion', primera);
+    const [p2, o2] = elegida('baja_presion', segunda);
+    const armado = {};
+    armado[p1] = o1;
+    armado[p2] = o2;
+    return armado;
+  };
+
+  const rendir = async (respuestas, token) => rest('/rest/v1/rpc/rendir_evaluacion', {
+    method: 'POST',
+    body: JSON.stringify({ p_evaluacion: evaluacion.id, p_respuestas: respuestas })
+  }, token);
+
+  const mal = await rendir(respuestasCon('acostado', 'caminar'), asistente.token);
+  comprobar('Contestando mal, la base dice que no aprobó',
+    mal.cuerpo && mal.cuerpo.aprobado === false && mal.cuerpo.porcentaje === 0,
+    mal.cuerpo && typeof mal.cuerpo.porcentaje === 'number'
+      ? 'porcentaje ' + mal.cuerpo.porcentaje : 'estado ' + mal.estado);
+
+  const bien = await rendir(respuestasCon('fowler', 'trendelenburg'), asistente.token);
+  comprobar('Contestando bien, aprueba',
+    bien.cuerpo && bien.cuerpo.aprobado === true && bien.cuerpo.porcentaje === 100,
+    bien.cuerpo && typeof bien.cuerpo.porcentaje === 'number'
+      ? 'porcentaje ' + bien.cuerpo.porcentaje : 'estado ' + bien.estado);
+
+  const aMano = await rest('/rest/v1/intentos_evaluacion', {
+    method: 'POST',
+    body: JSON.stringify({
+      tenant_id: asistente.prestadora.id, caregiver_id: asistente.legajoId,
+      evaluacion_id: evaluacion.id, respuestas: {}, respuestas_correctas: 2,
+      preguntas_totales: 2, porcentaje: 100, aprobado: true
+    })
+  }, asistente.token);
+  comprobar('Un intento aprobado no se puede escribir a mano',
+    aMano.estado >= 400, 'devolvió ' + aMano.estado);
+
+  const { cuerpo: propios } = await rest('/rest/v1/intentos_evaluacion?select=id', {}, asistente.token);
+  const { cuerpo: ajenos } = await rest('/rest/v1/intentos_evaluacion?select=id', {}, otroAsistente.token);
+  const cuentaPropios = Array.isArray(propios) ? propios.length : -1;
+  const cuentaAjenos = Array.isArray(ajenos) ? ajenos.length : -1;
+  comprobar('Cada quien ve sus intentos y ninguno de otra persona',
+    cuentaPropios === 2 && cuentaAjenos === 0,
+    'el que rindió ve ' + cuentaPropios + ', el otro ve ' + cuentaAjenos);
+
+  // El tope de la evaluación de muestra son tres. Van dos rendidos: se gasta el
+  // tercero y el cuarto tiene que rebotar, aunque venga con todo bien.
+  await rendir(respuestasCon('acostado', 'caminar'), asistente.token);
+  const cuarto = await rendir(respuestasCon('fowler', 'trendelenburg'), asistente.token);
+  comprobar('Gastados los tres intentos, no deja rendir otra vez',
+    cuarto.estado >= 400, 'devolvió ' + cuarto.estado);
+}
+
 // --- Limpieza ---------------------------------------------------------------
 console.log('');
 for (const c of cuentas) {
@@ -462,6 +576,7 @@ console.log('');
 if (fallos === 0) {
   console.log('Pasaron todas. El límite lo pone la sesión: vale para las tablas, para los');
   console.log('archivos y para la vidriera, que además exige que la persona haya dicho que sí.');
+  console.log('Y el examen lo corrige la base: la respuesta correcta nunca sale de ahí.');
 } else {
   console.log(fallos + ' comprobación(es) fallaron. El aislamiento NO está.');
   process.exitCode = 1;

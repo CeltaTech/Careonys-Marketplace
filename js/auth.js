@@ -111,6 +111,16 @@ const Sesion = {
     if (crudo.includes('mime type') || crudo.includes('invalid_mime')) {
       return 'Ese tipo de archivo no se acepta. Se admiten imágenes (JPG, PNG, WEBP) y PDF.';
     }
+    // Los cuatro avisos que puede devolver rendir_evaluacion (migración 0008).
+    if (crudo.includes('sin_legajo')) {
+      return 'Para rendir hace falta tener el legajo cargado. Se completa desde «Mi Legajo».';
+    }
+    if (crudo.includes('sin_intentos')) {
+      return 'Ya se usaron todos los intentos de esta evaluación.';
+    }
+    if (crudo.includes('evaluacion_vacia') || crudo.includes('evaluacion_inexistente')) {
+      return 'Esta evaluación no está disponible en este momento.';
+    }
     if (crudo.includes('row-level security') || crudo.includes('violates row')
         || crudo.includes('permission denied') || crudo.includes('unauthorized')) {
       return 'La sesión no tiene permiso para esta operación. Conviene volver a entrar.';

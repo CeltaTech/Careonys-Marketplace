@@ -334,6 +334,77 @@ const ClienteDatos = {
     return data.reverse();
   },
 
+  // --- EL EXAMEN ---
+  // La corrección la hace la base (migración 0008), y no por prolijidad: la
+  // respuesta correcta vive en una columna que no tiene permiso de lectura
+  // para nadie. Acá sólo se piden los enunciados y se manda lo contestado.
+
+  // Las evaluaciones que esta persona puede rendir. Salen de la base porque
+  // son un catálogo (regla 5.1): ninguna pantalla tiene una clave escrita
+  // adentro. La política ya devuelve sólo las publicadas, las generales y las
+  // de su Prestadora.
+  async getEvaluaciones() {
+    return await this._supabaseRequest('GET', 'evaluaciones', null, {
+      select: 'id,clave,nombre,porcentaje_para_aprobar,intentos_maximos,curso_id',
+      order: 'nombre.asc'
+    });
+  },
+
+  // Devuelve la evaluación con sus preguntas y las opciones de cada una.
+  // Las opciones salen de `opciones_para_responder`, que es la vista sin la
+  // columna de la respuesta: pedirle `opciones_pregunta` directamente no
+  // devuelve nada, y así tiene que quedarse.
+  async getEvaluacion(clave) {
+    const evaluaciones = await this._supabaseRequest('GET', 'evaluaciones', null, {
+      clave: `eq.${clave}`,
+      select: 'id,clave,nombre,porcentaje_para_aprobar,intentos_maximos'
+    });
+    const evaluacion = evaluaciones[0];
+    if (!evaluacion) return null;
+
+    const preguntas = await this._supabaseRequest('GET', 'preguntas_evaluacion', null, {
+      evaluacion_id: `eq.${evaluacion.id}`,
+      select: 'id,clave,enunciado,orden',
+      order: 'orden.asc'
+    });
+    if (preguntas.length === 0) return { ...evaluacion, preguntas: [] };
+
+    const opciones = await this._supabaseRequest('GET', 'opciones_para_responder', null, {
+      pregunta_id: `in.(${preguntas.map(p => p.id).join(',')})`,
+      select: 'id,pregunta_id,clave,texto,orden',
+      order: 'orden.asc'
+    });
+
+    return {
+      ...evaluacion,
+      preguntas: preguntas.map(pregunta => ({
+        ...pregunta,
+        opciones: opciones.filter(o => o.pregunta_id === pregunta.id)
+      }))
+    };
+  },
+
+  // `respuestas` es un objeto: identificador de pregunta → identificador de la
+  // opción elegida. Lo que devuelve es lo que calculó la base, que es el único
+  // resultado que vale.
+  async rendirEvaluacion(evaluacionId, respuestas) {
+    return await this._supabaseRequest('POST', 'rpc/rendir_evaluacion', {
+      p_evaluacion: evaluacionId,
+      p_respuestas: respuestas
+    });
+  },
+
+  // Los intentos de quien inició sesión. La política de la base ya decide
+  // cuáles puede ver: los propios, y los de su Prestadora si es del personal.
+  async getIntentosEvaluacion(evaluacionId) {
+    const queryParams = {
+      select: 'id,evaluacion_id,porcentaje,aprobado,rendido_el',
+      order: 'rendido_el.desc'
+    };
+    if (evaluacionId) queryParams.evaluacion_id = `eq.${evaluacionId}`;
+    return await this._supabaseRequest('GET', 'intentos_evaluacion', null, queryParams);
+  },
+
   // --- INTEGRACIÓN REST DE SUPABASE ---
   async _supabaseRequest(method, table, data = null, queryParams = {}) {
     const urlObj = new URL(`${this.supabaseUrl}/rest/v1/${table}`);
