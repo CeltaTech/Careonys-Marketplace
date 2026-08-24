@@ -667,6 +667,7 @@
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/identidad.js"></script>
+  <script src="js/texto.js"></script>
   <script src="js/catalogo.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
@@ -743,15 +744,17 @@
         bloque.style.cssText = 'background:var(--superficie-hover);border-radius:12px;padding:16px;border:1px solid var(--borde-card);margin-bottom:12px;';
         bloque.innerHTML = `
           <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-weight:700;font-size:13.5px;">
-            <input type="checkbox" id="bandera-${clave}" data-bandera="${clave}" style="width:18px;height:18px;margin-top:2px;" />
-            ${bandera.etiqueta}
+            <input type="checkbox" id="bandera-${Texto.escapar(clave)}" data-bandera="${Texto.escapar(clave)}" style="width:18px;height:18px;margin-top:2px;" />
+            ${Texto.escapar(bandera.etiqueta)}
           </label>
-          <p style="font-size:12px;color:var(--texto-secundario);margin:6px 0 0 28px;">${bandera.pregunta}</p>
-          <p id="bandera-${clave}-ayuda" style="font-size:11.5px;color:#64748b;margin:6px 0 0 28px;">${bandera.ayuda_no}</p>
+          <p style="font-size:12px;color:var(--texto-secundario);margin:6px 0 0 28px;">${Texto.escapar(bandera.pregunta)}</p>
+          <p id="bandera-${Texto.escapar(clave)}-ayuda" style="font-size:11.5px;color:#64748b;margin:6px 0 0 28px;">${Texto.escapar(bandera.ayuda_no)}</p>
         `;
         contenedorBanderas.appendChild(bloque);
-        const input = bloque.querySelector(`#bandera-${clave}`);
-        const ayuda = bloque.querySelector(`#bandera-${clave}-ayuda`);
+        // El navegador guarda el identificador ya sin escapar, y un selector de
+        // CSS no admite cualquier carácter: `CSS.escape` lo deja buscable.
+        const input = bloque.querySelector(`#${CSS.escape('bandera-' + clave)}`);
+        const ayuda = bloque.querySelector(`#${CSS.escape('bandera-' + clave + '-ayuda')}`);
         input.addEventListener('change', () => {
           ayuda.textContent = input.checked ? bandera.ayuda_si : bandera.ayuda_no;
         });

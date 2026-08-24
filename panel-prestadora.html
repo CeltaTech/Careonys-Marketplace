@@ -136,6 +136,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/identidad.js"></script>
+  <script src="js/texto.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script>
@@ -188,11 +189,11 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>
-            <strong>${a.nombre}</strong><br/>
-            <span style="font-size:11px;color:#64748b;">DNI: ${a.dni} | Tel: ${a.telefono}</span>
+            <strong>${Texto.escapar(a.nombre)}</strong><br/>
+            <span style="font-size:11px;color:#64748b;">DNI: ${Texto.escapar(a.dni)} | Tel: ${Texto.escapar(a.telefono)}</span>
           </td>
-          <td>${a.profesion}</td>
-          <td>${a.zona}</td>
+          <td>${Texto.escapar(a.profesion)}</td>
+          <td>${Texto.escapar(a.zona)}</td>
           <td>
             <span style="color:#2563eb;font-size:11px;font-weight:700;"><i class="fas fa-file-pdf"></i> DNI, Penales, Título</span>
           </td>
@@ -202,26 +203,20 @@
             '<span class="status-pill status-validado">🟢 Validado por Prestadora</span>'}
           </td>
           <td>
-            <button class="btn btn-secundario" style="font-size:11px;padding:6px 12px;" onclick="abrirAuditoria('${a.id}')">
+            <button class="btn btn-secundario" style="font-size:11px;padding:6px 12px;">
               <i class="fas fa-search-plus"></i> Auditar Legajo
             </button>
           </td>
         `;
+        // El identificador se pasa por la función y no por un `onclick` escrito
+        // en el marcado: adentro de un atributo el navegador deshace el escapado
+        // antes de leerlo como código, así que ahí escapar no protege de nada.
+        tr.querySelector('button').addEventListener('click', () => abrirAuditoria(a.id));
         tbody.appendChild(tr);
       });
 
       document.getElementById('kpi-revision').innerText = rev;
       document.getElementById('kpi-validados').innerText = val;
-    }
-
-    // Todo lo que se dibuja acá lo escribió quien se postuló. Sin escapar, un
-    // nombre con etiquetas HTML corre como código en la pantalla del personal de
-    // la Prestadora, que es justamente quien tiene los permisos.
-    function esc(valor) {
-      if (valor === null || valor === undefined) return '';
-      return String(valor)
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
     async function abrirAuditoria(id) {
@@ -242,7 +237,7 @@
         if (!url) {
           return '<span style="color:var(--texto-secundario)">No se pudo abrir</span>';
         }
-        return `<a href="${url}" target="_blank" rel="noopener" style="color:#2563eb;font-weight:700;">${etiqueta}</a>`;
+        return `<a href="${Texto.escapar(url)}" target="_blank" rel="noopener" style="color:#2563eb;font-weight:700;">${Texto.escapar(etiqueta)}</a>`;
       };
       const [linkDni, linkPenales, linkTitulo] = await Promise.all([
         enlaceDocumento(docs.dni, 'Ver DNI'),
@@ -251,11 +246,11 @@
       ]);
 
       const html = `
-        <p><strong>Nombre completo:</strong> ${esc(a.nombre)}</p>
-        <p><strong>DNI:</strong> ${esc(a.dni)} | <strong>Email:</strong> ${esc(a.email)} | <strong>Teléfono:</strong> ${esc(a.telefono)}</p>
-        <p><strong>Perfil Profesional:</strong> ${esc(a.profesion)} (${esc(a.zona)})</p>
-        <p><strong>Patologías con Experiencia:</strong> ${esc((a.patologias || []).join(', '))}</p>
-        <p><strong>Tareas Declaradas:</strong> ${esc((a.tareas || []).join(', '))}</p>
+        <p><strong>Nombre completo:</strong> ${Texto.escapar(a.nombre)}</p>
+        <p><strong>DNI:</strong> ${Texto.escapar(a.dni)} | <strong>Email:</strong> ${Texto.escapar(a.email)} | <strong>Teléfono:</strong> ${Texto.escapar(a.telefono)}</p>
+        <p><strong>Perfil Profesional:</strong> ${Texto.escapar(a.profesion)} (${Texto.escapar(a.zona)})</p>
+        <p><strong>Patologías con Experiencia:</strong> ${Texto.escapar((a.patologias || []).join(', '))}</p>
+        <p><strong>Tareas Declaradas:</strong> ${Texto.escapar((a.tareas || []).join(', '))}</p>
         <div style="background:#eef2ff;padding:10px;border-radius:8px;margin-top:10px;">
           <strong>Documentos adjuntos para verificar:</strong><br/>
           DNI Frente/Dorso: ${linkDni} |

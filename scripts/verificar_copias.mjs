@@ -3,7 +3,7 @@
 
        node scripts/verificar_copias.mjs
 
-   Siete archivos de este proyecto viven repetidos en dos o tres carpetas. No es
+   Ocho archivos de este proyecto viven repetidos en dos o tres carpetas. No es
    descuido: el service worker de cada PWA solo alcanza su propia carpeta, así
    que sin conexión no puede leer nada de arriba. Hasta que la migración a React
    traiga imports de verdad —pendiente 13—, la copia es la única forma.
@@ -25,6 +25,7 @@ const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 // Cada grupo: el primero es el original, los demás son sus copias.
 const GRUPOS = [
   ['js/identidad.js', 'pwa-asistente/js/identidad.js', 'pwa-familia/js/identidad.js'],
+  ['js/texto.js', 'pwa-asistente/js/texto.js', 'pwa-familia/js/texto.js'],
   ['js/apiClient.js', 'pwa-asistente/js/apiClient.js', 'pwa-familia/js/apiClient.js'],
   ['js/auth.js', 'pwa-asistente/js/auth.js', 'pwa-familia/js/auth.js'],
   ['js/catalogo.js', 'pwa-asistente/js/catalogo.js', 'pwa-familia/js/catalogo.js'],

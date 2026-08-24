@@ -314,6 +314,7 @@
     </footer>
 
     <script src="js/identidad.js"></script>
+    <script src="js/texto.js"></script>
         <!-- Esta página es demostrativa: no consulta la base. Por eso no carga el cliente
        de datos ni el de sesión, que se conectaban solos al abrirla. -->
   <script src="js/main.js"></script>
@@ -571,7 +572,7 @@
         document.getElementById('profile-name').textContent = c.name;
         document.getElementById('profile-sub').textContent = c.sub;
         document.getElementById('profile-pts').textContent = `(${c.pts})`;
-        document.getElementById('profile-level').innerHTML = `<i class="fas fa-award"></i> ${c.level}`;
+        document.getElementById('profile-level').innerHTML = `<i class="fas fa-award"></i> ${Texto.escapar(c.level)}`;
         document.getElementById('profile-level-bar').textContent = c.levelBar;
         document.getElementById('profile-retiro').textContent = c.retiro;
 
@@ -590,30 +591,30 @@
 
         // Roles
         const rolesEl = document.getElementById('profile-roles');
-        rolesEl.innerHTML = c.roles.map(r => `<span class="profile-tag">${r}</span>`).join('');
+        rolesEl.innerHTML = c.roles.map(r => `<span class="profile-tag">${Texto.escapar(r)}</span>`).join('');
 
         // Urgent
         if (c.urgent) document.getElementById('profile-urgent').style.display = 'flex';
 
         // Days
         const daysEl = document.getElementById('profile-days');
-        daysEl.innerHTML = c.days.map(d => `<span class="profile-day">${d}</span>`).join('');
+        daysEl.innerHTML = c.days.map(d => `<span class="profile-day">${Texto.escapar(d)}</span>`).join('');
 
         // Description
         document.getElementById('profile-description').textContent = c.description;
 
         // Specialties
         const specEl = document.getElementById('profile-specialties');
-        specEl.innerHTML = c.specialties.map(s => `<span class="spec-item">${s}</span>`).join('');
+        specEl.innerHTML = c.specialties.map(s => `<span class="spec-item">${Texto.escapar(s)}</span>`).join('');
 
         // Profession
-        document.getElementById('profile-profession').innerHTML = c.profession.split('\n').map(l => `<div>${l}</div>`).join('');
+        document.getElementById('profile-profession').innerHTML = c.profession.split('\n').map(l => `<div>${Texto.escapar(l)}</div>`).join('');
 
         // Schedule
-        document.getElementById('profile-schedule-detail').innerHTML = c.scheduleDetail.split('\n').map(l => `<div>${l}</div>`).join('');
+        document.getElementById('profile-schedule-detail').innerHTML = c.scheduleDetail.split('\n').map(l => `<div>${Texto.escapar(l)}</div>`).join('');
 
         // References
-        document.getElementById('profile-references').innerHTML = c.references.split('\n').map(l => `<div>${l}</div>`).join('');
+        document.getElementById('profile-references').innerHTML = c.references.split('\n').map(l => `<div>${Texto.escapar(l)}</div>`).join('');
 
         // Certifications
         const certEl = document.getElementById('profile-certifications');
@@ -622,12 +623,12 @@
       <div class="cert-icon" style="${cert.ok ? 'background:#e8f5e9;color:#2e7d32;' : 'background:var(--tono-info-fondo);color:#c62828;'}">
         ${cert.ok ? '✓' : '✗'}
       </div>
-      <span>${cert.label}</span>
+      <span>${Texto.escapar(cert.label)}</span>
     </div>
   `).join('');
 
         // Care chars
-        document.getElementById('profile-care-chars').innerHTML = c.careChars.split('\n').map(l => `<div>${l}</div>`).join('');
+        document.getElementById('profile-care-chars').innerHTML = c.careChars.split('\n').map(l => `<div>${Texto.escapar(l)}</div>`).join('');
       }
 
       loadProfile();

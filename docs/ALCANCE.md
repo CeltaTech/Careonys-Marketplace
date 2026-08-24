@@ -120,6 +120,54 @@ aparecieron dos cosas que no eran de trato:
 - Un `á` guardado como carácter roto en `solicitar-asistente.html`, que hacía invisible esa frase
   a cualquier búsqueda. Corregido.
 
+---
+
+### Un dato ya no puede entrar como código en una pantalla
+
+Cerró el pendiente 22, el 24 de agosto de 2026. Los sesenta y nueve lugares donde un dato guardado
+se metía adentro del marcado ahora pasan por `Texto.escapar`, en seis archivos:
+`panel-prestadora.html`, `perfil.html`, `mockup-app.html`, `postulacion-asistente.html`,
+`pwa-familia/index.html` y `js/fichas-legajo.js`.
+
+- **Cuál era el problema**: un nombre escrito como `<img src=x onerror=...>` no se veía como un
+  nombre — se ejecutaba, y se ejecutaba en la pantalla de quien lo estaba leyendo. En este
+  proyecto quien lee suele ser el personal de la Prestadora, o sea justo quien tiene los permisos,
+  o una familia mirando el cuaderno de cuidado.
+- **Los dos peores casos** no estaban donde decía el pendiente. Uno era el mensaje de chat de
+  `mockup-app.html:692`, que lo escribe una persona y lo lee otra. El otro era
+  `panel-prestadora.html`, la pantalla que el pendiente daba por arreglada: tenía el renglón de la
+  tabla de Asistentes entero sin escapar —nombre, documento, teléfono, profesión y zona— y el
+  único `onclick` escrito en el marcado de todo el proyecto.
+- **Escapar no alcanzaba ahí, y por eso se sacó el `onclick`.** Adentro de un atributo el
+  navegador deshace el escapado antes de leer el contenido como código, así que un `&#39;` vuelve
+  a ser una comilla y cierra la cadena igual. El identificador ahora se pasa por
+  `addEventListener` (`panel-prestadora.html:214`), que nunca vuelve a leer texto como programa.
+- **Un solo punto de verdad**, como pide la regla 7: `js/texto.js` (77 renglones) tiene
+  `Texto.escapar` y `Texto.mensajeDeError`, y lo cargan las catorce pantallas. Antes de esto el
+  único archivo que cargaban todas era `js/identidad.js`; ahora son dos. La copia local de
+  `panel-prestadora.html` se borró. Hay copia idéntica en cada PWA, porque el service worker de
+  cada una solo alcanza su propia carpeta, y `scripts/verificar_copias.mjs` compara las tres.
+- **De paso cerró la otra mitad de la regla 5.1.** `Texto.mensajeDeError` clasifica la falla —sin
+  red, sin permiso, dato repetido, no está, dato inválido— y devuelve la frase que corresponde; el
+  texto crudo de la base, que nombra tablas y restricciones, queda en la consola. Reemplazó a los
+  `alert('... ' + err.message)` de `mockup-app.html` y al aviso de la bitácora de
+  `pwa-familia/index.html`.
+- **Un chequeo lo sostiene.** `scripts/verificar_escapado.mjs` recorre los treinta y tres archivos
+  y falla si un dato entra crudo en el marcado, si aparece un manejador escrito en un atributo, o
+  si un `innerHTML` se arma sumando cadenas. Antes de recorrer nada se prueba contra diecisiete
+  casos —siete que tienen que fallar y diez que tienen que pasar—, y si el detector falla en
+  cualquiera se detiene. Se probó además plantando un dato sin escapar en `cursos.html`, y avisó
+  en el renglón exacto.
+
+**Lo que el chequeo no puede ver, y hay que leer con ojos**: no sigue el rastro de una variable.
+Acepta `${id}` sin preguntar de dónde salió, así que si tres renglones más arriba alguien le
+asignó un dato sin escapar, pasa. Reconoce que el dato está escapado sólo cuando el escapado se
+escribe ahí mismo.
+
+**Un marcador para las excepciones legítimas.** Cuando lo que se interpola es marcado que arma el
+mismo módulo —y cuyos datos ya van escapados allá—, la línea lleva un comentario que empieza con
+`seguro:` y explica por qué. Hay dos, los dos en `js/fichas-legajo.js`.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,

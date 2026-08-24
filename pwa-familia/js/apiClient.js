@@ -129,7 +129,11 @@ const ClienteDatos = {
         const tag = document.createElement('span');
         tag.className = 'powered-by-tag';
         tag.style.cssText = 'font-size: 11px; font-weight: 700; color: var(--texto-secundario); margin-top: 6px; display: block; letter-spacing: 0.3px;';
-        tag.innerHTML = 'Powered by <span style="color:var(--marca-prestadora-acento); font-weight: 900;">' + Identidad.datos.nombre + '</span>';
+        tag.textContent = 'Powered by ';
+        const marca = document.createElement('span');
+        marca.style.cssText = 'color:var(--marca-prestadora-acento); font-weight: 900;';
+        marca.textContent = Identidad.datos.nombre;
+        tag.appendChild(marca);
         footerLogo.appendChild(tag);
 
         footerLogo.style.display = 'flex';

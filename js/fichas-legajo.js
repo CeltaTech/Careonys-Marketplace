@@ -96,42 +96,45 @@ const FichasLegajo = {
   },
 
   _inputCampo(tipoFicha, campo, indice) {
-    const id = `ficha-${tipoFicha}-${campo.clave}-${indice}`;
+    // El catálogo termina siendo una tabla que carga gente: lo que sale de él
+    // entra en la pantalla como texto, nunca como marcado.
+    const id = Texto.escapar(`ficha-${tipoFicha}-${campo.clave}-${indice}`);
+    const clave = Texto.escapar(campo.clave);
     const req = campo.obligatorio ? 'required' : '';
     if (campo.tipo === 'texto' || campo.tipo === 'telefono') {
-      return `<input type="${campo.tipo === 'telefono' ? 'tel' : 'text'}" id="${id}" data-campo="${campo.clave}" maxlength="${campo.maximo || 255}" ${req} />`;
+      return `<input type="${campo.tipo === 'telefono' ? 'tel' : 'text'}" id="${id}" data-campo="${clave}" maxlength="${Texto.escapar(campo.maximo || 255)}" ${req} />`;
     }
     if (campo.tipo === 'texto_largo') {
-      return `<textarea id="${id}" data-campo="${campo.clave}" maxlength="${campo.maximo || 1000}" ${req} style="width:100%;min-height:60px;"></textarea>`;
+      return `<textarea id="${id}" data-campo="${clave}" maxlength="${Texto.escapar(campo.maximo || 1000)}" ${req} style="width:100%;min-height:60px;"></textarea>`;
     }
     if (campo.tipo === 'fecha') {
-      return `<input type="date" id="${id}" data-campo="${campo.clave}" ${req} />`;
+      return `<input type="date" id="${id}" data-campo="${clave}" ${req} />`;
     }
     if (campo.tipo === 'anio') {
-      return `<input type="number" id="${id}" data-campo="${campo.clave}" min="1950" max="2100" ${req} />`;
+      return `<input type="number" id="${id}" data-campo="${clave}" min="1950" max="2100" ${req} />`;
     }
     if (campo.tipo === 'mes_anio') {
-      return `<input type="month" id="${id}" data-campo="${campo.clave}" ${req} />`;
+      return `<input type="month" id="${id}" data-campo="${clave}" ${req} />`;
     }
     if (campo.tipo === 'casilla') {
-      return `<input type="checkbox" id="${id}" data-campo="${campo.clave}" style="width:18px;height:18px;" />`;
+      return `<input type="checkbox" id="${id}" data-campo="${clave}" style="width:18px;height:18px;" />`;
     }
     if (campo.tipo === 'archivo') {
-      return `<input type="file" id="${id}" data-campo="${campo.clave}" accept=".jpg,.jpeg,.png,.pdf" ${req} />`;
+      return `<input type="file" id="${id}" data-campo="${clave}" accept=".jpg,.jpeg,.png,.pdf" ${req} />`;
     }
     if (campo.tipo === 'lista') {
       const opciones = this._opciones(campo.vocabulario)
-        .map(o => `<option value="${o.clave}">${(o[this.idioma] || o['es-AR'])}</option>`).join('');
-      return `<select id="${id}" data-campo="${campo.clave}" ${req}><option value="">— Seleccionar —</option>${opciones}</select>`;
+        .map(o => `<option value="${Texto.escapar(o.clave)}">${Texto.escapar(o[this.idioma] || o['es-AR'])}</option>`).join('');
+      return `<select id="${id}" data-campo="${clave}" ${req}><option value="">— Seleccionar —</option>${opciones}</select>`;
     }
     if (campo.tipo === 'lista_multiple') {
       const vocs = Array.isArray(campo.vocabulario) ? campo.vocabulario : [campo.vocabulario];
       const opciones = vocs.flatMap(v => this._opciones(v))
-        .map(o => `<label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:400;"><input type="checkbox" data-campo="${campo.clave}" value="${o.clave}" /> ${(o[this.idioma] || o['es-AR'])}</label>`)
+        .map(o => `<label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:400;"><input type="checkbox" data-campo="${clave}" value="${Texto.escapar(o.clave)}" /> ${Texto.escapar(o[this.idioma] || o['es-AR'])}</label>`)
         .join('');
       return `<div class="lista-multiple-opciones" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">${opciones}</div>`;
     }
-    return `<input type="text" id="${id}" data-campo="${campo.clave}" ${req} />`;
+    return `<input type="text" id="${id}" data-campo="${clave}" ${req} />`;
   },
 
   _bloqueHTML(tipoFicha, indice) {
@@ -139,19 +142,20 @@ const FichasLegajo = {
     const camposHTML = ficha.campos.map(campo => {
       const t = this._textoCampo(campo);
       const esCasilla = campo.tipo === 'casilla';
-      return `<div class="form-group" data-clave="${campo.clave}" style="margin-bottom:12px;${esCasilla ? 'display:flex;align-items:center;gap:8px;' : ''}">
+      const idCampo = Texto.escapar(`ficha-${tipoFicha}-${campo.clave}-${indice}`);
+      return `<div class="form-group" data-clave="${Texto.escapar(campo.clave)}" style="margin-bottom:12px;${esCasilla ? 'display:flex;align-items:center;gap:8px;' : ''}">
         ${esCasilla
-          ? `${this._inputCampo(tipoFicha, campo, indice)}<label for="ficha-${tipoFicha}-${campo.clave}-${indice}" style="margin:0;cursor:pointer;">${t.etiqueta}</label>`
-          : `<label for="ficha-${tipoFicha}-${campo.clave}-${indice}">${t.etiqueta}${campo.obligatorio ? ' <span style="color:#ef4444;">*</span>' : ''}</label>${this._inputCampo(tipoFicha, campo, indice)}`}
-        ${t.ayuda ? `<p style="font-size:11px;color:#64748b;margin:4px 0 0 0;">${t.ayuda}</p>` : ''}
+          ? `${/* seguro: es marcado que arma este mismo módulo, y sus datos ya van escapados ahí */ this._inputCampo(tipoFicha, campo, indice)}<label for="${idCampo}" style="margin:0;cursor:pointer;">${Texto.escapar(t.etiqueta)}</label>`
+          : `<label for="${idCampo}">${Texto.escapar(t.etiqueta)}${campo.obligatorio ? ' <span style="color:#ef4444;">*</span>' : ''}</label>${/* seguro: es marcado que arma este mismo módulo, y sus datos ya van escapados ahí */ this._inputCampo(tipoFicha, campo, indice)}`}
+        ${t.ayuda ? `<p style="font-size:11px;color:#64748b;margin:4px 0 0 0;">${Texto.escapar(t.ayuda)}</p>` : ''}
       </div>`;
     }).join('');
 
     const advertencia = ficha.advertencia
-      ? `<p style="font-size:11.5px;color:#92400e;background:#fef3c7;border-radius:8px;padding:10px;margin-bottom:12px;">${ficha.advertencia[this.idioma] || ficha.advertencia['es-AR']}</p>`
+      ? `<p style="font-size:11.5px;color:#92400e;background:#fef3c7;border-radius:8px;padding:10px;margin-bottom:12px;">${Texto.escapar(ficha.advertencia[this.idioma] || ficha.advertencia['es-AR'])}</p>`
       : '';
 
-    return `<div class="ficha-bloque" data-ficha="${tipoFicha}" data-indice="${indice}"
+    return `<div class="ficha-bloque" data-ficha="${Texto.escapar(tipoFicha)}" data-indice="${indice}"
         style="background:var(--superficie-hover);border-radius:12px;padding:16px;border:1px solid var(--borde-card);margin-bottom:12px;position:relative;">
       ${advertencia}
       ${camposHTML}
@@ -171,11 +175,11 @@ const FichasLegajo = {
     const tituloNuevo = (ficha[this.idioma] || ficha['es-AR']).titulo_nuevo;
 
     contenedor.innerHTML = `
-      <h4 style="font-size:14px;font-weight:700;color:var(--texto-titulo);margin-bottom:10px;">${titulo}</h4>
-      <div class="fichas-lista" data-ficha="${tipoFicha}"></div>
-      <button type="button" class="btn btn-sobre-oscuro btn-agregar-ficha" data-ficha="${tipoFicha}"
+      <h4 style="font-size:14px;font-weight:700;color:var(--texto-titulo);margin-bottom:10px;">${Texto.escapar(titulo)}</h4>
+      <div class="fichas-lista" data-ficha="${Texto.escapar(tipoFicha)}"></div>
+      <button type="button" class="btn btn-sobre-oscuro btn-agregar-ficha" data-ficha="${Texto.escapar(tipoFicha)}"
         style="border-color:var(--borde-card);color:var(--azul-medio-texto);font-size:12.5px;padding:8px 14px;">
-        <i class="fas fa-plus"></i> ${tituloNuevo}
+        <i class="fas fa-plus"></i> ${Texto.escapar(tituloNuevo)}
       </button>
     `;
 

@@ -768,6 +768,7 @@
   <!-- JS LOCAL (dentro del scope del Service Worker) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/identidad.js"></script>
+  <script src="js/texto.js"></script>
   <script src="js/catalogo.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
@@ -805,9 +806,9 @@
             card.href = `../perfil.html?id=${asp.id}`;
             const avatarUrl = asp.fotoUrl || '../assets/images/perfil_maria.png';
             card.innerHTML = `
-              <img src="${avatarUrl}" onerror="this.src='https://via.placeholder.com/60'" />
-              <h5>${asp.nombre}</h5>
-              <p>${asp.profesion || 'Cuidadora'} | ${asp.zona || 'Cobertura'}</p>
+              <img src="${Texto.escapar(avatarUrl)}" onerror="this.src='https://via.placeholder.com/60'" />
+              <h5>${Texto.escapar(asp.nombre)}</h5>
+              <p>${Texto.escapar(asp.profesion || 'Cuidadora')} | ${Texto.escapar(asp.zona || 'Cobertura')}</p>
               <span class="badge-match">95% Match</span>
             `;
             recommendedList.appendChild(card);
@@ -839,15 +840,16 @@
             <div class="log-content">
               <span class="time">${timeStr}</span>
               <h5>${log.blood_pressure ? 'Control de Signos Vitales' : 'Nota de Cuidado'}</h5>
-              <p>${log.daily_notes}</p>
-              ${log.blood_pressure ? `<p style="margin-top:4px;font-size:11px;color:#0284c7;">🩺 P.A.: ${log.blood_pressure} | Glucemia: ${log.glycemia || 'N/A'}</p>` : ''}
-              ${log.medications_administered ? `<p style="margin-top:2px;font-size:10px;color:#10b981;">💊 Medicamento: ${log.medications_administered}</p>` : ''}
+              <p>${Texto.escapar(log.daily_notes)}</p>
+              ${log.blood_pressure ? `<p style="margin-top:4px;font-size:11px;color:#0284c7;">🩺 P.A.: ${Texto.escapar(log.blood_pressure)} | Glucemia: ${Texto.escapar(log.glycemia || 'N/A')}</p>` : ''}
+              ${log.medications_administered ? `<p style="margin-top:2px;font-size:10px;color:#10b981;">💊 Medicamento: ${Texto.escapar(log.medications_administered)}</p>` : ''}
             </div>
           `;
           listEl.appendChild(item);
         });
       } catch (err) {
-        listEl.innerHTML = `<p style="text-align:center;font-size:12px;color:#ef4444;padding:20px;">Error al cargar bitácora.</p>`;
+        const aviso = Texto.mensajeDeError(err, 'cargar la bitácora');
+        listEl.innerHTML = `<p style="text-align:center;font-size:12px;color:#ef4444;padding:20px;">${Texto.escapar(aviso)}</p>`;
       }
     }
 

@@ -83,32 +83,37 @@ del navegador.
 
 ### 2.1 Archivos propios
 
-Hay **5 archivos JavaScript distintos**, pero están copiados en tres carpetas, así que en disco
-se ven 13. Aparte hay dos guiones que no corren en el navegador sino en la línea de comandos.
+Hay **7 archivos JavaScript distintos** que corren en el navegador, pero cuatro de ellos están
+copiados en tres carpetas, así que en disco se ven 17. Aparte están los service workers de cada
+PWA y los guiones de línea de comandos.
 
 | Archivo | Renglones | Qué hace |
 |---|---:|---|
 | `js/identidad.js` | 108 | El único lugar donde está escrito el nombre comercial. Resuelve los marcadores `{{producto}}`, `{{productoCorto}}`, `{{dominio}}` y `{{contacto}}` al cargar cada página. |
-| `js/apiClient.js` | 419 | Capa de acceso a datos. Resolución de inquilino (multi-cliente), lectura y escritura contra Supabase, traducción de nombres de campos y modo alternativo con almacenamiento local. |
-| `js/auth.js` | 122 | Ingreso, registro, cierre de sesión, subida de archivos y suscripción en tiempo real, todo sobre el SDK de Supabase. |
-| `js/main.js` | 307 | Comportamiento global del sitio: menú, desplazamiento suave, validación de formularios, filtros del directorio, asistente de 6 pasos y ventana simulada de videollamada. |
-| `pwa-asistente/service-worker.js` | 73 | Caché para uso sin conexión de la aplicación de asistentes. |
-| `pwa-familia/service-worker.js` | 73 | Ídem para la de familias. |
+| `js/texto.js` | 77 | El único lugar donde se escapa un dato antes de meterlo en HTML, y el único que traduce una falla a una frase mostrable. Lo cargan las catorce pantallas. |
+| `js/apiClient.js` | 473 | Capa de acceso a datos. Resolución de inquilino (multi-cliente), y lectura y escritura contra Supabase con traducción de nombres de campos. Es la única fuente de datos de personas desde que se sacó el camino de imitación. |
+| `js/auth.js` | 217 | Ingreso, registro, cierre de sesión, subida de archivos y suscripción en tiempo real, todo sobre el SDK de Supabase. |
+| `js/catalogo.js` | 422 | Lee los archivos de `data/` y llena con ellos las listas, las grillas y los textos declarados en las pantallas. Pone los textos con `textContent`, nunca armando marcado. |
+| `js/fichas-legajo.js` | 265 | Arma las fichas del legajo del asistente a partir de su definición en el catálogo. |
+| `js/main.js` | 285 | Comportamiento global del sitio: menú, desplazamiento suave, validación de formularios, filtros del directorio, asistente de 6 pasos y ventana simulada de videollamada. |
+| `pwa-asistente/service-worker.js` | 78 | Caché para uso sin conexión de la aplicación de asistentes. Guarda también `js/texto.js`: sin él las pantallas no dibujan nada. |
+| `pwa-familia/service-worker.js` | 78 | Ídem para la de familias. |
 
-Los seis guiones de línea de comandos:
+Los siete guiones de línea de comandos:
 
 | Archivo | Qué hace |
 |---|---|
 | `scripts/generar_manifiestos.mjs` | Escribe los dos `manifest.json` desde la identidad. Hacen falta generados porque el navegador los lee como archivo, sin pasar por ninguna página: ahí no hay JavaScript que resuelva un marcador. |
-| `scripts/verificar_copias.mjs` | Compara byte a byte los cinco archivos que viven repetidos en dos o tres carpetas y falla si alguno se separó. Cuando encuentra una diferencia dice cuál de los dos es más nuevo, para no pisar el cambio bueno. |
+| `scripts/verificar_copias.mjs` | Compara byte a byte los ocho archivos que viven repetidos en dos o tres carpetas y falla si alguno se separó. Cuando encuentra una diferencia dice cuál de los dos es más nuevo, para no pisar el cambio bueno. |
 | `scripts/revisar_base.mjs` | Sonda de solo lectura: pregunta qué tablas puede enumerar y leer alguien **sin sesión**, y si alguna le muestra dos Prestadoras distintas. Se corre en el momento en que la base vuelva a responder, antes de cargar el primer dato. No escribe ni borra nada, y se niega a correr contra una base que no sea la de este proyecto. |
 | `scripts/verificar_guiones.mjs` | Falla si algún bloque `<script>` escrito adentro de una pantalla, o algún archivo de `js/`, tiene un error de sintaxis. Existe porque el navegador, ante un error así, descarta el bloque entero y sigue: la pantalla se dibuja igual y no funciona nada, sin aviso. Encontró uno el 24 de agosto de 2026. |
 | `scripts/verificar_trato.mjs` | Falla si el texto visible tutea a quien lo lee (regla 5.1). Mira el texto entre etiquetas, los atributos que se ven, las cadenas de los bloques `<script>`, las de `js/` y las del catálogo. No mira el imperativo en tú sin acento, que es idéntico a una tercera persona y necesita ojos. |
+| `scripts/verificar_escapado.mjs` | Falla si una plantilla que arma HTML mete adentro un dato sin pasarlo por `Texto.escapar`, o si un `onclick` escrito en el marcado interpola algo —ahí escapar no sirve, porque el navegador deshace el escapado del atributo antes de leerlo como código—. Deja pasar lo que el propio programa decide: un `condición ? 'esto' : 'aquello'` devuelve siempre uno de los dos textos escritos a la vista. No sigue el rastro de una variable, así que un dato copiado antes a una variable local se le escapa. |
 | `scripts/verificar_identidad.mjs` | Falla —código de salida 1— si el nombre, el dominio o el correo aparecen escritos a mano fuera de `js/identidad.js`. Verifica además que los manifiestos estén al día, y le pide a `verificar_copias.mjs` la comparación de las tres copias del archivo de identidad, para no tener dos veces escrita la misma revisión. Ignora la documentación y los comentarios del código. |
 
 **Duplicación verificada por firma digital**: `js/apiClient.js`, `pwa-asistente/js/apiClient.js`
 y `pwa-familia/js/apiClient.js` son **idénticos byte a byte**. Lo mismo pasa con las tres copias
-de `auth.js`, con las tres de `identidad.js` y con las dos copias de `css/styles-pwa.css`. Ninguna de esas copias se puede
+de `auth.js`, con las tres de `identidad.js`, con las tres de `texto.js` y con las dos copias de `css/styles-pwa.css`. Ninguna de esas copias se puede
 separar en silencio: `scripts/verificar_copias.mjs` las compara byte a byte y falla si alguna
 cambió sola. Son 1.082 renglones de copias exactas
 que hoy hay que mantener en tres lugares a la vez.
