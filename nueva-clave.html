@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Pantalla de la sesión, no del directorio: no tiene nada que hacer en un buscador. -->
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Elegir una contraseña nueva</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script>
+    // Lo primero de la página, antes incluso de cargar el SDK de Supabase: se
+    // guarda la dirección con la que se llegó. El SDK, cuando encuentra ahí una
+    // sesión, la borra para que no quede dando vueltas en el historial, y si el
+    // enlace traía el motivo del rechazo se lo lleva junto con el resto. Leerla
+    // acá arriba es la única forma de tenerla segura.
+    window.direccionAlLlegar = window.location.hash + window.location.search;
+  </script>
+</head>
+
+<body>
+  <main class="acceso-pantalla">
+    <div class="acceso-tarjeta">
+
+      <div class="acceso-marca">
+        <img class="tenant-logo" src="assets/images/logo_presdemo.png" alt="" />
+        <span class="tenant-name"></span>
+      </div>
+
+      <!-- Estado: cargando -->
+      <div id="estado-cargando" class="acceso-cargando">
+        <i class="fas fa-circle-notch fa-spin"></i> Comprobando el enlace...
+      </div>
+
+      <!-- Estado: el enlace no sirve (venció, ya se usó, o se entró de frente) -->
+      <div id="estado-sin-enlace" style="display:none;">
+        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;">
+          El enlace ya no sirve
+        </h2>
+        <div id="aviso-sin-enlace" class="acceso-aviso critico"></div>
+        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-bottom:20px;">
+          Cada enlace sirve una sola vez y vence en una hora. Se puede pedir otro.
+        </p>
+        <a href="recuperar-clave.html" class="btn btn-primario" style="width:100%;">
+          Pedir un enlace nuevo
+        </a>
+        <p class="acceso-pie">
+          <a href="acceso.html">Volver al acceso</a>
+        </p>
+      </div>
+
+      <!-- Estado: listo -->
+      <form id="estado-listo" style="display:none;" novalidate>
+        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;">
+          Elegir una contraseña nueva
+        </h2>
+        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-bottom:20px;">
+          Se cambia la contraseña de <strong id="correo-en-curso"></strong>. Tiene que tener al
+          menos <span id="minimo-caracteres"></span> caracteres.
+        </p>
+
+        <div id="aviso-error-cambio" class="acceso-aviso critico" style="display:none;"></div>
+
+        <div class="form-group">
+          <label for="clave">Contraseña nueva</label>
+          <input type="password" id="clave" autocomplete="new-password" required />
+        </div>
+
+        <div class="form-group">
+          <label for="clave-repetida">Repetir la contraseña</label>
+          <input type="password" id="clave-repetida" autocomplete="new-password" required />
+        </div>
+
+        <button type="submit" class="btn btn-primario" id="btn-guardar" style="width:100%;margin-top:8px;">
+          <span id="texto-btn-guardar">Guardar la contraseña</span>
+        </button>
+      </form>
+
+      <!-- Estado: quedó cambiada -->
+      <div id="estado-hecho" style="display:none;">
+        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;">
+          Contraseña cambiada
+        </h2>
+        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-bottom:20px;">
+          Ya se puede entrar con la contraseña nueva.
+        </p>
+        <a href="acceso.html" class="btn btn-primario" style="width:100%;">Ir al acceso</a>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/identidad.js"></script>
+  <script src="js/texto.js"></script>
+  <script src="js/clave.js"></script>
+  <script src="js/apiClient.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    const paneles = {
+      cargando: document.getElementById('estado-cargando'),
+      'sin-enlace': document.getElementById('estado-sin-enlace'),
+      listo: document.getElementById('estado-listo'),
+      hecho: document.getElementById('estado-hecho')
+    };
+
+    function mostrar(cual) {
+      Object.keys(paneles).forEach(nombre => {
+        paneles[nombre].style.display = (nombre === cual) ? 'block' : 'none';
+      });
+    }
+
+    function avisar(id, texto) {
+      const caja = document.getElementById(id);
+      caja.textContent = texto;
+      caja.style.display = texto ? 'block' : 'none';
+    }
+
+    // Qué dijo el servidor al rechazar el enlace. Viene en la dirección, a veces
+    // detrás del numeral y a veces como parámetro, según cómo se haya emitido.
+    function motivoDelRechazo() {
+      const partes = new URLSearchParams(direccionAlLlegar.replace(/^[#?]+/, ''));
+      const codigo = partes.get('error_code') || partes.get('error');
+      if (!codigo) return null;
+      if (/expired/.test(codigo)) return 'El enlace venció.';
+      if (/used|already/.test(codigo)) return 'Este enlace ya se había usado.';
+      return 'El enlace no fue aceptado.';
+    }
+
+    async function arrancar() {
+      mostrar('cargando');
+      document.getElementById('minimo-caracteres').textContent = Clave.MINIMO;
+
+      // La Prestadora se usa sólo para la marca de la tarjeta. Que no se
+      // reconozca no impide cambiar nada, así que no se avisa.
+      try {
+        await ClienteDatos.initTenant();
+      } catch (err) {
+        console.warn('Nueva contraseña, marca de la Prestadora:', err);
+      }
+
+      const motivo = motivoDelRechazo();
+      if (motivo) {
+        avisar('aviso-sin-enlace', motivo);
+        mostrar('sin-enlace');
+        return;
+      }
+
+      // Al abrir el enlace del correo, el SDK deja abierta una sesión de
+      // recuperación. Si no hay ninguna, o se entró a esta dirección de frente
+      // o el enlace ya no valía.
+      let sesion = null;
+      try {
+        sesion = await Sesion.getSession();
+      } catch (err) {
+        console.error('Nueva contraseña, arranque:', err);
+      }
+
+      if (!sesion) {
+        avisar('aviso-sin-enlace',
+          'Esta pantalla se abre desde el enlace que llega por correo.');
+        mostrar('sin-enlace');
+        return;
+      }
+
+      document.getElementById('correo-en-curso').textContent =
+        (sesion.user && sesion.user.email) || 'su cuenta';
+      mostrar('listo');
+    }
+
+    document.getElementById('estado-listo').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      avisar('aviso-error-cambio', '');
+
+      // Quién decide qué contraseña vale es `js/clave.js`, el mismo que revisa
+      // en el acceso y en el alta.
+      const clave = document.getElementById('clave').value;
+      const claveRepetida = document.getElementById('clave-repetida').value;
+      const problema = Clave.revisar(clave, claveRepetida);
+      if (problema) {
+        avisar('aviso-error-cambio', problema);
+        document.getElementById(clave === claveRepetida ? 'clave' : 'clave-repetida').focus();
+        return;
+      }
+
+      const boton = document.getElementById('btn-guardar');
+      const texto = document.getElementById('texto-btn-guardar');
+      const textoOriginal = texto.textContent;
+      boton.disabled = true;
+      texto.textContent = 'Guardando...';
+
+      try {
+        await Sesion.cambiarClave(clave);
+        mostrar('hecho');
+      } catch (err) {
+        // El detalle técnico lo manda a la consola `Texto.mensajeDeError`.
+        avisar('aviso-error-cambio', Texto.mensajeDeError(err, 'cambiar la contraseña'));
+        boton.disabled = false;
+        texto.textContent = textoOriginal;
+      }
+    });
+
+    arrancar();
+  </script>
+</body>
+
+</html>

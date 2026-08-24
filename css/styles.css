@@ -610,6 +610,85 @@ ul {
   background: var(--superficie);
 }
 
+/* ── Las pantallas de la sesión ────────────────────────────────────────────
+   Tres usan esta misma tarjeta centrada: entrar, pedir el enlace para
+   recuperar la contraseña y elegir la nueva. El estilo vivía adentro de
+   `acceso.html`; cuando aparecieron las otras dos se subió acá, porque tres
+   copias del mismo bloque se separan solas (regla 7). */
+.acceso-pantalla {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--fondo-app);
+}
+
+.acceso-tarjeta {
+  width: 100%;
+  max-width: 420px;
+  background: var(--superficie);
+  border: 1px solid var(--borde-card);
+  border-radius: 16px;
+  box-shadow: var(--sombra-card);
+  padding: 32px;
+}
+
+.acceso-marca {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.acceso-marca img {
+  max-height: 48px;
+  margin-bottom: 12px;
+}
+
+.acceso-marca .tenant-name {
+  display: block;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--texto-titulo);
+}
+
+.acceso-aviso {
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.acceso-aviso.critico {
+  background: var(--tono-critico-fondo);
+  color: var(--tono-critico-texto);
+}
+
+.acceso-aviso.atencion {
+  background: var(--tono-atencion-fondo);
+  color: var(--tono-atencion-texto);
+}
+
+.acceso-pie {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--texto-secundario);
+}
+
+.acceso-pie a {
+  color: var(--azul-medio-texto);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.acceso-cargando {
+  text-align: center;
+  color: var(--texto-secundario);
+  font-size: 14px;
+  padding: 24px 0;
+}
+
 /* ── Contraseñas: el botón para verlas ─────────────────────────────────────
    `js/clave.js` envuelve cada campo de contraseña en `.campo-clave` y le mete
    este botón adentro. El campo deja lugar a la derecha para que el texto no

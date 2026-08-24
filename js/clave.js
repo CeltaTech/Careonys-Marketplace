@@ -18,8 +18,16 @@
 (function () {
   'use strict';
 
-  // Lo que pide el servidor. Está acá arriba y solo, para que cambiarlo sea
-  // cambiar un número.
+  // Lo que se le pide a la persona. Está acá arriba y solo, para que cambiarlo
+  // sea cambiar un número.
+  //
+  // El 24 de agosto de 2026 se había decidido no decir ningún número y dejar que
+  // el largo lo pusiera el servidor. No alcanzó: sin número, el único aviso
+  // posible es «no cumple», y la persona se entera de cuánto le falta recién
+  // cuando el servidor la rechaza. El número vive acá, y `supabase/config.toml`
+  // (`minimum_password_length`) dice el mismo. Si el servidor termina pidiendo
+  // menos, el navegador queda más exigente, que es el lado seguro del desacuerdo:
+  // nunca deja pasar algo que el servidor vaya a rechazar.
   const MINIMO = 8;
 
   const Clave = {

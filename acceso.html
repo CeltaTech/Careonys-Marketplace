@@ -13,81 +13,6 @@
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <style>
-    .acceso-pantalla {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      background: var(--fondo-app);
-    }
-
-    .acceso-tarjeta {
-      width: 100%;
-      max-width: 420px;
-      background: var(--superficie);
-      border: 1px solid var(--borde-card);
-      border-radius: 16px;
-      box-shadow: var(--sombra-card);
-      padding: 32px;
-    }
-
-    .acceso-marca {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .acceso-marca img {
-      max-height: 48px;
-      margin-bottom: 12px;
-    }
-
-    .acceso-marca .tenant-name {
-      display: block;
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--texto-titulo);
-    }
-
-    .acceso-aviso {
-      border-radius: 10px;
-      padding: 12px 14px;
-      font-size: 13px;
-      line-height: 1.5;
-      margin-bottom: 16px;
-    }
-
-    .acceso-aviso.critico {
-      background: var(--tono-critico-fondo);
-      color: var(--tono-critico-texto);
-    }
-
-    .acceso-aviso.atencion {
-      background: var(--tono-atencion-fondo);
-      color: var(--tono-atencion-texto);
-    }
-
-    .acceso-pie {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 13px;
-      color: var(--texto-secundario);
-    }
-
-    .acceso-pie a {
-      color: var(--azul-medio-texto);
-      font-weight: 600;
-      text-decoration: none;
-    }
-
-    .acceso-cargando {
-      text-align: center;
-      color: var(--texto-secundario);
-      font-size: 14px;
-      padding: 24px 0;
-    }
-  </style>
 </head>
 
 <body>
@@ -132,6 +57,10 @@
         <button type="submit" class="btn btn-primario" id="btn-entrar" style="width:100%;margin-top:8px;">
           <span id="texto-btn-entrar">Entrar</span>
         </button>
+
+        <p class="acceso-pie">
+          <a href="recuperar-clave.html" id="link-olvide">¿Olvidó la contraseña?</a>
+        </p>
 
         <p class="acceso-pie">
           ¿Todavía no tiene cuenta?
@@ -204,6 +133,15 @@
     }
 
     document.getElementById('btn-reintentar').addEventListener('click', arrancar);
+
+    // Si ya escribió el correo, se lo lleva a la pantalla de recuperación para
+    // no hacerlo tipear dos veces. Va por `sessionStorage` y no colgado de la
+    // dirección: un correo en la dirección queda en el historial del navegador
+    // y en el registro de cualquier servidor que la vea (§4).
+    document.getElementById('link-olvide').addEventListener('click', () => {
+      const escrito = document.getElementById('acceso-email').value.trim();
+      if (escrito) sessionStorage.setItem('correo-a-recuperar', escrito);
+    });
 
     document.getElementById('estado-listo').addEventListener('submit', async (e) => {
       e.preventDefault();

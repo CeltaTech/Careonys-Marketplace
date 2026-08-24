@@ -73,6 +73,12 @@ const Texto = {
     if (dice('email not confirmed')) return 'La cuenta existe, pero falta confirmar el correo. El enlace está en la casilla.';
     if (dice('already registered', 'already been registered')) return 'Ya hay una cuenta con ese correo. Se puede entrar desde la pantalla de acceso.';
     if (dice('rate limit', 'too many')) return 'Hubo demasiados intentos seguidos. Conviene esperar unos minutos.';
+    // Los enlaces que llegan por correo —confirmar el alta, elegir una
+    // contraseña nueva— sirven una sola vez y vencen.
+    if (dice('otp_expired', 'link is invalid', 'token has expired', 'token not found')) return 'El enlace del correo ya no sirve. Se puede pedir uno nuevo.';
+    // Al elegir una contraseña nueva, el servidor rechaza la que ya se tenía.
+    // Va antes que el caso general, que si no contestaría «elegir una más larga».
+    if (dice('should be different')) return 'La contraseña nueva tiene que ser distinta de la anterior.';
     if (dice('password')) return 'La contraseña no cumple con lo que pide el servidor. Conviene elegir una más larga.';
 
     // Archivos del legajo.
@@ -86,10 +92,11 @@ const Texto = {
 
     // Lo genérico, que cubre cualquier tabla y cualquier pantalla.
     if (dice('failed to fetch', 'networkerror', 'err_internet', 'err_name_not_resolved')) return 'No hay conexión con el servidor. Conviene reintentar en un momento.';
-    if (dice('row-level security', 'violates row', 'permission denied', 'unauthorized', 'not authorized', 'jwt') || /40[13]/.test(crudo)) return 'La sesión no tiene permiso para esta operación, o venció. Conviene volver a ingresar.';
-    if (dice('duplicate key', 'already exists') || /409/.test(crudo)) return 'Ese dato ya estaba registrado.';
-    if (dice('does not exist', 'not found') || /404/.test(crudo)) return 'No se encontró lo que se estaba buscando.';
-    if (dice('invalid input', 'violates check constraint') || /4(00|22)/.test(crudo)) return 'Alguno de los datos enviados no es válido. Conviene revisar el formulario.';
+    if (dice('session missing', 'session not found', 'session_not_found')) return 'La sesión ya no está abierta. Conviene volver a ingresar.';
+    if (dice('row-level security', 'violates row', 'permission denied', 'unauthorized', 'not authorized', 'jwt') || /\b40[13]\b/.test(crudo)) return 'La sesión no tiene permiso para esta operación, o venció. Conviene volver a ingresar.';
+    if (dice('duplicate key', 'already exists') || /\b409\b/.test(crudo)) return 'Ese dato ya estaba registrado.';
+    if (dice('does not exist', 'not found') || /\b404\b/.test(crudo)) return 'No se encontró lo que se estaba buscando.';
+    if (dice('invalid input', 'violates check constraint') || /\b4(00|22)\b/.test(crudo)) return 'Alguno de los datos enviados no es válido. Conviene revisar el formulario.';
 
     return 'No se pudo completar la operación. Si vuelve a pasar, conviene avisar al soporte.';
   }

@@ -63,6 +63,39 @@ const Sesion = {
     return { user: data.user, session: data.session };
   },
 
+  // ── Olvidó la contraseña: mandar el enlace ─────────────
+  // No contesta si ese correo tiene cuenta o no, y la pantalla tampoco: decir
+  // «esa cuenta no existe» le regala a cualquiera una forma de averiguar quién
+  // está registrado. Siempre se responde lo mismo.
+  //
+  // `volverA` es la dirección a la que lleva el enlace del correo. Tiene que
+  // estar en la lista de direcciones permitidas del proyecto; si no está, el
+  // enlace termina en la portada y la persona no puede cambiar nada.
+  async pedirNuevaClave(email, volverA) {
+    const destino = volverA || (window.location.origin + '/nueva-clave.html');
+    const { error } = await _sb.auth.resetPasswordForEmail(email, { redirectTo: destino });
+    if (error) throw new Error(error.message);
+  },
+
+  // ── Elegir la contraseña nueva ─────────────────────────
+  // Necesita una sesión abierta. Cuando se llega desde el enlace del correo, el
+  // SDK ya la abrió solo al leer la dirección (`detectSessionInUrl`), así que
+  // acá no hay nada que pedir: si no hay sesión, el enlace venció.
+  async cambiarClave(nueva) {
+    const { data, error } = await _sb.auth.updateUser({ password: nueva });
+    if (error) throw new Error(error.message);
+    return data.user;
+  },
+
+  // ── Volver a mandar el correo de confirmación ──────────
+  // Para quien se dio de alta y no encuentra el mail. El servidor limita cuántos
+  // manda por hora, así que un segundo pedido seguido puede volver con ese aviso
+  // en lugar de un correo; `Texto.mensajeDeError` ya lo traduce.
+  async reenviarConfirmacion(email) {
+    const { error } = await _sb.auth.resend({ type: 'signup', email });
+    if (error) throw new Error(error.message);
+  },
+
   // ── El perfil de quien inició sesión ───────────────────
   // Punto único de verdad para el rol y la Prestadora del lado del navegador:
   // salen de `profiles`, que es lo mismo que miran las políticas de la base.

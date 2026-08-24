@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Pantalla de la sesión, no del directorio: no tiene nada que hacer en un buscador. -->
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Recuperar la contraseña</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body>
+  <main class="acceso-pantalla">
+    <div class="acceso-tarjeta">
+
+      <div class="acceso-marca">
+        <img class="tenant-logo" src="assets/images/logo_presdemo.png" alt="" />
+        <span class="tenant-name"></span>
+      </div>
+
+      <!-- Estado: cargando -->
+      <div id="estado-cargando" class="acceso-cargando">
+        <i class="fas fa-circle-notch fa-spin"></i> Un momento...
+      </div>
+
+      <!-- Estado: no se pudo llegar al servidor -->
+      <div id="estado-error" style="display:none;">
+        <div class="acceso-aviso critico">
+          No se pudo conectar con el servidor. Puede ser la conexión de este equipo.
+        </div>
+        <button type="button" class="btn btn-secundario" id="btn-reintentar" style="width:100%;">
+          Reintentar
+        </button>
+      </div>
+
+      <!-- Estado: listo -->
+      <form id="estado-listo" style="display:none;" novalidate>
+        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;">
+          Recuperar la contraseña
+        </h2>
+        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-bottom:20px;">
+          Escriba el correo con el que entra. Le llega un enlace para elegir una contraseña nueva.
+        </p>
+
+        <div id="aviso-error-envio" class="acceso-aviso critico" style="display:none;"></div>
+
+        <div class="form-group">
+          <label for="recuperar-email">Correo electrónico</label>
+          <input type="email" id="recuperar-email" autocomplete="username" required />
+        </div>
+
+        <button type="submit" class="btn btn-primario" id="btn-enviar" style="width:100%;margin-top:8px;">
+          <span id="texto-btn-enviar">Enviar el enlace</span>
+        </button>
+
+        <p class="acceso-pie">
+          <a href="acceso.html">Volver al acceso</a>
+        </p>
+      </form>
+
+      <!-- Estado: el pedido salió -->
+      <div id="estado-enviado" style="display:none;">
+        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;">
+          Revise su correo
+        </h2>
+        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;">
+          Si hay una cuenta con <strong id="correo-avisado"></strong>, ahí va el enlace para elegir
+          una contraseña nueva. El enlace sirve una sola vez y vence en una hora.
+        </p>
+        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-top:12px;">
+          Si no aparece en unos minutos, conviene mirar en el correo no deseado.
+        </p>
+        <p class="acceso-pie">
+          <a href="acceso.html">Volver al acceso</a>
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/identidad.js"></script>
+  <script src="js/texto.js"></script>
+  <!-- Sin `js/clave.js`: en esta pantalla no se escribe ninguna contraseña. -->
+  <script src="js/apiClient.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    const paneles = {
+      cargando: document.getElementById('estado-cargando'),
+      error: document.getElementById('estado-error'),
+      listo: document.getElementById('estado-listo'),
+      enviado: document.getElementById('estado-enviado')
+    };
+
+    function mostrar(cual) {
+      Object.keys(paneles).forEach(nombre => {
+        paneles[nombre].style.display = (nombre === cual) ? 'block' : 'none';
+      });
+    }
+
+    function avisar(id, texto) {
+      const caja = document.getElementById(id);
+      caja.textContent = texto;
+      caja.style.display = texto ? 'block' : 'none';
+    }
+
+    async function arrancar() {
+      mostrar('cargando');
+      try {
+        // La Prestadora se usa sólo para la marca de la tarjeta. Que no se
+        // reconozca no impide recuperar nada, así que no se avisa.
+        await ClienteDatos.initTenant();
+        mostrar('listo');
+        // El correo puede venir escrito desde la pantalla de acceso, para no
+        // hacerlo tipear dos veces. Viaja por `sessionStorage` y no por la
+        // dirección: un correo en la dirección queda en el historial del
+        // navegador y en el registro de cualquier servidor que la vea (§4).
+        const traido = sessionStorage.getItem('correo-a-recuperar');
+        if (traido) {
+          document.getElementById('recuperar-email').value = traido;
+          sessionStorage.removeItem('correo-a-recuperar');
+        }
+      } catch (err) {
+        console.error('Recuperar la contraseña, arranque:', err);
+        mostrar('error');
+      }
+    }
+
+    document.getElementById('btn-reintentar').addEventListener('click', arrancar);
+
+    document.getElementById('estado-listo').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      avisar('aviso-error-envio', '');
+
+      const email = document.getElementById('recuperar-email').value.trim();
+      if (!email) {
+        avisar('aviso-error-envio', 'Falta escribir el correo.');
+        return;
+      }
+
+      const boton = document.getElementById('btn-enviar');
+      const texto = document.getElementById('texto-btn-enviar');
+      const textoOriginal = texto.textContent;
+      boton.disabled = true;
+      texto.textContent = 'Enviando...';
+
+      try {
+        await Sesion.pedirNuevaClave(email);
+        // Se contesta lo mismo exista la cuenta o no: contestar distinto sería
+        // decirle a cualquiera qué correos están registrados acá.
+        document.getElementById('correo-avisado').textContent = email;
+        mostrar('enviado');
+      } catch (err) {
+        // El detalle técnico lo manda a la consola `Texto.mensajeDeError`.
+        avisar('aviso-error-envio', Texto.mensajeDeError(err, 'mandar el enlace'));
+        boton.disabled = false;
+        texto.textContent = textoOriginal;
+      }
+    });
+
+    arrancar();
+  </script>
+</body>
+
+</html>

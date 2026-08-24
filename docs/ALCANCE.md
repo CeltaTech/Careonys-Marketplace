@@ -199,9 +199,11 @@ quedado abierta.
   plantilla. Se probó además plantando un aviso con el error crudo en un archivo de prueba, y
   avisó en el renglón exacto.
 - **Una frase decía un número que nadie verificó.** El aviso de contraseña afirmaba «al menos ocho
-  caracteres»; `supabase/config.toml:187` dice seis, y el servidor remoto puede decir otra cosa
+  caracteres»; `supabase/config.toml` decía seis, y el servidor remoto puede decir otra cosa
   (es el pendiente 21). Ahora no dice ningún número: el largo lo pone el servidor, y la regla 5.1
   no deja escribir un valor operativo adentro del código.
+  **Revertido el mismo día**, más abajo: sin número el aviso no sirve. El número volvió, a un solo
+  lugar, y el archivo de configuración dice el mismo.
 
 ---
 
@@ -343,6 +345,43 @@ esperando una decisión suya.
   `Sesion.perfil()` en el código—, que es una tercera cosa: quién inició sesión, con qué rol y de qué
   Prestadora. Está guardada así desde el principio. No aparece en texto visible, así que la confusión
   no llega a la pantalla; queda avisada en el glosario para que no vuelva a entrar por ahí.
+
+---
+
+### Quien olvida la contraseña ya tiene por dónde volver
+
+Etapas 1 y 2 del pendiente 21, el 24 de agosto de 2026. Falta la etapa 3, que es el interruptor de
+la confirmación por correo.
+
+- **Un solo lugar decide qué contraseña vale.** Nace `js/clave.js`. Tres pantallas piden una
+  contraseña —el acceso, el alta de Asistente y la que elige una nueva— y hasta ahora cada una
+  revisaba por su cuenta; con tres copias, tarde o temprano una pide ocho caracteres y otra seis
+  (regla 7). El largo mínimo y las frases de aviso viven ahí y en ningún otro lado.
+- **El botón para ver la contraseña se pone solo.** Al cargar la página, todo campo de contraseña
+  queda con el suyo. Una pantalla nueva no tiene que acordarse de nada. Dice «Mostrar» y «Ocultar»
+  con todas las letras en vez de un dibujo de ojo, porque un ojo tachado no aclara si lo que se ve
+  es el estado actual o lo que va a pasar al apretarlo.
+- **Volvió el número, y se explica por qué.** La nota de más arriba —«ahora no dice ningún número:
+  el largo lo pone el servidor»— no aguantó el uso: sin número, el único aviso posible es «no
+  cumple», y la persona se entera de cuánto le falta recién cuando el servidor la rechaza. El ocho
+  vive en `js/clave.js` y `supabase/config.toml` dice el mismo. Si el servidor alojado termina
+  pidiendo menos, el navegador queda más exigente, que es el lado seguro del desacuerdo.
+- **Dos pantallas nuevas.** `recuperar-clave.html` pide el correo y manda el enlace;
+  `nueva-clave.html` recibe a quien llega desde ese enlace y guarda la contraseña nueva.
+  `acceso.html` enlaza a la primera, y le pasa el correo ya escrito **por `sessionStorage` y no
+  colgado de la dirección**: un correo en la dirección queda en el historial del navegador y en el
+  registro de cualquier servidor que la vea (§4 de `CLAUDE.md`).
+- **La pantalla no dice si ese correo tiene cuenta.** Contesta lo mismo en los dos casos.
+  Contestar distinto le regalaría a cualquiera una forma de averiguar quién está registrado acá.
+- **El estilo de las tres pantallas de sesión se subió a `css/styles.css`.** Vivía adentro de
+  `acceso.html`; con dos pantallas más de la misma cara, tres copias del mismo bloque se separan
+  solas.
+- **Cuatro regexes del clasificador de errores no funcionaban.** `js/texto.js` traía ocho bytes de
+  retroceso donde tenía que decir `\b`: los patrones de 400, 401, 403, 404, 409 y 422 pedían un
+  carácter de retroceso literal alrededor del número, así que ningún código HTTP encontraba su
+  frase y todos caían en «avisar al soporte». Los metió un `heredoc` de la línea de comandos, que
+  en esta máquina se come las barras invertidas. Arreglado en el original y en las dos copias, y
+  comprobado con un caso de 404 que antes fallaba.
 
 ## 2. Falta construir
 
