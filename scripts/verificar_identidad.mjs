@@ -22,20 +22,20 @@
    - que los dos `manifest.json` estén al día con la identidad.
 =================================================== */
 
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
+
+import { archivos } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
 const { IDENTIDAD } = require(join(raiz, 'js', 'identidad.js'));
 
-const CARPETAS_SALTEADAS = new Set([
-  'node_modules', '.git', '.vercel', 'docs', 'No commit', 'fuera de uso',
-  // Estado local del CLI de Supabase. No va al repositorio y no es código nuestro.
-  '.temp', '.branches'
-]);
+/* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
+   este: la documentación nombra la marca a propósito y todo el tiempo. */
+const AJENAS = ['docs'];
 const EXTENSIONES = ['.html', '.js', '.css', '.json', '.webmanifest', '.txt'];
 const COPIAS_IDENTIDAD = [
   join('js', 'identidad.js'),
@@ -57,17 +57,6 @@ const PROHIBIDO = [
   IDENTIDAD.nombre, IDENTIDAD.nombreCorto, IDENTIDAD.dominio, IDENTIDAD.contacto
 ].filter((v, i, a) => v && a.indexOf(v) === i);
 
-function archivos(dir) {
-  const salida = [];
-  for (const nombre of readdirSync(dir)) {
-    if (CARPETAS_SALTEADAS.has(nombre)) continue;
-    const ruta = join(dir, nombre);
-    if (statSync(ruta).isDirectory()) salida.push(...archivos(ruta));
-    else if (EXTENSIONES.some((e) => nombre.toLowerCase().endsWith(e))) salida.push(ruta);
-  }
-  return salida;
-}
-
 // Deja el renglón en blanco si era un comentario. Reemplaza por espacios en vez
 // de borrar para que el número de renglón siga siendo el de verdad.
 function sinComentarios(texto, extension) {
@@ -84,7 +73,7 @@ function sinComentarios(texto, extension) {
 }
 
 const hallazgos = [];
-for (const ruta of archivos(raiz)) {
+for (const ruta of archivos(raiz, EXTENSIONES, AJENAS)) {
   const rel = relative(raiz, ruta);
   if (ARCHIVOS_EXENTOS.has(rel) || GENERADOS.has(rel)) continue;
   if (rel.toLowerCase().endsWith('.md')) continue;

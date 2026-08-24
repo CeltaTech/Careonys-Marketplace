@@ -50,19 +50,17 @@
    es el dato pegado derecho desde el objeto.
 =================================================== */
 
-import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
+import { archivos } from './recorrido.mjs';
+
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-/* «No commit» y las de su especie no se abren: la regla de la bóveda está en
-   `F:\proyectos\CLAUDE.md` y vale también para un guion que recorre carpetas. */
-const IGNORADAS = new Set([
-  'node_modules', '.git', '.vercel', 'docs', 'supabase', 'scripts', 'assets',
-  'No commit', 'no_commit', 'NO HACER COMMIT', 'no pushear', 'ReferenciaNoHacerCommit',
-  'fuera de uso', '.temp', '.branches'
-]);
+/* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
+   este: un dato entra en una pantalla, y en esas carpetas no hay pantallas. */
+const AJENAS = ['docs', 'supabase', 'scripts', 'assets'];
 
 const PARECE_MARCADO = /<[a-zA-Z][a-zA-Z0-9-]*[\s/>]/;
 const MANEJADOR_EN_LINEA = /\son[a-z]+\s*=\s*"[^"]*\$\{/;
@@ -353,21 +351,10 @@ if (noDetecta.length || sePasa.length) {
   process.exit(1);
 }
 
-function archivos(carpeta, encontrados = []) {
-  if (!existsSync(carpeta)) return encontrados;
-  for (const nombre of readdirSync(carpeta)) {
-    if (IGNORADAS.has(nombre)) continue;
-    const camino = join(carpeta, nombre);
-    if (statSync(camino).isDirectory()) archivos(camino, encontrados);
-    else if (nombre.endsWith('.html') || nombre.endsWith('.js')) encontrados.push(camino);
-  }
-  return encontrados;
-}
-
 const fallas = [];
 let revisados = 0;
 
-for (const camino of archivos(raiz)) {
+for (const camino of archivos(raiz, ['.html', '.js'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   revisados++;
   const crudo = readFileSync(camino, 'utf8');

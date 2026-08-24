@@ -26,18 +26,16 @@
    tantas veces que alguien lo apague.
 =================================================== */
 
-import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
+import { archivos } from './recorrido.mjs';
+
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
-/* «No commit» y las de su especie no se abren: la regla de la bóveda está en
-   `F:\proyectos\CLAUDE.md` y vale también para un guion que recorre carpetas. */
-const IGNORADAS = new Set([
-  'node_modules', '.git', '.vercel', 'docs', 'supabase', 'scripts', 'assets',
-  'No commit', 'no_commit', 'NO HACER COMMIT', 'no pushear', 'ReferenciaNoHacerCommit',
-  'fuera de uso', '.temp', '.branches'
-]);
+/* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
+   este: el trato se revisa en el texto que ve una persona, y ahí no hay ninguno. */
+const AJENAS = ['docs', 'supabase', 'scripts', 'assets'];
 
 /* Sólo formas que no pueden ser otra cosa. Las ambiguas —«completa», «carga»,
    «agenda», «entrevista»— son terceras personas legítimas en casi todos los
@@ -135,21 +133,10 @@ if (noDetecta.length || sePasa.length) {
   process.exit(1);
 }
 
-function archivos(carpeta, extensiones, encontrados = []) {
-  if (!existsSync(carpeta)) return encontrados;
-  for (const nombre of readdirSync(carpeta)) {
-    if (IGNORADAS.has(nombre)) continue;
-    const camino = join(carpeta, nombre);
-    if (statSync(camino).isDirectory()) archivos(camino, extensiones, encontrados);
-    else if (extensiones.some((e) => nombre.endsWith(e))) encontrados.push(camino);
-  }
-  return encontrados;
-}
-
 const fallas = [];
 let revisados = 0;
 
-for (const camino of archivos(raiz, ['.html', '.js', '.json'])) {
+for (const camino of archivos(raiz, ['.html', '.js', '.json'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   if (nombre.endsWith('manifest.json') || nombre.endsWith('sw.js')) continue;
   revisados++;

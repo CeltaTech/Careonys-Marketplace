@@ -20,29 +20,17 @@
    Qué no mira: si el código hace lo que debe. Sólo si se puede leer.
 =================================================== */
 
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 import vm from 'node:vm';
 
-const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
-/* «No commit» y las de su especie no se abren: la regla de la bóveda está en
-   `F:\proyectos\CLAUDE.md` y vale también para un guion que recorre carpetas. */
-const IGNORADAS = new Set([
-  'node_modules', '.git', '.vercel', 'docs', 'supabase', 'scripts',
-  'No commit', 'no_commit', 'NO HACER COMMIT', 'no pushear', 'ReferenciaNoHacerCommit',
-  'fuera de uso', '.temp', '.branches'
-]);
+import { archivos } from './recorrido.mjs';
 
-function archivos(carpeta, extension, encontrados = []) {
-  for (const nombre of readdirSync(carpeta)) {
-    if (IGNORADAS.has(nombre)) continue;
-    const camino = join(carpeta, nombre);
-    if (statSync(camino).isDirectory()) archivos(camino, extension, encontrados);
-    else if (nombre.endsWith(extension)) encontrados.push(camino);
-  }
-  return encontrados;
-}
+const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
+/* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
+   este: la sintaxis de un guion se revisa donde vive una pantalla. */
+const AJENAS = ['docs', 'supabase', 'scripts'];
 
 /** Devuelve el mensaje del error de sintaxis, o null si el código se puede leer. */
 function revisar(codigo, nombre) {
@@ -57,7 +45,7 @@ function revisar(codigo, nombre) {
 const fallas = [];
 let revisados = 0;
 
-for (const camino of archivos(raiz, '.html')) {
+for (const camino of archivos(raiz, ['.html'], AJENAS)) {
   const pantalla = relative(raiz, camino).split(sep).join('/');
   const crudo = readFileSync(camino, 'utf8');
   const bloques = crudo.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi);
@@ -69,9 +57,9 @@ for (const camino of archivos(raiz, '.html')) {
   }
 }
 
-for (const camino of archivos(join(raiz, 'js'), '.js').concat(
-  archivos(join(raiz, 'pwa-asistente', 'js'), '.js'),
-  archivos(join(raiz, 'pwa-familia', 'js'), '.js'))) {
+for (const camino of archivos(join(raiz, 'js'), ['.js'], AJENAS).concat(
+  archivos(join(raiz, 'pwa-asistente', 'js'), ['.js'], AJENAS),
+  archivos(join(raiz, 'pwa-familia', 'js'), ['.js'], AJENAS))) {
   revisados++;
   const nombre = relative(raiz, camino).split(sep).join('/');
   const error = revisar(readFileSync(camino, 'utf8'), nombre);

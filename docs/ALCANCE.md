@@ -203,6 +203,43 @@ quedado abierta.
   (es el pendiente 21). Ahora no dice ningún número: el largo lo pone el servidor, y la regla 5.1
   no deja escribir un valor operativo adentro del código.
 
+---
+
+### Lo que se siembra ya habla el idioma del catálogo
+
+Cerró el pendiente 27, el 24 de agosto de 2026.
+
+- **Eran ocho valores, no uno.** El pendiente nombraba `enfermero` en lugar de
+  `enfermero_universitario`. Revisada la siembra entera contra
+  `data/catalogo-vocabularios.json` aparecieron siete más: `cuidados_paliativos` por `paliativos`,
+  `acompanamiento` por `solo_acompanamiento`, y cuatro que no existían en ningún vocabulario
+  —`movilidad_reducida`, `traslados`, `curaciones`, `estimulacion_cognitiva`—. Ninguno daba error
+  en ninguna parte.
+- **El daño no está en la base, está en la pantalla.** Las columnas son texto libre y aceptan
+  cualquier cosa. `js/catalogo.js:121` traduce la clave guardada a su etiqueta y, cuando no la
+  encuentra, muestra la clave cruda: la ficha decía «enfermero» en minúscula y con guión bajo. Y
+  el filtro por perfil profesional busca por la clave que ofrece el catálogo, así que esa fila no
+  aparecía nunca.
+- **Se arregló por los dos caminos.** `0003_dos_prestadoras_ficticias.sql` quedó corregida, para
+  que una base creada desde cero nazca bien, y `0010_claves_de_catalogo_en_la_siembra.sql`
+  actualiza las cuatro filas de la base que ya está andando. La 0010 va por identificador y no
+  buscando la clave vieja, para que las dos bases queden con exactamente los mismos valores.
+  **Está escrita y todavía no aplicada**, igual que la 0009 (pendiente 30).
+- **El chequeo lo sostiene.** `scripts/verificar_claves.mjs` empareja la lista de columnas de cada
+  `insert` con la de valores y exige que lo que caiga en una columna de catálogo sea una clave de
+  su vocabulario. Entiende el texto suelto y el arreglo `'["higiene"]'::jsonb`, y no se confunde
+  con un `(select ...)` en el medio ni con una comilla adentro de un nombre. Su autoprueba tiene
+  once casos; se probó además plantando dos valores falsos en una migración de prueba, y avisó en
+  los dos renglones exactos.
+- **Quedan dos columnas sin dueño**, `schedule_type` y `nationality`, que hoy guardan cuatro
+  formas distintas para lo mismo. No se adivinó cuál corresponde: es el pendiente 31.
+- **Y apareció una lista repetida cuatro veces.** El chequeo de identidad empezó a avisar de
+  dieciséis marcas escritas a mano que eran las de siempre, vistas dentro de `.claude/worktrees/`,
+  una copia entera del proyecto que deja el CLI. Ninguno de los cuatro chequeos que recorren
+  carpetas la excluía, porque cada uno llevaba su propia lista de carpetas a saltear, parecida a
+  las otras tres pero distinta. Ahora la lista y el recorrido viven en `scripts/recorrido.mjs` y
+  los cuatro la consumen (regla 7).
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,

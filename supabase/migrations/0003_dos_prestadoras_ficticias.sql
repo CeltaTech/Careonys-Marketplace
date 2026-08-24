@@ -8,6 +8,13 @@
 -- Todo lo de acá es inventado: ni una persona real, ni un documento real, ni un
 -- teléfono real. Los documentos son de la serie 90.000.000, que no se asigna.
 --
+-- Cada valor que sale de un catálogo está escrito con la clave del catálogo, no
+-- con una palabra parecida: `data/catalogo-vocabularios.json` manda. Un valor
+-- inventado no rompe nada en la base —las columnas son texto libre— pero llega
+-- entero a la pantalla, porque `js/catalogo.js` muestra la clave cruda cuando no
+-- encuentra su etiqueta. Quedan dos columnas sin vocabulario todavía:
+-- `schedule_type` y `nationality` (pendiente 31).
+--
 -- Las Prestadoras se buscan por su `slug` y no por un identificador escrito a
 -- mano: PresDemo ya existía en la base con el suyo, y pisarlo habría dejado sus
 -- legajos colgando de una Prestadora que no existe.
@@ -37,7 +44,7 @@ values
    (select id from public.tenants where slug = 'presdemo'),
    'Marta Quiroga Ficticia', '90000001', '27-90000001-4', '+54 9 11 5000-0001',
    'marta.ficticia@ejemplo.invalid', 'Calle Inventada 100, Vicente López',
-   'enfermero', 'zona_norte',
+   'enfermero_universitario', 'zona_norte',
    '["alzheimer", "diabetes"]'::jsonb, '["higiene", "medicacion"]'::jsonb,
    'validado_prestadora', '1985-03-12', 'femenino', 'argentina', 4800),
   ('aaaaaaa1-0000-4000-8000-000000000002',
@@ -45,21 +52,21 @@ values
    'Hugo Peralta Ficticio', '90000002', '20-90000002-1', '+54 9 11 5000-0002',
    'hugo.ficticio@ejemplo.invalid', 'Pasaje Imaginario 250, San Isidro',
    'cuidador_domiciliario', 'zona_norte',
-   '["movilidad_reducida"]'::jsonb, '["acompanamiento", "traslados"]'::jsonb,
+   '["acv"]'::jsonb, '["movilizacion", "solo_acompanamiento"]'::jsonb,
    'en_revision', '1979-11-02', 'masculino', 'argentina', 4200),
   ('bbbbbbb2-0000-4000-8000-000000000001',
    (select id from public.tenants where slug = 'cuidarnorte'),
    'Silvia Ledesma Ficticia', '90000003', '27-90000003-9', '+54 9 11 5000-0003',
    'silvia.ficticia@ejemplo.invalid', 'Avenida Falsa 1234, San Martín',
-   'enfermero', 'zona_oeste',
-   '["oncologico", "cuidados_paliativos"]'::jsonb, '["medicacion", "curaciones"]'::jsonb,
+   'enfermero_universitario', 'zona_oeste',
+   '["oncologico", "paliativos"]'::jsonb, '["medicacion", "inyecciones"]'::jsonb,
    'validado_prestadora', '1990-07-21', 'femenino', 'uruguaya', 5100),
   ('bbbbbbb2-0000-4000-8000-000000000002',
    (select id from public.tenants where slug = 'cuidarnorte'),
    'Rubén Ocampo Ficticio', '90000004', '20-90000004-7', '+54 9 11 5000-0004',
    'ruben.ficticio@ejemplo.invalid', 'Ruta Inexistente km 3, Morón',
    'gerontologo', 'zona_oeste',
-   '["parkinson"]'::jsonb, '["estimulacion_cognitiva"]'::jsonb,
+   '["parkinson"]'::jsonb, '["movilizacion", "solo_acompanamiento"]'::jsonb,
    'validado', '1972-01-30', 'masculino', 'argentina', 5600)
 on conflict (id) do nothing;
 
