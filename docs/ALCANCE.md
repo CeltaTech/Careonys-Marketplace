@@ -85,6 +85,41 @@ el pendiente 11.
 
 ---
 
+### El texto visible dejó de tutear
+
+Cerró el pendiente 10, el 24 de agosto de 2026. Las catorce pantallas hablan en forma impersonal,
+y de *usted* cuando hay que dirigirse a alguien, como pide la regla 5.1 de `CLAUDE.md`.
+
+- **Qué se cambió**: 187 renglones de texto visible, en once de las catorce pantallas. Las otras
+  tres —`acceso.html`, `examen.html` y `panel-prestadora.html`— ya estaban limpias. La mayoría era
+  voseo argentino («Encontrá», «Publicá tu aviso», «¿No tenés cuenta?»), pero también había
+  imperativos en tú («describe», «habilita») y futuros de segunda persona («Recibirás una
+  respuesta»).
+- **Dos criterios de estilo**, tomados para que no convivieran dos formas de escribir lo mismo:
+  la etiqueta de un campo no lleva posesivo —«Correo electrónico», no «Su correo electrónico»—, y
+  el botón va en infinitivo: «Ingresar», «Registrarse», «Postularse».
+- **Un chequeo lo sostiene.** `scripts/verificar_trato.mjs` falla si el voseo, un pronombre
+  informal o un imperativo con el pronombre pegado atrás reaparecen en el texto visible. Antes de
+  recorrer el proyecto se prueba a sí mismo contra ocho frases que tutean y ocho que no, y si el
+  detector falla en cualquiera de las dieciséis se detiene en vez de dar un cero tranquilizador:
+  una prueba que no puede fallar no prueba nada. Se probó además plantando «Registrate y completá
+  tu perfil» en una pantalla real, y falló.
+
+**Lo que el chequeo no puede ver, y hay que leer con ojos**: el imperativo en tú sin acento.
+«Descarga la aplicación» tutea y «El sistema descarga el archivo» no, y se escriben igual.
+Distinguirlas necesita entender la frase.
+
+**Lo que se encontró de paso.** El texto de las pantallas se revisó archivo por archivo, y
+aparecieron dos cosas que no eran de trato:
+
+- Un `await` adentro de una función que no era `async`, en `pwa-asistente/index.html:557`. Es un
+  error de sintaxis, así que el navegador descartaba el bloque `<script>` entero: la aplicación
+  del Asistente se dibujaba completa y no funcionaban ni el ingreso, ni el fichado, ni la
+  bitácora, sin ningún aviso. Corregido, y ahora `scripts/verificar_guiones.mjs` lo vigila —era
+  el único bloque roto de los veinticuatro del proyecto—.
+- Un `á` guardado como carácter roto en `solicitar-asistente.html`, que hacía invisible esa frase
+  a cualquier búsqueda. Corregido.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,

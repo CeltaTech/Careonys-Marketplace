@@ -64,22 +64,22 @@
         </div>
 
         <div style="text-align:right;margin-bottom:16px;">
-          <a href="#" style="font-size:11px;color:#64748b;text-decoration:none;font-weight:700;">¿Olvidaste tu
+          <a href="#" style="font-size:11px;color:#64748b;text-decoration:none;font-weight:700;">¿Olvidó su
             contraseña?</a>
         </div>
 
-        <button type="button" class="btn-login" id="btn-action-login">Ingresá</button>
+        <button type="button" class="btn-login" id="btn-action-login">Ingresar</button>
 
         <div style="text-align:center;margin:16px 0;font-size:11px;color:var(--texto-secundario);font-weight:700;">O</div>
 
-        <button type="button" class="social-btn"><i class="fab fa-google" style="color:#ea4335;"></i> Ingresá con
+        <button type="button" class="social-btn"><i class="fab fa-google" style="color:#ea4335;"></i> Ingresar con
           Google</button>
-        <button type="button" class="social-btn"><i class="fab fa-facebook-f" style="color:#1877f2;"></i> Ingresá con
+        <button type="button" class="social-btn"><i class="fab fa-facebook-f" style="color:#1877f2;"></i> Ingresar con
           Facebook</button>
 
         <div style="text-align:center;margin-top:20px;font-size:12px;color:#64748b;">
-          ¿No tenés cuenta? <a href="#" id="link-go-signup"
-            style="color:var(--marca-prestadora-acento);font-weight:700;text-decoration:none;">Registrate</a>
+          ¿No tiene cuenta? <a href="#" id="link-go-signup"
+            style="color:var(--marca-prestadora-acento);font-weight:700;text-decoration:none;">Registrarse</a>
         </div>
       </div>
 
@@ -98,9 +98,9 @@
 
       <div style="padding:20px 0;text-align:center;">
         <h3 style="font-size:18px;font-weight:800;color:var(--marca-prestadora);margin:0 0 6px 0;">¿Cómo
-          quisieras
+          desea
           ingresar?</h3>
-        <p style="font-size:12px;color:#64748b;margin:0;">Seleccioná tu tipo de cuenta para comenzar</p>
+        <p style="font-size:12px;color:#64748b;margin:0;">Seleccione su tipo de cuenta para comenzar</p>
       </div>
 
       <div class="role-card" data-role="familiar">
@@ -143,7 +143,7 @@
       <div class="verification-widget" style="margin-top:16px;">
         <i class="fas fa-exclamation-triangle"></i>
         <div style="flex:1;">
-          <h5>Completá las Verificaciones</h5>
+          <h5>Complete las Verificaciones</h5>
           <p>Email: ✓ Validado | Celular: ⌛ Pendiente</p>
         </div>
         <i class="fas fa-chevron-right" style="font-size:12px;color:#856404;"></i>
@@ -189,7 +189,7 @@
           <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-running"></i></div>
           <span>Vida Activa</span>
         </div>
-        <div class="service-btn" onclick="alert('Contactando con tu Gestor de Cuidados asignado...')">
+        <div class="service-btn" onclick="alert('Contactando con el Gestor de Cuidados asignado...')">
           <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-user-tie"></i></div>
           <span>Gestor</span>
         </div>
@@ -223,7 +223,7 @@
 
       <!-- CURSOS RECOMENDADOS -->
       <div class="section-title">
-        <span>Nuestros cursos para vos</span>
+        <span>Nuestros cursos</span>
         <a href="cursos.html">Explorar</a>
       </div>
 
@@ -304,7 +304,7 @@
       <!-- Input de mensaje -->
       <div
         style="padding:10px 12px;background: var(--superficie);border-top:1px solid #e2e8f0;display:flex;align-items:center;gap:8px;">
-        <input type="text" id="chat-input" placeholder="Escribí un mensaje..."
+        <input type="text" id="chat-input" placeholder="Escriba un mensaje..."
           style="flex:1;padding:9px 14px;border-radius:20px;border:1.5px solid #e2e8f0;font-size:13px;outline:none;" />
         <button id="chat-send-btn"
           style="background:var(--marca-prestadora);color:#fff;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i
@@ -503,7 +503,7 @@
       const notas = document.getElementById('bit-notas').value;
 
       if (!notas.trim()) {
-        alert('Por favor, describe la novedad o reporte del cuidado.');
+        alert('Por favor, describa la novedad o reporte del cuidado.');
         return;
       }
 
@@ -539,7 +539,7 @@
       statusEl.textContent = 'Obteniendo localización GPS...';
 
       if (!navigator.geolocation) {
-        alert('Tu navegador no soporta geolocalización.');
+        alert('El navegador no soporta geolocalización.');
         statusEl.textContent = 'GPS no soportado';
         return;
       }
@@ -564,7 +564,7 @@
           statusEl.textContent = 'Error en fichado';
         }
       }, (err) => {
-        alert('No pudimos acceder a tu ubicación. Por favor, habilita los permisos de GPS.');
+        alert('No se pudo acceder a la ubicación. Por favor, habilite los permisos de GPS.');
         statusEl.textContent = 'Permiso GPS denegado';
       });
     }
@@ -577,7 +577,7 @@
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-pass').value;
       const btn = document.getElementById('btn-action-login');
-      if (!email || !password) { alert('Completá email y contraseña.'); return; }
+      if (!email || !password) { alert('Complete email y contraseña.'); return; }
       btn.textContent = 'Ingresando...';
       btn.disabled = true;
       try {
@@ -597,7 +597,7 @@
       } catch (err) {
         alert('Error al iniciar sesión: ' + err.message);
       } finally {
-        btn.textContent = 'Ingresá';
+        btn.textContent = 'Ingresar';
         btn.disabled = false;
       }
     });
@@ -671,7 +671,7 @@
 
     // LOGOUT REAL
     document.getElementById('btn-logout').addEventListener('click', async () => {
-      if (confirm('¿Estás seguro de que querés cerrar sesión?')) {
+      if (confirm('¿Confirma que quiere cerrar la sesión?')) {
         await Sesion.logout();
         navigate('intro');
       }

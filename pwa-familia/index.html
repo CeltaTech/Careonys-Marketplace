@@ -595,7 +595,7 @@
       <div class="verification-widget" style="margin-top:16px;">
         <i class="fas fa-exclamation-triangle"></i>
         <div style="flex:1;">
-          <h5>Completá las Verificaciones</h5>
+          <h5>Complete las Verificaciones</h5>
           <p>Email: ✓ Validado | Celular: ⌛ Pendiente</p>
         </div>
       </div>
@@ -622,7 +622,7 @@
           <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-running"></i></div>
           <span>Vida Activa</span>
         </div>
-        <div class="service-btn" onclick="alert('Contactando a tu Gestor de Cuidados asignado...')">
+        <div class="service-btn" onclick="alert('Contactando al Gestor de Cuidados asignado...')">
           <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-user-tie"></i></div>
           <span>Gestor</span>
         </div>
@@ -689,7 +689,7 @@
       </div>
 
       <div style="padding:16px;">
-        <p style="font-size:12px;color:#64748b;margin:0 0 16px 0;">Completá los datos del cuidado que necesitás y te encontramos el asistente ideal.</p>
+        <p style="font-size:12px;color:#64748b;margin:0 0 16px 0;">Complete los datos del cuidado que necesita y le encontramos el asistente ideal.</p>
 
         <form id="form-nueva-busqueda" novalidate>
 
@@ -734,11 +734,11 @@
             <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--marca-prestadora);">
               <i class="fas fa-notes-medical" style="margin-right:6px;"></i>Condición del Paciente
             </h4>
-            <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:8px;">Patologías presentes (seleccioná todas las que apliquen):</label>
+            <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:8px;">Patologías presentes (seleccione todas las que apliquen):</label>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" data-catalogo="patologia" data-catalogo-como="casillas" data-catalogo-nombre="patologia" data-catalogo-clase="catalogo-casilla"></div>
             <div style="margin-top:12px;">
               <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">Descripción adicional (opcional)</label>
-              <textarea id="pb-descripcion" placeholder="Contanos más sobre la situación del paciente..." rows="3"
+              <textarea id="pb-descripcion" placeholder="Cuéntenos más sobre la situación del paciente..." rows="3"
                 style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid #cbd5e1;font-size:13px;box-sizing:border-box;background:#f8fafc;"></textarea>
             </div>
           </div>
@@ -750,7 +750,7 @@
           </button>
           <div id="pb-success"
             style="display:none;background:#e8f5e9;color:#2e7d32;padding:14px;border-radius:12px;font-weight:700;text-align:center;font-size:13px;border:1px solid #c8e6c9;margin-top:12px;">
-            ✓ ¡Búsqueda publicada! Te contactaremos a la brevedad con los mejores perfiles.
+            ✓ ¡Búsqueda publicada! Lo contactaremos a la brevedad con los mejores perfiles.
           </div>
         </form>
       </div>
@@ -864,7 +864,7 @@
       const email    = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-pass').value;
       const btn      = document.getElementById('btn-action-login');
-      if (!email || !password) { alert('Ingresá email y contraseña.'); return; }
+      if (!email || !password) { alert('Ingrese el correo electrónico y la contraseña.'); return; }
       btn.textContent = 'Ingresando...';
       btn.disabled = true;
       try {

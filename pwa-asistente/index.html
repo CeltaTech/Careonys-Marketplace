@@ -303,7 +303,7 @@
         </div>
         <button type="button" class="btn-login" id="btn-action-login">Ingresar a {{producto}} Asistente</button>
         <div class="btn-register-link">
-          ¿No tenés cuenta? <a onclick="navigate('registro')">Postulate como Asistente</a>
+          ¿No tiene cuenta? <a onclick="navigate('registro')">Postularse como Asistente</a>
         </div>
       </div>
       <div style="text-align:center;margin-top:auto;font-size:10px;color:var(--texto-secundario);padding-top:20px;">
@@ -336,7 +336,7 @@
       <div class="gps-widget">
         <i class="fas fa-map-marked-alt"></i>
         <h4 style="margin:0;font-size:15px;color:#1e293b;font-weight:800;">Fichador GPS Laboral</h4>
-        <p id="gps-status" style="margin:4px 0 0 0;font-size:12px;color:#64748b;">Presioná para marcar entrada o salida en el domicilio.</p>
+        <p id="gps-status" style="margin:4px 0 0 0;font-size:12px;color:#64748b;">Presione para marcar entrada o salida en el domicilio.</p>
         <div class="gps-actions">
           <button class="btn-gps" id="btn-gps-in" style="background:#0284c7;">Marcar Entrada</button>
           <button class="btn-gps" id="btn-gps-out" style="background:#ef4444;">Marcar Salida</button>
@@ -360,7 +360,7 @@
         </div>
         <div class="form-group-pwa">
           <label>Notas Diarias / Reporte del Servicio</label>
-          <textarea id="bit-notas" placeholder="Escribe el estado del paciente, alimentación, novedades..." style="height:60px;"></textarea>
+          <textarea id="bit-notas" placeholder="Escriba el estado del paciente, alimentación, novedades..." style="height:60px;"></textarea>
         </div>
         <button type="button" class="btn-login" id="btn-save-bitacora" style="margin-top:8px;">Guardar Novedad</button>
       </div>
@@ -465,7 +465,7 @@
               <label>Valor Hora ($ ARS)</label>
               <input type="number" id="w-valor-hora" placeholder="Ej: 3500" required />
             </div>
-            <p style="font-size:11px;font-weight:700;color:#334155;margin:12px 0 4px;">Agenda Semanal (toca para marcar disponible):</p>
+            <p style="font-size:11px;font-weight:700;color:#334155;margin:12px 0 4px;">Agenda Semanal (toque para marcar disponible):</p>
             <div class="wschedule-grid" id="wschedule">
               <div class="gh">Turno</div><div class="gh">L</div><div class="gh">M</div><div class="gh">Mi</div><div class="gh">J</div><div class="gh">V</div><div class="gh">S</div><div class="gh">D</div>
               <div class="gt">Mañana</div>
@@ -488,7 +488,7 @@
             <div class="wfield"><label>Teléfono del Referente (WhatsApp)</label><input type="tel" id="w-ref-tel" placeholder="11 9876 5432" required /></div>
             <div class="winfo-box">
               <strong><i class="fas fa-info-circle"></i> Proceso de Selección:</strong><br />
-              Tu solicitud quedará en estado "En Revisión". El equipo de <strong class="tenant-name">PresDemo</strong> auditará la documentación y te convocará a entrevista.
+              La solicitud quedará en estado "En Revisión". El equipo de <strong class="tenant-name">PresDemo</strong> auditará la documentación y lo convocará a una entrevista.
             </div>
             <div style="display:flex;align-items:flex-start;gap:8px;margin:12px 0;font-size:12px;color:#334155;">
               <input type="checkbox" id="w-terminos" required style="width:18px;height:18px;margin-top:2px;flex-shrink:0;" />
@@ -498,7 +498,7 @@
               <button type="button" class="wbtn-prev" onclick="wPrev(4)"><i class="fas fa-arrow-left"></i></button>
               <button type="submit" class="wbtn-submit"><i class="fas fa-check-circle"></i> Enviar Legajo</button>
             </div>
-            <div class="wsuccess-msg" id="w-success">✓ ¡Legajo enviado! Tu postulación ha ingresado al proceso de auditoría.</div>
+            <div class="wsuccess-msg" id="w-success">✓ ¡Legajo enviado! La postulación ha ingresado al proceso de auditoría.</div>
           </div>
 
         </form>
@@ -553,14 +553,13 @@
         const aspirantes = await ClienteDatos.getAspirantes();
         if (aspirantes && aspirantes.length > 0) {
           // Buscar el legajo del usuario actual si hay userId
-          const asp = userId
-            ? (aspirantes.find(a => a.email === (await Sesion.getSession())?.user?.email) || aspirantes[0])
-            : aspirantes[0];
+          const correo = userId ? (await Sesion.getSession())?.user?.email : null;
+          const asp = (correo && aspirantes.find(a => a.email === correo)) || aspirantes[0];
           statusTxt.textContent = asp.estado === 'validado' || asp.estado === 'validado_prestadora'
             ? '🟢 Validado — Habilitado para trabajar'
-            : '🟡 En revisión — Completá tu legajo';
+            : '🟡 En revisión — Complete su legajo';
         } else {
-          statusTxt.textContent = '🔴 Sin legajo — Completá tu registro';
+          statusTxt.textContent = '🔴 Sin legajo — Complete su registro';
         }
       } catch (err) {
         statusTxt.textContent = '⚠️ Sin conexión — Datos pendientes';
@@ -572,7 +571,7 @@
       const statusEl = document.getElementById('gps-status');
       statusEl.textContent = 'Obteniendo localización GPS...';
       if (!navigator.geolocation) {
-        alert('Tu dispositivo no tiene soporte de localización GPS.');
+        alert('El dispositivo no tiene soporte de localización GPS.');
         statusEl.textContent = 'GPS no soportado';
         return;
       }
@@ -591,7 +590,7 @@
           statusEl.textContent = 'Error al registrar';
         }
       }, () => {
-        alert('Habilitá los permisos de GPS para fichar asistencia.');
+        alert('Habilite los permisos de GPS para fichar asistencia.');
         statusEl.textContent = 'Permiso GPS denegado';
       });
     }
@@ -604,7 +603,7 @@
       const glucemia = document.getElementById('bit-glucemia').value;
       const medicamentos = document.getElementById('bit-medicamentos').value;
       const notas = document.getElementById('bit-notas').value;
-      if (!notas.trim()) { alert('Escribí un reporte o nota de cuidado.'); return; }
+      if (!notas.trim()) { alert('Escriba un reporte o nota de cuidado.'); return; }
       try {
         const session = await Sesion.getSession();
         await ClienteDatos.registrarBitacoraDiaria({
@@ -626,7 +625,7 @@
       const email    = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-pass').value;
       const btn      = document.getElementById('btn-action-login');
-      if (!email || !password) { alert('Ingresá email y contraseña.'); return; }
+      if (!email || !password) { alert('Ingrese el correo electrónico y la contraseña.'); return; }
       btn.textContent = 'Ingresando...';
       btn.disabled = true;
       try {
@@ -706,7 +705,7 @@
     document.getElementById('form-legajo-pwa').addEventListener('submit', async (e) => {
       e.preventDefault();
       const terminos = document.getElementById('w-terminos');
-      if (!terminos.checked) { alert('Debés aceptar los Términos y Condiciones.'); return; }
+      if (!terminos.checked) { alert('Debe aceptar los Términos y Condiciones.'); return; }
 
       const patologias = Array.from(document.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
       const tareas = Array.from(document.querySelectorAll('input[name="tarea_cuidado"]:checked')).map(cb => cb.value);
