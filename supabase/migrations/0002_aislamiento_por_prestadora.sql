@@ -18,7 +18,7 @@
 --   3. Se borran todas las políticas permisivas.
 --   4. Políticas nuevas: la Prestadora sale de la membresía verificada de la
 --      sesión, nunca de un parámetro del pedido (CLAUDE.md §4).
---   5. La vidriera pública sigue funcionando, pero por una vista que sólo
+--   5. El directorio sigue funcionando, pero por una vista que sólo
 --      muestra lo que puede ser público. Los datos personales no salen de ahí.
 -- =====================================================================
 
@@ -123,15 +123,15 @@ create policy "Su propia Prestadora" on public.tenants
   for select to authenticated
   using (id = public.prestadora_actual());
 
--- La vidriera necesita el nombre y el color antes de que nadie inicie sesión.
-create policy "Vidriera de Prestadoras" on public.tenants
+-- El directorio necesita el nombre y el color antes de que nadie inicie sesión.
+create policy "Directorio de Prestadoras" on public.tenants
   for select to anon
   using (status = 'activo');
 
--- --- 5. La vidriera pública, sin datos personales ---------------------------
--- El directorio se ve sin iniciar sesión, y eso está bien: es una vidriera.
+-- --- 5. El directorio, sin datos personales ---------------------------------
+-- El directorio se ve sin iniciar sesión, y eso está bien: para eso está.
 -- Lo que no puede es salir por ahí un documento o una cuenta bancaria. Esta
--- vista muestra sólo lo que una vidriera necesita, y sólo de quien ya está
+-- vista muestra sólo lo que el directorio necesita, y sólo de quien ya está
 -- validado. Es lo único que el rol anónimo puede leer de los legajos.
 create or replace view public.caregivers_publicos as
   select id,
@@ -148,9 +148,9 @@ create or replace view public.caregivers_publicos as
    where verification_status in ('validado_prestadora', 'validado');
 
 comment on view public.caregivers_publicos is
-  'Vidriera pública. Nunca agregar acá una columna con datos personales.';
+  'Directorio de Asistentes. Nunca agregar acá una columna con datos personales.';
 
--- --- 6. Permisos: el anónimo pierde todo menos la vidriera ------------------
+-- --- 6. Permisos: el anónimo pierde todo menos el directorio ----------------
 revoke all on table public.caregivers      from anon;
 revoke all on table public.care_searches   from anon;
 revoke all on table public.clock_ins       from anon;
@@ -159,7 +159,7 @@ revoke all on table public.messages        from anon;
 revoke all on table public.profiles        from anon;
 revoke all on table public.tenants         from anon;
 
--- De los legajos, el anónimo sólo ve la vidriera.
+-- De los legajos, el anónimo sólo ve el directorio.
 grant select on public.caregivers_publicos to anon;
 grant select on public.caregivers_publicos to authenticated;
 

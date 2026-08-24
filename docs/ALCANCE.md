@@ -18,7 +18,7 @@
 | Perfil público del Asistente | Maquetado |
 | Portal de postulación de Asistentes | Maquetado, con el legajo funcionando: `postulacion-asistente.html` guarda las cuatro fichas repetibles y las dos banderas en las tablas de la migración 0004 |
 | Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:176`). Declarados en `supabase/migrations/0006_archivos_del_legajo.sql`, no a mano |
-| Consentimiento de publicación | Funciona de punta a punta. El alta pregunta al cerrar (`data/catalogo-banderas.json`, paso 7) y guarda la respuesta en `banderas_asistente`; el directorio público cruza contra ella y **no muestra a nadie que no haya dicho que sí** (`supabase/migrations/0007_vidriera_con_consentimiento.sql`). Sin respuesta no se publica: la casilla arranca sin marcar. Y el directorio público va con `noindex`, que es lo que ese mismo consentimiento promete |
+| Consentimiento de publicación | Funciona de punta a punta. El alta pregunta al cerrar (`data/catalogo-banderas.json`, paso 7) y guarda la respuesta en `banderas_asistente`; el directorio cruza contra ella y **no muestra a nadie que no haya dicho que sí** (`supabase/migrations/0007_directorio_con_consentimiento.sql`). Sin respuesta no se publica: la casilla arranca sin marcar. Y el directorio va con `noindex`, que es lo que ese mismo consentimiento promete |
 | Evaluaciones de competencias | Funcionan, y **las corrige el servidor**. `examen.html` pide sesión, lista lo que la persona puede rendir y manda las respuestas a `rendir_evaluacion()`; la columna con la respuesta correcta no tiene permiso de lectura para nadie y las opciones salen de la vista `opciones_para_responder`, que no la incluye (`supabase/migrations/0008_cursos_y_evaluaciones.sql`). El intento no se puede escribir a mano: la tabla no tiene política de escritura y los permisos están revocados. `cursos.html` ya no tiene examen propio, enlaza a esta pantalla. Falta el contenido: ver `docs/PENDIENTES.md` punto 24 |
 | Motor de fichas del legajo (`js/fichas-legajo.js`) | Funciona. Dibuja, valida y recolecta Matrícula, estudio, experiencia y referencia leyendo `data/catalogo-fichas.json` y `data/catalogo-vocabularios.json`. Ninguna de las cuatro está escrita en la pantalla |
 | Formulario integral de datos del Paciente | Maquetado, paso a paso |
@@ -43,7 +43,7 @@ Cómo quedó:
   punto único de verdad, y las políticas de `caregivers`, de las siete tablas del legajo y de
   `verificaciones_asistente` preguntan por él y por `prestadora_actual()`.
 - **La aplicación pregunta en el mismo orden que la base.** Con sesión, la Prestadora sale del
-  perfil (`js/apiClient.js:43`); sin sesión, el enlace elige qué directorio público se muestra y nada más.
+  perfil (`js/apiClient.js:43`); sin sesión, el enlace elige qué directorio se muestra y nada más.
 - **Los archivos siguen la misma regla.** Ver la fila «Archivos del legajo» de arriba.
 
 Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, dieciséis
@@ -275,7 +275,7 @@ Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2
 
 ---
 
-### El directorio público se ve sin sesión, y el consentimiento dice la verdad
+### El directorio se ve sin sesión, y el consentimiento dice la verdad
 
 Decidido por el Desarrollador el 24 de agosto de 2026. Cerró la parte del pendiente 2 que estaba
 esperando una decisión suya.
@@ -295,18 +295,26 @@ esperando una decisión suya.
   escapa el negocio: si adentro del chat se puede escribir un teléfono, las otras dos reglas no
   sirven de nada. Quedó anotada en `docs/CATALOGO.md` y en el pendiente 6.
 
-### La palabra «vidriera» se fue del proyecto
+### La pantalla se llama directorio, y la palabra inventada no quedó en ningún lado
 
-- **La había inventado la línea de comandos, y no se había consultado.** Al Desarrollador le
-  resultó desagradable, con razón: deja al Asistente como un maniquí en exhibición. Estaba en 70
-  lugares de 20 archivos.
-- **En su lugar va «directorio público», que no es una palabra nueva**: la pantalla ya se llamaba
-  `directorio.html`, la ficha ya se llamaba `perfil.html`, y la casilla guardada en la base ya se
-  llamaba `perfil_publicado`.
-- **En las migraciones ya aplicadas la palabra vieja se queda**, porque son el registro de lo que
-  se corrió y no se reescribe. Lo que sí cambia es lo que está guardado dentro de la base: la
-  política y los dos comentarios de vista, y eso va en la migración 0011, que **todavía no está
-  aplicada** (pendiente 30).
+- **Había una palabra que la línea de comandos se inventó y nadie aprobó.** Al Desarrollador le
+  resultó desagradable, con razón: dejaba al Asistente como algo puesto en exhibición. Estaba en
+  70 lugares de 20 archivos.
+- **El nombre bueno ya estaba escrito y no hubo que inventar nada:** `docs/GLOSARIO.md:105` dice
+  que `directorio` nombra una pantalla, la pantalla ya se llamaba `directorio.html`, la ficha ya
+  se llamaba `perfil.html`, y la casilla guardada en la base ya se llamaba `perfil_publicado`.
+- **Y va sin adjetivo.** Por un rato se escribió «directorio público», hasta que el Desarrollador
+  preguntó el 24 de agosto de 2026 por qué no «directorio» a secas. No hay respuesta: directorio
+  hay uno solo y se ve sin sesión, así que el adjetivo no distinguía nada de nada. Que se vea sin
+  iniciar sesión se dice en la oración cuando hace falta decirlo, no en el nombre. «Perfil
+  público» sí se queda, porque ahí «público» sí distingue: el legajo del Asistente tiene una parte
+  que no se muestra.
+- **Y no quedó ni un rastro de la palabra vieja, tampoco en las migraciones ya aplicadas.** Ese
+  fue el pedido expreso del Desarrollador el mismo día: mientras siga escrita en algún archivo va
+  a volver a aparecer sola. La línea de comandos había propuesto dejarla ahí porque una migración
+  aplicada es el registro de lo que corrió; el registro de verdad es el historial de Git, que sí
+  guarda cada versión y no se puede reescribir por accidente. Cambiaron **sólo comentarios**, más
+  el nombre de una política, que la migración 0011 ya había renombrado en el servidor.
 
 ## 2. Falta construir
 

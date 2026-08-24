@@ -32,7 +32,7 @@
 -- «Cursos y certificaciones» es un módulo **compartido** (`docs/MODULOS.md`):
 -- un curso aprobado dice algo de la persona, no de cómo consiguió el
 -- trabajo, y vale igual en prestación directa. Por eso ninguna tabla de
--- acá sabe qué es una vidriera, y por eso **no hay ninguna columna de
+-- acá sabe qué es un directorio, y por eso **no hay ninguna columna de
 -- puntos de reputación**: cuánto vale un curso aprobado y en qué orden se
 -- muestran los Asistentes es una decisión de esta modalidad y se queda
 -- afuera del módulo compartido (`docs/MODULOS.md`, «El puntaje se parte en

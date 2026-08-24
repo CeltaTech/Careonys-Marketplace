@@ -164,7 +164,7 @@ const SENSIBLES = ['dni', 'cuit', 'cuil', 'bank', 'iban', 'cbu', 'address', 'dir
   'phone', 'telefono', 'email', 'correo', 'birth', 'nacimiento', 'salary', 'sueldo',
   'document', 'passport', 'pasaporte', 'health', 'salud', 'diagnos'];
 // `hourly_rate` no está en la lista a propósito: una tarifa por hora en una
-// vidriera es un precio publicado, no un dato personal. `salary`/`sueldo` sí,
+// directorio es un precio publicado, no un dato personal. `salary`/`sueldo` sí,
 // porque eso es lo que cobra una persona.
 const conDatosPersonales = abiertas
   .map((a) => ({

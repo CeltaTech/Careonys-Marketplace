@@ -10,8 +10,8 @@
 --
 -- Acá se declaran los dos, con una diferencia que importa:
 --
---   * **`avatares` es público.** Es la foto que se muestra en la vidriera:
---     si no se puede ver sin sesión, la vidriera no tiene fotos.
+--   * **`avatares` es público.** Es la foto que se muestra en el directorio:
+--     si no se puede ver sin sesión, el directorio no tiene fotos.
 --   * **`documentos-cuidadores` es privado.** Guarda el documento de
 --     identidad, los antecedentes penales, el título y la matrícula. Con el
 --     depósito público, cualquiera con la dirección lee el DNI de una

@@ -24,7 +24,7 @@
 --
 -- Todo esto es Legajo del Asistente, Documentación y vencimientos, y
 -- Verificación: los tres son módulos **compartidos** (`docs/MODULOS.md`),
--- así que ninguna tabla de acá sabe qué es una vidriera ni una
+-- así que ninguna tabla de acá sabe qué es un directorio ni una
 -- postulación. Es quién es la persona, no cómo consiguió el trabajo.
 --
 -- Se sigue el mismo patrón de aislamiento que dejó la 0002: `tenant_id`
@@ -208,7 +208,7 @@ create policy "Banderas de la Prestadora" on public.banderas_asistente
   using (tenant_id = public.prestadora_actual())
   with check (tenant_id = public.prestadora_actual());
 
--- Ninguna de estas siete es visible para el rol anónimo. La vidriera
+-- Ninguna de estas siete es visible para el rol anónimo. El directorio
 -- pública sigue resolviéndose sólo por caregivers_publicos (0002 §5), que
 -- todavía no filtra por banderas_asistente.perfil_publicado — eso es la
 -- otra mitad del pendiente 2 y se hace en una migración aparte, cuando

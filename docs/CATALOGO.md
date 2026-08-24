@@ -153,7 +153,7 @@ De ahí salen dos reglas:
 - **El teléfono no se muestra nunca, y no es una preferencia del Asistente.** Se guarda en el
   legajo, la Prestadora lo usa, y ninguna pantalla lo muestra a ninguna Familia. La Familia
   contacta por la plataforma.
-- **El directorio público no puede quedar abierto a los buscadores.** **Hecho el 24 de agosto
+- **El directorio no puede quedar abierto a los buscadores.** **Hecho el 24 de agosto
   de 2026:** `directorio.html` y `perfil.html` llevan `noindex, nofollow`. **Y decidido el
   mismo día (pendiente 2):** el directorio sí se ve sin iniciar sesión, con nombre y foto,
   porque es lo que convence a una Familia que todavía no es clienta. Lo que no se ve nunca

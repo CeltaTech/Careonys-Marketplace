@@ -67,7 +67,7 @@ alguien** y **qué puede ver de ella**.
    regla 3 y sin mostrar el texto crudo del error (regla 5.1).
 7. **`requireAuth()` apunta a `acceso.html`** y lo llama `panel-prestadora.html`.
 8. **`initTenant()` da vuelta el orden**: con sesión, la Prestadora sale de la sesión. La barra de
-   direcciones sigue eligiendo **qué directorio público se muestra** a quien no inició sesión, que es lo
+   direcciones sigue eligiendo **qué directorio se muestra** a quien no inició sesión, que es lo
    único que puede hacer sin datos detrás, y deja de decidir el acceso.
 9. **El alta pide contraseña** y deja de usar el DNI. Con confirmación y mínimo de ocho
    caracteres.
@@ -76,7 +76,7 @@ alguien** y **qué puede ver de ella**.
 
 ## 4. Lo que queda afuera a propósito
 
-- **Qué muestra el directorio público** lo decidió el Desarrollador el 24 de agosto de 2026
+- **Qué muestra el directorio** lo decidió el Desarrollador el 24 de agosto de 2026
   (pendiente 2): se ve sin iniciar sesión, con nombre y foto, y los datos de contacto no
   salen nunca. Este plan no lo resolvía; sólo hizo que el directorio dejara de ser la puerta
   de los datos.
