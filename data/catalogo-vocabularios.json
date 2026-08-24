@@ -61,34 +61,46 @@
       "items": [
         {
           "clave": "cuidador_domiciliario",
-          "es-AR": "Asistente / Cuidador domiciliario"
+          "es-AR": "Asistente / Cuidador domiciliario",
+          "requiere_matricula": false
         },
         {
           "clave": "enfermero_universitario",
-          "es-AR": "Enfermero universitario"
+          "es-AR": "Enfermero universitario",
+          "requiere_matricula": true
         },
         {
           "clave": "auxiliar_enfermeria",
-          "es-AR": "Auxiliar de enfermería"
+          "es-AR": "Auxiliar de enfermería",
+          "requiere_matricula": true
         },
         {
           "clave": "acompanante_terapeutico",
-          "es-AR": "Acompañante terapéutico"
+          "es-AR": "Acompañante terapéutico",
+          "requiere_matricula": true
         },
         {
           "clave": "gerontologo",
-          "es-AR": "Especialista en gerontología"
+          "es-AR": "Especialista en gerontología",
+          "requiere_matricula": true
         },
         {
           "clave": "voluntario",
-          "es-AR": "Voluntario / Acompañante"
+          "es-AR": "Voluntario / Acompañante",
+          "requiere_matricula": false
+        },
+        {
+          "clave": "promotor_salud",
+          "es-AR": "Promotor de salud",
+          "requiere_matricula": true
         },
         {
           "clave": "otro",
-          "es-AR": "Otro"
+          "es-AR": "Otro",
+          "requiere_matricula": false
         }
       ],
-      "nota": "Cuatro pantallas, cuatro listas distintas: dos incluían «Voluntario», dos no; dos incluían «Otro», dos no; «Gerontólogo» aparecía con tres nombres. Se unifica en siete."
+      "nota": "Cuatro pantallas, cuatro listas distintas: dos incluían «Voluntario», dos no; dos incluían «Otro», dos no; «Gerontólogo» aparecía con tres nombres. Se unifica en siete. Se agrega `requiere_matricula` porque el glosario ya lo exige —un Tipo de Asistente define sus Tareas y si requiere Matrícula— y la lista no lo guardaba: la regla estaba escrita y el dato no existía. Se agrega «Promotor de salud», que faltaba. Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas."
     },
     "condicion_fiscal": {
       "titulo": "Condición frente a AFIP",
@@ -140,7 +152,7 @@
           "es-AR": "Universitario graduado"
         }
       ],
-      "nota": "La PWA se comía «Universitario en curso», así que quien estaba estudiando no tenía dónde marcarlo."
+      "nota": "Se conserva como nivel alcanzado, pero no alcanza: un título que respalda una Matrícula necesita institución, título, año y archivo, y eso es una ficha repetible, no una opción de lista. Ver docs/CATALOGO.md."
     },
     "patologia": {
       "titulo": "Patologías con las que el Asistente trabaja",
@@ -154,7 +166,11 @@
       "items": [
         {
           "clave": "alzheimer",
-          "es-AR": "Alzheimer / Demencia"
+          "es-AR": "Alzheimer"
+        },
+        {
+          "clave": "deterioro_cognitivo",
+          "es-AR": "Deterioro cognitivo"
         },
         {
           "clave": "parkinson",
@@ -162,11 +178,55 @@
         },
         {
           "clave": "acv",
-          "es-AR": "ACV / Rehabilitación"
+          "es-AR": "ACV"
+        },
+        {
+          "clave": "epilepsia",
+          "es-AR": "Epilepsia o convulsiones"
+        },
+        {
+          "clave": "psiquiatricas",
+          "es-AR": "Patologías psiquiátricas"
         },
         {
           "clave": "diabetes",
-          "es-AR": "Diabetes / Control de insulina"
+          "es-AR": "Diabetes"
+        },
+        {
+          "clave": "hipertension",
+          "es-AR": "Hipertensión"
+        },
+        {
+          "clave": "anticoagulados",
+          "es-AR": "Pacientes anticoagulados"
+        },
+        {
+          "clave": "arritmias",
+          "es-AR": "Arritmias"
+        },
+        {
+          "clave": "coronarias",
+          "es-AR": "Enfermedades coronarias"
+        },
+        {
+          "clave": "epoc",
+          "es-AR": "EPOC"
+        },
+        {
+          "clave": "sincope",
+          "es-AR": "Síncope"
+        },
+        {
+          "clave": "obesidad",
+          "es-AR": "Obesidad"
+        },
+        {
+          "clave": "ceguera",
+          "es-AR": "Ceguera"
+        },
+        {
+          "clave": "amputaciones",
+          "es-AR": "Amputaciones"
         },
         {
           "clave": "postrados",
@@ -181,7 +241,7 @@
           "es-AR": "Paciente oncológico"
         }
       ],
-      "nota": "Las claves ya coincidían en las cuatro pantallas; el texto visible no. «Paciente oncológico» existía sólo en el filtro del directorio, así que se podía buscar pero ningún Asistente podía declararlo."
+      "nota": "Eran siete y quedan diecinueve. Las que faltaban no son casos raros: hipertensión, anticoagulación, EPOC, arritmias y deterioro cognitivo son de las más comunes en cuidado domiciliario, y sin ellas en la lista un Asistente con esa experiencia no la podía declarar y una Familia no la podía buscar. Se escriben por su nombre clínico y no de forma coloquial. Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas."
     },
     "tarea_cuidado": {
       "titulo": "Tareas de cuidado que el Asistente realiza",
@@ -208,18 +268,23 @@
           "es-AR": "Aplicación de inyecciones y sondas"
         },
         {
-          "clave": "tramites",
-          "es-AR": "Acompañamiento a turnos y paseos"
+          "clave": "cocina",
+          "es-AR": "Cocina adaptada al paciente y nutrición"
         },
         {
-          "clave": "cocina",
-          "es-AR": "Cocina adaptada y nutrición"
+          "clave": "movilizacion",
+          "es-AR": "Movilización de paciente sin movilidad"
+        },
+        {
+          "clave": "solo_acompanamiento",
+          "es-AR": "Solo acompañamiento, sin tareas de cuidado"
         }
-      ]
+      ],
+      "nota": "Antes era una sola lista de seis que mezclaba cuidar a una persona con limpiar una casa. Se parte en tres —cuidado, hogar, acompañamiento— porque no son la misma clase de trabajo y no tienen el mismo encuadre legal: la Ley 26.844 rige el trabajo en casas particulares y el cuidado de la salud no entra ahí. Una lista que las mezcla no permite saber qué se acordó. `tramites` salió de acá: su etiqueta decía «Acompañamiento a turnos y paseos», que son dos cosas y ninguna es un trámite; quedó desarmada en la lista de acompañamiento."
     },
     "modalidad_contratacion": {
-      "titulo": "Modalidad de contratación",
-      "cerrada": false,
+      "titulo": "Intensidad de la contratación",
+      "cerrada": true,
       "usado_en": [
         "postulacion-asistente.html:444",
         "pwa-asistente/index.html:499",
@@ -229,26 +294,18 @@
       "items": [
         {
           "clave": "horas",
-          "es-AR": "Por horas / Jornada parcial"
-        },
-        {
-          "clave": "retiro",
-          "es-AR": "Con retiro (jornada completa)"
-        },
-        {
-          "clave": "sin_retiro",
-          "es-AR": "Sin retiro (cama adentro, 24 h)"
+          "es-AR": "Por horas"
         },
         {
           "clave": "guardia_12",
           "es-AR": "Guardia de 12 horas"
         },
         {
-          "clave": "urgencia",
-          "es-AR": "Reemplazo urgente"
+          "clave": "jornada_completa",
+          "es-AR": "Jornada completa"
         }
       ],
-      "nota": "Cuatro listas distintas. «Guardia de 12 horas» sólo se podía pedir y nadie podía ofrecerla; «Reemplazo urgente» sólo se podía ofrecer y nadie podía pedirlo. La clave del tercero se escribía «sin-retiro» con guion medio y no coincide con el resto de las claves del proyecto: se normaliza a «sin_retiro»."
+      "nota": "Tenía cinco opciones de tres ejes distintos y obligaba a elegir una sola. «Con retiro» y «sin retiro» pasaron a su propia lista, porque no son excluyentes: quien trabaja de las dos formas antes no lo podía declarar. «Urgencia» no es una modalidad sino una disponibilidad del Asistente, y es una bandera del legajo, no una opción de catálogo: ver docs/CATALOGO.md."
     },
     "frecuencia": {
       "titulo": "Frecuencia del servicio",
@@ -351,25 +408,43 @@
       "nota": "Se sube de nivel con puntos de reputación. Cuántos hacen falta para pasar de uno a otro no está escrito en ninguna parte del proyecto."
     },
     "verificacion": {
-      "titulo": "Comprobaciones sobre el Asistente",
+      "titulo": "Verificaciones del legajo del Asistente",
       "cerrada": false,
       "usado_en": [
         "directorio.html:89"
       ],
+      "origen": "Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas.",
       "items": [
         {
           "clave": "dni",
-          "es-AR": "DNI validado"
+          "es-AR": "Documento de identidad"
+        },
+        {
+          "clave": "domicilio",
+          "es-AR": "Domicilio"
+        },
+        {
+          "clave": "titulo",
+          "es-AR": "Título que respalda la profesión"
+        },
+        {
+          "clave": "matricula",
+          "es-AR": "Matrícula vigente"
         },
         {
           "clave": "penales",
           "es-AR": "Certificado de antecedentes penales"
         },
         {
-          "clave": "titulo",
-          "es-AR": "Título acreditado"
+          "clave": "salud",
+          "es-AR": "Certificado de salud"
+        },
+        {
+          "clave": "referencia",
+          "es-AR": "Referencia laboral verificada"
         }
-      ]
+      ],
+      "nota": "Eran tres. Faltaban domicilio, matrícula, salud y referencias. Cuáles bloquean el alta y cuáles son opcionales es una decisión de negocio y no vive acá: ver docs/CATALOGO.md."
     },
     "certificacion": {
       "titulo": "Cursos acreditados que el Asistente declara",
@@ -557,6 +632,142 @@
           "region": "zona_oeste"
         }
       ]
+    },
+    "tarea_hogar": {
+      "titulo": "Tareas domésticas que el Asistente realiza",
+      "cerrada": false,
+      "usado_en": [],
+      "origen": "Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas. Ninguna pantalla nuestra ofrecía declarar trabajo doméstico.",
+      "items": [
+        {
+          "clave": "limpieza",
+          "es-AR": "Limpieza del hogar"
+        },
+        {
+          "clave": "tendido_cama",
+          "es-AR": "Tendido de cama"
+        },
+        {
+          "clave": "lavado",
+          "es-AR": "Lavado de ropa"
+        },
+        {
+          "clave": "planchado",
+          "es-AR": "Planchado de ropa"
+        },
+        {
+          "clave": "cocina_hogar",
+          "es-AR": "Cocina para el hogar"
+        },
+        {
+          "clave": "compras",
+          "es-AR": "Compras para el hogar"
+        }
+      ],
+      "nota": "Se separa del cuidado a propósito: es lo que la Ley 26.844 mira. Si una Familia acuerda estas tareas, el encuadre de la relación cambia, y eso tiene que poder verse en el acuerdo. «Cocina para el hogar» y «Cocina adaptada al paciente» son distintas por el mismo motivo."
+    },
+    "tarea_acompanamiento": {
+      "titulo": "Tareas de acompañamiento que el Asistente realiza",
+      "cerrada": false,
+      "usado_en": [],
+      "origen": "Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas.",
+      "items": [
+        {
+          "clave": "paseos",
+          "es-AR": "Pasear con el paciente"
+        },
+        {
+          "clave": "turnos_medicos",
+          "es-AR": "Acompañar a turnos médicos"
+        },
+        {
+          "clave": "tramites",
+          "es-AR": "Realizar trámites"
+        },
+        {
+          "clave": "tramites_obra_social",
+          "es-AR": "Trámites ante la Obra Social"
+        }
+      ]
+    },
+    "discapacidad": {
+      "titulo": "Discapacidades con las que el Asistente tiene experiencia",
+      "cerrada": false,
+      "usado_en": [],
+      "origen": "Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas.",
+      "items": [
+        {
+          "clave": "visual",
+          "es-AR": "Discapacidad visual"
+        },
+        {
+          "clave": "auditiva",
+          "es-AR": "Discapacidad auditiva"
+        },
+        {
+          "clave": "motora",
+          "es-AR": "Discapacidad motora"
+        },
+        {
+          "clave": "intelectual",
+          "es-AR": "Discapacidad intelectual"
+        },
+        {
+          "clave": "visceral",
+          "es-AR": "Discapacidad visceral"
+        }
+      ],
+      "nota": "Eje nuevo. No es una patología y por eso no entra en esa lista: una patología es un diagnóstico, una discapacidad es una condición de vida. Hasta ahora un Asistente con experiencia en discapacidad motora no tenía dónde declararlo."
+    },
+    "retiro": {
+      "titulo": "Con retiro o sin retiro del domicilio",
+      "cerrada": false,
+      "usado_en": [],
+      "origen": "Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas. Las dos palabras son las que usa el rubro.",
+      "items": [
+        {
+          "clave": "con_retiro",
+          "es-AR": "Con retiro"
+        },
+        {
+          "clave": "sin_retiro",
+          "es-AR": "Sin retiro, cama adentro"
+        }
+      ],
+      "nota": "No excluyentes: se puede declarar una, la otra o las dos. Al menos una."
+    },
+    "puesto_experiencia": {
+      "titulo": "Puesto declarado en una experiencia laboral anterior",
+      "cerrada": true,
+      "usado_en": [],
+      "origen": "Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas.",
+      "items": [
+        {
+          "clave": "cuidador_domiciliario",
+          "es-AR": "Cuidador domiciliario"
+        },
+        {
+          "clave": "auxiliar_enfermeria",
+          "es-AR": "Auxiliar de enfermería"
+        },
+        {
+          "clave": "gerontologo",
+          "es-AR": "Asistente gerontológico"
+        },
+        {
+          "clave": "acompanante_terapeutico",
+          "es-AR": "Acompañante terapéutico"
+        },
+        {
+          "clave": "personal_casas_particulares",
+          "es-AR": "Personal de casas particulares"
+        },
+        {
+          "clave": "otro",
+          "es-AR": "Otro"
+        }
+      ],
+      "nota": "Usa las mismas claves que `perfil_profesional` donde el puesto es el mismo, a propósito: un competidor mantiene dos vocabularios paralelos que no se corresponden, y por eso lo que un cuidador declara como experiencia no se puede cruzar con lo que declara saber hacer."
     }
   }
 }

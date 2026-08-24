@@ -156,6 +156,9 @@ nuevo:
 | Clientes | `familias`, `pacientes`, `miembros_familia` |
 | Zonas de cobertura | `zonas_cobertura` |
 
+**El reparto completo, módulo por módulo, está en `docs/MODULOS.md`** (24 de agosto de
+2026), que traza la línea de corte también para lo que no existe todavía de ningún lado.
+
 Lo propio de esta modalidad es lo que la distingue: que el cliente **busca y elige** en vez de
 recibir una asignación. Eso es el directorio, el perfil público, el filtro y la solicitud.
 

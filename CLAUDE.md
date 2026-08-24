@@ -153,10 +153,25 @@ información de otra.
     futura sea un update y no una migración.
 11. **Todo importe se guarda con su moneda.** Ningún campo de precio, honorario o cobro guarda un
     número solo. Un número sin moneda, leído un año después, no se sabe cuánto vale.
-12. **Git**: commit + push tras cada conjunto de cambios coherente. Mensajes en español, formato
+12. **Módulos, desde el esquema.** Todo lo que sea verdad sobre un Asistente, una
+    Familia o un Paciente **independientemente de cómo llegó el trabajo** se construye
+    como módulo compartido: lo usan igual prestación directa, esta modalidad,
+    subcontratación y cualquier aplicación futura. Lo que sólo existe porque el
+    cliente busca y elige se queda de este lado de la línea. **El reparto está en
+    `docs/MODULOS.md` y se consulta antes de escribir una tabla**, no después.
+    - La pregunta que decide cada caso: *¿esto seguiría teniendo sentido en
+      prestación directa?* Si sí, es compartido.
+    - **Ninguna palabra propia de esta modalidad aparece en un módulo compartido**
+      —vidriera, aviso, postulación, contacto, puntaje, destacado—. Si aparece
+      una, se filtró, y con ella se filtra el trabajo de sacarla más tarde.
+    - No es prolijidad: una mejora sobre código partido en dos copias se hace dos veces o se
+      hace una sola y la otra queda vieja. Ya pasó con `apiClient.js`, que está
+      triplicado byte a byte (pendiente 13).
+
+13. **Git**: commit + push tras cada conjunto de cambios coherente. Mensajes en español, formato
     `tipo: descripción breve`. Nunca subir `.env`, credenciales ni datos reales.
 
-**Checklist antes de cerrar cualquier tarea:** ¿se respetaron las 12 reglas? ¿se mantuvo el
+**Checklist antes de cerrar cualquier tarea:** ¿se respetaron las 13 reglas? ¿se mantuvo el
 aislamiento entre Organizaciones? ¿RLS cubierta en toda tabla nueva? ¿términos del glosario
 aprobados? ¿sin datos escritos a mano? ¿4 estados cubiertos? ¿documentación actualizada? Si alguna
 respuesta es no, la tarea no está terminada.
@@ -181,7 +196,23 @@ No se salta al paso 3 aunque el cambio ya esté decidido de palabra.
 2. Leer `docs/GLOSARIO.md` y `docs/PENDIENTES.md`.
 3. Confirmar con una línea: *"Leí los documentos correspondientes. Tarea de esta sesión: [X]."*
 4. Presentar plan (objetivo, archivos afectados, cambios previstos, riesgos, validaciones) y
-   esperar aprobación antes de escribir código.
+   **avanzar**. **Decidido por el Desarrollador el 24 de agosto de 2026: la aprobación
+   está dada de antemano y no se espera turno por turno.** Frenar el trabajo para pedir un
+   permiso que ya fue concedido cuesta más que equivocarse: este proyecto es exploratorio,
+   la base no tiene datos reales y se puede rehacer entera. El plan se sigue presentando —es
+   lo que permite corregir el rumbo— pero se presenta **junto con el trabajo hecho**, no en
+   lugar de él.
+
+   **Las cuatro cosas que sí se consultan antes**, porque no son reversibles ni baratas:
+   - Renombrar algo que ya esté **guardado** en la base (regla 5.1: eso es migración de
+     datos, no cambio de nombre).
+   - Incorporar un **término de negocio nuevo** al glosario (§3) o resolver el
+     conflicto de la palabra `marketplace` (`docs/GLOSARIO.md` §4).
+   - Construir **lógica comercial**, que sigue frenada por `docs/ALCANCE.md` §4.
+   - Cualquier cosa que toque **Careonys en producción**, que no se toca desde acá
+     (§1).
+
+   Todo lo demás se hace y se informa.
 
 **Control de características.** Ante un pedido con más de una funcionalidad, antes de programar va
 una lista explícita por característica: ✅ incluida tal cual / ⚠️ incluida con cambio (y por qué) /
