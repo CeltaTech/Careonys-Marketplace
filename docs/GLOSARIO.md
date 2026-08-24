@@ -91,7 +91,19 @@ se revisa para decidir cuáles suben al glosario común.
 
 | Término propuesto | Qué es | Estado |
 |---|---|---|
-| *(pendiente de completar al diseñar el esquema)* | | |
+| **modalidad de este producto** — identificador: `modalidad` | La modalidad de trabajo en la que el Cliente Contratante busca entre los Asistentes de su Prestadora, compara, elige y contrata, en vez de recibir una asignación. Es una de las tres, junto con prestación directa y subcontratación. Ejemplo: una Familia entra, filtra por zona y por patología, mira tres perfiles y pide contratar a uno. No es el Vínculo: el Vínculo es la relación de un Asistente con su Prestadora, y existe igual en las tres modalidades | **Aprobado** por el Desarrollador el 24 de agosto de 2026 |
+
+**Dos nombres, y a propósito.** En pantalla, en documentos y en la charla se dice **modalidad de
+contrataciones**, que es lo que la gente entiende. En tablas, columnas, claves de traducción y
+nombres de módulo va `modalidad`, corto y sin ruido. Es el mismo criterio que §1 ya usa con Cliente
+Contratante, cuyo identificador es `contratante`.
+
+**Por qué `modalidad` y no las otras.** Una modalidad de trabajo es, en castellano corriente, el lugar donde
+una parte publica lo que ofrece, la otra lo que necesita, y se encuentran: es exactamente esto.
+`contratacion` a secas se descartó porque se lee como si la plataforma contratara al Asistente, que
+es justo lo que no pasa y lo que no conviene insinuar. `mercado` se descartó por ser la traducción
+literal de `marketplace`, la palabra que en las tablas de Careonys nombra otra cosa. `directorio`
+nombra una pantalla, no la modalidad.
 
 **Cómo se agrega uno:** pasa las cinco preguntas de §2, se escribe acá con su definición según
 los criterios de §2, y recién entonces se usa en código.
@@ -126,19 +138,24 @@ palabra dentro del mismo sistema es exactamente lo que el glosario existe para i
 problema aparecería recién en la fusión, cuando ya es caro. Detalle completo en
 `docs/ALCANCE.md` §3.
 
-**Falta elegir el término.** El nombre comercial puede seguir siendo "Careonys Marketplace" —§1
-admite que los nombres comerciales son decisión de marca—, pero el término técnico, el que va a
-tablas, columnas, claves de traducción y módulos, tiene que ser otro, y tiene que pasar las cinco
-preguntas de §2.
+## Resuelto el 24 de agosto de 2026: el término es `modalidad`
 
-Hasta que se elija, **no se usa la palabra `marketplace` en ningún identificador** de este
-proyecto. Regla 13 heredada: lo que persiste se nombra por su función y no se renombra nunca, así
-que elegir mal acá es caro.
+**El nombre comercial no cambia.** «Careonys Marketplace» puede seguir diciéndose en la web, en el
+material de venta y en la charla: §1 admite que los nombres comerciales son decisión de marca.
+Lo que se eligió acá es el término técnico, el que va a tablas, columnas, claves de traducción y
+módulos, y que casi nadie ve.
 
-Candidatos a evaluar, ninguno aprobado todavía:
+**El término es `modalidad`, y el nombre visible es «modalidad de este producto».** La definición
+completa está en §3, con las razones por las que se descartaron `contratacion`, `mercado` y
+`directorio`.
 
-| Candidato | A favor | En contra |
-|---|---|---|
-| `directorio` | Ya es el nombre de la pantalla central; se entiende sin explicación | Nombra la búsqueda, no la contratación |
-| `contratacion` | Nombra lo que el producto hace, no cómo se ve | Se puede confundir con el Vínculo de un Asistente con su Prestadora |
-| `busqueda_asistentes` | Sin ambigüedad | Largo, y describe medio circuito |
+**La prohibición sobre `marketplace` queda firme y deja de ser provisoria.** No se usa en ningún
+identificador de este proyecto —ni sola, ni como parte de una palabra compuesta— porque el valor
+ya está guardado en tres tablas de Careonys nombrando otra cosa, y dos usos de la misma palabra en
+un mismo sistema es lo que este glosario existe para impedir. El problema aparecería en la
+fusión, cuando ya es caro.
+
+**Lo que sigue abierto, y no es de este lado:** en Careonys ese valor debería llamarse `autonomo`,
+la palabra que sus propias tablas legales ya usan para lo mismo. Es un valor guardado en
+producción, así que cambiarlo es una migración y una decisión del Desarrollador del lado de
+Careonys. Acá sólo queda anotado.

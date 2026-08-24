@@ -132,8 +132,10 @@ De acá salen dos cosas prácticas:
 ### Consecuencias
 
 1. **Acá no se usa la palabra `marketplace` en ningún identificador.** No porque el significado
-   esté tomado, sino porque el valor guardado ya la usa y colisionaría. El término técnico de esta
-   modalidad sigue sin elegir — `docs/GLOSARIO.md` §4 y el pendiente 5.
+   esté tomado, sino porque el valor guardado ya la usa y colisionaría. **El término técnico se
+   eligió el 24 de agosto de 2026: la modalidad se llama modalidad de este producto y su
+   identificador es `modalidad`** (`docs/GLOSARIO.md` §3 y §4). El nombre comercial «Careonys
+   Marketplace» no cambia: es decisión de marca y no entra al código.
 2. **`docs/GLOSARIO.md` §1 tiene la definición equivocada.** Dice que en marketplace *"el Asistente
    elige cuáles toma"*, que es la parte que vale para las dos. Es un término heredado: se corrige
    en el glosario de Careonys, no acá.
@@ -160,7 +162,8 @@ nuevo:
 2026), que traza la línea de corte también para lo que no existe todavía de ningún lado.
 
 Lo propio de esta modalidad es lo que la distingue: que el cliente **busca y elige** en vez de
-recibir una asignación. Eso es el directorio, el perfil público, el filtro y la solicitud.
+recibir una asignación. Eso es el directorio, el perfil público, el filtro y la solicitud. Sus
+módulos llevan el prefijo de la modalidad.
 
 ### La comparación va en los dos sentidos
 

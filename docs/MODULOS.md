@@ -44,6 +44,12 @@ respuesta es sí, es compartido. Si es no, se queda de este lado.
 
 ### Propio de esta modalidad — se queda de este lado
 
+Esta modalidad se llama **modalidad de este producto**, y su identificador es `modalidad` (decidido el 24
+de agosto de 2026, `docs/GLOSARIO.md` §3). Los módulos de este lado se nombran con ese prefijo:
+`vidriera`, `filtros`, `avisos`, `orden`, `visibilidad` y
+`contacto`. El prefijo no es decoración: es lo que hace que la prueba de más abajo se pueda
+correr con una búsqueda de texto.
+
 | Módulo | Qué hace | Por qué no cruza |
 |---|---|---|
 | **Vidriera y perfil público** | Muestra Asistentes a quien todavía no es cliente | En prestación directa nadie mira un catálogo: recibe una asignación |
@@ -79,13 +85,12 @@ No con una revisión de código: con una pregunta que se puede contestar.
 funcionando entera. Si falta algo, ese algo estaba del lado equivocado.
 
 **Prueba al revés, que es la que más se olvida:** buscar en lo compartido cualquier palabra que
-sólo signifique algo acá —vidriera, aviso, postulación, contacto, puntaje, destacado—. Si aparece
-una, se filtró.
+sólo signifique algo acá —`modalidad`, vidriera, aviso, postulación, contacto, puntaje, destacado—.
+Si aparece una, se filtró. Con el prefijo de la modalidad puesto, buscar esa palabra en lo compartido
+alcanza para detectar la mayoría de las filtraciones sin leer una línea.
 
 ## Lo que esta línea no resuelve
 
-- **El término técnico de esta modalidad sigue sin elegir** (pendiente 5). Los módulos de este
-  lado no se pueden nombrar hasta entonces, y por eso acá están descritos y no bautizados.
 - **Dónde viven físicamente los módulos compartidos** —repositorio propio, carpeta, paquete— no se
   decide acá. Se decide con la fusión, y hasta entonces la línea es conceptual: sirve para no
   escribir una tabla del lado equivocado, que es lo caro.
