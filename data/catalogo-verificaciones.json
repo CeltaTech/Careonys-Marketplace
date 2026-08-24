@@ -1,0 +1,77 @@
+{
+  "_lea_esto_primero": {
+    "que_es_esto": "Qué verificación frena qué cosa. **Decidido por el Desarrollador el 24 de agosto de 2026** (pendiente 20). Las etiquetas de las siete verificaciones viven en `catalogo-vocabularios.json`, lista `verificacion`; acá vive lo que cada una provoca, que es decisión de negocio y no vocabulario.",
+    "dos_puertas": "No todas frenan la misma puerta, y esa es la idea entera. **El alta** es terminar de cargar el legajo: si ahí se exige mucho, la gente abandona a mitad de camino y no queda nadie. **La publicación** es aparecer en la modalidad y poder ser contratado: de ahí en adelante alguien entra a una casa, y ahí sí se es duro.",
+    "las_tres_puertas_posibles": "`alta`: sin esto no se puede terminar de cargar el legajo. `publicacion`: el legajo existe pero no aparece en la modalidad ni puede ser contratado. `ninguna`: no frena nada, suma al perfil.",
+    "condicional_no_es_opcional": "Una verificación condicional bloquea la publicación **sólo cuando el tipo de Asistente la exige**, y eso el sistema ya lo sabe: está en `perfil_profesional.requiere_matricula`. Un cuidador sin Matrícula no queda trabado por algo que no le corresponde; un enfermero universitario sin Matrícula, sí.",
+    "los_plazos_los_controla_documentacion": "Un plazo que nadie mira no es un plazo. Todo lo que acá tenga `plazo_dias` o `vigencia_meses` lo vigila el módulo de Documentación y vencimientos, que es compartido (`docs/MODULOS.md`). Si ese módulo no está andando, estos plazos son un comentario.",
+    "lo_que_falta_decidir": "**El certificado de salud: falta saber cuál.** Acá quedó anotado como libreta sanitaria, que es el instrumento municipal más corriente y se renueva todos los años, pero la Prestadora puede querer un apto médico en su lugar o además. Pregunta abierta al Desarrollador del 24 de agosto de 2026."
+  },
+  "verificaciones": [
+    {
+      "clave": "dni",
+      "es-AR": "Documento de identidad",
+      "puerta": "alta",
+      "por_que": "Sin saber quién es la persona, ninguna de las otras seis significa nada. Es la única que frena el alta."
+    },
+    {
+      "clave": "penales",
+      "es-AR": "Certificado de antecedentes penales",
+      "puerta": "publicacion",
+      "por_que": "Es lo mínimo antes de que alguien entre a una casa a cuidar a una persona. No frena el alta porque el trámite tarda y no tiene sentido frenar la carga por eso.",
+      "plazo_dias": 15,
+      "plazo_desde": "alta",
+      "vencido_el_plazo": "bloquea_el_legajo",
+      "que_significa_bloquea_el_legajo": "A los 15 días del alta sin presentarlo, el legajo queda bloqueado y no se desbloquea hasta que se presente. No es sólo que no se publique: no se puede seguir usando.",
+      "vigencia_meses": 6,
+      "nota_vigencia": "Los 6 meses son criterio de la Prestadora, no un plazo de ley: el certificado no trae vigencia escrita, y cada quien decide cuán viejo lo acepta. Por eso es un parámetro y no un número clavado en el código. Vencido, vuelve a pedirse."
+    },
+    {
+      "clave": "matricula",
+      "es-AR": "Matrícula vigente",
+      "puerta": "publicacion",
+      "condicional_a": "perfil_profesional.requiere_matricula",
+      "por_que": "Los tipos de Asistente que la requieren no pueden atender a nadie sin ella vigente y verificada —está en el glosario, entrada Matrícula—. Los que no la requieren no deben quedar trabados por esto.",
+      "vence": true,
+      "nota_vigencia": "La fecha de vencimiento la carga la persona en su ficha de Matrícula. Vencida inhabilita, en cualquier modalidad."
+    },
+    {
+      "clave": "titulo",
+      "es-AR": "Título que respalda la profesión",
+      "puerta": "publicacion",
+      "condicional_a": "perfil_profesional.requiere_matricula",
+      "por_que": "Mismo criterio que la Matrícula: se exige a quien dice ejercer una profesión que la necesita. El archivo del título ya es obligatorio en esos casos, en la ficha de estudio."
+    },
+    {
+      "clave": "salud",
+      "es-AR": "Certificado de salud",
+      "puerta": "publicacion",
+      "instrumento": "libreta_sanitaria",
+      "instrumento_a_confirmar": true,
+      "por_que": "Cuida a personas vulnerables, muchas veces mayores y con patologías.",
+      "vence": true,
+      "vigencia_meses": 12,
+      "nota_vigencia": "La libreta sanitaria se renueva todos los años. Vencida deja de publicar, igual que la Matrícula."
+    },
+    {
+      "clave": "domicilio",
+      "es-AR": "Domicilio",
+      "puerta": "ninguna",
+      "por_que": "Sirve para las zonas de cobertura, pero verificarlo es lento y no protege a nadie. Suma al perfil y no frena.",
+      "suma_al_perfil": true
+    },
+    {
+      "clave": "referencia",
+      "es-AR": "Referencia laboral verificada",
+      "puerta": "ninguna",
+      "por_que": "Es lo que distingue un perfil sólido de uno vacío, pero exigirla deja afuera a quien recién empieza. Suma al perfil y no frena.",
+      "suma_al_perfil": true
+    }
+  ],
+  "resumen": {
+    "para_darse_de_alta": "Alcanza con el documento de identidad.",
+    "para_aparecer_en_el_directorio": "Antecedentes penales y certificado de salud. Y además Matrícula y título, si el tipo de Asistente los exige.",
+    "suman_pero_no_frenan": "Domicilio y referencia laboral.",
+    "el_reloj_que_corre": "Quince días desde el alta para presentar los antecedentes penales. Cumplido el plazo sin presentarlos, el legajo se bloquea."
+  }
+}

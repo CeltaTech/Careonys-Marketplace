@@ -10,6 +10,7 @@ otro lado:
 | `data/catalogo-oferta.json` | 8 servicios, 6 cursos y la evaluación con sus 2 preguntas |
 | `data/catalogo-banderas.json` | 2 banderas del legajo y el paso de cierre del alta |
 | `data/catalogo-fichas.json` | 4 fichas repetibles: matrícula, estudio, experiencia y referencia |
+| `data/catalogo-verificaciones.json` | Qué bloquea el alta, qué bloquea la publicación, y con qué plazos |
 
 Los dos primeros son listas de opciones. Los dos últimos, del 24 de agosto de 2026, no son
 listas: uno guarda preguntas de sí o no y el otro, formularios repetibles. Están declarados
@@ -111,6 +112,17 @@ propios.** Lo que sigue explica qué son y por qué se decidieron así.
 
 - **Publicar mi perfil**, que es el consentimiento para que se muestre.
 - **Disponible para reemplazos urgentes.**
+
+### Qué verificación bloquea qué (pendiente 20, resuelto el 24 de agosto de 2026)
+
+De las siete verificaciones del legajo, sólo el **documento de identidad** frena el **alta**: sin saber quién es la persona, nada de lo demás significa nada. Las demás frenan recién la **publicación** —aparecer en la modalidad y poder ser contratado—, y no todas de la misma manera:
+
+- **Antecedentes penales**: obligatorio para publicar, con **15 días de plazo** desde el alta para presentarlo. Si el plazo pasa sin presentarlo, **el legajo se bloquea**, no sólo la publicación. Vigencia de 6 meses, criterio de la Prestadora y no un plazo de ley.
+- **Certificado de salud**: obligatorio para publicar. Anotado como libreta sanitaria (vigencia anual), **a confirmar con el Desarrollador** —puede ser también o en cambio un apto médico.
+- **Matrícula y título**: obligatorios para publicar **sólo si el tipo de Asistente los exige** (`perfil_profesional.requiere_matricula`). Un cuidador no queda trabado por algo que no le corresponde.
+- **Domicilio y referencia laboral**: no bloquean nada, suman al perfil.
+
+Vive declarado en `data/catalogo-verificaciones.json`, con su razón de ser cada una. Los plazos y vigencias los tiene que vigilar el módulo de Documentación y vencimientos (`docs/MODULOS.md`): un plazo que nadie mira no es un plazo.
 
 ### Las dos que se propusieron y se descartaron
 
