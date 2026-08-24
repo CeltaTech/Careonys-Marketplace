@@ -4,6 +4,11 @@ Fecha del relevamiento: 22 de agosto de 2026.
 Carpeta analizada: `F:\proyectos\celtatech\productos\Careonys-Marketplace`.
 Método: lectura del código. No se modificó ningún archivo del proyecto.
 
+> **Esto es una foto del 22 de agosto de 2026, no el estado de hoy.** Se deja como estaba a
+> propósito: sirve para saber de dónde se partió. Lo que vale hoy está en `docs/ALCANCE.md`, y si
+> los dos dicen cosas distintas, gana ése. Lo que ya cambió desde esta foto está anotado ahí, con
+> fecha.
+
 ## Antes de leer: qué proyecto es éste y cuál es el otro
 
 En `F:\proyectos\celtatech` conviven varios proyectos. El único hecho con HTML, CSS y

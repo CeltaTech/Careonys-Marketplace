@@ -2,7 +2,7 @@
 
 > **Este archivo es la referencia única sobre el estado del producto.** Si otro documento dice que
 > algo está terminado y acá figura como no construido, gana este. Verificado contra el código el
-> 2026-08-23 (`docs/INVENTARIO.md`).
+> 2026-08-24. El inventario que lo respalda es `docs/INVENTARIO.md`, del 23.
 >
 > Acá va solo **qué existe**. Lo que queda abierto vive en `docs/PENDIENTES.md`, con su condición
 > de cierre. Ninguna afirmación entra sin archivo y renglón.
@@ -13,16 +13,39 @@
 
 | Módulo | Estado |
 |---|---|
-| Autenticación con Supabase Auth | Funciona. **Ninguna pantalla está protegida**: `requireAuth()` existe en `js/auth.js` y no la llama nadie |
+| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:289` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs` |
 | Directorio de Asistentes con filtros | Maquetado y navegable |
 | Perfil público del Asistente | Maquetado |
 | Portal de postulación de Asistentes | Maquetado, con el legajo funcionando: `postulacion-asistente.html` guarda las cuatro fichas repetibles y las dos banderas en las tablas de la migración 0004 |
+| Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:176`). Declarados en `supabase/migrations/0006_archivos_del_legajo.sql`, no a mano |
 | Motor de fichas del legajo (`js/fichas-legajo.js`) | Funciona. Dibuja, valida y recolecta Matrícula, estudio, experiencia y referencia leyendo `data/catalogo-fichas.json` y `data/catalogo-vocabularios.json`. Ninguna de las cuatro está escrita en la pantalla |
 | Formulario integral de datos del Paciente | Maquetado, paso a paso |
 | Cliente de datos (`js/apiClient.js`) | Funciona en modo local y modo Supabase |
 | Identidad del producto (`js/identidad.js`) | Funciona y está verificada. Ver abajo |
 
 **Maquetado** significa que la pantalla existe y se navega, no que la lógica detrás esté escrita.
+
+### El límite entre Prestadoras lo pone la sesión
+
+**Cerrado el 24 de agosto de 2026**, con las migraciones 0005 y 0006. Antes, la Prestadora salía
+de la barra de direcciones y viajaba como un filtro más en cada consulta: eso no es aislamiento,
+es una sugerencia, porque un filtro que viaja en el pedido lo cambia quien llama.
+
+Cómo quedó:
+
+- **Registrarse ya no decide nada.** El disparador de `auth.users` crea la fila de `profiles`
+  (`0005_acceso_por_sesion.sql:93`) y valida la Prestadora contra `tenants`, pero **el rol no sale
+  de los metadatos**: quien se registra solo queda siempre con un rol sin acceso a los datos de la
+  Prestadora. Pedir ser coordinador de otra Prestadora no sirve de nada.
+- **Pertenecer y poder ver son dos cosas distintas.** `public.es_personal_de_prestadora()` es el
+  punto único de verdad, y las políticas de `caregivers`, de las siete tablas del legajo y de
+  `verificaciones_asistente` preguntan por él y por `prestadora_actual()`.
+- **La aplicación pregunta en el mismo orden que la base.** Con sesión, la Prestadora sale del
+  perfil (`js/apiClient.js:43`); sin sesión, el enlace elige qué vidriera se muestra y nada más.
+- **Los archivos siguen la misma regla.** Ver la fila «Archivos del legajo» de arriba.
+
+Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, dieciséis
+comprobaciones. Y falsificado a propósito para verificar que se pone en rojo cuando corresponde.
 
 ### El nombre del producto salió del código
 
@@ -125,8 +148,9 @@ se hace, y no se vuelve a preguntar por modalidad ni por pantalla.
 
 De acá salen dos cosas prácticas:
 
-- El límite de aislamiento no se toca, y lo que hoy lo debilita pasa a ser más grave, no menos: la
-  Prestadora se elige desde la barra de direcciones, que es el pendiente 4.
+- El límite de aislamiento no se toca. Lo que lo debilitaba —la Prestadora saliendo de la barra
+  de direcciones— se cerró el 24 de agosto de 2026: ver «El límite entre Prestadoras lo pone la
+  sesión», arriba.
 - Ningún esquema de este proyecto necesita una tabla ni una consulta que cruce Prestadoras. Si
   alguna vez una consulta parece necesitarla, está mal planteada.
 

@@ -269,6 +269,10 @@
                 required /></div>
             <div class="form-group"><label for="celular">Celular (WhatsApp)</label><input type="tel" id="celular"
                 placeholder="11 2345 6789" required /></div>
+            <div class="form-group"><label for="clave">Contraseña</label><input type="password" id="clave"
+                autocomplete="new-password" minlength="8" placeholder="Al menos 8 caracteres" required /></div>
+            <div class="form-group"><label for="clave-repetida">Repetir la contraseña</label><input type="password"
+                id="clave-repetida" autocomplete="new-password" minlength="8" required /></div>
             <div class="form-group"><label for="cuit-cuil">CUIT / CUIL (Facturación y Seguros)</label><input
                 type="number" id="cuit-cuil" placeholder="11 dígitos sin guiones" required /></div>
             <div class="form-group"><label for="fecha-nacimiento">Fecha de Nacimiento</label><input type="date"
@@ -848,7 +852,7 @@
       });
 
       // Paso 5 (Legajo): las fichas ya validan sus propios bloques, y la Matrícula
-      // es obligatoria sólo cuando el perfil profesional elegido la exige (pendiente 19).
+      // es obligatoria sólo cuando el perfil profesional elegido la exige.
       if (paneId === 'step-pane-5' && fichasListas) {
         ['matricula', 'estudio', 'experiencia_laboral', 'referencia'].forEach(tipo => {
           if (!FichasLegajo.validarSeccion(`ficha-${tipo}`, tipo)) valid = false;
@@ -942,6 +946,23 @@
         }
       }
 
+      // La contraseña: dos veces igual y de largo suficiente. El servidor la
+      // rechazaría igual, pero avisar acá evita crear media cuenta.
+      const clave = document.getElementById('clave').value;
+      const claveRepetida = document.getElementById('clave-repetida').value;
+      if (clave.length < 8) {
+        alert('La contraseña tiene que tener al menos ocho caracteres.');
+        goToStep(1);
+        document.getElementById('clave').focus();
+        return;
+      }
+      if (clave !== claveRepetida) {
+        alert('Las dos contraseñas no coinciden.');
+        goToStep(1);
+        document.getElementById('clave-repetida').focus();
+        return;
+      }
+
       // Validar términos y condiciones
       const termsCheckbox = document.getElementById('acepto-terminos');
       if (!termsCheckbox || !termsCheckbox.checked) {
@@ -957,22 +978,47 @@
       submitBtn.disabled = true;
 
       try {
-        // 1. Crear cuenta en Supabase Auth para el asistente
+        // 1. La cuenta primero, y con sesión abierta antes de escribir nada.
+        //    Sin sesión las escrituras salen como visitante anónimo y la base las
+        //    rechaza: el legajo se perdería entero y en silencio.
         const email = document.getElementById('email').value;
-        const password = document.getElementById('dni-num').value; // DNI como contraseña inicial
-        let userId = 'demo-' + Date.now();
+        const prestadora = ClienteDatos.currentTenant;
+        let sesion = null;
+        let userId = null;
+
         try {
-          const user = await Sesion.signup(email, password, {
+          const alta = await Sesion.signup(email, clave, {
             full_name: document.getElementById('nombre').value,
-            role: 'caregiver'
+            role: 'caregiver',
+            tenant_slug: prestadora ? prestadora.slug : null
           });
-          if (user) userId = user.id;
+          sesion = alta.session;
+          userId = alta.user ? alta.user.id : null;
         } catch (authErr) {
-          // Si ya existe la cuenta, continuar de todas formas
-          console.warn('Auth signup error (may already exist):', authErr.message);
+          console.error('Alta de Asistente, cuenta:', authErr);
+          alert(Sesion.mensajeDeError(authErr));
+          return;
         }
 
-        // 2. Subir documentos a Supabase Storage
+        if (!sesion) {
+          // Pasa cuando el servidor exige confirmar el correo: la cuenta queda
+          // creada y la sesión no llega hasta que se abra el enlace del mail.
+          alert('La cuenta quedó creada, pero falta confirmar el correo antes de '
+              + 'poder guardar el legajo. El enlace está en la casilla de ' + email
+              + '. Después de confirmarlo hay que volver a completar este formulario.');
+          return;
+        }
+
+        // Con la sesión abierta la Prestadora se vuelve a resolver, y ahora sale
+        // del perfil: es el mismo dato que va a mirar la política al escribir.
+        ClienteDatos._resolucionEnCurso = null;
+        await ClienteDatos.initTenant();
+
+        // 2. Los archivos, a su depósito
+        // Se guarda el camino, no una dirección: los papeles viven en un depósito
+        // privado y su dirección se firma recién al mostrarla. La foto va aparte,
+        // al depósito público, porque es la que muestra la vidriera. La primera
+        // carpeta es siempre la cuenta: de ahí sale el permiso (migración 0006).
         const docUrls = {
           foto: 'pendiente',
           dni: 'pendiente',
@@ -980,46 +1026,29 @@
           titulo: 'pendiente'
         };
 
-        const fileFoto = document.getElementById('foto-perfil')?.files[0];
-        const fileDni = document.getElementById('file-dni')?.files[0];
-        const filePenales = document.getElementById('file-penales')?.files[0];
-        const fileTitulo = document.getElementById('file-titulo')?.files[0];
+        const adjuntos = [
+          { clave: 'foto',    campo: 'foto-perfil',  deposito: 'avatares',              base: 'foto_perfil', nombre: 'la foto de perfil' },
+          { clave: 'dni',     campo: 'file-dni',     deposito: 'documentos-cuidadores', base: 'dni_frente',  nombre: 'el documento de identidad' },
+          { clave: 'penales', campo: 'file-penales', deposito: 'documentos-cuidadores', base: 'penales',     nombre: 'los antecedentes penales' },
+          { clave: 'titulo',  campo: 'file-titulo',  deposito: 'documentos-cuidadores', base: 'titulo',      nombre: 'el título' }
+        ];
 
-        if (fileFoto) {
+        // Un archivo que no sube y no avisa es peor que uno que no se cargó: la
+        // persona se va creyendo que entregó el papel. Se juntan los que fallaron
+        // y se avisa una sola vez, sin frenar el resto del alta.
+        const adjuntosFallados = [];
+        for (const adj of adjuntos) {
+          const archivo = document.getElementById(adj.campo)?.files[0];
+          if (!archivo) continue;
+          const extension = (archivo.name.split('.').pop() || 'dat').toLowerCase();
           try {
-            docUrls.foto = await Sesion.uploadFile(
-              'documentos-cuidadores',
-              `${userId}/foto_perfil.${fileFoto.name.split('.').pop()}`,
-              fileFoto
+            docUrls[adj.clave] = await Sesion.uploadFile(
+              adj.deposito, `${userId}/${adj.base}.${extension}`, archivo
             );
-          } catch (e) { console.warn('Foto upload error:', e.message); }
-        }
-        if (fileDni) {
-          try {
-            docUrls.dni = await Sesion.uploadFile(
-              'documentos-cuidadores',
-              `${userId}/dni_frente.${fileDni.name.split('.').pop()}`,
-              fileDni
-            );
-          } catch (e) { console.warn('DNI upload error:', e.message); }
-        }
-        if (filePenales) {
-          try {
-            docUrls.penales = await Sesion.uploadFile(
-              'documentos-cuidadores',
-              `${userId}/penales.${filePenales.name.split('.').pop()}`,
-              filePenales
-            );
-          } catch (e) { console.warn('Penales upload error:', e.message); }
-        }
-        if (fileTitulo) {
-          try {
-            docUrls.titulo = await Sesion.uploadFile(
-              'documentos-cuidadores',
-              `${userId}/titulo.${fileTitulo.name.split('.').pop()}`,
-              fileTitulo
-            );
-          } catch (e) { console.warn('Titulo upload error:', e.message); }
+          } catch (errArchivo) {
+            console.error('Alta de Asistente, ' + adj.clave + ':', errArchivo);
+            adjuntosFallados.push({ nombre: adj.nombre, motivo: Sesion.mensajeDeError(errArchivo) });
+          }
         }
 
         // 3. Extraer datos del formulario
@@ -1036,6 +1065,7 @@
 
         // 4. Registrar en Supabase (tabla caregivers)
         const data = {
+          user_id: userId,
           nombre: document.getElementById('nombre').value,
           dni: document.getElementById('dni-num').value,
           email: email,
@@ -1055,7 +1085,7 @@
             cursosCompletados: cursos
           },
           valorHora: document.getElementById('valor-hora').value,
-          documentos: docUrls,   // URLs reales de Supabase Storage
+          documentos: docUrls,   // caminos dentro de los depósitos, no direcciones
           grillaHorarios
         };
 
@@ -1073,19 +1103,26 @@
           legajo.banderas[casilla.getAttribute('data-bandera')] = casilla.checked;
         });
 
-        // Los archivos de matrícula y estudio van a Storage; en la tabla queda la dirección.
+        // Los archivos de matrícula y estudio van al depósito privado; en la tabla
+        // queda el camino, igual que los otros adjuntos.
         for (const clave of ['matriculas', 'estudios']) {
           for (let i = 0; i < legajo[clave].length; i++) {
             const fila = legajo[clave][i];
             fila.archivo_url = null;
             if (fila.archivo) {
+              const extension = (fila.archivo.name.split('.').pop() || 'dat').toLowerCase();
               try {
                 fila.archivo_url = await Sesion.uploadFile(
-                  'documentos-cuidadores',
-                  `${userId}/${clave}_${i}.${fila.archivo.name.split('.').pop()}`,
-                  fila.archivo
+                  'documentos-cuidadores', `${userId}/${clave}_${i}.${extension}`, fila.archivo
                 );
-              } catch (errArchivo) { console.warn('Legajo upload error:', errArchivo.message); }
+              } catch (errArchivo) {
+                console.error('Alta de Asistente, ' + clave + ' ' + i + ':', errArchivo);
+                adjuntosFallados.push({
+                  nombre: (clave === 'matriculas' ? 'el archivo de una matrícula'
+                                                  : 'el archivo de un estudio'),
+                  motivo: Sesion.mensajeDeError(errArchivo)
+                });
+              }
             }
             delete fila.archivo;
           }
@@ -1096,6 +1133,11 @@
         }
 
         // 6. Confirmar al usuario
+        if (adjuntosFallados.length) {
+          const lista = adjuntosFallados.map(f => '- ' + f.nombre + ': ' + f.motivo).join('\n');
+          alert('El legajo quedó guardado, pero no se pudieron subir todos los archivos:\n\n'
+              + lista + '\n\nSe pueden volver a cargar más adelante desde el legajo.');
+        }
         const successMsg = document.getElementById('form-success');
         if (successMsg) successMsg.style.display = 'block';
         form.reset();

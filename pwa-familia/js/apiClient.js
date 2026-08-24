@@ -16,65 +16,93 @@ const ClienteDatos = {
     this.currentAuthToken = token;
   },
 
-  // --- RESOLVER MULTI-TENANT DINÁMICO ---
+  // --- QUIÉN ES LA PRESTADORA ---
+  // El orden importa y es éste, no el inverso:
+  //
+  //   1. **Con sesión, la Prestadora sale del perfil.** Es el mismo dato que
+  //      miran las políticas de la base (`prestadora_actual()`), así que la
+  //      pantalla y la base no pueden discrepar.
+  //   2. **Sin sesión, el enlace elige qué vidriera se muestra.** Es lo único
+  //      que puede hacer sin datos detrás, y no decide ningún acceso: quien
+  //      llegue con `?tenant=` a una Prestadora ajena ve su vidriera pública y
+  //      nada más, porque las tablas con datos exigen sesión.
+  //
+  // Al revés sería lo de antes: la barra de direcciones eligiendo de quién son
+  // los datos que se piden.
+  // Varias pantallas la llaman por su cuenta y el arranque automático la llama
+  // igual: se resuelve una sola vez por carga y las demás esperan a la misma.
   async initTenant() {
-    // 1. Detectar slug desde query param (?tenant=presdemo) o subdominio
-    const urlParams = new URLSearchParams(window.location.search);
-    let slug = urlParams.get('tenant') || urlParams.get('t');
+    if (!this._resolucionEnCurso) this._resolucionEnCurso = this._resolverPrestadora();
+    return this._resolucionEnCurso;
+  },
 
-    if (!slug) {
-      const hostname = window.location.hostname;
-      const parts = hostname.split('.');
-      // Ignorar subdominios de primer nivel en plataformas de deploy como vercel.app
-      if (hostname.endsWith('.vercel.app')) {
-        if (parts.length > 3) {
+  _resolucionEnCurso: null,
+
+  async _resolverPrestadora() {
+    try {
+      if (window.Sesion) {
+        const perfil = await Sesion.perfil();
+        if (perfil && perfil.tenant_id) {
+          const propia = await this._supabaseRequest(
+            'GET', 'tenants', null, { id: `eq.${perfil.tenant_id}` });
+          if (propia && propia[0]) {
+            this.currentTenant = propia[0];
+            this._applyBranding(this.currentTenant);
+            return this.currentTenant;
+          }
+        }
+      }
+
+      // Sin sesión: qué vidriera mostrar. Del parámetro o del subdominio.
+      const urlParams = new URLSearchParams(window.location.search);
+      let slug = urlParams.get('tenant') || urlParams.get('t');
+
+      if (!slug) {
+        const hostname = window.location.hostname;
+        const parts = hostname.split('.');
+        if (hostname.endsWith('.vercel.app')) {
+          if (parts.length > 3) slug = parts[0];
+        } else if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'localhost') {
           slug = parts[0];
         }
-      } else if (parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'localhost') {
-        slug = parts[0];
       }
-    }
 
-    // Default fallback para demo local
-    if (!slug) {
-      slug = 'presdemo';
-    }
-
-    try {
-      if (this.useSupabase) {
-        // Obtener configuración del tenant de Supabase
+      if (slug && this.useSupabase) {
         const res = await this._supabaseRequest('GET', 'tenants', null, { slug: `eq.${slug}` });
         if (res && res[0]) {
           this.currentTenant = res[0];
+          this._applyBranding(this.currentTenant);
+          return this.currentTenant;
         }
       }
-      
-      // Fallback a mock con UUID válido de base de datos si no se pudo cargar
-      if (!this.currentTenant) {
-        this.currentTenant = {
-          id: '2197bc14-d545-4939-9a98-979e69a120dc', // UUID real de 'presdemo' en Supabase
-          slug: 'presdemo',
-          name: 'PresDemo — Servicios de Cuidado',
-          logo_url: 'assets/images/logo_presdemo.png'
-        };
-      }
 
-      // Aplicar branding dinámicamente en el DOM
-      this._applyBranding(this.currentTenant);
+      this.currentTenant = await this._prestadoraDeRespaldo();
     } catch (err) {
-      console.error('Error al inicializar el tenant:', err);
-      // Asegurar que al menos tengamos el fallback con UUID válido si falla la conexión
-      this.currentTenant = {
-        id: '2197bc14-d545-4939-9a98-979e69a120dc',
-        slug: 'presdemo',
-        name: 'PresDemo — Servicios de Cuidado',
-        logo_url: 'assets/images/logo_presdemo.png'
-      };
-      this._applyBranding(this.currentTenant);
+      console.error('No se pudo resolver la Prestadora:', err);
+      this.currentTenant = await this._prestadoraDeRespaldo();
     }
+
+    if (this.currentTenant) this._applyBranding(this.currentTenant);
+    return this.currentTenant;
+  },
+
+  // Cuando no hay sesión ni enlace que valga, la vidriera muestra la primera
+  // Prestadora que devuelve la base. Es una decisión de presentación y no de
+  // permisos: sin sesión no se llega a ningún dato de nadie.
+  async _prestadoraDeRespaldo() {
+    if (this.useSupabase) {
+      try {
+        const res = await this._supabaseRequest('GET', 'tenants', null, { limit: '1' });
+        if (res && res[0]) return res[0];
+      } catch (err) {
+        console.error('No se pudo leer ninguna Prestadora:', err);
+      }
+    }
+    return null;
   },
 
   _applyBranding(tenant) {
+    if (!tenant) return;
     // Inyectar variables CSS de colores al root
     if (tenant.primary_color) {
       document.documentElement.style.setProperty('--marca-prestadora', tenant.primary_color);
@@ -408,6 +436,7 @@ const ClienteDatos = {
     if (table === 'caregivers') {
       const row = {};
       if (data.tenant_id !== undefined) row.tenant_id = data.tenant_id;
+      if (data.user_id !== undefined) row.user_id = data.user_id;
       if (data.nombre !== undefined) row.full_name = data.nombre;
       if (data.dni !== undefined) row.dni = data.dni;
       if (data.telefono !== undefined) row.phone = data.telefono;

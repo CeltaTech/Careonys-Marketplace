@@ -70,6 +70,8 @@
               class="fas fa-sync-alt"></i> Actualizar</button>
         </div>
 
+        <div id="estado-tabla" style="padding:16px;border-radius:10px;font-size:13px;line-height:1.5;margin-bottom:12px;display:none;"></div>
+
         <table class="aspirantes-table">
           <thead>
             <tr>
@@ -137,9 +139,42 @@
   <script>
     let aspiranteSeleccionadoId = null;
 
+    // Los cuatro estados de la regla 3. Sin esto una tabla vacía no distingue
+    // "no hay aspirantes" de "no se pudo leer" ni de "no le corresponde verlos".
+    function estadoTabla(tono, texto) {
+      const caja = document.getElementById('estado-tabla');
+      if (!texto) { caja.style.display = 'none'; return; }
+      caja.textContent = texto;
+      caja.style.background = 'var(--tono-' + tono + '-fondo)';
+      caja.style.color = 'var(--tono-' + tono + '-texto)';
+      caja.style.display = 'block';
+    }
+
     async function cargarAspirantes() {
-      const data = await ClienteDatos.getAspirantes();
       const tbody = document.getElementById('tabla-aspirantes-body');
+      estadoTabla('info', 'Buscando los legajos de la Prestadora...');
+
+      let data;
+      try {
+        data = await ClienteDatos.getAspirantes();
+      } catch (err) {
+        console.error('Panel de la Prestadora, legajos:', err);
+        tbody.innerHTML = '';
+        estadoTabla('critico',
+          'No se pudieron traer los legajos. Conviene reintentar con el botón Actualizar.');
+        return;
+      }
+
+      if (!data.length) {
+        tbody.innerHTML = '';
+        document.getElementById('kpi-revision').innerText = 0;
+        document.getElementById('kpi-validados').innerText = 0;
+        estadoTabla('neutro',
+          'Todavía no hay ningún legajo cargado en esta Prestadora.');
+        return;
+      }
+
+      estadoTabla(null, '');
       tbody.innerHTML = '';
 
       let rev = 0, val = 0;
@@ -177,28 +212,53 @@
       document.getElementById('kpi-validados').innerText = val;
     }
 
+    // Todo lo que se dibuja acá lo escribió quien se postuló. Sin escapar, un
+    // nombre con etiquetas HTML corre como código en la pantalla del personal de
+    // la Prestadora, que es justamente quien tiene los permisos.
+    function esc(valor) {
+      if (valor === null || valor === undefined) return '';
+      return String(valor)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
     async function abrirAuditoria(id) {
       aspiranteSeleccionadoId = id;
       const data = await ClienteDatos.getAspirantes();
       const a = data.find(item => item.id === id);
       if (!a) return;
 
+      // Los papeles viven en un depósito privado: en la base está el camino, y el
+      // enlace se firma acá, con vencimiento. Un enlace eterno a un documento de
+      // identidad es el documento, y viaja igual de fácil.
       const docs = a.documentos || {};
-      const linkDni = docs.dni && docs.dni !== 'pendiente' ? `<a href="${docs.dni}" target="_blank" style="color:#2563eb;font-weight:700;">Ver DNI</a>` : '<span style="color:var(--texto-secundario)">Pendiente</span>';
-      const linkPenales = docs.penales && docs.penales !== 'pendiente' ? `<a href="${docs.penales}" target="_blank" style="color:#2563eb;font-weight:700;">Ver Penales</a>` : '<span style="color:var(--texto-secundario)">Pendiente</span>';
-      const linkTitulo = docs.titulo && docs.titulo !== 'pendiente' ? `<a href="${docs.titulo}" target="_blank" style="color:#2563eb;font-weight:700;">Ver Título</a>` : '<span style="color:var(--texto-secundario)">Pendiente</span>';
+      const enlaceDocumento = async (camino, etiqueta) => {
+        if (!camino || camino === 'pendiente') {
+          return '<span style="color:var(--texto-secundario)">Pendiente</span>';
+        }
+        const url = await Sesion.urlFirmada('documentos-cuidadores', camino, 900);
+        if (!url) {
+          return '<span style="color:var(--texto-secundario)">No se pudo abrir</span>';
+        }
+        return `<a href="${url}" target="_blank" rel="noopener" style="color:#2563eb;font-weight:700;">${etiqueta}</a>`;
+      };
+      const [linkDni, linkPenales, linkTitulo] = await Promise.all([
+        enlaceDocumento(docs.dni, 'Ver DNI'),
+        enlaceDocumento(docs.penales, 'Ver Penales'),
+        enlaceDocumento(docs.titulo, 'Ver Título')
+      ]);
 
       const html = `
-        <p><strong>Nombre completo:</strong> ${a.nombre}</p>
-        <p><strong>DNI:</strong> ${a.dni} | <strong>Email:</strong> ${a.email} | <strong>Teléfono:</strong> ${a.telefono}</p>
-        <p><strong>Perfil Profesional:</strong> ${a.profesion} (${a.zona})</p>
-        <p><strong>Patologías con Experiencia:</strong> ${(a.patologias || []).join(', ')}</p>
-        <p><strong>Tareas Declaradas:</strong> ${(a.tareas || []).join(', ')}</p>
+        <p><strong>Nombre completo:</strong> ${esc(a.nombre)}</p>
+        <p><strong>DNI:</strong> ${esc(a.dni)} | <strong>Email:</strong> ${esc(a.email)} | <strong>Teléfono:</strong> ${esc(a.telefono)}</p>
+        <p><strong>Perfil Profesional:</strong> ${esc(a.profesion)} (${esc(a.zona)})</p>
+        <p><strong>Patologías con Experiencia:</strong> ${esc((a.patologias || []).join(', '))}</p>
+        <p><strong>Tareas Declaradas:</strong> ${esc((a.tareas || []).join(', '))}</p>
         <div style="background:#eef2ff;padding:10px;border-radius:8px;margin-top:10px;">
           <strong>Documentos adjuntos para verificar:</strong><br/>
-          🛡ï¸ DNI Frente/Dorso: ${linkDni} |
-          📋 Antecedentes Penales: ${linkPenales} |
-          📜 Título/Matrícula: ${linkTitulo}
+          DNI Frente/Dorso: ${linkDni} |
+          Antecedentes Penales: ${linkPenales} |
+          Título/Matrícula: ${linkTitulo}
         </div>
       `;
 
@@ -223,7 +283,24 @@
       cargarAspirantes();
     }
 
-    document.addEventListener('DOMContentLoaded', cargarAspirantes);
+    // El orden no es casual: sin sesión no hay Prestadora, y sin Prestadora la
+    // consulta de legajos no tiene por qué filtrar.
+    document.addEventListener('DOMContentLoaded', async () => {
+      const sesion = await Sesion.requireAuth();
+      if (!sesion) return;
+
+      await ClienteDatos.initTenant();
+
+      const perfil = await Sesion.perfil();
+      if (!perfil || perfil.role !== 'coordinador') {
+        estadoTabla('atencion',
+          'Esta pantalla es para el personal de la Prestadora. La cuenta con la que se '
+          + 'inició sesión no tiene ese permiso.');
+        return;
+      }
+
+      cargarAspirantes();
+    });
   </script>
 </body>
 

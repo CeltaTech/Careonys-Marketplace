@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acceso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .acceso-pantalla {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: var(--fondo-app);
+    }
+
+    .acceso-tarjeta {
+      width: 100%;
+      max-width: 420px;
+      background: var(--superficie);
+      border: 1px solid var(--borde-card);
+      border-radius: 16px;
+      box-shadow: var(--sombra-card);
+      padding: 32px;
+    }
+
+    .acceso-marca {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .acceso-marca img {
+      max-height: 48px;
+      margin-bottom: 12px;
+    }
+
+    .acceso-marca .tenant-name {
+      display: block;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--texto-titulo);
+    }
+
+    .acceso-aviso {
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .acceso-aviso.critico {
+      background: var(--tono-critico-fondo);
+      color: var(--tono-critico-texto);
+    }
+
+    .acceso-aviso.atencion {
+      background: var(--tono-atencion-fondo);
+      color: var(--tono-atencion-texto);
+    }
+
+    .acceso-pie {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--texto-secundario);
+    }
+
+    .acceso-pie a {
+      color: var(--azul-medio-texto);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .acceso-cargando {
+      text-align: center;
+      color: var(--texto-secundario);
+      font-size: 14px;
+      padding: 24px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="acceso-pantalla">
+    <div class="acceso-tarjeta">
+
+      <div class="acceso-marca">
+        <img class="tenant-logo" src="assets/images/logo_presdemo.png" alt="" />
+        <span class="tenant-name"></span>
+      </div>
+
+      <!-- Estado: cargando -->
+      <div id="estado-cargando" class="acceso-cargando">
+        <i class="fas fa-circle-notch fa-spin"></i> Verificando la sesión...
+      </div>
+
+      <!-- Estado: no se pudo llegar al servidor -->
+      <div id="estado-error" style="display:none;">
+        <div class="acceso-aviso critico">
+          No se pudo conectar con el servidor. Puede ser la conexión de este equipo.
+        </div>
+        <button type="button" class="btn btn-secundario" id="btn-reintentar" style="width:100%;">
+          Reintentar
+        </button>
+      </div>
+
+      <!-- Estado: listo -->
+      <form id="estado-listo" style="display:none;" novalidate>
+        <div id="aviso-prestadora" class="acceso-aviso atencion" style="display:none;"></div>
+        <div id="aviso-error-acceso" class="acceso-aviso critico" style="display:none;"></div>
+
+        <div class="form-group">
+          <label for="acceso-email">Correo electrónico</label>
+          <input type="email" id="acceso-email" autocomplete="username" required />
+        </div>
+
+        <div class="form-group">
+          <label for="acceso-clave">Contraseña</label>
+          <input type="password" id="acceso-clave" autocomplete="current-password" required />
+        </div>
+
+        <button type="submit" class="btn btn-primario" id="btn-entrar" style="width:100%;margin-top:8px;">
+          <span id="texto-btn-entrar">Entrar</span>
+        </button>
+
+        <p class="acceso-pie">
+          ¿Todavía no tiene cuenta?
+          <a href="postulacion-asistente.html">Darse de alta como Asistente</a>
+        </p>
+      </form>
+
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/identidad.js"></script>
+  <script src="js/apiClient.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    const paneles = {
+      cargando: document.getElementById('estado-cargando'),
+      error: document.getElementById('estado-error'),
+      listo: document.getElementById('estado-listo')
+    };
+
+    function mostrar(cual) {
+      Object.keys(paneles).forEach(nombre => {
+        paneles[nombre].style.display = (nombre === cual) ? 'block' : 'none';
+      });
+    }
+
+    function avisar(id, texto) {
+      const caja = document.getElementById(id);
+      caja.textContent = texto;
+      caja.style.display = texto ? 'block' : 'none';
+    }
+
+    // A dónde va cada quien después de entrar. Si venía de una pantalla que pidió
+    // sesión, vuelve a esa; si no, al lugar que le corresponde por su rol.
+    function destino(perfil) {
+      const volver = new URLSearchParams(window.location.search).get('volver');
+      if (volver && /^[a-zA-Z0-9_/-]+\.html$/.test(volver)) return volver;
+      const rol = perfil ? perfil.role : null;
+      if (rol === 'coordinador') return 'panel-prestadora.html';
+      if (rol === 'caregiver') return 'pwa-asistente/index.html';
+      if (rol === 'familiar') return 'pwa-familia/index.html';
+      return 'index.html';
+    }
+
+    async function arrancar() {
+      mostrar('cargando');
+      try {
+        const sesion = await Sesion.getSession();
+        if (sesion) {
+          window.location.href = destino(await Sesion.perfil());
+          return;
+        }
+
+        // Acá la Prestadora todavía no la decide la sesión: se usa sólo para la
+        // marca. Si el enlace nombra una que no existe se avisa y se sigue, porque
+        // quien entre va a caer en la suya de todas formas.
+        await ClienteDatos.initTenant();
+        mostrar('listo');
+        if (!ClienteDatos.currentTenant || !ClienteDatos.currentTenant.id) {
+          avisar('aviso-prestadora',
+            'No se reconoció la Prestadora de este enlace. Se puede iniciar sesión igual.');
+        }
+      } catch (err) {
+        console.error('Acceso, arranque:', err);
+        mostrar('error');
+      }
+    }
+
+    document.getElementById('btn-reintentar').addEventListener('click', arrancar);
+
+    document.getElementById('estado-listo').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      avisar('aviso-error-acceso', '');
+
+      const email = document.getElementById('acceso-email').value.trim();
+      const clave = document.getElementById('acceso-clave').value;
+
+      if (!email || !clave) {
+        avisar('aviso-error-acceso', 'Hay que completar el correo y la contraseña.');
+        return;
+      }
+
+      const boton = document.getElementById('btn-entrar');
+      const texto = document.getElementById('texto-btn-entrar');
+      const textoOriginal = texto.textContent;
+      boton.disabled = true;
+      texto.textContent = 'Entrando...';
+
+      try {
+        await Sesion.login(email, clave);
+        window.location.href = destino(await Sesion.perfil());
+      } catch (err) {
+        console.error('Acceso, inicio de sesión:', err);
+        avisar('aviso-error-acceso', Sesion.mensajeDeError(err));
+        boton.disabled = false;
+        texto.textContent = textoOriginal;
+      }
+    });
+
+    arrancar();
+  </script>
+</body>
+
+</html>
