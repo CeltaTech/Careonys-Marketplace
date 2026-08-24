@@ -93,5 +93,8 @@ alcanza para detectar la mayoría de las filtraciones sin leer una línea.
 
 - **Dónde viven físicamente los módulos compartidos** —repositorio propio, carpeta, paquete— no se
   decide acá. Se decide con la fusión, y hasta entonces la línea es conceptual: sirve para no
-  escribir una tabla del lado equivocado, que es lo caro.
+  escribir una tabla del lado equivocado, que es lo caro. **El Legajo del Asistente, la Documentación
+  y vencimientos, y la Verificación ya tienen tabla propia** (`supabase/migrations/0004`,
+  24 de agosto de 2026), escrita del lado compartido igual: sin ninguna columna que sepa qué
+  es una vidriera.
 - **Nada de esto autoriza a construir lógica comercial.** Sigue frenado por `docs/ALCANCE.md` §4.

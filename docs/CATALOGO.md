@@ -105,8 +105,12 @@ de nuestras pantallas.
 ## Lo que no es una lista, y por eso no está acá
 
 Tres cosas aparecieron en el relevamiento, hacen falta, y **no entran en `catalogo-vocabularios.json`**:
-no son opciones para elegir, son campos del legajo. **Están declaradas, en sus dos archivos
-propios.** Lo que sigue explica qué son y por qué se decidieron así.
+no son opciones para elegir, son campos del legajo. **Están declaradas en sus archivos propios, y
+desde el 24 de agosto de 2026 además tienen tabla real**, aplicada contra la base con
+`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql`: matrículas, estudios,
+experiencia laboral, referencias, documentos con vencimiento, verificaciones y banderas de
+consentimiento. Lo que sigue explica qué son y por qué se decidieron así; el JSON sigue
+siendo la fuente del texto en los tres idiomas, la tabla guarda los datos.
 
 **Banderas del legajo del Asistente** — se responden con sí o no, no con una opción de lista. Son dos:
 
