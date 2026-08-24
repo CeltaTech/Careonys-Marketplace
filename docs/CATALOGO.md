@@ -153,9 +153,17 @@ De ahí salen dos reglas:
 - **El teléfono no se muestra nunca, y no es una preferencia del Asistente.** Se guarda en el
   legajo, la Prestadora lo usa, y ninguna pantalla lo muestra a ninguna Familia. La Familia
   contacta por la plataforma.
-- **La vidriera no puede quedar abierta a los buscadores.** **Hecho el 24 de agosto de 2026:**
-  `directorio.html` y `perfil.html` llevan `noindex, nofollow`. Si además va detrás de la sesión
-  sigue abierto, y es lo único que queda del pendiente 2.
+- **El directorio público no puede quedar abierto a los buscadores.** **Hecho el 24 de agosto
+  de 2026:** `directorio.html` y `perfil.html` llevan `noindex, nofollow`. **Y decidido el
+  mismo día (pendiente 2):** el directorio sí se ve sin iniciar sesión, con nombre y foto,
+  porque es lo que convence a una Familia que todavía no es clienta. Lo que no se ve nunca
+  son los datos de contacto, y comunicarse es sólo para Familias registradas.
+- **El chat es la tercera puerta, y hay que cerrarla igual que las otras dos.** El chat existe
+  para que la Familia y el Asistente se conozcan **antes** de la contratación. Si adentro del
+  chat se puede escribir un teléfono, un correo o una dirección, las dos reglas de arriba no
+  sirven de nada: la conversación se sigue por afuera, y la plataforma se entera del primer
+  mensaje y de ninguno más. **Quien escriba el chat tiene que resolverlo dentro del chat**, y
+  no alcanza con prohibirlo en un texto que nadie lee. Es el pendiente 6.
 
 Ninguna de las dos se vuelve a proponer como casilla de un formulario. Si alguna vez hay que
 discutirlo, se discute como decisión comercial.

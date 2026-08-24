@@ -15,8 +15,8 @@ Por tres motivos, en este orden:
    mejora se hace dos veces o se hace una y la otra queda vieja. Es el pendiente 13 otra vez, que
    ya nos pasó con `apiClient.js` triplicado.
 3. **Lo propio de esta modalidad no puede ensuciar lo compartido.** Si el módulo de legajo sabe
-   qué es una vidriera, prestación directa arrastra un concepto que no usa, y cada cambio de la
-   vidriera obliga a tocar el legajo de todos.
+   qué es un directorio público, prestación directa arrastra un concepto que no usa, y cada
+   cambio del directorio obliga a tocar el legajo de todos.
 
 ## La regla
 
@@ -46,29 +46,29 @@ respuesta es sí, es compartido. Si es no, se queda de este lado.
 
 Esta modalidad se llama **modalidad de este producto**, y su identificador es `modalidad` (decidido el 24
 de agosto de 2026, `docs/GLOSARIO.md` §3). Los módulos de este lado se nombran con ese prefijo:
-`vidriera`, `filtros`, `avisos`, `orden`, `visibilidad` y
+`directorio`, `filtros`, `avisos`, `orden`, `visibilidad` y
 `contacto`. El prefijo no es decoración: es lo que hace que la prueba de más abajo se pueda
 correr con una búsqueda de texto.
 
 | Módulo | Qué hace | Por qué no cruza |
 |---|---|---|
-| **Vidriera y perfil público** | Muestra Asistentes a quien todavía no es cliente | En prestación directa nadie mira un catálogo: recibe una asignación |
+| **Directorio y perfil público** | Muestra Asistentes a quien todavía no es cliente | En prestación directa nadie mira un catálogo: recibe una asignación |
 | **Filtros de búsqueda** | Deja combinar tipo, zona, patología, disponibilidad | Existe porque hay alguien buscando |
 | **Aviso y postulación** | La Familia publica lo que necesita; el Asistente se ofrece | En prestación directa el trabajo se asigna, no se postula |
-| **Orden de aparición** | Con qué criterio se ordena lo que la vidriera muestra | Sin vidriera no hay orden que decidir |
-| **Interruptor de visibilidad** | Si el Asistente aparece en la vidriera | Nadie aparece en ningún lado en prestación directa. **No incluye el teléfono**: eso no se muestra nunca, en ninguna modalidad, y por eso no es un interruptor sino una regla —ver `docs/CATALOGO.md` |
+| **Orden de aparición** | Con qué criterio se ordena lo que el directorio público muestra | Sin directorio no hay orden que decidir |
+| **Interruptor de visibilidad** | Si el Asistente aparece en el directorio público | Nadie aparece en ningún lado en prestación directa. **No incluye el teléfono**: eso no se muestra nunca, en ninguna modalidad, y por eso no es un interruptor sino una regla —ver `docs/CATALOGO.md` |
 | **Contacto y su costo** | Cómo una Familia llega a un Asistente y qué se cobra por eso | Y además: hasta que no se resuelva `docs/ALCANCE.md` §4, acá no se construye nada comercial |
 
 ## Los tres casos que limitan
 
-**El consentimiento de visibilidad se parte en dos.** El interruptor —*¿aparezco en la vidriera?*—
+**El consentimiento de visibilidad se parte en dos.** El interruptor —*¿aparezco en el directorio?*—
 es de esta modalidad. El **registro de que la persona dio ese permiso** es del legajo, y va del
 lado compartido. Si mañana otra aplicación publica algo de un Asistente, tiene que poder ver que
 ya prestó consentimiento, en vez de pedirlo de nuevo o, peor, publicarlo sin preguntar.
 
 **El puntaje se parte en dos.** Lo que un Asistente acredita —título validado, matrícula vigente,
 antecedentes presentados, curso aprobado— es del legajo y es compartido. **Cuánto vale cada cosa
-y en qué orden se muestran** es de la vidriera y se queda acá: es una decisión de esta modalidad,
+y en qué orden se muestran** es del directorio público y se queda acá: es una decisión de esta modalidad,
 y en prestación directa ordenar Asistentes por puntaje no significa nada.
 
 **El catálogo es compartido pero no todas sus listas se usan en las dos.** `retiro`,
@@ -85,7 +85,7 @@ No con una revisión de código: con una pregunta que se puede contestar.
 funcionando entera. Si falta algo, ese algo estaba del lado equivocado.
 
 **Prueba al revés, que es la que más se olvida:** buscar en lo compartido cualquier palabra que
-sólo signifique algo acá —`modalidad`, vidriera, aviso, postulación, contacto, puntaje, destacado—.
+sólo signifique algo acá —`modalidad`, directorio público, aviso, postulación, contacto, puntaje, destacado—.
 Si aparece una, se filtró. Con el prefijo de la modalidad puesto, buscar esa palabra en lo compartido
 alcanza para detectar la mayoría de las filtraciones sin leer una línea.
 
@@ -96,5 +96,5 @@ alcanza para detectar la mayoría de las filtraciones sin leer una línea.
   escribir una tabla del lado equivocado, que es lo caro. **El Legajo del Asistente, la Documentación
   y vencimientos, y la Verificación ya tienen tabla propia** (`supabase/migrations/0004`,
   24 de agosto de 2026), escrita del lado compartido igual: sin ninguna columna que sepa qué
-  es una vidriera.
+  es un directorio público.
 - **Nada de esto autoriza a construir lógica comercial.** Sigue frenado por `docs/ALCANCE.md` §4.

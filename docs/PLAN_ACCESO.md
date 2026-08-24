@@ -67,7 +67,7 @@ alguien** y **qué puede ver de ella**.
    regla 3 y sin mostrar el texto crudo del error (regla 5.1).
 7. **`requireAuth()` apunta a `acceso.html`** y lo llama `panel-prestadora.html`.
 8. **`initTenant()` da vuelta el orden**: con sesión, la Prestadora sale de la sesión. La barra de
-   direcciones sigue eligiendo **qué vidriera se muestra** a quien no inició sesión, que es lo
+   direcciones sigue eligiendo **qué directorio público se muestra** a quien no inició sesión, que es lo
    único que puede hacer sin datos detrás, y deja de decidir el acceso.
 9. **El alta pide contraseña** y deja de usar el DNI. Con confirmación y mínimo de ocho
    caracteres.
@@ -76,8 +76,10 @@ alguien** y **qué puede ver de ella**.
 
 ## 4. Lo que queda afuera a propósito
 
-- **Qué es una vidriera pública** sigue abierto: es el pendiente 2, y lo decide el Desarrollador.
-  Este plan no lo resuelve; sólo hace que la vidriera deje de ser la puerta de los datos.
+- **Qué muestra el directorio público** lo decidió el Desarrollador el 24 de agosto de 2026
+  (pendiente 2): se ve sin iniciar sesión, con nombre y foto, y los datos de contacto no
+  salen nunca. Este plan no lo resolvía; sólo hizo que el directorio dejara de ser la puerta
+  de los datos.
 - **Los roles conservan sus nombres actuales.** `profiles.role` guarda hoy `familiar` y
   `caregiver`, en inglés y mezclados. Renombrarlos es migrar datos guardados, y eso se consulta
   antes (`CLAUDE.md` §7). Se agrega `coordinador`, que el glosario ya aprobó (§1), y nada más.
@@ -106,7 +108,7 @@ el tablero, sin migración que los declarara — contra la regla 9. Ahora los de
   forma de escribir en la carpeta de otro.
 - **`documentos-cuidadores` es privado y `avatares` es público.** El primero guarda documento de
   identidad, antecedentes penales y título: una dirección adivinable ahí es repartir documentos.
-  El segundo guarda la foto, y una vidriera sin caras no es una vidriera.
+  El segundo guarda la foto, y un directorio sin caras no es un directorio.
 - **El personal de la Prestadora lee los documentos de su Prestadora**, y solo los de ella: la
   política cruza la carpeta contra `caregivers` y contra `prestadora_actual()`.
 

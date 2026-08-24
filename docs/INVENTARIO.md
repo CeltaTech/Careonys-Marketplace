@@ -213,7 +213,7 @@ llevaba detrás una copia que escribía en el navegador. Esa copia nunca corría
 sin que nadie lo notara, y en un caso sí corría y era peor: `js/main.js` guardaba la búsqueda de
 la familia en el navegador y la pantalla anunciaba éxito. Se sacaron las dos cosas.
 
-**b) Escritos adentro del HTML.** Sigue siendo la fuente de las dos pantallas de la vidriera,
+**b) Escritos adentro del HTML.** Sigue siendo la fuente de las dos pantallas del directorio público,
 y no se toca hasta que se decida el pendiente 2:
 
 - `perfil.html` lleva **8 fichas completas de asistentes escritas como objeto JavaScript adentro

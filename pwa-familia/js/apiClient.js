@@ -21,9 +21,9 @@ const ClienteDatos = {
   //   1. **Con sesión, la Prestadora sale del perfil.** Es el mismo dato que
   //      miran las políticas de la base (`prestadora_actual()`), así que la
   //      pantalla y la base no pueden discrepar.
-  //   2. **Sin sesión, el enlace elige qué vidriera se muestra.** Es lo único
+  //   2. **Sin sesión, el enlace elige qué directorio público se muestra.** Es lo único
   //      que puede hacer sin datos detrás, y no decide ningún acceso: quien
-  //      llegue con `?tenant=` a una Prestadora ajena ve su vidriera pública y
+  //      llegue con `?tenant=` a una Prestadora ajena ve su directorio público y
   //      nada más, porque las tablas con datos exigen sesión.
   //
   // Al revés sería lo de antes: la barra de direcciones eligiendo de quién son
@@ -52,7 +52,7 @@ const ClienteDatos = {
         }
       }
 
-      // Sin sesión: qué vidriera mostrar. Del parámetro o del subdominio.
+      // Sin sesión: qué directorio mostrar. Del parámetro o del subdominio.
       const urlParams = new URLSearchParams(window.location.search);
       let slug = urlParams.get('tenant') || urlParams.get('t');
 
@@ -85,7 +85,7 @@ const ClienteDatos = {
     return this.currentTenant;
   },
 
-  // Cuando no hay sesión ni enlace que valga, la vidriera muestra la primera
+  // Cuando no hay sesión ni enlace que valga, el directorio público muestra la primera
   // Prestadora que devuelve la base. Es una decisión de presentación y no de
   // permisos: sin sesión no se llega a ningún dato de nadie.
   async _prestadoraDeRespaldo() {

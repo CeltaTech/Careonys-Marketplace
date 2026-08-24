@@ -162,7 +162,7 @@ información de otra.
     - La pregunta que decide cada caso: *¿esto seguiría teniendo sentido en
       prestación directa?* Si sí, es compartido.
     - **Ninguna palabra propia de esta modalidad aparece en un módulo compartido**
-      —vidriera, aviso, postulación, contacto, puntaje, destacado—. Si aparece
+      —directorio público, aviso, postulación, contacto, puntaje, destacado—. Si aparece
       una, se filtró, y con ella se filtra el trabajo de sacarla más tarde.
     - No es prolijidad: una mejora sobre código partido en dos copias se hace dos veces o se
       hace una sola y la otra queda vieja. Ya pasó con `apiClient.js`, que está
