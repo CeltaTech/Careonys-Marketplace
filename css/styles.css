@@ -610,6 +610,44 @@ ul {
   background: var(--superficie);
 }
 
+/* ── Contraseñas: el botón para verlas ─────────────────────────────────────
+   `js/clave.js` envuelve cada campo de contraseña en `.campo-clave` y le mete
+   este botón adentro. El campo deja lugar a la derecha para que el texto no
+   termine escondido abajo del botón. */
+.campo-clave {
+  position: relative;
+}
+
+.campo-clave input {
+  padding-right: 78px;
+}
+
+.campo-clave-boton {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--azul-medio-texto);
+  cursor: pointer;
+  transition: background var(--transicion);
+}
+
+.campo-clave-boton:hover {
+  background: var(--superficie-hundida);
+}
+
+.campo-clave-boton:focus-visible {
+  outline: none;
+  box-shadow: var(--anillo-foco);
+}
+
 .radio-group {
   display: flex;
   gap: 20px;

@@ -668,6 +668,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/identidad.js"></script>
   <script src="js/texto.js"></script>
+  <script src="js/clave.js"></script>
   <script src="js/catalogo.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
@@ -881,20 +882,17 @@
         }
       }
 
-      // La contraseña: dos veces igual y de largo suficiente. El servidor la
-      // rechazaría igual, pero avisar acá evita crear media cuenta.
+      // La contraseña: dos veces igual y de largo suficiente. Quien decide qué
+      // vale es `js/clave.js`, para que las tres pantallas que piden contraseña
+      // pidan lo mismo. El servidor la rechazaría igual, pero avisar acá evita
+      // crear media cuenta.
       const clave = document.getElementById('clave').value;
       const claveRepetida = document.getElementById('clave-repetida').value;
-      if (clave.length < 8) {
-        alert('La contraseña tiene que tener al menos ocho caracteres.');
+      const problemaClave = Clave.revisar(clave, claveRepetida);
+      if (problemaClave) {
+        alert(problemaClave);
         goToStep(1);
-        document.getElementById('clave').focus();
-        return;
-      }
-      if (clave !== claveRepetida) {
-        alert('Las dos contraseñas no coinciden.');
-        goToStep(1);
-        document.getElementById('clave-repetida').focus();
+        document.getElementById(clave === claveRepetida ? 'clave' : 'clave-repetida').focus();
         return;
       }
 
