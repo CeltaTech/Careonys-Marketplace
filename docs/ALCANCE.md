@@ -240,6 +240,39 @@ Cerró el pendiente 27, el 24 de agosto de 2026.
   las otras tres pero distinta. Ahora la lista y el recorrido viven en `scripts/recorrido.mjs` y
   los cuatro la consumen (regla 7).
 
+---
+
+### El directorio dejó de traer sus listas escritas a mano
+
+Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2026.
+
+- **El pendiente decía que el problema estaba en la base y estaba en la pantalla.** Nombraba
+  `caregivers.profession` y las claves `domiciliaria`, `enfermera`, `auxiliar` y `at`. Esas
+  palabras no eran filas: eran los `<option>` y los `data-` de `directorio.html`. Se verificó
+  además que ninguna pantalla escribe hoy una clave inventada en esa columna —`postulacion-`
+  `asistente.html:315` y `formulario-integral.html:384` toman las suyas del catálogo—, y de la
+  base misma no se puede afirmar nada desde acá, porque `caregivers` no se deja leer sin sesión.
+- **Los cuatro filtros salen del catálogo** (`directorio.html:66`): zona, perfil profesional,
+  patología y verificación. Eran veinticinco opciones escritas a mano contra la regla 5.1; ahora
+  son cuatro `data-catalogo`. Las zonas llegan agrupadas por región, que la lista escrita a mano
+  no hacía.
+- **Las ocho tarjetas de muestra hablan el mismo idioma que los filtros.** Cada una lleva ahora
+  `data-zone`, `data-type`, `data-patologia` y `data-verificacion` con claves del catálogo, y
+  `filterCards()` en `js/main.js:85` compara clave contra clave.
+- **Antes comparaba contra el texto visible de la tarjeta, y fallaba de dos maneras.** La opción
+  `medicos` no encontraba nunca a la tarjeta que decía «Médicos», porque la tilde no coincide;
+  `parkinson` y `acv` no existían en ninguna tarjeta y devolvían cero sin explicar por qué. Y
+  cualquier cambio de redacción rompía un filtro sin que nada avisara.
+- **Cero resultados ahora se dice con una frase**, no con un «Mostrando 0» que se lee como si
+  algo se hubiera roto: es el cuarto estado de la regla 5.3.
+- **El contador vivía en dos lugares.** `directorio.html` tenía un observador que contaba las
+  tarjetas visibles y escribía la misma frase que ya escribe `filterCards()`. Se sacó el
+  observador (regla 7).
+- **Y salió una palabra que el glosario prohíbe.** `docs/GLOSARIO.md:28` nombra «especialidad»
+  entre lo que no se debe usar por «Tipo de Asistente». Estaba nueve veces en seis pantallas,
+  incluida una etiqueta de formulario y una columna de tabla. No queda ninguna. La otra palabra
+  del mismo tipo, «cuidador» usada como genérico, aparece 176 veces y es el pendiente 33.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,

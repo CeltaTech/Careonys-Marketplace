@@ -82,51 +82,73 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ---- Directory search/filter ampliado ----
+  /* ---- Los filtros del directorio ----
+     Cada desplegable devuelve una clave de catálogo y cada tarjeta lleva las
+     suyas en un `data-`, así que se compara clave contra clave.
+
+     Antes se comparaba contra el texto visible de la tarjeta, y eso fallaba de
+     dos maneras a la vez: la opción «medicos» no encontraba nunca la tarjeta que
+     decía «Médicos», porque la tilde no coincide, y cualquier cambio de redacción
+     rompía un filtro sin que nada avisara. */
   const searchInput = document.getElementById('dir-search');
   const zoneSelect = document.getElementById('dir-zone');
   const typeSelect = document.getElementById('dir-type');
-  const specSelect = document.getElementById('dir-specialty');
-  const verifiedSelect = document.getElementById('dir-verified');
+  const patologiaSelect = document.getElementById('dir-patologia');
+  const verificacionSelect = document.getElementById('dir-verificacion');
   const cards = document.querySelectorAll('.caregiver-card');
   const resultsCount = document.getElementById('results-count');
 
+  // Una tarjeta puede llevar varias claves separadas por espacios. Se compara
+  // entera y no por pedazo: `acv` no tiene por qué encontrar a `acv_grave`.
+  function tieneClave(card, atributo, clave) {
+    if (!clave) return true;
+    return (card.dataset[atributo] || '').split(/\s+/).indexOf(clave) !== -1;
+  }
+
+  // La búsqueda libre ignora tildes: quien escribe «nunez» busca Núñez.
+  function sinTildes(texto) {
+    return texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
   function filterCards() {
-    const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
-    const zone = zoneSelect ? zoneSelect.value.toLowerCase() : '';
-    const type = typeSelect ? typeSelect.value.toLowerCase() : '';
-    const spec = specSelect ? specSelect.value.toLowerCase() : '';
-    const verif = verifiedSelect ? verifiedSelect.value.toLowerCase() : '';
+    const searchTerm = searchInput ? sinTildes(searchInput.value) : '';
+    const zone = zoneSelect ? zoneSelect.value : '';
+    const type = typeSelect ? typeSelect.value : '';
+    const patologia = patologiaSelect ? patologiaSelect.value : '';
+    const verificacion = verificacionSelect ? verificacionSelect.value : '';
 
     let visibleCount = 0;
 
     cards.forEach(card => {
-      const name = (card.dataset.name || '').toLowerCase();
-      const cardZone = (card.dataset.zone || '').toLowerCase();
-      const cardType = (card.dataset.type || '').toLowerCase();
-      const textContent = card.textContent.toLowerCase();
+      const name = sinTildes(card.dataset.name || '');
+      // La zona se guarda como clave (`grand_bourg`) y se busca como se escribe.
+      const zonaEscrita = sinTildes((card.dataset.zone || '').replace(/_/g, ' '));
 
-      const matchSearch = !searchTerm || name.includes(searchTerm) || cardZone.includes(searchTerm);
-      const matchZone = !zone || cardZone.includes(zone);
-      const matchType = !type || cardType.includes(type);
-      const matchSpec = !spec || textContent.includes(spec);
-      const matchVerif = !verif || textContent.includes(verif);
+      const isVisible =
+        (!searchTerm || name.includes(searchTerm) || zonaEscrita.includes(searchTerm))
+        && tieneClave(card, 'zone', zone)
+        && tieneClave(card, 'type', type)
+        && tieneClave(card, 'patologia', patologia)
+        && tieneClave(card, 'verificacion', verificacion);
 
-      const isVisible = matchSearch && matchZone && matchType && matchSpec && matchVerif;
       card.style.display = isVisible ? '' : 'none';
       if (isVisible) visibleCount++;
     });
 
+    // El cuarto estado de la regla 5.3: cero resultados se dice con una frase,
+    // no con un «Mostrando 0» que se lee como si algo se hubiera roto.
     if (resultsCount) {
-      resultsCount.textContent = `Mostrando ${visibleCount} cuidadores`;
+      resultsCount.textContent = visibleCount === 0
+        ? 'Ningún cuidador de la muestra coincide con esos filtros.'
+        : `Mostrando ${visibleCount} cuidadores`;
     }
   }
 
   if (searchInput) searchInput.addEventListener('input', filterCards);
   if (zoneSelect) zoneSelect.addEventListener('change', filterCards);
   if (typeSelect) typeSelect.addEventListener('change', filterCards);
-  if (specSelect) specSelect.addEventListener('change', filterCards);
-  if (verifiedSelect) verifiedSelect.addEventListener('change', filterCards);
+  if (patologiaSelect) patologiaSelect.addEventListener('change', filterCards);
+  if (verificacionSelect) verificacionSelect.addEventListener('change', filterCards);
 
   // ---- WIZARD INTERACTIVO DE 6 PASOS ----
   const selectCards = document.querySelectorAll('.select-card');

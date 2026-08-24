@@ -11,7 +11,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>Red de Asistentes — PresDemo</title>
   <meta name="description"
-    content="Encuentre al cuidador ideal para su familiar. Filtre por zona, especialidad y disponibilidad entre cientos de cuidadores calificados." />
+    content="Encuentre al cuidador ideal para su familiar. Filtre por zona, patología y disponibilidad entre cientos de cuidadores calificados." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
@@ -64,39 +64,18 @@
   <div class="filter-bar">
     <div class="filter-inner" style="flex-wrap:wrap;gap:12px;">
       <input type="text" id="dir-search" placeholder="🔍 Buscar por nombre o zona..." style="flex:2;min-width:220px;" />
-      <select id="dir-zone" style="flex:1;min-width:140px;">
-        <option value="">Todas las zonas</option>
-        <option value="grand bourg">Grand Bourg</option>
-        <option value="villa urquiza">Villa Urquiza</option>
-        <option value="palermo">Palermo</option>
-        <option value="san telmo">San Telmo</option>
-        <option value="belgrano">Belgrano</option>
-        <option value="caballito">Caballito</option>
-        <option value="flores">Flores</option>
-        <option value="nuñez">Núñez</option>
-      </select>
-      <select id="dir-type" style="flex:1;min-width:140px;">
-        <option value="">Todos los perfiles</option>
-        <option value="domiciliaria">Cuidadora Domiciliaria</option>
-        <option value="enfermera">Enfermera / Auxiliar</option>
-        <option value="geriatria">Geriatría / Adultos Mayores</option>
-        <option value="voluntaria">Voluntaria / Acompañante</option>
-      </select>
-      <select id="dir-specialty" style="flex:1;min-width:140px;">
-        <option value="">Todas las especialidades</option>
-        <option value="deterioro cognitivo">Alzheimer / Deterioro Cognitivo</option>
-        <option value="parkinson">Parkinson</option>
-        <option value="acv">ACV / Rehabilitación</option>
-        <option value="postrados">Pacientes Postrados</option>
-        <option value="oncologico">Paciente Oncológico</option>
-        <option value="medicos">Controles Médicos / Inyectables</option>
-      </select>
-      <select id="dir-verified" style="flex:1;min-width:130px;">
-        <option value="">Verificación</option>
-        <option value="dni">DNI Validado</option>
-        <option value="penales">Penales Limpios</option>
-        <option value="titulo">Título Acreditado</option>
-      </select>
+      <!-- Los cuatro desplegables salen del catálogo (regla 5.1): acá sólo se declara
+           cuál vocabulario manda en cada uno. Las claves que eligen son las mismas que
+           llevan las tarjetas en sus `data-`, así que el filtro compara clave con clave
+           y no depende de cómo esté escrita una palabra en la pantalla. -->
+      <select id="dir-zone" style="flex:1;min-width:140px;" data-catalogo="zona"
+        data-catalogo-vacio="Todas las zonas"></select>
+      <select id="dir-type" style="flex:1;min-width:140px;" data-catalogo="perfil_profesional"
+        data-catalogo-vacio="Todos los perfiles"></select>
+      <select id="dir-patologia" style="flex:1;min-width:140px;" data-catalogo="patologia"
+        data-catalogo-vacio="Todas las patologías"></select>
+      <select id="dir-verificacion" style="flex:1;min-width:130px;" data-catalogo="verificacion"
+        data-catalogo-vacio="Verificación"></select>
     </div>
   </div>
 
@@ -107,8 +86,9 @@
     <div class="directory-grid" id="directory-grid">
 
       <!-- CUIDADORA 1: Marisa Miranda -->
-      <div class="caregiver-card fade-in" data-name="marisa miranda" data-zone="grand bourg"
-        data-type="domiciliaria voluntaria">
+      <div class="caregiver-card fade-in" data-name="marisa miranda" data-zone="grand_bourg"
+        data-type="cuidador_domiciliario voluntario"
+        data-patologia="deterioro_cognitivo postrados oncologico ceguera" data-verificacion="dni penales titulo referencia">
         <div class="card-header-strip"></div>
         <div class="card-body">
           <div class="card-top">
@@ -175,8 +155,9 @@
       </div>
 
       <!-- CUIDADORA 2: Carmen Iglesias -->
-      <div class="caregiver-card fade-in" data-name="carmen iglesias" data-zone="villa urquiza"
-        data-type="domiciliaria enfermera">
+      <div class="caregiver-card fade-in" data-name="carmen iglesias" data-zone="villa_urquiza"
+        data-type="cuidador_domiciliario enfermero_universitario auxiliar_enfermeria voluntario"
+        data-patologia="deterioro_cognitivo postrados oncologico ceguera" data-verificacion="">
         <div class="card-header-strip"></div>
         <div class="card-body">
           <div class="card-top">
@@ -218,7 +199,9 @@
       </div>
 
       <!-- CUIDADORA 3: María Rodríguez -->
-      <div class="caregiver-card fade-in" data-name="maría rodríguez" data-zone="palermo" data-type="domiciliaria">
+      <div class="caregiver-card fade-in" data-name="maría rodríguez" data-zone="palermo"
+        data-type="cuidador_domiciliario"
+        data-patologia="postrados alzheimer deterioro_cognitivo" data-verificacion="">
         <div class="card-header-strip"></div>
         <div class="card-body">
           <div class="card-top">
@@ -259,8 +242,9 @@
       </div>
 
       <!-- CUIDADORA 4: Laura Gómez -->
-      <div class="caregiver-card fade-in" data-name="laura gómez" data-zone="san telmo"
-        data-type="geriatria domiciliaria">
+      <div class="caregiver-card fade-in" data-name="laura gómez" data-zone="san_telmo"
+        data-type="gerontologo cuidador_domiciliario"
+        data-patologia="alzheimer deterioro_cognitivo oncologico" data-verificacion="">
         <div class="card-header-strip"></div>
         <div class="card-body">
           <div class="card-top">
@@ -303,7 +287,8 @@
 
       <!-- CUIDADORA 5: Ana Martínez -->
       <div class="caregiver-card fade-in" data-name="ana martínez" data-zone="belgrano"
-        data-type="domiciliaria voluntaria">
+        data-type="cuidador_domiciliario voluntario"
+        data-patologia="" data-verificacion="">
         <div class="card-header-strip"></div>
         <div class="card-body">
           <div class="card-top">
@@ -345,7 +330,8 @@
 
       <!-- CUIDADORA 6: Sandra López -->
       <div class="caregiver-card fade-in" data-name="sandra lópez" data-zone="caballito"
-        data-type="enfermera domiciliaria">
+        data-type="enfermero_universitario cuidador_domiciliario"
+        data-patologia="deterioro_cognitivo postrados oncologico" data-verificacion="">
         <div class="card-header-strip"></div>
         <div class="card-body">
           <div class="card-top">
@@ -388,7 +374,8 @@
 
       <!-- CUIDADORA 7: Patricia Fernández -->
       <div class="caregiver-card fade-in" data-name="patricia fernández" data-zone="flores"
-        data-type="domiciliaria enfermera">
+        data-type="cuidador_domiciliario auxiliar_enfermeria"
+        data-patologia="postrados" data-verificacion="">
         <div class="card-header-strip"></div>
         <div class="card-body">
           <div class="card-top">
@@ -429,7 +416,9 @@
       </div>
 
       <!-- CUIDADORA 8: Claudia Suárez -->
-      <div class="caregiver-card fade-in" data-name="claudia suárez" data-zone="nuñez" data-type="domiciliaria">
+      <div class="caregiver-card fade-in" data-name="claudia suárez" data-zone="nunez"
+        data-type="cuidador_domiciliario"
+        data-patologia="postrados deterioro_cognitivo" data-verificacion="">
         <div class="card-header-strip"></div>
         <div class="card-body">
           <div class="card-top">
@@ -523,29 +512,24 @@
 
   <script src="js/identidad.js"></script>
   <script src="js/texto.js"></script>
-  <!-- Esta página es demostrativa: no consulta la base. Por eso no carga el cliente
-       de datos ni el de sesión, que se conectaban solos al abrirla. -->
+  <!-- Las opciones de los cuatro filtros salen de acá, no del HTML. -->
+  <script src="js/catalogo.js"></script>
   <script src="js/main.js"></script>
-  <script>
-    // ── Esta página es demostrativa, y no consulta la base ───────────────
-    // Las tarjetas de acá abajo son una foto de cómo se vería el directorio:
-    // ocho personas inventadas, escritas a mano en este mismo archivo. Sirven
-    // para mostrar el producto a quien todavía no tiene cuenta.
-    //
-    // Antes esta página le preguntaba a la base y, si había filas, borraba las
-    // ocho y mostraba legajos de verdad a cualquiera que abriera el enlace. Eso
-    // se sacó el 23 de agosto de 2026: lo operativo vive detrás de una sesión,
-    // en el panel y en las dos aplicaciones. Acá no se agrega ninguna consulta.
+  <!-- Esta página es demostrativa, y no consulta la base.
+       Las tarjetas de más arriba son una foto de cómo se vería el directorio: ocho
+       personas inventadas, escritas a mano en este mismo archivo. Sirven para mostrar
+       el producto a quien todavía no tiene cuenta. Por eso esta pantalla tampoco carga
+       el cliente de datos ni el de sesión, que se conectaban solos al abrirla.
 
-    // Contador observable para cuando los filtros ocultan/muestran tarjetas
-    const grid = document.getElementById('directory-grid');
-    const countEl = document.getElementById('results-count');
-    const observer = new MutationObserver(() => {
-      const visible = grid.querySelectorAll('.caregiver-card:not([style*="display: none"])').length;
-      countEl.textContent = `Mostrando ${visible} cuidadores`;
-    });
-    observer.observe(grid, { attributes: true, childList: true, subtree: true });
-  </script>
+       Antes esta página le preguntaba a la base y, si había filas, borraba las ocho y
+       mostraba legajos de verdad a cualquiera que abriera el enlace. Eso se sacó el 23
+       de agosto de 2026: lo operativo vive detrás de una sesión, en el panel y en las
+       dos aplicaciones. Acá no se agrega ninguna consulta.
+
+       Acá había también un observador que contaba las tarjetas visibles y escribía el
+       resultado, la misma frase que ya escribe `filterCards()` en `js/main.js`. Dos
+       lugares para el mismo número, que la regla 7 no admite: se sacó el 24 de agosto
+       de 2026 y quedó el de `main.js`, que es el que decide qué tarjeta se ve. -->
 </body>
 
 </html>
