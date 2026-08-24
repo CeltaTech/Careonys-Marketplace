@@ -35,7 +35,7 @@
 -- --- 1. Matrícula ------------------------------------------------------
 -- Organismo, número, vencimiento, archivo. Obligatoria para publicar
 -- cuando `caregivers.profession` corresponde a un tipo que la exige
--- (`perfil_profesional.requiere_matricula` en el catálogo). Vencida
+-- (`tipo_asistente.requiere_matricula` en el catálogo). Vencida
 -- inhabilita para atender, en cualquier modalidad.
 create table if not exists public.matriculas_asistente (
     id            uuid primary key default gen_random_uuid(),
@@ -91,7 +91,7 @@ comment on table public.experiencia_laboral_asistente is
 
 -- --- 4. Referencias --------------------------------------------------------
 -- Trae el dato de un tercero que no usa el sistema y no aceptó nada.
--- Nunca se muestra en el perfil público ni la ve ninguna Familia.
+-- Nunca se muestra en el perfil ni la ve ninguna Familia.
 create table if not exists public.referencias_asistente (
     id            uuid primary key default gen_random_uuid(),
     tenant_id     uuid not null references public.tenants(id),

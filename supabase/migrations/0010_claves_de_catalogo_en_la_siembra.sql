@@ -12,7 +12,7 @@
 -- Rompen la pantalla. `js/catalogo.js` traduce la clave a su etiqueta y, cuando
 -- no la encuentra, muestra la clave cruda: la ficha de la enfermera dice
 -- «enfermero» en minúscula y con guión bajo en lugar de «Enfermero/a
--- universitario/a». Un filtro por perfil profesional tampoco la encuentra,
+-- universitario/a». Un filtro por Tipo de Asistente tampoco la encuentra,
 -- porque busca por la clave que ofrece el catálogo y esa fila tiene otra.
 --
 -- La 0003 ya quedó corregida, así que una base creada desde cero nace bien.

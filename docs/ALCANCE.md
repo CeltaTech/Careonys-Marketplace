@@ -15,7 +15,7 @@
 |---|---|
 | Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:289` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs` |
 | Directorio de Asistentes con filtros | Maquetado y navegable |
-| Perfil público del Asistente | Maquetado |
+| Perfil del Asistente | Maquetado |
 | Portal de postulación de Asistentes | Maquetado, con el legajo funcionando: `postulacion-asistente.html` guarda las cuatro fichas repetibles y las dos banderas en las tablas de la migración 0004 |
 | Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:176`). Declarados en `supabase/migrations/0006_archivos_del_legajo.sql`, no a mano |
 | Consentimiento de publicación | Funciona de punta a punta. El alta pregunta al cerrar (`data/catalogo-banderas.json`, paso 7) y guarda la respuesta en `banderas_asistente`; el directorio cruza contra ella y **no muestra a nadie que no haya dicho que sí** (`supabase/migrations/0007_directorio_con_consentimiento.sql`). Sin respuesta no se publica: la casilla arranca sin marcar. Y el directorio va con `noindex`, que es lo que ese mismo consentimiento promete |
@@ -218,7 +218,7 @@ Cerró el pendiente 27, el 24 de agosto de 2026.
 - **El daño no está en la base, está en la pantalla.** Las columnas son texto libre y aceptan
   cualquier cosa. `js/catalogo.js:121` traduce la clave guardada a su etiqueta y, cuando no la
   encuentra, muestra la clave cruda: la ficha decía «enfermero» en minúscula y con guión bajo. Y
-  el filtro por perfil profesional busca por la clave que ofrece el catálogo, así que esa fila no
+  el filtro por Tipo de Asistente busca por la clave que ofrece el catálogo, así que esa fila no
   aparecía nunca.
 - **Se arregló por los dos caminos.** `0003_dos_prestadoras_ficticias.sql` quedó corregida, para
   que una base creada desde cero nazca bien, y `0010_claves_de_catalogo_en_la_siembra.sql`
@@ -252,7 +252,7 @@ Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2
   además que ninguna pantalla escribe hoy una clave inventada en esa columna —`postulacion-`
   `asistente.html:315` y `formulario-integral.html:384` toman las suyas del catálogo—, y de la
   base misma no se puede afirmar nada desde acá, porque `caregivers` no se deja leer sin sesión.
-- **Los cuatro filtros salen del catálogo** (`directorio.html:66`): zona, perfil profesional,
+- **Los cuatro filtros salen del catálogo** (`directorio.html:66`): zona, Tipo de Asistente,
   patología y verificación. Eran veinticinco opciones escritas a mano contra la regla 5.1; ahora
   son cuatro `data-catalogo`. Las zonas llegan agrupadas por región, que la lista escrita a mano
   no hacía.
@@ -307,14 +307,42 @@ esperando una decisión suya.
   preguntó el 24 de agosto de 2026 por qué no «directorio» a secas. No hay respuesta: directorio
   hay uno solo y se ve sin sesión, así que el adjetivo no distinguía nada de nada. Que se vea sin
   iniciar sesión se dice en la oración cuando hace falta decirlo, no en el nombre. «Perfil
-  público» sí se queda, porque ahí «público» sí distingue: el legajo del Asistente tiene una parte
-  que no se muestra.
+  público» perdió el adjetivo por lo mismo, y por una razón más que marcó el Desarrollador ese
+  día: lo que no se muestra no está en el perfil, está en el legajo, que es otra cosa.
 - **Y no quedó ni un rastro de la palabra vieja, tampoco en las migraciones ya aplicadas.** Ese
   fue el pedido expreso del Desarrollador el mismo día: mientras siga escrita en algún archivo va
   a volver a aparecer sola. La línea de comandos había propuesto dejarla ahí porque una migración
   aplicada es el registro de lo que corrió; el registro de verdad es el historial de Git, que sí
   guarda cada versión y no se puede reescribir por accidente. Cambiaron **sólo comentarios**, más
   el nombre de una política, que la migración 0011 ya había renombrado en el servidor.
+
+### El perfil y el legajo se separaron, y con eso se fue otra palabra inventada
+
+- **Lo marcó el Desarrollador el 24 de agosto de 2026**, leyendo una frase de la línea de comandos
+  que los usaba como sinónimos: una cosa es el perfil, donde se elige qué se muestra, como en
+  cualquier red social, y otra el legajo, que es el currículum con los papeles que lo respaldan.
+  Las dos definiciones quedaron escritas en `docs/GLOSARIO.md` §3, aprobadas ese mismo día.
+- **«Perfil profesional» era el Tipo de Asistente con otro nombre.** El glosario heredado ya fija
+  **Tipo de Asistente** y prohíbe expresamente llamarlo especialidad, categoría, puesto o rol;
+  «perfil profesional» era la misma cosa una vez más, y encima chocaba con «perfil del puesto»,
+  que la fila de Tareas también prohíbe. Salió de 16 archivos. La clave del vocabulario pasó de
+  `perfil_profesional` a `tipo_asistente`, y con ella el mapa de `scripts/verificar_claves.mjs`.
+- **Se cambió ahora porque hoy es gratis.** Esa clave vive únicamente en archivos: en los tres
+  catálogos, en los atributos `data-catalogo` de cuatro pantallas y en `js/fichas-legajo.js`. En
+  la base la columna se llama `profession` y no se toca, porque la regla 5.1 dice que un
+  identificador guardado no se renombra. Cuando el pendiente 7 lleve los catálogos a tablas, el
+  mismo cambio habría sido una migración de datos.
+- **Donde se completa un legajo ya no dice perfil.** Cambiaron `index.html`, `postulacion-asistente.html`
+  y `solicitar-asistente.html`: quien carga documentos, certificados y experiencia está completando
+  su legajo. A la Familia, que no tiene legajo, se le pide directamente «sus datos y los de su ser
+  querido», sin ninguna de las dos palabras.
+- **«Perfil público» perdió el adjetivo**, por lo mismo que lo perdió el directorio y por una razón
+  más: lo que no se muestra no está en un perfil privado, está en el legajo. Salió de `docs/ALCANCE.md`,
+  `docs/GLOSARIO.md`, `docs/MODULOS.md`, `data/catalogo-fichas.json` y un comentario de la migración 0004.
+- **Lo que sigue llamándose perfil y no se toca:** la ficha de la cuenta —`profiles` en la base,
+  `Sesion.perfil()` en el código—, que es una tercera cosa: quién inició sesión, con qué rol y de qué
+  Prestadora. Está guardada así desde el principio. No aparece en texto visible, así que la confusión
+  no llega a la pantalla; queda avisada en el glosario para que no vuelva a entrar por ahí.
 
 ## 2. Falta construir
 
@@ -419,7 +447,7 @@ nuevo:
 2026), que traza la línea de corte también para lo que no existe todavía de ningún lado.
 
 Lo propio de esta modalidad es lo que la distingue: que el cliente **busca y elige** en vez de
-recibir una asignación. Eso es el directorio, el perfil público, el filtro y la solicitud. Sus
+recibir una asignación. Eso es el directorio, el perfil, el filtro y la solicitud. Sus
 módulos llevan el prefijo de la modalidad.
 
 ### La comparación va en los dos sentidos

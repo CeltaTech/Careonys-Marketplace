@@ -25,9 +25,9 @@ de las pantallas todavía no las lee: eso pasa al portar cada una.
 **La primera que sí las lee es `postulacion-asistente.html`, desde el 24 de agosto de 2026.**
 Su paso 5 dibuja las cuatro fichas repetibles desde `data/catalogo-fichas.json` con el motor
 `js/fichas-legajo.js`, su paso 7 arma el cierre desde `data/catalogo-banderas.json`, y el
-perfil profesional del paso 2 sale del vocabulario `perfil_profesional`. Nada de eso está
+Tipo de Asistente del paso 2 sale del vocabulario `tipo_asistente`. Nada de eso está
 escrito en la pantalla, ni siquiera la regla de cuándo la Matrícula es obligatoria: eso lo
-decide la propiedad `requiere_matricula` de cada perfil del vocabulario. Agregar un perfil
+decide la propiedad `requiere_matricula` de cada tipo del vocabulario. Agregar un tipo
 profesional que exija Matrícula hoy no toca una sola línea de código.
 
 ## Por qué había que sacarlas de ahí
@@ -133,7 +133,7 @@ De las siete verificaciones del legajo, sólo el **documento de identidad** fren
 
 - **Antecedentes penales**: obligatorio para publicar, con **15 días de plazo** desde el alta para presentarlo. Si el plazo pasa sin presentarlo, **el legajo se bloquea**, no sólo la publicación. Vigencia de 6 meses, criterio de la Prestadora y no un plazo de ley.
 - **Certificado de salud**: obligatorio para publicar. Anotado como libreta sanitaria (vigencia anual), **a confirmar con el Desarrollador** —puede ser también o en cambio un apto médico.
-- **Matrícula y título**: obligatorios para publicar **sólo si el tipo de Asistente los exige** (`perfil_profesional.requiere_matricula`). Un cuidador no queda trabado por algo que no le corresponde.
+- **Matrícula y título**: obligatorios para publicar **sólo si el tipo de Asistente los exige** (`tipo_asistente.requiere_matricula`). Un cuidador no queda trabado por algo que no le corresponde.
 - **Domicilio y referencia laboral**: no bloquean nada, suman al perfil.
 
 Vive declarado en `data/catalogo-verificaciones.json`, con su razón de ser cada una. Los plazos y vigencias los tiene que vigilar el módulo de Documentación y vencimientos (`docs/MODULOS.md`): un plazo que nadie mira no es un plazo.
@@ -186,7 +186,7 @@ publicado.
 agrega de a uno. Son cuatro, no tres: la Matrícula es la que faltaba y la que bloqueaba.
 
 - **Matrícula**: organismo que la emitió, número, vencimiento y archivo. Es obligatoria cuando el
-  tipo de Asistente la exige, y ese dato ya lo guarda `perfil_profesional.requiere_matricula`.
+  tipo de Asistente la exige, y ese dato ya lo guarda `tipo_asistente.requiere_matricula`.
   **Vence**, y vencida inhabilita para atender en cualquier modalidad.
 - **Estudio o curso**: institución, título obtenido, año de finalización, qué perfil respalda y foto
   del título. `nivel_educativo` se conserva como nivel alcanzado, pero no alcanza para esto: en

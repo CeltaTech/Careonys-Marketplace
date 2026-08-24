@@ -51,7 +51,7 @@
   <!-- HERO -->
   <section class="inner-hero">
     <h1>Postularme como Asistente</h1>
-    <p>Regístrese en {{producto}}, complete su perfil con documentación verificada y conéctese con cientos de familias que
+    <p>Regístrese en {{producto}}, complete su legajo con documentación verificada y conéctese con cientos de familias que
       necesitan sus servicios.</p>
     <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
       <a href="#registro" class="btn btn-atencion">Registrarme ahora</a>
@@ -150,7 +150,7 @@
           <div class="step-item fade-in">
             <div class="step-number">2</div>
             <div class="step-content">
-              <h4>Complete su perfil</h4>
+              <h4>Complete su legajo</h4>
               <p>Cargue su foto, experiencia, patologías que atiende, disponibilidad horaria y documentación.</p>
             </div>
           </div>
@@ -311,8 +311,8 @@
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
             <div class="form-group" style="grid-column:1 / -1;">
-              <label for="profesion">Perfil profesional principal</label>
-              <select id="profesion" required data-catalogo="perfil_profesional" data-catalogo-vacio="— Seleccionar —"></select>
+              <label for="profesion">Tipo de Asistente principal</label>
+              <select id="profesion" required data-catalogo="tipo_asistente" data-catalogo-vacio="— Seleccionar —"></select>
             </div>
             <div class="form-group" style="grid-column:1 / -1;">
               <label for="nivel-estudios">Nivel de Estudios Formales Alcanzado</label>
@@ -510,7 +510,7 @@
           <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-titulo);"><i
               class="fas fa-folder-open"></i> Paso 5: Legajo</h3>
           <p id="ficha-matricula-obligatoria-aviso" style="display:none;font-size:12.5px;color:#92400e;background:#fef3c7;border-radius:8px;padding:10px;margin-bottom:16px;">
-            El perfil profesional que eligió exige Matrícula vigente y verificada para poder publicarse. Cárguela acá.
+            El Tipo de Asistente que eligió exige Matrícula vigente y verificada para poder publicarse. Cárguela acá.
           </p>
           <div id="ficha-matricula" style="margin-bottom:24px;"></div>
           <div id="ficha-estudio" style="margin-bottom:24px;"></div>
@@ -714,7 +714,7 @@
 
       const profesionSelect = document.getElementById('profesion');
       const elegido = profesionSelect.value;
-      FichasLegajo.opcionesVocabulario('perfil_profesional').forEach(item => {
+      FichasLegajo.opcionesVocabulario('tipo_asistente').forEach(item => {
         const opcion = document.createElement('option');
         opcion.value = item.clave;
         opcion.textContent = item[FichasLegajo.idioma] || item['es-AR'];
@@ -787,7 +787,7 @@
       });
 
       // Paso 5 (Legajo): las fichas ya validan sus propios bloques, y la Matrícula
-      // es obligatoria sólo cuando el perfil profesional elegido la exige.
+      // es obligatoria sólo cuando el Tipo de Asistente elegido la exige.
       if (paneId === 'step-pane-5' && fichasListas) {
         ['matricula', 'estudio', 'experiencia_laboral', 'referencia'].forEach(tipo => {
           if (!FichasLegajo.validarSeccion(`ficha-${tipo}`, tipo)) valid = false;

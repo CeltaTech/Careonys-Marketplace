@@ -49,8 +49,8 @@
         }
       ]
     },
-    "perfil_profesional": {
-      "titulo": "Perfil profesional del Asistente",
+    "tipo_asistente": {
+      "titulo": "Tipo de Asistente",
       "cerrada": true,
       "usado_en": [
         "postulacion-asistente.html:307",
@@ -767,7 +767,7 @@
           "es-AR": "Otro"
         }
       ],
-      "nota": "Usa las mismas claves que `perfil_profesional` donde el puesto es el mismo, a propósito: un competidor mantiene dos vocabularios paralelos que no se corresponden, y por eso lo que un cuidador declara como experiencia no se puede cruzar con lo que declara saber hacer."
+      "nota": "Usa las mismas claves que `tipo_asistente` donde el puesto es el mismo, a propósito: un competidor mantiene dos vocabularios paralelos que no se corresponden, y por eso lo que un cuidador declara como experiencia no se puede cruzar con lo que declara saber hacer."
     },
     "modalidad_curso": {
       "titulo": "Cómo se cursa",

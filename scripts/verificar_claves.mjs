@@ -44,7 +44,7 @@ const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
    la base; el valor, el del vocabulario en `data/catalogo-vocabularios.json`.
    Una columna que no está acá no se revisa. */
 const COLUMNAS = {
-  profession: 'perfil_profesional',
+  profession: 'tipo_asistente',
   zone: 'zona',
   pathologies: 'patologia',
   pathologies_required: 'patologia',

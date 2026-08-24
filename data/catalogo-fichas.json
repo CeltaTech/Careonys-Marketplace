@@ -12,7 +12,7 @@
     "matricula": {
       "ambito": "compartido",
       "repetible": true,
-      "obligatoria_cuando": "perfil_profesional.requiere_matricula == true",
+      "obligatoria_cuando": "tipo_asistente.requiere_matricula == true",
       "nota": "El glosario la define con número, vigencia y archivo, y esos tres son los que faltaban. Vence: una Matrícula vencida inhabilita para atender, en cualquier modalidad.",
       "es-AR": { "titulo": "Matrícula", "titulo_nuevo": "Agregar matrícula", "titulo_editar": "Editar matrícula" },
       "en": { "titulo": "Professional licence", "titulo_nuevo": "Add licence", "titulo_editar": "Edit licence" },
@@ -104,7 +104,7 @@
         {
           "clave": "respalda_perfil",
           "tipo": "lista",
-          "vocabulario": "perfil_profesional",
+          "vocabulario": "tipo_asistente",
           "obligatorio": false,
           "es-AR": { "etiqueta": "¿Respalda alguno de sus perfiles profesionales?", "ayuda": "Si este título es el que lo habilita como enfermero, acompañante terapéutico u otro perfil que exige matrícula, elíjalo acá." },
           "en": { "etiqueta": "Does it back one of your professional profiles?", "ayuda": "If this qualification is what qualifies you as a nurse, therapeutic companion or another profile requiring a licence, select it here." },
@@ -199,7 +199,7 @@
     "referencia": {
       "ambito": "compartido",
       "repetible": true,
-      "nota": "Una referencia trae el dato de otra persona, que no está usando el sistema y no aceptó nada. Por eso lleva su propia advertencia y no se muestra nunca en el perfil público.",
+      "nota": "Una referencia trae el dato de otra persona, que no está usando el sistema y no aceptó nada. Por eso lleva su propia advertencia y no se muestra nunca en el perfil.",
       "es-AR": { "titulo": "Referencias", "titulo_nuevo": "Agregar referencia", "titulo_editar": "Editar referencia" },
       "en": { "titulo": "References", "titulo_nuevo": "Add reference", "titulo_editar": "Edit reference" },
       "pt-BR": { "titulo": "Referências", "titulo_nuevo": "Adicionar referência", "titulo_editar": "Editar referência" },

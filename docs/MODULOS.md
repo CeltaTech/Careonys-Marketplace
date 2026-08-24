@@ -52,7 +52,7 @@ correr con una búsqueda de texto.
 
 | Módulo | Qué hace | Por qué no cruza |
 |---|---|---|
-| **Directorio y perfil público** | Muestra Asistentes a quien todavía no es cliente | En prestación directa nadie mira un catálogo: recibe una asignación |
+| **Directorio y perfil** | Muestra Asistentes a quien todavía no es cliente | En prestación directa nadie mira un catálogo: recibe una asignación |
 | **Filtros de búsqueda** | Deja combinar tipo, zona, patología, disponibilidad | Existe porque hay alguien buscando |
 | **Aviso y postulación** | La Familia publica lo que necesita; el Asistente se ofrece | En prestación directa el trabajo se asigna, no se postula |
 | **Orden de aparición** | Con qué criterio se ordena lo que el directorio muestra | Sin directorio no hay orden que decidir |

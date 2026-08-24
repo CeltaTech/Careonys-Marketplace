@@ -78,7 +78,7 @@
           <thead>
             <tr>
               <th>Aspirante / DNI</th>
-              <th>Perfil profesional</th>
+              <th>Tipo de Asistente</th>
               <th>Zona</th>
               <th>Documentación Cargada</th>
               <th>Estado de Auditoría</th>
@@ -248,7 +248,7 @@
       const html = `
         <p><strong>Nombre completo:</strong> ${Texto.escapar(a.nombre)}</p>
         <p><strong>DNI:</strong> ${Texto.escapar(a.dni)} | <strong>Email:</strong> ${Texto.escapar(a.email)} | <strong>Teléfono:</strong> ${Texto.escapar(a.telefono)}</p>
-        <p><strong>Perfil Profesional:</strong> ${Texto.escapar(a.profesion)} (${Texto.escapar(a.zona)})</p>
+        <p><strong>Tipo de Asistente:</strong> ${Texto.escapar(a.profesion)} (${Texto.escapar(a.zona)})</p>
         <p><strong>Patologías con Experiencia:</strong> ${Texto.escapar((a.patologias || []).join(', '))}</p>
         <p><strong>Tareas Declaradas:</strong> ${Texto.escapar((a.tareas || []).join(', '))}</p>
         <div style="background:#eef2ff;padding:10px;border-radius:8px;margin-top:10px;">

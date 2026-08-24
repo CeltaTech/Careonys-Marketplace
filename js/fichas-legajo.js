@@ -24,7 +24,7 @@ const FichasLegajo = {
   },
 
   requiereMatricula(claveProfesion) {
-    const items = (this.vocabularios.perfil_profesional || {}).items || [];
+    const items = (this.vocabularios.tipo_asistente || {}).items || [];
     const item = items.find(i => i.clave === claveProfesion);
     return !!(item && item.requiere_matricula);
   },
