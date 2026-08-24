@@ -161,20 +161,23 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-# Acá vale el servidor de pruebas que levanta `.claude/launch.json` en el 5599.
-# Esta lista manda solamente sobre el Supabase que corre en esta máquina: la del
-# proyecto alojado se configura en el panel de Supabase, en Authentication →
-# URL Configuration, y sin ella el enlace del correo cae en la portada.
-site_url = "http://localhost:5599"
+# La dirección publicada. Es a donde vuelve quien abre un enlace del correo, así
+# que tiene que ser la de verdad: si dice otra cosa, el enlace cae en la portada y
+# no se puede cambiar nada. Este archivo se aplica al proyecto alojado con
+# `supabase config push`.
+site_url = "https://careonys-marketplace-celta-tech.vercel.app"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-# El comodín cubre las pantallas que reciben un enlace del correo: elegir una
-# contraseña nueva y confirmar el alta.
+# Los tres nombres del sitio publicado —Vercel le da uno por proyecto, uno corto y
+# uno por rama— más el servidor de pruebas de esta máquina, que es contra el que
+# se prueba antes de subir. El comodín cubre las pantallas que reciben un enlace
+# del correo: elegir una contraseña nueva y confirmar el alta.
 additional_redirect_urls = [
-  "http://localhost:5599",
+  "https://careonys-marketplace-celta-tech.vercel.app/**",
+  "https://careonys-marketplace.vercel.app/**",
+  "https://careonys-marketplace-git-main-celta-tech.vercel.app/**",
   "http://localhost:5599/**",
-  "http://127.0.0.1:5599",
   "http://127.0.0.1:5599/**"
 ]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
@@ -243,13 +246,21 @@ enable_signup = true
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
-enable_confirmations = false
+# Dice `true` porque es lo que hace el servidor alojado: se comprobó contra
+# `/auth/v1/settings`, que devuelve `mailer_autoconfirm: false`. Antes decía
+# `false` y era mentira; ese desacuerdo es el pendiente 21. Cambiarlo a `false`
+# apagaría la confirmación en el sitio publicado, y esa decisión no está tomada.
+enable_confirmations = true
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
 secure_password_change = false
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
-max_frequency = "1s"
+# Un segundo era el valor de fábrica del archivo de ejemplo y no sirve para un
+# sitio publicado: deja pedir un correo por segundo con la dirección de cualquiera.
+max_frequency = "60s"
 # Number of characters used in the email OTP.
-otp_length = 6
+# Ocho, que es lo que usa el servidor alojado. Con seis, empujar este archivo
+# acortaria el codigo y lo haria cien veces mas facil de adivinar.
+otp_length = 8
 # Number of seconds before the email OTP expires (defaults to 1 hour).
 otp_expiry = 3600
 
@@ -320,8 +331,10 @@ max_enrolled_factors = 10
 
 # Control MFA via App Authenticator (TOTP)
 [auth.mfa.totp]
-enroll_enabled = false
-verify_enabled = false
+# Encendidas las dos porque es lo que hace hoy el servidor alojado. Con `false`,
+# empujar este archivo apagaria la verificacion en dos pasos de todo el proyecto.
+enroll_enabled = true
+verify_enabled = true
 
 # Configure MFA via Phone Messaging
 [auth.mfa.phone]

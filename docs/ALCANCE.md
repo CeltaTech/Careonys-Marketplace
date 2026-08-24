@@ -376,6 +376,20 @@ la confirmación por correo.
 - **El estilo de las tres pantallas de sesión se subió a `css/styles.css`.** Vivía adentro de
   `acceso.html`; con dos pantallas más de la misma cara, tres copias del mismo bloque se separan
   solas.
+- **El archivo de configuración y el servidor alojado ya dicen lo mismo.** Era la mitad del
+  pendiente 21 y se resolvió con `supabase config push`, sin tocar el tablero de Supabase. En el
+  servidor, `site_url` decía `http://localhost:3000` y la lista de direcciones de vuelta estaba
+  **vacía**: cualquier enlace de correo caía en la portada. Ahora apunta a la dirección publicada
+  en Vercel, con las tres que Vercel le da al proyecto más el servidor de pruebas de esta máquina,
+  y el largo mínimo de contraseña quedó en ocho de los dos lados.
+- **Empujar el archivo entero casi apaga dos cosas que nadie quería apagar.** El primer intento
+  llevó al servidor lo que el archivo decía por defecto de fábrica, y eso incluía **apagar la
+  verificación en dos pasos** (que el servidor tenía encendida) y **acortar de ocho a seis dígitos
+  el código que llega por correo**, que lo vuelve cien veces más fácil de adivinar. Se detectó en
+  el mismo momento porque el comando imprime la diferencia antes de aplicarla, se corrigió el
+  archivo y el segundo intento lo dejó como estaba. Queda anotado porque `supabase config push`
+  **empuja todo el archivo, no lo que uno cambió**: antes de correrlo hay que leer la diferencia
+  entera, no sólo buscar el renglón propio.
 - **Cuatro regexes del clasificador de errores no funcionaban.** `js/texto.js` traía ocho bytes de
   retroceso donde tenía que decir `\b`: los patrones de 400, 401, 403, 404, 409 y 422 pedían un
   carácter de retroceso literal alrededor del número, así que ningún código HTTP encontraba su
