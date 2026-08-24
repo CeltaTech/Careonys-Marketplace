@@ -196,12 +196,19 @@ No se salta al paso 3 aunque el cambio ya esté decidido de palabra.
 2. Leer `docs/GLOSARIO.md` y `docs/PENDIENTES.md`.
 3. Confirmar con una línea: *"Leí los documentos correspondientes. Tarea de esta sesión: [X]."*
 4. Presentar plan (objetivo, archivos afectados, cambios previstos, riesgos, validaciones) y
-   **avanzar**. **Decidido por el Desarrollador el 24 de agosto de 2026: la aprobación
-   está dada de antemano y no se espera turno por turno.** Frenar el trabajo para pedir un
-   permiso que ya fue concedido cuesta más que equivocarse: este proyecto es exploratorio,
-   la base no tiene datos reales y se puede rehacer entera. El plan se sigue presentando —es
-   lo que permite corregir el rumbo— pero se presenta **junto con el trabajo hecho**, no en
-   lugar de él.
+   esperar aprobación. **La aprobación es una sola y vale para el plan entero.**
+
+   **Decidido por el Desarrollador el 24 de agosto de 2026:** aprobado el plan, se ejecuta
+   completo sin volver a pedir permiso en cada paso. Nada de detenerse a mitad de camino a
+   preguntar si se sigue, ni de partir el trabajo en pedazos para pedir autorización de a
+   uno. Si el plan tiene ocho puntos, se hacen los ocho y después se informa.
+
+   De ahí salen dos obligaciones sobre el plan, porque es lo único que se aprueba:
+   - **Está entero antes de empezar.** Lo que no esté en el plan no está aprobado,
+     así que un plan a medias obliga a volver a parar, que es lo que se quiere evitar.
+   - **Si en el medio aparece algo que el plan no preveía**, se hace igual si cae adentro de
+     lo aprobado, y se informa al final diciendo que se agregó. Sólo se para si cae en
+     alguna de las cuatro excepciones de abajo, o si cambia el objetivo del plan.
 
    **Las cuatro cosas que sí se consultan antes**, porque no son reversibles ni baratas:
    - Renombrar algo que ya esté **guardado** en la base (regla 5.1: eso es migración de
