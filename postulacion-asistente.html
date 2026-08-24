@@ -618,6 +618,28 @@
                 class="fas fa-check-circle"></i> <span id="cierre-boton">Terminar el alta</span></button>
           </div>
 
+          <!-- Falta confirmar el correo. La cuenta ya quedó creada y el legajo
+               sigue cargado en pantalla: no se perdió nada, sólo falta el clic
+               del enlace que llegó al mail. -->
+          <div id="cierre-confirmar"
+            style="display:none;margin-top:16px;background:#fff8e1;border:1px solid #ffe082;border-radius:12px;padding:16px;font-size:13px;color:var(--texto-principal);">
+            <p style="font-weight:700;margin-bottom:8px;">La cuenta quedó creada. Falta un paso.</p>
+            <p style="margin-bottom:10px;">Se envió un correo a <strong id="cierre-correo"></strong> con un enlace para
+              confirmar la dirección. Lo cargado sigue en esta pantalla: no se perdió nada.</p>
+            <ol style="margin:0 0 12px 18px;line-height:1.6;">
+              <li>Abrir ese correo y tocar el enlace.</li>
+              <li>Volver a esta pestaña —conviene no cerrarla— y tocar el botón de abajo.</li>
+            </ol>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-secundario" id="btn-ya-confirme" style="padding:10px 20px;"><i
+                  class="fas fa-check"></i> <span id="ya-confirme-texto">Ya confirmé, continuar</span></button>
+              <button type="button" class="btn btn-sobre-oscuro" id="btn-reenviar-confirmacion"
+                style="padding:10px 20px;border-color:var(--borde-card);color:var(--texto-secundario);">Volver a mandar el correo</button>
+            </div>
+            <p id="cierre-confirmar-aviso"
+              style="display:none;margin-top:12px;padding:10px;border-radius:8px;font-size:12.5px;"></p>
+          </div>
+
           <div id="form-success" class="form-success"
             style="display:none;margin-top:16px;background:#e8f5e9;color:#2e7d32;padding:16px;border-radius:12px;font-weight:700;text-align:center;font-size:14px;border:1px solid #c8e6c9;">
             ✓ ¡Registro recibido exitosamente! Su legajo completo ha ingresado al proceso de auditoría y entrevistas del
@@ -870,9 +892,178 @@
     });
 
     // ENVIO FINAL DEL FORMULARIO con Upload real a Supabase Storage
-    document.getElementById('form-registro-cuidador-completo').addEventListener('submit', async (e) => {
+    const formAlta = document.getElementById('form-registro-cuidador-completo');
+
+    // Lo que el alta necesita recordar mientras se espera el clic del correo. La
+    // contraseña queda en memoria y en ningún otro lado: ni en el almacenamiento
+    // del navegador ni colgada de la dirección (§4). Vive lo que vive la pestaña.
+    let altaEsperandoCorreo = null;
+
+    // El tramo que escribe: los archivos, la ficha y el legajo. Está aparte
+    // porque se entra por dos puertas —el envío normal, cuando el alta ya trae la
+    // sesión abierta, y «Ya confirmé, continuar», cuando el servidor pidió
+    // confirmar el correo antes—. Mientras vivió adentro del envío, confirmar el
+    // correo costaba el legajo entero: no había forma de volver a este tramo sin
+    // cargar los siete pasos de nuevo (regla 7).
+    async function guardarLegajo(userId, email) {
+      const form = formAlta;
+
+      // Con la sesión abierta la Prestadora se vuelve a resolver, y ahora sale
+      // del perfil: es el mismo dato que va a mirar la política al escribir.
+      ClienteDatos._resolucionEnCurso = null;
+      await ClienteDatos.initTenant();
+
+      // 2. Los archivos, a su depósito
+      // Se guarda el camino, no una dirección: los papeles viven en un depósito
+      // privado y su dirección se firma recién al mostrarla. La foto va aparte,
+      // al depósito público, porque es la que muestra el directorio. La primera
+      // carpeta es siempre la cuenta: de ahí sale el permiso (migración 0006).
+      const docUrls = {
+        foto: 'pendiente',
+        dni: 'pendiente',
+        penales: 'pendiente',
+        titulo: 'pendiente'
+      };
+
+      const adjuntos = [
+        { clave: 'foto',    campo: 'foto-perfil',  deposito: 'avatares',              base: 'foto_perfil', nombre: 'la foto de perfil' },
+        { clave: 'dni',     campo: 'file-dni',     deposito: 'documentos-cuidadores', base: 'dni_frente',  nombre: 'el documento de identidad' },
+        { clave: 'penales', campo: 'file-penales', deposito: 'documentos-cuidadores', base: 'penales',     nombre: 'los antecedentes penales' },
+        { clave: 'titulo',  campo: 'file-titulo',  deposito: 'documentos-cuidadores', base: 'titulo',      nombre: 'el título' }
+      ];
+
+      // Un archivo que no sube y no avisa es peor que uno que no se cargó: la
+      // persona se va creyendo que entregó el papel. Se juntan los que fallaron
+      // y se avisa una sola vez, sin frenar el resto del alta.
+      const adjuntosFallados = [];
+      for (const adj of adjuntos) {
+        const archivo = document.getElementById(adj.campo)?.files[0];
+        if (!archivo) continue;
+        const extension = (archivo.name.split('.').pop() || 'dat').toLowerCase();
+        try {
+          docUrls[adj.clave] = await Sesion.uploadFile(
+            adj.deposito, `${userId}/${adj.base}.${extension}`, archivo
+          );
+        } catch (errArchivo) {
+          console.error('Alta de Asistente, ' + adj.clave + ':', errArchivo);
+          adjuntosFallados.push({ nombre: adj.nombre, motivo: Texto.mensajeDeError(errArchivo) });
+        }
+      }
+
+      // 3. Extraer datos del formulario
+      const patologias = Array.from(form.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
+      const tareas = Array.from(form.querySelectorAll('input[name="tarea_cuidado"]:checked')).map(cb => cb.value);
+      const cursos = Array.from(form.querySelectorAll('input[name="certificacion"]:checked')).map(cb => cb.value);
+      const grillaHorarios = {};
+      document.querySelectorAll('.schedule-grid-7x3 .select-slot').forEach(slot => {
+        const day = slot.getAttribute('data-day');
+        const shift = slot.getAttribute('data-shift');
+        if (!grillaHorarios[day]) grillaHorarios[day] = {};
+        grillaHorarios[day][shift] = slot.classList.contains('active');
+      });
+
+      // 4. Registrar en Supabase (tabla caregivers)
+      const data = {
+        user_id: userId,
+        nombre: document.getElementById('nombre').value,
+        dni: document.getElementById('dni-num').value,
+        email: email,
+        telefono: document.getElementById('celular').value,
+        cuit: document.getElementById('cuit-cuil').value,
+        fechaNacimiento: document.getElementById('fecha-nacimiento').value,
+        genero: document.getElementById('genero').value,
+        nacionalidad: document.getElementById('nacionalidad').value,
+        domicilio: document.getElementById('domicilio').value,
+        cbu: document.getElementById('cbu-alias').value,
+        profesion: document.getElementById('profesion').value,
+        zona: document.getElementById('zona').value,
+        patologias,
+        tareas,
+        educacion: {
+          nivelEstudios: document.getElementById('nivel-estudios').value,
+          cursosCompletados: cursos
+        },
+        valorHora: document.getElementById('valor-hora').value,
+        documentos: docUrls,   // caminos dentro de los depósitos, no direcciones
+        grillaHorarios
+      };
+
+      const aspirante = await ClienteDatos.registrarAspirante(data);
+
+      // 5. Legajo: las cuatro fichas repetibles y las dos banderas (migración 0004)
+      const legajo = {
+        matriculas: FichasLegajo.recolectar('ficha-matricula', 'matricula'),
+        estudios: FichasLegajo.recolectar('ficha-estudio', 'estudio'),
+        experiencia: FichasLegajo.recolectar('ficha-experiencia_laboral', 'experiencia_laboral'),
+        referencias: FichasLegajo.recolectar('ficha-referencia', 'referencia'),
+        banderas: {}
+      };
+      document.querySelectorAll('#banderas-container [data-bandera]').forEach(casilla => {
+        legajo.banderas[casilla.getAttribute('data-bandera')] = casilla.checked;
+      });
+
+      // Los archivos de matrícula y estudio van al depósito privado; en la tabla
+      // queda el camino, igual que los otros adjuntos.
+      for (const clave of ['matriculas', 'estudios']) {
+        for (let i = 0; i < legajo[clave].length; i++) {
+          const fila = legajo[clave][i];
+          fila.archivo_url = null;
+          if (fila.archivo) {
+            const extension = (fila.archivo.name.split('.').pop() || 'dat').toLowerCase();
+            try {
+              fila.archivo_url = await Sesion.uploadFile(
+                'documentos-cuidadores', `${userId}/${clave}_${i}.${extension}`, fila.archivo
+              );
+            } catch (errArchivo) {
+              console.error('Alta de Asistente, ' + clave + ' ' + i + ':', errArchivo);
+              adjuntosFallados.push({
+                nombre: (clave === 'matriculas' ? 'el archivo de una matrícula'
+                                                : 'el archivo de un estudio'),
+                motivo: Texto.mensajeDeError(errArchivo)
+              });
+            }
+            delete fila.archivo;
+          }
+        }
+      }
+
+      if (aspirante && aspirante.id) {
+        await ClienteDatos.guardarLegajoAsistente(aspirante.id, legajo);
+      }
+
+      // 6. Confirmar al usuario
+      if (adjuntosFallados.length) {
+        const lista = adjuntosFallados.map(f => '- ' + f.nombre + ': ' + f.motivo).join('\n');
+        alert('El legajo quedó guardado, pero no se pudieron subir todos los archivos:\n\n'
+            + lista + '\n\nSe pueden volver a cargar más adelante desde el legajo.');
+      }
+      const successMsg = document.getElementById('form-success');
+      if (successMsg) successMsg.style.display = 'block';
+      form.reset();
+      document.querySelectorAll('.schedule-grid-7x3 .select-slot').forEach(slot => {
+        slot.classList.remove('active');
+        slot.style.background = '#f1f5f9';
+        slot.style.color = 'var(--texto-secundario)';
+        slot.style.borderColor = '#e2e8f0';
+        slot.textContent = '—';
+      });
+      montarFichas();
+      goToStep(1);
+      setTimeout(() => { if (successMsg) successMsg.style.display = 'none'; }, 6000);
+    }
+
+    // El aviso del panel de confirmación. Verde cuando la noticia es buena, rojo
+    // cuando algo salió mal; con el texto vacío desaparece.
+    function avisarConfirmacion(mensaje, esError = true) {
+      const aviso = document.getElementById('cierre-confirmar-aviso');
+      aviso.textContent = mensaje;
+      aviso.style.display = mensaje ? 'block' : 'none';
+      aviso.style.color = esError ? '#b71c1c' : '#1b5e20';
+      aviso.style.background = esError ? '#ffebee' : '#e8f5e9';
+    }
+
+    formAlta.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const form = e.target;
 
       // Validar paso por paso (del 1 al 7) para asegurar que nada quedó vacío
       for (let i = 1; i <= 7; i++) {
@@ -936,154 +1127,19 @@
         if (!sesion) {
           // Pasa cuando el servidor exige confirmar el correo: la cuenta queda
           // creada y la sesión no llega hasta que se abra el enlace del mail.
-          alert('La cuenta quedó creada, pero falta confirmar el correo antes de '
-              + 'poder guardar el legajo. El enlace está en la casilla de ' + email
-              + '. Después de confirmarlo hay que volver a completar este formulario.');
+          // Nada de lo cargado se toca —sigue en pantalla, paso por paso— y el
+          // camino sigue por el botón «Ya confirmé, continuar», que entra con
+          // esta misma contraseña y guarda el legajo sin pedir nada de nuevo.
+          altaEsperandoCorreo = { email, clave };
+          document.getElementById('cierre-correo').textContent = email;
+          avisarConfirmacion('');
+          document.getElementById('cierre-confirmar').style.display = 'block';
+          submitBtn.style.display = 'none';
+          document.getElementById('cierre-confirmar').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           return;
         }
 
-        // Con la sesión abierta la Prestadora se vuelve a resolver, y ahora sale
-        // del perfil: es el mismo dato que va a mirar la política al escribir.
-        ClienteDatos._resolucionEnCurso = null;
-        await ClienteDatos.initTenant();
-
-        // 2. Los archivos, a su depósito
-        // Se guarda el camino, no una dirección: los papeles viven en un depósito
-        // privado y su dirección se firma recién al mostrarla. La foto va aparte,
-        // al depósito público, porque es la que muestra el directorio. La primera
-        // carpeta es siempre la cuenta: de ahí sale el permiso (migración 0006).
-        const docUrls = {
-          foto: 'pendiente',
-          dni: 'pendiente',
-          penales: 'pendiente',
-          titulo: 'pendiente'
-        };
-
-        const adjuntos = [
-          { clave: 'foto',    campo: 'foto-perfil',  deposito: 'avatares',              base: 'foto_perfil', nombre: 'la foto de perfil' },
-          { clave: 'dni',     campo: 'file-dni',     deposito: 'documentos-cuidadores', base: 'dni_frente',  nombre: 'el documento de identidad' },
-          { clave: 'penales', campo: 'file-penales', deposito: 'documentos-cuidadores', base: 'penales',     nombre: 'los antecedentes penales' },
-          { clave: 'titulo',  campo: 'file-titulo',  deposito: 'documentos-cuidadores', base: 'titulo',      nombre: 'el título' }
-        ];
-
-        // Un archivo que no sube y no avisa es peor que uno que no se cargó: la
-        // persona se va creyendo que entregó el papel. Se juntan los que fallaron
-        // y se avisa una sola vez, sin frenar el resto del alta.
-        const adjuntosFallados = [];
-        for (const adj of adjuntos) {
-          const archivo = document.getElementById(adj.campo)?.files[0];
-          if (!archivo) continue;
-          const extension = (archivo.name.split('.').pop() || 'dat').toLowerCase();
-          try {
-            docUrls[adj.clave] = await Sesion.uploadFile(
-              adj.deposito, `${userId}/${adj.base}.${extension}`, archivo
-            );
-          } catch (errArchivo) {
-            console.error('Alta de Asistente, ' + adj.clave + ':', errArchivo);
-            adjuntosFallados.push({ nombre: adj.nombre, motivo: Texto.mensajeDeError(errArchivo) });
-          }
-        }
-
-        // 3. Extraer datos del formulario
-        const patologias = Array.from(form.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
-        const tareas = Array.from(form.querySelectorAll('input[name="tarea_cuidado"]:checked')).map(cb => cb.value);
-        const cursos = Array.from(form.querySelectorAll('input[name="certificacion"]:checked')).map(cb => cb.value);
-        const grillaHorarios = {};
-        document.querySelectorAll('.schedule-grid-7x3 .select-slot').forEach(slot => {
-          const day = slot.getAttribute('data-day');
-          const shift = slot.getAttribute('data-shift');
-          if (!grillaHorarios[day]) grillaHorarios[day] = {};
-          grillaHorarios[day][shift] = slot.classList.contains('active');
-        });
-
-        // 4. Registrar en Supabase (tabla caregivers)
-        const data = {
-          user_id: userId,
-          nombre: document.getElementById('nombre').value,
-          dni: document.getElementById('dni-num').value,
-          email: email,
-          telefono: document.getElementById('celular').value,
-          cuit: document.getElementById('cuit-cuil').value,
-          fechaNacimiento: document.getElementById('fecha-nacimiento').value,
-          genero: document.getElementById('genero').value,
-          nacionalidad: document.getElementById('nacionalidad').value,
-          domicilio: document.getElementById('domicilio').value,
-          cbu: document.getElementById('cbu-alias').value,
-          profesion: document.getElementById('profesion').value,
-          zona: document.getElementById('zona').value,
-          patologias,
-          tareas,
-          educacion: {
-            nivelEstudios: document.getElementById('nivel-estudios').value,
-            cursosCompletados: cursos
-          },
-          valorHora: document.getElementById('valor-hora').value,
-          documentos: docUrls,   // caminos dentro de los depósitos, no direcciones
-          grillaHorarios
-        };
-
-        const aspirante = await ClienteDatos.registrarAspirante(data);
-
-        // 5. Legajo: las cuatro fichas repetibles y las dos banderas (migración 0004)
-        const legajo = {
-          matriculas: FichasLegajo.recolectar('ficha-matricula', 'matricula'),
-          estudios: FichasLegajo.recolectar('ficha-estudio', 'estudio'),
-          experiencia: FichasLegajo.recolectar('ficha-experiencia_laboral', 'experiencia_laboral'),
-          referencias: FichasLegajo.recolectar('ficha-referencia', 'referencia'),
-          banderas: {}
-        };
-        document.querySelectorAll('#banderas-container [data-bandera]').forEach(casilla => {
-          legajo.banderas[casilla.getAttribute('data-bandera')] = casilla.checked;
-        });
-
-        // Los archivos de matrícula y estudio van al depósito privado; en la tabla
-        // queda el camino, igual que los otros adjuntos.
-        for (const clave of ['matriculas', 'estudios']) {
-          for (let i = 0; i < legajo[clave].length; i++) {
-            const fila = legajo[clave][i];
-            fila.archivo_url = null;
-            if (fila.archivo) {
-              const extension = (fila.archivo.name.split('.').pop() || 'dat').toLowerCase();
-              try {
-                fila.archivo_url = await Sesion.uploadFile(
-                  'documentos-cuidadores', `${userId}/${clave}_${i}.${extension}`, fila.archivo
-                );
-              } catch (errArchivo) {
-                console.error('Alta de Asistente, ' + clave + ' ' + i + ':', errArchivo);
-                adjuntosFallados.push({
-                  nombre: (clave === 'matriculas' ? 'el archivo de una matrícula'
-                                                  : 'el archivo de un estudio'),
-                  motivo: Texto.mensajeDeError(errArchivo)
-                });
-              }
-            }
-            delete fila.archivo;
-          }
-        }
-
-        if (aspirante && aspirante.id) {
-          await ClienteDatos.guardarLegajoAsistente(aspirante.id, legajo);
-        }
-
-        // 6. Confirmar al usuario
-        if (adjuntosFallados.length) {
-          const lista = adjuntosFallados.map(f => '- ' + f.nombre + ': ' + f.motivo).join('\n');
-          alert('El legajo quedó guardado, pero no se pudieron subir todos los archivos:\n\n'
-              + lista + '\n\nSe pueden volver a cargar más adelante desde el legajo.');
-        }
-        const successMsg = document.getElementById('form-success');
-        if (successMsg) successMsg.style.display = 'block';
-        form.reset();
-        document.querySelectorAll('.schedule-grid-7x3 .select-slot').forEach(slot => {
-          slot.classList.remove('active');
-          slot.style.background = '#f1f5f9';
-          slot.style.color = 'var(--texto-secundario)';
-          slot.style.borderColor = '#e2e8f0';
-          slot.textContent = '—';
-        });
-        montarFichas();
-        goToStep(1);
-        setTimeout(() => { if (successMsg) successMsg.style.display = 'none'; }, 6000);
+        await guardarLegajo(userId, email);
 
       } catch (err) {
         console.error('Alta de Asistente:', err);
@@ -1093,6 +1149,54 @@
         submitBtn.disabled = false;
       }
     });
+
+    // «Ya confirmé, continuar». Reintenta el ingreso con la contraseña que la
+    // persona ya escribió y sigue guardando desde donde se había frenado. Si
+    // todavía no tocó el enlace, el servidor contesta «email not confirmed» y el
+    // aviso lo dice sin borrar nada: se puede volver a intentar.
+    document.getElementById('btn-ya-confirme').addEventListener('click', async () => {
+      if (!altaEsperandoCorreo) return;
+      const boton = document.getElementById('btn-ya-confirme');
+      const texto = document.getElementById('ya-confirme-texto');
+      const textoOriginal = texto.textContent;
+      boton.disabled = true;
+      texto.textContent = 'Guardando el legajo...';
+      avisarConfirmacion('');
+      try {
+        const usuario = await Sesion.login(altaEsperandoCorreo.email, altaEsperandoCorreo.clave);
+        await guardarLegajo(usuario.id, altaEsperandoCorreo.email);
+        // Guardado. Se olvida la contraseña y la pantalla vuelve a quedar como
+        // estaba, por si en la misma máquina se da de alta a otra persona.
+        altaEsperandoCorreo = null;
+        document.getElementById('cierre-confirmar').style.display = 'none';
+        document.getElementById('btn-submit-cuidador').style.display = '';
+      } catch (err) {
+        avisarConfirmacion(Texto.mensajeDeError(err, 'entrar después de confirmar el correo'));
+      } finally {
+        boton.disabled = false;
+        texto.textContent = textoOriginal;
+      }
+    });
+
+    // El correo que no llegó. El servidor limita cuántos manda por hora, así que
+    // un segundo pedido seguido puede volver con ese aviso en lugar de un mail.
+    document.getElementById('btn-reenviar-confirmacion').addEventListener('click', async () => {
+      if (!altaEsperandoCorreo) return;
+      const boton = document.getElementById('btn-reenviar-confirmacion');
+      const textoOriginal = boton.textContent;
+      boton.disabled = true;
+      boton.textContent = 'Mandando...';
+      try {
+        await Sesion.reenviarConfirmacion(altaEsperandoCorreo.email);
+        avisarConfirmacion('Se mandó el correo de nuevo. Puede tardar unos minutos en llegar.', false);
+      } catch (err) {
+        avisarConfirmacion(Texto.mensajeDeError(err, 'volver a mandar el correo de confirmación'));
+      } finally {
+        boton.disabled = false;
+        boton.textContent = textoOriginal;
+      }
+    });
+
     // Inicializar círculos de progreso en paso 1 al cargar
     goToStep(1);
 

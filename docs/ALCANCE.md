@@ -350,8 +350,8 @@ esperando una decisión suya.
 
 ### Quien olvida la contraseña ya tiene por dónde volver
 
-Etapas 1 y 2 del pendiente 21, el 24 de agosto de 2026. Falta la etapa 3, que es el interruptor de
-la confirmación por correo.
+Etapas 1 y 2 del pendiente 21, el 24 de agosto de 2026. La etapa 3 está más abajo, en su propia
+sección.
 
 - **Un solo lugar decide qué contraseña vale.** Nace `js/clave.js`. Tres pantallas piden una
   contraseña —el acceso, el alta de Asistente y la que elige una nueva— y hasta ahora cada una
@@ -396,6 +396,34 @@ la confirmación por correo.
   frase y todos caían en «avisar al soporte». Los metió un `heredoc` de la línea de comandos, que
   en esta máquina se come las barras invertidas. Arreglado en el original y en las dos copias, y
   comprobado con un caso de 404 que antes fallaba.
+
+### Confirmar el correo ya no cuesta el legajo
+
+Etapa 3 del pendiente 21, el 24 de agosto de 2026.
+
+- **El alta se parte en dos: crear la cuenta y guardar el legajo.** Eran un solo tramo, y ahí
+  estaba el problema. Cuando el servidor exige confirmar el correo —y lo exige—, `signUp` devuelve
+  la cuenta creada pero **sin sesión**, y sin sesión no se puede escribir nada: la base rechaza las
+  escrituras de un visitante anónimo. Como el tramo que escribe vivía adentro del envío, la única
+  salida era volver a empezar. Ahora vive aparte y se entra por dos puertas.
+- **El aviso que mandaba a empezar de nuevo se fue.** Decía que había que confirmar el correo y
+  **volver a completar el formulario**, con lo que se perdían los siete pasos recién cargados. En
+  su lugar aparece un panel: la cuenta quedó creada, el correo salió a tal dirección, lo cargado
+  sigue en pantalla, y hay dos botones.
+- **«Ya confirmé, continuar».** Entra con la contraseña que la persona todavía tiene escrita y
+  sigue guardando desde donde se había frenado. Si todavía no tocó el enlace, el servidor contesta
+  que falta confirmar y el aviso lo dice sin borrar nada: se vuelve a intentar y listo. La
+  contraseña vive en memoria mientras dura la espera, nunca en el almacenamiento del navegador ni
+  colgada de la dirección (§4 de `CLAUDE.md`).
+- **«Volver a mandar el correo»**, para el mail que no llegó. El servidor limita cuántos manda por
+  hora, así que un segundo pedido seguido puede volver con ese aviso en vez de un correo, y el
+  panel lo traduce.
+- **Comprobado con las tres puertas cerradas.** Se suplantaron sólo las llamadas que hablan con el
+  servidor, y el camino del navegador corrió entero: el panel aparece con el correo escrito y el
+  botón de enviar se esconde; el botón se deshabilita mientras está en curso (regla 5.5); con el
+  correo sin confirmar el aviso sale en rojo y no se pierde ni un dato; con el correo confirmado se
+  guardan la ficha y las cuatro secciones del legajo, la pantalla vuelve a su estado normal y la
+  contraseña desaparece de la memoria y de la pantalla.
 
 ## 2. Falta construir
 
