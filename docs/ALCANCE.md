@@ -24,8 +24,84 @@
 | Formulario integral de datos del Paciente | Maquetado, paso a paso |
 | Cliente de datos (`js/apiClient.js`) | Funciona en modo local y modo Supabase |
 | Identidad del producto (`js/identidad.js`) | Funciona y está verificada. Ver abajo |
+| Alta y baja de una Prestadora desde CeltaTech | Funciona, y **es lo único que este producto recibe de afuera**. La función de borde `supabase/functions/alta-y-baja/index.ts` verifica la firma del pedido y llama a las dos funciones de la migración 0023. Probada contra el servidor desplegado: `scripts/probar_alta_y_baja.mjs`, doce comprobaciones |
 
 **Maquetado** significa que la pantalla existe y se navega, no que la lógica detrás esté escrita.
+
+### La única puerta que este producto le abre a CeltaTech
+
+**Construida el 25 de agosto de 2026**, con las migraciones 0023 y 0024 y la función de borde
+`alta-y-baja`. Antes de eso, dar de alta una Prestadora era abrir la consola de la base y escribir
+un `insert` a mano — no había otra forma, porque `tenants` tiene políticas de lectura y ninguna de
+escritura, y eso está bien: una política de escritura dejaría que cualquiera con una cuenta creara
+Prestadoras. Lo que faltaba no era un permiso, era una puerta con llave.
+
+**Este producto no tiene servidor propio**, así que no había ninguna dirección donde CeltaTech
+pudiera golpear: son páginas que el navegador se baja y que hablan directo con la base. La puerta
+es una función de borde, que vive en los servidores de Supabase y es el único lugar donde puede
+vivir — las dos operaciones necesitan la llave de servicio, y una llave de servicio adentro de una
+página web la lee cualquiera.
+
+Atiende dos cosas y ninguna más:
+
+| Camino | Qué hace | Contrato |
+|---|---|---|
+| `POST /functions/v1/alta-y-baja/tenants` | Crea la Prestadora y devuelve su identificador, que es el `tenant_ref` que CeltaTech guarda | `../../docs/MODELO_COMERCIAL_CELTATECH.md` §6.1 |
+| `POST /functions/v1/alta-y-baja/eventos` | La deja activa, suspendida o cancelada | §6.2 |
+
+**Lo que no atiende es todo lo demás, y es a propósito.** El Desarrollador puso el límite ese
+mismo día: *«una cosa es el producto, y otra es su manejo comercial, no mezclemos o hacemos
+líos»*. Así que acá no se guarda de qué contrato viene una Prestadora, no se guarda qué
+capacidades tiene contratadas, y no se le pregunta nada a CeltaTech. El alta de §6.1 trae un
+`entitlements` adentro: la puerta lo recibe y lo ignora, que es distinto de rechazarlo — el
+contrato de quien llama no se rompe, simplemente de este lado no hay quién los use.
+
+De ahí sale, sin escribir una línea, la regla que §6.3 declara no negociable —«fallo abierto con
+el último valor conocido»—: **un producto que no le pregunta nada a CeltaTech no se cae cuando
+CeltaTech se cae.**
+
+#### Quién puede entrar
+
+La puerta está fuera del control de sesiones de Supabase, declarado en `supabase/config.toml` con
+`verify_jwt = false`. No es un descuido: CeltaTech no tiene ni va a tener una cuenta de este
+producto, así que no puede traer una sesión. Lo que trae es una firma —un resumen del cuerpo del
+mensaje hecho con una clave que saben los dos lados—, y sin firma válida no pasa un solo pedido.
+
+Tres cuidados que no son adorno, y los tres están probados:
+
+- **Se firma el texto crudo** y recién después se interpreta. Firmar lo ya interpretado deja pasar
+  dos mensajes distintos con la misma firma, y la comprobación 3 de la prueba es exactamente esa:
+  se firma un cuerpo y se manda otro.
+- **Las firmas se comparan en tiempo constante.** Comparar cortando en la primera letra distinta
+  deja adivinar la firma letra por letra, midiendo cuánto tarda cada intento.
+- **Si falta la clave, la puerta no abre.** No existe un modo «sin firma para probar»: una puerta
+  que se puede dejar abierta termina abierta.
+
+#### Por qué no lleva una lista de mensajes ya atendidos
+
+El modelo comercial §6.2 pide que el producto guarde los identificadores de los avisos ya
+procesados, porque los avisos se reintentan y llegan dos veces. Acá esa lista no hace falta, y no
+llevarla es mejor que llevarla:
+
+- **El alta no duplica** porque el nombre corto se deduce del nombre. El mismo nombre da el mismo
+  nombre corto, que choca con la fila que ya está, y el alta devuelve la Prestadora que existía en
+  vez de crear una gemela.
+- **El cambio de estado no se pisa** porque la base guarda cuándo se emitió la orden que dejó el
+  estado como está (`tenants.estado_fijado_en`) y descarta todo lo emitido antes. Un aviso
+  repetido no cambia nada, y uno atrasado tampoco.
+
+Lo segundo importa más de lo que parece. Los reintentos con espera no conservan el orden: puede
+llegar primero el reintento de una cancelación vieja y después el aviso que la reactivaba. Sin esa
+fecha, una Prestadora quedaría cancelada por un mensaje que ya no era verdad.
+
+#### Suspender no hace hoy nada nuevo
+
+`status` ya hacía algo desde la 0021: las tres funciones públicas exigen `activo`, así que una
+Prestadora suspendida se queda sin puerta de calle —nadie ve su marca ni su directorio sin
+sesión— mientras su personal, que sí tiene cuenta, sigue trabajando igual. **La puerta deja eso
+exactamente como estaba.** Qué más se le corta a quien no paga cuando hay gente cuidando a una
+persona es una pregunta abierta del Desarrollador, anotada en
+`../../docs/SUGERENCIAS_DESDE_EL_MARKETPLACE.md`, y no se contesta desde acá.
 
 ### El límite entre Prestadoras lo pone la sesión
 
@@ -1918,14 +1994,24 @@ porque migrar es más barato que construir.
 
 ---
 
-## 3. Esto no es otro producto: es una modalidad de Careonys
+## 3. Es una modalidad de Careonys **y además** un producto que se vende solo
 
-**Decidido por el Desarrollador el 23 de agosto de 2026.** Cierra las dos decisiones que
-bloqueaban el arranque.
+**Decidido por el Desarrollador el 23 de agosto de 2026 y ampliado el 25.** Cierra las dos
+decisiones que bloqueaban el arranque.
 
 Lo que se estaba construyendo acá como producto aparte es **una modalidad más de Careonys**: no
 una cuarta aplicación ni un sistema hermano. Una misma Prestadora puede tener las dos encendidas
 a la vez, con unos clientes de atención directa y otros que eligen del catálogo.
+
+**Y el 25 de agosto el Desarrollador agregó la otra mitad, que este título daba por cerrada de
+más:** CeltaTech además lo vende **por sí solo**, a clientes que no usan Careonys. Preguntado cuál
+de las dos, contestó *«las dos cosas»*. Lo que eso **no** quiere decir es que un cliente termine
+con dos contratos: pasar del Marketplace a Careonys entero **reemplaza** el contrato, no lo suma
+—dos contratos hay cuando son dos productos distintos que conviven, como un ERP o un CRM—.
+
+Todo eso es comercial y se decide del otro lado; acá está anotado porque cambia una frase de este
+documento y ninguna línea de código. El detalle está en
+`../../docs/SUGERENCIAS_DESDE_EL_MARKETPLACE.md`.
 
 ### La palabra `marketplace` está ocupada, pero está mal puesta
 
@@ -2026,9 +2112,23 @@ otro lado, y si alguna pantalla de acá los resuelve mejor, eso se lleva allá.
 
 ---
 
-## 4. Decisión abierta: la lógica comercial
+## 4. Cerrada: la lógica comercial no vive acá
 
-**Esto se resuelve antes de escribir la primera tabla.**
+**Cerrada por el Desarrollador el 25 de agosto de 2026**, y en los mismos términos en que estaba
+planteada: *«una cosa es el producto, y otra es su manejo comercial, no mezclemos o hacemos
+líos»*. Antes de eso había dicho lo mismo de otras dos maneras, sobre dos propuestas distintas:
+guardar de qué contrato viene cada Prestadora, y guardar qué capacidades tiene contratadas. Las
+dos volvieron con dos palabras, «tema de CeltaTech».
+
+**Qué queda afuera, entonces:** el producto no guarda ni consulta capacidades, no decide qué
+significa suspender a alguien, y no le pregunta nada a CeltaTech mientras hay gente trabajando. Lo
+único que sí recibe es el alta y la baja de una Prestadora, por la puerta de §1.
+
+**Y qué queda afuera de este repositorio**, que es la otra mitad de la decisión: lo comercial se
+le anota a CeltaTech en `../../docs/SUGERENCIAS_DESDE_EL_MARKETPLACE.md` y no se construye acá,
+aunque parezca chico y aunque el producto pudiera hacerlo. No se pregunta caso por caso.
+
+Lo que sigue es cómo estaba planteada la decisión, que explica de dónde venía:
 
 Los dos documentos de modelo de negocio de `docs/` ponen planes, comisiones, precios y facturación
 **adentro del producto**: niveles de suscripción, comisión por transacción, canon de licencia.
@@ -2042,7 +2142,7 @@ Un dato nuevo que conviene tener a la vista al decidir: Careonys ya tiene dos ta
 modalidad ya está construido allá, aunque ninguna de las dos tablas tiene comentario que explique
 qué guarda. Antes de escribir nada comercial acá conviene abrirlas.
 
-**Hasta entonces no se construye lógica comercial en este proyecto.**
+**Y así quedó: no se construye lógica comercial en este proyecto.**
 
 ---
 

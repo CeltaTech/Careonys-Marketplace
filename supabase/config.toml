@@ -445,3 +445,14 @@ enabled = true
 # declarative_schema_path = "./database"
 # JSON string passed through to pg-delta SQL formatting.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":80,\"commaStyle\":\"trailing\"}"
+
+# ── La puerta por donde CeltaTech da de alta y de baja una Prestadora ────────
+# `verify_jwt = false` está puesto a propósito y no es un descuido. CeltaTech no
+# tiene ni va a tener una cuenta de este producto, así que no puede traer una
+# sesión de Supabase. Lo que trae es la firma que pide el modelo comercial §6.2,
+# y la función la verifica antes de mirar nada más: sin firma válida no pasa un
+# solo pedido. Si el día de mañana se le saca esa verificación al código, esta
+# línea deja la puerta abierta de par en par.
+[functions.alta-y-baja]
+enabled = true
+verify_jwt = false
