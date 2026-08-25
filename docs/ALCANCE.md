@@ -2124,6 +2124,21 @@ dos volvieron con dos palabras, «tema de CeltaTech».
 significa suspender a alguien, y no le pregunta nada a CeltaTech mientras hay gente trabajando. Lo
 único que sí recibe es el alta y la baja de una Prestadora, por la puerta de §1.
 
+**Y el producto tampoco restringe.** Lo aclaró el Desarrollador el 25 de agosto de 2026, y es
+la parte que faltaba: *«desde la aplicación no se restringe, eso no es una funcionalidad técnica
+sino comercial. Marketplace informa sus capacidades y las mismas son autorizadas o no según el mix
+comercial que CeltaTech decida»*.
+
+O sea que ninguna pantalla de este producto se apaga por lo que un cliente tenga o no tenga
+contratado, y ninguna pregunta antes de mostrarse. **Lo que este producto sí tiene que poder
+hacer es decir qué sabe hacer** —la lista de sus capacidades, y qué combinaciones son
+técnicamente posibles—, porque de esa lista CeltaTech arma el paquete de cada cliente. Decidir
+quién tiene cuál, y hacerlo cumplir al dar el acceso, es de CeltaTech.
+
+De ahí sale una regla práctica para cualquier tarea futura: si un pedido pide esconder,
+deshabilitar o limitar algo **según lo que ese cliente pagó**, la tarea está mal planteada del
+mismo modo que dice el `CLAUDE.md` de Careonys en su §1.bis. Se para y se consulta.
+
 **Y qué queda afuera de este repositorio**, que es la otra mitad de la decisión: lo comercial se
 le anota a CeltaTech en `../../docs/SUGERENCIAS_DESDE_EL_MARKETPLACE.md` y no se construye acá,
 aunque parezca chico y aunque el producto pudiera hacerlo. No se pregunta caso por caso.
