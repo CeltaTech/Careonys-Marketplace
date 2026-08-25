@@ -466,6 +466,19 @@
             <div class="wfield"><label>🛡️ Foto DNI (Frente y Dorso)</label><input type="file" accept="image/*,.pdf" /></div>
             <div class="wfield"><label>📋 Antecedentes Penales (vigente)</label><input type="file" accept="image/*,.pdf" /></div>
             <div class="wfield"><label>📜 Título / Certificados</label><input type="file" accept="image/*,.pdf" /></div>
+
+            <!-- Las fichas repetibles del legajo. Salen de data/catalogo-fichas.json
+                 y las dibuja js/fichas-legajo.js, el mismo archivo que usa el
+                 portal (regla 5.1: los formularios se declaran, no se dibujan).
+                 Hasta el 24 de agosto de 2026 esta pantalla no las tenía, así que
+                 quien se daba de alta desde el teléfono quedaba sin matrícula, sin
+                 estudios, sin experiencia y con la referencia como texto suelto. -->
+            <p id="ficha-matricula-obligatoria-aviso" style="display:none;font-size:10px;color:#92400e;background:#fef3c7;border-radius:8px;padding:10px;margin:14px 0 0;">
+              El Tipo de Asistente que eligió exige Matrícula vigente y verificada para poder publicarse. Cárguela acá.
+            </p>
+            <div id="ficha-matricula" style="margin-top:14px;"></div>
+            <div id="ficha-estudio" style="margin-top:14px;"></div>
+
             <div class="wnav">
               <button type="button" class="wbtn-prev" onclick="wPrev(1)"><i class="fas fa-arrow-left"></i></button>
               <button type="button" class="wbtn-next" onclick="wNext(3)">Siguiente <i class="fas fa-arrow-right"></i></button>
@@ -479,6 +492,9 @@
             <div class="wcheck-group" style="margin-bottom:16px;" data-catalogo="patologia" data-catalogo-como="casillas" data-catalogo-nombre="patologia" data-catalogo-clase="catalogo-casilla"></div>
             <p style="font-size:12px;font-weight:700;color:#334155;margin-bottom:8px;">Tareas autorizadas a realizar:</p>
             <div class="wcheck-group" data-catalogo="tarea_cuidado" data-catalogo-como="casillas" data-catalogo-nombre="tarea_cuidado" data-catalogo-clase="catalogo-casilla"></div>
+
+            <div id="ficha-experiencia_laboral" style="margin-top:16px;"></div>
+
             <div class="wnav">
               <button type="button" class="wbtn-prev" onclick="wPrev(2)"><i class="fas fa-arrow-left"></i></button>
               <button type="button" class="wbtn-next" onclick="wNext(4)">Siguiente <i class="fas fa-arrow-right"></i></button>
@@ -513,19 +529,34 @@
           <!-- PASO 5: REFERENCIAS Y CONFIRMACIÓN -->
           <div class="wpane" id="wp5">
             <h3><i class="fas fa-user-check"></i> Paso 5: Referencias y Confirmación</h3>
-            <div class="wfield"><label>Nombre del Referente Laboral Anterior</label><input type="text" id="w-ref-nombre" placeholder="Nombre completo" required /></div>
-            <div class="wfield"><label>Teléfono del Referente (WhatsApp)</label><input type="tel" id="w-ref-tel" placeholder="11 9876 5432" required /></div>
+            <!-- La referencia era un nombre y un teléfono sueltos que terminaban
+                 como texto adentro de `caregivers.reference_info`, que es el
+                 formato viejo. Ahora es la misma ficha del portal y va a
+                 `referencias_asistente`, una fila por referencia. -->
+            <div id="ficha-referencia"></div>
+
             <div class="winfo-box">
               <strong><i class="fas fa-info-circle"></i> Proceso de Selección:</strong><br />
               La solicitud quedará en estado "En Revisión". El equipo de <strong class="tenant-name">PresDemo</strong> auditará la documentación y lo convocará a una entrevista.
             </div>
+            <!-- El paso de cierre: qué se muestra de la persona y a quién. El
+                 texto, el orden y el valor inicial de cada casilla salen de
+                 data/catalogo-autorizaciones.json y los dibuja
+                 js/autorizaciones.js, el mismo archivo que usa el portal.
+                 Sin la fila que esto guarda, la persona no aparece nunca en el
+                 directorio: la vista `caregivers_publicos` la exige. -->
+            <h4 id="cierre-titulo" style="font-size:12px;font-weight:700;color:#334155;margin:16px 0 4px;"></h4>
+            <p id="cierre-bajada" style="font-size:10px;color:var(--texto-secundario);margin:0 0 8px;"></p>
+            <p id="cierre-recordatorio" style="font-size:10px;color:#1b5e20;background:#e8f5e9;border-radius:8px;padding:8px;margin:0 0 8px;"></p>
+            <div id="autorizaciones-container"></div>
+
             <div style="display:flex;align-items:flex-start;gap:8px;margin:12px 0;font-size:12px;color:#334155;">
               <input type="checkbox" id="w-terminos" required style="width:18px;height:18px;margin-top:2px;flex-shrink:0;" />
               <label for="w-terminos" style="cursor:pointer;">Acepto los Términos y Condiciones de Legajo para Asistentes de {{producto}}.</label>
             </div>
             <div class="wnav">
               <button type="button" class="wbtn-prev" onclick="wPrev(4)"><i class="fas fa-arrow-left"></i></button>
-              <button type="submit" class="wbtn-submit"><i class="fas fa-check-circle"></i> Enviar Legajo</button>
+              <button type="submit" class="wbtn-submit"><i class="fas fa-check-circle"></i> <span id="cierre-boton">Enviar Legajo</span></button>
             </div>
             <!-- El servidor puede exigir confirmar el correo antes de dar
                  sesión. Ahí la cuenta ya quedó creada y el legajo sigue cargado
@@ -559,6 +590,8 @@
   <script src="js/clave.js"></script>
   <script src="js/catalogo.js"></script>
   <script src="js/disponibilidad.js"></script>
+  <script src="js/fichas-legajo.js"></script>
+  <script src="js/autorizaciones.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script>
@@ -573,6 +606,7 @@
     document.addEventListener('DOMContentLoaded', async () => {
       await ClienteDatos.initTenant();
       montarDisponibilidad();
+      montarLegajo();
 
       // Restaurar sesión activa automáticamente
       const session = await Sesion.getSession();
@@ -746,6 +780,44 @@
       await Disponibilidad.montarPreguntas('preguntas-disponibilidad');
     }
 
+    // Las cuatro fichas repetibles y el paso de cierre. Los dibujan los mismos
+    // módulos que usa el portal; acá sólo se les dice dónde. Está en una función
+    // aparte porque después de enviar hay que volver a montarlas: `form.reset()`
+    // vacía los campos pero no borra los bloques que la persona agregó.
+    function montarFichas() {
+      FichasLegajo.montarSeccion('ficha-matricula', 'matricula');
+      FichasLegajo.montarSeccion('ficha-estudio', 'estudio', { obligatoriaAlMontar: true });
+      FichasLegajo.montarSeccion('ficha-experiencia_laboral', 'experiencia_laboral', { obligatoriaAlMontar: true });
+      FichasLegajo.montarSeccion('ficha-referencia', 'referencia', { obligatoriaAlMontar: true });
+    }
+
+    async function montarLegajo() {
+      try {
+        await FichasLegajo.cargar();
+        montarFichas();
+
+        // La Matrícula es obligatoria sólo cuando el Tipo de Asistente elegido
+        // la exige, y eso lo dice el vocabulario, no esta pantalla.
+        const profesion = document.getElementById('w-profesion');
+        const avisarMatricula = () => {
+          document.getElementById('ficha-matricula-obligatoria-aviso').style.display =
+            FichasLegajo.requiereMatricula(profesion.value) ? 'block' : 'none';
+        };
+        profesion.addEventListener('change', avisarMatricula);
+        avisarMatricula();
+
+        const cierre = await Autorizaciones.textosDelPaso();
+        document.getElementById('cierre-titulo').textContent = cierre.titulo || '';
+        document.getElementById('cierre-bajada').textContent = cierre.bajada || '';
+        document.getElementById('cierre-recordatorio').textContent = cierre.recordatorio || '';
+        if (cierre.boton) document.getElementById('cierre-boton').textContent = cierre.boton;
+        await Autorizaciones.montar('autorizaciones-container');
+      } catch (err) {
+        console.error('Legajo del Asistente:', err);
+        alert(Texto.mensajeDeError(err, 'cargar los pasos del legajo'));
+      }
+    }
+
     // Lo que falta para terminar cuando el servidor pide confirmar el correo.
     // La cuenta ya quedó creada y el legajo sigue cargado en la pantalla, así
     // que se guardan el correo y la contraseña para volver a entrar y seguir
@@ -755,17 +827,41 @@
     // Guardar el legajo sale del envío del formulario porque hay dos caminos
     // que terminan en lo mismo: el normal y el de «Ya confirmé». Escribirlo dos
     // veces es tener dos que con el tiempo se despegan (regla 7).
-    async function guardarLegajo(data, disponibilidad) {
+    async function guardarLegajo(data, legajo) {
+      // El identificador de la cuenta recién creada. Se pide acá y no se pasa
+      // de mano en mano porque los dos caminos —el normal y el de «Ya
+      // confirmé»— llegan con la sesión abierta. Va a dos lugares: la fila del
+      // Asistente, para que la persona pueda abrir su propio legajo, y la
+      // carpeta del depósito donde quedan sus archivos.
+      const usuario = await Sesion.getUser();
+      if (usuario) data.user_id = usuario.id;
+
+      const noSubieron = usuario
+        ? await FichasLegajo.subirArchivos(legajo, usuario.id)
+        : [];
+
       const aspirante = await ClienteDatos.registrarAspirante(data);
       if (aspirante && aspirante.id) {
-        await ClienteDatos.guardarLegajoAsistente(aspirante.id, { disponibilidad });
+        await ClienteDatos.guardarLegajoAsistente(aspirante.id, legajo);
       }
+
+      // Un archivo que no sube y no avisa es peor que uno que no se cargó: la
+      // persona se va creyendo que entregó el papel. El resto del alta ya
+      // quedó guardado, así que se avisa y no se frena nada.
+      if (noSubieron.length) {
+        alert('El legajo quedó guardado, pero no se pudieron subir todos los archivos:\n\n'
+            + noSubieron.map(f => '- ' + f.nombre + ': ' + f.motivo).join('\n')
+            + '\n\nSe pueden volver a cargar más adelante desde el legajo.');
+      }
+
       // La contraseña deja de estar guardada apenas no hace falta.
       altaEsperandoCorreo = null;
       document.getElementById('w-espera-correo').style.display = 'none';
       document.getElementById('w-success').style.display = 'block';
       document.getElementById('form-legajo-pwa').reset();
       Disponibilidad.limpiar('grilla-disponibilidad', 'preguntas-disponibilidad');
+      Autorizaciones.limpiar('autorizaciones-container');
+      montarFichas();
       wGoTo(1);
       setTimeout(() => { document.getElementById('w-success').style.display = 'none'; }, 6000);
     }
@@ -808,6 +904,18 @@
       // es lo que esperan las columnas de franjas_asistente.
       const disponibilidad = Disponibilidad.recolectar('grilla-disponibilidad', 'preguntas-disponibilidad');
 
+      // El legajo entero, leído de la pantalla antes de tocar el servidor. Las
+      // cuatro fichas van cada una a su tabla y las autorizaciones a la suya;
+      // sin esa última fila la persona no aparece nunca en el directorio.
+      const legajo = {
+        matriculas: FichasLegajo.recolectar('ficha-matricula', 'matricula'),
+        estudios: FichasLegajo.recolectar('ficha-estudio', 'estudio'),
+        experiencia: FichasLegajo.recolectar('ficha-experiencia_laboral', 'experiencia_laboral'),
+        referencias: FichasLegajo.recolectar('ficha-referencia', 'referencia'),
+        autorizaciones: Autorizaciones.recolectar('autorizaciones-container'),
+        disponibilidad
+      };
+
       const data = {
         nombre: document.getElementById('w-nombre').value,
         dni: document.getElementById('w-dni').value,
@@ -827,10 +935,6 @@
           cursosCompletados: cursos
         },
         valorHora: document.getElementById('w-valor-hora').value,
-        referencia: {
-          nombre: document.getElementById('w-ref-nombre').value,
-          telefono: document.getElementById('w-ref-tel').value
-        },
         documentos: { dni: 'pendiente', penales: 'pendiente', titulo: 'pendiente' }
       };
 
@@ -858,14 +962,14 @@
           // El servidor exige confirmar el correo antes de dar sesión, así que
           // el legajo todavía no se puede guardar. La cuenta ya está creada y
           // el formulario sigue lleno: el camino sigue por «Ya confirmé».
-          altaEsperandoCorreo = { email, clave, data, disponibilidad };
+          altaEsperandoCorreo = { email, clave, data, legajo };
           document.getElementById('w-espera-correo-mail').textContent = email;
           document.getElementById('w-espera-correo').style.display = 'block';
           avisarConfirmacion('');
           return;
         }
 
-        await guardarLegajo(data, disponibilidad);
+        await guardarLegajo(data, legajo);
       } catch (err) {
         alert(Texto.mensajeDeError(err, 'enviar el legajo'));
       } finally {
@@ -887,7 +991,7 @@
       avisarConfirmacion('');
       try {
         await Sesion.login(espera.email, espera.clave);
-        await guardarLegajo(espera.data, espera.disponibilidad);
+        await guardarLegajo(espera.data, espera.legajo);
       } catch (err) {
         avisarConfirmacion(Texto.mensajeDeError(err, 'entrar después de confirmar el correo'));
       } finally {

@@ -72,6 +72,14 @@ const Texto = {
     if (dice('invalid login credentials')) return 'El correo o la contraseña no coinciden.';
     if (dice('email not confirmed')) return 'La cuenta existe, pero falta confirmar el correo. El enlace está en la casilla.';
     if (dice('already registered', 'already been registered')) return 'Ya hay una cuenta con ese correo. Se puede entrar desde la pantalla de acceso.';
+    // El servidor tiene su propia idea de qué dirección es válida y rechaza
+    // varias que parecen bien escritas —las terminadas en `.test`, por
+    // ejemplo—. Va después del caso anterior a propósito: «ya registrada»
+    // también nombra la dirección, y ahí lo que hay que decir es otra cosa.
+    if (dice('email_address_invalid')
+        || (crudo.includes('email address') && crudo.includes('is invalid'))) {
+      return 'El servidor no acepta esa dirección de correo. Conviene revisar que esté bien escrita, o usar otra.';
+    }
     if (dice('rate limit', 'too many')) return 'Hubo demasiados intentos seguidos. Conviene esperar unos minutos.';
     // Los enlaces que llegan por correo —confirmar el alta, elegir una
     // contraseña nueva— sirven una sola vez y vencen.

@@ -613,6 +613,7 @@
   <script src="js/main.js"></script>
   <script src="js/fichas-legajo.js"></script>
   <script src="js/disponibilidad.js"></script>
+  <script src="js/autorizaciones.js"></script>
   <script>
     // LEGAJO: FICHAS, DISPONIBILIDAD Y CIERRE (pendientes 18, 19 y 23)
     // Se dibujan desde data/catalogo-fichas.json, data/catalogo-disponibilidad.json
@@ -649,8 +650,6 @@
       profesionSelect.addEventListener('change', actualizarAvisoMatricula);
       actualizarAvisoMatricula();
 
-      const idioma = 'es-AR';
-
       // Paso 6: la disponibilidad. La grilla y la pregunta de los reemplazos
       // urgentes las arma el módulo; acá sólo se le dice dónde.
       const declaracionDisponibilidad = await Disponibilidad.cargar();
@@ -661,46 +660,16 @@
       await Disponibilidad.montarGrilla('grilla-disponibilidad');
       await Disponibilidad.montarPreguntas('preguntas-disponibilidad');
 
-      // Paso 7: lo que la persona autoriza a publicar.
-      const cierreRes = await fetch('data/catalogo-autorizaciones.json').then(r => r.json());
-      const paso = cierreRes.paso_de_cierre[idioma];
-      document.getElementById('cierre-titulo').append(' ' + paso.titulo);
-      document.getElementById('cierre-bajada').textContent = paso.bajada;
-      document.getElementById('cierre-recordatorio').textContent = paso.recordatorio;
-      document.getElementById('cierre-boton').textContent = paso.boton;
-
-      const contenedorAutorizaciones = document.getElementById('autorizaciones-container');
-      cierreRes.paso_de_cierre.autorizaciones.forEach(clave => {
-        const autorizacion = cierreRes.autorizaciones[clave][idioma];
-        const bloque = document.createElement('div');
-        bloque.className = 'gd-pregunta';
-
-        const etiqueta = document.createElement('label');
-        etiqueta.className = 'gd-pregunta-etiqueta';
-        const casilla = document.createElement('input');
-        casilla.type = 'checkbox';
-        casilla.id = 'autorizacion-' + clave;
-        casilla.setAttribute('data-autorizacion', clave);
-        etiqueta.setAttribute('for', casilla.id);
-        etiqueta.appendChild(casilla);
-        etiqueta.appendChild(document.createTextNode(' ' + autorizacion.etiqueta));
-
-        const detalle = document.createElement('p');
-        detalle.className = 'gd-pregunta-detalle';
-        detalle.textContent = autorizacion.pregunta;
-
-        const ayuda = document.createElement('p');
-        ayuda.className = 'gd-pregunta-ayuda';
-        ayuda.textContent = autorizacion.ayuda_no;
-        casilla.addEventListener('change', () => {
-          ayuda.textContent = casilla.checked ? autorizacion.ayuda_si : autorizacion.ayuda_no;
-        });
-
-        bloque.appendChild(etiqueta);
-        bloque.appendChild(detalle);
-        bloque.appendChild(ayuda);
-        contenedorAutorizaciones.appendChild(bloque);
-      });
+      // Paso 7: lo que la persona autoriza a publicar. Los cuarenta renglones
+      // que esto ocupaba acá son ahora `js/autorizaciones.js`, porque la
+      // pantalla del teléfono necesita el mismo paso y copiarlo habría sido
+      // tenerlo dos veces (regla 7).
+      const cierre = await Autorizaciones.textosDelPaso();
+      document.getElementById('cierre-titulo').append(' ' + (cierre.titulo || ''));
+      document.getElementById('cierre-bajada').textContent = cierre.bajada || '';
+      document.getElementById('cierre-recordatorio').textContent = cierre.recordatorio || '';
+      document.getElementById('cierre-boton').textContent = cierre.boton || '';
+      await Autorizaciones.montar('autorizaciones-container');
     }
     inicializarLegajo();
 
@@ -911,37 +880,14 @@
         estudios: FichasLegajo.recolectar('ficha-estudio', 'estudio'),
         experiencia: FichasLegajo.recolectar('ficha-experiencia_laboral', 'experiencia_laboral'),
         referencias: FichasLegajo.recolectar('ficha-referencia', 'referencia'),
-        autorizaciones: {},
+        autorizaciones: Autorizaciones.recolectar('autorizaciones-container'),
         disponibilidad
       };
-      document.querySelectorAll('#autorizaciones-container [data-autorizacion]').forEach(casilla => {
-        legajo.autorizaciones[casilla.getAttribute('data-autorizacion')] = casilla.checked;
-      });
 
       // Los archivos de matrícula y estudio van al depósito privado; en la tabla
-      // queda el camino, igual que los otros adjuntos.
-      for (const clave of ['matriculas', 'estudios']) {
-        for (let i = 0; i < legajo[clave].length; i++) {
-          const fila = legajo[clave][i];
-          fila.archivo_url = null;
-          if (fila.archivo) {
-            const extension = (fila.archivo.name.split('.').pop() || 'dat').toLowerCase();
-            try {
-              fila.archivo_url = await Sesion.uploadFile(
-                'documentos-cuidadores', `${userId}/${clave}_${i}.${extension}`, fila.archivo
-              );
-            } catch (errArchivo) {
-              console.error('Alta de Asistente, ' + clave + ' ' + i + ':', errArchivo);
-              adjuntosFallados.push({
-                nombre: (clave === 'matriculas' ? 'el archivo de una matrícula'
-                                                : 'el archivo de un estudio'),
-                motivo: Texto.mensajeDeError(errArchivo)
-              });
-            }
-            delete fila.archivo;
-          }
-        }
-      }
+      // queda el camino, igual que los otros adjuntos. Lo hace el módulo, que
+      // es el mismo que usa la aplicación del teléfono.
+      adjuntosFallados.push(...await FichasLegajo.subirArchivos(legajo, userId));
 
       if (aspirante && aspirante.id) {
         await ClienteDatos.guardarLegajoAsistente(aspirante.id, legajo);

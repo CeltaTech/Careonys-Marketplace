@@ -1,0 +1,68 @@
+{
+  "_lea_esto_primero": {
+    "que_es": "Lo que el Asistente autoriza al terminar de cargar su legajo. Se contesta con sí o no, una casilla de verificación cada una. No son listas de opciones y por eso no viven en catalogo-vocabularios.json.",
+    "por_que_se_llama_asi": "**Decidido por el Desarrollador el 24 de agosto de 2026.** Este archivo se llamaba `catalogo-banderas.json`, y la palabra la había puesto la línea de comandos traduciendo *flag* del inglés de programación. En sus palabras: «una bandera es una tela que identifica un país o un ejército, pero nunca es una casilla». Traducir palabra por palabra no pasa un término al castellano, lo deja como jerga disfrazada. El nombre nuevo dice lo que la pregunta hace: la persona autoriza, o no autoriza. La tabla se llama `autorizaciones_asistente` desde la migración 0012.",
+    "por_que_existe": "Cerró el pendiente 18, el 24 de agosto de 2026: el otro extremo es la migración 0007, que cruza el directorio contra estas respuestas. Sin ellas, publicar el legajo de una persona es una decisión que toma el sistema por alguien que no la tomó.",
+    "como_se_usa": "Ninguna pantalla escribe estos textos a mano. La pantalla lee de acá y dibuja una casilla por autorización, con su pregunta y con la ayuda que corresponda al estado en que quedó.",
+    "de_que_lado_de_la_linea": "El interruptor es de esta modalidad; el registro de que la persona dio el consentimiento es del legajo y va del lado compartido. Ver docs/MODULOS.md.",
+    "el_valor_inicial_es_no": "Toda autorización de publicación arranca en `false`. Un valor inicial en sí sería un consentimiento que nadie prestó.",
+    "cuando_se_pregunta": "Al terminar de cargar los datos, como último paso del alta. No es una opción escondida en el perfil: es la pregunta con la que se cierra la carga, y hasta que no se conteste el legajo no queda dado de alta.",
+    "por_que_al_final": "Porque recién al final la persona sabe qué está autorizando a publicar. Si la pregunta va al principio, contesta sobre datos que todavía no cargó.",
+    "lo_que_no_es_una_autorizacion": "**Decidido por el Desarrollador el 24 de agosto de 2026.** Acá había una segunda pregunta —«Disponible para reemplazos urgentes»— y no pertenecía a este archivo: aceptar un reemplazo no es autorizar nada, es estar disponible. Se mudó a `catalogo-disponibilidad.json` y a la tabla `disponibilidad_asistente`, con el resto de la disponibilidad horaria. La prueba de que estaba mal ubicada la tenía el propio catálogo: la nota de `modalidad_contratacion`, en `catalogo-vocabularios.json`, ya decía que la urgencia es una disponibilidad del Asistente.",
+    "dos_preguntas_que_no_existen": "**Decidido por el Desarrollador el 24 de agosto de 2026.** Se propusieron y se descartaron dos: «aparecer en los buscadores de internet» y «compartir mi teléfono al ser contactado». Las dos regalan el negocio. Si el perfil se indexa en un buscador, la Familia llega al Asistente sin pasar por la plataforma; si el teléfono se comparte, el segundo contacto ya no pasa por la plataforma. El competidor relevado tiene las dos encendidas, y por eso cobra el contacto una sola vez. **No se vuelven a proponer**, y si algún día hace falta discutirlo, se discute como decisión comercial y no como una casilla más del formulario.",
+    "el_telefono_no_se_muestra_nunca": "No es una preferencia del Asistente: es una regla del producto. El teléfono se guarda en el legajo, se usa para que la Prestadora lo contacte, y no se muestra a ninguna Familia en ninguna pantalla. La Familia contacta por la plataforma. Ninguna pantalla nueva puede agregar una opción que lo exponga.",
+    "consecuencia_sobre_el_directorio": "Si el perfil no se indexa, el directorio no puede quedar abierto a los buscadores: va con `noindex`. **Decidido por el Desarrollador el 24 de agosto de 2026 (pendiente 2):** el directorio se ve sin iniciar sesión, con nombre y foto, porque es lo que convence a una Familia que todavía no es clienta. Lo que no se ve nunca son los datos de contacto, y contactar es sólo para Familias registradas. El texto de `perfil_publicado` se reescribió para decir eso mismo: la promesa anterior hablaba de «las Familias de su Prestadora» y la pantalla no la cumplía."
+  },
+  "paso_de_cierre": {
+    "clave": "cierre_del_alta",
+    "cuando": "ultimo_paso",
+    "obligatorio": true,
+    "autorizaciones": [
+      "perfil_publicado"
+    ],
+    "si_no_contesta": "La casilla arranca sin marcar y así se guarda. Quien cierra el alta sin tocarla queda sin publicar, que es el resultado seguro: **la falta de respuesta nunca puede terminar en un perfil publicado.**",
+    "es-AR": {
+      "titulo": "Antes de terminar: ¿qué se muestra de usted?",
+      "bajada": "Ya cargó sus datos. Falta decidir qué se hace visible y para quién. Marque lo que quiera y deje sin marcar lo que no. Todo esto se puede cambiar después, cuando quiera, desde su perfil.",
+      "recordatorio": "Su documento, su teléfono, su correo y su domicilio no se muestran nunca, marque lo que marque. Las Familias lo contactan por la plataforma.",
+      "boton": "Terminar el alta"
+    },
+    "en": {
+      "titulo": "Before you finish: what is shown about you?",
+      "bajada": "Your details are saved. What remains is deciding what becomes visible, and to whom. Tick what you want and leave the rest unticked. All of this can be changed later, at any time, from your profile.",
+      "recordatorio": "Your ID number, phone, email and home address are never shown, whatever you tick. Families contact you through the platform.",
+      "boton": "Finish registration"
+    },
+    "pt-BR": {
+      "titulo": "Antes de terminar: o que é exibido sobre você?",
+      "bajada": "Seus dados já foram salvos. Falta decidir o que fica visível e para quem. Marque o que quiser e deixe sem marcar o que não quiser. Tudo isso pode ser alterado depois, quando quiser, no seu perfil.",
+      "recordatorio": "Seu documento, seu telefone, seu e-mail e seu endereço nunca são exibidos, marque o que marcar. As famílias entram em contato pela plataforma.",
+      "boton": "Concluir o cadastro"
+    }
+  },
+  "autorizaciones": {
+    "perfil_publicado": {
+      "ambito": "compartido",
+      "valor_inicial": false,
+      "es-AR": {
+        "etiqueta": "Publicar mi perfil",
+        "pregunta": "¿Desea que su perfil sea visible para las Familias que buscan Asistente?",
+        "ayuda_si": "Su perfil —su nombre, su foto, su zona, qué atiende y su precio por hora— se muestra dentro de la plataforma a quien esté buscando Asistente, se haya registrado o no. No aparece en Google ni en ningún buscador. Sus datos de contacto no se muestran nunca: ni su documento, ni su teléfono, ni su correo, ni su domicilio. Sólo las Familias registradas pueden comunicarse con usted, y lo hacen por la plataforma.",
+        "ayuda_no": "Su perfil no se muestra a ninguna Familia. Puede cambiarlo cuando quiera."
+      },
+      "en": {
+        "etiqueta": "Publish my profile",
+        "pregunta": "Do you want your profile to be visible to families looking for an assistant?",
+        "ayuda_si": "Your profile —your name, photo, area, what you handle and your hourly rate— is shown inside the platform to anyone looking for an assistant, whether they have registered or not. It does not appear on Google or any search engine. Your contact details are never shown: not your ID number, your phone, your email or your home address. Only registered families can get in touch with you, and they do so through the platform.",
+        "ayuda_no": "Your profile is not shown to any family. You can change this at any time."
+      },
+      "pt-BR": {
+        "etiqueta": "Publicar meu perfil",
+        "pregunta": "Deseja que seu perfil fique visível para as famílias que procuram um assistente?",
+        "ayuda_si": "Seu perfil —seu nome, sua foto, sua zona, o que você atende e seu valor por hora— é exibido dentro da plataforma a quem estiver procurando um assistente, cadastrado ou não. Não aparece no Google nem em nenhum buscador. Seus dados de contato nunca são exibidos: nem seu documento, nem seu telefone, nem seu e-mail, nem seu endereço. Somente as famílias cadastradas podem entrar em contato com você, e o fazem pela plataforma.",
+        "ayuda_no": "Seu perfil não é exibido a nenhuma família. Você pode alterar isso quando quiser."
+      },
+      "se_pregunta_en": "cierre_del_alta"
+    }
+  }
+}

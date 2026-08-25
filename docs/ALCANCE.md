@@ -581,8 +581,8 @@ descartaba sin decir nada. Era el pendiente 23, y estaba abierto desde que la pa
 - **Las dos pantallas del alta comparten ese archivo**, así que dejaron de tener cuarenta y dos
   celdas escritas a mano entre las dos.
 - **La pantalla del teléfono ahora guarda.** No llamaba nunca a `guardarLegajoAsistente`: quien se
-  postulaba desde el teléfono llenaba la grilla y no quedaba nada. Sigue sin guardar las fichas
-  del legajo ni el consentimiento de publicación, que es el pendiente 36.
+  postulaba desde el teléfono llenaba la grilla y no quedaba nada. Con el pendiente 36 cerrado
+  manda además las cuatro fichas y el consentimiento.
 - **«Bandera» se fue del proyecto.** La palabra la había puesto la línea de comandos traduciendo
   *flag*, y el Desarrollador la sacó el 24 de agosto de 2026: «una bandera es una tela que
   identifica un país o un ejército, pero nunca es una casilla». La tabla es
@@ -594,6 +594,69 @@ descartaba sin decir nada. Era el pendiente 23, y estaba abierto desde que la pa
 - **Y «disponible para reemplazos urgentes» dejó de ser una autorización.** El Desarrollador
   decidió el mismo día que eso no es algo que se permita sino algo que se está: se mudó al paso de
   disponibilidad. Con eso cerró también el pendiente 26.
+
+### El alta del teléfono guarda el legajo entero, y no sólo la disponibilidad
+
+Cierra el pendiente 36, el 25 de agosto de 2026.
+
+Quien se postulaba desde el teléfono quedaba dado de alta sin legajo y sin poder aparecer nunca en
+el directorio: el directorio exige una fila en `autorizaciones_asistente` con un `join` y no con un
+`left join` (`supabase/migrations/0012_autorizaciones_y_disponibilidad.sql:186`), y esa pantalla no
+tenía el paso que la crea. Ahora manda lo mismo que el portal.
+
+- **Los dos pasos que faltaban se dibujan desde el catálogo**, no están escritos en la pantalla.
+  Matrícula y estudios en el paso 2, experiencia laboral en el paso 3 y referencias en el paso 5
+  salen de `data/catalogo-fichas.json` a través de `js/fichas-legajo.js`
+  (`pwa-asistente/index.html:787`, `montarFichas`). El paso de cierre sale de
+  `data/catalogo-autorizaciones.json`.
+- **El paso de cierre pasó a ser un módulo.** Estaba escrito adentro de `postulacion-asistente.html`,
+  cuarenta renglones que traían el archivo y armaban las casillas. Ahora es `js/autorizaciones.js`,
+  y las dos pantallas consumen el mismo (regla 7). Copiarlo habría sido tener el mismo paso dos
+  veces, con el precio de siempre: se arregla uno y el otro queda viejo.
+- **Subir los archivos también dejó de estar en la pantalla.** `FichasLegajo.subirArchivos`
+  (`js/fichas-legajo.js:264`) es el único lugar que sabe a qué depósito van la matrícula y el
+  título, y devuelve la lista de los que no subieron para que quien llama avise una sola vez.
+- **De paso arregló algo que estaba mal en el portal.** Cuando la ficha de estudio no traía archivo
+  —es optativo—, la fila viajaba igual con una clave `archivo` en `null`. La columna se llama
+  `archivo_url` (`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:68`), así
+  que esa fila no entraba y la persona no se enteraba.
+- **Y el alta del teléfono creaba cuentas sin dueño.** `registrarAspirante` no escribía `user_id`,
+  así que la persona quedaba con cuenta y con legajo, pero el legajo no era de nadie y no lo podía
+  abrir. Se agrega en `guardarLegajo` (`pwa-asistente/index.html:830`), que es donde ya se sabe
+  quién inició sesión.
+
+**Cómo se comprobó, el 25 de agosto de 2026.** En dos mitades, porque el servidor alojado todavía
+no deja registrar cuentas de prueba (pendiente 39). En el navegador: la pantalla arma el legajo
+entero —cuatro fichas, la autorización y dos franjas horarias— y se guardó tal cual salió. Contra
+la base local, con las catorce migraciones puestas y con el `ClienteDatos` de verdad cargado desde
+`js/apiClient.js`, ese mismo legajo dejó **una fila en cada una de las cinco tablas** que antes
+quedaban vacías —`matriculas_asistente`, `estudios_asistente`, `experiencia_laboral_asistente`,
+`referencias_asistente`, `autorizaciones_asistente`—, más la de `disponibilidad_asistente` y dos de
+`franjas_asistente`, y `caregivers.user_id` con la cuenta que acababa de crearse.
+
+La prueba puede fallar, que es lo que la hace valer: con el legajo validado por la Prestadora y la
+autorización en «sí», la persona aparece en `caregivers_publicos`; poniendo esa misma autorización
+en «no», desaparece. Es exactamente el camino que antes no existía.
+
+
+### La prueba de aislamiento vuelve a correr entera
+
+Cierra el pendiente 39, el 25 de agosto de 2026.
+
+La prueba de la que depende el `CLAUDE.md` §2 se había quedado sin poder arrancar: empieza creando
+cuentas ficticias y el servidor alojado las rechaza. El propio pendiente proponía tres caminos y
+dejaba el tercero sin probar. Es el que anda.
+
+- **Corre contra la base local**, con `supabase start` y `node scripts/probar_aislamiento.mjs --local`.
+  Ahí el registro no manda ningún correo, así que ni el tope ni la confirmación la frenan.
+- **Pasaron las 36 comprobaciones**, dos corridas seguidas: las tablas, los archivos de los dos
+  depósitos, el directorio con su consentimiento y el examen que corrige la base.
+- **Y la base local está al día**: las catorce migraciones aplicadas desde cero, con las dos
+  Prestadoras ficticias que la prueba necesita para distinguir «aislado» de «todo bloqueado».
+
+Lo que no se arregla con esto es el correo del proyecto alojado, que sigue con el servicio de
+fábrica y su tope bajo. Eso es el pendiente 45, y toca al alta de verdad, no sólo a las pruebas.
+
 
 ### El directorio muestra a gente que existe en la base, y sólo la de una Prestadora
 

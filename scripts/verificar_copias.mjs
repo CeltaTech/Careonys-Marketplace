@@ -34,6 +34,12 @@ const GRUPOS = [
   // estos dos van a una sola copia y no a dos.
   ['js/disponibilidad.js', 'pwa-asistente/js/disponibilidad.js'],
   ['data/catalogo-disponibilidad.json', 'pwa-asistente/data/catalogo-disponibilidad.json'],
+  // Lo mismo con las cuatro fichas del legajo y con el paso de cierre: los
+  // pregunta el alta del Asistente y la Familia no los ve nunca.
+  ['js/fichas-legajo.js', 'pwa-asistente/js/fichas-legajo.js'],
+  ['data/catalogo-fichas.json', 'pwa-asistente/data/catalogo-fichas.json'],
+  ['js/autorizaciones.js', 'pwa-asistente/js/autorizaciones.js'],
+  ['data/catalogo-autorizaciones.json', 'pwa-asistente/data/catalogo-autorizaciones.json'],
   ['data/catalogo-vocabularios.json', 'pwa-asistente/data/catalogo-vocabularios.json',
    'pwa-familia/data/catalogo-vocabularios.json'],
   ['css/tokens.css', 'pwa-asistente/css/tokens.css', 'pwa-familia/css/tokens.css'],
