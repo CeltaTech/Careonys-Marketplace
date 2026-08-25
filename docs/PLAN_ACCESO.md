@@ -21,7 +21,7 @@ Lo que falta está todo del lado del navegador, y son cinco cosas:
 | 2 | **Nadie llama a `requireAuth()`.** `panel-prestadora.html` muestra legajos sin preguntar quién entra. Hoy lo tapa la RLS, no la pantalla | `panel-prestadora.html` |
 | 3 | **Nada crea la fila de `profiles`.** No hay disparador sobre `auth.users`. Sin esa fila `prestadora_actual()` devuelve nulo, y una política que compara contra nulo **nunca** da verdadero: con sesión y todo, la aplicación no lee ni escribe nada suyo | `0001_esquema_inicial.sql:149`; no hay ningún `create trigger` en las cuatro migraciones |
 | 4 | **La Prestadora sale de la barra de direcciones** y viaja como un filtro más en cada consulta | `js/apiClient.js:20-40` y `:347` |
-| 5 | **La contraseña inicial es el DNI.** Un dato que la persona escribe tres renglones más arriba en el mismo formulario, y que además figura en cualquier fotocopia de su documento | `postulacion-asistente.html:962` |
+| 5 | **La contraseña inicial es el DNI.** Un dato que la persona escribe tres renglones más arriba en el mismo formulario, y que además figura en cualquier fotocopia de su documento | `registrar-asistente.html:962` |
 
 **El punto 3 es el que explica todo lo demás.** Mientras no exista, iniciar sesión no cambia
 nada: el usuario autenticado ve exactamente lo mismo que el anónimo, porque su Prestadora es

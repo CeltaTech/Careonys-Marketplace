@@ -50,7 +50,7 @@ O sea: el mecanismo existe y funciona. Lo que falta es cobertura, no invención.
 | `<title>` de cada pantalla | 10 | las 10 del sitio |
 | `alt` de las imágenes de logotipo | 17 | todas las pantallas |
 | Línea de copyright del pie (`© 2025 PresDemo — Servicios de Cuidado`) | 8 | todas menos `index.html` |
-| `<meta name="description">` | 2 | `index.html`, `postulacion-asistente.html` |
+| `<meta name="description">` | 2 | `index.html`, `registrar-asistente.html` |
 | Texto legal y operativo | 5 | `panel-prestadora.html` (4: encabezado, operador de RRHH, resolución, nota legal) y `directorio.html` (1: el `title` del sello de auditoría) |
 | Texto armado desde JavaScript | 1 | `panel-prestadora.html:211`, la nota por defecto de la entrevista |
 

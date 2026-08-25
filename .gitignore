@@ -25,3 +25,8 @@ Thumbs.db
 
 # Material descartado que no se borra todavía.
 assets/images/fuera de uso/
+
+# Carpetas de trabajo de quien desarrolla: material en curso, no documentación del
+# proyecto. `scripts/verificar_referencias.mjs` tampoco les revisa las citas, por el
+# mismo motivo. Van con `**/` porque hay una en `docs/` y otra en `assets/images/`.
+**/Nueva carpeta/

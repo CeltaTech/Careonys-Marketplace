@@ -4,7 +4,7 @@
       "titulo": "Género de la persona",
       "cerrada": true,
       "usado_en": [
-        "postulacion-asistente.html:264",
+        "registrar-asistente.html:264",
         "formulario-integral.html:111",
         "pwa-asistente/index.html:410"
       ],
@@ -53,7 +53,7 @@
       "titulo": "Tipo de Asistente",
       "cerrada": true,
       "usado_en": [
-        "postulacion-asistente.html:307",
+        "registrar-asistente.html:307",
         "formulario-integral.html:428",
         "pwa-asistente/index.html:430",
         "directorio.html:73",
@@ -123,7 +123,7 @@
       "titulo": "Condición frente a AFIP",
       "cerrada": true,
       "usado_en": [
-        "postulacion-asistente.html:276"
+        "registrar-asistente.html:276"
       ],
       "items": [
         {
@@ -148,7 +148,7 @@
       "titulo": "Nivel educativo alcanzado",
       "cerrada": true,
       "usado_en": [
-        "postulacion-asistente.html:318",
+        "registrar-asistente.html:318",
         "pwa-asistente/index.html:441"
       ],
       "items": [
@@ -175,7 +175,7 @@
       "titulo": "Patologías con las que el Asistente trabaja",
       "cerrada": false,
       "usado_en": [
-        "postulacion-asistente.html:391",
+        "registrar-asistente.html:391",
         "pwa-asistente/index.html:472",
         "pwa-familia/index.html:756",
         "directorio.html:80"
@@ -264,7 +264,7 @@
       "titulo": "Tareas de cuidado que el Asistente realiza",
       "cerrada": false,
       "usado_en": [
-        "postulacion-asistente.html:410",
+        "registrar-asistente.html:410",
         "pwa-asistente/index.html:481",
         "formulario-integral.html — tarjetas del paso 2"
       ],
@@ -332,7 +332,7 @@
       "titulo": "Intensidad de la contratación",
       "cerrada": true,
       "usado_en": [
-        "postulacion-asistente.html:444",
+        "registrar-asistente.html:444",
         "pwa-asistente/index.html:499",
         "formulario-integral.html:239",
         "pwa-familia/index.html:726"
@@ -499,7 +499,7 @@
       "titulo": "Cursos acreditados que el Asistente declara",
       "cerrada": false,
       "usado_en": [
-        "postulacion-asistente.html:335",
+        "registrar-asistente.html:335",
         "pwa-asistente/index.html:450"
       ],
       "items": [

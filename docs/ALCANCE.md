@@ -16,7 +16,7 @@
 | Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:367` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs` |
 | Directorio de Asistentes con filtros | Maquetado y navegable |
 | Perfil del Asistente | Maquetado |
-| Portal de postulación de Asistentes | Maquetado, con el legajo funcionando: `postulacion-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en las tablas de la migración 0004, y la disponibilidad horaria en las de la 0012 |
+| Portal de registro de Asistentes | Maquetado, con el legajo funcionando: `registrar-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en las tablas de la migración 0004, y la disponibilidad horaria en las de la 0012 |
 | Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:173`). Declarados en `supabase/migrations/0006_archivos_del_legajo.sql`, no a mano |
 | Consentimiento de publicación | Funciona de punta a punta. El alta pregunta al cerrar (`data/catalogo-autorizaciones.json`, paso 7) y guarda la respuesta en `autorizaciones_asistente`; el directorio cruza contra ella y **no muestra a nadie que no haya dicho que sí** (`supabase/migrations/0007_directorio_con_consentimiento.sql`). Sin respuesta no se publica: la casilla arranca sin marcar. Y el directorio va con `noindex`, que es lo que ese mismo consentimiento promete |
 | Evaluaciones de competencias | Funcionan, y **las corrige el servidor**. `examen.html` pide sesión, lista lo que la persona puede rendir y manda las respuestas a `rendir_evaluacion()`; la columna con la respuesta correcta no tiene permiso de lectura para nadie y las opciones salen de la vista `opciones_para_responder`, que no la incluye (`supabase/migrations/0008_cursos_y_evaluaciones.sql`). El intento no se puede escribir a mano: la tabla no tiene política de escritura y los permisos están revocados. `cursos.html` ya no tiene examen propio, enlaza a esta pantalla. Falta el contenido: ver `docs/PENDIENTES.md` punto 24 |
@@ -124,7 +124,7 @@ aparecieron dos cosas que no eran de trato:
 
 Cerró el pendiente 22, el 24 de agosto de 2026. Los sesenta y nueve lugares donde un dato guardado
 se metía adentro del marcado ahora pasan por `Texto.escapar`, en seis archivos:
-`panel-prestadora.html`, `perfil.html`, `mockup-app.html`, `postulacion-asistente.html`,
+`panel-prestadora.html`, `perfil.html`, `mockup-app.html`, `registrar-asistente.html`,
 `pwa-familia/index.html` y `js/fichas-legajo.js`.
 
 - **Cuál era el problema**: un nombre escrito como `<img src=x onerror=...>` no se veía como un
@@ -249,7 +249,7 @@ Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2
 - **El pendiente decía que el problema estaba en la base y estaba en la pantalla.** Nombraba
   `caregivers.profession` y las claves `domiciliaria`, `enfermera`, `auxiliar` y `at`. Esas
   palabras no eran filas: eran los `<option>` y los `data-` de `directorio.html`. Se verificó
-  además que ninguna pantalla escribe hoy una clave inventada en esa columna —`postulacion-asistente.html:319`
+  además que ninguna pantalla escribe hoy una clave inventada en esa columna —`registrar-asistente.html:319`
   y `formulario-integral.html:353` toman las suyas del catálogo—, y de la
   base misma no se puede afirmar nada desde acá, porque `caregivers` no se deja leer sin sesión.
 - **Los cuatro filtros salen del catálogo** (`directorio.html:66`): zona, Tipo de Asistente,
@@ -332,7 +332,7 @@ esperando una decisión suya.
   la base la columna se llama `profession` y no se toca, porque la regla 5.1 dice que un
   identificador guardado no se renombra. Cuando el pendiente 7 lleve los catálogos a tablas, el
   mismo cambio habría sido una migración de datos.
-- **Donde se completa un legajo ya no dice perfil.** Cambiaron `index.html`, `postulacion-asistente.html`
+- **Donde se completa un legajo ya no dice perfil.** Cambiaron `index.html`, `registrar-asistente.html`
   y `solicitar-asistente.html`: quien carga documentos, certificados y experiencia está completando
   su legajo. A la Familia, que no tiene legajo, se le pide directamente «sus datos y los de su ser
   querido», sin ninguna de las dos palabras.
@@ -440,7 +440,7 @@ Cierra el pendiente 38, el 24 de agosto de 2026.
   `js/clave.js`, que es el archivo que sabe qué contraseña vale. Ahora lo cargan, y de paso ese
   archivo pasó a escribir él mismo el largo mínimo y el aviso de qué falta en cada campo donde se
   elige una contraseña nueva, así que los dos `8` que estaban tipeados a mano en
-  `postulacion-asistente.html` se borraron. Donde se escribe una contraseña vieja —el acceso— no se
+  `registrar-asistente.html` se borraron. Donde se escribe una contraseña vieja —el acceso— no se
   pone mínimo a propósito: una cuenta creada antes puede tener una más corta que la que hoy se
   pide, y el navegador no la dejaría ni probar.
 - **La espera del correo funciona igual que en la pantalla grande.** Cuando el servidor exige
@@ -582,7 +582,7 @@ descartaba sin decir nada. Era el pendiente 23, y estaba abierto desde que la pa
 - **Las dos pantallas del alta comparten ese archivo**, así que dejaron de tener cuarenta y dos
   celdas escritas a mano entre las dos.
 - **La pantalla del teléfono ahora guarda.** No llamaba nunca a `guardarLegajoAsistente`: quien se
-  postulaba desde el teléfono llenaba la grilla y no quedaba nada. Con el pendiente 36 cerrado
+  registraba desde el teléfono llenaba la grilla y no quedaba nada. Con el pendiente 36 cerrado
   manda además las cuatro fichas y el consentimiento.
 - **«Bandera» se fue del proyecto.** La palabra la había puesto la línea de comandos traduciendo
   *flag*, y el Desarrollador la sacó el 24 de agosto de 2026: «una bandera es una tela que
@@ -649,7 +649,7 @@ regla no las mueve la línea de comandos:
 
 Cierra el pendiente 36, el 25 de agosto de 2026.
 
-Quien se postulaba desde el teléfono quedaba dado de alta sin legajo y sin poder aparecer nunca en
+Quien se registraba desde el teléfono quedaba dado de alta sin legajo y sin poder aparecer nunca en
 el directorio: el directorio exige una fila en `autorizaciones_asistente` con un `join` y no con un
 `left join` (`supabase/migrations/0012_autorizaciones_y_disponibilidad.sql:186`), y esa pantalla no
 tenía el paso que la crea. Ahora manda lo mismo que el portal.
@@ -659,7 +659,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
   salen de `data/catalogo-fichas.json` a través de `js/fichas-legajo.js`
   (`pwa-asistente/index.html:986`, `montarFichas`). El paso de cierre sale de
   `data/catalogo-autorizaciones.json`.
-- **El paso de cierre pasó a ser un módulo.** Estaba escrito adentro de `postulacion-asistente.html`,
+- **El paso de cierre pasó a ser un módulo.** Estaba escrito adentro de `registrar-asistente.html`,
   cuarenta renglones que traían el archivo y armaban las casillas. Ahora es `js/autorizaciones.js`,
   y las dos pantallas consumen el mismo (regla 7). Copiarlo habría sido tener el mismo paso dos
   veces, con el precio de siempre: se arregla uno y el otro queda viejo.
@@ -810,7 +810,7 @@ pantallas decían «cuidador» en todos lados. Ya no, y esta vez la limpieza no 
 se acuerde.
 
 - **Salieron las 82 apariciones de las diez pantallas**, una por una: `index.html`, `mockup-app.html`,
-  `postulacion-asistente.html`, `solicitar-asistente.html`, `cursos.html`, `formulario-integral.html`,
+  `registrar-asistente.html`, `solicitar-asistente.html`, `cursos.html`, `formulario-integral.html`,
   `panel-prestadora.html`, `soporte-remoto.html`, las dos aplicaciones de teléfono y las notas del
   catálogo. Donde decía «cuidador» ahora dice **Asistente**.
 - **`scripts/verificar_vocabulario.mjs` es el chequeo que impide que vuelva.** Falla el commit si la
@@ -915,8 +915,8 @@ demás se arregló, y se arregló **cambiando qué token usa cada regla, no el t
 
 1. **Letra blanca sobre `--azul-medio` llega a 3.21:1 y hace falta 4.5:1.** Pasa en cinco lugares:
    el redondel del paso activo del formulario (`formulario-integral.html` y
-   `postulacion-asistente.html`), la banda con el nombre adentro del teléfono dibujado
-   (`index.html` y `postulacion-asistente.html`) y el botón de ingresar de `mockup-app.html`. **El
+   `registrar-asistente.html`), la banda con el nombre adentro del teléfono dibujado
+   (`index.html` y `registrar-asistente.html`) y el botón de ingresar de `mockup-app.html`. **El
    arreglo cambia cómo se ve**: o el fondo pasa a `--azul-oscuro` —y entonces el paso activo se
    confunde con el paso ya hecho, que ya usa ese color— o la letra pasa a oscura. Es una decisión de
    diseño, así que se deja como está hasta que diga cuál.
@@ -992,7 +992,7 @@ la Prestadora de ejemplo; de día son cinco y cinco, porque el botón de ingresa
 `mockup-app.html` falla de día y de noche se salva, y el enlace de 1.43:1 falla de noche y de día
 se salva. **De los 58 que rompía la noche no queda ninguno.**
 
-**El caso más claro de los que quedan.** De noche, el enlace «Postularse como Asistente» de la
+**El caso más claro de los que quedan.** De noche, el enlace «Registrarse como Asistente» de la
 pantalla de acceso del Asistente queda en **1.43:1**, que es prácticamente invisible. El color es
 `#1A365D`, el azul marino que la Prestadora de ejemplo tiene guardado en `tenants.primary_color`,
 apoyado sobre una tarjeta que de noche es gris oscuro. De día ese azul marino sobre blanco se lee
@@ -1448,7 +1448,7 @@ la medición dice que no.
   siete la toca. Y la columna compartida que más cerca pasa de la línea,
   `autorizaciones_asistente.perfil_publicado`, no usa ninguna de las siete.
 - **Y la que decide: el único incumplimiento real que hay hoy es invisible para esa prueba.** Las
-  dos tablas de esta modalidad no llevan el prefijo de la modalidad que `docs/GLOSARIO.md:99` aprobó para
+  dos tablas de esta modalidad no llevan el prefijo de la modalidad que `docs/GLOSARIO.md:101` aprobó para
   tablas el 24 de agosto, y ni `care_searches` ni `franjas_busqueda` contienen ninguna de las
   siete palabras. La prueba pasaría limpia con el problema adentro.
 

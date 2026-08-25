@@ -94,6 +94,8 @@ se revisa para decidir cuáles suben al glosario común.
 | **modalidad de este producto** — identificador: `modalidad` | La modalidad de trabajo en la que el Cliente Contratante busca entre los Asistentes de su Prestadora, compara, elige y contrata, en vez de recibir una asignación. Es una de las tres, junto con prestación directa y subcontratación. Ejemplo: una Familia entra, filtra por zona y por patología, mira tres perfiles y pide contratar a uno. No es el Vínculo: el Vínculo es la relación de un Asistente con su Prestadora, y existe igual en las tres modalidades | **Aprobado** por el Desarrollador el 24 de agosto de 2026 |
 | **Legajo** — identificador: `legajo` | Todo lo que la Prestadora guarda de un Asistente: sus datos, sus estudios, sus papeles, su experiencia y las verificaciones que le fue haciendo. Es el currículum con los respaldos adjuntos, y es lo que la Prestadora mira para decidir si esa persona puede trabajar. La persona lo completa una vez y después lo mantiene al día. Nadie de afuera lo ve entero, y hay partes que no salen nunca | **Aprobado** por el Desarrollador el 24 de agosto de 2026 |
 | **Perfil** | Lo que se muestra de un Asistente a quien lo está buscando: su nombre, su foto, su zona, qué atiende y su precio por hora. Sale del legajo pero no es el legajo: es la parte elegida para mostrar, y el Asistente decide si se publica o no. Es el mismo sentido que tiene la palabra en cualquier red social: el perfil es lo que se ve, y también dónde se elige qué se ve | **Aprobado** por el Desarrollador el 24 de agosto de 2026 |
+| **Aviso** — identificador: `aviso` | Lo que una Familia publica cuando necesita un Asistente: qué necesita, en qué zona, qué días y en qué turnos. Queda publicado para que los Asistentes lo vean. **Es una cosa guardada, no algo que alguien hace**: el aviso sigue existiendo aunque nadie lo mire. Ejemplo: una Familia publica que necesita acompañamiento los martes y jueves a la mañana en Caballito. No es la Búsqueda: la Búsqueda es la acción, el Aviso es lo que queda | **Propuesto** el 25 de agosto de 2026, a partir de la distinción que hizo el Desarrollador |
+| **Búsqueda** — identificador: `busqueda` | La acción de buscar, y la hacen los dos lados de tres maneras: una Familia busca entre los Asistentes disponibles; una Familia también busca cuando publica un aviso y espera que alguien se ofrezca; y un Asistente busca cuando revisa los avisos publicados hasta encontrar uno que le cuadre. **Es lo que alguien hace, no algo que quede guardado**, y por eso no nombra ninguna tabla. Ejemplo: la Familia filtra por zona y patología, mira tres perfiles y no elige ninguno — hubo Búsqueda y no quedó nada | **Propuesto** el 25 de agosto de 2026, a partir de la distinción que hizo el Desarrollador |
 
 **Dos nombres, y a propósito.** En pantalla, en documentos y en la charla se dice **modalidad de
 contrataciones**, que es lo que la gente entiende. En tablas, columnas, claves de traducción y
@@ -126,6 +128,35 @@ se muestra de un Asistente; la ficha de la cuenta no se nombra en pantalla.
 
 **Cómo se agrega uno:** pasa las cinco preguntas de §2, se escribe acá con su definición según
 los criterios de §2, y recién entonces se usa en código.
+
+**«Registrarse» y «postularse» son dos actos distintos, no dos sentidos de una misma palabra.**
+Conviene decirlo por lo que las palabras significan y no por cómo se venían usando. **Registrar**
+es asentar algo en un registro: el Asistente carga sus datos y quedan guardados. **Postularse** es
+ofrecerse uno mismo para algo, y es una palabra de uso corriente que sirve en cualquier contexto:
+uno se postula a una Prestadora igual que se postula a un aviso. Lo que cambia no es el verbo sino
+a qué se ofrece la persona.
+
+**De ahí que ninguna de las dos necesite entrada en este glosario, y que el problema fuera otro.**
+La pantalla que carga el legajo se llamaba `postulacion-asistente.html` y decía «Postularme como
+Asistente», pero lo que hace es guardar datos: la palabra estaba equivocada, no ambigua. El 25 de
+agosto de 2026 pasó a llamarse `registrar-asistente.html` y a decir «Registrarme como Asistente»,
+y con ella cambiaron las 86 referencias al archivo, los 29 enlaces que la nombraban, los ocho
+textos de las pantallas y las cinco menciones de los documentos que usaban «postulación» para
+hablar de cargar datos. **Donde la palabra ya estaba bien puesta no se tocó**: en `index.html` y
+en `solicitar-asistente.html`, los Asistentes se postulan a un aviso, que es exactamente
+ofrecerse para algo; en `docs/terminos_y_condiciones_asistentes.md:25` el Asistente se postula
+para integrar el plantel de una Prestadora, que también lo es; y en `docs/MODULOS.md` y
+`docs/ALCANCE.md` la palabra aparece dentro de la lista de términos de esta modalidad que la
+regla 12 prohíbe en un módulo compartido, donde nombra la postulación a un aviso.
+
+**Dos documentos conservan la palabra vieja y así se quedan.** `docs/INVENTARIO.md` y
+`docs/PLAN_ACCESO.md` son fotos fechadas —del 22 y del 24 de agosto de 2026—, y en esos días la
+pantalla de verdad se llamaba así. Corregirles el relato sería falsear lo que decían. Es el
+mismo motivo por el que `scripts/verificar_referencias.mjs` no les revisa los renglones citados,
+escrito en `scripts/verificar_referencias.mjs:51`. **Sí se les cambió el nombre del archivo**,
+que no es relato sino un puntero: una foto que remite a un archivo inexistente no le sirve a
+nadie. El relato quedó intacto, así que ahí adentro «postulación» sigue nombrando lo que en esos
+días se llamaba así.
 
 ---
 

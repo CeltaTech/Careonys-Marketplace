@@ -8,7 +8,7 @@
    Regla 5.1: ningún catálogo se escribe adentro de una pantalla. El texto de
    cada pregunta, su orden, su valor inicial y los tres idiomas salen de
    `data/catalogo-autorizaciones.json`. Este archivo nació porque ese paso
-   estaba escrito adentro de `postulacion-asistente.html` y la pantalla del
+   estaba escrito adentro de `registrar-asistente.html` y la pantalla del
    teléfono no lo tenía: copiarlo habría sido tener el mismo paso dos veces,
    que es lo que la regla 7 prohíbe.
 

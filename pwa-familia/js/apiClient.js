@@ -176,8 +176,8 @@ const ClienteDatos = {
     return await this._supabaseGet('caregivers', activeFilter);
   },
 
-  async registrarAspirante(postulacionData) {
-    const dbData = { ...postulacionData };
+  async registrarAspirante(registroData) {
+    const dbData = { ...registroData };
     if (this.currentTenant) {
       dbData.tenant_id = this.currentTenant.id;
     }

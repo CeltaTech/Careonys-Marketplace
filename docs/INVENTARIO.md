@@ -43,7 +43,7 @@ del navegador.
 | `directorio.html` | 550 | Listado de asistentes con buscador y cuatro filtros (zona, tipo, especialidad, verificación). |
 | `perfil.html` | 654 | Ficha pública de un asistente. Se elige con `?id=` en la dirección. |
 | `solicitar-asistente.html` | 407 | Página informativa para familias, con formulario de solicitud que sí graba en la base. |
-| `postulacion-asistente.html` | 1101 | Alta de asistentes. Asistente paso a paso de 5 pasos con carga de documentos. |
+| `registrar-asistente.html` | 1101 | Alta de asistentes. Asistente paso a paso de 5 pasos con carga de documentos. |
 | `formulario-integral.html` | 514 | Asistente paso a paso de 6 pasos para publicar una búsqueda de cuidado. |
 | `cursos.html` | 197 | Listado de cursos. Los seis cursos y el desplegable de inscripción salen del catálogo. |
 | `soporte-remoto.html` | 195 | Página informativa de acompañamiento online. Contenido fijo salvo el desplegable, que sale del catálogo. |
@@ -69,7 +69,7 @@ del navegador.
   "atrás" del navegador no lo acompaña.
 - **Redirecciones por código**: `main.js` manda a `formulario-integral.html` al enviar el
   formulario de contacto; `mockup-app.html` manda a `panel-prestadora.html`,
-  `postulacion-asistente.html` o `formulario-integral.html` según el rol o la elección.
+  `registrar-asistente.html` o `formulario-integral.html` según el rol o la elección.
 - **Páginas huérfanas**: a `mockup-app.html` sólo se llega desde el botón "Contactar" del
   directorio. A `panel-prestadora.html` sólo se llega por redirección tras ingresar con rol
   administrativo: ningún enlace del sitio la menciona.
@@ -133,7 +133,7 @@ etiquetas `<script>` de las páginas**:
 |---|---:|
 | `mockup-app.html` | 371 |
 | `perfil.html` | 331 |
-| `postulacion-asistente.html` | 261 |
+| `registrar-asistente.html` | 261 |
 | `pwa-asistente/index.html` | 257 |
 | `pwa-familia/index.html` | 177 |
 | `panel-prestadora.html` | 90 |
@@ -157,7 +157,7 @@ proyecto y está desparramada:
   función limpia, sin tocar el DOM.
 - *Validaciones*: repartidas en tres implementaciones distintas que no se hablan.
   `js/main.js:52-66` valida campos obligatorios y correo pintando bordes en rojo directamente
-  sobre el elemento; `postulacion-asistente.html` tiene su propia `validatePane()` por paso; las
+  sobre el elemento; `registrar-asistente.html` tiene su propia `validatePane()` por paso; las
   aplicaciones instalables tienen la suya. La misma regla está escrita más de una vez.
 - *Filtros del directorio*: `js/main.js:98-120`. La lógica de filtrado no trabaja sobre datos,
   trabaja leyendo `card.textContent` del HTML ya dibujado y escondiendo tarjetas con
@@ -262,7 +262,7 @@ Todo va contra un mismo proyecto de Supabase, cuya dirección está escrita en e
 `signOut`, `getSession`, `onAuthStateChange`.
 
 **Archivos** — `{supabase}/storage/v1/*`, a través del SDK. Dos depósitos: `documentos-cuidadores`
-y `avatares`. Se usa en `postulacion-asistente.html:873-891` para subir documento de identidad,
+y `avatares`. Se usa en `registrar-asistente.html:873-891` para subir documento de identidad,
 antecedentes y título.
 
 **Tiempo real** — conexión permanente del SDK, escuchando altas en la tabla `messages`
@@ -318,7 +318,7 @@ queda como punto a revisar contra la base.
 **Dos cosas más que conviene mirar antes de migrar** (son decisiones del código actual, no
 opiniones sobre el diseño):
 
-- `postulacion-asistente.html:849` usa **el número de documento como contraseña inicial** de la
+- `registrar-asistente.html:849` usa **el número de documento como contraseña inicial** de la
   cuenta que crea. Es un dato que el propio formulario acaba de mostrar en pantalla y que figura
   en el legajo.
 - La dirección del proyecto y la llave pública de Supabase están escritas en el código, en

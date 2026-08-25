@@ -28,7 +28,7 @@ de las pantallas todavía no las lee: eso pasa al portar cada una.
 
 **Los cursos y la evaluación dejaron de vivir solo en el archivo.** Desde el 24 de agosto de 2026 están además en la base, en las tablas `cursos`, `evaluaciones`, `preguntas_evaluacion` y `opciones_pregunta` (`supabase/migrations/0008_cursos_y_evaluaciones.sql`), sembradas desde `data/catalogo-oferta.json`. Tenían que estarlo: un examen que se corrige del lado del servidor necesita la respuesta correcta guardada donde el navegador no llegue. El archivo sigue siendo de dónde salió el contenido; la base es de dónde lo lee el producto. Las tablas admiten además cursos propios de una Prestadora: `tenant_id` vacío es la oferta general de CeltaTech, `tenant_id` cargado es la de esa Prestadora.
 
-**La primera que sí las lee es `postulacion-asistente.html`, desde el 24 de agosto de 2026.**
+**La primera que sí las lee es `registrar-asistente.html`, desde el 24 de agosto de 2026.**
 Su paso 5 dibuja las cuatro fichas repetibles desde `data/catalogo-fichas.json` con el motor
 `js/fichas-legajo.js`, su paso 7 arma el cierre desde `data/catalogo-autorizaciones.json`, y el
 Tipo de Asistente del paso 2 sale del vocabulario `tipo_asistente`. Nada de eso está

@@ -25,7 +25,7 @@
    - los archivos `.css`;
    - el JavaScript, que pinta con `elemento.style.background = '…'`. Ésa fue la
      cuarta puerta y se descubrió tarde: el primer barrido miró las otras tres y
-     dejó trece colores en `postulacion-asistente.html` que nadie veía porque no
+     dejó trece colores en `registrar-asistente.html` que nadie veía porque no
      estaban en ninguna hoja de estilo.
 
    Qué no mira, y por qué:

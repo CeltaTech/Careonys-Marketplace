@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{producto}} Asistente — Portal Móvil</title>
-  <meta name="description" content="Aplicación del Asistente de Cuidado de {{producto}}. Fichado GPS, bitácora médica y postulación de legajo." />
+  <meta name="description" content="Aplicación del Asistente de Cuidado de {{producto}}. Fichado GPS, bitácora médica y registro de legajo." />
   <link rel="manifest" href="manifest.json" />
   <!-- CSS LOCAL (dentro del scope del Service Worker) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -159,7 +159,7 @@
     button.drawer-menu-item { width: 100%; background: none; border: none; font-family: inherit; text-align: left; }
 
     /* ================================================
-       PANTALLA WIZARD DE POSTULACIÓN (Inline — Offline Safe)
+       PANTALLA WIZARD DE REGISTRO (Inline — Offline Safe)
     ================================================ */
     #screen-registro { background: var(--fondo-app); }
     .wizard-header-bar {
@@ -314,7 +314,7 @@
         </div>
         <button type="button" class="btn-login" id="btn-action-login">Ingresar a {{producto}} Asistente</button>
         <div class="btn-register-link">
-          ¿No tiene cuenta? <a onclick="navigate('registro')">Postularse como Asistente</a>
+          ¿No tiene cuenta? <a onclick="navigate('registro')">Registrarse como Asistente</a>
         </div>
       </div>
       <div style="text-align:center;margin-top:auto;font-size:10px;color:var(--texto-secundario);padding-top:20px;">
@@ -561,7 +561,7 @@
               </div>
               <p class="wespera-correo-aviso" id="w-espera-correo-aviso"></p>
             </div>
-            <div class="wsuccess-msg" id="w-success">✓ ¡Legajo enviado! La postulación ha ingresado al proceso de auditoría.</div>
+            <div class="wsuccess-msg" id="w-success">✓ ¡Legajo enviado! Ha ingresado al proceso de auditoría.</div>
           </div>
 
         </form>
@@ -949,7 +949,7 @@
       }
     });
 
-    // ── WIZARD DE POSTULACIÓN INLINE ───────────────
+    // ── WIZARD DE REGISTRO INLINE ───────────────
     let currentWStep = 1;
 
     function wGoTo(step) {
