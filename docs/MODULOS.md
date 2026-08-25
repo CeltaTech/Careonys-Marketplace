@@ -4,6 +4,14 @@
 > desde el esquema, no se reordena después. `docs/ALCANCE.md` §3 ya dijo qué módulos existen del
 > lado de Careonys y no se construyen acá. Esto dice **dónde pasa el corte** en todo lo demás.
 
+> **Y desde el 25 de agosto de 2026 lo compartido no se queda acá.** El Desarrollador fijó como
+> política central de CeltaTech que lo que sirve a más de un producto se escribe una sola vez,
+> se llama **`Octo` y después lo que hace** —`OctoCRM`, `OctoAuth`— y vive en
+> `F:\proyectos\celtatech\Modulos\`, afuera de los productos. La regla completa está en
+> `..\..\..\docs\POLITICA_DE_MODULOS.md`. **Esta página no cambia**: sigue diciendo por dónde
+> pasa el corte y qué queda de cada lado. Lo que agrega la política es dónde termina viviendo
+> la columna de la izquierda, y con qué nombre. Todavía no hay ningún módulo creado.
+
 ## Por qué se corta
 
 Por tres motivos, en este orden:

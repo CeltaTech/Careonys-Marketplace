@@ -164,6 +164,15 @@ información de otra.
     - **Ninguna palabra propia de esta modalidad aparece en un módulo compartido**
       —directorio, aviso, postulación, contacto, puntaje, destacado—. Si aparece
       una, se filtró, y con ella se filtra el trabajo de sacarla más tarde.
+    - **Y un módulo compartido no vive acá.** Vive en `F:\proyectos\celtatech\Modulos\`, se llama
+      **`Octo` y después lo que hace** —`OctoCRM`, `OctoAuth`— y lo usan todos los productos de
+      CeltaTech desde una sola copia. Es **política central de la empresa**, decidida por el
+      Desarrollador el 25 de agosto de 2026, y está escrita en
+      `..\..\docs\POLITICA_DE_MODULOS.md`, que se lee antes de crear un módulo. `docs/MODULOS.md`
+      sigue diciendo **qué** es compartido; esa política dice **dónde queda y cómo se llama**.
+      Todavía no hay ninguno: faltan tres decisiones del Desarrollador escritas al final de esa
+      página, y hasta entonces lo compartido se sigue construyendo acá con el reparto de
+      `docs/MODULOS.md`.
     - No es prolijidad: una mejora sobre código partido en dos copias se hace dos veces o se
       hace una sola y la otra queda vieja. Ya pasó con `apiClient.js`, que está
       triplicado byte a byte (pendiente 13).
