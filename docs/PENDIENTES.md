@@ -53,6 +53,23 @@ también le escribe a su personal, y esa tabla ya existe desde la 0001 con ese u
 lecturas son defendibles y la pregunta que decide —*¿esto seguiría teniendo sentido en prestación
 directa?*— acá contesta que sí. Se deja marcada en vez de resolverse sola.
 
+**Dos tablas compartidas apuntan al aviso, y eso pesa más que las palabras.** `logbook_entries` y
+`messages` tienen una columna `search_id` que referencia `care_searches`
+(`supabase/migrations/0001_esquema_inicial.sql:242` y `:247`). La bitácora y el chat existen igual
+en prestación directa, pero ahí no hay ningún aviso al que apuntar: esa columna quedaría siempre
+vacía. Es exactamente la filtración que `docs/MODULOS.md` quiere evitar, y ninguna búsqueda de
+texto la ve, porque `search_id` no contiene ninguna de las siete palabras. **También decide la
+duda sobre `messages`**: si el chat cuelga de un aviso, el chat es de este lado. Queda para la
+misma decisión, y son dos preguntas más: si la bitácora tiene que poder colgar de un aviso o si le
+alcanza con colgar del Vínculo, y lo mismo para el chat.
+
+**El costo de renombrar `care_searches` es menor de lo que suena.** En Postgres es un `alter table
+… rename to …`: las políticas, los índices, las claves foráneas y la función de la 0002 siguen
+apuntando solas al mismo objeto, y no se mueve un solo dato. Lo que sí hay que cambiar a la par
+son los 11 archivos que la nombran, porque el nombre de la tabla es además la dirección web por la
+que la aplicación la consulta. No es una migración de datos; es un renglón y un reemplazo
+parejo.
+
 **Lo que este reparto arregla y la búsqueda de texto no.** Puesto el prefijo, «buscar la palabra
 en lo compartido» pasa a ser una orden que se puede correr. Sin él, la prueba al revés de
 `docs/MODULOS.md:87` no distingue una filtración de la frase que enuncia la regla: se midió el 25
