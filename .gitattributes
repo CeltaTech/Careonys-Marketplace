@@ -1,0 +1,11 @@
+# Los ganchos de git son guiones de shell y tienen que quedar con renglones de
+# estilo Unix, aun en Windows. Este repositorio está configurado con
+# `core.autocrlf=true`, así que al clonar todo lo de texto se convierte a
+# renglones de estilo Windows; un guion convertido así no arranca en Linux ni en
+# Mac —`/bin/sh^M: bad interpreter`— y el gancho quedaría roto sin que nadie lo
+# note, que es la peor forma de tener un chequeo.
+#
+# La regla es a propósito angosta: sólo la carpeta de los ganchos. El resto del
+# proyecto tiene sus renglones como los tiene, y `scripts/verificar_copias.mjs`
+# compara archivos byte a byte: una regla amplia acá le cambiaría lo que compara.
+.githooks/** text eol=lf
