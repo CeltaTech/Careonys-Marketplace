@@ -1427,6 +1427,43 @@ Se mira a sí mismo con trece casos, cinco que tiene que encontrar y ocho que ti
 la tabla por la mitad—. Y para que no fuera una prueba que no puede fallar, se corrió una copia con
 la lista de exenciones vacía: aparecen los dos casos conocidos, cada uno en su renglón exacto.
 
+### La regla de los módulos se midió para hacerle un chequeo, y el chequeo no se escribió
+
+**La regla 12 se queda sin chequeo automático, y conviene dejar escrito por qué**, porque parecía
+la candidata más fácil: es la única que trae su propia lista de palabras. `docs/MODULOS.md:87`
+manda «buscar en lo compartido cualquier palabra que sólo signifique algo acá —`modalidad`,
+directorio, aviso, postulación, contacto, puntaje, destacado—». Se midió el 25 de agosto de 2026 y
+la medición dice que no.
+
+- **Sobre el texto crudo de las migraciones compartidas: once apariciones, once falsas.** Todas
+  están en comentarios, y varias son el enunciado de la propia regla —«ninguna tabla de acá sabe
+  qué es un directorio ni una postulación»—. Un chequeo que avisa cada vez que alguien escribe la
+  regla que el chequeo vigila se apaga el primer día.
+- **Sobre los nombres solos, sacando comentarios y textos entrecomillados: una aparición, también
+  falsa.** Es `create policy "Directorio de Prestadoras"` en `tenants`, y ahí «directorio» es la
+  lista de Prestadoras, no el directorio de Asistentes de esta modalidad. Una exención para cero
+  hallazgos.
+- **La lista de siete palabras no es la línea, es una muestra de la línea.** La mitad vieja del
+  esquema está en inglés —`caregivers`, `care_searches`, `clock_ins`—, así que ninguna de las
+  siete la toca. Y la columna compartida que más cerca pasa de la línea,
+  `autorizaciones_asistente.perfil_publicado`, no usa ninguna de las siete.
+- **Y la que decide: el único incumplimiento real que hay hoy es invisible para esa prueba.** Las
+  dos tablas de esta modalidad no llevan el prefijo de la modalidad que `docs/GLOSARIO.md:99` aprobó para
+  tablas el 24 de agosto, y ni `care_searches` ni `franjas_busqueda` contienen ninguna de las
+  siete palabras. La prueba pasaría limpia con el problema adentro.
+
+**Lo que falta no es el chequeo, es el prefijo.** La propia página lo dice en
+`docs/MODULOS.md:50`: el prefijo «es lo que hace que la prueba de más abajo se pueda correr con
+una búsqueda de texto». Puesto el prefijo, la regla se vuelve mecánica —nada que no se llame
+`algo` puede nombrar una palabra de esta modalidad— y el chequeo se escribe en una tarde.
+Sin el prefijo, cualquier chequeo tendría que saber de qué lado está cada tabla, y ese reparto
+tabla por tabla no está escrito en ningún lado: `docs/MODULOS.md` reparte módulos.
+
+Quedó anotado como **pendiente 52**, con el reparto de las 22 tablas ya propuesto para que
+decidirlo sea leer una lista y no armarla. **El momento importa:** `franjas_busqueda` la crea
+`supabase/migrations/0015_franjas_de_una_busqueda.sql`, que está escrita y sin aplicar, así que
+hoy renombrarla es editar un archivo; aplicada, es una migración de datos.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,
