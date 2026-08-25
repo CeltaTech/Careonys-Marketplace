@@ -245,12 +245,55 @@ const ClienteDatos = {
     return await this._supabaseGet('care_searches', filter);
   },
 
+  // Las franjas —cuándo se necesita el cuidado— no son una columna de
+  // `care_searches`: son filas de `franjas_busqueda`, una por casillero
+  // marcado (migración 0015). Por eso se apartan antes de mandar la búsqueda y
+  // se guardan después, cuando la búsqueda ya tiene identificador.
   async crearBusquedaFamilia(busquedaData) {
     const dbData = { ...busquedaData };
+    const franjas = dbData.franjas || [];
+    delete dbData.franjas;
     if (this.currentTenant) {
       dbData.tenant_id = this.currentTenant.id;
     }
-    return await this._supabasePost('care_searches', dbData);
+    const busqueda = await this._supabasePost('care_searches', dbData);
+    if (busqueda && busqueda.id && franjas.length > 0) {
+      try {
+        await this.guardarFranjasDeBusqueda(busqueda.id, franjas);
+      } catch (err) {
+        // La búsqueda ya está publicada: no se puede deshacer con otro pedido
+        // sin arriesgarse a borrar algo que sí quedó bien. Lo que se puede
+        // hacer es no mentir sobre qué pasó.
+        console.error('Las franjas de la búsqueda ' + busqueda.id + ':', err);
+        const aviso = new Error('busqueda_sin_franjas');
+        aviso.busqueda = busqueda;
+        aviso.causa = err;
+        throw aviso;
+      }
+    }
+    return busqueda;
+  },
+
+  // Una fila por casillero marcado. `dia` y `turno` guardan claves de los
+  // vocabularios `dia_semana` y `turno`, nunca la etiqueta: es exactamente lo
+  // que guarda `franjas_asistente` del otro lado, y por eso las dos se pueden
+  // cruzar. Antes esto era una columna `jsonb` a la que cada pantalla le
+  // escribía una forma distinta —pendiente 40—: la aplicación de la Familia
+  // mandaba turnos sin decir de qué día, y el formulario del portal preguntaba
+  // días y no mandaba nada.
+  async guardarFranjasDeBusqueda(searchId, franjas) {
+    const filas = (franjas || []).map((franja) => {
+      const fila = { search_id: searchId, dia: franja.dia, turno: franja.turno };
+      if (this.currentTenant) fila.tenant_id = this.currentTenant.id;
+      return fila;
+    });
+    if (filas.length === 0) return [];
+    return await this._supabaseRequest('POST', 'franjas_busqueda', filas);
+  },
+
+  async getFranjasDeBusqueda(searchId) {
+    return await this._supabaseRequest('GET', 'franjas_busqueda', null,
+      { search_id: `eq.${searchId}` });
   },
 
   // Alias con campos camelCase — usado por pwa-familia/index.html (screen-publicar)
@@ -260,7 +303,9 @@ const ClienteDatos = {
       paciente:      busquedaData.patientName  || busquedaData.paciente,
       patologias:    busquedaData.pathologiesRequired || busquedaData.patologias || [],
       horarios:      busquedaData.scheduleType || busquedaData.horarios,
-      grillaHorarios: busquedaData.gridSchedule7x3 || busquedaData.grillaHorarios || {},
+      // Cuándo se necesita el cuidado. Sale de `Franjas.recolectar()`, así que
+      // llega como una lista de pares `{ dia, turno }` con claves de catálogo.
+      franjas:       busquedaData.franjas || [],
       family_user_id: busquedaData.familyUserId || busquedaData.family_user_id || null,
       // Migración 0013. Cada uno con sus dos nombres porque la pantalla del
       // teléfono escribe algunos en inglés y otros en castellano; este atajo
@@ -563,7 +608,10 @@ const ClienteDatos = {
         patologias: row.pathologies_required || [],
         contacto: row.contact_info || null,
         horarios: row.schedule_type,
-        grillaHorarios: row.grid_schedule_7x3 || {},
+        // La grilla de días y turnos no está más acá: cada casillero es una
+        // fila de `franjas_busqueda` y se pide con `getFranjasDeBusqueda`. La
+        // columna `grid_schedule_7x3` sigue existiendo con lo que le quedó
+        // guardado, pero ninguna pantalla le escribe ni la lee (migración 0015).
         estado: row.status,
         // Lo que la Familia pide y hasta la migración 0013 no tenía dónde
         // guardarse.
@@ -631,7 +679,10 @@ const ClienteDatos = {
       llevar('paciente', 'patient_name');
       llevar('patologias', 'pathologies_required');
       llevar('horarios', 'schedule_type');
-      llevar('grillaHorarios', 'grid_schedule_7x3');
+      // `grid_schedule_7x3` no se escribe más: las franjas son filas de
+      // `franjas_busqueda` y las manda `crearBusquedaFamilia`. Si alguna
+      // pantalla vuelve a mandar `grillaHorarios`, el aviso del final de este
+      // método lo va a decir, que es justamente lo que se quiere.
       llevar('contacto', 'contact_info');
       llevar('estado', 'status');
       // Migración 0013: lo que las pantallas de la Familia ya preguntaban.

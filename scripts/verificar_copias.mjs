@@ -30,10 +30,13 @@ const GRUPOS = [
   ['js/apiClient.js', 'pwa-asistente/js/apiClient.js', 'pwa-familia/js/apiClient.js'],
   ['js/auth.js', 'pwa-asistente/js/auth.js', 'pwa-familia/js/auth.js'],
   ['js/catalogo.js', 'pwa-asistente/js/catalogo.js', 'pwa-familia/js/catalogo.js'],
-  // La aplicación de la Familia no pregunta la disponibilidad de nadie, así que
-  // estos dos van a una sola copia y no a dos.
-  ['js/disponibilidad.js', 'pwa-asistente/js/disponibilidad.js'],
-  ['data/catalogo-disponibilidad.json', 'pwa-asistente/data/catalogo-disponibilidad.json'],
+  // Los dos lados de la misma grilla de días por turnos: el Asistente dice
+  // cuándo puede trabajar y la Familia dice cuándo se necesita el cuidado, así
+  // que las dos aplicaciones llevan copia (migración 0015, pendiente 40).
+  ['js/disponibilidad.js', 'pwa-asistente/js/disponibilidad.js',
+   'pwa-familia/js/disponibilidad.js'],
+  ['data/catalogo-disponibilidad.json', 'pwa-asistente/data/catalogo-disponibilidad.json',
+   'pwa-familia/data/catalogo-disponibilidad.json'],
   // Lo mismo con las cuatro fichas del legajo y con el paso de cierre: los
   // pregunta el alta del Asistente y la Familia no los ve nunca.
   ['js/fichas-legajo.js', 'pwa-asistente/js/fichas-legajo.js'],

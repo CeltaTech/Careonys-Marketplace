@@ -235,3 +235,33 @@ label { font-size: 12px; font-weight: 700; color: var(--texto-secundario); displ
   font-size: 9px;
   font-weight: 800;
 }
+
+/* ---- La grilla de días por turnos ---- */
+/* La dibuja js/disponibilidad.js desde los vocabularios `dia_semana` y `turno`;
+   acá está sólo cómo se ve. La cantidad de columnas la pone el guion, porque
+   depende de cuántos días traiga el catálogo. Los tamaños son de teléfono; el
+   portal tiene los suyos en css/styles.css, más grandes, porque es una página
+   ancha.
+   Las usan las dos aplicaciones: el alta del Asistente para decir cuándo puede
+   trabajar, y la Familia para decir cuándo se necesita el cuidado. Los colores
+   todavía están escritos con su número y no con un identificador del sistema de
+   diseño; eso es el pendiente 8 y alcanza a toda la hoja, no a este bloque. */
+.grilla-disponibilidad {
+  display: grid;
+  gap: 2px; text-align: center; font-size: 9px;
+  background: var(--superficie); padding: 8px; border-radius: 10px; border: 1px solid #e2e8f0;
+  margin-top: 8px;
+}
+.grilla-disponibilidad .gd-encabezado { font-weight: 700; background: #f8fafc; padding: 5px 0; border-radius: 3px; font-size: 9px; }
+.grilla-disponibilidad .gd-turno { padding: 6px 2px; background: #f8fafc; font-weight: 700; border-radius: 3px; font-size: 8px; display: flex; align-items: center; justify-content: center; }
+.grilla-disponibilidad .gd-casillero { padding: 6px 0; background: #f1f5f9; color:var(--texto-secundario); border-radius: 3px; cursor: pointer; border: 1px solid #e2e8f0; font: inherit; transition: all 0.15s; }
+.grilla-disponibilidad .gd-casillero.gd-marcado { background: #e8f5e9; color: #2e7d32; font-weight: 900; border-color: #c8e6c9; }
+.grilla-disponibilidad .gd-casillero:focus-visible { outline: 2px solid var(--azul-medio-texto); outline-offset: 1px; }
+
+/* Las preguntas sueltas que acompañan a la grilla. Hoy sólo las usa el alta del
+   Asistente —los reemplazos urgentes—; la Familia monta la grilla sola. */
+.gd-pregunta { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-top: 12px; }
+.gd-pregunta-etiqueta { display: flex; align-items: flex-start; gap: 8px; cursor: pointer; font-weight: 700; font-size: 11px; }
+.gd-pregunta-etiqueta input[type="checkbox"] { width: 16px; height: 16px; flex-shrink: 0; }
+.gd-pregunta-detalle { font-size: 10px; color: var(--texto-secundario); margin: 6px 0 0 24px; }
+.gd-pregunta-ayuda { font-size: 10px; color: #64748b; margin: 4px 0 0 24px; }

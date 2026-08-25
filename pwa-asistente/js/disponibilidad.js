@@ -1,5 +1,22 @@
 /* ===================================================
-   DISPONIBILIDAD — cuándo puede trabajar el Asistente
+   FRANJAS — cuándo puede trabajar el Asistente, y cuándo se necesita el cuidado
+
+   Son la misma grilla vista desde cada lado: los mismos días, los mismos
+   turnos, el mismo dibujo. Por eso las dibuja este archivo y no dos. Lo que
+   cambia es el título del paso, lo que se lee al marcar un casillero
+   —«Disponible» de un lado, «Se necesita» del otro— y en qué tabla termina cada
+   marca: `franjas_asistente` (migración 0012) o `franjas_busqueda`
+   (migración 0015).
+
+   Cuál de las dos se dibuja se elige con el segundo argumento, que es el nombre
+   del bloque en `data/catalogo-disponibilidad.json`:
+
+       await Franjas.montarGrilla('grilla-disponibilidad');                    // el Asistente
+       await Franjas.montarGrilla('grilla-cuidado', 'grilla_busqueda');        // la Familia
+
+   El objeto sigue llamándose `Disponibilidad` además de `Franjas`, porque así
+   lo nombran las pantallas del Asistente desde antes; los dos nombres apuntan
+   al mismo objeto.
 
    Regla 5.1: ningún catálogo se escribe adentro de una pantalla, y los
    formularios se declaran, no se dibujan. La grilla de días por turnos estaba
@@ -9,20 +26,36 @@
    los vocabularios `dia_semana` y `turno`, y lo que queda guardado son las
    claves: `lunes`, `manana`.
 
-   Cómo se usa: la pantalla pone dos contenedores vacíos y los declara.
+   Cómo se usa: la pantalla pone los párrafos y los contenedores vacíos, y los
+   declara. Del lado del Asistente, con las preguntas sueltas del paso:
 
+       <p id="disponibilidad-titulo"></p>
+       <p id="disponibilidad-bajada"></p>
        <div id="grilla-disponibilidad"></div>
+       <p id="disponibilidad-ayuda"></p>
        <div id="preguntas-disponibilidad"></div>
 
-       await Disponibilidad.montarGrilla('grilla-disponibilidad');
-       await Disponibilidad.montarPreguntas('preguntas-disponibilidad');
+       await Franjas.montarTextos('disponibilidad', 'paso_de_disponibilidad');
+       await Franjas.montarGrilla('grilla-disponibilidad');
+       await Franjas.montarPreguntas('preguntas-disponibilidad');
 
-   Y al enviar el formulario:
-
-       const disponibilidad = Disponibilidad.recolectar(
+       const disponibilidad = Franjas.recolectar(
          'grilla-disponibilidad', 'preguntas-disponibilidad');
        // → { franjas: [{ dia: 'lunes', turno: 'manana' }, …],
        //     reemplazos_urgentes: false }
+
+   Del lado de la Familia, sin preguntas sueltas: sólo la grilla.
+
+       <p id="franjas-cuidado-titulo"></p>
+       <p id="franjas-cuidado-bajada"></p>
+       <div id="grilla-cuidado"></div>
+       <p id="franjas-cuidado-ayuda"></p>
+
+       await Franjas.montarTextos('franjas-cuidado', 'paso_de_franjas_busqueda');
+       await Franjas.montarGrilla('grilla-cuidado', 'grilla_busqueda');
+
+       const { franjas } = Franjas.recolectar('grilla-cuidado');
+       // → [{ dia: 'lunes', turno: 'manana' }, …]
 
    QUÉ DIBUJA Y QUÉ NO
    Dibuja la estructura y pone los nombres de clase; el aspecto es de cada
@@ -46,15 +79,22 @@
    la fusión el único lugar que sabe de dónde salen es `_traer()`, acá abajo.
 
    DÓNDE TERMINA LO QUE SE MARCA
-   En `franjas_asistente`, una fila por casillero, y en
-   `disponibilidad_asistente`, una fila por persona con lo general —hoy, si
-   acepta reemplazos urgentes—. Las dos nacieron en la migración 0012. Antes de
-   esa migración lo que la persona marcaba no llegaba a ninguna parte:
-   `apiClient.js` lo recibía y lo descartaba sin avisar, que era el pendiente 23.
+   La grilla del Asistente, en `franjas_asistente`, una fila por casillero; y
+   las preguntas sueltas en `disponibilidad_asistente`, una fila por persona con
+   lo general —hoy, si acepta reemplazos urgentes—. Las dos nacieron en la
+   migración 0012. Antes de esa migración lo que la persona marcaba no llegaba a
+   ninguna parte: `apiClient.js` lo recibía y lo descartaba sin avisar, que era
+   el pendiente 23.
 
-   Hay una copia idéntica de este archivo y del JSON en la aplicación del
-   Asistente, porque su guion de servicio sólo alcanza su propia carpeta.
-   `scripts/verificar_copias.mjs` comprueba que sigan siendo iguales.
+   La grilla de la Familia, en `franjas_busqueda`, también una fila por
+   casillero. Nació en la migración 0015 y viene del mismo defecto: lo que la
+   Familia marcaba iba a una columna `jsonb` a la que cada pantalla le escribía
+   una forma distinta, y nadie la leía. Era el pendiente 40.
+
+   Hay una copia idéntica de este archivo y del JSON en cada una de las dos
+   aplicaciones, porque el guion de servicio de cada una sólo alcanza su propia
+   carpeta. `scripts/verificar_copias.mjs` comprueba que las tres sigan siendo
+   iguales.
 =================================================== */
 
 (function () {
@@ -125,12 +165,37 @@
       return bloque[this.idioma] || bloque[IDIOMA_POR_DEFECTO] || {};
     },
 
+    // ── Los tres textos del paso ─────────────────────────────────────────
+    // Estaban escritos renglón por renglón adentro de cada pantalla. Con dos
+    // pantallas eran seis renglones repetidos; con cuatro serían doce. Acá se
+    // dicen una vez. La pantalla sólo pone tres párrafos vacíos con los nombres
+    // `<prefijo>-titulo`, `<prefijo>-bajada` y `<prefijo>-ayuda`; el que no
+    // ponga, no se llena.
+    async montarTextos(prefijo, nombreBloque) {
+      try {
+        await this.cargar();
+      } catch (err) {
+        console.error('Franjas:', err);
+        return;
+      }
+      const paso = this.texto(declaracion[nombreBloque || 'paso_de_disponibilidad']);
+      const poner = (parte, texto) => {
+        const nodo = document.getElementById(prefijo + '-' + parte);
+        if (nodo) nodo.textContent = texto || '';
+      };
+      poner('titulo', paso.titulo);
+      poner('bajada', paso.bajada);
+      poner('ayuda', paso.ayuda_grilla);
+    },
+
     // ── La grilla ────────────────────────────────────────────────────────
-    async montarGrilla(idContenedor) {
+    // `nombreBloque` elige cuál de las dos grillas declaradas se dibuja.
+    async montarGrilla(idContenedor, nombreBloque) {
       const contenedor = document.getElementById(idContenedor);
       if (!contenedor) return;
       _avisar(contenedor, AVISOS.cargando);
 
+      let grilla;
       let dias;
       let turnos;
       let rotulos;
@@ -138,9 +203,11 @@
         await this.cargar();
         await Catalogo.cargar();
         Catalogo.idioma = this.idioma;
-        dias = Catalogo.items(declaracion.grilla.columnas);
-        turnos = Catalogo.items(declaracion.grilla.filas);
-        rotulos = this.texto(declaracion.grilla);
+        grilla = declaracion[nombreBloque || 'grilla'];
+        if (!grilla) throw new Error('No hay una grilla llamada «' + nombreBloque + '»');
+        dias = Catalogo.items(grilla.columnas);
+        turnos = Catalogo.items(grilla.filas);
+        rotulos = this.texto(grilla);
       } catch (err) {
         _avisar(contenedor, AVISOS.error, err);
         return;
@@ -154,7 +221,7 @@
       // Los pares que vienen marcados de fábrica. Hoy la lista está vacía a
       // propósito y el archivo explica por qué; se llena ahí, no acá.
       const marcados = {};
-      (declaracion.grilla.marcados_al_abrir || []).forEach((par) => {
+      (grilla.marcados_al_abrir || []).forEach((par) => {
         marcados[par.dia + '|' + par.turno] = true;
       });
 
@@ -313,5 +380,11 @@
     }
   };
 
-  if (typeof window !== 'undefined') window.Disponibilidad = Disponibilidad;
+  // Dos nombres para el mismo objeto: `Franjas` es lo que hace, y
+  // `Disponibilidad` es como lo llaman las pantallas del Asistente desde antes
+  // de que existiera la grilla de la Familia.
+  if (typeof window !== 'undefined') {
+    window.Disponibilidad = Disponibilidad;
+    window.Franjas = Disponibilidad;
+  }
 })();

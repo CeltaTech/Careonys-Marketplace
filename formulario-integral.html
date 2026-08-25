@@ -191,9 +191,22 @@
             </div>
           </div>
 
+          <!-- La grilla no se dibuja acá. Los días, los turnos y las horas que cubre
+               cada turno salen de data/catalogo-vocabularios.json; los textos del paso,
+               de data/catalogo-disponibilidad.json. Las junta js/disponibilidad.js, el
+               mismo archivo que dibuja la grilla del alta del Asistente.
+               Antes acá había siete casillas de días —con lunes a viernes ya marcados de
+               fábrica, que no los marcó nadie— y ningún turno: una búsqueda no podía
+               decir «los martes a la tarde», y lo que se marcaba no se guardaba en
+               ninguna parte. Era el pendiente 40. -->
           <div class="form-group">
-            <label>Días de la Semana Requeridos</label>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;" data-catalogo="dia_semana" data-catalogo-como="casillas" data-catalogo-nombre="dia_semana" data-catalogo-clase="catalogo-casilla" data-catalogo-marcados="lunes,martes,miercoles,jueves,viernes"></div>
+            <p id="franjas-cuidado-titulo"
+              style="font-size:13px;font-weight:700;color:var(--texto-principal);margin-bottom:4px;"></p>
+            <p id="franjas-cuidado-bajada"
+              style="font-size:12.5px;color:var(--texto-secundario);margin-bottom:12px;"></p>
+            <div id="grilla-cuidado"></div>
+            <p id="franjas-cuidado-ayuda"
+              style="font-size:11.5px;color:var(--texto-secundario);margin:8px 0 0 0;"></p>
           </div>
 
           <div style="display:flex;justify-content:space-between;margin-top:24px;">
@@ -461,6 +474,7 @@
   <script src="js/identidad.js"></script>
   <script src="js/texto.js"></script>
   <script src="js/catalogo.js"></script>
+  <script src="js/disponibilidad.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <!-- Esta página es demostrativa: no consulta la base. Por eso no carga el cliente

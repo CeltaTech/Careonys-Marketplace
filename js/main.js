@@ -211,6 +211,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const wizardForm = document.getElementById('wizard-care-search-form');
   if (wizardForm) {
+    // El paso 4 pregunta cuándo se necesita el cuidado con la misma grilla de
+    // días por turnos que el alta del Asistente pregunta al revés. Los textos y
+    // los casilleros los pone `js/disponibilidad.js` desde el catálogo.
+    Franjas.montarTextos('franjas-cuidado', 'paso_de_franjas_busqueda');
+    Franjas.montarGrilla('grilla-cuidado', 'grilla_busqueda');
+
     wizardForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const successMsg = document.getElementById('wizard-success-msg');
@@ -243,7 +249,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // mismo y todavía no tiene vocabulario que la gobierne (pendiente 31).
         // Escribir acá una quinta forma sería empeorarlo.
         horarios: 'flexible',
-        grillaHorarios: {},
+        // Un par `{ dia, turno }` por casillero marcado, con claves de
+        // catálogo. Va a `franjas_busqueda`, una fila cada uno.
+        franjas: Franjas.recolectar('grilla-cuidado').franjas,
         tareas: elegidas('tarea_cuidado'),
         profesion: tipoAsistente[0] || '',
         generoPreferido: document.getElementById('w-pref-gender')?.value || '',

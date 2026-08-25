@@ -139,6 +139,11 @@ const Texto = {
     if (dice('sin_intentos')) return 'Ya se usaron todos los intentos de esta evaluación.';
     if (dice('evaluacion_vacia', 'evaluacion_inexistente')) return 'Esta evaluación no está disponible en este momento.';
 
+    // Publicar una búsqueda son dos pedidos: la búsqueda y sus franjas. Si el
+    // segundo falla, el primero ya está hecho, y decir «no se pudo publicar»
+    // llevaría a publicarla dos veces.
+    if (dice('busqueda_sin_franjas')) return 'La búsqueda quedó publicada, pero no se pudieron guardar los días y turnos en los que se necesita el cuidado. No hace falta publicarla de nuevo.';
+
     // El directorio sin saber de qué Prestadora es. No se pide nada y se dice
     // por qué: mostrar «todas» sería mostrarle a una Familia el personal de una
     // Prestadora que no es la suya.

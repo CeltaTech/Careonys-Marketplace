@@ -742,8 +742,22 @@
             <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">Modalidad de Servicio</label>
             <select id="pb-tipo" required
               style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid #cbd5e1;font-size:13px;box-sizing:border-box;background:#f8fafc;margin-bottom:10px;" data-catalogo="modalidad_contratacion" data-catalogo-vacio="— Seleccionar —"></select>
-            <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:6px;">Turnos Requeridos</label>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;" data-catalogo="turno" data-catalogo-como="casillas" data-catalogo-nombre="turno" data-catalogo-clase="catalogo-casilla"></div>
+            <!-- La grilla no se dibuja acá. Los días, los turnos y las horas que
+                 cubre cada turno salen de data/catalogo-vocabularios.json; los
+                 textos del paso, de data/catalogo-disponibilidad.json. Las junta
+                 js/disponibilidad.js, el mismo archivo que dibuja la grilla del
+                 alta del Asistente.
+                 Antes acá había tres casillas de turnos y ningún día: se podía
+                 pedir «tarde» pero no «los martes a la tarde», y lo que se
+                 marcaba iba a una columna suelta que nadie leía. Era el
+                 pendiente 40. -->
+            <p id="franjas-cuidado-titulo"
+              style="font-size:11px;font-weight:700;color:#475569;margin-bottom:2px;"></p>
+            <p id="franjas-cuidado-bajada"
+              style="font-size:10px;color:var(--texto-secundario);margin:0 0 6px;"></p>
+            <div id="grilla-cuidado"></div>
+            <p id="franjas-cuidado-ayuda"
+              style="font-size:10px;color:var(--texto-secundario);margin:6px 0 0;"></p>
           </div>
 
           <!-- Patologías -->
@@ -788,6 +802,7 @@
   <script src="js/texto.js"></script>
   <script src="js/clave.js"></script>
   <script src="js/catalogo.js"></script>
+  <script src="js/disponibilidad.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script>
@@ -963,6 +978,12 @@
       }
     });
 
+    // La grilla de cuándo se necesita el cuidado. Se dibuja una vez al abrir
+    // la aplicación, no cada vez que se entra a la pantalla: la pantalla existe
+    // desde el principio y sólo se muestra o se esconde.
+    Franjas.montarTextos('franjas-cuidado', 'paso_de_franjas_busqueda');
+    Franjas.montarGrilla('grilla-cuidado', 'grilla_busqueda');
+
     // ── Formulario Nueva Búsqueda de Cuidador (Inline — Offline Safe) ──────
     document.getElementById('form-nueva-busqueda').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -973,7 +994,9 @@
         alert('Faltan el nombre del paciente, la zona y la modalidad del servicio.');
         return;
       }
-      const turnos = Array.from(document.querySelectorAll('input[name="turno"]:checked')).map(cb => cb.value);
+      // Un par `{ dia, turno }` por casillero marcado, con claves de
+      // catálogo. Va a `franjas_busqueda`, una fila cada uno.
+      const franjas = Franjas.recolectar('grilla-cuidado').franjas;
       const patologias = Array.from(document.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
       const descripcion = document.getElementById('pb-descripcion').value;
 
@@ -987,13 +1010,17 @@
           patientName: nombre,
           zona,
           scheduleType: tipo,
-          gridSchedule7x3: { turnos },
+          franjas,
           pathologiesRequired: patologias,
           description: descripcion,
           familyUserId: session?.user?.id || null
         });
         document.getElementById('pb-success').style.display = 'block';
         document.getElementById('form-nueva-busqueda').reset();
+        // `reset()` no desmarca la grilla: sus casilleros son botones y no
+        // controles de formulario. Sin esto, la búsqueda siguiente arrancaría
+        // con lo que se marcó en la anterior.
+        Franjas.limpiar('grilla-cuidado');
         setTimeout(() => {
           document.getElementById('pb-success').style.display = 'none';
           navigate('dashboard');

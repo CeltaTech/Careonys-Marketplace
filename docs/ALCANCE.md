@@ -593,6 +593,55 @@ descartaba sin decir nada. Era el pendiente 23, y estaba abierto desde que la pa
   decidió el mismo día que eso no es algo que se permita sino algo que se está: se mudó al paso de
   disponibilidad. Con eso cerró también el pendiente 26.
 
+### Lo que una Familia necesita se pregunta igual que lo que un Asistente puede dar
+
+Hecho el 25 de agosto de 2026. Es el pendiente 40, y la mitad que la línea de comandos puede
+hacer está hecha; la otra mitad es del Desarrollador y está al final.
+
+- **El problema no era la columna, era la pregunta.** `care_searches.grid_schedule_7x3` es una
+  columna `jsonb` y cada pantalla le escribía una forma distinta porque **ninguna de las dos
+  preguntaba las dos cosas**: `pwa-familia/index.html` pedía turnos sin decir de qué día y
+  `formulario-integral.html` pedía días sin decir de qué turno. Con media pregunta no había forma
+  de escribir un casillero, así que una mandaba `{ turnos: [...] }` y la otra no mandaba nada.
+- **Las dos pantallas preguntan ahora la misma grilla de veintiún casilleros**, la misma que usa el
+  Asistente desde el pendiente 23. No es una grilla nueva: `js/disponibilidad.js` ya sabía armarla
+  desde el catálogo, y lo único que le faltaba era poder servir a los dos lados. Ahora recibe qué
+  bloque del catálogo tiene que leer, y `data/catalogo-disponibilidad.json` declara dos: la del
+  Asistente dice «¿Cuándo puede trabajar?» y marca «Disponible»; la de la búsqueda dice «¿Cuándo se
+  necesita el cuidado?» y marca «Se necesita». El mismo casillero, dos preguntas distintas.
+- **Se guarda como lo guarda un Asistente: una fila por casillero.** La migración 0015 crea
+  `franjas_busqueda`, espejo exacto de `franjas_asistente` —clave de `dia_semana`, clave de
+  `turno`, una sola por par, aislamiento por Prestadora, y `anon` sin ningún permiso—. El día que
+  alguien quiera cruzar lo que un Asistente puede dar con lo que una Familia necesita, de los dos
+  lados va a haber filas comparables.
+- **Se fue el lunes-a-viernes que nadie eligió.** El portal traía cinco días premarcados de fábrica:
+  quien no tocara nada publicaba un pedido de lunes a viernes sin haberlo dicho. La grilla arranca
+  vacía, que es la misma decisión que ya se había tomado para la del Asistente.
+- **Publicar y guardar los casilleros son dos pedidos, y la pantalla no miente sobre eso.** Si el
+  segundo falla, la búsqueda ya quedó publicada: decir «no se pudo publicar» haría que la persona
+  publique de nuevo y queden dos. Dice lo que pasó —que la búsqueda está publicada y que los días y
+  turnos no se guardaron— y aclara que no hace falta publicarla otra vez (`js/texto.js`,
+  `busqueda_sin_franjas`).
+- **Los estilos de la grilla salieron del HTML.** Estaban escritos adentro de
+  `pwa-asistente/index.html` y ahora viven en `css/styles-pwa.css`, que las dos aplicaciones
+  comparten byte a byte. Es un renglón menos para el pendiente 33.
+- **Comprobado en el navegador, en las tres pantallas.** Los veintiún casilleros se dibujan como
+  grilla en las tres; el título, la bajada y la ayuda salen del catálogo y son distintos según de
+  qué lado se pregunte; marcar martes a la tarde y sábado a la noche devuelve exactamente esos dos
+  pares; y quien navega con el teclado escucha «Martes, Tarde, Se necesita», que es la pregunta de
+  la búsqueda y no la del Asistente. La del Asistente sigue diciendo «Disponible» y conserva su
+  pregunta de reemplazos urgentes.
+
+**Lo que falta y es del Desarrollador.** Son dos cosas, y la segunda toca datos guardados, que por
+regla no las mueve la línea de comandos:
+
+1. **Aplicar la migración `supabase/migrations/0015_franjas_de_una_busqueda.sql`** pegándola en el
+   panel de Supabase, en SQL Editor. Hasta que corra, publicar una búsqueda guarda la búsqueda pero
+   no sus días y turnos, y la pantalla lo dice.
+2. **Vaciar y sacar `care_searches.grid_schedule_7x3`.** Ya no la escribe ni la lee nadie, pero la
+   columna existe y tiene adentro las dos formas viejas. La línea es
+   `alter table public.care_searches drop column grid_schedule_7x3;`
+
 ### El alta del teléfono guarda el legajo entero, y no sólo la disponibilidad
 
 Cierra el pendiente 36, el 25 de agosto de 2026.

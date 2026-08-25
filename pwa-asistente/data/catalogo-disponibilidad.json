@@ -1,6 +1,7 @@
 {
   "_lea_esto_primero": {
-    "que_es": "El paso del alta donde el Asistente declara cuándo puede trabajar: la grilla de días por turnos, y si acepta que se le avise de un reemplazo que empieza en pocas horas.",
+    "que_es": "Las dos grillas de días por turnos del proyecto, y las preguntas sueltas que las acompañan. La del Asistente, en el paso del alta donde declara cuándo puede trabajar y si acepta que se le avise de un reemplazo que empieza en pocas horas. Y la de la Familia, donde dice cuándo se necesita el cuidado.",
+    "por_que_las_dos_estan_en_el_mismo_archivo": "Porque son la misma grilla: los mismos días, los mismos turnos, el mismo dibujo y el mismo modo de marcar. Lo único distinto es el título del paso, lo que se lee al marcar un casillero —«Disponible» de un lado, «Se necesita» del otro— y en qué tabla termina cada marca. Tenerlas separadas sería tener dos veces la misma declaración, y el día que se agregue un turno habría que acordarse de los dos lugares. Los bloques son `paso_de_disponibilidad` con `grilla`, y `paso_de_franjas_busqueda` con `grilla_busqueda`.",
     "por_que_existe": "**Decidido por el Desarrollador el 24 de agosto de 2026.** La grilla estaba escrita a mano dentro de dos pantallas —veintiún casilleros en cada una, repetidos— y lo que la persona marcaba no llegaba a ninguna parte: `js/apiClient.js` no tenía dónde guardarlo y lo descartaba sin avisar. Era el pendiente 23. Ahora los días y los turnos salen del catálogo, y cada casillero marcado es una fila de `franjas_asistente` (migración 0012).",
     "de_donde_salen_los_dias_y_los_turnos": "De `catalogo-vocabularios.json`, vocabularios `dia_semana` y `turno`. Ninguna pantalla los escribe. Lo que se guarda son las claves —`lunes`, `manana`—, nunca la etiqueta que se muestra: una etiqueta cambia de idioma y una clave no.",
     "de_que_lado_de_la_linea": "Compartido. Cuándo puede trabajar una persona es verdad sobre ella independientemente de cómo consiguió el trabajo: vale igual en prestación directa. Ver docs/MODULOS.md, renglón «Disponibilidad horaria».",
@@ -44,6 +45,45 @@
       "encabezado_filas": "Turno",
       "marcado": "Disponível",
       "sin_marcar": "Indisponível"
+    }
+  },
+  "paso_de_franjas_busqueda": {
+    "clave": "franjas_busqueda",
+    "es-AR": {
+      "titulo": "¿Cuándo se necesita el cuidado?",
+      "bajada": "Marque los turnos en los que hace falta el Asistente. Se puede cambiar después.",
+      "ayuda_grilla": "Toque cada casillero para marcarlo o desmarcarlo."
+    },
+    "en": {
+      "titulo": "When is care needed?",
+      "bajada": "Tick the shifts when the assistant is needed. This can be changed later.",
+      "ayuda_grilla": "Tap each cell to tick or untick it."
+    },
+    "pt-BR": {
+      "titulo": "Quando o cuidado é necessário?",
+      "bajada": "Marque os turnos em que o assistente é necessário. Pode ser alterado depois.",
+      "ayuda_grilla": "Toque em cada quadro para marcar ou desmarcar."
+    }
+  },
+  "grilla_busqueda": {
+    "filas": "turno",
+    "columnas": "dia_semana",
+    "marcados_al_abrir": [],
+    "se_guarda_en": "franjas_busqueda",
+    "es-AR": {
+      "encabezado_filas": "Turno",
+      "marcado": "Se necesita",
+      "sin_marcar": "No se necesita"
+    },
+    "en": {
+      "encabezado_filas": "Shift",
+      "marcado": "Needed",
+      "sin_marcar": "Not needed"
+    },
+    "pt-BR": {
+      "encabezado_filas": "Turno",
+      "marcado": "Necessário",
+      "sin_marcar": "Não necessário"
     }
   },
   "preguntas": [
