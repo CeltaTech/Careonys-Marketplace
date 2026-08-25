@@ -1514,6 +1514,17 @@ paneles es grid ni flex, y el día que alguien agregara uno se habría aplastado
 que conmutan `display` dicen ahora `''`, con el motivo escrito al lado para que nadie lo devuelva a
 `'block'`. Que sigan siendo ocho copias es parte del pendiente 13.
 
+**La regla 4 se midió en el mismo rato y salió todavía más corta.** Pide confirmación explícita
+ante toda operación destructiva, y la medición encontró que en este proyecto hay exactamente una:
+rechazar un legajo (`panel-prestadora.html:348`). No hay un solo `delete` contra la base en las
+cuarenta y cuatro pantallas y guiones —lo único que se parece es un `delete` de JavaScript sobre un
+objeto en memoria, `js/apiClient.js:255`, que no toca nada guardado—, y salir de la sesión no
+destruye nada. La única que hay ya pregunta antes, y la pregunta dice qué queda después:
+«Se va a rechazar este legajo. Queda cerrado y la persona no aparece en el plantel activo.
+Desde esta pantalla no se puede volver atrás. ¿Confirma?».
+No hace falta un chequeo para vigilar un caso que además está bien; lo que hace falta es acordarse
+cuando aparezca el segundo, y por eso queda escrito acá.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,
