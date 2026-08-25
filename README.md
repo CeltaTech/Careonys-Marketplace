@@ -115,6 +115,42 @@ aislamiento. Una prueba que devuelve una lista vacía no distingue "aislado" de 
 Copiar `.env.example` a `.env.local` y completar los valores antes de levantar nada. Los `.env`
 nunca se suben (ver `.gitignore`).
 
+## Los diez chequeos, y el comando que hace falta una sola vez
+
+Cada regla que se arregló una vez tiene un guion que impide que vuelva. Se corren todos juntos
+en menos de un segundo:
+
+```bash
+node scripts/verificar_todo.mjs
+```
+
+Ese guion no tiene la lista escrita: busca los `scripts/verificar_*.mjs` de la carpeta, así que
+un chequeo nuevo se suma solo con existir.
+
+| Chequeo | Qué impide que vuelva |
+|---|---|
+| `verificar_claves` | Que se guarde en la base una opción que el catálogo no tiene |
+| `verificar_copias` | Que las cinco copias byte a byte se separen sin que nadie se entere |
+| `verificar_escapado` | Que un texto de la base entre a la pantalla como si fuera HTML |
+| `verificar_guiones` | Que el JavaScript de una pantalla quede sin poder leerse |
+| `verificar_identidad` | Que la marca vuelva a estar escrita a mano |
+| `verificar_paleta` | Que vuelva un color escrito con su número en vez de un token |
+| `verificar_referencias` | Que una cita `archivo:renglón` de la documentación apunte a la nada |
+| `verificar_temas` | Que se rompa el modo oscuro: las dos copias separadas, o un token de letra pintando un fondo |
+| `verificar_trato` | Que el texto visible tutee a quien lo lee |
+| `verificar_vocabulario` | Que «cuidador» vuelva a ser el término general |
+
+**El comando que hace falta una sola vez por máquina**, para que se corran solos antes de cada
+`git commit`:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+El gancho vive en `.githooks/pre-commit`, que sí se sube, porque `.git/hooks/` no se sube. Sin
+ese comando el gancho está en el repositorio y no lo llama nadie. Para saltearlo en un commit
+puntual: `git commit --no-verify`, y conviene que sea raro.
+
 ## Decisiones abiertas que bloquean el esquema
 
 1. **Cómo se llama esto en el código.** La palabra "marketplace" ya significa otra cosa en el

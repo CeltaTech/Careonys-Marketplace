@@ -13,11 +13,11 @@
 
 | Módulo | Estado |
 |---|---|
-| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:289` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs` |
+| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:286` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs` |
 | Directorio de Asistentes con filtros | Maquetado y navegable |
 | Perfil del Asistente | Maquetado |
 | Portal de postulación de Asistentes | Maquetado, con el legajo funcionando: `postulacion-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en las tablas de la migración 0004, y la disponibilidad horaria en las de la 0012 |
-| Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:176`). Declarados en `supabase/migrations/0006_archivos_del_legajo.sql`, no a mano |
+| Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:173`). Declarados en `supabase/migrations/0006_archivos_del_legajo.sql`, no a mano |
 | Consentimiento de publicación | Funciona de punta a punta. El alta pregunta al cerrar (`data/catalogo-autorizaciones.json`, paso 7) y guarda la respuesta en `autorizaciones_asistente`; el directorio cruza contra ella y **no muestra a nadie que no haya dicho que sí** (`supabase/migrations/0007_directorio_con_consentimiento.sql`). Sin respuesta no se publica: la casilla arranca sin marcar. Y el directorio va con `noindex`, que es lo que ese mismo consentimiento promete |
 | Evaluaciones de competencias | Funcionan, y **las corrige el servidor**. `examen.html` pide sesión, lista lo que la persona puede rendir y manda las respuestas a `rendir_evaluacion()`; la columna con la respuesta correcta no tiene permiso de lectura para nadie y las opciones salen de la vista `opciones_para_responder`, que no la incluye (`supabase/migrations/0008_cursos_y_evaluaciones.sql`). El intento no se puede escribir a mano: la tabla no tiene política de escritura y los permisos están revocados. `cursos.html` ya no tiene examen propio, enlaza a esta pantalla. Falta el contenido: ver `docs/PENDIENTES.md` punto 24 |
 | Motor de fichas del legajo (`js/fichas-legajo.js`) | Funciona. Dibuja, valida y recolecta Matrícula, estudio, experiencia y referencia leyendo `data/catalogo-fichas.json` y `data/catalogo-vocabularios.json`. Ninguna de las cuatro está escrita en la pantalla |
@@ -36,7 +36,7 @@ es una sugerencia, porque un filtro que viaja en el pedido lo cambia quien llama
 Cómo quedó:
 
 - **Registrarse ya no decide nada.** El disparador de `auth.users` crea la fila de `profiles`
-  (`0005_acceso_por_sesion.sql:93`) y valida la Prestadora contra `tenants`, pero **el rol no sale
+  (`supabase/migrations/0005_acceso_por_sesion.sql:93`) y valida la Prestadora contra `tenants`, pero **el rol no sale
   de los metadatos**: quien se registra solo queda siempre con un rol sin acceso a los datos de la
   Prestadora. Pedir ser coordinador de otra Prestadora no sirve de nada.
 - **Pertenecer y poder ver son dos cosas distintas.** `public.es_personal_de_prestadora()` es el
@@ -132,7 +132,7 @@ se metía adentro del marcado ahora pasan por `Texto.escapar`, en seis archivos:
   proyecto quien lee suele ser el personal de la Prestadora, o sea justo quien tiene los permisos,
   o una familia mirando el cuaderno de cuidado.
 - **Los dos peores casos** no estaban donde decía el pendiente. Uno era el mensaje de chat de
-  `mockup-app.html:692`, que lo escribe una persona y lo lee otra. El otro era
+  `mockup-app.html:736`, que lo escribe una persona y lo lee otra. El otro era
   `panel-prestadora.html`, la pantalla que el pendiente daba por arreglada: tenía el renglón de la
   tabla de Asistentes entero sin escapar —nombre, documento, teléfono, profesión y zona— y el
   único `onclick` escrito en el marcado de todo el proyecto.
@@ -216,7 +216,7 @@ Cerró el pendiente 27, el 24 de agosto de 2026.
   —`movilidad_reducida`, `traslados`, `curaciones`, `estimulacion_cognitiva`—. Ninguno daba error
   en ninguna parte.
 - **El daño no está en la base, está en la pantalla.** Las columnas son texto libre y aceptan
-  cualquier cosa. `js/catalogo.js:121` traduce la clave guardada a su etiqueta y, cuando no la
+  cualquier cosa. `js/catalogo.js:150` traduce la clave guardada a su etiqueta y, cuando no la
   encuentra, muestra la clave cruda: la ficha decía «enfermero» en minúscula y con guión bajo. Y
   el filtro por Tipo de Asistente busca por la clave que ofrece el catálogo, así que esa fila no
   aparecía nunca.
@@ -249,8 +249,8 @@ Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2
 - **El pendiente decía que el problema estaba en la base y estaba en la pantalla.** Nombraba
   `caregivers.profession` y las claves `domiciliaria`, `enfermera`, `auxiliar` y `at`. Esas
   palabras no eran filas: eran los `<option>` y los `data-` de `directorio.html`. Se verificó
-  además que ninguna pantalla escribe hoy una clave inventada en esa columna —`postulacion-`
-  `asistente.html:315` y `formulario-integral.html:384` toman las suyas del catálogo—, y de la
+  además que ninguna pantalla escribe hoy una clave inventada en esa columna —`postulacion-asistente.html:319`
+  y `formulario-integral.html:353` toman las suyas del catálogo—, y de la
   base misma no se puede afirmar nada desde acá, porque `caregivers` no se deja leer sin sesión.
 - **Los cuatro filtros salen del catálogo** (`directorio.html:66`): zona, Tipo de Asistente,
   patología y verificación. Eran veinticinco opciones escritas a mano contra la regla 5.1; ahora
@@ -258,7 +258,7 @@ Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2
   no hacía.
 - **Las ocho tarjetas de muestra hablan el mismo idioma que los filtros.** Cada una lleva ahora
   `data-zone`, `data-type`, `data-patologia` y `data-verificacion` con claves del catálogo, y
-  `filterCards()` en `js/main.js:85` compara clave contra clave.
+  `filterCards()` en `js/main.js:120` compara clave contra clave.
 - **Antes comparaba contra el texto visible de la tarjeta, y fallaba de dos maneras.** La opción
   `medicos` no encontraba nunca a la tarjeta que decía «Médicos», porque la tilde no coincide;
   `parkinson` y `acv` no existían en ninguna tarjeta y devolvían cero sin explicar por qué. Y
@@ -460,7 +460,7 @@ Cierra el pendiente 38, el 24 de agosto de 2026.
 
 Queda una contraseña de mentira en pantalla, y no es ésta: la de la pantalla de acceso viene
 prellenada con seis dígitos para poder mostrar el producto sin tipear
-(`pwa-asistente/index.html:326` y `pwa-familia/index.html:575`). Es un atajo de demostración y sale
+(`pwa-asistente/index.html:310` y `pwa-familia/index.html:565`). Es un atajo de demostración y sale
 antes de que haya una sola persona real.
 
 ### Las trece migraciones ya corren en el servidor
@@ -654,7 +654,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
 - **Los dos pasos que faltaban se dibujan desde el catálogo**, no están escritos en la pantalla.
   Matrícula y estudios en el paso 2, experiencia laboral en el paso 3 y referencias en el paso 5
   salen de `data/catalogo-fichas.json` a través de `js/fichas-legajo.js`
-  (`pwa-asistente/index.html:787`, `montarFichas`). El paso de cierre sale de
+  (`pwa-asistente/index.html:945`, `montarFichas`). El paso de cierre sale de
   `data/catalogo-autorizaciones.json`.
 - **El paso de cierre pasó a ser un módulo.** Estaba escrito adentro de `postulacion-asistente.html`,
   cuarenta renglones que traían el archivo y armaban las casillas. Ahora es `js/autorizaciones.js`,
@@ -739,7 +739,7 @@ atiende, precio por hora y si acepta reemplazos urgentes. Son exactamente los qu
 `caregivers_publicos`, la vista que sólo deja pasar a quien tiene el legajo validado por la
 Prestadora **y** además autorizó que se lo publique.
 
-- **Lo trae `traerDelDirectorio` (`js/apiClient.js:414`)**, que pide una sola fila filtrando por
+- **Lo trae `traerDelDirectorio` (`js/apiClient.js:486`)**, que pide una sola fila filtrando por
   identificador y por Prestadora. Un identificador que no tiene forma de identificador se contesta
   sin preguntarle a la base: la base devolvería un error de sintaxis, y un error en pantalla se lee
   como que el sistema se rompió, cuando lo que hay es un enlace viejo. Los hay: hasta el 25 de
@@ -769,7 +769,7 @@ registradas pueden comunicarse con ella, y que lo hacen por la plataforma
 Lo que falta —empezar una conversación con esa persona en particular— quedó anotado como pendiente 46.
 
 **Tres traducciones que estaban por escribirse dos veces subieron a los archivos compartidos**
-(regla 7): el precio en pesos es `Texto.importe` (`js/texto.js:52`), la etiqueta de una lista es
+(regla 7): el precio en pesos es `Texto.importe` (`js/texto.js:81`), la etiqueta de una lista es
 `Catalogo.etiquetaSiExiste` (`js/catalogo.js:160`), y la de una tarea —que puede estar en cualquiera
 de tres listas— es `Catalogo.etiquetaDeTarea` (`js/catalogo.js:173`). Vivían adentro de
 `directorio.html`; ahora las dos pantallas las piden al mismo lugar.
@@ -996,6 +996,66 @@ perfecto. No hay nada roto en las hojas de estilo: **el color que elige una Pres
 versión de noche**, y `js/apiClient.js` lo escribe encima de los tokens igual. Es el punto 2 de la
 lista de acá abajo, y de noche cuesta el doble.
 
+### Las citas de la documentación vuelven a apuntar donde dicen
+
+El 25 de agosto de 2026.
+
+**El problema.** `CLAUDE.md` §7 pide que toda afirmación sobre una decisión ya tomada cite
+**archivo y renglón exacto**, «verificable en segundos». Ese día había 94 citas con renglón en la
+documentación y **26 apuntaban a la nada**: una de cada cuatro. No porque alguien se equivocara al
+escribirlas, sino porque una cita con renglón se rompe sola: el archivo crece por arriba, la cita
+se queda quieta y termina señalando una llave de cierre. El renglón 199 de `js/main.js` era una
+llave sola; el 191 de `formulario-integral.html`, un cierre de `div`; y el 528 de
+`directorio.html` estaba 198 renglones más allá del final de un archivo que tiene 330.
+
+Eso no es un detalle de prolijidad. Quien sigue una cita y no encuentra nada deja de seguir las
+otras, y entonces la regla de citar se convierte en adorno: el documento vuelve a valer lo que
+vale la memoria de quien lo escribió.
+
+**Qué se hizo.** Se corrigieron las 26, buscando en el código real a qué apuntaba cada una. Cuatro
+nombraban archivos que ya no existen con ese nombre —una cita partida en dos renglones que el
+buscador no veía entera, y una migración citada sin su carpeta—. Y **dos apuntaban a un renglón con
+contenido, pero con el contenido equivocado**, que es el caso que ningún guion puede detectar:
+`mockup-app.html:692`, que decía ser el escapado del chat y era una redirección, y
+`js/apiClient.js:396`, que decía ser el aviso de una Prestadora que no existe y era la primera
+evaluación de una lista.
+
+**El décimo chequeo.** `scripts/verificar_referencias.mjs` exige tres cosas de cada cita: que el
+archivo exista, que tenga ese renglón, y que en ese renglón haya algo. Una llave sola, una
+etiqueta que cierra, el fin de un comentario o un renglón en blanco no son una cita: son el rastro
+de una que se corrió. Se registra solo en `scripts/verificar_todo.mjs` y en el gancho de
+`git commit`, sin tocar ninguno de los dos.
+
+**Los cuatro documentos exentos, y por qué.** Un documento que es **una foto fechada** cita el
+código de ese día a propósito, y corregirle los renglones sería falsear lo que decía.
+`docs/INVENTARIO.md` lo dice en su propio renglón 7; `docs/PLAN_ACCESO.md` y
+`docs/PLAN_PRESTADORA.md` son planes escritos antes de tocar código, y sus citas muestran los
+problemas que había ese día; `docs/CAREONYS_PRESDEMO_Plan_Tecnico.md` es material de diseño
+heredado. Los cuatro están en la lista `FOTOS` del chequeo, cada uno con su motivo escrito al
+lado —una exención sin motivo es una excepción que nadie va a poder revisar después—.
+
+**Lo que el chequeo no puede ver, dicho de frente.** Una cita que se corrió a otro renglón **con
+contenido** pasa igual: el guion no sabe de qué habla la frase. Se probó exigir que un
+identificador nombrado en la misma frase estuviera cerca del renglón citado, y sobre las citas de
+hoy daba **tres avisos falsos de cada cinco**, así que se descartó. Un chequeo que avisa de más se
+termina apagando, y entonces no verifica nada. Atrapa el caso ruidoso —que es el común—, y las
+dos citas del párrafo anterior aparecieron leyendo, no corriendo el guion.
+
+**De paso, las cuentas viejas.** Revisar cita por cita destapó números que ya no eran ciertos en
+`docs/PENDIENTES.md`, y se recontaron todos: la Prestadora de ejemplo está escrita **102 veces en
+23 archivos** —no 111 en 18—, su logotipo en 27 lugares de 15 archivos, las copias byte a byte son
+**921 renglones** —no 1.082— y los estilos pegados al HTML son **2.166 declaraciones en 687
+atributos**. Tres pendientes habían quedado describiendo cosas ya arregladas: el punto 20 decía
+que el paso 3 del formulario todavía tenía las profesiones escritas a mano, el 9 que quedaba
+suelta la hora del chat, y el 11 que un remiendo tenía escrito el UUID de la Prestadora de
+ejemplo. Ninguna de las tres seguía siendo verdad. Y el pendiente 14 se cerró: **ninguna pantalla
+tiene ya datos escritos adentro**.
+
+**El README cuenta los diez.** Hasta hoy los chequeos existían y no estaban explicados en ninguna
+parte, y el comando que hace falta una sola vez por máquina —`git config core.hooksPath
+.githooks`— vivía en dos documentos internos. Ahora están los diez en una tabla del `README.md`,
+con qué impide cada uno que vuelva.
+
 ### El Asistente ve sus capacitaciones, y al lado lo que rindió
 
 Cierra el pendiente 34, el 25 de agosto de 2026.
@@ -1127,7 +1187,7 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
   en el navegador antes de tocar nada: `directorio.html?t=prestadora-que-no-existe` mostraba los
   cuatro Asistentes de PresDemo, porque el respaldo devuelve la primera Prestadora de la base. El
   respaldo sirve para una dirección que no nombra ninguna, no para una que nombra mal. Ahora se
-  distingue un caso del otro (`js/apiClient.js:74`, `:85` y `:396`) y el segundo avisa.
+  distingue un caso del otro (`js/apiClient.js:74`, `:85` y `:468`) y el segundo avisa.
 - **La base tenía el directorio vacío y nadie se enteraba.** `caregivers_publicos` devolvía **cero
   filas**, y no por un problema de permisos: los legajos inventados de la migración 0003 están
   validados, pero nadie había contestado la autorización de publicación, que la vista exige. Con
@@ -1142,12 +1202,13 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
   respuesta de la base no trae documento, teléfono, correo ni domicilio.
 - **Se sacó el filtro «Verificación»**, que la pantalla ofrecía y nada podía contestar: lo que se
   controló de un legajo vive en `verificaciones_asistente`, que no es pública. Es el pendiente 43.
-- **`perfil.html` quedó a mitad de camino y por eso se lo frenó.** Sus datos siguen escritos a
+- **`perfil.html` quedó a mitad de camino y por eso se lo frenó.** Sus datos estaban escritos a
   mano, indexados del 1 al 8, y tomaba el identificador con `parseInt(...) || 1`: con el
   identificador de la base —que es un UUID— daba NaN, caía en el 1 y mostraba a otra persona sin
-  avisar. Ahora un enlace que no reconoce dice lo que pasa —que la pantalla todavía muestra un
-  perfil de ejemplo— y ofrece volver al directorio. Los ocho de ejemplo siguen abriéndose por su
-  número, así que el diseño no se perdió. Conectarla a la base es el pendiente 44.
+  avisar. Ese día un enlace que no reconocía pasó a decir lo que pasa y a ofrecer la vuelta al
+  directorio. **Se cerró el 25 de agosto de 2026**, y con él el pendiente 44: hoy la pantalla lee
+  de `caregivers_publicos`, como cuenta «El perfil muestra a la persona que dice la dirección, y
+  nada más que eso» más arriba.
 
 ## 2. Falta construir
 
@@ -1205,7 +1266,7 @@ prestación.
 
 El mercado es de una Prestadora: sus Asistentes ofreciendo, sus Familias buscando. Muchos de un
 lado y muchos del otro, pero **todos adentro de la misma Organización**. Es lo que ya hace
-`directorio.html:528`, que resuelve una Prestadora y muestra a los suyos.
+`directorio.html:304`, que resuelve una Prestadora y muestra a los suyos.
 
 **Ninguna búsqueda, en ninguna modalidad, mezcla Asistentes de dos Prestadoras.** Mezclarlas sería
 abandonar el aislamiento entre Organizaciones —la regla 2— para conseguir un desorden general. No
