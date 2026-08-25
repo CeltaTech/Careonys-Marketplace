@@ -425,6 +425,22 @@ Etapa 3 del pendiente 21, el 24 de agosto de 2026.
   guardan la ficha y las cuatro secciones del legajo, la pantalla vuelve a su estado normal y la
   contraseña desaparece de la memoria y de la pantalla.
 
+### Las once migraciones ya corren en el servidor
+
+Comprobado el 24 de agosto de 2026 con `supabase migration list` contra el proyecto real: el
+servidor tiene aplicadas 0001 a 0011, las mismas once que hay en `supabase/migrations/`. Antes
+tenía hasta la 0008, y esa distancia costaba dos cosas que ya no cuestan:
+
+- **La columna del contacto existe.** La 0009 agregó `care_searches.contact_info`, que es donde
+  `js/apiClient.js:461` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
+  público de `solicitar-asistente.html` mandaba una columna que la base no tenía.
+- **Las filas de ejemplo hablan el idioma del catálogo.** La 0010 reemplazó las claves viejas de
+  las cuatro filas ficticias —«enfermero» y compañía— por las que las pantallas esperan.
+- **La 0011 armó el directorio**, que es lo que hoy se ve sin sesión.
+
+Queda dicho porque el estado real manda sobre el documentado (`CLAUDE.md` §7): un archivo en
+`supabase/migrations/` describe lo que se quiso aplicar, no lo que corre. Esto último se preguntó.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,

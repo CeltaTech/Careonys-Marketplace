@@ -73,8 +73,11 @@
   <!-- CURSOS -->
   <section style="background:var(--superficie-hover);padding:40px 24px 80px;" id="cursos">
     <div style="max-width:1100px;margin:0 auto;">
-      <h2 style="font-size:28px;font-weight:800;margin-bottom:40px;text-align:center;" class="fade-in">Cursos
+      <h2 style="font-size:28px;font-weight:800;margin-bottom:12px;text-align:center;" class="fade-in">Cursos
         disponibles</h2>
+      <p style="text-align:center;color:var(--texto-secundario);font-size:14px;max-width:640px;margin:0 auto 40px auto;"
+        class="fade-in">Esta es la oferta general de capacitaciones. La inscripción se pide en el formulario del final
+        de esta página.</p>
       <div class="courses-grid" data-oferta="cursos">
         <template>
           <div class="course-card fade-in">
@@ -190,8 +193,14 @@
   <script src="js/identidad.js"></script>
   <script src="js/texto.js"></script>
   <script src="js/catalogo.js"></script>
-  <!-- Esta página es demostrativa: no consulta la base. Por eso no carga el cliente
-       de datos ni el de sesión, que se conectaban solos al abrirla. -->
+  <!-- La lista de cursos sale de `data/catalogo-oferta.json` y no de la base, y no es un
+       olvido. Las mismas seis filas están en la tabla `cursos` desde la migración 0008,
+       pero su política es `for select to authenticated`: la base no se las muestra a
+       quien no inició sesión, y esta pantalla es pública. Abrirle la lectura a `anon` es
+       ampliar el acceso anónimo, y eso no se hace sin decisión del Desarrollador: es el
+       pendiente 25, del que depende además el 7. Mientras tanto la pantalla lee el
+       archivo, que es de donde leen todas las pantallas portadas. Por eso tampoco carga
+       el cliente de datos ni el de sesión. -->
   <script src="js/main.js"></script>
 </body>
 
