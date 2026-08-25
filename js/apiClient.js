@@ -236,42 +236,42 @@ const ClienteDatos = {
     return await this._supabasePatch('caregivers', id, { estado: nuevoEstado, notaPrestadora: notaInterna });
   },
 
-  // --- MÓDULO 2: BÚSQUEDAS Y SOLICITUDES DE FAMILIAS ---
-  async getBusquedasFamilia() {
+  // --- MÓDULO 2: AVISOS Y SOLICITUDES DE FAMILIAS ---
+  async getAvisosFamilia() {
     const filter = {};
     if (this.currentTenant) {
       filter.tenant_id = this.currentTenant.id;
     }
-    return await this._supabaseGet('care_searches', filter);
+    return await this._supabaseGet('avisos', filter);
   },
 
   // Las franjas —cuándo se necesita el cuidado— no son una columna de
-  // `care_searches`: son filas de `franjas_busqueda`, una por casillero
-  // marcado (migración 0015). Por eso se apartan antes de mandar la búsqueda y
-  // se guardan después, cuando la búsqueda ya tiene identificador.
-  async crearBusquedaFamilia(busquedaData) {
-    const dbData = { ...busquedaData };
+  // `avisos`: son filas de `franjas_aviso`, una por casillero
+  // marcado (migración 0016). Por eso se apartan antes de mandar el aviso y
+  // se guardan después, cuando el aviso ya tiene identificador.
+  async crearAvisoFamilia(avisoData) {
+    const dbData = { ...avisoData };
     const franjas = dbData.franjas || [];
     delete dbData.franjas;
     if (this.currentTenant) {
       dbData.tenant_id = this.currentTenant.id;
     }
-    const busqueda = await this._supabasePost('care_searches', dbData);
-    if (busqueda && busqueda.id && franjas.length > 0) {
+    const aviso = await this._supabasePost('avisos', dbData);
+    if (aviso && aviso.id && franjas.length > 0) {
       try {
-        await this.guardarFranjasDeBusqueda(busqueda.id, franjas);
+        await this.guardarFranjasDeAviso(aviso.id, franjas);
       } catch (err) {
-        // La búsqueda ya está publicada: no se puede deshacer con otro pedido
+        // El aviso ya está publicado: no se puede deshacer con otro pedido
         // sin arriesgarse a borrar algo que sí quedó bien. Lo que se puede
         // hacer es no mentir sobre qué pasó.
-        console.error('Las franjas de la búsqueda ' + busqueda.id + ':', err);
-        const aviso = new Error('busqueda_sin_franjas');
-        aviso.busqueda = busqueda;
-        aviso.causa = err;
-        throw aviso;
+        console.error('Las franjas del aviso ' + aviso.id + ':', err);
+        const falla = new Error('aviso_sin_franjas');
+        falla.aviso = aviso;
+        falla.causa = err;
+        throw falla;
       }
     }
-    return busqueda;
+    return aviso;
   },
 
   // Una fila por casillero marcado. `dia` y `turno` guardan claves de los
@@ -281,42 +281,42 @@ const ClienteDatos = {
   // escribía una forma distinta —pendiente 40—: la aplicación de la Familia
   // mandaba turnos sin decir de qué día, y el formulario del portal preguntaba
   // días y no mandaba nada.
-  async guardarFranjasDeBusqueda(searchId, franjas) {
+  async guardarFranjasDeAviso(avisoId, franjas) {
     const filas = (franjas || []).map((franja) => {
-      const fila = { search_id: searchId, dia: franja.dia, turno: franja.turno };
+      const fila = { aviso_id: avisoId, dia: franja.dia, turno: franja.turno };
       if (this.currentTenant) fila.tenant_id = this.currentTenant.id;
       return fila;
     });
     if (filas.length === 0) return [];
-    return await this._supabaseRequest('POST', 'franjas_busqueda', filas);
+    return await this._supabaseRequest('POST', 'franjas_aviso', filas);
   },
 
-  async getFranjasDeBusqueda(searchId) {
-    return await this._supabaseRequest('GET', 'franjas_busqueda', null,
-      { search_id: `eq.${searchId}` });
+  async getFranjasDeAviso(avisoId) {
+    return await this._supabaseRequest('GET', 'franjas_aviso', null,
+      { aviso_id: `eq.${avisoId}` });
   },
 
   // Alias con campos camelCase — usado por pwa-familia/index.html (screen-publicar)
   // Normaliza el vocabulario de la UI al vocabulario interno del mapper.
-  async crearBusqueda(busquedaData) {
-    return await this.crearBusquedaFamilia({
-      paciente:      busquedaData.patientName  || busquedaData.paciente,
-      patologias:    busquedaData.pathologiesRequired || busquedaData.patologias || [],
-      horarios:      busquedaData.scheduleType || busquedaData.horarios,
+  async crearAviso(avisoData) {
+    return await this.crearAvisoFamilia({
+      paciente:      avisoData.patientName  || avisoData.paciente,
+      patologias:    avisoData.pathologiesRequired || avisoData.patologias || [],
+      horarios:      avisoData.scheduleType || avisoData.horarios,
       // Cuándo se necesita el cuidado. Sale de `Franjas.recolectar()`, así que
       // llega como una lista de pares `{ dia, turno }` con claves de catálogo.
-      franjas:       busquedaData.franjas || [],
-      family_user_id: busquedaData.familyUserId || busquedaData.family_user_id || null,
+      franjas:       avisoData.franjas || [],
+      family_user_id: avisoData.familyUserId || avisoData.family_user_id || null,
       // Migración 0013. Cada uno con sus dos nombres porque la pantalla del
       // teléfono escribe algunos en inglés y otros en castellano; este atajo
       // existe justamente para absorber esa mezcla.
-      zona:            busquedaData.zone || busquedaData.zona,
-      descripcion:     busquedaData.description || busquedaData.descripcion,
-      motivoConsulta:  busquedaData.consultationReason || busquedaData.motivoConsulta,
-      tareas:          busquedaData.tasksRequired || busquedaData.tareas,
-      profesion:       busquedaData.professionRequired || busquedaData.profesion,
-      generoPreferido: busquedaData.preferredGender || busquedaData.generoPreferido,
-      frecuencia:      busquedaData.frequency || busquedaData.frecuencia
+      zona:            avisoData.zone || avisoData.zona,
+      descripcion:     avisoData.description || avisoData.descripcion,
+      motivoConsulta:  avisoData.consultationReason || avisoData.motivoConsulta,
+      tareas:          avisoData.tasksRequired || avisoData.tareas,
+      profesion:       avisoData.professionRequired || avisoData.profesion,
+      generoPreferido: avisoData.preferredGender || avisoData.generoPreferido,
+      frecuencia:      avisoData.frequency || avisoData.frecuencia
     });
   },
 
@@ -332,7 +332,7 @@ const ClienteDatos = {
 
   async registrarBitacoraDiaria(entryData) {
     return await this._supabaseRequest('POST', 'logbook_entries', {
-      search_id: entryData.searchId || entryData.busquedaId,
+      aviso_id: entryData.avisoId,
       caregiver_id: entryData.caregiverId,
       blood_pressure: entryData.presion || entryData.blood_pressure,
       glycemia: entryData.glucemia || entryData.glycemia,
@@ -341,10 +341,10 @@ const ClienteDatos = {
     });
   },
 
-  async getBitacoraDiaria(searchId = null) {
+  async getBitacoraDiaria(avisoId = null) {
     const queryParams = {};
-    if (searchId) {
-      queryParams.search_id = `eq.${searchId}`;
+    if (avisoId) {
+      queryParams.aviso_id = `eq.${avisoId}`;
     }
     queryParams.order = 'created_at.desc';
     return await this._supabaseRequest('GET', 'logbook_entries', null, queryParams);
@@ -440,7 +440,7 @@ const ClienteDatos = {
   },
 
   // --- MÓDULO: EL DIRECTORIO ---
-  // La única lista que se ve sin iniciar sesión. Sale de `caregivers_publicos`,
+  // La única lista que se ve sin iniciar sesión. Sale de `directorio`,
   // que exige las dos condiciones —la Prestadora validó el legajo y la persona
   // autorizó a publicarlo— y no devuelve ni un dato de contacto (migración
   // 0012). Lo que se muestra es lo que el consentimiento promete y nada más:
@@ -467,14 +467,14 @@ const ClienteDatos = {
     // enlace que pedía otra empresa.
     if (this.slugPedido && this.prestadoraEsDeRespaldo) throw new Error('PRESTADORA_DESCONOCIDA');
 
-    return await this._supabaseRequest('GET', 'caregivers_publicos', null, {
+    return await this._supabaseRequest('GET', 'directorio', null, {
       tenant_id: `eq.${prestadora.id}`,
       order: 'full_name.asc'
     });
   },
 
   // Una sola persona del directorio, por su identificador. Va a la misma vista
-  // pública que la lista —`caregivers_publicos`— y nunca a la tabla: así una
+  // pública que la lista —`directorio`— y nunca a la tabla: así una
   // dirección escrita a mano no puede mostrar a alguien que no autorizó
   // publicarse, ni un dato que la vista no devuelve.
   //
@@ -496,7 +496,7 @@ const ClienteDatos = {
     if (!prestadora || !prestadora.id) throw new Error('SIN_PRESTADORA');
     if (this.slugPedido && this.prestadoraEsDeRespaldo) throw new Error('PRESTADORA_DESCONOCIDA');
 
-    const filas = await this._supabaseRequest('GET', 'caregivers_publicos', null, {
+    const filas = await this._supabaseRequest('GET', 'directorio', null, {
       id: `eq.${id}`,
       tenant_id: `eq.${prestadora.id}`,
       limit: '1'
@@ -601,7 +601,7 @@ const ClienteDatos = {
         fechaRegistro: row.created_at ? row.created_at.split('T')[0] : ''
       };
     }
-    if (table === 'care_searches') {
+    if (table === 'avisos') {
       return {
         id: row.id,
         paciente: row.patient_name,
@@ -609,9 +609,9 @@ const ClienteDatos = {
         contacto: row.contact_info || null,
         horarios: row.schedule_type,
         // La grilla de días y turnos no está más acá: cada casillero es una
-        // fila de `franjas_busqueda` y se pide con `getFranjasDeBusqueda`. La
+        // fila de `franjas_aviso` y se pide con `getFranjasDeAviso`. La
         // columna `grid_schedule_7x3` sigue existiendo con lo que le quedó
-        // guardado, pero ninguna pantalla le escribe ni la lee (migración 0015).
+        // guardado, pero ninguna pantalla le escribe ni la lee (migración 0016).
         estado: row.status,
         // Lo que la Familia pide y hasta la migración 0013 no tenía dónde
         // guardarse.
@@ -673,16 +673,16 @@ const ClienteDatos = {
       llevar('nacionalidad', 'nationality');
       llevar('valorHora', 'hourly_rate', (v) => v || null);
       llevar('estado', 'verification_status');
-    } else if (table === 'care_searches') {
+    } else if (table === 'avisos') {
       llevar('tenant_id', 'tenant_id');
       llevar('family_user_id', 'family_user_id');
       llevar('paciente', 'patient_name');
       llevar('patologias', 'pathologies_required');
       llevar('horarios', 'schedule_type');
       // `grid_schedule_7x3` no se escribe más: las franjas son filas de
-      // `franjas_busqueda` y las manda `crearBusquedaFamilia`. Si alguna
-      // pantalla vuelve a mandar `grillaHorarios`, el aviso del final de este
-      // método lo va a decir, que es justamente lo que se quiere.
+      // `franjas_aviso` y las manda `crearAvisoFamilia`. Si alguna
+      // pantalla vuelve a mandar `grillaHorarios`, la advertencia del final de
+      // este método lo va a decir, que es justamente lo que se quiere.
       llevar('contacto', 'contact_info');
       llevar('estado', 'status');
       // Migración 0013: lo que las pantallas de la Familia ya preguntaban.

@@ -410,7 +410,7 @@ if (!coordinador) {
   }, coordinador.token);
 
   const enDirectorio = async () => {
-    const { cuerpo } = await rest('/rest/v1/caregivers_publicos?select=id&id=eq.' + a.legajoId);
+    const { cuerpo } = await rest('/rest/v1/directorio?select=id&id=eq.' + a.legajoId);
     return Array.isArray(cuerpo) && cuerpo.length === 1;
   };
 
@@ -437,7 +437,7 @@ if (!coordinador) {
   comprobar('Contestó que sí: recién ahí aparece en el directorio',
     dijoQueSi === true, dijoQueSi ? 'aparece' : 'no aparece');
 
-  const { cuerpo: fila } = await rest('/rest/v1/caregivers_publicos?id=eq.' + a.legajoId);
+  const { cuerpo: fila } = await rest('/rest/v1/directorio?id=eq.' + a.legajoId);
   const columnas = Array.isArray(fila) && fila[0] ? Object.keys(fila[0]) : [];
   const prohibidas = ['dni', 'phone', 'email', 'address', 'bank_info', 'cuit',
                       'documents', 'birthdate', 'reference_info', 'education_info'];
@@ -565,7 +565,7 @@ for (const c of cuentas) {
     });
   }
 }
-const { cuerpo: quedan } = await rest('/rest/v1/caregivers_publicos?select=id&full_name=like.Legajo Ficticio*');
+const { cuerpo: quedan } = await rest('/rest/v1/directorio?select=id&full_name=like.Legajo Ficticio*');
 console.log('Legajos de prueba borrados. Quedan visibles en el directorio: ' +
   (Array.isArray(quedan) ? quedan.length : '?'));
 console.log('Las cuentas ficticias quedan en auth.users: se borran con el resto de los datos');

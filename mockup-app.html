@@ -202,7 +202,7 @@
       <!-- Se llamaba «Cuidadores recomendados» y no había ninguna recomendación
            detrás: las dos tarjetas de ejemplo eran nombres escritos a mano con
            un porcentaje de afinidad que no calculaba nadie. Ahora salen de
-           `caregivers_publicos`, la misma vista que el directorio. -->
+           `directorio`, la misma vista que el directorio. -->
       <div class="section-title">
         <span>Asistentes</span>
         <a href="directorio.html">Ver todos</a>
@@ -431,7 +431,7 @@
       }
     });
 
-    // Los Asistentes que se pueden mostrar salen de `caregivers_publicos`:
+    // Los Asistentes que se pueden mostrar salen de `directorio`:
     // gente con el legajo validado por la Prestadora y con la publicación
     // autorizada. Antes salían de la tabla `caregivers`, que es el personal
     // entero y no distingue una cosa de la otra.
@@ -800,7 +800,7 @@
       const userId = session ? session.user.id : 'demo-user';
 
       // Crear o recuperar conversacion para demo
-      // Se usa search_id del primer care_search activo, o null en modo demo
+      // Se usa aviso_id del primer aviso activo, o null en modo demo
       let conversaciones = [];
       try {
         const res = await fetch(

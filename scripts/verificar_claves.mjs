@@ -240,7 +240,7 @@ const BUENOS = [
   ['arreglo con claves buenas',
    `insert into public.caregivers (id, pathologies, tasks) values ('a', '["acv"]'::jsonb, '["higiene"]'::jsonb);`],
   ['columna sin vocabulario, no se juzga',
-   "insert into public.care_searches (id, schedule_type) values ('a', 'turno_manana');"],
+   "insert into public.avisos (id, schedule_type) values ('a', 'turno_manana');"],
   ['una comilla adentro del texto no corre las columnas',
    "insert into public.caregivers (full_name, profession) values ('O''Brien Ficticio', 'voluntario');"],
   ['un comentario que nombra una clave vieja',

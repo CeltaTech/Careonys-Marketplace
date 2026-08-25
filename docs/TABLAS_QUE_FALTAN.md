@@ -30,7 +30,7 @@ forma, y **manda lo que está en `supabase/migrations/`**, no lo que proponía e
 | `certificaciones` | `matriculas_asistente`, `estudios_asistente` y `cursos` |
 | `referencias_laborales` | `referencias_asistente` |
 | documentos en Storage | `documentos_asistente` |
-| `avisos` | `care_searches`, con `franjas_busqueda` para sus días y turnos |
+| `avisos` | `avisos`, con `franjas_aviso` para sus días y turnos |
 
 Y hay cuatro que el material heredado no previó y existen igual: `tenants`, `clock_ins`,
 `logbook_entries` y las cuatro de la evaluación (`evaluaciones`, `preguntas_evaluacion`,
@@ -60,12 +60,13 @@ Antes de escribir cualquiera de las diez, y sin excepción:
    (`CLAUDE.md` §5.12). De las diez, ocho son propias de la modalidad de este producto y sólo dos
    son compartidas. La columna «De qué lado cae» de cada ficha lo dice.
 
-**Y una advertencia de vocabulario.** El material heredado llamaba `avisos` a lo que publica una
-Familia, pero en este producto **un aviso es por dónde sale una notificación** —WhatsApp, correo,
-notificación al celular—, y `docs/GLOSARIO.md:36` avisa expresamente de esa colisión. Acá se
-escribe **búsqueda de cuidado**, que es lo que ya guarda `care_searches`. El módulo se sigue
-llamando `avisos` (`docs/MODULOS.md`), así que la palabra convive con los dos sentidos y
-alguna vez habrá que elegir.
+**La colisión de vocabulario que había acá se decidió.** El material heredado llamaba `avisos`
+a lo que publica una Familia, y este documento advertía que en el producto «aviso» se usaba
+para otra cosa: el aviso de que el Asistente llegó, el aviso que sale por WhatsApp o por
+correo. **El 25 de agosto de 2026 el Desarrollador eligió**: el **Aviso** es lo que la Familia
+publica y queda guardado, y la tabla se llama `avisos`. Para el otro sentido queda
+**notificación**, que es la palabra que el proyecto ya venía usando en `notificaciones`. Lo que
+no es ninguna de las dos cosas es **búsqueda**: buscar es el acto, y el acto no se guarda.
 
 ---
 
@@ -80,7 +81,7 @@ búsquedas se guardan, pero las dos puntas nunca se tocan.
 | | |
 |---|---|
 | **De qué lado cae** | Propia de esta modalidad — módulo `avisos`. En prestación directa el trabajo se asigna, no se postula |
-| **De qué depende** | De `care_searches` y de `caregivers`, las dos ya existentes |
+| **De qué depende** | De `avisos` y de `caregivers`, las dos ya existentes |
 | **Qué hay que decidir antes** | Si la tarifa propuesta se guarda acá, y con qué moneda (regla 11). Y qué pasa cuando la búsqueda se cierra con varias postulaciones abiertas |
 
 Columnas propuestas: búsqueda, Asistente, estado, mensaje, tarifa propuesta, fecha en que se vio,
@@ -144,13 +145,13 @@ se cambia de servicio, dos columnas de esta tabla quedan sin sentido.
 
 | | |
 |---|---|
-| **De qué lado cae** | Propia de esta modalidad — módulo `orden`. En prestación directa nadie elige |
-| **De qué depende** | De que exista una contratación terminada, que hoy no existe |
+| **De qué lado cae** | **Compartida**, corregido el 25 de agosto de 2026 —antes decía que era de esta modalidad—. La calificación es evidencia sobre la persona y la acompaña a donde trabaje: quien recibió el cuidado puede opinar lo haya elegido o se lo hayan asignado. Lo que se queda de este lado es cuánto pesa y en qué orden ordena, módulo `orden`, no la reseña |
+| **De qué depende** | De que exista un trabajo terminado, que hoy no existe de ningún lado. **Y no puede colgar del aviso**: el aviso es de esta modalidad, y una tabla compartida que apunta a un objeto de un solo lado arrastra el lado entero con ella —es el mismo defecto que `logbook_entries.aviso_id` y `messages.aviso_id`, anotado en el pendiente 52—. Tiene que colgar del trabajo hecho, que en esta modalidad llega por un aviso y en prestación directa por una asignación |
 | **Qué hay que decidir antes** | **Es lógica comercial y está congelada** por `docs/ALCANCE.md` §4. Además: quién puede calificar, si el Asistente puede responder, y quién puede esconder una reseña |
 
-Columnas propuestas: Asistente, Familia, búsqueda, calificación de 1 a 5, puntos otorgados,
-comentario, respuesta del Asistente, si es visible. Una sola reseña por Familia, Asistente y
-búsqueda.
+Columnas propuestas: Asistente, quién califica, el trabajo terminado que se califica, calificación
+de 1 a 5, puntos otorgados, comentario, respuesta del Asistente, si es visible. Una sola reseña
+por persona, Asistente y trabajo.
 
 **Falta `prestadora_id`.** Y una reseña visible es dato de una persona: la RLS de esta tabla es de
 las delicadas.

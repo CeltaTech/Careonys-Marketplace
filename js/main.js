@@ -218,8 +218,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // El paso 4 pregunta cuándo se necesita el cuidado con la misma grilla de
     // días por turnos que el alta del Asistente pregunta al revés. Los textos y
     // los casilleros los pone `js/disponibilidad.js` desde el catálogo.
-    Franjas.montarTextos('franjas-cuidado', 'paso_de_franjas_busqueda');
-    Franjas.montarGrilla('grilla-cuidado', 'grilla_busqueda');
+    Franjas.montarTextos('franjas-cuidado', 'paso_de_franjas_aviso');
+    Franjas.montarGrilla('grilla-cuidado', 'grilla_aviso');
 
     wizardForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Escribir acá una quinta forma sería empeorarlo.
         horarios: 'flexible',
         // Un par `{ dia, turno }` por casillero marcado, con claves de
-        // catálogo. Va a `franjas_busqueda`, una fila cada uno.
+        // catálogo. Va a `franjas_aviso`, una fila cada uno.
         franjas: Franjas.recolectar('grilla-cuidado').franjas,
         tareas: elegidas('tarea_cuidado'),
         profesion: tipoAsistente[0] || '',
@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (btnSubmit) btnSubmit.disabled = true;
       try {
-        await ClienteDatos.crearBusquedaFamilia(newSearch);
+        await ClienteDatos.crearAvisoFamilia(newSearch);
         if (successMsg) successMsg.style.display = 'block';
         if (btnSubmit) btnSubmit.style.display = 'none';
       } catch (err) {

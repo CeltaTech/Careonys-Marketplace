@@ -472,7 +472,7 @@ Comprobado el 24 de agosto de 2026 contra el proyecto real: el servidor tiene ap
 0013, las mismas trece que hay en `supabase/migrations/`. Antes tenía hasta la 0008, y esa
 distancia costaba dos cosas que ya no cuestan:
 
-- **La columna del contacto existe.** La 0009 agregó `care_searches.contact_info`, que es donde
+- **La columna del contacto existe.** La 0009 agregó `avisos.contact_info`, que es donde
   `js/apiClient.js:461` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
   público de `solicitar-asistente.html` mandaba una columna que la base no tenía.
 - **Las filas de ejemplo hablan el idioma del catálogo.** La 0010 reemplazó las claves viejas de
@@ -487,7 +487,7 @@ Para la 0012 se preguntó dos veces, porque la primera vez el programa dijo que 
 la migración había fallado a la mitad: se le pidió a la base, tabla por tabla, que dijera qué
 tiene. `banderas_asistente` contesta que no existe; `autorizaciones_asistente`,
 `disponibilidad_asistente` y `franjas_asistente` contestan que existen y que a un visitante sin
-sesión no le muestran nada; y `caregivers_publicos` devuelve la columna `reemplazos_urgentes` y
+sesión no le muestran nada; y `directorio` devuelve la columna `reemplazos_urgentes` y
 ya no devuelve `disponible_urgencias`.
 
 ### Las últimas listas escritas a mano se fueron de las pantallas
@@ -530,7 +530,7 @@ justamente la falla que el catálogo existe para no tener (regla 5.3).
 
 ### Lo que una Familia pide ya tiene dónde guardarse
 
-Tres pantallas le preguntan cosas a una Familia y `care_searches` tenía siete columnas. Lo que
+Tres pantallas le preguntan cosas a una Familia y `avisos` tenía siete columnas. Lo que
 sobraba no daba error: se perdía en silencio un paso antes de la base. La 0013 le dio una columna
 a cada cosa —`zone`, `description`, `consultation_reason`, `tasks_required`,
 `profession_required`, `preferred_gender` y `frequency`— y las tres pantallas ya las usan.
@@ -556,7 +556,7 @@ Comprobado en el navegador, pantalla por pantalla, mirando la fila que sale haci
 nombre que no reconociera: así se perdieron la grilla de disponibilidad, la zona y la descripción,
 y la falla se veía recién cuando alguien iba a buscar el dato a la base. Ahora cada campo se
 declara una sola vez y de esa misma lista sale la de nombres conocidos, así que el traductor puede
-avisar: *«la tabla care_searches no tiene dónde guardar «colorFavorito». Eso se pregunta en
+avisar: *«la tabla avisos no tiene dónde guardar «colorFavorito». Eso se pregunta en
 pantalla y no se está guardando»*. Era el pendiente 37.
 
 **Falta una sola cosa de las que se preguntan**, y se dejó afuera a propósito: la modalidad de
@@ -601,7 +601,7 @@ descartaba sin decir nada. Era el pendiente 23, y estaba abierto desde que la pa
 Hecho el 25 de agosto de 2026. Es el pendiente 40, y la mitad que la línea de comandos puede
 hacer está hecha; la otra mitad es del Desarrollador y está al final.
 
-- **El problema no era la columna, era la pregunta.** `care_searches.grid_schedule_7x3` es una
+- **El problema no era la columna, era la pregunta.** `avisos.grid_schedule_7x3` es una
   columna `jsonb` y cada pantalla le escribía una forma distinta porque **ninguna de las dos
   preguntaba las dos cosas**: `pwa-familia/index.html` pedía turnos sin decir de qué día y
   `formulario-integral.html` pedía días sin decir de qué turno. Con media pregunta no había forma
@@ -613,7 +613,7 @@ hacer está hecha; la otra mitad es del Desarrollador y está al final.
   Asistente dice «¿Cuándo puede trabajar?» y marca «Disponible»; la de la búsqueda dice «¿Cuándo se
   necesita el cuidado?» y marca «Se necesita». El mismo casillero, dos preguntas distintas.
 - **Se guarda como lo guarda un Asistente: una fila por casillero.** La migración 0015 crea
-  `franjas_busqueda`, espejo exacto de `franjas_asistente` —clave de `dia_semana`, clave de
+  `franjas_aviso`, espejo exacto de `franjas_asistente` —clave de `dia_semana`, clave de
   `turno`, una sola por par, aislamiento por Prestadora, y `anon` sin ningún permiso—. El día que
   alguien quiera cruzar lo que un Asistente puede dar con lo que una Familia necesita, de los dos
   lados va a haber filas comparables.
@@ -624,7 +624,7 @@ hacer está hecha; la otra mitad es del Desarrollador y está al final.
   segundo falla, la búsqueda ya quedó publicada: decir «no se pudo publicar» haría que la persona
   publique de nuevo y queden dos. Dice lo que pasó —que la búsqueda está publicada y que los días y
   turnos no se guardaron— y aclara que no hace falta publicarla otra vez (`js/texto.js`,
-  `busqueda_sin_franjas`).
+  `aviso_sin_franjas`).
 - **Los estilos de la grilla salieron del HTML.** Estaban escritos adentro de
   `pwa-asistente/index.html` y ahora viven en `css/styles-pwa.css`, que las dos aplicaciones
   comparten byte a byte. Es un renglón menos para el pendiente 33.
@@ -638,12 +638,12 @@ hacer está hecha; la otra mitad es del Desarrollador y está al final.
 **Lo que falta y es del Desarrollador.** Son dos cosas, y la segunda toca datos guardados, que por
 regla no las mueve la línea de comandos:
 
-1. **Aplicar la migración `supabase/migrations/0015_franjas_de_una_busqueda.sql`** pegándola en el
+1. **Aplicar la migración `supabase/migrations/0016_franjas_de_un_aviso.sql`** pegándola en el
    panel de Supabase, en SQL Editor. Hasta que corra, publicar una búsqueda guarda la búsqueda pero
    no sus días y turnos, y la pantalla lo dice.
-2. **Vaciar y sacar `care_searches.grid_schedule_7x3`.** Ya no la escribe ni la lee nadie, pero la
+2. **Vaciar y sacar `avisos.grid_schedule_7x3`.** Ya no la escribe ni la lee nadie, pero la
    columna existe y tiene adentro las dos formas viejas. La línea es
-   `alter table public.care_searches drop column grid_schedule_7x3;`
+   `alter table public.avisos drop column grid_schedule_7x3;`
 
 ### El alta del teléfono guarda el legajo entero, y no sólo la disponibilidad
 
@@ -685,7 +685,7 @@ quedaban vacías —`matriculas_asistente`, `estudios_asistente`, `experiencia_l
 `franjas_asistente`, y `caregivers.user_id` con la cuenta que acababa de crearse.
 
 La prueba puede fallar, que es lo que la hace valer: con el legajo validado por la Prestadora y la
-autorización en «sí», la persona aparece en `caregivers_publicos`; poniendo esa misma autorización
+autorización en «sí», la persona aparece en `directorio`; poniendo esa misma autorización
 en «no», desaparece. Es exactamente el camino que antes no existía.
 
 
@@ -739,7 +739,7 @@ Cierra el pendiente 44, el 25 de agosto de 2026.
 `perfil.html` tenía ocho personas escritas adentro, numeradas del 1 al 8. Ahora lee de la base la
 persona cuyo identificador viene en la dirección, y dibuja seis datos: nombre, foto, zona, qué
 atiende, precio por hora y si acepta reemplazos urgentes. Son exactamente los que devuelve
-`caregivers_publicos`, la vista que sólo deja pasar a quien tiene el legajo validado por la
+`directorio`, la vista que sólo deja pasar a quien tiene el legajo validado por la
 Prestadora **y** además autorizó que se lo publique.
 
 - **Lo trae `traerDelDirectorio` (`js/apiClient.js:486`)**, que pide una sola fila filtrando por
@@ -1013,7 +1013,7 @@ ser material heredado. Un documento vencido que nadie corrige no se queda quieto
 
 **Qué se hizo antes de borrarlo.** Se midieron sus 22 tablas propuestas contra las 22 que
 existen de verdad en `supabase/migrations/`. Doce ya estaban construidas con otro nombre
-—`cuidadores` es `caregivers`, `avisos` es `care_searches`, `certificaciones` son tres tablas
+—`cuidadores` es `caregivers`, `avisos` es `avisos`, `certificaciones` son tres tablas
 distintas—, y en esos casos **manda la migración, no el documento**. Diez no existían, y ese era
 todo el valor que quedaba: postulaciones, chat, videollamadas, reseñas, puntos, notificaciones,
 favoritos, pagos, moderación y configuración.
@@ -1034,12 +1034,13 @@ es una palabra propia de esta modalidad y no puede aparecer en un módulo compar
 `video_llamadas` y `pagos` tienen columnas que atan el esquema a un proveedor externo que todavía
 no se eligió. Las cinco reglas que ninguna puede saltearse están al principio del documento nuevo.
 
-**Una colisión de vocabulario que quedó anotada.** El material heredado llamaba `avisos` a lo que
-publica una Familia, pero en este producto **un aviso es por dónde sale una notificación**
-—WhatsApp, correo, notificación al celular—, y `docs/GLOSARIO.md:36` avisa expresamente de esa
-colisión. En el documento nuevo se escribe **búsqueda de cuidado**, que es lo que ya guarda
-`care_searches`. El módulo se sigue llamando `avisos`, así que la palabra convive con los
-dos sentidos y alguna vez habrá que elegir. No se decidió nada: se dejó escrito.
+**Una colisión de vocabulario que quedó anotada, y que después se decidió.** El material
+heredado llamaba `avisos` a lo que publica una Familia, y en el producto «aviso» se usaba
+para otra cosa: el aviso de que el Asistente llegó, el que sale por WhatsApp o por correo.
+Se dejó escrito sin decidir. **El 25 de agosto de 2026 el Desarrollador decidió**: el Aviso
+es lo que la Familia publica, la tabla se llama `avisos`, y para el otro sentido queda
+**notificación**. Ver más abajo, «Las dos tablas de esta modalidad pasaron a llamarse como lo
+que guardan».
 
 **Lo que se descartó y no se trajo.** La arquitectura entera, el sistema de diseño propuesto
 —superado por `css/tokens.css`, que existe y funciona—, seis proveedores externos elegidos de
@@ -1175,7 +1176,7 @@ del tablero de la Familia y se arregló ahí mismo.
 
 - **Salía de la tabla equivocada.** Leía `caregivers`, que es el personal entero de la Prestadora,
   incluida la gente cuyo legajo todavía no se validó y la que no autorizó publicarse. Ahora lee
-  `caregivers_publicos`, la misma vista que el directorio, que exige las dos cosas.
+  `directorio`, la misma vista que el directorio, que exige las dos cosas.
 
 - **Quien no tenía foto llevaba la cara de otra persona.** El respaldo era
   `assets/images/perfil_maria.png`, una foto de banco de imágenes: cualquier Asistente sin retrato
@@ -1209,7 +1210,7 @@ del tablero de la Familia y se arregló ahí mismo.
   cuelga de la raíz. No se tocó el dato guardado.
 
 **Lo que se probó.** Todo, y en el servidor de mirar las pantallas: las cuatro tarjetas reales que
-devuelve `caregivers_publicos` —nombres inventados, tipo y zona traducidos por el catálogo, precio
+devuelve `directorio` —nombres inventados, tipo y zona traducidos por el catálogo, precio
 por hora con el formato del proyecto, inicial en lugar de foto porque ninguna tiene—, el estado de
 error forzado rompiendo la dirección del servidor, el botón de reintentar volviendo a la lista, el
 estado vacío, y el nombre con una etiqueta adentro. Después de eso, cero pedidos a `placeholder.com`
@@ -1223,7 +1224,7 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
   renglones de tarjetas a mano, con nombres, puntajes, estrellas, un «98% Match» y cuatro
   insignias de verificación, ninguno de los cuales salía de ningún lado. Ahora hay un molde
   —`<template id="molde-asistente">`, `directorio.html:116`— y el contenido llega de
-  `caregivers_publicos`. El archivo pasó de 534 renglones a 342.
+  `directorio`. El archivo pasó de 534 renglones a 342.
 - **Todo lo inventado se fue con las tarjetas.** No hay sistema de puntaje, no hay estrellas y no
   hay porcentaje de coincidencia, así que no se muestran. Lo que queda es lo que el consentimiento
   promete —nombre, foto, zona, qué atiende y precio por hora
@@ -1239,7 +1240,7 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
   cuatro Asistentes de PresDemo, porque el respaldo devuelve la primera Prestadora de la base. El
   respaldo sirve para una dirección que no nombra ninguna, no para una que nombra mal. Ahora se
   distingue un caso del otro (`js/apiClient.js:74`, `:85` y `:468`) y el segundo avisa.
-- **La base tenía el directorio vacío y nadie se enteraba.** `caregivers_publicos` devolvía **cero
+- **La base tenía el directorio vacío y nadie se enteraba.** `directorio` devolvía **cero
   filas**, y no por un problema de permisos: los legajos inventados de la migración 0003 están
   validados, pero nadie había contestado la autorización de publicación, que la vista exige. Con
   ocho tarjetas dibujadas encima, eso no se veía. La migración 0014 pone cinco legajos inventados
@@ -1258,7 +1259,7 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
   identificador de la base —que es un UUID— daba NaN, caía en el 1 y mostraba a otra persona sin
   avisar. Ese día un enlace que no reconocía pasó a decir lo que pasa y a ofrecer la vuelta al
   directorio. **Se cerró el 25 de agosto de 2026**, y con él el pendiente 44: hoy la pantalla lee
-  de `caregivers_publicos`, como cuenta «El perfil muestra a la persona que dice la dirección, y
+  de `directorio`, como cuenta «El perfil muestra a la persona que dice la dirección, y
   nada más que eso» más arriba.
 
 ### Un botón que opera se apaga mientras opera, y lo que no se puede deshacer se pregunta antes
@@ -1455,10 +1456,11 @@ la medición dice que no.
   esquema está en inglés —`caregivers`, `care_searches`, `clock_ins`—, así que ninguna de las
   siete la toca. Y la columna compartida que más cerca pasa de la línea,
   `autorizaciones_asistente.perfil_publicado`, no usa ninguna de las siete.
-- **Y la que decide: el único incumplimiento real que hay hoy es invisible para esa prueba.** Las
-  dos tablas de esta modalidad no llevan el prefijo de la modalidad que `docs/GLOSARIO.md:101` aprobó para
-  tablas el 24 de agosto, y ni `care_searches` ni `franjas_busqueda` contienen ninguna de las
-  siete palabras. La prueba pasaría limpia con el problema adentro.
+- **Y la que decide: el único incumplimiento real que había ese día era invisible para esa
+  prueba.** Las dos tablas de esta modalidad no llevaban el prefijo de la modalidad que
+  `docs/GLOSARIO.md:101` aprobó para tablas el 24 de agosto, y ni `care_searches` ni
+  `franjas_busqueda` —así se llamaban— contenían ninguna de las siete palabras. La prueba
+  pasaba limpia con el problema adentro.
 
 **Lo que falta no es el chequeo, es el prefijo.** La propia página lo dice en
 `docs/MODULOS.md:50`: el prefijo «es lo que hace que la prueba de más abajo se pueda correr con
@@ -1467,10 +1469,48 @@ una búsqueda de texto». Puesto el prefijo, la regla se vuelve mecánica —nad
 Sin el prefijo, cualquier chequeo tendría que saber de qué lado está cada tabla, y ese reparto
 tabla por tabla no está escrito en ningún lado: `docs/MODULOS.md` reparte módulos.
 
-Quedó anotado como **pendiente 52**, con el reparto de las 22 tablas ya propuesto para que
-decidirlo sea leer una lista y no armarla. **El momento importa:** `franjas_busqueda` la crea
-`supabase/migrations/0015_franjas_de_una_busqueda.sql`, que está escrita y sin aplicar, así que
-hoy renombrarla es editar un archivo; aplicada, es una migración de datos.
+Quedó anotado como **pendiente 52** y el Desarrollador lo decidió ese mismo día: se renombran
+las dos. Cómo quedó está en la sección de acá abajo.
+
+### Las dos tablas de esta modalidad pasaron a llamarse como lo que guardan
+
+**Decidido por el Desarrollador el 25 de agosto de 2026**, sobre el pendiente 52 y con las tres
+opciones a la vista: se renombran las dos, no una sola. El motivo que dio es el que cierra la
+discusión —*no puede ser que tengamos distintos nombres para la misma cosa*—, y vale más que el
+trabajo de arreglarlo.
+
+**Eran dos problemas encimados.** El primero, el prefijo: `docs/GLOSARIO.md:101` había aprobado el
+24 de agosto que lo que sólo existe en esta modalidad lo lleve en el nombre, y no lo llevaba
+ninguna tabla. El segundo, la palabra: `care_searches` no guardaba búsquedas. Una búsqueda es el
+acto de buscar y no deja nada guardado; lo que queda guardado es el aviso que publica la Familia.
+
+**Cómo quedó.**
+
+| Antes | Ahora | Qué pasó |
+|---|---|---|
+| `care_searches` | `avisos` | `supabase/migrations/0015_los_avisos_se_llaman_avisos.sql`, con su clave, su restricción, su índice y su política |
+| `logbook_entries.search_id` y `messages.search_id` | `aviso_id` | La misma migración, con sus dos restricciones |
+| `caregivers_publicos` | `directorio` | La misma migración. El nombre no es nuevo: es el del módulo, decidido el 24 de agosto en `docs/MODULOS.md:47` |
+| `franjas_busqueda` | `franjas_aviso` | No hubo renombre: la migración que la crea no estaba aplicada, así que se reescribió y se renumeró a `supabase/migrations/0016_franjas_de_un_aviso.sql`. Esa tabla nunca llegó a existir |
+| `franjas_busqueda.search_id` | `franjas_aviso.aviso_id` | Ídem |
+| `grilla_busqueda`, `paso_de_franjas_busqueda` | `grilla_aviso`, `paso_de_franjas_aviso` | Claves del catálogo `data/catalogo-disponibilidad.json` y sus dos copias |
+| `getBusquedasFamilia`, `crearBusquedaFamilia`, `crearBusqueda`, `guardarFranjasDeBusqueda`, `getFranjasDeBusqueda` | `getAvisosFamilia`, `crearAvisoFamilia`, `crearAviso`, `guardarFranjasDeAviso`, `getFranjasDeAviso` | `js/apiClient.js` y sus dos copias, más quien las llama |
+| `busqueda_sin_franjas` | `aviso_sin_franjas` | El error y su texto en `js/texto.js` |
+
+**Lo que la renumeración evitó.** La migración de las franjas era la 0015 y pasó a ser la 0016,
+porque tiene que correr después del renombre: cuelga de `avisos`. Como no se había pegado
+todavía en el panel de Supabase, se pudo reescribir en vez de agregarle un renombre encima. Es la
+diferencia entre las dos tablas: `care_searches` ya existía en el servidor y necesitó una
+migración de verdad; `franjas_busqueda` no existió nunca.
+
+**Lo que este renombre dejó a la vista y no arregló.** `logbook_entries` y `messages` son tablas
+compartidas y siguen apuntando a un objeto que sólo existe en esta modalidad. Antes la columna se
+llamaba `search_id` y no se notaba; ahora se llama `aviso_id` y se nota. Es un problema de
+reparto, no de nombres, y sigue anotado en el pendiente 52.
+
+**Las dos migraciones están escritas y ninguna aplicada.** El Desarrollador tiene que pegarlas en
+el panel de Supabase, en orden: primero la 0015, después la 0016. Hasta que lo haga, el código
+nombra tablas que en el servidor todavía se llaman como antes.
 
 ### La regla 3 se midió para hacerle un chequeo, y lo que salió es que ya se cumple
 

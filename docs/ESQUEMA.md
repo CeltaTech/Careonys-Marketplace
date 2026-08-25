@@ -69,7 +69,7 @@ alguien tiene que acordarse de escribir en otro lado.
 es la clave de la tabla de Asistentes, el otro el usuario de Auth. **Nunca coinciden**, así que
 ningún fichado se puede registrar.
 
-`tenants` y `care_searches` quedaron con RLS activada y **cero políticas**, o sea que niegan todo.
+`tenants` y `avisos` quedaron con RLS activada y **cero políticas**, o sea que niegan todo.
 Como el cliente resuelve la Prestadora leyendo `tenants` por slug, eso hoy no puede funcionar.
 
 ### 1.5 Lo que hay que entender de todo esto

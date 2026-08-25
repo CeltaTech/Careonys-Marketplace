@@ -843,7 +843,7 @@
       }
     });
 
-    // Los Asistentes que se pueden mostrar salen de `caregivers_publicos`, la
+    // Los Asistentes que se pueden mostrar salen de `directorio`, la
     // misma vista que el directorio: gente con el legajo validado por la
     // Prestadora y con la publicación autorizada. Antes salían de la tabla
     // `caregivers`, que es el personal entero y no distingue una cosa de la
@@ -1010,8 +1010,8 @@
     // La grilla de cuándo se necesita el cuidado. Se dibuja una vez al abrir
     // la aplicación, no cada vez que se entra a la pantalla: la pantalla existe
     // desde el principio y sólo se muestra o se esconde.
-    Franjas.montarTextos('franjas-cuidado', 'paso_de_franjas_busqueda');
-    Franjas.montarGrilla('grilla-cuidado', 'grilla_busqueda');
+    Franjas.montarTextos('franjas-cuidado', 'paso_de_franjas_aviso');
+    Franjas.montarGrilla('grilla-cuidado', 'grilla_aviso');
 
     // ── Formulario Nueva Búsqueda de Asistente (Inline — Offline Safe) ─────
     document.getElementById('form-nueva-busqueda').addEventListener('submit', async (e) => {
@@ -1024,7 +1024,7 @@
         return;
       }
       // Un par `{ dia, turno }` por casillero marcado, con claves de
-      // catálogo. Va a `franjas_busqueda`, una fila cada uno.
+      // catálogo. Va a `franjas_aviso`, una fila cada uno.
       const franjas = Franjas.recolectar('grilla-cuidado').franjas;
       const patologias = Array.from(document.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
       const descripcion = document.getElementById('pb-descripcion').value;
@@ -1035,7 +1035,7 @@
 
       try {
         const session = await Sesion.getSession();
-        await ClienteDatos.crearBusqueda({
+        await ClienteDatos.crearAviso({
           patientName: nombre,
           zona,
           scheduleType: tipo,

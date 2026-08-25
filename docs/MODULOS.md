@@ -37,8 +37,10 @@ respuesta es sí, es compartido. Si es no, se queda de este lado.
 | **Legajo del Asistente** | Datos personales, estudios con su título y su archivo, matrícula con su vigencia, experiencia laboral, referencias | Es quién es la persona, no cómo consiguió el trabajo |
 | **Documentación y vencimientos** | Qué papel hace falta, cuál bloquea, cuál vence y cuándo, quién lo validó | Un certificado vencido inhabilita en cualquier modalidad |
 | **Verificación** | Qué se controló de un legajo y con qué resultado | Ídem |
+| **Incorporación de Asistentes** | Por dónde entró la persona —se registró sola, la cargó una Prestadora, u otra vía—, en qué etapa del proceso está y qué le falta para cerrarla | El plantel es uno solo. El mismo Asistente sirve a las tres modalidades, así que reclutarlo de nuevo en cada una sería tener tres versiones distintas de la misma persona, cada una con sus papeles a medio controlar. El término está en `docs/GLOSARIO.md:44` |
 | **Disponibilidad horaria** | Los días y las franjas en que la persona puede trabajar | Se usa para asignar igual que para mostrar |
 | **Cursos y certificaciones** | La oferta de cursos, la evaluación y el resultado | Careonys registra el resultado pero no tiene la oferta: ver `docs/ALCANCE.md` §3 |
+| **Calificaciones** | La calificación que deja quien recibió el trabajo, con su comentario y con la respuesta del Asistente | Quien fue cuidado puede opinar de quien lo cuidó, haya elegido a esa persona o se la hayan asignado. Es evidencia sobre la persona y va con la persona. **Cuánto pesa cada calificación y en qué orden ordena** no viene acá: eso es del directorio y se queda del otro lado |
 | **Organización y aislamiento** | La Prestadora de cada dato y quién puede verlo | Es la regla 2 del `CLAUDE.md`. Nunca puede vivir de un solo lado |
 | **Motor de formularios** | Campos, etiquetas, validaciones y pasos declarados, no dibujados | Regla 5.1. El motor es genérico; los formularios que carga, no |
 
@@ -70,6 +72,7 @@ ya prestó consentimiento, en vez de pedirlo de nuevo o, peor, publicarlo sin pr
 antecedentes presentados, curso aprobado— es del legajo y es compartido. **Cuánto vale cada cosa
 y en qué orden se muestran** es del directorio y se queda acá: es una decisión de esta modalidad,
 y en prestación directa ordenar Asistentes por puntaje no significa nada.
+**La calificación misma, en cambio, es compartida**, y la pregunta que decide lo contesta sola: una Familia que recibe una asignación puede opinar igual de quien vino a cuidar. Hasta el 25 de agosto de 2026 `docs/TABLAS_QUE_FALTAN.md` la ponía de este lado, que era exactamente la filtración que esta línea existe para evitar.
 
 **El catálogo es compartido pero no todas sus listas se usan en las dos.** `retiro`,
 `discapacidad` y `tarea_hogar` sirven igual en las dos modalidades. `genero_preferido` y

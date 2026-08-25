@@ -383,7 +383,7 @@
         const session = await Sesion.getSession().catch(() => null);
         const familyUserId = session?.user?.id || null;
 
-        await ClienteDatos.crearBusquedaFamilia({
+        await ClienteDatos.crearAvisoFamilia({
           paciente: nombre,
           // El motivo va a `consultation_reason` (migración 0013). Antes se
           // mandaba adentro de `patologias`, y «quiero hacer un curso» no es

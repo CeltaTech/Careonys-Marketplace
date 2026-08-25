@@ -5,14 +5,14 @@
    turnos, el mismo dibujo. Por eso las dibuja este archivo y no dos. Lo que
    cambia es el título del paso, lo que se lee al marcar un casillero
    —«Disponible» de un lado, «Se necesita» del otro— y en qué tabla termina cada
-   marca: `franjas_asistente` (migración 0012) o `franjas_busqueda`
+   marca: `franjas_asistente` (migración 0012) o `franjas_aviso`
    (migración 0015).
 
    Cuál de las dos se dibuja se elige con el segundo argumento, que es el nombre
    del bloque en `data/catalogo-disponibilidad.json`:
 
        await Franjas.montarGrilla('grilla-disponibilidad');                    // el Asistente
-       await Franjas.montarGrilla('grilla-cuidado', 'grilla_busqueda');        // la Familia
+       await Franjas.montarGrilla('grilla-cuidado', 'grilla_aviso');        // la Familia
 
    El objeto sigue llamándose `Disponibilidad` además de `Franjas`, porque así
    lo nombran las pantallas del Asistente desde antes; los dos nombres apuntan
@@ -51,8 +51,8 @@
        <div id="grilla-cuidado"></div>
        <p id="franjas-cuidado-ayuda"></p>
 
-       await Franjas.montarTextos('franjas-cuidado', 'paso_de_franjas_busqueda');
-       await Franjas.montarGrilla('grilla-cuidado', 'grilla_busqueda');
+       await Franjas.montarTextos('franjas-cuidado', 'paso_de_franjas_aviso');
+       await Franjas.montarGrilla('grilla-cuidado', 'grilla_aviso');
 
        const { franjas } = Franjas.recolectar('grilla-cuidado');
        // → [{ dia: 'lunes', turno: 'manana' }, …]
@@ -86,7 +86,7 @@
    ninguna parte: `apiClient.js` lo recibía y lo descartaba sin avisar, que era
    el pendiente 23.
 
-   La grilla de la Familia, en `franjas_busqueda`, también una fila por
+   La grilla de la Familia, en `franjas_aviso`, también una fila por
    casillero. Nació en la migración 0015 y viene del mismo defecto: lo que la
    Familia marcaba iba a una columna `jsonb` a la que cada pantalla le escribía
    una forma distinta, y nadie la leía. Era el pendiente 40.

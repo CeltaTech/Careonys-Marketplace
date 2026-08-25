@@ -36,11 +36,13 @@ alinearse con el stack de Careonys.
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
 
-**El esquema no está versionado.** Las tablas existen dentro de Supabase y no hay ninguna
-migración que las describa, así que no hay forma de reconstruirlas ni de saber qué se aplicó. Y
-están nombradas en inglés (`caregivers`, `tenants`, `care_searches`), contra el glosario. Como la
-base no tiene datos reales, se rehace — pero es más trabajo que escribir el esquema: hay que
-migrar además el código que ya usa esos nombres.
+**El cuadro de acá arriba es del arranque del proyecto y ya no dice la verdad**: hoy hay
+dieciséis migraciones en `supabase/migrations/` y veintidós tablas. Quedó anotado como
+pendiente 54. Lo que sí sigue siendo cierto es que **media base está nombrada en inglés**
+—`caregivers`, `tenants`, `clock_ins`—, contra el glosario; el 25 de agosto de 2026 se
+renombró la parte de esta modalidad (`avisos`, `franjas_aviso`,
+`directorio`) y el resto quedó como estaba, porque renombrar una tabla ya guardada
+arrastra el código que la nombra.
 
 ## Qué documento manda sobre qué
 
