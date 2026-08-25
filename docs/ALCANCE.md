@@ -1388,6 +1388,45 @@ En la misma pasada salieron de las dos aplicaciones del teléfono el correo y la
 venían escritos en los campos de acceso. Está contado más arriba, en «El alta del teléfono ya pide
 una contraseña».
 
+### Las cuatro reglas del esquema ya tienen quién las mire
+
+Cuatro reglas de `CLAUDE.md` vivían sólo en `CLAUDE.md`: nada impedía que una migración nueva las
+incumpliera. Ahora las mira `scripts/verificar_esquema.mjs` antes de cada commit. **Tres están
+limpias y la cuarta tiene un solo incumplimiento**, que quedó anotado como pendiente 51 en vez de
+taparse.
+
+- **Toda tabla enciende su RLS en la misma migración que la crea** (§4). Las 22 lo hacen.
+  Encenderla después, a mano desde el panel de Supabase, deja una ventana abierta entre las dos
+  cosas y deja el repositorio diciendo algo que no es.
+- **Toda función que se saltea la RLS le revoca el permiso a `PUBLIC` y a `anon`** (§4). Las cinco
+  lo hacen: `prestadora_actual`, `crear_perfil_al_registrarse`, `es_personal_de_prestadora`,
+  `legajo_propio` y `rendir_evaluacion`. Una función `SECURITY DEFINER` del esquema `public` es
+  además una dirección web, porque PostgREST publica ese esquema. El chequeo **no** mira
+  `authenticated` a propósito: ahí los dos casos son legítimos, porque la que consumen las
+  políticas tiene que conservarlo —sin él la aplicación no puede leer sus propias tablas— y la que
+  dispara un `trigger` no lo necesita.
+- **Toda tabla tiene la columna de la Organización** (§5.10). Las 22 la tienen. `tenants` está
+  exenta con el motivo escrito: es la Organización, y su propio identificador es el que las demás
+  copian.
+- **Todo importe se guarda con su moneda** (§5.11). Acá está el único incumplimiento:
+  `caregivers.hourly_rate` (`supabase/migrations/0001_esquema_inicial.sql:102`) es un `numeric` a
+  secas, y no hay columna de moneda en ninguna de las 22 tablas. Es el único importe del esquema.
+  Agregarle la moneda toca una columna que ya tiene datos escritos, así que lo decide el
+  Desarrollador: es el pendiente 51.
+
+**Una medición equivocada se corrigió antes de escribirla como verdad, y conviene dejarla contada.**
+La primera versión del chequeo buscaba la columna de la Organización sólo adentro del `create
+table`, y avisó de tres tablas —`clock_ins`, `logbook_entries` y `messages`— que en realidad la
+tienen: se la agrega la migración 0002 en los renglones 52 a 54. Lo que delató el error fue que las
+políticas de esas mismas tres tablas usan `tenant_id`, o sea que la columna existe. La regla pide la
+columna, no el momento; el momento lo pide sólo la RLS, y por un motivo distinto. El chequeo hoy lee
+las quince migraciones juntas antes de juzgar ninguna.
+
+Se mira a sí mismo con trece casos, cinco que tiene que encontrar y ocho que tiene que dejar pasar
+—entre ellos `numeric(10,2)`, que con un recorte ingenuo por el primer paréntesis que cierra parte
+la tabla por la mitad—. Y para que no fuera una prueba que no puede fallar, se corrió una copia con
+la lista de exenciones vacía: aparecen los dos casos conocidos, cada uno en su renglón exacto.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,

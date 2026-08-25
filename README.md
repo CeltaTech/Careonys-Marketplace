@@ -115,7 +115,7 @@ aislamiento. Una prueba que devuelve una lista vacía no distingue "aislado" de 
 Copiar `.env.example` a `.env.local` y completar los valores antes de levantar nada. Los `.env`
 nunca se suben (ver `.gitignore`).
 
-## Los doce chequeos, y el comando que hace falta una sola vez
+## Los trece chequeos, y el comando que hace falta una sola vez
 
 Cada regla que se arregló una vez tiene un guion que impide que vuelva. Se corren todos juntos
 en menos de un segundo:
@@ -134,6 +134,7 @@ un chequeo nuevo se suma solo con existir.
 | `verificar_claves` | Que se guarde en la base una opción que el catálogo no tiene |
 | `verificar_copias` | Que las cinco copias byte a byte se separen sin que nadie se entere |
 | `verificar_escapado` | Que un texto de la base entre a la pantalla como si fuera HTML |
+| `verificar_esquema` | Que una tabla nueva nazca sin RLS, que una función que se saltea la RLS quede al alcance de quien no inició sesión, que falte la columna de la Organización o que un importe se guarde sin moneda |
 | `verificar_guiones` | Que el JavaScript de una pantalla quede sin poder leerse |
 | `verificar_identidad` | Que la marca vuelva a estar escrita a mano |
 | `verificar_paleta` | Que vuelva un color escrito con su número en vez de un token |
