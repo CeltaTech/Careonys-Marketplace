@@ -66,6 +66,13 @@ const ClienteDatos = {
         }
       }
 
+      // Queda anotado qué Prestadora nombró la dirección, y más abajo si hubo
+      // que caer al respaldo. Las dos cosas juntas son lo único que distingue
+      // «la dirección no dijo nada» de «la dirección dijo algo que no existe»,
+      // y son casos distintos: en el segundo, mostrar otra Prestadora es
+      // mostrarle a una Familia el personal de una empresa que no es la suya.
+      this.slugPedido = slug || null;
+
       if (slug) {
         const res = await this._supabaseRequest('GET', 'tenants', null, { slug: `eq.${slug}` });
         if (res && res[0]) {
@@ -75,6 +82,7 @@ const ClienteDatos = {
         }
       }
 
+      this.prestadoraEsDeRespaldo = true;
       this.currentTenant = await this._prestadoraDeRespaldo();
     } catch (err) {
       console.error('No se pudo resolver la Prestadora:', err);
@@ -84,6 +92,12 @@ const ClienteDatos = {
     if (this.currentTenant) this._applyBranding(this.currentTenant);
     return this.currentTenant;
   },
+
+  // Qué nombró la dirección (`?t=` o subdominio) y si la Prestadora que se está
+  // usando salió del respaldo en vez de esa. Arrancan sin contestar porque
+  // todavía no se resolvió nada.
+  slugPedido: null,
+  prestadoraEsDeRespaldo: false,
 
   // Cuando no hay sesión ni enlace que valga, el directorio muestra la primera
   // Prestadora que devuelve la base. Es una decisión de presentación y no de
@@ -351,6 +365,53 @@ const ClienteDatos = {
     };
     if (evaluacionId) queryParams.evaluacion_id = `eq.${evaluacionId}`;
     return await this._supabaseRequest('GET', 'intentos_evaluacion', null, queryParams);
+  },
+
+  // --- MÓDULO: EL DIRECTORIO ---
+  // La única lista que se ve sin iniciar sesión. Sale de `caregivers_publicos`,
+  // que exige las dos condiciones —la Prestadora validó el legajo y la persona
+  // autorizó a publicarlo— y no devuelve ni un dato de contacto (migración
+  // 0012). Lo que se muestra es lo que el consentimiento promete y nada más:
+  // nombre, foto, zona, qué atiende y precio por hora
+  // (`data/catalogo-autorizaciones.json`, `perfil_publicado`).
+  //
+  // **El filtro por Prestadora se pone acá y no es optativo.** Sin sesión la
+  // base no tiene a quién preguntarle de qué Prestadora es la visita, así que
+  // la vista devuelve las dos mezcladas si nadie filtra: era el pendiente 2. El
+  // resto del archivo lo hace «si hay Prestadora resuelta» (`getAspirantes`), y
+  // eso es lo que no se puede hacer con una pantalla que se ve sin cuenta.
+  //
+  // Si no se pudo resolver ninguna Prestadora no se pide nada y se avisa.
+  // Mostrar «todas» sería mostrarle a una Familia el personal de una Prestadora
+  // que no es la suya.
+  async listarDirectorio() {
+    const prestadora = this.currentTenant || await this.initTenant();
+    if (!prestadora || !prestadora.id) throw new Error('SIN_PRESTADORA');
+
+    // Si la dirección nombró una Prestadora y no se encontró, no se muestra
+    // otra. El respaldo —la primera que devuelve la base— sirve para una
+    // dirección que no nombra ninguna, no para una que nombra mal: sin esto,
+    // `?t=cualquier-cosa` mostraba los cuatro Asistentes de PresDemo bajo un
+    // enlace que pedía otra empresa.
+    if (this.slugPedido && this.prestadoraEsDeRespaldo) throw new Error('PRESTADORA_DESCONOCIDA');
+
+    return await this._supabaseRequest('GET', 'caregivers_publicos', null, {
+      tenant_id: `eq.${prestadora.id}`,
+      order: 'full_name.asc'
+    });
+  },
+
+  // La foto del directorio vive en el depósito público `avatares`, y la vista
+  // devuelve el camino adentro del depósito y nunca una dirección firmada: las
+  // firmadas vencen, y guardar una es guardar algo que deja de funcionar.
+  //
+  // `Sesion.urlPublica()` arma la misma dirección con la biblioteca de
+  // Supabase. El directorio no la usa porque no carga esa biblioteca: es una
+  // pantalla que se ve sin cuenta, y traerse el cliente de sesión entero para
+  // formar una dirección sería cargarle a cada visita algo que no necesita.
+  urlDeFotoPublica(camino) {
+    if (!camino) return null;
+    return `${this.supabaseUrl.replace(/\/$/, '')}/storage/v1/object/public/avatares/${camino}`;
   },
 
   // --- INTEGRACIÓN REST DE SUPABASE ---

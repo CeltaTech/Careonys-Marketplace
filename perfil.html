@@ -558,7 +558,13 @@
       // ---- Load profile from URL param ----
       function loadProfile() {
         const params = new URLSearchParams(window.location.search);
-        const id = parseInt(params.get('id')) || 1;
+        // El identificador se busca tal cual viene y no se fuerza a número. Con
+        // `parseInt(...) || 1`, un identificador de la base —que es un UUID— daba
+        // NaN y caía en el 1: la pantalla mostraba a otra persona sin avisar. El
+        // directorio ya enlaza con el identificador de la base (pendiente 2), así
+        // que hasta que esta pantalla también lea de la base, un enlace que no
+        // reconoce vuelve al directorio en vez de inventar a quién muestra.
+        const id = params.get('id') || '1';
         const c = cuidadores[id];
         if (!c) { window.location.href = 'directorio.html'; return; }
 

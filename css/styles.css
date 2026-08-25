@@ -1134,6 +1134,59 @@ ul {
   border: 3px solid var(--superficie-hover);
 }
 
+/* Quien todavía no subió una foto. Es la inicial de su nombre y no un dibujo
+   de una persona que no es: una silueta ajena en el lugar de la cara es un dato
+   inventado, igual que cualquier otro. */
+.card-avatar-inicial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--superficie-hover);
+  color: var(--azul-medio-texto);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* El precio por hora. El consentimiento de publicación lo promete con todas las
+   letras —«su nombre, su foto, su zona, qué atiende y su precio por hora»—, así
+   que mostrarlo es cumplir lo que la persona autorizó. */
+.card-precio {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--texto-principal);
+  margin-bottom: 4px;
+}
+
+.card-precio .card-precio-unidad {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--texto-secundario);
+}
+
+/* Los tres estados que no son «listo». Antes no hacían falta: la pantalla traía
+   las tarjetas escritas adentro y nunca esperaba a nada. */
+.directorio-estado {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 12px;
+  text-align: center;
+  font-size: 15px;
+  color: var(--texto-secundario);
+}
+
+.directorio-estado-bajada {
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.directorio-cuenta {
+  max-width: 1100px;
+  margin: 0 auto 24px;
+  padding: 0 12px;
+  font-size: 14px;
+  color: var(--texto-secundario);
+}
+
 .card-meta h3 {
   font-size: 16px;
   font-weight: 700;

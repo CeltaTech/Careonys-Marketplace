@@ -90,6 +90,15 @@ const Texto = {
     if (dice('sin_intentos')) return 'Ya se usaron todos los intentos de esta evaluación.';
     if (dice('evaluacion_vacia', 'evaluacion_inexistente')) return 'Esta evaluación no está disponible en este momento.';
 
+    // El directorio sin saber de qué Prestadora es. No se pide nada y se dice
+    // por qué: mostrar «todas» sería mostrarle a una Familia el personal de una
+    // Prestadora que no es la suya.
+    if (dice('sin_prestadora')) return 'No se pudo saber de qué Prestadora es este directorio, así que no se muestra ninguno. Conviene entrar por el enlace de la Prestadora.';
+
+    // La dirección nombró una Prestadora que no existe. Se dice que no se
+    // encontró y no se muestra otra.
+    if (dice('prestadora_desconocida')) return 'No se encontró ninguna Prestadora con ese nombre en la dirección, así que no hay directorio para mostrar. Conviene revisar el enlace.';
+
     // Lo genérico, que cubre cualquier tabla y cualquier pantalla.
     if (dice('failed to fetch', 'networkerror', 'err_internet', 'err_name_not_resolved')) return 'No hay conexión con el servidor. Conviene reintentar en un momento.';
     if (dice('session missing', 'session not found', 'session_not_found')) return 'La sesión ya no está abierta. Conviene volver a ingresar.';

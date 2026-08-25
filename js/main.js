@@ -94,9 +94,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const zoneSelect = document.getElementById('dir-zone');
   const typeSelect = document.getElementById('dir-type');
   const patologiaSelect = document.getElementById('dir-patologia');
-  const verificacionSelect = document.getElementById('dir-verificacion');
-  const cards = document.querySelectorAll('.caregiver-card');
   const resultsCount = document.getElementById('results-count');
+
+  // Las tarjetas se preguntan cada vez y no se guardan al cargar la página: el
+  // directorio llega de la base, así que cuando este archivo corre todavía no
+  // hay ninguna. Antes eran ocho y estaban escritas en el HTML.
+  const tarjetas = () => document.querySelectorAll('.caregiver-card');
 
   // Una tarjeta puede llevar varias claves separadas por espacios. Se compara
   // entera y no por pedazo: `acv` no tiene por qué encontrar a `acv_grave`.
@@ -115,11 +118,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const zone = zoneSelect ? zoneSelect.value : '';
     const type = typeSelect ? typeSelect.value : '';
     const patologia = patologiaSelect ? patologiaSelect.value : '';
-    const verificacion = verificacionSelect ? verificacionSelect.value : '';
 
     let visibleCount = 0;
 
-    cards.forEach(card => {
+    tarjetas().forEach(card => {
       const name = sinTildes(card.dataset.name || '');
       // La zona se guarda como clave (`grand_bourg`) y se busca como se escribe.
       const zonaEscrita = sinTildes((card.dataset.zone || '').replace(/_/g, ' '));
@@ -128,8 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         (!searchTerm || name.includes(searchTerm) || zonaEscrita.includes(searchTerm))
         && tieneClave(card, 'zone', zone)
         && tieneClave(card, 'type', type)
-        && tieneClave(card, 'patologia', patologia)
-        && tieneClave(card, 'verificacion', verificacion);
+        && tieneClave(card, 'patologia', patologia);
 
       card.style.display = isVisible ? '' : 'none';
       if (isVisible) visibleCount++;
@@ -139,8 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // no con un «Mostrando 0» que se lee como si algo se hubiera roto.
     if (resultsCount) {
       resultsCount.textContent = visibleCount === 0
-        ? 'Ningún cuidador de la muestra coincide con esos filtros.'
-        : `Mostrando ${visibleCount} cuidadores`;
+        ? 'Ningún Asistente de este directorio coincide con esos filtros.'
+        : (visibleCount === 1
+          ? 'Mostrando 1 Asistente'
+          : `Mostrando ${visibleCount} Asistentes`);
     }
   }
 
@@ -148,7 +151,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (zoneSelect) zoneSelect.addEventListener('change', filterCards);
   if (typeSelect) typeSelect.addEventListener('change', filterCards);
   if (patologiaSelect) patologiaSelect.addEventListener('change', filterCards);
-  if (verificacionSelect) verificacionSelect.addEventListener('change', filterCards);
+
+  // El directorio termina de dibujarse cuando contesta la base, que es después
+  // de todo esto. Ahí llama acá para que el filtro pase sobre lo recién puesto.
+  window.filtrarDirectorio = filterCards;
 
   // ---- WIZARD INTERACTIVO DE 6 PASOS ----
   // Acá había veinte renglones que marcaban y desmarcaban tarjetas a mano, y

@@ -595,6 +595,49 @@ descartaba sin decir nada. Era el pendiente 23, y estaba abierto desde que la pa
   decidió el mismo día que eso no es algo que se permita sino algo que se está: se mudó al paso de
   disponibilidad. Con eso cerró también el pendiente 26.
 
+### El directorio muestra a gente que existe en la base, y sólo la de una Prestadora
+
+Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están hechas.
+
+- **La pantalla dejó de tener ocho personas escritas adentro.** `directorio.html` tenía 377
+  renglones de tarjetas a mano, con nombres, puntajes, estrellas, un «98% Match» y cuatro
+  insignias de verificación, ninguno de los cuales salía de ningún lado. Ahora hay un molde
+  —`<template id="molde-asistente">`, `directorio.html:116`— y el contenido llega de
+  `caregivers_publicos`. El archivo pasó de 534 renglones a 342.
+- **Todo lo inventado se fue con las tarjetas.** No hay sistema de puntaje, no hay estrellas y no
+  hay porcentaje de coincidencia, así que no se muestran. Lo que queda es lo que el consentimiento
+  promete —nombre, foto, zona, qué atiende y precio por hora
+  (`data/catalogo-autorizaciones.json`, `perfil_publicado`)—, más la insignia «Legajo validado por
+  la Prestadora», que es la condición que la vista ya exige para devolver la fila, y la de
+  reemplazos urgentes, que sale de `disponibilidad_asistente`.
+- **El filtro por Prestadora vive en el cliente de datos y no es optativo**
+  (`js/apiClient.js:399`). El resto del archivo filtra «si hay Prestadora resuelta», y eso no sirve
+  para una pantalla que se ve sin cuenta: sin sesión, la que no filtra devuelve las dos mezcladas.
+  Acá, si no hay Prestadora, no se pide nada.
+- **Y si la dirección nombra una Prestadora que no existe, tampoco se muestra otra.** Comprobado
+  en el navegador antes de tocar nada: `directorio.html?t=prestadora-que-no-existe` mostraba los
+  cuatro Asistentes de PresDemo, porque el respaldo devuelve la primera Prestadora de la base. El
+  respaldo sirve para una dirección que no nombra ninguna, no para una que nombra mal. Ahora se
+  distingue un caso del otro (`js/apiClient.js:74`, `:85` y `:396`) y el segundo avisa.
+- **La base tenía el directorio vacío y nadie se enteraba.** `caregivers_publicos` devolvía **cero
+  filas**, y no por un problema de permisos: los legajos inventados de la migración 0003 están
+  validados, pero nadie había contestado la autorización de publicación, que la vista exige. Con
+  ocho tarjetas dibujadas encima, eso no se veía. La migración 0014 pone cinco legajos inventados
+  más y contesta las autorizaciones, y **deja una validada y sin publicar a propósito** —Ester
+  Villalba Ficticia— para que la condición del consentimiento se pueda comprobar: si apareciera,
+  la vista no estaría mirándola.
+- **Comprobado en el navegador, con las dos Prestadoras.** PresDemo muestra cuatro y Cuidar Norte
+  muestra tres; nunca siete, que es el total. Los tres filtros y la búsqueda libre funcionan sobre
+  las tarjetas recién traídas —la búsqueda «ruben» encuentra a Rubén Ocampo Ficticio—, y los
+  cuatro estados de la regla 5.3 se probaron uno por uno, incluido el botón de reintentar. La
+  respuesta de la base no trae documento, teléfono, correo ni domicilio.
+- **Se sacó el filtro «Verificación»**, que la pantalla ofrecía y nada podía contestar: lo que se
+  controló de un legajo vive en `verificaciones_asistente`, que no es pública. Es el pendiente 43.
+- **`perfil.html` quedó a mitad de camino y por eso se lo frenó.** Sus datos siguen escritos a
+  mano, indexados del 1 al 8, y tomaba el identificador con `parseInt(...) || 1`: con el
+  identificador de la base —que es un UUID— daba NaN, caía en el 1 y mostraba a otra persona sin
+  avisar. Ahora un enlace que no reconoce vuelve al directorio. Esa pantalla es lo que sigue.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,
