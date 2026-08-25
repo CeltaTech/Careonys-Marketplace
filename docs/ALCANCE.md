@@ -749,6 +749,61 @@ core.hooksPath .githooks`. La carpeta `.githooks/` sí se sube, pero la configur
 vive en `.git/config`, que no. Sin ese comando el gancho está en el repositorio y nadie lo llama.
 
 
+### El Asistente ve sus capacitaciones, y al lado lo que rindió
+
+Cierra el pendiente 34, el 25 de agosto de 2026.
+
+«Mis Capacitaciones» llevaba a `cursos.html`, que es la vidriera pública: los mismos seis cursos
+para cualquiera, sin un solo dato de quien había iniciado sesión. Ahora es una pantalla de la
+aplicación, y lee de la base.
+
+- **El cliente de datos aprendió a pedir los cursos.** `getCursos()` en `js/apiClient.js` era lo que
+  faltaba: ya sabía pedir las evaluaciones y los intentos de quien inició sesión, pero ninguna
+  pantalla leía la tabla `cursos`, que existe desde la migración 0008. Filtra `publicado=eq.true` y
+  ordena por `orden`. Ese filtro está en el pedido y no en la política de la tabla porque la
+  política de `cursos` no mira `publicado` —la de `evaluaciones` sí—; que el curso sin publicar no
+  llegue a la pantalla es lo que corresponde, que no llegue al navegador sería mejor, y eso es una
+  migración.
+- **La pantalla nueva es `screen-capacitaciones`**, con los cuatro estados que pide la regla 5.3:
+  buscando, error con «Reintentar», sin cursos publicados, y la lista. Los dos enlaces que llevaban
+  afuera —el del cajón de menú y el de la barra de abajo— ahora entran acá.
+- **Al lado de cada curso está lo que esa persona rindió**, que es lo que la vidriera pública no
+  puede mostrar: sale de `intentos_evaluacion`, que la base sólo le muestra a quien lo rindió y a su
+  Prestadora. Cuatro renglones posibles: «Aprobada con 100% el 12/08/2026», «Todavía no la rindió»,
+  «Rendida 2 veces, sin aprobar. Quedan 2 intentos» o «Este curso no tiene evaluación».
+- **El botón «Rendir la evaluación» sale sólo si queda algo que rendir**: no aparece si ya aprobó,
+  ni si gastó los intentos, ni si el curso no tiene evaluación.
+- **`examen.html` acepta `?evaluacion=<clave>`** y abre esa. Quien llega desde «Mis Capacitaciones»
+  ya eligió el curso, y volver a mostrarle la lista sería hacerlo elegir dos veces. Sin ese dato en
+  la dirección, la pantalla sigue mostrando la lista como antes.
+- **La tarjeta se arma con un molde, no pegando textos.** `scripts/verificar_escapado.mjs` rechazó
+  la primera versión, que sumaba cadenas para armar el marcado, y tenía razón aunque escapara: el
+  proyecto usa un `<template>` con partes marcadas y `textContent`, que es la misma forma que usa
+  `directorio.html`. Probado con un nombre de curso que trae `<script>` adentro: llegó a la pantalla
+  como texto y no creó ninguna etiqueta.
+- **Los estilos van en `pwa-asistente/css/styles-pwa.css` y no en el bloque `<style>` del HTML**, que
+  son 271 renglones esperando el reparto del pendiente 8. No se le agrega a esa pila.
+- **Apareció la primera fecha del proyecto.** No había ninguna: ni un `toLocaleDateString` en ningún
+  archivo. `Texto.fechaCorta()` la escribe como se escribe acá —«12/08/2026»— y devuelve vacío si no
+  hay fecha, para que la pantalla pueda no mostrar nada en vez de mostrar «Invalid Date».
+- **El nivel del curso no se muestra.** `cursos.nivel` guarda `basico`, `intermedio` y `avanzado`,
+  que no son claves de ningún vocabulario, así que no hay de dónde sacar cómo se escriben en la
+  pantalla. Inventarlo desde acá sería inventar una palabra. Queda anotado en el pendiente 31, que
+  es donde viven las columnas que guardan catálogo sin tener catálogo.
+
+**Lo que se probó y lo que no.** El pedido a la base sale bien formado y la pantalla contesta: se lo
+miró salir con sus filtros y su orden. Los cuatro estados se recorrieron enteros —el error se forzó
+rompiendo la dirección del servidor, y «Reintentar» volvió a cargar—. Pero **la lista con los cursos
+de verdad no se pudo ver**, y conviene saber por qué: sin sesión, la base contesta como visitante y
+la política de `cursos` es `for select to authenticated`, así que devuelve cero filas sin dar error
+—por eso la pantalla muestra «Todavía no hay cursos publicados»—. Y **hoy no hay ninguna cuenta de
+Asistente con la que entrar**: la que viene escrita en la pantalla de acceso no existe en el
+servidor —contesta «Invalid login credentials»— y crear una nueva choca con el tope de correos del
+pendiente 45. Eso quedó anotado como pendiente 47. La lista se recorrió con cursos inventados
+—singular y plural de las horas, los cuatro resultados, el botón apareciendo y no apareciendo— y
+dibujó bien las cinco tarjetas.
+
+
 ### El directorio muestra a gente que existe en la base, y sólo la de una Prestadora
 
 Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están hechas.

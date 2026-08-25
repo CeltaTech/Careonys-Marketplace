@@ -302,7 +302,7 @@
       <div style="flex:1;padding:16px 0;">
         <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home" style="width:20px;color:#64748b;"></i> Inicio</a>
         <a class="drawer-menu-item" onclick="navigate('registro')"><i class="fas fa-user-plus" style="width:20px;color:#64748b;"></i> Completar Legajo</a>
-        <a class="drawer-menu-item" href="../cursos.html"><i class="fas fa-graduation-cap" style="width:20px;color:#64748b;"></i> Mis Capacitaciones</a>
+        <a class="drawer-menu-item" onclick="navigate('capacitaciones')"><i class="fas fa-graduation-cap" style="width:20px;color:#64748b;"></i> Mis Capacitaciones</a>
         <div style="border-top:1px solid #f1f5f9;margin:8px 0;"></div>
         <a class="drawer-menu-item" id="btn-logout" style="color:#ef4444;"><i class="fas fa-sign-out-alt" style="width:20px;color:#ef4444;"></i> Cerrar sesión</a>
       </div>
@@ -396,7 +396,7 @@
       <div class="bottom-tab-bar">
         <a class="tab-item active" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span>Inicio</span></a>
         <a class="tab-item" onclick="navigate('registro')"><i class="fas fa-user-plus"></i><span>Mi Legajo</span></a>
-        <a class="tab-item" href="../cursos.html"><i class="fas fa-graduation-cap"></i><span>Cursos</span></a>
+        <a class="tab-item" onclick="navigate('capacitaciones')"><i class="fas fa-graduation-cap"></i><span>Cursos</span></a>
       </div>
     </div>
 
@@ -581,6 +581,53 @@
       </div><!-- /wizard-body -->
     </div><!-- /screen-registro -->
 
+    <!-- 4. VISTA: MIS CAPACITACIONES -->
+    <div class="app-screen" id="screen-capacitaciones">
+      <div class="wizard-header-bar">
+        <button type="button" class="btn-volver-cabecera" id="cap-volver">
+          <i class="fas fa-arrow-left"></i></button>
+        <h2>Mis Capacitaciones</h2>
+      </div>
+
+      <div class="capacitaciones-cuerpo">
+        <div class="pwa-estado" id="cap-cargando">Buscando sus capacitaciones...</div>
+
+        <div class="pwa-estado" id="cap-error" hidden>
+          <p id="cap-error-texto"></p>
+          <button type="button" class="btn btn-primario" id="cap-reintentar">Reintentar</button>
+        </div>
+
+        <div class="pwa-estado" id="cap-vacio" hidden>
+          <p>Todavía no hay cursos publicados.</p>
+          <p class="pwa-estado-bajada">Cuando la Prestadora publique su oferta aparece acá.</p>
+        </div>
+
+        <div id="cap-listo" hidden>
+          <p class="capacitaciones-bajada">
+            Lo que rinda queda registrado en su legajo, a la vista de la Prestadora.
+          </p>
+          <div id="cap-lista"></div>
+
+        <!-- El molde de una tarjeta de curso. Las partes se marcan con
+             `data-parte` y se llenan con `textContent`: así ningún nombre ni
+             ninguna descripción que alguien cargue puede llegar a la pantalla
+             como etiqueta de HTML. -->
+        <template id="molde-curso">
+          <div class="curso-tarjeta">
+            <h3 data-parte="nombre"></h3>
+            <p data-parte="descripcion"></p>
+            <div class="curso-datos" data-parte="datos"></div>
+            <div class="curso-resultado" data-parte="resultado">
+              <i data-parte="icono"></i>
+              <span data-parte="resultado-texto"></span>
+            </div>
+            <a class="btn btn-primario" data-parte="rendir">Rendir la evaluación</a>
+          </div>
+        </template>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /phone-container -->
 
   <!-- JS LOCAL (dentro del scope del Service Worker) -->
@@ -619,6 +666,129 @@
       }
     });
 
+    // ── Mis Capacitaciones ─────────────────────────
+    // La vidriera pública (`../cursos.html`) muestra los seis cursos y nada más;
+    // esta pantalla muestra los mismos leídos de la tabla `cursos` y, al lado de
+    // cada uno, lo que esta persona rindió. Ese dato no puede salir de un
+    // archivo: sale de `intentos_evaluacion`, que la base sólo le muestra a
+    // quien lo rindió y a su Prestadora.
+
+    function capMostrar(cual) {
+      for (const estado of ['cargando', 'error', 'vacio', 'listo']) {
+        document.getElementById('cap-' + estado).hidden = estado !== cual;
+      }
+    }
+
+    // Devuelve el renglón de resultado de un curso: qué se sabe de esta persona
+    // en esa evaluación. Sin evaluación no hay renglón, y se dice.
+    function capResultado(evaluacion, intentos) {
+      if (!evaluacion) {
+        return { texto: 'Este curso no tiene evaluación.', clase: 'pendiente', icono: 'fa-circle-info' };
+      }
+      const mios = intentos.filter((i) => i.evaluacion_id === evaluacion.id);
+      const aprobado = mios.filter((i) => i.aprobado)[0];
+      if (aprobado) {
+        return {
+          texto: 'Aprobada con ' + aprobado.porcentaje + '% el ' + Texto.fechaCorta(aprobado.rendido_el) + '.',
+          clase: 'aprobado',
+          icono: 'fa-circle-check'
+        };
+      }
+      if (mios.length === 0) {
+        return { texto: 'Todavía no la rindió.', clase: 'pendiente', icono: 'fa-circle-dot' };
+      }
+      const quedan = (evaluacion.intentos_maximos || 0) - mios.length;
+      return {
+        texto: 'Rendida ' + mios.length + (mios.length === 1 ? ' vez' : ' veces') + ', sin aprobar. ' +
+          (quedan > 0
+            ? 'Queda' + (quedan === 1 ? '' : 'n') + ' ' + quedan + ' intento' + (quedan === 1 ? '' : 's') + '.'
+            : 'No quedan intentos.'),
+        clase: 'pendiente',
+        icono: 'fa-circle-exclamation'
+      };
+    }
+
+    function capTarjeta(curso, evaluacion, intentos) {
+      const nodo = document.getElementById('molde-curso').content.cloneNode(true);
+      const parte = (nombre) => nodo.querySelector('[data-parte="' + nombre + '"]');
+      const resultado = capResultado(evaluacion, intentos);
+
+      parte('nombre').textContent = curso.nombre || '';
+
+      if (curso.descripcion) parte('descripcion').textContent = curso.descripcion;
+      else parte('descripcion').remove();
+
+      // Las horas y el certificado son de este renglón; la modalidad es una
+      // clave guardada y su texto sale del catálogo (regla 5.1).
+      const datos = [];
+      if (curso.horas) datos.push(curso.horas + (curso.horas === 1 ? ' hora' : ' horas'));
+      const modalidad = Catalogo.etiquetaSiExiste('modalidad_curso', curso.modalidad);
+      if (modalidad) datos.push(modalidad);
+      if (curso.otorga_certificado) datos.push('Otorga certificado');
+
+      if (datos.length === 0) {
+        parte('datos').remove();
+      } else {
+        const caja = parte('datos');
+        datos.forEach((texto) => {
+          const marca = document.createElement('span');
+          marca.className = 'curso-dato';
+          marca.textContent = texto;
+          caja.appendChild(marca);
+        });
+      }
+
+      parte('resultado').classList.add('curso-resultado-' + resultado.clase);
+      parte('icono').className = 'fas ' + resultado.icono;
+      parte('resultado-texto').textContent = resultado.texto;
+
+      // El botón sale sólo si hay algo que rendir. El examen vive en una
+      // pantalla del sitio y no en la aplicación; que esté afuera es el
+      // pendiente 12, no este.
+      const usados = evaluacion
+        ? intentos.filter((i) => i.evaluacion_id === evaluacion.id).length
+        : 0;
+      if (evaluacion && resultado.clase !== 'aprobado' &&
+          (evaluacion.intentos_maximos || 0) > usados) {
+        parte('rendir').href = '../examen.html?evaluacion=' + encodeURIComponent(evaluacion.clave);
+      } else {
+        parte('rendir').remove();
+      }
+
+      return nodo;
+    }
+
+    function capDibujar(cursos, evaluaciones, intentos) {
+      const lista = document.getElementById('cap-lista');
+      while (lista.firstChild) lista.removeChild(lista.firstChild);
+      for (const curso of cursos) {
+        const evaluacion = evaluaciones.filter((e) => e.curso_id === curso.id)[0] || null;
+        lista.appendChild(capTarjeta(curso, evaluacion, intentos));
+      }
+    }
+
+    async function capCargar() {
+      capMostrar('cargando');
+      try {
+        const [cursos, evaluaciones, intentos] = await Promise.all([
+          ClienteDatos.getCursos(),
+          ClienteDatos.getEvaluaciones(),
+          ClienteDatos.getIntentosEvaluacion()
+        ]);
+        await Catalogo.cargar();
+        if (!cursos || cursos.length === 0) { capMostrar('vacio'); return; }
+        capDibujar(cursos, evaluaciones || [], intentos || []);
+        capMostrar('listo');
+      } catch (err) {
+        document.getElementById('cap-error-texto').textContent =
+          Texto.mensajeDeError(err, 'traer sus capacitaciones');
+        capMostrar('error');
+      }
+    }
+
+    document.getElementById('cap-volver').addEventListener('click', () => navigate('dashboard'));
+    document.getElementById('cap-reintentar').addEventListener('click', capCargar);
+
     // ── Navegación Multi-Pantalla ──────────────────
     function navigate(screenId) {
       document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
@@ -626,6 +796,10 @@
       // Cerrar drawer si está abierto
       document.getElementById('drawer').classList.remove('open');
       document.getElementById('overlay').classList.remove('open');
+
+      // Las pantallas que leen de la base se llenan al entrar, no al arrancar
+      // la aplicación: quien nunca abre capacitaciones no le pide nada a nadie.
+      if (screenId === 'capacitaciones') capCargar();
     }
 
     // ── Estado del Legajo ──────────────────────────

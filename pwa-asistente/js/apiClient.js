@@ -296,6 +296,24 @@ const ClienteDatos = {
     return await this._supabaseRequest('GET', 'logbook_entries', null, queryParams);
   },
 
+  // --- LOS CURSOS ---
+
+  // La oferta de cursos de quien inició sesión: la general de CeltaTech más la
+  // de su Prestadora, nunca la de otra. Eso no lo decide este renglón sino la
+  // política de la tabla (migración 0008), que es donde tiene que decidirse.
+  //
+  // `publicado` se filtra acá y no allá a propósito: la política de `cursos` no
+  // lo mira —la de `evaluaciones` sí—, así que un curso guardado sin publicar
+  // llegaría igual. Que no llegue a la pantalla es lo que corresponde; que no
+  // llegue al navegador sería mejor todavía, y eso es una migración.
+  async getCursos() {
+    return await this._supabaseRequest('GET', 'cursos', null, {
+      select: 'id,clave,nombre,descripcion,horas,nivel,modalidad,otorga_certificado,orden',
+      publicado: 'eq.true',
+      order: 'orden.asc'
+    });
+  },
+
   // --- EL EXAMEN ---
   // La corrección la hace la base (migración 0008), y no por prolijidad: la
   // respuesta correcta vive en una columna que no tiene permiso de lectura

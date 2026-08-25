@@ -530,7 +530,13 @@
           return;
         }
 
-        await verLista();
+        // Si la dirección nombra una evaluación, se abre esa. Es como llega
+        // quien viene de «Mis Capacitaciones», que ya eligió el curso. Si la
+        // clave no existe, `abrir` muestra el estado vacío con su explicación,
+        // que es mejor que mandarlo de vuelta a empezar.
+        const pedida = new URLSearchParams(window.location.search).get('evaluacion');
+        if (pedida) await abrir(pedida);
+        else await verLista();
       } catch (err) {
         console.error('Examen, arranque:', err);
         mostrar('error');

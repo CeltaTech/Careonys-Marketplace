@@ -45,6 +45,21 @@
 
 const Texto = {
   /**
+   * Una fecha como se escribe acá: «12/08/2026». Entra lo que devuelve la base
+   * —un texto con fecha y hora— y sale sólo el día. Sin fecha, o con algo que
+   * no lo sea, devuelve la cadena vacía, para que la pantalla pueda no mostrar
+   * nada en vez de mostrar «Invalid Date».
+   */
+  fechaCorta(valor) {
+    if (!valor) return '';
+    const fecha = new Date(valor);
+    if (isNaN(fecha.getTime())) return '';
+    return new Intl.DateTimeFormat('es-AR', {
+      day: '2-digit', month: '2-digit', year: 'numeric'
+    }).format(fecha);
+  },
+
+  /**
    * Un importe en pesos, con el punto de mil que se usa acá: 3500 → «$3.500».
    * Sin el número —o con algo que no lo sea— devuelve la cadena vacía, para que
    * la pantalla pueda decidir no mostrar nada en vez de mostrar «$NaN».
