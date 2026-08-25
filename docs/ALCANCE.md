@@ -1440,7 +1440,7 @@ la lista de exenciones vacía: aparecen los dos casos conocidos, cada uno en su 
 ### La regla de los módulos se midió para hacerle un chequeo, y el chequeo no se escribió
 
 **La regla 12 se queda sin chequeo automático, y conviene dejar escrito por qué**, porque parecía
-la candidata más fácil: es la única que trae su propia lista de palabras. `docs/MODULOS.md:87`
+la candidata más fácil: es la única que trae su propia lista de palabras. `docs/MODULOS.md`, «Cómo se comprueba que la línea está bien puesta»,
 manda «buscar en lo compartido cualquier palabra que sólo signifique algo acá —`modalidad`,
 directorio, aviso, postulación, contacto, puntaje, destacado—». Se midió el 25 de agosto de 2026 y
 la medición dice que no.
@@ -1488,7 +1488,7 @@ migraciones. Se midió todo de nuevo el 25 de agosto de 2026, contra el árbol d
 | 2.566 declaraciones en 772 atributos `style=` | 2.166 en 687 |
 | ninguna pantalla protegida | 11 de las 16 rescatan la sesión al abrir |
 | 4 dependencias por CDN | 4 servidores de afuera: dos de tipografías y dos de bibliotecas |
-| 6 tablas, sin migraciones en el repositorio | 22 tablas y 17 migraciones |
+| 6 tablas, sin migraciones en el repositorio | 24 tablas y 18 migraciones |
 
 Dos filas merecen una explicación. **Los estilos pegados al HTML bajaron** —de 2.566
 declaraciones a 2.166— porque en el medio se sacaron los 434 colores escritos a mano; el
@@ -1658,6 +1658,44 @@ destruye nada. La única que hay ya pregunta antes, y la pregunta dice qué qued
 Desde esta pantalla no se puede volver atrás. ¿Confirma?».
 No hace falta un chequeo para vigilar un caso que además está bien; lo que hace falta es acordarse
 cuando aparezca el segundo, y por eso queda escrito acá.
+
+### Cuánto vale cada papel lo decide cada Prestadora, no nosotros
+
+Al diseñar el puntaje del legajo, la línea de comandos propuso que las cinco comprobaciones
+valieran todas lo mismo, con este argumento: cualquier otro reparto obliga a defender por qué el
+domicilio vale menos que la referencia, y eso no lo puede defender nadie. **El argumento estaba
+bien y el dueño estaba mal.** El Desarrollador corrigió que el que tiene que poder defender ese
+reparto no somos nosotros sino **cada Prestadora**, cuyo criterio puede legítimamente no ser el
+nuestro —y que puede, además, no querer calificar a nadie.
+
+Así que los pesos iguales dejaron de ser la regla y pasaron a ser **el valor de fábrica**. La
+migración `0018_cada_prestadora_pondera_su_puntaje.sql` agrega dos tablas:
+
+| Tabla | Qué guarda |
+|---|---|
+| `puntaje_prestadora` | Una fila por Prestadora, con una sola llave: `califica`. En `false` desaparece el número de todas sus pantallas |
+| `peso_comprobacion` | Una fila por Prestadora y comprobación, con `peso`. Arranca en 1 las cinco |
+
+**Apagar el puntaje no apaga el escudo.** Son cosas distintas: el escudo dice que el legajo está
+validado, y eso es la puerta de la modalidad —no se entra sin eso—. El número dice cuánto acreditó
+alguien de más. Se puede no querer lo segundo sin dejar de necesitar lo primero.
+
+**Y un peso en cero no es lo mismo que apagar el puntaje.** Cero quiere decir «esta comprobación
+a mí no me importa», y el resto sigue sumando. Por eso son dos tablas y no una: una tabla vacía
+no dice «todas valen uno», dice «todavía nadie configuró esto», y esas dos cosas no se pueden
+confundir. La migración siembra las filas de fábrica para las Prestadoras que ya existen,
+justamente para que el valor de fábrica sea visible y no un supuesto escondido en el código.
+
+Las dos tablas se leen sólo con sesión y con la política de siempre —`tenant_id =
+prestadora_actual()`—, y `anon` no las ve: con qué criterio pondera una Prestadora es asunto
+suyo, y publicarlo dejaría comparar criterios de Prestadoras distintas, que es justo lo que
+todavía no está decidido (pendiente 56).
+
+**Esto abre una consecuencia que hay que mirar antes de dibujar la pantalla.** El diseño decía
+mostrar «4 de 5 comprobaciones». Esa fracción sólo se lee bien mientras las cinco valgan lo
+mismo; en cuanto una Prestadora las pondera distinto, «4 de 5» deja de querer decir algo y hay
+que mostrar un porcentaje. Quedó anotado en el pendiente 56 junto con la pregunta más difícil:
+qué ve una **Familia** en un directorio donde conviven Prestadoras que ponderan distinto.
 
 ## 2. Falta construir
 
