@@ -53,7 +53,7 @@
   const IDIOMA_POR_DEFECTO = 'es-AR';
 
   // Los cuatro estados de la regla 5.3, dichos una sola vez.
-  const AVISOS = {
+  const MENSAJES = {
     cargando: 'Cargando opciones…',
     error: 'No se pudieron cargar las opciones',
     vacio: 'No hay opciones disponibles',
@@ -248,7 +248,7 @@
       const lista = (oferta && oferta[cual]) || [];
       if (!lista.length) {
         console.error('Catálogo: la oferta «' + cual + '» está vacía.');
-        this._avisarEnOferta(contenedor, AVISOS.sinContenido);
+        this._avisarEnOferta(contenedor, MENSAJES.sinContenido);
         return;
       }
       const solo = (contenedor.getAttribute('data-oferta-solo') || '')
@@ -269,7 +269,7 @@
       // Ninguna de las claves pedidas existe. Sin esto la grilla queda vacía y
       // muda: el molde ya se sacó y no entra nada en su lugar.
       if (!elegidos.length) {
-        this._avisarEnOferta(contenedor, AVISOS.sinContenido);
+        this._avisarEnOferta(contenedor, MENSAJES.sinContenido);
         return;
       }
 
@@ -443,12 +443,12 @@
         items = this.items(clave);
       } catch (err) {
         console.error('Catálogo:', err.message);
-        this._avisar(elemento, AVISOS.error);
+        this._avisar(elemento, MENSAJES.error);
         return false;
       }
       if (!items.length) {
         console.error('Catálogo: el vocabulario «' + clave + '» no tiene ítems.');
-        this._avisar(elemento, AVISOS.vacio);
+        this._avisar(elemento, MENSAJES.vacio);
         return false;
       }
       const como = elemento.getAttribute('data-catalogo-como');
@@ -488,7 +488,7 @@
         console.error('Catálogo:', err.message);
         // El molde queda como está: una tarjeta menos se nota, una grilla vacía
         // sin explicación, no.
-        contenedores.forEach((c) => this._avisarEnOferta(c, AVISOS.error));
+        contenedores.forEach((c) => this._avisarEnOferta(c, MENSAJES.error));
         return;
       }
       contenedores.forEach((c) => this._llenarOferta(c));
@@ -504,7 +504,7 @@
       // falla que este archivo existe para no tener. El desplegable además
       // queda deshabilitado, así nadie manda el formulario a medio llenar.
       elementos.forEach((el) => {
-        this._avisar(el, AVISOS.cargando);
+        this._avisar(el, MENSAJES.cargando);
         if (el.tagName === 'SELECT') el.disabled = true;
       });
 
@@ -513,7 +513,7 @@
       } catch (err) {
         console.error('Catálogo:', err.message);
         elementos.forEach((el) => {
-          this._avisar(el, AVISOS.error);
+          this._avisar(el, MENSAJES.error);
           if (el.tagName === 'SELECT') el.disabled = false;
         });
         return;

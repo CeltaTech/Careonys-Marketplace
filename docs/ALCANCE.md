@@ -1523,6 +1523,14 @@ buscar es lo que hace después el que lo lee.
   brevedad».
 - **Los identificadores del formulario acompañan**: `form-nueva-busqueda` pasó a
   `form-nuevo-aviso` y `btn-enviar-busqueda` a `btn-enviar-aviso`.
+- **Y adentro del código había un `AVISOS` que no eran avisos.** `js/catalogo.js`,
+  `js/disponibilidad.js` y `js/autorizaciones.js` guardaban ahí los cuatro estados de la
+  regla 5.3 —«Cargando opciones…», «No se pudieron cargar», «No hay opciones
+  disponibles», «Por ahora no hay nada para mostrar acá»—, que no son ni un Aviso ni una
+  notificación: son **mensajes** en pantalla. La constante pasó a llamarse `MENSAJES` en
+  los tres módulos y en sus ocho copias. Esto no lo pidió nadie: el problema de un nombre
+  ambiguo no es sólo que la misma cosa tenga dos nombres, sino que dos cosas tengan el
+  mismo.
 
 **Y el chequeo de vocabulario pasó a mirar dos palabras en vez de una.**
 `scripts/verificar_vocabulario.mjs` vigilaba que «cuidador» no volviera a ser el término

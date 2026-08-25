@@ -60,7 +60,7 @@
   const IDIOMA_POR_DEFECTO = 'es-AR';
 
   // Los estados de la regla 5.3 que este paso puede tener, dichos una sola vez.
-  const AVISOS = {
+  const MENSAJES = {
     error: 'No se pudo cargar el paso de cierre'
   };
 
@@ -135,7 +135,7 @@
       try {
         await this.cargar();
       } catch (err) {
-        _avisar(contenedor, AVISOS.error, err);
+        _avisar(contenedor, MENSAJES.error, err);
         return;
       }
 

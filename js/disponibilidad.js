@@ -103,7 +103,7 @@
   const IDIOMA_POR_DEFECTO = 'es-AR';
 
   // Los cuatro estados de la regla 5.3, dichos una sola vez.
-  const AVISOS = {
+  const MENSAJES = {
     cargando: 'Cargando la disponibilidad…',
     error: 'No se pudo cargar el paso de disponibilidad',
     vacio: 'No hay días ni turnos para mostrar'
@@ -193,7 +193,7 @@
     async montarGrilla(idContenedor, nombreBloque) {
       const contenedor = document.getElementById(idContenedor);
       if (!contenedor) return;
-      _avisar(contenedor, AVISOS.cargando);
+      _avisar(contenedor, MENSAJES.cargando);
 
       let grilla;
       let dias;
@@ -209,12 +209,12 @@
         turnos = Catalogo.items(grilla.filas);
         rotulos = this.texto(grilla);
       } catch (err) {
-        _avisar(contenedor, AVISOS.error, err);
+        _avisar(contenedor, MENSAJES.error, err);
         return;
       }
 
       if (dias.length === 0 || turnos.length === 0) {
-        _avisar(contenedor, AVISOS.vacio);
+        _avisar(contenedor, MENSAJES.vacio);
         return;
       }
 
@@ -278,12 +278,12 @@
     async montarPreguntas(idContenedor) {
       const contenedor = document.getElementById(idContenedor);
       if (!contenedor) return;
-      _avisar(contenedor, AVISOS.cargando);
+      _avisar(contenedor, MENSAJES.cargando);
 
       try {
         await this.cargar();
       } catch (err) {
-        _avisar(contenedor, AVISOS.error, err);
+        _avisar(contenedor, MENSAJES.error, err);
         return;
       }
 
