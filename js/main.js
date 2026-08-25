@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const buscaAsistente = !consultaSelect || consultaSelect.value === 'busco_asistente' || form.id === 'form-solicitud-familia';
 
         if (buscaAsistente) {
-          // Redirigir al Wizard Interactivo de Publicación de Búsqueda
+          // Llevar al formulario paso a paso que publica el aviso
           window.location.href = 'formulario-integral.html';
         } else {
           const successMsg = form.querySelector('.form-success') || document.getElementById('form-success');
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const patientGender = document.getElementById('w-patient-gender')?.value || 'Femenino';
       
       // Lo que la persona eligió en los seis pasos. Hasta la migración 0013
-      // esto se recolectaba en pantalla y no salía de ahí: la búsqueda se
+      // esto se recolectaba en pantalla y no salía de ahí: el aviso se
       // armaba con `patologias: []` y `horarios: 'flexible'` escritos a mano, y
       // los pasos 2, 3 y 4 no llegaban a la base.
       //
@@ -271,10 +271,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btnSubmit) btnSubmit.style.display = 'none';
       } catch (err) {
         // Antes, sin ClienteDatos, esto se guardaba en el navegador y la
-        // pantalla anunciaba éxito: la búsqueda no llegaba a ninguna parte y
+        // pantalla anunciaba éxito: el aviso no llegaba a ninguna parte y
         // nadie se enteraba. Ahora va a la base o se dice que no se pudo.
-        console.error('Publicar la búsqueda:', err);
-        alert(Texto.mensajeDeError(err, 'publicar la búsqueda'));
+        console.error('Publicar el aviso:', err);
+        alert(Texto.mensajeDeError(err, 'publicar el aviso'));
         if (btnSubmit) btnSubmit.disabled = false;
       }
     });

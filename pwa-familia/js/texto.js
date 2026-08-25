@@ -139,7 +139,7 @@ const Texto = {
     if (dice('sin_intentos')) return 'Ya se usaron todos los intentos de esta evaluación.';
     if (dice('evaluacion_vacia', 'evaluacion_inexistente')) return 'Esta evaluación no está disponible en este momento.';
 
-    // Publicar una búsqueda son dos pedidos: la búsqueda y sus franjas. Si el
+    // Publicar un aviso son dos pedidos: el aviso y sus franjas. Si el
     // segundo falla, el primero ya está hecho, y decir «no se pudo publicar»
     // llevaría a publicarla dos veces.
     if (dice('aviso_sin_franjas')) return 'El aviso quedó publicado, pero no se pudieron guardar los días y turnos en los que se necesita el cuidado. No hace falta publicarlo de nuevo.';

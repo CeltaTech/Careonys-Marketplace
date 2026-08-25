@@ -334,10 +334,10 @@ const BUENOS = [
   ['ternario anidado, todo escrito', 'el.innerHTML = `<p>${a.e === \'x\' ? \'<b>X</b>\' : a.e ? \'<i>Y</i>\' : \'\'}</p>`;'],
   ['rama que es una plantilla', 'el.innerHTML = `<p>${a.ok ? `<b>${Texto.escapar(a.n)}</b>` : \'\'}</p>`;'],
   ['excepción con su razón', 'el.innerHTML = `<div>${/* seguro: lo arma este mismo módulo */ this._bloque(i)}</div>`;'],
-  ['plantilla que no es marcado', 'const q = `eq.${busqueda.id}`;'],
+  ['plantilla que no es marcado', 'const q = `eq.${aviso.id}`;'],
   ['texto plano por textContent', 'el.textContent = asp.nombre;'],
   ['marcado fijo sin datos', "el.innerHTML = '<p>No hay registros todavía.</p>';"],
-  ['el error crudo va a la consola', "console.error('Publicar la búsqueda:', err.message);"],
+  ['el error crudo va a la consola', "console.error('Publicar el aviso:', err.message);"],
   ['el error clasificado antes de mostrarse', "alert(Texto.mensajeDeError(err, 'guardar la novedad'));"],
   ['el error se relanza con su texto', "if (error) throw new Error(error.message);"]
 ];

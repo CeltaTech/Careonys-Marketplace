@@ -250,7 +250,7 @@ Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2
   `caregivers.profession` y las claves `domiciliaria`, `enfermera`, `auxiliar` y `at`. Esas
   palabras no eran filas: eran los `<option>` y los `data-` de `directorio.html`. Se verificó
   además que ninguna pantalla escribe hoy una clave inventada en esa columna —`registrar-asistente.html:319`
-  y `formulario-integral.html:353` toman las suyas del catálogo—, y de la
+  y `formulario-integral.html:352` toman las suyas del catálogo—, y de la
   base misma no se puede afirmar nada desde acá, porque `caregivers` no se deja leer sin sesión.
 - **Los cuatro filtros salen del catálogo** (`directorio.html:66`): zona, Tipo de Asistente,
   patología y verificación. Eran veinticinco opciones escritas a mano contra la regla 5.1; ahora
@@ -1471,6 +1471,37 @@ tabla por tabla no está escrito en ningún lado: `docs/MODULOS.md` reparte mód
 
 Quedó anotado como **pendiente 52** y el Desarrollador lo decidió ese mismo día: se renombran
 las dos. Cómo quedó está en la sección de acá abajo.
+
+### Las pantallas también dicen Aviso, y el «Wizard» dejó de estar en inglés
+
+El renombre de la mañana llegó hasta la base y hasta el código, y a la tarde se vio que
+faltaba lo único que la gente lee: **las pantallas seguían diciendo «Publicar Búsqueda»**.
+Estaba en el enlace de la barra de siete pantallas, en el título y en cuatro lugares más de
+`formulario-integral.html`, en dos de `pwa-familia/index.html` y en el menú de
+`panel-prestadora.html`. Publicar una búsqueda no quiere decir nada: se publica un aviso, y
+buscar es lo que hace después el que lo lee.
+
+- **El enlace de la barra dice «Publicar un Aviso»** en las siete pantallas que lo tienen.
+- **Se fue «(Wizard)»**, que estaba entre paréntesis en catorce enlaces, y también «Wizard
+  Interactivo» y «Wizard de Publicación», que eran texto visible en inglés. Quedó **«paso a
+  paso»**. No se tradujo por «asistente», que es la palabra correcta para eso en castellano,
+  porque en este producto un Asistente es una persona.
+- **El botón que publica decía `PUBLICAR BÚSQUEDA AHORA`** y ahora dice `PUBLICAR EL AVISO
+  AHORA`. Ése no lo encontró la lectura sino el chequeo, porque estaba todo en mayúsculas.
+- **Los dos avisos de éxito cambiaron de persona.** El de la PWA decía «Lo contactaremos a la
+  brevedad»: daba por sentado el género de quien lee. Ahora dice «Nos vamos a comunicar a la
+  brevedad».
+- **Los identificadores del formulario acompañan**: `form-nueva-busqueda` pasó a
+  `form-nuevo-aviso` y `btn-enviar-busqueda` a `btn-enviar-aviso`.
+
+**Y el chequeo de vocabulario pasó a mirar dos palabras en vez de una.**
+`scripts/verificar_vocabulario.mjs` vigilaba que «cuidador» no volviera a ser el término
+general; ahora vigila además que «búsqueda» no vuelva a nombrar lo que se publica. La palabra
+suelta **no** se prohíbe, porque buscar sigue siendo buscar: «Filtro y Búsqueda en la Red de
+Asistentes» está bien dicho y pasa. Lo que se prohíben son las formas donde nombra una cosa
+guardada —publicar una búsqueda, una búsqueda publicada, una búsqueda nueva, las búsquedas de
+una Familia—, que son las que no tienen ningún uso legítimo. Se prueba a sí mismo con once
+frases nuevas, seis que tiene que encontrar y cinco que tiene que dejar pasar.
 
 ### Las dos tablas de esta modalidad pasaron a llamarse como lo que guardan
 

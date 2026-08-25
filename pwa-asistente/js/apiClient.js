@@ -631,11 +631,11 @@ const ClienteDatos = {
   // El traductor de ida: del nombre que usa la pantalla al nombre de la columna.
   //
   // Cada campo se declara una sola vez, con `llevar`, y de esa misma lista sale
-  // la de nombres conocidos. Eso es lo que permite el aviso del final: hasta la
+  // la de nombres conocidos. Eso es lo que permite la advertencia del final: hasta
   // 0013 el traductor descartaba en silencio todo lo que no reconocía, y una
   // pantalla podía preguntar algo durante meses sin que se guardara nunca. Así
-  // se perdieron la grilla de disponibilidad, la zona y la descripción de una
-  // búsqueda. La falla se veía recién cuando alguien iba a buscar el dato a la
+  // se perdieron la grilla de disponibilidad, la zona y la descripción de un
+  // aviso. La falla se veía recién cuando alguien iba a buscar el dato a la
   // base y no estaba; ahora se ve la primera vez que se prueba la pantalla.
   _mapToDatabase(table, data) {
     const row = {};

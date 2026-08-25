@@ -143,7 +143,7 @@ un chequeo nuevo se suma solo con existir.
 | `verificar_referencias` | Que una cita `archivo:renglón` de la documentación apunte a la nada |
 | `verificar_temas` | Que se rompa el modo oscuro: las dos copias separadas, o un token de letra pintando un fondo |
 | `verificar_trato` | Que el texto visible tutee a quien lo lee |
-| `verificar_vocabulario` | Que «cuidador» vuelva a ser el término general |
+| `verificar_vocabulario` | Que «cuidador» vuelva a ser el término general, o que «búsqueda» nombre lo que una Familia publica |
 
 **El comando que hace falta una sola vez por máquina**, para que se corran solos antes de cada
 `git commit`:

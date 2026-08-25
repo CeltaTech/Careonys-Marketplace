@@ -615,7 +615,7 @@
         </div>
         <div class="service-btn" onclick="navigate('publicar')">
           <div class="icon-box" style="background:var(--naranja-alerta);"><i class="fas fa-plus-circle"></i></div>
-          <span>Nueva Búsqueda</span>
+          <span>Nuevo Aviso</span>
         </div>
         <div class="service-btn" onclick="alert('Vida Activa: Estimulación Cognitiva.')">
           <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-running"></i></div>
@@ -710,14 +710,14 @@
     <div class="app-screen" id="screen-publicar" style="padding-bottom:64px;">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
-        <h1><i class="fas fa-plus-circle" style="color:var(--marca-prestadora-acento);"></i> Nueva Búsqueda</h1>
+        <h1><i class="fas fa-plus-circle" style="color:var(--marca-prestadora-acento);"></i> Nuevo Aviso</h1>
         <div style="width:24px;"></div>
       </div>
 
       <div style="padding:16px;">
         <p style="font-size:12px;color:var(--texto-secundario);margin:0 0 16px 0;">Complete los datos del cuidado que necesita y le encontramos el asistente ideal.</p>
 
-        <form id="form-nueva-busqueda" novalidate>
+        <form id="form-nuevo-aviso" novalidate>
 
           <!-- Datos del Paciente -->
           <div style="background: var(--superficie);border:1px solid var(--borde-card);border-radius:16px;padding:16px;margin-bottom:12px;">
@@ -784,13 +784,13 @@
           </div>
 
           <!-- Botón Enviar -->
-          <button type="submit" id="btn-enviar-busqueda"
+          <button type="submit" id="btn-enviar-aviso"
             style="width:100%;padding:14px;border-radius:14px;background:var(--marca-prestadora-acento);color:var(--texto-sobre-color);font-weight:800;font-size:14px;border:none;cursor:pointer;box-shadow:var(--sombra-alta);">
             <i class="fas fa-search"></i> Buscar mi Asistente Ideal
           </button>
           <div id="pb-success"
             style="display:none;background:var(--tono-exito-fondo);color:var(--verde-exito-texto);padding:14px;border-radius:12px;font-weight:700;text-align:center;font-size:13px;border:1px solid var(--tono-exito-borde);margin-top:12px;">
-            ✓ ¡Búsqueda publicada! Lo contactaremos a la brevedad con los mejores perfiles.
+            ✓ ¡El aviso quedó publicado! Nos vamos a comunicar a la brevedad con los mejores perfiles.
           </div>
         </form>
       </div>
@@ -1013,8 +1013,8 @@
     Franjas.montarTextos('franjas-cuidado', 'paso_de_franjas_aviso');
     Franjas.montarGrilla('grilla-cuidado', 'grilla_aviso');
 
-    // ── Formulario Nueva Búsqueda de Asistente (Inline — Offline Safe) ─────
-    document.getElementById('form-nueva-busqueda').addEventListener('submit', async (e) => {
+    // ── Formulario de Nuevo Aviso, escrito acá adentro para que ande sin red ──
+    document.getElementById('form-nuevo-aviso').addEventListener('submit', async (e) => {
       e.preventDefault();
       const nombre = document.getElementById('pb-nombre').value.trim();
       const zona   = document.getElementById('pb-zona').value;
@@ -1029,7 +1029,7 @@
       const patologias = Array.from(document.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
       const descripcion = document.getElementById('pb-descripcion').value;
 
-      const btn = document.getElementById('btn-enviar-busqueda');
+      const btn = document.getElementById('btn-enviar-aviso');
       btn.textContent = 'Publicando...';
       btn.disabled = true;
 
@@ -1045,7 +1045,7 @@
           familyUserId: session?.user?.id || null
         });
         document.getElementById('pb-success').style.display = 'block';
-        document.getElementById('form-nueva-busqueda').reset();
+        document.getElementById('form-nuevo-aviso').reset();
         // `reset()` no desmarca la grilla: sus casilleros son botones y no
         // controles de formulario. Sin esto, la búsqueda siguiente arrancaría
         // con lo que se marcó en la anterior.
@@ -1055,7 +1055,7 @@
           navigate('dashboard');
         }, 4000);
       } catch (err) {
-        alert(Texto.mensajeDeError(err, 'publicar la búsqueda'));
+        alert(Texto.mensajeDeError(err, 'publicar el aviso'));
       } finally {
         btn.textContent = '🔍 Buscar mi Asistente Ideal';
         btn.disabled = false;

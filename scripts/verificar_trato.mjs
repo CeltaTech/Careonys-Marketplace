@@ -75,7 +75,7 @@ const PATRON = new RegExp(
 const TUTEAN = ['Completá tu legajo', 'Podés ingresar', '¿No tenés cuenta?', 'Registrate',
   'para tu ser querido', 'Te contactaremos', 'Si sos familiar', 'Contanos tu caso'];
 const NO_TUTEAN = ['Completar el curso', 'Solicitar Asistente', 'Encuentre al Asistente',
-  'Publicar Búsqueda', 'Cada Asistente completa su perfil', 'Agenda Horaria Semanal',
+  'Publicar un Aviso', 'Cada Asistente completa su perfil', 'Agenda Horaria Semanal',
   'Notas de la Entrevista', 'Se aprende desde aspectos técnicos'];
 
 const tutea = (frase) => { PATRON.lastIndex = 0; return PATRON.test(frase); };

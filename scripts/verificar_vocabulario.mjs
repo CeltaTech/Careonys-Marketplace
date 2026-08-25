@@ -1,8 +1,9 @@
 /* ===================================================
-   VERIFICA QUE «CUIDADOR» NO VUELVA A SER EL TÉRMINO GENERAL
+   VERIFICA DOS PALABRAS DEL GLOSARIO EN EL TEXTO QUE SE VE
 
    Falla —con código de salida 1— si en el texto que ve una persona aparece
-   «cuidador» usado como nombre de cualquiera que cuida.
+   «cuidador» usado como nombre de cualquiera que cuida, o «búsqueda» usada
+   como nombre de lo que una Familia publica.
 
        node scripts/verificar_vocabulario.mjs
 
@@ -25,6 +26,20 @@
      reconocen por el guion o el guion bajo pegado, y cambiarlos rompe algo.
    - **`soporte-remoto.html`**, entero: esa pantalla habla de las familias que
      cuidan a un familiar mayor, que no son Asistentes ni quieren serlo.
+
+   **La segunda palabra: «búsqueda» no nombra lo que se publica.** El
+   Desarrollador decidió el 25 de agosto de 2026 que lo que una Familia publica
+   es un **Aviso** —queda guardado— y que **Búsqueda** es el acto de buscar, que
+   no deja nada. Las pantallas decían «Publicar Búsqueda» en siete lugares y
+   «Nueva Búsqueda» en dos, y la base decía `care_searches`. Todo eso se cambió
+   ese mismo día.
+
+   Buscar sigue siendo buscar, así que la palabra suelta no se prohíbe: «Filtro
+   y Búsqueda en la Red de Asistentes» está bien dicho, y «la búsqueda libre
+   ignora tildes» también. Lo que se busca son las formas donde la palabra
+   nombra una cosa guardada, y ninguna de ellas tiene uso legítimo: publicar una
+   búsqueda, una búsqueda publicada, una búsqueda nueva, y las búsquedas de una
+   Familia. Un chequeo que avisa de más se termina apagando.
 
    Qué no mira: los comentarios del código y `docs/`. Un comentario explica de
    dónde salieron las cosas, y para eso necesita nombrarlas como se llamaban.
@@ -71,6 +86,26 @@ function apariciónQueSobra(frase) {
   return null;
 }
 
+/* Las formas en que «búsqueda» nombra lo que se publica. Ninguna se escribe
+   queriendo decir el acto de buscar, y por eso se pueden prohibir sin avisar
+   de más. */
+const ES_UN_AVISO = [
+  /\bpublicaci[oó]n\s+de\s+b[uú]squedas?\b/iu,
+  /\bpublica\w*\s+(?:una?\s+|la\s+|su\s+)?b[uú]squedas?\b/iu,
+  /\bb[uú]squedas?\s+public\w+\b/iu,
+  /\bnuevas?\s+b[uú]squedas?\b/iu,
+  /\bb[uú]squedas?\s+de\s+(?:familias?|la\s+familia)\b/iu
+];
+
+/** Devuelve el pedazo de frase donde «búsqueda» nombra un Aviso, o null. */
+function búsquedaQueEsAviso(frase) {
+  for (const patron of ES_UN_AVISO) {
+    const acierto = frase.match(patron);
+    if (acierto) return acierto[0];
+  }
+  return null;
+}
+
 /* Una prueba que no puede fallar no prueba nada: antes de recorrer el proyecto,
    el detector se prueba contra frases que sobran y contra frases que no. */
 const SOBRAN = [
@@ -92,8 +127,26 @@ const NO_SOBRAN = [
   'Encuentre al Asistente que necesita'
 ];
 
-const noDetecta = SOBRAN.filter((f) => !apariciónQueSobra(f));
-const sePasa = NO_SOBRAN.filter((f) => apariciónQueSobra(f));
+const SON_AVISOS = [
+  'Publicar Búsqueda (Wizard)',
+  'Publicación de Búsqueda y Formularios',
+  'Publicar una Búsqueda de Cuidado',
+  '¡Búsqueda publicada con éxito!',
+  'Nueva Búsqueda',
+  'Búsquedas de Familias'
+];
+const NO_SON_AVISOS = [
+  'Filtro y Búsqueda en la Red de Asistentes',
+  'La búsqueda libre ignora tildes',
+  'herramientas que facilitan la búsqueda y gestión del cuidado',
+  'Filtros de búsqueda',
+  'Publicar un Aviso'
+];
+
+const noDetecta = SOBRAN.filter((f) => !apariciónQueSobra(f))
+  .concat(SON_AVISOS.filter((f) => !búsquedaQueEsAviso(f)));
+const sePasa = NO_SOBRAN.filter((f) => apariciónQueSobra(f))
+  .concat(NO_SON_AVISOS.filter((f) => búsquedaQueEsAviso(f)));
 if (noDetecta.length || sePasa.length) {
   console.error('El detector está roto, así que no verifica nada:');
   if (noDetecta.length) console.error('  no detecta: ' + noDetecta.join(' / '));
@@ -102,6 +155,7 @@ if (noDetecta.length || sePasa.length) {
 }
 
 const fallas = [];
+const avisos = [];
 let revisados = 0;
 
 for (const camino of archivos(raiz, ['.html', '.js', '.json'], AJENAS)) {
@@ -117,7 +171,24 @@ for (const camino of archivos(raiz, ['.html', '.js', '.json'], AJENAS)) {
       vistos.add(renglon + sobra);
       fallas.push(`${nombre}:${renglon}  «${sobra}»  ${texto.slice(0, 90)}`);
     }
+    const esAviso = búsquedaQueEsAviso(texto);
+    if (esAviso && !vistos.has(renglon + esAviso)) {
+      vistos.add(renglon + esAviso);
+      avisos.push(`${nombre}:${renglon}  «${esAviso}»  ${texto.slice(0, 90)}`);
+    }
   }
+}
+
+if (avisos.length > 0) {
+  console.error('«Búsqueda» usada como nombre de lo que se publica:\n');
+  for (const aviso of avisos) console.error('  - ' + aviso);
+  const plural = avisos.length === 1 ? 'aparición' : 'apariciones';
+  console.error(
+    `\n${avisos.length} ${plural}. Lo que una Familia publica es un **Aviso**\n` +
+    '(docs/GLOSARIO.md), y **Búsqueda** es el acto de buscar, que no deja nada\n' +
+    'guardado. Buscar sigue diciéndose buscar: lo que no se puede es publicar\n' +
+    'una búsqueda.');
+  process.exit(1);
 }
 
 if (fallas.length > 0) {
@@ -130,4 +201,6 @@ if (fallas.length > 0) {
   process.exit(1);
 }
 
-console.log(`Vocabulario verificado: ${revisados} archivos sin «cuidador» como término general.`);
+console.log(
+  `Vocabulario verificado: ${revisados} archivos sin «cuidador» como término ` +
+  'general y sin «búsqueda» como nombre de lo que se publica.');
