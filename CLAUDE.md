@@ -170,9 +170,13 @@ información de otra.
       Desarrollador el 25 de agosto de 2026, y está escrita en
       `..\..\docs\POLITICA_DE_MODULOS.md`, que se lee antes de crear un módulo. `docs/MODULOS.md`
       sigue diciendo **qué** es compartido; esa política dice **dónde queda y cómo se llama**.
-      Todavía no hay ninguno: faltan tres decisiones del Desarrollador escritas al final de esa
-      página, y hasta entonces lo compartido se sigue construyendo acá con el reparto de
-      `docs/MODULOS.md`.
+      **Un módulo puede ser código instalado o un servicio con API**: va como servicio si guarda
+      algo que tiene que ser el mismo para todos los productos —cuentas, permisos, clientes—,
+      y como código si sólo hace algo con lo que el producto ya tiene. **Para este producto la
+      diferencia es grande:** un módulo de código no se puede usar acá hasta que haya herramienta
+      de armado (pendiente 13), pero una API se llama desde el navegador, que es lo que ya se
+      hace con la base. Todavía no hay ningún módulo creado, y hasta entonces lo compartido se
+      sigue construyendo acá con el reparto de `docs/MODULOS.md`.
     - No es prolijidad: una mejora sobre código partido en dos copias se hace dos veces o se
       hace una sola y la otra queda vieja. Ya pasó con `apiClient.js`, que está
       triplicado byte a byte (pendiente 13).
