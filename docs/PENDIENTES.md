@@ -53,6 +53,16 @@ también le escribe a su personal, y esa tabla ya existe desde la 0001 con ese u
 lecturas son defendibles y la pregunta que decide —*¿esto seguiría teniendo sentido en prestación
 directa?*— acá contesta que sí. Se deja marcada en vez de resolverse sola.
 
+**Y antes que el prefijo hay que decidir la palabra, porque no está decidida.** Lo que la Familia
+publica se llama **búsqueda** en el esquema y en las pantallas —`care_searches`,
+`franjas_busqueda`, `search_id`— y se llama **aviso** en `docs/MODULOS.md:57`, que nombra al
+módulo «Aviso y postulación», cuyo identificador `avisos` figura en `docs/MODULOS.md:49`. **Ninguna de las dos está
+definida en `docs/GLOSARIO.md`**: se buscaron las dos el 25 de agosto de 2026 y no hay entrada
+para ninguna. Son dos palabras para la misma cosa y las dos sin aprobar, que es justo lo que la
+regla 3 existe para impedir. Elegida la palabra, el nombre de la tabla sale solo; sin elegirla,
+cualquier nombre que se ponga hay que volver a cambiarlo. Es la primera de las decisiones de este
+pendiente, no una nota al pie.
+
 **Dos tablas compartidas apuntan al aviso, y eso pesa más que las palabras.** `logbook_entries` y
 `messages` tienen una columna `search_id` que referencia `care_searches`
 (`supabase/migrations/0001_esquema_inicial.sql:242` y `:247`). La bitácora y el chat existen igual
