@@ -80,6 +80,48 @@ y en prestación directa ordenar Asistentes por puntaje no significa nada.
 lista de opciones que una modalidad no consulta no le hace daño, y partir el catálogo por uso lo
 volvería a romper en copias.
 
+## Verificar un papel y incorporar a una persona son dos cosas
+
+**Decidido por el Desarrollador el 25 de agosto de 2026.** Los dos repositorios tenían una tabla
+llamada `verificaciones_asistente` y guardaban cosas distintas. Acá es una fila por control —qué se
+miró de un legajo y con qué resultado, siete tipos, cada uno con su vencimiento—. En Careonys es
+una fila por etapa del ingreso: postulación, identidad, penales, entrevista, capacitación.
+
+**No son rivales: están a distinta altura**, y buena parte de una ya vive adentro de la otra. De
+las cinco etapas de Careonys, cuatro ya tienen quién las guarde de este lado:
+
+| Etapa | Quién la guarda ya |
+|---|---|
+| Postulación | el momento en que nace el legajo |
+| Verificación de identidad | la verificación `dni` |
+| Antecedentes penales | la verificación `penales` |
+| Capacitación | un intento aprobado (`supabase/migrations/0008_cursos_y_evaluaciones.sql:151`) |
+| **Entrevista** | **nadie** |
+
+Cómo queda:
+
+1. **`verificaciones_asistente` se queda con este nombre y esta forma.** Es el módulo Verificación
+   que este documento ya nombra, y tiene la columna que decide: **el vencimiento**. Un papel vence
+   y hay que volver a pedirlo; una etapa del ingreso no vence nunca. Esa sola diferencia separa a
+   las dos tablas mejor que cualquier explicación.
+2. **La de Careonys pasa a llamarse `etapas_incorporacion`**, que es lo que su propio documento ya
+   titulaba —«Proceso de Incorporación de Asistentes»—. El nombre no se inventó y además dice
+   literalmente lo que pasa: *incorporar* es meter en el cuerpo, y el plantel es ese cuerpo. No
+   lleva sufijo `_asistente` como sus vecinas porque sería redundante: a un papel no se lo
+   incorpora, sólo a una persona.
+3. **Esa tabla guarda sólo la entrevista.** Las otras cuatro etapas las lee de donde ya están. Si
+   guardara las cinco tendría una segunda copia de un estado que también vive en otro lado, y dos
+   copias del mismo dato terminan siempre diciendo cosas distintas — que es exactamente lo que
+   pasó con `validado` y `validado_prestadora` (`supabase/migrations/0017_un_solo_nombre_para_validado.sql`).
+
+**La prueba de que la decisión es buena:** borra la duplicación en vez de repartirla. Dejar una
+tabla de cada lado con nombres distintos también habría terminado el conflicto de nombres, y la
+duplicación seguiría viva.
+
+**Lo que falta y no se hace desde acá:** el renombre corre sobre el repositorio de Careonys y sobre
+datos ya guardados. Se hace con la fusión, no desde este repositorio, que sólo lee los otros
+proyectos.
+
 ## Cómo se comprueba que la línea está bien puesta
 
 No con una revisión de código: con una pregunta que se puede contestar.
