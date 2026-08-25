@@ -73,6 +73,27 @@ label { font-size: 12px; font-weight: 700; color: var(--texto-secundario); displ
 .wizard-step-label { font-size: 10px; font-weight: 700; color: var(--texto-secundario); text-transform: uppercase; display: block; }
 .wizard-step-node { flex: 1; text-align: center; z-index: 2; }
 
+/* ---- Contraseñas: el botón para verlas ----
+   `js/clave.js` envuelve cada campo de contraseña en `.campo-clave` y le mete
+   este botón adentro. El campo deja lugar a la derecha para que lo escrito no
+   termine escondido abajo del botón.
+
+   El relleno pide tres piezas —la caja, el tipo y la marca— porque los campos
+   de estas pantallas se pintan con `.wpane .wfield input` y `.input-wrapper
+   input`, que están escritos adentro del HTML y pesan más que dos. */
+.campo-clave { position: relative; }
+.campo-clave input[type].campo-clave-campo { padding-right: 72px; }
+.campo-clave-boton {
+  position: absolute;
+  right: 6px; top: 50%; transform: translateY(-50%);
+  border: none; background: transparent;
+  padding: 5px 7px; border-radius: 6px;
+  font-family: inherit; font-size: 11px; font-weight: 700;
+  color: var(--azul-medio-texto); cursor: pointer;
+}
+.campo-clave-boton:hover { background: var(--superficie-hundida); }
+.campo-clave-boton:focus-visible { outline: none; box-shadow: var(--anillo-foco); }
+
 /* ---- Schedule Grid ---- */
 .schedule-grid-7x3 {
   display: grid;

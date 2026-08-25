@@ -697,7 +697,11 @@ ul {
   position: relative;
 }
 
-.campo-clave input {
+/* Pide tres piezas —la caja, el tipo y la marca— y no dos. Los campos de un
+   formulario suelen pintarse con selectores de dos clases, que pesan más que
+   `.campo-clave input` y le devolverían el relleno original al campo: el texto
+   escrito terminaría abajo del botón. */
+.campo-clave input[type].campo-clave-campo {
   padding-right: 78px;
 }
 

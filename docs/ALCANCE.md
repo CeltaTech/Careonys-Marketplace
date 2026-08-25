@@ -425,6 +425,46 @@ Etapa 3 del pendiente 21, el 24 de agosto de 2026.
   guardan la ficha y las cuatro secciones del legajo, la pantalla vuelve a su estado normal y la
   contraseña desaparece de la memoria y de la pantalla.
 
+### El alta del teléfono ya pide una contraseña
+
+Cierra el pendiente 38, el 24 de agosto de 2026.
+
+- **La contraseña era el número de documento.** `pwa-asistente/index.html` creaba la cuenta con el
+  correo y el valor del campo del documento, que está escrito tres renglones más arriba en la misma
+  pantalla. Un número de documento figura en papeles, se dicta por teléfono y lo conoce cualquiera
+  que haya visto una fotocopia: no es un secreto. Ahora la pantalla la pregunta, con su repetición,
+  como cualquier otra alta.
+- **Y un alta fallida ya no sigue adelante en silencio.** Si la cuenta no se podía crear —porque el
+  correo ya tenía una, por ejemplo—, el error se anotaba en la consola del navegador y la pantalla
+  mostraba «¡Legajo enviado!» igual: el legajo quedaba escrito y la persona se iba convencida de
+  tener cuenta. Ahora se frena ahí, con el aviso traducido, y no se guarda nada.
+- **El largo mínimo no se volvió a tipear.** Las dos pantallas del teléfono no cargaban
+  `js/clave.js`, que es el archivo que sabe qué contraseña vale. Ahora lo cargan, y de paso ese
+  archivo pasó a escribir él mismo el largo mínimo y el aviso de qué falta en cada campo donde se
+  elige una contraseña nueva, así que los dos `8` que estaban tipeados a mano en
+  `postulacion-asistente.html` se borraron. Donde se escribe una contraseña vieja —el acceso— no se
+  pone mínimo a propósito: una cuenta creada antes puede tener una más corta que la que hoy se
+  pide, y el navegador no la dejaría ni probar.
+- **La espera del correo funciona igual que en la pantalla grande.** Cuando el servidor exige
+  confirmar, aparece el mismo panel de la sección de arriba: la cuenta quedó creada, el correo
+  salió a tal dirección, lo cargado sigue en pantalla, «Ya confirmé, continuar» entra y guarda
+  desde donde se había frenado, y el otro botón vuelve a mandar el correo.
+- **El botón de ver la contraseña le pisaba el texto escrito.** En las pantallas del teléfono los
+  campos de un formulario se pintan con una regla de dos clases, que pesa más que la que le hace
+  lugar al botón: el relleno volvía al original y lo escrito terminaba abajo del botón. La regla
+  ahora pide tres piezas —la caja, el tipo y una marca que el propio `js/clave.js` le pone al
+  campo— y por eso gana. Queda comprobado con un campo recién creado al lado del otro: con la marca
+  mide 72 píxeles de relleno, sin la marca mide 14.
+- **Comprobado con las puertas cerradas**, con datos inventados y sin escribir una sola fila en la
+  base: la contraseña vacía, la corta y las dos que no coinciden frenan antes de crear nada; el
+  correo ya registrado crea cero legajos donde antes creaba uno; y el camino bueno crea la cuenta
+  con la contraseña elegida y no con el documento.
+
+Queda una contraseña de mentira en pantalla, y no es ésta: la de la pantalla de acceso viene
+prellenada con seis dígitos para poder mostrar el producto sin tipear
+(`pwa-asistente/index.html:326` y `pwa-familia/index.html:575`). Es un atajo de demostración y sale
+antes de que haya una sola persona real.
+
 ### Las trece migraciones ya corren en el servidor
 
 Comprobado el 24 de agosto de 2026 contra el proyecto real: el servidor tiene aplicadas 0001 a

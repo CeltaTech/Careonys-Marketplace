@@ -266,6 +266,19 @@
       font-weight: 700; font-size: 13px; border: none; cursor: pointer;
     }
 
+    .wespera-correo {
+      display: none; background: var(--tono-atencion-fondo);
+      border: 1px solid var(--naranja-alerta); border-radius: 10px;
+      padding: 12px; margin-top: 12px; font-size: 11px; line-height: 1.5;
+      color: var(--texto-principal);
+    }
+    .wespera-correo strong { display: block; margin-bottom: 6px; }
+    .wespera-correo p strong { display: inline; }
+    .wespera-correo p { margin-bottom: 8px; }
+    .wespera-correo ol { margin: 0 0 10px 16px; }
+    .wespera-correo-botones { display: flex; gap: 8px; flex-wrap: wrap; }
+    .wespera-correo-aviso { display: none; margin: 10px 0 0; font-weight: 700; }
+
     .wsuccess-msg {
       display: none; background: #e8f5e9; color: #2e7d32;
       padding: 16px; border-radius: 12px; font-weight: 700;
@@ -414,6 +427,13 @@
               <div class="wfield"><label>DNI</label><input type="number" id="w-dni" placeholder="8 dígitos" required /></div>
               <div class="wfield"><label>CUIT / CUIL</label><input type="number" id="w-cuit" placeholder="11 dígitos" required /></div>
               <div class="wfield"><label>Correo Electrónico</label><input type="email" id="w-email" required /></div>
+              <!-- La contraseña se pregunta, como en cualquier alta. Hasta el 24
+                   de agosto de 2026 esta pantalla no la pedía: creaba la cuenta
+                   con el número de documento, que está escrito tres renglones
+                   más arriba. El largo mínimo, el aviso de qué falta y el botón
+                   de ver lo escrito salen de js/clave.js. -->
+              <div class="wfield wgrid-2-full"><label>Contraseña</label><input type="password" id="w-clave" autocomplete="new-password" required /></div>
+              <div class="wfield wgrid-2-full"><label>Repetir la contraseña</label><input type="password" id="w-clave-repetida" autocomplete="new-password" required /></div>
               <div class="wfield"><label>Celular (WhatsApp)</label><input type="tel" id="w-celular" placeholder="11 2345 6789" required /></div>
               <div class="wfield"><label>Fecha de Nacimiento</label><input type="date" id="w-fecha-nac" required /></div>
               <div class="wfield">
@@ -507,6 +527,22 @@
               <button type="button" class="wbtn-prev" onclick="wPrev(4)"><i class="fas fa-arrow-left"></i></button>
               <button type="submit" class="wbtn-submit"><i class="fas fa-check-circle"></i> Enviar Legajo</button>
             </div>
+            <!-- El servidor puede exigir confirmar el correo antes de dar
+                 sesión. Ahí la cuenta ya quedó creada y el legajo sigue cargado
+                 en esta pantalla: no se perdió nada, falta tocar el enlace. -->
+            <div class="wespera-correo" id="w-espera-correo">
+              <strong>La cuenta quedó creada. Falta un paso.</strong>
+              <p>Se envió un correo a <strong id="w-espera-correo-mail"></strong> con un enlace para confirmar la dirección. Lo cargado sigue acá: no se perdió nada.</p>
+              <ol>
+                <li>Abrir ese correo y tocar el enlace.</li>
+                <li>Volver a esta pantalla y tocar el botón de abajo.</li>
+              </ol>
+              <div class="wespera-correo-botones">
+                <button type="button" class="wbtn-next" id="w-ya-confirme">Ya confirmé, continuar</button>
+                <button type="button" class="wbtn-prev" id="w-reenviar-confirmacion">Volver a mandar el correo</button>
+              </div>
+              <p class="wespera-correo-aviso" id="w-espera-correo-aviso"></p>
+            </div>
             <div class="wsuccess-msg" id="w-success">✓ ¡Legajo enviado! La postulación ha ingresado al proceso de auditoría.</div>
           </div>
 
@@ -520,6 +556,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/identidad.js"></script>
   <script src="js/texto.js"></script>
+  <script src="js/clave.js"></script>
   <script src="js/catalogo.js"></script>
   <script src="js/disponibilidad.js"></script>
   <script src="js/apiClient.js"></script>
@@ -709,11 +746,59 @@
       await Disponibilidad.montarPreguntas('preguntas-disponibilidad');
     }
 
+    // Lo que falta para terminar cuando el servidor pide confirmar el correo.
+    // La cuenta ya quedó creada y el legajo sigue cargado en la pantalla, así
+    // que se guardan el correo y la contraseña para volver a entrar y seguir
+    // desde donde se había frenado. Se olvidan apenas el legajo queda guardado.
+    let altaEsperandoCorreo = null;
+
+    // Guardar el legajo sale del envío del formulario porque hay dos caminos
+    // que terminan en lo mismo: el normal y el de «Ya confirmé». Escribirlo dos
+    // veces es tener dos que con el tiempo se despegan (regla 7).
+    async function guardarLegajo(data, disponibilidad) {
+      const aspirante = await ClienteDatos.registrarAspirante(data);
+      if (aspirante && aspirante.id) {
+        await ClienteDatos.guardarLegajoAsistente(aspirante.id, { disponibilidad });
+      }
+      // La contraseña deja de estar guardada apenas no hace falta.
+      altaEsperandoCorreo = null;
+      document.getElementById('w-espera-correo').style.display = 'none';
+      document.getElementById('w-success').style.display = 'block';
+      document.getElementById('form-legajo-pwa').reset();
+      Disponibilidad.limpiar('grilla-disponibilidad', 'preguntas-disponibilidad');
+      wGoTo(1);
+      setTimeout(() => { document.getElementById('w-success').style.display = 'none'; }, 6000);
+    }
+
+    // El aviso de adentro del recuadro de «falta confirmar el correo».
+    function avisarConfirmacion(aviso, esFalla = true) {
+      const caja = document.getElementById('w-espera-correo-aviso');
+      caja.textContent = aviso || '';
+      caja.style.display = aviso ? 'block' : 'none';
+      caja.style.color = esFalla ? 'var(--rojo-peligro-texto)' : 'var(--verde-exito-texto)';
+    }
+
     // Envío del formulario de legajo
     document.getElementById('form-legajo-pwa').addEventListener('submit', async (e) => {
       e.preventDefault();
       const terminos = document.getElementById('w-terminos');
       if (!terminos.checked) { alert('Debe aceptar los Términos y Condiciones.'); return; }
+
+      // La contraseña la elige quien se da de alta, como en cualquier otra alta.
+      // Hasta el 24 de agosto de 2026 esta pantalla creaba la cuenta con el
+      // número de documento: cualquiera que lo supiera —y está escrito en el
+      // legajo, y lo ve todo el que audita— entraba con esa cuenta. Qué
+      // contraseña vale lo decide js/clave.js y no esta pantalla, que es lo
+      // mismo que hacen el acceso y el alta del portal.
+      const email = document.getElementById('w-email').value.trim();
+      const clave = document.getElementById('w-clave').value;
+      const problemaClave = Clave.revisar(clave, document.getElementById('w-clave-repetida').value);
+      if (problemaClave) {
+        alert(problemaClave);
+        wGoTo(1);
+        document.getElementById('w-clave').focus();
+        return;
+      }
 
       const patologias = Array.from(document.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
       const tareas = Array.from(document.querySelectorAll('input[name="tarea_cuidado"]:checked')).map(cb => cb.value);
@@ -726,7 +811,7 @@
       const data = {
         nombre: document.getElementById('w-nombre').value,
         dni: document.getElementById('w-dni').value,
-        email: document.getElementById('w-email').value,
+        email,
         telefono: document.getElementById('w-celular').value,
         cuit: document.getElementById('w-cuit').value,
         fechaNacimiento: document.getElementById('w-fecha-nac').value,
@@ -749,29 +834,84 @@
         documentos: { dni: 'pendiente', penales: 'pendiente', titulo: 'pendiente' }
       };
 
-      // Crear cuenta en Supabase Auth si no existe
-      try {
-        await Sesion.signup(
-          document.getElementById('w-email').value,
-          document.getElementById('w-dni').value,
-          { full_name: document.getElementById('w-nombre').value, role: 'caregiver' }
-        );
-      } catch (authErr) {
-        console.warn('Signup (may already exist):', authErr.message);
-      }
+      // La cuenta, antes que el legajo, y si no se puede crear no se sigue.
+      // Hasta el 24 de agosto de 2026 la falla iba a la consola y la pantalla
+      // mostraba «¡Legajo enviado!» igual: la persona quedaba con el legajo
+      // guardado, sin cuenta con qué entrar, y sin enterarse de nada.
+      const boton = document.querySelector('#wp5 .wbtn-submit');
+      const botonOriginal = boton ? boton.innerHTML : '';
+      if (boton) { boton.disabled = true; boton.textContent = 'Creando la cuenta...'; }
 
       try {
-        const aspirante = await ClienteDatos.registrarAspirante(data);
-        if (aspirante && aspirante.id) {
-          await ClienteDatos.guardarLegajoAsistente(aspirante.id, { disponibilidad });
+        let sesion = null;
+        try {
+          const alta = await Sesion.signup(email, clave, {
+            full_name: document.getElementById('w-nombre').value, role: 'caregiver'
+          });
+          sesion = alta.session;
+        } catch (authErr) {
+          alert(Texto.mensajeDeError(authErr, 'crear la cuenta del Asistente'));
+          return;
         }
-        document.getElementById('w-success').style.display = 'block';
-        document.getElementById('form-legajo-pwa').reset();
-        Disponibilidad.limpiar('grilla-disponibilidad', 'preguntas-disponibilidad');
-        wGoTo(1);
-        setTimeout(() => { document.getElementById('w-success').style.display = 'none'; }, 6000);
+
+        if (!sesion) {
+          // El servidor exige confirmar el correo antes de dar sesión, así que
+          // el legajo todavía no se puede guardar. La cuenta ya está creada y
+          // el formulario sigue lleno: el camino sigue por «Ya confirmé».
+          altaEsperandoCorreo = { email, clave, data, disponibilidad };
+          document.getElementById('w-espera-correo-mail').textContent = email;
+          document.getElementById('w-espera-correo').style.display = 'block';
+          avisarConfirmacion('');
+          return;
+        }
+
+        await guardarLegajo(data, disponibilidad);
       } catch (err) {
         alert(Texto.mensajeDeError(err, 'enviar el legajo'));
+      } finally {
+        if (boton) { boton.disabled = false; boton.innerHTML = botonOriginal; }
+      }
+    });
+
+    // «Ya confirmé, continuar». Vuelve a entrar con la contraseña que la persona
+    // ya escribió y sigue guardando desde donde se había frenado. Si todavía no
+    // tocó el enlace, el servidor contesta que falta confirmar y el aviso lo
+    // dice sin borrar nada: se puede volver a intentar.
+    document.getElementById('w-ya-confirme').addEventListener('click', async () => {
+      if (!altaEsperandoCorreo) return;
+      const boton = document.getElementById('w-ya-confirme');
+      const textoOriginal = boton.textContent;
+      const espera = altaEsperandoCorreo;
+      boton.disabled = true;
+      boton.textContent = 'Guardando el legajo...';
+      avisarConfirmacion('');
+      try {
+        await Sesion.login(espera.email, espera.clave);
+        await guardarLegajo(espera.data, espera.disponibilidad);
+      } catch (err) {
+        avisarConfirmacion(Texto.mensajeDeError(err, 'entrar después de confirmar el correo'));
+      } finally {
+        boton.disabled = false;
+        boton.textContent = textoOriginal;
+      }
+    });
+
+    // El correo que no llegó. El servidor limita cuántos manda por hora, así que
+    // un segundo pedido seguido puede volver con ese aviso en lugar de un mail.
+    document.getElementById('w-reenviar-confirmacion').addEventListener('click', async () => {
+      if (!altaEsperandoCorreo) return;
+      const boton = document.getElementById('w-reenviar-confirmacion');
+      const textoOriginal = boton.textContent;
+      boton.disabled = true;
+      boton.textContent = 'Mandando...';
+      try {
+        await Sesion.reenviarConfirmacion(altaEsperandoCorreo.email);
+        avisarConfirmacion('Se mandó el correo de nuevo. Puede tardar unos minutos en llegar.', false);
+      } catch (err) {
+        avisarConfirmacion(Texto.mensajeDeError(err, 'volver a mandar el correo de confirmación'));
+      } finally {
+        boton.disabled = false;
+        boton.textContent = textoOriginal;
       }
     });
   </script>
