@@ -1464,6 +1464,48 @@ decidirlo sea leer una lista y no armarla. **El momento importa:** `franjas_busq
 `supabase/migrations/0015_franjas_de_una_busqueda.sql`, que está escrita y sin aplicar, así que
 hoy renombrarla es editar un archivo; aplicada, es una migración de datos.
 
+### La regla 3 se midió para hacerle un chequeo, y lo que salió es que ya se cumple
+
+Los cuatro estados —cargando, error, vacío, listo— son la regla 3 de `CLAUDE.md`, y eran lo último
+no negociable de la sección 5 que no miraba nadie. Se midió el 25 de agosto de 2026 para escribirle
+el chequeo catorce. **No se escribió, y el motivo es bueno: la regla se cumple, y el cumplimiento es
+invisible para cualquier prueba automática.**
+
+El detector buscó por estructura y no por palabras —toda `async function` que espera un pedido de
+datos y además escribe en la pantalla—, porque la primera versión, que buscaba las palabras
+«Cargando» y «vacío», señaló como incumplidora justo a la pantalla más cuidadosa de todas:
+`panel-prestadora.html` dice «Buscando…» y `!data.length`, que es exactamente lo mismo con otras
+palabras. El detector por estructura encontró catorce funciones y avisó de siete. **Las siete eran
+falsas**, y cada motivo es distinto, que es lo que termina de decidir la cuestión:
+
+- **El estado lo enciende una función auxiliar.** `panel-prestadora.html:168` llama a
+  `estadoTabla('info', 'Buscando los legajos de la Prestadora...')` antes de pedir nada, y
+  `mockup-app.html:473` y `pwa-familia/index.html:889` llaman a `recMostrar('cargando')`. El
+  detector sólo ve lo que se escribe ahí mismo.
+- **El fallo lo atrapa quien llama.** `examen.html:310` y `examen.html:375` no tienen `catch`, pero
+  nunca se los llama fuera de uno: los envuelven `examen.html:368` y `examen.html:553`. Igual pasa
+  con `armarAuditoria` (`panel-prestadora.html:250`), envuelta por `abrirAuditoria`
+  (`panel-prestadora.html:237`).
+- **El estado de carga está escrito en el HTML desde el principio.** `pwa-asistente/index.html:341`
+  ya dice «Cargando estado...» antes de que corra una sola línea de JavaScript.
+
+Y falta el caso que cierra la discusión: **la pantalla que mejor cumple la regla es la que el
+detector no ve.** `directorio.html:298` tiene los cuatro paneles con nombre, un interruptor que
+enciende uno y apaga los otros, y el `catch` que traduce el error a una frase legible; no aparece en
+la medición porque espera un `Promise.all` y no una llamada suelta. Un chequeo que no distingue la
+mejor pantalla del resto tampoco distinguiría una mala.
+
+**Lo que sí encontró la medición fue otra cosa, y ésa se arregló el mismo día.** El mismo
+interruptor está escrito ocho veces en ocho pantallas, y las copias no eran equivalentes: cuatro
+encendían el panel con `display: 'block'` y dos con `display: ''`. No es lo mismo. `'block'` le
+impone al panel una forma; `''` le devuelve la que le había dado el CSS. Y en este proyecto ya hay
+un panel que no es `block`: `.directory-grid` es `display: grid` (`css/styles.css:1113`), y por eso
+`directorio.html` tuvo que usar la forma vacía. Las otras cuatro —`acceso.html`, `examen.html`,
+`nueva-clave.html` y `recuperar-clave.html`— andaban de casualidad, porque hoy ninguno de sus
+paneles es grid ni flex, y el día que alguien agregara uno se habría aplastado sin avisar. Las seis
+que conmutan `display` dicen ahora `''`, con el motivo escrito al lado para que nadie lo devuelva a
+`'block'`. Que sigan siendo ocho copias es parte del pendiente 13.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,

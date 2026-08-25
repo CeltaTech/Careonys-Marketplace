@@ -281,7 +281,9 @@
 
     function mostrar(cual) {
       Object.keys(paneles).forEach(nombre => {
-        paneles[nombre].style.display = (nombre === cual) ? 'block' : 'none';
+        // Vacio y no 'block': asi el panel recupera el display que le dio el CSS.
+        // Imponerle 'block' aplasta un panel que sea grid o flex, y no avisa.
+        paneles[nombre].style.display = (nombre === cual) ? '' : 'none';
       });
     }
 
