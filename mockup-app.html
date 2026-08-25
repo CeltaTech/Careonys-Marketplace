@@ -24,8 +24,7 @@
     <!-- DRAWER SIDEBAR -->
     <div class="sidebar-drawer" id="drawer">
       <div class="drawer-header">
-        <img src="assets/images/foto_familiar_default.png" onerror="this.src='https://via.placeholder.com/100'"
-          alt="Avatar" />
+        <img src="assets/images/retrato_generico.svg" alt="Sin foto" />
         <h4 id="menu-user-name">Familiar de Prueba</h4>
         <p id="menu-user-email">familiar@ejemplo.com</p>
       </div>
@@ -199,27 +198,40 @@
         </div>
       </div>
 
-      <!-- CUIDADORES RECOMENDADOS (SINCRO SUPABASE) -->
+      <!-- ASISTENTES PUBLICADOS -->
+      <!-- Se llamaba «Cuidadores recomendados» y no había ninguna recomendación
+           detrás: las dos tarjetas de ejemplo eran nombres escritos a mano con
+           un porcentaje de afinidad que no calculaba nadie. Ahora salen de
+           `caregivers_publicos`, la misma vista que el directorio. -->
       <div class="section-title">
-        <span>Cuidadores recomendados</span>
+        <span>Asistentes</span>
         <a href="directorio.html">Ver todos</a>
       </div>
 
-      <div class="horizontal-slider" id="recommended-caregivers-list">
-        <!-- Render dinámico desde Supabase o mock -->
-        <div class="caregiver-card">
-          <img src="assets/images/perfil_maria.png" onerror="this.src='https://via.placeholder.com/60'" />
-          <h5>María Gómez</h5>
-          <p>Enfermera | 45 años</p>
-          <span class="badge-match">98% Match</span>
-        </div>
-        <div class="caregiver-card">
-          <img src="assets/images/perfil_ana.png" onerror="this.src='https://via.placeholder.com/60'" />
-          <h5>Ana Rodríguez</h5>
-          <p>Cuidadora | 38 años</p>
-          <span class="badge-match">92% Match</span>
-        </div>
+      <div class="pwa-estado" id="rec-cargando">Buscando Asistentes...</div>
+
+      <div class="pwa-estado" id="rec-error" hidden>
+        <p id="rec-error-texto"></p>
+        <button type="button" class="btn btn-primario" id="rec-reintentar">Reintentar</button>
       </div>
+
+      <div class="pwa-estado" id="rec-vacio" hidden>
+        <p>Todavía no hay Asistentes publicados.</p>
+        <p class="pwa-estado-bajada">Aparecen acá cuando la Prestadora valida su legajo y la
+          persona autoriza que se publique.</p>
+      </div>
+
+      <div class="horizontal-slider" id="recommended-caregivers-list" hidden></div>
+
+      <template id="molde-asistente">
+        <a class="caregiver-card">
+          <img data-parte="foto" alt="" />
+          <div class="card-inicial" data-parte="inicial"></div>
+          <h5 data-parte="nombre"></h5>
+          <p data-parte="tipo-y-zona"></p>
+          <span class="card-precio" data-parte="precio"></span>
+        </a>
+      </template>
 
       <!-- CURSOS RECOMENDADOS -->
       <div class="section-title">
@@ -286,7 +298,7 @@
       <!-- Burbuja de info de la asistente activa -->
       <div
         style="background:#f1f5f9;padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #e2e8f0;">
-        <img src="assets/images/perfil_maria.png" onerror="this.src='https://via.placeholder.com/40'"
+        <img src="assets/images/perfil_maria.png" onerror="this.onerror=null;this.src='assets/images/retrato_generico.svg'" alt=""
           style="width:40px;height:40px;border-radius:50%;object-fit:cover;" />
         <div>
           <p id="chat-contact-name" style="margin:0;font-size:13px;font-weight:800;color:#1e293b;">Asistente activa</p>
@@ -333,7 +345,7 @@
       <div class="cuaderno-header">
         <h3 style="margin:0;font-size:16px;">Abuela Rosa</h3>
         <div class="cuaderno-paciente">
-          <img src="assets/images/paciente_default.png" onerror="this.src='https://via.placeholder.com/60'" />
+          <img src="assets/images/retrato_generico.svg" alt="Sin foto" />
           <div>
             <p style="margin:0;font-size:12px;opacity:0.9;">Diagnóstico: Alzheimer Moderado</p>
             <p style="margin:2px 0 0 0;font-size:11px;opacity:0.7;">Cuidadora: María Gómez</p>
@@ -405,6 +417,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/identidad.js"></script>
   <script src="js/texto.js"></script>
+  <script src="js/catalogo.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script>
@@ -412,35 +425,66 @@
     document.addEventListener('DOMContentLoaded', async () => {
       await ClienteDatos.initTenant();
 
-      // Cargar Cuidadores Recomendados dinámicamente desde Supabase
-      try {
-        const aspirantes = await ClienteDatos.getAspirantes();
-        const recommendedList = document.getElementById('recommended-caregivers-list');
-
-        if (aspirantes && aspirantes.length > 0) {
-          recommendedList.innerHTML = ''; // Limpiar mocks
-
-          aspirantes.forEach(asp => {
-            const card = document.createElement('a');
-            card.className = 'caregiver-card';
-            card.href = `perfil.html?id=${asp.id}`;
-
-            // Buscar avatar en los documentos o fallback
-            const avatarUrl = asp.fotoUrl || 'assets/images/perfil_maria.png';
-
-            card.innerHTML = `
-              <img src="${Texto.escapar(avatarUrl)}" onerror="this.src='https://via.placeholder.com/60'" />
-              <h5>${Texto.escapar(asp.nombre)}</h5>
-              <p>${Texto.escapar(asp.profesion || 'Asistente')} | ${Texto.escapar(asp.zona || 'Cobertura')}</p>
-              <span class="badge-match">95% Match</span>
-            `;
-            recommendedList.appendChild(card);
-          });
-        }
-      } catch (err) {
-        console.error('Error al cargar asistentes recomendados:', err);
-      }
+      cargarRecomendados();
     });
+
+    // Los Asistentes que se pueden mostrar salen de `caregivers_publicos`:
+    // gente con el legajo validado por la Prestadora y con la publicación
+    // autorizada. Antes salían de la tabla `caregivers`, que es el personal
+    // entero y no distingue una cosa de la otra.
+    function recMostrar(cual) {
+      for (const estado of ['cargando', 'error', 'vacio']) {
+        document.getElementById('rec-' + estado).hidden = estado !== cual;
+      }
+      document.getElementById('recommended-caregivers-list').hidden = cual !== 'listo';
+    }
+
+    function recTarjeta(fila) {
+      const nodo = document.getElementById('molde-asistente').content.cloneNode(true);
+      const parte = (nombre) => nodo.querySelector('[data-parte="' + nombre + '"]');
+
+      nodo.querySelector('.caregiver-card').href = 'perfil.html?id=' + encodeURIComponent(fila.id);
+      parte('nombre').textContent = fila.full_name || '';
+
+      const tipo = Catalogo.etiquetaSiExiste('tipo_asistente', fila.profession);
+      const zona = Catalogo.etiquetaSiExiste('zona', fila.zone);
+      const linea = [tipo, zona].filter(Boolean).join(' · ');
+      if (linea) parte('tipo-y-zona').textContent = linea;
+      else parte('tipo-y-zona').remove();
+
+      const foto = ClienteDatos.urlDeFotoPublica(fila.foto);
+      if (foto) {
+        parte('foto').src = foto;
+        parte('inicial').remove();
+      } else {
+        parte('inicial').textContent = (fila.full_name || '?').trim().charAt(0).toUpperCase();
+        parte('foto').remove();
+      }
+
+      if (fila.hourly_rate) parte('precio').textContent = Texto.importe(fila.hourly_rate) + ' por hora';
+      else parte('precio').remove();
+
+      return nodo;
+    }
+
+    async function cargarRecomendados() {
+      recMostrar('cargando');
+      try {
+        const filas = await ClienteDatos.listarDirectorio();
+        await Catalogo.cargar();
+        const lista = document.getElementById('recommended-caregivers-list');
+        while (lista.firstChild) lista.removeChild(lista.firstChild);
+        if (!filas || filas.length === 0) { recMostrar('vacio'); return; }
+        filas.forEach((fila) => lista.appendChild(recTarjeta(fila)));
+        recMostrar('listo');
+      } catch (err) {
+        document.getElementById('rec-error-texto').textContent =
+          Texto.mensajeDeError(err, 'traer los Asistentes');
+        recMostrar('error');
+      }
+    }
+
+    document.getElementById('rec-reintentar').addEventListener('click', cargarRecomendados);
 
     // NAVEGACIÓN ENTRE PANTALLAS DE LA APP (SPA)
     function navigate(screenId) {
@@ -477,7 +521,7 @@
           if (log.blood_pressure) iconClass = 'fa-heartbeat';
           else if (log.glycemia) iconClass = 'fa-stethoscope';
 
-          const timeStr = log.created_at ? new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' hs' : 'Recién';
+          const timeStr = log.created_at ? Texto.horaCorta(log.created_at) + ' hs' : 'Recién';
 
           item.innerHTML = `
             <div class="log-dot"><i class="fas ${iconClass}" style="font-size:8px;color:var(--marca-prestadora-acento);"></i></div>
@@ -560,7 +604,7 @@
             event_type: tipo
           });
           alert(`¡Fichado de ${tipo} registrado con éxito!\nCoordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
-          statusEl.textContent = `Último fichado: ${tipo} (${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`;
+          statusEl.textContent = `Último fichado: ${tipo} (${Texto.horaCorta(new Date())})`;
         } catch (err) {
           alert(Texto.mensajeDeError(err, 'registrar el fichado'));
           statusEl.textContent = 'Error en fichado';
@@ -690,7 +734,7 @@
       div.innerHTML = `
         <div style="max-width:70%;padding:10px 13px;border-radius:${esPropio ? '16px 16px 4px 16px' : '16px 16px 16px 4px'};background:${esPropio ? 'var(--marca-prestadora)' : '#fff'};color:${esPropio ? '#fff' : '#1e293b'};font-size:13px;line-height:1.4;box-shadow:0 2px 6px rgba(0,0,0,0.05);">
           ${Texto.escapar(msg.contenido || msg.content || '')}
-          <div style="font-size:9px;opacity:0.6;margin-top:4px;text-align:right;">${Texto.escapar(new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))}</div>
+          <div style="font-size:9px;opacity:0.6;margin-top:4px;text-align:right;">${Texto.escapar(Texto.horaCorta(msg.created_at))}</div>
         </div>
       `;
       area.appendChild(div);

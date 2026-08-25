@@ -60,6 +60,20 @@ const Texto = {
   },
 
   /**
+   * La hora del reloj de acá: «14:05». Entra lo que devuelve la base, o un
+   * `Date` hecho recién. Sin hora, o con algo que no lo sea, devuelve la cadena
+   * vacía, por la misma razón que `fechaCorta`.
+   */
+  horaCorta(valor) {
+    if (!valor) return '';
+    const fecha = new Date(valor);
+    if (isNaN(fecha.getTime())) return '';
+    return new Intl.DateTimeFormat('es-AR', {
+      hour: '2-digit', minute: '2-digit'
+    }).format(fecha);
+  },
+
+  /**
    * Un importe en pesos, con el punto de mil que se usa acá: 3500 → «$3.500».
    * Sin el número —o con algo que no lo sea— devuelve la cadena vacía, para que
    * la pantalla pueda decidir no mostrar nada en vez de mostrar «$NaN».

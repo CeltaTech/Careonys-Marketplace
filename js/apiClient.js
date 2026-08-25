@@ -123,7 +123,16 @@ const ClienteDatos = {
     }
 
     // Reemplazar logos e imágenes de marca
-    const logoUrl = tenant.logo_url || 'assets/images/logo_presdemo.png';
+    // El logotipo se mide desde la raíz del sitio y no desde la página que lo
+    // pide. La columna `logo_url` de la Prestadora de prueba guarda hoy
+    // `assets/images/logo_presdemo.png`, una ruta relativa: leída desde
+    // `pwa-familia/index.html` apuntaba a `pwa-familia/assets/`, donde no hay
+    // ninguna carpeta `assets`, y el logotipo salía roto en las dos PWAs.
+    // `new URL` con la raíz de base resuelve los tres casos de una vez: una
+    // dirección entera se respeta, una que empieza con barra también, y una
+    // relativa se cuelga de la raíz.
+    const guardado = tenant.logo_url || '/assets/images/logo_presdemo.png';
+    const logoUrl = new URL(guardado, window.location.origin + '/').href;
     const logoSelectors = '.logo-brand, .tenant-logo, .navbar-logo img, .logo img';
     document.querySelectorAll(logoSelectors).forEach(img => {
       img.src = logoUrl;

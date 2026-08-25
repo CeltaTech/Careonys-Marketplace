@@ -90,7 +90,16 @@ body {
 .caregiver-card img { width:50px; height:50px; border-radius:50%; object-fit:cover; border:2px solid var(--borde-card); margin-bottom:8px; }
 .caregiver-card h5 { margin:0; font-size:12px; font-weight:700; color:var(--texto-principal); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .caregiver-card p { margin:2px 0 0; font-size:10px; color:var(--texto-secundario); }
-.caregiver-card .badge-match { display:inline-block; margin-top:6px; padding:2px 6px; border-radius:20px; background:var(--tono-exito-fondo); color:var(--tono-exito-texto); font-size:9px; font-weight:800; }
+.caregiver-card .card-inicial { width:50px; height:50px; border-radius:50%; margin:0 auto 8px auto; display:flex; align-items:center; justify-content:center; background:var(--superficie-hundida); color:var(--texto-secundario); font-size:20px; font-weight:800; }
+.caregiver-card .card-precio { display:inline-block; margin-top:6px; padding:2px 6px; border-radius:20px; background:var(--superficie-hundida); color:var(--texto-secundario); font-size:9px; font-weight:800; }
+
+/* Los tres estados de una pantalla que pide datos; el cuarto es la tira misma.
+   El atributo `hidden` necesita esa línea porque hay reglas de `display` que
+   le ganan. */
+[hidden] { display:none !important; }
+.pwa-estado { padding:24px 16px; text-align:center; color:var(--texto-secundario); font-size:13px; }
+.pwa-estado-bajada { font-size:11px; margin-top:6px; }
+.pwa-estado .btn { margin-top:12px; }
 
 .bottom-tab-bar { height:64px; background:var(--superficie); border-top:1px solid var(--borde-card); display:flex; justify-content:space-around; align-items:center; position:absolute; bottom:0; width:100%; box-sizing:border-box; z-index:100; }
 .tab-item { display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--texto-tenue); cursor:pointer; text-decoration:none; }

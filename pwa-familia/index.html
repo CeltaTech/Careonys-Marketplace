@@ -329,16 +329,6 @@
       color: #64748b;
     }
 
-    .caregiver-card .badge-match {
-      display: inline-block;
-      margin-top: 6px;
-      padding: 2px 6px;
-      border-radius: 20px;
-      background: #e2f0d9;
-      color: #385723;
-      font-size: 9px;
-      font-weight: 800;
-    }
 
     /* BARRA TABS */
     .bottom-tab-bar {
@@ -541,7 +531,7 @@
     <!-- DRAWER SIDEBAR -->
     <div class="sidebar-drawer" id="drawer">
       <div class="drawer-header">
-        <img src="../assets/images/foto_familiar_default.png" onerror="this.src='https://via.placeholder.com/100'" alt="Avatar" />
+        <img src="../assets/images/retrato_generico.svg" alt="Sin foto" />
         <h4 id="menu-user-name">Familiar de Prueba</h4>
         <p id="menu-user-email" style="margin:2px 0 0 0;font-size:11px;opacity:0.8;">familiar@ejemplo.com</p>
       </div>
@@ -628,14 +618,41 @@
         </div>
       </div>
 
-      <!-- CUIDADORES RECOMENDADOS -->
+      <!-- ASISTENTES PUBLICADOS -->
+      <!-- Decía «Cuidadores recomendados» y no había ninguna recomendación
+           detrás: son los Asistentes de la Prestadora que autorizaron
+           publicarse, los mismos del directorio y en el mismo orden. -->
       <div class="section-title">
-        <span>Cuidadores recomendados</span>
+        <span>Asistentes</span>
         <a href="../directorio.html">Ver todos</a>
       </div>
-      <div class="horizontal-slider" id="recommended-caregivers-list">
-        <p style="font-size:12px;color:#64748b;padding:0 16px;">Cargando cuidadores...</p>
+
+      <div class="pwa-estado" id="rec-cargando">Buscando Asistentes...</div>
+
+      <div class="pwa-estado" id="rec-error" hidden>
+        <p id="rec-error-texto"></p>
+        <button type="button" class="btn btn-primario" id="rec-reintentar">Reintentar</button>
       </div>
+
+      <div class="pwa-estado" id="rec-vacio" hidden>
+        <p>Todavía no hay Asistentes publicados.</p>
+        <p class="pwa-estado-bajada">Aparecen acá cuando la Prestadora valida su legajo y la
+          persona autoriza que se publique.</p>
+      </div>
+
+      <div class="horizontal-slider" id="recommended-caregivers-list" hidden></div>
+
+      <!-- El molde de la tarjeta: las partes se llenan con `textContent`, que es
+           como se arman las tarjetas del directorio. -->
+      <template id="molde-asistente">
+        <a class="caregiver-card">
+          <img data-parte="foto" alt="" />
+          <div class="card-inicial" data-parte="inicial"></div>
+          <h5 data-parte="nombre"></h5>
+          <p data-parte="tipo-y-zona"></p>
+          <span class="card-precio" data-parte="precio"></span>
+        </a>
+      </template>
 
       <div style="text-align:center;padding:24px 0;font-size:10px;color:var(--texto-secundario);">
         Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
@@ -660,7 +677,7 @@
       <div class="cuaderno-header">
         <h3 style="margin:0;font-size:16px;">Abuela Rosa</h3>
         <div class="cuaderno-paciente">
-          <img src="../assets/images/paciente_default.png" onerror="this.src='https://via.placeholder.com/60'" />
+          <img src="../assets/images/retrato_generico.svg" alt="Sin foto" />
           <div>
             <p style="margin:0;font-size:12px;opacity:0.9;">Diagnóstico: Alzheimer Moderado</p>
             <p style="margin:2px 0 0 0;font-size:11px;opacity:0.7;">Familiar a cargo: Abuela Rosa</p>
@@ -795,30 +812,67 @@
       }
     });
 
+    // Los Asistentes que se pueden mostrar salen de `caregivers_publicos`, la
+    // misma vista que el directorio: gente con el legajo validado por la
+    // Prestadora y con la publicación autorizada. Antes salían de la tabla
+    // `caregivers`, que es el personal entero y no distingue una cosa de la
+    // otra.
+    function recMostrar(cual) {
+      for (const estado of ['cargando', 'error', 'vacio']) {
+        document.getElementById('rec-' + estado).hidden = estado !== cual;
+      }
+      document.getElementById('recommended-caregivers-list').hidden = cual !== 'listo';
+    }
+
+    function recTarjeta(fila) {
+      const nodo = document.getElementById('molde-asistente').content.cloneNode(true);
+      const parte = (nombre) => nodo.querySelector('[data-parte="' + nombre + '"]');
+
+      nodo.querySelector('.caregiver-card').href = '../perfil.html?id=' + encodeURIComponent(fila.id);
+      parte('nombre').textContent = fila.full_name || '';
+
+      // El tipo y la zona son claves guardadas; su texto sale del catálogo.
+      const tipo = Catalogo.etiquetaSiExiste('tipo_asistente', fila.profession);
+      const zona = Catalogo.etiquetaSiExiste('zona', fila.zone);
+      const linea = [tipo, zona].filter(Boolean).join(' · ');
+      if (linea) parte('tipo-y-zona').textContent = linea;
+      else parte('tipo-y-zona').remove();
+
+      // Sin foto va la inicial del nombre. Antes iba la foto de otra persona,
+      // que es peor que no mostrar ninguna.
+      const foto = ClienteDatos.urlDeFotoPublica(fila.foto);
+      if (foto) {
+        parte('foto').src = foto;
+        parte('inicial').remove();
+      } else {
+        parte('inicial').textContent = (fila.full_name || '?').trim().charAt(0).toUpperCase();
+        parte('foto').remove();
+      }
+
+      if (fila.hourly_rate) parte('precio').textContent = Texto.importe(fila.hourly_rate) + ' por hora';
+      else parte('precio').remove();
+
+      return nodo;
+    }
+
     async function cargarRecomendados() {
+      recMostrar('cargando');
       try {
-        const aspirantes = await ClienteDatos.getAspirantes();
-        const recommendedList = document.getElementById('recommended-caregivers-list');
-        if (aspirantes && aspirantes.length > 0) {
-          recommendedList.innerHTML = '';
-          aspirantes.forEach(asp => {
-            const card = document.createElement('a');
-            card.className = 'caregiver-card';
-            card.href = `../perfil.html?id=${asp.id}`;
-            const avatarUrl = asp.fotoUrl || '../assets/images/perfil_maria.png';
-            card.innerHTML = `
-              <img src="${Texto.escapar(avatarUrl)}" onerror="this.src='https://via.placeholder.com/60'" />
-              <h5>${Texto.escapar(asp.nombre)}</h5>
-              <p>${Texto.escapar(asp.profesion || 'Cuidadora')} | ${Texto.escapar(asp.zona || 'Cobertura')}</p>
-              <span class="badge-match">95% Match</span>
-            `;
-            recommendedList.appendChild(card);
-          });
-        }
+        const filas = await ClienteDatos.listarDirectorio();
+        await Catalogo.cargar();
+        const lista = document.getElementById('recommended-caregivers-list');
+        while (lista.firstChild) lista.removeChild(lista.firstChild);
+        if (!filas || filas.length === 0) { recMostrar('vacio'); return; }
+        filas.forEach((fila) => lista.appendChild(recTarjeta(fila)));
+        recMostrar('listo');
       } catch (err) {
-        console.error(err);
+        document.getElementById('rec-error-texto').textContent =
+          Texto.mensajeDeError(err, 'traer los Asistentes');
+        recMostrar('error');
       }
     }
+
+    document.getElementById('rec-reintentar').addEventListener('click', cargarRecomendados);
 
     async function cargarBitacora() {
       const listEl = document.getElementById('timeline-log-list');
@@ -835,7 +889,7 @@
           item.className = 'log-item';
           let iconClass = 'fa-check';
           if (log.blood_pressure) iconClass = 'fa-heartbeat';
-          const timeStr = log.created_at ? new Date(log.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' hs' : 'Recién';
+          const timeStr = log.created_at ? Texto.horaCorta(log.created_at) + ' hs' : 'Recién';
           item.innerHTML = `
             <div class="log-dot"><i class="fas ${iconClass}" style="font-size:8px;color:var(--marca-prestadora-acento);"></i></div>
             <div class="log-content">

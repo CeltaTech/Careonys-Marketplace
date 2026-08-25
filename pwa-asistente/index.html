@@ -295,7 +295,7 @@
     <!-- DRAWER SIDEBAR -->
     <div class="sidebar-drawer" id="drawer">
       <div class="drawer-header">
-        <img src="../assets/images/perfil_maria.png" onerror="this.src='https://via.placeholder.com/100'" alt="Avatar" />
+        <img src="../assets/images/retrato_generico.svg" alt="Sin foto" />
         <h4 id="menu-user-name">Asistente de Prueba</h4>
         <p id="menu-user-email" style="margin:2px 0 0 0;font-size:11px;opacity:0.8;">cuidador@ejemplo.com</p>
       </div>
@@ -840,7 +840,7 @@
           const caregiverId = session ? session.user.id : '2197bc14-d545-4939-9a98-979e69a120dc';
           await ClienteDatos.registrarFichadoGPS({ caregiverId, lat, lng, event_type: tipo });
           alert(`¡Fichado de ${tipo} registrado!\nCoordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
-          statusEl.textContent = `Último registro: ${tipo} (${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})})`;
+          statusEl.textContent = `Último registro: ${tipo} (${Texto.horaCorta(new Date())})`;
         } catch (err) {
           alert(Texto.mensajeDeError(err, 'registrar el fichado'));
           statusEl.textContent = 'Error al registrar';

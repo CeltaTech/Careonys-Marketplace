@@ -804,6 +804,59 @@ pendiente 45. Eso quedó anotado como pendiente 47. La lista se recorrió con cu
 dibujó bien las cinco tarjetas.
 
 
+### El tablero de la Familia dejó de mostrar afinidades inventadas y caras prestadas
+
+Hecho el 25 de agosto de 2026, sin número de pendiente: apareció al revisar la tira de Asistentes
+del tablero de la Familia y se arregló ahí mismo.
+
+- **La tira decía «Cuidadores recomendados» y no había ninguna recomendación detrás.** Cada
+  tarjeta traía un «95% Match» que no calculaba nadie: era un número fijo escrito en el HTML, el
+  mismo para las cuatro personas. La maqueta `mockup-app.html` tenía además dos tarjetas escritas a
+  mano con un «98% Match» y un «92% Match». Se fueron los tres números y la palabra
+  «recomendados»: la tira se llama **Asistentes**, que es lo que muestra.
+
+- **Salía de la tabla equivocada.** Leía `caregivers`, que es el personal entero de la Prestadora,
+  incluida la gente cuyo legajo todavía no se validó y la que no autorizó publicarse. Ahora lee
+  `caregivers_publicos`, la misma vista que el directorio, que exige las dos cosas.
+
+- **Quien no tenía foto llevaba la cara de otra persona.** El respaldo era
+  `assets/images/perfil_maria.png`, una foto de banco de imágenes: cualquier Asistente sin retrato
+  aparecía con esa cara. Ahora, sin foto, va la inicial del nombre en un círculo, igual que en el
+  directorio.
+
+- **A quien no dijera su tipo se le ponía «Cuidadora».** Una palabra inventada por la pantalla, y
+  encima en femenino. Se fue: el tipo y la zona salen del catálogo, y si no hay ninguno de los dos
+  el renglón no se dibuja en vez de rellenarse con algo.
+
+- **La tira ahora tiene los cuatro estados de la regla 5.3** —buscando, error con su botón de
+  reintentar, vacío con su explicación, y la lista— y se arma con un `<template>` y `textContent`,
+  así que un nombre con una etiqueta adentro llega como texto. Se probó con
+  `<script>alert(1)</script><b>Prueba</b>` de nombre: cero elementos `script` y cero `b` creados.
+
+- **Ninguna imagen se le pide más a un sitio ajeno.** Nueve `<img>` del proyecto tenían escrito
+  `onerror="this.src='https://via.placeholder.com/…'"`. Ese sitio ya no contesta, así que la imagen
+  de respaldo también fallaba, y al fallar volvía a disparar el mismo `onerror`: el navegador
+  quedaba pidiendo la misma dirección para siempre. En una sola visita al tablero de la Familia se
+  contaron más de ciento cincuenta pedidos fallidos. Encima dos de los archivos locales que
+  disparaban ese respaldo no existen —`foto_familiar_default.png` y `paciente_default.png`—, y un
+  tercero era otra vez la cara prestada. Los tres apuntan ahora a
+  `assets/images/retrato_generico.svg`, un dibujo neutro que es un archivo y no un dibujo pegado en
+  cada pantalla, para que se cambie en un solo lugar.
+
+- **El logotipo de la Prestadora salía roto en las dos PWAs.** La columna `logo_url` de la
+  Prestadora de prueba guarda `assets/images/logo_presdemo.png`, una ruta relativa; leída desde
+  `pwa-familia/index.html` apuntaba a `pwa-familia/assets/`, donde no hay ninguna carpeta `assets`.
+  `_applyBranding` la resuelve ahora contra la raíz del sitio con `new URL`, que sirve para los
+  tres casos: una dirección entera se respeta, una que empieza con barra también, y una relativa se
+  cuelga de la raíz. No se tocó el dato guardado.
+
+**Lo que se probó.** Todo, y en el servidor de mirar las pantallas: las cuatro tarjetas reales que
+devuelve `caregivers_publicos` —nombres inventados, tipo y zona traducidos por el catálogo, precio
+por hora con el formato del proyecto, inicial en lugar de foto porque ninguna tiene—, el estado de
+error forzado rompiendo la dirección del servidor, el botón de reintentar volviendo a la lista, el
+estado vacío, y el nombre con una etiqueta adentro. Después de eso, cero pedidos a `placeholder.com`
+y cero imágenes rotas en las dos PWAs, en la maqueta y en el directorio.
+
 ### El directorio muestra a gente que existe en la base, y sólo la de una Prestadora
 
 Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están hechas.
