@@ -64,10 +64,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (valid) {
+        // La clave que guarda el vocabulario `motivo_consulta` es
+        // `busco_asistente`. Acá decía `busco-cuidador`, que no existe en
+        // ningún lado: quien elegía «Busco un Asistente» en la portada no
+        // llegaba nunca al formulario de publicación.
         const consultaSelect = form.querySelector('select');
-        const isBuscoCuidador = !consultaSelect || consultaSelect.value === 'busco-cuidador' || form.id === 'form-solicitud-familia';
+        const buscaAsistente = !consultaSelect || consultaSelect.value === 'busco_asistente' || form.id === 'form-solicitud-familia';
 
-        if (isBuscoCuidador) {
+        if (buscaAsistente) {
           // Redirigir al Wizard Interactivo de Publicación de Búsqueda
           window.location.href = 'formulario-integral.html';
         } else {
@@ -222,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const successMsg = document.getElementById('wizard-success-msg');
       const btnSubmit = document.getElementById('btn-submit-wizard');
 
-      const title = document.getElementById('w-title')?.value || 'Cuidadora para adulto mayor';
+      const title = document.getElementById('w-title')?.value || 'Asistente para adulto mayor';
       const patientAge = document.getElementById('w-patient-age')?.value || '80';
       const patientGender = document.getElementById('w-patient-gender')?.value || 'Femenino';
       
@@ -295,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="video-screen-placeholder">
               <i class="fas fa-user-circle" style="font-size:72px;color:rgba(255,255,255,0.4);margin-bottom:12px;"></i>
               <div style="font-size:16px;font-weight:700;">Conectando sala segura 8x8 Encryption...</div>
-              <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:4px;">Cuidadora: Marisa Miranda</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:4px;">Asistente: Marisa Miranda</div>
             </div>
             <div class="video-controls">
               <button class="video-btn mute" title="Silenciar Micrófono"><i class="fas fa-microphone"></i></button>

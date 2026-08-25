@@ -537,7 +537,7 @@
       </div>
       <div style="flex:1;padding:16px 0;">
         <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home" style="width:20px;color:#64748b;"></i> Inicio</a>
-        <a class="drawer-menu-item" href="../directorio.html"><i class="fas fa-search" style="width:20px;color:#64748b;"></i> Buscar Cuidador</a>
+        <a class="drawer-menu-item" href="../directorio.html"><i class="fas fa-search" style="width:20px;color:#64748b;"></i> Buscar Asistente</a>
         <a class="drawer-menu-item" onclick="navigate('cuaderno')"><i class="fas fa-book-medical" style="width:20px;color:#64748b;"></i> Cuaderno de Cuidado</a>
         <a class="drawer-menu-item" href="../cursos.html"><i class="fas fa-graduation-cap" style="width:20px;color:#64748b;"></i> Cursos</a>
         <a class="drawer-menu-item" href="../soporte-remoto.html"><i class="fas fa-headset" style="width:20px;color:#64748b;"></i> Acompañamiento Online</a>
@@ -594,7 +594,7 @@
       <div class="grid-services">
         <a class="service-btn" href="../directorio.html">
           <div class="icon-box" style="background:#4f46e5;"><i class="fas fa-user-search"></i></div>
-          <span>Buscar Cuidador</span>
+          <span>Buscar Asistente</span>
         </a>
         <a class="service-btn" href="../soporte-remoto.html">
           <div class="icon-box" style="background:#06b6d4;"><i class="fas fa-headset"></i></div>
@@ -697,7 +697,7 @@
       </div>
     </div>
 
-    <!-- 4. VISTA: PUBLICAR NUEVA BÚSQUEDA DE CUIDADOR (Inline — Offline Safe) -->
+    <!-- 4. VISTA: PUBLICAR NUEVA BÚSQUEDA DE ASISTENTE (Inline — Offline Safe) -->
     <div class="app-screen" id="screen-publicar" style="padding-bottom:64px;">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
@@ -984,7 +984,7 @@
     Franjas.montarTextos('franjas-cuidado', 'paso_de_franjas_busqueda');
     Franjas.montarGrilla('grilla-cuidado', 'grilla_busqueda');
 
-    // ── Formulario Nueva Búsqueda de Cuidador (Inline — Offline Safe) ──────
+    // ── Formulario Nueva Búsqueda de Asistente (Inline — Offline Safe) ─────
     document.getElementById('form-nueva-busqueda').addEventListener('submit', async (e) => {
       e.preventDefault();
       const nombre = document.getElementById('pb-nombre').value.trim();

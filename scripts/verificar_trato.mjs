@@ -12,12 +12,8 @@
    24 de agosto de 2026, y eso es una foto: la pantalla número quince la escribe
    alguien que no leyó la regla. Una regla que no se verifica sola no es una regla.
 
-   Qué mira:
-   - el texto entre etiquetas de cada `.html`, sin los comentarios ni el `<style>`;
-   - los atributos que se leen en pantalla (`placeholder`, `title`, `alt`,
-     `aria-label`, `value`, `content`, `label`);
-   - las cadenas de texto de los bloques `<script>`, de los archivos de `js/` y
-     del catálogo de `data/`, porque de ahí sale lo que la pantalla muestra.
+   Qué mira: el texto que ve una persona, que es lo que devuelve
+   `scripts/texto_visible.mjs`.
 
    Qué NO mira, y hay que leer con ojos: **el imperativo en tú sin acento.**
    «Descarga la aplicación» tutea y «El sistema descarga el archivo» no, y las
@@ -31,6 +27,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
 import { archivos } from './recorrido.mjs';
+import { visible } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
@@ -73,54 +70,12 @@ const VOSEO = [
 const PATRON = new RegExp(
   '(?<![\\p{L}\\p{N}_])(' + VOSEO.join('|') + ')(?![\\p{L}\\p{N}_])', 'giu');
 
-const ATRIBUTOS = 'placeholder|title|alt|aria-label|value|content|label';
-
-const enBlanco = (t) => t.replace(/[^\n]/g, ' ');
-
-/** Devuelve los trozos de texto que ve una persona, con su renglón. */
-function visible(crudo, esHtml) {
-  const trozos = [];
-  const anotar = (inicio, texto) => {
-    if (texto.trim()) trozos.push([crudo.slice(0, inicio).split('\n').length, texto.trim()]);
-  };
-
-  if (!esHtml) {
-    const sinComentarios = crudo.replace(/\/\/[^\n]*|\/\*[\s\S]*?\*\//g, enBlanco);
-    for (const c of sinComentarios.matchAll(/(?<![\w$])("[^"\n]*"|'[^'\n]*'|`[^`]*`)/g)) {
-      anotar(c.index, c[1].slice(1, -1));
-    }
-    return trozos;
-  }
-
-  const limpio = crudo
-    .replace(/<!--[\s\S]*?-->/g, enBlanco)
-    .replace(/<style\b[\s\S]*?<\/style>/gi, enBlanco);
-
-  for (const g of limpio.matchAll(/<script\b[\s\S]*?<\/script>/gi)) {
-    const cuerpo = g[0].replace(/\/\/[^\n]*|\/\*[\s\S]*?\*\//g, enBlanco);
-    for (const c of cuerpo.matchAll(/(?<![\w$])("[^"\n]*"|'[^'\n]*'|`[^`]*`)/g)) {
-      anotar(g.index + c.index, c[1].slice(1, -1));
-    }
-  }
-
-  const sinGuion = limpio.replace(/<script\b[\s\S]*?<\/script>/gi, enBlanco);
-
-  const atributo = new RegExp('\\b(' + ATRIBUTOS + ')\\s*=\\s*("[^"]*"|\'[^\']*\')', 'gi');
-  for (const a of sinGuion.matchAll(atributo)) anotar(a.index, a[2].slice(1, -1));
-
-  const resto = sinGuion.replace(/<[^>]*>/g, enBlanco);
-  resto.split('\n').forEach((linea, i) => {
-    if (linea.trim()) trozos.push([i + 1, linea.trim()]);
-  });
-  return trozos;
-}
-
 /* Una prueba que no puede fallar no prueba nada: antes de recorrer el proyecto,
    el detector se prueba contra frases que sí tutean y contra frases que no. */
 const TUTEAN = ['Completá tu legajo', 'Podés ingresar', '¿No tenés cuenta?', 'Registrate',
   'para tu ser querido', 'Te contactaremos', 'Si sos familiar', 'Contanos tu caso'];
-const NO_TUTEAN = ['Completar el curso', 'Solicitar Asistente', 'Encuentre al cuidador',
-  'Publicar Búsqueda', 'Cada cuidador completa su perfil', 'Agenda Horaria Semanal',
+const NO_TUTEAN = ['Completar el curso', 'Solicitar Asistente', 'Encuentre al Asistente',
+  'Publicar Búsqueda', 'Cada Asistente completa su perfil', 'Agenda Horaria Semanal',
   'Notas de la Entrevista', 'Se aprende desde aspectos técnicos'];
 
 const tutea = (frase) => { PATRON.lastIndex = 0; return PATRON.test(frase); };

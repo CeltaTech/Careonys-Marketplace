@@ -798,6 +798,64 @@ core.hooksPath .githooks`. La carpeta `.githooks/` sí se sube, pero la configur
 vive en `.git/config`, que no. Sin ese comando el gancho está en el repositorio y nadie lo llama.
 
 
+### La palabra «cuidador» salió de las pantallas y ya no puede volver sola
+
+Cierra el pendiente 33, el 25 de agosto de 2026.
+
+El glosario dice que **Asistente** es el término general y que «cuidador» es apenas un tipo, pero las
+pantallas decían «cuidador» en todos lados. Ya no, y esta vez la limpieza no depende de que alguien
+se acuerde.
+
+- **Salieron las 82 apariciones de las diez pantallas**, una por una: `index.html`, `mockup-app.html`,
+  `postulacion-asistente.html`, `solicitar-asistente.html`, `cursos.html`, `formulario-integral.html`,
+  `panel-prestadora.html`, `soporte-remoto.html`, las dos aplicaciones de teléfono y las notas del
+  catálogo. Donde decía «cuidador» ahora dice **Asistente**.
+- **`scripts/verificar_vocabulario.mjs` es el chequeo que impide que vuelva.** Falla el commit si la
+  palabra aparece en el texto que ve una persona. Es el séptimo, y confirmó lo que prometía el
+  renglón anterior de este documento: entró solo, sin tocar ni el corredor ni el gancho.
+- **Antes de escribirlo se sacó `visible()` a `scripts/texto_visible.mjs`**, que ahora comparten el
+  chequeo de trato y el de vocabulario. Copiarlo hubiera sido la octava lista repetida dos veces
+  (regla 7 de `CLAUDE.md`).
+- **La prueba se hizo al revés**, que es la única que vale: se dejó un archivo con «Encuentre al
+  cuidador que necesita» y el chequeo lo señaló con archivo y renglón. Además el detector se prueba
+  a sí mismo contra catorce frases —cinco que tienen que saltar y nueve que no— antes de mirar
+  ningún archivo.
+- **Buscando la palabra apareció un error de verdad.** `js/main.js` comparaba la respuesta de la
+  portada contra `busco-cuidador`, una clave que no existe en ningún lado: la de verdad es
+  `busco_asistente`. Quien elegía «Busco un Asistente» no llegaba nunca al formulario de
+  publicación. Corregido.
+- **Y dos respaldos que no respaldaban a nadie**: `apiClient.js` aceptaba `fichadoData.cuidadorId` y
+  `entryData.cuidadorId` por si alguien los mandaba, y no los manda ninguna pantalla. Borrados de
+  las tres copias.
+- **El borrador legal se llama `docs/terminos_y_condiciones_asistentes.md`** y adentro dice
+  Asistente y Prestadora. Su propio aviso pedía exactamente esa corrección. **Ninguna cláusula
+  cambió**, y el aviso de que un abogado todavía no lo revisó sigue entero.
+
+**Dónde la palabra se quedó a propósito**, porque ahí no es el término general:
+
+- **`cuidador domiciliario`**, con el sustantivo pegado: es el nombre de un tipo, la clave
+  `cuidador_domiciliario` del vocabulario `tipo_asistente`. Un enfermero universitario y un cuidador
+  domiciliario son dos tipos de Asistente.
+- **`soporte-remoto.html`**: esa pantalla habla de las familias que cuidan a un familiar mayor.
+  Llamarlas Asistentes sería mentirles, así que ahí «cuidadores» son ellas. El pie de esa misma
+  pantalla sí decía el genérico y sí se cambió.
+- **`síndrome del cuidador`**, en `data/catalogo-oferta.json`: es el nombre de un cuadro clínico.
+- **Los nombres que no se leen**: el depósito `documentos-cuidadores`, la imagen
+  `hero_cuidadores.png`, el botón `btn-submit-cuidador`, el formulario
+  `form-registro-cuidador-completo`, la clase `caregiver-card` y la tabla `caregivers`. Cambiarlos
+  rompe algo y no los ve nadie.
+
+**Lo que falta y es del Desarrollador**
+
+1. **La etiqueta del tipo dice «Asistente / Cuidador domiciliario»**, y esa barra hace que el término
+   general parezca un tipo. Es una etiqueta de negocio, así que la decisión es suya: se deja como
+   está hasta que diga otra cosa.
+2. **`docs/CAREONYS_PRESDEMO_Plan_Tecnico.md` conserva 88 apariciones de la palabra.** Quedó afuera
+   a propósito: el pendiente hablaba del texto visible y eso es un documento. Conviene decidir si
+   ese plan sigue vigente antes de corregirlo, porque corregir un documento vencido es trabajo
+   tirado.
+
+
 ### El Asistente ve sus capacitaciones, y al lado lo que rindió
 
 Cierra el pendiente 34, el 25 de agosto de 2026.

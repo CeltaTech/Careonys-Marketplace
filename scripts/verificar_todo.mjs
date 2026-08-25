@@ -6,19 +6,23 @@
    Falla —con código de salida 1— si falla cualquiera de ellos, y muestra la
    salida entera del que falló. Los que pasan ocupan un renglón cada uno.
 
-   Por qué existe: los chequeos se corrían a mano, uno por uno, y ya son seis.
-   Un chequeo que hay que acordarse de correr protege hasta que alguien se
-   olvida, que es exactamente como el nombre viejo del producto llegó a 273
+   Por qué existe: los chequeos se corrían a mano, uno por uno, y ya son
+   varios. Un chequeo que hay que acordarse de correr protege hasta que alguien
+   se olvida, que es exactamente como el nombre viejo del producto llegó a 273
    apariciones. Esto es lo que engancha el gancho `pre-commit` de `.githooks/`,
-   así que nada se sube sin haber pasado por los seis.
+   así que nada se sube sin haber pasado por todos.
 
    No lleva la lista escrita adentro: busca en esta misma carpeta todo archivo
    que se llame `verificar_*.mjs` —menos él mismo— y los corre en orden
-   alfabético. El séptimo chequeo que alguien escriba entra solo, sin tocar este
-   archivo ni el gancho. Un renglón con la cuenta de cuántos hay es un renglón
-   que queda viejo: en `docs/PENDIENTES.md` decía cinco cuando ya eran seis.
+   alfabético. El chequeo siguiente que alguien escriba entra solo, sin tocar
+   este archivo ni el gancho.
 
-   Qué no mira: nada por su cuenta. Todo lo que sabe lo saben los otros seis.
+   Acá no se escribe cuántos hay, a propósito: un renglón con la cuenta queda
+   viejo el día que se suma uno. En `docs/PENDIENTES.md` decía cinco cuando ya
+   eran seis, y este mismo encabezado decía seis cuando ya eran siete. La
+   cuenta la da la corrida, que la saca de la carpeta.
+
+   Qué no mira: nada por su cuenta. Todo lo que sabe lo saben los otros.
 =================================================== */
 
 import { readdirSync } from 'node:fs';
@@ -34,7 +38,7 @@ const chequeos = readdirSync(aca)
   .sort();
 
 if (chequeos.length === 0) {
-  console.error('No se encontró ningún chequeo en scripts/. Debería haber seis.');
+  console.error('No se encontró ningún chequeo en scripts/, y debería haber varios.');
   process.exit(1);
 }
 
@@ -54,7 +58,7 @@ for (const chequeo of chequeos) {
     /* Del que pasa alcanza con el último renglón, que es donde cada chequeo
        escribe cuánto revisó. Lo demás sería ruido en cada commit. */
     const salida = (corrida.stdout || '').trim().split('\n');
-    console.log(`  ✔ ${nombre.padEnd(10)} ${salida[salida.length - 1] || ''}`);
+    console.log(`  ✔ ${nombre.padEnd(12)} ${salida[salida.length - 1] || ''}`);
   } else {
     fallaron.push(nombre);
     console.log(`  ✘ ${nombre}`);

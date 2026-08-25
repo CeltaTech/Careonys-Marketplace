@@ -2,8 +2,9 @@
 # ===================================================
 # CORRE LOS CHEQUEOS ANTES DE CADA COMMIT
 #
-# Si alguno falla, el commit no se hace y se ve por qué. Los seis juntos tardan
-# menos de un segundo.
+# Si alguno falla, el commit no se hace y se ve por qué. Todos juntos tardan
+# menos de un segundo. Cuáles son los decide `scripts/verificar_todo.mjs`, que
+# los busca en la carpeta en vez de tener la lista escrita.
 #
 # Este gancho no vive en `.git/hooks/` —esa carpeta no se sube— sino acá, que sí
 # se sube. Para que git lo use hay que decírselo una sola vez por máquina:

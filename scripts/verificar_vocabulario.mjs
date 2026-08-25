@@ -1,0 +1,133 @@
+/* ===================================================
+   VERIFICA QUE «CUIDADOR» NO VUELVA A SER EL TÉRMINO GENERAL
+
+   Falla —con código de salida 1— si en el texto que ve una persona aparece
+   «cuidador» usado como nombre de cualquiera que cuida.
+
+       node scripts/verificar_vocabulario.mjs
+
+   Por qué existe: `docs/GLOSARIO.md` fija **Asistente** como el único término
+   general y nombra expresamente «cuidador» entre lo que no se debe usar así. El
+   25 de agosto de 2026 se sacó de las pantallas —eran ochenta y dos apariciones
+   en diez archivos— y esa limpieza es una foto: la pantalla siguiente la escribe
+   alguien que no leyó el glosario. Una regla que no se verifica sola no es una
+   regla, que es lo mismo que hicieron el chequeo de trato y el de identidad.
+
+   Dónde sí puede aparecer, y por qué:
+   - **`cuidador domiciliario`**, con el sustantivo pegado: ahí no es el término
+     general sino **el nombre de un tipo**, la clave `cuidador_domiciliario` del
+     vocabulario `tipo_asistente`. Un enfermero universitario y un cuidador
+     domiciliario son dos tipos de Asistente.
+   - **`síndrome del cuidador`**: es el nombre de un cuadro clínico y nombra a un
+     familiar agotado, no a nadie de la plataforma.
+   - **Los nombres que no se leen**: `documentos-cuidadores` (el depósito),
+     `hero_cuidadores.png` (una imagen), `btn-submit-cuidador` (un botón). Se
+     reconocen por el guion o el guion bajo pegado, y cambiarlos rompe algo.
+   - **`soporte-remoto.html`**, entero: esa pantalla habla de las familias que
+     cuidan a un familiar mayor, que no son Asistentes ni quieren serlo.
+
+   Qué no mira: los comentarios del código y `docs/`. Un comentario explica de
+   dónde salieron las cosas, y para eso necesita nombrarlas como se llamaban.
+=================================================== */
+
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join, relative, sep } from 'node:path';
+
+import { archivos } from './recorrido.mjs';
+import { visible } from './texto_visible.mjs';
+
+const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
+/* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
+   este: el vocabulario se revisa en el texto que ve una persona. */
+const AJENAS = ['docs', 'supabase', 'scripts', 'assets'];
+
+/* Pantallas donde la palabra nombra a otra persona, con el motivo escrito. */
+const PANTALLAS_EXENTAS = new Map([
+  ['soporte-remoto.html', 'ahí «cuidadores» son los familiares que cuidan, no los Asistentes']
+]);
+
+/* `\b` de JavaScript no entiende las vocales acentuadas, así que el borde de
+   palabra se marca con propiedades Unicode, igual que en el chequeo de trato.
+   El guion y el guion bajo quedan **afuera** del borde a propósito: son lo que
+   distingue un nombre de código de una palabra escrita para leer. */
+const PALABRA = /(?<![\p{L}\p{N}_-])(cuidador|cuidadora|cuidadores|cuidadoras)(?![\p{L}\p{N}_-])/giu;
+
+/* Lo que sigue o precede a la palabra y la vuelve legítima. */
+const ES_EL_TIPO = /^\s+domiciliari[oa]s?\b/iu;
+const ES_EL_SINDROME = /\bs[ií]ndrome\s+del\s*$/iu;
+
+/** Devuelve la primera aparición que sobra en la frase, o null. */
+function apariciónQueSobra(frase) {
+  PALABRA.lastIndex = 0;
+  let acierto;
+  while ((acierto = PALABRA.exec(frase)) !== null) {
+    const antes = frase.slice(0, acierto.index);
+    const despues = frase.slice(acierto.index + acierto[0].length);
+    if (ES_EL_TIPO.test(despues)) continue;
+    if (ES_EL_SINDROME.test(antes)) continue;
+    return acierto[1];
+  }
+  return null;
+}
+
+/* Una prueba que no puede fallar no prueba nada: antes de recorrer el proyecto,
+   el detector se prueba contra frases que sobran y contra frases que no. */
+const SOBRAN = [
+  'Encuentre al cuidador que necesita',
+  'Conectamos familias con cuidadores calificados',
+  'Para Cuidadores',
+  'Cuidadora: María Gómez',
+  'Soy una persona que busca un cuidador calificado'
+];
+const NO_SOBRAN = [
+  'Asistente / Cuidador domiciliario',
+  'Cuidadora Domiciliaria, Voluntaria.',
+  'Herramientas para prevenir el síndrome del cuidador',
+  'documentos-cuidadores',
+  'assets/images/hero_cuidadores.png',
+  'btn-submit-cuidador',
+  'form-registro-cuidador-completo',
+  'apoyo_cuidador',
+  'Encuentre al Asistente que necesita'
+];
+
+const noDetecta = SOBRAN.filter((f) => !apariciónQueSobra(f));
+const sePasa = NO_SOBRAN.filter((f) => apariciónQueSobra(f));
+if (noDetecta.length || sePasa.length) {
+  console.error('El detector está roto, así que no verifica nada:');
+  if (noDetecta.length) console.error('  no detecta: ' + noDetecta.join(' / '));
+  if (sePasa.length) console.error('  avisa de más: ' + sePasa.join(' / '));
+  process.exit(1);
+}
+
+const fallas = [];
+let revisados = 0;
+
+for (const camino of archivos(raiz, ['.html', '.js', '.json'], AJENAS)) {
+  const nombre = relative(raiz, camino).split(sep).join('/');
+  if (nombre.endsWith('manifest.json') || nombre.endsWith('sw.js')) continue;
+  if (PANTALLAS_EXENTAS.has(nombre)) continue;
+  revisados++;
+  const crudo = readFileSync(camino, 'utf8');
+  const vistos = new Set();
+  for (const [renglon, texto] of visible(crudo, nombre.endsWith('.html'))) {
+    const sobra = apariciónQueSobra(texto);
+    if (sobra && !vistos.has(renglon + sobra)) {
+      vistos.add(renglon + sobra);
+      fallas.push(`${nombre}:${renglon}  «${sobra}»  ${texto.slice(0, 90)}`);
+    }
+  }
+}
+
+if (fallas.length > 0) {
+  console.error('«Cuidador» usado como término general en el texto visible:\n');
+  for (const falla of fallas) console.error('  - ' + falla);
+  const plural = fallas.length === 1 ? 'aparición' : 'apariciones';
+  console.error(
+    `\n${fallas.length} ${plural}. El término general es **Asistente** (docs/GLOSARIO.md).\n` +
+    'Si de verdad se está nombrando el tipo, la forma es «cuidador domiciliario».');
+  process.exit(1);
+}
+
+console.log(`Vocabulario verificado: ${revisados} archivos sin «cuidador» como término general.`);

@@ -166,7 +166,7 @@ const ClienteDatos = {
     }
   },
 
-  // --- MÓDULO 1: RECLUTAMIENTO Y LEGAJOS (CUIDADORES) ---
+  // --- MÓDULO 1: RECLUTAMIENTO Y LEGAJOS (ASISTENTES) ---
   async getAspirantes(filter = {}) {
     // Filtrar automáticamente por el tenant activo
     const activeFilter = { ...filter };
@@ -323,7 +323,7 @@ const ClienteDatos = {
   // --- MÓDULO 3: FICHADO GPS Y BITÁCORA MÉDICA ---
   async registrarFichadoGPS(fichadoData) {
     return await this._supabaseRequest('POST', 'clock_ins', {
-      caregiver_id: fichadoData.caregiverId || fichadoData.cuidadorId,
+      caregiver_id: fichadoData.caregiverId,
       latitude: fichadoData.latitude || fichadoData.lat,
       longitude: fichadoData.longitude || fichadoData.lng,
       event_type: fichadoData.tipoEvent || fichadoData.event_type || fichadoData.estado
@@ -333,7 +333,7 @@ const ClienteDatos = {
   async registrarBitacoraDiaria(entryData) {
     return await this._supabaseRequest('POST', 'logbook_entries', {
       search_id: entryData.searchId || entryData.busquedaId,
-      caregiver_id: entryData.caregiverId || entryData.cuidadorId,
+      caregiver_id: entryData.caregiverId,
       blood_pressure: entryData.presion || entryData.blood_pressure,
       glycemia: entryData.glucemia || entryData.glycemia,
       medications_administered: entryData.medicamentos || entryData.medications,

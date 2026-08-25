@@ -30,7 +30,7 @@
       </div>
       <div class="drawer-menu">
         <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home"></i> Inicio</a>
-        <a class="drawer-menu-item" href="directorio.html"><i class="fas fa-search"></i> Buscar Cuidador</a>
+        <a class="drawer-menu-item" href="directorio.html"><i class="fas fa-search"></i> Buscar Asistente</a>
         <a class="drawer-menu-item" onclick="navigate('cuaderno')"><i class="fas fa-book-medical"></i> Cuaderno de
           Cuidado</a>
         <a class="drawer-menu-item" href="cursos.html"><i class="fas fa-graduation-cap"></i> Cursos</a>
@@ -104,12 +104,12 @@
 
       <div class="role-card" data-role="familiar">
         <h4><i class="fas fa-users" style="color:var(--marca-prestadora-acento);"></i> Como familiar</h4>
-        <p>Soy una persona que busca un cuidador calificado para asistir a un familiar o ser querido mayor.</p>
+        <p>Soy una persona que busca un Asistente calificado para asistir a un familiar o ser querido mayor.</p>
         <div class="circle-select"></div>
       </div>
 
-      <div class="role-card" data-role="cuidador">
-        <h4><i class="fas fa-user-md" style="color:var(--marca-prestadora);"></i> Como cuidador</h4>
+      <div class="role-card" data-role="asistente">
+        <h4><i class="fas fa-user-md" style="color:var(--marca-prestadora);"></i> Como Asistente</h4>
         <p>Soy un profesional que busca postularse para trabajar brindando servicios de cuidado domiciliario.</p>
         <div class="circle-select"></div>
       </div>
@@ -170,7 +170,7 @@
       <div class="grid-services">
         <a class="service-btn" href="directorio.html">
           <div class="icon-box" style="background:#4f46e5;"><i class="fas fa-user-search"></i></div>
-          <span>Buscar Cuidador</span>
+          <span>Buscar Asistente</span>
         </a>
         <a class="service-btn" href="soporte-remoto.html">
           <div class="icon-box" style="background:#06b6d4;"><i class="fas fa-headset"></i></div>
@@ -348,7 +348,7 @@
           <img src="assets/images/retrato_generico.svg" alt="Sin foto" />
           <div>
             <p style="margin:0;font-size:12px;opacity:0.9;">Diagnóstico: Alzheimer Moderado</p>
-            <p style="margin:2px 0 0 0;font-size:11px;opacity:0.7;">Cuidadora: María Gómez</p>
+            <p style="margin:2px 0 0 0;font-size:11px;opacity:0.7;">Asistente: María Gómez</p>
           </div>
         </div>
       </div>
@@ -558,7 +558,7 @@
         glucemia,
         medicamentos,
         notas,
-        // Usamos el ID del cuidador de prueba registrado en Supabase
+        // Usamos el ID del Asistente de prueba registrado en Supabase
         caregiverId: '2197bc14-d545-4939-9a98-979e69a120dc'
       };
 
@@ -686,7 +686,7 @@
 
     // Confirmar Rol
     document.getElementById('btn-signup-confirm').addEventListener('click', () => {
-      if (selectedRole === 'cuidador') {
+      if (selectedRole === 'asistente') {
         window.location.href = 'postulacion-asistente.html';
       } else {
         window.location.href = 'formulario-integral.html';
