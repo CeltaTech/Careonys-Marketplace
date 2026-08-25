@@ -62,6 +62,19 @@
     </div>
   </div>
 
+  <!-- Cuando el enlace nombra a alguien que esta pantalla todavía no sabe mostrar.
+       El directorio ya trae gente de la base; acá siguen las ocho personas de
+       ejemplo escritas adentro, numeradas del 1 al 8 (pendiente 44). -->
+  <div class="directorio-estado" id="perfil-sin-datos" style="display:none;">
+    <p><strong>Esta pantalla todavía muestra un perfil de ejemplo.</strong></p>
+    <p class="directorio-estado-bajada">
+      El directorio ya trae Asistentes de la base, pero el perfil de cada uno está sin construir:
+      lo que se ve acá son datos inventados para mostrar el diseño. Se prefiere decirlo antes que
+      mostrar a otra persona.
+    </p>
+    <p style="margin-top:16px;"><a class="btn btn-primario" href="directorio.html">Volver al directorio</a></p>
+  </div>
+
   <!-- PROFILE HERO -->
   <section class="profile-hero">
     <div class="profile-layout container">
@@ -561,12 +574,20 @@
         // El identificador se busca tal cual viene y no se fuerza a número. Con
         // `parseInt(...) || 1`, un identificador de la base —que es un UUID— daba
         // NaN y caía en el 1: la pantalla mostraba a otra persona sin avisar. El
-        // directorio ya enlaza con el identificador de la base (pendiente 2), así
-        // que hasta que esta pantalla también lea de la base, un enlace que no
-        // reconoce vuelve al directorio en vez de inventar a quién muestra.
+        // directorio ya enlaza con el identificador de la base (pendiente 2), y
+        // esta pantalla todavía no lee de ahí.
         const id = params.get('id') || '1';
         const c = cuidadores[id];
-        if (!c) { window.location.href = 'directorio.html'; return; }
+
+        // Un enlace que esta pantalla no sabe contestar no se disimula: antes
+        // rebotaba al directorio sin decir nada, y eso se lee como una falla.
+        if (!c) {
+          document.getElementById('perfil-sin-datos').style.display = '';
+          document.querySelector('.profile-hero').style.display = 'none';
+          document.querySelector('.profile-content').style.display = 'none';
+          document.getElementById('breadcrumb-name').textContent = 'Perfil';
+          return;
+        }
 
         document.title = `${c.name} — ${Identidad.datos.nombreCorto}`;
         document.getElementById('page-title').textContent = `${c.name} — ${Identidad.datos.nombreCorto}`;

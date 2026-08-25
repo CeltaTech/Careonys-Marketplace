@@ -636,7 +636,9 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
 - **`perfil.html` quedó a mitad de camino y por eso se lo frenó.** Sus datos siguen escritos a
   mano, indexados del 1 al 8, y tomaba el identificador con `parseInt(...) || 1`: con el
   identificador de la base —que es un UUID— daba NaN, caía en el 1 y mostraba a otra persona sin
-  avisar. Ahora un enlace que no reconoce vuelve al directorio. Esa pantalla es lo que sigue.
+  avisar. Ahora un enlace que no reconoce dice lo que pasa —que la pantalla todavía muestra un
+  perfil de ejemplo— y ofrece volver al directorio. Los ocho de ejemplo siguen abriéndose por su
+  número, así que el diseño no se perdió. Conectarla a la base es el pendiente 44.
 
 ## 2. Falta construir
 
