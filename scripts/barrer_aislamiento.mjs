@@ -91,17 +91,18 @@ const tablas = [...new Set([
 ])].sort();
 
 // --- Lo que sí se lee sin sesión, a propósito y con motivo escrito ----------
-const ABIERTAS_A_PROPOSITO = new Map([
-  ['tenants',
-   'La pantalla de ingreso tiene que resolver la Prestadora por su nombre corto antes de que ' +
-   'exista ninguna sesión, así que la lista de Prestadoras activas se lee sin sesión. Decidido en ' +
-   'la migración 0002.'],
-  ['directorio',
-   'El directorio público de Asistentes. Muestra sólo a quien contestó que sí al cierre del alta ' +
-   'y sólo lo que ese consentimiento nombra. Mezcla Prestadoras a propósito, y eso es lo que el ' +
-   'pendiente 43 (d) le pide decidir al Desarrollador: es la única excepción a «una Prestadora no ' +
-   've a la otra».']
-]);
+// **Hoy está vacía, y eso es la noticia.** Tenía dos entradas hasta la migración
+// 0021: `tenants`, que devolvía la lista de Prestadoras activas, y
+// `directorio`, que devolvía los legajos publicados de todas mezclados.
+// El Desarrollador cerró las dos el 25 de agosto de 2026 —no hay lista de
+// Prestadoras para nadie, y cada Prestadora tiene su propio directorio—, así
+// que ahora el rol anónimo no lee ninguna tabla ni vista de este esquema: entra
+// por tres funciones y las tres le exigen nombrar una Prestadora.
+//
+// La lista se deja escrita igual. Si algún día vuelve a hacer falta abrir algo,
+// el lugar donde se escribe el motivo ya existe, y el barrido sigue haciendo la
+// única pregunta que importa: ¿esto se abrió porque alguien lo decidió?
+const ABIERTAS_A_PROPOSITO = new Map([]);
 
 // --- La dirección y la clave publicable, de donde ya están ------------------
 const fuente = readFileSync(join(raiz, 'js', 'apiClient.js'), 'utf8');

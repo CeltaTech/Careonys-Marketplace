@@ -67,6 +67,24 @@ const SIN_ORGANIZACION = new Map([
    'es la Organización: su propio identificador es el que las demás tablas copian']
 ]);
 
+/* Funciones SECURITY DEFINER que conservan a propósito el permiso del rol
+   anónimo, con el motivo escrito. Es la excepción más cara del archivo y por eso
+   se nombra una por una: cualquier otra función así es un descuido, y el chequeo
+   la tiene que encontrar. */
+const AL_ALCANCE_ANONIMO = new Map([
+  ['prestadora_por_slug',
+   'la pantalla de ingreso tiene que saber qué nombre y qué colores mostrar antes de que ' +
+   'exista ninguna sesión; devuelve una sola Prestadora, la que nombra el argumento, y ' +
+   'sólo sus columnas de marca; migración 0021'],
+  ['directorio_de',
+   'el directorio se ve sin cuenta por decisión del 24 de agosto de 2026, así que la ' +
+   'puerta se abre sin sesión o no hay directorio; no devuelve ni una columna que la ' +
+   'vista `directorio` no publicara ya, y esa vista no tiene datos de contacto; ' +
+   'migración 0021'],
+  ['perfil_del_directorio',
+   'la misma puerta, para una sola persona; migración 0021']
+]);
+
 /* Importes que hoy se guardan sin moneda, con su motivo y su pendiente. */
 const SIN_MONEDA = new Map([
   ['caregivers.hourly_rate',
@@ -233,7 +251,8 @@ export function fallasDeUnaMigracion(texto, conColumna, claves) {
     const revocado = [...bajo.matchAll(
       new RegExp('revoke[^;]*\\b' + funcion + '\\b[^;]*from([^;]*);', 'g'))]
       .map((r) => r[1]).join(' ');
-    const faltan = ['public', 'anon'].filter((quien) =>
+    const exenta = AL_ALCANCE_ANONIMO.has(funcion);
+    const faltan = (exenta ? ['public'] : ['public', 'anon']).filter((quien) =>
       !new RegExp('\\b' + quien + '\\b').test(revocado));
     if (faltan.length > 0) {
       fallas.push([renglonDe(t, m.index),
@@ -371,7 +390,8 @@ if (ME_CORRIERON_A_MI) {
       'función, nunca en una posterior y nunca a mano desde el panel de Supabase; la\n' +
       'columna de Organización, la clave primaria y la moneda pueden llegar después,\n' +
       'pero tienen que llegar, y la clave tiene que ser `uuid`.\n' +
-      'Si un caso no puede cumplirla, va a SIN_ORGANIZACION o a SIN_MONEDA de este mismo\n' +
+      'Si un caso no puede cumplirla, va a SIN_ORGANIZACION, a SIN_MONEDA o a\n' +
+      'AL_ALCANCE_ANONIMO de este mismo\n' +
       'archivo, con el motivo escrito y el pendiente que lo sigue.');
     process.exit(1);
   }
@@ -379,6 +399,7 @@ if (ME_CORRIERON_A_MI) {
   console.log(
     `Esquema verificado: ${tablas} tablas con su RLS encendida donde se crean, su ` +
     `columna de Organización y clave primaria \`uuid\`, y ${funciones} funciones ` +
-    'SECURITY DEFINER fuera del alcance anónimo ' +
+    `SECURITY DEFINER, ${AL_ALCANCE_ANONIMO.size} de ellas al alcance anónimo a ` +
+    'propósito y las demás fuera de él ' +
     `(${SIN_ORGANIZACION.size} tabla y ${SIN_MONEDA.size} importe exentos, con su motivo).`);
 }

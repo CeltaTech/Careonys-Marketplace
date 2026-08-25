@@ -1239,7 +1239,10 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
   en el navegador antes de tocar nada: `directorio.html?t=prestadora-que-no-existe` mostraba los
   cuatro Asistentes de PresDemo, porque el respaldo devuelve la primera Prestadora de la base. El
   respaldo sirve para una dirección que no nombra ninguna, no para una que nombra mal. Ahora se
-  distingue un caso del otro (`js/apiClient.js:74`, `:85` y `:468`) y el segundo avisa.
+  distingue un caso del otro (`js/apiClient.js:73`) y el segundo avisa. **Y desde la
+  migración 0021 el respaldo ya no existe**: mostrar la primera Prestadora de la base era
+  leer la lista de clientes de CeltaTech, y esa lista no la ve nadie. Quien entra sin
+  enlace ahora ve que le falta el enlace.
 - **La base tenía el directorio vacío y nadie se enteraba.** `directorio` devolvía **cero
   filas**, y no por un problema de permisos: los legajos inventados de la migración 0003 están
   validados, pero nadie había contestado la autorización de publicación, que la vista exige. Con
@@ -1820,8 +1823,52 @@ falló nada — hay un trámite en curso. Los nombres guardados en la base no se
 función y no se renombra, y esos dos nombres describen bien el casillero.
 
 **Y la corrección dejó algo a la vista.** El código sí inventa la clase de persona que el
-Desarrollador dice que no existe: la llama «Aspirante», 56 veces en 6 archivos, y esa palabra no
+Desarrollador dice que no existe: la llama «Aspirante», 55 veces en 7 archivos, y esa palabra no
 está en el glosario de este proyecto ni en el de Careonys. Es el pendiente 57.
+
+### El anónimo dejó de tener listas y pasó a tener puertas con nombre
+
+Dos cosas se leían sin iniciar sesión con la clave que viaja adentro de cada pantalla —la que
+cualquiera lee del navegador—, y ninguna de las dos debía leerse. No es una sospecha: se preguntó
+contra el servidor de verdad antes de tocar nada.
+
+| Qué devolvía | Cuánto |
+|---|---|
+| `directorio` | 7 legajos publicados, de las dos Prestadoras, mezclados |
+| `tenants` | las 2 Prestadoras activas, o sea la lista de clientes de CeltaTech |
+
+**La pantalla filtraba bien y eso no alcanzaba.** `js/apiClient.js` pedía el directorio con
+`tenant_id=eq.<la suya>` desde que se cerró el pendiente 2, así que por la pantalla nadie veía de
+más. Pero la regla 2 de `CLAUDE.md` pide aislamiento «en aplicación **y base de datos**, nunca
+solo frontend», y una lista que separa sólo porque el que pregunta se porta bien no separa nada:
+la misma dirección sin el filtro devolvía todo.
+
+**Las dos frases que lo cerraron** son del Desarrollador, el 25 de agosto de 2026: «cada
+prestadora tiene su propio directorio, sus propias familias, etc. No se mezcla nada», y «no existe
+una lista de prestadoras que el cliente, familia, asistente o vaya uno a saber quién pueda ver».
+
+**Por qué hicieron falta funciones y no políticas.** Una política decide qué filas puede ver quien
+pregunta; **ninguna puede exigir que la pregunta traiga un filtro**. Y sin sesión la base no tiene
+a quién preguntarle de qué Prestadora es la visita. Lo único que resuelve las dos cosas a la vez
+es una función con un argumento obligatorio —el nombre corto, el que ya viaja en `?t=` y en el
+subdominio—: sin ese dato no devuelve nada, y con él devuelve una sola Prestadora. La respuesta
+que mezcla dos empresas dejó de existir, en vez de depender de que nadie se olvide.
+
+Después de la migración 0021 el rol anónimo **no lee ninguna tabla ni vista de este esquema**.
+Tiene tres puertas y las tres le piden nombrar una Prestadora: `prestadora_por_slug`,
+`directorio_de` y `perfil_del_directorio`. El barrido lo confirma contra el servidor real: 27
+tablas y vistas, 23 que ni dejan preguntar, 4 que contestan sin devolver nada, **0 que devuelvan
+filas**. Y su lista de excepciones quedó vacía, que es la primera vez.
+
+**Lo que dejó de funcionar a propósito.** Entrar sin nombrar ninguna Prestadora ya no muestra
+nada. Antes se mostraba la primera que devolviera la base; eso *era* leer la lista, así que se fue
+con ella. Quien entre sin el enlace de su Prestadora va a ver que le falta el enlace, que es
+exactamente lo que le pasa.
+
+**Y la corrección destapó algo que faltaba.** Si una Prestadora sólo se ve y se habilita desde el
+panel de control de CeltaTech, ese panel tiene que existir, y no existe: `status` se cambia hoy a
+mano contra la base. Es el pendiente 58, y es lo único del modelo de aislamiento de Careonys que
+acá parecía no hacer falta.
 
 ## 2. Falta construir
 

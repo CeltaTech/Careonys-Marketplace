@@ -66,15 +66,18 @@ const ClienteDatos = {
         }
       }
 
-      // Queda anotado qué Prestadora nombró la dirección, y más abajo si hubo
-      // que caer al respaldo. Las dos cosas juntas son lo único que distingue
-      // «la dirección no dijo nada» de «la dirección dijo algo que no existe»,
-      // y son casos distintos: en el segundo, mostrar otra Prestadora es
-      // mostrarle a una Familia el personal de una empresa que no es la suya.
+      // Queda anotado qué Prestadora nombró la dirección. Es lo único que
+      // distingue «la dirección no dijo nada» de «la dirección dijo algo que no
+      // existe», y son casos distintos: uno es que falta el enlace y el otro que
+      // el enlace está mal.
       this.slugPedido = slug || null;
 
       if (slug) {
-        const res = await this._supabaseRequest('GET', 'tenants', null, { slug: `eq.${slug}` });
+        // `prestadora_por_slug` en vez de pedirle filas a `tenants`: desde la
+        // migración 0021 esa tabla no se lee sin sesión. La puerta exige el
+        // nombre corto y devuelve una sola Prestadora, con sus colores y su
+        // logotipo y nada más.
+        const res = await this._supabaseRequest('POST', 'rpc/prestadora_por_slug', { p_slug: slug });
         if (res && res[0]) {
           this.currentTenant = res[0];
           this._applyBranding(this.currentTenant);
@@ -82,35 +85,23 @@ const ClienteDatos = {
         }
       }
 
-      this.prestadoraEsDeRespaldo = true;
-      this.currentTenant = await this._prestadoraDeRespaldo();
+      // Sin nombre corto no hay Prestadora, y ya no hay respaldo. Hasta la 0021
+      // se mostraba la primera que devolviera la base, y eso era leer la lista
+      // de clientes de CeltaTech: el Desarrollador decidió el 25 de agosto de
+      // 2026 que esa lista no la ve nadie fuera de su panel de control.
+      this.currentTenant = null;
     } catch (err) {
       console.error('No se pudo resolver la Prestadora:', err);
-      this.currentTenant = await this._prestadoraDeRespaldo();
+      this.currentTenant = null;
     }
 
     if (this.currentTenant) this._applyBranding(this.currentTenant);
     return this.currentTenant;
   },
 
-  // Qué nombró la dirección (`?t=` o subdominio) y si la Prestadora que se está
-  // usando salió del respaldo en vez de esa. Arrancan sin contestar porque
+  // Qué nombró la dirección (`?t=` o subdominio). Arranca sin contestar porque
   // todavía no se resolvió nada.
   slugPedido: null,
-  prestadoraEsDeRespaldo: false,
-
-  // Cuando no hay sesión ni enlace que valga, el directorio muestra la primera
-  // Prestadora que devuelve la base. Es una decisión de presentación y no de
-  // permisos: sin sesión no se llega a ningún dato de nadie.
-  async _prestadoraDeRespaldo() {
-    try {
-      const res = await this._supabaseRequest('GET', 'tenants', null, { limit: '1' });
-      if (res && res[0]) return res[0];
-    } catch (err) {
-      console.error('No se pudo leer ninguna Prestadora:', err);
-    }
-    return null;
-  },
 
   _applyBranding(tenant) {
     if (!tenant) return;
@@ -447,39 +438,34 @@ const ClienteDatos = {
   // nombre, foto, zona, qué atiende y precio por hora
   // (`data/catalogo-autorizaciones.json`, `perfil_publicado`).
   //
-  // **El filtro por Prestadora se pone acá y no es optativo.** Sin sesión la
-  // base no tiene a quién preguntarle de qué Prestadora es la visita, así que
-  // la vista devuelve las dos mezcladas si nadie filtra: era el pendiente 2. El
-  // resto del archivo lo hace «si hay Prestadora resuelta» (`getAspirantes`), y
-  // eso es lo que no se puede hacer con una pantalla que se ve sin cuenta.
+  // **El filtro por Prestadora ya no se pone acá: lo exige la base.** Hasta la
+  // migración 0021 esta función agregaba `tenant_id=eq.` y la vista devolvía
+  // las dos Prestadoras mezcladas si alguien se olvidaba de hacerlo —era el
+  // pendiente 2, y volvía a abrirse cada vez que se escribía una consulta
+  // nueva—. Ahora la vista no está concedida a nadie y la única forma de
+  // leerla es `directorio_de`, que pide el nombre corto de una Prestadora. La
+  // respuesta que mezcla dos empresas dejó de existir.
   //
-  // Si no se pudo resolver ninguna Prestadora no se pide nada y se avisa.
-  // Mostrar «todas» sería mostrarle a una Familia el personal de una Prestadora
-  // que no es la suya.
+  // Si no se pudo resolver ninguna Prestadora no se pide nada y se avisa, y se
+  // distingue de qué caso se trata: sin enlace, o con un enlace que nombra una
+  // empresa que no existe.
   async listarDirectorio() {
     const prestadora = this.currentTenant || await this.initTenant();
-    if (!prestadora || !prestadora.id) throw new Error('SIN_PRESTADORA');
+    if (!prestadora || !prestadora.slug) {
+      throw new Error(this.slugPedido ? 'PRESTADORA_DESCONOCIDA' : 'SIN_PRESTADORA');
+    }
 
-    // Si la dirección nombró una Prestadora y no se encontró, no se muestra
-    // otra. El respaldo —la primera que devuelve la base— sirve para una
-    // dirección que no nombra ninguna, no para una que nombra mal: sin esto,
-    // `?t=cualquier-cosa` mostraba los cuatro Asistentes de PresDemo bajo un
-    // enlace que pedía otra empresa.
-    if (this.slugPedido && this.prestadoraEsDeRespaldo) throw new Error('PRESTADORA_DESCONOCIDA');
-
-    return await this._supabaseRequest('GET', 'directorio', null, {
-      tenant_id: `eq.${prestadora.id}`,
-      order: 'full_name.asc'
-    });
+    return await this._supabaseRequest('POST', 'rpc/directorio_de', { p_slug: prestadora.slug });
   },
 
-  // Una sola persona del directorio, por su identificador. Va a la misma vista
-  // pública que la lista —`directorio`— y nunca a la tabla: así una
-  // dirección escrita a mano no puede mostrar a alguien que no autorizó
-  // publicarse, ni un dato que la vista no devuelve.
+  // Una sola persona del directorio, por su identificador. Va a la misma puerta
+  // que la lista —`perfil_del_directorio`, que lee `directorio`— y nunca
+  // a la tabla: así una dirección escrita a mano no puede mostrar a alguien que
+  // no autorizó publicarse, ni un dato que la vista no devuelve.
   //
-  // Filtra también por Prestadora, por el mismo motivo que `listarDirectorio()`:
-  // sin eso, el enlace de una empresa mostraría a alguien de otra.
+  // Pide el nombre corto además del identificador, y no por prolijidad: con el
+  // identificador solo, el enlace de una empresa abriría el perfil de alguien de
+  // otra. Eso lo exige la función, no esta pantalla.
   //
   // Devuelve `null` cuando no hay nadie con ese identificador. La pantalla lo
   // trata como «este perfil no está disponible», que es distinto de una falla.
@@ -493,13 +479,13 @@ const ClienteDatos = {
     if (!id || !FORMA_UUID.test(String(id))) return null;
 
     const prestadora = this.currentTenant || await this.initTenant();
-    if (!prestadora || !prestadora.id) throw new Error('SIN_PRESTADORA');
-    if (this.slugPedido && this.prestadoraEsDeRespaldo) throw new Error('PRESTADORA_DESCONOCIDA');
+    if (!prestadora || !prestadora.slug) {
+      throw new Error(this.slugPedido ? 'PRESTADORA_DESCONOCIDA' : 'SIN_PRESTADORA');
+    }
 
-    const filas = await this._supabaseRequest('GET', 'directorio', null, {
-      id: `eq.${id}`,
-      tenant_id: `eq.${prestadora.id}`,
-      limit: '1'
+    const filas = await this._supabaseRequest('POST', 'rpc/perfil_del_directorio', {
+      p_slug: prestadora.slug,
+      p_id: id
     });
     return (filas && filas[0]) || null;
   },
