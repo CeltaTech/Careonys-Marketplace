@@ -75,8 +75,8 @@ y en prestación directa ordenar Asistentes por puntaje no significa nada.
 **Y ni siquiera es una decisión nuestra:** el 25 de agosto de 2026 quedó que cada
 Prestadora pondera desde su panel cuánto suma cada comprobación, y que puede apagar el
 puntaje entero si no quiere calificar a nadie. Lo que nosotros elegimos es sólo el valor
-de fábrica —las cinco valiendo lo mismo—, y eso vive en `peso_comprobacion` y
-`puntaje_prestadora`, con el prefijo de la modalidad justamente porque cae de este lado.
+de fábrica —las cinco valiendo 20, que es 100 repartido en partes iguales—, y eso vive en
+`ponderacion_comprobacion` y `puntaje_prestadora`, con el prefijo de la modalidad justamente porque cae de este lado.
 **La calificación misma, en cambio, es compartida**, y la pregunta que decide lo contesta sola: una Familia que recibe una asignación puede opinar igual de quien vino a cuidar. Hasta el 25 de agosto de 2026 `docs/TABLAS_QUE_FALTAN.md` la ponía de este lado, que era exactamente la filtración que esta línea existe para evitar.
 
 **El catálogo es compartido pero no todas sus listas se usan en las dos.** `retiro`,

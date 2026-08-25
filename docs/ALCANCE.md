@@ -1677,17 +1677,48 @@ migración `0018_cada_prestadora_pondera_su_puntaje.sql` agrega dos tablas:
 | Tabla | Qué guarda |
 |---|---|
 | `puntaje_prestadora` | Una fila por Prestadora, con una sola llave: `califica`. En `false` desaparece el número de todas sus pantallas |
-| `peso_comprobacion` | Una fila por Prestadora y comprobación, con `peso`. Arranca en 1 las cinco |
+| `ponderacion_comprobacion` | Una fila por Prestadora y comprobación, con `ponderacion`. Arranca en 20 las cinco, que es 100 repartido en partes iguales |
 
 **Apagar el puntaje no apaga el escudo.** Son cosas distintas: el escudo dice que el legajo está
 validado, y eso es la puerta de la modalidad —no se entra sin eso—. El número dice cuánto acreditó
 alguien de más. Se puede no querer lo segundo sin dejar de necesitar lo primero.
 
-**Y un peso en cero no es lo mismo que apagar el puntaje.** Cero quiere decir «esta comprobación
-a mí no me importa», y el resto sigue sumando. Por eso son dos tablas y no una: una tabla vacía
+**Y una ponderación en cero no es lo mismo que apagar el puntaje.** Cero quiere decir «esta
+comprobación a mí no me importa», y el resto sigue sumando. Por eso son dos tablas y no una: una tabla vacía
 no dice «todas valen uno», dice «todavía nadie configuró esto», y esas dos cosas no se pueden
 confundir. La migración siembra las filas de fábrica para las Prestadoras que ya existen,
 justamente para que el valor de fábrica sea visible y no un supuesto escondido en el código.
+
+**La palabra `peso` no sobrevivió al primer lector.** El Desarrollador leyó «el formulario de
+pesos en el panel de la Prestadora» y preguntó si se estaba hablando de dinero. Esa es toda la
+prueba que hacía falta: acá el peso es la moneda antes que cualquier otra cosa. La migración
+`0022_la_ponderacion_no_es_plata_y_suma_cien.sql` renombró la tabla y la columna a
+`ponderacion`, que es la palabra que ya significa cuánto cuenta cada cosa dentro de un total.
+Sale barato porque la base todavía no tiene datos reales; dentro de un año no salía.
+
+**Y con el sí vino una regla que cambia la tabla más que el nombre:** «lo que sí es importante
+es que la suma de todos los ítems valorados dé 100%, así que si se agrega alguno la prestadora
+tendrá que reacomodar las ponderaciones de cada ítem para que el total de todas ellas dé el
+100%». Hasta la 0018 cada comprobación valía lo suyo y era independiente: subirle a una no le
+bajaba a ninguna, y el total era cinco, o seis, o lo que diera. Ahora **el total es una cantidad
+fija que se reparte**, y subirle a una obliga a bajarle a otra.
+
+Lo hace cumplir un disparador de restricción diferido, no una comprobación por renglón, y el
+motivo es que reacomodar mueve varias filas: en el medio el total nunca da 100, así que mirar
+después de cada una haría fallar la primera. Mira una sola vez, cuando la Prestadora terminó de
+guardar.
+
+**Lo que gana la regla, además de que el número se lea.** Agregar una comprobación sexta deja de
+poder hacerse a escondidas: la fila nueva entra valiendo 20, el total queda en 120 y la base no
+la deja pasar hasta que alguien reacomode las demás. Es la clase de regla que sirve **porque
+molesta** — si no molestara, la sexta entraría y nadie se enteraría de que el criterio de esa
+Prestadora cambió solo.
+
+**Y se lleva puesta la fracción «4 de 5 comprobaciones».** Sólo se lee bien si las cinco valen
+lo mismo, y ahora valen lo que cada Prestadora diga. El número pasa a ser un porcentaje, que es
+además lo que la suma a 100 vuelve natural: un legajo con el domicilio y la referencia
+comprobadas tiene 40 %. La lista al lado se queda, por el motivo de siempre —un número suelto
+invita a comparar personas y la lista invita a decidir—. Es el pendiente 56.
 
 Las dos tablas se leen sólo con sesión y con la política de siempre —`tenant_id =
 prestadora_actual()`—, y `anon` no las ve: con qué criterio pondera una Prestadora es asunto

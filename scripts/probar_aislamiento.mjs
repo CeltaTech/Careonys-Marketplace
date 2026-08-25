@@ -721,23 +721,24 @@ console.log('Dos Familias de la misma Prestadora');
     reporteId ? (Array.isArray(reportesAjenos) ? reportesAjenos.length + ' filas' : JSON.stringify(reportesAjenos))
               : 'no se pudo escribir el reporte de prueba, así que esto no probó nada');
 
-  // Y cómo pondera la Prestadora su puntaje (migración 0018) es de su personal.
+  // Y cómo pondera la Prestadora su puntaje (migraciones 0018 y 0022) es de su personal.
   // Las filas existen —las siembra la propia migración—, así que ver cero acá
   // es la política y no una tabla vacía.
-  const { cuerpo: pesosVisibles } = await rest(
-    '/rest/v1/peso_comprobacion?select=id,comprobacion,peso', {}, otraFamilia.token);
-  comprobar('Los pesos del puntaje no se leen desde una sesión que no es del personal',
-    Array.isArray(pesosVisibles) && pesosVisibles.length === 0,
-    Array.isArray(pesosVisibles) ? pesosVisibles.length + ' filas' : JSON.stringify(pesosVisibles));
+  const { cuerpo: ponderacionesVisibles } = await rest(
+    '/rest/v1/ponderacion_comprobacion?select=id,comprobacion,ponderacion', {}, otraFamilia.token);
+  comprobar('Las ponderaciones del puntaje no se leen desde una sesión que no es del personal',
+    Array.isArray(ponderacionesVisibles) && ponderacionesVisibles.length === 0,
+    Array.isArray(ponderacionesVisibles) ? ponderacionesVisibles.length + ' filas'
+                                         : JSON.stringify(ponderacionesVisibles));
 
-  const retoquePeso = await rest('/rest/v1/peso_comprobacion?comprobacion=eq.domicilio', {
+  const retoque = await rest('/rest/v1/ponderacion_comprobacion?comprobacion=eq.domicilio', {
     method: 'PATCH',
     headers: { Prefer: 'return=representation' },
-    body: JSON.stringify({ peso: 99 })
+    body: JSON.stringify({ ponderacion: 99 })
   }, otraFamilia.token);
   comprobar('Ni se cambian',
-    Array.isArray(retoquePeso.cuerpo) && retoquePeso.cuerpo.length === 0,
-    'tocó ' + (Array.isArray(retoquePeso.cuerpo) ? retoquePeso.cuerpo.length : '?') + ' filas');
+    Array.isArray(retoque.cuerpo) && retoque.cuerpo.length === 0,
+    'tocó ' + (Array.isArray(retoque.cuerpo) ? retoque.cuerpo.length : '?') + ' filas');
 }
 
 // --- Limpieza ---------------------------------------------------------------
