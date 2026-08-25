@@ -55,7 +55,7 @@
 
 import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const carpeta = join(raiz, 'supabase', 'migrations');
@@ -312,62 +312,73 @@ const BIEN = [
    '  cantidad numeric(10,2),\n  prestadora_id uuid not null\n);\n' + RLS]
 ];
 
-const noDetecta = MAL.filter(([, t]) => fallasDeUnaMigracion(t).length === 0);
-const sePasa = BIEN.filter(([, t]) => fallasDeUnaMigracion(t).length > 0);
-if (noDetecta.length || sePasa.length) {
-  console.error('El detector está roto, así que no verifica nada:');
-  for (const [q] of noDetecta) console.error('  no detecta: ' + q);
-  for (const [q] of sePasa) console.error('  avisa de más: ' + q);
-  process.exit(1);
-}
+/* De acá para abajo está la verificación. De acá para arriba está la regla que
+   reconoce una tabla con datos de una Prestadora, que además le presta
+   `scripts/barrer_aislamiento.mjs`. Por eso el cuerpo va adentro de esta
+   pregunta: cuando alguien importa este archivo para usar la regla, la
+   verificación no tiene que correr ni imprimir nada. Cuando se lo corre a él,
+   corre entera. */
+const ME_CORRIERON_A_MI = process.argv[1] &&
+  resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 
-const fallas = [];
-let tablas = 0;
-let funciones = 0;
-const migraciones = readdirSync(carpeta).filter((n) => n.endsWith('.sql')).sort();
-const textos = migraciones.map((n) => readFileSync(join(carpeta, n), 'utf8'));
-
-/* Primero se leen las quince juntas: una tabla puede recibir su columna de
-   Organización en una migración posterior a la que la crea, y juzgando archivo
-   por archivo se avisaría de tres que están bien. */
-const tienenColumna = conOrganizacion(textos);
-
-/* Lo mismo con la clave primaria: las siete tablas de la 0001 la declaran en un
-   `alter table` que está más abajo en el mismo archivo, y otra migración podría
-   declararla en otro. Se buscan todas antes de juzgar ninguna. */
-const primarias = clavesPrimarias(textos);
-
-for (const [i, nombre] of migraciones.entries()) {
-  const texto = textos[i];
-  tablas += [...texto.matchAll(TABLA)].length;
-  for (const m of texto.matchAll(FUNCION)) {
-    const fin = texto.toLowerCase().indexOf('$$;', m.index);
-    if (/security\s+definer/i.test(
-      texto.slice(m.index, fin > 0 ? fin : texto.length))) funciones++;
+if (ME_CORRIERON_A_MI) {
+  const noDetecta = MAL.filter(([, t]) => fallasDeUnaMigracion(t).length === 0);
+  const sePasa = BIEN.filter(([, t]) => fallasDeUnaMigracion(t).length > 0);
+  if (noDetecta.length || sePasa.length) {
+    console.error('El detector está roto, así que no verifica nada:');
+    for (const [q] of noDetecta) console.error('  no detecta: ' + q);
+    for (const [q] of sePasa) console.error('  avisa de más: ' + q);
+    process.exit(1);
   }
-  for (const [renglon, motivo] of
-    fallasDeUnaMigracion(texto, tienenColumna, primarias)) {
-    fallas.push(`supabase/migrations/${nombre}:${renglon}  ${motivo}`);
+
+  const fallas = [];
+  let tablas = 0;
+  let funciones = 0;
+  const migraciones = readdirSync(carpeta).filter((n) => n.endsWith('.sql')).sort();
+  const textos = migraciones.map((n) => readFileSync(join(carpeta, n), 'utf8'));
+
+  /* Primero se leen las quince juntas: una tabla puede recibir su columna de
+     Organización en una migración posterior a la que la crea, y juzgando archivo
+     por archivo se avisaría de tres que están bien. */
+  const tienenColumna = conOrganizacion(textos);
+
+  /* Lo mismo con la clave primaria: las siete tablas de la 0001 la declaran en un
+     `alter table` que está más abajo en el mismo archivo, y otra migración podría
+     declararla en otro. Se buscan todas antes de juzgar ninguna. */
+  const primarias = clavesPrimarias(textos);
+
+  for (const [i, nombre] of migraciones.entries()) {
+    const texto = textos[i];
+    tablas += [...texto.matchAll(TABLA)].length;
+    for (const m of texto.matchAll(FUNCION)) {
+      const fin = texto.toLowerCase().indexOf('$$;', m.index);
+      if (/security\s+definer/i.test(
+        texto.slice(m.index, fin > 0 ? fin : texto.length))) funciones++;
+    }
+    for (const [renglon, motivo] of
+      fallasDeUnaMigracion(texto, tienenColumna, primarias)) {
+      fallas.push(`supabase/migrations/${nombre}:${renglon}  ${motivo}`);
+    }
   }
-}
 
-if (fallas.length > 0) {
-  console.error('Migraciones que incumplen una regla del esquema:\n');
-  for (const falla of fallas) console.error('  - ' + falla);
-  console.error(
-    `\n${fallas.length} ${fallas.length === 1 ? 'incumplimiento' : 'incumplimientos'}. ` +
-    'Las cinco reglas están en el encabezado de este archivo, con el porqué de cada\n' +
-    'una. La RLS y la revocación van en la misma migración que crea la tabla o la\n' +
-    'función, nunca en una posterior y nunca a mano desde el panel de Supabase; la\n' +
-    'columna de Organización, la clave primaria y la moneda pueden llegar después,\n' +
-    'pero tienen que llegar, y la clave tiene que ser `uuid`.\n' +
-    'Si un caso no puede cumplirla, va a SIN_ORGANIZACION o a SIN_MONEDA de este mismo\n' +
-    'archivo, con el motivo escrito y el pendiente que lo sigue.');
-  process.exit(1);
-}
+  if (fallas.length > 0) {
+    console.error('Migraciones que incumplen una regla del esquema:\n');
+    for (const falla of fallas) console.error('  - ' + falla);
+    console.error(
+      `\n${fallas.length} ${fallas.length === 1 ? 'incumplimiento' : 'incumplimientos'}. ` +
+      'Las cinco reglas están en el encabezado de este archivo, con el porqué de cada\n' +
+      'una. La RLS y la revocación van en la misma migración que crea la tabla o la\n' +
+      'función, nunca en una posterior y nunca a mano desde el panel de Supabase; la\n' +
+      'columna de Organización, la clave primaria y la moneda pueden llegar después,\n' +
+      'pero tienen que llegar, y la clave tiene que ser `uuid`.\n' +
+      'Si un caso no puede cumplirla, va a SIN_ORGANIZACION o a SIN_MONEDA de este mismo\n' +
+      'archivo, con el motivo escrito y el pendiente que lo sigue.');
+    process.exit(1);
+  }
 
-console.log(
-  `Esquema verificado: ${tablas} tablas con su RLS encendida donde se crean, su ` +
-  `columna de Organización y clave primaria \`uuid\`, y ${funciones} funciones ` +
-  'SECURITY DEFINER fuera del alcance anónimo ' +
-  `(${SIN_ORGANIZACION.size} tabla y ${SIN_MONEDA.size} importe exentos, con su motivo).`);
+  console.log(
+    `Esquema verificado: ${tablas} tablas con su RLS encendida donde se crean, su ` +
+    `columna de Organización y clave primaria \`uuid\`, y ${funciones} funciones ` +
+    'SECURITY DEFINER fuera del alcance anónimo ' +
+    `(${SIN_ORGANIZACION.size} tabla y ${SIN_MONEDA.size} importe exentos, con su motivo).`);
+}
