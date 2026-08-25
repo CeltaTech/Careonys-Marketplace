@@ -1795,6 +1795,34 @@ necesita `--local` con `supabase start`, porque el registro por correo del servi
 confirmar la casilla y ahí la prueba nunca llega a tener sesión. Está dicho en la cabecera del
 propio guion desde antes.
 
+### La validación no parte a los Asistentes en dos clases: es un tilde que habilita
+
+Quedó escrito acá porque durante un día entero se buscó una palabra que no hacía falta. El
+pendiente 53 pedía cómo llamar «al Asistente que ya pasó todos los controles», dando por sentado
+que había dos clases de persona y que a la segunda le faltaba el nombre. **El Desarrollador
+corrigió el 25 de agosto de 2026 que no hay dos clases.** La validación es un tilde en un
+casillero que cambia una condición y habilita a la persona; quien todavía no lo tiene no es otra
+categoría de Asistente, es simplemente **alguien tramitando su incorporación**.
+
+Eso cierra el pendiente sin inventar ninguna palabra, que es el mejor final posible: la regla del
+Desarrollador dice que una palabra nueva mal elegida cuesta muchísimo más sacarla después que
+ponerla. Lo único que había que arreglar era el texto en pantalla, que nombraba un estado en vez
+de nombrar lo que está pasando:
+
+| Decía | Dice |
+|---|---|
+| 🔴 En Revisión (`panel-prestadora.html`) | 🟡 Tramitando su incorporación |
+| 🟡 En revisión — Complete su legajo (`pwa-asistente/index.html`) | 🟡 Tramitando su incorporación — Complete su legajo |
+
+El punto rojo también estaba mal y por el mismo motivo: rojo se lee como que algo falló, y acá no
+falló nada — hay un trámite en curso. Los nombres guardados en la base no se tocaron
+(`en_revision`, `validado_prestadora`): la regla 5.1 dice que lo que persiste se nombra por su
+función y no se renombra, y esos dos nombres describen bien el casillero.
+
+**Y la corrección dejó algo a la vista.** El código sí inventa la clase de persona que el
+Desarrollador dice que no existe: la llama «Aspirante», 56 veces en 6 archivos, y esa palabra no
+está en el glosario de este proyecto ni en el de Careonys. Es el pendiente 57.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,

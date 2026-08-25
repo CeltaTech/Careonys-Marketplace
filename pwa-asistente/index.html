@@ -807,7 +807,7 @@
           const asp = (correo && aspirantes.find(a => a.email === correo)) || aspirantes[0];
           statusTxt.textContent = asp.estado === 'validado_prestadora'
             ? '🟢 Validado — Habilitado para trabajar'
-            : '🟡 En revisión — Complete su legajo';
+            : '🟡 Tramitando su incorporación — Complete su legajo';
         } else {
           statusTxt.textContent = '🔴 Sin legajo — Complete su registro';
         }
