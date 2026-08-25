@@ -1,7 +1,8 @@
 # Esquema de base de datos
 
-> **Cómo se diseña la base de este proyecto.** El esquema todavía no existe: no hay ninguna
-> migración escrita.
+> **Cómo se diseña la base de este proyecto.** Cuando esto se escribió no había ninguna
+> migración; hoy hay veinte aplicadas y veinticuatro tablas, y lo de abajo sigue siendo la regla
+> con la que se escribe cada una.
 >
 > La §1 desarma cinco errores de seguridad sobre veinte renglones de SQL. Está primero a propósito:
 > son sutiles, se escriben sin darse cuenta y ninguno da error al aplicarlo. Las reglas de la §2

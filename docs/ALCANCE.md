@@ -1488,7 +1488,7 @@ migraciones. Se midió todo de nuevo el 25 de agosto de 2026, contra el árbol d
 | 2.566 declaraciones en 772 atributos `style=` | 2.166 en 687 |
 | ninguna pantalla protegida | 11 de las 16 rescatan la sesión al abrir |
 | 4 dependencias por CDN | 4 servidores de afuera: dos de tipografías y dos de bibliotecas |
-| 6 tablas, sin migraciones en el repositorio | 24 tablas y 19 migraciones |
+| 6 tablas, sin migraciones en el repositorio | 24 tablas y 20 migraciones |
 
 Dos filas merecen una explicación. **Los estilos pegados al HTML bajaron** —de 2.566
 declaraciones a 2.166— porque en el medio se sacaron los 434 colores escritos a mano; el
@@ -1732,6 +1732,68 @@ estaba escrita. Cambiarles el nombre haría que el documento mienta sobre lo que
 palabras a mirar tres: ahora también falla si «cuaderno» o «bitácora» reaparecen en texto
 visible. Este detector no lleva excepciones, al revés que el de «cuidador»: ninguna de las dos
 palabras tiene otro uso legítimo acá, así que cualquier aparición es la palabra vieja volviendo.
+
+### La barrera no era una sola: eran tres, y sólo estaban dos
+
+El Desarrollador lo dijo el 25 de agosto de 2026 en una frase: una Familia no puede ver a la
+otra, una Prestadora no puede ver a la otra, y un Asistente no puede ver al otro. Se auditaron
+las políticas vivas de todas las tablas y **la frase nombraba tres barreras, no una**. La que
+llamábamos «el tenant» es sólo la del medio:
+
+| Barrera | Con qué se sostiene | Cómo estaba |
+|---|---|---|
+| Prestadora ↔ Prestadora | `tenant_id = prestadora_actual()`, desde la 0002 | entera |
+| Asistente ↔ Asistente | `legajo_propio()` desde la 0005 y la 0012; la carpeta propia en el depósito, desde la 0006 | entera |
+| Familia ↔ Familia | nada | **no existía** |
+
+Las dos primeras separan cosas que están en tablas distintas o en carpetas distintas. La
+tercera es más difícil justamente porque **las dos Familias están adentro de la misma
+Prestadora**: ahí el `tenant_id` de las dos vale lo mismo, así que no separa nada. Cinco tablas
+se conformaban con él, y eso quería decir que **una Familia, con sólo iniciar sesión, leía,
+modificaba y borraba los avisos de las demás, y leía la presión, la glucemia y la medicación de
+todos los Pacientes de la Prestadora**. Lo mismo un Asistente con sesión. La migración
+`supabase/migrations/0020_la_barrera_tambien_va_entre_familias.sql` lo cierra, y está aplicada.
+
+**Faltaba una pieza antes de poder escribir la regla: el aviso no sabía de quién era.**
+`avisos` no tenía ninguna columna que lo atara a quien lo publicó, así que no había con
+qué comparar. Ahora tiene `familia_id`, y el valor **sale del valor por omisión y nunca del
+pedido** —igual que `tenant_id` desde la 0002—, que es lo que hace que nadie pueda publicar un
+aviso a nombre de otra persona. Los horarios y la conversación no deciden nada por su cuenta:
+cuelgan del aviso, y si el aviso no se ve, el `exists` de la política no encuentra nada y ellos
+tampoco se ven.
+
+**Y había un agujero recién hecho, propio, que se cerró en la misma pasada.** Las dos tablas de
+la 0018 —cuánto pondera cada Prestadora su puntaje— tenían políticas que sólo miraban el
+`tenant_id`, así que cualquier sesión de esa Prestadora podía cambiar los pesos del puntaje. No
+lo usaba nada todavía. Se cerró antes de que lo usara algo.
+
+**Lo que esta migración deja peor, a propósito y con la razón escrita.** La pantalla de reportes
+de la Familia **va a quedar vacía**. Hasta ayer mostraba los reportes de todos los Pacientes de
+la Prestadora, que no es «llena»: es peor que vacía. Un reporte no guarda para qué Familia es
+—`aviso_id` existe desde el principio y el código nunca lo llenó, comprobado en
+`pwa-asistente/index.html`, donde se escribe el reporte sin ese dato—, así que no hay forma de
+darle los suyos y ninguno más. Entre mostrar de más y no mostrar nada, se eligió no mostrar
+nada, y **la pantalla ahora dice por qué está vacía** en vez de dar a entender que nadie
+escribió. La cláusula que se lo va a devolver **ya está escrita** en la política y hoy no
+encuentra ninguna fila: empieza a funcionar sola el día que un reporte cuelgue de algo, que es
+el pendiente 52 y por esto pasó a ser urgente.
+
+**Un aviso publicado antes de hoy tampoco lo ve su Familia**, porque `familia_id` le quedó
+vacío. Lo sigue viendo el personal de la Prestadora. No se rellenó a mano: no hay dato de dónde
+sacarlo, y adivinar el dueño de un aviso es exactamente lo que la migración vino a impedir.
+
+**La prueba de aislamiento pasó de 27 comprobaciones a 39.** Las doce nuevas necesitaban una
+cuenta más: A y B están en Prestadoras distintas y entre ellas alcanza con el `tenant_id`, así
+que no probaban nada de esto. C está en la misma Prestadora que A, y es el único par que puede
+mostrar si la barrera existe. Comprueban que cada Familia publica su aviso y sale a su nombre
+sin haberlo mandado, que mandarlo a nombre de otra no sirve, que ninguna ve, modifica ni borra
+el aviso de la otra, ni sus horarios, ni su conversación, ni ningún reporte, y que los pesos del
+puntaje no se leen ni se cambian desde una sesión que no es del personal. Esa última no mira una
+tabla vacía: **las filas existen porque las siembra la propia 0018**, así que ver cero ahí es la
+política y no la falta de datos. **Las doce quedaron escritas y no corridas**: el guion completo
+necesita `--local` con `supabase start`, porque el registro por correo del servidor remoto pide
+confirmar la casilla y ahí la prueba nunca llega a tener sesión. Está dicho en la cabecera del
+propio guion desde antes.
 
 ## 2. Falta construir
 

@@ -912,7 +912,7 @@
         const logs = await ClienteDatos.getReportes();
         listEl.innerHTML = '';
         if (!logs || logs.length === 0) {
-          listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">Todavía no hay reportes.</p>';
+          listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">Todavía no se muestran reportes acá. Un reporte no guarda a qué cuidado corresponde, así que la aplicación no puede distinguir cuáles son los del Paciente de esta cuenta y prefiere no mostrar ninguno antes que mostrar los de otra Familia. Mientras tanto, se los puede pedir a la Prestadora.</p>';
           return;
         }
         logs.forEach(log => {

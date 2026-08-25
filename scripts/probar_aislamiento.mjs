@@ -16,8 +16,13 @@
 
    El CLAUDE.md §2 la pide con estas palabras: "una prueba que devuelve una
    lista vacía no distingue 'aislado' de 'todo bloqueado'". Así que esta no
-   mira listas vacías: registra dos cuentas ficticias, una en cada Prestadora,
-   les hace escribir su legajo, y recién entonces pregunta quién ve qué.
+   mira listas vacías: registra cuentas ficticias, les hace escribir su legajo
+   y publicar sus avisos, y recién entonces pregunta quién ve qué.
+
+   Son tres cuentas y no dos. A está en una Prestadora y B en la otra, que es
+   lo que separa Prestadora de Prestadora. C está en la misma Prestadora que A:
+   entre esas dos no hay `tenant_id` que valga, y son el único par que puede
+   mostrar si la barrera entre Familias existe.
 
    Lo que comprueba, en orden:
 
@@ -64,6 +69,24 @@
     25. Un intento aprobado no se puede escribir a mano.
     26. Cada quien ve sus intentos y ninguno de otra persona.
     27. Cuando se acaban los intentos, no deja rendir otra vez.
+
+   Y sobre la barrera entre Familias de una misma Prestadora (migración 0020),
+   que es la que faltaba entera:
+
+    28. Cada Familia publica su aviso.
+    29. Y el aviso sale a su nombre sin que ella lo haya mandado en el pedido.
+    30. Mandarlo a nombre de otra no sirve: sale igual a nombre de quien escribe.
+    31. Una Familia no ve el aviso de la otra, ni pidiéndolo por su identificador.
+    32. Ni la otra el de ella.
+    33. No puede modificarlo.
+    34. Ni borrarlo: sigue estando cuando su dueña lo pide.
+    35. No ve los horarios de ese aviso.
+    36. Ni la conversación.
+    37. No lee ningún reporte: ni presión, ni glucemia, ni medicación.
+    38. No lee cómo pondera su puntaje la Prestadora (migración 0018), aunque
+        esas filas existan: las siembra la propia migración, así que ver cero
+        ahí es la política y no una tabla vacía.
+    39. Ni las puede cambiar.
 
    Todo con datos inventados. No toca ni una fila que ya estuviera cargada, y
    borra lo que crea. No muestra ninguna clave: usa la publicable, que es la
@@ -186,6 +209,37 @@ for (const [etiqueta, prestadora] of [['A', A], ['B', B]]) {
     process.exit(1);
   }
   cuentas.push({ etiqueta, email, token, prestadora, userId: alta.cuerpo.user?.id || alta.cuerpo.id });
+}
+
+// --- Una tercera cuenta, en la MISMA Prestadora que la primera --------------
+// A y B están en Prestadoras distintas, así que entre ellas alcanza con el
+// `tenant_id` para separarlas y no prueban nada de la barrera entre Familias.
+// C está en la Prestadora de A: son dos Familias del mismo lado del muro, que
+// es el único par que puede mostrar si esa barrera existe o no.
+const familias = [];
+for (const etiqueta of ['C']) {
+  const email = `prueba.aislamiento.${etiqueta.toLowerCase()}.${sello}@ejemplo.invalid`;
+  const password = `Ficticia-${sello}-${etiqueta}`;
+  const alta = await registrar(email, password, {
+    full_name: `Familia Ficticia ${etiqueta}`,
+    tenant_slug: cuentas[0].prestadora.slug,
+    role: 'coordinador'
+  });
+  let token = alta.estado < 400 ? alta.cuerpo.access_token : null;
+  if (!token && alta.estado < 400) {
+    const sesion = await entrar(email, password);
+    token = sesion.cuerpo.access_token;
+  }
+  if (!token) {
+    console.error('No se pudo crear la cuenta ficticia ' + etiqueta + ', que es la que');
+    console.error('prueba la barrera entre Familias. Sin ella esa parte no se verifica.');
+    process.exit(1);
+  }
+  familias.push({
+    etiqueta, email, token,
+    prestadora: cuentas[0].prestadora,
+    userId: alta.cuerpo.user?.id || alta.cuerpo.id
+  });
 }
 
 // --- 1 a 4: el perfil -------------------------------------------------------
@@ -550,8 +604,149 @@ if (!evaluacion || !Array.isArray(preguntas) || preguntas.length !== 2) {
     cuarto.estado >= 400, 'devolvió ' + cuarto.estado);
 }
 
+// --- 28 a 39: la barrera entre Familias -------------------------------------
+// Las cuentas A y B están en Prestadoras distintas, así que entre ellas alcanza
+// con el `tenant_id` y no prueban nada nuevo. A y C están en la MISMA
+// Prestadora: son el único par que puede mostrar si la barrera de la migración
+// 0020 existe o si el muro tenía una sola pared.
+console.log('');
+console.log('Dos Familias de la misma Prestadora');
+{
+  const unaFamilia = cuentas[0];
+  const otraFamilia = familias[0];
+
+  for (const f of [unaFamilia, otraFamilia]) {
+    const r = await rest('/rest/v1/avisos', {
+      method: 'POST',
+      headers: { Prefer: 'return=representation' },
+      body: JSON.stringify({ patient_name: 'Paciente Ficticio ' + f.etiqueta })
+    }, f.token);
+    f.avisoId = Array.isArray(r.cuerpo) && r.cuerpo[0] ? r.cuerpo[0].id : null;
+    const aNombreSuyo = Array.isArray(r.cuerpo) && r.cuerpo[0] &&
+                        r.cuerpo[0].familia_id === f.userId;
+    comprobar(`${f.etiqueta}: publica su aviso y sale a su nombre sin haberlo mandado`,
+      r.estado === 201 && aNombreSuyo,
+      'respuesta ' + r.estado + (aNombreSuyo ? '' : ', familia_id ajeno o vacío'));
+  }
+
+  // El pedido trae el identificador de otra persona a propósito. La columna
+  // tiene valor por omisión, no lo toma del pedido: tiene que salir igual a
+  // nombre de quien la escribe.
+  const suplantar = await rest('/rest/v1/avisos', {
+    method: 'POST',
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify({
+      patient_name: 'Paciente Ficticio suplantado',
+      familia_id: otraFamilia.userId
+    })
+  }, unaFamilia.token);
+  const filaSuplantada = Array.isArray(suplantar.cuerpo) ? suplantar.cuerpo[0] : null;
+  if (filaSuplantada) unaFamilia.avisoSuplantado = filaSuplantada.id;
+  comprobar('Un aviso no se puede publicar a nombre de otra Familia',
+    !filaSuplantada || filaSuplantada.familia_id === unaFamilia.userId,
+    filaSuplantada ? 'quedó a nombre de ' +
+      (filaSuplantada.familia_id === unaFamilia.userId ? 'quien lo escribió' : 'la otra')
+      : 'la base lo rechazó entero');
+
+  for (const [f, ajena] of [[unaFamilia, otraFamilia], [otraFamilia, unaFamilia]]) {
+    const { cuerpo } = await rest(
+      '/rest/v1/avisos?select=id,familia_id&id=eq.' + ajena.avisoId, {}, f.token);
+    comprobar(`${f.etiqueta}: no ve el aviso de ${ajena.etiqueta} ni pidiéndolo por su identificador`,
+      Array.isArray(cuerpo) && cuerpo.length === 0,
+      Array.isArray(cuerpo) ? cuerpo.length + ' filas' : JSON.stringify(cuerpo));
+  }
+
+  // Ver de más es feo; escribir sobre lo ajeno es peor. Se prueban las dos.
+  const retoque = await rest('/rest/v1/avisos?id=eq.' + otraFamilia.avisoId, {
+    method: 'PATCH',
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify({ patient_name: 'Nombre cambiado por quien no debe' })
+  }, unaFamilia.token);
+  comprobar('Una Familia no puede modificar el aviso de la otra',
+    Array.isArray(retoque.cuerpo) && retoque.cuerpo.length === 0,
+    'tocó ' + (Array.isArray(retoque.cuerpo) ? retoque.cuerpo.length : '?') + ' filas');
+
+  const borrado = await rest('/rest/v1/avisos?id=eq.' + otraFamilia.avisoId, {
+    method: 'DELETE',
+    headers: { Prefer: 'return=representation' }
+  }, unaFamilia.token);
+  const { cuerpo: sigueAhi } = await rest(
+    '/rest/v1/avisos?select=id&id=eq.' + otraFamilia.avisoId, {}, otraFamilia.token);
+  comprobar('Ni borrarlo: sigue estando cuando su dueña lo pide',
+    Array.isArray(borrado.cuerpo) && borrado.cuerpo.length === 0 &&
+    Array.isArray(sigueAhi) && sigueAhi.length === 1,
+    'borró ' + (Array.isArray(borrado.cuerpo) ? borrado.cuerpo.length : '?') + ' filas');
+
+  // Los horarios y la conversación cuelgan del aviso y no deciden nada por su
+  // cuenta: si el aviso no se ve, esto tampoco tiene que verse.
+  await rest('/rest/v1/franjas_aviso', {
+    method: 'POST',
+    body: JSON.stringify({ aviso_id: otraFamilia.avisoId, dia: 'lunes', turno: 'manana' })
+  }, otraFamilia.token);
+  const { cuerpo: franjasAjenas } = await rest(
+    '/rest/v1/franjas_aviso?select=id&aviso_id=eq.' + otraFamilia.avisoId,
+    {}, unaFamilia.token);
+  comprobar('Tampoco ve los horarios del aviso ajeno',
+    Array.isArray(franjasAjenas) && franjasAjenas.length === 0,
+    Array.isArray(franjasAjenas) ? franjasAjenas.length + ' filas' : JSON.stringify(franjasAjenas));
+
+  await rest('/rest/v1/messages', {
+    method: 'POST',
+    body: JSON.stringify({ content: 'Mensaje ficticio', aviso_id: otraFamilia.avisoId })
+  }, otraFamilia.token);
+  const { cuerpo: mensajesAjenos } = await rest(
+    '/rest/v1/messages?select=id&aviso_id=eq.' + otraFamilia.avisoId, {}, unaFamilia.token);
+  comprobar('Ni la conversación de ese aviso',
+    Array.isArray(mensajesAjenos) && mensajesAjenos.length === 0,
+    Array.isArray(mensajesAjenos) ? mensajesAjenos.length + ' filas' : JSON.stringify(mensajesAjenos));
+
+  // El reporte es lo más delicado que hay acá adentro: presión, glucemia y
+  // medicación. Lo escribe el Asistente desde su legajo; ninguna otra cuenta de
+  // la Prestadora que no sea su personal tiene por qué leerlo.
+  const reporte = await rest('/rest/v1/reportes', {
+    method: 'POST',
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify({
+      caregiver_id: unaFamilia.legajoId,
+      blood_pressure: '120/80', glycemia: '95',
+      daily_notes: 'Anotación ficticia de prueba'
+    })
+  }, unaFamilia.token);
+  const reporteId = Array.isArray(reporte.cuerpo) && reporte.cuerpo[0] ? reporte.cuerpo[0].id : null;
+  unaFamilia.reporteId = reporteId;
+  const { cuerpo: reportesAjenos } = await rest('/rest/v1/reportes?select=id,blood_pressure',
+    {}, otraFamilia.token);
+  comprobar('Sin legajo propio y sin ser personal, no se lee ningún reporte',
+    reporteId && Array.isArray(reportesAjenos) && reportesAjenos.length === 0,
+    reporteId ? (Array.isArray(reportesAjenos) ? reportesAjenos.length + ' filas' : JSON.stringify(reportesAjenos))
+              : 'no se pudo escribir el reporte de prueba, así que esto no probó nada');
+
+  // Y cómo pondera la Prestadora su puntaje (migración 0018) es de su personal.
+  // Las filas existen —las siembra la propia migración—, así que ver cero acá
+  // es la política y no una tabla vacía.
+  const { cuerpo: pesosVisibles } = await rest(
+    '/rest/v1/peso_comprobacion?select=id,comprobacion,peso', {}, otraFamilia.token);
+  comprobar('Los pesos del puntaje no se leen desde una sesión que no es del personal',
+    Array.isArray(pesosVisibles) && pesosVisibles.length === 0,
+    Array.isArray(pesosVisibles) ? pesosVisibles.length + ' filas' : JSON.stringify(pesosVisibles));
+
+  const retoquePeso = await rest('/rest/v1/peso_comprobacion?comprobacion=eq.domicilio', {
+    method: 'PATCH',
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify({ peso: 99 })
+  }, otraFamilia.token);
+  comprobar('Ni se cambian',
+    Array.isArray(retoquePeso.cuerpo) && retoquePeso.cuerpo.length === 0,
+    'tocó ' + (Array.isArray(retoquePeso.cuerpo) ? retoquePeso.cuerpo.length : '?') + ' filas');
+}
+
 // --- Limpieza ---------------------------------------------------------------
 console.log('');
+for (const f of [cuentas[0], familias[0]]) {
+  for (const aviso of [f.avisoId, f.avisoSuplantado]) {
+    if (aviso) await rest('/rest/v1/avisos?id=eq.' + aviso, { method: 'DELETE' }, f.token);
+  }
+}
 for (const c of cuentas) {
   if (c.legajoId) {
     await rest('/rest/v1/caregivers?id=eq.' + c.legajoId, { method: 'DELETE' }, c.token);
@@ -576,7 +771,9 @@ console.log('');
 if (fallos === 0) {
   console.log('Pasaron todas. El límite lo pone la sesión: vale para las tablas, para los');
   console.log('archivos y para el directorio, que además exige que la persona haya dicho que sí.');
-  console.log('Y el examen lo corrige la base: la respuesta correcta nunca sale de ahí.');
+  console.log('El examen lo corrige la base: la respuesta correcta nunca sale de ahí.');
+  console.log('Y la separación no es sólo entre Prestadoras: dos Familias de la misma');
+  console.log('Prestadora tampoco se ven los avisos, los horarios, los mensajes ni los reportes.');
 } else {
   console.log(fallos + ' comprobación(es) fallaron. El aislamiento NO está.');
   process.exitCode = 1;
