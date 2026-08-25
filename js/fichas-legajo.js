@@ -146,6 +146,16 @@ const FichasLegajo = {
     return `<input type="text" id="${id}" data-campo="${clave}" ${req} />`;
   },
 
+  // ¿El bloque tiene algo cargado? Un campo escrito, una opción elegida que no sea
+  // la vacía, una casilla marcada o un archivo elegido.
+  _tieneAlgoCargado(bloque) {
+    return Array.from(bloque.querySelectorAll('input, select, textarea')).some((campo) => {
+      if (campo.type === 'checkbox' || campo.type === 'radio') return campo.checked;
+      if (campo.type === 'file') return campo.files && campo.files.length > 0;
+      return String(campo.value || '').trim() !== '';
+    });
+  },
+
   _bloqueHTML(tipoFicha, indice) {
     const ficha = this.fichas[tipoFicha];
     const camposHTML = ficha.campos.map(campo => {
@@ -200,7 +210,18 @@ const FichasLegajo = {
       const div = document.createElement('div');
       div.innerHTML = this._bloqueHTML(tipoFicha, indice);
       const bloque = div.firstElementChild;
-      bloque.querySelector('.btn-quitar-ficha').addEventListener('click', () => bloque.remove());
+      // Regla 4: quitar un bloque con datos adentro borra lo que la persona
+      // escribió, y desde acá no se recupera. Un bloque todavía vacío se quita sin
+      // preguntar: no hay nada que perder, y preguntar por nada enseña a contestar
+      // que sí sin leer, que es como después se pierde lo que sí importaba.
+      bloque.querySelector('.btn-quitar-ficha').addEventListener('click', () => {
+        if (this._tieneAlgoCargado(bloque)
+            && !confirm('Se va a quitar este bloque con todo lo que tiene cargado. '
+                        + 'No se puede deshacer.\n\n¿Confirma?')) {
+          return;
+        }
+        bloque.remove();
+      });
       bloque.addEventListener('change', () => this._aplicarCondiciones(bloque));
       bloque.addEventListener('input', () => this._aplicarCondiciones(bloque));
       lista.appendChild(bloque);

@@ -36,8 +36,8 @@
         <a class="drawer-menu-item" href="cursos.html"><i class="fas fa-graduation-cap"></i> Cursos</a>
         <a class="drawer-menu-item" href="soporte-remoto.html"><i class="fas fa-headset"></i> Acompañamiento Online</a>
         <div style="border-top:1px solid var(--borde-card);margin:8px 0;"></div>
-        <a class="drawer-menu-item" id="btn-logout" style="color:var(--rojo-peligro-texto);"><i class="fas fa-sign-out-alt"
-            style="color:var(--rojo-peligro-texto);"></i> Cerrar sesión</a>
+        <button type="button" class="drawer-menu-item" id="btn-logout" style="color:var(--rojo-peligro-texto);"><i class="fas fa-sign-out-alt"
+            style="color:var(--rojo-peligro-texto);"></i> Cerrar sesión</button>
       </div>
       <div style="padding:16px;text-align:center;font-size:10px;color:var(--texto-secundario);border-top:1px solid var(--borde-card);">
         Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
@@ -542,7 +542,11 @@
     }
 
     // REGISTRAR NUEVA NOVEDAD EN LA BITÁCORA
+    // Regla 5: guardar apaga el botón mientras la novedad viaja. Dos clics eran dos
+    // renglones idénticos en la bitácora, y ninguno de los dos se puede borrar desde
+    // la pantalla.
     document.getElementById('btn-save-bitacora').addEventListener('click', async () => {
+      const boton = document.getElementById('btn-save-bitacora');
       const presion = document.getElementById('bit-presion').value;
       const glucemia = document.getElementById('bit-glucemia').value;
       const medicamentos = document.getElementById('bit-medicamentos').value;
@@ -562,9 +566,13 @@
         caregiverId: '2197bc14-d545-4939-9a98-979e69a120dc'
       };
 
+      const original = boton.textContent;
+      boton.disabled = true;
+      boton.textContent = 'Guardando...';
+
       try {
         await ClienteDatos.registrarBitacoraDiaria(data);
-        alert('¡Novedad guardada exitosamente en Supabase!');
+        alert('La novedad quedó guardada en la bitácora.');
         document.getElementById('modal-bitacora').style.display = 'none';
 
         // Limpiar formulario
@@ -576,10 +584,24 @@
         cargarBitacora();
       } catch (err) {
         alert(Texto.mensajeDeError(err, 'guardar la novedad'));
+      } finally {
+        boton.disabled = false;
+        boton.textContent = original;
       }
     });
 
     // FICHADO GPS DE ASISTENCIA (CLOCK-IN / CLOCK-OUT REAL)
+    // Regla 5: mientras un fichado está en el aire, los dos botones se apagan. No es
+    // un detalle: esperar al GPS puede tardar varios segundos, en ese rato el botón
+    // no da ninguna señal de estar haciendo algo, y dos toques eran dos fichados en
+    // la misma hora. Un fichado repetido no se borra desde ninguna pantalla.
+    function fichadoEnCurso(corriendo) {
+      ['btn-gps-in', 'btn-gps-out'].forEach((id) => {
+        const boton = document.getElementById(id);
+        if (boton) boton.disabled = corriendo;
+      });
+    }
+
     async function ficharGPS(tipo) {
       const statusEl = document.getElementById('gps-status');
       statusEl.textContent = 'Obteniendo localización GPS...';
@@ -590,6 +612,7 @@
         return;
       }
 
+      fichadoEnCurso(true);
       navigator.geolocation.getCurrentPosition(async (position) => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
@@ -608,10 +631,13 @@
         } catch (err) {
           alert(Texto.mensajeDeError(err, 'registrar el fichado'));
           statusEl.textContent = 'Error en fichado';
+        } finally {
+          fichadoEnCurso(false);
         }
       }, (err) => {
         alert('No se pudo acceder a la ubicación. Por favor, habilite los permisos de GPS.');
         statusEl.textContent = 'Permiso GPS denegado';
+        fichadoEnCurso(false);
       });
     }
 
@@ -716,10 +742,23 @@
     };
 
     // LOGOUT REAL
+    // Regla 5: el botón se apaga mientras se cierra la sesión. Y regla 3: si no se
+    // pudo cerrar, se dice —antes el error no llegaba a ninguna parte y la persona
+    // se quedaba mirando el menú, creyendo que había salido—.
     document.getElementById('btn-logout').addEventListener('click', async () => {
-      if (confirm('¿Confirma que quiere cerrar la sesión?')) {
+      if (!confirm('¿Confirma que quiere cerrar la sesión? Para volver a entrar hay que escribir de nuevo el correo y la contraseña.')) return;
+      const boton = document.getElementById('btn-logout');
+      const original = boton.innerHTML;
+      boton.disabled = true;
+      boton.textContent = 'Cerrando la sesión...';
+      try {
         await Sesion.logout();
         navigate('intro');
+      } catch (err) {
+        alert(Texto.mensajeDeError(err, 'cerrar la sesión'));
+      } finally {
+        boton.disabled = false;
+        boton.innerHTML = original;
       }
     });
 
@@ -739,6 +778,18 @@
       `;
       area.appendChild(div);
       area.scrollTop = area.scrollHeight;
+      return div;
+    }
+
+    // Un mensaje que no llegó no puede quedar igual que uno que llegó.
+    function marcarNoEnviado(burbuja) {
+      const caja = burbuja && burbuja.firstElementChild;
+      if (!caja) return;
+      caja.style.opacity = '0.6';
+      const nota = document.createElement('div');
+      nota.textContent = 'No se pudo enviar. Conviene volver a intentarlo.';
+      nota.style.cssText = 'font-size:10px;color:var(--rojo-peligro-texto);text-align:right;margin-top:4px;';
+      caja.appendChild(nota);
     }
 
     async function initChat() {
@@ -773,6 +824,7 @@
     }
 
     document.getElementById('chat-send-btn').addEventListener('click', async () => {
+      const boton = document.getElementById('chat-send-btn');
       const input = document.getElementById('chat-input');
       const texto = input.value.trim();
       if (!texto) return;
@@ -780,11 +832,14 @@
       const session = await Sesion.getSession();
       const userId = session ? session.user.id : 'demo-user-' + Date.now();
       const msg = { contenido: texto, author_id: userId, created_at: new Date().toISOString() };
-      // Mostrar inmediatamente (optimistic UI)
-      renderMensaje(msg, true);
-      // Persistir en Supabase
+      // Se muestra en el acto, sin esperar al servidor: escribir y quedarse mirando
+      // es lo que hace sentir lento un chat. Pero entonces hay que decir después si
+      // no se pudo guardar, porque en pantalla ya parece enviado.
+      const burbuja = renderMensaje(msg, true);
+      // Regla 5: mientras el mensaje viaja, el botón se apaga.
+      boton.disabled = true;
       try {
-        await fetch(
+        const res = await fetch(
           `${ClienteDatos.supabaseUrl}/rest/v1/messages`,
           {
             method: 'POST',
@@ -797,7 +852,17 @@
             body: JSON.stringify({ content: texto, author_id: userId })
           }
         );
-      } catch (e) { console.warn('Error al enviar mensaje:', e); }
+        // Un pedido que vuelve con 401 no lanza ningún error: la promesa se cumple
+        // igual, con `ok` en falso. Sin este renglón, un mensaje rechazado se quedaba
+        // en pantalla como si hubiera salido —y hoy `messages` contesta 401 a quien
+        // no inició sesión, así que salía mal siempre—.
+        if (!res.ok) throw new Error('El servidor contestó ' + res.status);
+      } catch (e) {
+        console.warn('Chat, envío del mensaje:', e);
+        marcarNoEnviado(burbuja);
+      } finally {
+        boton.disabled = false;
+      }
     });
 
     document.getElementById('chat-input').addEventListener('keydown', (e) => {

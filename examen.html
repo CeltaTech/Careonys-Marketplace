@@ -343,7 +343,7 @@
 
         boton.appendChild(nombre);
         boton.appendChild(detalle);
-        boton.addEventListener('click', () => abrir(evaluacion.clave));
+        boton.addEventListener('click', () => abrirDesdeBoton(evaluacion.clave));
 
         const item = document.createElement('li');
         item.appendChild(boton);
@@ -357,6 +357,18 @@
     // Los enunciados y las opciones se escriben con textContent, nunca con
     // innerHTML: son texto que carga alguien de la Prestadora, y una etiqueta
     // metida ahí adentro se ejecutaría en el navegador de quien rinde.
+
+    // `arrancar` llama a `abrir` adentro de un `try`, así que un fallo del servidor
+    // termina en el panel de error. Desde un botón no había quien lo atrapara: la
+    // pantalla se quedaba en «Cargando...» para siempre, sin decir nada (regla 3).
+    async function abrirDesdeBoton(clave) {
+      try {
+        await abrir(clave);
+      } catch (err) {
+        console.error('Examen, apertura de la evaluación:', err);
+        mostrar('error');
+      }
+    }
 
     async function abrir(clave) {
       mostrar('cargando');
@@ -500,7 +512,7 @@
       mostrar('resultado');
     }
 
-    document.getElementById('btn-otra-vez').addEventListener('click', () => abrir(enCurso.clave));
+    document.getElementById('btn-otra-vez').addEventListener('click', () => abrirDesdeBoton(enCurso.clave));
     document.getElementById('volver-lista').addEventListener('click', (e) => {
       e.preventDefault();
       arrancar();

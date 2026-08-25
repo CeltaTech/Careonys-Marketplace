@@ -13,7 +13,7 @@
 
 | Módulo | Estado |
 |---|---|
-| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:286` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs` |
+| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:367` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs` |
 | Directorio de Asistentes con filtros | Maquetado y navegable |
 | Perfil del Asistente | Maquetado |
 | Portal de postulación de Asistentes | Maquetado, con el legajo funcionando: `postulacion-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en las tablas de la migración 0004, y la disponibilidad horaria en las de la 0012 |
@@ -110,7 +110,7 @@ Distinguirlas necesita entender la frase.
 **Lo que se encontró de paso.** El texto de las pantallas se revisó archivo por archivo, y
 aparecieron dos cosas que no eran de trato:
 
-- Un `await` adentro de una función que no era `async`, en `pwa-asistente/index.html:557`. Es un
+- Un `await` adentro de una función que no era `async`, en `pwa-asistente/index.html`. Es un
   error de sintaxis, así que el navegador descartaba el bloque `<script>` entero: la aplicación
   del Asistente se dibujaba completa y no funcionaban ni el ingreso, ni el fichado, ni la
   bitácora, sin ningún aviso. Corregido, y ahora `scripts/verificar_guiones.mjs` lo vigila —era
@@ -132,14 +132,14 @@ se metía adentro del marcado ahora pasan por `Texto.escapar`, en seis archivos:
   proyecto quien lee suele ser el personal de la Prestadora, o sea justo quien tiene los permisos,
   o una familia mirando el cuaderno de cuidado.
 - **Los dos peores casos** no estaban donde decía el pendiente. Uno era el mensaje de chat de
-  `mockup-app.html:736`, que lo escribe una persona y lo lee otra. El otro era
+  `mockup-app.html:775`, que lo escribe una persona y lo lee otra. El otro era
   `panel-prestadora.html`, la pantalla que el pendiente daba por arreglada: tenía el renglón de la
   tabla de Asistentes entero sin escapar —nombre, documento, teléfono, profesión y zona— y el
   único `onclick` escrito en el marcado de todo el proyecto.
 - **Escapar no alcanzaba ahí, y por eso se sacó el `onclick`.** Adentro de un atributo el
   navegador deshace el escapado antes de leer el contenido como código, así que un `&#39;` vuelve
   a ser una comilla y cierra la cadena igual. El identificador ahora se pasa por
-  `addEventListener` (`panel-prestadora.html:214`), que nunca vuelve a leer texto como programa.
+  `addEventListener` (`panel-prestadora.html:226`), que nunca vuelve a leer texto como programa.
 - **Un solo punto de verdad**, como pide la regla 7: `js/texto.js` (77 renglones) tiene
   `Texto.escapar` y `Texto.mensajeDeError`, y lo cargan las catorce pantallas. Antes de esto el
   único archivo que cargaban todas era `js/identidad.js`; ahora son dos. La copia local de
@@ -460,7 +460,7 @@ Cierra el pendiente 38, el 24 de agosto de 2026.
 
 Queda una contraseña de mentira en pantalla, y no es ésta: la de la pantalla de acceso viene
 prellenada con seis dígitos para poder mostrar el producto sin tipear
-(`pwa-asistente/index.html:310` y `pwa-familia/index.html:565`). Es un atajo de demostración y sale
+(`pwa-asistente/index.html:310` y `pwa-familia/index.html:571`). Es un atajo de demostración y sale
 antes de que haya una sola persona real.
 
 ### Las trece migraciones ya corren en el servidor
@@ -654,14 +654,14 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
 - **Los dos pasos que faltaban se dibujan desde el catálogo**, no están escritos en la pantalla.
   Matrícula y estudios en el paso 2, experiencia laboral en el paso 3 y referencias en el paso 5
   salen de `data/catalogo-fichas.json` a través de `js/fichas-legajo.js`
-  (`pwa-asistente/index.html:945`, `montarFichas`). El paso de cierre sale de
+  (`pwa-asistente/index.html:986`, `montarFichas`). El paso de cierre sale de
   `data/catalogo-autorizaciones.json`.
 - **El paso de cierre pasó a ser un módulo.** Estaba escrito adentro de `postulacion-asistente.html`,
   cuarenta renglones que traían el archivo y armaban las casillas. Ahora es `js/autorizaciones.js`,
   y las dos pantallas consumen el mismo (regla 7). Copiarlo habría sido tener el mismo paso dos
   veces, con el precio de siempre: se arregla uno y el otro queda viejo.
 - **Subir los archivos también dejó de estar en la pantalla.** `FichasLegajo.subirArchivos`
-  (`js/fichas-legajo.js:264`) es el único lugar que sabe a qué depósito van la matrícula y el
+  (`js/fichas-legajo.js:285`) es el único lugar que sabe a qué depósito van la matrícula y el
   título, y devuelve la lista de los que no subieron para que quien llama avise una sola vez.
 - **De paso arregló algo que estaba mal en el portal.** Cuando la ficha de estudio no traía archivo
   —es optativo—, la fila viajaba igual con una clave `archivo` en `null`. La columna se llama
@@ -669,7 +669,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
   que esa fila no entraba y la persona no se enteraba.
 - **Y el alta del teléfono creaba cuentas sin dueño.** `registrarAspirante` no escribía `user_id`,
   así que la persona quedaba con cuenta y con legajo, pero el legajo no era de nadie y no lo podía
-  abrir. Se agrega en `guardarLegajo` (`pwa-asistente/index.html:830`), que es donde ya se sabe
+  abrir. Se agrega en `guardarLegajo` (`pwa-asistente/index.html:1029`), que es donde ya se sabe
   quién inició sesión.
 
 **Cómo se comprobó, el 25 de agosto de 2026.** En dos mitades, porque el servidor alojado todavía
@@ -1064,8 +1064,8 @@ vale la memoria de quien lo escribió.
 nombraban archivos que ya no existen con ese nombre —una cita partida en dos renglones que el
 buscador no veía entera, y una migración citada sin su carpeta—. Y **dos apuntaban a un renglón con
 contenido, pero con el contenido equivocado**, que es el caso que ningún guion puede detectar:
-`mockup-app.html:692`, que decía ser el escapado del chat y era una redirección, y
-`js/apiClient.js:396`, que decía ser el aviso de una Prestadora que no existe y era la primera
+el renglón 692 de `mockup-app.html` decía ser el escapado del chat y era una redirección, y el
+396 de `js/apiClient.js` decía ser el aviso de una Prestadora que no existe y era la primera
 evaluación de una lista.
 
 **El décimo chequeo.** `scripts/verificar_referencias.mjs` exige tres cosas de cada cita: que el
@@ -1257,6 +1257,68 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
   directorio. **Se cerró el 25 de agosto de 2026**, y con él el pendiente 44: hoy la pantalla lee
   de `caregivers_publicos`, como cuenta «El perfil muestra a la persona que dice la dirección, y
   nada más que eso» más arriba.
+
+### Un botón que opera se apaga mientras opera, y lo que no se puede deshacer se pregunta antes
+
+El 25 de agosto de 2026.
+
+Las reglas 3, 4 y 5 de `CLAUDE.md` —cuatro estados, confirmar lo destructivo, apagar el botón
+mientras la operación está en curso— estaban escritas desde el principio y no había ningún chequeo
+que las mirara. Se contaron los botones del proyecto: **veintidós manejadores esperan una
+operación, y seis no apagaban nada.** Otros tres sólo se alcanzaban desde el marcado y dos más a
+través de una función intermedia, así que ninguno de los cinco aparecía en la cuenta.
+
+**El peor era el aval de la Prestadora sobre el legajo de una persona.** «Aprobar» y «Rechazar»
+en `panel-prestadora.html` no preguntaban nada, no se apagaban, y —esto es lo grave— **no tenían
+quién atrapara un error**: si la escritura fallaba, la ventana se cerraba, aparecía el aviso de
+éxito y la pantalla se recargaba como si hubiera funcionado. Nadie se enteraba de nada. Los dos
+pasaron a compartir una sola función, `resolverAspirante`, que pregunta, apaga los dos botones,
+atrapa el error y lo muestra, y recién entonces avisa y cierra. De paso, **«Rechazar» guarda ahora
+la nota de la entrevista que se escribió**, no la frase fija «No cumple requisitos.» que guardaba
+siempre; esa frase quedó de respaldo para cuando no se escribe nada.
+
+**El segundo era el fichado por GPS**, en `mockup-app.html` y en `pwa-asistente/index.html`.
+Esperar la ubicación puede tardar varios segundos y el botón no daba ninguna señal de estar
+haciendo algo, así que dos toques eran dos fichados en la misma hora, y un fichado repetido no se
+borra desde ninguna pantalla. Ahora los dos botones —entrada y salida— se apagan juntos mientras
+la ubicación está en camino, y se vuelven a prender pase lo que pase, también cuando se deniega el
+permiso.
+
+**El tercero no era un botón sino un mensaje que se perdía.** El chat de la maqueta escribía la
+burbuja en la pantalla y mandaba el mensaje al servidor; el servidor contestaba «no autorizado» y
+nadie lo leía, porque `fetch` no falla cuando el servidor rechaza el pedido: contesta, y hay que
+mirar la respuesta. **Todos los mensajes se estaban perdiendo en silencio, con la burbuja en
+pantalla como si hubieran salido.** Ahora la burbuja lleva escrito debajo que no se pudo enviar.
+
+**Lo demás, en orden.** «Cerrar sesión» era un enlace disfrazado de botón en las tres aplicaciones
+—un enlace no se puede apagar—, y ahora es un botón de verdad que pregunta antes, avisando que
+para volver a entrar hay que escribir de nuevo el correo y la contraseña. Guardar una novedad en
+la bitácora se apaga y dice «Guardando...». Abrir una evaluación desde un botón en `examen.html`
+no tenía quién atrapara un fallo del servidor y la pantalla se quedaba en «Cargando...» para
+siempre; ahora termina en el panel de error. Y quitar un bloque del legajo con datos adentro
+pregunta antes: si el bloque está vacío no pregunta nada, porque preguntar por nada enseña a
+contestar que sí sin leer, que es justamente como después se pierde lo que sí importaba.
+
+**El estado apagado no existía en ninguna hoja de estilos.** Se apagaba el botón y se veía igual
+que encendido. Se agregó a las cuatro.
+
+**El chequeo once, `scripts/verificar_botones.mjs`.** Mira las tres formas en que un botón llega a
+una operación: el manejador escrito ahí mismo, el que delega en una función, y el que sale de un
+`onclick` del marcado. Si adentro hay un `await` tiene que haber también un `.disabled`, acá o en
+alguna función que llame.
+
+Dos decisiones se tomaron midiendo, no opinando. **El cuerpo de cada función se recorta contando
+llaves**, porque recortando una cantidad fija de renglones el manejador de al lado le presta su
+apagado al que no lo tiene: así fue como una primera versión aprobó justo uno de los seis que
+tenía que encontrar. Y **se probó extender el chequeo a los manejadores que reciben la función por
+su nombre a secas, y se descartó**: los tres que hay en el proyecto tapan su botón con el panel de
+«cargando», que protege lo mismo. Tres avisos falsos de tres es un chequeo que alguien apaga, y
+entonces no verifica nada.
+
+Antes de mirar el proyecto, el chequeo se mira a sí mismo con diez casos, seis que tiene que dejar
+pasar y cuatro que tiene que encontrar. Y para que no fuera una prueba que no puede fallar, se
+sacaron de la historia de git las versiones anteriores de las cuatro pantallas y se las pasó por
+el chequeo: encontró los catorce defectos, uno por uno.
 
 ## 2. Falta construir
 

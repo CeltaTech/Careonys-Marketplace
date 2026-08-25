@@ -57,6 +57,9 @@ body {
 
 .btn-login { width:100%; padding:12px; border-radius:var(--redondeo-medio); background:var(--azul-medio); color:var(--superficie); font-weight:700; border:none; font-size:14px; cursor:pointer; box-shadow:var(--sombra-media); transition:all var(--transicion); }
 .btn-login:hover { opacity:0.9; }
+/* Ver el comentario de `css/styles.css`: un botón apagado se muestra apagado. */
+button:disabled { opacity:0.55; cursor:default; box-shadow:none; }
+button:disabled:hover { transform:none; box-shadow:none; opacity:0.55; }
 
 .social-btn { width:100%; padding:10px; border-radius:var(--redondeo-medio); border:1px solid var(--borde-card); background:var(--superficie); font-size:13px; font-weight:600; color:var(--texto-principal); display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; margin-top:10px; transition:all var(--transicion); }
 .social-btn:hover { background:var(--fondo-app); }
@@ -118,6 +121,10 @@ body {
 .drawer-menu { flex:1; padding:16px 0; overflow-y:auto; }
 .drawer-menu-item { display:flex; align-items:center; gap:14px; padding:12px 20px; color:var(--texto-principal); font-size:14px; font-weight:600; text-decoration:none; cursor:pointer; transition:background var(--transicion); }
 .drawer-menu-item:hover { background:var(--superficie-hundida); }
+/* El de cerrar sesión es un botón y no un enlace: dispara una operación, y un
+   enlace no se puede apagar mientras corre (regla 5). Se lo deja viendo igual
+   que el resto del menú. */
+button.drawer-menu-item { width:100%; background:none; border:none; font-family:inherit; text-align:left; }
 .drawer-menu-item i { color:var(--texto-secundario); width:20px; font-size:16px; }
 
 .cuaderno-header { background:var(--azul-oscuro); color:var(--superficie); padding:20px; border-radius:0 0 24px 24px; }

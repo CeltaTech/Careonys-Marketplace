@@ -90,6 +90,24 @@ ul {
   box-shadow: var(--sombra-alta);
 }
 
+/* ---- Botón apagado ---- */
+/* La regla 5 pide que un botón se deshabilite mientras su operación corre, y hasta
+   hoy eso no se veía: el botón quedaba idéntico, quien lo tocaba de nuevo no veía
+   pasar nada y la pantalla parecía colgada. Apagar sin mostrarlo es la mitad de
+   la regla. */
+button:disabled,
+.btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  box-shadow: none;
+}
+
+button:disabled:hover,
+.btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 .btn-atencion {
   background: var(--naranja-alerta);
   color: var(--texto-oscuro-sobre-color);

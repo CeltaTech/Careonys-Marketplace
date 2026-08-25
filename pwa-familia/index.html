@@ -520,6 +520,15 @@
       text-decoration: none;
       cursor: pointer;
     }
+    /* El de cerrar sesión es un botón y no un enlace: dispara una operación, y un
+       enlace no se puede apagar mientras corre (regla 5). */
+    button.drawer-menu-item {
+      width: 100%;
+      background: none;
+      border: none;
+      font-family: inherit;
+      text-align: left;
+    }
   </style>
 </head>
 <body>
@@ -542,7 +551,7 @@
         <a class="drawer-menu-item" href="../cursos.html"><i class="fas fa-graduation-cap" style="width:20px;color:var(--texto-secundario);"></i> Cursos</a>
         <a class="drawer-menu-item" href="../soporte-remoto.html"><i class="fas fa-headset" style="width:20px;color:var(--texto-secundario);"></i> Acompañamiento Online</a>
         <div style="border-top:1px solid var(--borde-card);margin:8px 0;"></div>
-        <a class="drawer-menu-item" id="btn-logout" style="color:var(--rojo-peligro-texto);"><i class="fas fa-sign-out-alt" style="width:20px;color:var(--rojo-peligro-texto);"></i> Cerrar sesión</a>
+        <button type="button" class="drawer-menu-item" id="btn-logout" style="color:var(--rojo-peligro-texto);"><i class="fas fa-sign-out-alt" style="width:20px;color:var(--rojo-peligro-texto);"></i> Cerrar sesión</button>
       </div>
       <div style="padding:16px;text-align:center;font-size:10px;color:var(--texto-secundario);border-top:1px solid var(--borde-card);">
         Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
@@ -971,10 +980,23 @@
       overlay.classList.remove('open');
     };
 
+    // Regla 5: el botón se apaga mientras se cierra la sesión. Y regla 3: si no se
+    // pudo cerrar, se dice —antes el error no llegaba a ninguna parte y la persona
+    // se quedaba mirando el menú, creyendo que había salido—.
     document.getElementById('btn-logout').addEventListener('click', async () => {
-      if (confirm('¿Cerrar sesión?')) {
+      if (!confirm('¿Confirma que quiere cerrar la sesión? Para volver a entrar hay que escribir de nuevo el correo y la contraseña.')) return;
+      const boton = document.getElementById('btn-logout');
+      const original = boton.innerHTML;
+      boton.disabled = true;
+      boton.textContent = 'Cerrando la sesión...';
+      try {
         await Sesion.logout();
         navigate('intro');
+      } catch (err) {
+        alert(Texto.mensajeDeError(err, 'cerrar la sesión'));
+      } finally {
+        boton.disabled = false;
+        boton.innerHTML = original;
       }
     });
 

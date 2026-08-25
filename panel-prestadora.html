@@ -68,7 +68,7 @@
             <p style="margin:4px 0 0 0;font-size:13px;color:var(--texto-secundario);">Legajos digitales enviados desde {{producto}}
               Marketplace para la revisión y entrevista de la prestadora.</p>
           </div>
-          <button class="btn btn-secundario" onclick="cargarAspirantes();" style="font-size:12px;padding:8px 16px;"><i
+          <button class="btn btn-secundario" id="btn-actualizar-aspirantes" onclick="cargarAspirantes();" style="font-size:12px;padding:8px 16px;"><i
               class="fas fa-sync-alt"></i> Actualizar</button>
         </div>
 
@@ -118,11 +118,11 @@
             placeholder="Ej: Entrevista aprobada vía videollamada. Excelente manejo en demencias. DNI y Penales verificados."></textarea>
         </div>
         <div style="display:flex;gap:12px;">
-          <button class="btn" style="background:var(--verde-exito);color:var(--texto-sobre-color);font-weight:800;font-size:13px;flex:1;"
+          <button class="btn" id="btn-aprobar-aspirante" style="background:var(--verde-exito);color:var(--texto-sobre-color);font-weight:800;font-size:13px;flex:1;"
             onclick="aprobarAspirante();">
             <i class="fas fa-check-circle"></i> OTORGAR AVAL: "VALIDADO POR PRESTADORA"
           </button>
-          <button class="btn" style="background:var(--rojo-peligro);color:var(--texto-sobre-color);font-weight:700;font-size:13px;"
+          <button class="btn" id="btn-rechazar-aspirante" style="background:var(--rojo-peligro);color:var(--texto-sobre-color);font-weight:700;font-size:13px;"
             onclick="rechazarAspirante();">
             Rechazar
           </button>
@@ -153,7 +153,19 @@
       caja.style.display = 'block';
     }
 
+    // Regla 5: Actualizar se apaga mientras trae los legajos. Tres clics seguidos
+    // eran tres consultas y tres dibujados de la misma tabla, pisándose entre sí.
     async function cargarAspirantes() {
+      const boton = document.getElementById('btn-actualizar-aspirantes');
+      if (boton) boton.disabled = true;
+      try {
+        await dibujarAspirantes();
+      } finally {
+        if (boton) boton.disabled = false;
+      }
+    }
+
+    async function dibujarAspirantes() {
       const tbody = document.getElementById('tabla-aspirantes-body');
       estadoTabla('info', 'Buscando los legajos de la Prestadora...');
 
@@ -211,7 +223,7 @@
         // El identificador se pasa por la función y no por un `onclick` escrito
         // en el marcado: adentro de un atributo el navegador deshace el escapado
         // antes de leerlo como código, así que ahí escapar no protege de nada.
-        tr.querySelector('button').addEventListener('click', () => abrirAuditoria(a.id));
+        tr.querySelector('button').addEventListener('click', (ev) => abrirAuditoria(a.id, ev.currentTarget));
         tbody.appendChild(tr);
       });
 
@@ -219,7 +231,23 @@
       document.getElementById('kpi-validados').innerText = val;
     }
 
-    async function abrirAuditoria(id) {
+    // Regla 5: el botón de la fila se apaga mientras se traen los papeles. Y
+    // regla 3: si no se pueden traer, se avisa —antes esto fallaba en silencio y
+    // el legajo simplemente no se abría, sin que nada explicara por qué—.
+    async function abrirAuditoria(id, boton) {
+      const original = boton ? boton.innerHTML : '';
+      if (boton) { boton.disabled = true; boton.textContent = 'Abriendo...'; }
+      try {
+        await armarAuditoria(id);
+      } catch (err) {
+        console.error('Panel de la Prestadora, auditoría del legajo:', err);
+        alert(Texto.mensajeDeError(err, 'abrir el legajo para auditarlo'));
+      } finally {
+        if (boton) { boton.disabled = false; boton.innerHTML = original; }
+      }
+    }
+
+    async function armarAuditoria(id) {
       aspiranteSeleccionadoId = id;
       const data = await ClienteDatos.getAspirantes();
       const a = data.find(item => item.id === id);
@@ -263,21 +291,74 @@
       document.getElementById('modal-auditoria').style.display = 'flex';
     }
 
-    async function aprobarAspirante() {
+    // Otorgar el aval y rechazar son la misma operación con distinto resultado, así
+    // que la pregunta, el apagado de los botones y el aviso de error viven en un
+    // solo lugar (regla 7 de `CLAUDE.md`).
+    //
+    // Regla 4: las dos decisiones caen sobre el trabajo de una persona y ninguna se
+    // deshace desde esta pantalla, así que antes se dice qué va a pasar y se puede
+    // cancelar. Regla 5: mientras la operación corre, los dos botones se apagan
+    // —dos clics eran dos escrituras—. Regla 3: si la base rechaza el cambio, se
+    // avisa; antes el error no llegaba a ninguna parte y la pantalla se cerraba
+    // igual, como si hubiera salido bien.
+    async function resolverAspirante({ estado, nota, pregunta, aviso, boton, mientras }) {
       if (!aspiranteSeleccionadoId) return;
-      const nota = document.getElementById('nota-entrevista').value || 'Aprobado por el equipo de RRHH PresDemo.';
-      await ClienteDatos.cambiarEstadoAspirante(aspiranteSeleccionadoId, 'validado_prestadora', nota);
-      alert('✓ Legajo auditado exitosamente. Se ha asignado el sello "Validado por Prestadora" y habilitado en el plantel activo.');
+      if (!confirm(pregunta)) return;
+
+      const botones = [
+        document.getElementById('btn-aprobar-aspirante'),
+        document.getElementById('btn-rechazar-aspirante')
+      ].filter(Boolean);
+      const original = boton ? boton.innerHTML : '';
+
+      botones.forEach((b) => { b.disabled = true; });
+      if (boton) boton.textContent = mientras;
+
+      try {
+        await ClienteDatos.cambiarEstadoAspirante(aspiranteSeleccionadoId, estado, nota);
+      } catch (err) {
+        console.error('Panel de la Prestadora, resolución del legajo:', err);
+        alert(Texto.mensajeDeError(err, 'registrar la resolución del legajo'));
+        return;
+      } finally {
+        botones.forEach((b) => { b.disabled = false; });
+        if (boton) boton.innerHTML = original;
+      }
+
+      alert(aviso);
       document.getElementById('modal-auditoria').style.display = 'none';
       cargarAspirantes();
     }
 
+    async function aprobarAspirante() {
+      await resolverAspirante({
+        estado: 'validado_prestadora',
+        nota: document.getElementById('nota-entrevista').value.trim()
+          || 'Aprobado por el equipo de RRHH PresDemo.',
+        pregunta: 'Se va a otorgar el aval "Validado por Prestadora" a este legajo.\n\n'
+          + 'La persona queda habilitada en el plantel activo y el aval se muestra en su '
+          + 'perfil. Desde esta pantalla no se puede quitar.\n\n¿Confirma?',
+        aviso: '✓ Legajo auditado. Se asignó el sello "Validado por Prestadora" y quedó '
+          + 'habilitado en el plantel activo.',
+        boton: document.getElementById('btn-aprobar-aspirante'),
+        mientras: 'Otorgando el aval...'
+      });
+    }
+
     async function rechazarAspirante() {
-      if (!aspiranteSeleccionadoId) return;
-      await ClienteDatos.cambiarEstadoAspirante(aspiranteSeleccionadoId, 'rechazado', 'No cumple requisitos.');
-      alert('Solicitud rechazada.');
-      document.getElementById('modal-auditoria').style.display = 'none';
-      cargarAspirantes();
+      await resolverAspirante({
+        estado: 'rechazado',
+        // Lo que se escribió en la entrevista es el motivo del rechazo, y antes se
+        // tiraba: la nota quedaba siempre en la misma frase escrita acá.
+        nota: document.getElementById('nota-entrevista').value.trim()
+          || 'No cumple requisitos.',
+        pregunta: 'Se va a rechazar este legajo.\n\nLa postulación queda cerrada y la '
+          + 'persona no aparece en el plantel activo. Desde esta pantalla no se puede '
+          + 'volver atrás.\n\n¿Confirma?',
+        aviso: 'Se registró el rechazo del legajo.',
+        boton: document.getElementById('btn-rechazar-aspirante'),
+        mientras: 'Registrando el rechazo...'
+      });
     }
 
     // El orden no es casual: sin sesión no hay Prestadora, y sin Prestadora la

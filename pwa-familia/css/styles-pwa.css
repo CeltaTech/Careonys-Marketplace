@@ -23,6 +23,24 @@ a { text-decoration: none; color: inherit; }
   transition: transform var(--transicion), box-shadow var(--transicion), background var(--transicion);
 }
 .btn:hover { transform: translateY(-2px); box-shadow: var(--sombra-media); }
+
+/* ---- Botón apagado ---- */
+/* La regla 5 pide que un botón se deshabilite mientras su operación corre, y hasta
+   hoy eso no se veía: el botón quedaba idéntico, quien lo tocaba de nuevo no veía
+   pasar nada y la pantalla parecía colgada. Apagar sin mostrarlo es la mitad de
+   la regla. */
+button:disabled,
+.btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  box-shadow: none;
+}
+
+button:disabled:hover,
+.btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
 .btn-primario { background: var(--relleno-azul); color: var(--texto-sobre-color); box-shadow: var(--sombra-media); }
 .btn-sobre-oscuro { background: transparent; border: 2px solid var(--borde-card); color: var(--texto-secundario); }
 .btn-secundario { background: var(--azul-oscuro); color: var(--texto-sobre-color); box-shadow: var(--sombra-media); }
