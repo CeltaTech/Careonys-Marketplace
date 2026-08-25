@@ -74,10 +74,8 @@ Cómo quedó:
   viejos. Se probaron los tres casos rompiendo cada cosa a propósito y el chequeo falló en los tres:
   una prueba que no puede fallar no prueba nada.
 
-  Hoy se corre a mano —`node scripts/verificar_identidad.mjs`— porque este proyecto no tiene
-  compilación: es HTML servido tal cual, sin `package.json`. **Un chequeo que hay que acordarse de
-  correr no sostiene nada solo**: se engancha a la compilación en cuanto la migración a React la
-  traiga. Está anotado en el pendiente 17.
+  Lo corre git antes de cada commit, junto con los otros cinco, desde `.githooks/pre-commit`.
+  Suelto sigue andando: `node scripts/verificar_identidad.mjs`.
 
 Lo que **no** cierra esto: el nombre de la **Prestadora de ejemplo**, «PresDemo», sigue escrito a
 mano 111 veces en 18 archivos. Es otro problema —el nombre de un cliente, no el del producto— y es
@@ -726,6 +724,29 @@ Lo que falta —empezar una conversación con esa persona en particular— qued�
 `Catalogo.etiquetaSiExiste` (`js/catalogo.js:160`), y la de una tarea —que puede estar en cualquiera
 de tres listas— es `Catalogo.etiquetaDeTarea` (`js/catalogo.js:173`). Vivían adentro de
 `directorio.html`; ahora las dos pantallas las piden al mismo lugar.
+
+
+### Los chequeos corren solos antes de cada commit
+
+Cierra el pendiente 17, el 25 de agosto de 2026.
+
+Eran seis chequeos que había que acordarse de correr, uno por uno. Ahora los corre git.
+
+- **`scripts/verificar_todo.mjs` los corre a todos** y devuelve error si falla cualquiera. No lleva
+  la lista escrita adentro: busca en `scripts/` todo lo que se llame `verificar_*.mjs` y lo corre en
+  orden alfabético, así que el séptimo chequeo que alguien escriba entra solo. Ese detalle no es
+  adorno: el renglón que se acaba de borrar decía «ya son cinco» cuando ya eran seis.
+- **`.githooks/pre-commit` lo llama antes de cada commit** y frena el commit si algo falla. Probado
+  al revés, que es la única prueba que vale: se le agregó un renglón a una de las copias de
+  `js/texto.js`, se intentó commitear, y git no dejó — «1 de 6 chequeos fallaron: copias».
+- **Los seis juntos tardan menos de un segundo**, así que no hay razón para saltearlos. Se puede,
+  con `git commit --no-verify`, y conviene que sea raro.
+- **No se agregó ningún `package.json`.** El sitio se publica como archivos sueltos y meterle uno
+  cambiaría cómo lo detecta el servicio de publicación. El gancho llama a `node` directamente.
+
+**En otra máquina hay que decirle a git dónde está el gancho, una sola vez**: `git config
+core.hooksPath .githooks`. La carpeta `.githooks/` sí se sube, pero la configuración que la nombra
+vive en `.git/config`, que no. Sin ese comando el gancho está en el repositorio y nadie lo llama.
 
 
 ### El directorio muestra a gente que existe en la base, y sólo la de una Prestadora

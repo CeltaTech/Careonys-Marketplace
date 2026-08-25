@@ -1,0 +1,30 @@
+#!/bin/sh
+# ===================================================
+# CORRE LOS CHEQUEOS ANTES DE CADA COMMIT
+#
+# Si alguno falla, el commit no se hace y se ve por qué. Los seis juntos tardan
+# menos de un segundo.
+#
+# Este gancho no vive en `.git/hooks/` —esa carpeta no se sube— sino acá, que sí
+# se sube. Para que git lo use hay que decírselo una sola vez por máquina:
+#
+#     git config core.hooksPath .githooks
+#
+# Sin eso, el gancho está en el repositorio pero nadie lo llama.
+#
+# Para saltearlo en un commit puntual: `git commit --no-verify`. Conviene que sea
+# raro: el chequeo existe porque acordarse no alcanza.
+# ===================================================
+
+if ! command -v node >/dev/null 2>&1; then
+  echo "pre-commit: no se encuentra node, así que no se pudo chequear nada."
+  echo "            Instalarlo, o commitear con --no-verify a sabiendas."
+  exit 1
+fi
+
+echo "Chequeos antes del commit:"
+node "$(git rev-parse --show-toplevel)/scripts/verificar_todo.mjs" || {
+  echo ""
+  echo "El commit no se hizo. Arreglar lo de arriba y volver a intentar."
+  exit 1
+}
