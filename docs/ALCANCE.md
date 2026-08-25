@@ -1388,11 +1388,11 @@ En la misma pasada salieron de las dos aplicaciones del teléfono el correo y la
 venían escritos en los campos de acceso. Está contado más arriba, en «El alta del teléfono ya pide
 una contraseña».
 
-### Las cuatro reglas del esquema ya tienen quién las mire
+### Las cinco reglas del esquema ya tienen quién las mire
 
-Cuatro reglas de `CLAUDE.md` vivían sólo en `CLAUDE.md`: nada impedía que una migración nueva las
-incumpliera. Ahora las mira `scripts/verificar_esquema.mjs` antes de cada commit. **Tres están
-limpias y la cuarta tiene un solo incumplimiento**, que quedó anotado como pendiente 51 en vez de
+Cinco reglas de `CLAUDE.md` vivían sólo en `CLAUDE.md`: nada impedía que una migración nueva las
+incumpliera. Ahora las mira `scripts/verificar_esquema.mjs` antes de cada commit. **Cuatro están
+limpias y la quinta tiene un solo incumplimiento**, que quedó anotado como pendiente 51 en vez de
 taparse.
 
 - **Toda tabla enciende su RLS en la misma migración que la crea** (§4). Las 22 lo hacen.
@@ -1408,6 +1408,14 @@ taparse.
 - **Toda tabla tiene la columna de la Organización** (§5.10). Las 22 la tienen. `tenants` está
   exenta con el motivo escrito: es la Organización, y su propio identificador es el que las demás
   copian.
+- **Toda tabla tiene clave primaria `uuid`** (§5.10). Las 22 la tienen, y se comprobó el 25 de
+  agosto de 2026 recorriendo las quince migraciones: quince la declaran al lado de la columna y
+  siete —las de la 0001— en un `alter table … add constraint … primary key` que está más abajo
+  en el mismo archivo, así que el chequeo busca en las tres formas y no en una. Es la otra mitad
+  de la regla de la columna de Organización, y es por lo mismo: dos bases que se fusionan con
+  claves correlativas chocan en el número 1, y hay que reasignarlas todas junto con cada
+  referencia que las apunta. Con UUID no chocan. Hasta el 25 de agosto de 2026 esta mitad no la
+  miraba nadie, aunque la de al lado sí.
 - **Todo importe se guarda con su moneda** (§5.11). Acá está el único incumplimiento:
   `caregivers.hourly_rate` (`supabase/migrations/0001_esquema_inicial.sql:102`) es un `numeric` a
   secas, y no hay columna de moneda en ninguna de las 22 tablas. Es el único importe del esquema.
@@ -1422,7 +1430,7 @@ políticas de esas mismas tres tablas usan `tenant_id`, o sea que la columna exi
 columna, no el momento; el momento lo pide sólo la RLS, y por un motivo distinto. El chequeo hoy lee
 las quince migraciones juntas antes de juzgar ninguna.
 
-Se mira a sí mismo con trece casos, cinco que tiene que encontrar y ocho que tiene que dejar pasar
+Se mira a sí mismo con diecisiete casos, siete que tiene que encontrar y diez que tiene que dejar pasar
 —entre ellos `numeric(10,2)`, que con un recorte ingenuo por el primer paréntesis que cierra parte
 la tabla por la mitad—. Y para que no fuera una prueba que no puede fallar, se corrió una copia con
 la lista de exenciones vacía: aparecen los dos casos conocidos, cada uno en su renglón exacto.

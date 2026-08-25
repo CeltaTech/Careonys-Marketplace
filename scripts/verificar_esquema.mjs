@@ -1,5 +1,5 @@
 /* ===================================================
-   VERIFICA LAS CUATRO REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
+   VERIFICA LAS CINCO REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
 
        node scripts/verificar_esquema.mjs
 
@@ -8,7 +8,7 @@
    Lo que corre hoy en el servidor es otra pregunta y se responde mirando el
    servidor (`CLAUDE.md` §7, «estado real por encima del documentado»).
 
-   Las cuatro:
+   Las cinco:
 
    1. **Toda tabla nueva enciende su RLS en la misma migración que la crea**
       (`CLAUDE.md` §4). Encenderla después, a mano desde el panel, deja una ventana
@@ -30,11 +30,17 @@
       creación o en un `alter table … add column` posterior.
    4. **Todo importe se guarda con su moneda** (§5.11). Un número solo, leído un
       año después, no se sabe cuánto vale.
+   5. **Toda tabla tiene clave primaria `uuid`** (§5.10). Es la otra mitad de la
+      regla 3, y es del mismo motivo: dos bases que se fusionan con claves
+      correlativas chocan en el número 1, y hay que reasignarlas todas junto con
+      cada referencia que las apunta. Con UUID no chocan. La clave se busca donde
+      esté declarada —adentro del `create table` o en un `alter table … add
+      constraint … primary key` posterior, que es como la declara la 0001—.
 
-   Las tres primeras están limpias —22 tablas, 5 funciones— y este chequeo está
-   para que sigan así. La cuarta tiene hoy un incumplimiento, anotado abajo con su
-   motivo y su pendiente: el chequeo no lo tapa, lo deja a la vista y evita que
-   entre uno nuevo.
+   Cuatro están limpias —22 tablas, 5 funciones, 22 claves primarias `uuid`— y
+   este chequeo está para que sigan así. La de la moneda tiene hoy un
+   incumplimiento, anotado abajo con su motivo y su pendiente: el chequeo no lo
+   tapa, lo deja a la vista y evita que entre uno nuevo.
 
    Qué NO mira, dicho de frente:
    - No sabe si la migración se aplicó. Un archivo acá describe lo que se quiso
@@ -43,6 +49,8 @@
      con la RLS encendida pasa igual.
    - Un importe se reconoce por el nombre de la columna. Una que se llame de otra
      manera no se detecta; hoy la única del esquema es `caregivers.hourly_rate`.
+   - De la clave primaria mira el tipo, no que sea una sola columna. Una clave
+     compuesta de dos `uuid` pasaría, y hoy no hay ninguna.
 =================================================== */
 
 import { readFileSync, readdirSync } from 'node:fs';
@@ -72,6 +80,8 @@ const PLATA = /(price|precio|rate|tarifa|monto|importe|honorario|cobro|salario|r
 const NUMERO = /\b(numeric|decimal|money|integer|bigint|real|double\s+precision|smallint)\b/i;
 const MONEDA = /(moneda|currency)/i;
 const NO_ES_COLUMNA = /^(primary|unique|constraint|foreign|check|--)/i;
+const CLAVE_APARTE =
+  /alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?"?public"?\."?([a-z_]+)"?[^;]*add\s+constraint[^;]*primary\s+key\s*\(\s*"?([a-z_]+)"?/gi;
 const AGREGA_ORGANIZACION =
   /alter\s+table\s+(?:if\s+exists\s+)?"?public"?\."?([a-z_]+)"?[^;]*add\s+column[^;]*\b(?:prestadora_id|tenant_id)\b/gi;
 
@@ -86,6 +96,54 @@ export function conOrganizacion(textos) {
       }
     }
     for (const m of t.matchAll(AGREGA_ORGANIZACION)) salida.add(m[1].toLowerCase());
+  }
+  return salida;
+}
+
+/** El tipo declarado de cada columna del cuerpo de un `create table`. */
+function tiposDeColumna(cuerpo) {
+  const salida = new Map();
+  for (const linea of cuerpo.split('\n')) {
+    const l = linea.trim().replace(/,$/, '');
+    if (!l || NO_ES_COLUMNA.test(l)) continue;
+    const partes = l.split(/\s+/);
+    salida.set(partes[0].replace(/"/g, '').toLowerCase(),
+      (partes[1] || '').replace(/"/g, '').replace(/\(.*/, '').toLowerCase());
+  }
+  return salida;
+}
+
+/**
+ * La clave primaria de cada tabla: `tabla → [columna, tipo]`. Se busca en las
+ * tres formas en que Postgres deja declararla, porque el esquema usa dos: al
+ * lado de la columna (`id uuid primary key`), como restricción del cuerpo
+ * (`primary key ("id")`) y en un `alter table` aparte, que es como salen las
+ * siete tablas de la 0001.
+ */
+export function clavesPrimarias(textos) {
+  const columna = new Map();
+  const tipos = new Map();
+  for (const texto of textos) {
+    const t = texto.replace(/\r\n/g, '\n');
+    for (const m of t.matchAll(TABLA)) {
+      const tabla = m[1].toLowerCase();
+      const cuerpo = entreParentesis(t, m.index);
+      tipos.set(tabla, tiposDeColumna(cuerpo));
+      for (const linea of cuerpo.split('\n')) {
+        const l = linea.trim();
+        if (!/primary\s+key/i.test(l)) continue;
+        const conParentesis = l.match(/primary\s+key\s*\(\s*"?([a-z_]+)"?/i);
+        const nombre = conParentesis ? conParentesis[1] : l.split(/\s+/)[0];
+        columna.set(tabla, nombre.replace(/"/g, '').toLowerCase());
+      }
+    }
+    for (const m of t.matchAll(CLAVE_APARTE)) {
+      columna.set(m[1].toLowerCase(), m[2].toLowerCase());
+    }
+  }
+  const salida = new Map();
+  for (const [tabla, nombre] of columna) {
+    salida.set(tabla, [nombre, (tipos.get(tabla) || new Map()).get(nombre) || '']);
   }
   return salida;
 }
@@ -112,12 +170,14 @@ const renglonDe = (texto, posicion) => texto.slice(0, posicion).split('\n').leng
 /**
  * Lo que incumple una migración. Devuelve `[renglón, qué pasa]` por cada cosa.
  * `conColumna` son las tablas que reciben su columna de Organización en alguna
- * migración, no necesariamente en ésta; sin ese dato se mira sólo este texto.
+ * migración, y `claves` las claves primarias de todas: ninguna de las dos cosas
+ * está obligada a estar en esta migración. Sin esos datos se mira sólo este texto.
  */
-export function fallasDeUnaMigracion(texto, conColumna) {
+export function fallasDeUnaMigracion(texto, conColumna, claves) {
   const t = texto.replace(/\r\n/g, '\n');
   const bajo = t.toLowerCase();
   const tienen = conColumna || conOrganizacion([t]);
+  const primarias = claves || clavesPrimarias([t]);
   const fallas = [];
 
   for (const m of t.matchAll(TABLA)) {
@@ -136,6 +196,17 @@ export function fallasDeUnaMigracion(texto, conColumna) {
     if (!tienen.has(tabla) && !SIN_ORGANIZACION.has(tabla)) {
       fallas.push([renglon,
         '`' + tabla + '` no tiene `prestadora_id` ni `tenant_id` en ninguna migración']);
+    }
+
+    /* 5. La clave primaria es un UUID, esté declarada donde esté. */
+    const clave = primarias.get(tabla);
+    if (!clave) {
+      fallas.push([renglon,
+        '`' + tabla + '` no declara clave primaria en ninguna migración']);
+    } else if (clave[1] !== 'uuid') {
+      fallas.push([renglon,
+        '`' + tabla + '.' + clave[0] + '` es la clave primaria y no es `uuid`: es `' +
+        (clave[1] || 'de un tipo que no se pudo leer') + '`']);
     }
 
     /* 4. La moneda del importe. */
@@ -191,6 +262,12 @@ const MAL = [
   ['un importe sin moneda',
    'create table if not exists public.visitas (\n  id uuid primary key,\n' +
    '  prestadora_id uuid not null,\n  precio_hora numeric not null\n);\n' + RLS],
+  ['una clave primaria que no es uuid',
+   'create table if not exists public.visitas (\n  id serial primary key,\n' +
+   '  prestadora_id uuid not null\n);\n' + RLS],
+  ['una tabla que no declara clave primaria en ningún lado',
+   'create table if not exists public.visitas (\n  id uuid not null,\n' +
+   '  prestadora_id uuid not null\n);\n' + RLS],
   ['una función SECURITY DEFINER que no revoca nada',
    'create function public.mirar() returns boolean language sql security definer as $$\n' +
    '  select true;\n$$;\n'],
@@ -212,6 +289,14 @@ const BIEN = [
   ['una columna numérica que no es un importe',
    'create table if not exists public.visitas (\n  id uuid primary key,\n' +
    '  prestadora_id uuid not null,\n  latitude double precision\n);\n' + RLS],
+  ['la clave primaria declarada en un `alter table` aparte, como en la 0001',
+   'create table if not exists public.visitas (\n  "id" uuid not null,\n' +
+   '  prestadora_id uuid not null\n);\n' +
+   'alter table only public.visitas add constraint visitas_pkey primary key ("id");\n' +
+   RLS],
+  ['la clave primaria escrita como restricción del cuerpo',
+   'create table if not exists public.visitas (\n  id uuid not null,\n' +
+   '  prestadora_id uuid not null,\n  primary key (id)\n);\n' + RLS],
   ['una función SECURITY DEFINER que le revoca a los dos',
    'create function public.mirar() returns boolean language sql security definer as $$\n' +
    '  select true;\n$$;\nrevoke all on function public.mirar() from public, anon;\n'],
@@ -247,6 +332,11 @@ const textos = migraciones.map((n) => readFileSync(join(carpeta, n), 'utf8'));
    por archivo se avisaría de tres que están bien. */
 const tienenColumna = conOrganizacion(textos);
 
+/* Lo mismo con la clave primaria: las siete tablas de la 0001 la declaran en un
+   `alter table` que está más abajo en el mismo archivo, y otra migración podría
+   declararla en otro. Se buscan todas antes de juzgar ninguna. */
+const primarias = clavesPrimarias(textos);
+
 for (const [i, nombre] of migraciones.entries()) {
   const texto = textos[i];
   tablas += [...texto.matchAll(TABLA)].length;
@@ -255,7 +345,8 @@ for (const [i, nombre] of migraciones.entries()) {
     if (/security\s+definer/i.test(
       texto.slice(m.index, fin > 0 ? fin : texto.length))) funciones++;
   }
-  for (const [renglon, motivo] of fallasDeUnaMigracion(texto, tienenColumna)) {
+  for (const [renglon, motivo] of
+    fallasDeUnaMigracion(texto, tienenColumna, primarias)) {
     fallas.push(`supabase/migrations/${nombre}:${renglon}  ${motivo}`);
   }
 }
@@ -265,17 +356,18 @@ if (fallas.length > 0) {
   for (const falla of fallas) console.error('  - ' + falla);
   console.error(
     `\n${fallas.length} ${fallas.length === 1 ? 'incumplimiento' : 'incumplimientos'}. ` +
-    'Las cuatro reglas están en el encabezado de este archivo, con el porqué de cada\n' +
+    'Las cinco reglas están en el encabezado de este archivo, con el porqué de cada\n' +
     'una. La RLS y la revocación van en la misma migración que crea la tabla o la\n' +
     'función, nunca en una posterior y nunca a mano desde el panel de Supabase; la\n' +
-    'columna de Organización y la moneda pueden llegar después, pero tienen que llegar.\n' +
+    'columna de Organización, la clave primaria y la moneda pueden llegar después,\n' +
+    'pero tienen que llegar, y la clave tiene que ser `uuid`.\n' +
     'Si un caso no puede cumplirla, va a SIN_ORGANIZACION o a SIN_MONEDA de este mismo\n' +
     'archivo, con el motivo escrito y el pendiente que lo sigue.');
   process.exit(1);
 }
 
 console.log(
-  `Esquema verificado: ${tablas} tablas con su RLS encendida donde se crean y con ` +
-  `columna de Organización, y ${funciones} funciones SECURITY DEFINER fuera del ` +
-  `alcance anónimo (${SIN_ORGANIZACION.size} tabla y ${SIN_MONEDA.size} importe ` +
-  'exentos, con su motivo).');
+  `Esquema verificado: ${tablas} tablas con su RLS encendida donde se crean, su ` +
+  `columna de Organización y clave primaria \`uuid\`, y ${funciones} funciones ` +
+  'SECURITY DEFINER fuera del alcance anónimo ' +
+  `(${SIN_ORGANIZACION.size} tabla y ${SIN_MONEDA.size} importe exentos, con su motivo).`);
