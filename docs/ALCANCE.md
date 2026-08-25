@@ -850,10 +850,11 @@ se acuerde.
 1. **La etiqueta del tipo dice «Asistente / Cuidador domiciliario»**, y esa barra hace que el término
    general parezca un tipo. Es una etiqueta de negocio, así que la decisión es suya: se deja como
    está hasta que diga otra cosa.
-2. **`docs/CAREONYS_PRESDEMO_Plan_Tecnico.md` conserva 88 apariciones de la palabra.** Quedó afuera
-   a propósito: el pendiente hablaba del texto visible y eso es un documento. Conviene decidir si
-   ese plan sigue vigente antes de corregirlo, porque corregir un documento vencido es trabajo
-   tirado.
+2. **El plan técnico heredado conservaba 106 apariciones de la palabra, y se resolvió borrándolo**
+   el 25 de agosto de 2026. Era la respuesta correcta a la pregunta que este punto dejaba abierta
+   —si ese plan seguía vigente—: su propia advertencia decía que la arquitectura estaba
+   descartada, así que corregirle el vocabulario a mil renglones vencidos era trabajo tirado. Lo
+   que servía está en `docs/TABLAS_QUE_FALTAN.md`, ya con el vocabulario del glosario.
 
 
 ### Los colores dejaron de estar escritos a mano
@@ -996,6 +997,53 @@ perfecto. No hay nada roto en las hojas de estilo: **el color que elige una Pres
 versión de noche**, y `js/apiClient.js` lo escribe encima de los tokens igual. Es el punto 2 de la
 lista de acá abajo, y de noche cuesta el doble.
 
+### El plan técnico heredado se borró, y lo que servía quedó en una página
+
+El 25 de agosto de 2026.
+
+**Qué había.** `docs/CAREONYS_PRESDEMO_Plan_Tecnico.md`, 1.545 renglones heredados de otro
+proyecto. Su propia advertencia decía que la arquitectura que proponía estaba descartada
+—monorepo, aplicación móvil con React Native, aplicación de Windows con Tauri, servidor propio— y
+que lo único vigente era el modelo de datos. Conservaba además **106 apariciones de «cuidador»**,
+la palabra que salió del resto del proyecto el día anterior, y estaba exento de dos chequeos por
+ser material heredado. Un documento vencido que nadie corrige no se queda quieto: se lo cita.
+
+**Qué se hizo antes de borrarlo.** Se midieron sus 22 tablas propuestas contra las 22 que
+existen de verdad en `supabase/migrations/`. Doce ya estaban construidas con otro nombre
+—`cuidadores` es `caregivers`, `avisos` es `care_searches`, `certificaciones` son tres tablas
+distintas—, y en esos casos **manda la migración, no el documento**. Diez no existían, y ese era
+todo el valor que quedaba: postulaciones, chat, videollamadas, reseñas, puntos, notificaciones,
+favoritos, pagos, moderación y configuración.
+
+**Dónde quedó.** En `docs/TABLAS_QUE_FALTAN.md`, una ficha por tabla: para qué sirve, qué columnas
+proponía el material heredado, de qué depende, **qué hay que decidir antes de escribirla**, y de
+qué lado del reparto de `docs/MODULOS.md` cae cada una —ocho son propias de la modalidad de
+contrataciones y dos son compartidas—. También se transcribió entero el sistema de puntos y
+niveles que proponía, porque es una decisión de producto pensada y perderla costaría volver a
+pensarla; queda anotado que **no está aprobada** y que `docs/ALCANCE.md` §4 la tiene congelada.
+
+**Lo que apareció al revisarlas una por una.** **Ninguna de las diez tenía `prestadora_id`.** El
+material fue escrito para una sola empresa, y la regla 10 del `CLAUDE.md` pide esa columna en toda
+tabla con datos propios de una Organización aunque hoy siempre valga lo mismo —es lo que hace que
+la fusión futura sea un update y no una migración—. Además: `postulaciones.tarifa_propuesta`
+guarda un número sin moneda (regla 11); los tipos de `notificaciones` incluyen `postulacion`, que
+es una palabra propia de esta modalidad y no puede aparecer en un módulo compartido (regla 12); y
+`video_llamadas` y `pagos` tienen columnas que atan el esquema a un proveedor externo que todavía
+no se eligió. Las cinco reglas que ninguna puede saltearse están al principio del documento nuevo.
+
+**Una colisión de vocabulario que quedó anotada.** El material heredado llamaba `avisos` a lo que
+publica una Familia, pero en este producto **un aviso es por dónde sale una notificación**
+—WhatsApp, correo, notificación al celular—, y `docs/GLOSARIO.md:36` avisa expresamente de esa
+colisión. En el documento nuevo se escribe **búsqueda de cuidado**, que es lo que ya guarda
+`care_searches`. El módulo se sigue llamando `avisos`, así que la palabra convive con los
+dos sentidos y alguna vez habrá que elegir. No se decidió nada: se dejó escrito.
+
+**Lo que se descartó y no se trajo.** La arquitectura entera, el sistema de diseño propuesto
+—superado por `css/tokens.css`, que existe y funciona—, seis proveedores externos elegidos de
+antemano para funciones que no se construyeron, el panel de administración de una aplicación que
+no existe, y el plan por fases en semanas. Nada de eso se archivó: se borró, y sigue en la
+historia de git para quien lo necesite.
+
 ### Las citas de la documentación vuelven a apuntar donde dicen
 
 El 25 de agosto de 2026.
@@ -1026,13 +1074,13 @@ etiqueta que cierra, el fin de un comentario o un renglón en blanco no son una 
 de una que se corrió. Se registra solo en `scripts/verificar_todo.mjs` y en el gancho de
 `git commit`, sin tocar ninguno de los dos.
 
-**Los cuatro documentos exentos, y por qué.** Un documento que es **una foto fechada** cita el
+**Los tres documentos exentos, y por qué.** Un documento que es **una foto fechada** cita el
 código de ese día a propósito, y corregirle los renglones sería falsear lo que decía.
 `docs/INVENTARIO.md` lo dice en su propio renglón 7; `docs/PLAN_ACCESO.md` y
 `docs/PLAN_PRESTADORA.md` son planes escritos antes de tocar código, y sus citas muestran los
-problemas que había ese día; `docs/CAREONYS_PRESDEMO_Plan_Tecnico.md` es material de diseño
-heredado. Los cuatro están en la lista `FOTOS` del chequeo, cada uno con su motivo escrito al
-lado —una exención sin motivo es una excepción que nadie va a poder revisar después—.
+problemas que había ese día. Los tres están en la lista `FOTOS` del chequeo, cada uno con su
+motivo escrito al lado —una exención sin motivo es una excepción que nadie va a poder revisar
+después—. Había un cuarto, el plan técnico heredado, y se borró el mismo día.
 
 **Lo que el chequeo no puede ver, dicho de frente.** Una cita que se corrió a otro renglón **con
 contenido** pasa igual: el guion no sabe de qué habla la frase. Se probó exigir que un

@@ -57,10 +57,7 @@ const FOTOS = new Map([
    'es el inventario y el plan previos a tocar código del 24 de agosto de 2026, y sus citas ' +
    'muestran los cinco problemas que había ese día — todos arreglados desde entonces'],
   ['docs/PLAN_PRESTADORA.md',
-   'es un plan a la espera de aprobación (pendiente 11): cita el código sobre el que se escribió'],
-  ['docs/CAREONYS_PRESDEMO_Plan_Tecnico.md',
-   'es material de diseño heredado; su propia advertencia dice que la arquitectura está ' +
-   'descartada y que el estado real lo cuenta docs/ALCANCE.md']
+   'es un plan a la espera de aprobación (pendiente 11): cita el código sobre el que se escribió']
 ]);
 
 /* Archivos que no viven en este repositorio y por eso no se pueden abrir. */

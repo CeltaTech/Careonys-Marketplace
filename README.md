@@ -72,7 +72,7 @@ Careonys-Marketplace/
 │   ├── INVENTARIO.md           ← anatomía del código actual
 │   ├── PENDIENTES.md           ← lo abierto, con condición de cierre
 │   ├── DISENO.md               ← equivalencias de estilo con Careonys
-│   ├── CAREONYS_PRESDEMO_Plan_Tecnico.md   ← material de diseño; arquitectura descartada
+│   ├── TABLAS_QUE_FALTAN.md     ← diseño de las diez tablas que aún no existen
 │   ├── modelo_de_negocios_*.md             ← material de diseño; decisión comercial abierta
 │   └── terminos_y_condiciones_*.md         ← borradores legales sin revisión de abogado
 ├── *.html                      ← las 12 pantallas del sitio, una por archivo

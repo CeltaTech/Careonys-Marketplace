@@ -136,12 +136,13 @@ Prestadora. Con datos ficticios sale gratis; con datos reales no se puede hacer 
 
 ## 4. Insumos para el diseño
 
-- **`CAREONYS_PRESDEMO_Plan_Tecnico.md` §4** tiene el modelo de datos más completo del proyecto,
-  en castellano: disponibilidad, certificaciones, referencias, avisos, postulaciones, chat,
-  videollamadas, reseñas, notificaciones, favoritos, pagos, moderación. Se usa como entrada, no
-  como plan: su arquitectura está descartada, y el propio archivo lo advierte en su encabezado.
-  Dos cuidados de vocabulario: `cuidadores` es **Asistente** en el glosario y `especialidades` es
-  **Tipo de Asistente**.
+- **`docs/TABLAS_QUE_FALTAN.md`** tiene el diseño de las diez tablas que aún no existen:
+  postulaciones, chat, videollamadas, reseñas, puntos, notificaciones, favoritos, pagos,
+  moderación y configuración. Salió del plan técnico heredado, que se borró el 25 de agosto de
+  2026 porque su arquitectura estaba descartada y sus otras doce tablas ya estaban construidas con
+  otro nombre. Se usa como entrada, no como plan: **nada de eso está aprobado**, y cada ficha dice
+  qué hay que decidir antes. Ya viene con el vocabulario del glosario y con las cinco reglas que
+  ninguna de esas tablas puede saltearse —empezando por `prestadora_id`, que ninguna tenía.
 - **`docs/INVENTARIO.md` §3** lista lo que el código realmente consulta hoy.
 - **El esquema de Careonys** es la referencia de vocabulario para todo concepto que exista allá.
 
