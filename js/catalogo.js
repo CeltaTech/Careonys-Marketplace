@@ -153,6 +153,32 @@
       return item ? this.texto(item) : (valor || '');
     },
 
+    // La misma traducción para cuando ya no se puede esperar —se está dibujando
+    // una tarjeta— y además sin quejarse si la clave no está en ese vocabulario:
+    // devuelve la cadena vacía. Eso último es lo que necesita quien busca la
+    // misma clave en varias listas, que es el caso de abajo.
+    etiquetaSiExiste(vocabulario, clave) {
+      if (!catalogo || !catalogo[vocabulario] || !clave) return '';
+      const item = (catalogo[vocabulario].items || []).filter((i) => i.clave === clave)[0];
+      return item ? this.texto(item) : '';
+    },
+
+    // Una fila de la base trae las tareas en una sola lista, pero el catálogo
+    // las tiene repartidas en tres vocabularios —cuidado, hogar y
+    // acompañamiento—, así que se busca en los tres, en orden. Si no aparece en
+    // ninguno se devuelve la clave tal cual: es preferible a dejar el hueco.
+    //
+    // Vivía escrita adentro de `directorio.html`. Subió acá cuando `perfil.html`
+    // necesitó lo mismo, para no tener la traducción dos veces (regla 7).
+    etiquetaDeTarea(clave) {
+      const donde = ['tarea_cuidado', 'tarea_hogar', 'tarea_acompanamiento'];
+      for (let i = 0; i < donde.length; i++) {
+        const texto = this.etiquetaSiExiste(donde[i], clave);
+        if (texto) return texto;
+      }
+      return clave || '';
+    },
+
     // ── La oferta: servicios y cursos ────────────────────────────────────
     // No son listas de opciones sino tarjetas, así que la pantalla declara el
     // molde —un `<template>`— y acá se rellena uno por cada cosa del catálogo.

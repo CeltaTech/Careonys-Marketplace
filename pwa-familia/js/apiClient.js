@@ -401,6 +401,37 @@ const ClienteDatos = {
     });
   },
 
+  // Una sola persona del directorio, por su identificador. Va a la misma vista
+  // pública que la lista —`caregivers_publicos`— y nunca a la tabla: así una
+  // dirección escrita a mano no puede mostrar a alguien que no autorizó
+  // publicarse, ni un dato que la vista no devuelve.
+  //
+  // Filtra también por Prestadora, por el mismo motivo que `listarDirectorio()`:
+  // sin eso, el enlace de una empresa mostraría a alguien de otra.
+  //
+  // Devuelve `null` cuando no hay nadie con ese identificador. La pantalla lo
+  // trata como «este perfil no está disponible», que es distinto de una falla.
+  async traerDelDirectorio(id) {
+    // Un identificador que no tiene forma de UUID no es de nadie, y se contesta
+    // sin preguntarle a la base: ella devolvería un error de sintaxis, y un
+    // error en pantalla se lee como que el sistema se rompió en vez de como un
+    // enlace viejo. Los hay: hasta el 25 de agosto de 2026 esta pantalla se
+    // abría con `?id=1`.
+    const FORMA_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!id || !FORMA_UUID.test(String(id))) return null;
+
+    const prestadora = this.currentTenant || await this.initTenant();
+    if (!prestadora || !prestadora.id) throw new Error('SIN_PRESTADORA');
+    if (this.slugPedido && this.prestadoraEsDeRespaldo) throw new Error('PRESTADORA_DESCONOCIDA');
+
+    const filas = await this._supabaseRequest('GET', 'caregivers_publicos', null, {
+      id: `eq.${id}`,
+      tenant_id: `eq.${prestadora.id}`,
+      limit: '1'
+    });
+    return (filas && filas[0]) || null;
+  },
+
   // La foto del directorio vive en el depósito público `avatares`, y la vista
   // devuelve el camino adentro del depósito y nunca una dirección firmada: las
   // firmadas vencen, y guardar una es guardar algo que deja de funcionar.

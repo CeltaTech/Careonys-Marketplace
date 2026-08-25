@@ -44,6 +44,18 @@
 =================================================== */
 
 const Texto = {
+  /**
+   * Un importe en pesos, con el punto de mil que se usa acá: 3500 → «$3.500».
+   * Sin el número —o con algo que no lo sea— devuelve la cadena vacía, para que
+   * la pantalla pueda decidir no mostrar nada en vez de mostrar «$NaN».
+   */
+  importe(valor) {
+    if (valor === null || valor === undefined || valor === '') return '';
+    const numero = Number(valor);
+    if (!isFinite(numero)) return '';
+    return '$' + new Intl.NumberFormat('es-AR').format(numero);
+  },
+
   /** Devuelve el valor listo para entrar en HTML sin correr como HTML. */
   escapar(valor) {
     if (valor === null || valor === undefined) return '';

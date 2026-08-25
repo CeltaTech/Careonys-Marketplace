@@ -1200,23 +1200,6 @@ ul {
   margin-bottom: 4px;
 }
 
-.stars {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.stars .star {
-  color: var(--naranja-alerta-texto);
-  font-size: 14px;
-}
-
-.stars .pts {
-  font-size: 12px;
-  color: var(--texto-secundario);
-  margin-left: 4px;
-}
-
 .card-badge {
   display: flex;
   align-items: center;
@@ -1329,20 +1312,6 @@ ul {
   margin-bottom: 12px;
 }
 
-.profile-badge-level {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--velo-sobre-color);
-  color: var(--texto-sobre-color);
-  padding: 6px 16px;
-  border-radius: 50px;
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
 .profile-info {
   flex: 1;
 }
@@ -1360,32 +1329,32 @@ ul {
   margin-bottom: 12px;
 }
 
-.profile-stars {
-  margin-bottom: 16px;
-}
-
-.profile-stars .stars .star {
+/* El precio por hora, sobre el fondo oscuro del encabezado. La tarjeta del
+   directorio tiene el suyo —`.card-precio`— y va sobre fondo claro: el mismo
+   dato, dos fondos, dos colores. */
+.perfil-precio {
   font-size: 20px;
+  font-weight: 800;
+  color: var(--texto-sobre-color);
+  margin-bottom: 12px;
 }
 
-.profile-stars .pts {
-  font-size: 14px;
+.perfil-precio .perfil-precio-unidad {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--texto-sobre-color-tenue);
 }
 
-.profile-tags {
+/* Cuando no cargó foto se muestra la inicial del nombre, igual que en la
+   tarjeta del directorio, pero del tamaño del encabezado. */
+.perfil-avatar-inicial {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.profile-tag {
+  align-items: center;
+  justify-content: center;
   background: var(--velo-sobre-color);
   color: var(--texto-sobre-color);
-  padding: 4px 14px;
-  border-radius: 50px;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 56px;
+  font-weight: 700;
 }
 
 .profile-urgent {
@@ -1396,39 +1365,6 @@ ul {
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 12px;
-}
-
-.profile-schedule {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.profile-retiro {
-  background: var(--velo-sobre-color);
-  color: var(--texto-sobre-color-tenue);
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.profile-days {
-  display: flex;
-  gap: 6px;
-}
-
-.profile-day {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--azul-oscuro);
-  color: var(--texto-sobre-color);
-  font-size: 11px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .profile-content {
@@ -1489,64 +1425,18 @@ ul {
   font-weight: 700;
 }
 
-.cert-list {
+/* Los botones de la ficha de contacto, uno abajo del otro y ocupando el ancho.
+   Se llamaba `.profile-actions` y estaba pegada arriba mientras se bajaba por la
+   pantalla; se quedó quieta cuando dejó de ser una columna de acciones sueltas y
+   pasó a vivir adentro de una ficha. */
+.profile-acciones {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: 16px;
 }
 
-.cert-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  color: var(--texto-secundario);
-}
-
-.cert-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--tono-exito-fondo);
-  color: var(--tono-exito-texto);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  flex-shrink: 0;
-}
-
-.level-bar {
-  background: var(--superficie-hover);
-  border-radius: 8px;
-  padding: 16px;
-  text-align: center;
-  margin-bottom: 16px;
-}
-
-.level-label {
-  font-size: 14px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--texto-titulo);
-  margin-bottom: 4px;
-}
-
-.level-sublabel {
-  font-size: 12px;
-  color: var(--texto-secundario);
-}
-
-.profile-actions {
-  position: sticky;
-  top: 80px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.profile-actions .btn {
+.profile-acciones .btn {
   width: 100%;
   justify-content: center;
 }
@@ -1603,22 +1493,10 @@ ul {
     grid-template-columns: 1fr;
   }
 
-  .profile-actions {
-    position: static;
-  }
-
   .profile-layout {
     flex-direction: column;
     align-items: center;
     text-align: center;
-  }
-
-  .profile-tags {
-    justify-content: center;
-  }
-
-  .profile-schedule {
-    justify-content: center;
   }
 
   .feature-layout {
@@ -2046,55 +1924,10 @@ ul {
   border: 1px solid var(--tono-atencion-fondo);
 }
 
-/* Grilla Semanal 7x3 (Mañana, Tarde, Noche) */
-.schedule-grid-7x3 {
-  display: grid;
-  grid-template-columns: 80px repeat(7, 1fr);
-  gap: 4px;
-  background: var(--superficie-hundida);
-  border: 1px solid var(--borde-card);
-  border-radius: 12px;
-  padding: 12px;
-  margin-top: 12px;
-  font-size: 11px;
-}
-
-.grid-cell-header {
-  font-weight: 700;
-  text-align: center;
-  color: var(--texto-titulo);
-  padding: 6px 2px;
-  background: var(--superficie);
-  border-radius: 6px;
-}
-
-.grid-cell-time {
-  font-weight: 700;
-  color: var(--texto-secundario);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--superficie-hundida);
-  border-radius: 6px;
-  font-size: 10px;
-}
-
-.grid-cell-slot {
-  background: var(--borde-card);
-  border-radius: 6px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--texto-secundario);
-  font-size: 10px;
-}
-
-.grid-cell-slot.active {
-  background: var(--tono-exito-fondo);
-  color: var(--tono-exito-texto);
-  font-weight: 800;
-}
+/* La grilla semanal de 7x3 vivía acá y la usaba una sola pantalla: `perfil.html`,
+   con los casilleros marcados a mano. Se fue con ella el 25 de agosto de 2026. La
+   disponibilidad de verdad se carga y se muestra en las aplicaciones de teléfono,
+   que tienen la suya en `pwa-asistente/css/styles-pwa.css`. */
 
 /* =====================================================
    COMPONENTES — CURSOS (cursos.html)

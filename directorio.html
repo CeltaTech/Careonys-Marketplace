@@ -11,7 +11,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>Red de Asistentes — PresDemo</title>
   <meta name="description"
-    content="Encuentre al cuidador ideal para su familiar. Filtre por zona, patología y disponibilidad entre cientos de cuidadores calificados." />
+    content="Encuentre al Asistente indicado para su familiar. Filtre por zona, patología y disponibilidad entre los Asistentes con legajo validado por la Prestadora." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
@@ -156,7 +156,7 @@
           <img src="assets/images/logo_presdemo.png" alt="PresDemo" />
           <span>PresDemo — Servicios de Cuidado</span>
         </div>
-        <p>Conectamos familias con cuidadores calificados.</p>
+        <p>Conectamos familias con Asistentes calificados.</p>
         <div class="footer-social">
           <a href="#"><i class="fab fa-facebook-f"></i></a>
           <a href="#"><i class="fab fa-instagram"></i></a>
@@ -173,7 +173,7 @@
         <a href="cursos.html">Cursos</a>
       </div>
       <div class="footer-col">
-        <h4>Para Cuidadores</h4>
+        <h4>Para Asistentes</h4>
         <a href="postulacion-asistente.html">Postularme como Asistente</a>
         <a href="postulacion-asistente.html#registro">Registrarme</a>
       </div>
@@ -230,32 +230,19 @@
         cuenta.style.display = (cual === 'listo') ? '' : 'none';
       }
 
-      // Una fila puede traer tareas de cualquiera de las tres listas, y son tres
-      // vocabularios distintos. Se busca en los tres, en orden.
-      const VOCABULARIOS_DE_TAREA = ['tarea_cuidado', 'tarea_hogar', 'tarea_acompanamiento'];
-
-      function etiquetaDe(vocabulario, clave) {
-        const item = Catalogo.items(vocabulario).filter((i) => i.clave === clave)[0];
-        return item ? Catalogo.texto(item) : '';
-      }
-
-      function etiquetaDeTarea(clave) {
-        for (let i = 0; i < VOCABULARIOS_DE_TAREA.length; i++) {
-          const texto = etiquetaDe(VOCABULARIOS_DE_TAREA[i], clave);
-          if (texto) return texto;
-        }
-        return clave;
-      }
-
-      const precioArgentino = new Intl.NumberFormat('es-AR');
+      // Traducir una clave guardada al texto que se lee, y buscar una tarea en
+      // los tres vocabularios que las tienen repartidas, lo hace el catálogo
+      // desde el 25 de agosto de 2026. Estaba escrito acá y `perfil.html`
+      // necesitaba lo mismo: dos copias de la misma traducción es exactamente
+      // lo que la regla 7 no quiere.
 
       function dibujarTarjeta(fila) {
         const nodo = molde.content.cloneNode(true);
         const parte = (nombre) => nodo.querySelector('[data-parte="' + nombre + '"]');
         const tarjeta = nodo.querySelector('.caregiver-card');
 
-        const tipo = fila.profession ? etiquetaDe('tipo_asistente', fila.profession) : '';
-        const zona = fila.zone ? etiquetaDe('zona', fila.zone) : '';
+        const tipo = Catalogo.etiquetaSiExiste('tipo_asistente', fila.profession);
+        const zona = Catalogo.etiquetaSiExiste('zona', fila.zone);
         const patologias = fila.pathologies || [];
         const tareas = fila.tasks || [];
 
@@ -282,7 +269,7 @@
 
         if (fila.hourly_rate) {
           const precio = parte('precio');
-          precio.textContent = '$' + precioArgentino.format(fila.hourly_rate) + ' ';
+          precio.textContent = Texto.importe(fila.hourly_rate) + ' ';
           const unidad = document.createElement('span');
           unidad.className = 'card-precio-unidad';
           unidad.textContent = 'por hora';
@@ -292,8 +279,8 @@
         }
 
         const etiquetas = parte('etiquetas');
-        patologias.map((c) => etiquetaDe('patologia', c) || c)
-          .concat(tareas.map(etiquetaDeTarea))
+        patologias.map((c) => Catalogo.etiquetaSiExiste('patologia', c) || c)
+          .concat(tareas.map((c) => Catalogo.etiquetaDeTarea(c)))
           .forEach((texto) => {
             const marca = document.createElement('span');
             marca.className = 'specialty-tag';

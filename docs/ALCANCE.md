@@ -682,6 +682,52 @@ entero. Lo que se sube es el guion; la configuración que lo llama vive sólo en
 que en otra hay que volver a escribirla.
 
 
+### El perfil muestra a la persona que dice la dirección, y nada más que eso
+
+Cierra el pendiente 44, el 25 de agosto de 2026.
+
+`perfil.html` tenía ocho personas escritas adentro, numeradas del 1 al 8. Ahora lee de la base la
+persona cuyo identificador viene en la dirección, y dibuja seis datos: nombre, foto, zona, qué
+atiende, precio por hora y si acepta reemplazos urgentes. Son exactamente los que devuelve
+`caregivers_publicos`, la vista que sólo deja pasar a quien tiene el legajo validado por la
+Prestadora **y** además autorizó que se lo publique.
+
+- **Lo trae `traerDelDirectorio` (`js/apiClient.js:414`)**, que pide una sola fila filtrando por
+  identificador y por Prestadora. Un identificador que no tiene forma de identificador se contesta
+  sin preguntarle a la base: la base devolvería un error de sintaxis, y un error en pantalla se lee
+  como que el sistema se rompió, cuando lo que hay es un enlace viejo. Los hay: hasta el 25 de
+  agosto de 2026 esta pantalla se abría con `?id=1`.
+- **El filtro por Prestadora se puede desmentir, y se intentó.** La vista devuelve hoy 7 personas
+  publicadas, repartidas entre las dos Prestadoras ficticias. Pidiendo desde el enlace de PresDemo
+  el identificador de una persona de la otra Prestadora, la pantalla no la muestra: queda vacía. Sin
+  ese filtro aparecería, que es exactamente la falla que se estaba buscando.
+- **Los cuatro estados están** (`perfil.html:68`, `:72`, `:81` y `:91`): cargando, error con
+  «Reintentar», vacío —«Este perfil no está disponible», con el porqué y la vuelta al directorio— y
+  listo. Los cuatro se probaron contra el servidor de verdad, el de error cortándole la dirección al
+  cliente de datos.
+- **Nada se pinta de adorno.** Una persona marcada para reemplazos urgentes muestra ese aviso y otra
+  que no lo está no lo muestra. Quien no cargó foto muestra la inicial de su nombre.
+
+**Lo que se sacó y por qué.** Estrellas, puntaje, nivel «CUIDADOR ORO», certificaciones, referencias,
+estudios, descripción y una grilla de días marcada a mano. Ninguno de esos datos existe en la base;
+lo único que sí existiría —lo que se le controló al legajo— es el pendiente 43 y todavía no está
+decidido. Con ellos se fueron seis bloques de `css/styles.css` que ya no vestían a nadie, comprobado
+uno por uno con `grep` antes de borrarlos.
+
+**También se fue el formulario de contacto**, que contestaba «¡Mensaje enviado!» sin mandar nada. Acá
+no hacía falta preguntar: el consentimiento que la persona firma ya dice que sólo las Familias
+registradas pueden comunicarse con ella, y que lo hacen por la plataforma
+(`data/catalogo-autorizaciones.json`, `perfil_publicado`). En su lugar la pantalla explica eso mismo
+(`perfil.html:136`) y ofrece las dos puertas que sí existen: entrar como Familia y publicar un aviso.
+Lo que falta —empezar una conversación con esa persona en particular— quedó anotado como pendiente 46.
+
+**Tres traducciones que estaban por escribirse dos veces subieron a los archivos compartidos**
+(regla 7): el precio en pesos es `Texto.importe` (`js/texto.js:52`), la etiqueta de una lista es
+`Catalogo.etiquetaSiExiste` (`js/catalogo.js:160`), y la de una tarea —que puede estar en cualquiera
+de tres listas— es `Catalogo.etiquetaDeTarea` (`js/catalogo.js:173`). Vivían adentro de
+`directorio.html`; ahora las dos pantallas las piden al mismo lugar.
+
+
 ### El directorio muestra a gente que existe en la base, y sólo la de una Prestadora
 
 Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están hechas.

@@ -9,9 +9,9 @@
        data/catalogo-autorizaciones.json—. Si el perfil se indexara, la Familia llegaría
        al Asistente sin pasar por la plataforma. -->
   <meta name="robots" content="noindex, nofollow" />
-  <title id="page-title">Perfil de Asistente — PresDemo</title>
+  <title>Perfil de Asistente — PresDemo</title>
   <meta name="description"
-    content="El perfil completo del cuidador, sus certificaciones, patologías que atiende y disponibilidad." />
+    content="El perfil de un Asistente publicado en la Red: su zona, qué patologías atiende, qué tareas hace y su precio por hora." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
@@ -62,621 +62,277 @@
     </div>
   </div>
 
-  <!-- Cuando el enlace nombra a alguien que esta pantalla todavía no sabe mostrar.
-       El directorio ya trae gente de la base; acá siguen las ocho personas de
-       ejemplo escritas adentro, numeradas del 1 al 8 (pendiente 44). -->
-  <div class="directorio-estado" id="perfil-sin-datos" style="display:none;">
-    <p><strong>Esta pantalla todavía muestra un perfil de ejemplo.</strong></p>
+  <!-- Los cuatro estados de la regla 5.3. Esta pantalla no tenía ninguno porque no
+       esperaba a nadie: traía ocho personas escritas acá adentro, numeradas del 1 al 8,
+       con su puntaje, su nivel, sus certificaciones y una grilla de días ya marcada. -->
+  <div class="directorio-estado" id="perfil-cargando">
+    <i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> Cargando el perfil...
+  </div>
+
+  <div class="directorio-estado" id="perfil-error" style="display:none;">
+    <p id="perfil-error-texto"></p>
+    <p style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <button type="button" class="btn btn-secundario" id="perfil-reintentar">Reintentar</button>
+      <a class="btn btn-sobre-oscuro" href="directorio.html"
+        style="border-color:var(--borde-card);color:var(--texto-secundario);">Volver al directorio</a>
+    </p>
+  </div>
+
+  <div class="directorio-estado" id="perfil-vacio" style="display:none;">
+    <p><strong>Este perfil no está disponible.</strong></p>
     <p class="directorio-estado-bajada">
-      El directorio ya trae Asistentes de la base, pero el perfil de cada uno está sin construir:
-      lo que se ve acá son datos inventados para mostrar el diseño. Se prefiere decirlo antes que
-      mostrar a otra persona.
+      Un Asistente se ve acá cuando su Prestadora validó el legajo y esa persona autorizó a publicar
+      su perfil. Las dos cosas, no una. Puede que el enlace haya quedado viejo, o que quien figuraba
+      haya dejado de publicarse.
     </p>
     <p style="margin-top:16px;"><a class="btn btn-primario" href="directorio.html">Volver al directorio</a></p>
   </div>
 
-  <!-- PROFILE HERO -->
-  <section class="profile-hero">
-    <div class="profile-layout container">
-      <div class="profile-avatar-wrap">
-        <img id="profile-photo" src="assets/images/perfil_marisa.png" class="profile-avatar" alt="Foto de perfil" />
-        <div class="profile-badge-level" id="profile-level">
-          <i class="fas fa-award"></i> CUIDADOR ORO
+  <div id="perfil-listo" style="display:none;">
+
+    <!-- PERFIL -->
+    <section class="profile-hero">
+      <div class="profile-layout container">
+        <div class="profile-avatar-wrap">
+          <img class="profile-avatar" id="perfil-foto" alt="" />
+          <div class="profile-avatar perfil-avatar-inicial" id="perfil-inicial" aria-hidden="true"></div>
         </div>
-      </div>
-      <div class="profile-info">
-        <h1 id="profile-name">Cargando...</h1>
-        <p class="sub" id="profile-sub">— años | —</p>
-        <div class="profile-stars">
-          <div class="stars" id="profile-stars">
-            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span
-              class="star">★</span><span class="star">★</span>
-            <span class="pts" id="profile-pts">(— ptos)</span>
+        <div class="profile-info">
+          <h1 id="perfil-nombre"></h1>
+          <p class="sub" id="perfil-tipo-y-zona"></p>
+          <p class="perfil-precio" id="perfil-precio"></p>
+          <div class="profile-urgent" id="perfil-urgencias" style="display:none;">
+            <i class="fas fa-clock" aria-hidden="true"></i> Disponible para reemplazos urgentes
+          </div>
+          <div>
+            <span class="insignia-validada"
+              title="La Prestadora auditó y validó el legajo bajo su exclusiva responsabilidad"><i
+                class="fas fa-user-check" aria-hidden="true"></i> Legajo validado por la Prestadora</span>
           </div>
         </div>
-        <div class="profile-tags" id="profile-roles"></div>
-        <div class="profile-urgent" id="profile-urgent" style="display:none;">
-          <i class="fas fa-clock"></i> Disponible para Reemplazo Urgente
+      </div>
+    </section>
+
+    <div class="profile-content">
+      <div class="profile-grid">
+
+        <div>
+          <div class="profile-section fade-in">
+            <h3>Qué atiende</h3>
+            <div class="spec-list" id="perfil-etiquetas"></div>
+            <p id="perfil-sin-etiquetas" style="display:none;">
+              Todavía no cargó qué patologías atiende ni qué tareas hace.
+            </p>
+          </div>
         </div>
-        <div class="profile-schedule">
-          <div class="profile-retiro" id="profile-retiro">Con/Sin Retiro</div>
-          <div class="profile-days" id="profile-days"></div>
+
+        <div>
+          <!-- El contacto no se dibuja como un formulario que anda. Acá había uno que
+               contestaba «¡Mensaje enviado!» sin mandar nada a ninguna parte, y esa
+               respuesta era falsa dos veces: no se enviaba, y aunque se enviara el
+               consentimiento de publicación promete que sólo las Familias registradas
+               pueden comunicarse (data/catalogo-autorizaciones.json). -->
+          <div class="profile-section fade-in" id="contactar">
+            <h3>Contactar</h3>
+            <p>
+              El contacto va por la plataforma. Es lo que se le promete a quien publica su perfil, y
+              por eso acá no se muestran ni su teléfono, ni su correo, ni su domicilio. Para
+              escribirle hay que entrar como Familia.
+            </p>
+            <div class="profile-acciones">
+              <a class="btn btn-primario" href="acceso.html">Entrar como Familia</a>
+              <a class="btn btn-sobre-oscuro" href="solicitar-asistente.html"
+                style="border-color:var(--borde-card);color:var(--texto-secundario);">Publicar un aviso</a>
+            </div>
+          </div>
         </div>
+
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- PROFILE CONTENT -->
-  <div class="profile-content">
-    <div class="profile-grid">
+  <!-- CTA BANNER -->
+  <div class="cta-banner">
+    <a href="directorio.html" class="btn btn-atencion">VER MÁS ASISTENTES</a>
+  </div>
 
-      <!-- LEFT COLUMN: Info -->
-      <div>
-
-        <div class="profile-section fade-in">
-          <h3>Sobre mí</h3>
-          <p id="profile-description">Cargando descripción...</p>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="logo">
+          <img src="assets/images/logo_presdemo.png" alt="PresDemo" />
+          <span>PresDemo — Servicios de Cuidado</span>
         </div>
-
-        <div class="profile-section fade-in">
-          <h3>Patologías y tareas</h3>
-          <div class="spec-list" id="profile-specialties"></div>
-        </div>
-
-        <div class="profile-section fade-in">
-          <h3>Profesión y formación</h3>
-          <div id="profile-profession" style="font-size:14px;color:var(--texto-secundario);line-height:1.8;"></div>
-        </div>
-
-        <div class="profile-section fade-in">
-          <h3>Disponibilidad y horarios (Grilla 7x3)</h3>
-          <div id="profile-schedule-detail"
-            style="font-size:14px;color:var(--texto-secundario);line-height:1.8;margin-bottom:12px;"></div>
-
-          <!-- GRILLA SEMANAL 7x3 — Disponibilidad Horaria del Asistente -->
-          <div class="schedule-grid-7x3">
-            <div class="grid-cell-header">Turno</div>
-            <div class="grid-cell-header">Lun</div>
-            <div class="grid-cell-header">Mar</div>
-            <div class="grid-cell-header">Mié</div>
-            <div class="grid-cell-header">Jue</div>
-            <div class="grid-cell-header">Vie</div>
-            <div class="grid-cell-header">Sáb</div>
-            <div class="grid-cell-header">Dom</div>
-
-            <!-- FILA 1: MAÑANA (06:00 a 14:00) -->
-            <div class="grid-cell-time">Mañana<br />(6 a 14)</div>
-            <div class="grid-cell-slot active">✓</div>
-            <div class="grid-cell-slot active">✓</div>
-            <div class="grid-cell-slot active">✓</div>
-            <div class="grid-cell-slot active">✓</div>
-            <div class="grid-cell-slot active">✓</div>
-            <div class="grid-cell-slot">—</div>
-            <div class="grid-cell-slot">—</div>
-
-            <!-- FILA 2: TARDE (14:00 a 22:00) -->
-            <div class="grid-cell-time">Tarde<br />(14 a 22)</div>
-            <div class="grid-cell-slot active">✓</div>
-            <div class="grid-cell-slot active">✓</div>
-            <div class="grid-cell-slot active">✓</div>
-            <div class="grid-cell-slot active">✓</div>
-            <div class="grid-cell-slot active">✓</div>
-            <div class="grid-cell-slot active">✓</div>
-            <div class="grid-cell-slot">—</div>
-
-            <!-- FILA 3: NOCHE (22:00 a 06:00) -->
-            <div class="grid-cell-time">Noche<br />(22 a 6)</div>
-            <div class="grid-cell-slot">—</div>
-            <div class="grid-cell-slot">—</div>
-            <div class="grid-cell-slot">—</div>
-            <div class="grid-cell-slot">—</div>
-            <div class="grid-cell-slot active">✓</div>
-            <div class="grid-cell-slot active">✓</div>
-            <div class="grid-cell-slot active">✓</div>
-          </div>
-        </div>
-
-        <div class="profile-section fade-in">
-          <h3>Referencias y experiencia</h3>
-          <div id="profile-references" style="font-size:14px;color:var(--texto-secundario);line-height:1.8;"></div>
-        </div>
-
-      </div><!-- /left column -->
-
-      <!-- RIGHT COLUMN: Actions & Certifications -->
-      <div>
-
-        <div class="profile-actions fade-in" id="contactar">
-          <a href="#contact-form" class="btn btn-primario"><i class="fas fa-comment" style="margin-right:8px;"></i>
-            Chat</a>
-          <a href="#contact-form" class="btn btn-atencion" style="color:var(--texto-principal);"><i class="fas fa-video"
-              style="margin-right:8px;"></i> Video Conferencia</a>
-          <a href="#" class="btn btn-sobre-oscuro" style="border-color:var(--borde-card);color:var(--texto-secundario);"><i
-              class="far fa-heart" style="margin-right:8px;"></i> Guardar en favoritos</a>
-        </div>
-
-        <div class="profile-section fade-in" style="margin-top:20px;">
-          <h3>Nivel de calificación</h3>
-          <div class="level-bar">
-            <div class="level-label" id="profile-level-bar">ORO</div>
-            <div
-              style="background:linear-gradient(to right, var(--verde-exito), var(--naranja-alerta), var(--azul-medio));height:6px;border-radius:3px;margin:8px 0;">
-            </div>
-            <div class="level-sublabel">Legajo completamente verificado</div>
-          </div>
-          <div class="cert-list" id="profile-certifications"></div>
-        </div>
-
-        <div class="profile-section fade-in">
-          <h3>Características del cuidado</h3>
-          <div id="profile-care-chars" style="font-size:14px;color:var(--texto-secundario);line-height:2.0;"></div>
-        </div>
-
-      </div><!-- /right column -->
-
-      <!-- MÓDULO DE BITÁCORA DIGITAL & HISTORIA CLINICA SIMULADA -->
-      <div class="profile-section fade-in"
-        style="margin-top:24px;background: var(--superficie);border:1px solid var(--borde-card);border-radius:var(--redondeo-grande);padding:24px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-          <h3 style="margin:0;font-size:18px;font-weight:800;color:var(--texto-titulo);"><i class="fas fa-heartbeat"
-              style="color:var(--azul-medio-texto);"></i> Módulo de Registro & Bitácora Digital de Salud</h3>
-          <span
-            style="background:#e8f5e9;color:#2e7d32;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;"><i
-              class="fas fa-satellite-dish"></i> Monitoreo en Tiempo Real</span>
-        </div>
-        <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:20px;">Reportes diarios que este asistente registra
-          desde la app para el seguimiento de la familia:</p>
-
-        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px;">
-          <div style="background:#f8fafc;border:1px solid #e2e8f0;padding:16px;border-radius:10px;text-align:center;">
-            <i class="fas fa-stethoscope" style="font-size:24px;color:var(--azul-medio-texto);margin-bottom:8px;"></i>
-            <div style="font-size:12px;font-weight:700;color:var(--texto-principal);">Signos Vitales</div>
-            <div style="font-size:11px;color:var(--texto-secundario);margin-top:4px;">Presión, Pulso, Glucemia y Temperatura
-            </div>
-          </div>
-          <div style="background:#f8fafc;border:1px solid #e2e8f0;padding:16px;border-radius:10px;text-align:center;">
-            <i class="fas fa-pills" style="font-size:24px;color:#0284c7;margin-bottom:8px;"></i>
-            <div style="font-size:12px;font-weight:700;color:var(--texto-principal);">Control de Dosis</div>
-            <div style="font-size:11px;color:var(--texto-secundario);margin-top:4px;">Alertas & Foto de Medicación</div>
-          </div>
-          <div style="background:#f8fafc;border:1px solid #e2e8f0;padding:16px;border-radius:10px;text-align:center;">
-            <i class="fas fa-map-marker-alt" style="font-size:24px;color:#16a34a;margin-bottom:8px;"></i>
-            <div style="font-size:12px;font-weight:700;color:var(--texto-principal);">Asistencia GPS</div>
-            <div style="font-size:11px;color:var(--texto-secundario);margin-top:4px;">Check-in / Check-out Validado</div>
-          </div>
+        <p>Conectamos familias con Asistentes calificados.</p>
+        <div class="footer-social">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+          <a href="mailto:{{contacto}}"><i class="fas fa-envelope"></i></a>
         </div>
       </div>
-
-      <!-- MINI CONTACT FORM -->
-      <div class="profile-section fade-in" id="contact-form" style="margin-top:20px;">
-        <h3>Contactar a <span id="contact-name">la cuidadora</span></h3>
-        <p style="font-size:14px;color:var(--texto-secundario);margin-bottom:20px;">Envíe un mensaje o solicite una video
-          entrevista.</p>
-        <form id="profile-contact-form" novalidate>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="form-two-col">
-            <div class="form-group">
-              <label for="pc-nombre">Nombre</label>
-              <input type="text" id="pc-nombre" required />
-            </div>
-            <div class="form-group">
-              <label for="pc-email">Correo electrónico</label>
-              <input type="email" id="pc-email" required />
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="pc-mensaje">Mensaje</label>
-            <textarea id="pc-mensaje" rows="4" required
-              placeholder="Cuéntenos brevemente qué tipo de cuidado necesita..."></textarea>
-          </div>
-          <div style="display:flex;gap:12px;flex-wrap:wrap;">
-            <button type="submit" class="btn btn-primario">Enviar mensaje</button>
-            <a href="directorio.html" class="btn btn-sobre-oscuro"
-              style="border-color:var(--borde-card);color:var(--texto-secundario);">← Volver al directorio</a>
-          </div>
-          <div id="profile-form-success" class="form-success" style="margin-top:12px;">✓ ¡Mensaje enviado! Recibirá una
-            respuesta a la brevedad.</div>
-        </form>
+      <div class="footer-col">
+        <h4>Para Familias</h4>
+        <a href="solicitar-asistente.html">Solicitar Asistente</a>
+        <a href="directorio.html">Directorio</a>
+        <a href="soporte-remoto.html">Acompañamiento</a>
+        <a href="cursos.html">Cursos</a>
       </div>
-
-    </div><!-- /profile-content -->
-
-    <!-- CTA BANNER -->
-    <div class="cta-banner">
-      <a href="directorio.html" class="btn btn-atencion">VER MÁS CUIDADORES</a>
+      <div class="footer-col">
+        <h4>Para Asistentes</h4>
+        <a href="postulacion-asistente.html">Postularme como Asistente</a>
+        <a href="postulacion-asistente.html#registro">Registrarme</a>
+      </div>
+      <div class="footer-col">
+        <h4>Empresa</h4>
+        <a href="#">Sobre {{producto}}</a>
+        <a href="#">Contacto</a>
+        <a href="#">Términos</a>
+      </div>
     </div>
+    <div class="footer-bottom">
+      <p>© 2025 PresDemo — Servicios de Cuidado. Todos los derechos reservados.</p>
+    </div>
+  </footer>
 
-    <!-- FOOTER -->
-    <footer class="footer">
-      <div class="footer-inner">
-        <div class="footer-brand">
-          <div class="logo">
-            <img src="assets/images/logo_presdemo.png" alt="PresDemo" />
-            <span>PresDemo — Servicios de Cuidado</span>
-          </div>
-          <p>Conectamos familias con cuidadores calificados.</p>
-          <div class="footer-social">
-            <a href="#"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
-            <a href="mailto:{{contacto}}"><i class="fas fa-envelope"></i></a>
-          </div>
-        </div>
-        <div class="footer-col">
-          <h4>Para Familias</h4>
-          <a href="solicitar-asistente.html">Solicitar Asistente</a>
-          <a href="directorio.html">Directorio</a>
-          <a href="soporte-remoto.html">Acompañamiento</a>
-          <a href="cursos.html">Cursos</a>
-        </div>
-        <div class="footer-col">
-          <h4>Para Cuidadores</h4>
-          <a href="postulacion-asistente.html">Postularme como Asistente</a>
-          <a href="postulacion-asistente.html#registro">Registrarme</a>
-        </div>
-        <div class="footer-col">
-          <h4>Empresa</h4>
-          <a href="#">Sobre {{producto}}</a>
-          <a href="#">Contacto</a>
-          <a href="#">Términos</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>© 2025 PresDemo — Servicios de Cuidado. Todos los derechos reservados.</p>
-      </div>
-    </footer>
-
-    <script src="js/identidad.js"></script>
-    <script src="js/texto.js"></script>
-        <!-- Esta página es demostrativa: no consulta la base. Por eso no carga el cliente
-       de datos ni el de sesión, que se conectaban solos al abrirla. -->
+  <script src="js/identidad.js"></script>
+  <script src="js/texto.js"></script>
+  <!-- El catálogo hace falta para escribir «Enfermero universitario» donde la fila
+       dice `enfermero_universitario`, y el cliente de datos para traer la fila. -->
+  <script src="js/catalogo.js"></script>
+  <script src="js/apiClient.js"></script>
   <script src="js/main.js"></script>
-    <script>
-      // ---- DATA: 8 perfiles completos ----
-      const cuidadores = {
-        1: {
-          name: "MARISA MIRANDA",
-          sub: "30 años | Grand Bourg",
-          photo: "assets/images/perfil_marisa.png",
-          pts: "1220 ptos",
-          starsCount: 5,
-          level: "CUIDADOR ORO",
-          levelBar: "ORO",
-          roles: ["Cuidadora Domiciliaria", "Voluntaria"],
-          urgent: true,
-          retiro: "Con/Sin Retiro",
-          days: ["L", "M", "J", "V", "S", "D"],
-          description: "Soy Marisa Miranda, cuidadora domiciliaria con más de 5 años de experiencia en el cuidado de adultos mayores. Me caracterizo por mi vocación de servicio, paciencia y compromiso con el bienestar de cada paciente. Cuento con formación continua en cuidados gerontológicos y primeros auxilios. Soy empática, ordenada y muy responsable. Mi objetivo es brindar el mejor cuidado posible para que tanto el paciente como su familia estén tranquilos.",
-          specialties: ["Deterioro Cognitivo", "Paciente Postrado", "Paciente Oncológico", "Acompañamiento Médico", "Ceguera", "Paseos Terapéuticos", "Hidratación y Nutrición", "Higiene Personal", "Compañía y Contención"],
-          profession: "• Cuidadora Domiciliaria Certificada (AMIA, 2018)\n• Auxiliar de Enfermería (Cruz Roja Argentina, 2019)\n• Curso de Primeros Auxilios (Cruz Roja, 2021)\n• Capacitación en Alzheimer y Demencias (FLACSO, 2022)\n• Voluntaria en Hogar de Ancianos (5 años)",
-          scheduleDetail: "• Disponibilidad: Lunes a Domingo\n• Horario diurno: 07:00 a 20:00\n• Horario nocturno: disponible\n• Modalidad: Con y Sin Retiro\n• Reemplazo urgente: Sí, disponible 24hs",
-          references: "• 12 años en el sector de cuidados\n• Más de 50 familias atendidas\n• Referencias verificadas: 8 referencias laborales positivas\n• Calificación promedio: 5 estrellas (1220 puntos)\n• Recomendada por la Dra. García Moreno (MN 45678)",
-          certifications: [
-            { icon: "✓", label: "Foto de perfil cargada", ok: true },
-            { icon: "✓", label: "DNI verificado visualmente", ok: true },
-            { icon: "✓", label: "Correo electrónico verificado", ok: true },
-            { icon: "✓", label: "Cuidadora certificada por AMIA", ok: true },
-            { icon: "✓", label: "Cargo: Antecedentes Penales verificados", ok: true },
-            { icon: "✓", label: "Cargo: Certificado de Domicilio", ok: true },
-            { icon: "✓", label: "Vacuna Covid-19 (completo)", ok: true },
-            { icon: "✓", label: "Teléfono verificado", ok: true }
-          ],
-          careChars: "• Tipo de cuidado: Domiciliario\n• Pacientes que atiende: Adulto mayor, paciente neurológico\n• Nivel cognitivo: Normal a Moderado\n• Actividades: Higiene, medicamentos, paseos, compañía, cocina\n• Movilidad asistida: Sí\n• Manejo de silla de ruedas: Sí"
-        },
-        2: {
-          name: "CARMEN IGLESIAS",
-          sub: "58 años | Villa Urquiza",
-          photo: "assets/images/perfil_carmen.png",
-          pts: "1200 ptos",
-          starsCount: 5,
-          level: "CUIDADOR ORO",
-          levelBar: "ORO",
-          roles: ["Cuidadora Domiciliaria", "Enfermera", "Auxiliar Enfermería", "Voluntaria"],
-          urgent: false,
-          retiro: "Con Retiro",
-          days: ["L", "M", "M", "J", "V"],
-          description: "Carmen Iglesias, con 30 años de trayectoria en cuidados de salud. Enfermera con amplia experiencia en hospital público y atención domiciliaria. Me dedico con amor y profesionalismo al cuidado de los adultos mayores, entendiendo que cada persona necesita una atención personalizada y respetuosa. Tengo formación especializada en pacientes oncológicos y paliativos.",
-          specialties: ["Deterioro Cognitivo", "Paciente Postrado", "Paciente Oncológico", "Cuidados Paliativos", "Ceguera", "Enfermería", "Acompañamiento Médico", "Curación de Heridas", "Sondas y Ostomías"],
-          profession: "• Enfermera Universitaria (UBA, 1995)\n• Auxiliar de Enfermería (Hospitales Públicos, 20 años)\n• Especialización en Cuidados Paliativos (2010)\n• Certificación en Oncología Domiciliaria (2015)\n• Voluntaria en Hogar Santa María (10 años)",
-          scheduleDetail: "• Disponibilidad: Lunes a Viernes\n• Horario: 08:00 a 18:00\n• Modalidad: Con Retiro (de lunes a viernes)\n• Turnos de 12 horas: disponible\n• Reemplazo urgente: con previo aviso de 24hs",
-          references: "• 30 años de experiencia en salud\n• Ex enfermera del Hospital Ramos Mejía (15 años)\n• Referencias: Dra. Peralta (MN 32145), Lic. Rossi\n• Calificación: 5 estrellas (1200 puntos)\n• Más de 80 familias asistidas",
-          certifications: [
-            { icon: "✓", label: "Foto de perfil cargada", ok: true },
-            { icon: "✓", label: "DNI verificado visualmente", ok: true },
-            { icon: "✓", label: "Correo electrónico verificado", ok: true },
-            { icon: "✓", label: "Título de Enfermería verificado", ok: true },
-            { icon: "✓", label: "Antecedentes Penales verificados", ok: true },
-            { icon: "✓", label: "Certificado de Domicilio", ok: true },
-            { icon: "✓", label: "Vacuna Covid-19 (completo + refuerzo)", ok: true },
-            { icon: "✓", label: "Teléfono verificado", ok: true }
-          ],
-          careChars: "• Tipo de cuidado: Domiciliario / Enfermería\n• Pacientes que atiende: Oncológico, neurológico, postrado\n• Nivel de complejidad: Alto\n• Actividades: Enfermería completa, curaciones, medicamentos\n• Manejo de catéteres: Sí\n• Cuidados paliativos: Sí"
-        },
-        3: {
-          name: "MARÍA RODRÍGUEZ",
-          sub: "45 años | Palermo",
-          photo: "assets/images/perfil_maria.png",
-          pts: "980 ptos",
-          starsCount: 4,
-          level: "CUIDADOR PLATA",
-          levelBar: "PLATA",
-          roles: ["Cuidadora Domiciliaria"],
-          urgent: false,
-          retiro: "Sin Retiro",
-          days: ["L", "M", "M", "J", "V", "S"],
-          description: "Soy María Rodríguez, cuidadora domiciliaria con 10 años de experiencia. Me especialicé en el cuidado de pacientes postrados y con Alzheimer. Soy una persona muy dedicada, con mucha paciencia y empatía. Manejo técnicas de movilización y posicionamiento para evitar escaras. Soy organizada y siempre mantengo informada a la familia sobre la evolución del paciente.",
-          specialties: ["Paciente Postrado", "Alzheimer", "Deterioro Cognitivo", "Movilización de Pacientes", "Paseos", "Compañía", "Higiene Personal", "Estimulación Cognitiva"],
-          profession: "• Cuidadora Domiciliaria Certificada (Cruz Roja, 2014)\n• Capacitación en Alzheimer y Demencias (FLACSO, 2020)\n• Movilización de Pacientes (Hospital Italiano, 2016)\n• Estimulación Cognitiva para Adultos Mayores (2019)",
-          scheduleDetail: "• Disponibilidad: Lunes a Sábado\n• Horario: 08:00 a 18:00\n• Modalidad: Sin Retiro (regresa a su domicilio)\n• Guardias de 8 horas: disponible\n• Fines de semana: Sábados hasta las 14hs",
-          references: "• 10 años de experiencia en cuidados\n• Especialización en pacientes postrados\n• Referencias: familia Pereyra (4 años de servicio), familia López\n• Calificación: 4 estrellas (980 puntos)",
-          certifications: [
-            { icon: "✓", label: "Foto de perfil cargada", ok: true },
-            { icon: "✓", label: "DNI verificado visualmente", ok: true },
-            { icon: "✓", label: "Correo electrónico verificado", ok: true },
-            { icon: "✓", label: "Cuidadora certificada (Cruz Roja)", ok: true },
-            { icon: "✓", label: "Antecedentes Penales verificados", ok: true },
-            { icon: "✗", label: "Certificado de Domicilio (pendiente)", ok: false },
-            { icon: "✓", label: "Vacuna Covid-19 (completo)", ok: true },
-            { icon: "✓", label: "Teléfono verificado", ok: true }
-          ],
-          careChars: "• Tipo de cuidado: Domiciliario\n• Pacientes que atiende: Postrado, Alzheimer, deterioro cognitivo\n• Nivel: Moderado a Alto\n• Actividades: Higiene, movilización, estimulación cognitiva\n• Manejo de silla de ruedas: Sí\n• Cambio de pañales: Sí"
-        },
-        4: {
-          name: "LAURA GÓMEZ",
-          sub: "38 años | San Telmo",
-          photo: "assets/images/perfil_laura.png",
-          pts: "1100 ptos",
-          starsCount: 5,
-          level: "CUIDADOR ORO",
-          levelBar: "ORO",
-          roles: ["Gerontóloga", "Cuidadora Domiciliaria"],
-          urgent: true,
-          retiro: "Con/Sin Retiro",
-          days: ["L", "M", "J", "V", "S"],
-          description: "Soy Laura Gómez, gerontóloga y cuidadora domiciliaria. Mi formación universitaria me permite entender el envejecimiento desde una perspectiva integral, abordando no solo los aspectos físicos sino también los emocionales y sociales. Me especializo en Alzheimer, demencias y deterioro cognitivo. Trabajo en equipo con familias y profesionales de la salud para diseñar el plan de cuidado más adecuado.",
-          specialties: ["Alzheimer", "Demencias", "Deterioro Cognitivo", "Gerontología", "Paciente Oncológico", "Estimulación Cognitiva", "Acompañamiento Médico", "Medicamentos", "Hidratación y Nutrición"],
-          profession: "• Licenciada en Gerontología (UBA, 2012)\n• Cuidadora Domiciliaria Certificada (AMIA, 2013)\n• Especialización en Alzheimer (Universidad Favaloro, 2016)\n• Diplomatura en Cuidados Paliativos (2019)\n• Docente de Capacitación en Cuidados (2020-presente)",
-          scheduleDetail: "• Disponibilidad: Lunes, Martes, Jueves, Viernes, Sábado\n• Horario: 07:00 a 19:00\n• Modalidad: Con y Sin Retiro\n• Reemplazo urgente: Sí (disponible con 2hs de aviso)\n• Guardias nocturnas: negociable",
-          references: "• 12 años de experiencia como gerontóloga\n• Referente en cuidados de Alzheimer en el barrio\n• Publicaciones académicas en gerontología\n• Referencias: Dra. Soto (Servicio de Geriatría HIGA), Prof. Méndez\n• Calificación: 5 estrellas (1100 puntos)",
-          certifications: [
-            { icon: "✓", label: "Foto de perfil cargada", ok: true },
-            { icon: "✓", label: "DNI verificado visualmente", ok: true },
-            { icon: "✓", label: "Correo electrónico verificado", ok: true },
-            { icon: "✓", label: "Título universitario verificado (Gerontología)", ok: true },
-            { icon: "✓", label: "Antecedentes Penales verificados", ok: true },
-            { icon: "✓", label: "Certificado de Domicilio", ok: true },
-            { icon: "✓", label: "Vacuna Covid-19 (completo + 2 refuerzos)", ok: true },
-            { icon: "✓", label: "Teléfono verificado", ok: true }
-          ],
-          careChars: "• Tipo de cuidado: Gerontológico especializado\n• Pacientes que atiende: Alzheimer, demencias, deterioro cognitivo\n• Nivel de complejidad: Alto\n• Actividades: Estimulación cognitiva, medicamentos, acompañamiento\n• Diseño de plan de cuidados personalizado: Sí\n• Coordinación con equipo médico: Sí"
-        },
-        5: {
-          name: "ANA MARTÍNEZ",
-          sub: "52 años | Belgrano",
-          photo: "assets/images/perfil_ana.png",
-          pts: "870 ptos",
-          starsCount: 4,
-          level: "CUIDADOR PLATA",
-          levelBar: "PLATA",
-          roles: ["Cuidadora Domiciliaria", "Voluntaria"],
-          urgent: false,
-          retiro: "Sin Retiro",
-          days: ["L", "M", "M", "J"],
-          description: "Soy Ana Martínez, cuidadora domiciliaria con más de 15 años de experiencia. Me caracterizo por mi calidez humana y mi capacidad para establecer vínculos de confianza con pacientes y familias. Trabajo principalmente en el cuidado general de adultos mayores: acompañamiento, paseos, compañía, administración de medicamentos y tareas del hogar relacionadas al cuidado.",
-          specialties: ["Cuidado General", "Paseos", "Compañía y Contención", "Tareas del Hogar", "Administración de Medicamentos", "Higiene Personal", "Alimentación", "Acompañamiento Médico"],
-          profession: "• Cuidadora Domiciliaria (experiencia práctica, 15 años)\n• Cursos de Primeros Auxilios (Cruz Roja, 2018)\n• Voluntaria en Hogar de Ancianos San José (8 años)\n• Capacitación en Gerontología Básica (AMIA, 2021)",
-          scheduleDetail: "• Disponibilidad: Lunes a Jueves\n• Horario: 09:00 a 17:00\n• Modalidad: Sin Retiro\n• Guardias: 8 horas diarias\n• Fines de semana: No disponible",
-          references: "• 15 años de experiencia en cuidados domiciliarios\n• Voluntaria activa en hogar de ancianos\n• Referencias: familia Gómez (3 años), familia Rodríguez (2 años)\n• Calificación: 4 estrellas (870 puntos)",
-          certifications: [
-            { icon: "✓", label: "Foto de perfil cargada", ok: true },
-            { icon: "✓", label: "DNI verificado visualmente", ok: true },
-            { icon: "✓", label: "Correo electrónico verificado", ok: true },
-            { icon: "✓", label: "Certificado de Voluntariado AMIA", ok: true },
-            { icon: "✓", label: "Antecedentes Penales verificados", ok: true },
-            { icon: "✗", label: "Certificado de Domicilio (pendiente)", ok: false },
-            { icon: "✓", label: "Vacuna Covid-19 (completo)", ok: true },
-            { icon: "✓", label: "Teléfono verificado", ok: true }
-          ],
-          careChars: "• Tipo de cuidado: General domiciliario\n• Pacientes que atiende: Adulto mayor autovalente o semidependiente\n• Nivel de complejidad: Bajo a Moderado\n• Actividades: Compañía, paseos, medicamentos, cocina, limpieza\n• Nivel cognitivo del paciente: Normal\n• Traslados: acompañamiento en taxi/remís"
-        },
-        6: {
-          name: "SANDRA LÓPEZ",
-          sub: "41 años | Caballito",
-          photo: "assets/images/perfil_sandra.png",
-          pts: "1050 ptos",
-          starsCount: 5,
-          level: "CUIDADOR ORO",
-          levelBar: "ORO",
-          roles: ["Enfermera Universitaria", "Cuidadora Domiciliaria"],
-          urgent: true,
-          retiro: "Con Retiro",
-          days: ["L", "M", "M", "J", "V", "S"],
-          description: "Soy Sandra López, enfermera universitaria con especialización en deterioro cognitivo y demencias. Mi enfoque combina el rigor profesional de la enfermería con la calidez del cuidado humano. Trabajo con familias para establecer rutinas y protocolos de cuidado que mejoren la calidad de vida del paciente. Tengo experiencia en el manejo de medicación compleja, sondas y catéteres.",
-          specialties: ["Deterioro Cognitivo", "Enfermería", "Medicamentos", "Paciente Postrado", "Paciente Oncológico", "Sondas y Catéteres", "Curación de Heridas", "Estimulación Cognitiva", "Diabetes"],
-          profession: "• Enfermera Universitaria (UCES, 2006)\n• Especialización en Neurología (Hospital Ramos Mejía, 2010)\n• Certificación en Deterioro Cognitivo (Alzheimer Argentina, 2014)\n• Capacitación en Oncología Domiciliaria (2018)\n• Instructora de primeros auxilios (Cruz Roja, 2020)",
-          scheduleDetail: "• Disponibilidad: Lunes a Sábado\n• Horario: 07:00 a 19:00\n• Modalidad: Con Retiro (de lunes a viernes), flexible fines de semana\n• Turnos de 12 horas: disponible\n• Reemplazo urgente: Sí",
-          references: "• 18 años de trayectoria en enfermería y cuidados\n• Ex enfermera de UTI pediátrica (5 años)\n• Referencias: Dra. Herrera (Neurología, HIGA), familia Vega (2 años)\n• Calificación: 5 estrellas (1050 puntos)",
-          certifications: [
-            { icon: "✓", label: "Foto de perfil cargada", ok: true },
-            { icon: "✓", label: "DNI verificado visualmente", ok: true },
-            { icon: "✓", label: "Correo electrónico verificado", ok: true },
-            { icon: "✓", label: "Título de Enfermería Universitaria verificado", ok: true },
-            { icon: "✓", label: "Antecedentes Penales verificados", ok: true },
-            { icon: "✓", label: "Certificado de Domicilio", ok: true },
-            { icon: "✓", label: "Vacuna Covid-19 (completo + refuerzo)", ok: true },
-            { icon: "✓", label: "Teléfono verificado", ok: true }
-          ],
-          careChars: "• Tipo de cuidado: Enfermería especializada\n• Pacientes que atiende: Neurológico, oncológico, postrado\n• Nivel de complejidad: Alto\n• Manejo de medicación compleja: Sí\n• Sondas, catéteres: Sí\n• Curaciones: Sí\n• Coordinación médica: Sí"
-        },
-        7: {
-          name: "PATRICIA FERNÁNDEZ",
-          sub: "49 años | Flores",
-          photo: "assets/images/perfil_patricia.png",
-          pts: "760 ptos",
-          starsCount: 4,
-          level: "CUIDADOR BRONCE",
-          levelBar: "BRONCE",
-          roles: ["Cuidadora Domiciliaria", "Auxiliar de Enfermería"],
-          urgent: false,
-          retiro: "Sin Retiro",
-          days: ["L", "M", "J", "V"],
-          description: "Soy Patricia Fernández, auxiliar de enfermería y cuidadora domiciliaria con 15 años de experiencia. Me caracterizo por mi paciencia, dedicación y capacidad para trabajar en equipo con familias y profesionales médicos. Tengo experiencia en el cuidado de pacientes postrados, asistencia en higiene personal y apoyo en actividades de la vida diaria. Me actualizo constantemente en técnicas de cuidado.",
-          specialties: ["Cuidado General", "Auxiliar de Enfermería", "Paciente Postrado", "Compañía", "Paseos", "Higiene Personal", "Medicamentos", "Alimentación Asistida"],
-          profession: "• Auxiliar de Enfermería (Cruz Roja, 2009)\n• Cuidadora Domiciliaria (AMIA, 2011)\n• Curso de Primeros Auxilios (2015)\n• Capacitación en Cuidados Básicos del Adulto Mayor (2020)",
-          scheduleDetail: "• Disponibilidad: Lunes, Martes, Jueves y Viernes\n• Horario: 08:00 a 16:00\n• Modalidad: Sin Retiro\n• Guardias: 8 horas diarias\n• Fines de semana: No disponible",
-          references: "• 15 años de experiencia en cuidados\n• Trabajo estable con 3 familias anteriores\n• Referencias: familia Suárez (4 años), familia Pérez (2 años), familia Blanco (3 años)\n• Calificación: 4 estrellas (760 puntos)",
-          certifications: [
-            { icon: "✓", label: "Foto de perfil cargada", ok: true },
-            { icon: "✓", label: "DNI verificado visualmente", ok: true },
-            { icon: "✓", label: "Correo electrónico verificado", ok: true },
-            { icon: "✓", label: "Certificado de Auxiliar de Enfermería", ok: true },
-            { icon: "✓", label: "Antecedentes Penales verificados", ok: true },
-            { icon: "✗", label: "Vacuna Covid-19 (pendiente de carga)", ok: false },
-            { icon: "✓", label: "Teléfono verificado", ok: true },
-            { icon: "✗", label: "Certificado de Domicilio (pendiente)", ok: false }
-          ],
-          careChars: "• Tipo de cuidado: Auxiliar de enfermería domiciliaria\n• Pacientes que atiende: Semidependiente, postrado leve\n• Nivel de complejidad: Bajo a Moderado\n• Actividades: Higiene, medicamentos, compañía, cocina\n• Manejo de silla de ruedas: Sí\n• Traslados: acompañamiento"
-        },
-        8: {
-          name: "CLAUDIA SUÁREZ",
-          sub: "35 años | Núñez",
-          photo: "assets/images/perfil_claudia.png",
-          pts: "1180 ptos",
-          starsCount: 5,
-          level: "CUIDADOR ORO",
-          levelBar: "ORO",
-          roles: ["Cuidadora Domiciliaria"],
-          urgent: true,
-          retiro: "Con/Sin Retiro",
-          days: ["L", "M", "M", "J", "V", "S", "D"],
-          description: "Soy Claudia Suárez, cuidadora domiciliaria con 8 años de experiencia y una gran vocación por el cuidado de los adultos mayores. Me especializo en pacientes postrados y en paseos terapéuticos que mejoran la calidad de vida. Soy una persona muy activa, empática y comprometida. Mantengo siempre informada a la familia y trabajo en equipo para brindar el mejor cuidado.",
-          specialties: ["Paciente Postrado", "Paseos Terapéuticos", "Deterioro Cognitivo", "Compañía", "Medicamentos", "Higiene Personal", "Actividades Recreativas", "Estimulación Sensorial", "Alimentación"],
-          profession: "• Cuidadora Domiciliaria Certificada (AMIA, 2016)\n• Curso de Paseos Terapéuticos (2018)\n• Estimulación Sensorial para Adultos Mayores (2020)\n• Capacitación en Manejo de Pacientes Postrados (2021)\n• Primeros Auxilios (Cruz Roja, 2022)",
-          scheduleDetail: "• Disponibilidad: Lunes a Domingo (todos los días)\n• Horario: flexible (diurno y nocturno)\n• Modalidad: Con y Sin Retiro\n• Reemplazo urgente: Sí, disponible inmediatamente\n• Guardias de 8, 12 o 24 horas: disponible",
-          references: "• 8 años de experiencia en cuidados domiciliarios\n• Alta disponibilidad y flexibilidad horaria\n• Referencias: familia Torres (3 años), familia Morales (2 años), familia Castro\n• Calificación: 5 estrellas (1180 puntos)",
-          certifications: [
-            { icon: "✓", label: "Foto de perfil cargada", ok: true },
-            { icon: "✓", label: "DNI verificado visualmente", ok: true },
-            { icon: "✓", label: "Correo electrónico verificado", ok: true },
-            { icon: "✓", label: "Cuidadora certificada por AMIA", ok: true },
-            { icon: "✓", label: "Antecedentes Penales verificados", ok: true },
-            { icon: "✓", label: "Certificado de Domicilio", ok: true },
-            { icon: "✓", label: "Vacuna Covid-19 (completo + 2 refuerzos)", ok: true },
-            { icon: "✓", label: "Teléfono verificado", ok: true }
-          ],
-          careChars: "• Tipo de cuidado: Domiciliario integral\n• Pacientes que atiende: Postrado, deterioro leve a moderado\n• Nivel de complejidad: Moderado\n• Actividades: Paseos terapéuticos, estimulación, higiene\n• Disponibilidad 24hs: Sí\n• Reemplazos urgentes: Sí"
-        }
+  <script>
+    /* ---- El perfil lo dibuja la base ----
+
+       Esta pantalla tenía ocho personas escritas adentro y no consultaba nada. El
+       directorio ya enlaza con el identificador de la base desde el pendiente 2, así
+       que «Ver perfil» abría una pantalla que avisaba que mostraba un ejemplo.
+
+       Lee de `caregivers_publicos`, la misma vista que el directorio: exige que la
+       Prestadora haya validado el legajo y que la persona haya autorizado a publicarlo,
+       y no devuelve ni un dato de contacto (migraciones 0007 y 0012).
+
+       **Lo que se sacó, y por qué.** La vista devuelve nombre, foto, zona, qué atiende,
+       precio por hora y si toma reemplazos urgentes. Todo lo demás que esta pantalla
+       dibujaba —estrellas, puntaje, nivel ORO, certificaciones, referencias, estudios,
+       descripción, la grilla de días y el módulo de bitácora— no tenía de dónde salir.
+       Lo que sí existe en la base son las verificaciones del legajo, y publicarlas es
+       una decisión del Desarrollador que está anotada en docs/PENDIENTES.md: el
+       consentimiento de publicación no las nombra. */
+    (function () {
+      const paneles = {
+        cargando: document.getElementById('perfil-cargando'),
+        error: document.getElementById('perfil-error'),
+        vacio: document.getElementById('perfil-vacio'),
+        listo: document.getElementById('perfil-listo')
       };
 
-      // ---- Load profile from URL param ----
-      function loadProfile() {
-        const params = new URLSearchParams(window.location.search);
-        // El identificador se busca tal cual viene y no se fuerza a número. Con
-        // `parseInt(...) || 1`, un identificador de la base —que es un UUID— daba
-        // NaN y caía en el 1: la pantalla mostraba a otra persona sin avisar. El
-        // directorio ya enlaza con el identificador de la base (pendiente 2), y
-        // esta pantalla todavía no lee de ahí.
-        const id = params.get('id') || '1';
-        const c = cuidadores[id];
-
-        // Un enlace que esta pantalla no sabe contestar no se disimula: antes
-        // rebotaba al directorio sin decir nada, y eso se lee como una falla.
-        if (!c) {
-          document.getElementById('perfil-sin-datos').style.display = '';
-          document.querySelector('.profile-hero').style.display = 'none';
-          document.querySelector('.profile-content').style.display = 'none';
-          document.getElementById('breadcrumb-name').textContent = 'Perfil';
-          return;
-        }
-
-        document.title = `${c.name} — ${Identidad.datos.nombreCorto}`;
-        document.getElementById('page-title').textContent = `${c.name} — ${Identidad.datos.nombreCorto}`;
-        document.getElementById('breadcrumb-name').textContent = c.name;
-        document.getElementById('contact-name').textContent = c.name.split(' ')[0];
-
-        document.getElementById('profile-photo').src = c.photo;
-        document.getElementById('profile-photo').alt = c.name;
-        document.getElementById('profile-name').textContent = c.name;
-        document.getElementById('profile-sub').textContent = c.sub;
-        document.getElementById('profile-pts').textContent = `(${c.pts})`;
-        document.getElementById('profile-level').innerHTML = `<i class="fas fa-award"></i> ${Texto.escapar(c.level)}`;
-        document.getElementById('profile-level-bar').textContent = c.levelBar;
-        document.getElementById('profile-retiro').textContent = c.retiro;
-
-        // Stars
-        const starsEl = document.getElementById('profile-stars');
-        const pts = document.getElementById('profile-pts');
-        starsEl.innerHTML = '';
-        for (let i = 1; i <= 5; i++) {
-          const star = document.createElement('span');
-          star.className = 'star';
-          star.style.color = i <= c.starsCount ? 'var(--naranja-alerta-texto)' : 'var(--borde-card)';
-          star.textContent = '★';
-          starsEl.appendChild(star);
-        }
-        starsEl.appendChild(pts);
-
-        // Roles
-        const rolesEl = document.getElementById('profile-roles');
-        rolesEl.innerHTML = c.roles.map(r => `<span class="profile-tag">${Texto.escapar(r)}</span>`).join('');
-
-        // Urgent
-        if (c.urgent) document.getElementById('profile-urgent').style.display = 'flex';
-
-        // Days
-        const daysEl = document.getElementById('profile-days');
-        daysEl.innerHTML = c.days.map(d => `<span class="profile-day">${Texto.escapar(d)}</span>`).join('');
-
-        // Description
-        document.getElementById('profile-description').textContent = c.description;
-
-        // Specialties
-        const specEl = document.getElementById('profile-specialties');
-        specEl.innerHTML = c.specialties.map(s => `<span class="spec-item">${Texto.escapar(s)}</span>`).join('');
-
-        // Profession
-        document.getElementById('profile-profession').innerHTML = c.profession.split('\n').map(l => `<div>${Texto.escapar(l)}</div>`).join('');
-
-        // Schedule
-        document.getElementById('profile-schedule-detail').innerHTML = c.scheduleDetail.split('\n').map(l => `<div>${Texto.escapar(l)}</div>`).join('');
-
-        // References
-        document.getElementById('profile-references').innerHTML = c.references.split('\n').map(l => `<div>${Texto.escapar(l)}</div>`).join('');
-
-        // Certifications
-        const certEl = document.getElementById('profile-certifications');
-        certEl.innerHTML = c.certifications.map(cert => `
-    <div class="cert-item">
-      <div class="cert-icon" style="${cert.ok ? 'background:#e8f5e9;color:#2e7d32;' : 'background:var(--tono-info-fondo);color:#c62828;'}">
-        ${cert.ok ? '✓' : '✗'}
-      </div>
-      <span>${Texto.escapar(cert.label)}</span>
-    </div>
-  `).join('');
-
-        // Care chars
-        document.getElementById('profile-care-chars').innerHTML = c.careChars.split('\n').map(l => `<div>${Texto.escapar(l)}</div>`).join('');
-      }
-
-      loadProfile();
-
-      // Profile contact form
-      const pcForm = document.getElementById('profile-contact-form');
-      if (pcForm) {
-        pcForm.addEventListener('submit', e => {
-          e.preventDefault();
-          document.getElementById('profile-form-success').style.display = 'block';
-          pcForm.reset();
-          setTimeout(() => { document.getElementById('profile-form-success').style.display = 'none'; }, 5000);
+      function mostrar(cual) {
+        Object.keys(paneles).forEach((nombre) => {
+          paneles[nombre].style.display = (nombre === cual) ? '' : 'none';
         });
       }
 
-      // Responsive grid for contact form
-      const formGrid = document.querySelector('.form-two-col');
-      if (formGrid && window.innerWidth < 600) {
-        formGrid.style.gridTemplateColumns = '1fr';
+      function migas(texto) {
+        document.getElementById('breadcrumb-name').textContent = texto;
       }
-    </script>
+
+      function dibujar(fila) {
+        const nombre = fila.full_name || '';
+        // El título de la pestaña lleva el nombre de la Prestadora, que es de
+        // quien es este directorio, y no el del producto: la persona llegó por
+        // el enlace de una empresa y ese es el nombre que reconoce.
+        const prestadora = (ClienteDatos.currentTenant && ClienteDatos.currentTenant.name) || '';
+        document.title = [nombre, prestadora].filter(Boolean).join(' — ');
+        migas(nombre);
+
+        document.getElementById('perfil-nombre').textContent = nombre;
+
+        const tipo = Catalogo.etiquetaSiExiste('tipo_asistente', fila.profession);
+        const zona = Catalogo.etiquetaSiExiste('zona', fila.zone);
+        document.getElementById('perfil-tipo-y-zona').textContent =
+          [tipo, zona].filter(Boolean).join(' · ');
+
+        // La foto o, si no cargó ninguna, la inicial del nombre. Se saca del
+        // documento la que no se usa: dejarla escondida es dejar un hueco que
+        // algún día vuelve a aparecer.
+        const foto = document.getElementById('perfil-foto');
+        const inicial = document.getElementById('perfil-inicial');
+        const direccion = ClienteDatos.urlDeFotoPublica(fila.foto);
+        if (direccion) {
+          foto.src = direccion;
+          foto.alt = nombre;
+          inicial.remove();
+        } else {
+          inicial.textContent = (nombre || '?').trim().charAt(0).toUpperCase();
+          foto.remove();
+        }
+
+        const precio = document.getElementById('perfil-precio');
+        if (fila.hourly_rate) {
+          precio.textContent = Texto.importe(fila.hourly_rate) + ' ';
+          const unidad = document.createElement('span');
+          unidad.className = 'perfil-precio-unidad';
+          unidad.textContent = 'por hora';
+          precio.appendChild(unidad);
+        } else {
+          precio.remove();
+        }
+
+        if (fila.reemplazos_urgentes) {
+          document.getElementById('perfil-urgencias').style.display = '';
+        }
+
+        // Las patologías y las tareas son las mismas etiquetas del directorio, y
+        // salen del mismo lugar: las tareas están repartidas en tres vocabularios
+        // y el catálogo sabe buscarlas en los tres.
+        const contenedor = document.getElementById('perfil-etiquetas');
+        const textos = (fila.pathologies || [])
+          .map((c) => Catalogo.etiquetaSiExiste('patologia', c) || c)
+          .concat((fila.tasks || []).map((c) => Catalogo.etiquetaDeTarea(c)));
+
+        if (textos.length === 0) {
+          contenedor.remove();
+          document.getElementById('perfil-sin-etiquetas').style.display = '';
+        } else {
+          textos.forEach((texto) => {
+            const etiqueta = document.createElement('span');
+            etiqueta.className = 'spec-item';
+            etiqueta.textContent = texto;
+            contenedor.appendChild(etiqueta);
+          });
+        }
+      }
+
+      async function traerPerfil() {
+        mostrar('cargando');
+        migas('Cargando...');
+        const id = new URLSearchParams(window.location.search).get('id');
+        try {
+          const [fila] = await Promise.all([
+            ClienteDatos.traerDelDirectorio(id),
+            Catalogo.cargar()
+          ]);
+
+          if (!fila) { mostrar('vacio'); migas('Perfil'); return; }
+
+          dibujar(fila);
+          mostrar('listo');
+        } catch (err) {
+          document.getElementById('perfil-error-texto').textContent =
+            Texto.mensajeDeError(err, 'traer el perfil');
+          mostrar('error');
+          migas('Perfil');
+        }
+      }
+
+      document.getElementById('perfil-reintentar').addEventListener('click', traerPerfil);
+      traerPerfil();
+    })();
+  </script>
 </body>
 
 </html>
