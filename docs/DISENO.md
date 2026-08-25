@@ -110,6 +110,32 @@ legajo, y no llevan el nombre de ninguna Prestadora.
 son el caso que más se escapa, porque un color escrito como `rgba(233, 30, 140, 0.25)` no aparece
 si se busca por código de color: hay que buscarlo por sus tres números.
 
+### Tres cosas que se miden, tres formas distintas de dibujarlas
+
+Un Asistente tiene tres marcas encima que dicen cosas incompatibles, y las tres tentaban con
+dibujarse igual. **El Desarrollador decidió el 25 de agosto de 2026 que las estrellas son de una
+sola: la que dan las Familias.** Las otras dos llevan forma propia, y la forma sale de qué clase
+de cosa es cada una.
+
+| Qué dice | Quién la da | Cómo se dibuja | Por qué esa forma |
+|---|---|---|---|
+| **Calificación** | La Familia, después de una jornada | **Estrellas**, de una a cinco | Es una opinión, y una opinión admite grados. La estrella es la forma que todo el mundo ya lee como «me pareció así» |
+| **Legajo comprobado** | La Prestadora, revisando papeles | **Escudo con tilde**, y al lado el recuento de las comprobaciones que suman | No es una opinión: es un hecho, y un hecho no tiene grados. Cada comprobación está o no está. El escudo ya existe —`insignia-validada`, `insignia-pendiente`— y esto lo continúa en vez de inventar algo nuevo |
+| **Insignia de examen** | Un examen rendido, que se paga | **Medalla**, en su metal: bronce, plata, oro | Ya viene con el metal en el nombre, y una medalla nunca se confunde con una estrella |
+
+**Las tres se pueden ver juntas sin que ninguna se lea como la otra**, que es la prueba: formas
+distintas, no colores distintos del mismo dibujo. Quien mire de reojo tiene que poder decir cuál es
+cuál sin leer una palabra.
+
+**Un cuidado con la medalla.** Es la única de las tres que se compra. Una Familia que ve oro va a
+leer «es la mejor», y lo que dice es «rindió y pagó un examen». Cuando se construya, el texto que
+la acompañe tiene que decir de qué examen se trata — nunca la medalla sola. Hoy no se construye
+nada de esto: todo lo comercial está frenado por `docs/ALCANCE.md` §4.
+
+**Lo que falta y no se inventa:** cuánto suma cada comprobación no obligatoria. Hoy las que suman
+son dos —`domicilio` y `referencia`, las de `puerta: ninguna` en `data/catalogo-verificaciones.json`—
+y cuánto vale cada una lo decide el Desarrollador.
+
 ### El foco del teclado
 
 `css/tokens.css` termina con una regla que le devuelve el contorno a todo lo que se puede enfocar.
