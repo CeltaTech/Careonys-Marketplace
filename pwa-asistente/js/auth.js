@@ -193,10 +193,18 @@ const Sesion = {
 };
 
 // ── Al cargar: restaurar sesión y propagar token ─────────
+// Acá no se avisa en pantalla a propósito: esto corre en las catorce pantallas y
+// su único trabajo es pasarle el permiso al cliente de datos. Si falla, el primer
+// pedido de la pantalla va a fallar también, y esa pantalla sí sabe cómo decirlo.
+// Lo que no puede pasar es que el fallo se pierda sin dejar rastro.
 (async () => {
-  const session = await Sesion.getSession();
-  if (session && window.ClienteDatos) {
-    ClienteDatos.setAuthToken(session.access_token);
+  try {
+    const session = await Sesion.getSession();
+    if (session && window.ClienteDatos) {
+      ClienteDatos.setAuthToken(session.access_token);
+    }
+  } catch (err) {
+    console.error('Restauración de la sesión guardada:', err);
   }
 })();
 

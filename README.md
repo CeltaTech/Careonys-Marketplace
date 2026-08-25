@@ -115,7 +115,7 @@ aislamiento. Una prueba que devuelve una lista vacía no distingue "aislado" de 
 Copiar `.env.example` a `.env.local` y completar los valores antes de levantar nada. Los `.env`
 nunca se suben (ver `.gitignore`).
 
-## Los once chequeos, y el comando que hace falta una sola vez
+## Los doce chequeos, y el comando que hace falta una sola vez
 
 Cada regla que se arregló una vez tiene un guion que impide que vuelva. Se corren todos juntos
 en menos de un segundo:
@@ -129,6 +129,7 @@ un chequeo nuevo se suma solo con existir.
 
 | Chequeo | Qué impide que vuelva |
 |---|---|
+| `verificar_arranque` | Que el arranque de una pantalla falle sin que nadie lo diga, ni en pantalla ni en la consola |
 | `verificar_botones` | Que un botón dispare una operación sin apagarse mientras corre, y dos toques sean dos escrituras |
 | `verificar_claves` | Que se guarde en la base una opción que el catálogo no tiene |
 | `verificar_copias` | Que las cinco copias byte a byte se separen sin que nadie se entere |

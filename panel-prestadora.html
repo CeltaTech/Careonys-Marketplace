@@ -363,21 +363,31 @@
 
     // El orden no es casual: sin sesión no hay Prestadora, y sin Prestadora la
     // consulta de legajos no tiene por qué filtrar.
+    // Regla 3: el arranque es un pedido a la base como cualquier otro, y si falla
+    // tiene que decirlo. Sin este `try` la primera línea que fallaba se llevaba
+    // puestas todas las de abajo, y la tabla se quedaba vacía sin una palabra:
+    // igualita a una Prestadora que todavía no tiene ningún legajo cargado.
     document.addEventListener('DOMContentLoaded', async () => {
-      const sesion = await Sesion.requireAuth();
-      if (!sesion) return;
+      try {
+        const sesion = await Sesion.requireAuth();
+        if (!sesion) return;
 
-      await ClienteDatos.initTenant();
+        await ClienteDatos.initTenant();
 
-      const perfil = await Sesion.perfil();
-      if (!perfil || perfil.role !== 'coordinador') {
-        estadoTabla('atencion',
-          'Esta pantalla es para el personal de la Prestadora. La cuenta con la que se '
-          + 'inició sesión no tiene ese permiso.');
-        return;
+        const perfil = await Sesion.perfil();
+        if (!perfil || perfil.role !== 'coordinador') {
+          estadoTabla('atencion',
+            'Esta pantalla es para el personal de la Prestadora. La cuenta con la que se '
+            + 'inició sesión no tiene ese permiso.');
+          return;
+        }
+
+        cargarAspirantes();
+      } catch (err) {
+        console.error('Panel de la Prestadora, arranque:', err);
+        estadoTabla('critico',
+          'No se pudo preparar la pantalla. Conviene volver a cargarla.');
       }
-
-      cargarAspirantes();
     });
   </script>
 </body>

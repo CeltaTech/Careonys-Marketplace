@@ -307,10 +307,10 @@
       </div>
       <div class="login-card">
         <div class="input-wrapper">
-          <input type="email" id="login-email" placeholder="Correo electrónico" value="asistente@ejemplo.com" required />
+          <input type="email" id="login-email" placeholder="Correo electrónico" required />
         </div>
         <div class="input-wrapper">
-          <input type="password" id="login-pass" placeholder="Contraseña" value="123456" required />
+          <input type="password" id="login-pass" placeholder="Contraseña" required />
         </div>
         <button type="button" class="btn-login" id="btn-action-login">Ingresar a {{producto}} Asistente</button>
         <div class="btn-register-link">
@@ -637,19 +637,26 @@
     }
 
     // ── Inicialización ─────────────────────────────
+    // Regla 3: si algo del arranque falla, queda a la vista la pantalla de acceso
+    // —que es la verdad: no hay sesión— y el detalle técnico va a la consola. Sin
+    // este `try` el fallo no dejaba rastro en ninguna parte.
     document.addEventListener('DOMContentLoaded', async () => {
-      await ClienteDatos.initTenant();
-      montarDisponibilidad();
-      montarLegajo();
+      try {
+        await ClienteDatos.initTenant();
+        montarDisponibilidad();
+        montarLegajo();
 
-      // Restaurar sesión activa automáticamente
-      const session = await Sesion.getSession();
-      if (session) {
-        document.getElementById('menu-user-email').textContent = session.user.email;
-        document.getElementById('menu-user-name').textContent =
-          (session.user.user_metadata?.full_name || session.user.email.split('@')[0]).toUpperCase();
-        navigate('dashboard');
-        cargarEstadoLegajo(session.user.id);
+        // Restaurar sesión activa automáticamente
+        const session = await Sesion.getSession();
+        if (session) {
+          document.getElementById('menu-user-email').textContent = session.user.email;
+          document.getElementById('menu-user-name').textContent =
+            (session.user.user_metadata?.full_name || session.user.email.split('@')[0]).toUpperCase();
+          navigate('dashboard');
+          cargarEstadoLegajo(session.user.id);
+        }
+      } catch (err) {
+        console.error('Arranque de la aplicación del Asistente:', err);
       }
     });
 

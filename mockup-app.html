@@ -423,9 +423,12 @@
   <script>
     // INICIALIZACIÓN DE BRANDING DINÁMICO DESDE SUPABASE
     document.addEventListener('DOMContentLoaded', async () => {
-      await ClienteDatos.initTenant();
-
-      cargarRecomendados();
+      try {
+        await ClienteDatos.initTenant();
+        cargarRecomendados();
+      } catch (err) {
+        console.error('Arranque de la pantalla:', err);
+      }
     });
 
     // Los Asistentes que se pueden mostrar salen de `caregivers_publicos`:
@@ -880,12 +883,19 @@
     };
 
     // ── VERIFICAR SESIÓN AL INICIO ────────────────────────────────────
+    // Si la sesión guardada no se puede rescatar —el servidor no contesta, el
+    // permiso venció— queda a la vista la pantalla de acceso, que es la verdad: no
+    // hay sesión. Lo que no puede pasar es que el fallo se pierda sin dejar rastro.
     (async () => {
-      const session = await Sesion.getSession();
-      if (session) {
-        document.getElementById('menu-user-email').textContent = session.user.email;
-        document.getElementById('menu-user-name').textContent = (session.user.user_metadata?.full_name || session.user.email.split('@')[0]).toUpperCase();
-        navigate('dashboard');
+      try {
+        const session = await Sesion.getSession();
+        if (session) {
+          document.getElementById('menu-user-email').textContent = session.user.email;
+          document.getElementById('menu-user-name').textContent = (session.user.user_metadata?.full_name || session.user.email.split('@')[0]).toUpperCase();
+          navigate('dashboard');
+        }
+      } catch (err) {
+        console.error('Rescate de la sesión guardada:', err);
       }
     })();
   </script>

@@ -458,10 +458,13 @@ Cierra el pendiente 38, el 24 de agosto de 2026.
   correo ya registrado crea cero legajos donde antes creaba uno; y el camino bueno crea la cuenta
   con la contraseña elegida y no con el documento.
 
-Queda una contraseña de mentira en pantalla, y no es ésta: la de la pantalla de acceso viene
-prellenada con seis dígitos para poder mostrar el producto sin tipear
-(`pwa-asistente/index.html:310` y `pwa-familia/index.html:571`). Es un atajo de demostración y sale
-antes de que haya una sola persona real.
+Ya no queda ninguna contraseña de mentira en pantalla. La de acceso venía prellenada con seis
+dígitos para poder mostrar el producto sin tipear, y el correo que la acompañaba tampoco
+correspondía a ninguna cuenta. Los cuatro campos se vaciaron el 25 de agosto de 2026 y arrancan
+con su indicación adentro (`pwa-asistente/index.html:310` y `:313`,
+`pwa-familia/index.html:571` y `:574`). Lo que falta para cerrar el pendiente 47 es la otra mitad:
+que exista una cuenta de Asistente ficticia con la que se pueda entrar, y eso depende del tope de
+correos del pendiente 45.
 
 ### Las trece migraciones ya corren en el servidor
 
@@ -1319,6 +1322,71 @@ Antes de mirar el proyecto, el chequeo se mira a sí mismo con diez casos, seis 
 pasar y cuatro que tiene que encontrar. Y para que no fuera una prueba que no puede fallar, se
 sacaron de la historia de git las versiones anteriores de las cuatro pantallas y se las pasó por
 el chequeo: encontró los catorce defectos, uno por uno.
+
+### El arranque de una pantalla ya dice cuando falla
+
+La regla 3 de `CLAUDE.md` pide cuatro estados —cargando, error, vacío, listo— a todo componente
+que carga datos. Lo primero que carga datos en cualquier pantalla es su arranque, y era
+exactamente lo que nadie miraba: **había ocho arranques y ninguno de los ocho tenía quién atrapara
+un fallo.** Hoy los ocho lo tienen, y el chequeo doce impide que vuelva a entrar uno sin él.
+
+Lo que pasaba sin ese resguardo: el arranque es una sola cadena de pedidos, y en cuanto uno falla
+se caen todos los de abajo sin llegar a ejecutarse. Lo que queda en pantalla no es un error, es la
+pantalla vacía.
+
+**El daño no era igual en las cuatro pantallas, y conviene decirlo así en vez de dejarlo parejo.**
+
+- **Una sola quedaba muda de verdad.** En `panel-prestadora.html:370`, una tabla sin legajos se ve
+  igual esté rota o esté bien: es idéntica a la de una Prestadora que todavía no cargó ninguno.
+  Ahora el fallo escribe en la propia tabla «No se pudo preparar la pantalla. Conviene volver a
+  cargarla», que es el estado de error que faltaba.
+- **Las otras tres caen en la pantalla de acceso**, y eso ya era la verdad: sin sesión rescatada,
+  lo que corresponde mostrar es el acceso. Lo que se perdía era el rastro. Ahora
+  `mockup-app.html:425` y `:889`, `pwa-asistente/index.html:643` y `pwa-familia/index.html:828`
+  dejan el detalle técnico en la consola en lugar de tirarlo.
+- **`js/auth.js:200` no avisa en pantalla, y es a propósito.** Corre en las catorce pantallas y su
+  único trabajo es pasarle el permiso al cliente de datos. Si falla, el primer pedido de esa
+  pantalla va a fallar también, y esa pantalla sí sabe cómo decirlo; poner un cartel acá sería
+  contarlo dos veces. Lo que no podía seguir pasando es que el fallo desapareciera sin dejar
+  rastro en ninguna parte.
+
+**Antes de escribir el chequeo se probaron dos reglas más amplias y se descartaron las dos, con la
+medición hecha.** Un chequeo que avisa de más se termina apagando, y entonces no verifica nada.
+
+- **Los cuatro estados buscados por vocabulario** —que cada pantalla nombre «cargando», «error» y
+  «vacío»— dieron aviso falso justo en `panel-prestadora.html`, que cubre los cuatro estados con
+  una sola función, `estadoTabla('info' | 'critico' | 'neutro')`, y no escribe ninguna de esas
+  palabras. Un chequeo que le dice «te falta» a la pantalla que mejor lo hace no sirve.
+- **Todo `await` adentro de un `try`**, mirando el proyecto entero, dejaba afuera 26 de 77. Casi
+  todos eran falsos: `ClienteDatos.initTenant()` atrapa su propio error y cae en una Prestadora de
+  respaldo, y los cuatro de `examen.html` viven adentro de funciones que `arrancar` llama dentro
+  de su `try`.
+- **La que midió limpio fue la del arranque**: ocho de ocho rotos, cero avisos falsos. Esa sí se
+  puede dejar prendida.
+
+**El chequeo** vive en `scripts/verificar_arranque.mjs` y mira tres formas de la misma cosa —una
+tarea que espera algo y que nadie aguarda, así que si falla no hay dónde caer—: el arranque de la
+pantalla, el bloque suelto que corre solo al cargar el archivo, y la tarea que se le entrega a una
+función que no espera respuesta, como el `getCurrentPosition` que ficha por GPS. Esas dos últimas
+ya estaban bien y siguen vigiladas.
+
+No alcanza con que el cuerpo tenga un `try` en alguna parte: para cada `await` se busca hacia
+atrás si hay un `try` abierto que todavía no cerró. Uno de los casos de prueba es justo eso, un
+`try` que cierra antes del `await`. El cuerpo se recorta contando llaves, por el mismo motivo que
+en `verificar_botones.mjs`.
+
+Se mira a sí mismo con once casos, cinco que tiene que encontrar y seis que tiene que dejar pasar.
+Y para que no fuera una prueba que no puede fallar, se sacaron de la historia de git las versiones
+anteriores de los cinco archivos: encontró los seis defectos que tenían, que son los ocho del
+proyecto porque `js/auth.js` está copiado tres veces.
+
+Qué no mira, dicho de frente: si el `catch` hace algo útil —uno vacío pasa igual—, y las llamadas
+hacia adentro; si el arranque llama a una función que espera, ese `await` es problema de esa
+función.
+
+En la misma pasada salieron de las dos aplicaciones del teléfono el correo y la contraseña que
+venían escritos en los campos de acceso. Está contado más arriba, en «El alta del teléfono ya pide
+una contraseña».
 
 ## 2. Falta construir
 
