@@ -805,7 +805,7 @@
           // Buscar el legajo del usuario actual si hay userId
           const correo = userId ? (await Sesion.getSession())?.user?.email : null;
           const asp = (correo && aspirantes.find(a => a.email === correo)) || aspirantes[0];
-          statusTxt.textContent = asp.estado === 'validado' || asp.estado === 'validado_prestadora'
+          statusTxt.textContent = asp.estado === 'validado_prestadora'
             ? '🟢 Validado — Habilitado para trabajar'
             : '🟡 En revisión — Complete su legajo';
         } else {

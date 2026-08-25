@@ -1488,7 +1488,7 @@ migraciones. Se midió todo de nuevo el 25 de agosto de 2026, contra el árbol d
 | 2.566 declaraciones en 772 atributos `style=` | 2.166 en 687 |
 | ninguna pantalla protegida | 11 de las 16 rescatan la sesión al abrir |
 | 4 dependencias por CDN | 4 servidores de afuera: dos de tipografías y dos de bibliotecas |
-| 6 tablas, sin migraciones en el repositorio | 22 tablas y 16 migraciones |
+| 6 tablas, sin migraciones en el repositorio | 22 tablas y 17 migraciones |
 
 Dos filas merecen una explicación. **Los estilos pegados al HTML bajaron** —de 2.566
 declaraciones a 2.166— porque en el medio se sacaron los 434 colores escritos a mano; el
@@ -1540,6 +1540,31 @@ Asistentes» está bien dicho y pasa. Lo que se prohíben son las formas donde n
 guardada —publicar una búsqueda, una búsqueda publicada, una búsqueda nueva, las búsquedas de
 una Familia—, que son las que no tienen ningún uso legítimo. Se prueba a sí mismo con once
 frases nuevas, seis que tiene que encontrar y cinco que tiene que dejar pasar.
+
+### El renombre se aplicó contra el servidor, y de paso murió un estado que nadie escribía
+
+Las migraciones `0015` y `0016` estaban escritas y sin aplicar, y mientras tanto el código pedía
+tablas que en el servidor todavía se llamaban como antes. **Se aplicaron el 25 de agosto de 2026
+con `supabase db push`**, contra la base de este proyecto —`pfbvpncavvlgmmvqkgbo`, la misma que
+nombra `js/apiClient.js:8`—, y no contra la de Careonys, que está en producción y no se toca desde
+acá. Quedan las diecisiete migraciones del repositorio aplicadas, sin diferencia entre lo local y
+el servidor.
+
+**Y aplicarlas destapó un valor muerto.** `caregivers.verification_status` aceptaba dos palabras
+para decir una sola cosa: `validado` y `validado_prestadora`. La `0007:8` ya había escrito qué
+significa —«Validado quiere decir "la Prestadora revisó los papeles"»—, que es exactamente lo que
+dice `validado_prestadora` con todas las letras. Los dos pasaban en todos lados, y **el corto no lo
+escribía nadie**: el único lugar que asigna un estado validado es `panel-prestadora.html:335`, y
+pone el largo. El corto sólo aparecía leído, y en una fila de ejemplo.
+
+La `0017` lo saca: pasa las filas que decían `validado` a decir `validado_prestadora`, y el
+directorio deja de nombrar el valor muerto. En el código quedaba un solo lugar que lo leía
+—`pwa-asistente/index.html:808`, un `||` defensivo— y también se fue. **Lo que la `0017` no hace es
+cerrar la lista de estados con un `check`**, porque para eso hay que saber cuáles son todos, y hoy
+el código nombra cuatro sin que ningún lugar diga que ésos son todos.
+
+Esto cierra la mitad del pendiente 53. La otra mitad no la puede cerrar la línea de comandos: falta
+**el nombre del segundo nivel de Asistente**, y un nombre no se inventa.
 
 ### Las dos tablas de esta modalidad pasaron a llamarse como lo que guardan
 
