@@ -23,7 +23,7 @@ a { text-decoration: none; color: inherit; }
   transition: transform var(--transicion), box-shadow var(--transicion), background var(--transicion);
 }
 .btn:hover { transform: translateY(-2px); box-shadow: var(--sombra-media); }
-.btn-primario { background: var(--azul-medio-texto); color: var(--texto-sobre-color); box-shadow: var(--sombra-media); }
+.btn-primario { background: var(--relleno-azul); color: var(--texto-sobre-color); box-shadow: var(--sombra-media); }
 .btn-sobre-oscuro { background: transparent; border: 2px solid var(--borde-card); color: var(--texto-secundario); }
 .btn-secundario { background: var(--azul-oscuro); color: var(--texto-sobre-color); box-shadow: var(--sombra-media); }
 
@@ -50,7 +50,7 @@ label { font-size: 12px; font-weight: 700; color: var(--texto-secundario); displ
 /* ---- Insignia ---- */
 .insignia-validada {
   display: inline-flex; align-items: center; gap: 4px;
-  background: var(--tono-exito-texto);
+  background: var(--relleno-exito);
   color: var(--texto-sobre-color); font-size: 10px; font-weight: 700;
   padding: 3px 10px; border-radius: 20px; white-space: nowrap;
 }

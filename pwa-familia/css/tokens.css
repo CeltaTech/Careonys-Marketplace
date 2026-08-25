@@ -87,6 +87,49 @@
      Lo que Careonys todavía no nombra. Si alguna vez lo nombra, esto se borra y se usa el de
      allá — por eso está separado y no mezclado arriba. */
 
+  /* --- De qué color son las partes que dibuja el navegador ---
+     La barra de desplazamiento, el calendario que se abre en un campo de fecha y la lista que
+     baja de un desplegable no las dibuja este archivo: las dibuja el navegador, y por su cuenta
+     las hace claras. Sobre una pantalla oscura eso son tres rectángulos blancos que no se
+     pueden pintar de otra manera. Esta línea es la única forma de avisarle de qué lado está. */
+  color-scheme: light;
+
+  /* --- Los colores macizos ---
+     Un color que pinta una pastilla, un botón o una franja: algo que se llena
+     entero y lleva letra encima. Son los mismos colores de arriba, pero acá
+     valen igual de día y de noche, y por eso están abajo de todo y el modo
+     oscuro no los toca.
+
+     Por qué hacen falta. Un token que termina en `-texto` está hecho para
+     pintar letras sobre el papel, y de noche se aclara a propósito, que es lo
+     que tiene que hacer una letra cuando el papel se pone negro. Nueve lugares
+     lo estaban usando de fondo, con letra blanca encima: de día se veía bien de
+     casualidad y de noche quedaba blanco sobre celeste. El fondo de una
+     pastilla no es una letra y no sigue la misma regla.
+
+     Los valores son exactamente los que tenían esos nueve lugares de día, así
+     que de día no cambia nada: lo único que cambia es que de noche se quedan
+     quietos. Todos llevan `--texto-sobre-color` encima. */
+  --relleno-azul: oklch(0.567 0.13 250);
+  --relleno-exito: oklch(0.4 0.13 165);
+  --relleno-atencion: oklch(0.45 0.13 70);
+  --relleno-critico: oklch(0.45 0.15 25);
+  --relleno-info: oklch(0.42 0.13 250);
+  --relleno-neutro: oklch(0.5 0.01 250);
+  --relleno-oscuro: oklch(0.2 0.01 250);
+
+  /* El único de la familia que va al revés: es el naranja de marca una sombra
+     más oscuro, para cuando el mouse se apoya en un botón naranja. Sigue siendo
+     lo bastante claro como para llevar letra oscura, igual que el de reposo. */
+  --relleno-atencion-hover: oklch(0.575 0.13 70);
+
+  /* --- La letra oscura sobre un color claro ---
+     El opuesto exacto de `--texto-sobre-color`. Un naranja o un amarillo son
+     demasiado claros para letra blanca, así que llevan letra oscura — y esa
+     letra tampoco puede cambiar de noche, porque el naranja de abajo no cambia.
+     Antes acá decía `--texto-principal`, que de noche se vuelve casi blanco. */
+  --texto-oscuro-sobre-color: oklch(0.2 0.01 250);
+
   /* --- Redondeo ---
      Cuatro escalones: la insignia, el campo, la tarjeta y la píldora. */
   --redondeo-chico: 8px;
@@ -165,19 +208,30 @@
 }
 
 /* ================= MODO OSCURO =================
-   Los tokens del modo oscuro están definidos abajo y se encienden cuando la persona lo elige:
-   se escribe `data-tema` en la etiqueta <html>.
+   Abajo están los mismos tokens de arriba con otros valores, y se encienden de dos maneras.
 
-   Todavía NO se enciende solo con la preferencia de la computadora. El motivo es medible: en la
-   portada, 17 de 144 textos quedan por debajo del mínimo legible en oscuro, porque su color está
-   escrito a mano adentro de un atributo `style=` y no sale de estos tokens. Esos atributos se
-   borran al portar cada pantalla. El día que no quede ninguno, se agrega acá el bloque
-   `@media (prefers-color-scheme: dark)` con estos mismos valores, más un bloque
-   `:root[data-tema='claro']` que le gane —sin ese, quien tenga la computadora en oscuro no
-   podría forzar la pantalla en claro—. Hoy no hace falta ninguno de los dos: sin preferencia
-   automática, lo de arriba ya es el modo claro. */
+   La primera es la preferencia de la computadora: quien la tiene puesta en oscuro abre el sitio
+   en oscuro, sin tocar nada y sin esperar a que cargue ningún programa. Eso lo hace el bloque
+   `@media (prefers-color-scheme: dark)`.
+
+   La segunda es la elección de la persona, que le gana a la computadora en las dos direcciones:
+   se escribe `data-tema` en la etiqueta <html>, con el valor `oscuro` para forzar el oscuro o
+   `claro` para forzar el claro. El `:not([data-tema='claro'])` del @media es lo que hace posible
+   la segunda: sin él, quien tenga la computadora en oscuro no podría volver a la pantalla clara
+   ni pidiéndolo.
+
+   Por qué recién ahora. Un color escrito con su número no cambia de noche, y hasta el 25 de
+   agosto de 2026 había 434 escritos a mano: encender esto antes dejaba cuadros blancos con
+   letra blanca adentro. Hoy no queda ninguno y `scripts/verificar_paleta.mjs` impide que
+   vuelvan.
+
+   Los valores aparecen dos veces —una en cada bloque— porque CSS no deja poner una condición de
+   pantalla adentro de un selector. Que las dos listas sigan siendo la misma no queda librado a
+   la memoria de nadie: lo compara `scripts/verificar_temas.mjs` en cada commit. */
 
 :root[data-tema='oscuro'] {
+  color-scheme: dark;
+
   --fondo-app: oklch(0.17 0.012 250);
   --superficie: oklch(0.22 0.014 250);
   --superficie-hundida: oklch(0.26 0.014 250);
@@ -216,6 +270,51 @@
   --sombra-alta: 0 4px 24px oklch(0 0 0 / 0.45);
 
   --texto-tenue: oklch(0.6 0.008 250);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema='claro']) {
+    color-scheme: dark;
+
+    --fondo-app: oklch(0.17 0.012 250);
+    --superficie: oklch(0.22 0.014 250);
+    --superficie-hundida: oklch(0.26 0.014 250);
+    --superficie-hover: oklch(0.29 0.014 250);
+    --borde-card: oklch(0.34 0.014 250);
+    --sombra-card: 0 1px 2px oklch(0 0 0 / 0.35);
+    --velo-modal: oklch(0.1 0.01 250 / 0.65);
+
+    --texto-principal: oklch(0.95 0.005 250);
+    --texto-secundario: oklch(0.72 0.008 250);
+    --texto-titulo: oklch(0.93 0.015 250);
+
+    --azul-medio-texto: oklch(0.75 0.12 250);
+    --verde-exito-texto: oklch(0.75 0.12 165);
+    --naranja-alerta-texto: oklch(0.78 0.12 70);
+    --rojo-peligro-texto: oklch(0.72 0.14 25);
+
+    --tono-exito-fondo: oklch(0.55 0.13 165 / 0.2);
+    --tono-exito-texto: oklch(0.78 0.12 165);
+    --tono-atencion-fondo: oklch(0.62 0.13 70 / 0.2);
+    --tono-atencion-texto: oklch(0.82 0.12 70);
+    --tono-critico-fondo: oklch(0.58 0.15 25 / 0.22);
+    --tono-critico-texto: oklch(0.76 0.14 25);
+    --tono-info-fondo: oklch(0.65 0.13 250 / 0.2);
+    --tono-info-texto: oklch(0.79 0.12 250);
+    --tono-neutro-fondo: oklch(0.3 0.01 250);
+    --tono-neutro-texto: oklch(0.78 0.008 250);
+
+    --tono-exito-borde: oklch(0.55 0.13 165 / 0.45);
+    --tono-atencion-borde: oklch(0.62 0.13 70 / 0.45);
+    --tono-critico-borde: oklch(0.58 0.15 25 / 0.45);
+    --tono-info-borde: oklch(0.65 0.13 250 / 0.45);
+
+    --sombra-suave: 0 2px 8px oklch(0 0 0 / 0.3);
+    --sombra-media: 0 4px 16px oklch(0 0 0 / 0.38);
+    --sombra-alta: 0 4px 24px oklch(0 0 0 / 0.45);
+
+    --texto-tenue: oklch(0.6 0.008 250);
+  }
 }
 
 /* Quien pidió que el movimiento se reduzca no ve transiciones. No es un extra: para algunas

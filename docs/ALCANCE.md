@@ -925,6 +925,77 @@ demás se arregló, y se arregló **cambiando qué token usa cada regla, no el t
    token de Careonys, así que el arreglo va allá: subirle una pizca de oscuridad.
 
 
+### La pantalla se pone de noche sola, y lo que se rompía de noche ya no puede volver
+
+Cierra la mitad de modo oscuro del pendiente 8, el 25 de agosto de 2026.
+
+**Qué se hizo.** Quien tiene la computadora puesta en oscuro ahora abre el sitio en oscuro, sin
+tocar nada y sin esperar a que cargue ningún programa. Hasta ayer el modo oscuro estaba escrito
+entero y no lo veía nadie: sólo se encendía escribiendo `data-tema='oscuro'` a mano en el HTML,
+cosa que ninguna pantalla hacía. Son tres cambios en `css/tokens.css` y sus dos copias:
+
+- El bloque `@media (prefers-color-scheme: dark)` (`css/tokens.css:275`), con los mismos valores
+  que `:root[data-tema='oscuro']` (`css/tokens.css:232`).
+- La guarda `:not([data-tema='claro'])` en ese bloque (`css/tokens.css:276`). Sin ella, quien
+  tiene la computadora en oscuro no podría volver a la pantalla clara ni pidiéndolo. Con ella, la
+  elección de la persona le gana a la de la máquina en las dos direcciones.
+- `color-scheme` (`css/tokens.css:95`), que le avisa al navegador de qué lado está. La barra de
+  desplazamiento, el calendario que se abre en un campo de fecha y la lista que baja de un
+  desplegable no las dibuja este proyecto: las dibuja el navegador, y sin esa línea las dibuja
+  claras encima de una pantalla oscura. Es la única forma de decírselo.
+
+**Por qué recién ahora.** Porque un color escrito con su número no cambia de noche, y hasta ayer
+había 434 escritos a mano. Encender esto antes habría dejado cuadros blancos con letra blanca
+adentro. La sección anterior cuenta cómo se fueron.
+
+**Lo que apareció al encenderlo.** Se midieron los 763 textos de las dieciséis pantallas contra el
+fondo que de verdad tienen debajo, con la computadora puesta en oscuro: **58 quedaban por debajo
+del mínimo legible**. Casi todos eran el mismo error, repetido once veces y con un solo nombre:
+
+- **Nueve lugares usaban de fondo un token que se llama `-texto`.** Un token de letra está hecho
+  para pintar sobre el papel y de noche se aclara a propósito, que es lo que tiene que hacer una
+  letra cuando el papel se pone negro. Usado como fondo de una pastilla con letra blanca encima
+  hace exactamente lo contrario: el botón azul de «Inscribirse» quedaba celeste con letra blanca,
+  en 2.22:1. Le tocaba al botón primario de las tres hojas de estilo, a la insignia de legajo
+  validado, a las tres franjas de las tarjetas de prensa, a los dos botones redondos de la
+  videollamada y al fondo oscuro de esas mismas franjas.
+- **Dos lugares hacían lo simétrico**: fondo que no cambia de noche con letra que sí. El botón
+  naranja y la pastilla «PRÓXIMAMENTE» tomaban la letra de `--texto-principal`, que de noche se
+  vuelve casi blanca — y el naranja de abajo seguía siendo el mismo naranja.
+
+**Los colores macizos.** De ahí salieron nueve tokens nuevos en la sección 3 de `css/tokens.css`,
+que es la propia del marketplace: siete `--relleno-*` (`css/tokens.css:113`) para lo que se llena
+entero y lleva letra encima, `--relleno-atencion-hover` para cuando el mouse se apoya en un botón
+naranja, y `--texto-oscuro-sobre-color` (`css/tokens.css:131`), que es el opuesto exacto de
+`--texto-sobre-color`: la letra oscura que va encima de un color demasiado claro para letra
+blanca. **Los valores son exactamente los que esos once lugares tenían de día**, así que de día no
+cambió nada; lo único que cambia es que de noche se quedan quietos. Y están abajo de todo a
+propósito, donde el modo oscuro no los toca.
+
+**El noveno chequeo.** `scripts/verificar_temas.mjs` cuida las dos cosas que rompen la noche, y las
+cuida solo: que los dos bloques del modo oscuro sigan diciendo lo mismo —están repetidos porque
+CSS no deja poner una condición de pantalla adentro de un selector, y una copia que nadie compara
+se separa sola— y que ningún token de letra vuelva a pintar un fondo. Tiene una excepción escrita
+con su motivo: las tres rayas del menú, que son un dibujo del mismo color que la letra y **sí**
+tienen que aclararse de noche. Se registró solo en `scripts/verificar_todo.mjs` y en el gancho de
+`git commit`, sin tocar ninguno de los dos.
+
+**Cómo quedó.** De los 763 textos, **10 quedan por debajo del mínimo de noche y 10 de día**, y no
+hay ninguno nuevo: son los mismos tres motivos que ya estaban anotados arriba como decisión del
+Desarrollador, y que desde hoy tienen número propio en `docs/PENDIENTES.md` —el pendiente 48—.
+De noche son cuatro de letra blanca sobre el azul medio y seis que salen de los colores que eligió
+la Prestadora de ejemplo; de día son cinco y cinco, porque el botón de ingresar de
+`mockup-app.html` falla de día y de noche se salva, y el enlace de 1.43:1 falla de noche y de día
+se salva. **De los 58 que rompía la noche no queda ninguno.**
+
+**El caso más claro de los que quedan.** De noche, el enlace «Postularse como Asistente» de la
+pantalla de acceso del Asistente queda en **1.43:1**, que es prácticamente invisible. El color es
+`#1A365D`, el azul marino que la Prestadora de ejemplo tiene guardado en `tenants.primary_color`,
+apoyado sobre una tarjeta que de noche es gris oscuro. De día ese azul marino sobre blanco se lee
+perfecto. No hay nada roto en las hojas de estilo: **el color que elige una Prestadora no tiene
+versión de noche**, y `js/apiClient.js` lo escribe encima de los tokens igual. Es el punto 2 de la
+lista de acá abajo, y de noche cuesta el doble.
+
 ### El Asistente ve sus capacitaciones, y al lado lo que rindió
 
 Cierra el pendiente 34, el 25 de agosto de 2026.

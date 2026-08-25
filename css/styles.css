@@ -92,15 +92,15 @@ ul {
 
 .btn-atencion {
   background: var(--naranja-alerta);
-  color: var(--texto-principal);
+  color: var(--texto-oscuro-sobre-color);
 }
 
 .btn-atencion:hover {
-  background: var(--naranja-alerta-texto);
+  background: var(--relleno-atencion-hover);
 }
 
 .btn-primario {
-  background: var(--azul-medio-texto);
+  background: var(--relleno-azul);
   color: var(--texto-sobre-color);
 }
 
@@ -379,7 +379,7 @@ ul {
   top: 16px;
   left: 16px;
   background: var(--naranja-alerta);
-  color: var(--texto-principal);
+  color: var(--texto-oscuro-sobre-color);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 1px;
@@ -906,7 +906,7 @@ ul {
 }
 
 .press-card-header {
-  background: var(--texto-principal);
+  background: var(--relleno-oscuro);
   color: var(--texto-sobre-color);
   padding: 12px 16px;
   font-size: 13px;
@@ -916,15 +916,15 @@ ul {
 }
 
 .press-card-header.red {
-  background: var(--tono-critico-texto);
+  background: var(--relleno-critico);
 }
 
 .press-card-header.blue {
-  background: var(--tono-info-texto);
+  background: var(--relleno-info);
 }
 
 .press-card-header.orange {
-  background: var(--tono-atencion-texto);
+  background: var(--relleno-atencion);
 }
 
 .press-card-body {
@@ -1891,11 +1891,11 @@ ul {
 }
 
 .video-btn.mute {
-  background: var(--texto-secundario);
+  background: var(--relleno-neutro);
 }
 
 .video-btn.hangup {
-  background: var(--tono-critico-texto);
+  background: var(--relleno-critico);
 }
 
 .video-btn.cam {
@@ -1907,7 +1907,7 @@ ul {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--tono-exito-texto);
+  background: var(--relleno-exito);
   color: var(--texto-sobre-color);
   font-size: 11px;
   font-weight: 800;
