@@ -29,6 +29,10 @@ const GRUPOS = [
   ['js/apiClient.js', 'pwa-asistente/js/apiClient.js', 'pwa-familia/js/apiClient.js'],
   ['js/auth.js', 'pwa-asistente/js/auth.js', 'pwa-familia/js/auth.js'],
   ['js/catalogo.js', 'pwa-asistente/js/catalogo.js', 'pwa-familia/js/catalogo.js'],
+  // La aplicación de la Familia no pregunta la disponibilidad de nadie, así que
+  // estos dos van a una sola copia y no a dos.
+  ['js/disponibilidad.js', 'pwa-asistente/js/disponibilidad.js'],
+  ['data/catalogo-disponibilidad.json', 'pwa-asistente/data/catalogo-disponibilidad.json'],
   ['data/catalogo-vocabularios.json', 'pwa-asistente/data/catalogo-vocabularios.json',
    'pwa-familia/data/catalogo-vocabularios.json'],
   ['css/tokens.css', 'pwa-asistente/css/tokens.css', 'pwa-familia/css/tokens.css'],

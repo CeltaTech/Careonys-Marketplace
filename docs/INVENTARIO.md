@@ -208,7 +208,7 @@ no de traducción de código.
 Salen de dos lugares distintos a la vez. Eran cuatro: el 24 de agosto de 2026 se suprimieron el camino de imitación con almacenamiento del navegador y el último JSON suelto de perfiles (pendiente 14).
 
 **a) Supabase, por interfaz REST.** Es la única fuente de datos de personas. `js/apiClient.js`
-ya no tiene bandera para apagarla: la que había (`useSupabase`) valía siempre `true` y cada método
+ya no tiene interruptor para apagarla: el que había (`useSupabase`) valía siempre `true` y cada método
 llevaba detrás una copia que escribía en el navegador. Esa copia nunca corría, así que envejecía
 sin que nadie lo notara, y en un caso sí corría y era peor: `js/main.js` guardaba la búsqueda de
 la familia en el navegador y la pantalla anunciaba éxito. Se sacaron las dos cosas.
@@ -232,7 +232,8 @@ borró el 24 de agosto de 2026.
 |---|---:|---|
 | `data/catalogo-vocabularios.json` | 22 listas, 133 opciones | El catálogo del producto: perfiles profesionales, zonas, patologías, tareas, modalidades, niveles. Explicado en `docs/CATALOGO.md` |
 | `data/catalogo-oferta.json` | 9 servicios, 6 cursos, 1 evaluación | Lo que el producto ofrece |
-| `data/catalogo-fichas.json`, `data/catalogo-banderas.json`, `data/catalogo-verificaciones.json` | — | Definiciones de las fichas del legajo |
+| `data/catalogo-fichas.json`, `data/catalogo-autorizaciones.json`, `data/catalogo-verificaciones.json` | — | Definiciones de las fichas del legajo |
+| `data/catalogo-disponibilidad.json` | 7 días × 3 turnos | La grilla horaria del alta y la pregunta de los reemplazos urgentes. Lo dibuja `js/disponibilidad.js` |
 
 Quedan **dos modelos de datos distintos para la misma cosa**: el de `perfil.html` (con `pts`,
 `starsCount`, `levelBar`) y el de la base traducido por `_mapFromDatabase` (con `estado`,
@@ -417,7 +418,7 @@ del navegador, todo lo que vive en memoria se pierde al cambiar de página.
 
 **Almacenamiento local (`localStorage`).** El proyecto ya no escribe ninguna clave propia. Había
 cuatro (`aspirantes`, `busquedas`, `fichadas`, `bitacora`), todas del camino de imitación que se
-suprimió el 24 de agosto de 2026 junto con la bandera `useSupabase`.
+suprimió el 24 de agosto de 2026 junto con el interruptor `useSupabase`.
 
 Queda la **clave de sesión que administra el SDK de Supabase**, que sí está en uso real y es lo
 único que efectivamente persiste entre pantallas.

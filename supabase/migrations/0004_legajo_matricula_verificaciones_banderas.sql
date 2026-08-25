@@ -1,6 +1,6 @@
 -- =====================================================================
 -- 0004 — El legajo crece: matrícula, estudios, experiencia, referencias,
---         verificaciones y las dos banderas de consentimiento
+--         verificaciones y las autorizaciones del cierre
 --
 -- Hasta acá `caregivers` guardaba el legajo entero en una sola fila. Le
 -- faltaban cuatro cosas que `docs/CATALOGO.md` y `docs/MODULOS.md` ya
@@ -14,9 +14,12 @@
 --      (`data/catalogo-verificaciones.json`, pendiente 20 resuelto el 24
 --      de agosto de 2026): quién las controló, con qué resultado, y desde
 --      cuándo corre el plazo de 15 días de los antecedentes penales.
---   3. Las dos banderas de consentimiento (`data/catalogo-banderas.json`,
---      pendientes 18 y 2): si el Asistente autorizó publicarse y si acepta
---      reemplazos urgentes. Arrancan sin marcar y así se guardan.
+--   3. Las autorizaciones del cierre del alta
+--      (`data/catalogo-autorizaciones.json`, pendientes 18 y 2): si el
+--      Asistente autorizó publicar su perfil. Arranca sin marcar y así se
+--      guarda. Acá había además una segunda pregunta, la de los reemplazos
+--      urgentes; se mudó a la Disponibilidad horaria en la migración 0012,
+--      porque aceptar un reemplazo no es autorizar nada, es estar disponible.
 --   4. Documentación con vencimiento, genérica: lo que hoy piden
 --      Matrícula y certificado de salud son casos del mismo patrón —un
 --      papel que vence y que hay que volver a pedir—, y conviene una sola
@@ -148,21 +151,23 @@ create table if not exists public.verificaciones_asistente (
 comment on table public.verificaciones_asistente is
   'Una fila por tipo de verificación y Asistente. tipo referencia data/catalogo-verificaciones.json: dni, penales, matricula, titulo, salud, domicilio, referencia.';
 
--- --- 7. Banderas de consentimiento ------------------------------------------
--- Las dos que quedaron tras sacar las que regalaban el negocio (pendiente
--- 18, 24 de agosto de 2026). Arrancan sin marcar y así se guardan: quien
--- cierra el alta sin tocarlas queda sin publicar.
-create table if not exists public.banderas_asistente (
+-- --- 7. Autorizaciones del cierre del alta ----------------------------------
+-- Lo que la persona autoriza al terminar de cargar sus datos (pendiente 18,
+-- 24 de agosto de 2026). Arranca sin marcar y así se guarda: quien cierra el
+-- alta sin tocarla queda sin publicar. La palabra que se usaba antes la había
+-- puesto la línea de comandos traduciendo del inglés y no quería decir nada;
+-- el Desarrollador la cambió el 24 de agosto de 2026, y la migración 0012 lo
+-- hizo sobre la base que ya estaba andando.
+create table if not exists public.autorizaciones_asistente (
     caregiver_id          uuid primary key references public.caregivers(id) on delete cascade,
     tenant_id             uuid not null references public.tenants(id),
     perfil_publicado      boolean not null default false,
-    disponible_urgencias  boolean not null default false,
     respondido_el         timestamp with time zone,
     created_at            timestamp with time zone default timezone('utc'::text, now())
 );
 
-comment on table public.banderas_asistente is
-  'Consentimiento de publicación. perfil_publicado en false es lo que impide que caregivers_publicos muestre a alguien que no dio permiso — pendiente 2.';
+comment on table public.autorizaciones_asistente is
+  'Lo que el Asistente autoriza al cerrar el alta. perfil_publicado en false es lo que impide que caregivers_publicos muestre a alguien que no dio permiso — pendiente 2.';
 
 -- --- 8. RLS: mismo patrón que la 0002 ---------------------------------------
 alter table public.matriculas_asistente          enable row level security;
@@ -171,7 +176,7 @@ alter table public.experiencia_laboral_asistente enable row level security;
 alter table public.referencias_asistente         enable row level security;
 alter table public.documentos_asistente          enable row level security;
 alter table public.verificaciones_asistente      enable row level security;
-alter table public.banderas_asistente            enable row level security;
+alter table public.autorizaciones_asistente      enable row level security;
 
 create policy "Matriculas de la Prestadora" on public.matriculas_asistente
   for all to authenticated
@@ -203,14 +208,14 @@ create policy "Verificaciones de la Prestadora" on public.verificaciones_asisten
   using (tenant_id = public.prestadora_actual())
   with check (tenant_id = public.prestadora_actual());
 
-create policy "Banderas de la Prestadora" on public.banderas_asistente
+create policy "Autorizaciones de la Prestadora" on public.autorizaciones_asistente
   for all to authenticated
   using (tenant_id = public.prestadora_actual())
   with check (tenant_id = public.prestadora_actual());
 
 -- Ninguna de estas siete es visible para el rol anónimo. El directorio
--- pública sigue resolviéndose sólo por caregivers_publicos (0002 §5), que
--- todavía no filtra por banderas_asistente.perfil_publicado — eso es la
+-- público sigue resolviéndose sólo por caregivers_publicos (0002 §5), que
+-- todavía no filtra por autorizaciones_asistente.perfil_publicado — eso es la
 -- otra mitad del pendiente 2 y se hace en una migración aparte, cuando
 -- exista la pantalla que escribe esta tabla.
 revoke all on table public.matriculas_asistente          from anon;
@@ -219,7 +224,7 @@ revoke all on table public.experiencia_laboral_asistente  from anon;
 revoke all on table public.referencias_asistente          from anon;
 revoke all on table public.documentos_asistente           from anon;
 revoke all on table public.verificaciones_asistente       from anon;
-revoke all on table public.banderas_asistente              from anon;
+revoke all on table public.autorizaciones_asistente        from anon;
 
 -- --- 9. Índices para las consultas obvias -----------------------------------
 create index if not exists idx_matriculas_caregiver     on public.matriculas_asistente(caregiver_id);

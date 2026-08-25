@@ -161,9 +161,11 @@ const ClienteDatos = {
     return await this._supabasePost('caregivers', dbData);
   },
 
-  // Guarda el legajo del Asistente: las cuatro fichas repetibles y las dos
-  // banderas de consentimiento (migracion 0004). Las claves de cada fila salen
-  // de data/catalogo-fichas.json y coinciden con las columnas de la tabla.
+  // Guarda el legajo del Asistente: las cuatro fichas repetibles, lo que
+  // autoriza al cerrar el alta (migración 0004) y su disponibilidad horaria
+  // (migración 0012). Las claves de cada fila salen de data/catalogo-fichas.json,
+  // data/catalogo-autorizaciones.json y data/catalogo-disponibilidad.json, y
+  // coinciden con las columnas de cada tabla.
   async guardarLegajoAsistente(caregiverId, legajo) {
     const tablas = {
       matriculas: 'matriculas_asistente',
@@ -183,9 +185,25 @@ const ClienteDatos = {
       }
     }
 
-    if (legajo.banderas) {
-      guardado.banderas = await this._supabaseRequest('POST', 'banderas_asistente',
-        marcar({ ...legajo.banderas, respondido_el: new Date().toISOString() }));
+    if (legajo.autorizaciones) {
+      guardado.autorizaciones = await this._supabaseRequest('POST', 'autorizaciones_asistente',
+        marcar({ ...legajo.autorizaciones, respondido_el: new Date().toISOString() }));
+    }
+
+    // La disponibilidad va a dos tablas: lo general a una fila propia, y cada
+    // casillero marcado de la grilla a una fila de franjas_asistente. Antes de
+    // la migración 0012 la grilla llegaba hasta acá y se descartaba en silencio,
+    // porque no había dónde ponerla: era el pendiente 23.
+    if (legajo.disponibilidad) {
+      const franjas = legajo.disponibilidad.franjas || [];
+      const general = { ...legajo.disponibilidad };
+      delete general.franjas;
+      guardado.disponibilidad = await this._supabaseRequest('POST', 'disponibilidad_asistente',
+        marcar({ ...general, respondido_el: new Date().toISOString() }));
+      if (franjas.length > 0) {
+        guardado.franjas = await this._supabaseRequest('POST', 'franjas_asistente',
+          franjas.map(marcar));
+      }
     }
 
     return guardado;

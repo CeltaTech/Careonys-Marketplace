@@ -305,7 +305,7 @@
           "es-AR": "Jornada completa"
         }
       ],
-      "nota": "Tenía cinco opciones de tres ejes distintos y obligaba a elegir una sola. «Con retiro» y «sin retiro» pasaron a su propia lista, porque no son excluyentes: quien trabaja de las dos formas antes no lo podía declarar. «Urgencia» no es una modalidad sino una disponibilidad del Asistente, y es una bandera del legajo, no una opción de catálogo: ver docs/CATALOGO.md."
+      "nota": "Tenía cinco opciones de tres ejes distintos y obligaba a elegir una sola. «Con retiro» y «sin retiro» pasaron a su propia lista, porque no son excluyentes: quien trabaja de las dos formas antes no lo podía declarar. «Urgencia» no es una modalidad sino una disponibilidad del Asistente: vive en data/catalogo-disponibilidad.json y se guarda en disponibilidad_asistente, no en una lista de opciones. La nota decía «bandera», que era como la línea de comandos había traducido flag; el Desarrollador cambió esa palabra el 24 de agosto de 2026."
     },
     "frecuencia": {
       "titulo": "Frecuencia del servicio",
@@ -371,15 +371,18 @@
       "items": [
         {
           "clave": "manana",
-          "es-AR": "Mañana"
+          "es-AR": "Mañana",
+          "horario": "6 a 14"
         },
         {
           "clave": "tarde",
-          "es-AR": "Tarde"
+          "es-AR": "Tarde",
+          "horario": "14 a 22"
         },
         {
           "clave": "noche",
-          "es-AR": "Noche"
+          "es-AR": "Noche",
+          "horario": "22 a 6"
         }
       ],
       "nota": "Las claves tenían eñe («mañana»). Una clave con eñe se rompe en direcciones web y en nombres de columna."

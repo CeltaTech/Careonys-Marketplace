@@ -8,14 +8,20 @@ otro lado:
 |---|---|
 | `data/catalogo-vocabularios.json` | 22 listas de opciones, 133 opciones en total |
 | `data/catalogo-oferta.json` | 9 servicios, 6 cursos y la evaluación con sus 2 preguntas |
-| `data/catalogo-banderas.json` | 2 banderas del legajo y el paso de cierre del alta |
+| `data/catalogo-autorizaciones.json` | Lo que el Asistente autoriza al cerrar el alta |
+| `data/catalogo-disponibilidad.json` | La grilla de días y turnos, y la pregunta de los reemplazos urgentes |
 | `data/catalogo-fichas.json` | 4 fichas repetibles: matrícula, estudio, experiencia y referencia |
 | `data/catalogo-verificaciones.json` | Qué bloquea el alta, qué bloquea la publicación, y con qué plazos |
 
-Los dos primeros son listas de opciones. Los dos últimos, del 24 de agosto de 2026, no son
-listas: uno guarda preguntas de sí o no y el otro, formularios repetibles. Están declarados
-con su texto en los tres idiomas, porque la regla 2 no admite construir en uno solo «para
-traducir después».
+Los dos primeros son listas de opciones. Los cuatro que siguen, del 24 de agosto de 2026, no
+son listas: guardan preguntas de sí o no, la grilla horaria, formularios repetibles y plazos.
+Todos están declarados con su texto en los tres idiomas, porque la regla 2 no admite construir
+en uno solo «para traducir después».
+
+`catalogo-autorizaciones.json` se llamaba `catalogo-banderas.json` hasta el 24 de agosto de
+2026. La palabra la había puesto la línea de comandos traduciendo *flag*, y el Desarrollador la
+sacó: «una bandera es una tela que identifica un país o un ejército, pero nunca es una casilla».
+La tabla se llama `autorizaciones_asistente` desde la migración 0012.
 
 Antes estaban escritas a mano adentro del HTML, repetidas pantalla por pantalla. La mayoría
 de las pantallas todavía no las lee: eso pasa al portar cada una.
@@ -24,7 +30,7 @@ de las pantallas todavía no las lee: eso pasa al portar cada una.
 
 **La primera que sí las lee es `postulacion-asistente.html`, desde el 24 de agosto de 2026.**
 Su paso 5 dibuja las cuatro fichas repetibles desde `data/catalogo-fichas.json` con el motor
-`js/fichas-legajo.js`, su paso 7 arma el cierre desde `data/catalogo-banderas.json`, y el
+`js/fichas-legajo.js`, su paso 7 arma el cierre desde `data/catalogo-autorizaciones.json`, y el
 Tipo de Asistente del paso 2 sale del vocabulario `tipo_asistente`. Nada de eso está
 escrito en la pantalla, ni siquiera la regla de cuándo la Matrícula es obligatoria: eso lo
 decide la propiedad `requiere_matricula` de cada tipo del vocabulario. Agregar un tipo
@@ -118,14 +124,25 @@ Tres cosas aparecieron en el relevamiento, hacen falta, y **no entran en `catalo
 no son opciones para elegir, son campos del legajo. **Están declaradas en sus archivos propios, y
 desde el 24 de agosto de 2026 además tienen tabla real**, aplicada contra la base con
 `supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql`: matrículas, estudios,
-experiencia laboral, referencias, documentos con vencimiento, verificaciones y banderas de
-consentimiento. Lo que sigue explica qué son y por qué se decidieron así; el JSON sigue
+experiencia laboral, referencias, documentos con vencimiento, verificaciones y el consentimiento
+de publicación. Lo que sigue explica qué son y por qué se decidieron así; el JSON sigue
 siendo la fuente del texto en los tres idiomas, la tabla guarda los datos.
 
-**Banderas del legajo del Asistente** — se responden con sí o no, no con una opción de lista. Son dos:
+El nombre de ese archivo de migración todavía dice «banderas», y se deja así a propósito: el
+programa de Supabase reconoce cada migración aplicada por su número **y su nombre**, así que
+cambiarle el nombre a una que ya corrió obliga a repararlo a mano en el servidor. El contenido sí
+está al día.
+
+**Lo que el Asistente autoriza al cerrar el alta** — se responde con sí o no, no con una opción
+de lista. Hoy hay una sola:
 
 - **Publicar mi perfil**, que es el consentimiento para que se muestre.
-- **Disponible para reemplazos urgentes.**
+
+Antes había una segunda, «disponible para reemplazos urgentes». **El Desarrollador decidió el 24
+de agosto de 2026 que eso no es una autorización sino una disponibilidad**, y se mudó al paso de
+disponibilidad horaria: hoy vive en `data/catalogo-disponibilidad.json` y se guarda en la tabla
+`disponibilidad_asistente` (migración 0012). No es lo mismo permitir algo que estar disponible
+para algo.
 
 ### Qué verificación bloquea qué (pendiente 20, resuelto el 24 de agosto de 2026)
 

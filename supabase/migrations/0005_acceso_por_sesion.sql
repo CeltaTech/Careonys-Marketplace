@@ -186,7 +186,7 @@ drop policy if exists "Experiencia de la Prestadora"    on public.experiencia_la
 drop policy if exists "Referencias de la Prestadora"    on public.referencias_asistente;
 drop policy if exists "Documentos de la Prestadora"     on public.documentos_asistente;
 drop policy if exists "Verificaciones de la Prestadora" on public.verificaciones_asistente;
-drop policy if exists "Banderas de la Prestadora"       on public.banderas_asistente;
+drop policy if exists "Autorizaciones de la Prestadora" on public.autorizaciones_asistente;
 
 do $bloque$
 declare
@@ -198,7 +198,7 @@ begin
     'experiencia_laboral_asistente',
     'referencias_asistente',
     'documentos_asistente',
-    'banderas_asistente'
+    'autorizaciones_asistente'
   ] loop
     execute format($sql$
       create policy "Legajo de la Prestadora, para su personal" on public.%I
@@ -237,7 +237,7 @@ revoke all on table public.verificaciones_asistente from anon;
 
 -- --- 7. Lo que sigue igual --------------------------------------------------
 -- `caregivers_publicos` sigue siendo la única puerta sin sesión, y sigue sin
--- filtrar por `banderas_asistente.perfil_publicado`: eso es el pendiente 2 y
--- lo decide el Desarrollador, no esta migración.
+-- filtrar por `autorizaciones_asistente.perfil_publicado`: eso es el pendiente
+-- 2 y lo decide el Desarrollador, no esta migración.
 grant select, insert, update, delete on public.caregivers to authenticated;
 revoke all on table public.caregivers from anon;

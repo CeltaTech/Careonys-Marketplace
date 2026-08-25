@@ -1,0 +1,75 @@
+{
+  "_lea_esto_primero": {
+    "que_es": "El paso del alta donde el Asistente declara cuándo puede trabajar: la grilla de días por turnos, y si acepta que se le avise de un reemplazo que empieza en pocas horas.",
+    "por_que_existe": "**Decidido por el Desarrollador el 24 de agosto de 2026.** La grilla estaba escrita a mano dentro de dos pantallas —veintiún casilleros en cada una, repetidos— y lo que la persona marcaba no llegaba a ninguna parte: `js/apiClient.js` no tenía dónde guardarlo y lo descartaba sin avisar. Era el pendiente 23. Ahora los días y los turnos salen del catálogo, y cada casillero marcado es una fila de `franjas_asistente` (migración 0012).",
+    "de_donde_salen_los_dias_y_los_turnos": "De `catalogo-vocabularios.json`, vocabularios `dia_semana` y `turno`. Ninguna pantalla los escribe. Lo que se guarda son las claves —`lunes`, `manana`—, nunca la etiqueta que se muestra: una etiqueta cambia de idioma y una clave no.",
+    "de_que_lado_de_la_linea": "Compartido. Cuándo puede trabajar una persona es verdad sobre ella independientemente de cómo consiguió el trabajo: vale igual en prestación directa. Ver docs/MODULOS.md, renglón «Disponibilidad horaria».",
+    "por_que_la_urgencia_esta_aca": "**Decidido por el Desarrollador el 24 de agosto de 2026.** «Disponible para reemplazos urgentes» vivía entre las autorizaciones del cierre del alta, y no era una autorización: aceptar un reemplazo no es autorizar nada, es estar disponible. La nota de `modalidad_contratacion`, en `catalogo-vocabularios.json`, ya lo decía. Era el pendiente 26.",
+    "por_que_la_grilla_arranca_vacia": "Las dos pantallas venían con lunes a viernes mañana y tarde ya marcados, y el sábado a la tarde también. Nadie los marcó: los marcó el formulario. Y a diferencia de un texto sugerido, esto se guarda y después se usa para ofrecerle trabajo a la persona, así que la suposición no queda a la vista de nadie. Arranca vacía. **Si el Desarrollador prefiere volver a sugerir una semana típica**, se agregan los pares a `grilla.marcados_al_abrir` de este archivo y ninguna pantalla se entera."
+  },
+  "paso_de_disponibilidad": {
+    "clave": "disponibilidad",
+    "es-AR": {
+      "titulo": "¿Cuándo puede trabajar?",
+      "bajada": "Marque los turnos en los que está disponible. Se puede cambiar después, cuando quiera, desde su perfil.",
+      "ayuda_grilla": "Toque cada casillero para marcarlo o desmarcarlo."
+    },
+    "en": {
+      "titulo": "When are you available to work?",
+      "bajada": "Tick the shifts you are available for. This can be changed later, at any time, from your profile.",
+      "ayuda_grilla": "Tap each cell to tick or untick it."
+    },
+    "pt-BR": {
+      "titulo": "Quando você pode trabalhar?",
+      "bajada": "Marque os turnos em que está disponível. Pode ser alterado depois, quando quiser, no seu perfil.",
+      "ayuda_grilla": "Toque em cada quadro para marcar ou desmarcar."
+    }
+  },
+  "grilla": {
+    "filas": "turno",
+    "columnas": "dia_semana",
+    "marcados_al_abrir": [],
+    "se_guarda_en": "franjas_asistente",
+    "es-AR": {
+      "encabezado_filas": "Turno",
+      "marcado": "Disponible",
+      "sin_marcar": "No disponible"
+    },
+    "en": {
+      "encabezado_filas": "Shift",
+      "marcado": "Available",
+      "sin_marcar": "Not available"
+    },
+    "pt-BR": {
+      "encabezado_filas": "Turno",
+      "marcado": "Disponível",
+      "sin_marcar": "Indisponível"
+    }
+  },
+  "preguntas": [
+    "reemplazos_urgentes"
+  ],
+  "reemplazos_urgentes": {
+    "ambito": "compartido",
+    "valor_inicial": false,
+    "se_guarda_en": "disponibilidad_asistente",
+    "es-AR": {
+      "etiqueta": "Disponible para reemplazos urgentes",
+      "pregunta": "¿Está disponible para cubrir un reemplazo urgente?",
+      "ayuda_si": "Se le puede avisar de un reemplazo que empieza en pocas horas. Avisar no es asignar: siempre puede decir que no.",
+      "ayuda_no": "No se le avisa de reemplazos urgentes."
+    },
+    "en": {
+      "etiqueta": "Available for urgent cover",
+      "pregunta": "Are you available to cover an urgent replacement?",
+      "ayuda_si": "You may be notified of a replacement starting within a few hours. Being notified is not being assigned: you can always decline.",
+      "ayuda_no": "You are not notified of urgent replacements."
+    },
+    "pt-BR": {
+      "etiqueta": "Disponível para substituições urgentes",
+      "pregunta": "Está disponível para cobrir uma substituição urgente?",
+      "ayuda_si": "Você pode ser avisado de uma substituição que começa em poucas horas. Avisar não é atribuir: você sempre pode recusar.",
+      "ayuda_no": "Você não é avisado sobre substituições urgentes."
+    }
+  }
+}

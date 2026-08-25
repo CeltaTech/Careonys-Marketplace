@@ -47,9 +47,9 @@
 
    Y sobre el directorio (migración 0007), que es lo único que se ve sin sesión:
 
-    17. Un legajo validado, pero sin banderas, no se muestra.
-    18. Con la bandera en «no», tampoco.
-    19. Con la bandera en «sí», recién ahí aparece.
+    17. Un legajo validado, pero sin contestar el cierre del alta, no se muestra.
+    18. Con la autorización en «no», tampoco.
+    19. Con la autorización en «sí», recién ahí aparece.
     20. El directorio no devuelve ningún dato personal ni ningún camino del
         depósito privado. (17 a 20 también necesitan --local, por lo mismo:
         validar un legajo es trabajo del personal de la Prestadora.)
@@ -418,7 +418,7 @@ if (!coordinador) {
   comprobar('Validado pero sin contestar: el directorio no lo muestra',
     sinContestar === false, sinContestar ? 'aparece igual' : 'no aparece');
 
-  const banderas = async publicado => rest('/rest/v1/banderas_asistente', {
+  const autorizar = async publicado => rest('/rest/v1/autorizaciones_asistente', {
     method: 'POST',
     headers: { Prefer: 'resolution=merge-duplicates' },
     body: JSON.stringify({
@@ -427,12 +427,12 @@ if (!coordinador) {
     })
   }, a.token);
 
-  await banderas(false);
+  await autorizar(false);
   const dijoQueNo = await enDirectorio();
   comprobar('Contestó que no: el directorio tampoco lo muestra',
     dijoQueNo === false, dijoQueNo ? 'aparece igual' : 'no aparece');
 
-  await banderas(true);
+  await autorizar(true);
   const dijoQueSi = await enDirectorio();
   comprobar('Contestó que sí: recién ahí aparece en el directorio',
     dijoQueSi === true, dijoQueSi ? 'aparece' : 'no aparece');

@@ -16,9 +16,9 @@
 | Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:289` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs` |
 | Directorio de Asistentes con filtros | Maquetado y navegable |
 | Perfil del Asistente | Maquetado |
-| Portal de postulación de Asistentes | Maquetado, con el legajo funcionando: `postulacion-asistente.html` guarda las cuatro fichas repetibles y las dos banderas en las tablas de la migración 0004 |
+| Portal de postulación de Asistentes | Maquetado, con el legajo funcionando: `postulacion-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en las tablas de la migración 0004, y la disponibilidad horaria en las de la 0012 |
 | Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:176`). Declarados en `supabase/migrations/0006_archivos_del_legajo.sql`, no a mano |
-| Consentimiento de publicación | Funciona de punta a punta. El alta pregunta al cerrar (`data/catalogo-banderas.json`, paso 7) y guarda la respuesta en `banderas_asistente`; el directorio cruza contra ella y **no muestra a nadie que no haya dicho que sí** (`supabase/migrations/0007_directorio_con_consentimiento.sql`). Sin respuesta no se publica: la casilla arranca sin marcar. Y el directorio va con `noindex`, que es lo que ese mismo consentimiento promete |
+| Consentimiento de publicación | Funciona de punta a punta. El alta pregunta al cerrar (`data/catalogo-autorizaciones.json`, paso 7) y guarda la respuesta en `autorizaciones_asistente`; el directorio cruza contra ella y **no muestra a nadie que no haya dicho que sí** (`supabase/migrations/0007_directorio_con_consentimiento.sql`). Sin respuesta no se publica: la casilla arranca sin marcar. Y el directorio va con `noindex`, que es lo que ese mismo consentimiento promete |
 | Evaluaciones de competencias | Funcionan, y **las corrige el servidor**. `examen.html` pide sesión, lista lo que la persona puede rendir y manda las respuestas a `rendir_evaluacion()`; la columna con la respuesta correcta no tiene permiso de lectura para nadie y las opciones salen de la vista `opciones_para_responder`, que no la incluye (`supabase/migrations/0008_cursos_y_evaluaciones.sql`). El intento no se puede escribir a mano: la tabla no tiene política de escritura y los permisos están revocados. `cursos.html` ya no tiene examen propio, enlaza a esta pantalla. Falta el contenido: ver `docs/PENDIENTES.md` punto 24 |
 | Motor de fichas del legajo (`js/fichas-legajo.js`) | Funciona. Dibuja, valida y recolecta Matrícula, estudio, experiencia y referencia leyendo `data/catalogo-fichas.json` y `data/catalogo-vocabularios.json`. Ninguna de las cuatro está escrita en la pantalla |
 | Formulario integral de datos del Paciente | Maquetado, paso a paso |
@@ -289,7 +289,7 @@ esperando una decisión suya.
 - **Y por eso hubo que cambiar lo que se le promete al Asistente.** El consentimiento decía «su
   perfil se muestra a las Familias **de su Prestadora**, **dentro de la plataforma**», y la
   pantalla no lo cumplía: cualquiera con la dirección veía su nombre y su cara. Se reescribió en
-  los tres idiomas (`data/catalogo-banderas.json`, `perfil_publicado`) para decir lo que de verdad
+  los tres idiomas (`data/catalogo-autorizaciones.json`, `perfil_publicado`) para decir lo que de verdad
   pasa. No es un retoque de redacción: era una promesa escrita que el producto no cumplía.
 - **Lo que no cambió.** El perfil sigue sin aparecer en Google ni en ningún buscador, y el
   teléfono sigue sin mostrarse nunca. Las dos reglas de `docs/CATALOGO.md` quedan como estaban.
@@ -425,11 +425,11 @@ Etapa 3 del pendiente 21, el 24 de agosto de 2026.
   guardan la ficha y las cuatro secciones del legajo, la pantalla vuelve a su estado normal y la
   contraseña desaparece de la memoria y de la pantalla.
 
-### Las once migraciones ya corren en el servidor
+### Las doce migraciones ya corren en el servidor
 
-Comprobado el 24 de agosto de 2026 con `supabase migration list` contra el proyecto real: el
-servidor tiene aplicadas 0001 a 0011, las mismas once que hay en `supabase/migrations/`. Antes
-tenía hasta la 0008, y esa distancia costaba dos cosas que ya no cuestan:
+Comprobado el 24 de agosto de 2026 contra el proyecto real: el servidor tiene aplicadas 0001 a
+0012, las mismas doce que hay en `supabase/migrations/`. Antes tenía hasta la 0008, y esa
+distancia costaba dos cosas que ya no cuestan:
 
 - **La columna del contacto existe.** La 0009 agregó `care_searches.contact_info`, que es donde
   `js/apiClient.js:461` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
@@ -437,9 +437,48 @@ tenía hasta la 0008, y esa distancia costaba dos cosas que ya no cuestan:
 - **Las filas de ejemplo hablan el idioma del catálogo.** La 0010 reemplazó las claves viejas de
   las cuatro filas ficticias —«enfermero» y compañía— por las que las pantallas esperan.
 - **La 0011 armó el directorio**, que es lo que hoy se ve sin sesión.
+- **La 0012 le dio lugar a la disponibilidad** y cambió el nombre de una tabla, abajo.
 
 Queda dicho porque el estado real manda sobre el documentado (`CLAUDE.md` §7): un archivo en
 `supabase/migrations/` describe lo que se quiso aplicar, no lo que corre. Esto último se preguntó.
+Para la 0012 se preguntó dos veces, porque la primera vez el programa dijo que había terminado y
+la migración había fallado a la mitad: se le pidió a la base, tabla por tabla, que dijera qué
+tiene. `banderas_asistente` contesta que no existe; `autorizaciones_asistente`,
+`disponibilidad_asistente` y `franjas_asistente` contestan que existen y que a un visitante sin
+sesión no le muestran nada; y `caregivers_publicos` devuelve la columna `reemplazos_urgentes` y
+ya no devuelve `disponible_urgencias`.
+
+### La grilla de disponibilidad dejó de tirarse, y las banderas se llaman autorizaciones
+
+El último paso del alta preguntaba días y turnos —veintiún casilleros— y no los guardaba en
+ningún lado: `caregivers` no tenía dónde ponerlos y el traductor del cliente de datos los
+descartaba sin decir nada. Era el pendiente 23, y estaba abierto desde que la pantalla existe.
+
+- **Dos tablas nuevas, y las dos son módulo compartido** (`CLAUDE.md` regla 12):
+  `disponibilidad_asistente` guarda lo general —hoy, si acepta reemplazos urgentes— y
+  `franjas_asistente` guarda una fila por casillero marcado. Ninguna de las dos sabe qué es un
+  directorio ni una postulación: son verdad sobre un Asistente aunque el trabajo llegue por
+  prestación directa.
+- **La grilla se dibuja desde el catálogo**, no está escrita en las pantallas. `js/disponibilidad.js`
+  la arma con los vocabularios `dia_semana` y `turno`, y por eso lo que se guarda son las claves
+  —`lunes`, `manana`— y no las etiquetas que se ven. Agregar un turno de madrugada hoy es una fila
+  de `data/catalogo-vocabularios.json`.
+- **Las dos pantallas del alta comparten ese archivo**, así que dejaron de tener cuarenta y dos
+  celdas escritas a mano entre las dos.
+- **La pantalla del teléfono ahora guarda.** No llamaba nunca a `guardarLegajoAsistente`: quien se
+  postulaba desde el teléfono llenaba la grilla y no quedaba nada. Sigue sin guardar las fichas
+  del legajo ni el consentimiento de publicación, que es el pendiente 36.
+- **«Bandera» se fue del proyecto.** La palabra la había puesto la línea de comandos traduciendo
+  *flag*, y el Desarrollador la sacó el 24 de agosto de 2026: «una bandera es una tela que
+  identifica un país o un ejército, pero nunca es una casilla». La tabla es
+  `autorizaciones_asistente`, el catálogo es `data/catalogo-autorizaciones.json`, y donde la
+  palabra nombraba un interruptor de código —`useSupabase`— dice interruptor. Sólo queda en el
+  nombre del archivo `0004_legajo_matricula_verificaciones_banderas.sql`, a propósito: el programa
+  de Supabase reconoce cada migración por su número **y su nombre**, y renombrar una que ya corrió
+  obliga a repararla a mano en el servidor.
+- **Y «disponible para reemplazos urgentes» dejó de ser una autorización.** El Desarrollador
+  decidió el mismo día que eso no es algo que se permita sino algo que se está: se mudó al paso de
+  disponibilidad. Con eso cerró también el pendiente 26.
 
 ## 2. Falta construir
 
@@ -607,6 +646,14 @@ En este orden, porque cada uno depende del anterior:
 
 La publicación en producción no entra en esta lista: es un proyecto exploratorio y no se publica
 hasta que el resultado satisfaga.
+
+**Cuándo se arranca el punto 4, decidido por el Desarrollador el 24 de agosto de 2026.** El
+esqueleto de React se levanta **recién cuando el catálogo esté entero en tablas y los estilos
+afuera del HTML**, no antes. El motivo es de costo: portar antes obliga a escribir cada pantalla
+dos veces —una en HTML plano para que funcione hoy, otra en React—, y ese trabajo duplicado es
+exactamente el que la regla 12 quiere evitar. Mientras tanto, cada pantalla que se toca deja el
+contenido en su catálogo y los colores en las variables, que es preparar el terreno para el punto
+4 sin escribir nada dos veces.
 
 ---
 

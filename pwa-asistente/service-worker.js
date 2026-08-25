@@ -4,7 +4,7 @@
    Los assets de directorios padre (../css, ../js) NO pueden ser
    interceptados por este SW según la política de seguridad del navegador.
 =================================================== */
-const CACHE_NAME = 'asistente-v6';
+const CACHE_NAME = 'asistente-v7';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -16,7 +16,9 @@ const ASSETS_TO_CACHE = [
   './js/apiClient.js',
   './js/auth.js',
   './js/catalogo.js',
-  './data/catalogo-vocabularios.json'
+  './js/disponibilidad.js',
+  './data/catalogo-vocabularios.json',
+  './data/catalogo-disponibilidad.json'
 ];
 
 self.addEventListener('install', (event) => {

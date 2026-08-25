@@ -393,106 +393,18 @@
               <input type="number" id="valor-hora" placeholder="Ej: 3500" required />
             </div>
 
-            <p style="font-size:13px;font-weight:700;color:var(--texto-principal);margin-bottom:12px;">Agenda Horaria Semanal
-              (Click en cada celda para marcar disponible):</p>
+            <!-- La grilla no se dibuja acá. Los días, los turnos y las horas que cubre
+                 cada turno salen de data/catalogo-vocabularios.json; los textos del paso,
+                 de data/catalogo-disponibilidad.json. Las junta js/disponibilidad.js. -->
+            <p id="disponibilidad-titulo"
+              style="font-size:13px;font-weight:700;color:var(--texto-principal);margin-bottom:4px;"></p>
+            <p id="disponibilidad-bajada"
+              style="font-size:12.5px;color:var(--texto-secundario);margin-bottom:12px;"></p>
+            <div id="grilla-disponibilidad"></div>
+            <p id="disponibilidad-ayuda"
+              style="font-size:11.5px;color:var(--texto-secundario);margin:8px 0 0 0;"></p>
 
-            <div class="schedule-grid-7x3"
-              style="display:grid;grid-template-columns: repeat(8, 1fr);gap:4px;text-align:center;font-size:11px;background: var(--superficie);padding:12px;border-radius:12px;border:1px solid var(--borde-card);">
-              <div class="grid-cell-header" style="font-weight:700;background:#f8fafc;padding:8px 0;border-radius:4px;">
-                Turno</div>
-              <div class="grid-cell-header" style="font-weight:700;background:#f8fafc;padding:8px 0;border-radius:4px;">
-                Lun</div>
-              <div class="grid-cell-header" style="font-weight:700;background:#f8fafc;padding:8px 0;border-radius:4px;">
-                Mar</div>
-              <div class="grid-cell-header" style="font-weight:700;background:#f8fafc;padding:8px 0;border-radius:4px;">
-                Mié</div>
-              <div class="grid-cell-header" style="font-weight:700;background:#f8fafc;padding:8px 0;border-radius:4px;">
-                Jue</div>
-              <div class="grid-cell-header" style="font-weight:700;background:#f8fafc;padding:8px 0;border-radius:4px;">
-                Vie</div>
-              <div class="grid-cell-header" style="font-weight:700;background:#f8fafc;padding:8px 0;border-radius:4px;">
-                Sáb</div>
-              <div class="grid-cell-header" style="font-weight:700;background:#f8fafc;padding:8px 0;border-radius:4px;">
-                Dom</div>
-
-              <!-- Fila 1: Mañana -->
-              <div class="grid-cell-time"
-                style="padding:10px 0;background:#f8fafc;font-weight:700;border-radius:4px;display:flex;align-items:center;justify-content:center;">
-                Mañana (6-14)</div>
-              <div class="grid-cell-slot select-slot active" data-day="Lunes" data-shift="Mañana"
-                style="padding:10px 0;background:#e8f5e9;color:#2e7d32;font-weight:900;border-radius:4px;cursor:pointer;border:1px solid #c8e6c9;">
-                ✓</div>
-              <div class="grid-cell-slot select-slot active" data-day="Martes" data-shift="Mañana"
-                style="padding:10px 0;background:#e8f5e9;color:#2e7d32;font-weight:900;border-radius:4px;cursor:pointer;border:1px solid #c8e6c9;">
-                ✓</div>
-              <div class="grid-cell-slot select-slot active" data-day="Miércoles" data-shift="Mañana"
-                style="padding:10px 0;background:#e8f5e9;color:#2e7d32;font-weight:900;border-radius:4px;cursor:pointer;border:1px solid #c8e6c9;">
-                ✓</div>
-              <div class="grid-cell-slot select-slot active" data-day="Jueves" data-shift="Mañana"
-                style="padding:10px 0;background:#e8f5e9;color:#2e7d32;font-weight:900;border-radius:4px;cursor:pointer;border:1px solid #c8e6c9;">
-                ✓</div>
-              <div class="grid-cell-slot select-slot active" data-day="Viernes" data-shift="Mañana"
-                style="padding:10px 0;background:#e8f5e9;color:#2e7d32;font-weight:900;border-radius:4px;cursor:pointer;border:1px solid #c8e6c9;">
-                ✓</div>
-              <div class="grid-cell-slot select-slot" data-day="Sábado" data-shift="Mañana"
-                style="padding:10px 0;background:#f1f5f9;color:var(--texto-secundario);border-radius:4px;cursor:pointer;border:1px solid #e2e8f0;">
-                —</div>
-              <div class="grid-cell-slot select-slot" data-day="Domingo" data-shift="Mañana"
-                style="padding:10px 0;background:#f1f5f9;color:var(--texto-secundario);border-radius:4px;cursor:pointer;border:1px solid #e2e8f0;">
-                —</div>
-
-              <!-- Fila 2: Tarde -->
-              <div class="grid-cell-time"
-                style="padding:10px 0;background:#f8fafc;font-weight:700;border-radius:4px;display:flex;align-items:center;justify-content:center;">
-                Tarde (14-22)</div>
-              <div class="grid-cell-slot select-slot active" data-day="Lunes" data-shift="Tarde"
-                style="padding:10px 0;background:#e8f5e9;color:#2e7d32;font-weight:900;border-radius:4px;cursor:pointer;border:1px solid #c8e6c9;">
-                ✓</div>
-              <div class="grid-cell-slot select-slot active" data-day="Martes" data-shift="Tarde"
-                style="padding:10px 0;background:#e8f5e9;color:#2e7d32;font-weight:900;border-radius:4px;cursor:pointer;border:1px solid #c8e6c9;">
-                ✓</div>
-              <div class="grid-cell-slot select-slot active" data-day="Miércoles" data-shift="Tarde"
-                style="padding:10px 0;background:#e8f5e9;color:#2e7d32;font-weight:900;border-radius:4px;cursor:pointer;border:1px solid #c8e6c9;">
-                ✓</div>
-              <div class="grid-cell-slot select-slot active" data-day="Jueves" data-shift="Tarde"
-                style="padding:10px 0;background:#e8f5e9;color:#2e7d32;font-weight:900;border-radius:4px;cursor:pointer;border:1px solid #c8e6c9;">
-                ✓</div>
-              <div class="grid-cell-slot select-slot active" data-day="Viernes" data-shift="Tarde"
-                style="padding:10px 0;background:#e8f5e9;color:#2e7d32;font-weight:900;border-radius:4px;cursor:pointer;border:1px solid #c8e6c9;">
-                ✓</div>
-              <div class="grid-cell-slot select-slot active" data-day="Sábado" data-shift="Tarde"
-                style="padding:10px 0;background:#e8f5e9;color:#2e7d32;font-weight:900;border-radius:4px;cursor:pointer;border:1px solid #c8e6c9;">
-                ✓</div>
-              <div class="grid-cell-slot select-slot" data-day="Domingo" data-shift="Tarde"
-                style="padding:10px 0;background:#f1f5f9;color:var(--texto-secundario);border-radius:4px;cursor:pointer;border:1px solid #e2e8f0;">
-                —</div>
-
-              <!-- Fila 3: Noche -->
-              <div class="grid-cell-time"
-                style="padding:10px 0;background:#f8fafc;font-weight:700;border-radius:4px;display:flex;align-items:center;justify-content:center;">
-                Noche (22-6)</div>
-              <div class="grid-cell-slot select-slot" data-day="Lunes" data-shift="Noche"
-                style="padding:10px 0;background:#f1f5f9;color:var(--texto-secundario);border-radius:4px;cursor:pointer;border:1px solid #e2e8f0;">
-                —</div>
-              <div class="grid-cell-slot select-slot" data-day="Martes" data-shift="Noche"
-                style="padding:10px 0;background:#f1f5f9;color:var(--texto-secundario);border-radius:4px;cursor:pointer;border:1px solid #e2e8f0;">
-                —</div>
-              <div class="grid-cell-slot select-slot" data-day="Miércoles" data-shift="Noche"
-                style="padding:10px 0;background:#f1f5f9;color:var(--texto-secundario);border-radius:4px;cursor:pointer;border:1px solid #e2e8f0;">
-                —</div>
-              <div class="grid-cell-slot select-slot" data-day="Jueves" data-shift="Noche"
-                style="padding:10px 0;background:#f1f5f9;color:var(--texto-secundario);border-radius:4px;cursor:pointer;border:1px solid #e2e8f0;">
-                —</div>
-              <div class="grid-cell-slot select-slot" data-day="Viernes" data-shift="Noche"
-                style="padding:10px 0;background:#f1f5f9;color:var(--texto-secundario);border-radius:4px;cursor:pointer;border:1px solid #e2e8f0;">
-                —</div>
-              <div class="grid-cell-slot select-slot" data-day="Sábado" data-shift="Noche"
-                style="padding:10px 0;background:#f1f5f9;color:var(--texto-secundario);border-radius:4px;cursor:pointer;border:1px solid #e2e8f0;">
-                —</div>
-              <div class="grid-cell-slot select-slot" data-day="Domingo" data-shift="Noche"
-                style="padding:10px 0;background:#f1f5f9;color:var(--texto-secundario);border-radius:4px;cursor:pointer;border:1px solid #e2e8f0;">
-                —</div>
-            </div>
+            <div id="preguntas-disponibilidad" style="margin-top:20px;"></div>
           </div>
 
           <div style="display:flex;justify-content:space-between;margin-top:24px;">
@@ -589,15 +501,15 @@
           </div>
         </div>
 
-        <!-- PASO 7: CIERRE — BANDERAS DE PUBLICACIÓN -->
-        <!-- Texto, orden y valor inicial vienen de data/catalogo-banderas.json. -->
+        <!-- PASO 7: CIERRE — LO QUE LA PERSONA AUTORIZA A PUBLICAR -->
+        <!-- Texto, orden y valor inicial vienen de data/catalogo-autorizaciones.json. -->
         <div class="wizard-step-pane" id="step-pane-7" style="display:none;">
           <h3 id="cierre-titulo" style="font-size:18px;font-weight:700;margin-bottom:8px;color:var(--texto-titulo);"><i
-              class="fas fa-flag-checkered"></i></h3>
+              class="fas fa-circle-check"></i></h3>
           <p id="cierre-bajada" style="font-size:13.5px;color:var(--texto-secundario);margin-bottom:16px;"></p>
           <p id="cierre-recordatorio" style="font-size:12.5px;color:#1b5e20;background:#e8f5e9;border-radius:8px;padding:10px;margin-bottom:20px;"></p>
 
-          <div id="banderas-container"></div>
+          <div id="autorizaciones-container"></div>
 
           <div style="margin:20px 0;font-size:12.5px;color:var(--texto-principal);display:flex;align-items:flex-start;gap:8px;">
             <input type="checkbox" id="acepto-terminos" required
@@ -696,30 +608,11 @@
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
   <script src="js/fichas-legajo.js"></script>
+  <script src="js/disponibilidad.js"></script>
   <script>
-    // INTERACTIVIDAD DE LA GRILLA HORARIA 7x3
-    document.querySelectorAll('.schedule-grid-7x3 .select-slot').forEach(slot => {
-      slot.addEventListener('click', () => {
-        if (slot.classList.contains('active')) {
-          slot.classList.remove('active');
-          slot.style.background = '#f1f5f9';
-          slot.style.color = 'var(--texto-secundario)';
-          slot.style.fontWeight = 'normal';
-          slot.style.borderColor = '#e2e8f0';
-          slot.textContent = '—';
-        } else {
-          slot.classList.add('active');
-          slot.style.background = '#e8f5e9';
-          slot.style.color = '#2e7d32';
-          slot.style.fontWeight = '900';
-          slot.style.borderColor = '#c8e6c9';
-          slot.textContent = '✓';
-        }
-      });
-    });
-
-    // LEGAJO: FICHAS REPETIBLES Y BANDERAS DE CIERRE (pendientes 18 y 19)
-    // Se dibujan desde data/catalogo-fichas.json y data/catalogo-banderas.json, nunca a mano.
+    // LEGAJO: FICHAS, DISPONIBILIDAD Y CIERRE (pendientes 18, 19 y 23)
+    // Se dibujan desde data/catalogo-fichas.json, data/catalogo-disponibilidad.json
+    // y data/catalogo-autorizaciones.json, nunca a mano.
     let fichasListas = false;
 
     function montarFichas() {
@@ -752,35 +645,57 @@
       profesionSelect.addEventListener('change', actualizarAvisoMatricula);
       actualizarAvisoMatricula();
 
-      const banderasRes = await fetch('data/catalogo-banderas.json').then(r => r.json());
       const idioma = 'es-AR';
-      const paso = banderasRes.paso_de_cierre[idioma];
+
+      // Paso 6: la disponibilidad. La grilla y la pregunta de los reemplazos
+      // urgentes las arma el módulo; acá sólo se le dice dónde.
+      const declaracionDisponibilidad = await Disponibilidad.cargar();
+      const pasoDisponibilidad = Disponibilidad.texto(declaracionDisponibilidad.paso_de_disponibilidad);
+      document.getElementById('disponibilidad-titulo').textContent = pasoDisponibilidad.titulo || '';
+      document.getElementById('disponibilidad-bajada').textContent = pasoDisponibilidad.bajada || '';
+      document.getElementById('disponibilidad-ayuda').textContent = pasoDisponibilidad.ayuda_grilla || '';
+      await Disponibilidad.montarGrilla('grilla-disponibilidad');
+      await Disponibilidad.montarPreguntas('preguntas-disponibilidad');
+
+      // Paso 7: lo que la persona autoriza a publicar.
+      const cierreRes = await fetch('data/catalogo-autorizaciones.json').then(r => r.json());
+      const paso = cierreRes.paso_de_cierre[idioma];
       document.getElementById('cierre-titulo').append(' ' + paso.titulo);
       document.getElementById('cierre-bajada').textContent = paso.bajada;
       document.getElementById('cierre-recordatorio').textContent = paso.recordatorio;
       document.getElementById('cierre-boton').textContent = paso.boton;
 
-      const contenedorBanderas = document.getElementById('banderas-container');
-      banderasRes.paso_de_cierre.banderas.forEach(clave => {
-        const bandera = banderasRes.banderas[clave][idioma];
+      const contenedorAutorizaciones = document.getElementById('autorizaciones-container');
+      cierreRes.paso_de_cierre.autorizaciones.forEach(clave => {
+        const autorizacion = cierreRes.autorizaciones[clave][idioma];
         const bloque = document.createElement('div');
-        bloque.style.cssText = 'background:var(--superficie-hover);border-radius:12px;padding:16px;border:1px solid var(--borde-card);margin-bottom:12px;';
-        bloque.innerHTML = `
-          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-weight:700;font-size:13.5px;">
-            <input type="checkbox" id="bandera-${Texto.escapar(clave)}" data-bandera="${Texto.escapar(clave)}" style="width:18px;height:18px;margin-top:2px;" />
-            ${Texto.escapar(bandera.etiqueta)}
-          </label>
-          <p style="font-size:12px;color:var(--texto-secundario);margin:6px 0 0 28px;">${Texto.escapar(bandera.pregunta)}</p>
-          <p id="bandera-${Texto.escapar(clave)}-ayuda" style="font-size:11.5px;color:#64748b;margin:6px 0 0 28px;">${Texto.escapar(bandera.ayuda_no)}</p>
-        `;
-        contenedorBanderas.appendChild(bloque);
-        // El navegador guarda el identificador ya sin escapar, y un selector de
-        // CSS no admite cualquier carácter: `CSS.escape` lo deja buscable.
-        const input = bloque.querySelector(`#${CSS.escape('bandera-' + clave)}`);
-        const ayuda = bloque.querySelector(`#${CSS.escape('bandera-' + clave + '-ayuda')}`);
-        input.addEventListener('change', () => {
-          ayuda.textContent = input.checked ? bandera.ayuda_si : bandera.ayuda_no;
+        bloque.className = 'gd-pregunta';
+
+        const etiqueta = document.createElement('label');
+        etiqueta.className = 'gd-pregunta-etiqueta';
+        const casilla = document.createElement('input');
+        casilla.type = 'checkbox';
+        casilla.id = 'autorizacion-' + clave;
+        casilla.setAttribute('data-autorizacion', clave);
+        etiqueta.setAttribute('for', casilla.id);
+        etiqueta.appendChild(casilla);
+        etiqueta.appendChild(document.createTextNode(' ' + autorizacion.etiqueta));
+
+        const detalle = document.createElement('p');
+        detalle.className = 'gd-pregunta-detalle';
+        detalle.textContent = autorizacion.pregunta;
+
+        const ayuda = document.createElement('p');
+        ayuda.className = 'gd-pregunta-ayuda';
+        ayuda.textContent = autorizacion.ayuda_no;
+        casilla.addEventListener('change', () => {
+          ayuda.textContent = casilla.checked ? autorizacion.ayuda_si : autorizacion.ayuda_no;
         });
+
+        bloque.appendChild(etiqueta);
+        bloque.appendChild(detalle);
+        bloque.appendChild(ayuda);
+        contenedorAutorizaciones.appendChild(bloque);
       });
     }
     inicializarLegajo();
@@ -954,13 +869,9 @@
       const patologias = Array.from(form.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
       const tareas = Array.from(form.querySelectorAll('input[name="tarea_cuidado"]:checked')).map(cb => cb.value);
       const cursos = Array.from(form.querySelectorAll('input[name="certificacion"]:checked')).map(cb => cb.value);
-      const grillaHorarios = {};
-      document.querySelectorAll('.schedule-grid-7x3 .select-slot').forEach(slot => {
-        const day = slot.getAttribute('data-day');
-        const shift = slot.getAttribute('data-shift');
-        if (!grillaHorarios[day]) grillaHorarios[day] = {};
-        grillaHorarios[day][shift] = slot.classList.contains('active');
-      });
+      // Días y turnos salen con la clave del catálogo —`lunes`, `manana`—, que
+      // es lo que esperan las columnas de franjas_asistente.
+      const disponibilidad = Disponibilidad.recolectar('grilla-disponibilidad', 'preguntas-disponibilidad');
 
       // 4. Registrar en Supabase (tabla caregivers)
       const data = {
@@ -984,22 +895,23 @@
           cursosCompletados: cursos
         },
         valorHora: document.getElementById('valor-hora').value,
-        documentos: docUrls,   // caminos dentro de los depósitos, no direcciones
-        grillaHorarios
+        documentos: docUrls    // caminos dentro de los depósitos, no direcciones
       };
 
       const aspirante = await ClienteDatos.registrarAspirante(data);
 
-      // 5. Legajo: las cuatro fichas repetibles y las dos banderas (migración 0004)
+      // 5. Legajo: las cuatro fichas repetibles (migración 0004), lo que la
+      // persona autorizó al cerrar y su disponibilidad horaria (migración 0012)
       const legajo = {
         matriculas: FichasLegajo.recolectar('ficha-matricula', 'matricula'),
         estudios: FichasLegajo.recolectar('ficha-estudio', 'estudio'),
         experiencia: FichasLegajo.recolectar('ficha-experiencia_laboral', 'experiencia_laboral'),
         referencias: FichasLegajo.recolectar('ficha-referencia', 'referencia'),
-        banderas: {}
+        autorizaciones: {},
+        disponibilidad
       };
-      document.querySelectorAll('#banderas-container [data-bandera]').forEach(casilla => {
-        legajo.banderas[casilla.getAttribute('data-bandera')] = casilla.checked;
+      document.querySelectorAll('#autorizaciones-container [data-autorizacion]').forEach(casilla => {
+        legajo.autorizaciones[casilla.getAttribute('data-autorizacion')] = casilla.checked;
       });
 
       // Los archivos de matrícula y estudio van al depósito privado; en la tabla
@@ -1040,13 +952,7 @@
       const successMsg = document.getElementById('form-success');
       if (successMsg) successMsg.style.display = 'block';
       form.reset();
-      document.querySelectorAll('.schedule-grid-7x3 .select-slot').forEach(slot => {
-        slot.classList.remove('active');
-        slot.style.background = '#f1f5f9';
-        slot.style.color = 'var(--texto-secundario)';
-        slot.style.borderColor = '#e2e8f0';
-        slot.textContent = '—';
-      });
+      Disponibilidad.limpiar('grilla-disponibilidad', 'preguntas-disponibilidad');
       montarFichas();
       goToStep(1);
       setTimeout(() => { if (successMsg) successMsg.style.display = 'none'; }, 6000);

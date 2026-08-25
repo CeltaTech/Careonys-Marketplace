@@ -10,16 +10,16 @@
 -- legajo porque los papeles están en orden es tomarle la decisión a alguien
 -- que nunca la tomó.
 --
--- La respuesta existe desde la migración 0004: `banderas_asistente`, con
+-- La respuesta existe desde la migración 0004: `autorizaciones_asistente`, con
 -- `perfil_publicado` arrancando en `false`. Hasta hoy nadie la miraba. El
 -- comentario de esa tabla ya decía que el directorio tenía que preguntarle;
 -- esta migración es el otro extremo de esa frase.
 --
 -- Y arranca en `false` a propósito: **la falta de respuesta nunca puede
 -- terminar en un perfil publicado**. Por eso el cruce es un `join` común y no
--- un `left join` — quien no tiene fila de banderas, no dio permiso, y no se
--- muestra. Los cuatro perfiles de muestra, que son anteriores a la 0004 y no
--- tienen banderas, desaparecen del directorio. Está bien que desaparezcan:
+-- un `left join` — quien no tiene fila de autorizaciones, no dio permiso, y no
+-- se muestra. Los cuatro perfiles de muestra, que son anteriores a la 0004 y no
+-- tienen ninguna, desaparecen del directorio. Está bien que desaparezcan:
 -- son inventados, y ninguno contestó nada.
 --
 -- La foto
@@ -58,12 +58,11 @@ create view public.caregivers_publicos as
          -- firmada: esas vencen, y guardar una es guardar algo que deja de
          -- funcionar.
          c.documents->>'foto' as foto,
-         b.disponible_urgencias,
          c.created_at
     from public.caregivers c
-    join public.banderas_asistente b on b.caregiver_id = c.id
+    join public.autorizaciones_asistente a on a.caregiver_id = c.id
    where c.verification_status in ('validado_prestadora', 'validado')
-     and b.perfil_publicado;
+     and a.perfil_publicado;
 
 comment on view public.caregivers_publicos is
   'Directorio de Asistentes. Dos condiciones, y las dos hacen falta: la Prestadora validó el legajo, y la persona marcó perfil_publicado. Nunca agregar acá una columna con datos personales: ni documento, ni teléfono, ni correo, ni domicilio, ni los caminos del depósito privado.';
