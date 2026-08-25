@@ -33,7 +33,7 @@ forma, y **manda lo que está en `supabase/migrations/`**, no lo que proponía e
 | `avisos` | `avisos`, con `franjas_aviso` para sus días y turnos |
 
 Y hay cuatro que el material heredado no previó y existen igual: `tenants`, `clock_ins`,
-`logbook_entries` y las cuatro de la evaluación (`evaluaciones`, `preguntas_evaluacion`,
+`reportes` y las cuatro de la evaluación (`evaluaciones`, `preguntas_evaluacion`,
 `opciones_pregunta`, `intentos_evaluacion`).
 
 **Un caso que no es equivalencia sino conflicto.** El material proponía `conversaciones` +

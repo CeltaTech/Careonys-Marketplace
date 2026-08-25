@@ -1,9 +1,10 @@
 /* ===================================================
-   VERIFICA DOS PALABRAS DEL GLOSARIO EN EL TEXTO QUE SE VE
+   VERIFICA TRES PALABRAS DEL GLOSARIO EN EL TEXTO QUE SE VE
 
    Falla —con código de salida 1— si en el texto que ve una persona aparece
-   «cuidador» usado como nombre de cualquiera que cuida, o «búsqueda» usada
-   como nombre de lo que una Familia publica.
+   «cuidador» usado como nombre de cualquiera que cuida, «búsqueda» usada
+   como nombre de lo que una Familia publica, o «cuaderno» y «bitácora»
+   usadas como nombre del reporte.
 
        node scripts/verificar_vocabulario.mjs
 
@@ -108,6 +109,20 @@ function búsquedaQueEsAviso(frase) {
 
 /* Una prueba que no puede fallar no prueba nada: antes de recorrer el proyecto,
    el detector se prueba contra frases que sobran y contra frases que no. */
+// Lo que el Asistente anota de una jornada se llama **reporte** (decidido el 25
+// de agosto de 2026, y es el nombre que ya usaba Careonys). Se lo llamó «cuaderno
+// de cuidado» y «bitácora» hasta ese día, y ninguna de las dos tiene otro uso
+// legítimo acá: cualquier aparición en texto visible es la palabra vieja
+// volviendo. Por eso este detector no necesita excepciones, al revés que el de
+// «cuidador».
+const ES_LA_PALABRA_VIEJA = /(?<![\p{L}\p{N}_-])(cuadernos?|bit[aá]coras?)(?![\p{L}\p{N}_-])/giu;
+
+function palabraVieja(frase) {
+  ES_LA_PALABRA_VIEJA.lastIndex = 0;
+  const acierto = ES_LA_PALABRA_VIEJA.exec(frase);
+  return acierto ? acierto[0] : null;
+}
+
 const SOBRAN = [
   'Encuentre al cuidador que necesita',
   'Conectamos familias con cuidadores calificados',
@@ -143,10 +158,15 @@ const NO_SON_AVISOS = [
   'Publicar un Aviso'
 ];
 
+const SON_LA_VIEJA = ['Cuaderno de Cuidado', 'la bitácora del día', 'Bitácora'];
+const NO_SON_LA_VIEJA = ['Reportes de cuidado', 'el reporte quedó guardado'];
+
 const noDetecta = SOBRAN.filter((f) => !apariciónQueSobra(f))
+  .concat(SON_LA_VIEJA.filter((f) => !palabraVieja(f)))
   .concat(SON_AVISOS.filter((f) => !búsquedaQueEsAviso(f)));
 const sePasa = NO_SOBRAN.filter((f) => apariciónQueSobra(f))
-  .concat(NO_SON_AVISOS.filter((f) => búsquedaQueEsAviso(f)));
+  .concat(NO_SON_AVISOS.filter((f) => búsquedaQueEsAviso(f)))
+  .concat(NO_SON_LA_VIEJA.filter((f) => palabraVieja(f)));
 if (noDetecta.length || sePasa.length) {
   console.error('El detector está roto, así que no verifica nada:');
   if (noDetecta.length) console.error('  no detecta: ' + noDetecta.join(' / '));
@@ -156,6 +176,7 @@ if (noDetecta.length || sePasa.length) {
 
 const fallas = [];
 const avisos = [];
+const viejas = [];
 let revisados = 0;
 
 for (const camino of archivos(raiz, ['.html', '.js', '.json'], AJENAS)) {
@@ -171,12 +192,28 @@ for (const camino of archivos(raiz, ['.html', '.js', '.json'], AJENAS)) {
       vistos.add(renglon + sobra);
       fallas.push(`${nombre}:${renglon}  «${sobra}»  ${texto.slice(0, 90)}`);
     }
+    const vieja = palabraVieja(texto);
+    if (vieja && !vistos.has(renglon + vieja)) {
+      vistos.add(renglon + vieja);
+      viejas.push(`${nombre}:${renglon}  «${vieja}»  ${texto.slice(0, 90)}`);
+    }
     const esAviso = búsquedaQueEsAviso(texto);
     if (esAviso && !vistos.has(renglon + esAviso)) {
       vistos.add(renglon + esAviso);
       avisos.push(`${nombre}:${renglon}  «${esAviso}»  ${texto.slice(0, 90)}`);
     }
   }
+}
+
+if (viejas.length > 0) {
+  console.error('El reporte llamado con su nombre viejo:\n');
+  for (const vieja of viejas) console.error('  - ' + vieja);
+  const plural = viejas.length === 1 ? 'aparición' : 'apariciones';
+  console.error(
+    `\n${viejas.length} ${plural}. Lo que el Asistente anota de una jornada es un\n` +
+    '**reporte** (docs/GLOSARIO.md), que es el nombre que ya usaba Careonys.\n' +
+    '«Cuaderno» y «bitácora» se sacaron el 25 de agosto de 2026.');
+  process.exit(1);
 }
 
 if (avisos.length > 0) {
@@ -203,4 +240,5 @@ if (fallas.length > 0) {
 
 console.log(
   `Vocabulario verificado: ${revisados} archivos sin «cuidador» como término ` +
-  'general y sin «búsqueda» como nombre de lo que se publica.');
+  'general, sin «búsqueda» como nombre de lo que se publica y sin «cuaderno» ' +
+  'ni «bitácora» como nombre del reporte.');

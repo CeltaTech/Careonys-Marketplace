@@ -44,7 +44,7 @@ Es la fuente principal de ingresos recurrentes de la prestadora:
 ### 2. Abono Mensual por Gestión Gerontológica & Garantía de Reemplazo
 Las familias pagan un abono fijo mensual (ej. **$ 25.000 a $ 45.000 ARS/mes**) por acceder a:
 * Asignación de un **Gestor del Cuidado** dedicado.
-* Informes diarios de bitácora y signos vitales en tiempo real.
+* Reportes diarios de cuidado y signos vitales en tiempo real.
 * **Garantía de Reemplazo Urgente en <2hs** si el asistente habitual falta.
 
 ### 3. Facturación a Obras Sociales, Prepagas y ARTs (Gestion de Reintegros)

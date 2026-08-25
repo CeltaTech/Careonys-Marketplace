@@ -34,7 +34,7 @@ Medido el 25 de agosto de 2026 sobre el árbol de trabajo, no copiado de una ver
 | 2.166 declaraciones más, pegadas al HTML | en 687 atributos `style=` (pendiente 8) |
 | Supabase Auth funcionando | 11 de las 16 pantallas rescatan la sesión al abrir |
 | 4 servidores de afuera, sin `package.json` ni compilación | dos de tipografías y dos de bibliotecas |
-| 24 tablas y 18 migraciones en el repositorio | 13 chequeos las miran antes de cada commit |
+| 24 tablas y 19 migraciones en el repositorio | 13 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
@@ -160,7 +160,7 @@ puntual: `git commit --no-verify`, y conviene que sea raro.
 
 1. **Cómo se llama esto en el código.** La palabra "marketplace" ya significa otra cosa en el
    glosario heredado. Ver `docs/GLOSARIO.md` §4.
-2. **Qué se construye acá y qué es de Careonys.** Bitácora de salud, signos vitales, check-in y
+2. **Qué se construye acá y qué es de Careonys.** Reportes de cuidado, signos vitales, check-in y
    reportes diarios ya existen allá. Ver `docs/ALCANCE.md` §3.
 
 Ninguna de las dos se resuelve escribiendo código.

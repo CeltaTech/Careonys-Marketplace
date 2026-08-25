@@ -52,10 +52,10 @@ del navegador.
 
 | Archivo | Renglones | Función |
 |---|---:|---|
-| `mockup-app.html` | 783 | Aplicación móvil simulada dentro de una sola página: ingreso, registro, inicio, cuaderno de cuidado, fichado por GPS y chat. Cambia de pantalla mostrando y ocultando bloques. |
+| `mockup-app.html` | 783 | Aplicación móvil simulada dentro de una sola página: ingreso, registro, inicio, reportes de cuidado, fichado por GPS y chat. Cambia de pantalla mostrando y ocultando bloques. |
 | `panel-prestadora.html` | 309 | Panel interno. Tabla de postulantes, indicadores y ventana de auditoría de legajos con aprobar/rechazar. |
-| `pwa-asistente/index.html` | 775 | Aplicación instalable para asistentes: ingreso, estado del legajo, fichado GPS, cuaderno médico y postulación. |
-| `pwa-familia/index.html` | 953 | Aplicación instalable para familias: ingreso, recomendados, cuaderno de cuidado y publicación de búsquedas. |
+| `pwa-asistente/index.html` | 775 | Aplicación instalable para asistentes: ingreso, estado del legajo, fichado GPS, reportes de cuidado y postulación. |
+| `pwa-familia/index.html` | 953 | Aplicación instalable para familias: ingreso, recomendados, reportes de cuidado y publicación de búsquedas. |
 
 ### 1.3 Cómo se navega
 
@@ -255,7 +255,7 @@ Todo va contra un mismo proyecto de Supabase, cuya dirección está escrita en e
 | `caregivers` | GET, POST, PATCH | `getAspirantes`, `registrarAspirante`, `cambiarEstadoAspirante` |
 | `care_searches` | GET, POST | `getBusquedasFamilia`, `crearBusquedaFamilia`, `crearBusqueda` |
 | `clock_ins` | POST | `registrarFichadoGPS` |
-| `logbook_entries` | GET (orden `created_at.desc`), POST | `getBitacoraDiaria`, `registrarBitacoraDiaria` |
+| `reportes` | GET (orden `created_at.desc`), POST | `getReportes`, `registrarReporte` |
 | `messages` | GET (`?order=created_at.asc&limit=50`), POST | **fuera del cliente**, directo en `mockup-app.html:701` y `mockup-app.html:736` |
 
 **Autenticación** — `{supabase}/auth/v1/*`, a través del SDK: `signInWithPassword`, `signUp`,
@@ -541,7 +541,7 @@ Se señala en vez de suponerlo:
 1. **Si las reglas por filas de Supabase están bien puestas.** De eso depende que el panel sin
    protección exponga datos o no. Hay que mirarlo en la base, no acá.
 2. **La forma real de las tablas.** El código sugiere columnas de `caregivers`, `care_searches`,
-   `clock_ins`, `logbook_entries`, `messages` y `tenants`, pero no hay migraciones en este
+   `clock_ins`, `reportes`, `messages` y `tenants`, pero no hay migraciones en este
    repositorio. La definición verdadera está en la base y hay que leerla de ahí.
 3. **Qué valores de rol existen.** Sólo se ve que se compara contra un rol administrativo y que
    `'familiar'` es el valor por omisión. La lista completa está en los datos de los usuarios.

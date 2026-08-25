@@ -7,7 +7,7 @@
 
        node scripts/verificar_escapado.mjs
 
-   Por qué existe: un nombre, una nota de la bitácora o un mensaje de chat que se
+   Por qué existe: un nombre, una nota de un reporte o un mensaje de chat que se
    pega crudo adentro de HTML deja de ser texto y pasa a ser marcado. Se limpiaron
    veinte lugares el 24 de agosto de 2026, y eso es una foto: la plantilla número
    veintiuno la escribe alguien apurado. Una regla que no se verifica sola no es

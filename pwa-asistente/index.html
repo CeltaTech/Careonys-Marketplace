@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{producto}} Asistente — Portal Móvil</title>
-  <meta name="description" content="Aplicación del Asistente de Cuidado de {{producto}}. Fichado GPS, bitácora médica y registro de legajo." />
+  <meta name="description" content="Aplicación del Asistente de Cuidado de {{producto}}. Fichado GPS, reportes de cuidado y registro de legajo." />
   <link rel="manifest" href="manifest.json" />
   <!-- CSS LOCAL (dentro del scope del Service Worker) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -109,7 +109,7 @@
       display: flex; align-items: center; gap: 12px;
     }
 
-    /* FORM NOVEDADES BITÁCORA */
+    /* FORMULARIO DE REPORTES */
     .novedades-form {
       background: var(--superficie); border: 1px solid var(--borde-card); border-radius: 20px;
       padding: 20px; margin: 0 16px 16px 16px;
@@ -354,9 +354,9 @@
         </div>
       </div>
 
-      <!-- FORM NOVEDADES BITÁCORA -->
+      <!-- FORMULARIO DE REPORTES -->
       <div class="novedades-form">
-        <h4 style="margin:0 0 16px 0;font-size:14px;font-weight:800;color:var(--marca-prestadora);"><i class="fas fa-notes-medical"></i> Registrar Novedad en Bitácora</h4>
+        <h4 style="margin:0 0 16px 0;font-size:14px;font-weight:800;color:var(--marca-prestadora);"><i class="fas fa-notes-medical"></i> Registrar un reporte</h4>
         <div class="form-group-pwa">
           <label>Presión Arterial (P.A.)</label>
           <input type="text" id="bit-presion" placeholder="Ej: 120/80" />
@@ -373,7 +373,7 @@
           <label>Notas Diarias / Reporte del Servicio</label>
           <textarea id="bit-notas" placeholder="Escriba el estado del paciente, alimentación, novedades..." style="height:60px;"></textarea>
         </div>
-        <button type="button" class="btn-login" id="btn-save-bitacora" style="margin-top:8px;">Guardar Novedad</button>
+        <button type="button" class="btn-login" id="btn-guardar-reporte" style="margin-top:8px;">Guardar Novedad</button>
       </div>
 
       <div style="text-align:center;padding:12px 0 24px 0;font-size:10px;color:var(--texto-secundario);">
@@ -862,12 +862,12 @@
     document.getElementById('btn-gps-in').addEventListener('click', () => ficharGPS('Entrada'));
     document.getElementById('btn-gps-out').addEventListener('click', () => ficharGPS('Salida'));
 
-    // ── Bitácora Médica ────────────────────────────
+    // ── Reportes ────────────────────────────
     // Regla 5: guardar apaga el botón mientras la novedad viaja. Dos clics eran dos
-    // renglones idénticos en la bitácora, y ninguno de los dos se puede borrar desde
+    // renglones idénticos en los reportes, y ninguno de los dos se puede borrar desde
     // la pantalla.
-    document.getElementById('btn-save-bitacora').addEventListener('click', async () => {
-      const boton = document.getElementById('btn-save-bitacora');
+    document.getElementById('btn-guardar-reporte').addEventListener('click', async () => {
+      const boton = document.getElementById('btn-guardar-reporte');
       const presion = document.getElementById('bit-presion').value;
       const glucemia = document.getElementById('bit-glucemia').value;
       const medicamentos = document.getElementById('bit-medicamentos').value;
@@ -878,11 +878,11 @@
       boton.textContent = 'Guardando...';
       try {
         const session = await Sesion.getSession();
-        await ClienteDatos.registrarBitacoraDiaria({
+        await ClienteDatos.registrarReporte({
           presion, glucemia, medicamentos, notas,
           caregiverId: session.user.id
         });
-        alert('¡Novedad registrada en la bitácora familiar!');
+        alert('El reporte quedó guardado.');
         document.getElementById('bit-presion').value = '';
         document.getElementById('bit-glucemia').value = '';
         document.getElementById('bit-medicamentos').value = '';

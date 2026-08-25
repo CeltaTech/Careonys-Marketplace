@@ -320,7 +320,7 @@ const ClienteDatos = {
     });
   },
 
-  // --- MÓDULO 3: FICHADO GPS Y BITÁCORA MÉDICA ---
+  // --- MÓDULO 3: FICHADO GPS Y REPORTES DE CUIDADO ---
   async registrarFichadoGPS(fichadoData) {
     return await this._supabaseRequest('POST', 'clock_ins', {
       caregiver_id: fichadoData.caregiverId,
@@ -330,8 +330,8 @@ const ClienteDatos = {
     });
   },
 
-  async registrarBitacoraDiaria(entryData) {
-    return await this._supabaseRequest('POST', 'logbook_entries', {
+  async registrarReporte(entryData) {
+    return await this._supabaseRequest('POST', 'reportes', {
       aviso_id: entryData.avisoId,
       caregiver_id: entryData.caregiverId,
       blood_pressure: entryData.presion || entryData.blood_pressure,
@@ -341,13 +341,13 @@ const ClienteDatos = {
     });
   },
 
-  async getBitacoraDiaria(avisoId = null) {
+  async getReportes(avisoId = null) {
     const queryParams = {};
     if (avisoId) {
       queryParams.aviso_id = `eq.${avisoId}`;
     }
     queryParams.order = 'created_at.desc';
-    return await this._supabaseRequest('GET', 'logbook_entries', null, queryParams);
+    return await this._supabaseRequest('GET', 'reportes', null, queryParams);
   },
 
   // --- LOS CURSOS ---

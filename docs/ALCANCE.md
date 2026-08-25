@@ -113,7 +113,7 @@ aparecieron dos cosas que no eran de trato:
 - Un `await` adentro de una función que no era `async`, en `pwa-asistente/index.html`. Es un
   error de sintaxis, así que el navegador descartaba el bloque `<script>` entero: la aplicación
   del Asistente se dibujaba completa y no funcionaban ni el ingreso, ni el fichado, ni la
-  bitácora, sin ningún aviso. Corregido, y ahora `scripts/verificar_guiones.mjs` lo vigila —era
+  reportes, sin ningún aviso. Corregido, y ahora `scripts/verificar_guiones.mjs` lo vigila —era
   el único bloque roto de los veinticuatro del proyecto—.
 - Un `á` guardado como carácter roto en `solicitar-asistente.html`, que hacía invisible esa frase
   a cualquier búsqueda. Corregido.
@@ -130,7 +130,7 @@ se metía adentro del marcado ahora pasan por `Texto.escapar`, en seis archivos:
 - **Cuál era el problema**: un nombre escrito como `<img src=x onerror=...>` no se veía como un
   nombre — se ejecutaba, y se ejecutaba en la pantalla de quien lo estaba leyendo. En este
   proyecto quien lee suele ser el personal de la Prestadora, o sea justo quien tiene los permisos,
-  o una familia mirando el cuaderno de cuidado.
+  o una familia mirando los reportes de cuidado.
 - **Los dos peores casos** no estaban donde decía el pendiente. Uno era el mensaje de chat de
   `mockup-app.html:775`, que lo escribe una persona y lo lee otra. El otro era
   `panel-prestadora.html`, la pantalla que el pendiente daba por arreglada: tenía el renglón de la
@@ -148,7 +148,7 @@ se metía adentro del marcado ahora pasan por `Texto.escapar`, en seis archivos:
 - **De paso cerró la otra mitad de la regla 5.1.** `Texto.mensajeDeError` clasifica la falla —sin
   red, sin permiso, dato repetido, no está, dato inválido— y devuelve la frase que corresponde; el
   texto crudo de la base, que nombra tablas y restricciones, queda en la consola. Reemplazó a los
-  `alert('... ' + err.message)` de `mockup-app.html` y al aviso de la bitácora de
+  `alert('... ' + err.message)` de `mockup-app.html` y al aviso de los reportes de
   `pwa-familia/index.html`.
 - **Un chequeo lo sostiene.** `scripts/verificar_escapado.mjs` recorre los treinta y tres archivos
   y falla si un dato entra crudo en el marcado, si aparece un manejador escrito en un atributo, o
@@ -1297,7 +1297,7 @@ pantalla como si hubieran salido.** Ahora la burbuja lleva escrito debajo que no
 **Lo demás, en orden.** «Cerrar sesión» era un enlace disfrazado de botón en las tres aplicaciones
 —un enlace no se puede apagar—, y ahora es un botón de verdad que pregunta antes, avisando que
 para volver a entrar hay que escribir de nuevo el correo y la contraseña. Guardar una novedad en
-la bitácora se apaga y dice «Guardando...». Abrir una evaluación desde un botón en `examen.html`
+el botón de reportes se apaga y dice «Guardando...». Abrir una evaluación desde un botón en `examen.html`
 no tenía quién atrapara un fallo del servidor y la pantalla se quedaba en «Cargando...» para
 siempre; ahora termina en el panel de error. Y quitar un bloque del legajo con datos adentro
 pregunta antes: si el bloque está vacío no pregunta nada, porque preguntar por nada enseña a
@@ -1426,7 +1426,7 @@ taparse.
 
 **Una medición equivocada se corrigió antes de escribirla como verdad, y conviene dejarla contada.**
 La primera versión del chequeo buscaba la columna de la Organización sólo adentro del `create
-table`, y avisó de tres tablas —`clock_ins`, `logbook_entries` y `messages`— que en realidad la
+table`, y avisó de tres tablas —`clock_ins`, `reportes` y `messages`— que en realidad la
 tienen: se la agrega la migración 0002 en los renglones 52 a 54. Lo que delató el error fue que las
 políticas de esas mismas tres tablas usan `tenant_id`, o sea que la columna existe. La regla pide la
 columna, no el momento; el momento lo pide sólo la RLS, y por un motivo distinto. El chequeo hoy lee
@@ -1488,7 +1488,7 @@ migraciones. Se midió todo de nuevo el 25 de agosto de 2026, contra el árbol d
 | 2.566 declaraciones en 772 atributos `style=` | 2.166 en 687 |
 | ninguna pantalla protegida | 11 de las 16 rescatan la sesión al abrir |
 | 4 dependencias por CDN | 4 servidores de afuera: dos de tipografías y dos de bibliotecas |
-| 6 tablas, sin migraciones en el repositorio | 24 tablas y 18 migraciones |
+| 6 tablas, sin migraciones en el repositorio | 24 tablas y 19 migraciones |
 
 Dos filas merecen una explicación. **Los estilos pegados al HTML bajaron** —de 2.566
 declaraciones a 2.166— porque en el medio se sacaron los 434 colores escritos a mano; el
@@ -1583,7 +1583,7 @@ acto de buscar y no deja nada guardado; lo que queda guardado es el aviso que pu
 | Antes | Ahora | Qué pasó |
 |---|---|---|
 | `care_searches` | `avisos` | `supabase/migrations/0015_los_avisos_se_llaman_avisos.sql`, con su clave, su restricción, su índice y su política |
-| `logbook_entries.search_id` y `messages.search_id` | `aviso_id` | La misma migración, con sus dos restricciones |
+| `reportes.search_id` y `messages.search_id` | `aviso_id` | La misma migración, con sus dos restricciones |
 | `caregivers_publicos` | `directorio` | La misma migración. El nombre no es nuevo: es el del módulo, decidido el 24 de agosto en `docs/MODULOS.md:47` |
 | `franjas_busqueda` | `franjas_aviso` | No hubo renombre: la migración que la crea no estaba aplicada, así que se reescribió y se renumeró a `supabase/migrations/0016_franjas_de_un_aviso.sql`. Esa tabla nunca llegó a existir |
 | `franjas_busqueda.search_id` | `franjas_aviso.aviso_id` | Ídem |
@@ -1597,7 +1597,7 @@ todavía en el panel de Supabase, se pudo reescribir en vez de agregarle un reno
 diferencia entre las dos tablas: `care_searches` ya existía en el servidor y necesitó una
 migración de verdad; `franjas_busqueda` no existió nunca.
 
-**Lo que este renombre dejó a la vista y no arregló.** `logbook_entries` y `messages` son tablas
+**Lo que este renombre dejó a la vista y no arregló.** `reportes` y `messages` son tablas
 compartidas y siguen apuntando a un objeto que sólo existe en esta modalidad. Antes la columna se
 llamaba `search_id` y no se notaba; ahora se llama `aviso_id` y se nota. Es un problema de
 reparto, no de nombres, y sigue anotado en el pendiente 52.
@@ -1697,6 +1697,42 @@ mismo; en cuanto una Prestadora las pondera distinto, «4 de 5» deja de querer 
 que mostrar un porcentaje. Quedó anotado en el pendiente 56 junto con la pregunta más difícil:
 qué ve una **Familia** en un directorio donde conviven Prestadoras que ponderan distinto.
 
+### El cuaderno se llama reporte, y la tabla ahora se llama igual que en Careonys
+
+Lo que el Asistente anota de cada jornada se llamaba de tres maneras a la vez: «cuaderno de
+cuidado» en el menú, «bitácora» en el resto de las pantallas y `logbook_entries` en la base. El
+Desarrollador decidió el 25 de agosto de 2026 que se llama **reporte**.
+
+**Reporte y no informe**, entre las dos palabras que puso sobre la mesa. Reportar es
+*re-portare*, llevar de vuelta: es exactamente lo que hace el Asistente, le lleva a la Familia lo
+que pasó en la jornada. Informar es *in-formare*, darle forma a algo, y suena a documento
+elaborado por alguien que analiza; esto es una anotación diaria, no un dictamen. **Y no es
+palabra nueva:** Careonys ya tenía la tabla como `reportes`, así que la fusión va a encontrar un
+solo nombre en vez de dos.
+
+Se cambió en los tres lados a la vez, que es la única forma de que no vuelva:
+
+| Dónde | Qué |
+|---|---|
+| La base | `logbook_entries` pasó a `reportes`, con sus tres restricciones y su política (`0019`) |
+| El código | `registrarBitacoraDiaria` → `registrarReporte`, `getBitacoraDiaria` → `getReportes`, `cargarBitacora` → `cargarReportes`, y los identificadores de pantalla y de estilo que decían `cuaderno` |
+| Lo que se lee | 98 apariciones en 20 archivos, entre menús, títulos, mensajes y comentarios |
+
+**La migración cambia el nombre y nada más.** Las columnas siguen como estaban: acá son
+`blood_pressure`, `glycemia`, `medications_administered` y `daily_notes`, y en Careonys son
+`signos_vitales`, `medicacion` y `texto_libre`, que es otra forma de guardar lo mismo.
+Emparejarlas es trabajo de la fusión, no de un renombre.
+
+**Dos apariciones se quedaron a propósito**, y por el mismo motivo: son citas literales de código
+que ya no existe. Las claves `bitacora` de `localStorage` se llamaban así y se borraron con el
+camino de imitación; el bloque SQL que `docs/ESQUEMA.md` copia es la política original tal cual
+estaba escrita. Cambiarles el nombre haría que el documento mienta sobre lo que hubo.
+
+**Y la palabra vieja quedó vigilada.** `scripts/verificar_vocabulario.mjs` pasó de mirar dos
+palabras a mirar tres: ahora también falla si «cuaderno» o «bitácora» reaparecen en texto
+visible. Este detector no lleva excepciones, al revés que el de «cuidador»: ninguna de las dos
+palabras tiene otro uso legítimo acá, así que cualquier aparición es la palabra vieja volviendo.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,
@@ -1709,7 +1745,7 @@ porque migrar es más barato que construir.
 | **Puntos reputacionales y rangos** (Bronce → Plata → Oro) | No existe |
 | **Reemplazo urgente por cercanía** (<2hs, <5km) | No existe. El botón está, la lógica no |
 | **Badges de verificación de 4 niveles** | Se muestran. No hay validación real detrás de ninguno |
-| **Bitácora de salud y signos vitales** | Maquetado sin persistencia — y ver §3 |
+| **Reportes de salud y signos vitales** | Maquetado sin persistencia — y ver §3 |
 | **Asesoría de reintegros de Obra Social** | Maquetado sin lógica — y ver §3 |
 
 ---
@@ -1816,7 +1852,7 @@ descripta y ahora vive en `data/catalogo-oferta.json`.
 Lo que sí se descarta es la idea de un esquema propio y paralelo: haya ganado quien haya ganado,
 al final hay una sola tabla de cada cosa.
 
-Los cuatro módulos que estaban duplicados —bitácora de salud, signos vitales, check-in con
+Los cuatro módulos que estaban duplicados —reportes de salud, signos vitales, check-in con
 ubicación, reportes diarios, Obra Social— no se construyen de nuevo acá: existen y funcionan del
 otro lado, y si alguna pantalla de acá los resuelve mejor, eso se lleva allá.
 

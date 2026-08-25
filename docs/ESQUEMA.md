@@ -43,7 +43,8 @@ CREATE POLICY "Tenant Logbook Read" ON logbook_entries
   FOR SELECT USING (true);
 ```
 
-El comentario dice "dentro del tenant". El código dice **todos**. `logbook_entries` guarda presión
+El comentario dice "dentro del tenant". El código dice **todos**. La tabla —que entonces se
+llamaba `logbook_entries` y desde la 0019 se llama `reportes`— guarda presión
 arterial, glucemia y medicación administrada: datos clínicos de Pacientes, abiertos a quien
 pregunte.
 
@@ -88,7 +89,7 @@ prueba de la §3 y no leyendo el SQL.
 1. **Claves primarias UUID** en todas las tablas, sin excepción. Es lo que permite fusionar con
    Careonys sin remapear relaciones.
 2. **`prestadora_id` en toda tabla con datos propios de una Organización**, aunque hoy siempre
-   valga lo mismo. Incluye las que hoy no la tienen, como la bitácora.
+   valga lo mismo. Incluye las que hoy no la tienen, como los reportes.
 3. **RLS activada en la misma migración que crea la tabla.** Nunca aplicada después a mano desde
    el dashboard.
 4. **Una sola política permisiva de lectura por tabla y por rol.** Si hacen falta dos condiciones,

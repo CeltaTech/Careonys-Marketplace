@@ -31,8 +31,8 @@
       <div class="drawer-menu">
         <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home"></i> Inicio</a>
         <a class="drawer-menu-item" href="directorio.html"><i class="fas fa-search"></i> Buscar Asistente</a>
-        <a class="drawer-menu-item" onclick="navigate('cuaderno')"><i class="fas fa-book-medical"></i> Cuaderno de
-          Cuidado</a>
+        <a class="drawer-menu-item" onclick="navigate('reportes')"><i class="fas fa-book-medical"></i> Reportes de
+          cuidado</a>
         <a class="drawer-menu-item" href="cursos.html"><i class="fas fa-graduation-cap"></i> Cursos</a>
         <a class="drawer-menu-item" href="soporte-remoto.html"><i class="fas fa-headset"></i> Acompañamiento Online</a>
         <div style="border-top:1px solid var(--borde-card);margin:8px 0;"></div>
@@ -176,9 +176,9 @@
           <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-headset"></i></div>
           <span>Acompañante Online</span>
         </a>
-        <div class="service-btn" onclick="navigate('cuaderno')">
+        <div class="service-btn" onclick="navigate('reportes')">
           <div class="icon-box" style="background:var(--verde-exito);"><i class="fas fa-book-medical"></i></div>
-          <span>Cuaderno Diario</span>
+          <span>Reportes</span>
         </div>
         <a class="service-btn" href="cursos.html">
           <div class="icon-box" style="background:var(--naranja-alerta);"><i class="fas fa-graduation-cap"></i></div>
@@ -279,9 +279,9 @@
           <span id="chat-badge"
             style="display:none;position:absolute;top:-2px;right:18px;background:var(--rojo-peligro);width:8px;height:8px;border-radius:50%;"></span>
         </a>
-        <a class="tab-item" onclick="navigate('cuaderno')">
+        <a class="tab-item" onclick="navigate('reportes')">
           <i class="fas fa-book-medical"></i>
-          <span>Bitácora</span>
+          <span>Reportes</span>
         </a>
       </div>
 
@@ -329,22 +329,22 @@
         <a class="tab-item" href="formulario-integral.html"><i class="fas fa-plus-circle"></i><span>Publicar</span></a>
         <a class="tab-item" href="directorio.html"><i class="fas fa-users"></i><span>Asistentes</span></a>
         <a class="tab-item active" onclick="navigate('chat')"><i class="fas fa-comments"></i><span>Chat</span></a>
-        <a class="tab-item" onclick="navigate('cuaderno')"><i class="fas fa-book-medical"></i><span>Bitácora</span></a>
+        <a class="tab-item" onclick="navigate('reportes')"><i class="fas fa-book-medical"></i><span>Reportes</span></a>
       </div>
     </div>
 
-    <!-- 4. VISTA: CUADERNO DE CUIDADO / BITÁCORA DIARIA -->
-    <div class="app-screen" id="screen-cuaderno" style="padding-bottom:64px;">
+    <!-- 4. VISTA: REPORTES DE CUIDADO -->
+    <div class="app-screen" id="screen-reportes" style="padding-bottom:64px;">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
-        <h1>Cuaderno de Cuidado</h1>
-        <button class="btn-back" onclick="document.getElementById('modal-bitacora').style.display='flex'"><i
+        <h1>Reportes de cuidado</h1>
+        <button class="btn-back" onclick="document.getElementById('modal-reporte').style.display='flex'"><i
             class="fas fa-plus"></i></button>
       </div>
 
-      <div class="cuaderno-header">
+      <div class="reportes-header">
         <h3 style="margin:0;font-size:16px;">Abuela Rosa</h3>
-        <div class="cuaderno-paciente">
+        <div class="reportes-paciente">
           <img src="assets/images/retrato_generico.svg" alt="Sin foto" />
           <div>
             <p style="margin:0;font-size:12px;opacity:0.9;">Diagnóstico: Alzheimer Moderado</p>
@@ -372,22 +372,22 @@
           <i class="fas fa-users"></i>
           <span>Asistentes</span>
         </a>
-        <a class="tab-item active" onclick="navigate('cuaderno')">
+        <a class="tab-item active" onclick="navigate('reportes')">
           <i class="fas fa-book-medical"></i>
-          <span>Bitácora</span>
+          <span>Reportes</span>
         </a>
       </div>
     </div>
 
-    <!-- MODAL NUEVA NOVEDAD BITÁCORA -->
-    <div id="modal-bitacora"
+    <!-- MODAL: UN REPORTE NUEVO -->
+    <div id="modal-reporte"
       style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:var(--velo-modal); z-index:300; justify-content:center; align-items:center;">
       <div
         style="background: var(--superficie); width:90%; max-width:360px; padding:20px; border-radius:20px; box-shadow:var(--sombra-media); box-sizing:border-box;">
         <h4
           style="margin:0 0 16px 0; color:var(--marca-prestadora); font-size:16px; font-weight:800; display:flex; justify-content:space-between; align-items:center;">
           <span>Nueva Novedad</span>
-          <button onclick="document.getElementById('modal-bitacora').style.display='none'"
+          <button onclick="document.getElementById('modal-reporte').style.display='none'"
             style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
         </h4>
         <div class="form-group" style="margin-bottom:12px;"><label style="font-size:11px; font-weight:700;">Presión
@@ -407,7 +407,7 @@
             Diarias / Novedades</label><textarea id="bit-notas" placeholder="¿Cómo pasó el día el paciente?"
             style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--borde-card); font-size:12px; box-sizing:border-box; height:60px;"
             required></textarea></div>
-        <button id="btn-save-bitacora" class="btn-login" style="width:100%;">Guardar Novedad</button>
+        <button id="btn-guardar-reporte" class="btn-login" style="width:100%;">Guardar Novedad</button>
       </div>
     </div>
 
@@ -496,23 +496,23 @@
       });
       document.getElementById(`screen-${screenId}`).classList.add('active');
 
-      // Si navegamos al cuaderno de cuidado, cargar novedades reales de Supabase
-      if (screenId === 'cuaderno') {
-        cargarBitacora();
+      // Si navegamos a los reportes, cargar novedades reales de Supabase
+      if (screenId === 'reportes') {
+        cargarReportes();
       }
     }
 
-    // CARGAR BITÁCORA DINÁMICAMENTE DESDE SUPABASE
-    async function cargarBitacora() {
+    // CARGAR LOS REPORTES DESDE SUPABASE
+    async function cargarReportes() {
       const listEl = document.getElementById('timeline-log-list');
-      listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">Cargando bitácora diaria...</p>';
+      listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">Cargando los reportes...</p>';
 
       try {
-        const logs = await ClienteDatos.getBitacoraDiaria();
+        const logs = await ClienteDatos.getReportes();
         listEl.innerHTML = '';
 
         if (!logs || logs.length === 0) {
-          listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">No hay registros en la bitácora para hoy.</p>';
+          listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">Todavía no hay reportes de hoy.</p>';
           return;
         }
 
@@ -539,17 +539,17 @@
           listEl.appendChild(item);
         });
       } catch (err) {
-        const aviso = Texto.mensajeDeError(err, 'cargar la bitácora');
+        const aviso = Texto.mensajeDeError(err, 'cargar los reportes');
         listEl.innerHTML = `<p style="text-align:center;font-size:12px;color:var(--rojo-peligro-texto);padding:20px;">${Texto.escapar(aviso)}</p>`;
       }
     }
 
-    // REGISTRAR NUEVA NOVEDAD EN LA BITÁCORA
+    // REGISTRAR UN REPORTE NUEVO
     // Regla 5: guardar apaga el botón mientras la novedad viaja. Dos clics eran dos
-    // renglones idénticos en la bitácora, y ninguno de los dos se puede borrar desde
+    // renglones idénticos en los reportes, y ninguno de los dos se puede borrar desde
     // la pantalla.
-    document.getElementById('btn-save-bitacora').addEventListener('click', async () => {
-      const boton = document.getElementById('btn-save-bitacora');
+    document.getElementById('btn-guardar-reporte').addEventListener('click', async () => {
+      const boton = document.getElementById('btn-guardar-reporte');
       const presion = document.getElementById('bit-presion').value;
       const glucemia = document.getElementById('bit-glucemia').value;
       const medicamentos = document.getElementById('bit-medicamentos').value;
@@ -574,9 +574,9 @@
       boton.textContent = 'Guardando...';
 
       try {
-        await ClienteDatos.registrarBitacoraDiaria(data);
-        alert('La novedad quedó guardada en la bitácora.');
-        document.getElementById('modal-bitacora').style.display = 'none';
+        await ClienteDatos.registrarReporte(data);
+        alert('El reporte quedó guardado.');
+        document.getElementById('modal-reporte').style.display = 'none';
 
         // Limpiar formulario
         document.getElementById('bit-presion').value = '';
@@ -584,7 +584,7 @@
         document.getElementById('bit-medicamentos').value = '';
         document.getElementById('bit-notas').value = '';
 
-        cargarBitacora();
+        cargarReportes();
       } catch (err) {
         alert(Texto.mensajeDeError(err, 'guardar la novedad'));
       } finally {

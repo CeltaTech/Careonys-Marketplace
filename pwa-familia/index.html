@@ -368,22 +368,22 @@
       font-weight: 700;
     }
 
-    /* TIMELINE CUADERNO */
-    .cuaderno-header {
+    /* TIMELINE DE REPORTES */
+    .reportes-header {
       background: var(--marca-prestadora);
       color: var(--texto-sobre-color);
       padding: 20px;
       border-radius: 0 0 24px 24px;
     }
 
-    .cuaderno-paciente {
+    .reportes-paciente {
       display: flex;
       align-items: center;
       gap: 12px;
       margin-top: 10px;
     }
 
-    .cuaderno-paciente img {
+    .reportes-paciente img {
       width: 44px;
       height: 44px;
       border-radius: 50%;
@@ -547,7 +547,7 @@
       <div style="flex:1;padding:16px 0;">
         <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home" style="width:20px;color:var(--texto-secundario);"></i> Inicio</a>
         <a class="drawer-menu-item" href="../directorio.html"><i class="fas fa-search" style="width:20px;color:var(--texto-secundario);"></i> Buscar Asistente</a>
-        <a class="drawer-menu-item" onclick="navigate('cuaderno')"><i class="fas fa-book-medical" style="width:20px;color:var(--texto-secundario);"></i> Cuaderno de Cuidado</a>
+        <a class="drawer-menu-item" onclick="navigate('reportes')"><i class="fas fa-book-medical" style="width:20px;color:var(--texto-secundario);"></i> Reportes de cuidado</a>
         <a class="drawer-menu-item" href="../cursos.html"><i class="fas fa-graduation-cap" style="width:20px;color:var(--texto-secundario);"></i> Cursos</a>
         <a class="drawer-menu-item" href="../soporte-remoto.html"><i class="fas fa-headset" style="width:20px;color:var(--texto-secundario);"></i> Acompañamiento Online</a>
         <div style="border-top:1px solid var(--borde-card);margin:8px 0;"></div>
@@ -609,9 +609,9 @@
           <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-headset"></i></div>
           <span>Acompañante Online</span>
         </a>
-        <div class="service-btn" onclick="navigate('cuaderno')">
+        <div class="service-btn" onclick="navigate('reportes')">
           <div class="icon-box" style="background:var(--verde-exito);"><i class="fas fa-book-medical"></i></div>
-          <span>Cuaderno Diario</span>
+          <span>Reportes</span>
         </div>
         <div class="service-btn" onclick="navigate('publicar')">
           <div class="icon-box" style="background:var(--naranja-alerta);"><i class="fas fa-plus-circle"></i></div>
@@ -671,21 +671,21 @@
         <a class="tab-item active" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span>Inicio</span></a>
         <a class="tab-item" onclick="navigate('publicar')"><i class="fas fa-plus-circle"></i><span>Publicar</span></a>
         <a class="tab-item" href="../directorio.html"><i class="fas fa-users"></i><span>Asistentes</span></a>
-        <a class="tab-item" onclick="navigate('cuaderno')"><i class="fas fa-book-medical"></i><span>Bitácora</span></a>
+        <a class="tab-item" onclick="navigate('reportes')"><i class="fas fa-book-medical"></i><span>Reportes</span></a>
       </div>
     </div>
 
-    <!-- 3. VISTA: CUADERNO DE CUIDADO / BITÁCORA -->
-    <div class="app-screen" id="screen-cuaderno" style="padding-bottom:64px;">
+    <!-- 3. VISTA: REPORTES DE CUIDADO -->
+    <div class="app-screen" id="screen-reportes" style="padding-bottom:64px;">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
-        <h1>Cuaderno de Cuidado</h1>
+        <h1>Reportes de cuidado</h1>
         <div style="width:24px;"></div>
       </div>
 
-      <div class="cuaderno-header">
+      <div class="reportes-header">
         <h3 style="margin:0;font-size:16px;">Abuela Rosa</h3>
-        <div class="cuaderno-paciente">
+        <div class="reportes-paciente">
           <img src="../assets/images/retrato_generico.svg" alt="Sin foto" />
           <div>
             <p style="margin:0;font-size:12px;opacity:0.9;">Diagnóstico: Alzheimer Moderado</p>
@@ -702,7 +702,7 @@
         <a class="tab-item" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span>Inicio</span></a>
         <a class="tab-item" onclick="navigate('publicar')"><i class="fas fa-plus-circle"></i><span>Publicar</span></a>
         <a class="tab-item" href="../directorio.html"><i class="fas fa-users"></i><span>Asistentes</span></a>
-        <a class="tab-item active" onclick="navigate('cuaderno')"><i class="fas fa-book-medical"></i><span>Bitácora</span></a>
+        <a class="tab-item active" onclick="navigate('reportes')"><i class="fas fa-book-medical"></i><span>Reportes</span></a>
       </div>
     </div>
 
@@ -799,7 +799,7 @@
         <a class="tab-item" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span>Inicio</span></a>
         <a class="tab-item active" onclick="navigate('publicar')"><i class="fas fa-plus-circle"></i><span>Publicar</span></a>
         <a class="tab-item" href="../directorio.html"><i class="fas fa-users"></i><span>Asistentes</span></a>
-        <a class="tab-item" onclick="navigate('cuaderno')"><i class="fas fa-book-medical"></i><span>Bitácora</span></a>
+        <a class="tab-item" onclick="navigate('reportes')"><i class="fas fa-book-medical"></i><span>Reportes</span></a>
       </div>
     </div>
 
@@ -905,14 +905,14 @@
 
     document.getElementById('rec-reintentar').addEventListener('click', cargarRecomendados);
 
-    async function cargarBitacora() {
+    async function cargarReportes() {
       const listEl = document.getElementById('timeline-log-list');
       listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">Cargando novedades...</p>';
       try {
-        const logs = await ClienteDatos.getBitacoraDiaria();
+        const logs = await ClienteDatos.getReportes();
         listEl.innerHTML = '';
         if (!logs || logs.length === 0) {
-          listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">No hay registros en la bitácora todavía.</p>';
+          listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">Todavía no hay reportes.</p>';
           return;
         }
         logs.forEach(log => {
@@ -934,7 +934,7 @@
           listEl.appendChild(item);
         });
       } catch (err) {
-        const aviso = Texto.mensajeDeError(err, 'cargar la bitácora');
+        const aviso = Texto.mensajeDeError(err, 'cargar los reportes');
         listEl.innerHTML = `<p style="text-align:center;font-size:12px;color:var(--rojo-peligro-texto);padding:20px;">${Texto.escapar(aviso)}</p>`;
       }
     }
@@ -942,8 +942,8 @@
     function navigate(screenId) {
       document.querySelectorAll('.app-screen').forEach(screen => screen.classList.remove('active'));
       document.getElementById(`screen-${screenId}`).classList.add('active');
-      if (screenId === 'cuaderno') {
-        cargarBitacora();
+      if (screenId === 'reportes') {
+        cargarReportes();
       }
     }
 

@@ -1,14 +1,14 @@
 /* ===================================================
    TEXTO QUE ENTRA EN UNA PANTALLA SIN CONVERTIRSE EN CÓDIGO
 
-   Cuando un dato se mete adentro de HTML —un nombre, una nota de la bitácora, un
+   Cuando un dato se mete adentro de HTML —un nombre, una nota de un reporte, un
    mensaje de chat— deja de ser texto y pasa a ser marcado. Un nombre escrito así:
 
        <img src=x onerror=alert(document.cookie)>
 
    no se ve como un nombre: se ejecuta. Y se ejecuta en la pantalla de quien lo
    está leyendo, que en este proyecto suele ser el personal de la Prestadora —o
-   sea, justo quien tiene los permisos— o una familia mirando el cuaderno de
+   sea, justo quien tiene los permisos— o una familia mirando los reportes de
    cuidado. El que escribe el dato elige qué corre en la máquina del que lo lee.
 
    `Texto.escapar` corta eso: convierte los cinco caracteres con los que se abre

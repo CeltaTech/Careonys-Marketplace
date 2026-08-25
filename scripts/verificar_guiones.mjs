@@ -9,8 +9,8 @@
    Por qué existe: el 24 de agosto de 2026 se encontró un `await` adentro de una
    función que no era `async`, en `pwa-asistente/index.html`. El navegador, ante
    un error de sintaxis, descarta el bloque entero y sigue como si nada: la
-   pantalla se dibuja igual, y no funcionan ni el ingreso, ni el fichado, ni la
-   bitácora. No hay mensaje, no hay pantalla en blanco, no hay nada que mirar.
+   pantalla se dibuja igual, y no funcionan ni el ingreso, ni el fichado, ni los
+   reportes. No hay mensaje, no hay pantalla en blanco, no hay nada que mirar.
    Una falla que no se ve es la que más tarda en encontrarse.
 
    Qué mira:
