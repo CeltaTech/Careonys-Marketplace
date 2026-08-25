@@ -45,10 +45,15 @@ const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
    Una columna que no está acá no se revisa. */
 const COLUMNAS = {
   profession: 'tipo_asistente',
+  profession_required: 'tipo_asistente',
   zone: 'zona',
   pathologies: 'patologia',
   pathologies_required: 'patologia',
   tasks: 'tarea_cuidado',
+  tasks_required: 'tarea_cuidado',
+  consultation_reason: 'motivo_consulta',
+  preferred_gender: 'genero_preferido',
+  frequency: 'frecuencia',
   gender: 'genero',
   modalidad: 'modalidad_curso'
 };

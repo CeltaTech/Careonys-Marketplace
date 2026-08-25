@@ -425,10 +425,10 @@ Etapa 3 del pendiente 21, el 24 de agosto de 2026.
   guardan la ficha y las cuatro secciones del legajo, la pantalla vuelve a su estado normal y la
   contraseña desaparece de la memoria y de la pantalla.
 
-### Las doce migraciones ya corren en el servidor
+### Las trece migraciones ya corren en el servidor
 
 Comprobado el 24 de agosto de 2026 contra el proyecto real: el servidor tiene aplicadas 0001 a
-0012, las mismas doce que hay en `supabase/migrations/`. Antes tenía hasta la 0008, y esa
+0013, las mismas trece que hay en `supabase/migrations/`. Antes tenía hasta la 0008, y esa
 distancia costaba dos cosas que ya no cuestan:
 
 - **La columna del contacto existe.** La 0009 agregó `care_searches.contact_info`, que es donde
@@ -438,6 +438,7 @@ distancia costaba dos cosas que ya no cuestan:
   las cuatro filas ficticias —«enfermero» y compañía— por las que las pantallas esperan.
 - **La 0011 armó el directorio**, que es lo que hoy se ve sin sesión.
 - **La 0012 le dio lugar a la disponibilidad** y cambió el nombre de una tabla, abajo.
+- **La 0013 le dio lugar a lo que pide una Familia**, que es lo que sigue.
 
 Queda dicho porque el estado real manda sobre el documentado (`CLAUDE.md` §7): un archivo en
 `supabase/migrations/` describe lo que se quiso aplicar, no lo que corre. Esto último se preguntó.
@@ -447,6 +448,42 @@ tiene. `banderas_asistente` contesta que no existe; `autorizaciones_asistente`,
 `disponibilidad_asistente` y `franjas_asistente` contestan que existen y que a un visitante sin
 sesión no le muestran nada; y `caregivers_publicos` devuelve la columna `reemplazos_urgentes` y
 ya no devuelve `disponible_urgencias`.
+
+### Lo que una Familia pide ya tiene dónde guardarse
+
+Tres pantallas le preguntan cosas a una Familia y `care_searches` tenía siete columnas. Lo que
+sobraba no daba error: se perdía en silencio un paso antes de la base. La 0013 le dio una columna
+a cada cosa —`zone`, `description`, `consultation_reason`, `tasks_required`,
+`profession_required`, `preferred_gender` y `frequency`— y las tres pantallas ya las usan.
+Comprobado en el navegador, pantalla por pantalla, mirando la fila que sale hacia la base.
+
+- **El motivo de la consulta salió de adentro de las patologías.** `solicitar-asistente.html`
+  mandaba «quiero hacer un curso» en la columna donde van las patologías del paciente, que es la
+  misma falla que la 0009 arregló con el teléfono. Ahora va a `consultation_reason`, y la
+  migración además rescata las filas que ya se hubieran escrito así.
+- **La zona se elige de una lista.** En el teléfono se escribía a mano —«Ej: Palermo»—, así que
+  dos personas del mismo barrio podían escribirlo de dos maneras y ningún filtro juntarlas. Ahora
+  sale del vocabulario `zona`, que tiene dos escalones: la región entera o el barrio suelto.
+- **El asistente de seis pasos manda los seis.** Preguntaba tareas, tipo de Asistente, género
+  preferido, frecuencia y descripción, y armaba la búsqueda con `patologias: []` y
+  `horarios: 'flexible'` escritos a mano. De paso se corrigieron las claves de las tarjetas, que
+  decían `movilidad`, `at`, `domiciliario` y `enfermero`: ninguna era clave de ningún vocabulario.
+  Como hasta hoy nadie las leía no ensuciaron ninguna fila, y a partir de ahora sí se leen.
+- **Y elegir el tipo de Asistente pasó a ser elegir uno.** Las cuatro tarjetas del paso 3 se
+  podían marcar todas a la vez, y a la columna va una sola clave.
+
+**El traductor dejó de perder cosas en silencio**, que es lo que hacía posible todo lo anterior.
+`ClienteDatos._mapToDatabase` armaba la fila campo por campo y descartaba sin decir nada cualquier
+nombre que no reconociera: así se perdieron la grilla de disponibilidad, la zona y la descripción,
+y la falla se veía recién cuando alguien iba a buscar el dato a la base. Ahora cada campo se
+declara una sola vez y de esa misma lista sale la de nombres conocidos, así que el traductor puede
+avisar: *«la tabla care_searches no tiene dónde guardar «colorFavorito». Eso se pregunta en
+pantalla y no se está guardando»*. Era el pendiente 37.
+
+**Falta una sola cosa de las que se preguntan**, y se dejó afuera a propósito: la modalidad de
+contratación iría a `schedule_type`, que hoy guarda cuatro formas distintas de nombrar lo mismo y
+no tiene vocabulario que la gobierne. Es el pendiente 31 y lo decide el Desarrollador; hasta
+entonces, escribir ahí una quinta forma sería empeorarlo.
 
 ### La grilla de disponibilidad dejó de tirarse, y las banderas se llaman autorizaciones
 

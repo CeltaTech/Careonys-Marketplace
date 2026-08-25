@@ -385,7 +385,11 @@
 
         await ClienteDatos.crearBusquedaFamilia({
           paciente: nombre,
-          patologias: [consulta],
+          // El motivo va a `consultation_reason` (migración 0013). Antes se
+          // mandaba adentro de `patologias`, y «quiero hacer un curso» no es
+          // una patología: cualquier pantalla que leyera las patologías de una
+          // búsqueda se encontraba ahí adentro algo que no lo era.
+          motivoConsulta: consulta,
           horarios: 'A coordinar',
           family_user_id: familyUserId,
           // Va a su propia columna, `contact_info` (migración 0009): son datos

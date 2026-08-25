@@ -248,7 +248,8 @@
       "cerrada": false,
       "usado_en": [
         "postulacion-asistente.html:410",
-        "pwa-asistente/index.html:481"
+        "pwa-asistente/index.html:481",
+        "formulario-integral.html — tarjetas del paso 2"
       ],
       "items": [
         {
@@ -274,6 +275,10 @@
         {
           "clave": "movilizacion",
           "es-AR": "Movilización de paciente sin movilidad"
+        },
+        {
+          "clave": "estimulacion_cognitiva",
+          "es-AR": "Estimulación cognitiva y juegos de memoria"
         },
         {
           "clave": "solo_acompanamiento",

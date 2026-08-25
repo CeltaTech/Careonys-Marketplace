@@ -711,8 +711,8 @@
               </div>
               <div>
                 <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">Zona / Barrio</label>
-                <input type="text" id="pb-zona" placeholder="Ej: Palermo" required
-                  style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid #cbd5e1;font-size:13px;box-sizing:border-box;background:#f8fafc;" />
+                <select id="pb-zona" required data-catalogo="zona" data-catalogo-vacio="— Seleccionar —"
+                  style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid #cbd5e1;font-size:13px;box-sizing:border-box;background:#f8fafc;"></select>
               </div>
             </div>
           </div>
@@ -912,7 +912,7 @@
     document.getElementById('form-nueva-busqueda').addEventListener('submit', async (e) => {
       e.preventDefault();
       const nombre = document.getElementById('pb-nombre').value.trim();
-      const zona   = document.getElementById('pb-zona').value.trim();
+      const zona   = document.getElementById('pb-zona').value;
       const tipo   = document.getElementById('pb-tipo').value;
       if (!nombre || !zona || !tipo) {
         alert('Faltan el nombre del paciente, la zona y la modalidad del servicio.');

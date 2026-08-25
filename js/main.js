@@ -151,9 +151,19 @@ document.addEventListener('DOMContentLoaded', () => {
   if (verificacionSelect) verificacionSelect.addEventListener('change', filterCards);
 
   // ---- WIZARD INTERACTIVO DE 6 PASOS ----
+  // Las tarjetas de los pasos 2 y 3 no se eligen igual. Las tareas son varias
+  // —una persona puede necesitar higiene y medicación a la vez— y el tipo de
+  // Asistente es uno solo, porque a `care_searches.profession_required` va una
+  // sola clave. Antes las dos se comportaban igual y se podían marcar cuatro
+  // tipos de Asistente para una misma búsqueda.
   const selectCards = document.querySelectorAll('.select-card');
   selectCards.forEach(card => {
     card.addEventListener('click', () => {
+      const unaSola = card.hasAttribute('data-tipo-asistente');
+      if (unaSola && !card.classList.contains('selected')) {
+        card.parentNode.querySelectorAll('.select-card.selected')
+          .forEach(otra => otra.classList.remove('selected'));
+      }
       card.classList.toggle('selected');
     });
   });
@@ -215,11 +225,31 @@ document.addEventListener('DOMContentLoaded', () => {
       const patientAge = document.getElementById('w-patient-age')?.value || '80';
       const patientGender = document.getElementById('w-patient-gender')?.value || 'Femenino';
       
+      // Lo que la persona eligió en los seis pasos. Hasta la migración 0013
+      // esto se recolectaba en pantalla y no salía de ahí: la búsqueda se
+      // armaba con `patologias: []` y `horarios: 'flexible'` escritos a mano, y
+      // los pasos 2, 3 y 4 no llegaban a la base.
+      const elegidas = (atributo) => Array.from(
+        document.querySelectorAll(`.select-card.selected[${atributo}]`)
+      ).map((tarjeta) => tarjeta.getAttribute(atributo));
+
+      const tipoAsistente = elegidas('data-tipo-asistente');
+
       const newSearch = {
         paciente: `Paciente de ${patientAge} años (${patientGender}) - ${title}`,
+        // Este asistente no pregunta patologías: el paso 2 pregunta tareas.
         patologias: [],
+        // `horarios` sigue escrito a mano a propósito: la columna
+        // `schedule_type` guarda hoy cuatro formas distintas de nombrar lo
+        // mismo y todavía no tiene vocabulario que la gobierne (pendiente 31).
+        // Escribir acá una quinta forma sería empeorarlo.
         horarios: 'flexible',
         grillaHorarios: {},
+        tareas: elegidas('data-tarea'),
+        profesion: tipoAsistente[0] || '',
+        generoPreferido: document.getElementById('w-pref-gender')?.value || '',
+        frecuencia: document.getElementById('w-frequency')?.value || '',
+        descripcion: document.getElementById('w-desc')?.value || '',
         estado: 'activa'
       };
 

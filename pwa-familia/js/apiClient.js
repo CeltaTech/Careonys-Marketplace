@@ -238,7 +238,17 @@ const ClienteDatos = {
       patologias:    busquedaData.pathologiesRequired || busquedaData.patologias || [],
       horarios:      busquedaData.scheduleType || busquedaData.horarios,
       grillaHorarios: busquedaData.gridSchedule7x3 || busquedaData.grillaHorarios || {},
-      family_user_id: busquedaData.familyUserId || busquedaData.family_user_id || null
+      family_user_id: busquedaData.familyUserId || busquedaData.family_user_id || null,
+      // Migración 0013. Cada uno con sus dos nombres porque la pantalla del
+      // teléfono escribe algunos en inglés y otros en castellano; este atajo
+      // existe justamente para absorber esa mezcla.
+      zona:            busquedaData.zone || busquedaData.zona,
+      descripcion:     busquedaData.description || busquedaData.descripcion,
+      motivoConsulta:  busquedaData.consultationReason || busquedaData.motivoConsulta,
+      tareas:          busquedaData.tasksRequired || busquedaData.tareas,
+      profesion:       busquedaData.professionRequired || busquedaData.profesion,
+      generoPreferido: busquedaData.preferredGender || busquedaData.generoPreferido,
+      frecuencia:      busquedaData.frequency || busquedaData.frecuencia
     });
   },
 
@@ -436,51 +446,96 @@ const ClienteDatos = {
         horarios: row.schedule_type,
         grillaHorarios: row.grid_schedule_7x3 || {},
         estado: row.status,
+        // Lo que la Familia pide y hasta la migración 0013 no tenía dónde
+        // guardarse.
+        zona: row.zone || '',
+        descripcion: row.description || '',
+        motivoConsulta: row.consultation_reason || '',
+        tareas: row.tasks_required || [],
+        profesion: row.profession_required || '',
+        generoPreferido: row.preferred_gender || '',
+        frecuencia: row.frequency || '',
         fechaCreacion: row.created_at
       };
     }
     return row;
   },
 
+  // El traductor de ida: del nombre que usa la pantalla al nombre de la columna.
+  //
+  // Cada campo se declara una sola vez, con `llevar`, y de esa misma lista sale
+  // la de nombres conocidos. Eso es lo que permite el aviso del final: hasta la
+  // 0013 el traductor descartaba en silencio todo lo que no reconocía, y una
+  // pantalla podía preguntar algo durante meses sin que se guardara nunca. Así
+  // se perdieron la grilla de disponibilidad, la zona y la descripción de una
+  // búsqueda. La falla se veía recién cuando alguien iba a buscar el dato a la
+  // base y no estaba; ahora se ve la primera vez que se prueba la pantalla.
   _mapToDatabase(table, data) {
+    const row = {};
+    const conocidas = new Set();
+
+    // `origen` es como lo llama la pantalla; `destino`, como se llama la
+    // columna. El tercero es para los pocos campos que además necesitan una
+    // vuelta de tuerca antes de guardarse.
+    const llevar = (origen, destino, ajustar) => {
+      conocidas.add(origen);
+      if (data[origen] === undefined) return;
+      row[destino] = ajustar ? ajustar(data[origen]) : data[origen];
+    };
+
     if (table === 'caregivers') {
-      const row = {};
-      if (data.tenant_id !== undefined) row.tenant_id = data.tenant_id;
-      if (data.user_id !== undefined) row.user_id = data.user_id;
-      if (data.nombre !== undefined) row.full_name = data.nombre;
-      if (data.dni !== undefined) row.dni = data.dni;
-      if (data.telefono !== undefined) row.phone = data.telefono;
-      if (data.email !== undefined) row.email = data.email;
-      if (data.profesion !== undefined) row.profession = data.profesion;
-      if (data.zona !== undefined) row.zone = data.zona || data.zonaResidencia;
-      if (data.patologias !== undefined) row.pathologies = data.patologias;
-      if (data.tareas !== undefined) row.tasks = data.tareas;
-      if (data.documentos !== undefined) row.documents = data.documentos;
-      if (data.cuit !== undefined) row.cuit = data.cuit;
-      if (data.domicilio !== undefined) row.address = data.domicilio;
-      if (data.cbu !== undefined) row.bank_info = data.cbu;
-      if (data.referencia !== undefined) row.reference_info = data.referencia;
-      if (data.educacion !== undefined) row.education_info = data.educacion;
-      if (data.fechaNacimiento !== undefined) row.birthdate = data.fechaNacimiento || null;
-      if (data.genero !== undefined) row.gender = data.genero;
-      if (data.nacionalidad !== undefined) row.nationality = data.nacionalidad;
-      if (data.valorHora !== undefined) row.hourly_rate = data.valorHora || null;
-      if (data.estado !== undefined) row.verification_status = data.estado;
-      return row;
+      llevar('tenant_id', 'tenant_id');
+      llevar('user_id', 'user_id');
+      llevar('nombre', 'full_name');
+      llevar('dni', 'dni');
+      llevar('telefono', 'phone');
+      llevar('email', 'email');
+      llevar('profesion', 'profession');
+      llevar('zona', 'zone', (v) => v || data.zonaResidencia);
+      conocidas.add('zonaResidencia');   // se lee ahí arriba: no es un perdido
+      llevar('patologias', 'pathologies');
+      llevar('tareas', 'tasks');
+      llevar('documentos', 'documents');
+      llevar('cuit', 'cuit');
+      llevar('domicilio', 'address');
+      llevar('cbu', 'bank_info');
+      llevar('referencia', 'reference_info');
+      llevar('educacion', 'education_info');
+      llevar('fechaNacimiento', 'birthdate', (v) => v || null);
+      llevar('genero', 'gender');
+      llevar('nacionalidad', 'nationality');
+      llevar('valorHora', 'hourly_rate', (v) => v || null);
+      llevar('estado', 'verification_status');
+    } else if (table === 'care_searches') {
+      llevar('tenant_id', 'tenant_id');
+      llevar('family_user_id', 'family_user_id');
+      llevar('paciente', 'patient_name');
+      llevar('patologias', 'pathologies_required');
+      llevar('horarios', 'schedule_type');
+      llevar('grillaHorarios', 'grid_schedule_7x3');
+      llevar('contacto', 'contact_info');
+      llevar('estado', 'status');
+      // Migración 0013: lo que las pantallas de la Familia ya preguntaban.
+      llevar('zona', 'zone');
+      llevar('descripcion', 'description');
+      llevar('motivoConsulta', 'consultation_reason');
+      llevar('tareas', 'tasks_required');
+      llevar('profesion', 'profession_required');
+      llevar('generoPreferido', 'preferred_gender');
+      llevar('frecuencia', 'frequency');
+    } else {
+      // Una tabla sin traducción propia viaja tal cual: los nombres que le
+      // llegan ya son los de sus columnas.
+      return data;
     }
-    if (table === 'care_searches') {
-      const row = {};
-      if (data.tenant_id !== undefined) row.tenant_id = data.tenant_id;
-      if (data.family_user_id !== undefined) row.family_user_id = data.family_user_id;
-      if (data.paciente !== undefined) row.patient_name = data.paciente;
-      if (data.patologias !== undefined) row.pathologies_required = data.patologias;
-      if (data.horarios !== undefined) row.schedule_type = data.horarios;
-      if (data.grillaHorarios !== undefined) row.grid_schedule_7x3 = data.grillaHorarios;
-      if (data.contacto !== undefined) row.contact_info = data.contacto;
-      if (data.estado !== undefined) row.status = data.estado;
-      return row;
+
+    const perdidas = Object.keys(data).filter((c) => !conocidas.has(c));
+    if (perdidas.length) {
+      console.warn('ClienteDatos: la tabla «' + table + '» no tiene dónde guardar '
+        + perdidas.map((c) => '«' + c + '»').join(', ')
+        + '. Eso se pregunta en pantalla y no se está guardando.');
     }
-    return data;
+    return row;
   }
 };
 

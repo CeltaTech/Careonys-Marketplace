@@ -6,7 +6,7 @@ otro lado:
 
 | Archivo | Qué guarda |
 |---|---|
-| `data/catalogo-vocabularios.json` | 22 listas de opciones, 133 opciones en total |
+| `data/catalogo-vocabularios.json` | 22 listas de opciones, 134 opciones en total |
 | `data/catalogo-oferta.json` | 9 servicios, 6 cursos y la evaluación con sus 2 preguntas |
 | `data/catalogo-autorizaciones.json` | Lo que el Asistente autoriza al cerrar el alta |
 | `data/catalogo-disponibilidad.json` | La grilla de días y turnos, y la pregunta de los reemplazos urgentes |
