@@ -856,6 +856,75 @@ se acuerde.
    tirado.
 
 
+### Los colores dejaron de estar escritos a mano
+
+Cierra la mitad de colores del pendiente 8, el 25 de agosto de 2026.
+
+Un color escrito con su número —`#1e293b`, `rgba(0,0,0,0.5)`— **no cambia cuando se enciende el modo
+oscuro**. Los tokens ya estaban, pero mientras quedara uno solo a mano, encender el modo oscuro
+dejaba cuadros blancos con letra blanca adentro de una pantalla negra. Por eso el modo oscuro
+automático seguía apagado.
+
+- **Salieron 434 colores de dieciséis archivos.** Eran 62 valores distintos para unas quince ideas:
+  cinco verdes apenas diferentes eran todos el mismo cuadro de «salió bien», escritos cinco veces
+  por cinco manos. Ahora todos salen de `css/tokens.css`.
+- **La sustitución se decidió por el par, no por el color.** `#fff` de fondo es una superficie y
+  `#fff` de letra es texto sobre color: son dos tokens distintos para el mismo número. El guion que
+  hizo el trabajo hizo primero una pasada en seco y **se negó a cambiar nada** hasta que las 88
+  combinaciones de propiedad y color estuvieran todas mapeadas a mano. Así aparecieron cuatro que
+  nadie hubiera visto: tres adentro de una plantilla de JavaScript donde la propiedad no se puede
+  leer mirando hacia atrás, y el velo de un modal.
+- **Las sombras se cambiaron enteras, no por su color.** Una sombra es geometría más color, y el
+  color solo no quiere decir nada: `0 4px 24px …` es `--sombra-alta` completa.
+- **Aparecieron ocho tokens que faltaban.** Cuatro son el tercer miembro de un par que ya existía
+  —cada tono de señal tenía fondo y letra pero no borde, y por eso el borde se escribía a mano—. Los
+  otros cuatro le ponen nombre a recetas que estaban copiadas: la sombra de una ilustración suelta,
+  el velo que oscurece el pie de una foto, el ícono decorativo sobre fondo oscuro y el velo oscuro
+  de una pastilla apoyada sobre color.
+- **`scripts/verificar_paleta.mjs` es el chequeo que impide que vuelvan.** Es el octavo, y también
+  entró solo: ni el corredor ni el gancho de commit se tocaron.
+- **El chequeo encontró una cuarta puerta que el barrido no había mirado.** Los colores entran por
+  los atributos `style=`, por los bloques `<style>`, por los `.css` — y por el JavaScript, que pinta
+  con `elemento.style.background = '#ffebee'`. Había dieciséis ahí, invisibles para cualquiera que
+  buscara en las hojas de estilo.
+- **Quedan dos colores escritos a mano, con nombre y motivo**: el rojo de Google y el azul de
+  Facebook, en los botones de ingresar con esas cuentas. No son de la paleta y no cambian de noche.
+
+**De paso se midió el contraste de cada texto**, con el navegador abierto en las dieciséis pantallas:
+719 textos, uno por uno, comparando el color de la letra contra el fondo de verdad —compuesto capa
+por capa, no el que declara la regla—. Hoy quedan 11 por debajo del mínimo de 4.5:1, y los tres
+motivos que quedan son decisiones que no puede tomar la línea de comandos; están abajo. Todo lo
+demás se arregló, y se arregló **cambiando qué token usa cada regla, no el token**.
+
+- `--azul-medio-texto` está calculado para llegar a 4.5:1 sobre blanco puro, y sobre cualquier gris
+  nuestro se queda en 4.0. Donde se apoyaba sobre un gris ahora va `--tono-info-texto`, que es el
+  mismo azul más oscuro: las etiquetas de los cursos, los rótulos en mayúscula de arriba de cada
+  título, las migas de `perfil.html` y el botón de mostrar la contraseña.
+- **Una pastilla aclaraba el fondo debajo de su propia letra blanca.** `--velo-sobre-color` aclara,
+  que es lo que hace falta para un `:hover`; abajo de letra blanca hace lo contrario de lo que hay
+  que hacer, y esos rótulos quedaban en 2.6:1. Ahora hay un velo que oscurece.
+- **Las secciones 1 y 2 de `css/tokens.css` no se tocaron**, que es lo que ellas mismas mandan: son
+  el sistema de Careonys y se cambian allá. Los dos tokens nuevos de contraste están en la sección
+  3, que es la propia del marketplace.
+
+**Lo que falta y es del Desarrollador**
+
+1. **Letra blanca sobre `--azul-medio` llega a 3.21:1 y hace falta 4.5:1.** Pasa en cinco lugares:
+   el redondel del paso activo del formulario (`formulario-integral.html` y
+   `postulacion-asistente.html`), la banda con el nombre adentro del teléfono dibujado
+   (`index.html` y `postulacion-asistente.html`) y el botón de ingresar de `mockup-app.html`. **El
+   arreglo cambia cómo se ve**: o el fondo pasa a `--azul-oscuro` —y entonces el paso activo se
+   confunde con el paso ya hecho, que ya usa ese color— o la letra pasa a oscura. Es una decisión de
+   diseño, así que se deja como está hasta que diga cuál.
+2. **El rojo de la Prestadora de ejemplo llega a 4.13:1 sobre blanco.** No es un token nuestro: sale
+   de `accent_color` de su fila en `tenants`, y `js/apiClient.js` lo escribe encima al abrir sesión.
+   El problema no es el color sino que **nada valida el color que elige una Prestadora**. Cuando
+   haya cientos, va a haber cientos de rojos ilegibles.
+3. **Las estrellas de calificación quedan en 4.4996:1**, que es 4.5 raspando por abajo.
+   `--naranja-alerta-texto` promete 4.5:1 sobre fondo claro y se queda a cuatro diezmilésimas. Es un
+   token de Careonys, así que el arreglo va allá: subirle una pizca de oscuridad.
+
+
 ### El Asistente ve sus capacitaciones, y al lado lo que rindió
 
 Cierra el pendiente 34, el 25 de agosto de 2026.

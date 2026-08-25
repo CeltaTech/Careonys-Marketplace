@@ -20,7 +20,7 @@ body {
   max-height: 840px;
   background: var(--superficie);
   position: relative;
-  box-shadow: 0 12px 40px rgba(15,23,42,0.15);
+  box-shadow: var(--sombra-media);
   border-radius: var(--redondeo-pildora);
   overflow: hidden;
   border: 8px solid var(--azul-oscuro);
@@ -107,9 +107,9 @@ body {
 .tab-item i { font-size:18px; }
 .tab-item span { font-size:10px; font-weight:700; }
 
-.sidebar-drawer { position:absolute; top:0; left:-280px; width:280px; height:100%; background:var(--superficie); box-shadow:10px 0 30px rgba(0,0,0,0.1); z-index:200; transition:left var(--transicion); display:flex; flex-direction:column; }
+.sidebar-drawer { position:absolute; top:0; left:-280px; width:280px; height:100%; background:var(--superficie); box-shadow:var(--sombra-media); z-index:200; transition:left var(--transicion); display:flex; flex-direction:column; }
 .sidebar-drawer.open { left:0; }
-.drawer-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.4); z-index:199; display:none; }
+.drawer-overlay { position:absolute; inset:0; background:var(--velo-modal); z-index:199; display:none; }
 .drawer-overlay.open { display:block; }
 .drawer-header { background:linear-gradient(135deg,var(--azul-oscuro) 0%,var(--azul-oscuro) 100%); color:var(--superficie); padding:30px 20px; }
 .drawer-header img { width:50px; height:50px; border-radius:50%; border:2px solid var(--superficie); margin-bottom:10px; }

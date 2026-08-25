@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
       form.querySelectorAll('[required]').forEach(field => {
         if (!field.value.trim()) {
           valid = false;
-          field.style.borderColor = '#e53935';
+          field.style.borderColor = 'var(--rojo-peligro)';
           field.addEventListener('input', () => { field.style.borderColor = ''; }, { once: true });
         }
       });
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const emailField = form.querySelector('input[type="email"]');
       if (emailField && emailField.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailField.value)) {
         valid = false;
-        emailField.style.borderColor = '#e53935';
+        emailField.style.borderColor = 'var(--rojo-peligro)';
       }
 
       if (valid) {
@@ -297,9 +297,9 @@ document.addEventListener('DOMContentLoaded', () => {
               <button class="btn-close-video" style="background:none;border:none;font-size:20px;cursor:pointer;">&times;</button>
             </div>
             <div class="video-screen-placeholder">
-              <i class="fas fa-user-circle" style="font-size:72px;color:rgba(255,255,255,0.4);margin-bottom:12px;"></i>
+              <i class="fas fa-user-circle" style="font-size:72px;color:var(--icono-sobre-color);margin-bottom:12px;"></i>
               <div style="font-size:16px;font-weight:700;">Conectando sala segura 8x8 Encryption...</div>
-              <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:4px;">Asistente: Marisa Miranda</div>
+              <div style="font-size:12px;color:var(--texto-sobre-color-tenue);margin-top:4px;">Asistente: Marisa Miranda</div>
             </div>
             <div class="video-controls">
               <button class="video-btn mute" title="Silenciar Micrófono"><i class="fas fa-microphone"></i></button>

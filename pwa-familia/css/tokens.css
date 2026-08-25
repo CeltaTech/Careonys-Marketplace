@@ -70,6 +70,15 @@
   --tono-neutro-fondo: oklch(0.94 0.006 250);
   --tono-neutro-texto: oklch(0.45 0.01 250);
 
+  /* El borde de esos mismos cuadros. El par fondo + letra ya estaba; el borde
+     estaba escrito a mano en cada aviso, y por eso había cinco verdes distintos
+     para el mismo cuadro de «salió bien». Es el color de la señal al 30%: se ve
+     como una línea del mismo tono y no como un marco de color. */
+  --tono-exito-borde: oklch(0.55 0.13 165 / 0.3);
+  --tono-atencion-borde: oklch(0.62 0.13 70 / 0.3);
+  --tono-critico-borde: oklch(0.58 0.15 25 / 0.3);
+  --tono-info-borde: oklch(0.65 0.13 250 / 0.3);
+
   /* --- Tipografía --- */
   --font-display: 'Public Sans', sans-serif;
   --font-body: 'Public Sans', sans-serif;
@@ -91,6 +100,16 @@
   --sombra-suave: 0 2px 8px oklch(0.2 0.01 250 / 0.06);
   --sombra-media: 0 4px 16px oklch(0.2 0.01 250 / 0.1);
   --sombra-alta: 0 4px 24px oklch(0.2 0.01 250 / 0.12);
+
+  /* Una ilustración suelta no tiene caja, así que no puede llevar `box-shadow`:
+     la sombra la tiene que dar el dibujo mismo. Por eso es un filtro y no una
+     sombra más. */
+  --sombra-ilustracion: drop-shadow(0 20px 40px oklch(0.2 0.01 250 / 0.15));
+
+  /* El degradado que oscurece la parte de abajo de una foto para que el texto
+     apoyado encima se lea. No es un color: es una receta de tres paradas, y
+     escrita a mano en cada tarjeta salía distinta en cada una. */
+  --velo-imagen: linear-gradient(to top, oklch(0 0 0 / 0.75) 0%, oklch(0 0 0 / 0.3) 60%, transparent 100%);
 
   /* --- Movimiento ---
      Una sola duración para todo. Quien pidió menos movimiento no la ve: ver el final del
@@ -124,12 +143,25 @@
      no sobre la superficie blanca. */
   --velo-sobre-color: oklch(1 0 0 / 0.15);
 
+  /* --- Velo oscuro sobre color ---
+     El de arriba aclara, y sirve para un `:hover`. Éste oscurece, y sirve para
+     una pastilla que lleva letra blanca adentro y está apoyada sobre un fondo
+     de color: si la pastilla aclarara el fondo, la letra blanca se leería peor
+     ahí que afuera, que era justo lo que pasaba. Al 35% la letra blanca llega a
+     5:1 incluso sobre el azul más claro de la paleta. */
+  --velo-oscuro-sobre-color: oklch(0 0 0 / 0.35);
+
   /* --- Lo demás que va sobre fondo oscuro ---
      `--texto-sobre-color` es el texto principal. Estos dos son su acompañamiento: el renglón
      secundario, que se apaga un poco, y el borde de lo que se apoya ahí. No hay versión oscura
      de ninguno de los tres: el fondo ya es oscuro en los dos modos. */
   --texto-sobre-color-tenue: oklch(1 0 0 / 0.85);
   --borde-sobre-color: oklch(1 0 0 / 0.3);
+  /* Y el tercero: un ícono que es decoración y no se lee —el monigote de una
+     sala de videollamada todavía vacía—, apoyado sobre ese mismo fondo oscuro.
+     Va más apagado que el texto a propósito: si se viera igual de fuerte,
+     competiría con lo que sí hay que leer. */
+  --icono-sobre-color: oklch(1 0 0 / 0.4);
 }
 
 /* ================= MODO OSCURO =================
@@ -173,6 +205,11 @@
   --tono-info-texto: oklch(0.79 0.12 250);
   --tono-neutro-fondo: oklch(0.3 0.01 250);
   --tono-neutro-texto: oklch(0.78 0.008 250);
+
+  --tono-exito-borde: oklch(0.55 0.13 165 / 0.45);
+  --tono-atencion-borde: oklch(0.62 0.13 70 / 0.45);
+  --tono-critico-borde: oklch(0.58 0.15 25 / 0.45);
+  --tono-info-borde: oklch(0.65 0.13 250 / 0.45);
 
   --sombra-suave: 0 2px 8px oklch(0 0 0 / 0.3);
   --sombra-media: 0 4px 16px oklch(0 0 0 / 0.38);

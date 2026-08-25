@@ -138,7 +138,7 @@ ul {
 }
 
 .navbar.scrolled {
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--sombra-media);
 }
 
 .navbar-inner {
@@ -338,7 +338,7 @@ ul {
 
 .service-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--sombra-alta);
 }
 
 .service-card img {
@@ -358,7 +358,7 @@ ul {
   left: 0;
   right: 0;
   padding: 24px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.3) 60%, transparent 100%);
+  background: var(--velo-imagen);
 }
 
 .service-card-overlay h3 {
@@ -425,7 +425,7 @@ ul {
 .steps-phone img {
   max-height: 560px;
   margin: 0 auto;
-  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.15));
+  filter: var(--sombra-ilustracion);
 }
 
 .steps-list {
@@ -469,12 +469,17 @@ ul {
   color: var(--azul-medio-texto);
 }
 
+/* Este rótulo se apoya sobre `--fondo-app`, que es papel apenas gris y no
+   blanco puro. `--azul-medio-texto` está calculado para llegar a 4.5:1 sobre
+   blanco, y sobre este gris se queda en 4.0:1. Por eso usa el azul del tono
+   informativo, que es el mismo color más oscuro. Lo mismo pasa más abajo con
+   `.feature-text .eyebrow`. */
 .step-content h4 {
   font-size: 13px;
   font-weight: 800;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--azul-medio-texto);
+  color: var(--tono-info-texto);
   margin-bottom: 6px;
 }
 
@@ -524,7 +529,7 @@ ul {
 .phones-display img {
   max-height: 480px;
   border-radius: 20px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--sombra-media);
 }
 
 .phones-display img:nth-child(2),
@@ -717,7 +722,8 @@ ul {
   font-family: var(--font-body);
   font-size: 12px;
   font-weight: 600;
-  color: var(--azul-medio-texto);
+  /* Va apoyado adentro del campo, que es gris: mismo caso que `.course-tag`. */
+  color: var(--tono-info-texto);
   cursor: pointer;
   transition: background var(--transicion);
 }
@@ -784,7 +790,8 @@ ul {
 .feature-text .eyebrow {
   font-size: 14px;
   font-weight: 700;
-  color: var(--azul-medio-texto);
+  /* Va sobre `--fondo-app`: mismo caso que `.step-content h4`. */
+  color: var(--tono-info-texto);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 12px;
@@ -837,13 +844,13 @@ ul {
   border-radius: var(--redondeo-grande);
   padding: 28px 20px;
   text-align: center;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  box-shadow: var(--sombra-suave);
   transition: transform var(--transicion), box-shadow var(--transicion);
 }
 
 .help-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--sombra-media);
 }
 
 .help-card .icon {
@@ -890,7 +897,7 @@ ul {
   background: var(--superficie);
   border-radius: var(--redondeo-grande);
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--sombra-media);
   transition: transform var(--transicion);
 }
 
@@ -917,7 +924,7 @@ ul {
 }
 
 .press-card-header.orange {
-  background: var(--naranja-alerta-texto);
+  background: var(--tono-atencion-texto);
 }
 
 .press-card-body {
@@ -1045,7 +1052,7 @@ ul {
 
 .filter-bar {
   background: var(--superficie);
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--sombra-media);
   padding: 20px 24px;
   position: sticky;
   top: 61px;
@@ -1097,7 +1104,7 @@ ul {
   background: var(--superficie);
   border-radius: var(--redondeo-grande);
   overflow: hidden;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--sombra-suave);
   transition: transform var(--transicion), box-shadow var(--transicion);
   display: flex;
   flex-direction: column;
@@ -1105,7 +1112,7 @@ ul {
 
 .caregiver-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
+  box-shadow: var(--sombra-media);
 }
 
 .card-header-strip {
@@ -1384,7 +1391,7 @@ ul {
   border-radius: var(--redondeo-grande);
   padding: 28px;
   margin-bottom: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--sombra-suave);
 }
 
 .profile-section h3 {
@@ -1824,7 +1831,7 @@ ul {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: var(--velo-modal);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1845,7 +1852,7 @@ ul {
   width: 90%;
   max-width: 650px;
   padding: 24px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--sombra-alta);
 }
 
 .video-screen-placeholder {
@@ -1906,7 +1913,7 @@ ul {
   font-weight: 800;
   padding: 4px 12px;
   border-radius: 50px;
-  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+  box-shadow: var(--sombra-alta);
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
@@ -1972,7 +1979,10 @@ ul {
 .course-tag {
   display: inline-block;
   background: var(--superficie-hover);
-  color: var(--azul-medio-texto);
+  /* Sobre `--superficie-hover`, que es gris, no blanco: por eso el azul oscuro
+     del tono informativo y no `--azul-medio-texto`, que está calculado para
+     blanco puro y acá se queda en 4.0:1. */
+  color: var(--tono-info-texto);
   font-size: 11px;
   font-weight: 700;
   padding: 4px 12px;
@@ -2162,7 +2172,7 @@ ul {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--velo-modal);
   backdrop-filter: blur(4px);
   z-index: 1000;
   align-items: center;
@@ -2278,20 +2288,20 @@ ul {
 
 .grilla-disponibilidad .gd-casillero {
   padding: 10px 0;
-  background: #f1f5f9;
+  background: var(--superficie-hover);
   color: var(--texto-secundario);
   border-radius: 4px;
   cursor: pointer;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--borde-card);
   font: inherit;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
 .grilla-disponibilidad .gd-casillero.gd-marcado {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: var(--tono-exito-fondo);
+  color: var(--verde-exito-texto);
   font-weight: 900;
-  border-color: #c8e6c9;
+  border-color: var(--tono-exito-borde);
 }
 
 .grilla-disponibilidad .gd-casillero:focus-visible {
@@ -2331,6 +2341,6 @@ ul {
 
 .gd-pregunta-ayuda {
   font-size: 11.5px;
-  color: #64748b;
+  color: var(--texto-secundario);
   margin: 6px 0 0 28px;
 }

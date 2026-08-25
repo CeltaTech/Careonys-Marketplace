@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     body {
-      background: #f1f5f9;
+      background: var(--superficie-hover);
       margin: 0;
       padding: 0;
       font-family: var(--font-body);
@@ -32,10 +32,10 @@
       max-height: 840px;
       background: var(--superficie);
       position: relative;
-      box-shadow: 0 12px 40px rgba(15, 23, 42, 0.15);
+      box-shadow: var(--sombra-media);
       border-radius: 32px;
       overflow: hidden;
-      border: 8px solid #0f172a;
+      border: 8px solid var(--azul-oscuro);
       display: flex;
       flex-direction: column;
     }
@@ -63,7 +63,7 @@
       flex-direction: column;
       height: 100%;
       overflow-y: auto;
-      background: #fafafb;
+      background: var(--fondo-app);
       position: relative;
     }
 
@@ -78,7 +78,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid var(--borde-card);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -96,7 +96,7 @@
 
     .app-header .btn-back {
       font-size: 18px;
-      color: #64748b;
+      color: var(--texto-secundario);
       cursor: pointer;
       background: none;
       border: none;
@@ -130,7 +130,7 @@
 
     .intro-logo-container p {
       font-size: 13px;
-      color: #64748b;
+      color: var(--texto-secundario);
       margin: 6px 0 0 0;
     }
 
@@ -138,8 +138,8 @@
       background: var(--superficie);
       padding: 24px;
       border-radius: 20px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-      border: 1px solid #e2e8f0;
+      box-shadow: var(--sombra-suave);
+      border: 1px solid var(--borde-card);
     }
 
     .input-wrapper {
@@ -151,11 +151,11 @@
       width: 100%;
       padding: 12px 14px;
       border-radius: 12px;
-      border: 1.5px solid #cbd5e1;
+      border: 1.5px solid var(--borde-card);
       font-size: 14px;
       box-sizing: border-box;
       transition: all 0.3s ease;
-      background: #f8fafc;
+      background: var(--superficie-hundida);
     }
 
     .input-wrapper input:focus {
@@ -169,12 +169,12 @@
       padding: 12px;
       border-radius: 12px;
       background: var(--marca-prestadora-acento);
-      color: #fff;
+      color: var(--texto-sobre-color);
       font-weight: 700;
       border: none;
       font-size: 14px;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(229, 62, 62, 0.2);
+      box-shadow: var(--sombra-media);
     }
 
     /* DASHBOARD FAMILIA */
@@ -184,7 +184,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid var(--borde-card);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -199,7 +199,7 @@
 
     .service-btn {
       background: var(--superficie);
-      border: 1px solid #e2e8f0;
+      border: 1px solid var(--borde-card);
       border-radius: 16px;
       padding: 14px 8px;
       display: flex;
@@ -210,7 +210,7 @@
       cursor: pointer;
       text-decoration: none;
       transition: all 0.2s ease;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      box-shadow: var(--sombra-suave);
     }
 
     .service-btn:hover {
@@ -224,21 +224,21 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
+      color: var(--texto-sobre-color);
       font-size: 18px;
     }
 
     .service-btn span {
       font-size: 11px;
       font-weight: 700;
-      color: #334155;
+      color: var(--texto-principal);
       text-align: center;
     }
 
     /* VERIFICACIÓN */
     .verification-widget {
-      background: #fff3cd;
-      border: 1px solid #ffeeba;
+      background: var(--tono-atencion-fondo);
+      border: 1px solid var(--tono-atencion-borde);
       border-radius: 16px;
       padding: 14px 16px;
       margin: 0 16px 16px 16px;
@@ -248,7 +248,7 @@
     }
 
     .verification-widget i {
-      color: #856404;
+      color: var(--tono-atencion-texto);
       font-size: 20px;
     }
 
@@ -256,13 +256,13 @@
       margin: 0;
       font-size: 13px;
       font-weight: 700;
-      color: #856404;
+      color: var(--tono-atencion-texto);
     }
 
     .verification-widget div p {
       margin: 2px 0 0 0;
       font-size: 11px;
-      color: #66512c;
+      color: var(--tono-atencion-texto);
     }
 
     /* SLIDERS */
@@ -295,11 +295,11 @@
       min-width: 140px;
       width: 140px;
       background: var(--superficie);
-      border: 1px solid #e2e8f0;
+      border: 1px solid var(--borde-card);
       border-radius: 16px;
       padding: 12px;
       text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      box-shadow: var(--sombra-suave);
       text-decoration: none;
       color: inherit;
     }
@@ -309,7 +309,7 @@
       height: 50px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid #e2e8f0;
+      border: 2px solid var(--borde-card);
       margin-bottom: 8px;
     }
 
@@ -317,7 +317,7 @@
       margin: 0;
       font-size: 12px;
       font-weight: 700;
-      color: #1e293b;
+      color: var(--texto-titulo);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -326,7 +326,7 @@
     .caregiver-card p {
       margin: 2px 0 0 0;
       font-size: 10px;
-      color: #64748b;
+      color: var(--texto-secundario);
     }
 
 
@@ -334,7 +334,7 @@
     .bottom-tab-bar {
       height: 64px;
       background: var(--superficie);
-      border-top: 1px solid #e2e8f0;
+      border-top: 1px solid var(--borde-card);
       display: flex;
       justify-content: space-around;
       align-items: center;
@@ -371,7 +371,7 @@
     /* TIMELINE CUADERNO */
     .cuaderno-header {
       background: var(--marca-prestadora);
-      color: #fff;
+      color: var(--texto-sobre-color);
       padding: 20px;
       border-radius: 0 0 24px 24px;
     }
@@ -387,7 +387,7 @@
       width: 44px;
       height: 44px;
       border-radius: 50%;
-      border: 2px solid #fff;
+      border: 2px solid var(--superficie);
     }
 
     .timeline-log {
@@ -402,7 +402,7 @@
       left: 31px;
       width: 2px;
       height: calc(100% - 48px);
-      background: #cbd5e1;
+      background: var(--tono-neutro-fondo);
     }
 
     .log-item {
@@ -428,23 +428,23 @@
     .log-content {
       flex: 1;
       background: var(--superficie);
-      border: 1px solid #e2e8f0;
+      border: 1px solid var(--borde-card);
       padding: 12px;
       border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      box-shadow: var(--sombra-suave);
     }
 
     .log-content h5 {
       margin: 0;
       font-size: 13px;
       font-weight: 700;
-      color: #1e293b;
+      color: var(--texto-titulo);
     }
 
     .log-content p {
       margin: 4px 0 0 0;
       font-size: 11px;
-      color: #64748b;
+      color: var(--texto-secundario);
       line-height: 1.4;
     }
 
@@ -463,7 +463,7 @@
       width: 280px;
       height: 100%;
       background: var(--superficie);
-      box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+      box-shadow: var(--sombra-media);
       z-index: 200;
       transition: left 0.3s ease;
       display: flex;
@@ -480,7 +480,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.4);
+      background: var(--velo-modal);
       z-index: 199;
       display: none;
     }
@@ -490,8 +490,8 @@
     }
 
     .drawer-header {
-      background: linear-gradient(135deg, var(--marca-prestadora) 0%, #1e1e2d 100%);
-      color: #fff;
+      background: linear-gradient(135deg, var(--marca-prestadora) 0%, var(--azul-oscuro) 100%);
+      color: var(--texto-sobre-color);
       padding: 30px 20px;
     }
 
@@ -499,7 +499,7 @@
       width: 50px;
       height: 50px;
       border-radius: 50%;
-      border: 2px solid #fff;
+      border: 2px solid var(--superficie);
       margin-bottom: 10px;
     }
 
@@ -514,7 +514,7 @@
       align-items: center;
       gap: 14px;
       padding: 12px 20px;
-      color: #334155;
+      color: var(--texto-principal);
       font-size: 14px;
       font-weight: 600;
       text-decoration: none;
@@ -536,15 +536,15 @@
         <p id="menu-user-email" style="margin:2px 0 0 0;font-size:11px;opacity:0.8;">familiar@ejemplo.com</p>
       </div>
       <div style="flex:1;padding:16px 0;">
-        <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home" style="width:20px;color:#64748b;"></i> Inicio</a>
-        <a class="drawer-menu-item" href="../directorio.html"><i class="fas fa-search" style="width:20px;color:#64748b;"></i> Buscar Asistente</a>
-        <a class="drawer-menu-item" onclick="navigate('cuaderno')"><i class="fas fa-book-medical" style="width:20px;color:#64748b;"></i> Cuaderno de Cuidado</a>
-        <a class="drawer-menu-item" href="../cursos.html"><i class="fas fa-graduation-cap" style="width:20px;color:#64748b;"></i> Cursos</a>
-        <a class="drawer-menu-item" href="../soporte-remoto.html"><i class="fas fa-headset" style="width:20px;color:#64748b;"></i> Acompañamiento Online</a>
-        <div style="border-top:1px solid #f1f5f9;margin:8px 0;"></div>
-        <a class="drawer-menu-item" id="btn-logout" style="color:#ef4444;"><i class="fas fa-sign-out-alt" style="width:20px;color:#ef4444;"></i> Cerrar sesión</a>
+        <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home" style="width:20px;color:var(--texto-secundario);"></i> Inicio</a>
+        <a class="drawer-menu-item" href="../directorio.html"><i class="fas fa-search" style="width:20px;color:var(--texto-secundario);"></i> Buscar Asistente</a>
+        <a class="drawer-menu-item" onclick="navigate('cuaderno')"><i class="fas fa-book-medical" style="width:20px;color:var(--texto-secundario);"></i> Cuaderno de Cuidado</a>
+        <a class="drawer-menu-item" href="../cursos.html"><i class="fas fa-graduation-cap" style="width:20px;color:var(--texto-secundario);"></i> Cursos</a>
+        <a class="drawer-menu-item" href="../soporte-remoto.html"><i class="fas fa-headset" style="width:20px;color:var(--texto-secundario);"></i> Acompañamiento Online</a>
+        <div style="border-top:1px solid var(--borde-card);margin:8px 0;"></div>
+        <a class="drawer-menu-item" id="btn-logout" style="color:var(--rojo-peligro-texto);"><i class="fas fa-sign-out-alt" style="width:20px;color:var(--rojo-peligro-texto);"></i> Cerrar sesión</a>
       </div>
-      <div style="padding:16px;text-align:center;font-size:10px;color:var(--texto-secundario);border-top:1px solid #f1f5f9;">
+      <div style="padding:16px;text-align:center;font-size:10px;color:var(--texto-secundario);border-top:1px solid var(--borde-card);">
         Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
       </div>
     </div>
@@ -579,7 +579,7 @@
           <img src="../assets/images/logotipo.png" class="tenant-logo" style="height:24px;" alt="Logo" />
           <span class="tenant-name" style="font-size:14px;font-weight:800;color:var(--marca-prestadora);">PresDemo</span>
         </div>
-        <div><i class="fas fa-bell" style="font-size:18px;color:#64748b;"></i></div>
+        <div><i class="fas fa-bell" style="font-size:18px;color:var(--texto-secundario);"></i></div>
       </div>
 
       <div class="verification-widget" style="margin-top:16px;">
@@ -593,19 +593,19 @@
       <!-- GRID DE SERVICIOS -->
       <div class="grid-services">
         <a class="service-btn" href="../directorio.html">
-          <div class="icon-box" style="background:#4f46e5;"><i class="fas fa-user-search"></i></div>
+          <div class="icon-box" style="background:var(--azul-oscuro);"><i class="fas fa-user-search"></i></div>
           <span>Buscar Asistente</span>
         </a>
         <a class="service-btn" href="../soporte-remoto.html">
-          <div class="icon-box" style="background:#06b6d4;"><i class="fas fa-headset"></i></div>
+          <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-headset"></i></div>
           <span>Acompañante Online</span>
         </a>
         <div class="service-btn" onclick="navigate('cuaderno')">
-          <div class="icon-box" style="background:#10b981;"><i class="fas fa-book-medical"></i></div>
+          <div class="icon-box" style="background:var(--verde-exito);"><i class="fas fa-book-medical"></i></div>
           <span>Cuaderno Diario</span>
         </div>
         <div class="service-btn" onclick="navigate('publicar')">
-          <div class="icon-box" style="background:#f59e0b;"><i class="fas fa-plus-circle"></i></div>
+          <div class="icon-box" style="background:var(--naranja-alerta);"><i class="fas fa-plus-circle"></i></div>
           <span>Nueva Búsqueda</span>
         </div>
         <div class="service-btn" onclick="alert('Vida Activa: Estimulación Cognitiva.')">
@@ -706,42 +706,42 @@
       </div>
 
       <div style="padding:16px;">
-        <p style="font-size:12px;color:#64748b;margin:0 0 16px 0;">Complete los datos del cuidado que necesita y le encontramos el asistente ideal.</p>
+        <p style="font-size:12px;color:var(--texto-secundario);margin:0 0 16px 0;">Complete los datos del cuidado que necesita y le encontramos el asistente ideal.</p>
 
         <form id="form-nueva-busqueda" novalidate>
 
           <!-- Datos del Paciente -->
-          <div style="background: var(--superficie);border:1px solid #e2e8f0;border-radius:16px;padding:16px;margin-bottom:12px;">
+          <div style="background: var(--superficie);border:1px solid var(--borde-card);border-radius:16px;padding:16px;margin-bottom:12px;">
             <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--marca-prestadora);">
               <i class="fas fa-user-injured" style="margin-right:6px;"></i>Datos del Paciente
             </h4>
             <div style="margin-bottom:10px;">
-              <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">Nombre del Paciente</label>
+              <label style="display:block;font-size:11px;font-weight:700;color:var(--texto-secundario);margin-bottom:4px;">Nombre del Paciente</label>
               <input type="text" id="pb-nombre" placeholder="Ej: Abuela Rosa" required
-                style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid #cbd5e1;font-size:13px;box-sizing:border-box;background:#f8fafc;" />
+                style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid var(--borde-card);font-size:13px;box-sizing:border-box;background:var(--superficie-hundida);" />
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
               <div>
-                <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">Edad</label>
+                <label style="display:block;font-size:11px;font-weight:700;color:var(--texto-secundario);margin-bottom:4px;">Edad</label>
                 <input type="number" id="pb-edad" placeholder="80" min="50" max="110"
-                  style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid #cbd5e1;font-size:13px;box-sizing:border-box;background:#f8fafc;" />
+                  style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid var(--borde-card);font-size:13px;box-sizing:border-box;background:var(--superficie-hundida);" />
               </div>
               <div>
-                <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">Zona / Barrio</label>
+                <label style="display:block;font-size:11px;font-weight:700;color:var(--texto-secundario);margin-bottom:4px;">Zona / Barrio</label>
                 <select id="pb-zona" required data-catalogo="zona" data-catalogo-vacio="— Seleccionar —"
-                  style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid #cbd5e1;font-size:13px;box-sizing:border-box;background:#f8fafc;"></select>
+                  style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid var(--borde-card);font-size:13px;box-sizing:border-box;background:var(--superficie-hundida);"></select>
               </div>
             </div>
           </div>
 
           <!-- Tipo de Cuidado -->
-          <div style="background: var(--superficie);border:1px solid #e2e8f0;border-radius:16px;padding:16px;margin-bottom:12px;">
+          <div style="background: var(--superficie);border:1px solid var(--borde-card);border-radius:16px;padding:16px;margin-bottom:12px;">
             <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--marca-prestadora);">
               <i class="fas fa-calendar-alt" style="margin-right:6px;"></i>Tipo de Cuidado
             </h4>
-            <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">Modalidad de Servicio</label>
+            <label style="display:block;font-size:11px;font-weight:700;color:var(--texto-secundario);margin-bottom:4px;">Modalidad de Servicio</label>
             <select id="pb-tipo" required
-              style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid #cbd5e1;font-size:13px;box-sizing:border-box;background:#f8fafc;margin-bottom:10px;" data-catalogo="modalidad_contratacion" data-catalogo-vacio="— Seleccionar —"></select>
+              style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid var(--borde-card);font-size:13px;box-sizing:border-box;background:var(--superficie-hundida);margin-bottom:10px;" data-catalogo="modalidad_contratacion" data-catalogo-vacio="— Seleccionar —"></select>
             <!-- La grilla no se dibuja acá. Los días, los turnos y las horas que
                  cubre cada turno salen de data/catalogo-vocabularios.json; los
                  textos del paso, de data/catalogo-disponibilidad.json. Las junta
@@ -752,7 +752,7 @@
                  marcaba iba a una columna suelta que nadie leía. Era el
                  pendiente 40. -->
             <p id="franjas-cuidado-titulo"
-              style="font-size:11px;font-weight:700;color:#475569;margin-bottom:2px;"></p>
+              style="font-size:11px;font-weight:700;color:var(--texto-secundario);margin-bottom:2px;"></p>
             <p id="franjas-cuidado-bajada"
               style="font-size:10px;color:var(--texto-secundario);margin:0 0 6px;"></p>
             <div id="grilla-cuidado"></div>
@@ -761,26 +761,26 @@
           </div>
 
           <!-- Patologías -->
-          <div style="background: var(--superficie);border:1px solid #e2e8f0;border-radius:16px;padding:16px;margin-bottom:16px;">
+          <div style="background: var(--superficie);border:1px solid var(--borde-card);border-radius:16px;padding:16px;margin-bottom:16px;">
             <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--marca-prestadora);">
               <i class="fas fa-notes-medical" style="margin-right:6px;"></i>Condición del Paciente
             </h4>
-            <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:8px;">Patologías presentes (seleccione todas las que apliquen):</label>
+            <label style="display:block;font-size:11px;font-weight:700;color:var(--texto-secundario);margin-bottom:8px;">Patologías presentes (seleccione todas las que apliquen):</label>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" data-catalogo="patologia" data-catalogo-como="casillas" data-catalogo-nombre="patologia" data-catalogo-clase="catalogo-casilla"></div>
             <div style="margin-top:12px;">
-              <label style="display:block;font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">Descripción adicional (opcional)</label>
+              <label style="display:block;font-size:11px;font-weight:700;color:var(--texto-secundario);margin-bottom:4px;">Descripción adicional (opcional)</label>
               <textarea id="pb-descripcion" placeholder="Cuéntenos más sobre la situación del paciente..." rows="3"
-                style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid #cbd5e1;font-size:13px;box-sizing:border-box;background:#f8fafc;"></textarea>
+                style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid var(--borde-card);font-size:13px;box-sizing:border-box;background:var(--superficie-hundida);"></textarea>
             </div>
           </div>
 
           <!-- Botón Enviar -->
           <button type="submit" id="btn-enviar-busqueda"
-            style="width:100%;padding:14px;border-radius:14px;background:var(--marca-prestadora-acento);color:#fff;font-weight:800;font-size:14px;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(229,62,62,0.25);">
+            style="width:100%;padding:14px;border-radius:14px;background:var(--marca-prestadora-acento);color:var(--texto-sobre-color);font-weight:800;font-size:14px;border:none;cursor:pointer;box-shadow:var(--sombra-alta);">
             <i class="fas fa-search"></i> Buscar mi Asistente Ideal
           </button>
           <div id="pb-success"
-            style="display:none;background:#e8f5e9;color:#2e7d32;padding:14px;border-radius:12px;font-weight:700;text-align:center;font-size:13px;border:1px solid #c8e6c9;margin-top:12px;">
+            style="display:none;background:var(--tono-exito-fondo);color:var(--verde-exito-texto);padding:14px;border-radius:12px;font-weight:700;text-align:center;font-size:13px;border:1px solid var(--tono-exito-borde);margin-top:12px;">
             ✓ ¡Búsqueda publicada! Lo contactaremos a la brevedad con los mejores perfiles.
           </div>
         </form>
@@ -911,15 +911,15 @@
               <span class="time">${timeStr}</span>
               <h5>${log.blood_pressure ? 'Control de Signos Vitales' : 'Nota de Cuidado'}</h5>
               <p>${Texto.escapar(log.daily_notes)}</p>
-              ${log.blood_pressure ? `<p style="margin-top:4px;font-size:11px;color:#0284c7;">🩺 P.A.: ${Texto.escapar(log.blood_pressure)} | Glucemia: ${Texto.escapar(log.glycemia || 'N/A')}</p>` : ''}
-              ${log.medications_administered ? `<p style="margin-top:2px;font-size:10px;color:#10b981;">💊 Medicamento: ${Texto.escapar(log.medications_administered)}</p>` : ''}
+              ${log.blood_pressure ? `<p style="margin-top:4px;font-size:11px;color:var(--azul-medio-texto);">🩺 P.A.: ${Texto.escapar(log.blood_pressure)} | Glucemia: ${Texto.escapar(log.glycemia || 'N/A')}</p>` : ''}
+              ${log.medications_administered ? `<p style="margin-top:2px;font-size:10px;color:var(--verde-exito-texto);">💊 Medicamento: ${Texto.escapar(log.medications_administered)}</p>` : ''}
             </div>
           `;
           listEl.appendChild(item);
         });
       } catch (err) {
         const aviso = Texto.mensajeDeError(err, 'cargar la bitácora');
-        listEl.innerHTML = `<p style="text-align:center;font-size:12px;color:#ef4444;padding:20px;">${Texto.escapar(aviso)}</p>`;
+        listEl.innerHTML = `<p style="text-align:center;font-size:12px;color:var(--rojo-peligro-texto);padding:20px;">${Texto.escapar(aviso)}</p>`;
       }
     }
 

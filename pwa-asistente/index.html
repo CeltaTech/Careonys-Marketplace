@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     body {
-      background: #f1f5f9;
+      background: var(--superficie-hover);
       margin: 0; padding: 0;
       display: flex; justify-content: center; align-items: center;
       min-height: 100vh; overflow-x: hidden;
@@ -23,9 +23,9 @@
     #phone-container {
       width: 100%; max-width: 420px; height: 100vh; max-height: 840px;
       background: var(--superficie); position: relative;
-      box-shadow: 0 12px 40px rgba(15, 23, 42, 0.15);
+      box-shadow: var(--sombra-media);
       border-radius: 32px; overflow: hidden;
-      border: 8px solid #0f172a; display: flex; flex-direction: column;
+      border: 8px solid var(--azul-oscuro); display: flex; flex-direction: column;
     }
     #phone-container ::-webkit-scrollbar { display: none; }
 
@@ -36,18 +36,18 @@
 
     .app-screen {
       flex: 1; display: none; flex-direction: column;
-      height: 100%; overflow-y: auto; background: #fafafb; position: relative;
+      height: 100%; overflow-y: auto; background: var(--fondo-app); position: relative;
     }
     .app-screen.active { display: flex; }
 
     .app-header {
       background: var(--superficie); padding: 14px 18px;
       display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100;
+      border-bottom: 1px solid var(--borde-card); position: sticky; top: 0; z-index: 100;
     }
     .app-header h1 { font-size: 16px; font-weight: 800; color: var(--marca-prestadora); margin: 0; }
     .app-header .btn-back {
-      font-size: 18px; color: #64748b; cursor: pointer; background: none; border: none; padding: 4px;
+      font-size: 18px; color: var(--texto-secundario); cursor: pointer; background: none; border: none; padding: 4px;
     }
 
     /* LOGIN */
@@ -60,22 +60,22 @@
     .intro-logo-container h2 { font-size: 24px; font-weight: 800; color: var(--marca-prestadora); margin: 0; }
     .login-card {
       background: var(--superficie); padding: 24px; border-radius: 20px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: 1px solid #e2e8f0;
+      box-shadow: var(--sombra-suave); border: 1px solid var(--borde-card);
     }
     .input-wrapper { position: relative; margin-bottom: 16px; }
     .input-wrapper input {
       width: 100%; padding: 12px 14px; border-radius: 12px;
-      border: 1.5px solid #cbd5e1; font-size: 14px; box-sizing: border-box;
-      transition: all 0.3s ease; background: #f8fafc;
+      border: 1.5px solid var(--borde-card); font-size: 14px; box-sizing: border-box;
+      transition: all 0.3s ease; background: var(--superficie-hundida);
     }
     .input-wrapper input:focus { border-color: var(--marca-prestadora-acento); background: var(--superficie); outline: none; }
     .btn-login {
       width: 100%; padding: 12px; border-radius: 12px;
-      background: var(--marca-prestadora); color: #fff; font-weight: 700; border: none;
-      font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(26, 54, 93, 0.2);
+      background: var(--marca-prestadora); color: var(--texto-sobre-color); font-weight: 700; border: none;
+      font-size: 14px; cursor: pointer; box-shadow: var(--sombra-media);
     }
     .btn-register-link {
-      text-align: center; margin-top: 16px; font-size: 12px; color: #64748b;
+      text-align: center; margin-top: 16px; font-size: 12px; color: var(--texto-secundario);
     }
     .btn-register-link a {
       color: var(--marca-prestadora); font-weight: 700; cursor: pointer;
@@ -86,44 +86,44 @@
     .dashboard-header {
       background: var(--superficie); padding: 14px 18px;
       display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100;
+      border-bottom: 1px solid var(--borde-card); position: sticky; top: 0; z-index: 100;
     }
 
     /* WIDGET FICHADO GPS */
     .gps-widget {
-      background: var(--superficie); border: 1px solid #e2e8f0; border-radius: 20px;
+      background: var(--superficie); border: 1px solid var(--borde-card); border-radius: 20px;
       padding: 20px; margin: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.02); text-align: center;
+      box-shadow: var(--sombra-suave); text-align: center;
     }
     .gps-widget i { font-size: 32px; color: var(--marca-prestadora); margin-bottom: 10px; }
     .gps-actions { display: flex; gap: 10px; margin-top: 16px; }
     .btn-gps {
       flex: 1; padding: 12px; border-radius: 12px;
-      font-weight: 700; font-size: 13px; border: none; color: #fff; cursor: pointer;
+      font-weight: 700; font-size: 13px; border: none; color: var(--texto-sobre-color); cursor: pointer;
     }
 
     /* STATUS LEGAJO */
     .status-badge-container {
-      background: #e0f2fe; border: 1px solid #bae6fd; border-radius: 16px;
+      background: var(--tono-info-fondo); border: 1px solid var(--tono-info-borde); border-radius: 16px;
       padding: 14px 16px; margin: 0 16px 16px 16px;
       display: flex; align-items: center; gap: 12px;
     }
 
     /* FORM NOVEDADES BITÁCORA */
     .novedades-form {
-      background: var(--superficie); border: 1px solid #e2e8f0; border-radius: 20px;
+      background: var(--superficie); border: 1px solid var(--borde-card); border-radius: 20px;
       padding: 20px; margin: 0 16px 16px 16px;
     }
     .form-group-pwa { margin-bottom: 12px; text-align: left; }
-    .form-group-pwa label { display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 4px; }
+    .form-group-pwa label { display: block; font-size: 11px; font-weight: 700; color: var(--texto-secundario); margin-bottom: 4px; }
     .form-group-pwa input, .form-group-pwa textarea {
       width: 100%; padding: 8px 12px; border-radius: 8px;
-      border: 1.5px solid #cbd5e1; font-size: 13px; box-sizing: border-box;
+      border: 1.5px solid var(--borde-card); font-size: 13px; box-sizing: border-box;
     }
 
     /* BOTTOM TAB BAR */
     .bottom-tab-bar {
-      height: 64px; background: var(--superficie); border-top: 1px solid #e2e8f0;
+      height: 64px; background: var(--superficie); border-top: 1px solid var(--borde-card);
       display: flex; justify-content: space-around; align-items: center;
       position: absolute; bottom: 0; width: 100%; box-sizing: border-box; z-index: 100;
     }
@@ -135,33 +135,33 @@
     /* SIDEBAR */
     .sidebar-drawer {
       position: absolute; top: 0; left: -280px; width: 280px; height: 100%;
-      background: var(--superficie); box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+      background: var(--superficie); box-shadow: var(--sombra-media);
       z-index: 200; transition: left 0.3s ease; display: flex; flex-direction: column;
     }
     .sidebar-drawer.open { left: 0; }
     .drawer-overlay {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.4); z-index: 199; display: none;
+      background: var(--velo-modal); z-index: 199; display: none;
     }
     .drawer-overlay.open { display: block; }
     .drawer-header {
-      background: linear-gradient(135deg, var(--marca-prestadora) 0%, #1e1e2d 100%);
-      color: #fff; padding: 30px 20px;
+      background: linear-gradient(135deg, var(--marca-prestadora) 0%, var(--azul-oscuro) 100%);
+      color: var(--texto-sobre-color); padding: 30px 20px;
     }
-    .drawer-header img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #fff; margin-bottom: 10px; }
+    .drawer-header img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--superficie); margin-bottom: 10px; }
     .drawer-header h4 { margin: 0; font-size: 16px; font-weight: 700; }
     .drawer-menu-item {
       display: flex; align-items: center; gap: 14px; padding: 12px 20px;
-      color: #334155; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer;
+      color: var(--texto-principal); font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer;
     }
 
     /* ================================================
        PANTALLA WIZARD DE POSTULACIÓN (Inline — Offline Safe)
     ================================================ */
-    #screen-registro { background: #fafafb; }
+    #screen-registro { background: var(--fondo-app); }
     .wizard-header-bar {
       background: var(--marca-prestadora);
-      color: #fff; padding: 16px 18px;
+      color: var(--texto-sobre-color); padding: 16px 18px;
       display: flex; align-items: center; gap: 12px;
       position: sticky; top: 0; z-index: 100;
     }
@@ -173,22 +173,22 @@
     }
     .wizard-progress-bar::before {
       content: ''; position: absolute; top: 14px; left: 14px; right: 14px;
-      height: 2px; background: #e2e8f0; z-index: 0;
+      height: 2px; background: var(--tono-neutro-fondo); z-index: 0;
     }
     .wstep {
       flex: 1; text-align: center; z-index: 2; position: relative;
     }
     .wstep-circle {
       width: 28px; height: 28px; border-radius: 50%;
-      background: #e2e8f0; color:var(--texto-secundario);
+      background: var(--tono-neutro-fondo); color:var(--texto-secundario);
       display: flex; align-items: center; justify-content: center;
       margin: 0 auto 4px auto; font-size: 11px; font-weight: 800;
       transition: all 0.3s ease; position: relative; z-index: 1;
     }
-    .wstep-circle.active { background: #E53E3E; color: #fff; }
-    .wstep-circle.done { background: #0284c7; color: #fff; }
+    .wstep-circle.active { background: var(--rojo-peligro); color: var(--texto-sobre-color); }
+    .wstep-circle.done { background: var(--azul-medio); color: var(--texto-sobre-color); }
     .wstep-label { font-size: 9px; font-weight: 700; color:var(--texto-secundario); text-transform: uppercase; }
-    .wstep-label.active { color: #E53E3E; }
+    .wstep-label.active { color: var(--rojo-peligro-texto); }
 
     .wpane { display: none; }
     .wpane.active { display: block; }
@@ -199,17 +199,17 @@
       margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
     }
     .wpane .wfield { margin-bottom: 12px; }
-    .wpane .wfield label { font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 4px; }
+    .wpane .wfield label { font-size: 11px; font-weight: 700; color: var(--texto-secundario); display: block; margin-bottom: 4px; }
     .wpane .wfield input,
     .wpane .wfield select,
     .wpane .wfield textarea {
       width: 100%; padding: 9px 12px; border-radius: 10px;
-      border: 1.5px solid #cbd5e1; font-size: 13px; box-sizing: border-box;
-      background: #f8fafc; transition: border-color 0.2s;
+      border: 1.5px solid var(--borde-card); font-size: 13px; box-sizing: border-box;
+      background: var(--superficie-hundida); transition: border-color 0.2s;
     }
     .wpane .wfield input:focus,
     .wpane .wfield select:focus,
-    .wpane .wfield textarea:focus { border-color: #1A365D; background: var(--superficie); outline: none; }
+    .wpane .wfield textarea:focus { border-color: var(--marca-prestadora); background: var(--superficie); outline: none; }
 
     .wgrid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .wgrid-2-full { grid-column: 1 / -1; }
@@ -225,28 +225,28 @@
        obligaba a escribirla de nuevo del otro lado. */
 
     .winfo-box {
-      background: #e8f5e9; border-left: 3px solid #2e7d32;
+      background: var(--tono-exito-fondo); border-left: 3px solid var(--verde-exito);
       border-radius: 8px; padding: 12px; margin: 12px 0;
-      font-size: 11px; color: #1b5e20; line-height: 1.5;
+      font-size: 11px; color: var(--tono-exito-texto); line-height: 1.5;
     }
 
     .wnav {
       display: flex; justify-content: space-between; gap: 10px;
-      margin-top: 20px; padding-top: 16px; border-top: 1px solid #e2e8f0;
+      margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--borde-card);
     }
     .wbtn-next {
       flex: 1; padding: 12px; border-radius: 12px;
-      background: var(--marca-prestadora); color: #fff;
+      background: var(--marca-prestadora); color: var(--texto-sobre-color);
       font-weight: 700; font-size: 13px; border: none; cursor: pointer;
     }
     .wbtn-prev {
       padding: 12px 16px; border-radius: 12px;
-      background: #f1f5f9; color: #475569;
-      font-weight: 700; font-size: 13px; border: 1.5px solid #e2e8f0; cursor: pointer;
+      background: var(--superficie-hover); color: var(--texto-secundario);
+      font-weight: 700; font-size: 13px; border: 1.5px solid var(--borde-card); cursor: pointer;
     }
     .wbtn-submit {
       flex: 1; padding: 12px; border-radius: 12px;
-      background: #10b981; color: #fff;
+      background: var(--verde-exito); color: var(--texto-sobre-color);
       font-weight: 700; font-size: 13px; border: none; cursor: pointer;
     }
 
@@ -264,9 +264,9 @@
     .wespera-correo-aviso { display: none; margin: 10px 0 0; font-weight: 700; }
 
     .wsuccess-msg {
-      display: none; background: #e8f5e9; color: #2e7d32;
+      display: none; background: var(--tono-exito-fondo); color: var(--verde-exito-texto);
       padding: 16px; border-radius: 12px; font-weight: 700;
-      text-align: center; font-size: 13px; border: 1px solid #c8e6c9; margin-top: 12px;
+      text-align: center; font-size: 13px; border: 1px solid var(--tono-exito-borde); margin-top: 12px;
     }
   </style>
 </head>
@@ -284,13 +284,13 @@
         <p id="menu-user-email" style="margin:2px 0 0 0;font-size:11px;opacity:0.8;">asistente@ejemplo.com</p>
       </div>
       <div style="flex:1;padding:16px 0;">
-        <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home" style="width:20px;color:#64748b;"></i> Inicio</a>
-        <a class="drawer-menu-item" onclick="navigate('registro')"><i class="fas fa-user-plus" style="width:20px;color:#64748b;"></i> Completar Legajo</a>
-        <a class="drawer-menu-item" onclick="navigate('capacitaciones')"><i class="fas fa-graduation-cap" style="width:20px;color:#64748b;"></i> Mis Capacitaciones</a>
-        <div style="border-top:1px solid #f1f5f9;margin:8px 0;"></div>
-        <a class="drawer-menu-item" id="btn-logout" style="color:#ef4444;"><i class="fas fa-sign-out-alt" style="width:20px;color:#ef4444;"></i> Cerrar sesión</a>
+        <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home" style="width:20px;color:var(--texto-secundario);"></i> Inicio</a>
+        <a class="drawer-menu-item" onclick="navigate('registro')"><i class="fas fa-user-plus" style="width:20px;color:var(--texto-secundario);"></i> Completar Legajo</a>
+        <a class="drawer-menu-item" onclick="navigate('capacitaciones')"><i class="fas fa-graduation-cap" style="width:20px;color:var(--texto-secundario);"></i> Mis Capacitaciones</a>
+        <div style="border-top:1px solid var(--borde-card);margin:8px 0;"></div>
+        <a class="drawer-menu-item" id="btn-logout" style="color:var(--rojo-peligro-texto);"><i class="fas fa-sign-out-alt" style="width:20px;color:var(--rojo-peligro-texto);"></i> Cerrar sesión</a>
       </div>
-      <div style="padding:16px;text-align:center;font-size:10px;color:var(--texto-secundario);border-top:1px solid #f1f5f9;">
+      <div style="padding:16px;text-align:center;font-size:10px;color:var(--texto-secundario);border-top:1px solid var(--borde-card);">
         Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
       </div>
     </div>
@@ -332,22 +332,22 @@
 
       <!-- ESTADO LEGAJO -->
       <div class="status-badge-container" id="status-container" style="margin-top:16px;">
-        <i class="fas fa-user-check" style="color:#0369a1;font-size:20px;"></i>
+        <i class="fas fa-user-check" style="color:var(--tono-info-texto);font-size:20px;"></i>
         <div style="flex:1;text-align:left;">
-          <h5 style="margin:0;font-size:13px;color:#0369a1;font-weight:700;">Estado del Legajo</h5>
-          <p id="legajo-estado-txt" style="margin:2px 0 0 0;font-size:11px;color:#0e7490;">Cargando estado...</p>
+          <h5 style="margin:0;font-size:13px;color:var(--tono-info-texto);font-weight:700;">Estado del Legajo</h5>
+          <p id="legajo-estado-txt" style="margin:2px 0 0 0;font-size:11px;color:var(--tono-info-texto);">Cargando estado...</p>
         </div>
-        <button onclick="navigate('registro')" style="font-size:10px;font-weight:700;padding:4px 10px;border-radius:8px;background:#0284c7;color:#fff;border:none;cursor:pointer;">Completar</button>
+        <button onclick="navigate('registro')" style="font-size:10px;font-weight:700;padding:4px 10px;border-radius:8px;background:var(--azul-medio);color:var(--texto-sobre-color);border:none;cursor:pointer;">Completar</button>
       </div>
 
       <!-- WIDGET FICHADO GPS -->
       <div class="gps-widget">
         <i class="fas fa-map-marked-alt"></i>
-        <h4 style="margin:0;font-size:15px;color:#1e293b;font-weight:800;">Fichador GPS Laboral</h4>
-        <p id="gps-status" style="margin:4px 0 0 0;font-size:12px;color:#64748b;">Presione para marcar entrada o salida en el domicilio.</p>
+        <h4 style="margin:0;font-size:15px;color:var(--texto-titulo);font-weight:800;">Fichador GPS Laboral</h4>
+        <p id="gps-status" style="margin:4px 0 0 0;font-size:12px;color:var(--texto-secundario);">Presione para marcar entrada o salida en el domicilio.</p>
         <div class="gps-actions">
-          <button class="btn-gps" id="btn-gps-in" style="background:#0284c7;">Marcar Entrada</button>
-          <button class="btn-gps" id="btn-gps-out" style="background:#ef4444;">Marcar Salida</button>
+          <button class="btn-gps" id="btn-gps-in" style="background:var(--azul-medio);">Marcar Entrada</button>
+          <button class="btn-gps" id="btn-gps-out" style="background:var(--rojo-peligro);">Marcar Salida</button>
         </div>
       </div>
 
@@ -387,7 +387,7 @@
     <!-- 3. VISTA: WIZARD REGISTRO DE LEGAJO (Inline — 100% Offline Safe) -->
     <div class="app-screen" id="screen-registro">
       <div class="wizard-header-bar">
-        <button onclick="navigate('dashboard')" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;"><i class="fas fa-arrow-left"></i></button>
+        <button onclick="navigate('dashboard')" style="background:none;border:none;color:var(--texto-sobre-color);font-size:18px;cursor:pointer;"><i class="fas fa-arrow-left"></i></button>
         <h2>Registro de Legajo Digital</h2>
       </div>
 
@@ -443,9 +443,9 @@
               <label>Nivel de Estudios</label>
               <select id="w-estudios" required data-catalogo="nivel_educativo" data-catalogo-vacio="— Seleccionar —"></select>
             </div>
-            <p style="font-size:12px;font-weight:700;color:#334155;margin:12px 0 6px;">Cursos y Certificaciones ({{producto}} Academy):</p>
+            <p style="font-size:12px;font-weight:700;color:var(--texto-principal);margin:12px 0 6px;">Cursos y Certificaciones ({{producto}} Academy):</p>
             <div class="wcheck-group" data-catalogo="certificacion" data-catalogo-como="casillas" data-catalogo-nombre="certificacion" data-catalogo-clase="catalogo-casilla"></div>
-            <p style="font-size:11px;font-weight:700;color:#475569;margin:12px 0 6px;"><i class="fas fa-shield-alt" style="color:#E53E3E;"></i> Documentación requerida:</p>
+            <p style="font-size:11px;font-weight:700;color:var(--texto-secundario);margin:12px 0 6px;"><i class="fas fa-shield-alt" style="color:var(--rojo-peligro-texto);"></i> Documentación requerida:</p>
             <div class="wfield"><label>📸 Foto de Perfil (tipo carnet)</label><input type="file" id="w-foto" accept="image/*" /></div>
             <div class="wfield"><label>🛡️ Foto DNI (Frente y Dorso)</label><input type="file" accept="image/*,.pdf" /></div>
             <div class="wfield"><label>📋 Antecedentes Penales (vigente)</label><input type="file" accept="image/*,.pdf" /></div>
@@ -457,7 +457,7 @@
                  Hasta el 24 de agosto de 2026 esta pantalla no las tenía, así que
                  quien se daba de alta desde el teléfono quedaba sin matrícula, sin
                  estudios, sin experiencia y con la referencia como texto suelto. -->
-            <p id="ficha-matricula-obligatoria-aviso" style="display:none;font-size:10px;color:#92400e;background:#fef3c7;border-radius:8px;padding:10px;margin:14px 0 0;">
+            <p id="ficha-matricula-obligatoria-aviso" style="display:none;font-size:10px;color:var(--tono-atencion-texto);background:var(--tono-atencion-fondo);border-radius:8px;padding:10px;margin:14px 0 0;">
               El Tipo de Asistente que eligió exige Matrícula vigente y verificada para poder publicarse. Cárguela acá.
             </p>
             <div id="ficha-matricula" style="margin-top:14px;"></div>
@@ -472,9 +472,9 @@
           <!-- PASO 3: APTITUDES Y PATOLOGÍAS -->
           <div class="wpane" id="wp3">
             <h3><i class="fas fa-clipboard-list"></i> Paso 3: Experiencia y Aptitudes</h3>
-            <p style="font-size:12px;font-weight:700;color:#334155;margin-bottom:8px;">Patologías atendidas con experiencia comprobable:</p>
+            <p style="font-size:12px;font-weight:700;color:var(--texto-principal);margin-bottom:8px;">Patologías atendidas con experiencia comprobable:</p>
             <div class="wcheck-group" style="margin-bottom:16px;" data-catalogo="patologia" data-catalogo-como="casillas" data-catalogo-nombre="patologia" data-catalogo-clase="catalogo-casilla"></div>
-            <p style="font-size:12px;font-weight:700;color:#334155;margin-bottom:8px;">Tareas autorizadas a realizar:</p>
+            <p style="font-size:12px;font-weight:700;color:var(--texto-principal);margin-bottom:8px;">Tareas autorizadas a realizar:</p>
             <div class="wcheck-group" data-catalogo="tarea_cuidado" data-catalogo-como="casillas" data-catalogo-nombre="tarea_cuidado" data-catalogo-clase="catalogo-casilla"></div>
 
             <div id="ficha-experiencia_laboral" style="margin-top:16px;"></div>
@@ -488,9 +488,9 @@
           <!-- PASO 4: DISPONIBILIDAD HORARIA -->
           <div class="wpane" id="wp4">
             <h3><i class="fas fa-calendar-alt"></i> Paso 4: Disponibilidad Horaria</h3>
-            <p style="font-size:12px;font-weight:700;color:#334155;margin-bottom:6px;">Modalidades de contratación aceptadas:</p>
+            <p style="font-size:12px;font-weight:700;color:var(--texto-principal);margin-bottom:6px;">Modalidades de contratación aceptadas:</p>
             <div class="wcheck-group" style="margin-bottom:14px;" data-catalogo="modalidad_contratacion" data-catalogo-como="casillas" data-catalogo-nombre="modalidad_contratacion" data-catalogo-clase="catalogo-casilla" data-catalogo-marcados="horas"></div>
-            <p style="font-size:12px;font-weight:700;color:#334155;margin-bottom:6px;">Con retiro o sin retiro:</p>
+            <p style="font-size:12px;font-weight:700;color:var(--texto-principal);margin-bottom:6px;">Con retiro o sin retiro:</p>
             <div class="wcheck-group" style="margin-bottom:14px;" data-catalogo="retiro" data-catalogo-como="casillas" data-catalogo-nombre="retiro" data-catalogo-clase="catalogo-casilla" data-catalogo-marcados="con_retiro"></div>
             <div class="wfield" style="max-width:180px;">
               <label>Valor Hora ($ ARS)</label>
@@ -499,10 +499,10 @@
             <!-- Los días y los turnos salen de data/catalogo-vocabularios.json y los
                  textos del paso de data/catalogo-disponibilidad.json; los junta
                  js/disponibilidad.js, el mismo archivo que usa el portal. -->
-            <p id="disponibilidad-titulo" style="font-size:11px;font-weight:700;color:#334155;margin:12px 0 2px;"></p>
+            <p id="disponibilidad-titulo" style="font-size:11px;font-weight:700;color:var(--texto-principal);margin:12px 0 2px;"></p>
             <p id="disponibilidad-bajada" style="font-size:10px;color:var(--texto-secundario);margin:0 0 4px;"></p>
             <div id="grilla-disponibilidad"></div>
-            <p id="disponibilidad-ayuda" style="font-size:10px;color:#64748b;margin:6px 0 0;"></p>
+            <p id="disponibilidad-ayuda" style="font-size:10px;color:var(--texto-secundario);margin:6px 0 0;"></p>
             <div id="preguntas-disponibilidad"></div>
             <div class="wnav">
               <button type="button" class="wbtn-prev" onclick="wPrev(3)"><i class="fas fa-arrow-left"></i></button>
@@ -529,12 +529,12 @@
                  js/autorizaciones.js, el mismo archivo que usa el portal.
                  Sin la fila que esto guarda, la persona no aparece nunca en el
                  directorio: la vista `caregivers_publicos` la exige. -->
-            <h4 id="cierre-titulo" style="font-size:12px;font-weight:700;color:#334155;margin:16px 0 4px;"></h4>
+            <h4 id="cierre-titulo" style="font-size:12px;font-weight:700;color:var(--texto-principal);margin:16px 0 4px;"></h4>
             <p id="cierre-bajada" style="font-size:10px;color:var(--texto-secundario);margin:0 0 8px;"></p>
-            <p id="cierre-recordatorio" style="font-size:10px;color:#1b5e20;background:#e8f5e9;border-radius:8px;padding:8px;margin:0 0 8px;"></p>
+            <p id="cierre-recordatorio" style="font-size:10px;color:var(--tono-exito-texto);background:var(--tono-exito-fondo);border-radius:8px;padding:8px;margin:0 0 8px;"></p>
             <div id="autorizaciones-container"></div>
 
-            <div style="display:flex;align-items:flex-start;gap:8px;margin:12px 0;font-size:12px;color:#334155;">
+            <div style="display:flex;align-items:flex-start;gap:8px;margin:12px 0;font-size:12px;color:var(--texto-principal);">
               <input type="checkbox" id="w-terminos" required style="width:18px;height:18px;margin-top:2px;flex-shrink:0;" />
               <label for="w-terminos" style="cursor:pointer;">Acepto los Términos y Condiciones de Legajo para Asistentes de {{producto}}.</label>
             </div>

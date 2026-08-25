@@ -155,20 +155,20 @@ const FichasLegajo = {
       return `<div class="form-group" data-clave="${Texto.escapar(campo.clave)}" style="margin-bottom:12px;${esCasilla ? 'display:flex;align-items:center;gap:8px;' : ''}">
         ${esCasilla
           ? `${/* seguro: es marcado que arma este mismo módulo, y sus datos ya van escapados ahí */ this._inputCampo(tipoFicha, campo, indice)}<label for="${idCampo}" style="margin:0;cursor:pointer;">${Texto.escapar(t.etiqueta)}</label>`
-          : `<label for="${idCampo}">${Texto.escapar(t.etiqueta)}${campo.obligatorio ? ' <span style="color:#ef4444;">*</span>' : ''}</label>${/* seguro: es marcado que arma este mismo módulo, y sus datos ya van escapados ahí */ this._inputCampo(tipoFicha, campo, indice)}`}
-        ${t.ayuda ? `<p style="font-size:11px;color:#64748b;margin:4px 0 0 0;">${Texto.escapar(t.ayuda)}</p>` : ''}
+          : `<label for="${idCampo}">${Texto.escapar(t.etiqueta)}${campo.obligatorio ? ' <span style="color:var(--rojo-peligro-texto);">*</span>' : ''}</label>${/* seguro: es marcado que arma este mismo módulo, y sus datos ya van escapados ahí */ this._inputCampo(tipoFicha, campo, indice)}`}
+        ${t.ayuda ? `<p style="font-size:11px;color:var(--texto-secundario);margin:4px 0 0 0;">${Texto.escapar(t.ayuda)}</p>` : ''}
       </div>`;
     }).join('');
 
     const advertencia = ficha.advertencia
-      ? `<p style="font-size:11.5px;color:#92400e;background:#fef3c7;border-radius:8px;padding:10px;margin-bottom:12px;">${Texto.escapar(ficha.advertencia[this.idioma] || ficha.advertencia['es-AR'])}</p>`
+      ? `<p style="font-size:11.5px;color:var(--tono-atencion-texto);background:var(--tono-atencion-fondo);border-radius:8px;padding:10px;margin-bottom:12px;">${Texto.escapar(ficha.advertencia[this.idioma] || ficha.advertencia['es-AR'])}</p>`
       : '';
 
     return `<div class="ficha-bloque" data-ficha="${Texto.escapar(tipoFicha)}" data-indice="${indice}"
         style="background:var(--superficie-hover);border-radius:12px;padding:16px;border:1px solid var(--borde-card);margin-bottom:12px;position:relative;">
       ${advertencia}
       ${camposHTML}
-      <button type="button" class="btn-quitar-ficha" style="position:absolute;top:12px;right:12px;background:none;border:none;color:#ef4444;cursor:pointer;font-size:13px;">
+      <button type="button" class="btn-quitar-ficha" style="position:absolute;top:12px;right:12px;background:none;border:none;color:var(--rojo-peligro-texto);cursor:pointer;font-size:13px;">
         <i class="fas fa-times-circle"></i> Quitar</button>
     </div>`;
   },
@@ -304,7 +304,7 @@ const FichasLegajo = {
         : !campo.value || !String(campo.value).trim();
       if (vacio) {
         valido = false;
-        campo.style.outline = '2px solid #e53935';
+        campo.style.outline = '2px solid var(--rojo-peligro)';
         campo.addEventListener('input', () => { campo.style.outline = ''; }, { once: true });
         campo.addEventListener('change', () => { campo.style.outline = ''; }, { once: true });
       }
