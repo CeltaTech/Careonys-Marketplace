@@ -13,6 +13,15 @@
        <div data-catalogo="patologia" data-catalogo-como="casillas"
             data-catalogo-nombre="patologias"></div>
 
+       <div class="card-select-grid" data-catalogo="tarea_cuidado"
+            data-catalogo-como="tarjetas" data-catalogo-nombre="tarea"></div>
+
+   `data-catalogo-como` dice de qué forma se dibuja: `casillas` y `radios` para
+   los grupos sueltos, `tarjetas` y `tarjetas-una` para las grillas con ícono y
+   bajada. La diferencia entre las dos últimas es cuántas se pueden marcar, y la
+   hace el navegador: `tarjetas` son casillas y `tarjetas-una` son redondas. Sin
+   `data-catalogo-como` se dibuja un desplegable.
+
    Al cargar la página se resuelven todas de una vez, igual que los marcadores
    de `identidad.js`.
 
@@ -50,6 +59,18 @@
     vacio: 'No hay opciones disponibles',
   sinContenido: 'Por ahora no hay nada para mostrar acá'
   };
+
+  // Una tarjeta puede traer `icono` y `bajada`; los dos son optativos. El ítem
+  // que no trae ícono se dibuja con una forma neutra: lo que la opción
+  // significa lo dice su etiqueta, y el ícono bueno se agrega en el catálogo el
+  // día que alguien lo elija. Lo que no se hace es dejar el hueco, porque una
+  // grilla con seis íconos y dos agujeros parece rota.
+  const ICONO_NEUTRO = 'fa-circle-dot';
+
+  // El nombre del ícono termina adentro de un `class`, así que se comprueba que
+  // sea un nombre de ícono y no otra cosa. Viene de un archivo propio, pero el
+  // día que venga de una tabla que alguien edita, esto ya está.
+  const ICONO_VALIDO = /^fa-[a-z0-9-]+$/;
 
   let promesa = null;   // La carga en curso o ya hecha. Se pide una sola vez.
   let catalogo = null;  // Los vocabularios, una vez traídos.
@@ -104,7 +125,15 @@
     // blanco.
     texto(item) {
       if (!item) return '';
-      return item[this.idioma] || item[IDIOMA_POR_DEFECTO] || item.clave || '';
+      return this.textoDe(item) || item.clave || '';
+    },
+
+    // El mismo criterio de idioma, para un texto que cuelga del ítem en vez de
+    // estar en su raíz: `"bajada": { "es-AR": "Baño, cambio de pañales" }`. La
+    // bajada de una tarjeta es la primera que lo usa.
+    textoDe(traducciones) {
+      if (!traducciones) return '';
+      return traducciones[this.idioma] || traducciones[IDIOMA_POR_DEFECTO] || '';
     },
 
     // Los ítems de un vocabulario. Requiere haber llamado a `cargar()`.
@@ -290,25 +319,81 @@
 
     // Un grupo de casillas o de opciones redondas, para los vocabularios donde
     // se elige más de una cosa (patologías, tareas, certificaciones).
+    // Los tres ajustes que comparten todos los grupos de opciones —casillas,
+    // redondas y tarjetas—: cómo se llama el campo, qué clase lleva cada
+    // opción, y cuáles vienen marcadas de entrada. Se leen en un solo lugar
+    // porque son los mismos tres (regla 7).
+    _ajustesDeGrupo(elemento) {
+      return {
+        nombre: elemento.getAttribute('data-catalogo-nombre')
+          || elemento.getAttribute('data-catalogo'),
+        clase: elemento.getAttribute('data-catalogo-clase') || '',
+        // Lo que viene tildado de entrada, si la pantalla lo declara.
+        marcados: (elemento.getAttribute('data-catalogo-marcados') || '')
+          .split(',').map((c) => c.trim()).filter(Boolean)
+      };
+    },
+
     _llenarGrupo(elemento, items, tipo) {
-      const nombre = elemento.getAttribute('data-catalogo-nombre')
-        || elemento.getAttribute('data-catalogo');
-      const clase = elemento.getAttribute('data-catalogo-clase') || '';
-      // Lo que viene tildado de entrada, si la pantalla lo declara.
-      const marcados = (elemento.getAttribute('data-catalogo-marcados') || '')
-        .split(',').map((c) => c.trim()).filter(Boolean);
+      const ajustes = this._ajustesDeGrupo(elemento);
       elemento.innerHTML = '';
       items.forEach((i) => {
         const etiqueta = document.createElement('label');
-        if (clase) etiqueta.className = clase;
+        if (ajustes.clase) etiqueta.className = ajustes.clase;
         const control = document.createElement('input');
         control.type = tipo === 'radios' ? 'radio' : 'checkbox';
-        control.name = nombre;
+        control.name = ajustes.nombre;
         control.value = i.clave;
-        if (marcados.indexOf(i.clave) !== -1) control.checked = true;
+        if (ajustes.marcados.indexOf(i.clave) !== -1) control.checked = true;
         etiqueta.appendChild(control);
         etiqueta.appendChild(document.createTextNode(' ' + this.texto(i)));
         elemento.appendChild(etiqueta);
+      });
+    },
+
+    // Una grilla de tarjetas: el mismo grupo de opciones de arriba, pero cada
+    // una con su ícono y su bajada.
+    //
+    // La tarjeta es una etiqueta con el control adentro, y no un recuadro que
+    // se pinta con una clase. De ahí salen tres cosas que antes había que
+    // escribir a mano y ya no: que de un grupo de redondas se marque una sola
+    // lo resuelve el navegador; lo elegido se lee del formulario y no de una
+    // clase de CSS; y la grilla se puede recorrer con el teclado. El control se
+    // esconde con CSS —no con `type="hidden"`, que no se puede marcar—, así que
+    // lo que se ve es la tarjeta y lo que se lee es el control.
+    _llenarTarjetas(elemento, items, unaSola) {
+      const ajustes = this._ajustesDeGrupo(elemento);
+      elemento.innerHTML = '';
+      items.forEach((i) => {
+        const tarjeta = document.createElement('label');
+        tarjeta.className = ajustes.clase || 'select-card';
+
+        const control = document.createElement('input');
+        control.type = unaSola ? 'radio' : 'checkbox';
+        control.name = ajustes.nombre;
+        control.value = i.clave;
+        if (ajustes.marcados.indexOf(i.clave) !== -1) control.checked = true;
+        tarjeta.appendChild(control);
+
+        const icono = document.createElement('i');
+        icono.className = 'fas ' + (ICONO_VALIDO.test(i.icono || '') ? i.icono : ICONO_NEUTRO);
+        // El ícono no dice nada que la etiqueta no diga: quien escucha la
+        // pantalla en vez de mirarla no tiene por qué oírlo.
+        icono.setAttribute('aria-hidden', 'true');
+        tarjeta.appendChild(icono);
+
+        const titulo = document.createElement('h4');
+        titulo.textContent = this.texto(i);
+        tarjeta.appendChild(titulo);
+
+        const bajada = this.textoDe(i.bajada);
+        if (bajada) {
+          const parrafo = document.createElement('p');
+          parrafo.textContent = bajada;
+          tarjeta.appendChild(parrafo);
+        }
+
+        elemento.appendChild(tarjeta);
       });
     },
 
@@ -342,7 +427,9 @@
       }
       const como = elemento.getAttribute('data-catalogo-como');
       if (como === 'casillas' || como === 'radios') this._llenarGrupo(elemento, items, como);
-      else this._llenarSelect(elemento, items);
+      else if (como === 'tarjetas' || como === 'tarjetas-una') {
+        this._llenarTarjetas(elemento, items, como === 'tarjetas-una');
+      } else this._llenarSelect(elemento, items);
 
       // Lo que la pantalla quiera dejar elegido de entrada, por ejemplo al
       // editar algo ya guardado.
@@ -385,11 +472,14 @@
       const elementos = Array.prototype.slice.call(base.querySelectorAll('[data-catalogo]'));
       if (!elementos.length) return;
 
+      // El estado «cargando» de la regla 5.3, para todos y no sólo para los
+      // desplegables. Un grupo de casillas o una grilla de tarjetas que todavía
+      // no llegó se ve igual que una que vino vacía, y ésa es exactamente la
+      // falla que este archivo existe para no tener. El desplegable además
+      // queda deshabilitado, así nadie manda el formulario a medio llenar.
       elementos.forEach((el) => {
-        if (el.tagName === 'SELECT') {
-          this._avisar(el, AVISOS.cargando);
-          el.disabled = true;
-        }
+        this._avisar(el, AVISOS.cargando);
+        if (el.tagName === 'SELECT') el.disabled = true;
       });
 
       try {

@@ -36,6 +36,12 @@ escrito en la pantalla, ni siquiera la regla de cuándo la Matrícula es obligat
 decide la propiedad `requiere_matricula` de cada tipo del vocabulario. Agregar un tipo
 profesional que exija Matrícula hoy no toca una sola línea de código.
 
+**Un ítem puede traer además `icono` y `bajada`, y los dos son optativos.** Salieron el 24 de
+agosto de 2026 de las diez tarjetas que `formulario-integral.html` tenía escritas adentro: cada
+una traía su ícono y su explicación de una línea, y ahora las trae el catálogo. Un ítem sin esos
+campos se dibuja igual —con su etiqueta y un ícono neutro—, así que no hay que inventarle una
+explicación a nada para que aparezca. La bajada cuelga por idioma, como todo el texto visible.
+
 ## Por qué había que sacarlas de ahí
 
 No es prolijidad. Cuando la misma lista está escrita en cuatro pantallas, las cuatro copias se

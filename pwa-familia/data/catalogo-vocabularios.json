@@ -56,17 +56,26 @@
         "postulacion-asistente.html:307",
         "formulario-integral.html:428",
         "pwa-asistente/index.html:430",
-        "directorio.html:73"
+        "directorio.html:73",
+        "formulario-integral.html — tarjetas del paso 3"
       ],
       "items": [
         {
           "clave": "cuidador_domiciliario",
           "es-AR": "Asistente / Cuidador domiciliario",
+          "icono": "fa-user-nurse",
+          "bajada": {
+            "es-AR": "Asistencia integral en el hogar"
+          },
           "requiere_matricula": false
         },
         {
           "clave": "enfermero_universitario",
           "es-AR": "Enfermero universitario",
+          "icono": "fa-stethoscope",
+          "bajada": {
+            "es-AR": "Cuidados clínicos y curaciones"
+          },
           "requiere_matricula": true
         },
         {
@@ -77,11 +86,19 @@
         {
           "clave": "acompanante_terapeutico",
           "es-AR": "Acompañante terapéutico",
+          "icono": "fa-hands-helping",
+          "bajada": {
+            "es-AR": "Soporte emocional y conductual"
+          },
           "requiere_matricula": true
         },
         {
           "clave": "gerontologo",
           "es-AR": "Especialista en gerontología",
+          "icono": "fa-ribbon",
+          "bajada": {
+            "es-AR": "Atención especializada en adultos mayores"
+          },
           "requiere_matricula": true
         },
         {
@@ -100,7 +117,7 @@
           "requiere_matricula": false
         }
       ],
-      "nota": "Cuatro pantallas, cuatro listas distintas: dos incluían «Voluntario», dos no; dos incluían «Otro», dos no; «Gerontólogo» aparecía con tres nombres. Se unifica en siete. Se agrega `requiere_matricula` porque el glosario ya lo exige —un Tipo de Asistente define sus Tareas y si requiere Matrícula— y la lista no lo guardaba: la regla estaba escrita y el dato no existía. Se agrega «Promotor de salud», que faltaba. Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas."
+      "nota": "Cuatro pantallas, cuatro listas distintas: dos incluían «Voluntario», dos no; dos incluían «Otro», dos no; «Gerontólogo» aparecía con tres nombres. Se unifica en siete. Se agrega `requiere_matricula` porque el glosario ya lo exige —un Tipo de Asistente define sus Tareas y si requiere Matrícula— y la lista no lo guardaba: la regla estaba escrita y el dato no existía. Se agrega «Promotor de salud», que faltaba. Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas. El 24 de agosto de 2026 se le agregaron dos campos optativos, `icono` y `bajada`, que salieron de las tarjetas escritas a mano en `formulario-integral.html`: la pantalla dibujaba su propia lista con su propio texto, y ahora la pide. Los ítems sin esos dos campos se dibujan igual, con su etiqueta y un ícono neutro; ponerles una bajada inventada sería volver a escribir texto de producto donde no va."
     },
     "condicion_fiscal": {
       "titulo": "Condición frente a AFIP",
@@ -254,15 +271,27 @@
       "items": [
         {
           "clave": "higiene",
-          "es-AR": "Higiene y confort del paciente"
+          "es-AR": "Higiene y confort del paciente",
+          "icono": "fa-bath",
+          "bajada": {
+            "es-AR": "Baño, cambio de pañales, aseo personal"
+          }
         },
         {
           "clave": "signos",
-          "es-AR": "Control de signos vitales"
+          "es-AR": "Control de signos vitales",
+          "icono": "fa-heartbeat",
+          "bajada": {
+            "es-AR": "Presión, glucemia, saturación"
+          }
         },
         {
           "clave": "medicacion",
-          "es-AR": "Administración de medicación"
+          "es-AR": "Administración de medicación",
+          "icono": "fa-pills",
+          "bajada": {
+            "es-AR": "Recordatorio y administración de dosis"
+          }
         },
         {
           "clave": "inyecciones",
@@ -270,22 +299,34 @@
         },
         {
           "clave": "cocina",
-          "es-AR": "Cocina adaptada al paciente y nutrición"
+          "es-AR": "Cocina adaptada al paciente y nutrición",
+          "icono": "fa-utensils",
+          "bajada": {
+            "es-AR": "Cocina ligera, dieta especial"
+          }
         },
         {
           "clave": "movilizacion",
-          "es-AR": "Movilización de paciente sin movilidad"
+          "es-AR": "Movilización de paciente sin movilidad",
+          "icono": "fa-wheelchair",
+          "bajada": {
+            "es-AR": "Silla de ruedas, paseos, transferencias"
+          }
         },
         {
           "clave": "estimulacion_cognitiva",
-          "es-AR": "Estimulación cognitiva y juegos de memoria"
+          "es-AR": "Estimulación cognitiva y juegos de memoria",
+          "icono": "fa-brain",
+          "bajada": {
+            "es-AR": "Acompañamiento, juegos de memoria"
+          }
         },
         {
           "clave": "solo_acompanamiento",
           "es-AR": "Solo acompañamiento, sin tareas de cuidado"
         }
       ],
-      "nota": "Antes era una sola lista de seis que mezclaba cuidar a una persona con limpiar una casa. Se parte en tres —cuidado, hogar, acompañamiento— porque no son la misma clase de trabajo y no tienen el mismo encuadre legal: la Ley 26.844 rige el trabajo en casas particulares y el cuidado de la salud no entra ahí. Una lista que las mezcla no permite saber qué se acordó. `tramites` salió de acá: su etiqueta decía «Acompañamiento a turnos y paseos», que son dos cosas y ninguna es un trámite; quedó desarmada en la lista de acompañamiento."
+      "nota": "Antes era una sola lista de seis que mezclaba cuidar a una persona con limpiar una casa. Se parte en tres —cuidado, hogar, acompañamiento— porque no son la misma clase de trabajo y no tienen el mismo encuadre legal: la Ley 26.844 rige el trabajo en casas particulares y el cuidado de la salud no entra ahí. Una lista que las mezcla no permite saber qué se acordó. `tramites` salió de acá: su etiqueta decía «Acompañamiento a turnos y paseos», que son dos cosas y ninguna es un trámite; quedó desarmada en la lista de acompañamiento. El 24 de agosto de 2026 se le agregaron dos campos optativos, `icono` y `bajada`, que salieron de las tarjetas escritas a mano en `formulario-integral.html`: la pantalla dibujaba su propia lista con su propio texto, y ahora la pide. Los ítems sin esos dos campos se dibujan igual, con su etiqueta y un ícono neutro; ponerles una bajada inventada sería volver a escribir texto de producto donde no va."
     },
     "modalidad_contratacion": {
       "titulo": "Intensidad de la contratación",

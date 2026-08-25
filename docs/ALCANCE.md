@@ -449,6 +449,44 @@ tiene. `banderas_asistente` contesta que no existe; `autorizaciones_asistente`,
 sesión no le muestran nada; y `caregivers_publicos` devuelve la columna `reemplazos_urgentes` y
 ya no devuelve `disponible_urgencias`.
 
+### Las últimas listas escritas a mano se fueron de las pantallas
+
+Quedaban dos, y eran las más visibles: las diez tarjetas del asistente de seis pasos de
+`formulario-integral.html`. Cada una traía su ícono, su título y su explicación escritos adentro
+del HTML —setenta y dos renglones—, que es exactamente lo que prohíbe la regla 5.1. Agregar una
+tarea de cuidado era editar una pantalla. Ahora las dos grillas se declaran en dos renglones y el
+contenido sale del catálogo:
+
+```html
+<div class="card-select-grid" data-catalogo="tarea_cuidado"
+     data-catalogo-como="tarjetas" data-catalogo-nombre="tarea"></div>
+```
+
+- **El ícono y la explicación se mudaron al catálogo**, no se inventaron: son los mismos diez que
+  estaban en la pantalla. Los ítems del catálogo ganaron dos campos optativos, `icono` y `bajada`.
+  Los que no los tienen se dibujan igual, con su etiqueta y un ícono neutro; escribirles una
+  explicación inventada habría sido volver a poner texto de producto donde no va.
+- **Y aparecieron seis opciones que la pantalla se estaba comiendo.** Las tarjetas mostraban seis
+  de las ocho tareas y cuatro de los ocho tipos de Asistente. Las que faltaban no eran una decisión
+  de nadie: eran las que quien tipeó el HTML no tipeó. Un Asistente podía ofrecer «Aplicación de
+  inyecciones y sondas» —el vocabulario entero se le muestra desde siempre— y ninguna Familia
+  podía pedirla. Las dos puntas vuelven a hablar de lo mismo.
+- **El título de cada tarjeta ahora es el del catálogo.** Decía «Cuidador/a Domiciliario/a» donde
+  el catálogo dice «Asistente / Cuidador domiciliario»: el mismo dato con dos redacciones, que es
+  la falla que el catálogo existe para no tener.
+
+**Cada tarjeta pasó a ser una etiqueta con su casilla adentro**, y eso borró más código del que
+agregó. Antes un recuadro se pintaba con una clase de CSS que ponía y sacaba `js/main.js`, con
+veinte renglones que además tenían que acordarse de que los tipos de Asistente son de a uno. Ahora
+el tipo de control lo dice la pantalla —`tarjetas` para marcar varias, `tarjetas-una` para marcar
+una sola—, de que se marque una sola se ocupa el navegador, y lo elegido se lee del formulario en
+lugar de leerse de una clase. De yapa, la grilla se puede recorrer con el teclado, que antes no se
+podía.
+
+**Y el aviso de «Cargando opciones…» dejó de ser sólo de los desplegables.** Un grupo de casillas
+o una grilla de tarjetas que todavía no llegó se veía igual que uno que vino vacío, que es
+justamente la falla que el catálogo existe para no tener (regla 5.3).
+
 ### Lo que una Familia pide ya tiene dónde guardarse
 
 Tres pantallas le preguntan cosas a una Familia y `care_searches` tenía siete columnas. Lo que

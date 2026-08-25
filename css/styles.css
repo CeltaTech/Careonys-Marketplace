@@ -1710,6 +1710,9 @@ ul {
 }
 
 .select-card {
+  position: relative;
+  display: block;
+  margin: 0;
   border: 2px solid var(--borde-card);
   border-radius: 12px;
   padding: 18px;
@@ -1719,15 +1722,45 @@ ul {
   background: var(--superficie);
 }
 
+/* El control de la tarjeta se esconde, no se saca: es el que guarda lo elegido
+   y el que hace que de un grupo de redondas se marque una sola. Se esconde con
+   `opacity` y no con `display:none` para que el teclado siga llegando. */
+.select-card input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  margin: 0;
+  opacity: 0;
+}
+
 .select-card:hover {
   border-color: var(--azul-medio);
   transform: translateY(-2px);
 }
 
-.select-card.selected {
+.select-card:has(input:checked) {
   border-color: var(--azul-medio);
   background: var(--superficie-hover);
   box-shadow: var(--sombra-media);
+}
+
+/* Quien recorre la pantalla con el teclado tiene que ver dónde está parado. El
+   control está escondido, así que el recuadro se marca por él. */
+.select-card:focus-within {
+  outline: 2px solid var(--azul-medio);
+  outline-offset: 2px;
+}
+
+/* Un navegador que no entienda `:has` dejaría la tarjeta sin ninguna señal de
+   estar elegida, y como el control está escondido no se vería nada. Ahí se
+   muestra el control: la grilla queda fea, pero se puede usar. */
+@supports not selector(:has(*)) {
+  .select-card input {
+    position: static;
+    width: auto;
+    height: auto;
+    opacity: 1;
+  }
 }
 
 .select-card i {

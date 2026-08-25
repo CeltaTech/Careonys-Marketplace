@@ -151,22 +151,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (verificacionSelect) verificacionSelect.addEventListener('change', filterCards);
 
   // ---- WIZARD INTERACTIVO DE 6 PASOS ----
-  // Las tarjetas de los pasos 2 y 3 no se eligen igual. Las tareas son varias
-  // —una persona puede necesitar higiene y medicación a la vez— y el tipo de
-  // Asistente es uno solo, porque a `care_searches.profession_required` va una
-  // sola clave. Antes las dos se comportaban igual y se podían marcar cuatro
-  // tipos de Asistente para una misma búsqueda.
-  const selectCards = document.querySelectorAll('.select-card');
-  selectCards.forEach(card => {
-    card.addEventListener('click', () => {
-      const unaSola = card.hasAttribute('data-tipo-asistente');
-      if (unaSola && !card.classList.contains('selected')) {
-        card.parentNode.querySelectorAll('.select-card.selected')
-          .forEach(otra => otra.classList.remove('selected'));
-      }
-      card.classList.toggle('selected');
-    });
-  });
+  // Acá había veinte renglones que marcaban y desmarcaban tarjetas a mano, y
+  // que además tenían que acordarse de que las de tipo de Asistente son de a
+  // una. Ya no hacen falta: cada tarjeta la dibuja `js/catalogo.js` con su
+  // control adentro, así que de un grupo de redondas se marca una sola porque
+  // lo hace el navegador, y lo elegido se lee del formulario.
 
   const nextBtns = document.querySelectorAll('.btn-next-step');
   const prevBtns = document.querySelectorAll('.btn-prev-step');
@@ -229,11 +218,15 @@ document.addEventListener('DOMContentLoaded', () => {
       // esto se recolectaba en pantalla y no salía de ahí: la búsqueda se
       // armaba con `patologias: []` y `horarios: 'flexible'` escritos a mano, y
       // los pasos 2, 3 y 4 no llegaban a la base.
-      const elegidas = (atributo) => Array.from(
-        document.querySelectorAll(`.select-card.selected[${atributo}]`)
-      ).map((tarjeta) => tarjeta.getAttribute(atributo));
+      //
+      // Se pregunta por el vocabulario y no por la clase de la tarjeta: la
+      // grilla la dibuja el catálogo y el valor lo guarda el control de cada
+      // una, así que lo elegido es lo que el formulario tiene marcado.
+      const elegidas = (vocabulario) => Array.from(
+        document.querySelectorAll(`[data-catalogo="${vocabulario}"] input:checked`)
+      ).map((control) => control.value);
 
-      const tipoAsistente = elegidas('data-tipo-asistente');
+      const tipoAsistente = elegidas('tipo_asistente');
 
       const newSearch = {
         paciente: `Paciente de ${patientAge} años (${patientGender}) - ${title}`,
@@ -245,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Escribir acá una quinta forma sería empeorarlo.
         horarios: 'flexible',
         grillaHorarios: {},
-        tareas: elegidas('data-tarea'),
+        tareas: elegidas('tarea_cuidado'),
         profesion: tipoAsistente[0] || '',
         generoPreferido: document.getElementById('w-pref-gender')?.value || '',
         frecuencia: document.getElementById('w-frequency')?.value || '',
