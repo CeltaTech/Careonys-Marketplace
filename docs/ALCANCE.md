@@ -1345,7 +1345,8 @@ pantalla vacía.
   lo que corresponde mostrar es el acceso. Lo que se perdía era el rastro. Ahora
   `mockup-app.html:425` y `:889`, `pwa-asistente/index.html:643` y `pwa-familia/index.html:828`
   dejan el detalle técnico en la consola en lugar de tirarlo.
-- **`js/auth.js:200` no avisa en pantalla, y es a propósito.** Corre en las catorce pantallas y su
+- **`js/auth.js:201` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
+  cargan ese archivo —no en las dieciséis, y el comentario decía catorce hasta que se contaron—, y su
   único trabajo es pasarle el permiso al cliente de datos. Si falla, el primer pedido de esa
   pantalla va a fallar también, y esa pantalla sí sabe cómo decirlo; poner un cartel acá sería
   contarlo dos veces. Lo que no podía seguir pasando es que el fallo desapareciera sin dejar
@@ -1471,6 +1472,35 @@ tabla por tabla no está escrito en ningún lado: `docs/MODULOS.md` reparte mód
 
 Quedó anotado como **pendiente 52** y el Desarrollador lo decidió ese mismo día: se renombran
 las dos. Cómo quedó está en la sección de acá abajo.
+
+### El cuadro «Estado real» se volvió a medir, y una cuenta estaba mal
+
+El `README.md` abría con siete filas de números —pantallas, renglones, dependencias, tablas—
+que eran del arranque del proyecto y que nadie había vuelto a medir. Decía «6 tablas en
+Supabase, **sin migraciones en el repositorio**» cuando hay veintidós tablas y dieciséis
+migraciones. Se midió todo de nuevo el 25 de agosto de 2026, contra el árbol de trabajo:
+
+| Decía | Dice |
+|---|---|
+| 12 pantallas HTML, 7.082 renglones | 16 pantallas HTML, 8.290 renglones |
+| 2.600 renglones de JavaScript propio, 1.606 metidos en el HTML | 8.423 en 28 archivos, más 2.883 metidos en el HTML en 13 bloques |
+| 3.349 renglones de CSS, 32 variables con nombre | 4.170 en 7 archivos, 64 tokens con nombre |
+| 2.566 declaraciones en 772 atributos `style=` | 2.166 en 687 |
+| ninguna pantalla protegida | 11 de las 16 rescatan la sesión al abrir |
+| 4 dependencias por CDN | 4 servidores de afuera: dos de tipografías y dos de bibliotecas |
+| 6 tablas, sin migraciones en el repositorio | 22 tablas y 16 migraciones |
+
+Dos filas merecen una explicación. **Los estilos pegados al HTML bajaron** —de 2.566
+declaraciones a 2.166— porque en el medio se sacaron los 434 colores escritos a mano; el
+pendiente 8 lo cuenta. Y **el JavaScript no creció tres veces**: de los 8.423 renglones,
+**5.084 son copias byte a byte** de otro archivo, que es exactamente el pendiente 13. El
+cuadro ahora lo dice en la misma fila, para que el número no se lea como trabajo hecho.
+
+**Y contar sirvió para encontrar una cuenta mal hecha.** `js/auth.js` decía en un comentario
+que ese arranque «corre en las catorce pantallas». Corre en **once**: son las que cargan el
+archivo. Hoy hay dieciséis pantallas, así que el número no era ni el viejo ni el nuevo — era
+uno que nunca se volvió a contar. Se corrigió en las tres copias del archivo y en el pasaje
+de este documento que lo repetía.
 
 ### Las pantallas también dicen Aviso, y el «Wizard» dejó de estar en inglés
 

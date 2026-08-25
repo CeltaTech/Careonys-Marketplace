@@ -23,26 +23,26 @@ dos repositorios y dos proyectos de Supabase independientes.
 Sitio estático en HTML, CSS y JavaScript plano, en proceso de migración a React + Vite para
 alinearse con el stack de Careonys.
 
+Medido el 25 de agosto de 2026 sobre el árbol de trabajo, no copiado de una versión anterior.
+
 | | |
 |---|---|
-| 12 pantallas HTML, 7.082 renglones | sin ruteo: cada pantalla es un archivo |
-| 2.600 renglones de JavaScript propio | 1.606 de ellos embebidos en el HTML |
-| 3.349 renglones de CSS en hojas de estilo | 32 variables con nombre, sin framework |
-| 2.566 declaraciones más, pegadas al HTML | en 772 atributos `style=` |
-| Supabase Auth funcionando | ninguna pantalla protegida |
-| 4 dependencias, todas por CDN | sin `package.json` ni compilación |
-| 6 tablas en Supabase | **sin migraciones en el repositorio** |
+| 16 pantallas HTML, 8.290 renglones | sin ruteo: cada pantalla es un archivo |
+| 8.423 renglones de JavaScript propio, en 28 archivos | 5.084 de ellos son copias byte a byte de otro archivo (pendiente 13) |
+| 2.883 renglones más metidos adentro del HTML | en 13 bloques `<script>` |
+| 4.170 renglones de hojas de estilo, en 7 archivos | 64 tokens con nombre en `css/tokens.css`, sin framework |
+| 2.166 declaraciones más, pegadas al HTML | en 687 atributos `style=` (pendiente 8) |
+| Supabase Auth funcionando | 11 de las 16 pantallas rescatan la sesión al abrir |
+| 4 servidores de afuera, sin `package.json` ni compilación | dos de tipografías y dos de bibliotecas |
+| 22 tablas y 16 migraciones en el repositorio | 13 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
 
-**El cuadro de acá arriba es del arranque del proyecto y ya no dice la verdad**: hoy hay
-dieciséis migraciones en `supabase/migrations/` y veintidós tablas. Quedó anotado como
-pendiente 54. Lo que sí sigue siendo cierto es que **media base está nombrada en inglés**
-—`caregivers`, `tenants`, `clock_ins`—, contra el glosario; el 25 de agosto de 2026 se
-renombró la parte de esta modalidad (`avisos`, `franjas_aviso`,
-`directorio`) y el resto quedó como estaba, porque renombrar una tabla ya guardada
-arrastra el código que la nombra.
+**Media base sigue nombrada en inglés** —`caregivers`, `tenants`, `clock_ins`—, contra el
+glosario. El 25 de agosto de 2026 se renombró la parte de esta modalidad (`avisos`,
+`franjas_aviso`, `directorio`) y el resto quedó como estaba, porque renombrar una
+tabla ya guardada arrastra el código que la nombra y eso lo decide el Desarrollador.
 
 ## Qué documento manda sobre qué
 

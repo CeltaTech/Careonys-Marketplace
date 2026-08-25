@@ -193,10 +193,11 @@ const Sesion = {
 };
 
 // ── Al cargar: restaurar sesión y propagar token ─────────
-// Acá no se avisa en pantalla a propósito: esto corre en las catorce pantallas y
-// su único trabajo es pasarle el permiso al cliente de datos. Si falla, el primer
-// pedido de la pantalla va a fallar también, y esa pantalla sí sabe cómo decirlo.
-// Lo que no puede pasar es que el fallo se pierda sin dejar rastro.
+// Acá no se avisa en pantalla a propósito: esto corre en las once pantallas que
+// cargan este archivo, y su único trabajo es pasarle el permiso al cliente de
+// datos. Si falla, el primer pedido de esa pantalla va a fallar también, y esa
+// pantalla sí sabe cómo decirlo. Lo que no puede pasar es que el fallo se pierda
+// sin dejar rastro.
 (async () => {
   try {
     const session = await Sesion.getSession();
