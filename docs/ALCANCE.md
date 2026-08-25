@@ -658,6 +658,30 @@ Lo que no se arregla con esto es el correo del proyecto alojado, que sigue con e
 fábrica y su tope bajo. Eso es el pendiente 45, y toca al alta de verdad, no sólo a las pruebas.
 
 
+### El servidor de mirar las pantallas ya no muestra la versión vieja
+
+Cierra el pendiente 42, el 25 de agosto de 2026. Lo que faltaba era comprobar si el programa que
+levanta el servidor toma `.claude/launch.json` cuando cambia. **Toma uno, pero no el del
+proyecto.**
+
+- **Hay dos archivos con ese nombre y gana el de arriba.** El que se lee es
+  `F:\proyectos\celtatech\.claude\launch.json`, el de la carpeta desde donde arranca la sesión,
+  no `Careonys-Marketplace/.claude/launch.json`. Ahí la configuración `marketplace` seguía diciendo
+  `python -m http.server`, que es exactamente el servidor que no manda ninguna instrucción sobre
+  guardar copias: por eso el arreglo escrito el 24 de agosto no se notaba. Los dos archivos dicen
+  ahora lo mismo y nombran `scripts/servidor_local.py`.
+- **El servidor publica la carpeta del proyecto**, calculada desde la ubicación de su propio
+  archivo, y no aquella desde la que lo llamaron. Levantado desde un nivel más arriba publicaba de
+  más y las direcciones no coincidían: contestaba igual, que es la peor forma de estar mal.
+- **Comprobado pidiendo el mismo archivo antes y después.** Antes: `200 OK` sin ninguna instrucción
+  sobre copias. Después: `Cache-Control: no-store, must-revalidate`, `Pragma: no-cache`,
+  `Expires: 0`, y `pwa-asistente/index.html` sigue contestando `200`.
+
+**Ninguno de los dos `launch.json` está en el repositorio**: `.gitignore:21` excluye `.claude/`
+entero. Lo que se sube es el guion; la configuración que lo llama vive sólo en esta máquina, así
+que en otra hay que volver a escribirla.
+
+
 ### El directorio muestra a gente que existe en la base, y sólo la de una Prestadora
 
 Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están hechas.
