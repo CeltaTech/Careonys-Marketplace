@@ -43,7 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ---- Contact form validation & Redirección al Wizard ----
-  const formsToHandle = document.querySelectorAll('#contact-form, #form-solicitud-familia');
+  // Los que llevan `data-guion-propio` quedan afuera: su página tiene su
+  // propio envío, que además guarda. Con los dos enganchados corrían los
+  // dos, y éste prendía el cartel de «enviado» antes de que el guardado
+  // terminara, así que el cartel salía igual cuando el guardado fallaba.
+  const formsToHandle = document.querySelectorAll(
+    '#contact-form:not([data-guion-propio]), #form-solicitud-familia:not([data-guion-propio])');
   formsToHandle.forEach(form => {
     form.addEventListener('submit', e => {
       e.preventDefault();
