@@ -16,7 +16,7 @@
      3. De esas, ¿cuáles devuelven filas sin sesión? Una tabla que contesta con
         datos a quien no inició sesión está abierta, tenga o no políticas.
      4. De las que devuelven filas, ¿aparecen dos Prestadoras distintas? Eso es
-        la prueba de aislamiento del CLAUDE.md §2. **Y es la única de las cuatro
+        la prueba de aislamiento con dos Organizaciones que pide la empresa. **Y es la única de las cuatro
         que puede dar un falso "todo bien"**: si hay una sola Prestadora cargada,
         ver una sola no prueba nada. El guion lo avisa cuando pasa.
 
@@ -27,7 +27,8 @@
    imprime solo el nombre del servidor.
 
    Se niega a correr contra cualquier base que no sea la de este proyecto: la de
-   Careonys está en producción y no se toca desde acá (CLAUDE.md §1).
+   Careonys está en producción y no se toca desde acá (regla de los productos Careonys:
+   «Careonys no se toca desde el Marketplace»).
 =================================================== */
 
 import { readFileSync, readdirSync } from 'node:fs';
@@ -220,7 +221,7 @@ for (const { tabla } of abiertas) {
 if (!sePudoProbar) {
   console.log('   No se pudo probar: ninguna tabla accesible tiene columna de Prestadora con datos.');
   console.log('   La prueba honesta necesita DOS Prestadoras ficticias con datos, que es lo');
-  console.log('   que pide el CLAUDE.md §2. Con una sola, el resultado no distingue "aislado"');
+  console.log('   que pide la empresa. Con una sola, el resultado no distingue "aislado"');
   console.log('   de "siempre devuelve lo mismo".');
 }
 console.log('');

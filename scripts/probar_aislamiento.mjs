@@ -6,15 +6,19 @@
    Contra la base local, que es donde conviene correrla porque no manda
    correos ni gasta cuota:
 
-       supabase start -x edge-runtime -x vector -x supavisor -x logflare
-       supabase db reset
        node scripts/probar_aislamiento.mjs --local
+
+   Si el entorno local no está levantado, o si está atrasado respecto de
+   `supabase/migrations/`, primero:
+
+       supabase start -x edge-runtime -x vector -x supavisor -x logflare
+       supabase migration up --local
 
    Sin `--local` apunta al servidor que use la aplicación. Ojo con eso: el
    registro por correo del servidor remoto pide confirmar la casilla, así que
    ahí la prueba no llega a tener sesión.
 
-   El CLAUDE.md §2 la pide con estas palabras: "una prueba que devuelve una
+   La regla de la empresa la pide con estas palabras: "una prueba que devuelve una
    lista vacía no distingue 'aislado' de 'todo bloqueado'". Así que esta no
    mira listas vacías: registra cuentas ficticias, les hace escribir su legajo
    y publicar sus avisos, y recién entonces pregunta quién ve qué.
@@ -55,38 +59,46 @@
     17. Un legajo validado, pero sin contestar el cierre del alta, no se muestra.
     18. Con la autorización en «no», tampoco.
     19. Con la autorización en «sí», recién ahí aparece.
-    20. El directorio no devuelve ningún dato personal ni ningún camino del
-        depósito privado. (17 a 20 también necesitan --local, por lo mismo:
+    20. Y el directorio de la OTRA Prestadora no lo muestra. Es la razón de ser
+        de la migración 0021, y hasta el 26 de agosto de 2026 no lo probaba nada.
+    21. El directorio no devuelve ningún dato personal ni ningún camino del
+        depósito privado. (17 a 21 también necesitan --local, por lo mismo:
         validar un legajo es trabajo del personal de la Prestadora.)
+
+   El directorio se pide siempre por la puerta de UNA Prestadora
+   —`directorio_de(<nombre corto>)`, `perfil_del_directorio(<nombre corto>,
+   <id>)`—, porque la migración 0021 le quitó el permiso a `directorio`
+   para todo el mundo. Leerla derecho devuelve vacío siempre, y una prueba
+   escrita así no puede fallar.
 
    Y sobre el examen (migración 0008), que es lo que acredita que alguien sabe
    cuidar:
 
-    21. La respuesta correcta no se puede leer con sesión iniciada.
-    22. Las opciones sí se leen, y llegan sin la respuesta adentro.
-    23. Contestando mal, la base dice que no aprobó.
-    24. Contestando bien, aprueba.
-    25. Un intento aprobado no se puede escribir a mano.
-    26. Cada quien ve sus intentos y ninguno de otra persona.
-    27. Cuando se acaban los intentos, no deja rendir otra vez.
+    22. La respuesta correcta no se puede leer con sesión iniciada.
+    23. Las opciones sí se leen, y llegan sin la respuesta adentro.
+    24. Contestando mal, la base dice que no aprobó.
+    25. Contestando bien, aprueba.
+    26. Un intento aprobado no se puede escribir a mano.
+    27. Cada quien ve sus intentos y ninguno de otra persona.
+    28. Cuando se acaban los intentos, no deja rendir otra vez.
 
    Y sobre la barrera entre Familias de una misma Prestadora (migración 0020),
    que es la que faltaba entera:
 
-    28. Cada Familia publica su aviso.
-    29. Y el aviso sale a su nombre sin que ella lo haya mandado en el pedido.
-    30. Mandarlo a nombre de otra no sirve: sale igual a nombre de quien escribe.
-    31. Una Familia no ve el aviso de la otra, ni pidiéndolo por su identificador.
-    32. Ni la otra el de ella.
-    33. No puede modificarlo.
-    34. Ni borrarlo: sigue estando cuando su dueña lo pide.
-    35. No ve los horarios de ese aviso.
-    36. Ni la conversación.
-    37. No lee ningún reporte: ni presión, ni glucemia, ni medicación.
-    38. No lee cómo pondera su puntaje la Prestadora (migración 0018), aunque
+    29. Cada Familia publica su aviso.
+    30. Y el aviso sale a su nombre sin que ella lo haya mandado en el pedido.
+    31. Mandarlo a nombre de otra no sirve: sale igual a nombre de quien escribe.
+    32. Una Familia no ve el aviso de la otra, ni pidiéndolo por su identificador.
+    33. Ni la otra el de ella.
+    34. No puede modificarlo.
+    35. Ni borrarlo: sigue estando cuando su dueña lo pide.
+    36. No ve los horarios de ese aviso.
+    37. Ni la conversación.
+    38. No lee ningún reporte: ni presión, ni glucemia, ni medicación.
+    39. No lee cómo pondera su puntaje la Prestadora (migración 0018), aunque
         esas filas existan: las siembra la propia migración, así que ver cero
         ahí es la política y no una tabla vacía.
-    39. Ni las puede cambiar.
+    40. Ni las puede cambiar.
 
    Todo con datos inventados. No toca ni una fila que ya estuviera cargada, y
    borra lo que crea. No muestra ninguna clave: usa la publicable, que es la
@@ -171,10 +183,22 @@ async function entrar(email, password) {
 }
 
 // --- Las dos Prestadoras ----------------------------------------------------
-const { cuerpo: prestadoras } = await rest('/rest/v1/tenants?select=id,slug,name');
-if (!Array.isArray(prestadoras) || prestadoras.length < 2) {
-  console.error('Hacen falta al menos dos Prestadoras cargadas. Hay: ' +
-    (Array.isArray(prestadoras) ? prestadoras.length : 0));
+// Se piden por su nombre corto, de a una. No se listan: la migracion 0021 quito
+// la lista a proposito —no existe ninguna respuesta que devuelva mas de una
+// Prestadora—, y una prueba no es motivo para reabrirla. Los dos nombres cortos
+// los crea la migracion 0003 y no cambian.
+const NOMBRES_CORTOS = ['presdemo', 'cuidarnorte'];
+const prestadoras = [];
+for (const slug of NOMBRES_CORTOS) {
+  const { cuerpo } = await rest('/rest/v1/rpc/prestadora_por_slug', {
+    method: 'POST',
+    body: JSON.stringify({ p_slug: slug })
+  });
+  if (Array.isArray(cuerpo) && cuerpo.length === 1) prestadoras.push(cuerpo[0]);
+}
+if (prestadoras.length < 2) {
+  console.error('Hacen falta las dos Prestadoras ficticias de la migracion 0003 (' +
+    NOMBRES_CORTOS.join(', ') + '). Se resolvieron: ' + prestadoras.length);
   process.exit(1);
 }
 const [A, B] = prestadoras;
@@ -463,10 +487,18 @@ if (!coordinador) {
     body: JSON.stringify({ verification_status: 'validado_prestadora' })
   }, coordinador.token);
 
-  const enDirectorio = async () => {
-    const { cuerpo } = await rest('/rest/v1/directorio?select=id&id=eq.' + a.legajoId);
-    return Array.isArray(cuerpo) && cuerpo.length === 1;
+  // El directorio se pide por la puerta de UNA Prestadora, que desde la migracion
+  // 0021 es la unica que existe: `directorio` no esta concedida a nadie, asi
+  // que leerla directo devuelve vacio siempre y una prueba escrita asi no puede
+  // fallar.
+  const enDirectorioDe = async slug => {
+    const { cuerpo } = await rest('/rest/v1/rpc/directorio_de', {
+      method: 'POST',
+      body: JSON.stringify({ p_slug: slug })
+    });
+    return Array.isArray(cuerpo) && cuerpo.some(f => f.id === a.legajoId);
   };
+  const enDirectorio = () => enDirectorioDe(a.prestadora.slug);
 
   const sinContestar = await enDirectorio();
   comprobar('Validado pero sin contestar: el directorio no lo muestra',
@@ -491,7 +523,17 @@ if (!coordinador) {
   comprobar('Contestó que sí: recién ahí aparece en el directorio',
     dijoQueSi === true, dijoQueSi ? 'aparece' : 'no aparece');
 
-  const { cuerpo: fila } = await rest('/rest/v1/directorio?id=eq.' + a.legajoId);
+  // Y la puerta del otro lado: el directorio de la Prestadora ajena no lo trae.
+  // Es la razon de ser de la migracion 0021, y sin esta comprobacion las tres de
+  // arriba pasarian igual con el directorio mezclando las dos empresas.
+  const enElAjeno = await enDirectorioDe(B.slug);
+  comprobar('Y el directorio de la otra Prestadora no lo muestra',
+    enElAjeno === false, enElAjeno ? 'aparece en el ajeno' : 'no aparece en el ajeno');
+
+  const { cuerpo: fila } = await rest('/rest/v1/rpc/perfil_del_directorio', {
+    method: 'POST',
+    body: JSON.stringify({ p_slug: a.prestadora.slug, p_id: a.legajoId })
+  });
   const columnas = Array.isArray(fila) && fila[0] ? Object.keys(fila[0]) : [];
   const prohibidas = ['dni', 'phone', 'email', 'address', 'bank_info', 'cuit',
                       'documents', 'birthdate', 'reference_info', 'education_info'];
@@ -731,14 +773,14 @@ console.log('Dos Familias de la misma Prestadora');
     Array.isArray(ponderacionesVisibles) ? ponderacionesVisibles.length + ' filas'
                                          : JSON.stringify(ponderacionesVisibles));
 
-  const retoque = await rest('/rest/v1/ponderacion_comprobacion?comprobacion=eq.domicilio', {
+  const retoquePonderacion = await rest('/rest/v1/ponderacion_comprobacion?comprobacion=eq.domicilio', {
     method: 'PATCH',
     headers: { Prefer: 'return=representation' },
     body: JSON.stringify({ ponderacion: 99 })
   }, otraFamilia.token);
   comprobar('Ni se cambian',
-    Array.isArray(retoque.cuerpo) && retoque.cuerpo.length === 0,
-    'tocó ' + (Array.isArray(retoque.cuerpo) ? retoque.cuerpo.length : '?') + ' filas');
+    Array.isArray(retoquePonderacion.cuerpo) && retoquePonderacion.cuerpo.length === 0,
+    'tocó ' + (Array.isArray(retoquePonderacion.cuerpo) ? retoquePonderacion.cuerpo.length : '?') + ' filas');
 }
 
 // --- Limpieza ---------------------------------------------------------------
@@ -761,7 +803,12 @@ for (const c of cuentas) {
     });
   }
 }
-const { cuerpo: quedan } = await rest('/rest/v1/directorio?select=id&full_name=like.Legajo Ficticio*');
+const { cuerpo: quedan } = await rest('/rest/v1/rpc/directorio_de', {
+  method: 'POST',
+  body: JSON.stringify({ p_slug: NOMBRES_CORTOS[0] })
+}).then(r => ({ cuerpo: Array.isArray(r.cuerpo)
+  ? r.cuerpo.filter(f => String(f.full_name || '').startsWith('Legajo Ficticio'))
+  : r.cuerpo }));
 console.log('Legajos de prueba borrados. Quedan visibles en el directorio: ' +
   (Array.isArray(quedan) ? quedan.length : '?'));
 console.log('Las cuentas ficticias quedan en auth.users: se borran con el resto de los datos');

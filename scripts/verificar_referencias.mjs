@@ -3,7 +3,8 @@
 
        node scripts/verificar_referencias.mjs
 
-   `CLAUDE.md` §7 pide que toda afirmación sobre una decisión ya tomada cite
+   La regla de la empresa «documentación verificable» pide que toda afirmación sobre
+   una decisión ya tomada cite
    **archivo y renglón exacto**, «verificable en segundos». Una cita así vale
    exactamente mientras el renglón siga estando donde estaba: el archivo crece
    por arriba, la cita se queda quieta y termina señalando una llave de cierre.
@@ -64,7 +65,8 @@ const FOTOS = new Map([
 const AJENOS = new Map([
   ['supabase/migrations/20260820190000_el_canal_del_asistente_se_elige_y_se_respeta.sql',
    'es una migración de Careonys, que tiene su propio repositorio y no se toca desde acá ' +
-   '(CLAUDE.md §1). La cita queda porque de ahí sale la frase que se transcribe']
+   '(regla de los productos Careonys: «Careonys no se toca desde el Marketplace»). ' +
+   'La cita queda porque de ahí sale la frase que se transcribe']
 ]);
 
 /* Carpetas de trabajo de quien desarrolla: no son documentación del proyecto. */

@@ -122,8 +122,9 @@ Cómo quedó:
   perfil (`js/apiClient.js:43`); sin sesión, el enlace elige qué directorio se muestra y nada más.
 - **Los archivos siguen la misma regla.** Ver la fila «Archivos del legajo» de arriba.
 
-Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, dieciséis
-comprobaciones. Y falsificado a propósito para verificar que se pone en rojo cuando corresponde.
+Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, cuarenta y nueve
+comprobaciones el 26 de agosto de 2026. Y falsificado a propósito para verificar que se pone en
+rojo cuando corresponde.
 
 ### El nombre del producto salió del código
 
@@ -557,7 +558,7 @@ distancia costaba dos cosas que ya no cuestan:
 - **La 0012 le dio lugar a la disponibilidad** y cambió el nombre de una tabla, abajo.
 - **La 0013 le dio lugar a lo que pide una Familia**, que es lo que sigue.
 
-Queda dicho porque el estado real manda sobre el documentado (`CLAUDE.md` §7): un archivo en
+Queda dicho porque el estado real manda sobre el documentado (la regla de la empresa «el estado real está por encima del documentado»): un archivo en
 `supabase/migrations/` describe lo que se quiso aplicar, no lo que corre. Esto último se preguntó.
 Para la 0012 se preguntó dos veces, porque la primera vez el programa dijo que había terminado y
 la migración había fallado a la mitad: se le pidió a la base, tabla por tabla, que dijera qué
@@ -769,19 +770,54 @@ en «no», desaparece. Es exactamente el camino que antes no existía.
 
 Cierra el pendiente 39, el 25 de agosto de 2026.
 
-La prueba de la que depende el `CLAUDE.md` §2 se había quedado sin poder arrancar: empieza creando
-cuentas ficticias y el servidor alojado las rechaza. El propio pendiente proponía tres caminos y
-dejaba el tercero sin probar. Es el que anda.
+La prueba de la que depende la regla de la empresa «aislamiento entre Organizaciones» se había
+quedado sin poder arrancar: empieza creando cuentas ficticias y el servidor alojado las rechaza.
+El propio pendiente proponía tres caminos y dejaba el tercero sin probar. Es el que anda.
 
-- **Corre contra la base local**, con `supabase start` y `node scripts/probar_aislamiento.mjs --local`.
-  Ahí el registro no manda ningún correo, así que ni el tope ni la confirmación la frenan.
+- **Corre contra la base local**, con `node scripts/probar_aislamiento.mjs --local`. Ahí el
+  registro no manda ningún correo, así que ni el tope ni la confirmación la frenan.
 - **Pasaron las 36 comprobaciones**, dos corridas seguidas: las tablas, los archivos de los dos
   depósitos, el directorio con su consentimiento y el examen que corrige la base.
-- **Y la base local está al día**: las catorce migraciones aplicadas desde cero, con las dos
-  Prestadoras ficticias que la prueba necesita para distinguir «aislado» de «todo bloqueado».
+- **Y la base local estaba al día**: las catorce migraciones de entonces aplicadas desde cero, con
+  las dos Prestadoras ficticias que la prueba necesita para distinguir «aislado» de «todo
+  bloqueado».
 
 Lo que no se arregla con esto es el correo del proyecto alojado, que sigue con el servicio de
 fábrica y su tope bajo. Eso es el pendiente 45, y toca al alta de verdad, no sólo a las pruebas.
+
+
+### Y después se pudrió en diez migraciones, hasta que volvió a correr el 26 de agosto de 2026
+
+Diez migraciones después de aquella corrida, la prueba **ya no arrancaba y nadie se había
+enterado**. Es el caso exacto que la regla «una prueba que no puede fallar no prueba nada»
+describe, y esta vez salió a la luz en las tres formas de una vez.
+
+- **No compilaba.** Dos `const retoque` en el mismo alcance: Node ni siquiera llegaba a abrir una
+  conexión. Renombrada la segunda a `retoquePonderacion`.
+- **La base local estaba diez migraciones atrás**, en la 0014, mientras el servidor alojado ya
+  tenía las 24. Lo primero que devolvió la prueba fueron ocho fallos de «no encuentro la tabla»
+  que no eran agujeros de aislamiento: eran tablas que en esa base no existían.
+- **Y arrancaba pidiendo la lista de Prestadoras**, que la migración 0021 quitó a propósito. Con
+  las migraciones al día, la prueba se cortaba en el primer renglón: «hacen falta dos
+  Prestadoras, hay 0». Ahora las pide de a una por su nombre corto, con
+  `prestadora_por_slug`, que es la única puerta que quedó.
+
+**El fallo que importó es el del directorio, y lo destapó la única comprobación positiva que
+tenía.** La prueba leía `directorio` derecho, y la 0021 le sacó el permiso a todo el mundo:
+las dos comprobaciones que esperan **no** ver a nadie seguían diciendo «bien», porque no veía a
+nadie nunca. La tercera —la que exige que la persona **sí** aparezca después de autorizar— es la
+que se puso en rojo. Sin ella, tres comprobaciones rotas habrían seguido pasando por años. Hoy el
+directorio se pide por `directorio_de(<nombre corto>)` y el perfil por
+`perfil_del_directorio(<nombre corto>, <id>)`.
+
+**Y se le agregó la comprobación que faltaba desde la 0021:** que el legajo publicado de una
+Prestadora **no** aparezca en el directorio de la otra. Es la razón de ser de esa migración, y
+hasta hoy nada la verificaba.
+
+**Resultado: 49 comprobaciones, todas en verde**, contra las 24 migraciones. Cubren el perfil que
+crea el registro, el legajo, los archivos de los dos depósitos, el directorio de cada Prestadora,
+el examen, y la barrera entre dos Familias de una misma Prestadora —avisos, horarios, mensajes,
+reportes y ponderaciones—.
 
 
 ### El servidor de mirar las pantallas ya no muestra la versión vieja
@@ -1128,7 +1164,7 @@ historia de git para quien lo necesite.
 
 El 25 de agosto de 2026.
 
-**El problema.** `CLAUDE.md` §7 pide que toda afirmación sobre una decisión ya tomada cite
+**El problema.** La regla de la empresa «documentación verificable» pide que toda afirmación sobre una decisión ya tomada cite
 **archivo y renglón exacto**, «verificable en segundos». Ese día había 94 citas con renglón en la
 documentación y **26 apuntaban a la nada**: una de cada cuatro. No porque alguien se equivocara al
 escribirlas, sino porque una cita con renglón se rompe sola: el archivo crece por arriba, la cita

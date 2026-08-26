@@ -47,17 +47,17 @@ modelos distintos del mismo hecho, y hay que elegir uno. Está anotado en los pe
 
 Antes de escribir cualquiera de las diez, y sin excepción:
 
-1. **RLS estricta en la misma migración que crea la tabla** (`CLAUDE.md` §4), nunca agregada
+1. **RLS estricta en la misma migración que crea la tabla** (la regla de la empresa «RLS estricta en toda tabla nueva»), nunca agregada
    después a mano desde el panel.
-2. **`prestadora_id` en toda tabla con datos propios de una Organización** (`CLAUDE.md` §5.10),
+2. **`prestadora_id` en toda tabla con datos propios de una Organización** (la regla de la empresa «toda tabla nace con clave `uuid` y con la columna de su Organización»),
    aunque hoy siempre valga lo mismo. Ninguna de las diez propuestas lo tiene: el material
    heredado fue escrito para una sola empresa. **Es la corrección más importante de esta página.**
-3. **Clave primaria UUID** (`CLAUDE.md` §5.10). Las propuestas ya lo cumplen, salvo `favoritos`,
+3. **Clave primaria UUID** (la misma regla). Las propuestas ya lo cumplen, salvo `favoritos`,
    que usa una clave compuesta, y `configuracion`, que usa un texto.
-4. **Todo importe se guarda con su moneda** (`CLAUDE.md` §5.11). `pagos` lo cumple;
+4. **Todo importe se guarda con su moneda** (la regla de la empresa del mismo nombre). `pagos` lo cumple;
    `postulaciones.tarifa_propuesta` **no**, y es un número suelto.
 5. **Ninguna palabra propia de esta modalidad entra en un módulo compartido**
-   (`CLAUDE.md` §5.12). De las diez, ocho son propias de la modalidad de este producto y sólo dos
+   (la regla de la empresa «ninguna palabra propia de un producto entra en un módulo»). De las diez, ocho son propias de la modalidad de este producto y sólo dos
    son compartidas. La columna «De qué lado cae» de cada ficha lo dice.
 
 **La colisión de vocabulario que había acá se decidió.** El material heredado llamaba `avisos`
@@ -192,7 +192,7 @@ extra, fecha.
 
 **Falta `prestadora_id`**, y falta el canal. **Y falta lo más importante para una tabla
 compartida**: los tipos propuestos incluyen `postulacion`, que es una palabra propia de esta
-modalidad y no puede aparecer en un módulo compartido (`CLAUDE.md` §5.12). El tipo tiene que salir
+modalidad y no puede aparecer en un módulo compartido (la regla de la empresa «ninguna palabra propia de un producto entra en un módulo»). El tipo tiene que salir
 de un catálogo, no de una lista escrita adentro de la tabla.
 
 ---
@@ -261,7 +261,7 @@ porcentaje cobra la plataforma.
 **La idea es correcta y es «los catálogos salen de la base»** —nada de eso se escribe adentro de una pantalla—, pero
 la forma propuesta tiene dos problemas: guarda todo como texto con una columna que dice de qué
 tipo es, y **no tiene `prestadora_id`**, cuando la mitad de esos valores son justamente lo que
-puede variar de una Prestadora a otra. Eso es «configuración sobre programación» (`CLAUDE.md` §2)
+puede variar de una Prestadora a otra. Eso es «configuración sobre programación» (la regla de los productos Careonys «una diferencia entre Prestadoras se resuelve con configuración, nunca con código»)
 al revés.
 
 Los valores que traía escritos hablan de puntos, de niveles y de comisiones: todo congelado por

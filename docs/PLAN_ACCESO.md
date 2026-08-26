@@ -1,6 +1,6 @@
 # Plan: la sesión pasa a ser el límite
 
-> Inventario y plan previos a tocar código, como pide `CLAUDE.md` §6. Cierra los pendientes 1 y
+> Inventario y plan previos a tocar código, como pide la regla de la empresa «antes de un cambio grande». Cierra los pendientes 1 y
 > 4, y destraba el 19 y el 2.
 >
 > Fecha: 24 de agosto de 2026.
@@ -82,7 +82,7 @@ alguien** y **qué puede ver de ella**.
   de los datos.
 - **Los roles conservan sus nombres actuales.** `profiles.role` guarda hoy `familiar` y
   `caregiver`, en inglés y mezclados. Renombrarlos es migrar datos guardados, y eso se consulta
-  antes (`CLAUDE.md` §7). Se agrega `coordinador`, que el glosario ya aprobó (§1), y nada más.
+  antes (la regla de la empresa «se consulta cuando hay que borrar o pisar datos»). Se agrega `coordinador`, que el glosario ya aprobó (§1), y nada más.
 - **El alta de personal de la Prestadora no se construye acá.** Hoy esas cuentas se cargan a
   mano; que una Prestadora pueda invitar a su gente es una pantalla propia y va después.
 
@@ -137,7 +137,7 @@ Desarrollador, no un arreglo de código, y está anotada como pendiente 21.
 `scripts/probar_aislamiento.mjs` pasó de nueve comprobaciones a dieciséis; con dos Prestadoras
 ficticias, las veinticinco de la corrida completa dan verde. Y se falsificaron a propósito
 —abriendo una política permisiva sobre `storage.objects`— para verificar que cuatro de ellas se
-ponen rojas: una prueba que no puede fallar no prueba nada (`CLAUDE.md` §7).
+ponen rojas: una prueba que no puede fallar no prueba nada (la regla de la empresa del mismo nombre).
 
 El recorrido completo se hizo además en el navegador contra un servidor local: alta con los cinco
 archivos, sesión de coordinadora que ve exactamente los tres legajos de su Prestadora, sesión de

@@ -44,7 +44,7 @@ Prestadora es. Está guardada así desde el principio y no se renombra, porque �
 un identificador guardado se queda como está. En texto visible, entonces, «perfil» es siempre lo que
 se muestra de un Asistente; la ficha de la cuenta no se nombra en pantalla.
 
-**Cómo se agrega uno:** pasa las cinco preguntas de `..\..\..\CLAUDE.md` §4 y se escribe acá con
+**Cómo se agrega uno:** pasa las cinco preguntas del glosario de la empresa (`..\..\..\CLAUDE.md`) y se escribe acá con
 su definición según los criterios de ahí. Recién entonces se usa en código.
 
 **«Registrarse» y «postularse» son dos actos distintos, no dos sentidos de una misma palabra.**
@@ -71,7 +71,7 @@ para integrar el plantel de una Prestadora, que también lo es; y en `docs/MODUL
 `docs/PLAN_ACCESO.md` son fotos fechadas —del 22 y del 24 de agosto de 2026—, y en esos días la
 pantalla de verdad se llamaba así. Corregirles el relato sería falsear lo que decían. Es el
 mismo motivo por el que `scripts/verificar_referencias.mjs` no les revisa los renglones citados,
-escrito en `scripts/verificar_referencias.mjs:51`. **Sí se les cambió el nombre del archivo**,
+escrito en `scripts/verificar_referencias.mjs:52`. **Sí se les cambió el nombre del archivo**,
 que no es relato sino un puntero: una foto que remite a un archivo inexistente no le sirve a
 nadie. El relato quedó intacto, así que ahí adentro «postulación» sigue nombrando lo que en esos
 días se llamaba así.

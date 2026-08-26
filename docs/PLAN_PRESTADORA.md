@@ -1,6 +1,6 @@
 # Plan: sacar a «PresDemo» de las pantallas
 
-> **Esto es una propuesta, no un cambio hecho.** El `CLAUDE.md` §6 pide inventario, después plan,
+> **Esto es una propuesta, no un cambio hecho.** La regla de la empresa «antes de un cambio grande» pide inventario, después plan,
 > y recién después tocar código. Acá están los dos primeros pasos. **Falta la aprobación del
 > Desarrollador.**
 >
@@ -19,7 +19,7 @@ lugares le va a mostrar el nombre de otra empresa.
 
 Eso choca con dos reglas escritas:
 
-- **`CLAUDE.md` §2:** *"¿Esto funciona correctamente cuando existan cientos de Prestadoras usándolo
+- **La regla de los productos careonys «toda decisión técnica se valida contra cientos de Prestadoras a la vez»:** *"¿Esto funciona correctamente cuando existan cientos de Prestadoras usándolo
   simultáneamente?"* — hoy la respuesta es no.
 - **`CLAUDE.md`, «nunca hardcodear»:** nada de texto visible escrito a mano. La marca de la Prestadora es
   un dato de la Prestadora, no una constante del programa.
@@ -128,6 +128,7 @@ datos de muestra de `data/`, que son datos y no pantalla.
   (pendiente 13). Todo cambio va tres veces, y nada garantiza que sigan iguales. Se puede aplicar
   el mismo remedio que a `identidad.js`: que el chequeo verifique las tres copias.
 - **La base no responde** (pendiente 2), así que hoy no se puede probar con una Prestadora de
-  verdad. La prueba honesta es con **dos** Prestadoras ficticias distintas, que es lo que pide el
-  `CLAUDE.md` §2: una sola no distingue «anda» de «siempre muestra la misma».
+  verdad. La prueba honesta es con **dos** Prestadoras ficticias distintas, que es lo que pide
+  la regla de la empresa «una prueba de aislamiento se hace con dos Organizaciones con datos
+  cargados»: una sola no distingue «anda» de «siempre muestra la misma».
 - **Es una recorrida del documento más por página.** Medible, chico, pero se mide.

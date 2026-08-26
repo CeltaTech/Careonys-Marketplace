@@ -6,15 +6,15 @@
    Mira `supabase/migrations/*.sql`. No consulta la base: mira lo que dice cada
    migración, que es lo único que se puede comprobar sin red y antes de un commit.
    Lo que corre hoy en el servidor es otra pregunta y se responde mirando el
-   servidor (`CLAUDE.md` §7, «estado real por encima del documentado»).
+   servidor (regla de la empresa «el estado real está por encima del documentado»).
 
    Las cinco:
 
    1. **Toda tabla nueva enciende su RLS en la misma migración que la crea**
-      (`CLAUDE.md` §4). Encenderla después, a mano desde el panel, deja una ventana
+      (regla de la empresa «RLS estricta en toda tabla nueva»). Encenderla después, a mano desde el panel, deja una ventana
       abierta entre las dos cosas, y deja el repositorio diciendo algo que no es.
    2. **Toda función `SECURITY DEFINER` le revoca el permiso a `PUBLIC` y a `anon`
-      en la misma migración** (§4). Una función así del esquema `public` es además
+      en la misma migración** (la misma regla). Una función así del esquema `public` es además
       una dirección web, porque PostgREST publica ese esquema: con permiso para
       `anon`, cualquiera con la clave pública la llama sin sesión. Revocarle a
       `PUBLIC` no alcanza: el de `anon` es una concesión aparte. No se mira

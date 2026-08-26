@@ -106,7 +106,7 @@ prueba de la §3 y no leyendo el SQL.
 8. **Toda función `SECURITY DEFINER` revoca `PUBLIC` y `anon`** en la misma migración que la crea.
    Las que consumen las políticas conservan `authenticated` y solo pierden el anónimo — y cuál de
    los dos casos es se verifica **probando contra una tabla cuya política llame a esa función**,
-   no contra cualquier tabla. Ver `CLAUDE.md` §4.
+   no contra cualquier tabla. Ver la regla de la empresa «la base de datos: sólo por migraciones».
 9. **Toda migración versionada en `supabase/migrations/`.** Hoy el esquema vive solo dentro de
    Supabase y no hay forma de reconstruirlo.
 10. **Los nombres salen del glosario.** `caregivers` es Asistente, `tenants` es Prestadora,
