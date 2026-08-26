@@ -2529,6 +2529,40 @@ que se llama `directorio` desde la migración 0015. No eran un desvío —estaba
 dos bases, porque salen de las migraciones—, era texto que ya no describía lo que hay.
 
 
+### Las dos bases dicen lo mismo sin excepciones, y las sobras se fueron
+
+Cuando `scripts/comparar_bases.mjs` empezó a comparar las dos bases fila por fila, quedaron once
+que están publicadas y ninguna migración carga. En ese momento se anotaron como pendiente y se
+dejó la decisión al Desarrollador, porque borrar es pisar datos. La decisión llegó el 26 de agosto
+de 2026, y fue que se vayan las once: **aunque sean ficticios, los datos tienen que ser coherentes
+y las bases no pueden estar desprolijas.**
+
+Y no era un problema estético. Esas filas se ven: el directorio de la Organización de pruebas
+—que es justamente lo que se le muestra a un cliente en una demostración— mostraba tres veces la
+misma persona inventada, un legajo con el nombre, el documento, el teléfono y el correo todos
+vacíos, y un correo con el nombre anterior del producto adentro.
+
+**De paso se corrigió una afirmación que este documento traía mal.** El pendiente decía que los
+cinco perfiles «estaban bien», porque los crea al registrarse alguien el disparador de la
+migración 0005. No era así, y se comprobó de dos maneras: tres de los cinco tienen identificador
+escrito a mano —unos, dos y tres repetidos— que ninguna cuenta de acceso genera, los otros dos se
+cargaron en la misma transacción al mismo microsegundo, cosa que dos altas separadas no hacen, y
+sobre todo **`profiles` no tiene ninguna clave foránea hacia `auth.users`**: una fila ahí no
+prueba que exista una cuenta detrás. Eran filas sueltas de la época en que se escribía contra la
+base.
+
+Las borra `supabase/migrations/0031_se_van_las_sobras_de_la_base_publicada.sql`, que **nombra una
+por una las once** en su encabezado, para que quede el rastro de qué había cuando ya no se pueda
+mirar. Doce tablas apuntan a un legajo, así que primero se va lo que cuelga y recién después el
+legajo. El borrado va por identificador y no por una condición del tipo «lo que no cargó ninguna
+migración»: una condición así se lleva puesto también lo que cargue alguien mañana usando el
+producto. En la base local la migración no hace nada, porque ninguno de esos once identificadores
+existe en una base recién construida — que es exactamente de lo que se trata.
+
+**Comprobado corriendo la comparación después:** ya no lista ninguna fila de más. Lo único que
+sigue difiriendo son las fechas que cada base se pone al construirse, que el guion cuenta y dice
+en voz alta en vez de esconder.
+
 ### La dirección pública volvió a servir lo que hay publicado
 
 Durante días el sitio `careonys-marketplace.vercel.app` mostró el producto de veintiún días
