@@ -2330,6 +2330,56 @@ no se ejecutó ninguna operación con una sesión de Asistente de verdad, porque
 existe (pendientes 45 y 47). Todo lo de arriba sale del texto de las políticas y de los permisos
 leídos de la base en vivo. Es mucho más que leer las migraciones y es menos que haberlo intentado.
 
+### El catálogo dejó de decir dónde se lo usa, y pasó a calcularlo
+
+Cada uno de los veinticuatro vocabularios de `data/catalogo-vocabularios.json` lleva una lista
+`usado_en` que dice en qué pantalla y en qué renglón se lo usa. Se medió contra los archivos
+reales: **de las 36 citas con renglón, acertaba una** —la de `motivo_consulta` en
+`soporte-remoto.html:143`—, y una apuntaba al renglón 510 de un archivo que tiene 486. No fue
+descuido de nadie. Esa lista se mantenía a mano y el marcado se mueve todos los días; y
+`scripts/verificar_referencias.mjs`, que es el que comprueba que toda cita apunte a algo, mira los
+trece documentos de `docs/` y no entra en `data/`. Por eso pasaron dieciséis chequeos sin que
+nadie las mirara.
+
+**Se cambió el sentido de la lista: en vez de escribirse, se calcula.** El chequeo nuevo es
+`scripts/verificar_usos.mjs`, y con `--escribir` rehace la lista y vuelve a copiar el archivo a
+las dos aplicaciones, así `copias` sigue en verde. Sin esa opción sólo compara, en los dos
+sentidos: cada cita tiene que apuntar a un renglón donde el vocabulario se nombre, y cada lugar
+donde se lo nombra tiene que estar en la cita.
+
+**Un vocabulario llega a la pantalla por seis puertas, y todas se declaran.** `data-catalogo="X"`
+en el marcado; `data-campo="algo@X"`, que es lo mismo dicho desde la declaración de un campo;
+`"vocabulario": "X"` en `data/catalogo-fichas.json`, que es como las fichas del legajo declaran
+los suyos; `"filas"` y `"columnas"` en `data/catalogo-disponibilidad.json`, de donde la grilla saca
+los días y los turnos; `Catalogo.items('X')` y `Catalogo.etiquetaSiExiste('X', …)`, que son las dos
+puertas del catálogo que reciben el nombre; y la lista que recorre `etiquetaDeTarea` en
+`js/catalogo.js:325`, que busca una tarea en tres vocabularios seguidos.
+
+**Y lo que no cuenta importa igual que lo que cuenta.** Que el nombre aparezca entre comillas no
+alcanza: `genero`, `zona`, `frecuencia` y `patologia` son además nombres de columna de la base.
+`input[name="patologia"]` y `elegidas('tarea_cuidado')` **leen de vuelta** lo que el catálogo ya
+dibujó, así que contarlos sería contar dos veces el mismo lugar. Y el encabezado de
+`js/catalogo.js` trae `data-catalogo="genero"` escrito adentro de un comentario, como ejemplo: por
+eso esa forma se busca sólo en los `.html`. Las copias tampoco se citan — un portador que aparece
+en una copia se le atribuye a su original, que es donde hay que ir a tocarlo, y la lista de copias
+sale de `scripts/verificar_copias.mjs`, que pasó a exportarla para no tener dos listas.
+
+**La prueba de que el chequeo mira.** Se corrió **antes** de arreglar nada, y encontró las 35
+citas falsas, que es lo que pedía la condición de cierre. Después, con la lista ya calculada y el
+chequeo en verde, se metió un renglón vacío arriba del `data-catalogo="patologia"` de
+`directorio.html:82` — o sea, se corrió todo lo de abajo un renglón. El chequeo se puso rojo y
+nombró los cinco vocabularios afectados, diciendo de cada uno el renglón viejo y el nuevo. Se
+restauró el archivo y volvió al verde. Un chequeo que no se prueba así puede estar mirando cero
+archivos y decir que sí.
+
+**Quedan 69 citas de 24 vocabularios, cada una en el renglón que dice, y son diecisiete
+chequeos.** Y salió una corrección de la primera medición, que conviene decir porque estaba
+escrita en `docs/PENDIENTES.md`: los vocabularios que no usa nadie no son cinco, son dos
+—`verificacion` y `discapacidad`—. `tarea_hogar`, `tarea_acompanamiento` y `puesto_experiencia` sí
+se usan, desde `data/catalogo-fichas.json`, que la primera pasada no miraba. Los dos que quedan el
+chequeo los informa y no rompe: que sobren o que falte la pantalla que los iba a pedir es una
+decisión, no un defecto.
+
 
 ## 2. Falta construir
 

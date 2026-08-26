@@ -23,7 +23,7 @@ import { dirname, join, resolve, sep } from 'node:path';
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 // Cada grupo: el primero es el original, los demás son sus copias.
-const GRUPOS = [
+export const GRUPOS = [
   ['js/identidad.js', 'pwa-asistente/js/identidad.js', 'pwa-familia/js/identidad.js'],
   ['js/texto.js', 'pwa-asistente/js/texto.js', 'pwa-familia/js/texto.js'],
   ['js/clave.js', 'pwa-asistente/js/clave.js', 'pwa-familia/js/clave.js'],
