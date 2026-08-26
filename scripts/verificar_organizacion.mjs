@@ -31,8 +31,11 @@
 
      1. **Ningún nombre ni nombre corto de Prestadora aparece escrito** en el
         marcado, en los guiones ni en los estilos. La lista de Prestadoras no
-        está escrita acá: sale de las altas literales de `supabase/migrations/`,
-        que es donde se cargan las de ejemplo.
+        está escrita acá: sale de `supabase/migrations/`, que es donde se cargan
+        las de ejemplo, y se leen tanto las altas como los cambios de nombre
+        posteriores. Sin lo segundo, el nombre con el que hoy se ve una
+        Prestadora renombrada sería el único que ninguna pantalla tendría
+        prohibido escribir.
      2. **La única ruta de logotipo que se escribe es la que declara
         `js/identidad.js`.** Cualquier otra es el logotipo de alguien en
         particular puesto como respaldo de todos.
@@ -63,31 +66,49 @@ function loQueDeclaraIdentidad() {
   return { logotipo: ruta[1], codigo: codigo[1] };
 }
 
-/** Las Prestadoras que las migraciones cargan con nombre escrito. */
+/** Las Prestadoras que las migraciones cargan con nombre escrito.
+ *
+ *  Se miran las altas y **también los cambios de nombre**. Una Prestadora
+ *  renombrada por una migración posterior tiene dos nombres, y el segundo no
+ *  está en ningún alta: si acá se leyeran sólo las altas, el nombre con el que
+ *  hoy se la ve sería justamente el único que ninguna pantalla tendría prohibido
+ *  escribir. */
 function prestadorasDelSeed(codigoDelProducto) {
-  const nombres = new Map(); // nombre → archivo de la migración que lo carga
+  const nombres = new Map(); // nombre → archivo de la migración que lo escribe
+  const cortos = new Set();  // los nombres cortos, que son una Prestadora cada uno
   for (const archivo of readdirSync(MIGRACIONES).sort()) {
     if (!archivo.endsWith('.sql')) continue;
     const texto = readFileSync(join(MIGRACIONES, archivo), 'utf8');
-    const desde = texto.toLowerCase().indexOf('into public.tenants');
-    if (desde === -1) continue;
 
-    const bloque = texto.slice(desde, texto.indexOf(';', desde));
-    for (const fila of bloque.matchAll(/\(\s*'([^']+)'\s*,\s*\n?\s*'([^']+)'/g)) {
-      const [, slug, nombre] = fila;
-      if (slug === codigoDelProducto) continue;
-      nombres.set(slug, archivo);
-      nombres.set(nombre, archivo);
+    const desde = texto.toLowerCase().indexOf('into public.tenants');
+    if (desde !== -1) {
+      const bloque = texto.slice(desde, texto.indexOf(';', desde));
+      for (const fila of bloque.matchAll(/\(\s*'([^']+)'\s*,\s*\n?\s*'([^']+)'/g)) {
+        const [, slug, nombre] = fila;
+        if (slug === codigoDelProducto) continue;
+        cortos.add(slug);
+        nombres.set(slug, archivo);
+        nombres.set(nombre, archivo);
+      }
+    }
+
+    for (const cambio of texto.matchAll(/update\s+public\.tenants([\s\S]*?);/gi)) {
+      const nombre = cambio[1].match(/\bname\s*=\s*'([^']+)'/i);
+      const slug = cambio[1].match(/\bslug\s*=\s*'([^']+)'/i);
+      if (!nombre || !slug || slug[1] === codigoDelProducto) continue;
+      cortos.add(slug[1]);
+      nombres.set(slug[1], archivo);
+      nombres.set(nombre[1], archivo);
     }
   }
-  return nombres;
+  return { nombres, cuantas: cortos.size };
 }
 
 /** Los problemas, vacío si ninguna pantalla nombra a una Prestadora. */
 export function verificarOrganizacion() {
   const { logotipo, codigo } = loQueDeclaraIdentidad();
-  const prestadoras = prestadorasDelSeed(codigo);
-  if (prestadoras.size === 0) {
+  const { nombres: prestadoras, cuantas } = prestadorasDelSeed(codigo);
+  if (cuantas === 0) {
     throw new Error('Ninguna migración carga una Prestadora con nombre: sin eso este chequeo no prueba nada.');
   }
 
@@ -138,7 +159,7 @@ export function verificarOrganizacion() {
     );
   }
 
-  return { problemas, prestadoras: prestadoras.size / 2, archivos: mirados.length, logotipo };
+  return { problemas, prestadoras: cuantas, archivos: mirados.length, logotipo };
 }
 
 // Solo corre cuando se lo llama a mano, no cuando otro archivo lo importa.

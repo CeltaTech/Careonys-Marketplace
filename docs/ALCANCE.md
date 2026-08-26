@@ -2424,10 +2424,11 @@ mostraba el nombre **del producto** en el lugar donde va el de la Organización.
 **El chequeo que lo sostiene.** `scripts/verificar_organizacion.mjs` es el dieciocho, y mira dos
 cosas, cada una contra su punto único de verdad: que ningún nombre de Prestadora esté escrito en
 el marcado, los guiones ni los estilos —y la lista de Prestadoras no está escrita adentro del
-chequeo, sale de las altas de `supabase/migrations/`, `scripts/verificar_organizacion.mjs:67`—, y
+chequeo, sale de `supabase/migrations/`, de las altas y de los cambios de nombre posteriores,
+`scripts/verificar_organizacion.mjs:76`—, y
 que la única ruta de logotipo que se escriba sea la que declara `js/identidad.js`. Si ninguna
 migración carga una Prestadora con nombre, el chequeo **falla** en vez de pasar en verde sobre una
-lista vacía (`scripts/verificar_organizacion.mjs:89`).
+lista vacía (`scripts/verificar_organizacion.mjs:111`).
 
 **Se probó que puede fallar**, que es la regla de que una prueba que no puede fallar no prueba
 nada. Se rompieron las dos reglas a propósito: se escribió el nombre de una de las Prestadoras del
@@ -2459,11 +2460,11 @@ en esas tres el marcador se queda en el nombre del producto y no hay nada que re
 migraciones.** PresDemo se llama ahí «PresDemo — Servicios de Cuidado» y tiene cargado su logotipo;
 la migración que la crea la carga con el nombre «PresDemo» y sin logotipo, y ninguna migración
 escribe ninguna de las dos cosas. O sea que se pusieron a mano contra la base. Reconstruirla desde
-cero da una base distinta de la que está publicada. Quedó como pendiente 80, y **conviene decir de
-dónde salió**: se llegó ahí por haber dado por cierto lo que decían las migraciones en vez de
-preguntarle a la base, que es exactamente lo que la regla «el estado real está por encima del
-documentado» viene a evitar. El diagnóstico escrito el mismo día —«la Prestadora de ejemplo no
-tiene logotipo»— era falso para PresDemo y verdadero para Cuidar Norte.
+cero daba una base distinta de la que está publicada. **Conviene decir de dónde salió**: se llegó
+ahí por haber dado por cierto lo que decían las migraciones en vez de preguntarle a la base, que
+es exactamente lo que la regla «el estado real está por encima del documentado» viene a evitar. El
+diagnóstico escrito el mismo día —«la Prestadora de ejemplo no tiene logotipo»— era falso para
+PresDemo y verdadero para Cuidar Norte. Se arregló el mismo día, y cómo se hizo está más abajo.
 
 **Tres cosas se hicieron distinto de como decía el plan** que había escrito para esto, y por eso
 se anotan antes de borrarlo:
@@ -2480,9 +2481,52 @@ se anotan antes de borrarlo:
    logotipo de la Prestadora de ejemplo. Se dejó, porque es de ella y la base puede apuntarlo,
    pero dejó de ser el respaldo de todas.
 
-Queda una consecuencia para decidir, anotada como pendiente: **ninguna migración le carga hoy un
-`logo_url` a la Prestadora de ejemplo**, así que la demostración se ve con el logotipo del
-producto y no muestra justamente lo que tiene para mostrar, que cada Prestadora lleva el suyo.
+### La base publicada volvió a ser la que arman las migraciones
+
+El desvío se arregló el mismo 26 de agosto de 2026, y arreglarlo empezó por medirlo bien. Las dos
+columnas que se habían mirado a ojo eran las dos que se encontraron: **mirar a ojo es lo que dejó
+pasar el desvío la primera vez**. Así que se hizo al revés: se reconstruyó una base local desde
+cero con todas las migraciones, se volcaron las dos del mismo modo y se compararon fila por fila y
+columna por columna.
+
+**De ahí salieron tres clases de diferencia, y sólo una era un desvío.**
+
+1. **La fila de la Prestadora de ejemplo.** Nombre, descripción y logotipo escritos a mano contra
+   la base. Es el desvío, y ahora lo escribe
+   `supabase/migrations/0029_la_prestadora_de_ejemplo_dice_lo_mismo_en_las_dos_bases.sql`, **sin
+   condición**. La migración anterior escribía el logotipo sólo `where logo_url is null`, y contra
+   la base publicada eso no hizo nada, porque el valor ya estaba puesto: una migración que no corre
+   justo donde hace falta no arregla nada. Entre los dos textos ganó el de la base publicada, que
+   es el que ya se había demostrado funcionando, con una corrección: su descripción decía
+   «plataforma», que el glosario de la empresa no admite para nombrar una unidad vendible.
+2. **Los identificadores y las fechas.** Cada base genera los suyos. No es un desvío y no hay nada
+   que escribir.
+3. **Once filas que están publicadas y ninguna migración carga.** Cinco son perfiles, y están
+   bien: cuelgan de una cuenta de acceso, las crea el disparador de la migración 0005 al
+   registrarse alguien, y una base recién construida no tiene cuentas. Las otras seis son legajos
+   cargados a mano probando pantallas, tres de ellos la misma persona inventada repetida y uno con
+   todos sus datos vacíos. Se ven en el directorio de la demostración. Borrarlos es pisar datos,
+   así que lo decide el Desarrollador: quedó como pendiente 81.
+
+**Y se dejó hecho lo que hace falta para que la próxima vez no dependa de la casualidad.** El
+desvío no lo denunció nada: se encontró mirando otra cosa. Ahora `scripts/comparar_bases.mjs` hace
+esa comparación entera y sola, y reparte lo que encuentra en esas mismas tres clases: rompe con las
+dos primeras y muestra la tercera para que la mire una persona, porque un guion no puede saber si
+una fila de más es un desvío o alguien que usó el producto. No entra en los chequeos del `commit`,
+que corren sin red. **Se probó que puede fallar**: contra el volcado de antes de la migración
+denuncia exactamente las tres columnas corridas, con lo que decía cada base; contra el de después,
+ninguna.
+
+El chequeo de organización también quedaba corto: armaba su lista de nombres prohibidos leyendo
+sólo las altas, así que el nombre nuevo de una Prestadora renombrada por una migración posterior
+—justamente el nombre con el que hoy se la ve— era el único que ninguna pantalla tenía prohibido
+escribir. Ahora lee las altas y los cambios de nombre
+(`scripts/verificar_organizacion.mjs:76`). Probado igual: escrito a mano en una pantalla, el nombre
+nuevo la pone en rojo y nombra la migración que lo escribe.
+
+De paso viajaron dos comentarios de tabla que seguían nombrando `caregivers_publicos`, una vista
+que se llama `directorio` desde la migración 0015. No eran un desvío —estaban igual en las
+dos bases, porque salen de las migraciones—, era texto que ya no describía lo que hay.
 
 
 ## 2. Falta construir
