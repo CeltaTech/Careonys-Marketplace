@@ -2296,6 +2296,7 @@ porque migrar es más barato que construir.
 | **Puntos reputacionales y rangos** (Bronce → Plata → Oro) | No existe |
 | **Reemplazo urgente por cercanía** (<2hs, <5km) | No existe. El botón está, la lógica no |
 | **Badges de verificación de 4 niveles** | Se muestran. No hay validación real detrás de ninguno |
+| **La pantalla que carga las verificaciones del legajo** | La tabla, sus columnas de rastro, sus políticas y la vista que las publica están desde las migraciones 0004, 0005 y 0026; **falta dónde apretar**, así que hoy sólo tienen comprobaciones los legajos que sembró la migración 0027. Es el pendiente 70 |
 | **Reportes de salud y signos vitales** | Maquetado sin persistencia — y ver §3 |
 | **Asesoría de reintegros de Obra Social** | Maquetado sin lógica — y ver §3 |
 
