@@ -155,7 +155,7 @@
       color: var(--texto-principal); font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer;
     }
     /* El de cerrar sesión es un botón y no un enlace: dispara una operación, y un
-       enlace no se puede apagar mientras corre (regla 5). */
+       enlace no se puede apagar mientras corre («todo botón que dispara una operación se apaga»). */
     button.drawer-menu-item { width: 100%; background: none; border: none; font-family: inherit; text-align: left; }
 
     /* ================================================
@@ -456,7 +456,7 @@
 
             <!-- Las fichas repetibles del legajo. Salen de data/catalogo-fichas.json
                  y las dibuja js/fichas-legajo.js, el mismo archivo que usa el
-                 portal (regla 5.1: los formularios se declaran, no se dibujan).
+                 portal («los formularios se declaran, no se dibujan»).
                  Hasta el 24 de agosto de 2026 esta pantalla no las tenía, así que
                  quien se daba de alta desde el teléfono quedaba sin matrícula, sin
                  estudios, sin experiencia y con la referencia como texto suelto. -->
@@ -637,7 +637,7 @@
     }
 
     // ── Inicialización ─────────────────────────────
-    // Regla 3: si algo del arranque falla, queda a la vista la pantalla de acceso
+    // «los cuatro estados»: si algo del arranque falla, queda a la vista la pantalla de acceso
     // —que es la verdad: no hay sesión— y el detalle técnico va a la consola. Sin
     // este `try` el fallo no dejaba rastro en ninguna parte.
     document.addEventListener('DOMContentLoaded', async () => {
@@ -713,7 +713,7 @@
       else parte('descripcion').remove();
 
       // Las horas y el certificado son de este renglón; la modalidad es una
-      // clave guardada y su texto sale del catálogo (regla 5.1).
+      // clave guardada y su texto sale del catálogo («los catálogos salen de la base»).
       const datos = [];
       if (curso.horas) datos.push(curso.horas + (curso.horas === 1 ? ' hora' : ' horas'));
       const modalidad = Catalogo.etiquetaSiExiste('modalidad_curso', curso.modalidad);
@@ -817,7 +817,7 @@
     }
 
     // ── Fichado GPS ────────────────────────────────
-    // Regla 5: mientras un fichado está en el aire, los dos botones se apagan. No es
+    // «todo botón que dispara una operación se apaga»: mientras un fichado está en el aire, los dos botones se apagan. No es
     // un detalle: esperar al GPS puede tardar varios segundos, en ese rato el botón
     // no da ninguna señal de estar haciendo algo, y dos toques eran dos fichados en
     // la misma hora. Un fichado repetido no se borra desde ninguna pantalla.
@@ -863,7 +863,7 @@
     document.getElementById('btn-gps-out').addEventListener('click', () => ficharGPS('Salida'));
 
     // ── Reportes ────────────────────────────
-    // Regla 5: guardar apaga el botón mientras la novedad viaja. Dos clics eran dos
+    // «todo botón que dispara una operación se apaga»: guardar apaga el botón mientras la novedad viaja. Dos clics eran dos
     // renglones idénticos en los reportes, y ninguno de los dos se puede borrar desde
     // la pantalla.
     document.getElementById('btn-guardar-reporte').addEventListener('click', async () => {
@@ -929,7 +929,7 @@
       drawer.classList.remove('open');
       overlay.classList.remove('open');
     });
-    // Regla 5: el botón se apaga mientras se cierra la sesión. Y regla 3: si no se
+    // El botón se apaga mientras se cierra la sesión. Y los cuatro estados: si no se
     // pudo cerrar, se dice —antes el error no llegaba a ninguna parte y la persona
     // se quedaba mirando el menú, creyendo que había salido—.
     document.getElementById('btn-logout').addEventListener('click', async () => {
@@ -1032,7 +1032,7 @@
 
     // Guardar el legajo sale del envío del formulario porque hay dos caminos
     // que terminan en lo mismo: el normal y el de «Ya confirmé». Escribirlo dos
-    // veces es tener dos que con el tiempo se despegan (regla 7).
+    // veces es tener dos que con el tiempo se despegan («ningún patrón repetido sin punto único de verdad»).
     async function guardarLegajo(data, legajo) {
       // El identificador de la cuenta recién creada. Se pide acá y no se pasa
       // de mano en mano porque los dos caminos —el normal y el de «Ya

@@ -545,7 +545,7 @@
     }
 
     // REGISTRAR UN REPORTE NUEVO
-    // Regla 5: guardar apaga el botón mientras la novedad viaja. Dos clics eran dos
+    // «todo botón que dispara una operación se apaga»: guardar apaga el botón mientras la novedad viaja. Dos clics eran dos
     // renglones idénticos en los reportes, y ninguno de los dos se puede borrar desde
     // la pantalla.
     document.getElementById('btn-guardar-reporte').addEventListener('click', async () => {
@@ -594,7 +594,7 @@
     });
 
     // FICHADO GPS DE ASISTENCIA (CLOCK-IN / CLOCK-OUT REAL)
-    // Regla 5: mientras un fichado está en el aire, los dos botones se apagan. No es
+    // «todo botón que dispara una operación se apaga»: mientras un fichado está en el aire, los dos botones se apagan. No es
     // un detalle: esperar al GPS puede tardar varios segundos, en ese rato el botón
     // no da ninguna señal de estar haciendo algo, y dos toques eran dos fichados en
     // la misma hora. Un fichado repetido no se borra desde ninguna pantalla.
@@ -745,7 +745,7 @@
     };
 
     // LOGOUT REAL
-    // Regla 5: el botón se apaga mientras se cierra la sesión. Y regla 3: si no se
+    // El botón se apaga mientras se cierra la sesión. Y los cuatro estados: si no se
     // pudo cerrar, se dice —antes el error no llegaba a ninguna parte y la persona
     // se quedaba mirando el menú, creyendo que había salido—.
     document.getElementById('btn-logout').addEventListener('click', async () => {
@@ -839,7 +839,7 @@
       // es lo que hace sentir lento un chat. Pero entonces hay que decir después si
       // no se pudo guardar, porque en pantalla ya parece enviado.
       const burbuja = renderMensaje(msg, true);
-      // Regla 5: mientras el mensaje viaja, el botón se apaga.
+      // «todo botón que dispara una operación se apaga»: mientras el mensaje viaja, el botón se apaga.
       boton.disabled = true;
       try {
         const res = await fetch(

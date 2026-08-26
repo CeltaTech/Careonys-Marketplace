@@ -18,7 +18,7 @@
 
    Por qué existe aparte: estaba adentro de `verificar_trato.mjs`, y el segundo
    chequeo que necesitó lo mismo iba a copiarlo. Una lista repetida dos veces se
-   arregla una vez y queda mal la otra (regla 7 de `CLAUDE.md`).
+   arregla una vez y queda mal la otra («ningún patrón repetido sin punto único de verdad»).
 =================================================== */
 
 const ATRIBUTOS = 'placeholder|title|alt|aria-label|value|content|label';

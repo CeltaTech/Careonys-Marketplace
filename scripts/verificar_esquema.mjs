@@ -31,7 +31,7 @@
    4. **Todo importe se guarda con su moneda** (§5.11). Un número solo, leído un
       año después, no se sabe cuánto vale.
    5. **Toda tabla tiene clave primaria `uuid`** (§5.10). Es la otra mitad de la
-      regla 3, y es del mismo motivo: dos bases que se fusionan con claves
+      «toda tabla nace con clave uuid y con la columna de su Organización», y es del mismo motivo: dos bases que se fusionan con claves
       correlativas chocan en el número 1, y hay que reasignarlas todas junto con
       cada referencia que las apunta. Con UUID no chocan. La clave se busca donde
       esté declarada —adentro del `create table` o en un `alter table … add

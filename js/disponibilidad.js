@@ -18,7 +18,7 @@
    lo nombran las pantallas del Asistente desde antes; los dos nombres apuntan
    al mismo objeto.
 
-   Regla 5.1: ningún catálogo se escribe adentro de una pantalla, y los
+   «todo botón que dispara una operación se apaga».1: ningún catálogo se escribe adentro de una pantalla, y los
    formularios se declaran, no se dibujan. La grilla de días por turnos estaba
    escrita a mano en dos pantallas —veintiún casilleros en cada una, con el día
    y el turno puestos en el marcado— y las dos habían escrito «Lunes» y
@@ -102,7 +102,7 @@
 
   const IDIOMA_POR_DEFECTO = 'es-AR';
 
-  // Los cuatro estados de la regla 5.3, dichos una sola vez.
+  // Los cuatro estados, dichos una sola vez.
   const MENSAJES = {
     cargando: 'Cargando la disponibilidad…',
     error: 'No se pudo cargar el paso de disponibilidad',

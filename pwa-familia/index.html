@@ -521,7 +521,7 @@
       cursor: pointer;
     }
     /* El de cerrar sesión es un botón y no un enlace: dispara una operación, y un
-       enlace no se puede apagar mientras corre (regla 5). */
+       enlace no se puede apagar mientras corre («todo botón que dispara una operación se apaga»). */
     button.drawer-menu-item {
       width: 100%;
       background: none;
@@ -822,7 +822,7 @@
         .catch(err => console.error('Error al registrar Service Worker:', err));
     }
 
-    // Regla 3: si algo del arranque falla, queda a la vista la pantalla de acceso
+    // «los cuatro estados»: si algo del arranque falla, queda a la vista la pantalla de acceso
     // —que es la verdad: no hay sesión— y el detalle técnico va a la consola. Sin
     // este `try` el fallo no dejaba rastro en ninguna parte.
     document.addEventListener('DOMContentLoaded', async () => {
@@ -987,7 +987,7 @@
       overlay.classList.remove('open');
     };
 
-    // Regla 5: el botón se apaga mientras se cierra la sesión. Y regla 3: si no se
+    // El botón se apaga mientras se cierra la sesión. Y los cuatro estados: si no se
     // pudo cerrar, se dice —antes el error no llegaba a ninguna parte y la persona
     // se quedaba mirando el menú, creyendo que había salido—.
     document.getElementById('btn-logout').addEventListener('click', async () => {

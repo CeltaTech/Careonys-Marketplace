@@ -135,7 +135,7 @@ Cómo quedó:
 - **El texto visible usa marcadores** —`{{producto}}`, `{{productoCorto}}`, `{{dominio}}`,
   `{{contacto}}`— y `js/identidad.js` los resuelve al cargar la página. Hay 59 repartidos en las 12
   pantallas, y las 12 cargan el archivo.
-- **Lo que persiste se nombra por su función**, según la regla 13 heredada. El identificador
+- **Lo que persiste se nombra por su función**, según «lo que se guarda para siempre se nombra por lo que hace». El identificador
   técnico del producto es `plataforma` y no la marca (`js/identidad.js:35`); el logotipo es
   `assets/images/logotipo.png`; las claves guardadas en el navegador pasaron a `aspirantes`,
   `busquedas`, `fichadas`, `bitacora` y las cachés a `asistente-v4` y `familia-v4`. Esas se
@@ -162,7 +162,7 @@ el pendiente 11.
 ### El texto visible dejó de tutear
 
 Cerró el pendiente 10, el 24 de agosto de 2026. Las catorce pantallas hablan en forma impersonal,
-y de *usted* cuando hay que dirigirse a alguien, como pide la regla 5.1 de `CLAUDE.md`.
+y de *usted* cuando hay que dirigirse a alguien, como pide «trato de usted».
 
 - **Qué se cambió**: 187 renglones de texto visible, en once de las catorce pantallas. Las otras
   tres —`acceso.html`, `examen.html` y `panel-prestadora.html`— ya estaban limpias. La mayoría era
@@ -216,12 +216,12 @@ se metía adentro del marcado ahora pasan por `Texto.escapar`, en seis archivos:
   navegador deshace el escapado antes de leer el contenido como código, así que un `&#39;` vuelve
   a ser una comilla y cierra la cadena igual. El identificador ahora se pasa por
   `addEventListener` (`panel-prestadora.html:226`), que nunca vuelve a leer texto como programa.
-- **Un solo punto de verdad**, como pide la regla 7: `js/texto.js` (77 renglones) tiene
+- **Un solo punto de verdad**, como pide «ningún patrón repetido sin punto único de verdad»: `js/texto.js` (77 renglones) tiene
   `Texto.escapar` y `Texto.mensajeDeError`, y lo cargan las catorce pantallas. Antes de esto el
   único archivo que cargaban todas era `js/identidad.js`; ahora son dos. La copia local de
   `panel-prestadora.html` se borró. Hay copia idéntica en cada PWA, porque el service worker de
   cada una solo alcanza su propia carpeta, y `scripts/verificar_copias.mjs` compara las tres.
-- **De paso cerró la otra mitad de la regla 5.1.** `Texto.mensajeDeError` clasifica la falla —sin
+- **De paso cerró la otra mitad de «un mensaje de error es texto visible».** `Texto.mensajeDeError` clasifica la falla —sin
   red, sin permiso, dato repetido, no está, dato inválido— y devuelve la frase que corresponde; el
   texto crudo de la base, que nombra tablas y restricciones, queda en la consola. Reemplazó a los
   `alert('... ' + err.message)` de `mockup-app.html` y al aviso de los reportes de
@@ -246,7 +246,7 @@ mismo módulo —y cuyos datos ya van escapados allá—, la línea lleva un com
 
 ### El error que ve una persona ya no es el que devuelve la base
 
-Cerró el pendiente 28, el 24 de agosto de 2026, y con él la mitad de la regla 5.1 que había
+Cerró el pendiente 28, el 24 de agosto de 2026, y con él la mitad de «un mensaje de error es texto visible» que había
 quedado abierta.
 
 - **El contacto de una Familia tiene su propia columna.** `solicitar-asistente.html` pide nombre,
@@ -259,7 +259,7 @@ quedado abierta.
   pantalla pública.
 - **Un solo clasificador de errores, no dos.** Al cerrar el pendiente 22 quedaron conviviendo
   `Sesion.mensajeDeError` en `js/auth.js` y `Texto.mensajeDeError` en `js/texto.js`: la misma
-  decisión en dos lugares, que es justo lo que prohíbe la regla 7. Se unificaron en `js/texto.js`,
+  decisión en dos lugares, que es justo lo que prohíbe «ningún patrón repetido sin punto único de verdad». Se unificaron en `js/texto.js`,
   que es donde va —un mensaje de error es texto, no es sesión— y que además lo cargan las catorce
   pantallas, cosa que `js/auth.js` no. Los siete llamadores pasaron al nombre nuevo.
 - **Ocho avisos mostraban el texto crudo de la base.** Quedaban `alert('Error al ...: ' +
@@ -274,7 +274,7 @@ quedado abierta.
   avisó en el renglón exacto.
 - **Una frase decía un número que nadie verificó.** El aviso de contraseña afirmaba «al menos ocho
   caracteres»; `supabase/config.toml` decía seis, y el servidor remoto puede decir otra cosa
-  (es el pendiente 21). Ahora no dice ningún número: el largo lo pone el servidor, y la regla 5.1
+  (es el pendiente 21). Ahora no dice ningún número: el largo lo pone el servidor, y «nunca hardcodear»
   no deja escribir un valor operativo adentro del código.
   **Revertido el mismo día**, más abajo: sin número el aviso no sirve. El número volvió, a un solo
   lugar, y el archivo de configuración dice el mismo.
@@ -314,7 +314,7 @@ Cerró el pendiente 27, el 24 de agosto de 2026.
   una copia entera del proyecto que deja el CLI. Ninguno de los cuatro chequeos que recorren
   carpetas la excluía, porque cada uno llevaba su propia lista de carpetas a saltear, parecida a
   las otras tres pero distinta. Ahora la lista y el recorrido viven en `scripts/recorrido.mjs` y
-  los cuatro la consumen (regla 7).
+  los cuatro la consumen («ningún patrón repetido sin punto único de verdad»).
 
 ---
 
@@ -329,7 +329,7 @@ Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2
   y `formulario-integral.html:352` toman las suyas del catálogo—, y de la
   base misma no se puede afirmar nada desde acá, porque `caregivers` no se deja leer sin sesión.
 - **Los cuatro filtros salen del catálogo** (`directorio.html:66`): zona, Tipo de Asistente,
-  patología y verificación. Eran veinticinco opciones escritas a mano contra la regla 5.1; ahora
+  patología y verificación. Eran veinticinco opciones escritas a mano contra «los catálogos salen de la base»; ahora
   son cuatro `data-catalogo`. Las zonas llegan agrupadas por región, que la lista escrita a mano
   no hacía.
 - **Las ocho tarjetas de muestra hablan el mismo idioma que los filtros.** Cada una lleva ahora
@@ -340,11 +340,11 @@ Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2
   `parkinson` y `acv` no existían en ninguna tarjeta y devolvían cero sin explicar por qué. Y
   cualquier cambio de redacción rompía un filtro sin que nada avisara.
 - **Cero resultados ahora se dice con una frase**, no con un «Mostrando 0» que se lee como si
-  algo se hubiera roto: es el cuarto estado de la regla 5.3.
+  algo se hubiera roto: es el cuarto estado.
 - **El contador vivía en dos lugares.** `directorio.html` tenía un observador que contaba las
   tarjetas visibles y escribía la misma frase que ya escribe `filterCards()`. Se sacó el
-  observador (regla 7).
-- **Y salió una palabra que el glosario prohíbe.** `docs/GLOSARIO.md:28` nombra «especialidad»
+  observador («ningún patrón repetido sin punto único de verdad»).
+- **Y salió una palabra que el glosario prohíbe.** `../../docs/GLOSARIO_PRODUCTOS_CAREONYS.md:24` nombra «especialidad»
   entre lo que no se debe usar por «Tipo de Asistente». Estaba nueve veces en seis pantallas,
   incluida una etiqueta de formulario y una columna de tabla. No queda ninguna. La otra palabra
   del mismo tipo, «cuidador» usada como genérico, aparece 176 veces y es el pendiente 33.
@@ -376,7 +376,7 @@ esperando una decisión suya.
 - **Había una palabra que la línea de comandos se inventó y nadie aprobó.** Al Desarrollador le
   resultó desagradable, con razón: dejaba al Asistente como algo puesto en exhibición. Estaba en
   70 lugares de 20 archivos.
-- **El nombre bueno ya estaba escrito y no hubo que inventar nada:** `docs/GLOSARIO.md:105` dice
+- **El nombre bueno ya estaba escrito y no hubo que inventar nada:** `docs/GLOSARIO.md:27` dice
   que `directorio` nombra una pantalla, la pantalla ya se llamaba `directorio.html`, la ficha ya
   se llamaba `perfil.html`, y la casilla guardada en la base ya se llamaba `perfil_publicado`.
 - **Y va sin adjetivo.** Por un rato se escribió «directorio público», hasta que el Desarrollador
@@ -405,7 +405,7 @@ esperando una decisión suya.
   `perfil_profesional` a `tipo_asistente`, y con ella el mapa de `scripts/verificar_claves.mjs`.
 - **Se cambió ahora porque hoy es gratis.** Esa clave vive únicamente en archivos: en los tres
   catálogos, en los atributos `data-catalogo` de cuatro pantallas y en `js/fichas-legajo.js`. En
-  la base la columna se llama `profession` y no se toca, porque la regla 5.1 dice que un
+  la base la columna se llama `profession` y no se toca, porque «lo que se guarda para siempre se nombra por lo que hace» dice que un
   identificador guardado no se renombra. Cuando el pendiente 7 lleve los catálogos a tablas, el
   mismo cambio habría sido una migración de datos.
 - **Donde se completa un legajo ya no dice perfil.** Cambiaron `index.html`, `registrar-asistente.html`
@@ -430,7 +430,7 @@ sección.
 - **Un solo lugar decide qué contraseña vale.** Nace `js/clave.js`. Tres pantallas piden una
   contraseña —el acceso, el alta de Asistente y la que elige una nueva— y hasta ahora cada una
   revisaba por su cuenta; con tres copias, tarde o temprano una pide ocho caracteres y otra seis
-  (regla 7). El largo mínimo y las frases de aviso viven ahí y en ningún otro lado.
+  («ningún patrón repetido sin punto único de verdad»). El largo mínimo y las frases de aviso viven ahí y en ningún otro lado.
 - **El botón para ver la contraseña se pone solo.** Al cargar la página, todo campo de contraseña
   queda con el suyo. Una pantalla nueva no tiene que acordarse de nada. Dice «Mostrar» y «Ocultar»
   con todas las letras en vez de un dibujo de ojo, porque un ojo tachado no aclara si lo que se ve
@@ -494,7 +494,7 @@ Etapa 3 del pendiente 21, el 24 de agosto de 2026.
   panel lo traduce.
 - **Comprobado con las tres puertas cerradas.** Se suplantaron sólo las llamadas que hablan con el
   servidor, y el camino del navegador corrió entero: el panel aparece con el correo escrito y el
-  botón de enviar se esconde; el botón se deshabilita mientras está en curso (regla 5.5); con el
+  botón de enviar se esconde; el botón se deshabilita mientras está en curso («todo botón que dispara una operación se apaga»); con el
   correo sin confirmar el aviso sale en rojo y no se pierde ni un dato; con el correo confirmado se
   guardan la ficha y las cuatro secciones del legajo, la pantalla vuelve a su estado normal y la
   contraseña desaparece de la memoria y de la pantalla.
@@ -570,7 +570,7 @@ ya no devuelve `disponible_urgencias`.
 
 Quedaban dos, y eran las más visibles: las diez tarjetas del asistente de seis pasos de
 `formulario-integral.html`. Cada una traía su ícono, su título y su explicación escritos adentro
-del HTML —setenta y dos renglones—, que es exactamente lo que prohíbe la regla 5.1. Agregar una
+del HTML —setenta y dos renglones—, que es exactamente lo que prohíbe «los catálogos salen de la base». Agregar una
 tarea de cuidado era editar una pantalla. Ahora las dos grillas se declaran en dos renglones y el
 contenido sale del catálogo:
 
@@ -602,7 +602,7 @@ podía.
 
 **Y el aviso de «Cargando opciones…» dejó de ser sólo de los desplegables.** Un grupo de casillas
 o una grilla de tarjetas que todavía no llegó se veía igual que uno que vino vacío, que es
-justamente la falla que el catálogo existe para no tener (regla 5.3).
+justamente la falla que el catálogo existe para no tener («los cuatro estados»).
 
 ### Lo que una Familia pide ya tiene dónde guardarse
 
@@ -646,7 +646,7 @@ El último paso del alta preguntaba días y turnos —veintiún casilleros— y 
 ningún lado: `caregivers` no tenía dónde ponerlos y el traductor del cliente de datos los
 descartaba sin decir nada. Era el pendiente 23, y estaba abierto desde que la pantalla existe.
 
-- **Dos tablas nuevas, y las dos son módulo compartido** (`CLAUDE.md` regla 12):
+- **Dos tablas nuevas, y las dos son módulo compartido** (`CLAUDE.md`, «los módulos»):
   `disponibilidad_asistente` guarda lo general —hoy, si acepta reemplazos urgentes— y
   `franjas_asistente` guarda una fila por casillero marcado. Ninguna de las dos sabe qué es un
   directorio ni una postulación: son verdad sobre un Asistente aunque el trabajo llegue por
@@ -737,7 +737,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
   `data/catalogo-autorizaciones.json`.
 - **El paso de cierre pasó a ser un módulo.** Estaba escrito adentro de `registrar-asistente.html`,
   cuarenta renglones que traían el archivo y armaban las casillas. Ahora es `js/autorizaciones.js`,
-  y las dos pantallas consumen el mismo (regla 7). Copiarlo habría sido tener el mismo paso dos
+  y las dos pantallas consumen el mismo («ningún patrón repetido sin punto único de verdad»). Copiarlo habría sido tener el mismo paso dos
   veces, con el precio de siempre: se arregla uno y el otro queda viejo.
 - **Subir los archivos también dejó de estar en la pantalla.** `FichasLegajo.subirArchivos`
   (`js/fichas-legajo.js:285`) es el único lugar que sabe a qué depósito van la matrícula y el
@@ -848,7 +848,7 @@ registradas pueden comunicarse con ella, y que lo hacen por la plataforma
 Lo que falta —empezar una conversación con esa persona en particular— quedó anotado como pendiente 46.
 
 **Tres traducciones que estaban por escribirse dos veces subieron a los archivos compartidos**
-(regla 7): el precio en pesos es `Texto.importe` (`js/texto.js:81`), la etiqueta de una lista es
+(«ningún patrón repetido sin punto único de verdad»): el precio en pesos es `Texto.importe` (`js/texto.js:81`), la etiqueta de una lista es
 `Catalogo.etiquetaSiExiste` (`js/catalogo.js:160`), y la de una tarea —que puede estar en cualquiera
 de tres listas— es `Catalogo.etiquetaDeTarea` (`js/catalogo.js:173`). Vivían adentro de
 `directorio.html`; ahora las dos pantallas las piden al mismo lugar.
@@ -894,7 +894,7 @@ se acuerde.
   renglón anterior de este documento: entró solo, sin tocar ni el corredor ni el gancho.
 - **Antes de escribirlo se sacó `visible()` a `scripts/texto_visible.mjs`**, que ahora comparten el
   chequeo de trato y el de vocabulario. Copiarlo hubiera sido la octava lista repetida dos veces
-  (regla 7 de `CLAUDE.md`).
+  («ningún patrón repetido sin punto único de verdad»).
 - **La prueba se hizo al revés**, que es la única que vale: se dejó un archivo con «Encuentre al
   cuidador que necesita» y el chequeo lo señaló con archivo y renglón. Además el detector se prueba
   a sí mismo contra catorce frases —cinco que tienen que saltar y nueve que no— antes de mirar
@@ -1102,11 +1102,11 @@ niveles que proponía, porque es una decisión de producto pensada y perderla co
 pensarla; queda anotado que **no está aprobada** y que `docs/ALCANCE.md` §4 la tiene congelada.
 
 **Lo que apareció al revisarlas una por una.** **Ninguna de las diez tenía `prestadora_id`.** El
-material fue escrito para una sola empresa, y la regla 10 del `CLAUDE.md` pide esa columna en toda
+material fue escrito para una sola empresa, y la «toda tabla nace con clave uuid y con la columna de su Organización» pide esa columna en toda
 tabla con datos propios de una Organización aunque hoy siempre valga lo mismo —es lo que hace que
 la fusión futura sea un update y no una migración—. Además: `postulaciones.tarifa_propuesta`
-guarda un número sin moneda (regla 11); los tipos de `notificaciones` incluyen `postulacion`, que
-es una palabra propia de esta modalidad y no puede aparecer en un módulo compartido (regla 12); y
+guarda un número sin moneda («todo importe se guarda con su moneda»); los tipos de `notificaciones` incluyen `postulacion`, que
+es una palabra propia de esta modalidad y no puede aparecer en un módulo compartido («los módulos»); y
 `video_llamadas` y `pagos` tienen columnas que atan el esquema a un proveedor externo que todavía
 no se eligió. Las cinco reglas que ninguna puede saltearse están al principio del documento nuevo.
 
@@ -1199,7 +1199,7 @@ aplicación, y lee de la base.
   política de `cursos` no mira `publicado` —la de `evaluaciones` sí—; que el curso sin publicar no
   llegue a la pantalla es lo que corresponde, que no llegue al navegador sería mejor, y eso es una
   migración.
-- **La pantalla nueva es `screen-capacitaciones`**, con los cuatro estados que pide la regla 5.3:
+- **La pantalla nueva es `screen-capacitaciones`**, con los cuatro estados:
   buscando, error con «Reintentar», sin cursos publicados, y la lista. Los dos enlaces que llevaban
   afuera —el del cajón de menú y el de la barra de abajo— ahora entran acá.
 - **Al lado de cada curso está lo que esa persona rindió**, que es lo que la vidriera pública no
@@ -1263,7 +1263,7 @@ del tablero de la Familia y se arregló ahí mismo.
   encima en femenino. Se fue: el tipo y la zona salen del catálogo, y si no hay ninguno de los dos
   el renglón no se dibuja en vez de rellenarse con algo.
 
-- **La tira ahora tiene los cuatro estados de la regla 5.3** —buscando, error con su botón de
+- **La tira ahora tiene los cuatro estados** —buscando, error con su botón de
   reintentar, vacío con su explicación, y la lista— y se arma con un `<template>` y `textContent`,
   así que un nombre con una etiqueta adentro llega como texto. Se probó con
   `<script>alert(1)</script><b>Prueba</b>` de nombre: cero elementos `script` y cero `b` creados.
@@ -1329,7 +1329,7 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
 - **Comprobado en el navegador, con las dos Prestadoras.** PresDemo muestra cuatro y Cuidar Norte
   muestra tres; nunca siete, que es el total. Los tres filtros y la búsqueda libre funcionan sobre
   las tarjetas recién traídas —la búsqueda «ruben» encuentra a Rubén Ocampo Ficticio—, y los
-  cuatro estados de la regla 5.3 se probaron uno por uno, incluido el botón de reintentar. La
+  cuatro estados se probaron uno por uno, incluido el botón de reintentar. La
   respuesta de la base no trae documento, teléfono, correo ni domicilio.
 - **Se sacó el filtro «Verificación»**, que la pantalla ofrecía y nada podía contestar: lo que se
   controló de un legajo vive en `verificaciones_asistente`, que no es pública. Es el pendiente 43.
@@ -1345,7 +1345,7 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
 
 El 25 de agosto de 2026.
 
-Las reglas 3, 4 y 5 de `CLAUDE.md` —cuatro estados, confirmar lo destructivo, apagar el botón
+Las reglas de la empresa —cuatro estados, confirmar lo destructivo, apagar el botón
 mientras la operación está en curso— estaban escritas desde el principio y no había ningún chequeo
 que las mirara. Se contaron los botones del proyecto: **veintidós manejadores esperan una
 operación, y seis no apagaban nada.** Otros tres sólo se alcanzaban desde el marcado y dos más a
@@ -1405,7 +1405,7 @@ el chequeo: encontró los catorce defectos, uno por uno.
 
 ### El arranque de una pantalla ya dice cuando falla
 
-La regla 3 de `CLAUDE.md` pide cuatro estados —cargando, error, vacío, listo— a todo componente
+Las reglas de la empresa piden cuatro estados —cargando, error, vacío, listo— a todo componente
 que carga datos. Lo primero que carga datos en cualquier pantalla es su arranque, y era
 exactamente lo que nadie miraba: **había ocho arranques y ninguno de los ocho tenía quién atrapara
 un fallo.** Hoy los ocho lo tienen, y el chequeo doce impide que vuelva a entrar uno sin él.
@@ -1518,7 +1518,7 @@ la lista de exenciones vacía: aparecen los dos casos conocidos, cada uno en su 
 
 ### La regla de los módulos se midió para hacerle un chequeo, y el chequeo no se escribió
 
-**La regla 12 se queda sin chequeo automático, y conviene dejar escrito por qué**, porque parecía
+**El reparto de módulos se queda sin chequeo automático, y conviene dejar escrito por qué**, porque parecía
 la candidata más fácil: es la única que trae su propia lista de palabras. `docs/MODULOS.md`, «Cómo se comprueba que la línea está bien puesta»,
 manda «buscar en lo compartido cualquier palabra que sólo signifique algo acá —`modalidad`,
 directorio, aviso, postulación, contacto, puntaje, destacado—». Se midió el 25 de agosto de 2026 y
@@ -1538,7 +1538,7 @@ la medición dice que no.
   `autorizaciones_asistente.perfil_publicado`, no usa ninguna de las siete.
 - **Y la que decide: el único incumplimiento real que había ese día era invisible para esa
   prueba.** Las dos tablas de esta modalidad no llevaban el prefijo de la modalidad que
-  `docs/GLOSARIO.md:101` aprobó para tablas el 24 de agosto, y ni `care_searches` ni
+  `docs/GLOSARIO.md:19` aprobó para tablas el 24 de agosto, y ni `care_searches` ni
   `franjas_busqueda` —así se llamaban— contenían ninguna de las siete palabras. La prueba
   pasaba limpia con el problema adentro.
 
@@ -1604,7 +1604,7 @@ buscar es lo que hace después el que lo lee.
   `form-nuevo-aviso` y `btn-enviar-busqueda` a `btn-enviar-aviso`.
 - **Y adentro del código había un `AVISOS` que no eran avisos.** `js/catalogo.js`,
   `js/disponibilidad.js` y `js/autorizaciones.js` guardaban ahí los cuatro estados de la
-  regla 5.3 —«Cargando opciones…», «No se pudieron cargar», «No hay opciones
+  «los cuatro estados» —«Cargando opciones…», «No se pudieron cargar», «No hay opciones
   disponibles», «Por ahora no hay nada para mostrar acá»—, que no son ni un Aviso ni una
   notificación: son **mensajes** en pantalla. La constante pasó a llamarse `MENSAJES` en
   los tres módulos y en sus ocho copias. Esto no lo pidió nadie: el problema de un nombre
@@ -1652,7 +1652,7 @@ opciones a la vista: se renombran las dos, no una sola. El motivo que dio es el 
 discusión —*no puede ser que tengamos distintos nombres para la misma cosa*—, y vale más que el
 trabajo de arreglarlo.
 
-**Eran dos problemas encimados.** El primero, el prefijo: `docs/GLOSARIO.md:101` había aprobado el
+**Eran dos problemas encimados.** El primero, el prefijo: `docs/GLOSARIO.md:19` había aprobado el
 24 de agosto que lo que sólo existe en esta modalidad lo lleve en el nombre, y no lo llevaba
 ninguna tabla. El segundo, la palabra: `care_searches` no guardaba búsquedas. Una búsqueda es el
 acto de buscar y no deja nada guardado; lo que queda guardado es el aviso que publica la Familia.
@@ -1685,9 +1685,9 @@ reparto, no de nombres, y sigue anotado en el pendiente 52.
 el panel de Supabase, en orden: primero la 0015, después la 0016. Hasta que lo haga, el código
 nombra tablas que en el servidor todavía se llaman como antes.
 
-### La regla 3 se midió para hacerle un chequeo, y lo que salió es que ya se cumple
+### Los cuatro estados se midieron para hacerles un chequeo, y lo que salió es que ya se cumple
 
-Los cuatro estados —cargando, error, vacío, listo— son la regla 3 de `CLAUDE.md`, y eran lo último
+Los cuatro estados —cargando, error, vacío, listo— son una regla de la empresa, y eran lo último
 no negociable de la sección 5 que no miraba nadie. Se midió el 25 de agosto de 2026 para escribirle
 el chequeo catorce. **No se escribió, y el motivo es bueno: la regla se cumple, y el cumplimiento es
 invisible para cualquier prueba automática.**
@@ -1727,7 +1727,7 @@ paneles es grid ni flex, y el día que alguien agregara uno se habría aplastado
 que conmutan `display` dicen ahora `''`, con el motivo escrito al lado para que nadie lo devuelva a
 `'block'`. Que sigan siendo ocho copias es parte del pendiente 13.
 
-**La regla 4 se midió en el mismo rato y salió todavía más corta.** Pide confirmación explícita
+**La «toda operación destructiva se confirma» se midió en el mismo rato y salió todavía más corta.** Pide confirmación explícita
 ante toda operación destructiva, y la medición encontró que en este proyecto hay exactamente una:
 rechazar un legajo (`panel-prestadora.html:348`). No hay un solo `delete` contra la base en las
 cuarenta y cuatro pantallas y guiones —lo único que se parece es un `delete` de JavaScript sobre un
@@ -1926,7 +1926,7 @@ de nombrar lo que está pasando:
 
 El punto rojo también estaba mal y por el mismo motivo: rojo se lee como que algo falló, y acá no
 falló nada — hay un trámite en curso. Los nombres guardados en la base no se tocaron
-(`en_revision`, `validado_prestadora`): la regla 5.1 dice que lo que persiste se nombra por su
+(`en_revision`, `validado_prestadora`): «lo que se guarda para siempre se nombra por lo que hace» dice que lo que persiste se nombra por su
 función y no se renombra, y esos dos nombres describen bien el casillero.
 
 **Y la corrección dejó algo a la vista.** El código sí inventa la clase de persona que el
@@ -1946,7 +1946,7 @@ contra el servidor de verdad antes de tocar nada.
 
 **La pantalla filtraba bien y eso no alcanzaba.** `js/apiClient.js` pedía el directorio con
 `tenant_id=eq.<la suya>` desde que se cerró el pendiente 2, así que por la pantalla nadie veía de
-más. Pero la regla 2 de `CLAUDE.md` pide aislamiento «en aplicación **y base de datos**, nunca
+más. Pero las reglas de la empresa piden aislamiento «en aplicación **y base de datos**, nunca
 solo frontend», y una lista que separa sólo porque el que pregunta se porta bien no separa nada:
 la misma dirección sin el filtro devolvía todo.
 
@@ -2046,7 +2046,7 @@ lado y muchos del otro, pero **todos adentro de la misma Organización**. Es lo 
 `directorio.html:304`, que resuelve una Prestadora y muestra a los suyos.
 
 **Ninguna búsqueda, en ninguna modalidad, mezcla Asistentes de dos Prestadoras.** Mezclarlas sería
-abandonar el aislamiento entre Organizaciones —la regla 2— para conseguir un desorden general. No
+abandonar el aislamiento entre Organizaciones para conseguir un desorden general. No
 se hace, y no se vuelve a preguntar por modalidad ni por pantalla.
 
 De acá salen dos cosas prácticas:
@@ -2069,7 +2069,7 @@ De acá salen dos cosas prácticas:
    en el glosario de Careonys, no acá.
 3. **Careonys tiene un valor mal nombrado, y eso es un caso de la comparación en los dos
    sentidos.** Por su función debería llamarse `autonomo`, la palabra que sus propias tablas
-   legales ya usan para lo mismo. Pero es un valor **guardado**, y la regla 13 dice que lo que
+   legales ya usan para lo mismo. Pero es un valor **guardado**, y «lo que se guarda para siempre se nombra por lo que hace» dice que lo que
    persiste no se renombra: cambiarlo es migración de datos sobre un sistema en producción.
    **Decisión del Desarrollador, del lado de Careonys.** Acá sólo queda anotado.
 
@@ -2187,7 +2187,7 @@ hasta que el resultado satisfaga.
 esqueleto de React se levanta **recién cuando el catálogo esté entero en tablas y los estilos
 afuera del HTML**, no antes. El motivo es de costo: portar antes obliga a escribir cada pantalla
 dos veces —una en HTML plano para que funcione hoy, otra en React—, y ese trabajo duplicado es
-exactamente el que la regla 12 quiere evitar. Mientras tanto, cada pantalla que se toca deja el
+exactamente el que el reparto de módulos quiere evitar. Mientras tanto, cada pantalla que se toca deja el
 contenido en su catálogo y los colores en las variables, que es preparar el terreno para el punto
 4 sin escribir nada dos veces.
 

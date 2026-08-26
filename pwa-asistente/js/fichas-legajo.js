@@ -3,7 +3,7 @@
    Desarrollado por CeltaTech.
    Lee data/catalogo-fichas.json y data/catalogo-vocabularios.json
    y dibuja los formularios de Matrícula, Estudios, Experiencia laboral
-   y Referencias. Regla 5.1 del CLAUDE.md: los formularios se declaran,
+   y Referencias. «todo botón que dispara una operación se apaga».1 del CLAUDE.md: los formularios se declaran,
    no se dibujan — ninguna etiqueta ni opción de este archivo se escribe
    a mano en el HTML.
 =================================================== */
@@ -210,7 +210,7 @@ const FichasLegajo = {
       const div = document.createElement('div');
       div.innerHTML = this._bloqueHTML(tipoFicha, indice);
       const bloque = div.firstElementChild;
-      // Regla 4: quitar un bloque con datos adentro borra lo que la persona
+      // «toda operación destructiva se confirma»: quitar un bloque con datos adentro borra lo que la persona
       // escribió, y desde acá no se recupera. Un bloque todavía vacío se quita sin
       // preguntar: no hay nada que perder, y preguntar por nada enseña a contestar
       // que sí sin leer, que es como después se pierde lo que sí importaba.
@@ -276,7 +276,7 @@ const FichasLegajo = {
   //
   // Está acá y no en cada pantalla porque las dos altas —el portal y la
   // aplicación del teléfono— tienen que subirlos al mismo lugar y guardar el
-  // mismo camino (regla 7).
+  // mismo camino («ningún patrón repetido sin punto único de verdad»).
   //
   // Devuelve la lista de los que no subieron, para que quien llama avise una
   // sola vez y sin frenar el resto del alta: un archivo que no sube y no avisa

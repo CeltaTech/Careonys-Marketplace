@@ -51,8 +51,8 @@ Cuando dos digan cosas distintas, gana el de más arriba.
 | | Documento | Autoridad sobre |
 |---|---|---|
 | 1 | **El código y la base** | Todo. Ningún documento sobrescribe lo que el código hace |
-| 2 | `CLAUDE.md` | Las reglas. Qué se puede y qué no |
-| 3 | `docs/GLOSARIO.md` | Cómo se llaman las cosas. Copia de Careonys; el original manda |
+| 2 | `CLAUDE.md` | Las reglas propias de este producto. Arriba mandan `../../CLAUDE.md` y `../../docs/REGLAS_PRODUCTOS_CAREONYS.md` |
+| 3 | `../../docs/GLOSARIO_PRODUCTOS_CAREONYS.md` | Cómo se llaman las cosas. Es el único y no se copia. Lo propio de acá está en `docs/GLOSARIO.md` |
 | 4 | `docs/ALCANCE.md` | Qué está construido y qué no |
 | 5 | `docs/PENDIENTES.md` | Lo abierto, con condición de cierre |
 | 6 | `docs/ESQUEMA.md` | Cómo se diseña la base |
@@ -66,9 +66,9 @@ lo dice en su encabezado.
 
 ```
 Careonys-Marketplace/
-├── CLAUDE.md                   ← reglas no negociables, leer primero
+├── CLAUDE.md                   ← las reglas propias de este producto, leer primero
 ├── docs/
-│   ├── GLOSARIO.md             ← copia del glosario de Careonys; el original manda
+│   ├── GLOSARIO.md             ← los términos que nació este producto; el glosario está arriba
 │   ├── ALCANCE.md              ← qué existe y qué no. Referencia única
 │   ├── ESQUEMA.md              ← reglas de la base y el error que no se repite
 │   ├── INVENTARIO.md           ← anatomía del código actual
@@ -158,9 +158,7 @@ puntual: `git commit --no-verify`, y conviene que sea raro.
 
 ## Decisiones abiertas que bloquean el esquema
 
-1. **Cómo se llama esto en el código.** La palabra "marketplace" ya significa otra cosa en el
-   glosario heredado. Ver `docs/GLOSARIO.md` §4.
-2. **Qué se construye acá y qué es de Careonys.** Reportes de cuidado, signos vitales, check-in y
+1. **Qué se construye acá y qué es de Careonys.** Reportes de cuidado, signos vitales, check-in y
    reportes diarios ya existen allá. Ver `docs/ALCANCE.md` §3.
 
-Ninguna de las dos se resuelve escribiendo código.
+No se resuelve escribiendo código.

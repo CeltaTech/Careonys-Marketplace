@@ -9,7 +9,7 @@
    los cuatro chequeos entraron a revisarla: el de identidad avisó de dieciséis
    marcas escritas a mano que eran las mismas de siempre, vistas dos veces. Una
    lista repetida cuatro veces se arregla tres veces y queda mal la cuarta
-   (regla 7 de `CLAUDE.md`).
+   («ningún patrón repetido sin punto único de verdad»).
 
    `NUNCA_SE_ABRE` es lo que no abre ningún chequeo, por dos razones distintas:
    - **Las cajas fuertes.** La regla de la bóveda está en `F:\proyectos\CLAUDE.md`

@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (isVisible) visibleCount++;
     });
 
-    // El cuarto estado de la regla 5.3: cero resultados se dice con una frase,
+    // El cuarto estado: cero resultados se dice con una frase,
     // no con un «Mostrando 0» que se lee como si algo se hubiera roto.
     if (resultsCount) {
       resultsCount.textContent = visibleCount === 0

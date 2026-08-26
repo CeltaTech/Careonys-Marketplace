@@ -7,7 +7,7 @@
 
        node scripts/verificar_trato.mjs
 
-   Por qué existe: la regla 5.1 de `CLAUDE.md` pide forma impersonal primero y
+   Por qué existe: la regla «trato de usted» pide forma impersonal primero y
    *usted* cuando haya que dirigirse a alguien. Se limpiaron catorce pantallas el
    24 de agosto de 2026, y eso es una foto: la pantalla número quince la escribe
    alguien que no leyó la regla. Una regla que no se verifica sola no es una regla.
@@ -111,7 +111,7 @@ if (fallas.length > 0) {
   console.error('Texto visible que tutea a quien lo lee:\n');
   for (const falla of fallas) console.error('  - ' + falla);
   const plural = fallas.length === 1 ? 'aparición' : 'apariciones';
-  console.error(`\n${fallas.length} ${plural}. La regla 5.1 pide forma impersonal, o *usted*.`);
+  console.error(`\n${fallas.length} ${plural}. La regla «trato de usted» pide forma impersonal, o *usted*.`);
   process.exit(1);
 }
 

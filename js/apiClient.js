@@ -365,7 +365,7 @@ const ClienteDatos = {
   // para nadie. Acá sólo se piden los enunciados y se manda lo contestado.
 
   // Las evaluaciones que esta persona puede rendir. Salen de la base porque
-  // son un catálogo (regla 5.1): ninguna pantalla tiene una clave escrita
+  // son un catálogo («los catálogos salen de la base»): ninguna pantalla tiene una clave escrita
   // adentro. La política ya devuelve sólo las publicadas, las generales y las
   // de su Prestadora.
   async getEvaluaciones() {

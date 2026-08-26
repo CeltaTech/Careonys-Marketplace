@@ -21,7 +21,7 @@ Eso choca con dos reglas escritas:
 
 - **`CLAUDE.md` §2:** *"¿Esto funciona correctamente cuando existan cientos de Prestadoras usándolo
   simultáneamente?"* — hoy la respuesta es no.
-- **`CLAUDE.md` §5, regla 1:** nada de texto visible escrito a mano. La marca de la Prestadora es
+- **`CLAUDE.md`, «nunca hardcodear»:** nada de texto visible escrito a mano. La marca de la Prestadora es
   un dato de la Prestadora, no una constante del programa.
 
 Está escrito además con **tres grafías distintas** —`PresDemo`, `PrestDemo`, `Presdemo`—, lo que

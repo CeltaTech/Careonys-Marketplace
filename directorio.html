@@ -65,7 +65,7 @@
   <div class="filter-bar">
     <div class="filter-inner" style="flex-wrap:wrap;gap:12px;">
       <input type="text" id="dir-search" placeholder="🔍 Buscar por nombre o zona..." style="flex:2;min-width:220px;" />
-      <!-- Los cuatro desplegables salen del catálogo (regla 5.1): acá sólo se declara
+      <!-- Los cuatro desplegables salen del catálogo («los catálogos salen de la base»): acá sólo se declara
            cuál vocabulario manda en cada uno. Las claves que eligen son las mismas que
            llevan las tarjetas en sus `data-`, así que el filtro compara clave con clave
            y no depende de cómo esté escrita una palabra en la pantalla. -->
@@ -88,7 +88,7 @@
   <section class="directory-grid-section">
     <p class="directorio-cuenta" id="results-count"></p>
 
-    <!-- Los cuatro estados de la regla 5.3. Hasta el 24 de agosto de 2026 ninguno
+    <!-- Los cuatro estados. Hasta el 24 de agosto de 2026 ninguno
          hacía falta, porque la pantalla no esperaba a nadie: traía ocho tarjetas
          inventadas escritas acá adentro, con su nombre, su puntaje y sus insignias. -->
     <div class="directorio-estado" id="dir-cargando">
@@ -234,7 +234,7 @@
       // los tres vocabularios que las tienen repartidas, lo hace el catálogo
       // desde el 25 de agosto de 2026. Estaba escrito acá y `perfil.html`
       // necesitaba lo mismo: dos copias de la misma traducción es exactamente
-      // lo que la regla 7 no quiere.
+      // lo que la «ningún patrón repetido sin punto único de verdad» no quiere.
 
       function dibujarTarjeta(fila) {
         const nodo = molde.content.cloneNode(true);

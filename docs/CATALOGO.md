@@ -15,7 +15,7 @@ otro lado:
 
 Los dos primeros son listas de opciones. Los cuatro que siguen, del 24 de agosto de 2026, no
 son listas: guardan preguntas de sí o no, la grilla horaria, formularios repetibles y plazos.
-Todos están declarados con su texto en los tres idiomas, porque la regla 2 no admite construir
+Todos están declarados con su texto en los tres idiomas, porque «multiidioma desde el día uno» no admite construir
 en uno solo «para traducir después».
 
 `catalogo-autorizaciones.json` se llamaba `catalogo-banderas.json` hasta el 24 de agosto de

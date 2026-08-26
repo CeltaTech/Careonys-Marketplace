@@ -27,13 +27,13 @@
    `innerHTML`. Esa vía nunca interpreta marcado, así que es la preferida y no
    necesita ninguna función. Escapar es para cuando hay que armar HTML de verdad.
 
-   `Texto.mensajeDeError` existe por la otra mitad del problema. La regla 5.1 de
-   `CLAUDE.md` dice que un mensaje de error es texto visible: lo que devuelven el
+   `Texto.mensajeDeError` existe por la otra mitad del problema. La regla «un mensaje de error es texto visible»
+   dice que lo que devuelven el
    navegador o la base nombra tablas, columnas y restricciones, y eso no se le
    muestra a nadie. Se clasifica el error, se muestra la frase que corresponde, y
    el texto técnico queda en la consola.
 
-   Es el único clasificador del proyecto, como pide la regla 7. Vivió un tiempo
+   Es el único clasificador del proyecto, como pide «ningún patrón repetido sin punto único de verdad». Vivió un tiempo
    en `js/auth.js` con el nombre `Sesion.mensajeDeError` y se mudó acá porque un
    mensaje de error es texto y no es sesión, y porque `js/texto.js` lo cargan
    las catorce pantallas y `js/auth.js` no.

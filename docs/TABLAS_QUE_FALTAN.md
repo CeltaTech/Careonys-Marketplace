@@ -82,7 +82,7 @@ búsquedas se guardan, pero las dos puntas nunca se tocan.
 |---|---|
 | **De qué lado cae** | Propia de esta modalidad — módulo `avisos`. En prestación directa el trabajo se asigna, no se postula |
 | **De qué depende** | De `avisos` y de `caregivers`, las dos ya existentes |
-| **Qué hay que decidir antes** | Si la tarifa propuesta se guarda acá, y con qué moneda (regla 11). Y qué pasa cuando la búsqueda se cierra con varias postulaciones abiertas |
+| **Qué hay que decidir antes** | Si la tarifa propuesta se guarda acá, y con qué moneda («todo importe se guarda con su moneda»). Y qué pasa cuando la búsqueda se cierra con varias postulaciones abiertas |
 
 Columnas propuestas: búsqueda, Asistente, estado, mensaje, tarifa propuesta, fecha en que se vio,
 fecha de respuesta, motivo del rechazo, fecha de creación. Una sola postulación por par de
@@ -209,7 +209,7 @@ de un catálogo, no de una lista escrita adentro de la tabla.
 
 Columnas propuestas: Familia, Asistente, fecha. La clave primaria es el par.
 
-**Falta `prestadora_id`.** Y conviene revisar la regla 3 del `CLAUDE.md`: una clave primaria UUID
+**Falta `prestadora_id`.** Y conviene revisar el aislamiento entre Organizaciones: una clave primaria UUID
 propia hace la tabla más fácil de referenciar después.
 
 ---
@@ -227,7 +227,7 @@ propia hace la tabla más fácil de referenciar después.
 Columnas propuestas: Familia, Asistente, búsqueda, monto, moneda, estado, método, dos
 identificadores del cobrador externo, comisión de la plataforma, monto del Asistente.
 
-**Es la única de las diez que sí guarda la moneda** junto al importe, como pide la regla 11. Le
+**Es la única de las diez que sí guarda la moneda** junto al importe, como pide la «todo importe se guarda con su moneda». Le
 falta `prestadora_id`, y le sobran los dos identificadores del cobrador externo: eso ata el
 esquema a un proveedor de cobro que todavía no se eligió.
 
@@ -258,7 +258,7 @@ El material heredado proponía una tabla de clave y valor para los números que 
 escritos en el código: cuántos puntos vale cada cosa, a los cuántos días expira una búsqueda, qué
 porcentaje cobra la plataforma.
 
-**La idea es correcta y es la regla 5.1** —nada de eso se escribe adentro de una pantalla—, pero
+**La idea es correcta y es «los catálogos salen de la base»** —nada de eso se escribe adentro de una pantalla—, pero
 la forma propuesta tiene dos problemas: guarda todo como texto con una columna que dice de qué
 tipo es, y **no tiene `prestadora_id`**, cuando la mitad de esos valores son justamente lo que
 puede variar de una Prestadora a otra. Eso es «configuración sobre programación» (`CLAUDE.md` §2)

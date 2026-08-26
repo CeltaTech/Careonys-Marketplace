@@ -51,7 +51,7 @@ alguien** y **qué puede ver de ella**.
    Prestadora de los metadatos del registro, pero **el rol no**: quien se registra solo queda
    siempre con un rol sin acceso a los datos de la Prestadora. La Prestadora se valida contra
    `tenants`; si no existe, la fila queda sin Prestadora en vez de inventarla.
-3. **`public.es_personal_de_prestadora()`**, punto único de verdad (regla 7), con las mismas
+3. **`public.es_personal_de_prestadora()`**, punto único de verdad («ningún patrón repetido sin punto único de verdad»), con las mismas
    precauciones que `prestadora_actual()`: `security definer`, sin permiso para el anónimo, con
    permiso para la sesión autenticada.
 4. **Políticas en dos niveles** sobre `caregivers` y sobre las siete tablas del legajo:
@@ -64,7 +64,7 @@ alguien** y **qué puede ver de ella**.
 ### Aplicación
 
 6. **`acceso.html`**: la pantalla de inicio de sesión que no existe. Con los cuatro estados de la
-   regla 3 y sin mostrar el texto crudo del error (regla 5.1).
+   «los cuatro estados» y sin mostrar el texto crudo del error («un mensaje de error es texto visible»).
 7. **`requireAuth()` apunta a `acceso.html`** y lo llama `panel-prestadora.html`.
 8. **`initTenant()` da vuelta el orden**: con sesión, la Prestadora sale de la sesión. La barra de
    direcciones sigue eligiendo **qué directorio se muestra** a quien no inició sesión, que es lo
@@ -100,7 +100,7 @@ política**: un volcado del esquema `storage` no devuelve ningún `create policy
 sesión, subir estaba prohibido para todo el mundo.
 
 Los dos depósitos existían igual, y eso es lo segundo que apareció: los creó alguien a mano desde
-el tablero, sin migración que los declarara — contra la regla 9. Ahora los declara
+el tablero, sin migración que los declarara — contra la «toda migración versionada». Ahora los declara
 `supabase/migrations/0006_archivos_del_legajo.sql`, junto con las tres políticas:
 
 - **El permiso sale de la primera carpeta del camino.** Cada archivo vive en

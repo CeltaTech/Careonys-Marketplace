@@ -5,12 +5,12 @@
    entonces se le pregunta qué de eso se hace visible. Antes de cargarlo no
    sabría qué está autorizando.
 
-   Regla 5.1: ningún catálogo se escribe adentro de una pantalla. El texto de
+   «todo botón que dispara una operación se apaga».1: ningún catálogo se escribe adentro de una pantalla. El texto de
    cada pregunta, su orden, su valor inicial y los tres idiomas salen de
    `data/catalogo-autorizaciones.json`. Este archivo nació porque ese paso
    estaba escrito adentro de `registrar-asistente.html` y la pantalla del
    teléfono no lo tenía: copiarlo habría sido tener el mismo paso dos veces,
-   que es lo que la regla 7 prohíbe.
+   que es lo que la «ningún patrón repetido sin punto único de verdad» prohíbe.
 
    Cómo se usa: la pantalla pone un contenedor vacío y lo declara.
 
@@ -59,7 +59,7 @@
 
   const IDIOMA_POR_DEFECTO = 'es-AR';
 
-  // Los estados de la regla 5.3 que este paso puede tener, dichos una sola vez.
+  // Los cuatro estados que este paso puede tener, dichos una sola vez.
   const MENSAJES = {
     error: 'No se pudo cargar el paso de cierre'
   };

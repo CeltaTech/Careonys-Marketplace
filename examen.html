@@ -362,7 +362,7 @@
 
     // `arrancar` llama a `abrir` adentro de un `try`, así que un fallo del servidor
     // termina en el panel de error. Desde un botón no había quien lo atrapara: la
-    // pantalla se quedaba en «Cargando...» para siempre, sin decir nada (regla 3).
+    // pantalla se quedaba en «Cargando...» para siempre, sin decir nada («los cuatro estados»).
     async function abrirDesdeBoton(clave) {
       try {
         await abrir(clave);

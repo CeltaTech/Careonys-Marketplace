@@ -421,7 +421,7 @@
         </div>
 
         <!-- PASO 5: LEGAJO — FICHAS REPETIBLES (matrícula, estudios, experiencia, referencias) -->
-        <!-- Se dibuja desde data/catalogo-fichas.json vía js/fichas-legajo.js (regla 5.1: formularios declarados, no dibujados). -->
+        <!-- Se dibuja desde data/catalogo-fichas.json vía js/fichas-legajo.js («los formularios se declaran, no se dibujan»). -->
         <div class="wizard-step-pane" id="step-pane-5" style="display:none;">
           <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-titulo);"><i
               class="fas fa-folder-open"></i> Paso 5: Legajo</h3>
@@ -663,7 +663,7 @@
       // Paso 7: lo que la persona autoriza a publicar. Los cuarenta renglones
       // que esto ocupaba acá son ahora `js/autorizaciones.js`, porque la
       // pantalla del teléfono necesita el mismo paso y copiarlo habría sido
-      // tenerlo dos veces (regla 7).
+      // tenerlo dos veces («ningún patrón repetido sin punto único de verdad»).
       const cierre = await Autorizaciones.textosDelPaso();
       document.getElementById('cierre-titulo').append(' ' + (cierre.titulo || ''));
       document.getElementById('cierre-bajada').textContent = cierre.bajada || '';
@@ -792,7 +792,7 @@
     // sesión abierta, y «Ya confirmé, continuar», cuando el servidor pidió
     // confirmar el correo antes—. Mientras vivió adentro del envío, confirmar el
     // correo costaba el legajo entero: no había forma de volver a este tramo sin
-    // cargar los siete pasos de nuevo (regla 7).
+    // cargar los siete pasos de nuevo («ningún patrón repetido sin punto único de verdad»).
     async function guardarLegajo(userId, email) {
       const form = formAlta;
 

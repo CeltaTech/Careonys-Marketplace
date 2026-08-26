@@ -45,12 +45,12 @@ respuesta es sí, es compartido. Si es no, se queda de este lado.
 | **Legajo del Asistente** | Datos personales, estudios con su título y su archivo, matrícula con su vigencia, experiencia laboral, referencias | Es quién es la persona, no cómo consiguió el trabajo |
 | **Documentación y vencimientos** | Qué papel hace falta, cuál bloquea, cuál vence y cuándo, quién lo validó | Un certificado vencido inhabilita en cualquier modalidad |
 | **Verificación** | Qué se controló de un legajo y con qué resultado | Ídem |
-| **Incorporación de Asistentes** | Por dónde entró la persona —se registró sola, la cargó una Prestadora, u otra vía—, en qué etapa del proceso está y qué le falta para cerrarla | El plantel es uno solo. El mismo Asistente sirve a las tres modalidades, así que reclutarlo de nuevo en cada una sería tener tres versiones distintas de la misma persona, cada una con sus papeles a medio controlar. El término está en `docs/GLOSARIO.md:44` |
+| **Incorporación de Asistentes** | Por dónde entró la persona —se registró sola, la cargó una Prestadora, u otra vía—, en qué etapa del proceso está y qué le falta para cerrarla | El plantel es uno solo. El mismo Asistente sirve a las tres modalidades, así que reclutarlo de nuevo en cada una sería tener tres versiones distintas de la misma persona, cada una con sus papeles a medio controlar. El término está en `../../docs/GLOSARIO_PRODUCTOS_CAREONYS.md:40` |
 | **Disponibilidad horaria** | Los días y las franjas en que la persona puede trabajar | Se usa para asignar igual que para mostrar |
 | **Cursos y certificaciones** | La oferta de cursos, la evaluación y el resultado | Careonys registra el resultado pero no tiene la oferta: ver `docs/ALCANCE.md` §3 |
 | **Calificaciones** | La calificación que deja quien recibió el trabajo, con su comentario y con la respuesta del Asistente | Quien fue cuidado puede opinar de quien lo cuidó, haya elegido a esa persona o se la hayan asignado. Es evidencia sobre la persona y va con la persona. **Cuánto pesa cada calificación y en qué orden ordena** no viene acá: eso es del directorio y se queda del otro lado |
-| **Organización y aislamiento** | La Prestadora de cada dato y quién puede verlo | Es la regla 2 del `CLAUDE.md`. Nunca puede vivir de un solo lado |
-| **Motor de formularios** | Campos, etiquetas, validaciones y pasos declarados, no dibujados | Regla 5.1. El motor es genérico; los formularios que carga, no |
+| **Organización y aislamiento** | La Prestadora de cada dato y quién puede verlo | Es el aislamiento entre Organizaciones. Nunca puede vivir de un solo lado |
+| **Motor de formularios** | Campos, etiquetas, validaciones y pasos declarados, no dibujados | «todo botón que dispara una operación se apaga».1. El motor es genérico; los formularios que carga, no |
 
 ### Propio de esta modalidad — se queda de este lado
 

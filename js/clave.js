@@ -6,7 +6,7 @@
    por su cuenta, tarde o temprano una pide ocho caracteres, otra seis, y la
    persona se entera del desacuerdo recién cuando el servidor la rechaza. Por
    eso el largo mínimo y las frases de aviso viven acá y en ningún otro lado
-   (regla 7).
+   («ningún patrón repetido sin punto único de verdad»).
 
    El botón para ver la contraseña también sale de acá, y se pone solo: al
    cargar la página, todo campo de contraseña queda con el suyo. Una pantalla

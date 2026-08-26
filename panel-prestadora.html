@@ -142,7 +142,7 @@
   <script>
     let aspiranteSeleccionadoId = null;
 
-    // Los cuatro estados de la regla 3. Sin esto una tabla vacía no distingue
+    // Los cuatro estados. Sin esto una tabla vacía no distingue
     // "no hay aspirantes" de "no se pudo leer" ni de "no le corresponde verlos".
     function estadoTabla(tono, texto) {
       const caja = document.getElementById('estado-tabla');
@@ -153,7 +153,7 @@
       caja.style.display = 'block';
     }
 
-    // Regla 5: Actualizar se apaga mientras trae los legajos. Tres clics seguidos
+    // «todo botón que dispara una operación se apaga»: Actualizar se apaga mientras trae los legajos. Tres clics seguidos
     // eran tres consultas y tres dibujados de la misma tabla, pisándose entre sí.
     async function cargarAspirantes() {
       const boton = document.getElementById('btn-actualizar-aspirantes');
@@ -231,8 +231,8 @@
       document.getElementById('kpi-validados').innerText = val;
     }
 
-    // Regla 5: el botón de la fila se apaga mientras se traen los papeles. Y
-    // regla 3: si no se pueden traer, se avisa —antes esto fallaba en silencio y
+    // «todo botón que dispara una operación se apaga»: el botón de la fila se apaga mientras se traen los papeles. Y
+    // «los cuatro estados»: si no se pueden traer, se avisa —antes esto fallaba en silencio y
     // el legajo simplemente no se abría, sin que nada explicara por qué—.
     async function abrirAuditoria(id, boton) {
       const original = boton ? boton.innerHTML : '';
@@ -293,12 +293,12 @@
 
     // Otorgar el aval y rechazar son la misma operación con distinto resultado, así
     // que la pregunta, el apagado de los botones y el aviso de error viven en un
-    // solo lugar (regla 7 de `CLAUDE.md`).
+    // solo lugar («ningún patrón repetido sin punto único de verdad»).
     //
-    // Regla 4: las dos decisiones caen sobre el trabajo de una persona y ninguna se
+    // «toda operación destructiva se confirma»: las dos decisiones caen sobre el trabajo de una persona y ninguna se
     // deshace desde esta pantalla, así que antes se dice qué va a pasar y se puede
-    // cancelar. Regla 5: mientras la operación corre, los dos botones se apagan
-    // —dos clics eran dos escrituras—. Regla 3: si la base rechaza el cambio, se
+    // cancelar. «todo botón que dispara una operación se apaga»: mientras la operación corre, los dos botones se apagan
+    // —dos clics eran dos escrituras—. «los cuatro estados»: si la base rechaza el cambio, se
     // avisa; antes el error no llegaba a ninguna parte y la pantalla se cerraba
     // igual, como si hubiera salido bien.
     async function resolverAspirante({ estado, nota, pregunta, aviso, boton, mientras }) {
@@ -363,7 +363,7 @@
 
     // El orden no es casual: sin sesión no hay Prestadora, y sin Prestadora la
     // consulta de legajos no tiene por qué filtrar.
-    // Regla 3: el arranque es un pedido a la base como cualquier otro, y si falla
+    // «los cuatro estados»: el arranque es un pedido a la base como cualquier otro, y si falla
     // tiene que decirlo. Sin este `try` la primera línea que fallaba se llevaba
     // puestas todas las de abajo, y la tabla se quedaba vacía sin una palabra:
     // igualita a una Prestadora que todavía no tiene ningún legajo cargado.

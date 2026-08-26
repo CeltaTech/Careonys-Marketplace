@@ -30,8 +30,8 @@
 
    3. **El HTML armado con `+`**, que es la forma vieja de lo mismo.
 
-   4. **El texto crudo de un error que llega a la vista.** La regla 5.1 de
-      `CLAUDE.md` dice que un mensaje de error es texto visible: lo que devuelven
+   4. **El texto crudo de un error que llega a la vista.** La regla «un mensaje de error es texto visible»
+      dice que lo que devuelven
       el navegador o la base nombra tablas, columnas y restricciones, y eso no se
       le muestra a nadie. Se avisa cuando un `.message` o un `.error_description`
       aparece en la misma sentencia que un `alert`, un `confirm`, un `innerHTML`

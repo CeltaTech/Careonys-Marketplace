@@ -3,7 +3,7 @@
 
        node scripts/verificar_botones.mjs
 
-   La regla 5 de `CLAUDE.md` pide que todo botón que dispara una operación se
+   La «todo botón que dispara una operación se apaga» pide que todo botón que dispara una operación se
    deshabilite mientras está en curso, «nunca doble envío». Es fácil de escribir
    y fácil de olvidar: el 25 de agosto de 2026 había veintidós manejadores de
    este tipo y seis no apagaban nada. Uno de ellos otorgaba el aval de la
@@ -246,7 +246,7 @@ if (fallas.length > 0) {
   for (const falla of fallas) console.error('  - ' + falla + '\n');
   const plural = fallas.length === 1 ? 'manejador' : 'manejadores';
   console.error(
-    `${fallas.length} ${plural}. Regla 5 de \`CLAUDE.md\`: nunca doble envío.\n` +
+    `${fallas.length} ${plural}. «todo botón que dispara una operación se apaga» de \`CLAUDE.md\`: nunca doble envío.\n` +
     'Se guarda el botón en una variable, se le pone `disabled = true` antes del primer\n' +
     '`await` y se lo devuelve en un `finally`, que corre también cuando algo falla.\n' +
     'Si el manejador no puede apagar nada por algún motivo, va a EXENTOS de este mismo\n' +

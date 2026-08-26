@@ -3,7 +3,7 @@
 
        node scripts/verificar_arranque.mjs
 
-   La regla 3 de `CLAUDE.md` pide cuatro estados —cargando, error, vacío, listo—
+   La «los cuatro estados» pide cuatro estados —cargando, error, vacío, listo—
    a todo componente que carga datos. Lo primero que carga datos en cualquier
    pantalla es su arranque, y es justo lo que nadie mira: el 25 de agosto de 2026
    había ocho arranques y **ninguno de los ocho** tenía quién atrapara un fallo.
@@ -222,7 +222,7 @@ if (fallas.length > 0) {
   for (const falla of fallas) console.error('  - ' + falla + '\n');
   const plural = fallas.length === 1 ? 'arranque' : 'arranques';
   console.error(
-    `${fallas.length} ${plural}. Regla 3 de \`CLAUDE.md\`: cargando, error, vacío y listo.\n` +
+    `${fallas.length} ${plural}. «los cuatro estados» de \`CLAUDE.md\`: cargando, error, vacío y listo.\n` +
     'El arranque entero va adentro de un `try`, el `catch` deja el detalle técnico en la\n' +
     'consola y muestra en pantalla la frase que corresponde. Sin eso, la primera línea que\n' +
     'falla se lleva puestas todas las de abajo y la pantalla queda igual que si no hubiera\n' +

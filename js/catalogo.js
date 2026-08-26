@@ -1,7 +1,7 @@
 /* ===================================================
    CATÁLOGO — las listas de opciones, en un solo lugar
 
-   Regla 5.1: ningún catálogo se escribe adentro de una pantalla. Antes cada
+   «todo botón que dispara una operación se apaga».1: ningún catálogo se escribe adentro de una pantalla. Antes cada
    formulario traía su propia lista de géneros, de zonas, de perfiles; eran
    veintiuna listas repartidas en nueve archivos y no coincidían entre sí.
    Ahora hay una sola, y las pantallas la piden.
@@ -48,11 +48,11 @@
   'use strict';
 
   // El idioma del texto visible. Hoy las listas están escritas solo en es-AR;
-  // cuando tengan `en` y `pt-BR` (regla 5.2) esto ya las lee sin tocar nada,
+  // cuando tengan `en` y `pt-BR` («multiidioma desde el día uno») esto ya las lee sin tocar nada,
   // porque cada ítem es un objeto con un texto por idioma.
   const IDIOMA_POR_DEFECTO = 'es-AR';
 
-  // Los cuatro estados de la regla 5.3, dichos una sola vez.
+  // Los cuatro estados, dichos una sola vez.
   const MENSAJES = {
     cargando: 'Cargando opciones…',
     error: 'No se pudieron cargar las opciones',
@@ -169,7 +169,7 @@
     // ninguno se devuelve la clave tal cual: es preferible a dejar el hueco.
     //
     // Vivía escrita adentro de `directorio.html`. Subió acá cuando `perfil.html`
-    // necesitó lo mismo, para no tener la traducción dos veces (regla 7).
+    // necesitó lo mismo, para no tener la traducción dos veces («ningún patrón repetido sin punto único de verdad»).
     etiquetaDeTarea(clave) {
       const donde = ['tarea_cuidado', 'tarea_hogar', 'tarea_acompanamiento'];
       for (let i = 0; i < donde.length; i++) {
@@ -183,7 +183,7 @@
     // No son listas de opciones sino tarjetas, así que la pantalla declara el
     // molde —un `<template>`— y acá se rellena uno por cada cosa del catálogo.
     // El diseño sigue viviendo en el HTML y el contenido en el catálogo, que es
-    // el reparto que pide la regla 5.1.
+    // el reparto que pide «los catálogos salen de la base».
 
     cargarOferta() {
       if (!promesaOferta) {
@@ -221,7 +221,7 @@
       // `modalidad@modalidad_curso` guarda «online» y muestra «Online»: el
       // valor sale del ítem y el texto, del vocabulario que se nombra después
       // de la arroba. Sin él habría que escribir la traducción en la pantalla,
-      // que es justo lo que la regla 5.1 no quiere.
+      // que es justo lo que «los catálogos salen de la base» no quiere.
       const arroba = nombre.indexOf('@');
       const clave = arroba === -1 ? nombre : nombre.slice(0, arroba);
       const valor = clave === 'nombre' ? this.texto(item) : item[clave];
@@ -348,7 +348,7 @@
     // Los tres ajustes que comparten todos los grupos de opciones —casillas,
     // redondas y tarjetas—: cómo se llama el campo, qué clase lleva cada
     // opción, y cuáles vienen marcadas de entrada. Se leen en un solo lugar
-    // porque son los mismos tres (regla 7).
+    // porque son los mismos tres («ningún patrón repetido sin punto único de verdad»).
     _ajustesDeGrupo(elemento) {
       return {
         nombre: elemento.getAttribute('data-catalogo-nombre')
@@ -466,7 +466,7 @@
 
     // Recorre el documento y resuelve todo lo que declare `data-catalogo`.
     // Mientras llega el archivo, cada desplegable dice «Cargando opciones…» y
-    // queda deshabilitado: es el estado «cargando» de la regla 5.3, y además
+    // queda deshabilitado: es el estado «cargando», y además
     // evita que alguien mande el formulario con la lista a medio llenar.
     async aplicarEnDocumento(raiz) {
       const base = raiz || document;
@@ -498,7 +498,7 @@
       const elementos = Array.prototype.slice.call(base.querySelectorAll('[data-catalogo]'));
       if (!elementos.length) return;
 
-      // El estado «cargando» de la regla 5.3, para todos y no sólo para los
+      // El estado «cargando», para todos y no sólo para los
       // desplegables. Un grupo de casillas o una grilla de tarjetas que todavía
       // no llegó se ve igual que una que vino vacía, y ésa es exactamente la
       // falla que este archivo existe para no tener. El desplegable además
