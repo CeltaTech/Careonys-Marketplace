@@ -2542,14 +2542,22 @@ Y no era un problema estético. Esas filas se ven: el directorio de la Organizac
 misma persona inventada, un legajo con el nombre, el documento, el teléfono y el correo todos
 vacíos, y un correo con el nombre anterior del producto adentro.
 
-**De paso se corrigió una afirmación que este documento traía mal.** El pendiente decía que los
-cinco perfiles «estaban bien», porque los crea al registrarse alguien el disparador de la
-migración 0005. No era así, y se comprobó de dos maneras: tres de los cinco tienen identificador
-escrito a mano —unos, dos y tres repetidos— que ninguna cuenta de acceso genera, los otros dos se
-cargaron en la misma transacción al mismo microsegundo, cosa que dos altas separadas no hacen, y
-sobre todo **`profiles` no tiene ninguna clave foránea hacia `auth.users`**: una fila ahí no
-prueba que exista una cuenta detrás. Eran filas sueltas de la época en que se escribía contra la
-base.
+**De paso se corrigió una afirmación que este documento traía mal, y después hubo que corregir la
+corrección.** El pendiente decía que los cinco perfiles «estaban bien», porque los crea al
+registrarse alguien el disparador de la migración 0005. Contra eso se escribió acá que `profiles`
+no tenía ninguna clave foránea hacia `auth.users`, así que una fila ahí no probaba que hubiera una
+cuenta detrás. **Eso es falso.** El 26 de agosto de 2026, probando otra cosa contra la base local,
+un `insert` en `profiles` con un identificador inventado lo rechazó `profiles_id_fkey`, que existe
+desde la primera migración, apunta a `auth.users(id)` y borra en cascada
+(`supabase/migrations/0001_esquema_inicial.sql:252`). O sea que cada uno de los cinco perfiles
+tuvo su cuenta de acceso: sin ella la fila no podía existir.
+
+Lo que sigue en pie es lo otro: tres de los cinco tienen identificador escrito a mano —unos, dos y
+tres repetidos—, que ninguna alta genera, y los otros dos se cargaron al mismo microsegundo. Con
+la clave foránea a la vista eso significa que **también las cuentas de acceso se escribieron a
+mano**, porque una fila de `profiles` con ese identificador exige una de `auth.users` con el
+mismo. Lo que no resuelve es si las otras dos nacieron de un registro de verdad; y da igual, porque
+el Desarrollador ya había dicho lo que decide: son datos inventados y se van.
 
 Las borra `supabase/migrations/0031_se_van_las_sobras_de_la_base_publicada.sql`, que **nombra una
 por una las once** en su encabezado, para que quede el rastro de qué había cuando ya no se pueda
@@ -2678,6 +2686,87 @@ las treinta migraciones están limpias. Además quedaron cuatro casos nuevos en 
 que tienen que romper y dos que tienen que pasar; uno de esos dos últimos es una lista de valores
 **sin** nombres de columna, que el chequeo tiene que dejar pasar en vez de adivinar a qué columna
 corresponde cada uno.
+
+### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
+
+Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
+cuidado el segundo paso de los dos que hace Postgres —treinta y cuatro políticas, todas pidiendo
+sesión— y el primero tal como venía de fábrica. Supabase deja puesto un permiso por omisión que
+le concede *todo* a `anon` y a `authenticated` sobre cada tabla, secuencia y función nueva de
+`public`, así que cada tabla nacía abierta sin que ninguna migración lo pidiera.
+
+**Lo que eso abría no era teórico, y se midió.** Con una cuenta ficticia de coordinador de
+PresDemo, contra la base local, con las 31 migraciones aplicadas: esa cuenta **veía 6 avisos** —los
+de su Prestadora, que es lo que la política le deja ver— y con un solo `truncate` **dejó la tabla
+en 0**, borrando también los 6 de Cuidar Norte. La RLS no lo detuvo porque no puede: filtra filas,
+y vaciar la tabla no es filtrar filas. `TRUNCATE` no mira ninguna política. El pendiente decía que
+el permiso «está de más igual» aunque no hubiera daño; había daño, y alcanzaba a la Organización
+ajena.
+
+Lo arregla `supabase/migrations/0032_los_permisos_de_tabla_al_minimo.sql`, que **no concede nada
+nuevo: sólo saca.** Cada tabla queda con exactamente los verbos que sus propias políticas ya
+permiten —alta, baja, modificación y consulta donde la política dice `for all`; sólo consulta
+donde dice `for select`— y se van `TRUNCATE`, `REFERENCES` y `TRIGGER`, que ninguna pantalla usa y
+que PostgREST no sabe pedir. Se van también los cinco permisos que tenía `anon` sin usarlos, la
+función de disparador que había quedado al alcance anónimo, y los seis renglones de permiso por
+omisión, que son los que hacían que esto se repusiera solo con cada tabla nueva.
+
+**Consecuencia que hay que saber, porque cambia cómo se escribe una migración de acá en más:**
+toda migración que cree una tabla, una vista o una función tiene que conceder sus permisos
+explícitamente. Si no, la pantalla va a recibir `42501 permission denied` con una sesión válida, y
+eso no se arregla tocando políticas.
+
+**Y la 0032 sacó de más, cosa que se descubrió al día siguiente y se corrigió con la migración
+0033.** El renglón `revoke all on table public.profiles from anon, authenticated` se llevó puesto
+también un permiso **por columna** que la migración 0005 había escrito a propósito, `update
+(full_name)` (`supabase/migrations/0005_acceso_por_sesion.sql:160`). En Postgres, `REVOKE ALL ON
+TABLE` no distingue el permiso sobre la tabla entera del permiso sobre una columna: borra los dos.
+`supabase/migrations/0033_vuelve_el_permiso_por_columna_del_perfil.sql` lo repone, y nada más.
+Ninguna pantalla lo usa hoy —ningún archivo de `js/` escribe `profiles`—, así que no hubo síntoma
+visible; lo que se había roto no era una función, era una defensa.
+
+**Por qué ese permiso es la defensa, y no una comodidad.** `profiles` tiene la política «Su propio
+perfil, de escritura», que dice `id = auth.uid()` y **no nombra ninguna columna**. La tabla guarda
+`role` y `tenant_id`. Lo único que impide que alguien con sesión se ascienda a personal de la
+Prestadora o se mude a otra Organización escribiéndose el `tenant_id` es que el permiso llegue
+acotado a `full_name`. Comprobado el 26 de agosto de 2026 contra la base local, con una cuenta
+ficticia y sesión simulada: corregirse el propio nombre sale bien; ascenderse a `coordinador` y
+mudarse a la Prestadora ajena contestan las dos `permission denied for table profiles`; y
+escribirle el nombre a otra persona toca cero filas.
+
+**Queda como pendiente 82, que no es una alarma sino una trampa armada.** La protección no vive
+donde se la busca: quien lea la política va a leer «cada quien escribe su propia fila» y no va a
+ver ningún límite de columnas, porque no lo hay — está seis renglones más abajo, en un `grant`. La
+0032 es la prueba de que se pisa sin querer. Y el mensaje de Postgres sugiere literalmente el
+arreglo equivocado: `HINT: Grant the required privileges to the current role with: GRANT UPDATE ON
+public.profiles TO authenticated`, que es justo la línea que abre el agujero.
+
+**Y una afirmación de la 0032 quedó mal escrita.** Su encabezado dice que `profiles` «no tiene el
+permiso de tabla que la haría funcionar» y que la política de escritura es letra muerta. Era falso
+al escribirse: el permiso existía, acotado a `full_name`, desde 0005. Lo volvió cierto la propia
+0032, al revocarlo. Una migración aplicada no se edita, así que aquel párrafo queda como está y la
+corrección vive acá y en el encabezado de la 0033.
+
+**Cómo se comprobó, en tres capas, porque el volcado del esquema solo no alcanza.** Una:
+`scripts/probar_permisos_en_vivo.mjs` da las cinco en verde contra las dos bases, sin que se
+tocara la prueba, y sus dos comprobaciones de sostén siguen en pie —el volcado trae tablas y
+políticas, y las tres puertas del directorio siguen al alcance anónimo—. Dos: con una cuenta
+ficticia y sesión simulada contra la base local se leyeron las tablas, se llamaron las funciones
+del directorio, y se dio de alta, se modificó y se dio de baja un aviso, todo `1` fila; el
+`truncate` que antes vaciaba la tabla ahora contesta `permission denied`; y el disparador de las
+ponderaciones **sigue rechazando** aunque su función ya no se pueda llamar desde ninguna sesión,
+porque el permiso de llamada se verifica al crear el disparador y no cada vez que se dispara.
+Tres: `scripts/probar_aislamiento.mjs --local` pasó entero con los permisos recortados —registro
+real, sesiones reales, archivos, examen, avisos y reportes—, que es la única capa que prueba que
+no se rompió nada de lo que la aplicación hace de verdad; se volvió a correr después de la 0033,
+sobre la base local reconstruida desde cero con las 33 migraciones en orden. Y cuatro, que apareció
+después: la prueba por columna sobre `profiles`, la que encontró lo que la 0032 había sacado de
+más. Las tres primeras capas la habían dejado pasar —ninguna escribe `profiles`—, que es
+exactamente el motivo por el que el pendiente 82 pide una prueba en el repositorio y no a mano.
+
+**Lo que no se tocó, y por qué se dice.** Las funciones que llaman las políticas conservan
+`authenticated`: una política evalúa su expresión con los permisos de quien consulta, y quitarle
+ese permiso a una de ésas no devuelve cero filas, **falla**. `service_role` tampoco se tocó.
 
 
 ## 2. Falta construir
