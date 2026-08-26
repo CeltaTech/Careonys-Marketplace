@@ -2277,6 +2277,18 @@ nadie las vuelva a investigar:
   Asistente tiene sola lectura. Ninguna de las dos se puede falsificar desde una sesión. El agujero
   del pendiente 66 no está en la evidencia sino en el veredicto que la resume.
 
+**Y el del 66 se ejecutó esa misma noche, contra la base local y con una cuenta inventada.**
+Hasta ahí salía de leer el texto de las políticas; con las 27 migraciones aplicadas se hizo el
+intento entero, y salió peor de lo que decía el papel: el legajo se puede **crear ya sellado**
+—el `POST` con `verification_status` adentro contesta `201` y el valor queda—, o sea que ni
+hace falta modificarlo después; el sello se baja y se vuelve a subir cuantas veces se quiera; y
+la persona **apareció en el directorio público**, pedido sin ninguna sesión. Lo ficticio se borró
+al terminar. **La prueba puede fallar:** la misma cuenta, en la misma corrida, intentó mudar su
+legajo a la Prestadora ajena y recibió `403`. Y quedó a la vista un cruce con el pendiente 70: la
+tarjeta del intruso salió con la lista `comprobaciones` vacía, que es lo mismo que muestra hoy la
+de cualquiera, porque ninguna pantalla carga esas comprobaciones. **La única señal que habría
+distinguido un legajo revisado de uno auto-sellado hoy no distingue nada.**
+
 **Los dos depósitos de archivos también se midieron, y esa prueba sí se pudo hacer entera.**
 Se pidieron las dos direcciones públicas contra el servidor real: `avatares` contesta «objeto no
 encontrado», o sea que el depósito está ahí y es público; `documentos-cuidadores` contesta
