@@ -872,6 +872,28 @@
         }
       ],
       "nota": "Sale de la ficha de cada curso, donde la modalidad se guarda como clave («online») y la pantalla la muestra como texto. Las seis fichas de hoy dicen «online»; las otras dos opciones existen porque la lista guardada tiene que admitir el curso presencial antes de que exista, no después."
+    },
+    "nivel_curso": {
+      "titulo": "Nivel del curso",
+      "cerrada": true,
+      "usado_en": [
+        "pwa-asistente/index.html:722"
+      ],
+      "items": [
+        {
+          "clave": "basico",
+          "es-AR": "Nivel básico"
+        },
+        {
+          "clave": "intermedio",
+          "es-AR": "Nivel intermedio"
+        },
+        {
+          "clave": "avanzado",
+          "es-AR": "Nivel avanzado"
+        }
+      ],
+      "nota": "Las tres claves no se eligieron acá: ya estaban guardadas en la columna `cursos.nivel` desde la migración 0008, que siembra los seis cursos con `basico`, `intermedio` y `avanzado`. Lo que faltaba era el texto para mostrarlas, y por eso «Mis Capacitaciones» no decía el nivel de ningún curso. La etiqueta dice «Nivel básico» y no «Básico» porque la tarjeta la pone al lado de «8 horas» y «Online», donde una palabra suelta no dice de qué habla. No confundir con el campo `etiqueta` de `data/catalogo-oferta.json`, que es otra cosa: ahí conviven «Nivel básico», «Bienestar» y «Salud», así que no es el nivel sino un rótulo libre de la vidriera pública, y decidir qué hace ese campo no es parte de esto."
     }
   }
 }

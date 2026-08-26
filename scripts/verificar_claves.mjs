@@ -55,7 +55,8 @@ const COLUMNAS = {
   preferred_gender: 'genero_preferido',
   frequency: 'frecuencia',
   gender: 'genero',
-  modalidad: 'modalidad_curso'
+  modalidad: 'modalidad_curso',
+  nivel: 'nivel_curso'
 };
 
 const catalogo = JSON.parse(

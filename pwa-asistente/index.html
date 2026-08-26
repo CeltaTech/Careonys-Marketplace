@@ -712,10 +712,15 @@
       if (curso.descripcion) parte('descripcion').textContent = curso.descripcion;
       else parte('descripcion').remove();
 
-      // Las horas y el certificado son de este renglón; la modalidad es una
-      // clave guardada y su texto sale del catálogo («los catálogos salen de la base»).
+      // Las horas y el certificado son de este renglón; el nivel y la modalidad
+      // son claves guardadas y su texto sale del catálogo («los catálogos salen
+      // de la base»). `etiquetaSiExiste` devuelve vacío cuando la clave no está
+      // en el vocabulario, y entonces no se dibuja nada: es preferible que
+      // falte el dato a que la tarjeta muestre `basico` en crudo.
       const datos = [];
       if (curso.horas) datos.push(curso.horas + (curso.horas === 1 ? ' hora' : ' horas'));
+      const nivel = Catalogo.etiquetaSiExiste('nivel_curso', curso.nivel);
+      if (nivel) datos.push(nivel);
       const modalidad = Catalogo.etiquetaSiExiste('modalidad_curso', curso.modalidad);
       if (modalidad) datos.push(modalidad);
       if (curso.otorga_certificado) datos.push('Otorga certificado');
