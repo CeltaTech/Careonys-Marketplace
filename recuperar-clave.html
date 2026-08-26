@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Pantalla de la sesión, no del directorio: no tiene nada que hacer en un buscador. -->
   <meta name="robots" content="noindex, nofollow" />
-  <title>Recuperar la contraseña</title>
+  <title data-frase="recuperar.titulo">Recuperar la contraseña</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
@@ -26,58 +26,75 @@
 
       <!-- Estado: cargando -->
       <div id="estado-cargando" class="acceso-cargando">
-        <i class="fas fa-circle-notch fa-spin"></i> Un momento...
+        <i class="fas fa-circle-notch fa-spin"></i> <span data-frase="recuperar.cargando">Un momento…</span>
       </div>
 
       <!-- Estado: no se pudo llegar al servidor -->
       <div id="estado-error" style="display:none;">
-        <div class="acceso-aviso critico">
+        <!-- Las dos frases son las mismas de la pantalla de acceso y se piden
+             con su clave: la misma frase escrita dos veces se traduce dos veces
+             y se corrige una sola. -->
+        <div class="acceso-aviso critico" data-frase="acceso.sin_servidor">
           No se pudo conectar con el servidor. Puede ser la conexión de este equipo.
         </div>
-        <button type="button" class="btn btn-secundario" id="btn-reintentar" style="width:100%;">
+        <button type="button" class="btn btn-secundario" id="btn-reintentar" style="width:100%;"
+          data-frase="acceso.reintentar">
           Reintentar
         </button>
       </div>
 
       <!-- Estado: listo -->
       <form id="estado-listo" style="display:none;" novalidate>
-        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;">
+        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;"
+          data-frase="recuperar.titulo">
           Recuperar la contraseña
         </h2>
-        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-bottom:20px;">
+        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-bottom:20px;"
+          data-frase="recuperar.explicacion">
           Escriba el correo con el que entra. Le llega un enlace para elegir una contraseña nueva.
         </p>
 
         <div id="aviso-error-envio" class="acceso-aviso critico" style="display:none;"></div>
 
         <div class="form-group">
-          <label for="recuperar-email">Correo electrónico</label>
+          <label for="recuperar-email" data-frase="acceso.correo">Correo electrónico</label>
           <input type="email" id="recuperar-email" autocomplete="username" required />
         </div>
 
         <button type="submit" class="btn btn-primario" id="btn-enviar" style="width:100%;margin-top:8px;">
-          <span id="texto-btn-enviar">Enviar el enlace</span>
+          <span id="texto-btn-enviar" data-frase="recuperar.enviar">Enviar el enlace</span>
         </button>
 
         <p class="acceso-pie">
-          <a href="acceso.html">Volver al acceso</a>
+          <a href="acceso.html" data-frase="recuperar.volver">Volver al acceso</a>
         </p>
       </form>
 
       <!-- Estado: el pedido salió -->
       <div id="estado-enviado" style="display:none;">
-        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;">
+        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;"
+          data-frase="recuperar.revise_correo">
           Revise su correo
         </h2>
-        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;">
-          Si hay una cuenta con <strong id="correo-avisado"></strong>, ahí va el enlace para elegir
-          una contraseña nueva. El enlace sirve una sola vez y vence en una hora.
+        <!-- El correo va solo, en su propio renglón, y no adentro de la frase.
+             Una frase se traduce entera y se escribe con `textContent`, así que
+             un `<strong>` metido en el medio se perdería; partirla en dos
+             pedazos alrededor del correo sale mal en cuanto un idioma ordena
+             distinto. Arriba y aparte, se lee igual de bien en los tres. -->
+        <p style="font-size:15px;font-weight:700;color:var(--texto-titulo);line-height:1.6;">
+          <strong id="correo-avisado"></strong>
         </p>
-        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-top:12px;">
+        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;"
+          data-frase="recuperar.enlace_enviado">
+          Si hay una cuenta con esa dirección, ahí va el enlace para elegir una contraseña nueva.
+          El enlace sirve una sola vez y vence en una hora.
+        </p>
+        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-top:12px;"
+          data-frase="recuperar.no_aparece">
           Si no aparece en unos minutos, conviene mirar en el correo no deseado.
         </p>
         <p class="acceso-pie">
-          <a href="acceso.html">Volver al acceso</a>
+          <a href="acceso.html" data-frase="recuperar.volver">Volver al acceso</a>
         </p>
       </div>
 
@@ -107,10 +124,35 @@
       });
     }
 
-    function avisar(id, texto) {
+    // Se le pasa **la clave** de la frase, no la frase. Así el aviso queda
+    // marcado con lo que dice, y si la persona cambia de idioma con el cartel
+    // en pantalla, el cartel cambia también. Escribiéndole el texto ya armado
+    // se quedaba en el idioma en que nació.
+    function avisar(id, clave, huecos) {
       const caja = document.getElementById(id);
-      caja.textContent = texto;
-      caja.style.display = texto ? 'block' : 'none';
+      if (!clave) {
+        caja.removeAttribute('data-frase');
+        caja.removeAttribute('data-huecos');
+        caja.textContent = '';
+        caja.style.display = 'none';
+        return;
+      }
+      caja.setAttribute('data-frase', clave);
+      if (huecos) caja.setAttribute('data-huecos', JSON.stringify(huecos));
+      caja.style.display = 'block';
+      // Se **pide** la traducción en vez de escribirla. `Catalogo.frase()` no
+      // espera nada, así que un aviso que se abre durante el arranque —el
+      // enlace vencido, por ejemplo— la llamaba antes de que el catálogo
+      // llegara: la frase salía vacía, se anotaba «no existe» en la consola y
+      // el cartel mostraba el error genérico en vez del que correspondía.
+      // `traducir()` sí espera, y escribe lo que corresponde apenas llega.
+      Catalogo.traducir(caja).then(() => {
+        // Una caja que se abre es porque hay algo que decir, así que nunca
+        // queda en blanco: si la frase no se resolvió —el catálogo no llegó—
+        // se dice lo genérico, que está escrito adentro de `js/catalogo.js` en
+        // los tres idiomas justamente para esto.
+        if (!caja.textContent) caja.textContent = Catalogo.frase('error.generico');
+      });
     }
 
     async function arrancar() {
@@ -143,15 +185,23 @@
 
       const email = document.getElementById('recuperar-email').value.trim();
       if (!email) {
-        avisar('aviso-error-envio', 'Falta escribir el correo.');
+        avisar('aviso-error-envio', 'recuperar.falta_correo');
         return;
       }
 
       const boton = document.getElementById('btn-enviar');
       const texto = document.getElementById('texto-btn-enviar');
-      const textoOriginal = texto.textContent;
+
+      // El rótulo se cambia nombrando la frase y pidiendo que la traduzcan, no
+      // escribiendo el texto: así el botón queda marcado con lo que dice, y un
+      // cambio de idioma mientras la operación corre lo alcanza igual.
+      const rotular = (clave) => {
+        texto.setAttribute('data-frase', clave);
+        Catalogo.traducir(texto);
+      };
+
       boton.disabled = true;
-      texto.textContent = 'Enviando...';
+      rotular('recuperar.enviando');
 
       try {
         await Sesion.pedirNuevaClave(email);
@@ -160,10 +210,11 @@
         document.getElementById('correo-avisado').textContent = email;
         mostrar('enviado');
       } catch (err) {
-        // El detalle técnico lo manda a la consola `Texto.mensajeDeError`.
-        avisar('aviso-error-envio', Texto.mensajeDeError(err, 'mandar el enlace'));
+        // El detalle técnico lo registra `claveDeError` y no sale de la consola;
+        // a la pantalla va la frase que corresponde a esa clase de falla.
+        avisar('aviso-error-envio', Texto.claveDeError(err, 'Recuperar la contraseña, envío:'));
         boton.disabled = false;
-        texto.textContent = textoOriginal;
+        rotular('recuperar.enviar');
       }
     });
 

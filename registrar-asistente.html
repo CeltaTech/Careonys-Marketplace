@@ -937,7 +937,9 @@
       const claveRepetida = document.getElementById('clave-repetida').value;
       const problemaClave = Clave.revisar(clave, claveRepetida);
       if (problemaClave) {
-        alert(problemaClave);
+        // `revisar` devuelve la clave de la frase, no la frase: el texto sale
+        // del catálogo, en el idioma en que se esté viendo la pantalla.
+        alert(Catalogo.frase(problemaClave.clave, problemaClave.huecos));
         goToStep(1);
         document.getElementById(clave === claveRepetida ? 'clave' : 'clave-repetida').focus();
         return;

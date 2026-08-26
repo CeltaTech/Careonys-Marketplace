@@ -109,12 +109,20 @@
       }
       caja.setAttribute('data-frase', clave);
       if (huecos) caja.setAttribute('data-huecos', JSON.stringify(huecos));
-      // Una caja que se abre es porque hay algo que decir, así que nunca
-      // aparece en blanco: si la frase no se resuelve —el catálogo no llegó—
-      // se dice lo genérico, que está escrito adentro de `js/catalogo.js` en
-      // los tres idiomas justamente para esto.
-      caja.textContent = Catalogo.frase(clave, huecos) || Catalogo.frase('error.generico');
       caja.style.display = 'block';
+      // Se **pide** la traducción en vez de escribirla. `Catalogo.frase()` no
+      // espera nada, así que un aviso que se abre durante el arranque —el
+      // enlace vencido, por ejemplo— la llamaba antes de que el catálogo
+      // llegara: la frase salía vacía, se anotaba «no existe» en la consola y
+      // el cartel mostraba el error genérico en vez del que correspondía.
+      // `traducir()` sí espera, y escribe lo que corresponde apenas llega.
+      Catalogo.traducir(caja).then(() => {
+        // Una caja que se abre es porque hay algo que decir, así que nunca
+        // queda en blanco: si la frase no se resolvió —el catálogo no llegó—
+        // se dice lo genérico, que está escrito adentro de `js/catalogo.js` en
+        // los tres idiomas justamente para esto.
+        if (!caja.textContent) caja.textContent = Catalogo.frase('error.generico');
+      });
     }
 
     // A dónde va cada quien después de entrar. Si venía de una pantalla que pidió

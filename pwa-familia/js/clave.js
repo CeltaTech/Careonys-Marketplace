@@ -5,8 +5,10 @@
    que se usa para elegir una nueva después de olvidarla. Si cada una revisa
    por su cuenta, tarde o temprano una pide ocho caracteres, otra seis, y la
    persona se entera del desacuerdo recién cuando el servidor la rechaza. Por
-   eso el largo mínimo y las frases de aviso viven acá y en ningún otro lado
-   («ningún patrón repetido sin punto único de verdad»).
+   eso el largo mínimo y **qué está mal** se deciden acá y en ningún otro lado
+   («ningún patrón repetido sin punto único de verdad»). Cómo se dice cada
+   aviso no se decide acá: `revisar()` devuelve la clave de la frase y el texto
+   sale del catálogo, en los tres idiomas.
 
    El botón para ver la contraseña también sale de acá, y se pone solo: al
    cargar la página, todo campo de contraseña queda con el suyo. Una pantalla
@@ -47,18 +49,31 @@
     MINIMO,
 
     // ── ¿Sirve esta contraseña? ──────────────────────────────────────────
-    // Devuelve `null` si está bien, o la frase que hay que mostrarle a la
-    // persona. Nunca lanza: quien llama decide dónde poner el aviso.
+    // Devuelve `null` si está bien, o **la clave de la frase** que hay que
+    // mostrarle a la persona, junto con lo que va adentro de sus huecos:
+    //
+    //     { clave: 'clave.corta', huecos: { cuantos: 8 } }
+    //
+    // Devuelve la clave y no la frase por lo mismo que `Texto.claveDeError`:
+    // un aviso de contraseña es texto visible, así que se traduce y sale del
+    // catálogo. Decidir **de qué se trata** el problema es lógica y se queda
+    // acá; cómo se dice, no. De paso queda comprobable, porque una prueba que
+    // espera una clave no se rompe el día que alguien mejora la redacción.
+    //
+    // La forma es la misma que espera `avisar(id, clave, huecos)` en las
+    // pantallas de la sesión, así que el resultado se pasa entero.
+    //
+    // Nunca lanza: quien llama decide dónde poner el aviso.
     //
     // `repetida` es opcional. Se pasa donde el formulario la pide dos veces
     // —el alta, la contraseña nueva— y se omite en el acceso, donde va una sola.
     revisar(clave, repetida) {
-      if (!clave) return 'Falta escribir la contraseña.';
+      if (!clave) return { clave: 'clave.falta' };
       if (clave.length < MINIMO) {
-        return 'La contraseña tiene que tener al menos ' + MINIMO + ' caracteres.';
+        return { clave: 'clave.corta', huecos: { cuantos: MINIMO } };
       }
       if (repetida !== undefined && clave !== repetida) {
-        return 'Las dos contraseñas no coinciden.';
+        return { clave: 'clave.no_coinciden' };
       }
       return null;
     },

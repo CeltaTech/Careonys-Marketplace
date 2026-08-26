@@ -2116,8 +2116,9 @@ en el §4 de este mismo documento, y mover una consulta de lugar no es elegirlo.
 
 Hasta el 26 de agosto de 2026 todo lo que una persona lee estaba escrito a mano adentro del HTML,
 en castellano y nada más, mientras la regla de la empresa pide `es-AR`, `en` y `pt-BR` **desde el
-día uno**. Ese día se construyó el mecanismo entero y se convirtió la primera pantalla. El
-inventario, el orden y lo que falta están en `docs/PLAN_MULTIIDIOMA.md`; acá está lo que existe.
+día uno**. Ese día se construyó el mecanismo entero y se convirtió el camino de la contraseña
+completo: entrar, pedir el enlace y elegir una contraseña nueva. El inventario, el orden y lo que
+falta están en `docs/PLAN_MULTIIDIOMA.md`; acá está lo que existe.
 
 **El texto vive donde ya vivían las opciones.** `data/catalogo-frases.json` es hermano de los seis
 catálogos que ya había y lo lee el mismo `js/catalogo.js`. La pantalla nombra y el catálogo
@@ -2160,7 +2161,25 @@ pantallas es una decisión de diseño, y ésas se consultan.
 cada `commit` con cinco reglas —la clave existe, tiene los tres idiomas, ninguna sobra, ninguna
 pantalla ya convertida volvió a tener texto a mano, y las cinco frases de emergencia no están
 duplicadas— y ve también las claves que pone el código, no sólo las escritas en el HTML. Dice
-además cuánto falta: hoy, **1 de 45 archivos**.
+además cuánto falta: hoy, **3 de 45 archivos**.
+
+**Quién decide qué contraseña vale, y quién decide cómo se lo dice, son dos cosas distintas.**
+`Clave.revisar()` (`js/clave.js:70`) sigue siendo el único lugar del proyecto que sabe cuándo una
+contraseña no sirve, pero ya no devuelve la frase: devuelve **la clave** de la frase y lo que va en
+sus huecos —`{ clave: 'clave.corta', huecos: { cuantos: 8 } }`—, con la misma forma que espera el
+`avisar()` de las tres pantallas de la sesión, así que el resultado se pasa entero. Es el mismo
+reparto que ya se había hecho con los mensajes de error, y por el mismo motivo: un aviso de
+contraseña es texto visible. De paso el largo mínimo dejó de estar escrito dos veces —lo dice
+únicamente la indicación que `js/clave.js` le pone al campo, y ninguna pantalla lo repite.
+
+**Un cartel que se abre solo no puede pedir la frase sin esperarla.** `Catalogo.frase()` está hecha
+para llamarse mientras se dibuja y por eso no espera nada; si el catálogo todavía viaja, devuelve
+vacío. En `nueva-clave.html` eso se veía: el aviso del enlace vencido es el único que se abre
+apenas carga la pantalla, y salía el error genérico en vez de decir que el enlace había vencido. Lo
+que se abre solo pide ahora `Catalogo.traducir(caja)`, que sí espera, y recién si después quedó
+vacío se pone lo genérico. En `acceso.html` el mismo error estaba escrito y no se veía nunca,
+porque ahí los carteles los abre la persona. **Los 16 chequeos no lo veían**: apareció mirando la
+consola del navegador.
 
 **Dos fallas de verdad aparecieron al probar con el archivo escondido**, que es la prueba que sí
 podía fallar. `acceso.html` confundía un catálogo que no llegaba con un servidor caído: mostraba

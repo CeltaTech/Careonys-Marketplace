@@ -198,6 +198,21 @@
 
     "___": "── El campo de contraseña, que arma js/clave.js en cualquier pantalla ──",
 
+    "clave.falta": {
+      "es-AR": "Falta escribir la contraseña.",
+      "en": "The password is missing.",
+      "pt-BR": "Falta escrever a senha."
+    },
+    "clave.corta": {
+      "es-AR": "La contraseña tiene que tener al menos {cuantos} caracteres.",
+      "en": "The password must have at least {cuantos} characters.",
+      "pt-BR": "A senha precisa ter pelo menos {cuantos} caracteres."
+    },
+    "clave.no_coinciden": {
+      "es-AR": "Las dos contraseñas no coinciden.",
+      "en": "The two passwords do not match.",
+      "pt-BR": "As duas senhas não coincidem."
+    },
     "clave.minimo": {
       "es-AR": "Al menos {cuantos} caracteres",
       "en": "At least {cuantos} characters",
@@ -222,6 +237,152 @@
       "es-AR": "Ocultar la contraseña",
       "en": "Hide the password",
       "pt-BR": "Ocultar a senha"
+    },
+
+    "____": "── Pedir el enlace para recuperar la contraseña ──",
+
+    "recuperar.titulo": {
+      "es-AR": "Recuperar la contraseña",
+      "en": "Recover the password",
+      "pt-BR": "Recuperar a senha"
+    },
+    "recuperar.cargando": {
+      "es-AR": "Un momento…",
+      "en": "One moment…",
+      "pt-BR": "Um momento…"
+    },
+    "recuperar.explicacion": {
+      "es-AR": "Escriba el correo con el que entra. Le llega un enlace para elegir una contraseña nueva.",
+      "en": "Enter the email address used to sign in. A link to choose a new password will arrive there.",
+      "pt-BR": "Escreva o e-mail com o qual entra. Chega um link para escolher uma senha nova."
+    },
+    "recuperar.falta_correo": {
+      "es-AR": "Falta escribir el correo.",
+      "en": "The email address is missing.",
+      "pt-BR": "Falta escrever o e-mail."
+    },
+    "recuperar.enviar": {
+      "es-AR": "Enviar el enlace",
+      "en": "Send the link",
+      "pt-BR": "Enviar o link"
+    },
+    "recuperar.enviando": {
+      "es-AR": "Enviando…",
+      "en": "Sending…",
+      "pt-BR": "Enviando…"
+    },
+    "recuperar.volver": {
+      "es-AR": "Volver al acceso",
+      "en": "Back to the access screen",
+      "pt-BR": "Voltar ao acesso"
+    },
+    "recuperar.revise_correo": {
+      "es-AR": "Revise su correo",
+      "en": "Check the inbox",
+      "pt-BR": "Confira o e-mail"
+    },
+    "recuperar.enlace_enviado": {
+      "es-AR": "Si hay una cuenta con esa dirección, ahí va el enlace para elegir una contraseña nueva. El enlace sirve una sola vez y vence en una hora.",
+      "en": "If there is an account with that address, the link to choose a new password goes there. The link works only once and expires in an hour.",
+      "pt-BR": "Se houver uma conta com esse endereço, o link para escolher uma senha nova vai para lá. O link serve uma única vez e vence em uma hora."
+    },
+    "recuperar.no_aparece": {
+      "es-AR": "Si no aparece en unos minutos, conviene mirar en el correo no deseado.",
+      "en": "If it does not arrive within a few minutes, it is worth looking in the spam folder.",
+      "pt-BR": "Se não aparecer em alguns minutos, convém olhar na caixa de spam."
+    },
+
+    "_____": "── Elegir una contraseña nueva, desde el enlace del correo ──",
+
+    "nueva.titulo": {
+      "es-AR": "Elegir una contraseña nueva",
+      "en": "Choose a new password",
+      "pt-BR": "Escolher uma senha nova"
+    },
+    "nueva.comprobando": {
+      "es-AR": "Comprobando el enlace…",
+      "en": "Checking the link…",
+      "pt-BR": "Verificando o link…"
+    },
+    "nueva.enlace_no_sirve": {
+      "es-AR": "El enlace ya no sirve",
+      "en": "The link is no longer valid",
+      "pt-BR": "O link não vale mais"
+    },
+    "nueva.enlace_vencio": {
+      "es-AR": "El enlace venció.",
+      "en": "The link expired.",
+      "pt-BR": "O link venceu."
+    },
+    "nueva.enlace_ya_usado": {
+      "es-AR": "Este enlace ya se había usado.",
+      "en": "This link had already been used.",
+      "pt-BR": "Este link já tinha sido usado."
+    },
+    "nueva.enlace_rechazado": {
+      "es-AR": "El enlace no fue aceptado.",
+      "en": "The link was not accepted.",
+      "pt-BR": "O link não foi aceito."
+    },
+    "nueva.se_abre_desde_el_correo": {
+      "es-AR": "Esta pantalla se abre desde el enlace que llega por correo.",
+      "en": "This screen opens from the link that arrives by email.",
+      "pt-BR": "Esta tela se abre pelo link que chega por e-mail."
+    },
+    "nueva.cada_enlace": {
+      "es-AR": "Cada enlace sirve una sola vez y vence en una hora. Se puede pedir otro.",
+      "en": "Each link works only once and expires in an hour. Another one can be requested.",
+      "pt-BR": "Cada link serve uma única vez e vence em uma hora. É possível pedir outro."
+    },
+    "nueva.pedir_otro": {
+      "es-AR": "Pedir un enlace nuevo",
+      "en": "Request a new link",
+      "pt-BR": "Pedir um link novo"
+    },
+    "nueva.esta_cuenta": {
+      "es-AR": "esta cuenta",
+      "en": "this account",
+      "pt-BR": "esta conta"
+    },
+    "nueva.explicacion": {
+      "es-AR": "Se cambia la contraseña de esa cuenta.",
+      "en": "The password for that account is the one being changed.",
+      "pt-BR": "Altera-se a senha dessa conta."
+    },
+    "nueva.clave_nueva": {
+      "es-AR": "Contraseña nueva",
+      "en": "New password",
+      "pt-BR": "Senha nova"
+    },
+    "nueva.repetir": {
+      "es-AR": "Repetir la contraseña",
+      "en": "Repeat the password",
+      "pt-BR": "Repetir a senha"
+    },
+    "nueva.guardar": {
+      "es-AR": "Guardar la contraseña",
+      "en": "Save the password",
+      "pt-BR": "Salvar a senha"
+    },
+    "nueva.guardando": {
+      "es-AR": "Guardando…",
+      "en": "Saving…",
+      "pt-BR": "Salvando…"
+    },
+    "nueva.cambiada": {
+      "es-AR": "Contraseña cambiada",
+      "en": "Password changed",
+      "pt-BR": "Senha alterada"
+    },
+    "nueva.ya_se_puede": {
+      "es-AR": "Ya se puede entrar con la contraseña nueva.",
+      "en": "It is now possible to sign in with the new password.",
+      "pt-BR": "Já é possível entrar com a senha nova."
+    },
+    "nueva.ir_al_acceso": {
+      "es-AR": "Ir al acceso",
+      "en": "Go to the access screen",
+      "pt-BR": "Ir ao acesso"
     }
   }
 }

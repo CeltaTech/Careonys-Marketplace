@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Pantalla de la sesión, no del directorio: no tiene nada que hacer en un buscador. -->
   <meta name="robots" content="noindex, nofollow" />
-  <title>Elegir una contraseña nueva</title>
+  <title data-frase="nueva.titulo">Elegir una contraseña nueva</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
@@ -34,62 +34,78 @@
 
       <!-- Estado: cargando -->
       <div id="estado-cargando" class="acceso-cargando">
-        <i class="fas fa-circle-notch fa-spin"></i> Comprobando el enlace...
+        <i class="fas fa-circle-notch fa-spin"></i> <span data-frase="nueva.comprobando">Comprobando el enlace…</span>
       </div>
 
       <!-- Estado: el enlace no sirve (venció, ya se usó, o se entró de frente) -->
       <div id="estado-sin-enlace" style="display:none;">
-        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;">
+        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;"
+          data-frase="nueva.enlace_no_sirve">
           El enlace ya no sirve
         </h2>
         <div id="aviso-sin-enlace" class="acceso-aviso critico"></div>
-        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-bottom:20px;">
+        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-bottom:20px;"
+          data-frase="nueva.cada_enlace">
           Cada enlace sirve una sola vez y vence en una hora. Se puede pedir otro.
         </p>
-        <a href="recuperar-clave.html" class="btn btn-primario" style="width:100%;">
+        <a href="recuperar-clave.html" class="btn btn-primario" style="width:100%;"
+          data-frase="nueva.pedir_otro">
           Pedir un enlace nuevo
         </a>
         <p class="acceso-pie">
-          <a href="acceso.html">Volver al acceso</a>
+          <a href="acceso.html" data-frase="recuperar.volver">Volver al acceso</a>
         </p>
       </div>
 
       <!-- Estado: listo -->
       <form id="estado-listo" style="display:none;" novalidate>
-        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;">
+        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;"
+          data-frase="nueva.titulo">
           Elegir una contraseña nueva
         </h2>
-        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-bottom:20px;">
-          Se cambia la contraseña de <strong id="correo-en-curso"></strong>. Tiene que tener al
-          menos <span id="minimo-caracteres"></span> caracteres.
+        <!-- El correo va solo y no adentro de la frase, por lo mismo que en
+             `recuperar-clave.html`: una frase se escribe entera con
+             `textContent`, así que un `<strong>` en el medio se perdería.
+             Y el largo mínimo tampoco se dice acá: lo dice la indicación que
+             `js/clave.js` le pone a todo campo de contraseña, que es el único
+             lugar donde ese número existe. Repetirlo era tener dos. -->
+        <p style="font-size:15px;font-weight:700;color:var(--texto-titulo);line-height:1.6;">
+          <strong id="correo-en-curso"></strong>
+        </p>
+        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-bottom:20px;"
+          data-frase="nueva.explicacion">
+          Se cambia la contraseña de esa cuenta.
         </p>
 
         <div id="aviso-error-cambio" class="acceso-aviso critico" style="display:none;"></div>
 
         <div class="form-group">
-          <label for="clave">Contraseña nueva</label>
+          <label for="clave" data-frase="nueva.clave_nueva">Contraseña nueva</label>
           <input type="password" id="clave" autocomplete="new-password" required />
         </div>
 
         <div class="form-group">
-          <label for="clave-repetida">Repetir la contraseña</label>
+          <label for="clave-repetida" data-frase="nueva.repetir">Repetir la contraseña</label>
           <input type="password" id="clave-repetida" autocomplete="new-password" required />
         </div>
 
         <button type="submit" class="btn btn-primario" id="btn-guardar" style="width:100%;margin-top:8px;">
-          <span id="texto-btn-guardar">Guardar la contraseña</span>
+          <span id="texto-btn-guardar" data-frase="nueva.guardar">Guardar la contraseña</span>
         </button>
       </form>
 
       <!-- Estado: quedó cambiada -->
       <div id="estado-hecho" style="display:none;">
-        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;">
+        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;"
+          data-frase="nueva.cambiada">
           Contraseña cambiada
         </h2>
-        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-bottom:20px;">
+        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-bottom:20px;"
+          data-frase="nueva.ya_se_puede">
           Ya se puede entrar con la contraseña nueva.
         </p>
-        <a href="acceso.html" class="btn btn-primario" style="width:100%;">Ir al acceso</a>
+        <a href="acceso.html" class="btn btn-primario" style="width:100%;"
+          data-frase="nueva.ir_al_acceso">Ir al acceso</a>
       </div>
 
     </div>
@@ -118,26 +134,49 @@
       });
     }
 
-    function avisar(id, texto) {
+    // Se le pasa **la clave** de la frase, no la frase, para que el cartel siga
+    // el idioma como el resto de la pantalla. Lo mismo que en `acceso.html`.
+    function avisar(id, clave, huecos) {
       const caja = document.getElementById(id);
-      caja.textContent = texto;
-      caja.style.display = texto ? 'block' : 'none';
+      if (!clave) {
+        caja.removeAttribute('data-frase');
+        caja.removeAttribute('data-huecos');
+        caja.textContent = '';
+        caja.style.display = 'none';
+        return;
+      }
+      caja.setAttribute('data-frase', clave);
+      if (huecos) caja.setAttribute('data-huecos', JSON.stringify(huecos));
+      caja.style.display = 'block';
+      // Se **pide** la traducción en vez de escribirla. `Catalogo.frase()` no
+      // espera nada, así que un aviso que se abre durante el arranque —el
+      // enlace vencido, por ejemplo— la llamaba antes de que el catálogo
+      // llegara: la frase salía vacía, se anotaba «no existe» en la consola y
+      // el cartel mostraba el error genérico en vez del que correspondía.
+      // `traducir()` sí espera, y escribe lo que corresponde apenas llega.
+      Catalogo.traducir(caja).then(() => {
+        // Una caja que se abre es porque hay algo que decir, así que nunca
+        // queda en blanco: si la frase no se resolvió —el catálogo no llegó—
+        // se dice lo genérico, que está escrito adentro de `js/catalogo.js` en
+        // los tres idiomas justamente para esto.
+        if (!caja.textContent) caja.textContent = Catalogo.frase('error.generico');
+      });
     }
 
     // Qué dijo el servidor al rechazar el enlace. Viene en la dirección, a veces
     // detrás del numeral y a veces como parámetro, según cómo se haya emitido.
+    // Devuelve la clave de la frase, no la frase: el motivo es texto visible.
     function motivoDelRechazo() {
       const partes = new URLSearchParams(direccionAlLlegar.replace(/^[#?]+/, ''));
       const codigo = partes.get('error_code') || partes.get('error');
       if (!codigo) return null;
-      if (/expired/.test(codigo)) return 'El enlace venció.';
-      if (/used|already/.test(codigo)) return 'Este enlace ya se había usado.';
-      return 'El enlace no fue aceptado.';
+      if (/expired/.test(codigo)) return 'nueva.enlace_vencio';
+      if (/used|already/.test(codigo)) return 'nueva.enlace_ya_usado';
+      return 'nueva.enlace_rechazado';
     }
 
     async function arrancar() {
       mostrar('cargando');
-      document.getElementById('minimo-caracteres').textContent = Clave.MINIMO;
 
       // La Prestadora se usa sólo para la marca de la tarjeta. Que no se
       // reconozca no impide cambiar nada, así que no se avisa.
@@ -165,14 +204,22 @@
       }
 
       if (!sesion) {
-        avisar('aviso-sin-enlace',
-          'Esta pantalla se abre desde el enlace que llega por correo.');
+        avisar('aviso-sin-enlace', 'nueva.se_abre_desde_el_correo');
         mostrar('sin-enlace');
         return;
       }
 
-      document.getElementById('correo-en-curso').textContent =
-        (sesion.user && sesion.user.email) || 'su cuenta';
+      // Si la sesión no trae el correo, se nombra la cuenta sin decir cuál. Va
+      // por el catálogo como todo lo demás: es texto que se lee.
+      const donde = document.getElementById('correo-en-curso');
+      const correo = sesion.user && sesion.user.email;
+      if (correo) {
+        donde.removeAttribute('data-frase');
+        donde.textContent = correo;
+      } else {
+        donde.setAttribute('data-frase', 'nueva.esta_cuenta');
+        Catalogo.traducir(donde);
+      }
       mostrar('listo');
     }
 
@@ -181,30 +228,39 @@
       avisar('aviso-error-cambio', '');
 
       // Quién decide qué contraseña vale es `js/clave.js`, el mismo que revisa
-      // en el acceso y en el alta.
+      // en el acceso y en el alta. Devuelve la clave de la frase y sus huecos,
+      // que es justo lo que `avisar` espera.
       const clave = document.getElementById('clave').value;
       const claveRepetida = document.getElementById('clave-repetida').value;
       const problema = Clave.revisar(clave, claveRepetida);
       if (problema) {
-        avisar('aviso-error-cambio', problema);
+        avisar('aviso-error-cambio', problema.clave, problema.huecos);
         document.getElementById(clave === claveRepetida ? 'clave' : 'clave-repetida').focus();
         return;
       }
 
       const boton = document.getElementById('btn-guardar');
       const texto = document.getElementById('texto-btn-guardar');
-      const textoOriginal = texto.textContent;
+
+      // El rótulo se cambia nombrando la frase, no escribiendo el texto, para
+      // que un cambio de idioma mientras la operación corre lo alcance igual.
+      const rotular = (clave) => {
+        texto.setAttribute('data-frase', clave);
+        Catalogo.traducir(texto);
+      };
+
       boton.disabled = true;
-      texto.textContent = 'Guardando...';
+      rotular('nueva.guardando');
 
       try {
         await Sesion.cambiarClave(clave);
         mostrar('hecho');
       } catch (err) {
-        // El detalle técnico lo manda a la consola `Texto.mensajeDeError`.
-        avisar('aviso-error-cambio', Texto.mensajeDeError(err, 'cambiar la contraseña'));
+        // El detalle técnico lo registra `claveDeError` y no sale de la consola;
+        // a la pantalla va la frase que corresponde a esa clase de falla.
+        avisar('aviso-error-cambio', Texto.claveDeError(err, 'Nueva contraseña, guardado:'));
         boton.disabled = false;
-        texto.textContent = textoOriginal;
+        rotular('nueva.guardar');
       }
     });
 

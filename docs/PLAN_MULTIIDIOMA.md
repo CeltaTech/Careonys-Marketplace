@@ -1,8 +1,8 @@
 # Plan: los tres idiomas
 
 > **El mecanismo está construido y funcionando; el trabajo de mudar las frases recién empieza.**
-> Al 26 de agosto de 2026: **1 de 45 archivos convertido** y **40 frases** en los tres idiomas.
-> Lo que falta son las otras 44 pantallas, y una sola decisión del Desarrollador —quién traduce—,
+> Al 26 de agosto de 2026: **3 de 45 archivos convertidos** y **71 frases** en los tres idiomas.
+> Lo que falta son las otras 42 pantallas, y una sola decisión del Desarrollador —quién traduce—,
 > que es la número 2 de la sección 5.
 >
 > Corresponde al pendiente 9. Cuando esté todo convertido, este archivo se borra.
@@ -150,7 +150,7 @@ que con la marca—, así que una pantalla nunca aparece vacía.
 
 **Lo que arma el código**, y por lo tanto no está escrito en ninguna pantalla, se marca igual y
 después pide la traducción de ese pedazo: `Catalogo.traducir(elemento)`. Así lo hacen el botón de
-ver la contraseña (`js/clave.js:125`) y los avisos de `acceso.html`. La ventaja no es de estilo:
+ver la contraseña (`js/clave.js:147`) y los avisos de `acceso.html`. La ventaja no es de estilo:
 **un texto escrito a mano se queda en el idioma en que nació**, y si la persona cambia de idioma
 con el cartel en pantalla, el cartel no se entera.
 
@@ -194,9 +194,16 @@ Por lo que ya se midió, y de a una pantalla por vez:
    `Texto.claveDeError()` clasifica la falla y devuelve una clave; la frase la pone el catálogo.
 2. **`acceso.html`**, entera, incluidos el botón de ver la contraseña y los avisos que escribe el
    código. ✔ Hecha. Es la pantalla chica que ejercita todas las formas del mecanismo.
-3. **Las seis pantallas grandes**, que son el 64 %.
-4. **Las nueve chicas.**
-5. **Los `alt`, los `aria-label` y las `meta`**, todos juntos al final, que son 84 y se hacen de
+3. **`recuperar-clave.html` y `nueva-clave.html`**, las dos que completan el camino de la
+   contraseña. ✔ Hechas. **Se adelantaron al paso 4 a propósito**, y conviene decir por qué: el
+   paso siguiente son las seis pantallas grandes, donde están los 91 párrafos de venta y de aviso
+   legal, que son justamente los que la decisión 2 todavía no resolvió quién traduce. Estas dos son
+   casi todo rótulo corto, así que avanzan el trabajo sin adelantarse a esa decisión. De paso
+   cierran el camino entero: quien no puede entrar pide el enlace y elige contraseña nueva sin
+   cambiar de idioma en el medio, que era lo que pasaba si se convertía sólo el acceso.
+4. **Las seis pantallas grandes**, que son el 64 %.
+5. **Las nueve chicas.**
+6. **Los `alt`, los `aria-label` y las `meta`**, todos juntos al final, que son 84 y se hacen de
    una pasada.
 
 ---
@@ -221,8 +228,10 @@ Por lo que ya se midió, y de a una pantalla por vez:
 2. **Quién traduce las 751.** ⏳ **Abierta.** Una máquina y después alguien que revise, o alguien
    desde el principio. Es una decisión de plata y de calidad, y **también es un caso de «evaluar qué
    tareas conviene dejarle a una IA»**: los 660 rótulos cortos los hace bien una máquina, los 91
-   párrafos son texto de venta y de aviso legal, y ahí la máquina no alcanza. Las 40 que ya están
-   las tradujo la línea de comandos.
+   párrafos son texto de venta y de aviso legal, y ahí la máquina no alcanza. Las 71 que ya están
+   las tradujo la línea de comandos, y son todas rótulos y avisos cortos: **mientras esto siga
+   abierto, se convierten pantallas de rótulo y no pantallas de párrafo**, para no dejar traducido
+   por una máquina justo lo que la decisión iba a mandar a una persona.
 3. **Si se hace antes de React o adentro.** ✔ Tomada: antes, como se recomendaba, por lo que decía
    el propio pendiente —cada pantalla nueva lo encarece, y la migración va a agregar pantallas.
 4. **Qué pasa con `pt-BR` y el trato.** ✔ Resuelta, y hacía falta el mismo día: «publicá-lo», que
@@ -258,6 +267,16 @@ elección real. Los otros dos sí son elegibles.
   la mira completa. **Ya pasó una vez**, y no con el HTML sino con lo que escribe el código: el
   aviso de `acceso.html` se quedaba en castellano al cambiar de idioma porque nació como texto y
   no como clave.
+- **El cartel que se abre antes de que llegue el catálogo.** `Catalogo.frase()` no espera —está
+  hecha para que se la llame mientras se dibuja—, así que un aviso que se abre durante el arranque
+  la llama con el archivo todavía en camino: devuelve vacío, anota «no existe» en la consola, y el
+  cartel muestra el error genérico en vez del que correspondía. Apareció en `nueva-clave.html`, con
+  el enlace vencido, que es el único aviso que se abre solo apenas carga la pantalla; en
+  `acceso.html` el mismo error estaba escrito y no se veía nunca, porque ahí los carteles los abre
+  la persona y para entonces el catálogo ya llegó. **La regla que queda:** lo que se abre solo pide
+  `Catalogo.traducir(elemento)`, que sí espera; `frase()` es para lo que se dibuja a pedido. Los
+  tres avisos de la sesión están escritos así, y el respaldo genérico se pone después, sólo si
+  quedó vacío. Los 16 chequeos no lo veían: apareció mirando la consola del navegador.
 - **La frase partida en pedazos.** Hoy hay texto armado con `+` desde los guiones —«Quedan 3
   intentos»—. Traducido pedazo por pedazo sale mal en cualquier idioma que ordene distinto. Esas
   145 apariciones se convierten en frases con huecos, no en pedazos sueltos.
