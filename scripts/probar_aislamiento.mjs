@@ -18,6 +18,12 @@
    registro por correo del servidor remoto pide confirmar la casilla, así que
    ahí la prueba no llega a tener sesión.
 
+   Y antes de crear una sola cuenta ficticia comprueba que la base a la que
+   apunta tenga aplicadas todas las migraciones de `supabase/migrations/`. Si
+   falta alguna **se niega a correr**, nombra las que faltan y dice con qué
+   comando se aplican. El aviso de los renglones de arriba quedó porque explica
+   qué hacer; lo que ya no depende de que alguien lo lea es el freno.
+
    La regla de la empresa la pide con estas palabras: "una prueba que devuelve una
    lista vacía no distingue 'aislado' de 'todo bloqueado'". Así que esta no
    mira listas vacías: registra cuentas ficticias, les hace escribir su legajo
@@ -105,15 +111,124 @@
    que ya viaja al navegador.
 =================================================== */
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
+const contraLocal = process.argv.includes('--local');
+
+// --- El guardián: la base tiene que estar en la versión que la prueba dice ---
+// Va antes de todo lo demás, y sobre todo antes de crear ninguna cuenta
+// ficticia. El motivo está medido: una migración que sólo cambia una vista o
+// sólo siembra filas no rompe esta prueba, la deja probando la forma anterior y
+// contestando que está todo bien. Así que acá no se avisa: se frena.
+//
+// `supabase migration list` devuelve tres columnas separadas por `|`: la
+// versión del archivo, la versión que la base tiene aplicada, y la fecha. El
+// renglón con la del medio vacía es una migración que existe como archivo y que
+// esa base no corrió nunca.
+//
+// Falla cerrado, como pide la regla de la empresa: si la lista no se puede
+// leer, o si se lee y no trae ni un renglón de versión, tampoco corre. Una
+// comprobación que ante la duda deja pasar es la que no entendió el caso.
+{
+  const bandera = contraLocal ? '--local' : '--linked';
+
+  const archivos = readdirSync(join(raiz, 'supabase', 'migrations'))
+    .filter((n) => n.endsWith('.sql'))
+    .sort();
+  const versionDe = (nombre) => (nombre.match(/^(\d+)_/) || [])[1] || null;
+
+  const negarse = (...renglones) => {
+    console.error('La prueba de aislamiento no corre.');
+    console.error('');
+    for (const r of renglones) console.error(r);
+    process.exit(1);
+  };
+
+  if (archivos.length === 0) {
+    negarse('No se encontró ninguna migración en supabase/migrations/, y tiene que haber varias.');
+  }
+
+  let salidaLista = null;
+  try {
+    salidaLista = execFileSync('npx', ['supabase', 'migration', 'list', bandera], {
+      cwd: raiz, encoding: 'utf8', shell: true, stdio: ['ignore', 'pipe', 'pipe']
+    });
+  } catch (error) {
+    // Cuando el CLI sale con error igual conviene mirar lo que alcanzó a
+    // escribir: a veces trae el motivo en limpio. Pero pase lo que pase, de acá
+    // no se sigue.
+    const dicho = String((error && error.stdout) || '').trim();
+    negarse(
+      'No se pudo leer qué migraciones tiene aplicadas la base:',
+      '    npx supabase migration list ' + bandera,
+      ...(dicho ? ['', dicho] : []),
+      '',
+      contraLocal
+        ? 'Si el entorno local no está levantado, primero:'
+        : 'Si el proyecto no está enlazado, primero:',
+      contraLocal
+        ? '    supabase start -x edge-runtime -x vector -x supavisor -x logflare'
+        : '    supabase link'
+    );
+  }
+
+  // Del listado sólo sirven los renglones cuya primera columna es una versión.
+  // Con eso se van solos el encabezado, la fila de guiones y los avisos de
+  // versión nueva del CLI, que no traen `|` ni número.
+  const aplicadas = new Set();
+  let renglonesDeVersion = 0;
+  for (const renglon of String(salidaLista).split('\n')) {
+    if (!renglon.includes('|')) continue;
+    const columnas = renglon.split('|').map((c) => c.trim());
+    if (columnas.length < 2) continue;
+    const [enElArchivo, enLaBase] = columnas;
+    if (!/^\d+$/.test(enElArchivo)) continue;
+    renglonesDeVersion++;
+    if (enLaBase !== '') {
+      aplicadas.add(enElArchivo);
+      aplicadas.add(enLaBase);
+    }
+  }
+
+  if (renglonesDeVersion === 0) {
+    negarse(
+      'La lista de migraciones se leyó pero no trajo ninguna versión, así que no hay',
+      'forma de saber en qué estado está la base. Antes que dar luz verde a ciegas,',
+      'no corre.',
+      '',
+      '    npx supabase migration list ' + bandera
+    );
+  }
+
+  const faltantes = archivos.filter((n) => {
+    const version = versionDe(n);
+    return !version || !aplicadas.has(version);
+  });
+
+  if (faltantes.length > 0) {
+    negarse(
+      'La base a la que apunta no tiene aplicadas todas las migraciones de',
+      'supabase/migrations/. Le faltan ' + faltantes.length + ' de ' + archivos.length + ':',
+      '',
+      ...faltantes.map((n) => '    ' + n),
+      '',
+      'Con la base atrasada esta prueba puede pasar entera y estar probando la forma',
+      'anterior del esquema, así que no arranca. Se aplican con:',
+      '',
+      '    supabase migration up ' + bandera
+    );
+  }
+
+  console.log('Migraciones: las ' + archivos.length + ' de supabase/migrations/ están aplicadas.');
+}
+
 let url, clave, claveServicio;
 
-if (process.argv.includes('--local')) {
+if (contraLocal) {
   // `supabase status -o env` imprime las direcciones y claves del entorno local.
   // Son las mismas para todo el mundo y no son secretas, pero igual se leen de
   // ahí y no se escriben acá: si cambian, la prueba sigue andando.

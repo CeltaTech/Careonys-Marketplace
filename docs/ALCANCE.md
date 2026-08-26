@@ -834,7 +834,20 @@ inserta filas, ninguna crea tabla ni columna, y la prueba no nombra en sus 828 r
 `verificaciones_asistente` ni a la lista `comprobaciones`. Cuando la base estaba diez
 migraciones atrás la prueba se rompió a los gritos, pero fue porque aquellas migraciones
 **creaban tablas**. Una que sólo aprieta una política o sólo siembra datos la deja probando la
-forma anterior y contestando en verde. Está anotado como pendiente 71.
+forma anterior y contestando en verde.
+
+**Y eso quedó arreglado el mismo día: la prueba ya no avisa, se niega.** Antes de resolver la
+dirección de la base y mucho antes de crear ninguna cuenta ficticia, `scripts/probar_aislamiento.mjs`
+le pregunta a la línea de comandos qué migraciones tiene aplicadas la base a la que apunta y las
+compara con los archivos de `supabase/migrations/`. Si falta una sola, imprime cuáles faltan y
+sale sin haber tocado nada. **Falla cerrado en los tres casos en que no puede saberlo**: si no hay
+migraciones en disco, si el comando no corrió, o si el listado llegó sin un solo renglón de versión.
+
+**Y se comprobó con la base deliberadamente atrasada, porque con la base al día una comprobación
+escrita al revés pasa igual.** Se dejó un archivo de migración de mentira en la carpeta, con un
+comentario adentro y nada más, que existe como archivo y no está aplicado en ninguna base: la
+prueba se negó a arrancar, lo nombró, y dijo con qué comando se arregla. Sacado el archivo, vuelve a
+correr entera y da las 49 en verde. La base nunca se tocó: el archivo jamás se aplicó.
 
 
 ### El servidor de mirar las pantallas ya no muestra la versión vieja
