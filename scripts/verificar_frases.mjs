@@ -103,6 +103,18 @@ const sinComentarios = (crudo, esHtml) => (esHtml
     .replace(/<script\b[\s\S]*?<\/script>/gi, enCodigo)
   : enCodigo(crudo));
 
+/* Regla 6: `Intl` con el idioma escrito adentro.
+
+   Una fecha, una hora y un importe son texto visible tanto como una etiqueta.
+   Si la función que les da forma lleva el idioma escrito, la pantalla en inglés
+   muestra «08/12/2026» queriendo decir el 12 de agosto, y un precio en pesos se
+   lee como si fueran dólares. El idioma sale de `Catalogo`, igual que el resto.
+
+   Se busca cualquier `Intl.LoQueSea(` seguido de una comilla, que es la forma de
+   pasarle un idioma escrito a mano. Pasarle una variable no casa, que es
+   justamente lo que se quiere. */
+const IDIOMA_ESCRITO = /\bIntl\.[A-Za-z]+\s*\(\s*(?:\[\s*)?('[^'\n]*'|"[^"\n]*")/g;
+
 // ── Qué claves usa cada archivo ────────────────────────────────────────────
 
 function clavesUsadas(crudo, prefijos) {
@@ -153,7 +165,17 @@ for (const camino of archivos(raiz, ['.html', '.js'], AJENAS)) {
   const esHtml = nombre.endsWith('.html');
   const crudo = readFileSync(camino, 'utf8');
 
-  for (const clave of clavesUsadas(sinComentarios(crudo, esHtml), PREFIJOS)) usadasEnTodo.add(clave);
+  const sinNotas = sinComentarios(crudo, esHtml);
+  for (const clave of clavesUsadas(sinNotas, PREFIJOS)) usadasEnTodo.add(clave);
+
+  // Regla 6. Vale para toda pantalla y todo guión, esté convertido o no: es el
+  // idioma del dato, no el de la etiqueta, y no espera a la conversión.
+  for (const m of sinNotas.matchAll(IDIOMA_ESCRITO)) {
+    const renglon = sinNotas.slice(0, m.index).split('\n').length;
+    fallas.push(`${nombre}:${renglon}  ${m[0].trim()}… tiene el idioma escrito adentro.\n`
+      + '    Una fecha, una hora o un importe se escriben en el idioma de la pantalla,'
+      + ' que sale de `Catalogo`, como el resto.');
+  }
 
   // La regla 4 es de pantallas. Un `.js` con `data-frase` adentro es el propio
   // mecanismo —`js/catalogo.js`—, y pedirle que no tenga texto sería pedirle
@@ -239,7 +261,29 @@ const DEBE_IRSE = [
   ['<input data-frase-placeholder="x" placeholder="Escriba acá" />', 'Escriba acá'],
   ['<button class="b" data-frase="x" id="c">\n  Entrar\n</button>', 'Entrar']
 ];
+/* Y lo mismo con la regla 6: un detector que no casa con nada da siempre por
+   buena una pantalla que sí tiene el idioma escrito adentro. */
+const IDIOMA_DEBE_CASAR = [
+  "new Intl.DateTimeFormat('es-AR', { day: '2-digit' })",
+  'new Intl.NumberFormat("en", {})',
+  "new Intl.DateTimeFormat(['pt-BR'], {})",
+  "Intl.Collator('es')"
+];
+const IDIOMA_NO_DEBE_CASAR = [
+  "new Intl.DateTimeFormat(idiomaDeForma(), { day: '2-digit' })",
+  'new Intl.NumberFormat(Catalogo.idioma, {})',
+  "const IDIOMA_DE_FORMA_POR_OMISION = 'es-AR';"
+];
+
 const roto = [];
+for (const linea of IDIOMA_DEBE_CASAR) {
+  IDIOMA_ESCRITO.lastIndex = 0;
+  if (!IDIOMA_ESCRITO.test(linea)) roto.push('la regla 6 no ve: ' + linea);
+}
+for (const linea of IDIOMA_NO_DEBE_CASAR) {
+  IDIOMA_ESCRITO.lastIndex = 0;
+  if (IDIOMA_ESCRITO.test(linea)) roto.push('la regla 6 se queja de: ' + linea);
+}
 for (const [html, texto] of DEBE_QUEDAR) {
   if (despejar(html).indexOf(texto) === -1) roto.push('deja de ver: ' + texto);
 }

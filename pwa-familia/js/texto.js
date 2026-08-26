@@ -50,24 +50,62 @@
    comprueba que las tres sean iguales byte a byte.
 =================================================== */
 
+/* De dónde sale el idioma con el que se le da forma a una fecha, a una hora o a
+   un importe.
+
+   Sale de `Catalogo`, que es donde se decide el idioma de todo lo demás: dos
+   lugares que lo resuelvan por separado son una pantalla mitad en un idioma y
+   mitad en otro. `js/catalogo.js` se carga después que este archivo, así que se
+   pregunta al llamar y no al definir; si todavía no está —o si esto corre fuera
+   del navegador, en una prueba— cae en el mismo idioma por omisión que usa
+   `Catalogo`.
+
+   Antes las tres funciones pedían `'es-AR'` escrito adentro, y con la pantalla
+   en inglés eso decía cosas que no eran: «12/08/2026» es el 8 de diciembre en
+   los Estados Unidos. */
+const IDIOMA_DE_FORMA_POR_OMISION = 'es-AR';
+
+function idiomaDeForma() {
+  if (typeof window === 'undefined' || !window.Catalogo) return IDIOMA_DE_FORMA_POR_OMISION;
+  return window.Catalogo.idioma || IDIOMA_DE_FORMA_POR_OMISION;
+}
+
+/* Con qué moneda se muestra un importe que no trae la suya.
+
+   Ningún importe guardado la trae todavía: `caregivers.hourly_rate` es un
+   número a secas, y darle una columna toca datos ya escritos, así que lo decide
+   el Desarrollador. Hasta entonces la moneda sale de acá y de ningún otro lado,
+   y `importe()` la recibe como parámetro para que el día que el dato la tenga
+   alcance con pasársela.
+
+   No es el signo `$` escrito a mano, que era lo que había antes: es el código
+   de la moneda, y cómo se escribe en cada idioma lo decide `Intl`. En castellano
+   de acá sigue leyéndose «$ 4.500»; en inglés pasa a «ARS 4,500», que es lo que
+   evita que un precio por hora se lea como cuatro dólares y medio. */
+const MONEDA_POR_OMISION = 'ARS';
+
 const Texto = {
   /**
-   * Una fecha como se escribe acá: «12/08/2026». Entra lo que devuelve la base
-   * —un texto con fecha y hora— y sale sólo el día. Sin fecha, o con algo que
-   * no lo sea, devuelve la cadena vacía, para que la pantalla pueda no mostrar
-   * nada en vez de mostrar «Invalid Date».
+   * Una fecha, escrita como se escribe en el idioma de la pantalla: «12/08/2026»
+   * en castellano de acá, «08/12/2026» en inglés de los Estados Unidos. Entra lo
+   * que devuelve la base —un texto con fecha y hora— y sale sólo el día. Sin
+   * fecha, o con algo que no lo sea, devuelve la cadena vacía, para que la
+   * pantalla pueda no mostrar nada en vez de mostrar «Invalid Date».
    */
   fechaCorta(valor) {
     if (!valor) return '';
     const fecha = new Date(valor);
     if (isNaN(fecha.getTime())) return '';
-    return new Intl.DateTimeFormat('es-AR', {
+    return new Intl.DateTimeFormat(idiomaDeForma(), {
       day: '2-digit', month: '2-digit', year: 'numeric'
     }).format(fecha);
   },
 
   /**
-   * La hora del reloj de acá: «14:05». Entra lo que devuelve la base, o un
+   * La hora, escrita como la escribe el idioma de la pantalla. Qué forma le toca
+   * a cada uno lo decide `Intl`, no este archivo: al 26 de agosto de 2026 sale
+   * «02:05 p. m.» en castellano de acá, «02:05 PM» en inglés y «14:05» en
+   * portugués de Brasil. Entra lo que devuelve la base, o un
    * `Date` hecho recién. Sin hora, o con algo que no lo sea, devuelve la cadena
    * vacía, por la misma razón que `fechaCorta`.
    */
@@ -75,21 +113,28 @@ const Texto = {
     if (!valor) return '';
     const fecha = new Date(valor);
     if (isNaN(fecha.getTime())) return '';
-    return new Intl.DateTimeFormat('es-AR', {
+    return new Intl.DateTimeFormat(idiomaDeForma(), {
       hour: '2-digit', minute: '2-digit'
     }).format(fecha);
   },
 
   /**
-   * Un importe en pesos, con el punto de mil que se usa acá: 3500 → «$3.500».
-   * Sin el número —o con algo que no lo sea— devuelve la cadena vacía, para que
-   * la pantalla pueda decidir no mostrar nada en vez de mostrar «$NaN».
+   * Un importe con su moneda, escrito como lo escribe el idioma de la pantalla:
+   * 3500 → «$ 3.500» en castellano de acá, «ARS 3,500» en inglés. La moneda
+   * entra por parámetro; mientras ningún importe guardado traiga la suya sale de
+   * `MONEDA_POR_OMISION`, acá arriba. Sin el número —o con algo que no lo sea—
+   * devuelve la cadena vacía, para que la pantalla pueda decidir no mostrar nada
+   * en vez de mostrar «$NaN».
    */
-  importe(valor) {
+  importe(valor, moneda = MONEDA_POR_OMISION) {
     if (valor === null || valor === undefined || valor === '') return '';
     const numero = Number(valor);
     if (!isFinite(numero)) return '';
-    return '$' + new Intl.NumberFormat('es-AR').format(numero);
+    // Sin decimales, que es como se venían mostrando estos precios: `Intl` les
+    // pondría dos por ser una moneda, y «$ 4.500,00» dice lo mismo con más ruido.
+    return new Intl.NumberFormat(idiomaDeForma(), {
+      style: 'currency', currency: moneda, maximumFractionDigits: 0
+    }).format(numero);
   },
 
   /** Devuelve el valor listo para entrar en HTML sin correr como HTML. */
