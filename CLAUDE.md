@@ -44,9 +44,6 @@ condiciones fiscales, niveles educativos, patologías, tareas de cuidado, servic
 cursos y sus evaluaciones. Cada lista de opciones que hoy esté escrita adentro de un componente
 es una tabla que alguien no creó.
 
-**Los formularios se declaran, no se dibujan.** Campos, etiquetas, validaciones y pasos salen de
-una definición, no de etiquetas repetidas pantalla por pantalla.
-
 **Ninguna pantalla se porta sin haber extraído antes su contenido.** Si el componente nuevo lee de
 una tabla que todavía no tiene filas, el contenido no migró: se perdió, y la pantalla vacía no
 avisa.
