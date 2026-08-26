@@ -2260,6 +2260,24 @@ nadie las vuelva a investigar:
   Asistente tiene sola lectura. Ninguna de las dos se puede falsificar desde una sesión. El agujero
   del pendiente 66 no está en la evidencia sino en el veredicto que la resume.
 
+**Los dos depósitos de archivos también se midieron, y esa prueba sí se pudo hacer entera.**
+Se pidieron las dos direcciones públicas contra el servidor real: `avatares` contesta «objeto no
+encontrado», o sea que el depósito está ahí y es público; `documentos-cuidadores` contesta
+«depósito no encontrado», o sea que por la puerta pública no existe. **Cada uno es el control del
+otro**: si el privado se hubiera quedado público —que es lo que pasa cuando alguien lo crea a mano
+desde el tablero—, habría contestado igual que el primero. En el esquema de depósitos, en vivo,
+están las tres políticas que declaró la migración 0006, y ninguna más. La que le deja al personal
+de la Prestadora mirar los papeles de su gente compara la Organización con un `join` contra el
+legajo, así que el aislamiento no depende del camino del archivo.
+
+**Y de ahí sale algo que este producto no puede contestar solo**: la regla de la empresa dice que
+los archivos no se sirven nunca con dirección pública y que la ruta empieza por la Organización, y
+acá la foto del directorio es pública —porque el directorio se ve sin sesión— y la ruta empieza
+por la cuenta. Las dos cosas están razonadas por escrito en la migración que las creó, así que no
+son un olvido; lo que falta es que la regla y el producto digan lo mismo. Quedó anotado como punto
+10 de `celtatech\\docs\\SUGERENCIAS_DESDE_EL_MARKETPLACE.md`, que es donde va lo que decide la
+empresa.
+
 **Y hay una prueba que este barrido no pudo hacer, que conviene decir en vez de dejarla implícita:**
 no se ejecutó ninguna operación con una sesión de Asistente de verdad, porque esa cuenta todavía no
 existe (pendientes 45 y 47). Todo lo de arriba sale del texto de las políticas y de los permisos
