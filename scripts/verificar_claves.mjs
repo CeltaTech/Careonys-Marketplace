@@ -56,7 +56,10 @@ const COLUMNAS = {
   frequency: 'frecuencia',
   gender: 'genero',
   modalidad: 'modalidad_curso',
-  nivel: 'nivel_curso'
+  nivel: 'nivel_curso',
+  dia: 'dia_semana',
+  turno: 'turno',
+  puesto: 'puesto_experiencia'
 };
 
 const catalogo = JSON.parse(
@@ -115,6 +118,19 @@ function finDeCadena(sql, desde) {
     i++;
   }
   return sql.length - 1;
+}
+
+/** Dónde cierra el paréntesis que abre en `abre`. Devuelve -1 si no cierra. */
+function finDeParentesis(sql, abre) {
+  let hondo = 0;
+  let i = abre;
+  while (i < sql.length) {
+    if (sql[i] === "'") { i = finDeCadena(sql, i) + 1; continue; }
+    if (sql[i] === '(') hondo++;
+    else if (sql[i] === ')') { hondo--; if (hondo === 0) return i; }
+    i++;
+  }
+  return -1;
 }
 
 /** Corta por las comas que están al ras: las de adentro de un paréntesis no cuentan. */
@@ -184,23 +200,51 @@ function textosDe(valor) {
 
 const INSERT = /insert\s+into\s+(?:public\.)?"?(\w+)"?\s*\(([^)]*)\)\s*values/gi;
 
+/** Los bloques `(values (…), (…)) as f(col, col)`, con sus columnas.
+ *
+ *  Es la otra forma de sembrar que usan estas migraciones: en vez de escribir
+ *  la fila entera se junta una lista de valores contra `caregivers` o contra
+ *  `avisos`, y de ahí sale la Prestadora sin escribirla a mano. La
+ *  estrenó la 0027 y la 0030 la usa para las franjas, para las comprobaciones y
+ *  para la experiencia laboral. Sin esto, **todo lo que se siembre de esa forma
+ *  no lo mira nadie**, que es justamente el agujero por el que la 0003 metió
+ *  ocho claves inventadas sin que sonara nada. */
+function bloquesDeValores(sql) {
+  const bloques = [];
+  const VALUES = /\(\s*values(?![a-z_])/gi;
+  let m;
+  while ((m = VALUES.exec(sql)) !== null) {
+    const abre = m.index;
+    const cierra = finDeParentesis(sql, abre);
+    if (cierra < 0) continue;
+    /* El nombre y la lista de columnas van pegados al paréntesis que cierra.
+       Sin lista de columnas no hay contra qué emparejar los valores. */
+    const cola = sql.slice(cierra + 1).match(/^\s*(?:as\s+)?\w+\s*\(([^)]*)\)/i);
+    if (!cola) continue;
+    const arranque = abre + m[0].length;
+    bloques.push({
+      arranque,
+      columnas: cola[1].split(',').map((c) => c.trim().replace(/"/g, '')),
+      tuplas: tuplasDesde(sql.slice(arranque, cierra), 0)
+    });
+  }
+  return bloques;
+}
+
 /** Los reparos de un texto SQL. Cada uno dice renglón, columna, valor y remedio. */
 function revisarSql(sql) {
   const limpio = sinComentarios(sql);
   const reparos = [];
   const renglon = (i) => limpio.slice(0, i).split('\n').length;
 
-  INSERT.lastIndex = 0;
-  let cabecera;
-  while ((cabecera = INSERT.exec(limpio)) !== null) {
-    const columnas = cabecera[2].split(',').map((c) => c.trim().replace(/"/g, ''));
+  /** Empareja cada tupla con su lista de columnas y anota lo que no es clave. */
+  const revisarTuplas = (columnas, tuplas, arranque) => {
     const interesan = columnas
       .map((c, i) => [i, c])
       .filter(([, c]) => Object.prototype.hasOwnProperty.call(COLUMNAS, c));
-    if (interesan.length === 0) continue;
+    if (interesan.length === 0) return;
 
-    const arranque = cabecera.index + cabecera[0].length;
-    for (const tupla of tuplasDesde(limpio, arranque)) {
+    for (const tupla of tuplas) {
       const valores = partirAlRas(tupla);
       if (valores.length !== columnas.length) continue;
       for (const [i, columna] of interesan) {
@@ -217,7 +261,25 @@ function revisarSql(sql) {
         }
       }
     }
+  };
+
+  INSERT.lastIndex = 0;
+  let cabecera;
+  while ((cabecera = INSERT.exec(limpio)) !== null) {
+    const arranque = cabecera.index + cabecera[0].length;
+    revisarTuplas(
+      cabecera[2].split(',').map((c) => c.trim().replace(/"/g, '')),
+      tuplasDesde(limpio, arranque),
+      arranque
+    );
   }
+
+  /* Y la otra forma de sembrar, la que junta una lista de valores contra una
+     tabla para sacar de ahí la Prestadora. */
+  for (const bloque of bloquesDeValores(limpio)) {
+    revisarTuplas(bloque.columnas, bloque.tuplas, bloque.arranque);
+  }
+
   return reparos;
 }
 
@@ -233,7 +295,11 @@ const MALOS = [
   ['la segunda fila es la mala',
    "insert into public.caregivers (id, zone) values ('a', 'caba'), ('b', 'zona_este');"],
   ['la columna vale aunque haya un subselect al lado',
-   "insert into public.caregivers (tenant_id, profession) values ((select id from public.tenants where slug = 'x'), 'enfermero');"]
+   "insert into public.caregivers (tenant_id, profession) values ((select id from public.tenants where slug = 'x'), 'enfermero');"],
+  ['la siembra que junta una lista de valores contra otra tabla',
+   "insert into public.franjas_asistente (tenant_id, caregiver_id, dia, turno) select c.tenant_id, c.id, f.dia, f.turno from public.caregivers c join (values ('a'::uuid, 'lunes', 'manana'), ('b'::uuid, 'lunes', 'mediodia')) as f(caregiver_id, dia, turno) on f.caregiver_id = c.id;"],
+  ['el puesto de una experiencia laboral, en la misma forma',
+   "insert into public.experiencia_laboral_asistente (tenant_id, caregiver_id, puesto) select c.tenant_id, c.id, x.puesto from public.caregivers c join (values ('a'::uuid, 'enfermero')) as x(caregiver_id, puesto) on x.caregiver_id = c.id;"]
 ];
 const BUENOS = [
   ['todas las claves buenas',
@@ -247,7 +313,11 @@ const BUENOS = [
   ['un comentario que nombra una clave vieja',
    "-- antes decía 'enfermero'\ninsert into public.caregivers (id, profession) values ('a', 'auxiliar_enfermeria');"],
   ['una tabla que no siembra catálogo',
-   "insert into public.tenants (slug, name) values ('presdemo', 'PresDemo');"]
+   "insert into public.tenants (slug, name) values ('presdemo', 'PresDemo');"],
+  ['la lista de valores con todas las claves buenas',
+   "insert into public.franjas_asistente (tenant_id, caregiver_id, dia, turno) select c.tenant_id, c.id, f.dia, f.turno from public.caregivers c join (values ('a'::uuid, 'lunes', 'manana'), ('b'::uuid, 'sabado', 'noche')) as f(caregiver_id, dia, turno) on f.caregiver_id = c.id;"],
+  ['una lista de valores sin nombres de columna no se juzga a ciegas',
+   "insert into public.caregivers (id, zone) select v.a, v.b from (values ('a', 'zona_este')) v;"]
 ];
 
 const noDetecta = MALOS.filter(([, s]) => revisarSql(s).length === 0).map(([n]) => n);

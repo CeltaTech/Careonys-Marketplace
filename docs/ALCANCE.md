@@ -2529,6 +2529,91 @@ que se llama `directorio` desde la migración 0015. No eran un desvío —estaba
 dos bases, porque salen de las migraciones—, era texto que ya no describía lo que hay.
 
 
+### Cada Prestadora ficticia tiene ahora sus Familias y sus Asistentes
+
+Las dos Prestadoras de ejemplo estaban desparejas y a medio llenar. PresDemo tenía seis
+Asistentes y Cuidar Norte tres; cada una tenía **un** aviso, y ese aviso tenía nueve columnas
+vacías, entre ellas la de contacto, que es la única forma que tiene este producto de saber que
+detrás hay una Familia. Y había seis tablas con cero filas: las cuatro que guardan lo que un
+legajo muestra por dentro —estudios, matrículas, experiencia y referencias— y las dos de franjas
+horarias, la del Asistente y la del aviso.
+
+**Cero filas no es un dato menor: es una prueba que no puede fallar.** Una pantalla que lee de
+una tabla vacía se ve exactamente igual esté bien o esté rota, y la demostración muestra un
+legajo sin nada adentro sin que nada avise por qué. Lo mismo con el cruce entre lo que un
+Asistente puede y lo que un aviso necesita: con las dos tablas vacías, la consulta devuelve
+vacío siempre, y eso no distingue «no hay coincidencias» de «la consulta está mal escrita».
+
+Lo pidió el Desarrollador el 26 de agosto de 2026: cinco o seis Familias y cinco o seis
+Asistentes en cada Prestadora ficticia, porque es mejor para probar y para mostrarle el producto
+a un cliente. Lo escribe
+`supabase/migrations/0030_cada_prestadora_ficticia_con_sus_familias_y_sus_asistentes.sql`, y así
+quedaron las dos:
+
+| | Asistentes | Validados | En el directorio | Familias |
+|---|---|---|---|---|
+| **PresDemo** | 6 | 5 | 4 | 6 |
+| **Cuidar Norte** | 6 | 5 | 5 | 6 |
+
+**Los números de las dos no coinciden a propósito.** El directorio público devuelve nueve, que es
+cuatro más cinco: si alguna pantalla mezclara las dos Prestadoras, el número cantaría solo. Con
+dos columnas iguales, mezclarlas se ve igual que no mezclarlas.
+
+**Cada Prestadora quedó además con los casos que hacen falta para probar**, no con seis filas
+iguales: un Asistente `en_revision` que no está publicado, uno validado que eligió no publicarse,
+uno que acepta reemplazos urgentes, y una verificación en estado `presentado` —el papel llegó,
+nadie lo miró todavía— al lado de las que están `verificado`. Un directorio donde todos están en
+el mismo estado no prueba que el estado se respete.
+
+**Y el cruce que motivó llenar las dos tablas de franjas ahora devuelve filas.** Hay dos
+coincidencias puestas a mano, una en cada Prestadora: el aviso de San Isidro pide martes y jueves
+a la mañana y Omar Zabala Ficticio está justo ahí con esas dos franjas; el de Ramos Mejía pide
+lunes a la mañana y jueves a la tarde, y Lorena Maidana Ficticia tiene las dos. Cruzando zona y
+franja la consulta devuelve esas dos filas y ninguna otra.
+
+**Tres cosas que la migración deliberadamente no hace, y por qué.**
+
+1. **Ninguna Familia tiene cuenta para entrar.** En este producto una Familia no tiene tabla:
+   existe porque publicó un aviso, y lo que se sabe de ella es el contacto que dejó ahí. La
+   columna que la ataría a una cuenta apunta a `auth.users`, y crear cuentas desde una migración
+   significa escribir una contraseña adentro del repositorio, que es exactamente lo que prohíbe
+   la regla de credenciales de la empresa. Los avisos quedan sin cuenta, que es el caso que la
+   migración 0020 ya había previsto: son los que ve el personal de la Prestadora.
+2. **Los avisos nuevos no dicen `schedule_type`.** Esa columna no tiene vocabulario —es el
+   pendiente 31— y hoy cada lugar que la escribe usa una forma distinta. Escribir una quinta
+   forma empeora el problema en vez de arreglarlo, así que el horario va donde sí tiene
+   vocabulario: en las franjas del aviso, con `dia_semana` y `turno`.
+3. **Ningún estado de aviso nuevo.** Todos quedan `activa`. Inventar un estado sería inventar
+   una palabra de negocio sin aprobarla.
+
+Todos los datos son inventados y se nota a propósito: los documentos son de la serie 90.000.000,
+los teléfonos empiezan en 5000 o 6000, los correos terminan en un dominio que no existe, los
+apellidos terminan en «Ficticia» o «Ficticio», los pacientes se llaman «Paciente de Ejemplo» y
+las referencias «Referencia Inventada».
+
+### El chequeo de claves no veía la mitad de las migraciones nuevas
+
+Al escribir la 0030 apareció que `scripts/verificar_claves.mjs` —el que comprueba que ninguna
+migración escriba un valor que no esté en el catálogo de vocabularios— estaba mirando una sola
+de las dos formas de cargar filas. Reconocía `insert into tabla (columnas) values (…)`, y no
+reconocía la otra, la que usan la 0027 y la 0030: `insert … select … from una lista de valores`,
+donde las columnas no se declaran junto a la tabla sino después de la lista. **Veintisiete filas
+de franjas, treinta y cinco de avisos y todo el contenido de los cuatro legajos pasaban sin que
+nadie les mirara los valores.**
+
+Un chequeo que no mira no es un chequeo que pasa: es un chequeo que no existe. Ahora reconoce las
+dos formas (`scripts/verificar_claves.mjs:212`) y conoce cinco columnas más —modalidad y nivel de
+un curso, día y turno de una franja, puesto de una experiencia—.
+
+**Se probó que puede fallar**, que es la única forma de saber que sirve. Con dos valores
+cambiados a mano adentro de la 0030 —un turno que no existe y una profesión que no está en el
+catálogo—, el chequeo denunció los dos, con su renglón, y cortó. Restaurados, vuelve a decir que
+las treinta migraciones están limpias. Además quedaron cuatro casos nuevos en su autoprueba, dos
+que tienen que romper y dos que tienen que pasar; uno de esos dos últimos es una lista de valores
+**sin** nombres de columna, que el chequeo tiene que dejar pasar en vez de adivinar a qué columna
+corresponde cada uno.
+
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,
@@ -2541,7 +2626,7 @@ porque migrar es más barato que construir.
 | **Puntos reputacionales y rangos** (Bronce → Plata → Oro) | No existe |
 | **Reemplazo urgente por cercanía** (<2hs, <5km) | No existe. El botón está, la lógica no |
 | **Badges de verificación de 4 niveles** | Se muestran. No hay validación real detrás de ninguno |
-| **La pantalla que carga las verificaciones del legajo** | La tabla, sus columnas de rastro, sus políticas y la vista que las publica están desde las migraciones 0004, 0005 y 0026; **falta dónde apretar**, así que hoy sólo tienen comprobaciones los legajos que sembró la migración 0027. Es el pendiente 70 |
+| **La pantalla que carga las verificaciones del legajo** | La tabla, sus columnas de rastro, sus políticas y la vista que las publica están desde las migraciones 0004, 0005 y 0026; **falta dónde apretar**, así que hoy sólo tienen comprobaciones los legajos que sembraron las migraciones 0027 y 0030. Es el pendiente 70 |
 | **Reportes de salud y signos vitales** | Maquetado sin persistencia — y ver §3 |
 | **Asesoría de reintegros de Obra Social** | Maquetado sin lógica — y ver §3 |
 
