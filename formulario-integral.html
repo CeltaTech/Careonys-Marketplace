@@ -476,8 +476,10 @@
   <script src="js/disponibilidad.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
-  <!-- Esta página es demostrativa: no consulta la base. Por eso no carga el cliente
-       de datos ni el de sesión, que se conectaban solos al abrirla. -->
+  <!-- Esta pantalla sí consulta la base: el paso a paso publica el aviso de verdad
+       (`js/main.js:284`), y por eso carga el cliente de datos y el de sesión. Acá
+       decía que era demostrativa y que no los cargaba, que es el comentario de
+       `index.html` y de `soporte-remoto.html` —ésas sí lo son— y acá era falso. -->
   <script src="js/main.js"></script>
 </body>
 
