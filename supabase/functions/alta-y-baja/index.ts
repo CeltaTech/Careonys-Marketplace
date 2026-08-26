@@ -17,6 +17,27 @@
        POST .../alta-y-baja/tenants   el alta      (modelo comercial §6.1)
        POST .../alta-y-baja/eventos   el cambio    (modelo comercial §6.2)
 
+   ── De quién son los datos de una Prestadora ────────────────────────────────
+   De CeltaTech. Lo cerró el Desarrollador el 26 de agosto de 2026: «los datos
+   que son válidos son los que se cargan en CeltaTech, el Marketplace no puede
+   ni editar ni borrar ningún dato de ningún cliente». De ahí salen dos cosas.
+
+   La primera es que la identidad no se deduce, llega. CeltaTech manda su propia
+   referencia y este producto la guarda tal cual, sin mirarla por dentro; es lo
+   único por lo que reconoce a una Prestadora. Hasta la 0024 la reconocía por el
+   nombre corto que le sacaba a la razón social, y eso era adivinar: bastaba una
+   corrección de nombre para que la misma empresa entrara dos veces.
+
+   Hoy esa referencia viaja en el `suscripcion_id` que §6.1 ya manda, y no en un
+   campo nuevo. Sirve porque una Suscripción apunta a exactamente una
+   Organización (`../../../../CLAUDE.md` §3), así que no hay dos Prestadoras con
+   la misma. De este lado igual no se interpreta: si mañana CeltaTech decide
+   mandar otra cosa, alcanza con que la mande siempre igual.
+
+   La segunda es que tiene que haber por dónde recibir una corrección, porque un
+   dato que se corrige allá y no llega acá deja de ser el válido. Es el tipo
+   `cliente.actualizado` de más abajo.
+
    Qué NO atiende, a propósito: nada comercial. No guarda de qué contrato viene
    una Prestadora, no guarda qué capacidades tiene contratadas, y no le pregunta
    nada a CeltaTech. El alta de §6.1 trae un `entitlements` adentro y esta puerta
@@ -53,9 +74,12 @@
    procesados, porque los avisos se reintentan y pueden llegar dos veces. Acá no
    hace falta llevar esa lista, y no llevarla es mejor que llevarla:
 
-     * El alta es idempotente por el nombre corto, que se deduce del nombre. Un
-       reintento choca con la fila que ya está y devuelve esa misma Prestadora en
-       vez de crear una gemela.
+     * El alta es idempotente por la referencia de CeltaTech. Un reintento
+       encuentra la fila que ya está y devuelve esa misma Prestadora en vez de
+       crear una gemela — y sigue funcionando aunque entre los dos intentos
+       alguien haya corregido la razón social.
+     * La corrección de nombre es idempotente sola: aplicarla dos veces deja el
+       mismo nombre que aplicarla una.
      * El cambio de estado es idempotente por la fecha de emisión. La base
        descarta todo lo que se emitió antes de lo último aplicado, así que un
        repetido no cambia nada y un atrasado tampoco.
@@ -164,10 +188,20 @@ Deno.serve(async (pedido: Request): Promise<Response> => {
       return responder(400, { error: 'Falta cliente.razon_social' });
     }
 
+    /* La referencia con la que CeltaTech va a nombrar a esta Prestadora en todo
+       lo que mande después. Sin ella no se da de alta a nadie: una Prestadora
+       sin referencia es una que ya no se puede volver a nombrar. */
+    const referencia = typeof cuerpo.suscripcion_id === 'string' ? cuerpo.suscripcion_id : '';
+    if (!referencia.trim()) {
+      return responder(400, { error: 'Falta suscripcion_id' });
+    }
+
     const r = await llamarALaBase('alta_de_prestadora', {
+      p_referencia: referencia,
       p_nombre: nombre,
       // Opcional, y existe para un caso real: dos clientes distintos con la
-      // misma razón social. Sin esto, el segundo recibiría el primero.
+      // misma razón social. Sin esto, el segundo caería en la dirección del
+      // primero y la base le agregaría un número al final.
       p_slug: typeof cuerpo.slug === 'string' ? cuerpo.slug : null,
       /* La descripción es el texto que la Prestadora muestra en su propia
          pantalla, y lo escribe ella. El alta de §6.1 no trae nada parecido
@@ -184,9 +218,8 @@ Deno.serve(async (pedido: Request): Promise<Response> => {
       { id: string; slug: string; creada: boolean } | undefined;
     if (!fila) return responder(502, { error: 'La base no devolvió la Prestadora' });
 
-    /* 201 si la creó esta llamada, 200 si ya estaba. La diferencia le sirve a
-       quien llama para distinguir su propio reintento de una razón social
-       repetida por dos empresas distintas. */
+    /* 201 si la creó esta llamada, 200 si ya estaba con esa misma referencia,
+       o sea si esto es un reintento. */
     return responder(fila.creada ? 201 : 200, {
       tenant_ref: fila.id,
       slug: fila.slug,
@@ -199,6 +232,44 @@ Deno.serve(async (pedido: Request): Promise<Response> => {
     const tipo = typeof cuerpo.tipo === 'string' ? cuerpo.tipo : '';
     const ref = typeof cuerpo.tenant_ref === 'string' ? cuerpo.tenant_ref : '';
     const emitido = typeof cuerpo.emitido_en === 'string' ? cuerpo.emitido_en : '';
+
+    /* La corrección de un dato que se corrigió en CeltaTech. Va antes que el
+       cambio de estado porque no es uno: no toca `status` y no depende de la
+       fecha de emisión, porque aplicarla dos veces deja el mismo nombre.
+
+       Corrige la razón social y nada más. El nombre corto es la dirección web
+       por la que ya entra gente y no se toca, y la descripción la escribe la
+       Prestadora para su propia pantalla, así que no es de CeltaTech. */
+    if (tipo === 'cliente.actualizado') {
+      const referencia = typeof cuerpo.suscripcion_id === 'string' ? cuerpo.suscripcion_id : '';
+      const cliente = (cuerpo.cliente ?? {}) as Record<string, unknown>;
+      const nombre = typeof cliente.razon_social === 'string' ? cliente.razon_social : '';
+      if (!referencia.trim() || !nombre.trim()) {
+        return responder(400, { error: 'Falta suscripcion_id o cliente.razon_social' });
+      }
+
+      const r = await llamarALaBase('corregir_prestadora', {
+        p_referencia: referencia,
+        p_nombre: nombre,
+      });
+      if (!r.ok) {
+        console.error('La corrección falló:', r.estado, r.cuerpo);
+        return responder(502, { error: 'La base rechazó la corrección', detalle: r.cuerpo });
+      }
+
+      const fila = (Array.isArray(r.cuerpo) ? r.cuerpo[0] : r.cuerpo) as
+        { id: string | null; aplicado: boolean } | undefined;
+      if (!fila) return responder(502, { error: 'La base no contestó la corrección' });
+
+      /* Que no esté no es un error de nadie: es una Prestadora que todavía no se
+         dio de alta. Con 200, para que el aviso no se reintente para siempre. */
+      return responder(200, {
+        aplicado: fila.aplicado,
+        ...(fila.aplicado
+          ? { tenant_ref: fila.id }
+          : { motivo: 'Acá no hay ninguna Prestadora con esa referencia' }),
+      });
+    }
 
     const estado = QUE_HACE[tipo];
     if (!estado) {
