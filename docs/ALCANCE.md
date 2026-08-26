@@ -2094,6 +2094,24 @@ chat no existe, `messages` es de otro modelo y todavía no se decidió cuál que
 pendiente 62, con la condición de que el control entre en la misma migración que cree la tabla y
 lea las mismas reglas, no una segunda copia de ellas.
 
+**Y el mismo día se sacó del HTML la consulta al chat.** Leer y mandar mensajes estaba escrito con
+`fetch` a mano adentro de `mockup-app.html`, armando la dirección y los encabezados ahí mismo: era
+el pendiente 15. No era una cuestión de prolijidad. Quien escribe la llamada a mano decide solo si
+manda el token de quien inició sesión o la clave pública, y de ese renglón depende que la base
+sepa quién está preguntando. Ahora son `ClienteDatos.getMensajes()` y
+`ClienteDatos.enviarMensaje()` (`js/apiClient.js:454`), que arman el pedido una sola vez para
+todos.
+
+Se ganó algo que no se buscaba: la lectura vieja miraba `res.ok` y, si venía en falso, seguía de
+largo con la lista vacía. `_supabaseRequest` convierte eso en un error. Hoy la tabla contesta
+`42501 permission denied` a quien no inició sesión, y eso antes se veía igual que un chat sin
+mensajes.
+
+**Lo que no se decidió al mudarla.** La consulta se movió tal como estaba, con su tabla y sus
+columnas de hoy, y sigue sin filtrar por conversación porque la tabla de hoy no tiene con qué.
+Cuál es el modelo del chat —`messages`, o `conversaciones` y `mensajes`— sigue esperando decisión
+en el §4 de este mismo documento, y mover una consulta de lugar no es elegirlo.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,

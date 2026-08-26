@@ -809,13 +809,7 @@
       // Se usa aviso_id del primer aviso activo, o null en modo demo
       let conversaciones = [];
       try {
-        const res = await fetch(
-          `${ClienteDatos.supabaseUrl}/rest/v1/messages?order=created_at.asc&limit=50`,
-          { headers: { 'apikey': ClienteDatos.supabaseKey, 'Authorization': `Bearer ${ClienteDatos.currentAuthToken || ClienteDatos.supabaseKey}` } }
-        );
-        if (res.ok) {
-          conversaciones = await res.json();
-        }
+        conversaciones = await ClienteDatos.getMensajes();
       } catch (e) { /* sin mensajes previos, ok */ }
 
       conversaciones.forEach(msg => renderMensaje(msg, msg.author_id === userId));
@@ -866,24 +860,13 @@
       // «todo botón que dispara una operación se apaga»: mientras el mensaje viaja, el botón se apaga.
       boton.disabled = true;
       try {
-        const res = await fetch(
-          `${ClienteDatos.supabaseUrl}/rest/v1/messages`,
-          {
-            method: 'POST',
-            headers: {
-              'apikey': ClienteDatos.supabaseKey,
-              'Authorization': `Bearer ${ClienteDatos.currentAuthToken || ClienteDatos.supabaseKey}`,
-              'Content-Type': 'application/json',
-              'Prefer': 'return=minimal'
-            },
-            body: JSON.stringify({ content: texto, author_id: userId })
-          }
-        );
-        // Un pedido que vuelve con 401 no lanza ningún error: la promesa se cumple
-        // igual, con `ok` en falso. Sin este renglón, un mensaje rechazado se quedaba
-        // en pantalla como si hubiera salido —y hoy `messages` contesta 401 a quien
-        // no inició sesión, así que salía mal siempre—.
-        if (!res.ok) throw new Error('El servidor contestó ' + res.status);
+        // Un pedido que vuelve con 401 no lanza ningún error por su cuenta: la
+        // promesa se cumple igual, con `ok` en falso, y un mensaje rechazado se
+        // quedaría en pantalla como si hubiera salido —hoy `messages` contesta
+        // 401 a quien no inició sesión, así que sale mal siempre—. Quien mira
+        // el `ok` es `_supabaseRequest`, que convierte eso en un error; por eso
+        // acá alcanza con dejar que el `catch` lo agarre.
+        await ClienteDatos.enviarMensaje(texto, userId);
       } catch (e) {
         console.warn('Chat, envío del mensaje:', e);
         marcarNoEnviado(burbuja);

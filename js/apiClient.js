@@ -430,6 +430,52 @@ const ClienteDatos = {
     return await this._supabaseRequest('GET', 'intentos_evaluacion', null, queryParams);
   },
 
+  // --- EL CHAT ---
+  //
+  // Estos dos renglones estaban escritos con `fetch` a mano adentro de
+  // `mockup-app.html`, armando la dirección y los encabezados por su cuenta.
+  // Eran el pendiente 15, y no era prolijidad: quien escribe la llamada a mano
+  // decide solo si manda el token de la sesión o la clave pública, y ese es
+  // justo el renglón del que depende que la base sepa quién pregunta.
+  //
+  // **Lo que estos dos métodos NO deciden es el modelo del chat**, que sigue
+  // sin decidirse —si es una tabla `messages` o son `conversaciones` y
+  // `mensajes`— y está frenado en `docs/ALCANCE.md` §4. Por eso la consulta se
+  // mudó tal como estaba, con su tabla y sus columnas de hoy: mover una
+  // consulta de lugar no es elegir el modelo, y elegirlo acá sería decidir de
+  // costado algo que está esperando decisión.
+
+  // Los mensajes del chat, del más viejo al más nuevo.
+  //
+  // Hoy trae los últimos y nada más: **no filtra por conversación, porque la
+  // tabla de hoy no tiene con qué**. Lo que impide que alguien lea la
+  // conversación de otro no es este renglón sino la política de la tabla, y así
+  // tiene que seguir siendo.
+  async getMensajes(limite = 50) {
+    return await this._supabaseRequest('GET', 'messages', null, {
+      order: 'created_at.asc',
+      limit: limite
+    });
+  },
+
+  // Manda un mensaje al chat. Devuelve lo que quedó guardado.
+  //
+  // El autor viaja en el cuerpo porque la columna no tiene valor por omisión
+  // (`supabase/migrations/0001_esquema_inicial.sql:140`), a diferencia de la
+  // columna de la Organización, que sí lo tiene. **Que venga del navegador no
+  // lo vuelve falsificable**: la política exige `author_id = auth.uid()` salvo
+  // que quien escriba sea personal de la Prestadora
+  // (`supabase/migrations/0020_la_barrera_tambien_va_entre_familias.sql:109`),
+  // así que un mensaje firmado con otra persona lo rechaza la base. Si algún
+  // día esa columna toma `auth.uid()` por omisión, este parámetro sobra.
+  async enviarMensaje(contenido, autorId) {
+    const filas = await this._supabaseRequest('POST', 'messages', {
+      content: contenido,
+      author_id: autorId
+    });
+    return Array.isArray(filas) ? filas[0] : filas;
+  },
+
   // --- MÓDULO: EL DIRECTORIO ---
   // La única lista que se ve sin iniciar sesión. Sale de `directorio`,
   // que exige las dos condiciones —la Prestadora validó el legajo y la persona
