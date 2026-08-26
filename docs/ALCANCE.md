@@ -819,6 +819,23 @@ crea el registro, el legajo, los archivos de los dos depósitos, el directorio d
 el examen, y la barrera entre dos Familias de una misma Prestadora —avisos, horarios, mensajes,
 reportes y ponderaciones—.
 
+**Y volvió a correr ese mismo día contra las 27, con el mismo resultado: 49 de 49.** Pero para
+que diera eso hubo que aplicarle a la base local dos migraciones que le faltaban, y ahí está lo
+que conviene anotar. `supabase migration list --local` mostraba la 0026 y la 0027 con el archivo
+presente y el renglón de la base vacío, mientras que `--linked` las tenía completas: **la base
+local se había vuelto a atrasar el mismo día en que se la había puesto al día**, lo cual dice que
+no es un descuido sino la forma normal de las cosas. `supabase migration up --local` las aplicó
+enteras las dos, que de paso es una comprobación de que corren o no corren, sin dejar la base a
+mitad de camino.
+
+**Lo que importa no es el atraso sino que la prueba no lo nota.** El 49 de 49 es el mismo número
+que habría dado sin aplicar ninguna de las dos: la 0026 sólo reemplaza la vista y la 0027 sólo
+inserta filas, ninguna crea tabla ni columna, y la prueba no nombra en sus 828 renglones ni a
+`verificaciones_asistente` ni a la lista `comprobaciones`. Cuando la base estaba diez
+migraciones atrás la prueba se rompió a los gritos, pero fue porque aquellas migraciones
+**creaban tablas**. Una que sólo aprieta una política o sólo siembra datos la deja probando la
+forma anterior y contestando en verde. Está anotado como pendiente 71.
+
 
 ### El servidor de mirar las pantallas ya no muestra la versión vieja
 
