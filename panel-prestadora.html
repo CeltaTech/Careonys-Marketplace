@@ -252,7 +252,14 @@
       aspiranteSeleccionadoId = id;
       const data = await ClienteDatos.getAspirantes();
       const a = data.find(item => item.id === id);
-      if (!a) return;
+      // «los cuatro estados». El legajo estaba en la tabla cuando se dibujó y ya no
+      // está: se movió, o dejó de pertenecer a esta Prestadora. Antes acá se volvía
+      // en silencio, así que quien apretaba Auditar veía el botón encenderse y
+      // apagarse sin que se abriera nada ni se dijera por qué. Se lanza en vez de
+      // volver, para que lo diga `abrirAuditoria`, que es quien tiene el aviso.
+      // `NOT FOUND` es el marcador que `Texto.claveDeError` clasifica como
+      // «error.no_encontrado», igual que hace `js/apiClient.js:501` con los suyos.
+      if (!a) throw new Error('NOT FOUND: el legajo ya no figura en la lista');
 
       // Los papeles viven en un depósito privado: en la base está el camino, y el
       // enlace se firma acá, con vencimiento. Un enlace eterno a un documento de

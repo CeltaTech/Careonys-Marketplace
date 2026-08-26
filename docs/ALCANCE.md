@@ -1452,7 +1452,7 @@ pantalla vacía.
 
 **El daño no era igual en las cuatro pantallas, y conviene decirlo así en vez de dejarlo parejo.**
 
-- **Una sola quedaba muda de verdad.** En `panel-prestadora.html:370`, una tabla sin legajos se ve
+- **Una sola quedaba muda de verdad.** En `panel-prestadora.html:378`, una tabla sin legajos se ve
   igual esté rota o esté bien: es idéntica a la de una Prestadora que todavía no cargó ninguno.
   Ahora el fallo escribe en la propia tabla «No se pudo preparar la pantalla. Conviene volver a
   cargarla», que es el estado de error que faltaba.
@@ -1669,7 +1669,7 @@ el servidor.
 para decir una sola cosa: `validado` y `validado_prestadora`. La `0007:8` ya había escrito qué
 significa —«Validado quiere decir "la Prestadora revisó los papeles"»—, que es exactamente lo que
 dice `validado_prestadora` con todas las letras. Los dos pasaban en todos lados, y **el corto no lo
-escribía nadie**: el único lugar que asigna un estado validado es `panel-prestadora.html:335`, y
+escribía nadie**: el único lugar que asigna un estado validado es `panel-prestadora.html:343`, y
 pone el largo. El corto sólo aparecía leído, y en una fila de ejemplo.
 
 La `0017` lo saca: pasa las filas que decían `validado` a decir `validado_prestadora`, y el
