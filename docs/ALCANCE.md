@@ -2529,6 +2529,38 @@ que se llama `directorio` desde la migración 0015. No eran un desvío —estaba
 dos bases, porque salen de las migraciones—, era texto que ya no describía lo que hay.
 
 
+### La dirección pública volvió a servir lo que hay publicado
+
+Durante días el sitio `careonys-marketplace.vercel.app` mostró el producto de veintiún días
+antes: el directorio con las ocho tarjetas inventadas escritas a mano, la portada titulada
+«PrestDemo» y tuteando, y `data/catalogo-frases.json` —subido esa misma semana— contestando 404.
+No era memoria del navegador: se pidió con `curl` y sin caché y contestaba lo viejo.
+
+**La causa no era ninguna de las que se sospecharon.** No era que el dominio estuviera colgado de
+otra cuenta, y no era que los despliegues no llegaran: llegaban todos, uno por cada `push`, el
+último a los quince segundos. **Llegaban y quedaban bloqueados antes de empezar a construir** —
+veinte seguidos, con estado `UNKNOWN` en la línea de comandos y «Obstruido» en el tablero. El
+motivo lo decía Vercel adentro del despliegue bloqueado: *el autor de la confirmación no tenía
+acceso de contribución al proyecto*, y debajo, que el plan Hobby no admite colaboración en
+repositorios privados.
+
+Encajaba todo: el repositorio es privado, la cuenta de Vercel es la de CeltaTech, y los commits
+venían firmados con el correo personal del Desarrollador, que GitHub atribuye a otra cuenta. Para
+Vercel eso es un colaborador, y en Hobby un colaborador no despliega un repositorio privado.
+
+**Se arregló haciendo que este repositorio firme como CeltaTech**, con `git config user.email`
+puesto sólo en esta carpeta. De las cuatro salidas posibles es la única que no cuesta plata ni
+obliga a hacer público el código; las otras tres eran pagar el plan Pro, abrir el repositorio, o
+mudar el correo personal a la cuenta de GitHub de CeltaTech, que además obliga a sacarlo antes de
+la otra cuenta porque GitHub no admite el mismo correo en dos.
+
+**Comprobado el 26 de agosto de 2026**, con el primer `push` firmado así: el despliegue pasó a
+`Ready` en cuatro segundos, y la dirección pública contesta lo nuevo por tres señales
+independientes —`data/catalogo-frases.json` pasó de 404 a 200, la portada ya no trae ninguna de
+las ocho tarjetas escritas a mano, y no tutea en ninguna parte—. El título que entrega es
+`{{organizacion}}` en crudo, que es lo esperado y lo que describe el pendiente 79: el marcador lo
+resuelve el navegador, así que lo que el servidor manda todavía lo trae sin resolver.
+
 ### Cada Prestadora ficticia tiene ahora sus Familias y sus Asistentes
 
 Las dos Prestadoras de ejemplo estaban desparejas y a medio llenar. PresDemo tenía seis
