@@ -2223,6 +2223,47 @@ chequeo que sólo mirara este proyecto pasaría siempre sin probar nada. Se comp
 comparación exacta: el chequeo falló con catorce avisos.
 
 
+### Los permisos de la base se midieron en vivo, y no en los archivos
+
+Hasta el 26 de agosto de 2026 todo lo que se sabía de la seguridad de la base salía de leer las
+migraciones. Eso es historial de intención: dice qué se quiso, no qué quedó. Esa noche se trajo el
+esquema real del servidor con `supabase db dump --linked --schema public` —que no pide contraseña
+porque la línea de comandos ya está enlazada— y se revisó contra él. **Aparecieron dos agujeros,
+que quedaron como pendientes 66 y 67, y siete cosas que están bien.** Se anotan las siete para que
+nadie las vuelva a investigar:
+
+- **Las 24 tablas tienen la RLS encendida.** Ninguna quedó afuera, y se comparó tabla por tabla
+  contra la lista de las que la encienden, no por muestreo.
+- **Ninguna política se alcanza sin sesión.** Las 34 son `to authenticated`. O sea que un visitante
+  sin cuenta no llega a ninguna tabla, y todo lo público del producto pasa por otra puerta.
+- **Esa otra puerta son tres funciones, y son exactamente las tres previstas**: `directorio_de`,
+  `perfil_del_directorio` y `prestadora_por_slug`. De las once funciones que se saltean la RLS, las
+  otras ocho están fuera del alcance anónimo. La cuarta que figura concedida a `anon` es
+  `la_ponderacion_suma_cien`, que devuelve `trigger`: Postgres se niega a llamarla de otro modo que
+  como disparador, así que el permiso sobra pero no abre nada.
+- **`opciones_pregunta` tiene la RLS encendida y ni una política**, que es la forma correcta de
+  sellar una tabla: no la lee nadie con sesión, y la respuesta correcta sale únicamente por la
+  vista `opciones_para_responder`, que no la trae. La vista lleva escrito al lado que esa columna
+  no se agrega nunca.
+- **La vista del directorio no la puede consultar nadie de forma directa.** Ni `anon` ni
+  `authenticated` tienen consulta sobre `directorio`: la migración 0021 se la revocó a los
+  dos, y en vivo sigue revocada. Importa porque la vista no es `security_invoker`, así que corre con
+  los permisos de quien la creó y se saltearía el aislamiento entre Prestadoras; lo que la contiene
+  es que sólo la leen las tres funciones, y las tres piden el nombre corto de una Prestadora.
+- **La vista `caregivers_publicos` ya no existe.** La borraron las migraciones 0007 y 0012. Quedan
+  dos comentarios de tabla que todavía la nombran —en `autorizaciones_asistente` y en
+  `referencias_asistente`—, que es documentación vieja adentro de la base y no un permiso abierto.
+- **El camino de las verificaciones está protegido de punta a punta.** Lo que el directorio publica
+  como comprobado sale de `verificaciones_asistente` y de `intentos_evaluacion`, y de las dos el
+  Asistente tiene sola lectura. Ninguna de las dos se puede falsificar desde una sesión. El agujero
+  del pendiente 66 no está en la evidencia sino en el veredicto que la resume.
+
+**Y hay una prueba que este barrido no pudo hacer, que conviene decir en vez de dejarla implícita:**
+no se ejecutó ninguna operación con una sesión de Asistente de verdad, porque esa cuenta todavía no
+existe (pendientes 45 y 47). Todo lo de arriba sale del texto de las políticas y de los permisos
+leídos de la base en vivo. Es mucho más que leer las migraciones y es menos que haberlo intentado.
+
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,
