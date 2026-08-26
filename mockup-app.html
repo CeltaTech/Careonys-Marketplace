@@ -313,6 +313,11 @@
         </div>
       </div>
 
+      <!-- Por qué no salió el mensaje. Vive fuera del área de mensajes a propósito:
+           el mensaje no se envió, así que no puede aparecer como una burbuja más. -->
+      <div id="chat-aviso" role="status" style="display:none;padding:10px 14px;background:var(--tono-atencion-fondo);
+        color:var(--tono-atencion-texto);border-top:1px solid var(--tono-atencion-borde);font-size:12px;line-height:1.45;"></div>
+
       <!-- Input de mensaje -->
       <div
         style="padding:10px 12px;background: var(--superficie);border-top:1px solid var(--borde-card);display:flex;align-items:center;gap:8px;">
@@ -418,6 +423,7 @@
   <script src="js/identidad.js"></script>
   <script src="js/texto.js"></script>
   <script src="js/catalogo.js"></script>
+  <script src="js/contacto.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script>
@@ -831,6 +837,24 @@
       const input = document.getElementById('chat-input');
       const texto = input.value.trim();
       if (!texto) return;
+
+      // LA TERCERA PUERTA. El chat es para conocerse antes de contratar; si por
+      // acá pasa un teléfono, un correo o un domicilio, la conversación se sigue
+      // por afuera y las otras dos reglas de `docs/CATALOGO.md` no sirven de
+      // nada. Se revisa antes de vaciar el campo, para que el mensaje no se
+      // pierda y se pueda corregir; y antes de dibujar la burbuja, porque una
+      // burbuja que aparece y desaparece parece un error del programa.
+      const aviso = document.getElementById('chat-aviso');
+      const revision = await Contacto.revisar(texto);
+      if (!revision.pasa) {
+        const porQue = revision.motivos.map((m) => m.motivo).filter(Boolean).join(' ');
+        aviso.textContent = porQue ? revision.aviso + ' ' + porQue : revision.aviso;
+        aviso.style.display = 'block';
+        input.focus();
+        return;
+      }
+      aviso.style.display = 'none';
+
       input.value = '';
       const session = await Sesion.getSession();
       const userId = session ? session.user.id : 'demo-user-' + Date.now();

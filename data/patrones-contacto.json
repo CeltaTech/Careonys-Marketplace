@@ -1,0 +1,65 @@
+{
+  "_que_es_esto": "Las reglas con las que el chat reconoce un dato de contacto. Están acá y no adentro del guion porque son una regla operativa, y una regla operativa no se escribe en el código. Quien las ajuste no necesita tocar ninguna pantalla.",
+  "_de_donde_sale": "docs/CATALOGO.md, «El chat es la tercera puerta». El chat existe para que la Familia y el Asistente se conozcan antes de contratar; si adentro del chat se puede pasar un teléfono, un correo o un domicilio, la conversación sigue por afuera y la plataforma cobra una vez y nunca más.",
+  "_lo_que_esto_no_es": "No es un control de seguridad. Corre en el navegador, así que quien quiera saltearlo lo saltea. Cierra el camino fácil y deja dicho que no se puede; el control de verdad va del lado del servidor, en la misma migración que cree la tabla del chat, y todavía no existe porque esa tabla tampoco.",
+  "_por_que_falla_hacia_afuera": "Ante la duda, deja pasar. Un mensaje legítimo bloqueado es peor que un teléfono que se escapa: el primero le rompe la conversación a alguien que no hizo nada, y el segundo ya está anotado como pendiente. Por eso ninguna regla se apoya en una sola palabra suelta.",
+
+  "aviso": {
+    "es-AR": "Este mensaje no se envió: adentro del chat no se comparten datos de contacto. La conversación se sigue acá hasta que se acuerde la contratación.",
+    "en": "This message was not sent: contact details cannot be shared inside the chat. The conversation continues here until the hiring is agreed.",
+    "pt-BR": "Esta mensagem não foi enviada: não se compartilham dados de contato dentro do chat. A conversa continua aqui até que a contratação seja acordada."
+  },
+
+  "reglas": [
+    {
+      "clave": "telefono",
+      "patron": "(?:\\d[ .()\\-]{0,2}){7,}",
+      "banderas": "g",
+      "motivo": {
+        "es-AR": "Parece un número de teléfono.",
+        "en": "This looks like a phone number.",
+        "pt-BR": "Parece um número de telefone."
+      }
+    },
+    {
+      "clave": "telefono_en_letras",
+      "patron": "(?:\\b(?:cero|uno|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve)\\b[ ,.\\-]*){7,}",
+      "banderas": "gi",
+      "motivo": {
+        "es-AR": "Parece un número de teléfono escrito con palabras.",
+        "en": "This looks like a phone number spelled out in words.",
+        "pt-BR": "Parece um número de telefone escrito por extenso."
+      }
+    },
+    {
+      "clave": "correo",
+      "patron": "[A-Za-z0-9._%+-]+ ?(?:@|\\( ?at ?\\)|\\[ ?at ?\\]|\\barroba\\b) ?[A-Za-z0-9-]+ ?(?:\\.|\\bpunto\\b|\\bponto\\b) ?[A-Za-z]{2,}",
+      "banderas": "gi",
+      "motivo": {
+        "es-AR": "Parece una dirección de correo.",
+        "en": "This looks like an email address.",
+        "pt-BR": "Parece um endereço de e-mail."
+      }
+    },
+    {
+      "clave": "domicilio",
+      "patron": "\\b(?:calle|avenida|av|avda|pasaje|psje|diagonal)\\b\\.? ?[A-Za-zÀ-ÿ' ]{0,24}?\\d{1,5}\\b",
+      "banderas": "gi",
+      "motivo": {
+        "es-AR": "Parece un domicilio.",
+        "en": "This looks like a street address.",
+        "pt-BR": "Parece um endereço residencial."
+      }
+    },
+    {
+      "clave": "domicilio_por_partes",
+      "patron": "\\b(?:piso|depto|dpto|departamento|timbre|altura)\\b\\.? ?\\d{1,5}\\b",
+      "banderas": "gi",
+      "motivo": {
+        "es-AR": "Parece parte de un domicilio.",
+        "en": "This looks like part of a street address.",
+        "pt-BR": "Parece parte de um endereço residencial."
+      }
+    }
+  ]
+}

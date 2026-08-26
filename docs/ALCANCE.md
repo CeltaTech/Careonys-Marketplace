@@ -2051,6 +2051,49 @@ nunca cuál es, y sigue prometiendo que ningún dato de contacto se muestra.
 Asistente, la tarjeta dice «Enfermero universitario · Femenino». El desajuste ya existía en el
 catálogo; recién ahora se ve. Es el pendiente 60.
 
+### El chat no deja pasar un teléfono, y hay que decir hasta dónde llega eso
+
+Hecho el 26 de agosto de 2026. Cierra la parte del pendiente 6 que no dependía de ninguna
+decisión: la condición ya estaba tomada por el Desarrollador el 24 de agosto y escrita en
+`docs/CATALOGO.md` como «la tercera puerta».
+
+**Qué hace.** Antes de mandar un mensaje, el chat lo revisa. Si adentro hay algo que parece un
+teléfono —en dígitos o escrito con palabras—, un correo —incluso disfrazado de «arroba» y
+«punto»— o un domicilio, el mensaje no sale: se dice por qué, y **el texto se queda en el campo**
+para que se pueda corregir. Nunca se dibuja la burbuja, porque una burbuja que aparece y
+desaparece se lee como un error del programa y no como una negativa.
+
+**Dónde vive cada cosa, y por qué ahí.**
+
+| Pieza | Dónde | Por qué |
+|---|---|---|
+| Las reglas | `data/patrones-contacto.json` | Son una regla operativa, y una regla operativa no se escribe en el código. Quien quiera ajustar qué cuenta como teléfono edita ese archivo y no toca ninguna pantalla |
+| El reconocedor | `js/contacto.js` | Un solo lugar. El día que haya chat en las PWAs, lo llaman igual |
+| La prueba | `scripts/verificar_contacto.mjs` | Entra sola al gancho de `pre-commit`, que busca los chequeos en la carpeta |
+| El aviso, en tres idiomas | dentro del archivo de reglas | Un mensaje de error es texto visible, y no nace en un solo idioma |
+
+**No se triplica.** Las copias de `js/` en cada PWA existen porque el trabajador de servicio de
+cada una sólo alcanza su propia carpeta. Ninguna de las dos tiene chat, así que no hay nada que
+copiar todavía.
+
+**La prueba tiene dos listas, y la segunda es la que sirve.** Trece mensajes que **no pueden
+pasar** y trece que **no pueden quedar bloqueados**. Con una sola lista, un reconocedor que
+bloqueara todo pasaría la prueba entera. Y el daño real de este control no es dejar escapar un
+teléfono —eso ya está anotado— sino cortarle la conversación a un Asistente que dijo que cobra
+3500 por hora y trabaja de 8 a 16. Se comprobó que la prueba falla de las dos maneras: sin
+reglas, y con una regla que bloquea cualquier cosa.
+
+**Falla cerrado y se nota.** Si el archivo de reglas no se puede leer, el mensaje no sale y la
+pantalla lo dice. Un control que se apaga en silencio es peor que uno que no existe, porque nadie
+se entera de que dejó de estar.
+
+**Y lo que hay que decir de esto es lo que no hace.** Corre en el navegador de quien escribe. Se
+saltea abriendo la consola, y quien tiene motivo para saltearlo es exactamente contra quien
+existe. **La mitad que importa va del lado del servidor y hoy no se puede escribir**: la tabla del
+chat no existe, `messages` es de otro modelo y todavía no se decidió cuál queda. Quedó como
+pendiente 62, con la condición de que el control entre en la misma migración que cree la tabla y
+lea las mismas reglas, no una segunda copia de ellas.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,
