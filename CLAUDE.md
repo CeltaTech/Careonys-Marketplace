@@ -65,10 +65,11 @@ antes de escribir una tabla**, no después.
 - **Ninguna palabra propia de esta modalidad aparece en un módulo compartido** —directorio, aviso,
   postulación, contacto, puntaje, destacado—. Si aparece una, se filtró, y con ella se filtra el
   trabajo de sacarla más tarde.
-- **Para este producto la diferencia entre servicio y código es grande:** un módulo de código no
-  se puede usar acá hasta que haya herramienta de armado (pendiente 13), pero una API se llama
-  desde el navegador, que es lo que ya se hace con la base. Todavía no hay ningún módulo creado, y
-  hasta entonces lo compartido se sigue construyendo acá con el reparto de `docs/MODULOS.md`.
+- **Todo módulo se usa por API** —fijado por el Desarrollador el 2026-08-26, para Octo y módulos
+  por igual—, así que acá no se instala nada: una dirección se llama desde el navegador, que es lo
+  que ya se hace con la base, y este producto no espera a tener herramienta de armado. Todavía no
+  hay ningún módulo creado, y hasta entonces lo compartido se sigue construyendo acá con el
+  reparto de `docs/MODULOS.md`.
 - Ya pasó lo que esto evita: `apiClient.js` está **triplicado byte a byte** (pendiente 13).
 
 ## 4. Protocolo de sesión

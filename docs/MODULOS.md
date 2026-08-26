@@ -5,12 +5,15 @@
 > lado de Careonys y no se construyen acá. Esto dice **dónde pasa el corte** en todo lo demás.
 
 > **Y desde el 25 de agosto de 2026 lo compartido no se queda acá.** El Desarrollador fijó como
-> política central de CeltaTech que lo que sirve a más de un producto se escribe una sola vez,
-> se llama **`Octo` y después lo que hace** —`OctoCRM`, `OctoAuth`— y vive en
-> `F:\proyectos\celtatech\Modulos\`, afuera de los productos. La regla completa está en
-> `..\..\..\docs\POLITICA_DE_MODULOS.md`. **Esta página no cambia**: sigue diciendo por dónde
-> pasa el corte y qué queda de cada lado. Lo que agrega la política es dónde termina viviendo
-> la columna de la izquierda, y con qué nombre. Todavía no hay ningún módulo creado.
+> política central de CeltaTech que lo que sirve a más de un producto se escribe una sola vez y
+> vive en `F:\proyectos\celtatech\Modulos\`, afuera de los productos, nombrado por su función y
+> sin apellido. **`Octo` es otra cosa**: una pieza que además se vende sola, y por eso vive en
+> `productos\`. El 26 de agosto agregó que **todo se usa por API, Octo y módulo por igual**, así
+> que acá no se instala nada — una dirección se llama desde el navegador, que es lo que este
+> producto ya hace con su base. La regla completa está en `..\..\..\docs\POLITICA_DE_MODULOS.md`.
+> **Esta página no cambia**: sigue diciendo por dónde pasa el corte y qué queda de cada lado. Lo
+> que agrega la política es dónde termina viviendo la columna de la izquierda. Todavía no hay
+> ningún módulo creado.
 
 ## Por qué se corta
 
