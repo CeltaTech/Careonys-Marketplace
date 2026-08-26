@@ -3,6 +3,13 @@
 > Se lee primero, en cada sesión, antes de escribir una sola línea de código.
 > Este archivo refleja siempre el estado **vigente** de las reglas — se actualiza solo cuando una
 > regla cambia.
+>
+> **Y hay dos archivos más que mandan sobre éste.** `F:\proyectos\celtatech\CLAUDE.md`
+> —las reglas de la empresa— **se lee solo**, porque la línea de comandos junta los `CLAUDE.md`
+> desde la carpeta de trabajo hacia arriba. `F:\proyectos\celtatech\docs\FAMILIA_CAREONYS.md`
+> —lo que vale para Careonys y el Marketplace, y para nadie más— **no se lee solo**: los dos
+> productos son carpetas hermanas y ninguna carpeta los contiene sólo a ellos. **Hay que
+> abrirlo a mano al empezar.**
 
 ## 0. Qué es este proyecto y en qué se diferencia
 
