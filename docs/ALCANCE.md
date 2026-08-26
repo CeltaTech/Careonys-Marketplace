@@ -2498,6 +2498,99 @@ exactamente el que el reparto de módulos quiere evitar. Mientras tanto, cada pa
 contenido en su catálogo y los colores en las variables, que es preparar el terreno para el punto
 4 sin escribir nada dos veces.
 
+### La red de chequeos se adapta antes del punto 4, no después
+
+Esto es el paso 1 de «antes de un cambio grande»: el inventario de qué asume el código de hoy,
+hecho sobre **la red que sostiene al producto** en vez de sobre el producto. Va acá y no en
+`docs/INVENTARIO.md` porque ese archivo es una foto del 22 de agosto de 2026 y se deja como está. Hoy corren dieciséis
+chequeos antes de cada `commit` (`.githooks/pre-commit` llama a `scripts/verificar_todo.mjs`), y
+son los que impiden que vuelvan los colores a mano, el tuteo, las claves en el código, las
+pantallas mudas y los textos escritos adentro del HTML. **Medido el 26 de agosto de 2026 leyendo
+los dieciséis, no de memoria.**
+
+**El hallazgo: nueve chequeos no se rompen, se callan.**
+
+`scripts/recorrido.mjs` recorre el proyecto y **cada chequeo le pide una lista de extensiones**.
+Ninguno de los dieciséis nombra `.jsx` ni `.tsx`. Así que el día que la primera pantalla deja de
+ser `.html` y pasa a ser un componente, **nueve chequeos no la miran, y no avisan de nada**:
+siguen diciendo ✔, con un número más chico que nadie está mirando. Otros dos —`guiones` y
+`contacto`— quedan tocados de otra manera, y están en la misma tabla porque tampoco sobreviven
+como están.
+
+| Chequeo | Qué recorre hoy | Qué pasa con un `.jsx` |
+|---|---|---|
+| `arranque` | `.html`, `.js` | Deja de verlo |
+| `botones` | `.html`, `.js` | Deja de verlo |
+| `escapado` | `.html`, `.js` | Deja de verlo |
+| `frases` | `.html`, `.js` | Deja de verlo |
+| `identidad` | `.html`, `.js`, `.css`, `.json`, `.webmanifest`, `.txt` | Deja de verlo |
+| `paleta` | `.html`, `.css`, `.js` | Deja de verlo |
+| `temas` | `.html`, `.css` | Deja de verlo |
+| `trato` | `.html`, `.js`, `.json` | Deja de verlo |
+| `vocabulario` | `.html`, `.js`, `.json` | Deja de verlo |
+| `guiones` | sólo los bloques `<script>` de cada `.html` | **Se queda sin nada que revisar**: en Vite no hay guiones adentro del HTML |
+| `contacto` | carga `js/contacto.js` con `require()` | Ver 9.3 |
+
+**Por qué importa más de lo que parece:** son nueve pruebas que pasan a no poder fallar, más una
+décima —`guiones`— que se queda mirando cero bloques y también dice ✔. Un chequeo
+que recorre cero archivos informa lo mismo que uno que recorrió cuarenta y nueve y no encontró
+nada. La migración no rompería la red — **la desarmaría en silencio**, que es peor, porque el
+`commit` sigue saliendo verde.
+
+Y no alcanza con agregar `.jsx` a las listas: **cuatro de esos chequeos buscan una forma que en
+React no existe.** `paleta` y `temas` buscan color escrito adentro de `style="..."`, y en JSX eso
+se escribe `style={{...}}`. `escapado` mira dos cosas que en React no
+existen: las plantillas de texto que arman HTML con `${...}` adentro, y los manejadores escritos
+en el marcado (`onclick="..."`). En un componente el marcado no se arma con texto y el manejador
+se pasa como función, así que **React escapa solo** y el chequeo se queda sin sus dos objetivos;
+lo que hay que mirar en su lugar es una sola cosa, `dangerouslySetInnerHTML`. O sea que ese
+chequeo se vuelve **más corto y más exigente**, no más largo. `frases` pide que en una pantalla
+convertida no quede texto a mano, y hoy reconoce lo convertido por el atributo `data-frase`, que
+en un componente no es un atributo sino una llamada.
+
+**Los cinco que sobreviven, y por qué.**
+
+| Chequeo | Por qué no lo afecta |
+|---|---|
+| `claves` | Lee las 27 migraciones `.sql`. La base no cambia de forma porque cambie la pantalla |
+| `esquema` | Lo mismo: las 24 tablas y sus políticas |
+| `cajas` | Comprueba que las carpetas cerradas sigan cerradas, con su propio árbol de mentira. No depende de cómo esté escrito el producto |
+| `referencias` | Comprueba que cada cita `archivo:renglón` de la documentación apunte a algo. **Va a fallar, y a propósito**: al renombrarse las pantallas, las 154 citas dejan de encontrar su archivo. Es el único que avisa fuerte de la migración, y conviene no apagarlo |
+| `copias` | Compara 27 archivos que tienen que ser iguales byte a byte. También falla fuerte, porque la lista nombra caminos exactos. Y **la migración es la ocasión de que deje de hacer falta**: las tres copias existen porque hoy no hay forma de compartir código entre las tres aplicaciones, y con una herramienta de armado sí la hay |
+
+**Lo que se midió y salió al revés de lo esperado.**
+
+Dos chequeos —`contacto` e `identidad`— cargan un archivo del producto y corren **el mismo código
+que corre la pantalla**, en vez de una copia: `js/contacto.js` y `js/identidad.js`, con
+`createRequire`. Funciona porque hoy **no hay `package.json`**, así que Node los lee como módulos
+de los de antes, y los dos archivos terminan en `module.exports`.
+
+Levantar Vite crea un `package.json`, y casi siempre con `"type": "module"`. Lo esperable era que
+`require()` fallara. **Se probó, y no falla: devuelve un objeto vacío.** Node lee el archivo como
+módulo nuevo, donde `module.exports` no significa nada, y no protesta. O sea que `IDENTIDAD` y
+`Contacto` llegan valiendo *nada*.
+
+Que eso se note depende de una casualidad afortunada: los dos chequeos usan lo que cargaron
+enseguida y sin preguntar —`IDENTIDAD.nombre` en `scripts/verificar_identidad.mjs:57`,
+`Contacto.revisarCon(...)` en `scripts/verificar_contacto.mjs:74`—, así que revientan en el acto y
+el `commit` se frena. **Si alguno hubiera preguntado antes «¿tiene nombre?», habría pasado en
+verde sin haber comprobado nada.** Es exactamente la trampa que la regla de la empresa describe:
+`undefined < 3` da falso, y un control escrito así deja pasar justo el caso que no entendió.
+
+**Qué hacer con esto, en orden.**
+
+1. **Antes de la primera pantalla portada**, no después: agregar `.jsx`/`.tsx` a las listas de los
+   nueve que sólo cambian de extensión, y darles a `paleta`, `temas`, `escapado` y `frases` la
+   forma que esas cuatro cosas tienen en React.
+2. **Que la red se pruebe a sí misma.** Hoy `cajas` y `referencias` ya lo hacen —se arman un
+   ejemplo malo y comprueban que lo agarran—. Conviene que lo hagan todos los que se toquen, para
+   que ninguno pueda quedar mirando cero archivos y decir ✔.
+3. **`guiones` no se adapta: se jubila.** Comprueba la sintaxis de los guiones sueltos adentro del
+   HTML, y esa categoría desaparece; de eso pasa a ocuparse la herramienta de armado, que no
+   compila un componente con un error de sintaxis.
+4. **`copias` se jubila también, pero recién cuando las tres copias dejen de existir**, no antes.
+
+
 ---
 
 ## 6. Deuda del código actual
