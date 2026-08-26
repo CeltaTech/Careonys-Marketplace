@@ -2442,10 +2442,28 @@ de tocar nada y salteando `<title>` en el paseo de textos (`js/identidad.js:112`
 `js/identidad.js:118`). Con eso, en el navegador: título, pie, descripción para los buscadores y
 texto de la imagen pasan de «Careonys» a la Prestadora y vuelven.
 
-**Qué no quedó probado, y se dice así.** La base local devuelve `42501 permission denied` sobre
-`tenants`, un problema anterior y ajeno a este cambio, así que **el camino que trae la Prestadora
-desde la base no se pudo correr localmente**. Lo probado es el mecanismo del marcador, llamado
-directamente. Falta verlo con una Prestadora resuelta de verdad.
+**Probado de punta a punta contra la base publicada**, con las dos Prestadoras de ejemplo:
+`directorio.html?t=presdemo` y `?t=cuidarnorte` resuelven cada una su nombre, su logotipo y su
+color, y las dos pantallas se ven distintas entre sí y distintas del producto. Sin `?t=`, y en las
+tres pantallas que no cargan el cliente de datos, se ve el producto, que es lo correcto.
+
+En el camino se aclararon dos cosas que parecían defectos y no lo son. La base contesta `42501
+permission denied` a quien le pida filas de `tenants` sin sesión, **y eso está bien**: desde la
+migración 0021 la lista de Prestadoras no la ve nadie, porque es la lista de clientes de CeltaTech.
+La pantalla no la pide: llama a `prestadora_por_slug`, que exige el nombre corto y devuelve una
+sola Prestadora con sus colores y su logotipo (`js/apiClient.js:80`). Y la portada no cambia de
+marca porque no carga el cliente de datos —tampoco `cursos.html` ni `soporte-remoto.html`—, así que
+en esas tres el marcador se queda en el nombre del producto y no hay nada que resolver.
+
+**Y apareció algo que no se estaba buscando: la base publicada no es la que arman las
+migraciones.** PresDemo se llama ahí «PresDemo — Servicios de Cuidado» y tiene cargado su logotipo;
+la migración que la crea la carga con el nombre «PresDemo» y sin logotipo, y ninguna migración
+escribe ninguna de las dos cosas. O sea que se pusieron a mano contra la base. Reconstruirla desde
+cero da una base distinta de la que está publicada. Quedó como pendiente 80, y **conviene decir de
+dónde salió**: se llegó ahí por haber dado por cierto lo que decían las migraciones en vez de
+preguntarle a la base, que es exactamente lo que la regla «el estado real está por encima del
+documentado» viene a evitar. El diagnóstico escrito el mismo día —«la Prestadora de ejemplo no
+tiene logotipo»— era falso para PresDemo y verdadero para Cuidar Norte.
 
 **Tres cosas se hicieron distinto de como decía el plan** que había escrito para esto, y por eso
 se anotan antes de borrarlo:
