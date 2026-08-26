@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Pantalla con sesión, no del directorio: no tiene nada que hacer en un buscador. -->
   <meta name="robots" content="noindex, nofollow" />
-  <title>Evaluaciones</title>
+  <title data-frase="examen.titulo">Evaluaciones</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
@@ -202,30 +202,36 @@
 
       <!-- Estado: cargando -->
       <div id="estado-cargando" class="examen-cargando">
-        <i class="fas fa-circle-notch fa-spin"></i> Cargando...
+        <i class="fas fa-circle-notch fa-spin"></i> <span data-frase="comun.cargando">Cargando…</span>
       </div>
 
       <!-- Estado: no se pudo llegar al servidor -->
       <div id="estado-error" style="display:none;">
-        <div class="examen-aviso critico">
+        <!-- Las dos frases nacieron en la pantalla de acceso y se piden con su
+             clave: una clave no se renombra, y la misma frase escrita dos veces
+             se traduce dos veces y se corrige una sola. -->
+        <div class="examen-aviso critico" data-frase="acceso.sin_servidor">
           No se pudo conectar con el servidor. Puede ser la conexión de este equipo.
         </div>
-        <button type="button" class="btn btn-secundario" id="btn-reintentar" style="width:100%;">
+        <button type="button" class="btn btn-secundario" id="btn-reintentar" style="width:100%;"
+          data-frase="acceso.reintentar">
           Reintentar
         </button>
       </div>
 
       <!-- Estado: vacío -->
       <div id="estado-vacio" style="display:none;">
-        <h1 class="examen-titulo">Evaluaciones</h1>
+        <h1 class="examen-titulo" data-frase="examen.titulo">Evaluaciones</h1>
+        <!-- Vacío a propósito: cuál de los tres motivos es se sabe recién al
+             pedir los datos, así que la clave se la pone el guion. -->
         <p class="examen-bajada" id="texto-vacio"></p>
-        <p class="examen-pie"><a href="cursos.html">Ver los cursos</a></p>
+        <p class="examen-pie"><a href="cursos.html" data-frase="examen.ver_cursos">Ver los cursos</a></p>
       </div>
 
       <!-- Estado: listo, eligiendo qué rendir -->
       <div id="estado-lista" style="display:none;">
-        <h1 class="examen-titulo">Evaluaciones</h1>
-        <p class="examen-bajada">
+        <h1 class="examen-titulo" data-frase="examen.titulo">Evaluaciones</h1>
+        <p class="examen-bajada" data-frase="examen.bajada">
           Las evaluaciones se corrigen en el servidor. El resultado queda registrado en el legajo.
         </p>
         <ul class="examen-lista" id="lista-evaluaciones"></ul>
@@ -233,6 +239,9 @@
 
       <!-- Estado: listo, rindiendo -->
       <form id="estado-examen" style="display:none;" novalidate>
+        <!-- El nombre de la evaluación y sus condiciones los pone el guion: el
+             primero lo escribió alguien de la Prestadora y no se traduce; las
+             segundas cambian de frase según cuántas preguntas tenga. -->
         <h1 class="examen-titulo" id="examen-nombre"></h1>
         <p class="examen-bajada" id="examen-condiciones"></p>
 
@@ -242,10 +251,10 @@
         <div id="examen-preguntas"></div>
 
         <button type="submit" class="btn btn-primario" id="btn-entregar" style="width:100%;">
-          <span id="texto-btn-entregar">Entregar respuestas</span>
+          <span id="texto-btn-entregar" data-frase="examen.entregar">Entregar respuestas</span>
         </button>
 
-        <p class="examen-pie"><a href="#" id="volver-lista">Volver a la lista</a></p>
+        <p class="examen-pie"><a href="#" id="volver-lista" data-frase="examen.volver_lista">Volver a la lista</a></p>
       </form>
 
       <!-- Estado: listo, ya corregido -->
@@ -255,10 +264,11 @@
           <p id="resultado-titulo" style="font-weight:700;margin:0 0 6px;"></p>
           <p id="resultado-detalle" style="margin:0;"></p>
         </div>
-        <button type="button" class="btn btn-primario" id="btn-otra-vez" style="width:100%;display:none;">
+        <button type="button" class="btn btn-primario" id="btn-otra-vez" style="width:100%;display:none;"
+          data-frase="examen.rendir_de_nuevo">
           Rendir de nuevo
         </button>
-        <p class="examen-pie"><a href="#" id="volver-lista-2">Volver a la lista</a></p>
+        <p class="examen-pie"><a href="#" id="volver-lista-2" data-frase="examen.volver_lista">Volver a la lista</a></p>
       </div>
 
     </div>
@@ -288,11 +298,41 @@
       });
     }
 
-    function avisar(id, texto, tono) {
+    // Se le pasa **la clave** de la frase, no la frase. Un texto escrito a mano
+    // se queda en el idioma en que nació: marcando el elemento con lo que dice,
+    // un cambio de idioma con el cartel en pantalla lo alcanza también.
+    //
+    // Y se pide `traducir`, que espera al catálogo, en vez de `frase`, que no
+    // espera: un aviso que se abre mientras la pantalla arranca la llamaría con
+    // el archivo todavía en camino y saldría en blanco.
+    function avisar(id, clave, huecos, tono) {
       const caja = document.getElementById(id);
-      caja.textContent = texto;
+      if (!clave) {
+        caja.removeAttribute('data-frase');
+        caja.removeAttribute('data-huecos');
+        caja.textContent = '';
+        caja.style.display = 'none';
+        return;
+      }
+      caja.setAttribute('data-frase', clave);
+      if (huecos) caja.setAttribute('data-huecos', JSON.stringify(huecos));
+      else caja.removeAttribute('data-huecos');
       if (tono) caja.className = 'examen-aviso ' + tono;
-      caja.style.display = texto ? 'block' : 'none';
+      caja.style.display = 'block';
+      Catalogo.traducir(caja).then(() => {
+        // Una caja que se abre es porque hay algo que decir, así que nunca queda
+        // en blanco: si la frase no se resolvió, se dice lo genérico.
+        if (!caja.textContent) caja.textContent = Catalogo.frase('error.generico');
+      });
+    }
+
+    // Los tres motivos por los que esta pantalla no tiene nada que mostrar. Van
+    // por clave como todo lo demás; cuál de los tres es lo decide quien llama.
+    function decirVacio(clave) {
+      const donde = document.getElementById('texto-vacio');
+      donde.setAttribute('data-frase', clave);
+      Catalogo.traducir(donde);
+      mostrar('vacio');
     }
 
     function vaciar(id) {
@@ -313,9 +353,7 @@
       const evaluaciones = await ClienteDatos.getEvaluaciones();
 
       if (!evaluaciones || evaluaciones.length === 0) {
-        document.getElementById('texto-vacio').textContent =
-          'Todavía no hay evaluaciones disponibles.';
-        mostrar('vacio');
+        decirVacio('examen.sin_evaluaciones');
         return;
       }
 
@@ -331,17 +369,24 @@
 
         const nombre = document.createElement('span');
         nombre.className = 'nombre';
+        // El nombre lo cargó alguien de la Prestadora: es dato, no texto de la
+        // pantalla, y por eso es lo único de acá que no pasa por el catálogo.
         nombre.textContent = evaluacion.nombre;
 
+        // Singular y plural son **dos frases distintas y no una armada con
+        // pedazos**: «Rendida 3 veces» partido en cachos sale mal en cuanto un
+        // idioma ordena distinto o no usa el mismo plural.
         const detalle = document.createElement('span');
         detalle.className = 'detalle';
         if (aprobada) {
-          detalle.textContent = 'Aprobada';
-        } else if (propios.length > 0) {
-          detalle.textContent = 'Rendida ' + propios.length +
-            (propios.length === 1 ? ' vez' : ' veces') + ', sin aprobar';
+          detalle.setAttribute('data-frase', 'examen.aprobada');
+        } else if (propios.length === 1) {
+          detalle.setAttribute('data-frase', 'examen.rendida_una');
+        } else if (propios.length > 1) {
+          detalle.setAttribute('data-frase', 'examen.rendida_varias');
+          detalle.setAttribute('data-huecos', JSON.stringify({ cuantas: propios.length }));
         } else {
-          detalle.textContent = 'Sin rendir';
+          detalle.setAttribute('data-frase', 'examen.sin_rendir');
         }
 
         boton.appendChild(nombre);
@@ -353,6 +398,9 @@
         lista.appendChild(item);
       });
 
+      // Una sola vez al final, con la lista ya armada: `traducir` recorre todo
+      // lo que cuelga de lo que se le pasa.
+      Catalogo.traducir(lista);
       mostrar('lista');
     }
 
@@ -378,9 +426,7 @@
       const evaluacion = await ClienteDatos.getEvaluacion(clave);
 
       if (!evaluacion || !evaluacion.preguntas || evaluacion.preguntas.length === 0) {
-        document.getElementById('texto-vacio').textContent =
-          'Esta evaluación todavía no tiene preguntas cargadas.';
-        mostrar('vacio');
+        decirVacio('examen.sin_preguntas');
         return;
       }
 
@@ -389,10 +435,18 @@
       intentosUsados = propios.length;
 
       document.getElementById('examen-nombre').textContent = evaluacion.nombre;
-      document.getElementById('examen-condiciones').textContent =
-        evaluacion.preguntas.length +
-        (evaluacion.preguntas.length === 1 ? ' pregunta. Se aprueba con ' : ' preguntas. Se aprueba con ') +
-        evaluacion.porcentaje_para_aprobar + '% de respuestas correctas.';
+
+      // Cuántas preguntas y con qué porcentaje se aprueba: los dos números
+      // entran en huecos y cada idioma los pone donde le corresponda.
+      const cuantas = evaluacion.preguntas.length;
+      const condiciones = document.getElementById('examen-condiciones');
+      condiciones.setAttribute('data-frase',
+        cuantas === 1 ? 'examen.condiciones_una' : 'examen.condiciones_varias');
+      condiciones.setAttribute('data-huecos', JSON.stringify({
+        cuantas: cuantas,
+        porcentaje: evaluacion.porcentaje_para_aprobar
+      }));
+      Catalogo.traducir(condiciones);
 
       const preguntas = vaciar('examen-preguntas');
       evaluacion.preguntas.forEach((pregunta, i) => {
@@ -431,21 +485,30 @@
 
       avisar('aviso-examen', '');
       if (quedan === null) {
-        avisar('aviso-intentos', intentosUsados > 0
-          ? 'Rendida ' + intentosUsados + (intentosUsados === 1 ? ' vez.' : ' veces.') +
-            ' Se puede volver a rendir sin límite.'
-          : '', 'info');
+        if (intentosUsados === 1) {
+          avisar('aviso-intentos', 'examen.sin_limite_una', null, 'info');
+        } else if (intentosUsados > 1) {
+          avisar('aviso-intentos', 'examen.sin_limite_varias', { cuantas: intentosUsados }, 'info');
+        } else {
+          avisar('aviso-intentos', '');
+        }
         boton.disabled = false;
       } else if (quedan > 0) {
-        avisar('aviso-intentos', quedan === 1
-          ? 'Queda 1 intento de ' + evaluacion.intentos_maximos + '.'
-          : 'Quedan ' + quedan + ' intentos de ' + evaluacion.intentos_maximos + '.', 'info');
+        if (quedan === 1) {
+          avisar('aviso-intentos', 'examen.queda_uno',
+            { total: evaluacion.intentos_maximos }, 'info');
+        } else {
+          avisar('aviso-intentos', 'examen.quedan_varios',
+            { cuantos: quedan, total: evaluacion.intentos_maximos }, 'info');
+        }
         boton.disabled = false;
       } else {
-        avisar('aviso-intentos', evaluacion.intentos_maximos === 1
-          ? 'Esta evaluación se rinde una sola vez, y ya está rendida.'
-          : 'Ya se usaron los ' + evaluacion.intentos_maximos + ' intentos de esta evaluación.',
-          'atencion');
+        if (evaluacion.intentos_maximos === 1) {
+          avisar('aviso-intentos', 'examen.una_sola_vez', null, 'atencion');
+        } else {
+          avisar('aviso-intentos', 'examen.sin_intentos',
+            { cuantos: evaluacion.intentos_maximos }, 'atencion');
+        }
         boton.disabled = true;
       }
 
@@ -465,28 +528,35 @@
       });
 
       if (faltan > 0) {
-        avisar('aviso-examen', faltan === 1
-          ? 'Falta contestar una pregunta.'
-          : 'Faltan contestar ' + faltan + ' preguntas.', 'critico');
+        if (faltan === 1) avisar('aviso-examen', 'examen.falta_una', null, 'critico');
+        else avisar('aviso-examen', 'examen.faltan_varias', { cuantas: faltan }, 'critico');
         return;
       }
 
       const boton = document.getElementById('btn-entregar');
       const texto = document.getElementById('texto-btn-entregar');
-      const textoOriginal = texto.textContent;
+
+      // El rótulo se cambia nombrando la frase, no escribiendo el texto, para
+      // que un cambio de idioma mientras la corrección corre lo alcance igual.
+      const rotular = (clave) => {
+        texto.setAttribute('data-frase', clave);
+        Catalogo.traducir(texto);
+      };
+
       boton.disabled = true;
-      texto.textContent = 'Corrigiendo...';
+      rotular('examen.corrigiendo');
 
       try {
         const resultado = await ClienteDatos.rendirEvaluacion(enCurso.id, respuestas);
         intentosUsados += 1;
         verResultado(resultado);
       } catch (err) {
-        console.error('Examen, corrección:', err);
-        avisar('aviso-examen', Texto.mensajeDeError(err), 'critico');
+        // El detalle técnico lo registra `claveDeError` y no sale de la consola;
+        // a la pantalla va la frase que corresponde a esa clase de falla.
+        avisar('aviso-examen', Texto.claveDeError(err, 'Examen, corrección:'), null, 'critico');
         boton.disabled = false;
       } finally {
-        texto.textContent = textoOriginal;
+        rotular('examen.entregar');
       }
     });
 
@@ -499,12 +569,21 @@
 
       document.getElementById('resultado-caja').className =
         'examen-aviso ' + (aprobado ? 'exito' : 'atencion');
+      // La cifra es un número y un signo: no hay nada que traducir.
       document.getElementById('resultado-porcentaje').textContent = resultado.porcentaje + '%';
-      document.getElementById('resultado-titulo').textContent =
-        aprobado ? 'Evaluación aprobada' : 'Evaluación no aprobada';
-      document.getElementById('resultado-detalle').textContent =
-        resultado.respuestas_correctas + ' de ' + resultado.preguntas_totales +
-        ' respuestas correctas. Se aprueba con ' + resultado.porcentaje_para_aprobar + '%.';
+
+      const titulo = document.getElementById('resultado-titulo');
+      titulo.setAttribute('data-frase', aprobado ? 'examen.aprobado' : 'examen.no_aprobado');
+
+      const detalle = document.getElementById('resultado-detalle');
+      detalle.setAttribute('data-frase', 'examen.resultado_detalle');
+      detalle.setAttribute('data-huecos', JSON.stringify({
+        correctas: resultado.respuestas_correctas,
+        total: resultado.preguntas_totales,
+        porcentaje: resultado.porcentaje_para_aprobar
+      }));
+
+      Catalogo.traducir(document.getElementById('estado-resultado'));
 
       const quedan = enCurso.intentos_maximos
         ? enCurso.intentos_maximos - intentosUsados
@@ -539,9 +618,7 @@
         // conviene decirlo antes de mostrar las preguntas.
         const perfil = await Sesion.perfil();
         if (!perfil || perfil.role !== 'caregiver') {
-          document.getElementById('texto-vacio').textContent =
-            'Las evaluaciones las rinden los Asistentes, y esta cuenta no lo es.';
-          mostrar('vacio');
+          decirVacio('examen.no_es_asistente');
           return;
         }
 

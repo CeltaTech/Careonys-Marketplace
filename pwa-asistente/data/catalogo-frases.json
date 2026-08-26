@@ -15,6 +15,14 @@
 
   "frases": {
 
+    "_0": "── Lo que no es de ninguna pantalla en particular ──",
+
+    "comun.cargando": {
+      "es-AR": "Cargando…",
+      "en": "Loading…",
+      "pt-BR": "Carregando…"
+    },
+
     "_": "── Los mensajes de error. Los clasifica js/texto.js y los muestra cualquier pantalla ──",
 
     "error.credenciales": {
@@ -383,6 +391,144 @@
       "es-AR": "Ir al acceso",
       "en": "Go to the access screen",
       "pt-BR": "Ir ao acesso"
+    },
+
+    "______": "── Rendir una evaluación ──",
+
+    "examen.titulo": {
+      "es-AR": "Evaluaciones",
+      "en": "Assessments",
+      "pt-BR": "Avaliações"
+    },
+    "examen.sin_evaluaciones": {
+      "es-AR": "Todavía no hay evaluaciones disponibles.",
+      "en": "There are no assessments available yet.",
+      "pt-BR": "Ainda não há avaliações disponíveis."
+    },
+    "examen.ver_cursos": {
+      "es-AR": "Ver los cursos",
+      "en": "See the courses",
+      "pt-BR": "Ver os cursos"
+    },
+    "examen.bajada": {
+      "es-AR": "Las evaluaciones se corrigen en el servidor. El resultado queda registrado en el legajo.",
+      "en": "Assessments are marked on the server. The result is recorded in the personal file.",
+      "pt-BR": "As avaliações são corrigidas no servidor. O resultado fica registrado no cadastro."
+    },
+    "examen.aprobada": {
+      "es-AR": "Aprobada",
+      "en": "Passed",
+      "pt-BR": "Aprovada"
+    },
+    "examen.rendida_una": {
+      "es-AR": "Rendida 1 vez, sin aprobar",
+      "en": "Taken once, not passed",
+      "pt-BR": "Feita 1 vez, sem aprovação"
+    },
+    "examen.rendida_varias": {
+      "es-AR": "Rendida {cuantas} veces, sin aprobar",
+      "en": "Taken {cuantas} times, not passed",
+      "pt-BR": "Feita {cuantas} vezes, sem aprovação"
+    },
+    "examen.sin_rendir": {
+      "es-AR": "Sin rendir",
+      "en": "Not taken",
+      "pt-BR": "Não feita"
+    },
+    "examen.sin_preguntas": {
+      "es-AR": "Esta evaluación todavía no tiene preguntas cargadas.",
+      "en": "This assessment does not have any questions loaded yet.",
+      "pt-BR": "Esta avaliação ainda não tem perguntas carregadas."
+    },
+    "examen.condiciones_una": {
+      "es-AR": "1 pregunta. Se aprueba con {porcentaje}% de respuestas correctas.",
+      "en": "1 question. Passing requires {porcentaje}% of correct answers.",
+      "pt-BR": "1 pergunta. Aprova-se com {porcentaje}% de respostas corretas."
+    },
+    "examen.condiciones_varias": {
+      "es-AR": "{cuantas} preguntas. Se aprueba con {porcentaje}% de respuestas correctas.",
+      "en": "{cuantas} questions. Passing requires {porcentaje}% of correct answers.",
+      "pt-BR": "{cuantas} perguntas. Aprova-se com {porcentaje}% de respostas corretas."
+    },
+    "examen.sin_limite_una": {
+      "es-AR": "Rendida 1 vez. Se puede volver a rendir sin límite.",
+      "en": "Taken once. It can be taken again without limit.",
+      "pt-BR": "Feita 1 vez. É possível refazer sem limite."
+    },
+    "examen.sin_limite_varias": {
+      "es-AR": "Rendida {cuantas} veces. Se puede volver a rendir sin límite.",
+      "en": "Taken {cuantas} times. It can be taken again without limit.",
+      "pt-BR": "Feita {cuantas} vezes. É possível refazer sem limite."
+    },
+    "examen.queda_uno": {
+      "es-AR": "Queda 1 intento de {total}.",
+      "en": "1 attempt out of {total} remains.",
+      "pt-BR": "Resta 1 tentativa de {total}."
+    },
+    "examen.quedan_varios": {
+      "es-AR": "Quedan {cuantos} intentos de {total}.",
+      "en": "{cuantos} attempts out of {total} remain.",
+      "pt-BR": "Restam {cuantos} tentativas de {total}."
+    },
+    "examen.una_sola_vez": {
+      "es-AR": "Esta evaluación se rinde una sola vez, y ya está rendida.",
+      "en": "This assessment is taken only once, and it has already been taken.",
+      "pt-BR": "Esta avaliação é feita uma única vez, e já foi feita."
+    },
+    "examen.sin_intentos": {
+      "es-AR": "Ya se usaron los {cuantos} intentos de esta evaluación.",
+      "en": "The {cuantos} attempts for this assessment have already been used.",
+      "pt-BR": "As {cuantos} tentativas desta avaliação já foram usadas."
+    },
+    "examen.entregar": {
+      "es-AR": "Entregar respuestas",
+      "en": "Submit answers",
+      "pt-BR": "Entregar respostas"
+    },
+    "examen.corrigiendo": {
+      "es-AR": "Corrigiendo…",
+      "en": "Marking…",
+      "pt-BR": "Corrigindo…"
+    },
+    "examen.volver_lista": {
+      "es-AR": "Volver a la lista",
+      "en": "Back to the list",
+      "pt-BR": "Voltar à lista"
+    },
+    "examen.falta_una": {
+      "es-AR": "Falta contestar una pregunta.",
+      "en": "One question is still unanswered.",
+      "pt-BR": "Falta responder uma pergunta."
+    },
+    "examen.faltan_varias": {
+      "es-AR": "Faltan contestar {cuantas} preguntas.",
+      "en": "{cuantas} questions are still unanswered.",
+      "pt-BR": "Faltam responder {cuantas} perguntas."
+    },
+    "examen.aprobado": {
+      "es-AR": "Evaluación aprobada",
+      "en": "Assessment passed",
+      "pt-BR": "Avaliação aprovada"
+    },
+    "examen.no_aprobado": {
+      "es-AR": "Evaluación no aprobada",
+      "en": "Assessment not passed",
+      "pt-BR": "Avaliação não aprovada"
+    },
+    "examen.resultado_detalle": {
+      "es-AR": "{correctas} de {total} respuestas correctas. Se aprueba con {porcentaje}%.",
+      "en": "{correctas} of {total} answers correct. Passing requires {porcentaje}%.",
+      "pt-BR": "{correctas} de {total} respostas corretas. Aprova-se com {porcentaje}%."
+    },
+    "examen.rendir_de_nuevo": {
+      "es-AR": "Rendir de nuevo",
+      "en": "Take it again",
+      "pt-BR": "Fazer de novo"
+    },
+    "examen.no_es_asistente": {
+      "es-AR": "Las evaluaciones las rinden los Asistentes, y esta cuenta no lo es.",
+      "en": "Assessments are taken by Caregivers, and this account is not one.",
+      "pt-BR": "As avaliações são feitas pelos Assistentes, e esta conta não é uma."
     }
   }
 }

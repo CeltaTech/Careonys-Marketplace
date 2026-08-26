@@ -1,8 +1,8 @@
 # Plan: los tres idiomas
 
 > **El mecanismo está construido y funcionando; el trabajo de mudar las frases recién empieza.**
-> Al 26 de agosto de 2026: **3 de 45 archivos convertidos** y **71 frases** en los tres idiomas.
-> Lo que falta son las otras 42 pantallas, y una sola decisión del Desarrollador —quién traduce—,
+> Al 26 de agosto de 2026: **4 de 45 archivos convertidos** y **99 frases** en los tres idiomas.
+> Lo que falta son las otras 41 pantallas, y una sola decisión del Desarrollador —quién traduce—,
 > que es la número 2 de la sección 5.
 >
 > Corresponde al pendiente 9. Cuando esté todo convertido, este archivo se borra.
@@ -126,6 +126,12 @@ Los huecos se escriben entre llaves simples —`{cuantos}`— y se rellena la fr
 pedazos: cada idioma ordena distinto. Una clave que empieza con guión bajo es un separador para
 leer el archivo, no una frase.
 
+**Lo que no es de ninguna pantalla se nombra `comun.cosa`.** «Cargando…» aparece en casi todas, y
+darle el nombre de la primera que la usó obliga a las demás a pedir una frase que dice ser de otra.
+Las dos del servidor caído —`acceso.sin_servidor` y `acceso.reintentar`— **se quedan donde
+nacieron** y las demás pantallas las piden con ese nombre: una clave no se renombra, y renombrarla
+para que quede prolija es exactamente lo que la regla prohíbe.
+
 **Cinco frases no están ahí**, a propósito: las que hacen falta cuando ese archivo no llegó. Viven
 adentro de `js/catalogo.js`, con sus tres idiomas, y `verificar_frases.mjs` comprueba que no estén
 además en el catálogo.
@@ -201,9 +207,15 @@ Por lo que ya se midió, y de a una pantalla por vez:
    casi todo rótulo corto, así que avanzan el trabajo sin adelantarse a esa decisión. De paso
    cierran el camino entero: quien no puede entrar pide el enlace y elige contraseña nueva sin
    cambiar de idioma en el medio, que era lo que pasaba si se convertía sólo el acceso.
-4. **Las seis pantallas grandes**, que son el 64 %.
-5. **Las nueve chicas.**
-6. **Los `alt`, los `aria-label` y las `meta`**, todos juntos al final, que son 84 y se hacen de
+4. **`examen.html`**, por el mismo motivo que las dos anteriores: es chica y es casi toda rótulo.
+   ✔ Hecha. Aportó lo que ninguna otra había pedido todavía —**el singular y el plural**—, y con
+   eso la regla que vale para las 41 que faltan: **son dos frases distintas y no una armada con
+   pedazos**. «Rendida 3 veces» no se arma pegando «Rendida», el número y «veces»: cada idioma
+   arma su oración y elige su plural, así que hay `examen.rendida_una` y `examen.rendida_varias`,
+   y el número entra en un hueco. Son ocho pares así en esta sola pantalla.
+5. **Las seis pantallas grandes**, que son el 64 %.
+6. **Las nueve chicas.**
+7. **Los `alt`, los `aria-label` y las `meta`**, todos juntos al final, que son 84 y se hacen de
    una pasada.
 
 ---

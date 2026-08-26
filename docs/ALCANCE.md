@@ -2116,9 +2116,9 @@ en el §4 de este mismo documento, y mover una consulta de lugar no es elegirlo.
 
 Hasta el 26 de agosto de 2026 todo lo que una persona lee estaba escrito a mano adentro del HTML,
 en castellano y nada más, mientras la regla de la empresa pide `es-AR`, `en` y `pt-BR` **desde el
-día uno**. Ese día se construyó el mecanismo entero y se convirtió el camino de la contraseña
-completo: entrar, pedir el enlace y elegir una contraseña nueva. El inventario, el orden y lo que
-falta están en `docs/PLAN_MULTIIDIOMA.md`; acá está lo que existe.
+día uno**. Ese día se construyó el mecanismo entero, se convirtió el camino de la contraseña
+completo —entrar, pedir el enlace y elegir una contraseña nueva— y la pantalla de las evaluaciones.
+El inventario, el orden y lo que falta están en `docs/PLAN_MULTIIDIOMA.md`; acá está lo que existe.
 
 **El texto vive donde ya vivían las opciones.** `data/catalogo-frases.json` es hermano de los seis
 catálogos que ya había y lo lee el mismo `js/catalogo.js`. La pantalla nombra y el catálogo
@@ -2161,7 +2161,13 @@ pantallas es una decisión de diseño, y ésas se consultan.
 cada `commit` con cinco reglas —la clave existe, tiene los tres idiomas, ninguna sobra, ninguna
 pantalla ya convertida volvió a tener texto a mano, y las cinco frases de emergencia no están
 duplicadas— y ve también las claves que pone el código, no sólo las escritas en el HTML. Dice
-además cuánto falta: hoy, **3 de 45 archivos**.
+además cuánto falta: hoy, **4 de 45 archivos**.
+
+**El singular y el plural son dos frases, no una con un pedazo cambiado.** «Rendida 3 veces» no se
+arma pegando «Rendida», el número y «veces»: cada idioma arma su oración y elige su plural, y hay
+idiomas que ni siquiera tienen las mismas dos formas. Así que hay `examen.rendida_una` y
+`examen.rendida_varias`, el número entra en un hueco, y el guion elige cuál de las dos pedir. En
+`examen.html` son ocho pares, que es la pantalla donde apareció el caso por primera vez.
 
 **Quién decide qué contraseña vale, y quién decide cómo se lo dice, son dos cosas distintas.**
 `Clave.revisar()` (`js/clave.js:70`) sigue siendo el único lugar del proyecto que sabe cuándo una
