@@ -2238,7 +2238,9 @@ nadie las vuelva a investigar:
   sin cuenta no llega a ninguna tabla, y todo lo público del producto pasa por otra puerta.
 - **Esa otra puerta son tres funciones, y son exactamente las tres previstas**: `directorio_de`,
   `perfil_del_directorio` y `prestadora_por_slug`. De las once funciones que se saltean la RLS, las
-  otras ocho están fuera del alcance anónimo. La cuarta que figura concedida a `anon` es
+  otras ocho están fuera del alcance anónimo. Son once y no trece: el chequeo del esquema informa
+  trece porque cuenta declaraciones en las migraciones, y `crear_perfil_al_registrarse` y
+  `alta_de_prestadora` están declaradas más de una vez. La cuarta que figura concedida a `anon` es
   `la_ponderacion_suma_cien`, que devuelve `trigger`: Postgres se niega a llamarla de otro modo que
   como disparador, así que el permiso sobra pero no abre nada.
 - **`opciones_pregunta` tiene la RLS encendida y ni una política**, que es la forma correcta de
