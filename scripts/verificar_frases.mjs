@@ -126,6 +126,12 @@ function despejar(html) {
 
 const sinGuiones = (html) => html.replace(/<script\b[\s\S]*?<\/script>/gi, enBlanco);
 
+/* Una entidad de HTML es un signo, no una palabra: `&gt;` se lee «>» y `&nbsp;`
+   no se lee. Se sacan porque el nombre de la entidad trae letras, y sin esto el
+   «>» que separa las migas de `perfil.html` se informaba como texto escrito a
+   mano —y ninguna traducción iba a cambiarlo—. */
+const sinEntidades = (html) => html.replace(/&(?:#\d+|#x[0-9a-f]+|[a-z][a-z0-9]{1,10});/gi, enBlanco);
+
 /* Un `<meta>` no lo lee una persona salvo el de la descripción, y el ancho de
    la pantalla o el `noindex` no se traducen a ningún idioma. */
 const sinMetas = (html) => html.replace(/<meta\b[^>]*>/gi,
@@ -203,7 +209,7 @@ for (const camino of archivos(raiz, ['.html', '.js'], AJENAS)) {
 
   // Regla 4a: en el HTML no puede quedar texto que una persona lea y que no
   // salga del catálogo.
-  const limpio = sinMetas(sinGuiones(despejar(crudo)));
+  const limpio = sinEntidades(sinMetas(sinGuiones(despejar(crudo))));
   for (const [renglon, texto] of visible(limpio, true)) {
     if (!/[A-Za-zÀ-ÿ]{2,}/.test(texto)) continue;
     fallas.push(`${nombre}:${renglon}  texto escrito a mano: «${texto.slice(0, 70)}»`);

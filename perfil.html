@@ -9,8 +9,8 @@
        data/catalogo-autorizaciones.json—. Si el perfil se indexara, la Familia llegaría
        al Asistente sin pasar por la plataforma. -->
   <meta name="robots" content="noindex, nofollow" />
-  <title>Perfil de Asistente — PresDemo</title>
-  <meta name="description"
+  <title data-frase="perfil.titulo">Perfil de Asistente</title>
+  <meta name="description" data-frase-content="perfil.descripcion"
     content="El perfil de un Asistente publicado en la Red: su zona, qué patologías atiende, qué tareas hace, su precio por hora y qué se le comprobó." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -26,39 +26,41 @@
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="navbar-logo">
-        <img src="assets/images/logo_presdemo.png" alt="PresDemo logo" />
+        <img class="tenant-logo" src="assets/images/logo_presdemo.png"
+          data-frase-alt="nav.inicio" alt="Inicio" />
       </a>
       <div class="navbar-links">
-        <a href="solicitar-asistente.html">Solicitar Asistente</a>
-        <a href="registrar-asistente.html">Registrarme como Asistente</a>
-        <a href="directorio.html">Red de Asistentes</a>
-        <a href="formulario-integral.html">Publicar un Aviso</a>
+        <a href="solicitar-asistente.html" data-frase="nav.solicitar_asistente">Solicitar Asistente</a>
+        <a href="registrar-asistente.html" data-frase="nav.registrarme_asistente">Registrarme como Asistente</a>
+        <a href="directorio.html" data-frase="nav.red_asistentes">Red de Asistentes</a>
+        <a href="formulario-integral.html" data-frase="nav.publicar_aviso">Publicar un Aviso</a>
       </div>
       <div class="navbar-social">
-        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-        <a href="mailto:{{contacto}}" aria-label="Email"><i class="fas fa-envelope"></i></a>
+        <a href="#" data-frase-aria-label="nav.facebook" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" data-frase-aria-label="nav.instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" data-frase-aria-label="nav.linkedin" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" data-frase-aria-label="nav.youtube" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="mailto:{{contacto}}" data-frase-aria-label="nav.correo" aria-label="Correo electrónico"><i
+            class="fas fa-envelope"></i></a>
       </div>
-      <button class="hamburger" aria-label="Menú">
+      <button class="hamburger" data-frase-aria-label="nav.menu" aria-label="Menú">
         <span></span><span></span><span></span>
       </button>
     </div>
     <div class="mobile-menu">
-      <a href="solicitar-asistente.html">Solicitar Asistente</a>
-      <a href="registrar-asistente.html">Registrarme como Asistente</a>
-      <a href="directorio.html">Red de Asistentes</a>
-      <a href="formulario-integral.html">Publicar un Aviso</a>
+      <a href="solicitar-asistente.html" data-frase="nav.solicitar_asistente">Solicitar Asistente</a>
+      <a href="registrar-asistente.html" data-frase="nav.registrarme_asistente">Registrarme como Asistente</a>
+      <a href="directorio.html" data-frase="nav.red_asistentes">Red de Asistentes</a>
+      <a href="formulario-integral.html" data-frase="nav.publicar_aviso">Publicar un Aviso</a>
     </div>
   </nav>
 
   <!-- Breadcrumb -->
   <div style="background:var(--superficie-hover);padding:12px 24px;border-bottom:1px solid var(--borde-card);">
     <div style="max-width:900px;margin:0 auto;font-size:13px;color:var(--texto-secundario);">
-      <a href="index.html" style="color:var(--tono-info-texto);">Inicio</a> &gt;
-      <a href="directorio.html" style="color:var(--tono-info-texto);">Directorio</a> &gt;
-      <span id="breadcrumb-name">Cargando...</span>
+      <a href="index.html" style="color:var(--tono-info-texto);" data-frase="nav.inicio">Inicio</a> &gt;
+      <a href="directorio.html" style="color:var(--tono-info-texto);" data-frase="pie.directorio">Directorio</a> &gt;
+      <span id="breadcrumb-name" data-frase="perfil.miga">Perfil</span>
     </div>
   </div>
 
@@ -66,26 +68,29 @@
        esperaba a nadie: traía ocho personas escritas acá adentro, numeradas del 1 al 8,
        con su puntaje, su nivel, sus certificaciones y una grilla de días ya marcada. -->
   <div class="directorio-estado" id="perfil-cargando">
-    <i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> Cargando el perfil...
+    <i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> <span
+      data-frase="perfil.cargando">Cargando el perfil…</span>
   </div>
 
   <div class="directorio-estado" id="perfil-error" style="display:none;">
     <p id="perfil-error-texto"></p>
     <p style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <button type="button" class="btn btn-secundario" id="perfil-reintentar">Reintentar</button>
-      <a class="btn btn-sobre-oscuro" href="directorio.html"
+      <button type="button" class="btn btn-secundario" id="perfil-reintentar"
+        data-frase="acceso.reintentar">Reintentar</button>
+      <a class="btn btn-sobre-oscuro" href="directorio.html" data-frase="perfil.volver"
         style="border-color:var(--borde-card);color:var(--texto-secundario);">Volver al directorio</a>
     </p>
   </div>
 
   <div class="directorio-estado" id="perfil-vacio" style="display:none;">
-    <p><strong>Este perfil no está disponible.</strong></p>
-    <p class="directorio-estado-bajada">
+    <p><strong data-frase="perfil.no_disponible">Este perfil no está disponible.</strong></p>
+    <p class="directorio-estado-bajada" data-frase="perfil.no_disponible_bajada">
       Un Asistente se ve acá cuando su Prestadora validó el legajo y esa persona autorizó a publicar
       su perfil. Las dos cosas, no una. Puede que el enlace haya quedado viejo, o que quien figuraba
       haya dejado de publicarse.
     </p>
-    <p style="margin-top:16px;"><a class="btn btn-primario" href="directorio.html">Volver al directorio</a></p>
+    <p style="margin-top:16px;"><a class="btn btn-primario" href="directorio.html"
+        data-frase="perfil.volver">Volver al directorio</a></p>
   </div>
 
   <div id="perfil-listo" style="display:none;">
@@ -102,12 +107,14 @@
           <p class="sub" id="perfil-tipo-y-zona"></p>
           <p class="perfil-precio" id="perfil-precio"></p>
           <div class="profile-urgent" id="perfil-urgencias" style="display:none;">
-            <i class="fas fa-clock" aria-hidden="true"></i> Disponible para reemplazos urgentes
+            <i class="fas fa-clock" aria-hidden="true"></i> <span
+              data-frase="directorio.urgencias">Disponible para reemplazos urgentes</span>
           </div>
           <div>
-            <span class="insignia-validada"
+            <span class="insignia-validada" data-frase-title="directorio.validado_detalle"
               title="La Prestadora auditó y validó el legajo bajo su exclusiva responsabilidad"><i
-                class="fas fa-user-check" aria-hidden="true"></i> Legajo validado por la Prestadora</span>
+                class="fas fa-user-check" aria-hidden="true"></i> <span
+                data-frase="directorio.validado">Legajo validado por la Prestadora</span></span>
           </div>
           <!-- Qué se le comprobó. Sale de la misma vista que el directorio, así que
                dice lo mismo en las dos pantallas y no hay una segunda regla que
@@ -122,9 +129,9 @@
 
         <div>
           <div class="profile-section fade-in">
-            <h3>Qué atiende</h3>
+            <h3 data-frase="perfil.que_atiende">Qué atiende</h3>
             <div class="spec-list" id="perfil-etiquetas"></div>
-            <p id="perfil-sin-etiquetas" style="display:none;">
+            <p id="perfil-sin-etiquetas" style="display:none;" data-frase="perfil.sin_etiquetas">
               Todavía no cargó qué patologías atiende ni qué tareas hace.
             </p>
           </div>
@@ -137,16 +144,17 @@
                consentimiento de publicación promete que sólo las Familias registradas
                pueden comunicarse (data/catalogo-autorizaciones.json). -->
           <div class="profile-section fade-in" id="contactar">
-            <h3>Contactar</h3>
-            <p>
+            <h3 data-frase="perfil.contactar">Contactar</h3>
+            <p data-frase="perfil.contacto_bajada">
               El contacto va por la plataforma. Es lo que se le promete a quien publica su perfil, y
               por eso acá no se muestran ni su teléfono, ni su correo, ni su domicilio. Para
               escribirle hay que entrar como Familia.
             </p>
             <div class="profile-acciones">
-              <a class="btn btn-primario" href="acceso.html">Entrar como Familia</a>
-              <a class="btn btn-sobre-oscuro" href="solicitar-asistente.html"
-                style="border-color:var(--borde-card);color:var(--texto-secundario);">Publicar un aviso</a>
+              <a class="btn btn-primario" href="acceso.html"
+                data-frase="perfil.entrar_familia">Entrar como Familia</a>
+              <a class="btn btn-sobre-oscuro" href="solicitar-asistente.html" data-frase="nav.publicar_aviso"
+                style="border-color:var(--borde-card);color:var(--texto-secundario);">Publicar un Aviso</a>
             </div>
           </div>
         </div>
@@ -157,7 +165,7 @@
 
   <!-- CTA BANNER -->
   <div class="cta-banner">
-    <a href="directorio.html" class="btn btn-atencion">VER MÁS ASISTENTES</a>
+    <a href="directorio.html" class="btn btn-atencion" data-frase="perfil.ver_mas">Ver más Asistentes</a>
   </div>
 
   <!-- FOOTER -->
@@ -165,10 +173,10 @@
     <div class="footer-inner">
       <div class="footer-brand">
         <div class="logo">
-          <img src="assets/images/logo_presdemo.png" alt="PresDemo" />
-          <span>PresDemo — Servicios de Cuidado</span>
+          <img class="tenant-logo" src="assets/images/logo_presdemo.png" alt="" />
+          <span class="tenant-name"></span>
         </div>
-        <p>Conectamos familias con Asistentes calificados.</p>
+        <p data-frase="pie.lema">Conectamos familias con Asistentes calificados.</p>
         <div class="footer-social">
           <a href="#"><i class="fab fa-facebook-f"></i></a>
           <a href="#"><i class="fab fa-instagram"></i></a>
@@ -178,26 +186,27 @@
         </div>
       </div>
       <div class="footer-col">
-        <h4>Para Familias</h4>
-        <a href="solicitar-asistente.html">Solicitar Asistente</a>
-        <a href="directorio.html">Directorio</a>
-        <a href="soporte-remoto.html">Acompañamiento</a>
-        <a href="cursos.html">Cursos</a>
+        <h4 data-frase="pie.para_familias">Para Familias</h4>
+        <a href="solicitar-asistente.html" data-frase="nav.solicitar_asistente">Solicitar Asistente</a>
+        <a href="directorio.html" data-frase="pie.directorio">Directorio</a>
+        <a href="soporte-remoto.html" data-frase="pie.acompanamiento">Acompañamiento</a>
+        <a href="cursos.html" data-frase="pie.cursos">Cursos</a>
       </div>
       <div class="footer-col">
-        <h4>Para Asistentes</h4>
-        <a href="registrar-asistente.html">Registrarme como Asistente</a>
-        <a href="registrar-asistente.html#registro">Registrarme</a>
+        <h4 data-frase="pie.para_asistentes">Para Asistentes</h4>
+        <a href="registrar-asistente.html" data-frase="nav.registrarme_asistente">Registrarme como Asistente</a>
+        <a href="registrar-asistente.html#registro" data-frase="pie.registrarme">Registrarme</a>
       </div>
       <div class="footer-col">
-        <h4>Empresa</h4>
-        <a href="#">Sobre {{producto}}</a>
-        <a href="#">Contacto</a>
-        <a href="#">Términos</a>
+        <h4 data-frase="pie.empresa">Empresa</h4>
+        <a href="#" data-frase="pie.sobre_producto">Sobre {{producto}}</a>
+        <a href="#" data-frase="pie.contacto">Contacto</a>
+        <a href="#" data-frase="pie.terminos">Términos</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 PresDemo — Servicios de Cuidado. Todos los derechos reservados.</p>
+      <p>© 2025 <span class="tenant-name"></span>
+        <span data-frase="pie.derechos">Todos los derechos reservados.</span></p>
     </div>
   </footer>
 
@@ -240,8 +249,20 @@
         });
       }
 
-      function migas(texto) {
-        document.getElementById('breadcrumb-name').textContent = texto;
+      // Dos formas de escribir la última miga, porque son dos cosas distintas.
+      // El nombre de la persona es un dato y se escribe tal cual. «Perfil» es un
+      // rótulo, así que se escribe la clave y traduce el catálogo: cambia con el
+      // idioma como el resto de la pantalla.
+      const miga = document.getElementById('breadcrumb-name');
+
+      function migaConNombre(texto) {
+        miga.removeAttribute('data-frase');
+        miga.textContent = texto;
+      }
+
+      function migaPorClave(clave) {
+        miga.setAttribute('data-frase', clave);
+        Catalogo.traducir(miga);
       }
 
       function dibujar(fila) {
@@ -250,8 +271,12 @@
         // quien es este directorio, y no el del producto: la persona llegó por
         // el enlace de una empresa y ese es el nombre que reconoce.
         const prestadora = (ClienteDatos.currentTenant && ClienteDatos.currentTenant.name) || '';
+        // El título deja de ser una frase del catálogo apenas hay un nombre real:
+        // lo que se lee ahí pasa a ser un dato. Sin esto, el catálogo lo pisaría
+        // de vuelta con «Perfil de Asistente» al cambiar de idioma.
+        document.querySelector('title').removeAttribute('data-frase');
         document.title = [nombre, prestadora].filter(Boolean).join(' — ');
-        migas(nombre);
+        migaConNombre(nombre);
 
         document.getElementById('perfil-nombre').textContent = nombre;
 
@@ -298,7 +323,8 @@
           precio.textContent = Texto.importe(fila.hourly_rate) + ' ';
           const unidad = document.createElement('span');
           unidad.className = 'perfil-precio-unidad';
-          unidad.textContent = 'por hora';
+          unidad.setAttribute('data-frase', 'directorio.por_hora');
+          Catalogo.traducir(unidad);
           precio.appendChild(unidad);
         } else {
           precio.remove();
@@ -331,7 +357,7 @@
 
       async function traerPerfil() {
         mostrar('cargando');
-        migas('Cargando...');
+        migaPorClave('perfil.cargando');
         const id = new URLSearchParams(window.location.search).get('id');
         try {
           const [fila] = await Promise.all([
@@ -339,15 +365,18 @@
             Catalogo.cargar()
           ]);
 
-          if (!fila) { mostrar('vacio'); migas('Perfil'); return; }
+          if (!fila) { mostrar('vacio'); migaPorClave('perfil.miga'); return; }
 
           dibujar(fila);
           mostrar('listo');
         } catch (err) {
-          document.getElementById('perfil-error-texto').textContent =
-            Texto.mensajeDeError(err, 'traer el perfil');
+          // La clave, no el texto: así el mensaje cambia con el idioma como
+          // cualquier otro rótulo de la pantalla.
+          const donde = document.getElementById('perfil-error-texto');
+          donde.setAttribute('data-frase', Texto.claveDeError(err, 'traer el perfil'));
+          Catalogo.traducir(donde);
           mostrar('error');
-          migas('Perfil');
+          migaPorClave('perfil.miga');
         }
       }
 

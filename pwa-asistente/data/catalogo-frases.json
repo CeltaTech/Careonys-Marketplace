@@ -753,6 +753,74 @@
       "es-AR": "Mostrando {cuantos} Asistentes",
       "en": "Showing {cuantos} Caregivers",
       "pt-BR": "Mostrando {cuantos} Assistentes"
+    },
+
+    "________": "── El perfil de un Asistente. Lo que comparte con la grilla —la insignia, los reemplazos urgentes, el precio por hora— se pide con las claves «directorio.», que nombran la Red y no el archivo ──",
+
+    "perfil.titulo": {
+      "es-AR": "Perfil de Asistente",
+      "en": "Caregiver profile",
+      "pt-BR": "Perfil de Assistente"
+    },
+    "perfil.descripcion": {
+      "es-AR": "El perfil de un Asistente publicado en la Red: su zona, qué patologías atiende, qué tareas hace, su precio por hora y qué se le comprobó.",
+      "en": "The profile of a Caregiver published in the Network: their area, which conditions they cover, which tasks they do, their hourly rate and what has been checked.",
+      "pt-BR": "O perfil de um Assistente publicado na Rede: a sua zona, que patologias atende, que tarefas faz, o seu preço por hora e o que lhe foi verificado."
+    },
+    "perfil.miga": {
+      "es-AR": "Perfil",
+      "en": "Profile",
+      "pt-BR": "Perfil"
+    },
+    "perfil.cargando": {
+      "es-AR": "Cargando el perfil…",
+      "en": "Loading the profile…",
+      "pt-BR": "Carregando o perfil…"
+    },
+    "perfil.volver": {
+      "es-AR": "Volver al directorio",
+      "en": "Back to the directory",
+      "pt-BR": "Voltar ao diretório"
+    },
+    "perfil.no_disponible": {
+      "es-AR": "Este perfil no está disponible.",
+      "en": "This profile is not available.",
+      "pt-BR": "Este perfil não está disponível."
+    },
+    "perfil.no_disponible_bajada": {
+      "es-AR": "Un Asistente se ve acá cuando su Prestadora validó el legajo y esa persona autorizó a publicar su perfil. Las dos cosas, no una. Puede que el enlace haya quedado viejo, o que quien figuraba haya dejado de publicarse.",
+      "en": "A Caregiver is shown here when their Provider has validated the personal file and that person has authorised their profile to be published. Both things, not one. The link may be out of date, or whoever appeared there may have stopped being published.",
+      "pt-BR": "Um Assistente aparece aqui quando a sua Prestadora validou o cadastro e essa pessoa autorizou a publicação do seu perfil. As duas coisas, não uma. Pode ser que o link tenha ficado velho, ou que quem figurava tenha deixado de se publicar."
+    },
+    "perfil.que_atiende": {
+      "es-AR": "Qué atiende",
+      "en": "What they cover",
+      "pt-BR": "O que atende"
+    },
+    "perfil.sin_etiquetas": {
+      "es-AR": "Todavía no cargó qué patologías atiende ni qué tareas hace.",
+      "en": "They have not yet entered which conditions they cover or which tasks they do.",
+      "pt-BR": "Ainda não informou que patologias atende nem que tarefas faz."
+    },
+    "perfil.contactar": {
+      "es-AR": "Contactar",
+      "en": "Get in touch",
+      "pt-BR": "Contatar"
+    },
+    "perfil.contacto_bajada": {
+      "es-AR": "El contacto va por la plataforma. Es lo que se le promete a quien publica su perfil, y por eso acá no se muestran ni su teléfono, ni su correo, ni su domicilio. Para escribirle hay que entrar como Familia.",
+      "en": "Contact goes through the platform. That is what is promised to whoever publishes their profile, which is why neither their telephone, nor their email, nor their address is shown here. To write to them you have to sign in as a Family.",
+      "pt-BR": "O contato passa pela plataforma. É o que se promete a quem publica o seu perfil, e por isso aqui não se mostram nem o seu telefone, nem o seu e-mail, nem o seu endereço. Para lhe escrever é preciso entrar como Família."
+    },
+    "perfil.entrar_familia": {
+      "es-AR": "Entrar como Familia",
+      "en": "Sign in as a Family",
+      "pt-BR": "Entrar como Família"
+    },
+    "perfil.ver_mas": {
+      "es-AR": "Ver más Asistentes",
+      "en": "See more Caregivers",
+      "pt-BR": "Ver mais Assistentes"
     }
   }
 }

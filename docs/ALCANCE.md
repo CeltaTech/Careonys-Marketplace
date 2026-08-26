@@ -880,7 +880,7 @@ uno por uno con `grep` antes de borrarlos.
 no hacía falta preguntar: el consentimiento que la persona firma ya dice que sólo las Familias
 registradas pueden comunicarse con ella, y que lo hacen por la plataforma
 (`data/catalogo-autorizaciones.json`, `perfil_publicado`). En su lugar la pantalla explica eso mismo
-(`perfil.html:136`) y ofrece las dos puertas que sí existen: entrar como Familia y publicar un aviso.
+(`perfil.html:148`) y ofrece las dos puertas que sí existen: entrar como Familia y publicar un aviso.
 Lo que falta —empezar una conversación con esa persona en particular— quedó anotado como pendiente 46.
 
 **Tres traducciones que estaban por escribirse dos veces subieron a los archivos compartidos**
