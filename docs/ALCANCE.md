@@ -2769,6 +2769,45 @@ exactamente el motivo por el que el pendiente 82 pide una prueba en el repositor
 ese permiso a una de ésas no devuelve cero filas, **falla**. `service_role` tampoco se tocó.
 
 
+### La persona se elegía su propia antigüedad, y ahora la fecha la pone la base
+
+`caregivers.created_at` tenía su valor por omisión desde el principio, pero la política «Su propio
+legajo» es `for all` y no nombra ninguna columna, así que la fecha entraba en el alta como
+cualquier otro dato. **Medido el 26 de agosto de 2026** contra la base local, con una cuenta
+ficticia y sesión simulada: el legajo se creó con fecha de alta del **1 de enero de 2015**, y un
+`update` posterior la corrió al **1 de enero de 2010**. Las dos veces la base guardó lo que le
+mandaron.
+
+**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:636` la traduce a `fechaRegistro` y ese
+nombre no aparece en ningún otro archivo del proyecto—, así que no había consecuencia visible. Se
+arregló igual, porque la antigüedad es exactamente la clase de dato que después se usa para ordenar
+un directorio o para decidir a quién se muestra primero, y ese día el agujero pasa a ser una
+ventaja que alguien se dio a sí mismo.
+
+**Lo arregla `supabase/migrations/0034_la_fecha_de_alta_del_legajo_la_pone_la_base.sql`** con un
+disparador `before insert or update`: al dar de alta la fecha es la de ese momento y se ignora lo
+que venga de afuera; al modificar, queda como estaba. Vale para todo el mundo, incluido el
+servidor.
+
+**Por qué un disparador y no un permiso por columna**, que era la otra herramienta disponible. Acá
+las dos servían —a diferencia del veredicto de la Prestadora del pendiente 66, donde el permiso por
+columna no sirve porque el personal y el Asistente son el mismo rol de base—. Se eligió el
+disparador por dos razones. Una: el límite queda escrito en la tabla, donde lo lee quien lee el
+esquema, y no en un `grant` a treinta renglones de distancia. Dos: un permiso por columna se pierde
+sin que nadie se entere, y eso no es una hipótesis — la migración 0032 se llevó puesto el `update
+(full_name)` de `profiles` con un `revoke all on table`, y hubo que reponerlo con la 0033.
+
+**Cómo se comprobó, y por qué la prueba podía fallar.** Es el mismo guion corrido dos veces, antes
+y después de la migración: la primera vez guardó 2015 y después 2010; la segunda ignoró las dos y
+puso la hora real. Y trae su comprobación de sostén —que la persona sí pueda corregirse el
+teléfono—, sin la cual cerrar la tabla entera habría dado el mismo verde sin arreglar nada.
+
+**Ninguna migración escribe esa fecha**, así que el disparador no le cambia nada a los datos
+ficticios: se verificó sobre las tres que dan de alta legajos —`0003`, `0014` y `0030`—, y ninguna
+la nombra. Si algún día hace falta traer legajos de otro sistema conservando sus fechas, esa
+migración apaga el disparador mientras carga y lo vuelve a encender, y así queda dicho que la
+excepción fue a propósito.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,
