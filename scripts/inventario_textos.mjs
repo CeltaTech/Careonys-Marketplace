@@ -28,6 +28,13 @@
      a una fecha, así que el idioma le entra por ahí.
    - **Los nombres propios**, los números sueltos y los símbolos.
 
+   - **Lo que ya está convertido.** El texto que queda adentro de un elemento con
+     `data-frase` es el que se ve mientras el catálogo viaja, no trabajo por
+     hacer, así que se despeja con la misma función que usa
+     `scripts/verificar_frases.mjs`. Sin esto la cuenta no bajaba nunca: una
+     pantalla convertida seguía contada entera, y el número dejaba de medir lo
+     que falta.
+
    LO QUE ESTA CUENTA NO PUEDE DECIR: si dos pantallas dicen la misma frase, acá
    figura dos veces. La cuenta de frases distintas está abajo, y es la que
    manda para calcular el trabajo: traducir es por frase, no por aparición.
@@ -36,6 +43,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative } from 'node:path';
+import { despejar } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const detalle = process.argv.includes('--detalle');
@@ -118,7 +126,7 @@ const agregar = (archivo, grupo, texto) => {
 // --- LAS PANTALLAS ---
 for (const ruta of archivos(raiz, ['.html'])) {
   const rel = relative(raiz, ruta).replace(/\\/g, '/');
-  const bruto = readFileSync(ruta, 'utf8');
+  const bruto = despejar(readFileSync(ruta, 'utf8'));
   const visible = sinLoQueNoSeVe(bruto);
 
   // El texto entre etiquetas.
@@ -128,7 +136,10 @@ for (const ruta of archivos(raiz, ['.html'])) {
   // porque un `alt` puede estar adentro de una plantilla de `<script>`.
   const conPlantillas = bruto.replace(/<!--[\s\S]*?-->/g, ' ');
   for (const attr of ATRIBUTOS) {
-    const exp = new RegExp(attr + '\\s*=\\s*"([^"]*)"', 'gi');
+    // `(?<![-\\w])` y no el nombre pelado: sin eso `alt` casa también adentro de
+    // `data-frase-alt`, y lo que se contaría es la clave del catálogo en lugar
+    // del texto. Es el mismo cuidado que ya tienen `despejar()` y `visible()`.
+    const exp = new RegExp('(?<![-\\w])' + attr + '\\s*=\\s*"([^"]*)"', 'gi');
     let m;
     while ((m = exp.exec(conPlantillas))) agregar(rel, 'atributo ' + attr, m[1]);
   }

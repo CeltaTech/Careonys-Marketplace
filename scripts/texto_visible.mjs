@@ -47,6 +47,52 @@ export const soloCastellano = (crudo) => crudo.replace(
   (todo, valor) => todo.slice(0, todo.length - valor.length - 1) + enBlanco(valor) + '"'
 );
 
+/**
+ * Deja en blanco lo que **sí** puede tener texto escrito en una pantalla ya
+ * convertida: lo que hay adentro de un elemento con `data-frase` —que es lo que
+ * se ve mientras el catálogo viaja— y los atributos que nombra un
+ * `data-frase-<atributo>`.
+ *
+ * Se reemplaza por espacios y no se borra, para que el número de renglón que
+ * informa `texto_visible.mjs` siga siendo el de verdad.
+ */
+export function despejar(html) {
+  // El contenido de un elemento con `data-frase`. Sin anidar a propósito: un
+  // elemento convertido lleva texto y nada más —lo que necesita un enlace
+  // adentro se parte en dos claves—, así que si acá hubiera etiquetas, el que
+  // está mal es el HTML.
+  let salida = html.replace(
+    /(<([a-z][\w-]*)\b[^>]*\bdata-frase\s*=\s*"[^"]*"[^>]*>)([^<]*)(<\/\2>)/gi,
+    (todo, apertura, etiqueta, adentro, cierre) => apertura + enBlanco(adentro) + cierre
+  );
+
+  // Los atributos que el propio elemento declara traducidos.
+  salida = salida.replace(/<[a-z][\w-]*\b[^>]*>/gi, (etiqueta) => {
+    const traducidos = (etiqueta.match(/\bdata-frase-([a-z-]+)\s*=/gi) || [])
+      .map((a) => a.replace(/^\s*data-frase-/i, '').replace(/\s*=$/, '').toLowerCase());
+    if (!traducidos.length) return etiqueta;
+    let limpia = etiqueta;
+    for (const nombre of traducidos) {
+      limpia = limpia.replace(
+        // `(?<![-\w])` y no `\b`: sin eso `placeholder` casa también adentro de
+        // `data-frase-placeholder`, y lo que se despeja es la clave en lugar
+        // del texto. Lo encontró la autoprueba del final de este guion.
+        new RegExp('(?<![-\\w])(' + nombre + '\\s*=\\s*")([^"]*)(")', 'i'),
+        (t, a, valor, c) => a + enBlanco(valor) + c
+      );
+    }
+    return limpia;
+  });
+
+  return salida;
+}
+
+/* Una entidad de HTML es un signo, no una palabra: `&gt;` se lee «>» y `&nbsp;`
+   no se lee. Se sacan porque el nombre de la entidad trae letras, y sin esto el
+   «>» que separa las migas de `perfil.html` se informaba como texto escrito a
+   mano —y ninguna traducción iba a cambiarlo—. */
+export const sinEntidades = (html) => html.replace(/&(?:#\d+|#x[0-9a-f]+|[a-z][a-z0-9]{1,10});/gi, enBlanco);
+
 /** Devuelve pares `[renglón, texto]` de lo que ve una persona. */
 export function visible(crudo, esHtml) {
   const trozos = [];

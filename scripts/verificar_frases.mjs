@@ -43,7 +43,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
 import { archivos } from './recorrido.mjs';
-import { visible, enBlanco } from './texto_visible.mjs';
+import { visible, enBlanco, despejar, sinEntidades } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const IDIOMAS = ['es-AR', 'en', 'pt-BR'];
@@ -84,53 +84,7 @@ const claves = Object.keys(frases).filter((c) => c[0] !== '_');
 
 // ── Lo que se saca antes de buscar texto a mano ────────────────────────────
 
-/**
- * Deja en blanco lo que **sí** puede tener texto escrito en una pantalla ya
- * convertida: lo que hay adentro de un elemento con `data-frase` —que es lo que
- * se ve mientras el catálogo viaja— y los atributos que nombra un
- * `data-frase-<atributo>`.
- *
- * Se reemplaza por espacios y no se borra, para que el número de renglón que
- * informa `texto_visible.mjs` siga siendo el de verdad.
- */
-function despejar(html) {
-  // El contenido de un elemento con `data-frase`. Sin anidar a propósito: un
-  // elemento convertido lleva texto y nada más —lo que necesita un enlace
-  // adentro se parte en dos claves—, así que si acá hubiera etiquetas, el que
-  // está mal es el HTML.
-  let salida = html.replace(
-    /(<([a-z][\w-]*)\b[^>]*\bdata-frase\s*=\s*"[^"]*"[^>]*>)([^<]*)(<\/\2>)/gi,
-    (todo, apertura, etiqueta, adentro, cierre) => apertura + enBlanco(adentro) + cierre
-  );
-
-  // Los atributos que el propio elemento declara traducidos.
-  salida = salida.replace(/<[a-z][\w-]*\b[^>]*>/gi, (etiqueta) => {
-    const traducidos = (etiqueta.match(/\bdata-frase-([a-z-]+)\s*=/gi) || [])
-      .map((a) => a.replace(/^\s*data-frase-/i, '').replace(/\s*=$/, '').toLowerCase());
-    if (!traducidos.length) return etiqueta;
-    let limpia = etiqueta;
-    for (const nombre of traducidos) {
-      limpia = limpia.replace(
-        // `(?<![-\w])` y no `\b`: sin eso `placeholder` casa también adentro de
-        // `data-frase-placeholder`, y lo que se despeja es la clave en lugar
-        // del texto. Lo encontró la autoprueba del final de este guion.
-        new RegExp('(?<![-\\w])(' + nombre + '\\s*=\\s*")([^"]*)(")', 'i'),
-        (t, a, valor, c) => a + enBlanco(valor) + c
-      );
-    }
-    return limpia;
-  });
-
-  return salida;
-}
-
 const sinGuiones = (html) => html.replace(/<script\b[\s\S]*?<\/script>/gi, enBlanco);
-
-/* Una entidad de HTML es un signo, no una palabra: `&gt;` se lee «>» y `&nbsp;`
-   no se lee. Se sacan porque el nombre de la entidad trae letras, y sin esto el
-   «>» que separa las migas de `perfil.html` se informaba como texto escrito a
-   mano —y ninguna traducción iba a cambiarlo—. */
-const sinEntidades = (html) => html.replace(/&(?:#\d+|#x[0-9a-f]+|[a-z][a-z0-9]{1,10});/gi, enBlanco);
 
 /* Un `<meta>` no lo lee una persona salvo el de la descripción, y el ancho de
    la pantalla o el `noindex` no se traducen a ningún idioma. */
