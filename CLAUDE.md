@@ -164,9 +164,11 @@ información de otra.
     - **Ninguna palabra propia de esta modalidad aparece en un módulo compartido**
       —directorio, aviso, postulación, contacto, puntaje, destacado—. Si aparece
       una, se filtró, y con ella se filtra el trabajo de sacarla más tarde.
-    - **Y un módulo compartido no vive acá.** Vive en `F:\proyectos\celtatech\Modulos\`, se llama
-      **`Octo` y después lo que hace** —`OctoCRM`, `OctoAuth`— y lo usan todos los productos de
-      CeltaTech desde una sola copia. Es **política central de la empresa**, decidida por el
+    - **Y un módulo compartido no vive acá.** Vive en `F:\proyectos\celtatech\Modulos\`, se
+      nombra por su función y sin apellido, y lo usan todos los productos de CeltaTech desde una
+      sola copia. **Un Octo es otra cosa**: una pieza que se vende sola y que además otros
+      productos usan por API —OctoCMS, OctoBuilder—. Vive en `..\`, junto a este producto, porque
+      es un producto. Es **política central de la empresa**, decidida por el
       Desarrollador el 25 de agosto de 2026, y está escrita en
       `..\..\docs\POLITICA_DE_MODULOS.md`, que se lee antes de crear un módulo. `docs/MODULOS.md`
       sigue diciendo **qué** es compartido; esa política dice **dónde queda y cómo se llama**.
