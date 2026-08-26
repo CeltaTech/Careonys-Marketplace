@@ -145,12 +145,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // El cuarto estado: cero resultados se dice con una frase,
     // no con un «Mostrando 0» que se lee como si algo se hubiera roto.
+    //
+    // Singular y plural son dos claves distintas y no una frase armada con
+    // pedazos: el número va adentro de un hueco y cada idioma la ordena como
+    // quiera. Se escribe la clave y traduce el catálogo, así que el texto
+    // cambia solo cuando cambia el idioma.
     if (resultsCount) {
-      resultsCount.textContent = visibleCount === 0
-        ? 'Ningún Asistente de este directorio coincide con esos filtros.'
-        : (visibleCount === 1
-          ? 'Mostrando 1 Asistente'
-          : `Mostrando ${visibleCount} Asistentes`);
+      if (visibleCount === 0) {
+        resultsCount.setAttribute('data-frase', 'directorio.sin_coincidencias');
+        resultsCount.removeAttribute('data-huecos');
+      } else if (visibleCount === 1) {
+        resultsCount.setAttribute('data-frase', 'directorio.mostrando_uno');
+        resultsCount.removeAttribute('data-huecos');
+      } else {
+        resultsCount.setAttribute('data-frase', 'directorio.mostrando_varios');
+        resultsCount.setAttribute('data-huecos', JSON.stringify({ cuantos: visibleCount }));
+      }
+      if (window.Catalogo) Catalogo.traducir(resultsCount);
     }
   }
 

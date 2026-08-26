@@ -64,10 +64,16 @@ function frasesDeArranque() {
 }
 
 /* Lo que se escribe igual en los tres idiomas y no es un descuido: el nombre de
-   un plan, el nombre de un idioma en su propio idioma. Hoy no hay ninguno; la
-   lista está vacía a propósito y no borrada, porque el día que aparezca el
-   selector de idioma van a entrar acá «Español», «English» y «Português». */
-const IGUALES_EN_TODOS = new Set([]);
+   un plan, el nombre de una red social, el nombre de un idioma en su propio
+   idioma. El día que aparezca el selector de idioma van a entrar acá «Español»,
+   «English» y «Português». */
+const IGUALES_EN_TODOS = new Set([
+  /* Marcas de terceros: se escriben como el tercero las escribe, en todo idioma. */
+  'nav.facebook',
+  'nav.instagram',
+  'nav.linkedin',
+  'nav.youtube',
+]);
 
 // ── El catálogo ────────────────────────────────────────────────────────────
 const crudoCatalogo = readFileSync(join(raiz, 'data', 'catalogo-frases.json'), 'utf8');

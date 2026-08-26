@@ -508,6 +508,13 @@ button:disabled:hover,
 }
 
 /* ---- CTA Banner (full-width magenta) ---- */
+/* El botón del banner final se lee en mayúsculas, y eso es una decisión de
+   diseño y no una forma de escribir: la frase vive una sola vez en el catálogo
+   —la misma que la barra de arriba— y acá se la muestra así. */
+.cta-banner .btn {
+  text-transform: uppercase;
+}
+
 .cta-banner {
   background: var(--azul-medio);
   padding: 40px 24px;

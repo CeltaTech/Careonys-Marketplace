@@ -9,8 +9,8 @@
        data/catalogo-autorizaciones.json—. Si el perfil se indexara, la Familia llegaría
        al Asistente sin pasar por la plataforma. -->
   <meta name="robots" content="noindex, nofollow" />
-  <title>Red de Asistentes — PresDemo</title>
-  <meta name="description"
+  <title data-frase="nav.red_asistentes">Red de Asistentes</title>
+  <meta name="description" data-frase-content="directorio.descripcion"
     content="Encuentre al Asistente indicado para su familiar. Filtre por zona, patología y disponibilidad entre los Asistentes con legajo validado por la Prestadora." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -26,54 +26,61 @@
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="navbar-logo">
-        <img src="assets/images/logo_presdemo.png" alt="PresDemo logo" />
+        <img class="tenant-logo" src="assets/images/logo_presdemo.png"
+          data-frase-alt="nav.inicio" alt="Inicio" />
       </a>
       <div class="navbar-links">
-        <a href="solicitar-asistente.html">Solicitar Asistente</a>
-        <a href="registrar-asistente.html">Registrarme como Asistente</a>
-        <a href="directorio.html" class="active">Red de Asistentes</a>
-        <a href="formulario-integral.html">Publicar un Aviso</a>
+        <a href="solicitar-asistente.html" data-frase="nav.solicitar_asistente">Solicitar Asistente</a>
+        <a href="registrar-asistente.html" data-frase="nav.registrarme_asistente">Registrarme como Asistente</a>
+        <a href="directorio.html" class="active" data-frase="nav.red_asistentes">Red de Asistentes</a>
+        <a href="formulario-integral.html" data-frase="nav.publicar_aviso">Publicar un Aviso</a>
       </div>
       <div class="navbar-social">
-        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-        <a href="mailto:{{contacto}}" aria-label="Email"><i class="fas fa-envelope"></i></a>
+        <a href="#" data-frase-aria-label="nav.facebook" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" data-frase-aria-label="nav.instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" data-frase-aria-label="nav.linkedin" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" data-frase-aria-label="nav.youtube" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="mailto:{{contacto}}" data-frase-aria-label="nav.correo" aria-label="Correo electrónico"><i
+            class="fas fa-envelope"></i></a>
       </div>
-      <button class="hamburger" aria-label="Menú">
+      <button class="hamburger" data-frase-aria-label="nav.menu" aria-label="Menú">
         <span></span><span></span><span></span>
       </button>
     </div>
     <div class="mobile-menu">
-      <a href="solicitar-asistente.html">Solicitar Asistente</a>
-      <a href="registrar-asistente.html">Registrarme como Asistente</a>
-      <a href="directorio.html">Red de Asistentes</a>
-      <a href="formulario-integral.html">Publicar un Aviso</a>
+      <a href="solicitar-asistente.html" data-frase="nav.solicitar_asistente">Solicitar Asistente</a>
+      <a href="registrar-asistente.html" data-frase="nav.registrarme_asistente">Registrarme como Asistente</a>
+      <a href="directorio.html" data-frase="nav.red_asistentes">Red de Asistentes</a>
+      <a href="formulario-integral.html" data-frase="nav.publicar_aviso">Publicar un Aviso</a>
     </div>
   </nav>
 
   <!-- HERO -->
   <section class="directory-hero">
-    <h1>Red de Asistentes</h1>
-    <p>Encuentre al Asistente indicado para su ser querido. Los que aparecen acá tienen el legajo
+    <h1 data-frase="nav.red_asistentes">Red de Asistentes</h1>
+    <p data-frase="directorio.bajada">Encuentre al Asistente indicado para su ser querido. Los que aparecen acá tienen el legajo
       validado por su Prestadora y autorizaron a publicar su perfil.</p>
-    <a href="solicitar-asistente.html" class="btn btn-atencion">Publicar un aviso</a>
+    <a href="solicitar-asistente.html" class="btn btn-atencion"
+      data-frase="nav.publicar_aviso">Publicar un Aviso</a>
   </section>
 
   <!-- FILTER BAR -->
   <div class="filter-bar">
     <div class="filter-inner" style="flex-wrap:wrap;gap:12px;">
-      <input type="text" id="dir-search" placeholder="🔍 Buscar por nombre o zona..." style="flex:2;min-width:220px;" />
+      <input type="text" id="dir-search" data-frase-placeholder="directorio.buscar"
+        placeholder="🔍 Buscar por nombre o zona…" style="flex:2;min-width:220px;" />
       <!-- Los cuatro desplegables salen del catálogo («los catálogos salen de la base»): acá sólo se declara
            cuál vocabulario manda en cada uno. Las claves que eligen son las mismas que
            llevan las tarjetas en sus `data-`, así que el filtro compara clave con clave
            y no depende de cómo esté escrita una palabra en la pantalla. -->
       <select id="dir-zone" style="flex:1;min-width:140px;" data-catalogo="zona"
+        data-frase-data-catalogo-vacio="directorio.todas_zonas"
         data-catalogo-vacio="Todas las zonas"></select>
       <select id="dir-type" style="flex:1;min-width:140px;" data-catalogo="tipo_asistente"
+        data-frase-data-catalogo-vacio="directorio.todos_tipos"
         data-catalogo-vacio="Todos los tipos"></select>
       <select id="dir-patologia" style="flex:1;min-width:140px;" data-catalogo="patologia"
+        data-frase-data-catalogo-vacio="directorio.todas_patologias"
         data-catalogo-vacio="Todas las patologías"></select>
       <!-- El cuarto desplegable volvió el 26 de agosto de 2026, cuando el Desarrollador
            decidió que el directorio sí puede decir qué se le comprobó a cada Asistente,
@@ -81,6 +88,7 @@
            tiene cinco claves y no las siete de `verificacion`: documento, antecedentes
            penales y certificado de salud se comprueban igual y no salen nunca. -->
       <select id="dir-comprobacion" style="flex:1;min-width:140px;" data-catalogo="comprobacion"
+        data-frase-data-catalogo-vacio="directorio.cualquier_comprobacion"
         data-catalogo-vacio="Cualquier comprobación"></select>
     </div>
   </div>
@@ -93,20 +101,20 @@
          hacía falta, porque la pantalla no esperaba a nadie: traía ocho tarjetas
          inventadas escritas acá adentro, con su nombre, su puntaje y sus insignias. -->
     <div class="directorio-estado" id="dir-cargando">
-      <i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> Cargando el directorio...
+      <i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i>
+      <span data-frase="directorio.cargando">Cargando el directorio…</span>
     </div>
 
     <div class="directorio-estado" id="dir-error" style="display:none;">
       <p id="dir-error-texto"></p>
-      <button type="button" class="btn btn-secundario" id="dir-reintentar">Reintentar</button>
+      <button type="button" class="btn btn-secundario" id="dir-reintentar"
+        data-frase="acceso.reintentar">Reintentar</button>
     </div>
 
     <div class="directorio-estado" id="dir-vacio" style="display:none;">
-      <p>Todavía no hay Asistentes publicados en este directorio.</p>
-      <p class="directorio-estado-bajada">
-        Un Asistente aparece acá cuando su Prestadora validó el legajo y esa persona autorizó a publicar
-        su perfil. Las dos cosas, no una.
-      </p>
+      <p data-frase="directorio.vacio">Todavía no hay Asistentes publicados en este directorio.</p>
+      <p class="directorio-estado-bajada" data-frase="directorio.vacio_bajada">Un Asistente aparece acá cuando su Prestadora validó el legajo y esa persona autorizó a publicar
+        su perfil. Las dos cosas, no una.</p>
     </div>
 
     <div class="directory-grid" id="directory-grid" style="display:none;"></div>
@@ -126,19 +134,22 @@
               <p class="sub" data-parte="tipo-y-zona"></p>
             </div>
           </div>
-          <div class="card-badge" data-parte="urgencias">Disponible para reemplazos urgentes</div>
+          <div class="card-badge" data-parte="urgencias"
+            data-frase="directorio.urgencias">Disponible para reemplazos urgentes</div>
           <p class="card-precio" data-parte="precio"></p>
           <div style="margin:8px 0 12px 0;">
-            <span class="insignia-validada"
+            <span class="insignia-validada" data-frase-title="directorio.validado_detalle"
               title="La Prestadora auditó y validó el legajo bajo su exclusiva responsabilidad"><i
-                class="fas fa-user-check" aria-hidden="true"></i> Legajo validado por la Prestadora</span>
+                class="fas fa-user-check" aria-hidden="true"></i> <span
+                data-frase="directorio.validado">Legajo validado por la Prestadora</span></span>
           </div>
           <div class="lista-comprobaciones" data-parte="comprobaciones"></div>
           <div class="specialties" data-parte="etiquetas"></div>
         </div>
         <div class="card-footer">
-          <a class="btn btn-primario" data-parte="ver-perfil">Ver perfil</a>
-          <a class="btn btn-sobre-oscuro" data-parte="contactar"
+          <a class="btn btn-primario" data-parte="ver-perfil"
+            data-frase="directorio.ver_perfil">Ver perfil</a>
+          <a class="btn btn-sobre-oscuro" data-parte="contactar" data-frase="directorio.contactar"
             style="border-color:var(--borde-card);color:var(--texto-secundario);">Contactar</a>
         </div>
       </article>
@@ -147,7 +158,8 @@
 
   <!-- CTA FINAL -->
   <div class="cta-banner">
-    <a href="solicitar-asistente.html" class="btn btn-atencion">PUBLICAR UN AVISO</a>
+    <a href="solicitar-asistente.html" class="btn btn-atencion"
+      data-frase="nav.publicar_aviso">Publicar un Aviso</a>
   </div>
 
   <!-- FOOTER -->
@@ -155,10 +167,10 @@
     <div class="footer-inner">
       <div class="footer-brand">
         <div class="logo">
-          <img src="assets/images/logo_presdemo.png" alt="PresDemo" />
-          <span>PresDemo — Servicios de Cuidado</span>
+          <img class="tenant-logo" src="assets/images/logo_presdemo.png" alt="" />
+          <span class="tenant-name"></span>
         </div>
-        <p>Conectamos familias con Asistentes calificados.</p>
+        <p data-frase="pie.lema">Conectamos familias con Asistentes calificados.</p>
         <div class="footer-social">
           <a href="#"><i class="fab fa-facebook-f"></i></a>
           <a href="#"><i class="fab fa-instagram"></i></a>
@@ -168,27 +180,28 @@
         </div>
       </div>
       <div class="footer-col">
-        <h4>Para Familias</h4>
-        <a href="solicitar-asistente.html">Solicitar Asistente</a>
-        <a href="directorio.html">Directorio</a>
-        <a href="soporte-remoto.html">Acompañamiento</a>
-        <a href="cursos.html">Cursos</a>
+        <h4 data-frase="pie.para_familias">Para Familias</h4>
+        <a href="solicitar-asistente.html" data-frase="nav.solicitar_asistente">Solicitar Asistente</a>
+        <a href="directorio.html" data-frase="pie.directorio">Directorio</a>
+        <a href="soporte-remoto.html" data-frase="pie.acompanamiento">Acompañamiento</a>
+        <a href="cursos.html" data-frase="pie.cursos">Cursos</a>
       </div>
       <div class="footer-col">
-        <h4>Para Asistentes</h4>
-        <a href="registrar-asistente.html">Registrarme como Asistente</a>
-        <a href="registrar-asistente.html#registro">Registrarme</a>
+        <h4 data-frase="pie.para_asistentes">Para Asistentes</h4>
+        <a href="registrar-asistente.html" data-frase="nav.registrarme_asistente">Registrarme como Asistente</a>
+        <a href="registrar-asistente.html#registro" data-frase="pie.registrarme">Registrarme</a>
       </div>
       <div class="footer-col">
-        <h4>Empresa</h4>
-        <a href="#">Sobre {{producto}}</a>
-        <a href="#">Contacto</a>
-        <a href="#">Términos</a>
-        <a href="#">Privacidad</a>
+        <h4 data-frase="pie.empresa">Empresa</h4>
+        <a href="#" data-frase="pie.sobre_producto">Sobre {{producto}}</a>
+        <a href="#" data-frase="pie.contacto">Contacto</a>
+        <a href="#" data-frase="pie.terminos">Términos</a>
+        <a href="#" data-frase="pie.privacidad">Privacidad</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 PresDemo — Servicios de Cuidado. Todos los derechos reservados.</p>
+      <p>© 2025 <span class="tenant-name"></span>
+        <span data-frase="pie.derechos">Todos los derechos reservados.</span></p>
     </div>
   </footer>
 
@@ -295,7 +308,7 @@
           precio.textContent = Texto.importe(fila.hourly_rate) + ' ';
           const unidad = document.createElement('span');
           unidad.className = 'card-precio-unidad';
-          unidad.textContent = 'por hora';
+          unidad.setAttribute('data-frase', 'directorio.por_hora');
           precio.appendChild(unidad);
         } else {
           parte('precio').remove();
@@ -333,13 +346,20 @@
           const grilla = paneles.listo;
           while (grilla.firstChild) grilla.removeChild(grilla.firstChild);
           filas.forEach((fila) => grilla.appendChild(dibujarTarjeta(fila)));
+          // El molde no lo alcanza la traducción de arranque, porque lo que cuelga
+          // de un `<template>` no está en el documento. Se traduce acá, una vez,
+          // cuando las tarjetas ya están puestas.
+          Catalogo.traducir(grilla);
 
           mostrar('listo');
           // El filtro vive en js/main.js y es el que escribe cuántos se muestran.
           if (window.filtrarDirectorio) window.filtrarDirectorio();
         } catch (err) {
-          document.getElementById('dir-error-texto').textContent =
-            Texto.mensajeDeError(err, 'traer el directorio');
+          // La clave, no el texto: así el mensaje cambia con el idioma como
+          // cualquier otro rótulo de la pantalla.
+          const donde = document.getElementById('dir-error-texto');
+          donde.setAttribute('data-frase', Texto.claveDeError(err, 'traer el directorio'));
+          Catalogo.traducir(donde);
           mostrar('error');
         }
       }

@@ -75,7 +75,13 @@ export function visible(crudo, esHtml) {
 
   const sinGuion = limpio.replace(/<script\b[\s\S]*?<\/script>/gi, enBlanco);
 
-  const atributo = new RegExp('\\b(' + ATRIBUTOS + ')\\s*=\\s*("[^"]*"|\'[^\']*\')', 'gi');
+  // `(?<![-\w])` y no `\b`: con `\b`, `alt` casa también adentro de
+  // `data-frase-alt`, porque el guión es un carácter de corte. Lo que se
+  // informaría entonces es la clave del catálogo en lugar del texto, y una
+  // pantalla ya convertida quedaría marcada como si tuviera texto a mano.
+  // `despejar()`, en verificar_frases.mjs, se cuida de lo mismo por el mismo
+  // motivo.
+  const atributo = new RegExp('(?<![-\\w])(' + ATRIBUTOS + ')\\s*=\\s*("[^"]*"|\'[^\']*\')', 'gi');
   for (const a of sinGuion.matchAll(atributo)) anotar(a.index, a[2].slice(1, -1));
 
   const resto = sinGuion.replace(/<[^>]*>/g, enBlanco);

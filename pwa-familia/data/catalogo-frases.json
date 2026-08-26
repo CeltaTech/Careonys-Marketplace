@@ -23,6 +23,132 @@
       "pt-BR": "Carregando…"
     },
 
+    "_1": "── La barra de arriba, la misma en toda pantalla pública ──",
+
+    "nav.inicio": {
+      "es-AR": "Inicio",
+      "en": "Home",
+      "pt-BR": "Início"
+    },
+    "nav.solicitar_asistente": {
+      "es-AR": "Solicitar Asistente",
+      "en": "Request a Caregiver",
+      "pt-BR": "Solicitar Assistente"
+    },
+    "nav.registrarme_asistente": {
+      "es-AR": "Registrarme como Asistente",
+      "en": "Register as a Caregiver",
+      "pt-BR": "Cadastrar-me como Assistente"
+    },
+    "nav.red_asistentes": {
+      "es-AR": "Red de Asistentes",
+      "en": "Caregiver Network",
+      "pt-BR": "Rede de Assistentes"
+    },
+    "nav.publicar_aviso": {
+      "es-AR": "Publicar un Aviso",
+      "en": "Post a Listing",
+      "pt-BR": "Publicar um Anúncio"
+    },
+    "nav.menu": {
+      "es-AR": "Menú",
+      "en": "Menu",
+      "pt-BR": "Menu"
+    },
+    "nav.correo": {
+      "es-AR": "Correo electrónico",
+      "en": "Email",
+      "pt-BR": "E-mail"
+    },
+    "nav.facebook": {
+      "es-AR": "Facebook",
+      "en": "Facebook",
+      "pt-BR": "Facebook"
+    },
+    "nav.instagram": {
+      "es-AR": "Instagram",
+      "en": "Instagram",
+      "pt-BR": "Instagram"
+    },
+    "nav.linkedin": {
+      "es-AR": "LinkedIn",
+      "en": "LinkedIn",
+      "pt-BR": "LinkedIn"
+    },
+    "nav.youtube": {
+      "es-AR": "YouTube",
+      "en": "YouTube",
+      "pt-BR": "YouTube"
+    },
+
+    "_2": "── El pie, el mismo en toda pantalla pública ──",
+
+    "pie.lema": {
+      "es-AR": "Conectamos familias con Asistentes calificados.",
+      "en": "We connect families with qualified Caregivers.",
+      "pt-BR": "Conectamos famílias com Assistentes qualificados."
+    },
+    "pie.para_familias": {
+      "es-AR": "Para Familias",
+      "en": "For Families",
+      "pt-BR": "Para Famílias"
+    },
+    "pie.directorio": {
+      "es-AR": "Directorio",
+      "en": "Directory",
+      "pt-BR": "Diretório"
+    },
+    "pie.acompanamiento": {
+      "es-AR": "Acompañamiento",
+      "en": "Companionship",
+      "pt-BR": "Acompanhamento"
+    },
+    "pie.cursos": {
+      "es-AR": "Cursos",
+      "en": "Courses",
+      "pt-BR": "Cursos"
+    },
+    "pie.para_asistentes": {
+      "es-AR": "Para Asistentes",
+      "en": "For Caregivers",
+      "pt-BR": "Para Assistentes"
+    },
+    "pie.registrarme": {
+      "es-AR": "Registrarme",
+      "en": "Sign up",
+      "pt-BR": "Cadastrar-me"
+    },
+    "pie.empresa": {
+      "es-AR": "Empresa",
+      "en": "Company",
+      "pt-BR": "Empresa"
+    },
+    "pie.sobre_producto": {
+      "es-AR": "Sobre {{producto}}",
+      "en": "About {{producto}}",
+      "pt-BR": "Sobre {{producto}}"
+    },
+    "pie.contacto": {
+      "es-AR": "Contacto",
+      "en": "Contact",
+      "pt-BR": "Contato"
+    },
+    "pie.terminos": {
+      "es-AR": "Términos",
+      "en": "Terms",
+      "pt-BR": "Termos"
+    },
+    "pie.privacidad": {
+      "es-AR": "Privacidad",
+      "en": "Privacy",
+      "pt-BR": "Privacidade"
+    },
+    "pie.derechos": {
+      "es-AR": "Todos los derechos reservados.",
+      "en": "All rights reserved.",
+      "pt-BR": "Todos os direitos reservados."
+    },
+
     "_": "── Los mensajes de error. Los clasifica js/texto.js y los muestra cualquier pantalla ──",
 
     "error.credenciales": {
@@ -529,6 +655,104 @@
       "es-AR": "Las evaluaciones las rinden los Asistentes, y esta cuenta no lo es.",
       "en": "Assessments are taken by Caregivers, and this account is not one.",
       "pt-BR": "As avaliações são feitas pelos Assistentes, e esta conta não é uma."
+    },
+
+    "_______": "── La Red de Asistentes ──",
+
+    "directorio.descripcion": {
+      "es-AR": "Encuentre al Asistente indicado para su familiar. Filtre por zona, patología y disponibilidad entre los Asistentes con legajo validado por la Prestadora.",
+      "en": "Find the right Caregiver for your relative. Filter by area, condition and availability among the Caregivers whose personal file the Provider has validated.",
+      "pt-BR": "Encontre o Assistente indicado para o seu familiar. Filtre por zona, patologia e disponibilidade entre os Assistentes com cadastro validado pela Prestadora."
+    },
+    "directorio.bajada": {
+      "es-AR": "Encuentre al Asistente indicado para su ser querido. Los que aparecen acá tienen el legajo validado por su Prestadora y autorizaron a publicar su perfil.",
+      "en": "Find the right Caregiver for your loved one. Those listed here have had their personal file validated by their Provider and have authorised their profile to be published.",
+      "pt-BR": "Encontre o Assistente indicado para quem você ama. Os que aparecem aqui têm o cadastro validado pela sua Prestadora e autorizaram a publicação do seu perfil."
+    },
+    "directorio.cargando": {
+      "es-AR": "Cargando el directorio…",
+      "en": "Loading the directory…",
+      "pt-BR": "Carregando o diretório…"
+    },
+    "directorio.vacio": {
+      "es-AR": "Todavía no hay Asistentes publicados en este directorio.",
+      "en": "No Caregivers have been published in this directory yet.",
+      "pt-BR": "Ainda não há Assistentes publicados neste diretório."
+    },
+    "directorio.vacio_bajada": {
+      "es-AR": "Un Asistente aparece acá cuando su Prestadora validó el legajo y esa persona autorizó a publicar su perfil. Las dos cosas, no una.",
+      "en": "A Caregiver appears here when their Provider has validated the personal file and that person has authorised their profile to be published. Both things, not one.",
+      "pt-BR": "Um Assistente aparece aqui quando a sua Prestadora validou o cadastro e essa pessoa autorizou a publicação do seu perfil. As duas coisas, não uma."
+    },
+    "directorio.buscar": {
+      "es-AR": "🔍 Buscar por nombre o zona…",
+      "en": "🔍 Search by name or area…",
+      "pt-BR": "🔍 Buscar por nome ou zona…"
+    },
+    "directorio.todas_zonas": {
+      "es-AR": "Todas las zonas",
+      "en": "All areas",
+      "pt-BR": "Todas as zonas"
+    },
+    "directorio.todos_tipos": {
+      "es-AR": "Todos los tipos",
+      "en": "All types",
+      "pt-BR": "Todos os tipos"
+    },
+    "directorio.todas_patologias": {
+      "es-AR": "Todas las patologías",
+      "en": "All conditions",
+      "pt-BR": "Todas as patologias"
+    },
+    "directorio.cualquier_comprobacion": {
+      "es-AR": "Cualquier comprobación",
+      "en": "Any check",
+      "pt-BR": "Qualquer verificação"
+    },
+    "directorio.urgencias": {
+      "es-AR": "Disponible para reemplazos urgentes",
+      "en": "Available for urgent cover",
+      "pt-BR": "Disponível para substituições urgentes"
+    },
+    "directorio.validado": {
+      "es-AR": "Legajo validado por la Prestadora",
+      "en": "Personal file validated by the Provider",
+      "pt-BR": "Cadastro validado pela Prestadora"
+    },
+    "directorio.validado_detalle": {
+      "es-AR": "La Prestadora auditó y validó el legajo bajo su exclusiva responsabilidad",
+      "en": "The Provider audited and validated the personal file under its sole responsibility",
+      "pt-BR": "A Prestadora auditou e validou o cadastro sob sua exclusiva responsabilidade"
+    },
+    "directorio.ver_perfil": {
+      "es-AR": "Ver perfil",
+      "en": "View profile",
+      "pt-BR": "Ver perfil"
+    },
+    "directorio.contactar": {
+      "es-AR": "Contactar",
+      "en": "Get in touch",
+      "pt-BR": "Contatar"
+    },
+    "directorio.por_hora": {
+      "es-AR": "por hora",
+      "en": "per hour",
+      "pt-BR": "por hora"
+    },
+    "directorio.sin_coincidencias": {
+      "es-AR": "Ningún Asistente de este directorio coincide con esos filtros.",
+      "en": "No Caregiver in this directory matches those filters.",
+      "pt-BR": "Nenhum Assistente deste diretório corresponde a esses filtros."
+    },
+    "directorio.mostrando_uno": {
+      "es-AR": "Mostrando 1 Asistente",
+      "en": "Showing 1 Caregiver",
+      "pt-BR": "Mostrando 1 Assistente"
+    },
+    "directorio.mostrando_varios": {
+      "es-AR": "Mostrando {cuantos} Asistentes",
+      "en": "Showing {cuantos} Caregivers",
+      "pt-BR": "Mostrando {cuantos} Assistentes"
     }
   }
 }

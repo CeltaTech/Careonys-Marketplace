@@ -329,7 +329,7 @@ Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2
   además que ninguna pantalla escribe hoy una clave inventada en esa columna —`registrar-asistente.html:319`
   y `formulario-integral.html:352` toman las suyas del catálogo—, y de la
   base misma no se puede afirmar nada desde acá, porque `caregivers` no se deja leer sin sesión.
-- **Los cuatro filtros salen del catálogo** (`directorio.html:66`): zona, Tipo de Asistente,
+- **Los cuatro filtros salen del catálogo** (`directorio.html:76`): zona, Tipo de Asistente,
   patología y verificación. Eran veinticinco opciones escritas a mano contra «los catálogos salen de la base»; ahora
   son cuatro `data-catalogo`. Las zonas llegan agrupadas por región, que la lista escrita a mano
   no hacía.
@@ -1756,7 +1756,7 @@ mejor pantalla del resto tampoco distinguiría una mala.
 interruptor está escrito ocho veces en ocho pantallas, y las copias no eran equivalentes: cuatro
 encendían el panel con `display: 'block'` y dos con `display: ''`. No es lo mismo. `'block'` le
 impone al panel una forma; `''` le devuelve la que le había dado el CSS. Y en este proyecto ya hay
-un panel que no es `block`: `.directory-grid` es `display: grid` (`css/styles.css:1113`), y por eso
+un panel que no es `block`: `.directory-grid` es `display: grid` (`css/styles.css:1120`), y por eso
 `directorio.html` tuvo que usar la forma vacía. Las otras cuatro —`acceso.html`, `examen.html`,
 `nueva-clave.html` y `recuperar-clave.html`— andaban de casualidad, porque hoy ninguno de sus
 paneles es grid ni flex, y el día que alguien agregara uno se habría aplastado sin avisar. Las seis

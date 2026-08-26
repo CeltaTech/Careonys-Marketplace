@@ -266,9 +266,12 @@ puso la línea de comandos:
 | Prestadora | Provider | Prestadora |
 | Asistente | Caregiver | Assistente |
 | legajo | personal file | cadastro |
+| Aviso | Listing | Anúncio |
+| Acompañamiento | Companionship | Acompanhamento |
 
 `Caregiver` es además el término que ya usa la base (`caregivers`), así que en inglés no hay
-elección real. Los otros dos sí son elegibles.
+elección real. Los otros cuatro sí son elegibles. `Aviso` y `Acompañamiento` entraron el 26 de
+agosto de 2026 con la barra y el pie de `directorio.html`, que las repiten ocho pantallas.
 
 ---
 
