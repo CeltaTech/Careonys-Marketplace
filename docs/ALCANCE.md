@@ -2245,7 +2245,12 @@ comparación exacta: el chequeo falló con catorce avisos.
 Hasta el 26 de agosto de 2026 todo lo que se sabía de la seguridad de la base salía de leer las
 migraciones. Eso es historial de intención: dice qué se quiso, no qué quedó. Esa noche se trajo el
 esquema real del servidor con `supabase db dump --linked --schema public` —que no pide contraseña
-porque la línea de comandos ya está enlazada— y se revisó contra él. **Aparecieron dos agujeros,
+porque la línea de comandos ya está enlazada— y se revisó contra él. **Y esa medición dejó de ser
+de una sola vez:** quedó escrita como `scripts/probar_permisos_en_vivo.mjs`, que la repite cuando se
+la llame, contra la base enlazada o contra la local con `--local`. Hoy da cuatro comprobaciones
+en rojo —que son el pendiente 67— y una en verde, que es la que las contiene: las 34 políticas
+piden sesión. Se corre a mano y no entra en los dieciséis chequeos del `commit`, porque necesita
+hablar con la base. **Aparecieron dos agujeros,
 que quedaron como pendientes 66 y 67, y siete cosas que están bien.** Se anotan las siete para que
 nadie las vuelva a investigar:
 
