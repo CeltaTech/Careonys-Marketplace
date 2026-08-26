@@ -153,9 +153,14 @@ mínimo—, pero sobre `--fondo-app`, que es `oklch(0.98 …)`, cae a 4,02. Lo m
 otras tres. Es un asunto de Careonys y no se arregla acá: la sección 2 de este archivo se copia,
 no se edita. Anotado para llevarlo allá.
 
-**El modo oscuro no se enciende solo.** Está definido y funciona cuando la persona lo elige, pero
-todavía hay 304 colores escritos a mano adentro de atributos `style=` que no cambian con el modo.
-La condición para encenderlo está escrita arriba del bloque, en `css/tokens.css`.
+**El modo oscuro ya se enciende solo, y era condición necesaria, no una comodidad** —remarcado por
+el Desarrollador el 2026-08-26—. Sigue `prefers-color-scheme`: quien tiene el teléfono o la
+computadora en oscuro entra directo en oscuro, sin tocar nada. Encima de eso, la persona puede
+forzar un modo con `data-tema='oscuro'` o `'claro'` en el `<html>`, y esa elección le gana a la del
+dispositivo. Los dos bloques están en `css/tokens.css`. Esto quedó posible el 25 de agosto de 2026,
+el mismo día en que se fueron los 434 colores escritos a mano: `scripts/verificar_paleta.mjs`
+verificó hoy 48 archivos sin ninguno (2 exentos por ser marcas de otras empresas), y
+`scripts/verificar_temas.mjs` corta el build si algo vuelve a romper el modo oscuro.
 
 **No hay tokens de espaciado ni de densidad.** Careonys tiene `--densidad-fila-y` y
 `--densidad-fila-texto`, que la persona elige y quedan guardados en su navegador. Acá el espaciado
