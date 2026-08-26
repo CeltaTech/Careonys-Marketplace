@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Solicitar Asistente — PresDemo</title>
+  <title>Solicitar Asistente — {{organizacion}}</title>
   <meta name="description"
     content="Encuentre al Asistente ideal para su familiar mayor. Publique su aviso y reciba postulaciones de Asistentes calificados en su zona." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -21,7 +21,7 @@
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="navbar-logo">
-        <img src="assets/images/logo_presdemo.png" alt="PresDemo logo" />
+        <img src="assets/images/logotipo.png" alt="{{organizacion}}" />
       </a>
       <div class="navbar-links">
         <a href="solicitar-asistente.html" class="active">Solicitar Asistente</a>
@@ -326,7 +326,7 @@
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-brand">
-        <div class="logo"><img src="assets/images/logo_presdemo.png" alt="PresDemo" /><span>PresDemo — Servicios de
+        <div class="logo"><img src="assets/images/logotipo.png" alt="{{organizacion}}" /><span>{{organizacion}} — Servicios de
             Cuidado</span></div>
         <p>Conectamos familias con Asistentes calificados.</p>
         <div class="footer-social">
@@ -353,7 +353,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 PresDemo — Servicios de Cuidado. Todos los derechos reservados.</p>
+      <p>© 2025 {{organizacion}} — Servicios de Cuidado. Todos los derechos reservados.</p>
     </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

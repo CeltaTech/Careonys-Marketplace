@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Pantalla de la sesión, no del directorio: no tiene nada que hacer en un buscador. -->
   <meta name="robots" content="noindex, nofollow" />
-  <title>Registrarme como Asistente — PresDemo</title>
+  <title>Registrarme como Asistente — {{organizacion}}</title>
   <meta name="description"
-    content="Regístrese como Asistente en PresDemo, conéctese con familias que necesitan sus servicios y desarrolle su carrera profesional." />
+    content="Regístrese como Asistente en {{organizacion}}, conéctese con familias que necesitan sus servicios y desarrolle su carrera profesional." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
@@ -23,7 +23,7 @@
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="navbar-logo">
-        <img src="assets/images/logo_presdemo.png" alt="PresDemo logo" />
+        <img src="assets/images/logotipo.png" alt="{{organizacion}}" />
       </a>
       <div class="navbar-links">
         <a href="solicitar-asistente.html">Solicitar Asistente</a>
@@ -491,7 +491,7 @@
             <strong><i class="fas fa-info-circle"></i> Proceso de Selección e Inserción al Plantel (Responsabilidad de
               la Prestadora):</strong><br />
             Su solicitud quedará registrada en la base de datos central en estado <em>"En Revisión"</em>. El equipo de
-            Selección de la prestadora <strong class="tenant-name">PresDemo</strong> auditará la documentación digital
+            Selección de la prestadora <strong class="tenant-name">{{organizacion}}</strong> auditará la documentación digital
             cargada y convocará a una entrevista de selección. Una vez aprobado/a por ellos, su perfil figurará como
             <strong>"Validado por Prestadora"</strong> en el directorio visible para las familias.
           </div>
@@ -571,7 +571,7 @@
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-brand">
-        <div class="logo"><img src="assets/images/logo_presdemo.png" alt="PresDemo" /><span>PresDemo — Servicios de
+        <div class="logo"><img src="assets/images/logotipo.png" alt="{{organizacion}}" /><span>{{organizacion}} — Servicios de
             Cuidado</span></div>
         <p>Conectamos familias con Asistentes calificados.</p>
         <div class="footer-social">
@@ -600,7 +600,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 PresDemo — Servicios de Cuidado. Todos los derechos reservados.</p>
+      <p>© 2025 {{organizacion}} — Servicios de Cuidado. Todos los derechos reservados.</p>
     </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

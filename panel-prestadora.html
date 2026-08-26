@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Pantalla de la sesión, no del directorio: no tiene nada que hacer en un buscador. -->
   <meta name="robots" content="noindex, nofollow" />
-  <title>Panel de la Prestadora — PresDemo</title>
+  <title>Panel de la Prestadora — {{organizacion}}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
@@ -20,11 +20,11 @@
   <header class="tenant-header">
     <div class="tenant-brand">
       <i class="fas fa-hospital-user" style="color:var(--azul-medio-texto);"></i>
-      <span>PresDemo Salud</span>
-      <span class="tenant-badge">Organización: {{producto}}</span>
+      <span>{{organizacion}}</span>
+      <span class="tenant-badge">Organización: {{organizacion}}</span>
     </div>
     <div style="font-size:13px;">
-      <i class="fas fa-user-shield"></i> Operador: RRHH PresDemo | <a href="index.html"
+      <i class="fas fa-user-shield"></i> Operador: RRHH {{organizacion}} | <a href="index.html"
         style="color:var(--texto-sobre-color);text-decoration:underline;">Volver al Portal</a>
     </div>
   </header>
@@ -110,7 +110,7 @@
 
       <div style="background:var(--superficie-hundida);padding:16px;border-radius:12px;margin:16px 0;border:1px solid var(--borde-card);">
         <h4 style="margin:0 0 8px 0;font-size:14px;color:var(--texto-titulo);"><i class="fas fa-user-check"></i>
-          Resolución de la Prestadora PresDemo:</h4>
+          Resolución de la Prestadora {{organizacion}}:</h4>
         <div style="margin-bottom:12px;">
           <label style="font-weight:700;font-size:12px;">Notas de la Entrevista Psicotécnica y Evaluación:</label>
           <textarea id="nota-entrevista"
@@ -130,7 +130,7 @@
       </div>
 
       <p style="font-size:11px;color:var(--texto-secundario);margin:0;">* Nota legal: {{producto}} provee únicamente el software SaaS. El
-        otorgamiento del aval y la selección son responsabilidad exclusiva de PresDemo.</p>
+        otorgamiento del aval y la selección son responsabilidad exclusiva de {{organizacion}}.</p>
     </div>
   </div>
 
@@ -342,7 +342,7 @@
       await resolverAspirante({
         estado: 'validado_prestadora',
         nota: document.getElementById('nota-entrevista').value.trim()
-          || 'Aprobado por el equipo de RRHH PresDemo.',
+          || Identidad.aplicar('Aprobado por el equipo de RRHH {{organizacion}}.'),
         pregunta: 'Se va a otorgar el aval "Validado por Prestadora" a este legajo.\n\n'
           + 'La persona queda habilitada en el plantel activo y el aval se muestra en su '
           + 'perfil. Desde esta pantalla no se puede quitar.\n\n¿Confirma?',

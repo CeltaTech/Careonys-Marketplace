@@ -56,9 +56,7 @@ const FOTOS = new Map([
    'lo dice en su renglón 7: es una foto del 22 de agosto de 2026, no el estado de hoy'],
   ['docs/PLAN_ACCESO.md',
    'es el inventario y el plan previos a tocar código del 24 de agosto de 2026, y sus citas ' +
-   'muestran los cinco problemas que había ese día — todos arreglados desde entonces'],
-  ['docs/PLAN_PRESTADORA.md',
-   'es un plan a la espera de aprobación (pendiente 11): cita el código sobre el que se escribió']
+   'muestran los cinco problemas que había ese día — todos arreglados desde entonces']
 ]);
 
 /* Archivos que no viven en este repositorio y por eso no se pueden abrir. */

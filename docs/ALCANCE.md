@@ -154,9 +154,9 @@ Cómo quedó:
   Lo corre git antes de cada commit, junto con los otros cinco, desde `.githooks/pre-commit`.
   Suelto sigue andando: `node scripts/verificar_identidad.mjs`.
 
-Lo que **no** cierra esto: el nombre de la **Prestadora de ejemplo**, «PresDemo», sigue escrito a
-mano 111 veces en 18 archivos. Es otro problema —el nombre de un cliente, no el del producto— y es
-el pendiente 11.
+Lo que **no** cerraba esto: el nombre de la **Prestadora de ejemplo**, «PresDemo», quedaba escrito
+a mano en 18 archivos. Era otro problema —el nombre de un cliente, no el del producto— y se cerró
+el 26 de agosto de 2026 con el marcador `{{organizacion}}`, contado más abajo.
 
 ---
 
@@ -550,7 +550,7 @@ Comprobado el 24 de agosto de 2026 contra el proyecto real: el servidor tiene ap
 distancia costaba dos cosas que ya no cuestan:
 
 - **La columna del contacto existe.** La 0009 agregó `avisos.contact_info`, que es donde
-  `js/apiClient.js:461` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
+  `js/apiClient.js:721` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
   público de `solicitar-asistente.html` mandaba una columna que la base no tenía.
 - **Las filas de ejemplo hablan el idioma del catálogo.** La 0010 reemplazó las claves viejas de
   las cuatro filas ficticias —«enfermero» y compañía— por las que las pantallas esperan.
@@ -1220,13 +1220,15 @@ etiqueta que cierra, el fin de un comentario o un renglón en blanco no son una 
 de una que se corrió. Se registra solo en `scripts/verificar_todo.mjs` y en el gancho de
 `git commit`, sin tocar ninguno de los dos.
 
-**Los tres documentos exentos, y por qué.** Un documento que es **una foto fechada** cita el
+**Los documentos exentos, y por qué.** Un documento que es **una foto fechada** cita el
 código de ese día a propósito, y corregirle los renglones sería falsear lo que decía.
-`docs/INVENTARIO.md` lo dice en su propio renglón 7; `docs/PLAN_ACCESO.md` y
-`docs/PLAN_PRESTADORA.md` son planes escritos antes de tocar código, y sus citas muestran los
-problemas que había ese día. Los tres están en la lista `FOTOS` del chequeo, cada uno con su
-motivo escrito al lado —una exención sin motivo es una excepción que nadie va a poder revisar
-después—. Había un cuarto, el plan técnico heredado, y se borró el mismo día.
+`docs/INVENTARIO.md` lo dice en su propio renglón 7, y `docs/PLAN_ACCESO.md` es un plan escrito
+antes de tocar código, cuyas citas muestran los problemas que había ese día. Los dos están en la
+lista `FOTOS` del chequeo, cada uno con su motivo escrito al lado —una exención sin motivo es una
+excepción que nadie va a poder revisar después—. Empezaron siendo cuatro: el plan técnico heredado
+se borró el mismo día, y el plan de la Prestadora, el 26 de agosto de 2026, al ejecutarse. **Una
+exención se borra junto con el archivo que eximía**, si no queda señalando a un documento que ya
+no está.
 
 **Lo que el chequeo no puede ver, dicho de frente.** Una cita que se corrió a otro renglón **con
 contenido** pasa igual: el guion no sabe de qué habla la frase. Se probó exigir que un
@@ -1374,7 +1376,7 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
   la Prestadora», que es la condición que la vista ya exige para devolver la fila, y la de
   reemplazos urgentes, que sale de `disponibilidad_asistente`.
 - **El filtro por Prestadora vive en el cliente de datos y no es optativo**
-  (`js/apiClient.js:399`). El resto del archivo filtra «si hay Prestadora resuelta», y eso no sirve
+  (`js/apiClient.js:504`). El resto del archivo filtra «si hay Prestadora resuelta», y eso no sirve
   para una pantalla que se ve sin cuenta: sin sesión, la que no filtra devuelve las dos mezcladas.
   Acá, si no hay Prestadora, no se pide nada.
 - **Y si la dirección nombra una Prestadora que no existe, tampoco se muestra otra.** Comprobado
@@ -2232,7 +2234,7 @@ idiomas siguen viendo todo.
 
 ### Las cajas fuertes se reconocen por lo que dicen, no por cómo se escriben
 
-`scripts/recorrido.mjs` es por donde pasan los dieciséis chequeos para leer archivos, y era también
+`scripts/recorrido.mjs` es por donde pasan los dieciocho chequeos para leer archivos, y era también
 donde se hacía cumplir la regla de `F:\proyectos\CLAUDE.md`: una carpeta que anuncia que guarda
 claves no se abre, no se lista y no se cita. **Lo hacía comparando el nombre exacto**, así que
 alcanzaba justo para las cinco carpetas que existían el día que se escribió la lista: una llamada
@@ -2262,7 +2264,7 @@ porque la línea de comandos ya está enlazada— y se revisó contra él. **Y e
 de una sola vez:** quedó escrita como `scripts/probar_permisos_en_vivo.mjs`, que la repite cuando se
 la llame, contra la base enlazada o contra la local con `--local`. Hoy da cuatro comprobaciones
 en rojo —que son el pendiente 67— y una en verde, que es la que las contiene: las 34 políticas
-piden sesión. Se corre a mano y no entra en los dieciséis chequeos del `commit`, porque necesita
+piden sesión. Se corre a mano y no entra en los dieciocho chequeos del `commit`, porque necesita
 hablar con la base. **Aparecieron dos agujeros,
 que quedaron como pendientes 66 y 67, y siete cosas que están bien.** Se anotan las siete para que
 nadie las vuelva a investigar:
@@ -2372,13 +2374,97 @@ nombró los cinco vocabularios afectados, diciendo de cada uno el renglón viejo
 restauró el archivo y volvió al verde. Un chequeo que no se prueba así puede estar mirando cero
 archivos y decir que sí.
 
-**Quedan 69 citas de 24 vocabularios, cada una en el renglón que dice, y son diecisiete
+**Quedan 69 citas de 24 vocabularios, cada una en el renglón que dice, y son dieciocho
 chequeos.** Y salió una corrección de la primera medición, que conviene decir porque estaba
 escrita en `docs/PENDIENTES.md`: los vocabularios que no usa nadie no son cinco, son dos
 —`verificacion` y `discapacidad`—. `tarea_hogar`, `tarea_acompanamiento` y `puesto_experiencia` sí
 se usan, desde `data/catalogo-fichas.json`, que la primera pasada no miraba. Los dos que quedan el
 chequeo los informa y no rompe: que sobren o que falte la pantalla que los iba a pedir es una
 decisión, no un defecto.
+
+
+### La Prestadora de ejemplo estaba escrita a mano en cada pantalla
+
+Este producto se muestra con el nombre y el logotipo de la Prestadora que se esté mirando: cuál es
+sale de la dirección —`?t=` o subdominio— y se busca en la base, o sea que se sabe **después** de
+que la pantalla ya se dibujó. Escribir el nombre de una Prestadora adentro de una pantalla la deja
+bien para esa sola; cualquier otra ve un cartel con el nombre de una empresa que no es la suya.
+
+**Y estaba escrito.** Medido el 26 de agosto de 2026: la Prestadora de ejemplo aparecía **70 veces
+en dieciocho archivos** —nueve títulos de pantalla, dos descripciones para los buscadores, cinco
+avisos de derechos reservados, el texto que dice de quién es la responsabilidad de un aval, y
+veinte rutas del archivo del logotipo—. El guion de marca corregía al cargar los nombres y los
+logotipos que colgaban de un encabezado o de un pie, y nada más: el título de la pantalla, la
+descripción para los buscadores, el texto de la imagen y los textos corridos no los tocaba nadie.
+Esos se publicaban con el nombre de la Prestadora de ejemplo **para todo el mundo**, incluida la
+descripción con la que la pantalla aparece en un buscador.
+
+**Cómo se escribe ahora.** La pantalla dice **dónde** va el nombre, con el marcador
+`{{organizacion}}`, y `js/identidad.js` lo resuelve dos veces. La primera, al dibujar, valiendo el
+nombre del producto (`js/identidad.js:62`); la segunda, cuando la Prestadora llega, con el suyo
+(`js/identidad.js:150`, que llama `js/apiClient.js:139`). Mostrar el producto mientras la
+Prestadora no se sabe no es un respaldo inventado para tapar un hueco: **sin Prestadora resuelta,
+la pantalla es del producto**, así que lo que se ve es cierto en los dos momentos. No hay marcador
+roto en la pantalla ni relleno neutro, y no hay ninguna Prestadora haciendo de valor por defecto
+de todas las demás.
+
+Resolver dos veces obliga a acordarse de dónde estaba cada marcador, porque una vez reemplazado ya
+no está en la pantalla para volver a buscarlo. El paseo anota cada lugar junto con su texto
+original (`js/identidad.js:78`) y la segunda vuelta trabaja sobre esa anotación.
+
+**El nombre por selector se borró, no se dejó al lado.** `_applyBranding` escribía el nombre
+buscando tres clases de CSS; eso es la misma decisión en dos lugares, y el marcador la hace mejor
+—alcanza al título, a la descripción y a los textos corridos, que no tienen ninguna clase que los
+distinga—. Quedó una sola forma de escribir el nombre. El logotipo sigue cambiándose por selector,
+porque es una imagen y no un texto, pero su respaldo pasó a ser el del producto.
+
+**De paso apareció un error de etiqueta:** `panel-prestadora.html:24` decía «Organización» y
+mostraba el nombre **del producto** en el lugar donde va el de la Organización.
+
+**El chequeo que lo sostiene.** `scripts/verificar_organizacion.mjs` es el dieciocho, y mira dos
+cosas, cada una contra su punto único de verdad: que ningún nombre de Prestadora esté escrito en
+el marcado, los guiones ni los estilos —y la lista de Prestadoras no está escrita adentro del
+chequeo, sale de las altas de `supabase/migrations/`, `scripts/verificar_organizacion.mjs:67`—, y
+que la única ruta de logotipo que se escriba sea la que declara `js/identidad.js`. Si ninguna
+migración carga una Prestadora con nombre, el chequeo **falla** en vez de pasar en verde sobre una
+lista vacía (`scripts/verificar_organizacion.mjs:89`).
+
+**Se probó que puede fallar**, que es la regla de que una prueba que no puede fallar no prueba
+nada. Se rompieron las dos reglas a propósito: se escribió el nombre de una de las Prestadoras del
+seed en una pantalla y se restauró la ruta vieja del logotipo. Rojo las dos veces, nombrando
+archivo y renglón. Se deshizo, y volvió el verde.
+
+**Y el mecanismo se probó en un navegador de verdad, que es lo que encontró el defecto.** Ningún
+chequeo estático lo hubiera visto: el título de la pantalla no se volvía a resolver.
+`document.title = x` **reemplaza el nodo de texto** de `<title>`, así que el nodo anotado en la
+primera vuelta quedaba huérfano y escribirle no hacía nada. Se arregló guardando el título antes
+de tocar nada y salteando `<title>` en el paseo de textos (`js/identidad.js:112` y
+`js/identidad.js:118`). Con eso, en el navegador: título, pie, descripción para los buscadores y
+texto de la imagen pasan de «Careonys» a la Prestadora y vuelven.
+
+**Qué no quedó probado, y se dice así.** La base local devuelve `42501 permission denied` sobre
+`tenants`, un problema anterior y ajeno a este cambio, así que **el camino que trae la Prestadora
+desde la base no se pudo correr localmente**. Lo probado es el mecanismo del marcador, llamado
+directamente. Falta verlo con una Prestadora resuelta de verdad.
+
+**Tres cosas se hicieron distinto de como decía el plan** que había escrito para esto, y por eso
+se anotan antes de borrarlo:
+
+1. **Un marcador, no tres.** El plan proponía `{{prestadora}}`, `{{prestadoraLogo}}` y
+   `{{prestadoraColor}}`, con un segundo motor de marcadores adentro de `_applyBranding`. Un
+   marcador solo, viviendo en el motor que ya existía, evita tener dos mecanismos que hacen lo
+   mismo. El logotipo y el color no necesitan marcador: ya se resolvían por selector y por
+   variable de CSS.
+2. **Una tercera respuesta a qué se muestra mientras la Prestadora no se sabe.** El plan daba dos
+   —dejar el marcador a la vista, o poner un texto neutro—. Ninguna de las dos dice la verdad; el
+   nombre del producto sí.
+3. **El respaldo del logotipo es el del producto.** El plan pedía sacar del repositorio el
+   logotipo de la Prestadora de ejemplo. Se dejó, porque es de ella y la base puede apuntarlo,
+   pero dejó de ser el respaldo de todas.
+
+Queda una consecuencia para decidir, anotada como pendiente: **ninguna migración le carga hoy un
+`logo_url` a la Prestadora de ejemplo**, así que la demostración se ve con el logotipo del
+producto y no muestra justamente lo que tiene para mostrar, que cada Prestadora lleva el suyo.
 
 
 ## 2. Falta construir
@@ -2600,8 +2686,8 @@ contenido en su catálogo y los colores en las variables, que es preparar el ter
 
 Esto es el paso 1 de «antes de un cambio grande»: el inventario de qué asume el código de hoy,
 hecho sobre **la red que sostiene al producto** en vez de sobre el producto. Va acá y no en
-`docs/INVENTARIO.md` porque ese archivo es una foto del 22 de agosto de 2026 y se deja como está. Hoy corren dieciséis
-chequeos antes de cada `commit` (`.githooks/pre-commit` llama a `scripts/verificar_todo.mjs`), y
+`docs/INVENTARIO.md` porque ese archivo es una foto del 22 de agosto de 2026 y se deja como está. Al hacerse esta medición
+corrían dieciséis chequeos antes de cada `commit` (`.githooks/pre-commit` llama a `scripts/verificar_todo.mjs`), y
 son los que impiden que vuelvan los colores a mano, el tuteo, las claves en el código, las
 pantallas mudas y los textos escritos adentro del HTML. **Medido el 26 de agosto de 2026 leyendo
 los dieciséis, no de memoria.**

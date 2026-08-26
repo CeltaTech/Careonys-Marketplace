@@ -302,7 +302,7 @@
     <div class="app-screen active" id="screen-intro">
       <div class="intro-logo-container">
         <img src="../assets/images/logotipo.png" class="tenant-logo" alt="Logo" onerror="this.style.display='none'" />
-        <h2 class="tenant-name">PresDemo</h2>
+        <h2 class="tenant-name">{{organizacion}}</h2>
         <p>Portal del Asistente de Cuidado</p>
       </div>
       <div class="login-card">
@@ -328,7 +328,7 @@
         <button class="btn-back" id="btn-open-menu" style="font-size:20px;"><i class="fas fa-bars"></i></button>
         <div style="display:flex;align-items:center;gap:6px;">
           <img src="../assets/images/logotipo.png" class="tenant-logo" style="height:24px;" alt="Logo" onerror="this.style.display='none'" />
-          <span class="tenant-name" style="font-size:14px;font-weight:800;color:var(--marca-prestadora);">PresDemo</span>
+          <span class="tenant-name" style="font-size:14px;font-weight:800;color:var(--marca-prestadora);">{{organizacion}}</span>
         </div>
         <div style="width:24px;"></div>
       </div>
@@ -524,7 +524,7 @@
 
             <div class="winfo-box">
               <strong><i class="fas fa-info-circle"></i> Proceso de Selección:</strong><br />
-              La solicitud quedará en estado "En Revisión". El equipo de <strong class="tenant-name">PresDemo</strong> auditará la documentación y lo convocará a una entrevista.
+              La solicitud quedará en estado "En Revisión". El equipo de <strong class="tenant-name">{{organizacion}}</strong> auditará la documentación y lo convocará a una entrevista.
             </div>
             <!-- El paso de cierre: qué se muestra de la persona y a quién. El
                  texto, el orden y el valor inicial de cada casilla salen de

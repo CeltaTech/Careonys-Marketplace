@@ -115,25 +115,28 @@ const ClienteDatos = {
 
     // Reemplazar logos e imágenes de marca
     // El logotipo se mide desde la raíz del sitio y no desde la página que lo
-    // pide. La columna `logo_url` de la Prestadora de prueba guarda hoy
-    // `assets/images/logo_presdemo.png`, una ruta relativa: leída desde
-    // `pwa-familia/index.html` apuntaba a `pwa-familia/assets/`, donde no hay
-    // ninguna carpeta `assets`, y el logotipo salía roto en las dos PWAs.
-    // `new URL` con la raíz de base resuelve los tres casos de una vez: una
-    // dirección entera se respeta, una que empieza con barra también, y una
+    // pide. La columna `logo_url` de una Prestadora guarda una ruta relativa:
+    // leída desde `pwa-familia/index.html` apuntaba a `pwa-familia/assets/`,
+    // donde no hay ninguna carpeta `assets`, y el logotipo salía roto en las dos
+    // PWAs. `new URL` con la raíz de base resuelve los tres casos de una vez:
+    // una dirección entera se respeta, una que empieza con barra también, y una
     // relativa se cuelga de la raíz.
-    const guardado = tenant.logo_url || '/assets/images/logo_presdemo.png';
+    // Si la Prestadora no tiene logotipo propio se muestra el del producto, que
+    // es lo mismo que muestra la pantalla antes de que la Prestadora se
+    // resuelva. El respaldo no nombra a ninguna Prestadora: hasta hoy era el de
+    // una en particular, y cualquier otra veía el logotipo ajeno.
+    const guardado = tenant.logo_url || Identidad.datos.logotipo;
     const logoUrl = new URL(guardado, window.location.origin + '/').href;
     const logoSelectors = '.logo-brand, .tenant-logo, .navbar-logo img, .logo img';
     document.querySelectorAll(logoSelectors).forEach(img => {
       img.src = logoUrl;
     });
 
-    // Reemplazar nombres y textos de marca
-    const nameSelectors = '.tenant-name, .navbar-logo span, .logo span';
-    document.querySelectorAll(nameSelectors).forEach(el => {
-      el.textContent = tenant.name;
-    });
+    // El nombre no se escribe por selector. Cada pantalla dice dónde va con el
+    // marcador `{{organizacion}}`, y esto lo vuelve a resolver ahora que se sabe
+    // cuál es: así alcanza también al título, a la descripción y a los textos
+    // que no tienen ningún selector que los distinga.
+    Identidad.resolverOrganizacion(tenant.name);
 
     // La insignia del producto va solo en el pie, y solo cuando lo que se muestra
     // es una Prestadora cliente y no el producto mismo.

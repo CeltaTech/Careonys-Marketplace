@@ -225,8 +225,10 @@ Por lo que ya se midió, y de a una pantalla por vez:
 - **Quién traduce.** Es la decisión 2 de abajo, la única que sigue abierta.
 - **Los nombres comerciales.** La regla de la empresa los exceptúa: un plan que se llama de una
   manera se llama igual en los tres idiomas. Hay que marcarlos para que el chequeo no los pida.
-- **«PresDemo».** Aparece 19 veces en la cuenta y **no es texto para traducir**: es el pendiente 11
-  y tiene su propio plan en `docs/PLAN_PRESTADORA.md`. Si ese se hace antes, estas 19 se van solas.
+- **«PresDemo».** Ya no está. Aparecía 19 veces en la cuenta y **no era texto para traducir**: era
+  el nombre de la Prestadora de ejemplo escrito a mano. El 26 de agosto de 2026 pasó a ser el
+  marcador `{{organizacion}}`, que se resuelve al cargar, así que esas 19 salieron de la cuenta sin
+  que hubiera que traducir ninguna.
 - **Las nueve ilustraciones.** Varias tienen texto adentro del dibujo. Eso no se traduce con un
   catálogo y va con el pendiente 16.
 
