@@ -34,6 +34,14 @@
   // nunca deja pasar algo que el servidor vaya a rechazar.
   const MINIMO = 8;
 
+  // El botón para ver la contraseña se arma acá, así que su rótulo no está en
+  // ninguna pantalla y el recorrido del catálogo no lo alcanza: hay que pedirle
+  // que traduzca ese pedazo cuando ya existe. Si el catálogo no está cargado en
+  // esta pantalla, no pasa nada: queda lo que dice el botón recién creado.
+  const traducir = (elemento) => {
+    if (window.Catalogo && window.Catalogo.traducir) window.Catalogo.traducir(elemento);
+  };
+
   const Clave = {
 
     MINIMO,
@@ -85,27 +93,47 @@
         if (campo.getAttribute('autocomplete') === 'new-password') {
           campo.setAttribute('minlength', String(MINIMO));
           if (!campo.getAttribute('placeholder')) {
+            // El aviso nace escrito en castellano y el catálogo lo traduce
+            // enseguida, igual que el botón de acá abajo y que el texto que las
+            // pantallas llevan adentro. Es lo que hace que una pantalla que
+            // todavía no carga el catálogo siga diciendo cuántos caracteres
+            // hacen falta en vez de no decir nada.
             campo.setAttribute('placeholder', 'Al menos ' + MINIMO + ' caracteres');
+            // Y la versión traducida se nombra, no se arma: el número entra en
+            // el hueco de la frase, así que sigue viniendo de un solo lugar y
+            // cada idioma lo pone donde le corresponde. Pegar pedazos daría mal
+            // en los otros dos, que ordenan distinto.
+            campo.setAttribute('data-frase-placeholder', 'clave.minimo');
+            campo.setAttribute('data-huecos', JSON.stringify({ cuantos: MINIMO }));
           }
         }
 
         const boton = document.createElement('button');
         boton.type = 'button';
         boton.className = 'campo-clave-boton';
+        // El botón nace en castellano y el catálogo lo traduce enseguida, igual
+        // que el texto escrito adentro de una pantalla. Es a propósito: **un
+        // botón no puede aparecer sin rótulo** ni el instante que tarda en
+        // llegar el archivo, y si el archivo no llega nunca, dice algo.
         boton.textContent = 'Mostrar';
         boton.setAttribute('aria-pressed', 'false');
         boton.setAttribute('aria-label', 'Mostrar la contraseña');
+        boton.setAttribute('data-frase', 'clave.mostrar');
+        boton.setAttribute('data-frase-aria-label', 'clave.mostrar_aria');
         caja.appendChild(boton);
 
         boton.addEventListener('click', () => {
           const seVe = campo.type === 'text';
           campo.type = seVe ? 'password' : 'text';
-          boton.textContent = seVe ? 'Mostrar' : 'Ocultar';
           boton.setAttribute('aria-pressed', seVe ? 'false' : 'true');
-          boton.setAttribute('aria-label',
-            seVe ? 'Mostrar la contraseña' : 'Ocultar la contraseña');
+          boton.setAttribute('data-frase', seVe ? 'clave.mostrar' : 'clave.ocultar');
+          boton.setAttribute('data-frase-aria-label',
+            seVe ? 'clave.mostrar_aria' : 'clave.ocultar_aria');
+          traducir(boton);
           campo.focus();
         });
+
+        traducir(caja);
       });
     }
   };

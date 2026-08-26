@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Pantalla de la sesión, no del directorio: no tiene nada que hacer en un buscador. -->
   <meta name="robots" content="noindex, nofollow" />
-  <title>Acceso</title>
+  <title data-frase="acceso.titulo">Acceso</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
@@ -26,15 +26,16 @@
 
       <!-- Estado: cargando -->
       <div id="estado-cargando" class="acceso-cargando">
-        <i class="fas fa-circle-notch fa-spin"></i> Verificando la sesión...
+        <i class="fas fa-circle-notch fa-spin"></i> <span data-frase="acceso.verificando">Verificando la sesión…</span>
       </div>
 
       <!-- Estado: no se pudo llegar al servidor -->
       <div id="estado-error" style="display:none;">
-        <div class="acceso-aviso critico">
+        <div class="acceso-aviso critico" data-frase="acceso.sin_servidor">
           No se pudo conectar con el servidor. Puede ser la conexión de este equipo.
         </div>
-        <button type="button" class="btn btn-secundario" id="btn-reintentar" style="width:100%;">
+        <button type="button" class="btn btn-secundario" id="btn-reintentar" style="width:100%;"
+          data-frase="acceso.reintentar">
           Reintentar
         </button>
       </div>
@@ -45,26 +46,26 @@
         <div id="aviso-error-acceso" class="acceso-aviso critico" style="display:none;"></div>
 
         <div class="form-group">
-          <label for="acceso-email">Correo electrónico</label>
+          <label for="acceso-email" data-frase="acceso.correo">Correo electrónico</label>
           <input type="email" id="acceso-email" autocomplete="username" required />
         </div>
 
         <div class="form-group">
-          <label for="acceso-clave">Contraseña</label>
+          <label for="acceso-clave" data-frase="acceso.contrasena">Contraseña</label>
           <input type="password" id="acceso-clave" autocomplete="current-password" required />
         </div>
 
         <button type="submit" class="btn btn-primario" id="btn-entrar" style="width:100%;margin-top:8px;">
-          <span id="texto-btn-entrar">Entrar</span>
+          <span id="texto-btn-entrar" data-frase="acceso.entrar">Entrar</span>
         </button>
 
         <p class="acceso-pie">
-          <a href="recuperar-clave.html" id="link-olvide">¿Olvidó la contraseña?</a>
+          <a href="recuperar-clave.html" id="link-olvide" data-frase="acceso.olvide">¿Olvidó la contraseña?</a>
         </p>
 
         <p class="acceso-pie">
-          ¿Todavía no tiene cuenta?
-          <a href="registrar-asistente.html">Darse de alta como Asistente</a>
+          <span data-frase="acceso.sin_cuenta">¿Todavía no tiene cuenta?</span>
+          <a href="registrar-asistente.html" data-frase="acceso.darse_de_alta">Darse de alta como Asistente</a>
         </p>
       </form>
 
@@ -74,6 +75,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/identidad.js"></script>
   <script src="js/texto.js"></script>
+  <script src="js/catalogo.js"></script>
   <script src="js/clave.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
@@ -92,10 +94,27 @@
       });
     }
 
-    function avisar(id, texto) {
+    // Se le pasa **la clave** de la frase, no la frase. Así el aviso queda
+    // marcado con lo que dice, y si la persona cambia de idioma con el cartel
+    // en pantalla, el cartel cambia también. Escribiéndole el texto ya armado
+    // se quedaba en el idioma en que nació.
+    function avisar(id, clave, huecos) {
       const caja = document.getElementById(id);
-      caja.textContent = texto;
-      caja.style.display = texto ? 'block' : 'none';
+      if (!clave) {
+        caja.removeAttribute('data-frase');
+        caja.removeAttribute('data-huecos');
+        caja.textContent = '';
+        caja.style.display = 'none';
+        return;
+      }
+      caja.setAttribute('data-frase', clave);
+      if (huecos) caja.setAttribute('data-huecos', JSON.stringify(huecos));
+      // Una caja que se abre es porque hay algo que decir, así que nunca
+      // aparece en blanco: si la frase no se resuelve —el catálogo no llegó—
+      // se dice lo genérico, que está escrito adentro de `js/catalogo.js` en
+      // los tres idiomas justamente para esto.
+      caja.textContent = Catalogo.frase(clave, huecos) || Catalogo.frase('error.generico');
+      caja.style.display = 'block';
     }
 
     // A dónde va cada quien después de entrar. Si venía de una pantalla que pidió
@@ -112,6 +131,24 @@
 
     async function arrancar() {
       mostrar('cargando');
+
+      // El texto de esta pantalla se pide explícitamente y no se confía en que
+      // el recorrido del documento haya terminado: los avisos de acá abajo
+      // salen del catálogo, y uno de ellos puede aparecer antes de que nadie
+      // haya mirado la pantalla. Pedirlo dos veces no cuesta nada
+      // —`cargarFrases` trae el archivo una sola vez por página—.
+      //
+      // Y va **afuera** del bloque de abajo, con su propia red. Adentro, un
+      // catálogo que no llega se confundía con un servidor caído: la pantalla
+      // mostraba «no se pudo conectar» y escondía el formulario, cuando lo que
+      // pasaba era que faltaba una traducción y se podía entrar igual. Se
+      // comprobó escondiendo el archivo.
+      try {
+        await Catalogo.cargarFrases();
+      } catch (err) {
+        console.error('Acceso, texto de la pantalla:', err);
+      }
+
       try {
         const sesion = await Sesion.getSession();
         if (sesion) {
@@ -125,8 +162,7 @@
         await ClienteDatos.initTenant();
         mostrar('listo');
         if (!ClienteDatos.currentTenant || !ClienteDatos.currentTenant.id) {
-          avisar('aviso-prestadora',
-            'No se reconoció la Prestadora de este enlace. Se puede iniciar sesión igual.');
+          avisar('aviso-prestadora', 'acceso.prestadora_desconocida');
         }
       } catch (err) {
         console.error('Acceso, arranque:', err);
@@ -153,24 +189,34 @@
       const clave = document.getElementById('acceso-clave').value;
 
       if (!email || !clave) {
-        avisar('aviso-error-acceso', 'Hay que completar el correo y la contraseña.');
+        avisar('aviso-error-acceso', 'acceso.faltan_datos');
         return;
       }
 
       const boton = document.getElementById('btn-entrar');
       const texto = document.getElementById('texto-btn-entrar');
-      const textoOriginal = texto.textContent;
+      // El rótulo se cambia nombrando la frase y pidiendo que la traduzcan, no
+      // escribiendo el texto: así el botón queda marcado con lo que dice, y un
+      // cambio de idioma mientras la operación corre lo alcanza igual. Si el
+      // catálogo no llegó, el rótulo se queda como estaba, que es castellano:
+      // un botón sin texto no se entiende, uno en el idioma equivocado sí.
+      const rotular = (clave) => {
+        texto.setAttribute('data-frase', clave);
+        Catalogo.traducir(texto);
+      };
+
       boton.disabled = true;
-      texto.textContent = 'Entrando...';
+      rotular('acceso.entrando');
 
       try {
         await Sesion.login(email, clave);
         window.location.href = destino(await Sesion.perfil());
       } catch (err) {
-        console.error('Acceso, inicio de sesión:', err);
-        avisar('aviso-error-acceso', Texto.mensajeDeError(err));
+        // El detalle técnico lo registra `claveDeError` y no sale de la consola;
+        // a la pantalla va la frase que corresponde a esa clase de falla.
+        avisar('aviso-error-acceso', Texto.claveDeError(err, 'Acceso, inicio de sesión:'));
         boton.disabled = false;
-        texto.textContent = textoOriginal;
+        rotular('acceso.entrar');
       }
     });
 

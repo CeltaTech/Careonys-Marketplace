@@ -1,10 +1,11 @@
 # Plan: los tres idiomas
 
-> **Esto es una propuesta, no un cambio hecho.** La regla de la empresa «antes de un cambio grande»
-> pide inventario, después plan, y recién después tocar código. Acá están los dos primeros pasos.
-> **Falta la aprobación del Desarrollador, y las cinco decisiones de la sección 5.**
+> **El mecanismo está construido y funcionando; el trabajo de mudar las frases recién empieza.**
+> Al 26 de agosto de 2026: **1 de 45 archivos convertido** y **40 frases** en los tres idiomas.
+> Lo que falta son las otras 44 pantallas, y una sola decisión del Desarrollador —quién traduce—,
+> que es la número 2 de la sección 5.
 >
-> Corresponde al pendiente 9. Cuando se ejecute, este archivo se borra.
+> Corresponde al pendiente 9. Cuando esté todo convertido, este archivo se borra.
 
 ---
 
@@ -78,7 +79,7 @@ olvida de ellos deja a esas personas en el idioma equivocado.
 **Seis archivos concentran 801 de las 1.256**, o sea el 64 %. Ese es el orden en que conviene
 tomarlos.
 
-### 2.3 Lo que ya está resuelto sin que nadie se lo propusiera
+### 2.3 Lo que ya estaba resuelto sin que nadie se lo propusiera
 
 Tres cosas quedaron afuera de la cuenta, y no por descuido:
 
@@ -86,7 +87,7 @@ Tres cosas quedaron afuera de la cuenta, y no por descuido:
   de los demás `data/catalogo-*.json` no están escritas en ninguna pantalla: la pantalla pide la
   clave y el catálogo devuelve el texto. **Ahí el idioma entra por un solo lugar.** Hoy esos
   archivos tienen una sola columna, `es-AR`; agregarle dos columnas es agregar dos columnas.
-- **Las fechas.** `Texto.fechaCorta()` (`js/texto.js:57`) es el único lugar del proyecto donde se
+- **Las fechas.** `Texto.fechaCorta()` (`js/texto.js:60`) es el único lugar del proyecto donde se
   le da forma a una fecha. El idioma le entra por ahí y no hay que buscarlo pantalla por pantalla.
 - **El aviso del chat.** `data/patrones-contacto.json` nació el 26 de agosto de 2026 con los tres
   idiomas adentro, porque para entonces la regla ya estaba escrita.
@@ -96,17 +97,21 @@ costó nada**. Lo que cuesta son las 751 que no.
 
 ---
 
-## 3. Lo que se propone construir
+## 3. Lo que está construido
 
-### 3.1 Un catálogo de textos, con la misma forma que los que ya hay
+Las cuatro piezas de abajo existen y corren. Lo que sigue abierto es mudar las frases de las 44
+pantallas que faltan.
 
-`data/catalogo-textos.json`, hermano de los seis que ya existen y leído por el mismo `js/catalogo.js`:
+### 3.1 El catálogo de frases
+
+`data/catalogo-frases.json`, hermano de los seis que ya existían y leído por el mismo
+`js/catalogo.js`:
 
 ```json
 {
-  "textos": {
+  "frases": {
     "acceso.entrar": {
-      "es-AR": "Ingresar",
+      "es-AR": "Entrar",
       "en": "Sign in",
       "pt-BR": "Entrar"
     }
@@ -117,52 +122,88 @@ costó nada**. Lo que cuesta son las 751 que no.
 La clave se nombra `pantalla.cosa`. **Se nombra por lo que hace y no se renombra**, que es la regla
 de «lo que se guarda para siempre»: la clave es lo guardado, el texto es lo visible.
 
-### 3.2 Las pantallas piden por clave, como ya piden la marca
+Los huecos se escriben entre llaves simples —`{cuantos}`— y se rellena la frase entera, nunca de a
+pedazos: cada idioma ordena distinto. Una clave que empieza con guión bajo es un separador para
+leer el archivo, no una frase.
 
-El mecanismo existe y funciona: `_applyBranding()` (`js/apiClient.js:76`) ya recorre la pantalla al
-cargar y reemplaza el nombre y el logotipo de la Prestadora. Se propone lo mismo para el texto:
+**Cinco frases no están ahí**, a propósito: las que hacen falta cuando ese archivo no llegó. Viven
+adentro de `js/catalogo.js`, con sus tres idiomas, y `verificar_frases.mjs` comprueba que no estén
+además en el catálogo.
+
+### 3.2 Las pantallas piden por clave, como ya pedían la marca
+
+El mecanismo ya existía para la marca: `_applyBranding()` (`js/apiClient.js:106`) recorre la
+pantalla al cargar y reemplaza el nombre y el logotipo de la Prestadora. El texto va igual:
 
 ```html
-<button data-texto="acceso.entrar">Ingresar</button>
+<button data-frase="acceso.entrar">Entrar</button>
+<input data-frase-placeholder="clave.minimo" data-huecos='{"cuantos":8}' placeholder="…" />
 ```
 
+`data-frase` cambia lo que se lee adentro del elemento; `data-frase-<atributo>` cambia un atributo
+—`placeholder`, `aria-label`, `title`—; `data-huecos` trae lo que va adentro de los huecos. Se
+llama `data-huecos` y no `data-frase-huecos` a propósito: todo lo que empieza con `data-frase-` es
+el nombre de un atributo para traducir.
+
 Lo escrito adentro queda como está y es lo que se ve **antes** de que responda el catálogo —igual
-que hoy con la marca—, así que una pantalla nunca aparece vacía.
+que con la marca—, así que una pantalla nunca aparece vacía.
+
+**Lo que arma el código**, y por lo tanto no está escrito en ninguna pantalla, se marca igual y
+después pide la traducción de ese pedazo: `Catalogo.traducir(elemento)`. Así lo hacen el botón de
+ver la contraseña (`js/clave.js:125`) y los avisos de `acceso.html`. La ventaja no es de estilo:
+**un texto escrito a mano se queda en el idioma en que nació**, y si la persona cambia de idioma
+con el cartel en pantalla, el cartel no se entera.
 
 **Por qué así y no con un armador de proyectos:** este producto no tiene herramienta de armado, y
 esperar a tenerla es esperar a la migración a React. El atributo funciona hoy, en las catorce
 pantallas y en las dos aplicaciones del teléfono, sin instalar nada. Y cuando llegue React, las
 claves ya están puestas: se cambia quién las lee, no dónde están.
 
-### 3.3 Un chequeo que falle cuando falte una traducción
+### 3.3 De dónde sale el idioma
 
-`scripts/verificar_textos.mjs`, con la forma de los catorce que ya corren antes de cada `commit`:
+`Catalogo.idiomaDelEntorno()`, y por ahora sin selector visible. En orden: lo que diga
+`?idioma=` en la dirección, después lo guardado de la vez anterior, después lo que declara el
+navegador. `es-419` y `pt-PT` caen en `es-AR` y `pt-BR` por la raíz, no por una lista escrita a
+mano. `Catalogo.cambiarIdioma()` cambia la pantalla entera sin recargarla y guarda la elección.
+
+**El selector visible todavía no se puso, y es a propósito**: dónde va en el encabezado de catorce
+pantallas es una decisión de diseño, y ésas se consultan. Es la primera mitad de la decisión 1 de
+la sección 5, que ya está tomada; falta la segunda.
+
+### 3.4 El chequeo que falla cuando falte una traducción
+
+`scripts/verificar_frases.mjs`, con la forma de sus hermanos, que corren antes de cada `commit`.
+Entra solo en `verificar_todo.mjs`, que busca sus hermanos por el nombre.
 
 1. Toda clave nombrada en una pantalla existe en el catálogo.
 2. Toda clave del catálogo tiene los tres idiomas, sin ninguno vacío.
 3. Ninguna clave del catálogo quedó sin usar.
 4. Ninguna pantalla ya convertida volvió a tener texto escrito a mano.
+5. Ninguna de las cinco frases de arranque está además en el catálogo.
 
 El punto 4 es el que sostiene todo lo demás: sin él, la pantalla siguiente vuelve a nacer en un
-solo idioma y nadie se entera hasta que un cliente la abre.
+solo idioma y nadie se entera hasta que un cliente la abre. Ve las claves puestas desde el código
+—`setAttribute`, ternarios— y no sólo las escritas en el HTML.
 
-### 3.4 En qué orden
+### 3.5 En qué orden
 
 Por lo que ya se midió, y de a una pantalla por vez:
 
-1. **`js/texto.js` y los mensajes de error primero.** Son pocos, los ve cualquiera de las tres
-   puntas, y un mensaje de error es texto visible: se traduce y sale del catálogo.
-2. **Las seis pantallas grandes**, que son el 64 %.
-3. **Las nueve chicas.**
-4. **Los `alt`, los `aria-label` y las `meta`**, todos juntos al final, que son 84 y se hacen de
+1. **`js/texto.js` y los mensajes de error primero.** ✔ Hecho. Son pocos, los ve cualquiera de las
+   tres puntas, y un mensaje de error es texto visible: se traduce y sale del catálogo.
+   `Texto.claveDeError()` clasifica la falla y devuelve una clave; la frase la pone el catálogo.
+2. **`acceso.html`**, entera, incluidos el botón de ver la contraseña y los avisos que escribe el
+   código. ✔ Hecha. Es la pantalla chica que ejercita todas las formas del mecanismo.
+3. **Las seis pantallas grandes**, que son el 64 %.
+4. **Las nueve chicas.**
+5. **Los `alt`, los `aria-label` y las `meta`**, todos juntos al final, que son 84 y se hacen de
    una pasada.
 
 ---
 
 ## 4. Lo que este plan no resuelve
 
-- **Cómo se elige el idioma.** Es la decisión 1 de abajo.
-- **Quién traduce.** Es la decisión 2.
+- **Quién traduce.** Es la decisión 2 de abajo, la única que sigue abierta.
 - **Los nombres comerciales.** La regla de la empresa los exceptúa: un plan que se llama de una
   manera se llama igual en los tres idiomas. Hay que marcarlos para que el chequeo no los pida.
 - **«PresDemo».** Aparece 19 veces en la cuenta y **no es texto para traducir**: es el pendiente 11
@@ -172,37 +213,58 @@ Por lo que ya se midió, y de a una pantalla por vez:
 
 ---
 
-## 5. Lo que hay que decidir antes de empezar
+## 5. Las decisiones
 
-1. **Cómo se elige el idioma.** Tres caminos, y no son excluyentes: lo que declara el navegador;
-   un selector visible; o lo guardado en el legajo de esa persona. **Se recomienda el navegador
-   como valor de arranque y un selector visible que lo pise**, porque el navegador acierta casi
-   siempre y el selector arregla el caso en que no.
-2. **Quién traduce las 751.** Una máquina y después alguien que revise, o alguien desde el
-   principio. Es una decisión de plata y de calidad, y **también es un caso de «evaluar qué tareas
-   conviene dejarle a una IA»**: los 660 rótulos cortos los hace bien una máquina, los 91 párrafos
-   son texto de venta y de aviso legal, y ahí la máquina no alcanza.
-3. **Si se hace antes de React o adentro.** Hoy el pendiente 9 está anotado como «se resuelve
-   dentro de la migración a React». **Se recomienda hacerlo antes**, por lo que dice el propio
-   pendiente: cada pantalla nueva lo encarece, y la migración va a agregar pantallas.
-4. **Qué pasa con `pt-BR` y el trato.** El chequeo `verificar_trato.mjs` mira que no se tutee, y
-   está escrito para el castellano. En portugués «você» es la forma corriente y no es tutear. Hay
-   que decidir si el chequeo se enseña a distinguir el idioma o si sólo mira `es-AR`.
-5. **Si el catálogo de textos es un archivo o una tabla.** Los seis catálogos de hoy son archivos y
-   el pendiente 7 dice que todos tienen que terminar en tablas. **Se recomienda archivo por ahora**
-   y que viaje junto con los otros seis cuando ese pendiente se haga: partirlo en dos formas
-   distintas es trabajo de más para el mismo final.
+1. **Cómo se elige el idioma.** ✔ Tomada como se recomendaba: el navegador como valor de arranque
+   y un selector visible que lo pise. Lo primero está construido (3.3). **El selector visible falta
+   y no se pone solo**: dónde va en el encabezado es diseño, y eso se consulta.
+2. **Quién traduce las 751.** ⏳ **Abierta.** Una máquina y después alguien que revise, o alguien
+   desde el principio. Es una decisión de plata y de calidad, y **también es un caso de «evaluar qué
+   tareas conviene dejarle a una IA»**: los 660 rótulos cortos los hace bien una máquina, los 91
+   párrafos son texto de venta y de aviso legal, y ahí la máquina no alcanza. Las 40 que ya están
+   las tradujo la línea de comandos.
+3. **Si se hace antes de React o adentro.** ✔ Tomada: antes, como se recomendaba, por lo que decía
+   el propio pendiente —cada pantalla nueva lo encarece, y la migración va a agregar pantallas.
+4. **Qué pasa con `pt-BR` y el trato.** ✔ Resuelta, y hacía falta el mismo día: «publicá-lo», que
+   en portugués es lo normal, se leía como un voseo, y «cuidador», que en portugués es la palabra
+   correcta, es la que el vocabulario prohíbe en castellano. `scripts/texto_visible.mjs` tiene
+   ahora `soloCastellano()`, que deja fuera lo rotulado `en` y `pt-BR`; lo usan
+   `verificar_trato.mjs` y `verificar_vocabulario.mjs`, y **se reconoce por la clave, no por las
+   palabras**. Los chequeos que valen para los tres idiomas siguen viendo todo.
+5. **Si el catálogo de frases es un archivo o una tabla.** ✔ Tomada como se recomendaba: archivo
+   por ahora, y viaja junto con los otros seis cuando se haga el pendiente 7. El único lugar que
+   sabe de dónde sale es `_traer()` en `js/catalogo.js`.
+
+### 5.1 Lo que conviene que el Desarrollador confirme
+
+No traba nada —está escrito y funcionando—, pero son palabras del negocio en dos idiomas y las
+puso la línea de comandos:
+
+| Castellano | `en` | `pt-BR` |
+|---|---|---|
+| Prestadora | Provider | Prestadora |
+| Asistente | Caregiver | Assistente |
+| legajo | personal file | cadastro |
+
+`Caregiver` es además el término que ya usa la base (`caregivers`), así que en inglés no hay
+elección real. Los otros dos sí son elegibles.
 
 ---
 
 ## 6. Riesgos
 
 - **La pantalla convertida a medias.** Media pantalla en castellano y media en inglés es peor que
-  toda en castellano. Por eso se convierte de a una pantalla entera, y el chequeo del punto 3.3.4
-  la mira completa.
+  toda en castellano. Por eso se convierte de a una pantalla entera, y el chequeo del punto 3.4.4
+  la mira completa. **Ya pasó una vez**, y no con el HTML sino con lo que escribe el código: el
+  aviso de `acceso.html` se quedaba en castellano al cambiar de idioma porque nació como texto y
+  no como clave.
 - **La frase partida en pedazos.** Hoy hay texto armado con `+` desde los guiones —«Quedan 3
   intentos»—. Traducido pedazo por pedazo sale mal en cualquier idioma que ordene distinto. Esas
   145 apariciones se convierten en frases con huecos, no en pedazos sueltos.
+- **El archivo que no llega.** Si el catálogo no se puede traer, lo que se ve es el castellano que
+  la pantalla trae adentro, y `lang` se deja como está: declarar inglés sobre texto castellano hace
+  que un lector de pantalla lo pronuncie mal. Se comprobó escondiendo el archivo, y ahí aparecieron
+  dos fallas de verdad, ya corregidas.
 - **El texto legal.** Los avisos legales no se traducen: **salen del documento legal de ese país**,
   y si el país no tiene documento no hay aviso. Eso ya está escrito en la regla de la empresa y no
   cambia acá.

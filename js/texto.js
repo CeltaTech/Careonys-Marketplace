@@ -33,6 +33,13 @@
    muestra a nadie. Se clasifica el error, se muestra la frase que corresponde, y
    el texto técnico queda en la consola.
 
+   Y son dos cosas separadas a propósito, porque son de dos clases distintas:
+   `claveDeError` mira la falla y decide **de qué se trata**, que es lógica y
+   vive acá; la frase que se lee sale de `data/catalogo-frases.json`, porque un
+   mensaje de error es texto visible y se traduce a los tres idiomas como
+   cualquier otro. Antes las frases estaban escritas en este archivo, en un solo
+   idioma.
+
    Es el único clasificador del proyecto, como pide «ningún patrón repetido sin punto único de verdad». Vivió un tiempo
    en `js/auth.js` con el nombre `Sesion.mensajeDeError` y se mudó acá porque un
    mensaje de error es texto y no es sesión, y porque `js/texto.js` lo cargan
@@ -102,6 +109,23 @@ const Texto = {
    * porque «password» aparece también adentro de «invalid login credentials».
    */
   mensajeDeError(error, queSeIntentaba = '') {
+    return this.frase(this.claveDeError(error, queSeIntentaba));
+  },
+
+  /**
+   * Qué clase de falla fue. Devuelve una clave del catálogo de frases y no una
+   * frase: **clasificar es lógica y la frase es texto visible**, y el texto
+   * visible se traduce a los tres idiomas, así que no puede vivir acá.
+   *
+   * Está separado de `mensajeDeError` para poder probarlo: una prueba que le
+   * pasa un error y espera una clave no se rompe el día que alguien mejora la
+   * redacción, y así puede decir algo sobre la clasificación, que es lo que
+   * esta función hace.
+   *
+   * El orden importa: lo específico primero, porque «password» aparece también
+   * adentro de «invalid login credentials».
+   */
+  claveDeError(error, queSeIntentaba = '') {
     if (error) console.error(queSeIntentaba || 'Falla:', error);
 
     const crudo = String(
@@ -110,58 +134,75 @@ const Texto = {
     const dice = (...trozos) => trozos.some((trozo) => crudo.includes(trozo));
 
     // Ingreso y alta de cuenta.
-    if (dice('invalid login credentials')) return 'El correo o la contraseña no coinciden.';
-    if (dice('email not confirmed')) return 'La cuenta existe, pero falta confirmar el correo. El enlace está en la casilla.';
-    if (dice('already registered', 'already been registered')) return 'Ya hay una cuenta con ese correo. Se puede entrar desde la pantalla de acceso.';
+    if (dice('invalid login credentials')) return 'error.credenciales';
+    if (dice('email not confirmed')) return 'error.correo_sin_confirmar';
+    if (dice('already registered', 'already been registered')) return 'error.ya_registrado';
     // El servidor tiene su propia idea de qué dirección es válida y rechaza
     // varias que parecen bien escritas —las terminadas en `.test`, por
     // ejemplo—. Va después del caso anterior a propósito: «ya registrada»
     // también nombra la dirección, y ahí lo que hay que decir es otra cosa.
     if (dice('email_address_invalid')
         || (crudo.includes('email address') && crudo.includes('is invalid'))) {
-      return 'El servidor no acepta esa dirección de correo. Conviene revisar que esté bien escrita, o usar otra.';
+      return 'error.correo_rechazado';
     }
-    if (dice('rate limit', 'too many')) return 'Hubo demasiados intentos seguidos. Conviene esperar unos minutos.';
+    if (dice('rate limit', 'too many')) return 'error.demasiados_intentos';
     // Los enlaces que llegan por correo —confirmar el alta, elegir una
     // contraseña nueva— sirven una sola vez y vencen.
-    if (dice('otp_expired', 'link is invalid', 'token has expired', 'token not found')) return 'El enlace del correo ya no sirve. Se puede pedir uno nuevo.';
+    if (dice('otp_expired', 'link is invalid', 'token has expired', 'token not found')) return 'error.enlace_vencido';
     // Al elegir una contraseña nueva, el servidor rechaza la que ya se tenía.
     // Va antes que el caso general, que si no contestaría «elegir una más larga».
-    if (dice('should be different')) return 'La contraseña nueva tiene que ser distinta de la anterior.';
-    if (dice('password')) return 'La contraseña no cumple con lo que pide el servidor. Conviene elegir una más larga.';
+    if (dice('should be different')) return 'error.clave_repetida';
+    if (dice('password')) return 'error.clave_debil';
 
     // Archivos del legajo.
-    if (dice('maximum allowed size', 'payload too large')) return 'El archivo pesa demasiado. El límite es 10 MB para documentos y 5 MB para la foto.';
-    if (dice('mime type', 'invalid_mime')) return 'Ese tipo de archivo no se acepta. Se admiten imágenes (JPG, PNG, WEBP) y PDF.';
+    if (dice('maximum allowed size', 'payload too large')) return 'error.archivo_pesado';
+    if (dice('mime type', 'invalid_mime')) return 'error.archivo_tipo';
 
     // Los cuatro avisos que puede devolver rendir_evaluacion (migración 0008).
-    if (dice('sin_legajo')) return 'Para rendir hace falta tener el legajo cargado. Se completa desde «Mi Legajo».';
-    if (dice('sin_intentos')) return 'Ya se usaron todos los intentos de esta evaluación.';
-    if (dice('evaluacion_vacia', 'evaluacion_inexistente')) return 'Esta evaluación no está disponible en este momento.';
+    if (dice('sin_legajo')) return 'error.sin_legajo';
+    if (dice('sin_intentos')) return 'error.sin_intentos';
+    if (dice('evaluacion_vacia', 'evaluacion_inexistente')) return 'error.evaluacion_no_disponible';
 
     // Publicar un aviso son dos pedidos: el aviso y sus franjas. Si el
     // segundo falla, el primero ya está hecho, y decir «no se pudo publicar»
     // llevaría a publicarla dos veces.
-    if (dice('aviso_sin_franjas')) return 'El aviso quedó publicado, pero no se pudieron guardar los días y turnos en los que se necesita el cuidado. No hace falta publicarlo de nuevo.';
+    if (dice('aviso_sin_franjas')) return 'error.aviso_sin_franjas';
 
     // El directorio sin saber de qué Prestadora es. No se pide nada y se dice
     // por qué: mostrar «todas» sería mostrarle a una Familia el personal de una
     // Prestadora que no es la suya.
-    if (dice('sin_prestadora')) return 'No se pudo saber de qué Prestadora es este directorio, así que no se muestra ninguno. Conviene entrar por el enlace de la Prestadora.';
+    if (dice('sin_prestadora')) return 'error.sin_prestadora';
 
     // La dirección nombró una Prestadora que no existe. Se dice que no se
     // encontró y no se muestra otra.
-    if (dice('prestadora_desconocida')) return 'No se encontró ninguna Prestadora con ese nombre en la dirección, así que no hay directorio para mostrar. Conviene revisar el enlace.';
+    if (dice('prestadora_desconocida')) return 'error.prestadora_desconocida';
 
     // Lo genérico, que cubre cualquier tabla y cualquier pantalla.
-    if (dice('failed to fetch', 'networkerror', 'err_internet', 'err_name_not_resolved')) return 'No hay conexión con el servidor. Conviene reintentar en un momento.';
-    if (dice('session missing', 'session not found', 'session_not_found')) return 'La sesión ya no está abierta. Conviene volver a ingresar.';
-    if (dice('row-level security', 'violates row', 'permission denied', 'unauthorized', 'not authorized', 'jwt') || /\b40[13]\b/.test(crudo)) return 'La sesión no tiene permiso para esta operación, o venció. Conviene volver a ingresar.';
-    if (dice('duplicate key', 'already exists') || /\b409\b/.test(crudo)) return 'Ese dato ya estaba registrado.';
-    if (dice('does not exist', 'not found') || /\b404\b/.test(crudo)) return 'No se encontró lo que se estaba buscando.';
-    if (dice('invalid input', 'violates check constraint') || /\b4(00|22)\b/.test(crudo)) return 'Alguno de los datos enviados no es válido. Conviene revisar el formulario.';
+    if (dice('failed to fetch', 'networkerror', 'err_internet', 'err_name_not_resolved')) return 'error.sin_conexion';
+    if (dice('session missing', 'session not found', 'session_not_found')) return 'error.sesion_cerrada';
+    if (dice('row-level security', 'violates row', 'permission denied', 'unauthorized', 'not authorized', 'jwt') || /\b40[13]\b/.test(crudo)) return 'error.sin_permiso';
+    if (dice('duplicate key', 'already exists') || /\b409\b/.test(crudo)) return 'error.duplicado';
+    if (dice('does not exist', 'not found') || /\b404\b/.test(crudo)) return 'error.no_encontrado';
+    if (dice('invalid input', 'violates check constraint') || /\b4(00|22)\b/.test(crudo)) return 'error.datos_invalidos';
 
-    return 'No se pudo completar la operación. Si vuelve a pasar, conviene avisar al soporte.';
+    return 'error.generico';
+  },
+
+  /**
+   * El texto de una clave, en el idioma que corresponda. Es un atajo a
+   * `Catalogo.frase` con una red abajo: **un mensaje de error no se puede
+   * quedar sin decir nada**, así que cuando la clave no se resuelve —el
+   * catálogo no llegó, o la pantalla no lo carga— cae en `error.generico`, que
+   * está escrita adentro de `js/catalogo.js` con sus tres idiomas justamente
+   * para este caso.
+   *
+   * Corriendo fuera del navegador no hay catálogo ni pantalla: ahí devuelve la
+   * clave, que es lo que una prueba necesita ver.
+   */
+  frase(clave, huecos) {
+    if (typeof window === 'undefined' || !window.Catalogo) return clave;
+    return window.Catalogo.frase(clave, huecos)
+      || window.Catalogo.frase('error.generico');
   }
 };
 

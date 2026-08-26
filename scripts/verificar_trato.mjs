@@ -27,7 +27,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
 import { archivos } from './recorrido.mjs';
-import { visible } from './texto_visible.mjs';
+import { visible, soloCastellano } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
@@ -97,7 +97,7 @@ for (const camino of archivos(raiz, ['.html', '.js', '.json'], AJENAS)) {
   revisados++;
   const crudo = readFileSync(camino, 'utf8');
   const vistos = new Set();
-  for (const [renglon, texto] of visible(crudo, nombre.endsWith('.html'))) {
+  for (const [renglon, texto] of visible(soloCastellano(crudo), nombre.endsWith('.html'))) {
     PATRON.lastIndex = 0;
     const acierto = PATRON.exec(texto);
     if (acierto && !vistos.has(renglon + acierto[1])) {

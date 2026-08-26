@@ -884,9 +884,9 @@ registradas pueden comunicarse con ella, y que lo hacen por la plataforma
 Lo que falta —empezar una conversación con esa persona en particular— quedó anotado como pendiente 46.
 
 **Tres traducciones que estaban por escribirse dos veces subieron a los archivos compartidos**
-(«ningún patrón repetido sin punto único de verdad»): el precio en pesos es `Texto.importe` (`js/texto.js:81`), la etiqueta de una lista es
-`Catalogo.etiquetaSiExiste` (`js/catalogo.js:160`), y la de una tarea —que puede estar en cualquiera
-de tres listas— es `Catalogo.etiquetaDeTarea` (`js/catalogo.js:173`). Vivían adentro de
+(«ningún patrón repetido sin punto único de verdad»): el precio en pesos es `Texto.importe` (`js/texto.js:88`), la etiqueta de una lista es
+`Catalogo.etiquetaSiExiste` (`js/catalogo.js:310`), y la de una tarea —que puede estar en cualquiera
+de tres listas— es `Catalogo.etiquetaDeTarea` (`js/catalogo.js:323`). Vivían adentro de
 `directorio.html`; ahora las dos pantallas las piden al mismo lugar.
 
 
@@ -1735,13 +1735,13 @@ datos y además escribe en la pantalla—, porque la primera versión, que busca
 palabras. El detector por estructura encontró catorce funciones y avisó de siete. **Las siete eran
 falsas**, y cada motivo es distinto, que es lo que termina de decidir la cuestión:
 
-- **El estado lo enciende una función auxiliar.** `panel-prestadora.html:168` llama a
+- **El estado lo enciende una función auxiliar.** `panel-prestadora.html:169` llama a
   `estadoTabla('info', 'Buscando los legajos de la Prestadora...')` antes de pedir nada, y
   `mockup-app.html:473` y `pwa-familia/index.html:889` llaman a `recMostrar('cargando')`. El
   detector sólo ve lo que se escribe ahí mismo.
-- **El fallo lo atrapa quien llama.** `examen.html:310` y `examen.html:375` no tienen `catch`, pero
+- **El fallo lo atrapa quien llama.** `examen.html:311` y `examen.html:376` no tienen `catch`, pero
   nunca se los llama fuera de uno: los envuelven `examen.html:368` y `examen.html:553`. Igual pasa
-  con `armarAuditoria` (`panel-prestadora.html:250`), envuelta por `abrirAuditoria`
+  con `armarAuditoria` (`panel-prestadora.html:251`), envuelta por `abrirAuditoria`
   (`panel-prestadora.html:237`).
 - **El estado de carga está escrito en el HTML desde el principio.** `pwa-asistente/index.html:341`
   ya dice «Cargando estado...» antes de que corra una sola línea de JavaScript.
@@ -1765,7 +1765,7 @@ que conmutan `display` dicen ahora `''`, con el motivo escrito al lado para que 
 
 **La «toda operación destructiva se confirma» se midió en el mismo rato y salió todavía más corta.** Pide confirmación explícita
 ante toda operación destructiva, y la medición encontró que en este proyecto hay exactamente una:
-rechazar un legajo (`panel-prestadora.html:348`). No hay un solo `delete` contra la base en las
+rechazar un legajo (`panel-prestadora.html:349`). No hay un solo `delete` contra la base en las
 cuarenta y cuatro pantallas y guiones —lo único que se parece es un `delete` de JavaScript sobre un
 objeto en memoria, `js/apiClient.js:255`, que no toca nada guardado—, y salir de la sesión no
 destruye nada. La única que hay ya pregunta antes, y la pregunta dice qué queda después:
@@ -2111,6 +2111,92 @@ mensajes.
 columnas de hoy, y sigue sin filtrar por conversación porque la tabla de hoy no tiene con qué.
 Cuál es el modelo del chat —`messages`, o `conversaciones` y `mensajes`— sigue esperando decisión
 en el §4 de este mismo documento, y mover una consulta de lugar no es elegirlo.
+
+### Las pantallas dejaron de tener el texto adentro
+
+Hasta el 26 de agosto de 2026 todo lo que una persona lee estaba escrito a mano adentro del HTML,
+en castellano y nada más, mientras la regla de la empresa pide `es-AR`, `en` y `pt-BR` **desde el
+día uno**. Ese día se construyó el mecanismo entero y se convirtió la primera pantalla. El
+inventario, el orden y lo que falta están en `docs/PLAN_MULTIIDIOMA.md`; acá está lo que existe.
+
+**El texto vive donde ya vivían las opciones.** `data/catalogo-frases.json` es hermano de los seis
+catálogos que ya había y lo lee el mismo `js/catalogo.js`. La pantalla nombra y el catálogo
+contesta, que es exactamente el reparto que ya regía para los desplegables:
+
+```html
+<button data-frase="acceso.entrar">Entrar</button>
+```
+
+Lo escrito adentro no se borra: es lo que se ve mientras el archivo viaja, y lo que queda si el
+archivo no llega. **Una pantalla nunca aparece vacía**, ni el instante que tarda.
+
+Son tres marcas y hacen tres cosas distintas: `data-frase` cambia lo que se lee adentro del
+elemento, `data-frase-<atributo>` cambia un atributo —`placeholder`, `aria-label`, `title`—, y
+`data-huecos` trae lo que va adentro de los huecos. **La frase se rellena entera y no se arma con
+pedazos**: «Al menos 8 caracteres» pegado con un `+` sale mal en portugués y en inglés, que ordenan
+distinto, así que el número entra en `{cuantos}` y cada idioma lo pone donde le corresponda.
+
+**Lo que arma el código se marca igual.** El botón de ver la contraseña no está escrito en ninguna
+pantalla —lo fabrica `js/clave.js`—, así que lleva sus `data-frase` puestos desde el código y pide
+`Catalogo.traducir(elemento)` cuando ya existe. Eso no es prolijidad: **un texto escrito a mano se
+queda en el idioma en que nació**. Se vio en `acceso.html`, donde el aviso de la Prestadora
+desconocida seguía en castellano después de cambiar a portugués, con la pantalla entera ya
+traducida alrededor. Ahora `avisar()` recibe la clave y no la frase, y el cartel cambia con todo lo
+demás.
+
+**Los mensajes de error se partieron en dos**, que era la única forma de que se pudieran traducir.
+`Texto.claveDeError()` mira la falla y decide **de qué se trata**, que es lógica y se queda en
+`js/texto.js`; la frase que se lee sale del catálogo, porque un mensaje de error es texto visible.
+De paso quedó comprobable: una prueba que le pasa un error y espera una clave no se rompe el día
+que alguien mejora la redacción.
+
+**El idioma se decide en un solo lugar.** `idiomaDelEntorno()`, en este orden: `?idioma=` en la
+dirección, lo guardado de la vez anterior, lo que declara el navegador. `es-419` y `pt-PT` caen en
+`es-AR` y `pt-BR` por la raíz y no por una lista escrita a mano. `Catalogo.cambiarIdioma()` reescribe
+la pantalla sin recargarla. **Falta el selector visible**: dónde va en el encabezado de catorce
+pantallas es una decisión de diseño, y ésas se consultan.
+
+**El chequeo es lo que impide que esto se deshaga.** `scripts/verificar_frases.mjs` corre antes de
+cada `commit` con cinco reglas —la clave existe, tiene los tres idiomas, ninguna sobra, ninguna
+pantalla ya convertida volvió a tener texto a mano, y las cinco frases de emergencia no están
+duplicadas— y ve también las claves que pone el código, no sólo las escritas en el HTML. Dice
+además cuánto falta: hoy, **1 de 45 archivos**.
+
+**Dos fallas de verdad aparecieron al probar con el archivo escondido**, que es la prueba que sí
+podía fallar. `acceso.html` confundía un catálogo que no llegaba con un servidor caído: mostraba
+«no se pudo conectar» y escondía el formulario, cuando se podía entrar igual. Y `lang` se ponía
+antes de que el texto llegara, así que declaraba inglés sobre contenido en castellano y un lector
+de pantalla lo habría pronunciado mal. `lang` describe lo que está escrito, no lo que se pidió.
+
+**Y dos chequeos aprendieron a distinguir el idioma el mismo día.** `verificar_trato.mjs` marcó
+«publicá-lo», que en portugués es lo normal, como si fuera un voseo; y «cuidador», que en portugués
+es la palabra correcta, es justo la que el vocabulario prohíbe en castellano. `soloCastellano()`,
+en `scripts/texto_visible.mjs`, deja fuera lo rotulado `en` y `pt-BR` **por la clave y no por las
+palabras**, que es la única forma de saberlo con certeza. Los chequeos que valen para los tres
+idiomas siguen viendo todo.
+
+### Las cajas fuertes se reconocen por lo que dicen, no por cómo se escriben
+
+`scripts/recorrido.mjs` es por donde pasan los dieciséis chequeos para leer archivos, y era también
+donde se hacía cumplir la regla de `F:\proyectos\CLAUDE.md`: una carpeta que anuncia que guarda
+claves no se abre, no se lista y no se cita. **Lo hacía comparando el nombre exacto**, así que
+alcanzaba justo para las cinco carpetas que existían el día que se escribió la lista: una llamada
+`no-commit`, `NoCommit` o `No Commit` —el mismo pedido, otra tipografía— se habría recorrido y
+leído entera. Una regla de seguridad que depende de acertar la mayúscula no es una regla.
+
+Ahora el nombre se compara desnudo: se separan las palabras pegadas en mayúscula y se borra todo lo
+que no sea una letra, así que diecisiete formas de escribir lo mismo son la misma puerta cerrada.
+Lo que no es secreto sino ruido —`node_modules`, `.git`, `fuera de uso`— se sigue nombrando tal
+cual, porque lo escribe una herramienta y lo escribe siempre igual.
+
+`scripts/verificar_cajas.mjs` lo comprueba, y **lo comprueba de las dos puntas**: arma un árbol de
+mentira en la carpeta temporal del sistema, con las diecisiete formas y seis carpetas parecidas que
+sí tienen que leerse —`comisiones`, `pushear-ahora`—, y falla tanto si se abrió una cerrada como si
+se cerró una abierta. Una regla que cierra de más deja de revisar código de verdad y tampoco avisa.
+Las carpetas se fabrican en vez de buscarse a propósito: acá no hay ninguna caja fuerte, así que un
+chequeo que sólo mirara este proyecto pasaría siempre sin probar nada. Se comprobó volviendo a la
+comparación exacta: el chequeo falló con catorce avisos.
+
 
 ## 2. Falta construir
 

@@ -45,6 +45,12 @@ const GRUPOS = [
   ['data/catalogo-autorizaciones.json', 'pwa-asistente/data/catalogo-autorizaciones.json'],
   ['data/catalogo-vocabularios.json', 'pwa-asistente/data/catalogo-vocabularios.json',
    'pwa-familia/data/catalogo-vocabularios.json'],
+  // El texto de las pantallas en los tres idiomas. Las dos PWA lo necesitan por
+  // la misma razón que los demás: sin el archivo adentro de su carpeta, el
+  // service worker no lo alcanza y la aplicación arranca con las cinco frases
+  // de emergencia de `js/catalogo.js` y nada más.
+  ['data/catalogo-frases.json', 'pwa-asistente/data/catalogo-frases.json',
+   'pwa-familia/data/catalogo-frases.json'],
   ['css/tokens.css', 'pwa-asistente/css/tokens.css', 'pwa-familia/css/tokens.css'],
   ['pwa-asistente/css/styles-pwa.css', 'pwa-familia/css/styles-pwa.css']
 ];

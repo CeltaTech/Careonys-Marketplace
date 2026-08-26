@@ -1,0 +1,227 @@
+{
+  "_lea_esto_primero": [
+    "Todo el texto que una persona lee en la pantalla vive acá y no adentro del HTML.",
+    "La clave se nombra «pantalla.cosa» y NO SE RENOMBRA: la clave es lo guardado y la",
+    "frase es lo visible, que son dos capas distintas. Los tres idiomas son obligatorios",
+    "y ninguno puede quedar vacío: eso lo hace cumplir scripts/verificar_frases.mjs.",
+    "Los huecos se escriben entre llaves simples —{cuantos}—; las llaves dobles son de",
+    "js/identidad.js y siguen funcionando adentro de estas frases.",
+    "Las cinco frases de arranque NO están acá: son las que hacen falta cuando este",
+    "archivo no llegó, así que viven en js/catalogo.js y llevan sus tres idiomas ahí.",
+    "Una clave que empieza con guión bajo es un separador para leer el archivo, no una",
+    "frase: ni se busca ni se traduce. Es la única forma de dejar títulos adentro de un",
+    "JSON, que no tiene comentarios."
+  ],
+
+  "frases": {
+
+    "_": "── Los mensajes de error. Los clasifica js/texto.js y los muestra cualquier pantalla ──",
+
+    "error.credenciales": {
+      "es-AR": "El correo o la contraseña no coinciden.",
+      "en": "The email address and password do not match.",
+      "pt-BR": "O e-mail ou a senha não coincidem."
+    },
+    "error.correo_sin_confirmar": {
+      "es-AR": "La cuenta existe, pero falta confirmar el correo. El enlace está en la casilla.",
+      "en": "The account exists, but the email address is still unconfirmed. The link is in the inbox.",
+      "pt-BR": "A conta existe, mas falta confirmar o e-mail. O link está na caixa de entrada."
+    },
+    "error.ya_registrado": {
+      "es-AR": "Ya hay una cuenta con ese correo. Se puede entrar desde la pantalla de acceso.",
+      "en": "There is already an account with that email address. Sign in from the access screen.",
+      "pt-BR": "Já existe uma conta com esse e-mail. É possível entrar pela tela de acesso."
+    },
+    "error.correo_rechazado": {
+      "es-AR": "El servidor no acepta esa dirección de correo. Conviene revisar que esté bien escrita, o usar otra.",
+      "en": "The server does not accept that email address. It is worth checking the spelling, or using another one.",
+      "pt-BR": "O servidor não aceita esse endereço de e-mail. Convém verificar se está escrito corretamente, ou usar outro."
+    },
+    "error.demasiados_intentos": {
+      "es-AR": "Hubo demasiados intentos seguidos. Conviene esperar unos minutos.",
+      "en": "There were too many attempts in a row. It is worth waiting a few minutes.",
+      "pt-BR": "Houve tentativas demais seguidas. Convém esperar alguns minutos."
+    },
+    "error.enlace_vencido": {
+      "es-AR": "El enlace del correo ya no sirve. Se puede pedir uno nuevo.",
+      "en": "The link in the email is no longer valid. A new one can be requested.",
+      "pt-BR": "O link do e-mail não vale mais. É possível pedir um novo."
+    },
+    "error.clave_repetida": {
+      "es-AR": "La contraseña nueva tiene que ser distinta de la anterior.",
+      "en": "The new password has to be different from the previous one.",
+      "pt-BR": "A senha nova precisa ser diferente da anterior."
+    },
+    "error.clave_debil": {
+      "es-AR": "La contraseña no cumple con lo que pide el servidor. Conviene elegir una más larga.",
+      "en": "The password does not meet what the server requires. It is worth choosing a longer one.",
+      "pt-BR": "A senha não atende ao que o servidor exige. Convém escolher uma mais longa."
+    },
+    "error.archivo_pesado": {
+      "es-AR": "El archivo pesa demasiado. El límite es 10 MB para documentos y 5 MB para la foto.",
+      "en": "The file is too large. The limit is 10 MB for documents and 5 MB for the photograph.",
+      "pt-BR": "O arquivo é grande demais. O limite é 10 MB para documentos e 5 MB para a foto."
+    },
+    "error.archivo_tipo": {
+      "es-AR": "Ese tipo de archivo no se acepta. Se admiten imágenes (JPG, PNG, WEBP) y PDF.",
+      "en": "That file type is not accepted. Images (JPG, PNG, WEBP) and PDF are allowed.",
+      "pt-BR": "Esse tipo de arquivo não é aceito. São admitidas imagens (JPG, PNG, WEBP) e PDF."
+    },
+    "error.sin_legajo": {
+      "es-AR": "Para rendir hace falta tener el legajo cargado. Se completa desde «Mi Legajo».",
+      "en": "Taking the assessment requires a completed personal file. It is filled in from “My file”.",
+      "pt-BR": "Para fazer a avaliação é preciso ter o cadastro preenchido. Preenche-se em “Meu cadastro”."
+    },
+    "error.sin_intentos": {
+      "es-AR": "Ya se usaron todos los intentos de esta evaluación.",
+      "en": "All the attempts at this assessment have already been used.",
+      "pt-BR": "Todas as tentativas desta avaliação já foram usadas."
+    },
+    "error.evaluacion_no_disponible": {
+      "es-AR": "Esta evaluación no está disponible en este momento.",
+      "en": "This assessment is not available at the moment.",
+      "pt-BR": "Esta avaliação não está disponível no momento."
+    },
+    "error.aviso_sin_franjas": {
+      "es-AR": "El aviso quedó publicado, pero no se pudieron guardar los días y turnos en los que se necesita el cuidado. No hace falta publicarlo de nuevo.",
+      "en": "The listing was published, but the days and shifts when care is needed could not be saved. There is no need to publish it again.",
+      "pt-BR": "O anúncio foi publicado, mas não foi possível salvar os dias e turnos em que o cuidado é necessário. Não é preciso publicá-lo de novo."
+    },
+    "error.sin_prestadora": {
+      "es-AR": "No se pudo saber de qué Prestadora es este directorio, así que no se muestra ninguno. Conviene entrar por el enlace de la Prestadora.",
+      "en": "It was not possible to tell which Provider this directory belongs to, so none is shown. It is worth entering through the Provider’s link.",
+      "pt-BR": "Não foi possível saber de qual Prestadora é este diretório, então nenhum é exibido. Convém entrar pelo link da Prestadora."
+    },
+    "error.prestadora_desconocida": {
+      "es-AR": "No se encontró ninguna Prestadora con ese nombre en la dirección, así que no hay directorio para mostrar. Conviene revisar el enlace.",
+      "en": "No Provider with that name was found in the address, so there is no directory to show. It is worth checking the link.",
+      "pt-BR": "Não foi encontrada nenhuma Prestadora com esse nome no endereço, então não há diretório para exibir. Convém verificar o link."
+    },
+    "error.sin_conexion": {
+      "es-AR": "No hay conexión con el servidor. Conviene reintentar en un momento.",
+      "en": "There is no connection to the server. It is worth trying again in a moment.",
+      "pt-BR": "Não há conexão com o servidor. Convém tentar de novo em instantes."
+    },
+    "error.sesion_cerrada": {
+      "es-AR": "La sesión ya no está abierta. Conviene volver a ingresar.",
+      "en": "The session is no longer open. It is worth signing in again.",
+      "pt-BR": "A sessão não está mais aberta. Convém entrar de novo."
+    },
+    "error.sin_permiso": {
+      "es-AR": "La sesión no tiene permiso para esta operación, o venció. Conviene volver a ingresar.",
+      "en": "The session does not have permission for this operation, or it has expired. It is worth signing in again.",
+      "pt-BR": "A sessão não tem permissão para esta operação, ou expirou. Convém entrar de novo."
+    },
+    "error.duplicado": {
+      "es-AR": "Ese dato ya estaba registrado.",
+      "en": "That entry was already registered.",
+      "pt-BR": "Esse dado já estava registrado."
+    },
+    "error.no_encontrado": {
+      "es-AR": "No se encontró lo que se estaba buscando.",
+      "en": "What was being looked for could not be found.",
+      "pt-BR": "Não foi encontrado o que se estava procurando."
+    },
+    "error.datos_invalidos": {
+      "es-AR": "Alguno de los datos enviados no es válido. Conviene revisar el formulario.",
+      "en": "One of the submitted entries is not valid. It is worth checking the form.",
+      "pt-BR": "Algum dos dados enviados não é válido. Convém revisar o formulário."
+    },
+
+    "__": "── La pantalla de acceso ──",
+
+    "acceso.titulo": {
+      "es-AR": "Acceso",
+      "en": "Sign in",
+      "pt-BR": "Acesso"
+    },
+    "acceso.verificando": {
+      "es-AR": "Verificando la sesión…",
+      "en": "Checking the session…",
+      "pt-BR": "Verificando a sessão…"
+    },
+    "acceso.sin_servidor": {
+      "es-AR": "No se pudo conectar con el servidor. Puede ser la conexión de este equipo.",
+      "en": "It was not possible to connect to the server. It may be this device’s connection.",
+      "pt-BR": "Não foi possível conectar ao servidor. Pode ser a conexão deste equipamento."
+    },
+    "acceso.reintentar": {
+      "es-AR": "Reintentar",
+      "en": "Try again",
+      "pt-BR": "Tentar de novo"
+    },
+    "acceso.correo": {
+      "es-AR": "Correo electrónico",
+      "en": "Email address",
+      "pt-BR": "E-mail"
+    },
+    "acceso.contrasena": {
+      "es-AR": "Contraseña",
+      "en": "Password",
+      "pt-BR": "Senha"
+    },
+    "acceso.entrar": {
+      "es-AR": "Entrar",
+      "en": "Sign in",
+      "pt-BR": "Entrar"
+    },
+    "acceso.entrando": {
+      "es-AR": "Entrando…",
+      "en": "Signing in…",
+      "pt-BR": "Entrando…"
+    },
+    "acceso.olvide": {
+      "es-AR": "¿Olvidó la contraseña?",
+      "en": "Forgot the password?",
+      "pt-BR": "Esqueceu a senha?"
+    },
+    "acceso.sin_cuenta": {
+      "es-AR": "¿Todavía no tiene cuenta?",
+      "en": "No account yet?",
+      "pt-BR": "Ainda não tem conta?"
+    },
+    "acceso.darse_de_alta": {
+      "es-AR": "Darse de alta como Asistente",
+      "en": "Register as a Caregiver",
+      "pt-BR": "Cadastrar-se como Assistente"
+    },
+    "acceso.prestadora_desconocida": {
+      "es-AR": "No se reconoció la Prestadora de este enlace. Se puede iniciar sesión igual.",
+      "en": "The Provider in this link was not recognised. It is still possible to sign in.",
+      "pt-BR": "A Prestadora deste link não foi reconhecida. Ainda assim é possível entrar."
+    },
+    "acceso.faltan_datos": {
+      "es-AR": "Hay que completar el correo y la contraseña.",
+      "en": "The email address and the password have to be filled in.",
+      "pt-BR": "É preciso preencher o e-mail e a senha."
+    },
+
+    "___": "── El campo de contraseña, que arma js/clave.js en cualquier pantalla ──",
+
+    "clave.minimo": {
+      "es-AR": "Al menos {cuantos} caracteres",
+      "en": "At least {cuantos} characters",
+      "pt-BR": "Pelo menos {cuantos} caracteres"
+    },
+    "clave.mostrar": {
+      "es-AR": "Mostrar",
+      "en": "Show",
+      "pt-BR": "Mostrar"
+    },
+    "clave.ocultar": {
+      "es-AR": "Ocultar",
+      "en": "Hide",
+      "pt-BR": "Ocultar"
+    },
+    "clave.mostrar_aria": {
+      "es-AR": "Mostrar la contraseña",
+      "en": "Show the password",
+      "pt-BR": "Mostrar a senha"
+    },
+    "clave.ocultar_aria": {
+      "es-AR": "Ocultar la contraseña",
+      "en": "Hide the password",
+      "pt-BR": "Ocultar a senha"
+    }
+  }
+}

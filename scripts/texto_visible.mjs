@@ -27,6 +27,26 @@ const ATRIBUTOS = 'placeholder|title|alt|aria-label|value|content|label';
    siendo el de verdad. */
 export const enBlanco = (t) => t.replace(/[^\n]/g, ' ');
 
+/**
+ * Deja fuera lo que está escrito en inglés y en portugués.
+ *
+ * Desde que el texto se traduce a los tres idiomas, los chequeos que miran
+ * **cómo está escrito** el castellano —el trato de usted, el vocabulario— se
+ * encuentran con frases de los otros dos y las juzgan con reglas que no son las
+ * de ellas. Pasó apenas apareció el catálogo: «publicá-lo», que en portugués es
+ * lo normal, se leía como un voseo; y «cuidador», que en portugués es la palabra
+ * correcta, es justo la que el vocabulario prohíbe en castellano.
+ *
+ * Se reconoce por la clave, no por las palabras: en el catálogo cada frase trae
+ * sus tres idiomas rotulados, así que se sabe con certeza cuál es cuál. Los
+ * chequeos que valen para los tres idiomas —el escapado, los colores— no llaman
+ * a esto y siguen viendo todo.
+ */
+export const soloCastellano = (crudo) => crudo.replace(
+  /"(?:en|pt-BR)"\s*:\s*"((?:[^"\\]|\\.)*)"/g,
+  (todo, valor) => todo.slice(0, todo.length - valor.length - 1) + enBlanco(valor) + '"'
+);
+
 /** Devuelve pares `[renglón, texto]` de lo que ve una persona. */
 export function visible(crudo, esHtml) {
   const trozos = [];

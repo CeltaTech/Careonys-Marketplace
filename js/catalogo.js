@@ -1,7 +1,8 @@
 /* ===================================================
    CATÁLOGO — las listas de opciones, en un solo lugar
 
-   «todo botón que dispara una operación se apaga».1: ningún catálogo se escribe adentro de una pantalla. Antes cada
+   «Los catálogos salen de la base»: ninguna lista de opciones se escribe adentro
+   de una pantalla. Antes cada
    formulario traía su propia lista de géneros, de zonas, de perfiles; eran
    veintiuna listas repartidas en nueve archivos y no coincidían entre sí.
    Ahora hay una sola, y las pantallas la piden.
@@ -25,6 +26,21 @@
    Al cargar la página se resuelven todas de una vez, igual que los marcadores
    de `identidad.js`.
 
+   Y ACÁ TAMBIÉN VIVE EL TEXTO DE LAS PANTALLAS
+   El mismo reparto —la pantalla nombra, el catálogo contesta— rige para las
+   frases sueltas, que son las que se traducen a los tres idiomas:
+
+       <button data-frase="acceso.entrar">Entrar</button>
+       <input data-frase-placeholder="acceso.correo_hueco" placeholder="…" />
+
+   Están en `data/catalogo-frases.json`, y `scripts/verificar_frases.mjs` falla
+   antes de cada `commit` si una clave no existe, si a una frase le falta un
+   idioma, o si una pantalla ya convertida volvió a tener texto escrito a mano.
+
+   El idioma es uno solo para las tres cosas —opciones, oferta y frases— y se
+   decide en `idiomaDelEntorno()`, abajo. Tenerlo en un solo lugar es lo que
+   evita la pantalla mitad en un idioma y mitad en otro.
+
    DE DÓNDE SALE HOY Y DE DÓNDE VA A SALIR MAÑANA
    El contenido está en `data/catalogo-vocabularios.json`. Su destino son las
    tablas de Careonys, no unas propias de este proyecto (`docs/MODULOS.md`, el
@@ -47,17 +63,81 @@
 (function () {
   'use strict';
 
-  // El idioma del texto visible. Hoy las listas están escritas solo en es-AR;
-  // cuando tengan `en` y `pt-BR` («multiidioma desde el día uno») esto ya las lee sin tocar nada,
-  // porque cada ítem es un objeto con un texto por idioma.
+  // ── EL IDIOMA ────────────────────────────────────────────────────────────
+  // Uno solo para todo lo que se ve: las opciones de los vocabularios, las
+  // fichas de la oferta y las frases de las pantallas. Tenerlo en un solo lugar
+  // es lo que evita que la mitad de una pantalla quede en un idioma y la otra
+  // mitad en otro.
   const IDIOMA_POR_DEFECTO = 'es-AR';
+  const IDIOMAS = ['es-AR', 'en', 'pt-BR'];
+  const DONDE_SE_GUARDA = 'idioma';
 
-  // Los cuatro estados, dichos una sola vez.
-  const MENSAJES = {
-    cargando: 'Cargando opciones…',
-    error: 'No se pudieron cargar las opciones',
-    vacio: 'No hay opciones disponibles',
-  sinContenido: 'Por ahora no hay nada para mostrar acá'
+  // De qué idioma habla una etiqueta como `pt`, `pt-PT`, `en-GB` o `es-419`. Se
+  // mira sólo la primera parte a propósito: quien tiene el navegador en
+  // portugués de Portugal entiende el de Brasil mucho mejor que el castellano,
+  // y quedarse con la coincidencia exacta lo mandaría al idioma por omisión.
+  function cual(etiqueta) {
+    const base = String(etiqueta || '').toLowerCase().split('-')[0];
+    return IDIOMAS.filter((i) => i.toLowerCase().split('-')[0] === base)[0] || null;
+  }
+
+  // El orden es el de quién manda sobre quién: lo que la persona eligió a mano
+  // pisa lo que declara el navegador, y el navegador pisa al valor por omisión.
+  // La dirección (`?idioma=en`) va primera porque es la que sirve para mandarle
+  // a alguien un enlace ya en su idioma, y para probar esto sin tocar nada.
+  function idiomaDelEntorno() {
+    try {
+      const dela = cual(new URLSearchParams(window.location.search).get('idioma'));
+      if (dela) return dela;
+    } catch (e) { /* sin dirección legible, se sigue */ }
+    try {
+      const guardado = cual(window.localStorage.getItem(DONDE_SE_GUARDA));
+      if (guardado) return guardado;
+    } catch (e) { /* el navegador puede tener el depósito cerrado */ }
+    const declarados = (navigator.languages && navigator.languages.length)
+      ? navigator.languages : [navigator.language];
+    for (let i = 0; i < declarados.length; i++) {
+      const encontrado = cual(declarados[i]);
+      if (encontrado) return encontrado;
+    }
+    return IDIOMA_POR_DEFECTO;
+  }
+
+  // LAS FRASES DE ARRANQUE, Y POR QUÉ ÉSTAS SÍ ESTÁN ESCRITAS ACÁ.
+  // «Nunca hardcodear» manda, y estas cinco son la excepción que la regla
+  // necesita para poder cumplirse: son exactamente las que hay que mostrar
+  // **cuando el catálogo no llegó**. Sacarlas al archivo las dejaría adentro de
+  // lo que se está avisando que falta, y la pantalla quedaría muda justo en el
+  // único momento en que el aviso importa. Por eso son cinco y no seis, llevan
+  // sus tres idiomas acá mismo, y `scripts/verificar_frases.mjs` comprueba que
+  // ninguna de ellas esté además en `data/catalogo-frases.json`: una frase con
+  // dos dueños se corrige en uno solo y nadie se entera.
+  const ARRANQUE = {
+    'catalogo.cargando': {
+      'es-AR': 'Cargando opciones…',
+      'en': 'Loading options…',
+      'pt-BR': 'Carregando opções…'
+    },
+    'catalogo.error': {
+      'es-AR': 'No se pudieron cargar las opciones',
+      'en': 'The options could not be loaded',
+      'pt-BR': 'Não foi possível carregar as opções'
+    },
+    'catalogo.vacio': {
+      'es-AR': 'No hay opciones disponibles',
+      'en': 'There are no options available',
+      'pt-BR': 'Não há opções disponíveis'
+    },
+    'catalogo.sin_contenido': {
+      'es-AR': 'Por ahora no hay nada para mostrar acá',
+      'en': 'There is nothing to show here yet',
+      'pt-BR': 'Por enquanto não há nada para mostrar aqui'
+    },
+    'error.generico': {
+      'es-AR': 'No se pudo completar la operación. Si vuelve a pasar, conviene avisar al soporte.',
+      'en': 'The operation could not be completed. If it happens again, it is worth telling support.',
+      'pt-BR': 'Não foi possível concluir a operação. Se acontecer de novo, convém avisar o suporte.'
+    }
   };
 
   // Una tarjeta puede traer `icono` y `bajada`; los dos son optativos. El ítem
@@ -76,6 +156,8 @@
   let catalogo = null;  // Los vocabularios, una vez traídos.
   let promesaOferta = null;
   let oferta = null;    // Servicios y cursos.
+  let promesaFrases = null;
+  let frases = null;    // El texto visible de las pantallas.
 
   // La dirección del archivo se calcula desde la de este mismo guion. Así la
   // copia de cada PWA lee el JSON de su propia carpeta sin que nadie configure
@@ -108,9 +190,18 @@
     return await respuesta.json();
   }
 
+  async function _traerFrases() {
+    const respuesta = await fetch(ARCHIVO('catalogo-frases'), { cache: 'no-cache' });
+    if (!respuesta.ok) throw new Error('Las frases respondieron ' + respuesta.status);
+    const datos = await respuesta.json();
+    if (!datos || !datos.frases) throw new Error('El catálogo de frases no tiene frases');
+    return datos.frases;
+  }
+
   const Catalogo = {
 
-    idioma: IDIOMA_POR_DEFECTO,
+    idioma: idiomaDelEntorno(),
+    idiomas: IDIOMAS.slice(),
 
     // Trae el catálogo una sola vez por página, aunque lo pidan diez veces.
     cargar() {
@@ -118,6 +209,66 @@
         promesa = _traer().then((v) => { catalogo = v; return v; });
       }
       return promesa;
+    },
+
+    // ── LAS FRASES DE LAS PANTALLAS ──────────────────────────────────────
+    // «Multiidioma desde el día uno». Ninguna frase que una persona lea está
+    // escrita adentro de una pantalla: la pantalla nombra una clave y el texto
+    // sale de `data/catalogo-frases.json`, que es el mismo reparto que ya rige
+    // para las opciones de los vocabularios.
+    //
+    //     <button data-frase="acceso.entrar">Entrar</button>
+    //     <input data-frase-placeholder="acceso.correo_hueco" placeholder="…" />
+    //     <title data-frase="acceso.titulo">Acceso</title>
+    //
+    // Lo escrito adentro queda y es lo que se ve mientras el archivo viaja,
+    // igual que hoy con la marca. Y si el archivo no llegara, **eso es lo que
+    // queda**: la pantalla se ve en castellano, que es peor que en el idioma
+    // que se pidió y muchísimo mejor que en blanco.
+
+    cargarFrases() {
+      if (!promesaFrases) {
+        promesaFrases = _traerFrases().then((f) => { frases = f; return f; });
+      }
+      return promesaFrases;
+    },
+
+    // El texto de una clave, ya listo para mostrar. Los huecos se escriben
+    // entre llaves simples en el catálogo y se pasan acá:
+    //
+    //     Catalogo.frase('examen.intentos', { cuantos: 3 })
+    //
+    // Se rellena la frase entera y no se la parte en pedazos: cada idioma
+    // ordena distinto, y «Quedan 3 intentos» armado con tres cachos sale mal en
+    // cuanto el verbo cambia de lugar.
+    //
+    // No espera nada, porque se la llama mientras se dibuja. Si la clave no
+    // está —el archivo no llegó, o alguien la escribió mal— devuelve la cadena
+    // vacía y avisa por consola; quien la llamó decide qué hacer con el hueco.
+    frase(clave, huecos) {
+      const traducciones = (frases && frases[clave]) || ARRANQUE[clave];
+      if (!traducciones) {
+        console.error('Catálogo: no existe la frase «' + clave + '».');
+        return '';
+      }
+      let texto = traducciones[this.idioma] || traducciones[IDIOMA_POR_DEFECTO] || '';
+      if (huecos) {
+        for (const nombre in huecos) {
+          texto = texto.split('{' + nombre + '}').join(String(huecos[nombre]));
+        }
+      }
+      return window.Identidad ? window.Identidad.aplicar(texto) : texto;
+    },
+
+    // Cambia el idioma y vuelve a escribir la pantalla, sin recargarla. Se
+    // guarda la elección para las próximas visitas; si el navegador tiene el
+    // depósito cerrado, el cambio vale igual para esta pantalla.
+    async cambiarIdioma(nuevo) {
+      const elegido = cual(nuevo);
+      if (!elegido || elegido === this.idioma) return;
+      this.idioma = elegido;
+      try { window.localStorage.setItem(DONDE_SE_GUARDA, elegido); } catch (e) { /* depósito cerrado */ }
+      await this.aplicarEnDocumento();
     },
 
     // El texto de un ítem en el idioma que corresponde. Si falta la traducción
@@ -248,7 +399,7 @@
       const lista = (oferta && oferta[cual]) || [];
       if (!lista.length) {
         console.error('Catálogo: la oferta «' + cual + '» está vacía.');
-        this._avisarEnOferta(contenedor, MENSAJES.sinContenido);
+        this._avisarEnOferta(contenedor, this.frase('catalogo.sin_contenido'));
         return;
       }
       const solo = (contenedor.getAttribute('data-oferta-solo') || '')
@@ -269,7 +420,7 @@
       // Ninguna de las claves pedidas existe. Sin esto la grilla queda vacía y
       // muda: el molde ya se sacó y no entra nada en su lugar.
       if (!elegidos.length) {
-        this._avisarEnOferta(contenedor, MENSAJES.sinContenido);
+        this._avisarEnOferta(contenedor, this.frase('catalogo.sin_contenido'));
         return;
       }
 
@@ -443,12 +594,12 @@
         items = this.items(clave);
       } catch (err) {
         console.error('Catálogo:', err.message);
-        this._avisar(elemento, MENSAJES.error);
+        this._avisar(elemento, this.frase('catalogo.error'));
         return false;
       }
       if (!items.length) {
         console.error('Catálogo: el vocabulario «' + clave + '» no tiene ítems.');
-        this._avisar(elemento, MENSAJES.vacio);
+        this._avisar(elemento, this.frase('catalogo.vacio'));
         return false;
       }
       const como = elemento.getAttribute('data-catalogo-como');
@@ -470,7 +621,77 @@
     // evita que alguien mande el formulario con la lista a medio llenar.
     async aplicarEnDocumento(raiz) {
       const base = raiz || document;
+      // Las frases van primero y solas: son el texto de toda la pantalla, y las
+      // otras dos esperas dependen de la red igual que ésta pero pueden tardar
+      // más. Encadenarlas dejaría los rótulos esperando a las opciones.
+      await this.traducir(base);
       await Promise.all([this._aplicarVocabularios(base), this._aplicarOferta(base)]);
+    },
+
+    async traducir(base) {
+      // El propio elemento entra, no sólo lo que cuelga de él: quien arma un
+      // botón a mano y pide que se lo traduzcan le pasa **ese** botón, y
+      // `querySelectorAll` nunca devuelve la raíz desde la que se busca.
+      const todos = Array.prototype.slice.call(base.querySelectorAll('*'));
+      if (base.attributes) todos.unshift(base);
+
+      const conTexto = todos.filter((el) => el.hasAttribute('data-frase'));
+      const conAtributo = todos.filter((el) => Array.prototype.slice.call(el.attributes)
+        .some((a) => a.name.indexOf('data-frase-') === 0));
+      if (!conTexto.length && !conAtributo.length) return;
+
+      try {
+        await this.cargarFrases();
+      } catch (err) {
+        // Lo que quedó escrito adentro de la pantalla es lo que se ve. No se
+        // borra nada y no se pone ningún cartel: media pantalla en castellano
+        // se entiende, media pantalla vacía no.
+        console.error('Catálogo:', err.message);
+        return;
+      }
+
+      // `lang` no es decorativo: de ahí sacan el idioma el lector de pantalla,
+      // el corrector del navegador y el partido de palabras al final del
+      // renglón. Va **después** de que el texto llegó, no antes: si el archivo
+      // no llega, lo que se ve sigue siendo el castellano que la pantalla trae
+      // adentro, y declararlo inglés haría que un lector de pantalla lea
+      // castellano con pronunciación inglesa. `lang` describe lo que está
+      // escrito, no lo que se pidió. Se comprobó escondiendo el archivo.
+      if (base === document) document.documentElement.setAttribute('lang', this.idioma);
+
+      // Lo que va adentro de los huecos de una frase, escrito en el elemento:
+      //     <p data-frase="clave.minimo" data-huecos='{"cuantos":8}'></p>
+      // Se llama `data-huecos` y no `data-frase-huecos` a propósito: cualquier
+      // cosa que empiece con `data-frase-` es el nombre de un atributo que hay
+      // que traducir, así que esto último terminaría escribiendo un atributo
+      // `huecos` en la pantalla.
+      const huecosDe = (el) => {
+        const escrito = el.getAttribute('data-huecos');
+        if (!escrito) return null;
+        try {
+          return JSON.parse(escrito);
+        } catch (err) {
+          console.error('Catálogo: `data-huecos` no es un JSON válido:', escrito);
+          return null;
+        }
+      };
+
+      conTexto.forEach((el) => {
+        const texto = this.frase(el.getAttribute('data-frase'), huecosDe(el));
+        if (!texto) return;
+        // `textContent` y nunca `innerHTML`: una frase con un signo raro tiene
+        // que verse, no ejecutarse. Lo que necesita un enlace adentro se parte
+        // en dos claves, una por elemento.
+        el.textContent = texto;
+      });
+
+      conAtributo.forEach((el) => {
+        Array.prototype.slice.call(el.attributes).forEach((a) => {
+          if (a.name.indexOf('data-frase-') !== 0) return;
+          const texto = this.frase(a.value, huecosDe(el));
+          if (texto) el.setAttribute(a.name.slice(11), texto);
+        });
+      });
     },
 
     async _aplicarOferta(base) {
@@ -488,7 +709,7 @@
         console.error('Catálogo:', err.message);
         // El molde queda como está: una tarjeta menos se nota, una grilla vacía
         // sin explicación, no.
-        contenedores.forEach((c) => this._avisarEnOferta(c, MENSAJES.error));
+        contenedores.forEach((c) => this._avisarEnOferta(c, this.frase('catalogo.error')));
         return;
       }
       contenedores.forEach((c) => this._llenarOferta(c));
@@ -504,7 +725,7 @@
       // falla que este archivo existe para no tener. El desplegable además
       // queda deshabilitado, así nadie manda el formulario a medio llenar.
       elementos.forEach((el) => {
-        this._avisar(el, MENSAJES.cargando);
+        this._avisar(el, this.frase('catalogo.cargando'));
         if (el.tagName === 'SELECT') el.disabled = true;
       });
 
@@ -513,7 +734,7 @@
       } catch (err) {
         console.error('Catálogo:', err.message);
         elementos.forEach((el) => {
-          this._avisar(el, MENSAJES.error);
+          this._avisar(el, this.frase('catalogo.error'));
           if (el.tagName === 'SELECT') el.disabled = false;
         });
         return;
