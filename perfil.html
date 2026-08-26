@@ -11,7 +11,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>Perfil de Asistente — PresDemo</title>
   <meta name="description"
-    content="El perfil de un Asistente publicado en la Red: su zona, qué patologías atiende, qué tareas hace y su precio por hora." />
+    content="El perfil de un Asistente publicado en la Red: su zona, qué patologías atiende, qué tareas hace, su precio por hora y qué se le comprobó." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
@@ -109,6 +109,10 @@
               title="La Prestadora auditó y validó el legajo bajo su exclusiva responsabilidad"><i
                 class="fas fa-user-check" aria-hidden="true"></i> Legajo validado por la Prestadora</span>
           </div>
+          <!-- Qué se le comprobó. Sale de la misma vista que el directorio, así que
+               dice lo mismo en las dos pantallas y no hay una segunda regla que
+               mantener. -->
+          <div class="lista-comprobaciones" id="perfil-comprobaciones" style="display:none;"></div>
         </div>
       </div>
     </section>
@@ -253,8 +257,26 @@
 
         const tipo = Catalogo.etiquetaSiExiste('tipo_asistente', fila.profession);
         const zona = Catalogo.etiquetaSiExiste('zona', fila.zone);
+        // «Prefiero no decirlo» no se escribe: es la respuesta de quien no quiso
+        // decirlo, y ponerla igual sería publicarla con otras palabras.
+        const genero = fila.gender === 'sin_declarar'
+          ? '' : Catalogo.etiquetaSiExiste('genero', fila.gender);
         document.getElementById('perfil-tipo-y-zona').textContent =
-          [tipo, zona].filter(Boolean).join(' · ');
+          [tipo, genero, zona].filter(Boolean).join(' · ');
+
+        const comprobadas = fila.comprobaciones || [];
+        if (comprobadas.length > 0) {
+          const lista = document.getElementById('perfil-comprobaciones');
+          comprobadas.forEach((clave) => {
+            const marca = document.createElement('span');
+            marca.className = 'insignia-comprobacion';
+            marca.textContent = Catalogo.etiquetaSiExiste('comprobacion', clave) || clave;
+            lista.appendChild(marca);
+          });
+          lista.style.display = '';
+        } else {
+          document.getElementById('perfil-comprobaciones').remove();
+        }
 
         // La foto o, si no cargó ninguna, la inicial del nombre. Se saca del
         // documento la que no se usa: dejarla escondida es dejar un hueco que

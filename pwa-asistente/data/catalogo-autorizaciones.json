@@ -47,19 +47,19 @@
       "es-AR": {
         "etiqueta": "Publicar mi perfil",
         "pregunta": "¿Desea que su perfil sea visible para las Familias que buscan Asistente?",
-        "ayuda_si": "Su perfil —su nombre, su foto, su zona, qué atiende y su precio por hora— se muestra dentro de la plataforma a quien esté buscando Asistente, se haya registrado o no. No aparece en Google ni en ningún buscador. Sus datos de contacto no se muestran nunca: ni su documento, ni su teléfono, ni su correo, ni su domicilio. Sólo las Familias registradas pueden comunicarse con usted, y lo hacen por la plataforma.",
+        "ayuda_si": "Su perfil —su nombre, su foto, su género, su zona, qué atiende, su precio por hora y qué se le comprobó— se muestra dentro de la plataforma a quien esté buscando Asistente, se haya registrado o no. De las comprobaciones se dice cuáles se hicieron —domicilio, referencias, matrícula, título, curso aprobado— y nada más: ni fechas, ni números, ni qué le falta. No aparece en Google ni en ningún buscador. Sus datos de contacto no se muestran nunca: ni su documento, ni su teléfono, ni su correo, ni su domicilio; de su domicilio sólo se dice que se comprobó, nunca cuál es. Sólo las Familias registradas pueden comunicarse con usted, y lo hacen por la plataforma.",
         "ayuda_no": "Su perfil no se muestra a ninguna Familia. Puede cambiarlo cuando quiera."
       },
       "en": {
         "etiqueta": "Publish my profile",
         "pregunta": "Do you want your profile to be visible to families looking for an assistant?",
-        "ayuda_si": "Your profile —your name, photo, area, what you handle and your hourly rate— is shown inside the platform to anyone looking for an assistant, whether they have registered or not. It does not appear on Google or any search engine. Your contact details are never shown: not your ID number, your phone, your email or your home address. Only registered families can get in touch with you, and they do so through the platform.",
+        "ayuda_si": "Your profile —your name, photo, gender, area, what you handle, your hourly rate and what has been checked— is shown inside the platform to anyone looking for an assistant, whether they have registered or not. Of the checks, only which ones were made is shown —home address, references, professional registration, qualification, approved course— and nothing more: no dates, no numbers, and never what you are missing. It does not appear on Google or any search engine. Your contact details are never shown: not your ID number, your phone, your email or your home address; of your home address it is only said that it was checked, never what it is. Only registered families can get in touch with you, and they do so through the platform.",
         "ayuda_no": "Your profile is not shown to any family. You can change this at any time."
       },
       "pt-BR": {
         "etiqueta": "Publicar meu perfil",
         "pregunta": "Deseja que seu perfil fique visível para as famílias que procuram um assistente?",
-        "ayuda_si": "Seu perfil —seu nome, sua foto, sua zona, o que você atende e seu valor por hora— é exibido dentro da plataforma a quem estiver procurando um assistente, cadastrado ou não. Não aparece no Google nem em nenhum buscador. Seus dados de contato nunca são exibidos: nem seu documento, nem seu telefone, nem seu e-mail, nem seu endereço. Somente as famílias cadastradas podem entrar em contato com você, e o fazem pela plataforma.",
+        "ayuda_si": "Seu perfil —seu nome, sua foto, seu gênero, sua zona, o que você atende, seu valor por hora e o que foi comprovado— é exibido dentro da plataforma a quem estiver procurando um assistente, cadastrado ou não. Das comprovações informa-se apenas quais foram feitas —endereço, referências, registro profissional, diploma, curso aprovado— e nada mais: nem datas, nem números, nem o que falta. Não aparece no Google nem em nenhum buscador. Seus dados de contato nunca são exibidos: nem seu documento, nem seu telefone, nem seu e-mail, nem seu endereço; do seu endereço informa-se apenas que foi comprovado, nunca qual é. Somente as famílias cadastradas podem entrar em contato com você, e o fazem pela plataforma.",
         "ayuda_no": "Seu perfil não é exibido a nenhuma família. Você pode alterar isso quando quiser."
       },
       "se_pregunta_en": "cierre_del_alta"

@@ -1949,6 +1949,30 @@ button:disabled:hover,
   border: 1px solid var(--tono-atencion-fondo);
 }
 
+/* Lo que se le comprobó a un Asistente. Va apagada a propósito: la que decide es
+   la insignia de arriba —el legajo lo validó la Prestadora—, y éstas son el
+   detalle de qué se controló. Si gritaran igual, la tarjeta pasaría a tener seis
+   cosas importantes y ninguna. */
+.insignia-comprobacion {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--tono-exito-fondo);
+  color: var(--tono-exito-texto);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 50px;
+  border: 1px solid var(--tono-exito-borde);
+}
+
+.lista-comprobaciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 12px 0;
+}
+
 /* La grilla semanal de 7x3 vivía acá y la usaba una sola pantalla: `perfil.html`,
    con los casilleros marcados a mano. Se fue con ella el 25 de agosto de 2026. La
    disponibilidad de verdad se carga y se muestra en las aplicaciones de teléfono,

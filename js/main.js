@@ -98,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const zoneSelect = document.getElementById('dir-zone');
   const typeSelect = document.getElementById('dir-type');
   const patologiaSelect = document.getElementById('dir-patologia');
+  const comprobacionSelect = document.getElementById('dir-comprobacion');
   const resultsCount = document.getElementById('results-count');
 
   // Las tarjetas se preguntan cada vez y no se guardan al cargar la página: el
@@ -122,6 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const zone = zoneSelect ? zoneSelect.value : '';
     const type = typeSelect ? typeSelect.value : '';
     const patologia = patologiaSelect ? patologiaSelect.value : '';
+    const comprobacion = comprobacionSelect ? comprobacionSelect.value : '';
 
     let visibleCount = 0;
 
@@ -134,7 +136,8 @@ document.addEventListener('DOMContentLoaded', () => {
         (!searchTerm || name.includes(searchTerm) || zonaEscrita.includes(searchTerm))
         && tieneClave(card, 'zone', zone)
         && tieneClave(card, 'type', type)
-        && tieneClave(card, 'patologia', patologia);
+        && tieneClave(card, 'patologia', patologia)
+        && tieneClave(card, 'comprobacion', comprobacion);
 
       card.style.display = isVisible ? '' : 'none';
       if (isVisible) visibleCount++;
@@ -155,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (zoneSelect) zoneSelect.addEventListener('change', filterCards);
   if (typeSelect) typeSelect.addEventListener('change', filterCards);
   if (patologiaSelect) patologiaSelect.addEventListener('change', filterCards);
+  if (comprobacionSelect) comprobacionSelect.addEventListener('change', filterCards);
 
   // El directorio termina de dibujarse cuando contesta la base, que es después
   // de todo esto. Ahí llama acá para que el filtro pase sobre lo recién puesto.

@@ -75,12 +75,13 @@
         data-catalogo-vacio="Todos los tipos"></select>
       <select id="dir-patologia" style="flex:1;min-width:140px;" data-catalogo="patologia"
         data-catalogo-vacio="Todas las patologías"></select>
-      <!-- Había un cuarto desplegable, «Verificación», y se sacó el 24 de agosto de
-           2026 al hacer que esta pantalla lea de la base: no hay con qué contestarlo.
-           Lo que se controló de un legajo vive en `verificaciones_asistente`, que no
-           es pública, y el consentimiento de publicación no la nombra —promete
-           nombre, foto, zona, qué atiende y precio por hora—. Publicarla es una
-           decisión del Desarrollador y está anotada en docs/PENDIENTES.md. -->
+      <!-- El cuarto desplegable volvió el 26 de agosto de 2026, cuando el Desarrollador
+           decidió que el directorio sí puede decir qué se le comprobó a cada Asistente,
+           y el consentimiento pasó a nombrarlo. Sale del vocabulario `comprobacion`, que
+           tiene cinco claves y no las siete de `verificacion`: documento, antecedentes
+           penales y certificado de salud se comprueban igual y no salen nunca. -->
+      <select id="dir-comprobacion" style="flex:1;min-width:140px;" data-catalogo="comprobacion"
+        data-catalogo-vacio="Cualquier comprobación"></select>
     </div>
   </div>
 
@@ -132,6 +133,7 @@
               title="La Prestadora auditó y validó el legajo bajo su exclusiva responsabilidad"><i
                 class="fas fa-user-check" aria-hidden="true"></i> Legajo validado por la Prestadora</span>
           </div>
+          <div class="lista-comprobaciones" data-parte="comprobaciones"></div>
           <div class="specialties" data-parte="etiquetas"></div>
         </div>
         <div class="card-footer">
@@ -252,9 +254,30 @@
         tarjeta.dataset.zone = fila.zone || '';
         tarjeta.dataset.type = fila.profession || '';
         tarjeta.dataset.patologia = patologias.join(' ');
+        tarjeta.dataset.comprobacion = (fila.comprobaciones || []).join(' ');
 
         parte('nombre').textContent = fila.full_name || '';
-        parte('tipo-y-zona').textContent = [tipo, zona].filter(Boolean).join(' · ');
+        // «Prefiero no decirlo» es la respuesta de quien no quiso decirlo: escribirla
+        // en la tarjeta sería publicarla igual, con otras palabras.
+        const genero = fila.gender === 'sin_declarar'
+          ? '' : Catalogo.etiquetaSiExiste('genero', fila.gender);
+        parte('tipo-y-zona').textContent = [tipo, genero, zona].filter(Boolean).join(' · ');
+
+        // Qué se le comprobó. La vista devuelve sólo las cinco que el
+        // consentimiento nombra, así que acá no hay nada que filtrar: se dibuja
+        // lo que llega. Sin ninguna, la fila se saca y no queda un hueco.
+        const comprobadas = fila.comprobaciones || [];
+        if (comprobadas.length === 0) {
+          parte('comprobaciones').remove();
+        } else {
+          const lista = parte('comprobaciones');
+          comprobadas.forEach((clave) => {
+            const marca = document.createElement('span');
+            marca.className = 'insignia-comprobacion';
+            marca.textContent = Catalogo.etiquetaSiExiste('comprobacion', clave) || clave;
+            lista.appendChild(marca);
+          });
+        }
 
         const foto = ClienteDatos.urlDeFotoPublica(fila.foto);
         if (foto) {

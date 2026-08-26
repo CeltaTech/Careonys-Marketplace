@@ -335,7 +335,7 @@ Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2
   no hacía.
 - **Las ocho tarjetas de muestra hablan el mismo idioma que los filtros.** Cada una lleva ahora
   `data-zone`, `data-type`, `data-patologia` y `data-verificacion` con claves del catálogo, y
-  `filterCards()` en `js/main.js:120` compara clave contra clave.
+  `filterCards()`, en `js/main.js`, compara clave contra clave.
 - **Antes comparaba contra el texto visible de la tarjeta, y fallaba de dos maneras.** La opción
   `medicos` no encontraba nunca a la tarjeta que decía «Médicos», porque la tilde no coincide;
   `parkinson` y `acv` no existían en ninguna tarjeta y devolvían cero sin explicar por qué. Y
@@ -2012,6 +2012,44 @@ exactamente lo que le pasa.
 panel de control de CeltaTech, ese panel tiene que existir, y no existe: `status` se cambia hoy a
 mano contra la base. Es el pendiente 58, y es lo único del modelo de aislamiento de Careonys que
 acá parecía no hacer falta.
+
+### El directorio dice qué se le comprobó a cada uno, y el consentimiento lo promete
+
+Cerró el pendiente 43, el 26 de agosto de 2026, con las tres decisiones que el Desarrollador
+había tomado ese mismo día: se muestra el género, el directorio puede decir qué se controló de un
+legajo, y por eso vuelve el filtro que se había sacado el 24.
+
+**Qué sale y qué no.** La vista `directorio` ganó una columna, `comprobaciones`
+(`supabase/migrations/0026_el_directorio_dice_que_se_comprobo.sql`), con hasta cinco claves:
+domicilio, referencia, matrícula, título y curso aprobado. Las cinco ya estaban restringidas en la
+base desde la migración 0018, así que no hubo que inventar ninguna palabra.
+
+| Qué se decidió no publicar | Por qué |
+|---|---|
+| Documento, antecedentes penales y certificado de salud | Son la puerta. Quien está publicado ya los pasó, así que nombrarlos no distingue a nadie, y son lo más sensible del legajo |
+| Fechas y números | El consentimiento promete decir **qué** se comprobó, no cuándo ni con qué papel |
+| Lo que **falta** | Decir qué falta es publicar el estado de los papeles de una persona, y eso no lo autorizó nadie |
+| «Prefiero no decirlo», cuando es la respuesta de género | Escribirla en la tarjeta sería publicarla con otras palabras |
+
+**Un papel presentado no es un papel comprobado.** La columna cuenta sólo las verificaciones en
+estado `verificado`; el curso no viene de ahí sino de un intento aprobado, porque lo corrigió la
+base (migración 0008) y nunca fue un papel que alguien entregó.
+
+**La primera prueba no probaba nada, y se rehízo.** Con la columna ya aplicada contra el servidor
+real, las siete personas publicadas devolvían lista vacía: la siembra no tenía ni una comprobación
+cargada, así que una consulta rota y una correcta contestaban lo mismo. La migración 0027 cargó
+comprobaciones repartidas a propósito —alguien con una matrícula sólo presentada, alguien con los
+antecedentes penales comprobados de verdad—, y recién entonces la prueba pudo fallar. Con ella:
+Ramiro devuelve una sola comprobación y no dos, Nadia devuelve tres y no cuatro, y el filtro por
+matrícula devuelve cero.
+
+**El consentimiento dice lo mismo, en los tres idiomas.** `data/catalogo-autorizaciones.json`
+nombra ahora el género y qué se comprobó, aclara que del domicilio sólo se dice que se comprobó y
+nunca cuál es, y sigue prometiendo que ningún dato de contacto se muestra.
+
+**Y apareció una decisión de redacción que no es nuestra.** Con el género pegado al Tipo de
+Asistente, la tarjeta dice «Enfermero universitario · Femenino». El desajuste ya existía en el
+catálogo; recién ahora se ve. Es el pendiente 60.
 
 ## 2. Falta construir
 

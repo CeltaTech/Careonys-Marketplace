@@ -6,7 +6,8 @@
       "usado_en": [
         "registrar-asistente.html:264",
         "formulario-integral.html:111",
-        "pwa-asistente/index.html:410"
+        "pwa-asistente/index.html:410",
+        "directorio.html"
       ],
       "items": [
         {
@@ -459,9 +460,7 @@
     "verificacion": {
       "titulo": "Verificaciones del legajo del Asistente",
       "cerrada": false,
-      "usado_en": [
-        "directorio.html:89"
-      ],
+      "usado_en": [],
       "origen": "Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas.",
       "items": [
         {
@@ -493,7 +492,41 @@
           "es-AR": "Referencia laboral verificada"
         }
       ],
-      "nota": "Eran tres. Faltaban domicilio, matrícula, salud y referencias. Cuáles bloquean el alta y cuáles son opcionales es una decisión de negocio y no vive acá: ver docs/CATALOGO.md."
+      "nota": "Eran tres. Faltaban domicilio, matrícula, salud y referencias. Cuáles bloquean el alta y cuáles son opcionales es una decisión de negocio y no vive acá: ver docs/CATALOGO.md.",
+      "no_es_lo_que_se_publica": "Esta lista es la de adentro: los siete papeles que la Prestadora le controla a un legajo. Al directorio no salen los siete, salen cinco, y esos están en `comprobacion`, acá abajo. Este vocabulario no se usa para filtrar ninguna pantalla pública."
+    },
+    "comprobacion": {
+      "titulo": "Lo que se le comprobó a un Asistente y el directorio dice",
+      "cerrada": true,
+      "usado_en": [
+        "directorio.html"
+      ],
+      "origen": "La columna `comprobaciones` de la vista `directorio` (migración 0026). Las cinco claves son exactamente las que la base ya tenía restringidas en `ponderacion_comprobacion` desde la migración 0018, así que acá no se inventó ninguna palabra.",
+      "items": [
+        {
+          "clave": "domicilio",
+          "es-AR": "Domicilio comprobado"
+        },
+        {
+          "clave": "referencia",
+          "es-AR": "Referencias comprobadas"
+        },
+        {
+          "clave": "matricula",
+          "es-AR": "Matrícula comprobada"
+        },
+        {
+          "clave": "titulo",
+          "es-AR": "Título comprobado"
+        },
+        {
+          "clave": "curso_aprobado",
+          "es-AR": "Curso aprobado"
+        }
+      ],
+      "por_que_es_cerrada": "Porque la base la cierra. Agregar una clave acá no hace que el directorio la devuelva: la lista sale de la vista, y una clave de más sería un filtro que no encuentra a nadie nunca.",
+      "los_tres_que_no_están": "Documento de identidad, antecedentes penales y certificado de salud se comprueban igual, y no salen. Son la puerta: quien está publicado ya los pasó, así que nombrarlos no distingue a nadie, y son lo más sensible del legajo. Decidido por el Desarrollador el 26 de agosto de 2026.",
+      "lo_que_tampoco_se_dice": "Ni cuándo se comprobó, ni con qué número, ni qué le falta a la persona. Decir qué falta es publicar el estado de los papeles de alguien, que es justo lo que el consentimiento no promete."
     },
     "certificacion": {
       "titulo": "Cursos acreditados que el Asistente declara",
