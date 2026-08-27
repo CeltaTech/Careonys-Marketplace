@@ -35,6 +35,36 @@
      pantalla convertida seguía contada entera, y el número dejaba de medir lo
      que falta.
 
+   - **Lo que en un guion parece texto y es nombre.** Acá estaba el grueso del
+     error: el 27 de agosto de 2026 la cuenta de «texto desde el guion» decía
+     122 y de verdad eran 30. Lo que sobraba no era una cosa sino seis, y cada
+     una se reconoce por algo que el proyecto ya escribió, nunca por adivinar si
+     una cadena «parece» una frase:
+       · la **clave** que se le pide al catálogo —`Catalogo.frase('…')`—, el
+         nombre de un atributo en un `getAttribute` y el de un campo entre
+         corchetes: los tres son nombres de ida, no texto de vuelta;
+       · lo que está al lado de un `===`, que es un valor guardado y traducirlo
+         rompe la comparación —el mismo criterio que `sinValoresGuardados()`
+         aplica al `value` de un casillero en `texto_visible.mjs`—;
+       · el segundo argumento de las funciones que clasifican un error, que sólo
+         llega a la consola;
+       · lo que se le escribe a un elemento que este mismo guion marca con
+         `data-frase`, o a una hoja de estilo que él mismo se fabrica: en el
+         primer caso el texto sale del catálogo y ya está contado allá, en el
+         segundo es CSS;
+       · el **atributo adentro de una plantilla de marcado**. `elemento.title = …`
+         es una escritura y `title="Silenciar Micrófono">` es marcado; sin exigir
+         el punto de adelante se confundían, y como un atributo no termina en
+         punto y coma, la lectura seguía de largo y contaba como frases los
+         renglones de código que venían atrás;
+       · los **pedazos**: una plantilla cortada por la mitad, un hueco `${…}`
+         contado sin mirar las llaves de adentro, un par de comillas mal
+         emparejado en `a ? (x || '') : (y || '')`. Los tres dejaban restos como
+         «<h4 style="font-size:14px» o «) : (y ||» adentro del inventario.
+     Se comprobó al revés, que es lo que hace que la prueba pueda fallar: con un
+     archivo de mentira que escribe cuatro frases de cuatro maneras distintas y
+     dos cosas que no son texto, aparecen las cuatro y no aparecen las dos.
+
    LO QUE ESTA CUENTA NO PUEDE DECIR: si dos pantallas dicen la misma frase, acá
    figura dos veces. La cuenta de frases distintas está abajo, y es la que
    manda para calcular el trabajo: traducir es por frase, no por aparición.
@@ -43,7 +73,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative } from 'node:path';
-import { despejar, sinValoresGuardados } from './texto_visible.mjs';
+import { despejar, sinValoresGuardados, visible } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const detalle = process.argv.includes('--detalle');
@@ -127,10 +157,10 @@ const agregar = (archivo, grupo, texto) => {
 for (const ruta of archivos(raiz, ['.html'])) {
   const rel = relative(raiz, ruta).replace(/\\/g, '/');
   const bruto = despejar(readFileSync(ruta, 'utf8'));
-  const visible = sinLoQueNoSeVe(bruto);
+  const enPantalla = sinLoQueNoSeVe(bruto);
 
   // El texto entre etiquetas.
-  for (const trozo of visible.split(/<[^>]*>/)) agregar(rel, 'texto en pantalla', trozo);
+  for (const trozo of enPantalla.split(/<[^>]*>/)) agregar(rel, 'texto en pantalla', trozo);
 
   // Los atributos que se leen. Se buscan sobre el HTML entero menos comentarios,
   // porque un `alt` puede estar adentro de una plantilla de `<script>`.
@@ -160,7 +190,137 @@ for (const ruta of archivos(raiz, ['.html'])) {
 // Sólo el texto que termina en pantalla. Un texto entre comillas que es una
 // clave, un selector o una dirección no es texto visible, y por eso se busca
 // alrededor de lo que escribe en el documento en vez de todas las comillas.
-const ESCRIBEN = /(?:textContent|innerHTML|innerText|placeholder|alert|title)\s*(?:=|\()\s*([^;]{0,400})/g;
+//
+// Buscar alrededor no alcanzaba, y se vio al mirar los 122 textos que este
+// guion sacaba de los guiones: cuatro de cada diez no eran texto. Cuatro
+// familias, y ninguna se descarta adivinando —cada una se reconoce por algo
+// que el propio proyecto ya sabe—:
+//
+//  1. **Las claves del catálogo.** «error.generico», «fichado.registrando» y
+//     otras treinta son lo que el código le pide al catálogo, no lo que la
+//     persona lee. Se descartan comprobándolas contra
+//     `data/catalogo-frases.json`, así que una clave inventada seguiría
+//     contando.
+//  2. **Lo que se le cuenta al registro y no a la persona.** El segundo
+//     argumento de `Texto.claveDeError()` y `Texto.mensajeDeError()` —«guardar
+//     el legajo», «cerrar la sesión»— sólo va a `console.error`
+//     (`js/texto.js`), y traducirlo no cambia ninguna pantalla.
+//  3. **Lo que el código ya marcó.** Un elemento que el guion arma y al que le
+//     pone `data-frase` lleva su castellano como respaldo, igual que una
+//     pantalla convertida. Es la misma regla que `despejar()` aplica al HTML.
+//  4. **El marcado que viaja adentro de un `innerHTML`.** Ahí «video-modal-card»
+//     o «fas fa-video» son clases, no frases. Un pedazo de HTML se mira con
+//     `visible()`, que es la función que ya distingue el texto de los atributos
+//     que se leen, en vez de juntar todo lo que esté entre comillas.
+const CLAVES_DEL_CATALOGO = new Set(
+  Object.keys(JSON.parse(readFileSync(join(raiz, 'data/catalogo-frases.json'), 'utf8')).frases)
+);
+/* El punto de adelante no es adorno: `elemento.title = ...` es una escritura de
+   JavaScript, y `title="Silenciar Micrófono">` es un atributo adentro de una
+   plantilla de marcado. Sin exigir el punto se confundían, y como un atributo no
+   termina en punto y coma, el lector seguía leyendo y contaba como frases los
+   renglones de código que venían después. Lo mismo con `placeholder`. */
+const ESCRIBEN = new RegExp(
+  '(?:([A-Za-z_$][\\w$]*)\\s*)?\\.\\s*(?:textContent|innerHTML|innerText|placeholder|title)\\s*=(?!=)\\s*'
+  + '|(?<![.\\w$])alert\\s*\\(\\s*'
+  + '|([A-Za-z_$][\\w$]*)\\s*\\.setAttribute\\(\\s*[\'"`](?:placeholder|title|alt|aria-label)[\'"`]\\s*,\\s*',
+  'g'
+);
+
+/* Lee lo que se escribe, hasta el punto y coma que de verdad lo termina.
+   Cortar en el primer `;` no alcanza: un `style="…;…"` adentro de un
+   `innerHTML` trae varios, y cortar ahí parte el marcado al medio. Lo que
+   quedaba entonces eran pedazos de atributo —«<h4 style="font-size:14px»—
+   contados como frases a traducir. */
+function leerValor(t, desde, tope = 900) {
+  let i = desde;
+  let comilla = null;
+  // El tope no corta adentro de una cadena: una plantilla de marcado pasa
+  // holgada los novecientos caracteres, y cortarla ahí devolvía a contar
+  // pedazos de atributo. Lo que la termina es su propia comilla, y para eso
+  // ya no hace falta adivinar dónde. El techo absoluto es por si nunca cierra.
+  for (; i < t.length && (comilla ? i - desde < 20000 : i - desde < tope); i++) {
+    const c = t[i];
+    if (comilla) {
+      if (c === '\\') i++;
+      else if (c === comilla) comilla = null;
+    } else if (c === "'" || c === '"' || c === '`') comilla = c;
+    else if (c === ';') break;
+  }
+  return t.slice(desde, i);
+}
+/* Saca los huecos de una plantilla contando las llaves, no buscando la primera
+   que cierre. Un hueco como `${a ? 'sí' : (b || 'no')}` tiene llaves adentro; con
+   la forma corta quedaba a medias y el resto —«) : (b ||»— se contaba como una
+   frase a traducir. Lo que el hueco calcula no es texto escrito acá: o sale de un
+   dato, o sale de otra clave del catálogo, y en los dos casos ya está contado
+   donde corresponde. */
+function sinHuecos(t) {
+  let salida = '';
+  for (let i = 0; i < t.length; i++) {
+    if (t[i] === '$' && t[i + 1] === '{') {
+      let hondo = 1;
+      i += 2;
+      for (; i < t.length && hondo; i++) {
+        if (t[i] === '{') hondo++;
+        else if (t[i] === '}') hondo--;
+      }
+      i--;
+      salida += ' ';
+      continue;
+    }
+    salida += t[i];
+  }
+  return salida;
+}
+
+/* Devuelve lo que hay adentro de cada cadena, recorriendo el texto en vez de
+   buscar pares de comillas sueltas. Con la forma corta, un `a ? (x || '') : (y || '')`
+   emparejaba la comilla que cierra la primera cadena vacía con la que abre la
+   segunda, y lo del medio —«) : (y ||»— entraba al inventario como una frase. */
+function literales(t) {
+  const salida = [];
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    if (c !== "'" && c !== '"' && c !== '`') continue;
+    let j = i + 1;
+    for (; j < t.length; j++) {
+      if (t[j] === '\\') j++;
+      else if (t[j] === c) break;
+    }
+    salida.push(t.slice(i + 1, j));
+    i = j;
+  }
+  return salida;
+}
+
+/* Despeja lo que es nombre y no frase. Son tres formas, y las tres se reconocen
+   por lo que el propio proyecto ya escribió alrededor:
+
+   - **Lo que se le pide al catálogo.** `Catalogo.frase('catalogo.cargando')` no
+     escribe esa cadena en la pantalla: la usa para ir a buscar el texto. La
+     clave además puede vivir en la tabla de arranque de `js/catalogo.js` en vez
+     del archivo de frases, así que compararla contra el archivo da un faltante
+     que no existe. Mirar la forma de la llamada no tiene ese problema.
+   - **Lo que se le pide a un elemento o a un dato.** El nombre de un atributo
+     dentro de un `getAttribute` es marcado, y lo que va entre corchetes
+     —`item['es-AR']`— es el nombre de un campo. Ninguno de los dos se lee.
+   - **Lo que se compara.** Una cadena al lado de un `===` es un valor guardado
+     —`'validado_prestadora'`, `'es-AR'`—, y traducirla rompe la comparación.
+     Es el mismo criterio que `sinValoresGuardados()` aplica al `value` de un
+     casillero en `texto_visible.mjs`. */
+const sinNombres = (t) => t
+  .replace(/((?:frase|etiquetaSiExiste|etiqueta|getAttribute|setAttribute)\s*\(\s*)(?:'[^']*'|"[^"]*"|`[^`]*`)/g, (todo, antes) => antes)
+  .replace(/(\[\s*)(?:'[^']*'|"[^"]*"|`[^`]*`)(\s*\])/g, (todo, a, b) => a + b)
+  .replace(/(?:'[^']*'|"[^"]*"|`[^`]*`)(\s*[!=]==?\s*)|(\s*[!=]==?\s*)(?:'[^']*'|"[^"]*"|`[^`]*`)/g,
+    (todo, a, b) => a || b);
+
+/* El segundo argumento de las dos que clasifican un error: se despeja dejando
+   la coma, para no pegar el primero con lo que venga después. */
+const sinLoQueSeIntentaba = (t) => t.replace(
+  /((?:clave|mensaje)DeError\s*\(\s*[^,()]{0,80},\s*)(?:'[^']*'|"[^"]*"|`[^`]*`)/g,
+  (todo, antes) => antes
+);
 for (const ruta of archivos(raiz, ['.js', '.html'])) {
   const rel = relative(raiz, ruta).replace(/\\/g, '/');
   const bruto = readFileSync(ruta, 'utf8');
@@ -168,10 +328,42 @@ for (const ruta of archivos(raiz, ['.js', '.html'])) {
     ? bruto.replace(/^\s*\/\/.*$/gm, ' ').replace(/\/\*[\s\S]*?\*\//g, ' ')
     : (bruto.match(/<script\b[^>]*>([\s\S]*?)<\/script>/gi) || []).join('\n')
         .replace(/^\s*\/\/.*$/gm, ' ').replace(/\/\*[\s\S]*?\*\//g, ' ');
+
+  // Los elementos que este mismo guion marca con `data-frase`.
+  const marcados = new Set();
+  for (const m of guion.matchAll(/([A-Za-z_$][\w$]*)\s*\.setAttribute\(\s*['"`]data-frase/g)) {
+    marcados.add(m[1]);
+  }
+
+  /* Y las hojas de estilo que el guion se fabrica solo. Lo que se le escribe
+     adentro a un `<style>` es CSS: nadie lo lee y nadie lo traduce. Se reconoce
+     por dónde nació el elemento, igual que arriba, y no por lo que parezca el
+     texto. */
+  for (const m of guion.matchAll(/([A-Za-z_$][\w$]*)\s*=\s*document\.createElement\(\s*['"`]style['"`]/g)) {
+    marcados.add(m[1]);
+  }
+
+  const anotar = (texto) => {
+    if (!CLAVES_DEL_CATALOGO.has(texto.trim())) agregar(rel, 'texto desde el guion', texto);
+  };
+
   let m;
   while ((m = ESCRIBEN.exec(guion))) {
-    const cadenas = m[1].match(/'([^'\\]{2,})'|"([^"\\]{2,})"|`([^`$\\]{2,})`/g) || [];
-    for (const c of cadenas) agregar(rel, 'texto desde el guion', c.slice(1, -1));
+    const duenio = m[1] || m[2];
+    if (duenio && marcados.has(duenio)) continue;
+    // Los huecos de una plantilla no son texto: se despejan antes de mirar.
+    const valor = sinNombres(sinHuecos(sinLoQueSeIntentaba(leerValor(guion, ESCRIBEN.lastIndex))));
+    /* Se mira cadena por cadena, y el marcado se lee desde adentro de la suya.
+       Mirando el valor entero, las comillas que envolvían al marcado quedaban
+       pegadas al texto —«' Todavía no hay reportes de hoy. '»— y esa frase no
+       coincidía con ninguna del catálogo aunque estuviera. */
+    for (const c of literales(valor)) {
+      if (/<[a-z][\w-]*[\s>]/i.test(c)) {
+        for (const [, texto] of visible(c, true)) anotar(texto);
+      } else if (c.trim().length >= 2) {
+        anotar(c);
+      }
+    }
   }
 }
 

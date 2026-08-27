@@ -83,6 +83,54 @@ olvida de ellos deja a esas personas en el idioma equivocado.
 **Seis archivos concentran 801 de las 1.256**, o sea el 64 %. Ese es el orden en que conviene
 tomarlos.
 
+### 2.2.1 La cuenta estaba inflada, y se midió cuánto
+
+**Al 27 de agosto de 2026 lo que falta son 414 frases distintas, no 479.** La diferencia no es
+trabajo hecho: es que el inventario contaba de más. De los 122 textos que decía sacar de los
+guiones, **30 eran texto y 92 no**.
+
+| | Antes | Corregido |
+|---|---:|---:|
+| Apariciones | 710 | 618 |
+| Archivos | 28 | 7 |
+| **Frases distintas** | **479** | **414** |
+| Texto armado desde un guion | 122 | 30 |
+
+Lo que sobraba no era una cosa sino seis, y ninguna se reconoce mirando si una cadena «parece»
+una frase —eso es adivinar—: cada una se reconoce por algo que el propio proyecto ya escribió
+alrededor.
+
+- **Nombres de ida, no texto de vuelta.** La clave que se le pide al catálogo
+  —`Catalogo.frase('catalogo.cargando')`—, el nombre de un atributo dentro de un `getAttribute`,
+  el de un campo entre corchetes. La clave además puede vivir en la tabla de arranque de
+  `js/catalogo.js:115` en lugar del archivo de frases, así que compararla contra el archivo daba
+  faltantes que no existen.
+- **Valores guardados.** Una cadena al lado de un `===` viaja al servidor y traducirla rompe la
+  comparación. Es el mismo criterio que `sinValoresGuardados()` (`scripts/texto_visible.mjs:42`)
+  ya aplicaba al `value` de un casillero.
+- **Lo que sólo llega a la consola**, que es el segundo argumento de las funciones que clasifican
+  un error.
+- **Lo que ya está contado en otro lado**: lo que se le escribe a un elemento que el mismo guion
+  marca con `data-frase` —el texto sale del catálogo—, y lo que se le escribe a una hoja de
+  estilo que el guion se fabrica solo, que es CSS.
+- **El atributo adentro de una plantilla de marcado.** `elemento.title = …` es una escritura de
+  JavaScript; `title="Silenciar Micrófono">` es marcado. Sin exigir el punto de adelante se
+  confundían, y como un atributo no termina en punto y coma, la lectura seguía de largo y contaba
+  como frases los renglones de código que venían atrás.
+- **Los pedazos.** Una plantilla cortada por la mitad al llegar al tope de lectura, un hueco
+  `${…}` quitado sin contar las llaves de adentro, un par de comillas mal emparejado en
+  `a ? (x || '') : (y || '')`. Los tres dejaban restos —«<h4 style="font-size:14px», «) : (y ||»—
+  adentro del inventario.
+
+**Se comprobó al revés, que es lo que hace que la prueba pueda fallar.** Un archivo de mentira que
+escribe cuatro frases de cuatro maneras distintas —`textContent`, `innerHTML` con marcado,
+`setAttribute('title', …)` y `alert()`— y además dos cosas que no son texto: aparecen las cuatro
+y no aparecen las dos. Y las categorías que no toca este arreglo quedaron **idénticas**: 588
+apariciones antes y 588 después, así que lo que cambió es lo que tenía que cambiar y nada más.
+
+**Los siete archivos que quedan son exactamente los seis trabados más `js/main.js`.** No es
+casualidad: es lo que decía la lista de trabas, ahora sin ruido encima.
+
 ### 2.3 Lo que ya estaba resuelto sin que nadie se lo propusiera
 
 Tres cosas quedaron afuera de la cuenta, y no por descuido:

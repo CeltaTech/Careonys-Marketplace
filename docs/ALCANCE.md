@@ -3125,6 +3125,29 @@ engancha un manejador, sólo `.btn-next-step` y `.btn-prev-step` aparecen en má
 y sólo `registrar-asistente.html` tenía además el suyo propio. Por eso no se agregó un chequeo:
 guardaría un caso único, y un chequeo que avisa de más se termina apagando.
 
+### El inventario de texto contaba 92 cosas que no eran texto
+
+Apareció el 27 de agosto de 2026 revisando de dónde salía cada frase que `scripts/inventario_textos.mjs`
+decía sacar de los guiones. Decía 122; de verdad eran 30. **Lo que falta traducir no son 479
+frases distintas sino 414**, y la diferencia no es trabajo hecho: es una medición que estaba mal.
+
+Importa porque de este número cuelgan dos decisiones: cuánto trabajo es el multiidioma, y quién lo
+hace —la única decisión abierta del plan (`docs/PLAN_MULTIIDIOMA.md`, sección 5, punto 2)—. Un
+inventario que cuenta de más pide presupuesto de más.
+
+**Las seis familias de ruido y cómo se reconoce cada una están en `docs/PLAN_MULTIIDIOMA.md`
+sección 2.2.1**, y no se repiten acá. El criterio, sí: **ninguna se reconoce mirando si la cadena
+parece una frase.** Eso es adivinar, y adivinar es lo que hacía el guion viejo. Cada una se
+reconoce por algo que el proyecto ya escribió alrededor —que la cadena sea el argumento de
+`Catalogo.frase()`, que esté al lado de un `===`, que el elemento haya nacido de un
+`createElement('style')`—, que es el mismo criterio con el que `scripts/verificar_referencias.mjs:32`
+descartó su heurística de cercanía: un chequeo que avisa de más se termina apagando.
+
+**Se comprobó al revés.** Un archivo de mentira con cuatro frases escritas de cuatro maneras
+distintas y dos cosas que no son texto: aparecen las cuatro, no aparecen las dos. Y las categorías
+que el arreglo no toca dieron el mismo número antes y después —588 apariciones—, así que cambió lo
+que tenía que cambiar y nada más.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,
