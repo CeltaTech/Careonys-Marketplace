@@ -148,6 +148,11 @@
       "en": "All rights reserved.",
       "pt-BR": "Todos os direitos reservados."
     },
+    "pie.sello_producto": {
+      "es-AR": "Con la tecnología de",
+      "en": "Powered by",
+      "pt-BR": "Com a tecnologia de"
+    },
 
     "_": "── Los mensajes de error. Los clasifica js/texto.js y los muestra cualquier pantalla ──",
 

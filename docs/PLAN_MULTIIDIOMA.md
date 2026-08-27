@@ -1,7 +1,7 @@
 # Plan: los tres idiomas
 
 > **El mecanismo está construido y funcionando; el trabajo de mudar las frases recién empieza.**
-> Al 26 de agosto de 2026: **10 de 46 archivos convertidos** y **460 frases** en los tres idiomas.
+> Al 26 de agosto de 2026: **10 de 46 archivos convertidos** y **461 frases** en los tres idiomas.
 > Lo que falta son las otras 36 pantallas —seis de ellas trabadas por una decisión del
 > Desarrollador, contadas en el pendiente 9— y **el contenido de los datos**, que es la mitad que
 > este plan no miraba: `data/catalogo-oferta.json` y `data/catalogo-vocabularios.json` están sólo
@@ -142,7 +142,7 @@ además en el catálogo.
 
 ### 3.2 Las pantallas piden por clave, como ya pedían la marca
 
-El mecanismo ya existía para la marca: `_applyBranding()` (`js/apiClient.js:106`) recorre la
+El mecanismo ya existía para la marca: `_applyBranding()` (`js/apiClient.js:125`) recorre la
 pantalla al cargar y reemplaza el nombre y el logotipo de la Prestadora. El texto va igual:
 
 ```html

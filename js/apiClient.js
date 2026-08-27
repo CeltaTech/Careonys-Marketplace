@@ -165,11 +165,23 @@ const ClienteDatos = {
         const tag = document.createElement('span');
         tag.className = 'powered-by-tag';
         tag.style.cssText = 'font-size: 11px; font-weight: 700; color: var(--texto-secundario); margin-top: 6px; display: block; letter-spacing: 0.3px;';
-        tag.textContent = 'Powered by ';
+        // El rótulo va en su propio elemento y no suelto adentro del sello: el
+        // catálogo traduce escribiendo el texto entero del elemento que lleva
+        // `data-frase`, así que compartirlo con el nombre de la Prestadora lo
+        // borraría en cuanto llegara la traducción.
+        const rotulo = document.createElement('span');
+        rotulo.setAttribute('data-frase', 'pie.sello_producto');
+        rotulo.textContent = 'Con la tecnología de';
+        tag.appendChild(rotulo);
+        tag.appendChild(document.createTextNode(' '));
         const marca = document.createElement('span');
         marca.style.cssText = 'color:var(--marca-prestadora-acento); font-weight: 900;';
         marca.textContent = Identidad.datos.nombre;
         tag.appendChild(marca);
+        // El sello nace después de que la pantalla ya se tradujo, así que se pide
+        // por él. Si el catálogo no está —una pantalla que no lo cargue—, queda
+        // el castellano, que es el respaldo de siempre.
+        if (window.Catalogo) window.Catalogo.traducir(tag);
         footerLogo.appendChild(tag);
 
         footerLogo.style.display = 'flex';
