@@ -3092,6 +3092,39 @@ decisión: el organismo fiscal que cambió de nombre y una lista impositiva que 
 textos escritos distinto de sus vecinos sin motivo (86).
 
 
+### El alta de un Asistente avisaba que faltaban campos y avanzaba igual
+
+Apareció el 26 de agosto de 2026 tirando de un hilo distinto: por qué `js/main.js` guarda un
+título escrito a mano cuando el campo viene vacío. El título resultó ser de `formulario-integral.html`,
+que está sentenciado a borrarse; el hilo llevó a otra cosa.
+
+**Dos navegadores de pasos escuchaban el mismo botón.** `registrar-asistente.html` tiene el suyo,
+escrito adentro de la pantalla, que **valida el paso antes de dejar pasar al siguiente**
+(`registrar-asistente.html:881`). Y `js/main.js` traía otro, el del asistente por pasos de
+`formulario-integral.html`, que se enganchaba a `.btn-next-step` en cualquier pantalla que
+cargara el archivo —y `registrar-asistente.html` lo carga— **sin validar nada**
+(`js/main.js:206`). Los dos corrían en cada clic, en ese orden, así que el segundo deshacía lo
+que el primero acababa de decidir.
+
+**El resultado se comprobó en el navegador, no se dedujo.** Con los catorce campos obligatorios
+del paso 1 vacíos, la pantalla decía «Faltan completar campos o archivos obligatorios» **y pasaba
+al paso 2 lo mismo**. Los siete pasos quedaban así: la validación existía, se ejecutaba, avisaba,
+y no servía para nada. Lo único que la salvaba era el envío final, que revalida los siete
+(`registrar-asistente.html:1100`), así que a la base nunca llegó un alta incompleta —pero quien
+se anotaba se enteraba de lo que le faltaba recién al final, después de siete pasos.
+
+**El arreglo es pedir por la pantalla propia antes de enganchar nada.** Ese bloque de `js/main.js`
+lee `w-title`, `summary-title` y `summary-desc`, que existen sólo en `formulario-integral.html`,
+así que ahora se engancha únicamente si ese formulario está (`js/main.js:172`). Comprobado en el
+navegador de las dos maneras, que es lo que hace que la prueba pueda fallar: con el paso 1 vacío
+avisa y **no** avanza; con el paso 1 completo avanza y no avisa. Y `formulario-integral.html`
+sigue funcionando igual, resumen del paso 6 incluido.
+
+**Se midió si pasaba en otro lado y no pasa.** De los doce selectores a los que `js/main.js` le
+engancha un manejador, sólo `.btn-next-step` y `.btn-prev-step` aparecen en más de una pantalla,
+y sólo `registrar-asistente.html` tenía además el suyo propio. Por eso no se agregó un chequeo:
+guardaría un caso único, y un chequeo que avisa de más se termina apagando.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,

@@ -160,8 +160,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // control adentro, así que de un grupo de redondas se marca una sola porque
   // lo hace el navegador, y lo elegido se lee del formulario.
 
-  const nextBtns = document.querySelectorAll('.btn-next-step');
-  const prevBtns = document.querySelectorAll('.btn-prev-step');
+  // Este asistente por pasos es el de `formulario-integral.html` y de nadie
+  // más: lee `w-title`, `summary-title` y `summary-desc`, que existen sólo ahí.
+  // Por eso se pide primero por su formulario y recién después se engancha
+  // nada. `registrar-asistente.html` repite las mismas clases —`.btn-next-step`,
+  // `.wizard-step-pane`— con su propio navegador de pasos, que **valida el paso
+  // antes de avanzar**; enganchados los dos, el de acá avanzaba igual después
+  // de que el otro avisara que faltaban campos, así que la validación no servía
+  // de nada. Comprobado el 26 de agosto de 2026 con los catorce obligatorios
+  // del paso 1 vacíos: salía el aviso y la pantalla pasaba al paso 2 lo mismo.
+  const wizardForm = document.getElementById('wizard-care-search-form');
+
+  const nextBtns = wizardForm ? document.querySelectorAll('.btn-next-step') : [];
+  const prevBtns = wizardForm ? document.querySelectorAll('.btn-prev-step') : [];
   const stepNodes = document.querySelectorAll('.wizard-step-node');
   const stepPanes = document.querySelectorAll('.wizard-step-pane');
 
@@ -206,7 +217,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  const wizardForm = document.getElementById('wizard-care-search-form');
   if (wizardForm) {
     // El paso 4 pregunta cuándo se necesita el cuidado con la misma grilla de
     // días por turnos que el alta del Asistente pregunta al revés. Los textos y
