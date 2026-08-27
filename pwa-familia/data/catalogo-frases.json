@@ -821,6 +821,542 @@
       "es-AR": "Ver más Asistentes",
       "en": "See more Caregivers",
       "pt-BR": "Ver mais Assistentes"
+    },
+
+    "_________": "── El paso de disponibilidad del legajo, que arma js/disponibilidad.js ──",
+
+    "disponibilidad.vacio": {
+      "es-AR": "Todavía no hay franjas horarias para elegir.",
+      "en": "There are no time slots to choose from yet.",
+      "pt-BR": "Ainda não há faixas de horário para escolher."
+    },
+
+    "__________": "── El paso de cierre del legajo, que arma js/autorizaciones.js ──",
+
+    "cierre.vacio": {
+      "es-AR": "Todavía no hay autorizaciones para confirmar.",
+      "en": "There are no authorisations to confirm yet.",
+      "pt-BR": "Ainda não há autorizações para confirmar."
+    },
+
+    "___________": "── Los estados de nueva-clave.html y el aviso de solicitar-asistente.html ──",
+
+    "nueva.no_se_pudo_comprobar": {
+      "es-AR": "No se pudo comprobar el enlace",
+      "en": "The link could not be checked",
+      "pt-BR": "Não foi possível verificar o link"
+    },
+
+    "aviso.faltan_campos": {
+      "es-AR": "Hay que completar todos los campos.",
+      "en": "All the fields have to be filled in.",
+      "pt-BR": "É preciso preencher todos os campos."
+    },
+
+    "____________": "── Los estados de la aplicación de la Familia ──",
+
+    "reporte.cargando": {
+      "es-AR": "Cargando los reportes…",
+      "en": "Loading the reports…",
+      "pt-BR": "Carregando os relatórios…"
+    },
+
+    "familia.reportes_vacio": {
+      "es-AR": "Acá todavía no se muestran reportes. Por ahora se los pide a la Prestadora.",
+      "en": "No reports are shown here yet. For now, they can be requested from the Provider.",
+      "pt-BR": "Ainda não são exibidos relatórios aqui. Por enquanto, é possível pedi-los à Prestadora."
+    },
+
+    "familia.cerrando_sesion": {
+      "es-AR": "Cerrando la sesión…",
+      "en": "Signing out…",
+      "pt-BR": "Saindo da sessão…"
+    },
+
+    "familia.aviso_faltan_datos": {
+      "es-AR": "Faltan el nombre del Paciente, la zona y la modalidad del servicio.",
+      "en": "The Patient’s name, the area and the service arrangement are missing.",
+      "pt-BR": "Faltam o nome do Paciente, a zona e a modalidade do serviço."
+    },
+
+    "familia.aviso_publicando": {
+      "es-AR": "Publicando…",
+      "en": "Publishing…",
+      "pt-BR": "Publicando…"
+    },
+
+    "_____________": "── Los estados de la aplicación del Asistente, el fichado y el reporte ──",
+
+    "asistente.legajo_sin_legajo": {
+      "es-AR": "🔴 Sin legajo — falta completar el registro",
+      "en": "🔴 No file yet — the registration is still to be completed",
+      "pt-BR": "🔴 Sem cadastro — falta concluir o registro"
+    },
+
+    "asistente.legajo_tramitando": {
+      "es-AR": "🟡 Incorporación en trámite — falta completar el legajo",
+      "en": "🟡 Onboarding in progress — the file is still to be completed",
+      "pt-BR": "🟡 Incorporação em andamento — falta concluir o cadastro"
+    },
+
+    "asistente.legajo_validado": {
+      "es-AR": "🟢 Validado — habilitado para trabajar",
+      "en": "🟢 Validated — cleared to work",
+      "pt-BR": "🟢 Validado — habilitado para trabalhar"
+    },
+
+    "asistente.confirmar_salir": {
+      "es-AR": "¿Confirma que quiere cerrar la sesión? Para volver a entrar hay que escribir de nuevo el correo y la contraseña.",
+      "en": "Do you confirm that you want to sign out? To come back in, the email address and the password have to be entered again.",
+      "pt-BR": "Confirma que deseja encerrar a sessão? Para entrar de novo é preciso digitar outra vez o e-mail e a senha."
+    },
+
+    "asistente.cerrando_sesion": {
+      "es-AR": "Cerrando la sesión…",
+      "en": "Signing out…",
+      "pt-BR": "Encerrando a sessão…"
+    },
+
+    "asistente.falta_terminos": {
+      "es-AR": "Para terminar el alta hay que aceptar los Términos y Condiciones.",
+      "en": "To finish the registration, the Terms and Conditions have to be accepted.",
+      "pt-BR": "Para concluir o cadastro é preciso aceitar os Termos e Condições."
+    },
+
+    "asistente.creando_cuenta": {
+      "es-AR": "Creando la cuenta…",
+      "en": "Creating the account…",
+      "pt-BR": "Criando a conta…"
+    },
+
+    "asistente.guardando_legajo": {
+      "es-AR": "Guardando el legajo…",
+      "en": "Saving the file…",
+      "pt-BR": "Salvando o cadastro…"
+    },
+
+    "asistente.legajo_guardado_sin_archivos": {
+      "es-AR": "El legajo quedó guardado, pero no se pudieron subir todos los archivos:\n\n{lista}\n\nSe pueden volver a cargar más adelante desde el legajo.",
+      "en": "The file was saved, but not every document could be uploaded:\n\n{lista}\n\nThey can be uploaded again later from the file.",
+      "pt-BR": "O cadastro foi salvo, mas não foi possível enviar todos os arquivos:\n\n{lista}\n\nEles podem ser enviados mais tarde a partir do cadastro."
+    },
+
+    "asistente.reenviando_correo": {
+      "es-AR": "Mandando…",
+      "en": "Sending…",
+      "pt-BR": "Enviando…"
+    },
+
+    "asistente.correo_reenviado": {
+      "es-AR": "Se mandó el correo de nuevo. Puede tardar unos minutos en llegar.",
+      "en": "The message was sent again. It may take a few minutes to arrive.",
+      "pt-BR": "A mensagem foi enviada de novo. Pode levar alguns minutos para chegar."
+    },
+
+    "fichado.entrada": {
+      "es-AR": "Entrada",
+      "en": "Clock-in",
+      "pt-BR": "Entrada"
+    },
+
+    "fichado.salida": {
+      "es-AR": "Salida",
+      "en": "Clock-out",
+      "pt-BR": "Saída"
+    },
+
+    "fichado.buscando": {
+      "es-AR": "Obteniendo la localización por GPS…",
+      "en": "Getting the GPS location…",
+      "pt-BR": "Obtendo a localização por GPS…"
+    },
+
+    "fichado.sin_soporte": {
+      "es-AR": "Este dispositivo no tiene localización por GPS.",
+      "en": "This device has no GPS location.",
+      "pt-BR": "Este dispositivo não tem localização por GPS."
+    },
+
+    "fichado.sin_soporte_estado": {
+      "es-AR": "Sin GPS en este dispositivo",
+      "en": "No GPS on this device",
+      "pt-BR": "Sem GPS neste dispositivo"
+    },
+
+    "fichado.registrando": {
+      "es-AR": "Registrando el fichado de {tipo}…",
+      "en": "Recording the {tipo}…",
+      "pt-BR": "Registrando o registro de {tipo}…"
+    },
+
+    "fichado.registrado": {
+      "es-AR": "Quedó registrado el fichado de {tipo}.\n\nCoordenadas: {lat}, {lng}",
+      "en": "The {tipo} was recorded.\n\nCoordinates: {lat}, {lng}",
+      "pt-BR": "O registro de {tipo} foi gravado.\n\nCoordenadas: {lat}, {lng}"
+    },
+
+    "fichado.ultimo": {
+      "es-AR": "Último registro: {tipo} ({hora})",
+      "en": "Last record: {tipo} ({hora})",
+      "pt-BR": "Último registro: {tipo} ({hora})"
+    },
+
+    "fichado.error_estado": {
+      "es-AR": "No se pudo registrar el fichado",
+      "en": "The record could not be saved",
+      "pt-BR": "Não foi possível gravar o registro"
+    },
+
+    "fichado.permiso_denegado": {
+      "es-AR": "Habilite los permisos de GPS para poder fichar la asistencia.",
+      "en": "Please enable GPS permissions so attendance can be recorded.",
+      "pt-BR": "Habilite as permissões de GPS para poder registrar a presença."
+    },
+
+    "fichado.permiso_denegado_estado": {
+      "es-AR": "Permiso de GPS denegado",
+      "en": "GPS permission denied",
+      "pt-BR": "Permissão de GPS negada"
+    },
+
+    "reporte.falta_texto": {
+      "es-AR": "Escriba un reporte o una nota del cuidado.",
+      "en": "Please write a report or a care note.",
+      "pt-BR": "Escreva um relatório ou uma nota do cuidado."
+    },
+
+    "reporte.guardando": {
+      "es-AR": "Guardando…",
+      "en": "Saving…",
+      "pt-BR": "Salvando…"
+    },
+
+    "reporte.guardado": {
+      "es-AR": "El reporte quedó guardado.",
+      "en": "The report was saved.",
+      "pt-BR": "O relatório foi salvo."
+    },
+
+    "______________": "── Los estados y los rótulos que escribe el guion del panel de la Prestadora ──",
+
+    "panel.legajos_cargando": {
+      "es-AR": "Buscando los legajos de la Prestadora…",
+      "en": "Looking for the Provider’s personal files…",
+      "pt-BR": "Buscando os cadastros da Prestadora…"
+    },
+
+    "panel.legajos_error": {
+      "es-AR": "No se pudieron traer los legajos. Conviene reintentar con el botón Actualizar.",
+      "en": "The personal files could not be retrieved. It is worth trying again with the Refresh button.",
+      "pt-BR": "Não foi possível trazer os cadastros. Convém tentar de novo com o botão Atualizar."
+    },
+
+    "panel.legajos_vacio": {
+      "es-AR": "Todavía no hay ningún legajo cargado en esta Prestadora.",
+      "en": "No personal file has been loaded in this Provider yet.",
+      "pt-BR": "Ainda não há nenhum cadastro carregado nesta Prestadora."
+    },
+
+    "panel.sin_permiso": {
+      "es-AR": "Esta pantalla es para el personal de la Prestadora. La cuenta con la que se inició sesión no tiene ese permiso.",
+      "en": "This screen is for the Provider’s staff. The account that signed in does not have that permission.",
+      "pt-BR": "Esta tela é para o pessoal da Prestadora. A conta com a qual se entrou não tem essa permissão."
+    },
+
+    "panel.arranque_error": {
+      "es-AR": "No se pudo preparar la pantalla. Conviene volver a cargarla.",
+      "en": "The screen could not be prepared. It is worth loading it again.",
+      "pt-BR": "Não foi possível preparar a tela. Convém carregá-la de novo."
+    },
+
+    "panel.abriendo": {
+      "es-AR": "Abriendo…",
+      "en": "Opening…",
+      "pt-BR": "Abrindo…"
+    },
+
+    "panel.legajo_cargando": {
+      "es-AR": "Abriendo el legajo para auditarlo…",
+      "en": "Opening the personal file for auditing…",
+      "pt-BR": "Abrindo o cadastro para auditá-lo…"
+    },
+
+    "panel.legajo_error": {
+      "es-AR": "No se pudo abrir el legajo para auditarlo. Conviene reintentar.",
+      "en": "The personal file could not be opened for auditing. It is worth trying again.",
+      "pt-BR": "Não foi possível abrir o cadastro para auditá-lo. Convém tentar de novo."
+    },
+
+    "panel.legajo_no_esta": {
+      "es-AR": "Ese legajo ya no figura en la lista. Conviene actualizarla con el botón Actualizar.",
+      "en": "That personal file is no longer on the list. It is worth refreshing it with the Refresh button.",
+      "pt-BR": "Esse cadastro não figura mais na lista. Convém atualizá-la com o botão Atualizar."
+    },
+
+    "panel.fila_telefono": {
+      "es-AR": "Tel:",
+      "en": "Phone:",
+      "pt-BR": "Tel:"
+    },
+
+    "panel.documentos_cargados": {
+      "es-AR": "DNI, Penales, Título",
+      "en": "ID, record check, qualification",
+      "pt-BR": "Identidade, antecedentes, diploma"
+    },
+
+    "panel.estado_en_revision": {
+      "es-AR": "🟡 Tramitando su incorporación",
+      "en": "🟡 Joining process under way",
+      "pt-BR": "🟡 Incorporação em andamento"
+    },
+
+    "panel.estado_validado": {
+      "es-AR": "🟢 Validado por Prestadora",
+      "en": "🟢 Validated by the Provider",
+      "pt-BR": "🟢 Validado pela Prestadora"
+    },
+
+    "panel.auditar": {
+      "es-AR": "Auditar Legajo",
+      "en": "Audit personal file",
+      "pt-BR": "Auditar cadastro"
+    },
+
+    "panel.documento_pendiente": {
+      "es-AR": "Pendiente",
+      "en": "Pending",
+      "pt-BR": "Pendente"
+    },
+
+    "panel.documento_sin_enlace": {
+      "es-AR": "No se pudo abrir",
+      "en": "Could not be opened",
+      "pt-BR": "Não foi possível abrir"
+    },
+
+    "panel.ver_dni": {
+      "es-AR": "Ver DNI",
+      "en": "View identity document",
+      "pt-BR": "Ver documento de identidade"
+    },
+
+    "panel.ver_penales": {
+      "es-AR": "Ver Penales",
+      "en": "View criminal record check",
+      "pt-BR": "Ver antecedentes criminais"
+    },
+
+    "panel.ver_titulo": {
+      "es-AR": "Ver Título",
+      "en": "View qualification",
+      "pt-BR": "Ver diploma"
+    },
+
+    "panel.detalle_nombre": {
+      "es-AR": "Nombre completo:",
+      "en": "Full name:",
+      "pt-BR": "Nome completo:"
+    },
+
+    "panel.detalle_dni": {
+      "es-AR": "DNI:",
+      "en": "Identity number:",
+      "pt-BR": "Documento:"
+    },
+
+    "panel.detalle_email": {
+      "es-AR": "Correo:",
+      "en": "Email address:",
+      "pt-BR": "E-mail:"
+    },
+
+    "panel.detalle_telefono": {
+      "es-AR": "Teléfono:",
+      "en": "Telephone:",
+      "pt-BR": "Telefone:"
+    },
+
+    "panel.detalle_profesion": {
+      "es-AR": "Tipo de Asistente:",
+      "en": "Type of Caregiver:",
+      "pt-BR": "Tipo de Assistente:"
+    },
+
+    "panel.detalle_patologias": {
+      "es-AR": "Patologías con experiencia:",
+      "en": "Conditions with experience:",
+      "pt-BR": "Patologias com experiência:"
+    },
+
+    "panel.detalle_tareas": {
+      "es-AR": "Tareas declaradas:",
+      "en": "Declared tasks:",
+      "pt-BR": "Tarefas declaradas:"
+    },
+
+    "panel.detalle_documentos": {
+      "es-AR": "Documentos adjuntos para verificar:",
+      "en": "Attached documents to verify:",
+      "pt-BR": "Documentos anexos para verificar:"
+    },
+
+    "panel.detalle_dni_archivo": {
+      "es-AR": "DNI, frente y dorso:",
+      "en": "Identity document, front and back:",
+      "pt-BR": "Documento de identidade, frente e verso:"
+    },
+
+    "panel.detalle_penales_archivo": {
+      "es-AR": "Antecedentes penales:",
+      "en": "Criminal record check:",
+      "pt-BR": "Antecedentes criminais:"
+    },
+
+    "panel.detalle_titulo_archivo": {
+      "es-AR": "Título o matrícula:",
+      "en": "Qualification or licence:",
+      "pt-BR": "Diploma ou registro profissional:"
+    },
+
+    "panel.aprobar_pregunta": {
+      "es-AR": "Se va a otorgar el aval «Validado por Prestadora» a este legajo.\n\nLa persona queda habilitada en el plantel activo y el aval se muestra en su perfil. Desde esta pantalla no se puede quitar.\n\n¿Confirma?",
+      "en": "The “Validated by the Provider” endorsement is about to be granted to this personal file.\n\nThe person becomes available in the active roster and the endorsement is shown on their profile. It cannot be removed from this screen.\n\nPlease confirm.",
+      "pt-BR": "O selo «Validado pela Prestadora» está prestes a ser concedido a este cadastro.\n\nA pessoa fica habilitada no quadro ativo e o selo aparece no seu perfil. Não é possível retirá-lo a partir desta tela.\n\nConfirma?"
+    },
+
+    "panel.aprobar_mientras": {
+      "es-AR": "Otorgando el aval…",
+      "en": "Granting the endorsement…",
+      "pt-BR": "Concedendo o selo…"
+    },
+
+    "panel.aprobar_aviso": {
+      "es-AR": "✓ Legajo auditado. Se asignó el sello «Validado por Prestadora» y quedó habilitado en el plantel activo.",
+      "en": "✓ Personal file audited. The “Validated by the Provider” seal was assigned and it is now available in the active roster.",
+      "pt-BR": "✓ Cadastro auditado. Foi atribuído o selo «Validado pela Prestadora» e ficou habilitado no quadro ativo."
+    },
+
+    "panel.aprobar_nota_por_omision": {
+      "es-AR": "Aprobado por el equipo de RRHH {{organizacion}}.",
+      "en": "Approved by the {{organizacion}} HR team.",
+      "pt-BR": "Aprovado pela equipe de RH {{organizacion}}."
+    },
+
+    "panel.rechazar_pregunta": {
+      "es-AR": "Se va a rechazar este legajo.\n\nQueda cerrado y la persona no aparece en el plantel activo. Desde esta pantalla no se puede volver atrás.\n\n¿Confirma?",
+      "en": "This personal file is about to be rejected.\n\nIt is closed and the person does not appear in the active roster. It cannot be undone from this screen.\n\nPlease confirm.",
+      "pt-BR": "Este cadastro está prestes a ser recusado.\n\nEle fica encerrado e a pessoa não aparece no quadro ativo. Não é possível voltar atrás a partir desta tela.\n\nConfirma?"
+    },
+
+    "panel.rechazar_mientras": {
+      "es-AR": "Registrando el rechazo…",
+      "en": "Recording the rejection…",
+      "pt-BR": "Registrando a recusa…"
+    },
+
+    "panel.rechazar_aviso": {
+      "es-AR": "Se registró el rechazo del legajo.",
+      "en": "The rejection of the personal file was recorded.",
+      "pt-BR": "A recusa do cadastro foi registrada."
+    },
+
+    "panel.rechazar_nota_por_omision": {
+      "es-AR": "No cumple requisitos.",
+      "en": "Does not meet the requirements.",
+      "pt-BR": "Não cumpre os requisitos."
+    },
+
+    "_______________": "── Los estados del alta de un Asistente ──",
+
+    "alta.legajo_cargando": {
+      "es-AR": "Preparando el formulario del legajo…",
+      "en": "Preparing the personal file form…",
+      "pt-BR": "Preparando o formulário do cadastro…"
+    },
+
+    "alta.legajo_vacio": {
+      "es-AR": "El formulario del legajo se armó sin ningún Tipo de Asistente para elegir. Con la lista vacía el alta no se puede completar. Pruebe de nuevo, y si vuelve a pasar avise a la Prestadora.",
+      "en": "The personal file form loaded with no Caregiver type to choose from. The registration cannot be completed with an empty list. Please try again, and if it happens again let the Provider know.",
+      "pt-BR": "O formulário do cadastro foi montado sem nenhum tipo de Assistente para escolher. Com a lista vazia não é possível concluir o cadastramento. Tente de novo e, se acontecer outra vez, avise a Prestadora."
+    },
+
+    "alta.guardando": {
+      "es-AR": "Guardando el legajo…",
+      "en": "Saving the personal file…",
+      "pt-BR": "Salvando o cadastro…"
+    },
+
+    "alta.sin_asistente": {
+      "es-AR": "El alta terminó sin devolver el Asistente creado, así que el legajo quedó sin guardar. No se cargó nada a medias. Vuelva a intentarlo.",
+      "en": "The registration finished without returning the Caregiver that was created, so the personal file was not saved. Nothing was half-written. Please try again.",
+      "pt-BR": "O cadastramento terminou sem devolver o Assistente criado, portanto o cadastro não foi salvo. Nada ficou pela metade. Tente novamente."
+    },
+
+    "alta.enviando": {
+      "es-AR": "Enviando el alta…",
+      "en": "Submitting the registration…",
+      "pt-BR": "Enviando o cadastramento…"
+    },
+
+    "alta.mandando": {
+      "es-AR": "Mandando el correo…",
+      "en": "Sending the email…",
+      "pt-BR": "Enviando o e-mail…"
+    },
+
+    "alta.faltan_terminos": {
+      "es-AR": "Para terminar el alta hay que aceptar los Términos y Condiciones.",
+      "en": "The Terms and Conditions must be accepted to complete the registration.",
+      "pt-BR": "Para concluir o cadastramento é preciso aceitar os Termos e Condições."
+    },
+
+    "alta.no_se_completo": {
+      "es-AR": "No se pudo completar el alta. Revise los datos y vuelva a intentarlo.",
+      "en": "The registration could not be completed. Please check the details and try again.",
+      "pt-BR": "Não foi possível concluir o cadastramento. Confira os dados e tente novamente."
+    },
+
+    "alta.correo_reenviado": {
+      "es-AR": "Se mandó el correo de confirmación de nuevo. Revise también la carpeta de correo no deseado.",
+      "en": "The confirmation email has been sent again. Please check the spam folder as well.",
+      "pt-BR": "O e-mail de confirmação foi enviado outra vez. Verifique também a pasta de spam."
+    },
+
+    "alta.archivos_no_subidos": {
+      "es-AR": "El legajo quedó guardado, pero estos archivos no se pudieron subir:\n{lista}\n\nSe pueden volver a cargar más tarde desde «Mi Legajo».",
+      "en": "The personal file was saved, but these files could not be uploaded:\n{lista}\n\nThey can be uploaded again later from “My file”.",
+      "pt-BR": "O cadastro foi salvo, mas estes arquivos não puderam ser enviados:\n{lista}\n\nPodem ser enviados mais tarde em “Meu cadastro”."
+    },
+
+    "alta.archivo_foto": {
+      "es-AR": "La foto de perfil",
+      "en": "The profile photo",
+      "pt-BR": "A foto de perfil"
+    },
+
+    "alta.archivo_dni": {
+      "es-AR": "El documento de identidad",
+      "en": "The identity document",
+      "pt-BR": "O documento de identidade"
+    },
+
+    "alta.archivo_penales": {
+      "es-AR": "El certificado de antecedentes penales",
+      "en": "The criminal record certificate",
+      "pt-BR": "O certificado de antecedentes criminais"
+    },
+
+    "alta.archivo_titulo": {
+      "es-AR": "El título o certificado de estudios",
+      "en": "The qualification or study certificate",
+      "pt-BR": "O diploma ou certificado de estudos"
+    },
+
+    "alta.archivo_legajo": {
+      "es-AR": "Los archivos adjuntos del legajo",
+      "en": "The attachments of the personal file",
+      "pt-BR": "Os anexos do cadastro"
     }
   }
 }

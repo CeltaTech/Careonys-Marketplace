@@ -50,6 +50,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 import { archivos } from './recorrido.mjs';
+import { cuerpo } from './bloques.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -67,33 +68,6 @@ const PALABRAS = new Set([
   'try', 'typeof', 'await', 'new', 'delete', 'void', 'case', 'with'
 ]);
 
-/* Deja el renglón sin sus textos ni su comentario de línea, para que una llave
-   escrita adentro de una frase no descuadre la cuenta. */
-function soloCodigo(linea) {
-  return linea
-    .replace(/\\./g, '')
-    .replace(/'[^']*'/g, "''")
-    .replace(/"[^"]*"/g, '""')
-    .replace(/\/\/.*$/, '');
-}
-
-/* Los renglones de la función que arranca en `desde`, contando llaves. */
-function cuerpo(lineas, desde) {
-  let profundidad = 0;
-  let abrio = false;
-  const salida = [];
-  for (let n = desde; n < lineas.length; n++) {
-    const limpio = soloCodigo(lineas[n]);
-    salida.push(lineas[n]);
-    for (const caracter of limpio) {
-      if (caracter === '{') { profundidad++; abrio = true; }
-      if (caracter === '}') profundidad--;
-    }
-    if (abrio && profundidad <= 0) break;
-  }
-  return salida.join('\n');
-}
-
 /* Cada función con nombre del archivo, y el texto de su cuerpo. */
 function funciones(lineas) {
   const mapa = new Map();
@@ -106,7 +80,7 @@ function funciones(lineas) {
     for (const forma of FORMAS) {
       const encontrado = forma.exec(lineas[n]);
       if (encontrado && !PALABRAS.has(encontrado[1]) && !mapa.has(encontrado[1])) {
-        mapa.set(encontrado[1], cuerpo(lineas, n));
+        mapa.set(encontrado[1], cuerpo(lineas, n).join('\n'));
       }
     }
   }
@@ -157,7 +131,7 @@ export function botonesSinApagar(texto) {
   for (let n = 0; n < lineas.length; n++) {
     if (!MANEJADOR.test(lineas[n])) continue;
     const nombre = (lineas[n].trim().match(/^[^.]*\.?[^.]*/) || [''])[0].trim();
-    revisar(n + 1, nombre.slice(0, 60), cuerpo(lineas, n));
+    revisar(n + 1, nombre.slice(0, 60), cuerpo(lineas, n).join('\n'));
   }
 
   for (let n = 0; n < lineas.length; n++) {

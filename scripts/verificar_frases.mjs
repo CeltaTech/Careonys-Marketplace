@@ -180,7 +180,14 @@ for (const camino of archivos(raiz, ['.html', '.js'], AJENAS)) {
   // La regla 4 es de pantallas. Un `.js` con `data-frase` adentro es el propio
   // mecanismo —`js/catalogo.js`—, y pedirle que no tenga texto sería pedirle
   // que no tenga las frases de arranque, que es justo lo que hace falta.
-  if (!esHtml || !/\bdata-frase\b/.test(crudo)) continue;
+  //
+  // Y se pregunta sobre el texto **sin comentarios**. Nombrar el atributo
+  // adentro de un comentario —«esta pantalla no está convertida, no tiene ni
+  // un data-frase»— daba por convertida a la pantalla entera y prendía de
+  // golpe los cien avisos de texto a mano que esa pantalla todavía tiene por
+  // delante. Pasó dos veces el 26 de agosto de 2026, en dos archivos
+  // distintos, escribiendo justamente el comentario que explicaba la regla.
+  if (!esHtml || !/\bdata-frase\b/.test(sinNotas)) continue;
   convertidas++;
 
   // Regla 4a: en el HTML no puede quedar texto que una persona lea y que no

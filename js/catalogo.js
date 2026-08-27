@@ -440,11 +440,28 @@
 
     // Un aviso puesto como texto adentro de un <select> no se ve: el navegador
     // solo dibuja sus <option>. Ahí va como opción deshabilitada.
-    _avisarEnOferta(contenedor, texto) {
+    // `conservarMoldes` es para el estado «cargando», que se muestra **antes** de
+    // saber si va a hacer falta dibujar: sin eso el aviso se llevaría puestos
+    // los `<template>` que todavía no se usaron, y después no habría con qué
+    // armar las tarjetas. El aviso queda marcado para poder sacarlo después.
+    _avisarEnOferta(contenedor, texto, conservarMoldes) {
       if (contenedor.tagName === 'SELECT') { this._avisar(contenedor, texto); return; }
+      if (conservarMoldes) {
+        this._sacarAvisoDeOferta(contenedor);
+        const aviso = document.createElement('p');
+        aviso.setAttribute('data-aviso-oferta', '');
+        aviso.textContent = texto;
+        contenedor.appendChild(aviso);
+        return;
+      }
       Array.prototype.slice.call(contenedor.querySelectorAll(':scope > template'))
         .forEach((m) => m.remove());
       contenedor.textContent = texto;
+    },
+
+    _sacarAvisoDeOferta(contenedor) {
+      Array.prototype.slice.call(contenedor.querySelectorAll(':scope > [data-aviso-oferta]'))
+        .forEach((a) => a.remove());
     },
 
     // ── Cómo se dibuja cada cosa ─────────────────────────────────────────
@@ -703,6 +720,12 @@
       // Se busca en el texto y no con un selector: lo que hay adentro de un
       // <template> no está en el documento y `querySelector` no lo encuentra.
       const traduce = contenedores.some((c) => /data-(campo|attr-[a-z-]+)="[^"]*@/.test(c.innerHTML));
+      // El estado «cargando», con el mismo motivo que en `_aplicarVocabularios`:
+      // una grilla de tarjetas que todavía no llegó se ve igual que una que vino
+      // vacía. Los moldes se conservan porque recién después se sabe si hacen
+      // falta. La frase es una de las de arranque: es la única que contesta
+      // mientras el archivo que la traería todavía viaja.
+      contenedores.forEach((c) => this._avisarEnOferta(c, this.frase('catalogo.cargando'), true));
       try {
         await Promise.all(traduce ? [this.cargarOferta(), this.cargar()] : [this.cargarOferta()]);
       } catch (err) {
@@ -712,7 +735,10 @@
         contenedores.forEach((c) => this._avisarEnOferta(c, this.frase('catalogo.error')));
         return;
       }
-      contenedores.forEach((c) => this._llenarOferta(c));
+      contenedores.forEach((c) => {
+        this._sacarAvisoDeOferta(c);
+        this._llenarOferta(c);
+      });
     },
 
     async _aplicarVocabularios(base) {

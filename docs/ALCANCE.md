@@ -1753,36 +1753,53 @@ reparto, no de nombres, y sigue anotado en el pendiente 52.
 el panel de Supabase, en orden: primero la 0015, después la 0016. Hasta que lo haga, el código
 nombra tablas que en el servidor todavía se llaman como antes.
 
-### Los cuatro estados se midieron para hacerles un chequeo, y lo que salió es que ya se cumple
+### Los cuatro estados se midieron dos veces, y la segunda dijo lo contrario que la primera
 
 Los cuatro estados —cargando, error, vacío, listo— son una regla de la empresa, y eran lo último
-no negociable de la sección 5 que no miraba nadie. Se midió el 25 de agosto de 2026 para escribirle
-el chequeo catorce. **No se escribió, y el motivo es bueno: la regla se cumple, y el cumplimiento es
-invisible para cualquier prueba automática.**
+no negociable de la sección 5 que no miraba nadie.
 
-El detector buscó por estructura y no por palabras —toda `async function` que espera un pedido de
-datos y además escribe en la pantalla—, porque la primera versión, que buscaba las palabras
-«Cargando» y «vacío», señaló como incumplidora justo a la pantalla más cuidadosa de todas:
-`panel-prestadora.html` dice «Buscando…» y `!data.length`, que es exactamente lo mismo con otras
-palabras. El detector por estructura encontró catorce funciones y avisó de siete. **Las siete eran
-falsas**, y cada motivo es distinto, que es lo que termina de decidir la cuestión:
+**La primera medición, el 25 de agosto de 2026, concluyó que la regla ya se cumplía y que no valía
+la pena escribir el chequeo. Estaba equivocada, y conviene dejar escrito por qué**, porque el error
+no fue de descuido: fue de método, y el mismo método está a mano para volver a cometerlo.
 
-- **El estado lo enciende una función auxiliar.** `panel-prestadora.html:169` llama a
-  `estadoTabla('info', 'Buscando los legajos de la Prestadora...')` antes de pedir nada, y
-  `mockup-app.html:473` y `pwa-familia/index.html:889` llaman a `recMostrar('cargando')`. El
-  detector sólo ve lo que se escribe ahí mismo.
-- **El fallo lo atrapa quien llama.** `examen.html:311` y `examen.html:376` no tienen `catch`, pero
-  nunca se los llama fuera de uno: los envuelven `examen.html:368` y `examen.html:553`. Igual pasa
-  con `armarAuditoria` (`panel-prestadora.html:251`), envuelta por `abrirAuditoria`
-  (`panel-prestadora.html:237`).
-- **El estado de carga está escrito en el HTML desde el principio.** `pwa-asistente/index.html:341`
-  ya dice «Cargando estado...» antes de que corra una sola línea de JavaScript.
+Aquel detector buscó **funciones**: toda `async function` que espera un pedido de datos y además
+escribe en la pantalla. Encontró catorce y avisó de siete, y las siete eran falsas —cada una por un
+motivo distinto: el estado lo encendía una función auxiliar, el fallo lo atrapaba quien llamaba, el
+cartel de carga estaba escrito en el HTML desde el principio—. Con siete de siete falsas, la
+conclusión pareció obvia: la regla se cumple y el cumplimiento es invisible para una prueba
+automática.
 
-Y falta el caso que cierra la discusión: **la pantalla que mejor cumple la regla es la que el
-detector no ve.** `directorio.html:298` tiene los cuatro paneles con nombre, un interruptor que
-enciende uno y apaga los otros, y el `catch` que traduce el error a una frase legible; no aparece en
-la medición porque espera un `Promise.all` y no una llamada suelta. Un chequeo que no distingue la
-mejor pantalla del resto tampoco distinguiría una mala.
+**Lo que falló fue la unidad de medida.** Contar funciones deja afuera todo lo que no es una
+función: un `await` suelto adentro de un escuchador de eventos, un `try` sin `catch`, un cargador de
+`js/` que no atrapa nada y muere en la pantalla que lo llama. Y deja afuera, sobre todo, la
+pregunta que importa, que no es «¿esta función maneja los cuatro estados?» sino **«¿hay alguna
+espera de la que una persona no se entere si sale mal?»**.
+
+**La segunda medición, el 26 de agosto de 2026, contó bloques asincrónicos en vez de funciones, y
+encontró doce puntos de carga incumplidores.** No siete falsos: doce reales, en ocho pantallas.
+Entre ellos, tres que decían en la cara algo que no era: `nueva-clave.html` contaba un fallo de red
+como «este enlace ya no sirve» y mandaba a pedir uno nuevo que tampoco iba a poder abrir;
+`registrar-asistente.html` mostraba el cartel de éxito cuando el alta se había salteado el legajo;
+y `js/apiClient.js` devolvía el mismo `null` para «no se pudo preguntar qué Prestadora es» y para
+«esta dirección no nombra ninguna», así que la pantalla decía lo segundo cuando pasaba lo primero.
+
+De esos doce, **once se corrigieron y uno quedó exento**: los dos de `mockup-app.html`, que es un
+modelo estético con fecha de vencimiento escrita en el pendiente 6 y que el chequeo declara y
+explica cada vez que corre.
+
+**El chequeo existe y se llama `scripts/verificar_estados.mjs`.** Lo levanta
+`scripts/verificar_todo.mjs`, que lo descubre solo. Mide 59 puntos de carga y 220 bloques
+asincrónicos en 45 archivos. Reconoce tres formas distintas de contar un fallo —decirlo, volver a
+lanzarlo, o anotarlo en una lista que la función devuelve— y tiene pruebas propias que le rompen
+cada una para comprobar que el detector todavía avisa; sin eso, un detector que se ablanda de más
+pasa a dar verde por no mirar.
+
+**Y la lección de método, que es lo único de esta sección que sirve para el próximo chequeo:** una
+medición que sale toda en verde no es una buena noticia hasta que se comprueba que **podía** salir
+en rojo. La primera midió con una unidad que no podía encontrar lo que había, y por eso no encontró
+nada. La regla que quedó escrita de ahí está en el `CLAUDE.md` de la empresa: «una prueba que no
+puede fallar no prueba nada».
+
 
 **Lo que sí encontró la medición fue otra cosa, y ésa se arregló el mismo día.** El mismo
 interruptor está escrito ocho veces en ocho pantallas, y las copias no eran equivalentes: cuatro
@@ -2131,7 +2148,7 @@ lea las mismas reglas, no una segunda copia de ellas.
 el pendiente 15. No era una cuestión de prolijidad. Quien escribe la llamada a mano decide solo si
 manda el token de quien inició sesión o la clave pública, y de ese renglón depende que la base
 sepa quién está preguntando. Ahora son `ClienteDatos.getMensajes()` y
-`ClienteDatos.enviarMensaje()` (`js/apiClient.js:454`), que arman el pedido una sola vez para
+`ClienteDatos.enviarMensaje()` (`js/apiClient.js:476`), que arman el pedido una sola vez para
 todos.
 
 Se ganó algo que no se buscaba: la lectura vieja miraba `res.ok` y, si venía en falso, seguía de

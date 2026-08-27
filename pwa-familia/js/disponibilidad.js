@@ -18,7 +18,7 @@
    lo nombran las pantallas del Asistente desde antes; los dos nombres apuntan
    al mismo objeto.
 
-   «todo botón que dispara una operación se apaga».1: ningún catálogo se escribe adentro de una pantalla, y los
+   «Los catálogos salen de la base»: ningún catálogo se escribe adentro de una pantalla, y los
    formularios se declaran, no se dibujan. La grilla de días por turnos estaba
    escrita a mano en dos pantallas —veintiún casilleros en cada una, con el día
    y el turno puestos en el marcado— y las dos habían escrito «Lunes» y
@@ -102,11 +102,21 @@
 
   const IDIOMA_POR_DEFECTO = 'es-AR';
 
-  // Los cuatro estados, dichos una sola vez.
+  // Los cuatro estados, dichos una sola vez. El texto sale del catálogo y no de
+  // acá: un cartel escrito a mano no existe en `en` ni en `pt-BR`. Son
+  // funciones y no cadenas porque el idioma se elige después de que este
+  // archivo se leyó, y una cadena guardada ahora se queda con el de entonces.
+  //
+  // Cuál clave usa cada uno no es casualidad. El de **cargando** se muestra
+  // mientras el catálogo todavía viaja, así que pide una de las frases de
+  // arranque, que son las únicas que contestan sin él. El de **error** pasa por
+  // `Texto.mensajeDeError`, que clasifica la falla y cae en `error.generico` si
+  // no la reconoce —también de arranque—. El de **vacío** recién aparece
+  // cuando la carga salió bien, y para entonces el catálogo ya llegó.
   const MENSAJES = {
-    cargando: 'Cargando la disponibilidad…',
-    error: 'No se pudo cargar el paso de disponibilidad',
-    vacio: 'No hay días ni turnos para mostrar'
+    cargando: () => Catalogo.frase('catalogo.cargando'),
+    error: (err) => Texto.mensajeDeError(err, 'cargar el paso de disponibilidad'),
+    vacio: () => Catalogo.frase('disponibilidad.vacio')
   };
 
   // La dirección del archivo se calcula desde la de este mismo guion, igual que
@@ -171,18 +181,27 @@
     // dicen una vez. La pantalla sólo pone tres párrafos vacíos con los nombres
     // `<prefijo>-titulo`, `<prefijo>-bajada` y `<prefijo>-ayuda`; el que no
     // ponga, no se llena.
+    //
+    // Los cuatro estados se escriben en el título, que es el primer párrafo que
+    // la pantalla tiene puesto: mientras se espera dice que está cargando, si
+    // falla dice por qué, y si sale bien lo pisa el título de verdad. Antes el
+    // fallo sólo iba a la consola y los tres párrafos quedaban vacíos, que en
+    // la pantalla se ve igual que un paso que no existe.
     async montarTextos(prefijo, nombreBloque) {
-      try {
-        await this.cargar();
-      } catch (err) {
-        console.error('Franjas:', err);
-        return;
-      }
-      const paso = this.texto(declaracion[nombreBloque || 'paso_de_disponibilidad']);
       const poner = (parte, texto) => {
         const nodo = document.getElementById(prefijo + '-' + parte);
         if (nodo) nodo.textContent = texto || '';
       };
+      const titulo = document.getElementById(prefijo + '-titulo');
+
+      if (titulo) titulo.textContent = MENSAJES.cargando();
+      try {
+        await this.cargar();
+      } catch (err) {
+        if (titulo) titulo.textContent = MENSAJES.error(err);
+        return;
+      }
+      const paso = this.texto(declaracion[nombreBloque || 'paso_de_disponibilidad']);
       poner('titulo', paso.titulo);
       poner('bajada', paso.bajada);
       poner('ayuda', paso.ayuda_grilla);
@@ -193,7 +212,7 @@
     async montarGrilla(idContenedor, nombreBloque) {
       const contenedor = document.getElementById(idContenedor);
       if (!contenedor) return;
-      _avisar(contenedor, MENSAJES.cargando);
+      _avisar(contenedor, MENSAJES.cargando());
 
       let grilla;
       let dias;
@@ -209,12 +228,12 @@
         turnos = Catalogo.items(grilla.filas);
         rotulos = this.texto(grilla);
       } catch (err) {
-        _avisar(contenedor, MENSAJES.error, err);
+        _avisar(contenedor, MENSAJES.error(err), err);
         return;
       }
 
       if (dias.length === 0 || turnos.length === 0) {
-        _avisar(contenedor, MENSAJES.vacio);
+        _avisar(contenedor, MENSAJES.vacio());
         return;
       }
 
@@ -278,12 +297,12 @@
     async montarPreguntas(idContenedor) {
       const contenedor = document.getElementById(idContenedor);
       if (!contenedor) return;
-      _avisar(contenedor, MENSAJES.cargando);
+      _avisar(contenedor, MENSAJES.cargando());
 
       try {
         await this.cargar();
       } catch (err) {
-        _avisar(contenedor, MENSAJES.error, err);
+        _avisar(contenedor, MENSAJES.error(err), err);
         return;
       }
 

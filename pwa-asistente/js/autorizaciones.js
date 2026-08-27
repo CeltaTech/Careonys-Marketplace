@@ -5,7 +5,7 @@
    entonces se le pregunta qué de eso se hace visible. Antes de cargarlo no
    sabría qué está autorizando.
 
-   «todo botón que dispara una operación se apaga».1: ningún catálogo se escribe adentro de una pantalla. El texto de
+   «Los catálogos salen de la base»: ningún catálogo se escribe adentro de una pantalla. El texto de
    cada pregunta, su orden, su valor inicial y los tres idiomas salen de
    `data/catalogo-autorizaciones.json`. Este archivo nació porque ese paso
    estaba escrito adentro de `registrar-asistente.html` y la pantalla del
@@ -59,9 +59,22 @@
 
   const IDIOMA_POR_DEFECTO = 'es-AR';
 
-  // Los cuatro estados que este paso puede tener, dichos una sola vez.
+  // Los cuatro estados que este paso puede tener, dichos una sola vez. El texto
+  // sale del catálogo y no de acá: un cartel escrito a mano no existe en `en`
+  // ni en `pt-BR`. Son funciones y no cadenas porque el idioma se elige después
+  // de que este archivo se leyó, y una cadena guardada ahora se queda con el de
+  // entonces.
+  //
+  // Cuál clave usa cada uno no es casualidad. El de **cargando** se muestra
+  // mientras el catálogo todavía viaja, así que pide una de las frases de
+  // arranque, que son las únicas que contestan sin él. El de **error** pasa por
+  // `Texto.mensajeDeError`, que clasifica la falla y cae en `error.generico` si
+  // no la reconoce —también de arranque—. El de **vacío** recién aparece
+  // cuando la carga salió bien, y para entonces el catálogo ya llegó.
   const MENSAJES = {
-    error: 'No se pudo cargar el paso de cierre'
+    cargando: () => Catalogo.frase('catalogo.cargando'),
+    error: (err) => Texto.mensajeDeError(err, 'cargar el paso de cierre'),
+    vacio: () => Catalogo.frase('cierre.vacio')
   };
 
   // La dirección del archivo se calcula desde la de este mismo guion, igual que
@@ -131,15 +144,20 @@
     async montar(idContenedor) {
       const contenedor = document.getElementById(idContenedor);
       if (!contenedor) return;
+      _avisar(contenedor, MENSAJES.cargando());
 
       try {
         await this.cargar();
       } catch (err) {
-        _avisar(contenedor, MENSAJES.error, err);
+        _avisar(contenedor, MENSAJES.error(err), err);
         return;
       }
 
       const claves = (declaracion.paso_de_cierre || {}).autorizaciones || [];
+      // Sin preguntas declaradas no hay paso. Se dice, y no se deja el hueco
+      // mudo: en la pantalla, un paso vacío se ve igual que un paso que no
+      // cargó, y son dos cosas distintas.
+      if (claves.length === 0) { _avisar(contenedor, MENSAJES.vacio()); return; }
       contenedor.textContent = '';
 
       claves.forEach((clave) => {

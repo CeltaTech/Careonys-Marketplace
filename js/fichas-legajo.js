@@ -3,9 +3,8 @@
    Desarrollado por CeltaTech.
    Lee data/catalogo-fichas.json y data/catalogo-vocabularios.json
    y dibuja los formularios de Matrícula, Estudios, Experiencia laboral
-   y Referencias. «todo botón que dispara una operación se apaga».1 del CLAUDE.md: los formularios se declaran,
-   no se dibujan — ninguna etiqueta ni opción de este archivo se escribe
-   a mano en el HTML.
+   y Referencias. «Los formularios se declaran, no se dibujan»: ninguna etiqueta
+   ni opción de este archivo se escribe a mano en el HTML.
 =================================================== */
 
 const FichasLegajo = {

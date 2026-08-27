@@ -39,7 +39,11 @@
 
       <!-- Estado: el enlace no sirve (venció, ya se usó, o se entró de frente) -->
       <div id="estado-sin-enlace" style="display:none;">
-        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;"
+        <!-- El título lleva `id` porque no siempre dice lo mismo: cuando la
+             comprobación falla, lo que hay que decir es que no se pudo
+             comprobar, y no que el enlace no sirve. Lo cambia `arrancar()`. -->
+        <h2 id="titulo-sin-enlace"
+          style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;"
           data-frase="nueva.enlace_no_sirve">
           El enlace ya no sirve
         </h2>
@@ -200,7 +204,27 @@
       try {
         sesion = await Sesion.getSession();
       } catch (err) {
-        console.error('Nueva contraseña, arranque:', err);
+        // Que la comprobación **falle** no es lo mismo que no haber llegado por
+        // el correo, y hasta acá se contaban igual: el fallo se anotaba en la
+        // consola, `sesion` quedaba en nulo y el caso caía en el `if (!sesion)`
+        // de abajo. Así, a quien se quedó sin red la pantalla le decía «esta
+        // pantalla se abre desde el enlace que llega por correo» y lo mandaba a
+        // pedir un enlace nuevo que tampoco iba a poder abrir. Es el estado
+        // error, y sin él se veía igual que el estado vacío.
+        //
+        // El título cambia junto con el aviso: dejarlo en «el enlace ya no
+        // sirve» sería afirmar algo que nadie llegó a comprobar. Lo demás del
+        // panel —que cada enlace vence, y el botón para pedir otro— sigue
+        // valiendo, así que queda como está.
+        //
+        // El detalle técnico lo registra `claveDeError` y no sale de la consola;
+        // a la pantalla va la frase que corresponde a esa clase de falla.
+        const titulo = document.getElementById('titulo-sin-enlace');
+        titulo.setAttribute('data-frase', 'nueva.no_se_pudo_comprobar');
+        Catalogo.traducir(titulo);
+        avisar('aviso-sin-enlace', Texto.claveDeError(err, 'Nueva contraseña, arranque:'));
+        mostrar('sin-enlace');
+        return;
       }
 
       if (!sesion) {

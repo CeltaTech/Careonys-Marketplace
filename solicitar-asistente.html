@@ -364,6 +364,25 @@
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
   <script>
+    // El catálogo de frases hay que pedirlo acá. `Catalogo` lo trae solo, pero
+    // por adentro de `traducir()`, que sale sin pedir nada cuando la pantalla no
+    // marca ni un rótulo con el atributo que nombra su frase, y ésta todavía no
+    // marca ninguno. Sin este llamado, `Catalogo.frase()` devolvería la cadena
+    // vacía justo cuando hay algo que avisar. Se pide una sola vez al abrir la
+    // pantalla, así que para cuando alguien manda el formulario ya llegó, y no
+    // agrega ninguna espera al envío. Si no llegara, `Texto.frase` cae en la
+    // frase genérica, que está escrita en `js/catalogo.js` en los tres idiomas
+    // justamente para eso.
+    //
+    // (El nombre de ese atributo no se escribe en este archivo a propósito:
+    //  `scripts/verificar_frases.mjs` da por convertida a toda pantalla donde
+    //  aparezca, y ésta todavía no lo está. Es el mismo motivo por el que
+    //  `scripts/verificar_estados.mjs` nombra al salto de renglón por su número
+    //  en vez de escribirlo.)
+    Catalogo.cargarFrases().catch((err) => {
+      console.error('Solicitar Asistente, catálogo de frases:', err);
+    });
+
     document.getElementById('contact-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = e.target.querySelector('button[type="submit"]');
@@ -375,7 +394,13 @@
       const consulta = document.getElementById('consulta').value;
 
       if (!nombre || !email || !celular || !consulta) {
-        alert('Por favor, complete todos los campos.');
+        // El texto sale del catálogo y no escrito acá: un cartel a mano no
+        // existe en `en` ni en `pt-BR`, así que la pantalla traducida volvía al
+        // castellano justo el día que algo faltaba. Se pide por `Texto.frase`
+        // —que es `Catalogo.frase` con red abajo— porque un aviso que se abre
+        // no puede quedarse sin decir nada: si el catálogo no llegó, se dice lo
+        // genérico en vez de abrir un cartel vacío.
+        alert(Texto.frase('aviso.faltan_campos'));
         return;
       }
 

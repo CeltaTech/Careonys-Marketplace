@@ -575,6 +575,14 @@
         </div>
         <button type="button" class="btn-login" id="btn-action-login" style="width:100%;">Ingresar a {{producto}} Familia</button>
       </div>
+
+      <!-- Los estados del arranque. Nace vacío y su texto lo pone el guion desde
+           el catálogo: mientras se averigua si ya hay sesión dice que está
+           averiguando, y si algo falla dice qué. Antes el fallo del arranque
+           sólo iba a la consola, así que una Prestadora que no se pudo resolver
+           se veía exactamente igual que un arranque bueno. -->
+      <p class="pwa-estado" id="arranque-aviso" hidden></p>
+
       <div style="text-align:center;margin-top:auto;font-size:10px;color:var(--texto-secundario);padding-top:20px;">
         Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
       </div>
@@ -822,10 +830,42 @@
         .catch(err => console.error('Error al registrar Service Worker:', err));
     }
 
-    // «los cuatro estados»: si algo del arranque falla, queda a la vista la pantalla de acceso
-    // —que es la verdad: no hay sesión— y el detalle técnico va a la consola. Sin
-    // este `try` el fallo no dejaba rastro en ninguna parte.
+    // El cartel del arranque. El texto nunca se escribe acá: se pide al
+    // catálogo, que es lo que lo hace existir también en `en` y en `pt-BR`.
+    function arrMostrar(texto) {
+      const aviso = document.getElementById('arranque-aviso');
+      aviso.textContent = texto || '';
+      aviso.hidden = !texto;
+    }
+
+    // «los cuatro estados» del arranque. Antes el fallo sólo iba a la consola y
+    // quedaba a la vista la pantalla de acceso, idéntica a la de un arranque
+    // bueno: la persona no tenía cómo saber que la marca de su Prestadora no
+    // había llegado.
     document.addEventListener('DOMContentLoaded', async () => {
+      // **Cargando, antes de la primera espera**, y sin texto a propósito: el
+      // catálogo de frases todavía no llegó, así que acá un cartel saldría en
+      // blanco. Se apaga el botón de entrar —que además evita que alguien mande
+      // el formulario con la Prestadora a medio resolver— y se marca la tarjeta
+      // como ocupada, que es lo que lee un lector de pantalla. El cartel con
+      // palabras aparece unos renglones más abajo, ya con el catálogo adentro.
+      const entrar = document.getElementById('btn-action-login');
+      const tarjeta = document.querySelector('.login-card');
+      entrar.disabled = true;
+      tarjeta.setAttribute('aria-busy', 'true');
+
+      // El texto de esta pantalla se pide explícitamente: el marcado no declara
+      // ninguna frase, así que el recorrido del documento no trae nada y los
+      // avisos de acá abajo se quedarían mudos. Va con su propia red, como en
+      // `acceso.html`: un catálogo que no llega no es un servidor caído, y
+      // confundirlos escondía el formulario por una traducción que faltaba.
+      try {
+        await Catalogo.cargarFrases();
+      } catch (err) {
+        console.error('Familia, texto de la pantalla:', err);
+      }
+      arrMostrar(Catalogo.frase('acceso.verificando'));
+
       try {
         await ClienteDatos.initTenant();
         cargarRecomendados();
@@ -838,8 +878,13 @@
             (session.user.user_metadata?.full_name || session.user.email.split('@')[0]).toUpperCase();
           navigate('dashboard');
         }
+        arrMostrar('');
       } catch (err) {
         console.error('Arranque de la aplicación de la Familia:', err);
+        arrMostrar(Texto.mensajeDeError(err, 'arrancar la aplicación de la Familia'));
+      } finally {
+        entrar.disabled = false;
+        tarjeta.removeAttribute('aria-busy');
       }
     });
 
@@ -907,12 +952,21 @@
 
     async function cargarReportes() {
       const listEl = document.getElementById('timeline-log-list');
-      listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">Cargando novedades...</p>';
+      // El marcado se queda acá y el texto sale del catálogo: son dos cosas
+      // distintas, y la que una persona lee es la segunda. La clave se escribe
+      // adentro de `Catalogo.frase` en cada llamada, y no se le pasa a este
+      // ayudante, para que `verificar_frases.mjs` la vea: una clave escondida
+      // adentro de una variable es una clave que ningún chequeo puede
+      // comprobar. Escapado, porque entra por `innerHTML`.
+      const cartel = (texto) => '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">'
+        + Texto.escapar(texto) + '</p>';
+
+      listEl.innerHTML = cartel(Catalogo.frase('reporte.cargando'));
       try {
         const logs = await ClienteDatos.getReportes();
         listEl.innerHTML = '';
         if (!logs || logs.length === 0) {
-          listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">Todavía no se muestran reportes acá. Un reporte no guarda a qué cuidado corresponde, así que la aplicación no puede distinguir cuáles son los del Paciente de esta cuenta y prefiere no mostrar ninguno antes que mostrar los de otra Familia. Mientras tanto, se los puede pedir a la Prestadora.</p>';
+          listEl.innerHTML = cartel(Catalogo.frase('familia.reportes_vacio'));
           return;
         }
         logs.forEach(log => {
@@ -952,7 +1006,10 @@
       const email    = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-pass').value;
       const btn      = document.getElementById('btn-action-login');
-      if (!email || !password) { alert('Ingrese el correo electrónico y la contraseña.'); return; }
+      // La misma falta que avisa `acceso.html`, con la misma frase: una sola
+      // clave para las dos pantallas, no dos textos que se corrigen por
+      // separado.
+      if (!email || !password) { alert(Catalogo.frase('acceso.faltan_datos')); return; }
       btn.textContent = 'Ingresando...';
       btn.disabled = true;
       try {
@@ -995,7 +1052,7 @@
       const boton = document.getElementById('btn-logout');
       const original = boton.innerHTML;
       boton.disabled = true;
-      boton.textContent = 'Cerrando la sesión...';
+      boton.textContent = Catalogo.frase('familia.cerrando_sesion');
       try {
         await Sesion.logout();
         navigate('intro');
@@ -1020,7 +1077,7 @@
       const zona   = document.getElementById('pb-zona').value;
       const tipo   = document.getElementById('pb-tipo').value;
       if (!nombre || !zona || !tipo) {
-        alert('Faltan el nombre del paciente, la zona y la modalidad del servicio.');
+        alert(Catalogo.frase('familia.aviso_faltan_datos'));
         return;
       }
       // Un par `{ dia, turno }` por casillero marcado, con claves de
@@ -1029,8 +1086,14 @@
       const patologias = Array.from(document.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
       const descripcion = document.getElementById('pb-descripcion').value;
 
+      // Lo que decía el botón se guarda y se repone tal cual, igual que en el
+      // de cerrar la sesión. Antes el rótulo de vuelta estaba escrito acá
+      // adentro —y con un dibujito en vez del ícono—, así que después de
+      // publicar una vez el botón quedaba distinto de como había nacido y en un
+      // solo idioma.
       const btn = document.getElementById('btn-enviar-aviso');
-      btn.textContent = 'Publicando...';
+      const rotulo = btn.innerHTML;
+      btn.textContent = Catalogo.frase('familia.aviso_publicando');
       btn.disabled = true;
 
       try {
@@ -1057,7 +1120,7 @@
       } catch (err) {
         alert(Texto.mensajeDeError(err, 'publicar el aviso'));
       } finally {
-        btn.textContent = '🔍 Buscar mi Asistente Ideal';
+        btn.innerHTML = rotulo;
         btn.disabled = false;
       }
     });

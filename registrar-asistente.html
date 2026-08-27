@@ -255,6 +255,19 @@
         </div>
       </div>
 
+      <!-- LOS CUATRO ESTADOS DEL ARMADO DEL LEGAJO.
+           Los pasos 5, 6 y 7 no están escritos acá: los dibujan js/fichas-legajo.js,
+           js/disponibilidad.js y js/autorizaciones.js con lo que traen sus catálogos.
+           Mientras eso viaja —y si no llega— la pantalla tiene que decirlo, porque un
+           formulario a medias sin cartel se ve igual que uno terminado. -->
+      <div id="legajo-estado"
+        style="display:none;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px;padding:12px 14px;border-radius:12px;font-size:13px;">
+        <i id="legajo-estado-rueda" class="fas fa-circle-notch fa-spin" aria-hidden="true"></i>
+        <span id="legajo-estado-texto">Preparando el formulario del legajo…</span>
+        <button type="button" class="btn btn-secundario" id="legajo-reintentar"
+          style="display:none;padding:6px 16px;font-size:12.5px;">Reintentar</button>
+      </div>
+
       <!-- FORMULARIO WIZARD -->
       <form id="form-registro-cuidador-completo" novalidate>
 
@@ -534,6 +547,16 @@
                 class="fas fa-check-circle"></i> <span id="cierre-boton">Terminar el alta</span></button>
           </div>
 
+          <!-- LOS CUATRO ESTADOS DEL GUARDADO. Cerrar el alta son cinco escrituras
+               seguidas —la Prestadora, los archivos, la ficha, el legajo— y hasta el
+               26 de agosto de 2026 ninguna decía nada mientras corría: el botón se
+               apagaba y la pantalla se quedaba igual. -->
+          <div id="alta-estado"
+            style="display:none;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px;padding:12px 14px;border-radius:12px;font-size:13px;">
+            <i id="alta-estado-rueda" class="fas fa-circle-notch fa-spin" aria-hidden="true"></i>
+            <span id="alta-estado-texto"></span>
+          </div>
+
           <!-- Falta confirmar el correo. La cuenta ya quedó creada y el legajo
                sigue cargado en pantalla: no se perdió nada, sólo falta el clic
                del enlace que llegó al mail. -->
@@ -620,6 +643,40 @@
     // y data/catalogo-autorizaciones.json, nunca a mano.
     let fichasListas = false;
 
+    /* LOS CUATRO ESTADOS, EN UN SOLO LUGAR PARA LAS DOS ZONAS QUE ESPERAN DATOS:
+       el armado del legajo al abrir la pantalla —zona `legajo`— y el guardado al
+       cerrarla —zona `alta`—. Las dos hacen exactamente lo mismo con distinta
+       caja, así que la decisión vive una vez y no dos.
+
+       El texto no se escribe acá: entra la clave y la frase sale del catálogo,
+       porque un cartel escrito a mano no existe en `en` ni en `pt-BR`. Y sale
+       por `Texto.frase`, que si el catálogo no llegó cae en `error.generico`
+       antes que dejar la caja muda.
+
+       Con `cual` vacío la caja desaparece, que es el estado listo: lo que se ve
+       entonces es el formulario, no un cartel diciendo que está listo. */
+    const COLOR_DEL_ESTADO = {
+      cargando: ['var(--tono-neutro-fondo)', 'var(--texto-secundario)'],
+      error: ['var(--tono-critico-fondo)', 'var(--tono-critico-texto)'],
+      vacio: ['var(--tono-atencion-fondo)', 'var(--tono-atencion-texto)'],
+      listo: ['var(--tono-exito-fondo)', 'var(--tono-exito-texto)']
+    };
+
+    function altaMostrar(zona, cual, clave, huecos) {
+      const caja = document.getElementById(zona + '-estado');
+      const texto = document.getElementById(zona + '-estado-texto');
+      const rueda = document.getElementById(zona + '-estado-rueda');
+      const color = COLOR_DEL_ESTADO[cual] || COLOR_DEL_ESTADO.cargando;
+      texto.textContent = clave ? Texto.frase(clave, huecos) : '';
+      rueda.style.display = (cual === 'cargando') ? '' : 'none';
+      caja.style.background = color[0];
+      caja.style.color = color[1];
+      caja.style.display = cual ? 'flex' : 'none';
+      if (cual === 'error' || cual === 'vacio') {
+        caja.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
     function montarFichas() {
       if (!FichasLegajo.fichas) return;
       FichasLegajo.montarSeccion('ficha-matricula', 'matricula');
@@ -628,49 +685,113 @@
       FichasLegajo.montarSeccion('ficha-referencia', 'referencia', { obligatoriaAlMontar: true });
     }
 
+    /* Arma los pasos 5, 6 y 7 con lo que traen los tres catálogos.
+
+       Es el último que espera, así que es el que tiene que atrapar: los cuatro
+       cargadores que se llaman acá adentro —`FichasLegajo.cargar`,
+       `Disponibilidad.cargar`, `Autorizaciones.textosDelPaso` y las frases del
+       catálogo— traen datos y no muestran nada, y sin este `try` el fallo moría
+       en este renglón dejando el formulario a medias y sin cartel.
+
+       El `try` abraza el cuerpo entero y no cada llamado por separado a
+       propósito: los tres catálogos arman **un** formulario, y con uno solo que
+       falte no hay medio legajo que ofrecer. Qué falló lo dice
+       `Texto.claveDeError`, que es quien clasifica en todo el proyecto. */
     async function inicializarLegajo() {
-      await FichasLegajo.cargar();
-      montarFichas();
-      fichasListas = true;
+      const reintentar = document.getElementById('legajo-reintentar');
+      // Estado cargando, y antes de la primera espera: una pantalla que se queda
+      // igual que estaba mientras espera se ve igual que una que ya terminó.
+      //
+      // Este primer cartel usa `catalogo.cargando` y no una clave propia porque
+      // se escribe **antes** de que las frases hayan podido llegar, y una clave
+      // que todavía no está no dice nada. Ésa es una de las cinco frases de
+      // arranque, que viven en `js/catalogo.js` justo para este momento.
+      reintentar.style.display = 'none';
+      altaMostrar('legajo', 'cargando', 'catalogo.cargando');
 
-      const profesionSelect = document.getElementById('profesion');
-      const elegido = profesionSelect.value;
-      FichasLegajo.opcionesVocabulario('tipo_asistente').forEach(item => {
-        const opcion = document.createElement('option');
-        opcion.value = item.clave;
-        opcion.textContent = item[FichasLegajo.idioma] || item['es-AR'];
-        profesionSelect.appendChild(opcion);
-      });
-      profesionSelect.value = elegido;
+      try {
+        // Las frases primero: son las que este mismo bloque necesita para poder
+        // decir en el idioma de la pantalla lo que le pase a los otros tres. Con
+        // ellas puestas, el cartel ya puede decir qué se está preparando.
+        await Catalogo.cargarFrases();
+        altaMostrar('legajo', 'cargando', 'alta.legajo_cargando');
 
-      const actualizarAvisoMatricula = () => {
-        const exige = FichasLegajo.requiereMatricula(profesionSelect.value);
-        document.getElementById('ficha-matricula-obligatoria-aviso').style.display = exige ? 'block' : 'none';
-      };
-      profesionSelect.addEventListener('change', actualizarAvisoMatricula);
-      actualizarAvisoMatricula();
+        await FichasLegajo.cargar();
+        montarFichas();
+        fichasListas = true;
 
-      // Paso 6: la disponibilidad. La grilla y la pregunta de los reemplazos
-      // urgentes las arma el módulo; acá sólo se le dice dónde.
-      const declaracionDisponibilidad = await Disponibilidad.cargar();
-      const pasoDisponibilidad = Disponibilidad.texto(declaracionDisponibilidad.paso_de_disponibilidad);
-      document.getElementById('disponibilidad-titulo').textContent = pasoDisponibilidad.titulo || '';
-      document.getElementById('disponibilidad-bajada').textContent = pasoDisponibilidad.bajada || '';
-      document.getElementById('disponibilidad-ayuda').textContent = pasoDisponibilidad.ayuda_grilla || '';
-      await Disponibilidad.montarGrilla('grilla-disponibilidad');
-      await Disponibilidad.montarPreguntas('preguntas-disponibilidad');
+        const profesionSelect = document.getElementById('profesion');
+        const elegido = profesionSelect.value;
+        const tiposDeAsistente = FichasLegajo.opcionesVocabulario('tipo_asistente');
 
-      // Paso 7: lo que la persona autoriza a publicar. Los cuarenta renglones
-      // que esto ocupaba acá son ahora `js/autorizaciones.js`, porque la
-      // pantalla del teléfono necesita el mismo paso y copiarlo habría sido
-      // tenerlo dos veces («ningún patrón repetido sin punto único de verdad»).
-      const cierre = await Autorizaciones.textosDelPaso();
-      document.getElementById('cierre-titulo').append(' ' + (cierre.titulo || ''));
-      document.getElementById('cierre-bajada').textContent = cierre.bajada || '';
-      document.getElementById('cierre-recordatorio').textContent = cierre.recordatorio || '';
-      document.getElementById('cierre-boton').textContent = cierre.boton || '';
-      await Autorizaciones.montar('autorizaciones-container');
+        // Estado vacío: el catálogo contestó y no trajo ni un Tipo de Asistente.
+        // Sin esa lista el paso 1 no se puede completar, así que se dice y no se
+        // sigue armando un formulario que nadie va a poder terminar. Sin esta
+        // rama, cero opciones y una falla se ven igual.
+        if (!tiposDeAsistente.length) {
+          reintentar.style.display = '';
+          altaMostrar('legajo', 'vacio', 'alta.legajo_vacio');
+          return;
+        }
+
+        // Las que ya están no se vuelven a poner: este desplegable lo llena
+        // también `js/catalogo.js` por su `data-catalogo`, y con el botón de
+        // reintentar esto puede correr más de una vez.
+        const yaEstan = new Set(Array.from(profesionSelect.options).map(o => o.value));
+        tiposDeAsistente.forEach(item => {
+          if (yaEstan.has(item.clave)) return;
+          const opcion = document.createElement('option');
+          opcion.value = item.clave;
+          opcion.textContent = item[FichasLegajo.idioma] || item['es-AR'];
+          profesionSelect.appendChild(opcion);
+        });
+        profesionSelect.value = elegido;
+
+        const actualizarAvisoMatricula = () => {
+          const exige = FichasLegajo.requiereMatricula(profesionSelect.value);
+          document.getElementById('ficha-matricula-obligatoria-aviso').style.display = exige ? 'block' : 'none';
+        };
+        profesionSelect.addEventListener('change', actualizarAvisoMatricula);
+        actualizarAvisoMatricula();
+
+        // Paso 6: la disponibilidad. La grilla y la pregunta de los reemplazos
+        // urgentes las arma el módulo; acá sólo se le dice dónde.
+        const declaracionDisponibilidad = await Disponibilidad.cargar();
+        const pasoDisponibilidad = Disponibilidad.texto(declaracionDisponibilidad.paso_de_disponibilidad);
+        document.getElementById('disponibilidad-titulo').textContent = pasoDisponibilidad.titulo || '';
+        document.getElementById('disponibilidad-bajada').textContent = pasoDisponibilidad.bajada || '';
+        document.getElementById('disponibilidad-ayuda').textContent = pasoDisponibilidad.ayuda_grilla || '';
+        await Disponibilidad.montarGrilla('grilla-disponibilidad');
+        await Disponibilidad.montarPreguntas('preguntas-disponibilidad');
+
+        // Paso 7: lo que la persona autoriza a publicar. Los cuarenta renglones
+        // que esto ocupaba acá son ahora `js/autorizaciones.js`, porque la
+        // pantalla del teléfono necesita el mismo paso y copiarlo habría sido
+        // tenerlo dos veces («ningún patrón repetido sin punto único de verdad»).
+        const cierre = await Autorizaciones.textosDelPaso();
+        // El título se agrega al lado del ícono que ya está escrito en la
+        // pantalla, así que se pone una vez: con el botón de reintentar, un
+        // `append` suelto lo escribiría dos veces.
+        const tituloCierre = document.getElementById('cierre-titulo');
+        if (!tituloCierre.dataset.puesto) {
+          tituloCierre.append(' ' + (cierre.titulo || ''));
+          tituloCierre.dataset.puesto = '1';
+        }
+        document.getElementById('cierre-bajada').textContent = cierre.bajada || '';
+        document.getElementById('cierre-recordatorio').textContent = cierre.recordatorio || '';
+        document.getElementById('cierre-boton').textContent = cierre.boton || '';
+        await Autorizaciones.montar('autorizaciones-container');
+
+        // Estado listo: el cartel se va y lo que queda es el formulario.
+        altaMostrar('legajo', null);
+      } catch (err) {
+        // Estado error, con el botón para volver a intentarlo: lo cargado en los
+        // pasos que sí se armaron sigue en pantalla y no se pierde nada.
+        reintentar.style.display = '';
+        altaMostrar('legajo', 'error', Texto.claveDeError(err, 'armar el formulario del legajo'));
+      }
     }
+    document.getElementById('legajo-reintentar').addEventListener('click', inicializarLegajo);
     inicializarLegajo();
 
     // NAVEGACIÓN Y VALIDACIÓN DEL WIZARD STEP-BY-STEP
@@ -793,119 +914,168 @@
     // confirmar el correo antes—. Mientras vivió adentro del envío, confirmar el
     // correo costaba el legajo entero: no había forma de volver a este tramo sin
     // cargar los siete pasos de nuevo («ningún patrón repetido sin punto único de verdad»).
+    //
+    // Devuelve si el legajo quedó guardado. **No vuelve a lanzar el fallo**: ya lo
+    // dijo en la pantalla, y relanzarlo haría que quien llama lo dijera otra vez.
+    // Quien llama mira lo que devuelve para saber si puede dar el paso siguiente,
+    // que en «Ya confirmé» es olvidar la contraseña y cerrar el panel: hacer eso
+    // después de un guardado que falló dejaría el legajo perdido y sin aviso.
     async function guardarLegajo(userId, email) {
       const form = formAlta;
 
-      // Con la sesión abierta la Prestadora se vuelve a resolver, y ahora sale
-      // del perfil: es el mismo dato que va a mirar la política al escribir.
-      ClienteDatos._resolucionEnCurso = null;
-      await ClienteDatos.initTenant();
+      // Estado cargando, antes de la primera espera. Cerrar el alta son cinco
+      // escrituras seguidas y ninguna es instantánea.
+      altaMostrar('alta', 'cargando', 'alta.guardando');
 
-      // 2. Los archivos, a su depósito
-      // Se guarda el camino, no una dirección: los papeles viven en un depósito
-      // privado y su dirección se firma recién al mostrarla. La foto va aparte,
-      // al depósito público, porque es la que muestra el directorio. La primera
-      // carpeta es siempre la cuenta: de ahí sale el permiso (migración 0006).
-      const docUrls = {
-        foto: 'pendiente',
-        dni: 'pendiente',
-        penales: 'pendiente',
-        titulo: 'pendiente'
-      };
+      try {
+        // Con la sesión abierta la Prestadora se vuelve a resolver, y ahora sale
+        // del perfil: es el mismo dato que va a mirar la política al escribir.
+        // Sin la Prestadora resuelta nada de lo que sigue se puede escribir, así
+        // que si esto falla el `catch` de abajo lo dice y no se sigue.
+        ClienteDatos._resolucionEnCurso = null;
+        await ClienteDatos.initTenant();
 
-      const adjuntos = [
-        { clave: 'foto',    campo: 'foto-perfil',  deposito: 'avatares',              base: 'foto_perfil', nombre: 'la foto de perfil' },
-        { clave: 'dni',     campo: 'file-dni',     deposito: 'documentos-cuidadores', base: 'dni_frente',  nombre: 'el documento de identidad' },
-        { clave: 'penales', campo: 'file-penales', deposito: 'documentos-cuidadores', base: 'penales',     nombre: 'los antecedentes penales' },
-        { clave: 'titulo',  campo: 'file-titulo',  deposito: 'documentos-cuidadores', base: 'titulo',      nombre: 'el título' }
-      ];
+        // 2. Los archivos, a su depósito
+        // Se guarda el camino, no una dirección: los papeles viven en un depósito
+        // privado y su dirección se firma recién al mostrarla. La foto va aparte,
+        // al depósito público, porque es la que muestra el directorio. La primera
+        // carpeta es siempre la cuenta: de ahí sale el permiso (migración 0006).
+        const docUrls = {
+          foto: 'pendiente',
+          dni: 'pendiente',
+          penales: 'pendiente',
+          titulo: 'pendiente'
+        };
 
-      // Un archivo que no sube y no avisa es peor que uno que no se cargó: la
-      // persona se va creyendo que entregó el papel. Se juntan los que fallaron
-      // y se avisa una sola vez, sin frenar el resto del alta.
-      const adjuntosFallados = [];
-      for (const adj of adjuntos) {
-        const archivo = document.getElementById(adj.campo)?.files[0];
-        if (!archivo) continue;
-        const extension = (archivo.name.split('.').pop() || 'dat').toLowerCase();
-        try {
-          docUrls[adj.clave] = await Sesion.uploadFile(
-            adj.deposito, `${userId}/${adj.base}.${extension}`, archivo
-          );
-        } catch (errArchivo) {
-          console.error('Alta de Asistente, ' + adj.clave + ':', errArchivo);
-          adjuntosFallados.push({ nombre: adj.nombre, motivo: Texto.mensajeDeError(errArchivo) });
+        // `nombre` es la clave del catálogo y no el nombre escrito: termina
+        // adentro del aviso de «no se pudieron subir todos los archivos», que es
+        // texto visible y se lee en los tres idiomas como cualquier otro.
+        const adjuntos = [
+          { clave: 'foto',    campo: 'foto-perfil',  deposito: 'avatares',              base: 'foto_perfil', nombre: 'alta.archivo_foto' },
+          { clave: 'dni',     campo: 'file-dni',     deposito: 'documentos-cuidadores', base: 'dni_frente',  nombre: 'alta.archivo_dni' },
+          { clave: 'penales', campo: 'file-penales', deposito: 'documentos-cuidadores', base: 'penales',     nombre: 'alta.archivo_penales' },
+          { clave: 'titulo',  campo: 'file-titulo',  deposito: 'documentos-cuidadores', base: 'titulo',      nombre: 'alta.archivo_titulo' }
+        ];
+
+        // Un archivo que no sube y no avisa es peor que uno que no se cargó: la
+        // persona se va creyendo que entregó el papel. Se juntan los que fallaron
+        // y se avisa una sola vez, sin frenar el resto del alta.
+        const adjuntosFallados = [];
+        for (const adj of adjuntos) {
+          const archivo = document.getElementById(adj.campo)?.files[0];
+          if (!archivo) continue;
+          const extension = (archivo.name.split('.').pop() || 'dat').toLowerCase();
+          try {
+            docUrls[adj.clave] = await Sesion.uploadFile(
+              adj.deposito, `${userId}/${adj.base}.${extension}`, archivo
+            );
+          } catch (errArchivo) {
+            console.error('Alta de Asistente, ' + adj.clave + ':', errArchivo);
+            adjuntosFallados.push({ nombre: Texto.frase(adj.nombre), motivo: Texto.mensajeDeError(errArchivo) });
+          }
         }
-      }
 
-      // 3. Extraer datos del formulario
-      const patologias = Array.from(form.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
-      const tareas = Array.from(form.querySelectorAll('input[name="tarea_cuidado"]:checked')).map(cb => cb.value);
-      const cursos = Array.from(form.querySelectorAll('input[name="certificacion"]:checked')).map(cb => cb.value);
-      // Días y turnos salen con la clave del catálogo —`lunes`, `manana`—, que
-      // es lo que esperan las columnas de franjas_asistente.
-      const disponibilidad = Disponibilidad.recolectar('grilla-disponibilidad', 'preguntas-disponibilidad');
+        // 3. Extraer datos del formulario
+        const patologias = Array.from(form.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
+        const tareas = Array.from(form.querySelectorAll('input[name="tarea_cuidado"]:checked')).map(cb => cb.value);
+        const cursos = Array.from(form.querySelectorAll('input[name="certificacion"]:checked')).map(cb => cb.value);
+        // Días y turnos salen con la clave del catálogo —`lunes`, `manana`—, que
+        // es lo que esperan las columnas de franjas_asistente.
+        const disponibilidad = Disponibilidad.recolectar('grilla-disponibilidad', 'preguntas-disponibilidad');
 
-      // 4. Registrar en Supabase (tabla caregivers)
-      const data = {
-        user_id: userId,
-        nombre: document.getElementById('nombre').value,
-        dni: document.getElementById('dni-num').value,
-        email: email,
-        telefono: document.getElementById('celular').value,
-        cuit: document.getElementById('cuit-cuil').value,
-        fechaNacimiento: document.getElementById('fecha-nacimiento').value,
-        genero: document.getElementById('genero').value,
-        nacionalidad: document.getElementById('nacionalidad').value,
-        domicilio: document.getElementById('domicilio').value,
-        cbu: document.getElementById('cbu-alias').value,
-        profesion: document.getElementById('profesion').value,
-        zona: document.getElementById('zona').value,
-        patologias,
-        tareas,
-        educacion: {
-          nivelEstudios: document.getElementById('nivel-estudios').value,
-          cursosCompletados: cursos
-        },
-        valorHora: document.getElementById('valor-hora').value,
-        documentos: docUrls    // caminos dentro de los depósitos, no direcciones
-      };
+        // 4. Registrar en Supabase (tabla caregivers)
+        const data = {
+          user_id: userId,
+          nombre: document.getElementById('nombre').value,
+          dni: document.getElementById('dni-num').value,
+          email: email,
+          telefono: document.getElementById('celular').value,
+          cuit: document.getElementById('cuit-cuil').value,
+          fechaNacimiento: document.getElementById('fecha-nacimiento').value,
+          genero: document.getElementById('genero').value,
+          nacionalidad: document.getElementById('nacionalidad').value,
+          domicilio: document.getElementById('domicilio').value,
+          cbu: document.getElementById('cbu-alias').value,
+          profesion: document.getElementById('profesion').value,
+          zona: document.getElementById('zona').value,
+          patologias,
+          tareas,
+          educacion: {
+            nivelEstudios: document.getElementById('nivel-estudios').value,
+            cursosCompletados: cursos
+          },
+          valorHora: document.getElementById('valor-hora').value,
+          documentos: docUrls    // caminos dentro de los depósitos, no direcciones
+        };
 
-      const aspirante = await ClienteDatos.registrarAspirante(data);
+        const aspirante = await ClienteDatos.registrarAspirante(data);
 
-      // 5. Legajo: las cuatro fichas repetibles (migración 0004), lo que la
-      // persona autorizó al cerrar y su disponibilidad horaria (migración 0012)
-      const legajo = {
-        matriculas: FichasLegajo.recolectar('ficha-matricula', 'matricula'),
-        estudios: FichasLegajo.recolectar('ficha-estudio', 'estudio'),
-        experiencia: FichasLegajo.recolectar('ficha-experiencia_laboral', 'experiencia_laboral'),
-        referencias: FichasLegajo.recolectar('ficha-referencia', 'referencia'),
-        autorizaciones: Autorizaciones.recolectar('autorizaciones-container'),
-        disponibilidad
-      };
+        // Estado vacío: el alta contestó y no trajo el Asistente, así que no hay
+        // a quién colgarle el legajo. Hasta el 26 de agosto de 2026 esto era un
+        // `if (aspirante && aspirante.id)` sin la otra rama: el legajo entero se
+        // perdía en silencio y la pantalla ponía igual el cartel de éxito.
+        if (!aspirante || !aspirante.id) {
+          altaMostrar('alta', 'vacio', 'alta.sin_asistente');
+          return false;
+        }
 
-      // Los archivos de matrícula y estudio van al depósito privado; en la tabla
-      // queda el camino, igual que los otros adjuntos. Lo hace el módulo, que
-      // es el mismo que usa la aplicación del teléfono.
-      adjuntosFallados.push(...await FichasLegajo.subirArchivos(legajo, userId));
+        // 5. Legajo: las cuatro fichas repetibles (migración 0004), lo que la
+        // persona autorizó al cerrar y su disponibilidad horaria (migración 0012)
+        const legajo = {
+          matriculas: FichasLegajo.recolectar('ficha-matricula', 'matricula'),
+          estudios: FichasLegajo.recolectar('ficha-estudio', 'estudio'),
+          experiencia: FichasLegajo.recolectar('ficha-experiencia_laboral', 'experiencia_laboral'),
+          referencias: FichasLegajo.recolectar('ficha-referencia', 'referencia'),
+          autorizaciones: Autorizaciones.recolectar('autorizaciones-container'),
+          disponibilidad
+        };
 
-      if (aspirante && aspirante.id) {
+        // Los archivos de matrícula y estudio van al depósito privado; en la tabla
+        // queda el camino, igual que los otros adjuntos. Lo hace el módulo, que
+        // es el mismo que usa la aplicación del teléfono.
+        //
+        // Devuelve **la lista de los que no subieron**, no una excepción, y eso ya
+        // se maneja como dato: se suma a la lista de arriba y se avisa una sola
+        // vez al final. Lo que faltaba era la otra puerta: si el módulo se cae
+        // entero —sin red no llega ni a intentarlo— el fallo sale por excepción,
+        // y dejarlo llegar al `catch` de abajo perdería el legajo de alguien que
+        // ya quedó registrado. Se cuenta como un archivo más que no subió.
+        try {
+          adjuntosFallados.push(...await FichasLegajo.subirArchivos(legajo, userId));
+        } catch (errFichas) {
+          console.error('Alta de Asistente, archivos del legajo:', errFichas);
+          adjuntosFallados.push({
+            nombre: Texto.frase('alta.archivo_legajo'),
+            motivo: Texto.mensajeDeError(errFichas)
+          });
+        }
+
         await ClienteDatos.guardarLegajoAsistente(aspirante.id, legajo);
-      }
 
-      // 6. Confirmar al usuario
-      if (adjuntosFallados.length) {
-        const lista = adjuntosFallados.map(f => '- ' + f.nombre + ': ' + f.motivo).join('\n');
-        alert('El legajo quedó guardado, pero no se pudieron subir todos los archivos:\n\n'
-            + lista + '\n\nSe pueden volver a cargar más adelante desde el legajo.');
+        // 6. Confirmar al usuario
+        if (adjuntosFallados.length) {
+          const lista = adjuntosFallados.map(f => '- ' + f.nombre + ': ' + f.motivo).join('\n');
+          alert(Texto.frase('alta.archivos_no_subidos', { lista }));
+        }
+        // Estado listo: el cartel se va y lo que queda es el cartel de éxito que
+        // esta pantalla ya tenía.
+        altaMostrar('alta', null);
+        const successMsg = document.getElementById('form-success');
+        if (successMsg) successMsg.style.display = 'block';
+        form.reset();
+        Disponibilidad.limpiar('grilla-disponibilidad', 'preguntas-disponibilidad');
+        montarFichas();
+        goToStep(1);
+        setTimeout(() => { if (successMsg) successMsg.style.display = 'none'; }, 6000);
+        return true;
+      } catch (err) {
+        // Estado error. Acá mueren los tres que traen datos y no muestran nada
+        // —`initTenant`, `registrarAspirante` y `guardarLegajoAsistente`—, así
+        // que es este renglón el que tiene que decirlo: lo cargado sigue en
+        // pantalla y se puede volver a enviar.
+        altaMostrar('alta', 'error', Texto.claveDeError(err, 'guardar el legajo del alta'));
+        return false;
       }
-      const successMsg = document.getElementById('form-success');
-      if (successMsg) successMsg.style.display = 'block';
-      form.reset();
-      Disponibilidad.limpiar('grilla-disponibilidad', 'preguntas-disponibilidad');
-      montarFichas();
-      goToStep(1);
-      setTimeout(() => { if (successMsg) successMsg.style.display = 'none'; }, 6000);
     }
 
     // El aviso del panel de confirmación. Verde cuando la noticia es buena, rojo
@@ -948,7 +1118,7 @@
       // Validar términos y condiciones
       const termsCheckbox = document.getElementById('acepto-terminos');
       if (!termsCheckbox || !termsCheckbox.checked) {
-        alert('Para terminar el alta hay que aceptar los Términos y Condiciones.');
+        alert(Texto.frase('alta.faltan_terminos'));
         if (termsCheckbox) termsCheckbox.focus();
         return;
       }
@@ -956,7 +1126,7 @@
       const submitBtn = document.getElementById('btn-submit-cuidador');
       const textoBoton = document.getElementById('cierre-boton');
       const textoBotonOriginal = textoBoton.textContent;
-      textoBoton.textContent = 'Enviando...';
+      textoBoton.textContent = Texto.frase('alta.enviando');
       submitBtn.disabled = true;
 
       try {
@@ -997,11 +1167,14 @@
           return;
         }
 
+        // Lo que devuelve no se mira acá: si el guardado falló ya lo dijo en su
+        // propio cartel, y lo único que falta es reponer el botón, que lo hace
+        // el `finally` de abajo pase lo que pase.
         await guardarLegajo(userId, email);
 
       } catch (err) {
         console.error('Alta de Asistente:', err);
-        alert('No se pudo completar el alta. Los datos cargados siguen en pantalla: se puede reintentar en un momento.');
+        alert(Texto.frase('alta.no_se_completo'));
       } finally {
         textoBoton.textContent = textoBotonOriginal;
         submitBtn.disabled = false;
@@ -1018,11 +1191,14 @@
       const texto = document.getElementById('ya-confirme-texto');
       const textoOriginal = texto.textContent;
       boton.disabled = true;
-      texto.textContent = 'Guardando el legajo...';
+      texto.textContent = Texto.frase('alta.guardando');
       avisarConfirmacion('');
       try {
         const usuario = await Sesion.login(altaEsperandoCorreo.email, altaEsperandoCorreo.clave);
-        await guardarLegajo(usuario.id, altaEsperandoCorreo.email);
+        // Si el guardado falló ya lo dijo en su cartel, y acá hay que frenar:
+        // olvidar la contraseña y cerrar el panel dejaría el legajo perdido sin
+        // ninguna forma de volver a mandarlo. El `finally` repone el botón.
+        if (!await guardarLegajo(usuario.id, altaEsperandoCorreo.email)) return;
         // Guardado. Se olvida la contraseña y la pantalla vuelve a quedar como
         // estaba, por si en la misma máquina se da de alta a otra persona.
         altaEsperandoCorreo = null;
@@ -1043,10 +1219,10 @@
       const boton = document.getElementById('btn-reenviar-confirmacion');
       const textoOriginal = boton.textContent;
       boton.disabled = true;
-      boton.textContent = 'Mandando...';
+      boton.textContent = Texto.frase('alta.mandando');
       try {
         await Sesion.reenviarConfirmacion(altaEsperandoCorreo.email);
-        avisarConfirmacion('Se mandó el correo de nuevo. Puede tardar unos minutos en llegar.', false);
+        avisarConfirmacion(Texto.frase('alta.correo_reenviado'), false);
       } catch (err) {
         avisarConfirmacion(Texto.mensajeDeError(err, 'volver a mandar el correo de confirmación'));
       } finally {

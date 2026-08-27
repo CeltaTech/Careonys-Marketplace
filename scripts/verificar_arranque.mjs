@@ -45,6 +45,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 import { archivos } from './recorrido.mjs';
+import { soloCodigo, cuerpo, dentroDeTry } from './bloques.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -57,58 +58,6 @@ const EXENTOS = new Map([
   // (vacío por ahora: los ocho arranques que había se arreglaron el 25 de agosto
   //  de 2026, y las dos tareas del GPS ya tenían su `try` desde el día anterior)
 ]);
-
-const ESCAPE = new RegExp(String.fromCharCode(92, 92) + '.', 'g');
-
-/* Deja el renglón sin sus textos ni su comentario de línea, para que una llave
-   escrita adentro de una frase no descuadre la cuenta. */
-function soloCodigo(linea) {
-  return linea
-    .replace(ESCAPE, '')
-    .replace(/'[^']*'/g, "''")
-    .replace(/"[^"]*"/g, '""')
-    .replace(/`[^`]*`/g, '``')
-    .replace(/\/\/.*$/, '');
-}
-
-/* Los renglones del bloque que arranca en `desde`, contando llaves. */
-function cuerpo(lineas, desde) {
-  let profundidad = 0;
-  let abrio = false;
-  const salida = [];
-  for (let n = desde; n < lineas.length; n++) {
-    salida.push(lineas[n]);
-    for (const caracter of soloCodigo(lineas[n])) {
-      if (caracter === '{') { profundidad++; abrio = true; }
-      if (caracter === '}') profundidad--;
-    }
-    if (abrio && profundidad <= 0) break;
-  }
-  return salida;
-}
-
-/* ¿El renglón `n` está adentro de un `try` que todavía no cerró? Se cuenta hacia
-   atrás: cada `}` que aparece antes es un bloque que ya se cerró y hay que
-   saltear entero; la primera `{` que queda sin pareja es la del bloque que
-   contiene a este renglón, y ahí se mira si abre un `try`. */
-function dentroDeTry(lineas, n) {
-  let pendientes = 0;
-  for (let i = n - 1; i >= 0; i--) {
-    const limpio = soloCodigo(lineas[i]);
-    const termina = limpio.trimEnd();
-    for (const caracter of [...limpio].reverse()) {
-      if (caracter === '}') pendientes++;
-      else if (caracter === '{') {
-        if (pendientes === 0) {
-          if (/\btry\s*\{$/.test(termina)) return true;
-        } else {
-          pendientes--;
-        }
-      }
-    }
-  }
-  return false;
-}
 
 const AL_CARGAR = /addEventListener\(\s*['"]DOMContentLoaded['"]\s*,\s*async/;
 const SUELTO = /\(\s*async\s*(?:\([^)]*\)|function\s*\**\s*[\w$]*\s*\([^)]*\))\s*(?:=>)?\s*\{/;

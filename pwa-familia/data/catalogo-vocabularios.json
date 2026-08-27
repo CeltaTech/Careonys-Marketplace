@@ -7,8 +7,8 @@
         "directorio.html:276",
         "formulario-integral.html:110",
         "perfil.html:288",
-        "pwa-asistente/index.html:428",
-        "registrar-asistente.html:288"
+        "pwa-asistente/index.html:446",
+        "registrar-asistente.html:301"
       ],
       "items": [
         {
@@ -63,9 +63,9 @@
         "formulario-integral.html:397",
         "mockup-app.html:458",
         "perfil.html:283",
-        "pwa-asistente/index.html:443",
-        "pwa-familia/index.html:866",
-        "registrar-asistente.html:319"
+        "pwa-asistente/index.html:461",
+        "pwa-familia/index.html:911",
+        "registrar-asistente.html:332"
       ],
       "items": [
         {
@@ -131,7 +131,7 @@
       "titulo": "Condición frente a AFIP",
       "cerrada": true,
       "usado_en": [
-        "registrar-asistente.html:294"
+        "registrar-asistente.html:307"
       ],
       "items": [
         {
@@ -156,8 +156,8 @@
       "titulo": "Nivel educativo alcanzado",
       "cerrada": true,
       "usado_en": [
-        "pwa-asistente/index.html:447",
-        "registrar-asistente.html:323"
+        "pwa-asistente/index.html:465",
+        "registrar-asistente.html:336"
       ],
       "items": [
         {
@@ -186,9 +186,9 @@
         "directorio.html:318",
         "directorio.html:82",
         "perfil.html:342",
-        "pwa-asistente/index.html:479",
-        "pwa-familia/index.html:778",
-        "registrar-asistente.html:367"
+        "pwa-asistente/index.html:497",
+        "pwa-familia/index.html:786",
+        "registrar-asistente.html:380"
       ],
       "items": [
         {
@@ -277,8 +277,8 @@
         "data/catalogo-fichas.json:180",
         "formulario-integral.html:143",
         "js/catalogo.js:325",
-        "pwa-asistente/index.html:481",
-        "registrar-asistente.html:371"
+        "pwa-asistente/index.html:499",
+        "registrar-asistente.html:384"
       ],
       "items": [
         {
@@ -346,9 +346,9 @@
       "usado_en": [
         "formulario-integral.html:185",
         "formulario-integral.html:402",
-        "pwa-asistente/index.html:495",
-        "pwa-familia/index.html:753",
-        "registrar-asistente.html:392"
+        "pwa-asistente/index.html:513",
+        "pwa-familia/index.html:761",
+        "registrar-asistente.html:405"
       ],
       "items": [
         {
@@ -547,8 +547,8 @@
       "titulo": "Cursos acreditados que el Asistente declara",
       "cerrada": false,
       "usado_en": [
-        "pwa-asistente/index.html:450",
-        "registrar-asistente.html:333"
+        "pwa-asistente/index.html:468",
+        "registrar-asistente.html:346"
       ],
       "items": [
         {
@@ -628,9 +628,9 @@
         "formulario-integral.html:392",
         "mockup-app.html:459",
         "perfil.html:284",
-        "pwa-familia/index.html:740",
-        "pwa-familia/index.html:867",
-        "registrar-asistente.html:300"
+        "pwa-familia/index.html:748",
+        "pwa-familia/index.html:912",
+        "registrar-asistente.html:313"
       ],
       "nota": "Las dos pantallas listaban zonas de distinto tamaño: una, barrios; la otra, regiones enteras. No son dos listas rivales sino dos escalones de la misma, así que cada barrio queda colgado de su región. Qué barrios y partidos cubre el servicio de verdad no está escrito en el proyecto: esta lista es la que estaba en las pantallas, no un mapa de cobertura.",
       "items": [
@@ -832,8 +832,8 @@
       "titulo": "Con retiro o sin retiro del domicilio",
       "cerrada": false,
       "usado_en": [
-        "pwa-asistente/index.html:497",
-        "registrar-asistente.html:394"
+        "pwa-asistente/index.html:515",
+        "registrar-asistente.html:407"
       ],
       "origen": "Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas. Las dos palabras son las que usa el rubro.",
       "items": [
@@ -888,7 +888,7 @@
       "cerrada": true,
       "usado_en": [
         "cursos.html:91",
-        "pwa-asistente/index.html:724"
+        "pwa-asistente/index.html:769"
       ],
       "items": [
         {
@@ -910,7 +910,7 @@
       "titulo": "Nivel del curso",
       "cerrada": true,
       "usado_en": [
-        "pwa-asistente/index.html:722"
+        "pwa-asistente/index.html:767"
       ],
       "items": [
         {

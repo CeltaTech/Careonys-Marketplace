@@ -266,6 +266,19 @@
     .wespera-correo-botones { display: flex; gap: 8px; flex-wrap: wrap; }
     .wespera-correo-aviso { display: none; margin: 10px 0 0; font-weight: 700; }
 
+    /* Los dos carteles que dicen «esto está pasando» o «esto falló»: el del
+       arranque, abajo del botón de entrar, y el del legajo que se está
+       guardando. Nacen vacíos y escondidos; el guion les pone el texto, que
+       sale del catálogo como cualquier otro rótulo. */
+    .warranque-aviso {
+      display: none; margin: 10px 0 0; font-size: 11px; font-weight: 700;
+      text-align: center; color: var(--rojo-peligro-texto);
+    }
+    .wguardando {
+      display: none; margin: 10px 0 0; font-size: 11px; font-weight: 700;
+      text-align: center; color: var(--texto-secundario);
+    }
+
     .wsuccess-msg {
       display: none; background: var(--tono-exito-fondo); color: var(--verde-exito-texto);
       padding: 16px; border-radius: 12px; font-weight: 700;
@@ -313,6 +326,11 @@
           <input type="password" id="login-pass" placeholder="Contraseña" required />
         </div>
         <button type="button" class="btn-login" id="btn-action-login">Ingresar a {{producto}} Asistente</button>
+        <!-- El estado error del arranque. Antes, si algo del arranque fallaba, el
+             detalle se iba a la consola y la pantalla quedaba idéntica a la de
+             quien nunca inició sesión: no había forma de distinguir «no hay
+             sesión» de «no se pudo preguntar». -->
+        <p class="warranque-aviso" id="arranque-aviso"></p>
         <div class="btn-register-link">
           ¿No tiene cuenta? <a onclick="navigate('registro')">Registrarse como Asistente</a>
         </div>
@@ -561,6 +579,10 @@
               </div>
               <p class="wespera-correo-aviso" id="w-espera-correo-aviso"></p>
             </div>
+            <!-- Mientras el legajo viaja, y si no llega. Guardar un legajo toca
+                 varias tablas y sube archivos: puede tardar, y sin este cartel
+                 la espera se veía igual que un formulario que no hizo nada. -->
+            <p class="wguardando" id="w-guardando"></p>
             <div class="wsuccess-msg" id="w-success">✓ ¡Legajo enviado! Ha ingresado al proceso de auditoría.</div>
           </div>
 
@@ -637,11 +659,30 @@
     }
 
     // ── Inicialización ─────────────────────────────
-    // «los cuatro estados»: si algo del arranque falla, queda a la vista la pantalla de acceso
-    // —que es la verdad: no hay sesión— y el detalle técnico va a la consola. Sin
-    // este `try` el fallo no dejaba rastro en ninguna parte.
+    // «los cuatro estados», los cuatro en la pantalla de acceso, que es la que
+    // se está viendo mientras esto corre. **Cargando**: el botón de entrar queda
+    // apagado mientras se averigua si hay una sesión abierta, así nadie manda un
+    // segundo pedido encima del que ya está viajando. **Error**: lo que falle se
+    // dice en el cartel de abajo del botón, y no sólo en la consola, donde no lo
+    // lee nadie. **Listo** y **vacío** son lo mismo acá: sin sesión se queda la
+    // pantalla de acceso, que es la verdad.
     document.addEventListener('DOMContentLoaded', async () => {
+      const botonEntrar = document.getElementById('btn-action-login');
+      const avisoArranque = document.getElementById('arranque-aviso');
+      botonEntrar.disabled = true;
       try {
+        // El texto de esta pantalla se pide explícitamente. Esta pantalla todavía
+        // no está convertida —no tiene ni un `data-frase`—, así que el recorrido
+        // del catálogo no trae las frases solo, y de ahí salen todos los avisos
+        // de este guion. Va en su propio `try`: un catálogo que no llega no es un
+        // servidor caído, y confundirlos escondería el formulario por una
+        // traducción que faltó.
+        try {
+          await Catalogo.cargarFrases();
+        } catch (err) {
+          console.error('Portal del Asistente, texto de la pantalla:', err);
+        }
+
         await ClienteDatos.initTenant();
         montarDisponibilidad();
         montarLegajo();
@@ -657,6 +698,10 @@
         }
       } catch (err) {
         console.error('Arranque de la aplicación del Asistente:', err);
+        avisoArranque.textContent = Texto.mensajeDeError(err, 'arrancar el portal del Asistente');
+        avisoArranque.style.display = 'block';
+      } finally {
+        botonEntrar.disabled = false;
       }
     });
 
@@ -802,22 +847,30 @@
     }
 
     // ── Estado del Legajo ──────────────────────────
+    // Los cuatro estados del renglón que dice cómo va el legajo. **Cargando**:
+    // mientras se pregunta lo dice, porque antes ese renglón se quedaba con lo
+    // que trajera la pantalla y no se distinguía de una respuesta ya llegada.
+    // **Vacío**: no hay legajo, y se dice. **Error**: no se pudo preguntar, y se
+    // dice cuál fue el problema en vez del «sin conexión» que se escribía pasara
+    // lo que pasara. Y los cuatro textos salen del catálogo.
     async function cargarEstadoLegajo(userId) {
       const statusTxt = document.getElementById('legajo-estado-txt');
+      statusTxt.textContent = Catalogo.frase('comun.cargando');
       try {
         const aspirantes = await ClienteDatos.getAspirantes();
-        if (aspirantes && aspirantes.length > 0) {
-          // Buscar el legajo del usuario actual si hay userId
-          const correo = userId ? (await Sesion.getSession())?.user?.email : null;
-          const asp = (correo && aspirantes.find(a => a.email === correo)) || aspirantes[0];
-          statusTxt.textContent = asp.estado === 'validado_prestadora'
-            ? '🟢 Validado — Habilitado para trabajar'
-            : '🟡 Tramitando su incorporación — Complete su legajo';
-        } else {
-          statusTxt.textContent = '🔴 Sin legajo — Complete su registro';
+        if (!aspirantes || aspirantes.length === 0) {
+          statusTxt.textContent = Catalogo.frase('asistente.legajo_sin_legajo');
+          return;
         }
+        // Buscar el legajo del usuario actual si hay userId
+        const correo = userId ? (await Sesion.getSession())?.user?.email : null;
+        const asp = (correo && aspirantes.find(a => a.email === correo)) || aspirantes[0];
+        statusTxt.textContent = asp.estado === 'validado_prestadora'
+          ? Catalogo.frase('asistente.legajo_validado')
+          : Catalogo.frase('asistente.legajo_tramitando');
       } catch (err) {
-        statusTxt.textContent = '⚠️ Sin conexión — Datos pendientes';
+        console.error('Estado del legajo del Asistente:', err);
+        statusTxt.textContent = Texto.mensajeDeError(err, 'traer el estado del legajo');
       }
     }
 
@@ -833,39 +886,50 @@
       });
     }
 
-    async function ficharGPS(tipo) {
+    // Entran dos cosas y son distintas a propósito. `tipo` es **lo que se
+    // guarda** en `event_type`, y por eso no se traduce ni se renombra: los
+    // fichados ya escritos dicen «Entrada» y «Salida», y cambiarlo sería una
+    // migración de datos disfrazada de traducción. `claveTipo` es **lo que se
+    // lee**, y sale del catálogo en el idioma de la pantalla.
+    async function ficharGPS(tipo, claveTipo) {
       const statusEl = document.getElementById('gps-status');
-      statusEl.textContent = 'Obteniendo localización GPS...';
+      const nombreTipo = Catalogo.frase(claveTipo);
+      statusEl.textContent = Catalogo.frase('fichado.buscando');
       if (!navigator.geolocation) {
-        alert('El dispositivo no tiene soporte de localización GPS.');
-        statusEl.textContent = 'GPS no soportado';
+        alert(Catalogo.frase('fichado.sin_soporte'));
+        statusEl.textContent = Catalogo.frase('fichado.sin_soporte_estado');
         return;
       }
       fichadoEnCurso(true);
       navigator.geolocation.getCurrentPosition(async (position) => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
-        statusEl.textContent = `Registrando ${tipo}...`;
+        statusEl.textContent = Catalogo.frase('fichado.registrando', { tipo: nombreTipo });
         try {
           const session = await Sesion.getSession();
           const caregiverId = session ? session.user.id : '2197bc14-d545-4939-9a98-979e69a120dc';
           await ClienteDatos.registrarFichadoGPS({ caregiverId, lat, lng, event_type: tipo });
-          alert(`¡Fichado de ${tipo} registrado!\nCoordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
-          statusEl.textContent = `Último registro: ${tipo} (${Texto.horaCorta(new Date())})`;
+          const norte = lat.toFixed(5);
+          const este = lng.toFixed(5);
+          const hora = Texto.horaCorta(new Date());
+          alert(Catalogo.frase('fichado.registrado', { tipo: nombreTipo, lat: norte, lng: este }));
+          statusEl.textContent = Catalogo.frase('fichado.ultimo', { tipo: nombreTipo, hora });
         } catch (err) {
           alert(Texto.mensajeDeError(err, 'registrar el fichado'));
-          statusEl.textContent = 'Error al registrar';
+          statusEl.textContent = Catalogo.frase('fichado.error_estado');
         } finally {
           fichadoEnCurso(false);
         }
       }, () => {
-        alert('Habilite los permisos de GPS para fichar asistencia.');
-        statusEl.textContent = 'Permiso GPS denegado';
+        alert(Catalogo.frase('fichado.permiso_denegado'));
+        statusEl.textContent = Catalogo.frase('fichado.permiso_denegado_estado');
         fichadoEnCurso(false);
       });
     }
-    document.getElementById('btn-gps-in').addEventListener('click', () => ficharGPS('Entrada'));
-    document.getElementById('btn-gps-out').addEventListener('click', () => ficharGPS('Salida'));
+    document.getElementById('btn-gps-in')
+      .addEventListener('click', () => ficharGPS('Entrada', 'fichado.entrada'));
+    document.getElementById('btn-gps-out')
+      .addEventListener('click', () => ficharGPS('Salida', 'fichado.salida'));
 
     // ── Reportes ────────────────────────────
     // «todo botón que dispara una operación se apaga»: guardar apaga el botón mientras la novedad viaja. Dos clics eran dos
@@ -877,17 +941,17 @@
       const glucemia = document.getElementById('bit-glucemia').value;
       const medicamentos = document.getElementById('bit-medicamentos').value;
       const notas = document.getElementById('bit-notas').value;
-      if (!notas.trim()) { alert('Escriba un reporte o nota de cuidado.'); return; }
+      if (!notas.trim()) { alert(Catalogo.frase('reporte.falta_texto')); return; }
       const original = boton.textContent;
       boton.disabled = true;
-      boton.textContent = 'Guardando...';
+      boton.textContent = Catalogo.frase('reporte.guardando');
       try {
         const session = await Sesion.getSession();
         await ClienteDatos.registrarReporte({
           presion, glucemia, medicamentos, notas,
           caregiverId: session.user.id
         });
-        alert('El reporte quedó guardado.');
+        alert(Catalogo.frase('reporte.guardado'));
         document.getElementById('bit-presion').value = '';
         document.getElementById('bit-glucemia').value = '';
         document.getElementById('bit-medicamentos').value = '';
@@ -905,8 +969,12 @@
       const email    = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-pass').value;
       const btn      = document.getElementById('btn-action-login');
-      if (!email || !password) { alert('Ingrese el correo electrónico y la contraseña.'); return; }
-      btn.textContent = 'Ingresando...';
+      if (!email || !password) { alert(Catalogo.frase('acceso.faltan_datos')); return; }
+      // El rótulo original se guarda y se repone. Antes se reponía escrito a
+      // mano —«Ingresar»— y el botón perdía para siempre el nombre del producto
+      // que trae la pantalla.
+      const rotuloEntrar = btn.textContent;
+      btn.textContent = Catalogo.frase('acceso.entrando');
       btn.disabled = true;
       try {
         const user = await Sesion.login(email, password);
@@ -918,7 +986,7 @@
       } catch (err) {
         alert(Texto.mensajeDeError(err, 'iniciar sesión'));
       } finally {
-        btn.textContent = 'Ingresar';
+        btn.textContent = rotuloEntrar;
         btn.disabled = false;
       }
     });
@@ -938,11 +1006,11 @@
     // pudo cerrar, se dice —antes el error no llegaba a ninguna parte y la persona
     // se quedaba mirando el menú, creyendo que había salido—.
     document.getElementById('btn-logout').addEventListener('click', async () => {
-      if (!confirm('¿Confirma que quiere cerrar la sesión? Para volver a entrar hay que escribir de nuevo el correo y la contraseña.')) return;
+      if (!confirm(Catalogo.frase('asistente.confirmar_salir'))) return;
       const boton = document.getElementById('btn-logout');
       const original = boton.innerHTML;
       boton.disabled = true;
-      boton.textContent = 'Cerrando la sesión...';
+      boton.textContent = Catalogo.frase('asistente.cerrando_sesion');
       try {
         await Sesion.logout();
         navigate('intro');
@@ -981,14 +1049,26 @@
 
     // El paso de disponibilidad: la grilla y la pregunta de los reemplazos
     // urgentes. Las dibuja el módulo; acá sólo se le dice dónde.
+    // Y los cuatro estados del paso: el título dice que está cargando mientras
+    // el módulo trae sus textos, y si algo falla lo dice ahí mismo. Antes no
+    // había ningún `catch`: el paso se quedaba con tres renglones en blanco y
+    // una grilla vacía, que es exactamente lo que se ve cuando no hay franjas.
+    // El estado vacío lo maneja el módulo, que es el que sabe cuántas vinieron.
     async function montarDisponibilidad() {
-      const declaracion = await Disponibilidad.cargar();
-      const paso = Disponibilidad.texto(declaracion.paso_de_disponibilidad);
-      document.getElementById('disponibilidad-titulo').textContent = paso.titulo || '';
-      document.getElementById('disponibilidad-bajada').textContent = paso.bajada || '';
-      document.getElementById('disponibilidad-ayuda').textContent = paso.ayuda_grilla || '';
-      await Disponibilidad.montarGrilla('grilla-disponibilidad');
-      await Disponibilidad.montarPreguntas('preguntas-disponibilidad');
+      const titulo = document.getElementById('disponibilidad-titulo');
+      titulo.textContent = Catalogo.frase('catalogo.cargando');
+      try {
+        const declaracion = await Disponibilidad.cargar();
+        const paso = Disponibilidad.texto(declaracion.paso_de_disponibilidad);
+        titulo.textContent = paso.titulo || '';
+        document.getElementById('disponibilidad-bajada').textContent = paso.bajada || '';
+        document.getElementById('disponibilidad-ayuda').textContent = paso.ayuda_grilla || '';
+        await Disponibilidad.montarGrilla('grilla-disponibilidad');
+        await Disponibilidad.montarPreguntas('preguntas-disponibilidad');
+      } catch (err) {
+        console.error('Paso de disponibilidad del Asistente:', err);
+        titulo.textContent = Texto.mensajeDeError(err, 'cargar el paso de disponibilidad');
+      }
     }
 
     // Las cuatro fichas repetibles y el paso de cierre. Los dibujan los mismos
@@ -1003,6 +1083,11 @@
     }
 
     async function montarLegajo() {
+      // El estado cargando del paso de cierre: mientras las fichas y las
+      // autorizaciones viajan, el título dice que está cargando. Sin eso, el
+      // paso 5 se veía en blanco igual que si no tuviera nada que confirmar.
+      const tituloCierre = document.getElementById('cierre-titulo');
+      tituloCierre.textContent = Catalogo.frase('catalogo.cargando');
       try {
         await FichasLegajo.cargar();
         montarFichas();
@@ -1018,7 +1103,7 @@
         avisarMatricula();
 
         const cierre = await Autorizaciones.textosDelPaso();
-        document.getElementById('cierre-titulo').textContent = cierre.titulo || '';
+        tituloCierre.textContent = cierre.titulo || '';
         document.getElementById('cierre-bajada').textContent = cierre.bajada || '';
         document.getElementById('cierre-recordatorio').textContent = cierre.recordatorio || '';
         if (cierre.boton) document.getElementById('cierre-boton').textContent = cierre.boton;
@@ -1038,43 +1123,65 @@
     // Guardar el legajo sale del envío del formulario porque hay dos caminos
     // que terminan en lo mismo: el normal y el de «Ya confirmé». Escribirlo dos
     // veces es tener dos que con el tiempo se despegan («ningún patrón repetido sin punto único de verdad»).
+    // Y los cuatro estados del guardado, que antes no tenía ninguno. **Cargando**:
+    // el cartel dice que el legajo se está guardando; los dos caminos que llegan
+    // acá apagan además su botón, pero eso pasa afuera y esta función también se
+    // hace cargo. **Error**: acá no había ningún `catch`, así que el fallo salía
+    // por arriba y quien llamaba mostraba un aviso genérico sin decir en qué paso
+    // se cortó; ahora se dice en el mismo cartel. **Vacío**: la lista de archivos
+    // que no subieron puede venir sin ninguno, y ése es el caso bueno. **Listo**:
+    // el recuadro verde de siempre.
     async function guardarLegajo(data, legajo) {
-      // El identificador de la cuenta recién creada. Se pide acá y no se pasa
-      // de mano en mano porque los dos caminos —el normal y el de «Ya
-      // confirmé»— llegan con la sesión abierta. Va a dos lugares: la fila del
-      // Asistente, para que la persona pueda abrir su propio legajo, y la
-      // carpeta del depósito donde quedan sus archivos.
-      const usuario = await Sesion.getUser();
-      if (usuario) data.user_id = usuario.id;
+      const aviso = document.getElementById('w-guardando');
+      aviso.style.color = 'var(--texto-secundario)';
+      aviso.textContent = Catalogo.frase('asistente.guardando_legajo');
+      aviso.style.display = 'block';
+      try {
+        // El identificador de la cuenta recién creada. Se pide acá y no se pasa
+        // de mano en mano porque los dos caminos —el normal y el de «Ya
+        // confirmé»— llegan con la sesión abierta. Va a dos lugares: la fila del
+        // Asistente, para que la persona pueda abrir su propio legajo, y la
+        // carpeta del depósito donde quedan sus archivos.
+        const usuario = await Sesion.getUser();
+        if (usuario) data.user_id = usuario.id;
 
-      const noSubieron = usuario
-        ? await FichasLegajo.subirArchivos(legajo, usuario.id)
-        : [];
+        const noSubieron = usuario
+          ? await FichasLegajo.subirArchivos(legajo, usuario.id)
+          : [];
 
-      const aspirante = await ClienteDatos.registrarAspirante(data);
-      if (aspirante && aspirante.id) {
-        await ClienteDatos.guardarLegajoAsistente(aspirante.id, legajo);
+        const aspirante = await ClienteDatos.registrarAspirante(data);
+        if (aspirante && aspirante.id) {
+          await ClienteDatos.guardarLegajoAsistente(aspirante.id, legajo);
+        }
+
+        // Un archivo que no sube y no avisa es peor que uno que no se cargó: la
+        // persona se va creyendo que entregó el papel. El resto del alta ya
+        // quedó guardado, así que se avisa y no se frena nada. Y cuando la lista
+        // viene sin ninguno —el caso bueno— no se dice nada.
+        if (noSubieron.length > 0) {
+          const lista = noSubieron.map(f => '- ' + f.nombre + ': ' + f.motivo).join('\n');
+          alert(Catalogo.frase('asistente.legajo_guardado_sin_archivos', { lista }));
+        }
+
+        // La contraseña deja de estar guardada apenas no hace falta.
+        altaEsperandoCorreo = null;
+        aviso.style.display = 'none';
+        document.getElementById('w-espera-correo').style.display = 'none';
+        document.getElementById('w-success').style.display = 'block';
+        document.getElementById('form-legajo-pwa').reset();
+        Disponibilidad.limpiar('grilla-disponibilidad', 'preguntas-disponibilidad');
+        Autorizaciones.limpiar('autorizaciones-container');
+        montarFichas();
+        wGoTo(1);
+        setTimeout(() => { document.getElementById('w-success').style.display = 'none'; }, 6000);
+      } catch (err) {
+        // Se cuenta acá y no se vuelve a lanzar: los dos que llaman lo hacen
+        // como último paso, así que no hay nada más que frenar, y relanzarlo
+        // significaba dos avisos seguidos por la misma falla.
+        console.error('Guardado del legajo del Asistente:', err);
+        aviso.style.color = 'var(--rojo-peligro-texto)';
+        aviso.textContent = Texto.mensajeDeError(err, 'guardar el legajo');
       }
-
-      // Un archivo que no sube y no avisa es peor que uno que no se cargó: la
-      // persona se va creyendo que entregó el papel. El resto del alta ya
-      // quedó guardado, así que se avisa y no se frena nada.
-      if (noSubieron.length) {
-        alert('El legajo quedó guardado, pero no se pudieron subir todos los archivos:\n\n'
-            + noSubieron.map(f => '- ' + f.nombre + ': ' + f.motivo).join('\n')
-            + '\n\nSe pueden volver a cargar más adelante desde el legajo.');
-      }
-
-      // La contraseña deja de estar guardada apenas no hace falta.
-      altaEsperandoCorreo = null;
-      document.getElementById('w-espera-correo').style.display = 'none';
-      document.getElementById('w-success').style.display = 'block';
-      document.getElementById('form-legajo-pwa').reset();
-      Disponibilidad.limpiar('grilla-disponibilidad', 'preguntas-disponibilidad');
-      Autorizaciones.limpiar('autorizaciones-container');
-      montarFichas();
-      wGoTo(1);
-      setTimeout(() => { document.getElementById('w-success').style.display = 'none'; }, 6000);
     }
 
     // El aviso de adentro del recuadro de «falta confirmar el correo».
@@ -1089,7 +1196,7 @@
     document.getElementById('form-legajo-pwa').addEventListener('submit', async (e) => {
       e.preventDefault();
       const terminos = document.getElementById('w-terminos');
-      if (!terminos.checked) { alert('Debe aceptar los Términos y Condiciones.'); return; }
+      if (!terminos.checked) { alert(Catalogo.frase('asistente.falta_terminos')); return; }
 
       // La contraseña la elige quien se da de alta, como en cualquier otra alta.
       // Hasta el 24 de agosto de 2026 esta pantalla creaba la cuenta con el
@@ -1157,7 +1264,7 @@
       // guardado, sin cuenta con qué entrar, y sin enterarse de nada.
       const boton = document.querySelector('#wp5 .wbtn-submit');
       const botonOriginal = boton ? boton.innerHTML : '';
-      if (boton) { boton.disabled = true; boton.textContent = 'Creando la cuenta...'; }
+      if (boton) { boton.disabled = true; boton.textContent = Catalogo.frase('asistente.creando_cuenta'); }
 
       try {
         let sesion = null;
@@ -1200,7 +1307,7 @@
       const textoOriginal = boton.textContent;
       const espera = altaEsperandoCorreo;
       boton.disabled = true;
-      boton.textContent = 'Guardando el legajo...';
+      boton.textContent = Catalogo.frase('asistente.guardando_legajo');
       avisarConfirmacion('');
       try {
         await Sesion.login(espera.email, espera.clave);
@@ -1220,10 +1327,10 @@
       const boton = document.getElementById('w-reenviar-confirmacion');
       const textoOriginal = boton.textContent;
       boton.disabled = true;
-      boton.textContent = 'Mandando...';
+      boton.textContent = Catalogo.frase('asistente.reenviando_correo');
       try {
         await Sesion.reenviarConfirmacion(altaEsperandoCorreo.email);
-        avisarConfirmacion('Se mandó el correo de nuevo. Puede tardar unos minutos en llegar.', false);
+        avisarConfirmacion(Catalogo.frase('asistente.correo_reenviado'), false);
       } catch (err) {
         avisarConfirmacion(Texto.mensajeDeError(err, 'volver a mandar el correo de confirmación'));
       } finally {

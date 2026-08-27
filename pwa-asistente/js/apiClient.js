@@ -30,8 +30,25 @@ const ClienteDatos = {
   // los datos que se piden.
   // Varias pantallas la llaman por su cuenta y el arranque automático la llama
   // igual: se resuelve una sola vez por carga y las demás esperan a la misma.
+  //
+  // **Si la resolución falla, falla acá y se ve.** Hasta el 26 de agosto de 2026
+  // el fallo se atrapaba adentro y se devolvía `null`, que es exactamente lo
+  // mismo que devuelve «esta dirección no nombró ninguna Prestadora»: la
+  // pantalla no tenía cómo distinguir «no se pudo preguntar» de «no hay», y
+  // terminaba diciendo lo segundo cuando pasaba lo primero. Ahora sale como
+  // fallo, y quien muestra algo lo atrapa y lo dice — que es el estado
+  // **error** de la regla de los cuatro estados.
+  //
+  // Un fallo tampoco queda pegado a la carga: la resolución guardada se borra,
+  // así el próximo que pregunte vuelve a intentar. Sin eso, un corte de un
+  // segundo al arrancar dejaba la página entera sin Prestadora hasta recargarla.
   async initTenant() {
-    if (!this._resolucionEnCurso) this._resolucionEnCurso = this._resolverPrestadora();
+    if (!this._resolucionEnCurso) {
+      this._resolucionEnCurso = this._resolverPrestadora().catch((err) => {
+        this._resolucionEnCurso = null;
+        throw err;
+      });
+    }
     return this._resolucionEnCurso;
   },
 
@@ -91,8 +108,10 @@ const ClienteDatos = {
       // 2026 que esa lista no la ve nadie fuera de su panel de control.
       this.currentTenant = null;
     } catch (err) {
-      console.error('No se pudo resolver la Prestadora:', err);
+      // No se traga: se deja el estado limpio y el fallo sigue camino hacia
+      // quien muestra la pantalla. Ver la explicación arriba, en `initTenant`.
       this.currentTenant = null;
+      throw err;
     }
 
     if (this.currentTenant) this._applyBranding(this.currentTenant);
@@ -744,9 +763,19 @@ const ClienteDatos = {
   }
 };
 
-// Inicializar el Tenant automáticamente al cargar el script
+// Resolver la Prestadora apenas carga la pantalla, para que la marca aparezca
+// cuanto antes.
+//
+// **Éste es el único llamado sin red a propósito, y el motivo es que no muestra
+// nada**: lo único que hace de visible es pintar los colores y el logotipo. Si
+// falla, la pantalla se queda con la marca del producto, que es justo lo que
+// muestra mientras tanto — o sea que no hay nada que avisar. Quien sí necesita
+// la Prestadora para mostrar algo la vuelve a pedir con `initTenant()`, que
+// reintenta, y ahí el fallo se atrapa y se dice en la pantalla.
 document.addEventListener('DOMContentLoaded', () => {
-  ClienteDatos.initTenant();
+  ClienteDatos.initTenant().catch((err) => {
+    console.error('No se pudo resolver la Prestadora al arrancar:', err);
+  });
 });
 
 window.ClienteDatos = ClienteDatos;

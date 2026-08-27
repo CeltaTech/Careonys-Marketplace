@@ -145,10 +145,19 @@
 
     // Los cuatro estados. Sin esto una tabla vacía no distingue
     // "no hay aspirantes" de "no se pudo leer" ni de "no le corresponde verlos".
-    function estadoTabla(tono, texto) {
+    //
+    // Recibe la **clave** del catálogo y no el texto ya armado. Los carteles de
+    // esta pantalla no están escritos en ninguna parte del marcado, así que la
+    // única forma de que existan en `en` y en `pt-BR` es que salgan de
+    // `data/catalogo-frases.json`. Se piden por `Texto.frase`, que trae la red
+    // de abajo: si el catálogo no llegó, dice algo igual en vez de dejar la caja
+    // en blanco, que se ve idéntica a no tener cartel.
+    //
+    // Para apagar el cartel se llama sin clave: `estadoTabla(null)`.
+    function estadoTabla(tono, clave, huecos) {
       const caja = document.getElementById('estado-tabla');
-      if (!texto) { caja.style.display = 'none'; return; }
-      caja.textContent = texto;
+      if (!tono) { caja.style.display = 'none'; return; }
+      caja.textContent = Texto.frase(clave, huecos);
       caja.style.background = 'var(--tono-' + tono + '-fondo)';
       caja.style.color = 'var(--tono-' + tono + '-texto)';
       caja.style.display = 'block';
@@ -168,7 +177,7 @@
 
     async function dibujarAspirantes() {
       const tbody = document.getElementById('tabla-aspirantes-body');
-      estadoTabla('info', 'Buscando los legajos de la Prestadora...');
+      estadoTabla('info', 'panel.legajos_cargando');
 
       let data;
       try {
@@ -176,8 +185,7 @@
       } catch (err) {
         console.error('Panel de la Prestadora, legajos:', err);
         tbody.innerHTML = '';
-        estadoTabla('critico',
-          'No se pudieron traer los legajos. Conviene reintentar con el botón Actualizar.');
+        estadoTabla('critico', 'panel.legajos_error');
         return;
       }
 
@@ -185,12 +193,11 @@
         tbody.innerHTML = '';
         document.getElementById('kpi-revision').innerText = 0;
         document.getElementById('kpi-validados').innerText = 0;
-        estadoTabla('neutro',
-          'Todavía no hay ningún legajo cargado en esta Prestadora.');
+        estadoTabla('neutro', 'panel.legajos_vacio');
         return;
       }
 
-      estadoTabla(null, '');
+      estadoTabla(null);
       tbody.innerHTML = '';
 
       let rev = 0, val = 0;
@@ -203,21 +210,21 @@
         tr.innerHTML = `
           <td>
             <strong>${Texto.escapar(a.nombre)}</strong><br/>
-            <span style="font-size:11px;color:var(--texto-secundario);">DNI: ${Texto.escapar(a.dni)} | Tel: ${Texto.escapar(a.telefono)}</span>
+            <span style="font-size:11px;color:var(--texto-secundario);">${Texto.escapar(Catalogo.frase('panel.detalle_dni'))} ${Texto.escapar(a.dni)} | ${Texto.escapar(Catalogo.frase('panel.fila_telefono'))} ${Texto.escapar(a.telefono)}</span>
           </td>
           <td>${Texto.escapar(a.profesion)}</td>
           <td>${Texto.escapar(a.zona)}</td>
           <td>
-            <span style="color:var(--azul-medio-texto);font-size:11px;font-weight:700;"><i class="fas fa-file-pdf"></i> DNI, Penales, Título</span>
+            <span style="color:var(--azul-medio-texto);font-size:11px;font-weight:700;"><i class="fas fa-file-pdf"></i> ${Texto.escapar(Catalogo.frase('panel.documentos_cargados'))}</span>
           </td>
           <td>
             ${a.estado === 'en_revision' ?
-            '<span class="status-pill status-revision">🟡 Tramitando su incorporación</span>' :
-            '<span class="status-pill status-validado">🟢 Validado por Prestadora</span>'}
+            '<span class="status-pill status-revision">' + Texto.escapar(Catalogo.frase('panel.estado_en_revision')) + '</span>' :
+            '<span class="status-pill status-validado">' + Texto.escapar(Catalogo.frase('panel.estado_validado')) + '</span>'}
           </td>
           <td>
             <button class="btn btn-secundario" style="font-size:11px;padding:6px 12px;">
-              <i class="fas fa-search-plus"></i> Auditar Legajo
+              <i class="fas fa-search-plus"></i> ${Texto.escapar(Catalogo.frase('panel.auditar'))}
             </button>
           </td>
         `;
@@ -232,12 +239,12 @@
       document.getElementById('kpi-validados').innerText = val;
     }
 
-    // «todo botón que dispara una operación se apaga»: el botón de la fila se apaga mientras se traen los papeles. Y
-    // «los cuatro estados»: si no se pueden traer, se avisa —antes esto fallaba en silencio y
-    // el legajo simplemente no se abría, sin que nada explicara por qué—.
+    // «todo botón que dispara una operación se apaga»: el botón de la fila se apaga mientras se traen los papeles.
+    // El aviso de lo que salga mal lo pone `armarAuditoria`, que es la que sabe
+    // qué falló; este `catch` es la red de lo imprevisto, no el estado error.
     async function abrirAuditoria(id, boton) {
       const original = boton ? boton.innerHTML : '';
-      if (boton) { boton.disabled = true; boton.textContent = 'Abriendo...'; }
+      if (boton) { boton.disabled = true; boton.textContent = Texto.frase('panel.abriendo'); }
       try {
         await armarAuditoria(id);
       } catch (err) {
@@ -250,51 +257,83 @@
 
     async function armarAuditoria(id) {
       aspiranteSeleccionadoId = id;
-      const data = await ClienteDatos.getAspirantes();
-      const a = data.find(item => item.id === id);
-      // «los cuatro estados». El legajo estaba en la tabla cuando se dibujó y ya no
-      // está: se movió, o dejó de pertenecer a esta Prestadora. Antes acá se volvía
-      // en silencio, así que quien apretaba Auditar veía el botón encenderse y
-      // apagarse sin que se abriera nada ni se dijera por qué. Se lanza en vez de
-      // volver, para que lo diga `abrirAuditoria`, que es quien tiene el aviso.
-      // `NOT FOUND` es el marcador que `Texto.claveDeError` clasifica como
-      // «error.no_encontrado», igual que hace `js/apiClient.js:501` con los suyos.
-      if (!a) throw new Error('NOT FOUND: el legajo ya no figura en la lista');
 
-      // Los papeles viven en un depósito privado: en la base está el camino, y el
-      // enlace se firma acá, con vencimiento. Un enlace eterno a un documento de
-      // identidad es el documento, y viaja igual de fácil.
-      const docs = a.documentos || {};
-      const enlaceDocumento = async (camino, etiqueta) => {
-        if (!camino || camino === 'pendiente') {
-          return '<span style="color:var(--texto-secundario)">Pendiente</span>';
-        }
-        const url = await Sesion.urlFirmada('documentos-cuidadores', camino, 900);
-        if (!url) {
-          return '<span style="color:var(--texto-secundario)">No se pudo abrir</span>';
-        }
-        return `<a href="${Texto.escapar(url)}" target="_blank" rel="noopener" style="color:var(--azul-medio-texto);font-weight:700;">${Texto.escapar(etiqueta)}</a>`;
-      };
-      const [linkDni, linkPenales, linkTitulo] = await Promise.all([
-        enlaceDocumento(docs.dni, 'Ver DNI'),
-        enlaceDocumento(docs.penales, 'Ver Penales'),
-        enlaceDocumento(docs.titulo, 'Ver Título')
-      ]);
+      // El estado cargando de esta operación. El botón de la fila ya se apagó en
+      // `abrirAuditoria`, pero eso pasa en la fila y no dice qué está ocurriendo:
+      // traer el legajo es un pedido a la base y cada papel se firma aparte.
+      estadoTabla('info', 'panel.legajo_cargando');
 
+      let a;
+      let linkDni, linkPenales, linkTitulo;
+
+      // «los cuatro estados»: acá el pedido moría sin red. Si la base no contestaba,
+      // el fallo salía disparado y la pantalla se quedaba igual que estaba: el
+      // botón se encendía y se apagaba sin que se abriera nada ni se dijera por
+      // qué. Ahora el estado error se dice en el mismo cartel que usan los otros
+      // tres, y no se vuelve a lanzar: lanzar además dejaría dos avisos —el
+      // cartel y una ventana— contando la misma falla.
+      try {
+        const data = await ClienteDatos.getAspirantes();
+        a = data.find(item => item.id === id);
+        // El legajo estaba en la tabla cuando se dibujó y ya no está: se movió, o
+        // dejó de pertenecer a esta Prestadora. Es una falla distinta de «no se
+        // pudo traer» y se dice distinto, porque lo que hay que hacer también es
+        // otro: actualizar la lista, no reintentar.
+        if (!a) {
+          estadoTabla('atencion', 'panel.legajo_no_esta');
+          return;
+        }
+
+        // Los papeles viven en un depósito privado: en la base está el camino, y el
+        // enlace se firma acá, con vencimiento. Un enlace eterno a un documento de
+        // identidad es el documento, y viaja igual de fácil.
+        const docs = a.documentos || {};
+        const enlaceDocumento = async (camino, clave) => {
+          if (!camino || camino === 'pendiente') {
+            return '<span style="color:var(--texto-secundario)">' + Texto.escapar(Catalogo.frase('panel.documento_pendiente')) + '</span>';
+          }
+          // Un papel que no se pudo firmar es un enlace menos; una excepción suelta
+          // es el legajo entero que no se abre. Se anota el detalle en la consola y
+          // se sigue por la misma rama que ya existía para cuando el depósito
+          // contesta sin dar enlace.
+          let url = null;
+          try {
+            url = await Sesion.urlFirmada('documentos-cuidadores', camino, 900);
+          } catch (err) {
+            console.error('Panel de la Prestadora, enlace del documento:', err);
+          }
+          if (!url) {
+            return '<span style="color:var(--texto-secundario)">' + Texto.escapar(Catalogo.frase('panel.documento_sin_enlace')) + '</span>';
+          }
+          return `<a href="${Texto.escapar(url)}" target="_blank" rel="noopener" style="color:var(--azul-medio-texto);font-weight:700;">${Texto.escapar(Catalogo.frase(clave))}</a>`;
+        };
+        [linkDni, linkPenales, linkTitulo] = await Promise.all([
+          enlaceDocumento(docs.dni, 'panel.ver_dni'),
+          enlaceDocumento(docs.penales, 'panel.ver_penales'),
+          enlaceDocumento(docs.titulo, 'panel.ver_titulo')
+        ]);
+      } catch (err) {
+        console.error('Panel de la Prestadora, legajo para auditar:', err);
+        estadoTabla('critico', 'panel.legajo_error');
+        return;
+      }
+
+      const rotulo = (clave) => Texto.escapar(Catalogo.frase(clave));
       const html = `
-        <p><strong>Nombre completo:</strong> ${Texto.escapar(a.nombre)}</p>
-        <p><strong>DNI:</strong> ${Texto.escapar(a.dni)} | <strong>Email:</strong> ${Texto.escapar(a.email)} | <strong>Teléfono:</strong> ${Texto.escapar(a.telefono)}</p>
-        <p><strong>Tipo de Asistente:</strong> ${Texto.escapar(a.profesion)} (${Texto.escapar(a.zona)})</p>
-        <p><strong>Patologías con Experiencia:</strong> ${Texto.escapar((a.patologias || []).join(', '))}</p>
-        <p><strong>Tareas Declaradas:</strong> ${Texto.escapar((a.tareas || []).join(', '))}</p>
+        <p><strong>${rotulo('panel.detalle_nombre')}</strong> ${Texto.escapar(a.nombre)}</p>
+        <p><strong>${rotulo('panel.detalle_dni')}</strong> ${Texto.escapar(a.dni)} | <strong>${rotulo('panel.detalle_email')}</strong> ${Texto.escapar(a.email)} | <strong>${rotulo('panel.detalle_telefono')}</strong> ${Texto.escapar(a.telefono)}</p>
+        <p><strong>${rotulo('panel.detalle_profesion')}</strong> ${Texto.escapar(a.profesion)} (${Texto.escapar(a.zona)})</p>
+        <p><strong>${rotulo('panel.detalle_patologias')}</strong> ${Texto.escapar((a.patologias || []).join(', '))}</p>
+        <p><strong>${rotulo('panel.detalle_tareas')}</strong> ${Texto.escapar((a.tareas || []).join(', '))}</p>
         <div style="background:var(--tono-info-fondo);padding:10px;border-radius:8px;margin-top:10px;">
-          <strong>Documentos adjuntos para verificar:</strong><br/>
-          DNI Frente/Dorso: ${linkDni} |
-          Antecedentes Penales: ${linkPenales} |
-          Título/Matrícula: ${linkTitulo}
+          <strong>${rotulo('panel.detalle_documentos')}</strong><br/>
+          ${rotulo('panel.detalle_dni_archivo')} ${linkDni} |
+          ${rotulo('panel.detalle_penales_archivo')} ${linkPenales} |
+          ${rotulo('panel.detalle_titulo_archivo')} ${linkTitulo}
         </div>
       `;
 
+      estadoTabla(null);
       document.getElementById('detalles-aspirante-content').innerHTML = html;
       document.getElementById('modal-auditoria').style.display = 'flex';
     }
@@ -311,16 +350,22 @@
     // igual, como si hubiera salido bien.
     async function resolverAspirante({ estado, nota, pregunta, aviso, boton, mientras }) {
       if (!aspiranteSeleccionadoId) return;
-      if (!confirm(pregunta)) return;
+      if (!confirm(Texto.frase(pregunta))) return;
 
-      const botones = [
-        document.getElementById('btn-aprobar-aspirante'),
-        document.getElementById('btn-rechazar-aspirante')
-      ].filter(Boolean);
+      // Los dos botones se nombran uno por uno en vez de recorrerse en una lista.
+      // Son dos, se sabe cuáles, y esta función no dibuja ninguna lista: escrito
+      // como recorrido parecía que sí, y entonces no se distinguía de una grilla
+      // a la que le falta la rama de «no vino nada».
+      const aprobar = document.getElementById('btn-aprobar-aspirante');
+      const rechazar = document.getElementById('btn-rechazar-aspirante');
+      const apagarBotones = (apagados) => {
+        if (aprobar) aprobar.disabled = apagados;
+        if (rechazar) rechazar.disabled = apagados;
+      };
       const original = boton ? boton.innerHTML : '';
 
-      botones.forEach((b) => { b.disabled = true; });
-      if (boton) boton.textContent = mientras;
+      apagarBotones(true);
+      if (boton) boton.textContent = Texto.frase(mientras);
 
       try {
         await ClienteDatos.cambiarEstadoAspirante(aspiranteSeleccionadoId, estado, nota);
@@ -329,27 +374,27 @@
         alert(Texto.mensajeDeError(err, 'registrar la resolución del legajo'));
         return;
       } finally {
-        botones.forEach((b) => { b.disabled = false; });
+        apagarBotones(false);
         if (boton) boton.innerHTML = original;
       }
 
-      alert(aviso);
+      alert(Texto.frase(aviso));
       document.getElementById('modal-auditoria').style.display = 'none';
       cargarAspirantes();
     }
 
+    // Las dos resoluciones pasan claves del catálogo, no frases: `resolverAspirante`
+    // es quien las resuelve, y así la pregunta, el aviso y el rótulo del botón
+    // existen en los tres idiomas como cualquier otro texto de la pantalla.
     async function aprobarAspirante() {
       await resolverAspirante({
         estado: 'validado_prestadora',
         nota: document.getElementById('nota-entrevista').value.trim()
-          || Identidad.aplicar('Aprobado por el equipo de RRHH {{organizacion}}.'),
-        pregunta: 'Se va a otorgar el aval "Validado por Prestadora" a este legajo.\n\n'
-          + 'La persona queda habilitada en el plantel activo y el aval se muestra en su '
-          + 'perfil. Desde esta pantalla no se puede quitar.\n\n¿Confirma?',
-        aviso: '✓ Legajo auditado. Se asignó el sello "Validado por Prestadora" y quedó '
-          + 'habilitado en el plantel activo.',
+          || Texto.frase('panel.aprobar_nota_por_omision'),
+        pregunta: 'panel.aprobar_pregunta',
+        aviso: 'panel.aprobar_aviso',
         boton: document.getElementById('btn-aprobar-aspirante'),
-        mientras: 'Otorgando el aval...'
+        mientras: 'panel.aprobar_mientras'
       });
     }
 
@@ -359,13 +404,11 @@
         // Lo que se escribió en la entrevista es el motivo del rechazo, y antes se
         // tiraba: la nota quedaba siempre en la misma frase escrita acá.
         nota: document.getElementById('nota-entrevista').value.trim()
-          || 'No cumple requisitos.',
-        pregunta: 'Se va a rechazar este legajo.\n\nQueda cerrado y la '
-          + 'persona no aparece en el plantel activo. Desde esta pantalla no se puede '
-          + 'volver atrás.\n\n¿Confirma?',
-        aviso: 'Se registró el rechazo del legajo.',
+          || Texto.frase('panel.rechazar_nota_por_omision'),
+        pregunta: 'panel.rechazar_pregunta',
+        aviso: 'panel.rechazar_aviso',
         boton: document.getElementById('btn-rechazar-aspirante'),
-        mientras: 'Registrando el rechazo...'
+        mientras: 'panel.rechazar_mientras'
       });
     }
 
@@ -376,6 +419,25 @@
     // puestas todas las de abajo, y la tabla se quedaba vacía sin una palabra:
     // igualita a una Prestadora que todavía no tiene ningún legajo cargado.
     document.addEventListener('DOMContentLoaded', async () => {
+      // El estado cargando del arranque: antes la pantalla se quedaba idéntica a
+      // como se ve una Prestadora sin ningún legajo, y no había forma de saber si
+      // estaba esperando o si ya había terminado sin traer nada. La frase es una
+      // de las que viajan adentro de `js/catalogo.js`, que son las únicas que
+      // pueden contestar antes de que llegue el archivo con todas las demás.
+      estadoTabla('info', 'catalogo.cargando');
+
+      // El texto de esta pantalla se pide acá y con su propia red. Ni un cartel
+      // de los de abajo está escrito adentro del guion, así que sin el catálogo
+      // no habría nada que mostrar. Va afuera del bloque siguiente para no
+      // confundir «faltó una traducción» con «la base no contesta»: son dos
+      // fallas distintas y se arreglan en lugares distintos. Pedirlo no cuesta
+      // nada de más: `cargarFrases` trae el archivo una sola vez por página.
+      try {
+        await Catalogo.cargarFrases();
+      } catch (err) {
+        console.error('Panel de la Prestadora, texto de la pantalla:', err);
+      }
+
       try {
         const sesion = await Sesion.requireAuth();
         if (!sesion) return;
@@ -384,17 +446,14 @@
 
         const perfil = await Sesion.perfil();
         if (!perfil || perfil.role !== 'coordinador') {
-          estadoTabla('atencion',
-            'Esta pantalla es para el personal de la Prestadora. La cuenta con la que se '
-            + 'inició sesión no tiene ese permiso.');
+          estadoTabla('atencion', 'panel.sin_permiso');
           return;
         }
 
         cargarAspirantes();
       } catch (err) {
         console.error('Panel de la Prestadora, arranque:', err);
-        estadoTabla('critico',
-          'No se pudo preparar la pantalla. Conviene volver a cargarla.');
+        estadoTabla('critico', 'panel.arranque_error');
       }
     });
   </script>
