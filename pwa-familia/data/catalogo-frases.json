@@ -1357,6 +1357,86 @@
       "es-AR": "Los archivos adjuntos del legajo",
       "en": "The attachments of the personal file",
       "pt-BR": "Os anexos do cadastro"
+    },
+
+    "________________": "── Los formularios de consulta del portal ──",
+
+    "comun.si": {
+      "es-AR": "Sí",
+      "en": "Yes",
+      "pt-BR": "Sim"
+    },
+
+    "comun.no": {
+      "es-AR": "No",
+      "en": "No",
+      "pt-BR": "Não"
+    },
+
+    "consulta.enviando": {
+      "es-AR": "Enviando…",
+      "en": "Sending…",
+      "pt-BR": "Enviando…"
+    },
+
+    "consulta.enviada": {
+      "es-AR": "Su consulta quedó registrada. Le vamos a responder a la dirección que dejó.",
+      "en": "Your enquiry has been recorded. We will reply to the address you left.",
+      "pt-BR": "Sua consulta foi registrada. Responderemos ao endereço que você deixou."
+    },
+
+    "consulta.no_se_recibe_aca": {
+      "es-AR": "Esta consulta todavía no se recibe desde esta pantalla. Se puede mandar por correo, con todo lo que acaba de completar ya escrito adentro.",
+      "en": "This enquiry cannot yet be received from this screen. It can be sent by email, with everything you just filled in already written out.",
+      "pt-BR": "Esta consulta ainda não é recebida a partir desta tela. Pode ser enviada por e-mail, com tudo o que acabou de preencher já escrito."
+    },
+
+    "consulta.escribir_correo": {
+      "es-AR": "Escribir el correo",
+      "en": "Write the email",
+      "pt-BR": "Escrever o e-mail"
+    },
+
+    "consulta.asunto": {
+      "es-AR": "Consulta desde el sitio",
+      "en": "Enquiry from the website",
+      "pt-BR": "Consulta pelo site"
+    },
+
+    "consulta.dato_nombre": {
+      "es-AR": "Nombre y apellido",
+      "en": "Full name",
+      "pt-BR": "Nome e sobrenome"
+    },
+
+    "consulta.dato_correo": {
+      "es-AR": "Correo electrónico",
+      "en": "Email address",
+      "pt-BR": "Endereço de e-mail"
+    },
+
+    "consulta.dato_celular": {
+      "es-AR": "Número de celular",
+      "en": "Mobile number",
+      "pt-BR": "Número de celular"
+    },
+
+    "consulta.dato_motivo": {
+      "es-AR": "Motivo de la consulta",
+      "en": "Reason for the enquiry",
+      "pt-BR": "Motivo da consulta"
+    },
+
+    "consulta.dato_curso": {
+      "es-AR": "Curso de interés",
+      "en": "Course of interest",
+      "pt-BR": "Curso de interesse"
+    },
+
+    "consulta.dato_novedades": {
+      "es-AR": "Desea recibir novedades",
+      "en": "Would like to receive news",
+      "pt-BR": "Deseja receber novidades"
     }
   }
 }

@@ -42,54 +42,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ---- Contact form validation & Redirección al Wizard ----
-  // Los que llevan `data-guion-propio` quedan afuera: su página tiene su
-  // propio envío, que además guarda. Con los dos enganchados corrían los
-  // dos, y éste prendía el cartel de «enviado» antes de que el guardado
-  // terminara, así que el cartel salía igual cuando el guardado fallaba.
-  const formsToHandle = document.querySelectorAll(
-    '#contact-form:not([data-guion-propio]), #form-solicitud-familia:not([data-guion-propio])');
-  formsToHandle.forEach(form => {
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      let valid = true;
+  /* ---- Los formularios de consulta no se atienden acá ----
+     Hasta el 26 de agosto de 2026, `js/main.js` enganchaba todo
+     `#contact-form` y todo `#form-solicitud-familia` y hacía una de dos
+     cosas: si el motivo elegido era «busco un Asistente», llevaba a
+     `formulario-integral.html`; y si no, prendía el cartel verde de
+     «¡Solicitud enviada!», limpiaba el formulario y lo apagaba a los cinco
+     segundos **sin haber mandado nada a ningún lado**. Era el pendiente 64.
 
-      form.querySelectorAll('[required]').forEach(field => {
-        if (!field.value.trim()) {
-          valid = false;
-          field.style.borderColor = 'var(--rojo-peligro)';
-          field.addEventListener('input', () => { field.style.borderColor = ''; }, { once: true });
-        }
-      });
+     Los cinco formularios de consulta del portal los atiende ahora
+     `js/formulario-consulta.js`, que guarda cuando se puede guardar y
+     cuando no, lo dice y ofrece el correo. Nada de eso vive acá.
 
-      const emailField = form.querySelector('input[type="email"]');
-      if (emailField && emailField.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailField.value)) {
-        valid = false;
-        emailField.style.borderColor = 'var(--rojo-peligro)';
-      }
-
-      if (valid) {
-        // La clave que guarda el vocabulario `motivo_consulta` es
-        // `busco_asistente`. Acá decía `busco-cuidador`, que no existe en
-        // ningún lado: quien elegía «Busco un Asistente» en la portada no
-        // llegaba nunca al formulario de publicación.
-        const consultaSelect = form.querySelector('select');
-        const buscaAsistente = !consultaSelect || consultaSelect.value === 'busco_asistente' || form.id === 'form-solicitud-familia';
-
-        if (buscaAsistente) {
-          // Llevar al formulario paso a paso que publica el aviso
-          window.location.href = 'formulario-integral.html';
-        } else {
-          const successMsg = form.querySelector('.form-success') || document.getElementById('form-success');
-          if (successMsg) {
-            successMsg.style.display = 'block';
-            form.reset();
-            setTimeout(() => { successMsg.style.display = 'none'; }, 5000);
-          }
-        }
-      }
-    });
-  });
+     El único que llevaba a otra pantalla era el de la portada, y sólo cuando
+     el motivo elegido era «busco un Asistente»: el destino era el paso a
+     paso de `formulario-integral.html`, que publica el aviso de verdad y
+     está más abajo en este mismo archivo. Ese paso a paso choca con la
+     misma pared —guardar exige una Prestadora resuelta, y quien llega al
+     portal no tiene ninguna—, así que llevar hasta él a alguien sin sesión
+     era hacerle completar seis pasos para terminar en un error. La consulta
+     de la portada se atiende ahora donde se hace, y el paso a paso sigue en
+     pie para quien sí tiene sesión: pendiente 64. */
 
   /* ---- Los filtros del directorio ----
      Cada desplegable devuelve una clave de catálogo y cada tarjeta lleva las

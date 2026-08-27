@@ -405,17 +405,35 @@
       const solo = (contenedor.getAttribute('data-oferta-solo') || '')
         .split(',').map((c) => c.trim()).filter(Boolean);
 
+      const elegidos = solo.length
+        ? solo.map((c) => lista.filter((i) => i.clave === c)[0]).filter(Boolean)
+        : lista;
+      // Sólo se reclama cuando se pidieron claves. Sin este `solo.length` la
+      // comparación daba distinto siempre que la pantalla no pidiera ninguna
+      // —cero contra los cinco que trae la lista— y avisaba de claves faltantes
+      // con la lista de faltantes vacía: un error rojo en la consola que no
+      // señalaba nada, en toda pantalla que dibuja la oferta entera.
+      if (solo.length && solo.length !== elegidos.length) {
+        console.error('Catálogo: «' + cual + '» no tiene todas las claves pedidas: '
+          + solo.filter((c) => !lista.some((i) => i.clave === c)).join(', '));
+      }
+
+      /* Un desplegable no se arma con moldes, y además no puede: el navegador
+         descarta todo lo que no sea `<option>` adentro de un `<select>` al leer
+         la página, así que el `<template>` escrito ahí no llega nunca al
+         documento. Eso dejaba el desplegable de cursos clavado en «Cargando las
+         opciones…» y, como es obligatorio, el formulario de `cursos.html` no se
+         podía enviar. Una opción es una clave y una etiqueta, que es justo lo
+         que ya sabe armar el mismo desplegable de los vocabularios. */
+      if (contenedor.tagName === 'SELECT') {
+        this._llenarSelect(contenedor, elegidos);
+        return;
+      }
+
       const moldes = Array.prototype.slice.call(contenedor.querySelectorAll(':scope > template'));
       if (!moldes.length) {
         console.error('Catálogo: «' + cual + '» no declara ningún <template>.');
         return;
-      }
-      const elegidos = solo.length
-        ? solo.map((c) => lista.filter((i) => i.clave === c)[0]).filter(Boolean)
-        : lista;
-      if (solo.length !== elegidos.length) {
-        console.error('Catálogo: «' + cual + '» no tiene todas las claves pedidas: '
-          + solo.filter((c) => !lista.some((i) => i.clave === c)).join(', '));
       }
       // Ninguna de las claves pedidas existe. Sin esto la grilla queda vacía y
       // muda: el molde ya se sacó y no entra nada en su lugar.

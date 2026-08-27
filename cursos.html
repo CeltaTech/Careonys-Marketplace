@@ -131,7 +131,10 @@
         <h2>Inscríbase a un curso</h2>
         <p>Complete sus datos y le enviaremos información sobre el curso que le interesa y el proceso de inscripción.
         </p>
-        <form id="contact-form" novalidate>
+        <!-- Igual que en las otras tres, con una diferencia: acá no se pregunta el
+               motivo, porque ya se sabe. `data-motivo` lo dice, con la clave del
+               vocabulario `motivo_consulta` y no con la etiqueta. -->
+          <form id="contact-form" data-consulta data-motivo="cursos" data-guion-propio novalidate>
           <div class="form-group"><label for="nombre">Nombre y apellido</label><input type="text" id="nombre"
               required /></div>
           <div class="form-group"><label for="email">Correo electrónico</label><input type="email" id="email"
@@ -140,10 +143,13 @@
               required /></div>
           <div class="form-group">
             <label for="curso">Curso de interés</label>
-            <select id="curso" required data-oferta="cursos">
-              <option value="">— Seleccionar el curso —</option>
-              <template><option data-attr-value="clave" data-campo="nombre"></option></template>
-            </select>
+            <!-- Las opciones las pone el catálogo. Acá había un `<template>` que no
+                 funcionaba nunca: el navegador tira todo lo que no sea `<option>`
+                 adentro de un `<select>` al leer la página, así que el molde no
+                 llegaba al documento y el desplegable quedaba en «Cargando las
+                 opciones…». Ahora `js/catalogo.js` arma las opciones sin molde. -->
+            <select id="curso" required data-oferta="cursos"
+              data-catalogo-vacio="— Seleccionar el curso —"></select>
           </div>
           <div class="form-group">
             <label>¿Se suscribe al newsletter?</label>
@@ -202,6 +208,7 @@
        archivo, que es de donde leen todas las pantallas portadas. Por eso tampoco carga
        el cliente de datos ni el de sesión. -->
   <script src="js/main.js"></script>
+  <script src="js/formulario-consulta.js"></script>
 </body>
 
 </html>

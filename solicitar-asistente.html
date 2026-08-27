@@ -293,11 +293,14 @@
       <div class="contact-form fade-in">
         <h2>Podemos ayudarle</h2>
         <p>Si es familiar y tiene dudas, puede dejarnos sus datos para que podamos asistirle.</p>
-        <!-- `data-guion-propio` le dice a js/main.js que no se meta: el envío de este
-             formulario lo maneja el guion del final de esta misma página, que además
-             guarda el aviso. Sin eso corrían los dos, y el de main.js prendía el cartel
-             verde antes de que el guardado terminara: decía «enviado» aunque fallara. -->
-        <form id="contact-form" data-guion-propio novalidate>
+        <!-- `data-guion-propio` le dice a js/main.js que no se meta. `data-consulta` se
+             lo da a `js/formulario-consulta.js`, que atiende los cuatro formularios de
+             consulta del portal con el mismo guion. Hasta el 26 de agosto de 2026 el
+             envío estaba escrito acá abajo y era el único de los cuatro que intentaba
+             guardar; se midió que ese guardado no funciona para nadie sin Prestadora
+             resuelta —401 sin sesión, 403 con una cuenta nueva— y el guion compartido
+             lo dice en vez de fallar. -->
+        <form id="contact-form" data-consulta data-guion-propio novalidate>
           <div class="form-group"><label for="nombre">Nombre y apellido</label><input type="text" id="nombre"
               required /></div>
           <div class="form-group"><label for="email">Correo electrónico</label><input type="email" id="email"
@@ -363,80 +366,7 @@
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
-  <script>
-    // El catálogo de frases hay que pedirlo acá. `Catalogo` lo trae solo, pero
-    // por adentro de `traducir()`, que sale sin pedir nada cuando la pantalla no
-    // marca ni un rótulo con el atributo que nombra su frase, y ésta todavía no
-    // marca ninguno. Sin este llamado, `Catalogo.frase()` devolvería la cadena
-    // vacía justo cuando hay algo que avisar. Se pide una sola vez al abrir la
-    // pantalla, así que para cuando alguien manda el formulario ya llegó, y no
-    // agrega ninguna espera al envío. Si no llegara, `Texto.frase` cae en la
-    // frase genérica, que está escrita en `js/catalogo.js` en los tres idiomas
-    // justamente para eso.
-    //
-    // (El nombre de ese atributo no se escribe en este archivo a propósito:
-    //  `scripts/verificar_frases.mjs` da por convertida a toda pantalla donde
-    //  aparezca, y ésta todavía no lo está. Es el mismo motivo por el que
-    //  `scripts/verificar_estados.mjs` nombra al salto de renglón por su número
-    //  en vez de escribirlo.)
-    Catalogo.cargarFrases().catch((err) => {
-      console.error('Solicitar Asistente, catálogo de frases:', err);
-    });
-
-    document.getElementById('contact-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = e.target.querySelector('button[type="submit"]');
-      const successEl = document.getElementById('form-success');
-
-      const nombre = document.getElementById('nombre').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const celular = document.getElementById('celular').value.trim();
-      const consulta = document.getElementById('consulta').value;
-
-      if (!nombre || !email || !celular || !consulta) {
-        // El texto sale del catálogo y no escrito acá: un cartel a mano no
-        // existe en `en` ni en `pt-BR`, así que la pantalla traducida volvía al
-        // castellano justo el día que algo faltaba. Se pide por `Texto.frase`
-        // —que es `Catalogo.frase` con red abajo— porque un aviso que se abre
-        // no puede quedarse sin decir nada: si el catálogo no llegó, se dice lo
-        // genérico en vez de abrir un cartel vacío.
-        alert(Texto.frase('aviso.faltan_campos'));
-        return;
-      }
-
-      btn.textContent = 'Enviando...';
-      btn.disabled = true;
-
-      try {
-        // Obtener sesi�n si el usuario est� logueado
-        const session = await Sesion.getSession().catch(() => null);
-        const familyUserId = session?.user?.id || null;
-
-        await ClienteDatos.crearAvisoFamilia({
-          paciente: nombre,
-          // El motivo va a `consultation_reason` (migración 0013). Antes se
-          // mandaba adentro de `patologias`, y «quiero hacer un curso» no es
-          // una patología: cualquier pantalla que leyera las patologías de una
-          // búsqueda se encontraba ahí adentro algo que no lo era.
-          motivoConsulta: consulta,
-          horarios: 'A coordinar',
-          family_user_id: familyUserId,
-          // Va a su propia columna, `contact_info` (migración 0009): son datos
-          // de una persona y tienen que estar donde se los pueda encontrar.
-          contacto: { nombre, email, celular }
-        });
-
-        successEl.style.display = 'block';
-        e.target.reset();
-        setTimeout(() => { successEl.style.display = 'none'; }, 6000);
-      } catch (err) {
-        alert(Texto.mensajeDeError(err, 'enviar la solicitud'));
-      } finally {
-        btn.textContent = 'ENVIAR';
-        btn.disabled = false;
-      }
-    });
-  </script>
+  <script src="js/formulario-consulta.js"></script>
 </body>
 
 </html>

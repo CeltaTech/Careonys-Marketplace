@@ -253,7 +253,11 @@
       <div class="contact-form fade-in">
         <h2>Podemos ayudarle</h2>
         <p>Si es familiar y tiene dudas, puede dejarnos sus datos para poder asistirlo.</p>
-        <form id="contact-form" novalidate>
+        <!-- `data-consulta` lo atiende `js/formulario-consulta.js`, que es el mismo para
+               las cuatro pantallas que preguntan esto. `data-guion-propio` le dice a
+               `js/main.js` que no se meta: aquel guion prendía el cartel de «enviado»
+               sin haber mandado nada. -->
+          <form id="contact-form" data-consulta data-guion-propio novalidate>
           <div class="form-group">
             <label for="nombre">Nombre y apellido</label>
             <input type="text" id="nombre" name="nombre" required placeholder="" />
@@ -520,6 +524,7 @@
   <!-- Esta página es demostrativa: no consulta la base. Por eso no carga el cliente
        de datos ni el de sesión, que se conectaban solos al abrirla. -->
   <script src="js/main.js"></script>
+  <script src="js/formulario-consulta.js"></script>
 </body>
 
 </html>

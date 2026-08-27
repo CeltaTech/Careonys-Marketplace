@@ -7,7 +7,10 @@ Paciente. Producto de **CeltaTech**, hermano de Careonys (`productos/careonys/`)
 plataforma de gestión que usan las Prestadoras.
 
 **Proyecto exploratorio.** Se construye para ver si el resultado satisface y su base no tiene
-datos reales. **Pero está publicado en internet** (`careonys-marketplace-nu.vercel.app`).
+datos reales. **Pero está publicado en internet**, en `careonys-marketplace.vercel.app`, que es
+la dirección que sirve lo que hay en `main`. La que decía este renglón hasta el 26 de agosto de
+2026 —`careonys-marketplace-nu.vercel.app`— es **otra**, quedó congelada en una versión vieja y
+sigue abierta: pendiente 83.
 
 **Si ese despliegue expone datos o no, no se puede saber leyendo el código.** Hay que consultarlo
 contra la base real, no contra un documento. Hasta que esa consulta se haga, conviene bajar el

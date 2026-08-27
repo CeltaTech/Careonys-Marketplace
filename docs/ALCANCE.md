@@ -327,7 +327,7 @@ Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2
   `caregivers.profession` y las claves `domiciliaria`, `enfermera`, `auxiliar` y `at`. Esas
   palabras no eran filas: eran los `<option>` y los `data-` de `directorio.html`. Se verificó
   además que ninguna pantalla escribe hoy una clave inventada en esa columna —`registrar-asistente.html:319`
-  y `formulario-integral.html:352` toman las suyas del catálogo—, y de la
+  y `formulario-integral.html:355` toman las suyas del catálogo—, y de la
   base misma no se puede afirmar nada desde acá, porque `caregivers` no se deja leer sin sesión.
 - **Los cuatro filtros salen del catálogo** (`directorio.html:76`): zona, Tipo de Asistente,
   patología y verificación. Eran veinticinco opciones escritas a mano contra «los catálogos salen de la base»; ahora
@@ -2824,6 +2824,68 @@ ficticios: se verificó sobre las tres que dan de alta legajos —`0003`, `0014`
 la nombra. Si algún día hace falta traer legajos de otro sistema conservando sus fechas, esa
 migración apaga el disparador mientras carga y lo vuelve a encender, y así queda dicho que la
 excepción fue a propósito.
+
+### Los cinco formularios del portal dejaron de decir que mandaron algo, y de paso se supo que nadie puede mandarlo
+
+Cinco pantallas públicas preguntan lo mismo —nombre, correo, celular, motivo y si quiere
+novedades— y hasta el 26 de agosto de 2026 hacían con la respuesta tres cosas distintas, todas
+malas. Tres de ellas —`index.html`, `cursos.html` y `soporte-remoto.html`— prendían un cartel
+verde que decía «✓ ¡Solicitud enviada!» **sin haber mandado nada a ningún lado**: el guion que
+las atendía, en `js/main.js`, mostraba el cartel y limpiaba el formulario. Una cuarta,
+`#form-solicitud-familia`, se recargaba a sí misma y borraba lo escrito. La quinta,
+`solicitar-asistente.html`, era la única que intentaba guardar.
+
+**El plan era hacer que las otras cuatro guardaran como esa quinta. La medición lo tiró abajo.**
+`scripts/probar_consulta_publica.mjs` hace contra la base local, con datos inventados, el mismo
+alta que hace esa pantalla:
+
+- **sin sesión —que es como llega cualquiera al portal— contesta 401, «permission denied»**:
+  `anon` no tiene permiso sobre la tabla;
+- **con una cuenta recién creada contesta 403**, porque la política «Busquedas de la Prestadora»
+  exige `tenant_id = prestadora_actual()` (`supabase/migrations/0002_aislamiento_por_prestadora.sql:87`)
+  y una cuenta nueva no tiene Prestadora.
+
+La prueba trae su comprobación de sostén —la misma fila con una sesión válida entra—, sin la cual
+una tabla cerrada para todos habría dado el mismo rojo y no habría distinguido nada.
+
+**O sea que hoy ninguna consulta del portal puede llegar a la base**, y la única pantalla que
+decía la verdad la decía siempre en su forma mala: «no se pudo». Abrirle la tabla a quien no
+inició sesión es ampliar el acceso anónimo, que es decisión del Desarrollador —pendiente 25— y no
+de esta tarea.
+
+**Lo que hay ahora es un solo guion para los cinco**, `js/formulario-consulta.js`, que hace una
+cosa y la dice como es: si hay sesión **y** se resolvió una Prestadora guarda la consulta, que es
+el único caso en el que el guardado puede funcionar y el que va a andar solo el día que se abra la
+puerta; y si no, muestra el correo del producto con la consulta ya redactada adentro y deja que la
+persona la mande. **Nada dice «enviado» hasta que algo se envió.** El motivo va a
+`consultation_reason`, que la migración 0013 creó justamente para distinguir a quien busca cuidado
+de quien pregunta por un curso, y la dirección sale de `js/identidad.js`, que es el único punto de
+verdad de la marca.
+
+Todo el texto que escribe ese guion está en el catálogo en los tres idiomas, el botón se apaga
+mientras corre y el fallo se dice en la pantalla, no en la consola. Con eso **las cinco pantallas
+quedaron libres para convertirse al multiidioma**, que era lo que el cartel falso trababa:
+traducir una mentira a tres idiomas cuesta tres veces más sacarla.
+
+**Y probar los cinco en el navegador encontró otra cosa, que era la que de verdad tapaba el
+formulario de `cursos.html`: el desplegable de cursos no se llenaba nunca.** Quedaba clavado en
+«Cargando las opciones…», y como es obligatorio, ese formulario no se podía enviar ni aunque
+funcionara. El motivo: el molde estaba escrito adentro del `<select>`, y **el navegador descarta
+todo lo que no sea `<option>` adentro de un `<select>` al leer la página**, así que el `<template>`
+no llegaba nunca al documento y `js/catalogo.js` avisaba —a la consola, donde no lo ve nadie— que
+no encontraba ninguno. Ahora un `<select>` con `data-oferta` se llena con el mismo código que ya
+llenaba los desplegables de vocabulario: una opción es una clave y una etiqueta, y para eso no hace
+falta molde. De paso se arregló un error que la consola daba en toda pantalla que dibuja la oferta
+entera —«no tiene todas las claves pedidas», con la lista de claves faltantes vacía—: la
+comparación se hacía también cuando la pantalla no pedía ninguna clave, y ahí cero nunca iba a ser
+igual a cinco.
+
+**Lo que no se hizo, y por qué.** El consentimiento de novedades lo siguen preguntando los cinco y
+no lo recibe ninguna tabla: hoy viaja adentro del correo, que es mejor que perderse, pero no es
+guardarlo. Y `formulario-integral.html` no se borró aunque el Desarrollador la dio por sentenciada:
+adentro tiene lo único que publica un aviso de verdad —el paso a paso, por `js/main.js:202`—, y ese
+paso a paso choca con exactamente la misma pared. Las dos cosas están en el pendiente 64.
+
 
 ## 2. Falta construir
 
