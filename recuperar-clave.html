@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/utilidades.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 
@@ -30,38 +31,38 @@
       </div>
 
       <!-- Estado: no se pudo llegar al servidor -->
-      <div id="estado-error" style="display:none;">
+      <div id="estado-error" class="oculto">
         <!-- Las dos frases son las mismas de la pantalla de acceso y se piden
              con su clave: la misma frase escrita dos veces se traduce dos veces
              y se corrige una sola. -->
         <div class="acceso-aviso critico" data-frase="acceso.sin_servidor">
           No se pudo conectar con el servidor. Puede ser la conexión de este equipo.
         </div>
-        <button type="button" class="btn btn-secundario" id="btn-reintentar" style="width:100%;"
+        <button type="button" class="btn btn-secundario ancho-total" id="btn-reintentar"
           data-frase="acceso.reintentar">
           Reintentar
         </button>
       </div>
 
       <!-- Estado: listo -->
-      <form id="estado-listo" style="display:none;" novalidate>
-        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;"
+      <form id="estado-listo" class="oculto" novalidate>
+        <h2 class="texto-20 peso-800 color-titulo mb-8"
           data-frase="recuperar.titulo">
           Recuperar la contraseña
         </h2>
-        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-bottom:20px;"
+        <p class="texto-14 color-secundario interlineado-16 mb-20"
           data-frase="recuperar.explicacion">
           Escriba el correo con el que entra. Le llega un enlace para elegir una contraseña nueva.
         </p>
 
-        <div id="aviso-error-envio" class="acceso-aviso critico" style="display:none;"></div>
+        <div id="aviso-error-envio" class="acceso-aviso critico oculto"></div>
 
         <div class="form-group">
           <label for="recuperar-email" data-frase="acceso.correo">Correo electrónico</label>
           <input type="email" id="recuperar-email" autocomplete="username" required />
         </div>
 
-        <button type="submit" class="btn btn-primario" id="btn-enviar" style="width:100%;margin-top:8px;">
+        <button type="submit" class="btn btn-primario ancho-total mt-8" id="btn-enviar">
           <span id="texto-btn-enviar" data-frase="recuperar.enviar">Enviar el enlace</span>
         </button>
 
@@ -71,8 +72,8 @@
       </form>
 
       <!-- Estado: el pedido salió -->
-      <div id="estado-enviado" style="display:none;">
-        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;"
+      <div id="estado-enviado" class="oculto">
+        <h2 class="texto-20 peso-800 color-titulo mb-8"
           data-frase="recuperar.revise_correo">
           Revise su correo
         </h2>
@@ -81,15 +82,15 @@
              un `<strong>` metido en el medio se perdería; partirla en dos
              pedazos alrededor del correo sale mal en cuanto un idioma ordena
              distinto. Arriba y aparte, se lee igual de bien en los tres. -->
-        <p style="font-size:15px;font-weight:700;color:var(--texto-titulo);line-height:1.6;">
+        <p class="texto-15 peso-700 color-titulo interlineado-16">
           <strong id="correo-avisado"></strong>
         </p>
-        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;"
+        <p class="texto-14 color-secundario interlineado-16"
           data-frase="recuperar.enlace_enviado">
           Si hay una cuenta con esa dirección, ahí va el enlace para elegir una contraseña nueva.
           El enlace sirve una sola vez y vence en una hora.
         </p>
-        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-top:12px;"
+        <p class="texto-14 color-secundario interlineado-16 mt-12"
           data-frase="recuperar.no_aparece">
           Si no aparece en unos minutos, conviene mirar en el correo no deseado.
         </p>
@@ -118,9 +119,12 @@
 
     function mostrar(cual) {
       Object.keys(paneles).forEach(nombre => {
-        // Vacio y no 'block': asi el panel recupera el display que le dio el CSS.
-        // Imponerle 'block' aplasta un panel que sea grid o flex, y no avisa.
-        paneles[nombre].style.display = (nombre === cual) ? '' : 'none';
+        // Esconder es estado, no estilo: el panel que no toca se lleva la clase
+        // `oculto` y el que toca la suelta. Asi ninguno pierde el display que le
+        // dio el CSS —el que sea grid o flex sigue siendolo— y no hace falta
+        // imponerle 'block' a nada. Vaciar el atributo `style` ya no sirve: sin
+        // nada escrito ahi vuelve a mandar la clase y el panel queda escondido.
+        paneles[nombre].classList.toggle('oculto', nombre !== cual);
       });
     }
 

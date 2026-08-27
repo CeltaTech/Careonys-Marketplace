@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/utilidades.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 
@@ -53,7 +54,7 @@
     <h1>Registrarme como Asistente</h1>
     <p>Regístrese en {{producto}}, complete su legajo con documentación verificada y conéctese con cientos de familias que
       necesitan sus servicios.</p>
-    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+    <div class="flex gap-16 justificar-centro envolver">
       <a href="#registro" class="btn btn-atencion">Registrarme ahora</a>
       <a href="#beneficios" class="btn btn-sobre-oscuro">Ver beneficios</a>
     </div>
@@ -109,23 +110,23 @@
   </section>
 
   <!-- CÓMO FUNCIONA PARA ASISTENTES -->
-  <section class="steps-section" style="background: var(--superficie);">
+  <section class="steps-section fondo-superficie">
     <div class="container">
       <h2 class="fade-in">Consiga trabajo como Asistente en 5 pasos.</h2>
       <div class="steps-layout">
         <div class="steps-phone fade-in">
           <div
-            style="background:var(--azul-oscuro);border-radius:40px;padding:14px;max-width:280px;margin:0 auto;box-shadow:var(--sombra-alta);">
+            class="fondo-azul-oscuro redondeo-40 p-14 ancho-maximo-280 m-centrado sombra-alta">
             <div style="background:var(--azul-medio);border-radius:28px;overflow:hidden;padding:20px;min-height:360px;">
-              <div style="color:var(--texto-sobre-color);text-align:center;margin-bottom:14px;">
+              <div class="color-sobre-color centrar-texto mb-14">
                 <img src="assets/images/perfil_marisa.png"
                   style="width:70px;height:70px;border-radius:50%;object-fit:cover;border:3px solid var(--borde-sobre-color);"
                   alt="" />
               </div>
-              <div style="color:var(--texto-sobre-color);text-align:center;font-weight:700;font-size:14px;">María Arizmendi</div>
+              <div class="color-sobre-color centrar-texto peso-700 texto-14">María Arizmendi</div>
               <div style="display:flex;gap:8px;justify-content:center;margin:10px 0;">
                 <div
-                  style="background:var(--velo-oscuro-sobre-color);color:var(--texto-sobre-color);padding:6px 12px;border-radius:20px;font-size:11px;font-weight:700;">
+                  class="fondo-velo-oscuro color-sobre-color p-6-12 redondeo-20 texto-11 peso-700">
                   ASISTENTE BRONCE</div>
                 <div
                   style="background:var(--velo-oscuro-sobre-color);color:var(--texto-sobre-color-tenue);padding:6px 12px;border-radius:20px;font-size:11px;">
@@ -134,7 +135,7 @@
               <div style="background:var(--velo-modal);border-radius:8px;padding:12px;margin-top:12px;">
                 <div style="color:var(--texto-sobre-color-tenue);font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">
                   PROFESIÓN</div>
-                <div style="color:var(--texto-sobre-color);font-size:13px;">Cuidadora Domiciliaria</div>
+                <div class="color-sobre-color texto-13">Cuidadora Domiciliaria</div>
               </div>
             </div>
           </div>
@@ -194,7 +195,7 @@
         <span class="eyebrow"
           style="color:var(--tono-info-texto);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Registro
           Oficial</span>
-        <h2 style="font-size:28px;font-weight:800;color:var(--texto-titulo);margin-top:4px;">Registro de Legajo Digital
+        <h2 class="texto-28 peso-800 color-titulo mt-4">Registro de Legajo Digital
           Completo</h2>
         <p style="font-size:14px;color:var(--texto-secundario);max-width:600px;margin:8px auto 0 auto;">Complete los 5 pasos
           obligatorios de ingreso al plantel de la prestadora. Estos datos son idénticos a los requeridos por la App
@@ -204,54 +205,54 @@
       <!-- BARRA DE PROGRESO DE 7 PASOS -->
       <div class="wizard-progress"
         style="display:flex;justify-content:space-between;margin-bottom:40px;position:relative;">
-        <div class="wizard-step-node active" data-step="1" style="flex:1;text-align:center;z-index:2;">
-          <div class="wizard-step-circle"
-            style="width:36px;height:36px;border-radius:50%;background:var(--tono-neutro-fondo);color:var(--texto-secundario);display:flex;align-items:center;justify-content:center;margin:0 auto 8px auto;font-weight:700;transition:all 0.3s ease;">
+        <div class="wizard-step-node active flex-1 centrar-texto z-2" data-step="1">
+          <div class="wizard-step-circle ancho-36 alto-36 circulo fondo-neutro color-secundario flex alinear-centro justificar-centro m-centrado-abajo-8 peso-700 transicion"
+           >
             1</div>
-          <span class="wizard-step-label"
-            style="font-size:11px;font-weight:700;color:var(--texto-secundario);text-transform:uppercase;">Identidad</span>
+          <span class="wizard-step-label texto-11 peso-700 color-secundario mayusculas"
+           >Identidad</span>
         </div>
-        <div class="wizard-step-node" data-step="2" style="flex:1;text-align:center;z-index:2;">
-          <div class="wizard-step-circle"
-            style="width:36px;height:36px;border-radius:50%;background:var(--tono-neutro-fondo);color:var(--texto-secundario);display:flex;align-items:center;justify-content:center;margin:0 auto 8px auto;font-weight:700;transition:all 0.3s ease;">
+        <div class="wizard-step-node flex-1 centrar-texto z-2" data-step="2">
+          <div class="wizard-step-circle ancho-36 alto-36 circulo fondo-neutro color-secundario flex alinear-centro justificar-centro m-centrado-abajo-8 peso-700 transicion"
+           >
             2</div>
-          <span class="wizard-step-label"
-            style="font-size:11px;font-weight:700;color:var(--texto-secundario);text-transform:uppercase;">Formación</span>
+          <span class="wizard-step-label texto-11 peso-700 color-secundario mayusculas"
+           >Formación</span>
         </div>
-        <div class="wizard-step-node" data-step="3" style="flex:1;text-align:center;z-index:2;">
-          <div class="wizard-step-circle"
-            style="width:36px;height:36px;border-radius:50%;background:var(--tono-neutro-fondo);color:var(--texto-secundario);display:flex;align-items:center;justify-content:center;margin:0 auto 8px auto;font-weight:700;transition:all 0.3s ease;">
+        <div class="wizard-step-node flex-1 centrar-texto z-2" data-step="3">
+          <div class="wizard-step-circle ancho-36 alto-36 circulo fondo-neutro color-secundario flex alinear-centro justificar-centro m-centrado-abajo-8 peso-700 transicion"
+           >
             3</div>
-          <span class="wizard-step-label"
-            style="font-size:11px;font-weight:700;color:var(--texto-secundario);text-transform:uppercase;">Aptitudes</span>
+          <span class="wizard-step-label texto-11 peso-700 color-secundario mayusculas"
+           >Aptitudes</span>
         </div>
-        <div class="wizard-step-node" data-step="4" style="flex:1;text-align:center;z-index:2;">
-          <div class="wizard-step-circle"
-            style="width:36px;height:36px;border-radius:50%;background:var(--tono-neutro-fondo);color:var(--texto-secundario);display:flex;align-items:center;justify-content:center;margin:0 auto 8px auto;font-weight:700;transition:all 0.3s ease;">
+        <div class="wizard-step-node flex-1 centrar-texto z-2" data-step="4">
+          <div class="wizard-step-circle ancho-36 alto-36 circulo fondo-neutro color-secundario flex alinear-centro justificar-centro m-centrado-abajo-8 peso-700 transicion"
+           >
             4</div>
-          <span class="wizard-step-label"
-            style="font-size:11px;font-weight:700;color:var(--texto-secundario);text-transform:uppercase;">Horarios</span>
+          <span class="wizard-step-label texto-11 peso-700 color-secundario mayusculas"
+           >Horarios</span>
         </div>
-        <div class="wizard-step-node" data-step="5" style="flex:1;text-align:center;z-index:2;">
-          <div class="wizard-step-circle"
-            style="width:36px;height:36px;border-radius:50%;background:var(--tono-neutro-fondo);color:var(--texto-secundario);display:flex;align-items:center;justify-content:center;margin:0 auto 8px auto;font-weight:700;transition:all 0.3s ease;">
+        <div class="wizard-step-node flex-1 centrar-texto z-2" data-step="5">
+          <div class="wizard-step-circle ancho-36 alto-36 circulo fondo-neutro color-secundario flex alinear-centro justificar-centro m-centrado-abajo-8 peso-700 transicion"
+           >
             5</div>
-          <span class="wizard-step-label"
-            style="font-size:11px;font-weight:700;color:var(--texto-secundario);text-transform:uppercase;">Legajo</span>
+          <span class="wizard-step-label texto-11 peso-700 color-secundario mayusculas"
+           >Legajo</span>
         </div>
-        <div class="wizard-step-node" data-step="6" style="flex:1;text-align:center;z-index:2;">
-          <div class="wizard-step-circle"
-            style="width:36px;height:36px;border-radius:50%;background:var(--tono-neutro-fondo);color:var(--texto-secundario);display:flex;align-items:center;justify-content:center;margin:0 auto 8px auto;font-weight:700;transition:all 0.3s ease;">
+        <div class="wizard-step-node flex-1 centrar-texto z-2" data-step="6">
+          <div class="wizard-step-circle ancho-36 alto-36 circulo fondo-neutro color-secundario flex alinear-centro justificar-centro m-centrado-abajo-8 peso-700 transicion"
+           >
             6</div>
-          <span class="wizard-step-label"
-            style="font-size:11px;font-weight:700;color:var(--texto-secundario);text-transform:uppercase;">Documentos</span>
+          <span class="wizard-step-label texto-11 peso-700 color-secundario mayusculas"
+           >Documentos</span>
         </div>
-        <div class="wizard-step-node" data-step="7" style="flex:1;text-align:center;z-index:2;">
-          <div class="wizard-step-circle"
-            style="width:36px;height:36px;border-radius:50%;background:var(--tono-neutro-fondo);color:var(--texto-secundario);display:flex;align-items:center;justify-content:center;margin:0 auto 8px auto;font-weight:700;transition:all 0.3s ease;">
+        <div class="wizard-step-node flex-1 centrar-texto z-2" data-step="7">
+          <div class="wizard-step-circle ancho-36 alto-36 circulo fondo-neutro color-secundario flex alinear-centro justificar-centro m-centrado-abajo-8 peso-700 transicion"
+           >
             7</div>
-          <span class="wizard-step-label"
-            style="font-size:11px;font-weight:700;color:var(--texto-secundario);text-transform:uppercase;">Cierre</span>
+          <span class="wizard-step-label texto-11 peso-700 color-secundario mayusculas"
+           >Cierre</span>
         </div>
       </div>
 
@@ -260,12 +261,12 @@
            js/disponibilidad.js y js/autorizaciones.js con lo que traen sus catálogos.
            Mientras eso viaja —y si no llega— la pantalla tiene que decirlo, porque un
            formulario a medias sin cartel se ve igual que uno terminado. -->
-      <div id="legajo-estado"
-        style="display:none;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px;padding:12px 14px;border-radius:12px;font-size:13px;">
+      <div class="oculto" id="legajo-estado"
+        style="align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px;padding:12px 14px;border-radius:12px;font-size:13px;">
         <i id="legajo-estado-rueda" class="fas fa-circle-notch fa-spin" aria-hidden="true"></i>
         <span id="legajo-estado-texto">Preparando el formulario del legajo…</span>
-        <button type="button" class="btn btn-secundario" id="legajo-reintentar"
-          style="display:none;padding:6px 16px;font-size:12.5px;">Reintentar</button>
+        <button type="button" class="btn btn-secundario oculto" id="legajo-reintentar"
+          style="padding:6px 16px;font-size:12.5px;">Reintentar</button>
       </div>
 
       <!-- FORMULARIO WIZARD -->
@@ -273,9 +274,9 @@
 
         <!-- PASO 1: DATOS PERSONALES Y FISCALES -->
         <div class="wizard-step-pane" id="step-pane-1">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-titulo);"><i
+          <h3 class="texto-18 peso-700 mb-16 color-titulo"><i
               class="fas fa-id-card"></i> Paso 1: Información Personal y Fiscal</h3>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="grilla grilla-2 gap-16">
             <div class="form-group"><label for="nombre">Nombre y Apellido Completo</label><input type="text" id="nombre"
                 required /></div>
             <div class="form-group"><label for="dni-num">DNI (Documento de Identidad)</label><input type="number"
@@ -306,7 +307,7 @@
               <label for="afip-tipo">Condición de Registro AFIP</label>
               <select id="afip-tipo" required data-catalogo="condicion_fiscal" data-catalogo-vacio="— Seleccionar —"></select>
             </div>
-            <div class="form-group" style="grid-column:1 / -1;"><label for="domicilio">Domicilio Completo (Calle, Nro,
+            <div class="form-group grilla-fila-entera"><label for="domicilio">Domicilio Completo (Calle, Nro,
                 Piso, Localidad)</label><input type="text" id="domicilio"
                 placeholder="Ej: Av. Santa Fe 1234, Palermo, CABA" required /></div>
             <div class="form-group"><label for="zona">Barrio o zona de cobertura</label><select id="zona"
@@ -317,21 +318,21 @@
 
           <div style="display:flex;justify-content:flex-end;margin-top:24px;">
             <button type="button" class="btn btn-primario btn-next-step" data-next="2">Siguiente Paso <i
-                class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+                class="fas fa-arrow-right ml-8"></i></button>
           </div>
         </div>
 
         <!-- PASO 2: FORMACIÓN Y DOCUMENTACIÓN -->
-        <div class="wizard-step-pane" id="step-pane-2" style="display:none;">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-titulo);"><i
+        <div class="wizard-step-pane oculto" id="step-pane-2">
+          <h3 class="texto-18 peso-700 mb-16 color-titulo"><i
               class="fas fa-file-invoice"></i> Paso 2: Formación</h3>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
-            <div class="form-group" style="grid-column:1 / -1;">
+          <div class="grilla grilla-2 gap-16 mb-20">
+            <div class="form-group grilla-fila-entera">
               <label for="profesion">Tipo de Asistente principal</label>
               <select id="profesion" required data-catalogo="tipo_asistente" data-catalogo-vacio="— Seleccionar —"></select>
             </div>
-            <div class="form-group" style="grid-column:1 / -1;">
+            <div class="form-group grilla-fila-entera">
               <label for="nivel-estudios">Nivel de Estudios Formales Alcanzado</label>
               <select id="nivel-estudios" required data-catalogo="nivel_educativo" data-catalogo-vacio="— Seleccionar —"></select>
             </div>
@@ -339,71 +340,71 @@
 
           <!-- CURSOS ACADÉMICOS -->
           <div
-            style="background: var(--superficie);border-radius:12px;padding:20px;border:1px solid var(--borde-card);margin-bottom:20px;">
-            <h4 style="font-size:14px;font-weight:700;color:var(--texto-titulo);margin-bottom:12px;"><i
-                class="fas fa-graduation-cap" style="color:var(--azul-medio-texto);"></i> Cursos y Certificaciones Realizados
+            class="fondo-superficie redondeo-12 p-20 borde-tarjeta mb-20">
+            <h4 class="texto-14 peso-700 color-titulo mb-12"><i
+                class="fas fa-graduation-cap color-azul-medio"></i> Cursos y Certificaciones Realizados
               ({{producto}} Academy o afines)</h4>
             <div style="display:grid;grid-template-columns:1fr;gap:10px;font-size:13px;" data-catalogo="certificacion" data-catalogo-como="casillas" data-catalogo-nombre="certificacion" data-catalogo-clase="catalogo-casilla"></div>
           </div>
 
           <!-- CARGA DE DOCUMENTOS -->
           <div
-            style="background:var(--superficie-hover);border-radius:12px;padding:20px;border:1px solid var(--borde-card);margin-bottom:20px;">
-            <h4 style="font-size:14px;font-weight:700;color:var(--texto-titulo);margin-bottom:16px;"><i
-                class="fas fa-shield-alt" style="color:var(--azul-medio-texto);"></i> Foto de perfil</h4>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-              <div class="form-group" style="grid-column: 1 / -1;"><label style="font-size:12px;">📸 Foto de Perfil
+            class="fondo-superficie-hover redondeo-12 p-20 borde-tarjeta mb-20">
+            <h4 class="texto-14 peso-700 color-titulo mb-16"><i
+                class="fas fa-shield-alt color-azul-medio"></i> Foto de perfil</h4>
+            <div class="grilla grilla-2 gap-16">
+              <div class="form-group grilla-fila-entera"><label class="texto-12">📸 Foto de Perfil
                   Profesional (Rostro tipo carnet)</label><input type="file" id="foto-perfil" accept="image/*"
-                  style="font-size:12px;" required /></div>
-              <div class="form-group" style="grid-column: 1 / -1;"><p style="font-size:12px;color:var(--texto-secundario);margin:0;">El documento de identidad, los antecedentes penales y el título se cargan en el paso 6. La matrícula, si corresponde, en el paso 5.</p></div>
+                  class="texto-12" required /></div>
+              <div class="form-group grilla-fila-entera"><p class="texto-12 color-secundario m-0">El documento de identidad, los antecedentes penales y el título se cargan en el paso 6. La matrícula, si corresponde, en el paso 5.</p></div>
             </div>
           </div>
 
-          <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="1"
-              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
-                style="margin-right:8px;"></i> Anterior</button>
+          <div class="flex justificar-entre mt-24">
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step borde-color-tarjeta color-secundario" data-prev="1"
+             ><i class="fas fa-arrow-left mr-8"
+               ></i> Anterior</button>
             <button type="button" class="btn btn-primario btn-next-step" data-next="3">Siguiente Paso <i
-                class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+                class="fas fa-arrow-right ml-8"></i></button>
           </div>
         </div>
 
         <!-- PASO 3: APTITUDES Y PATOLOGÍAS -->
-        <div class="wizard-step-pane" id="step-pane-3" style="display:none;">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-titulo);"><i
+        <div class="wizard-step-pane oculto" id="step-pane-3">
+          <h3 class="texto-18 peso-700 mb-16 color-titulo"><i
               class="fas fa-clipboard-list"></i> Paso 3: Experiencia y Patologías</h3>
 
           <div
-            style="background: var(--superficie);border-radius:12px;padding:20px;border:1px solid var(--borde-card);margin-bottom:20px;">
-            <p style="font-size:14px;font-weight:700;color:var(--texto-principal);margin-bottom:12px;">Patologías atendidas
+            class="fondo-superficie redondeo-12 p-20 borde-tarjeta mb-20">
+            <p class="texto-14 peso-700 color-principal mb-12">Patologías atendidas
               con experiencia real comprobable:</p>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;margin-bottom:20px;" data-catalogo="patologia" data-catalogo-como="casillas" data-catalogo-nombre="patologia" data-catalogo-clase="catalogo-casilla"></div>
+            <div class="grilla grilla-2 gap-12 texto-13 mb-20" data-catalogo="patologia" data-catalogo-como="casillas" data-catalogo-nombre="patologia" data-catalogo-clase="catalogo-casilla"></div>
 
-            <p style="font-size:14px;font-weight:700;color:var(--texto-principal);margin-bottom:12px;">Tareas de Cuidado
+            <p class="texto-14 peso-700 color-principal mb-12">Tareas de Cuidado
               Autorizadas a realizar:</p>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;" data-catalogo="tarea_cuidado" data-catalogo-como="casillas" data-catalogo-nombre="tarea_cuidado" data-catalogo-clase="catalogo-casilla"></div>
+            <div class="grilla grilla-2 gap-12 texto-13" data-catalogo="tarea_cuidado" data-catalogo-como="casillas" data-catalogo-nombre="tarea_cuidado" data-catalogo-clase="catalogo-casilla"></div>
           </div>
 
-          <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="2"
-              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
-                style="margin-right:8px;"></i> Anterior</button>
+          <div class="flex justificar-entre mt-24">
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step borde-color-tarjeta color-secundario" data-prev="2"
+             ><i class="fas fa-arrow-left mr-8"
+               ></i> Anterior</button>
             <button type="button" class="btn btn-primario btn-next-step" data-next="4">Siguiente Paso <i
-                class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+                class="fas fa-arrow-right ml-8"></i></button>
           </div>
         </div>
 
         <!-- PASO 4: DISPONIBILIDAD HORARIA Y TARIFAS -->
-        <div class="wizard-step-pane" id="step-pane-4" style="display:none;">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-titulo);"><i
+        <div class="wizard-step-pane oculto" id="step-pane-4">
+          <h3 class="texto-18 peso-700 mb-16 color-titulo"><i
               class="fas fa-calendar-alt"></i> Paso 4: Disponibilidad Horaria</h3>
 
           <div
-            style="background:var(--superficie-hover);border-radius:12px;padding:20px;border:1px solid var(--borde-card);margin-bottom:20px;">
-            <p style="font-size:13px;font-weight:700;color:var(--texto-principal);margin-bottom:12px;">Modalidades de
+            class="fondo-superficie-hover redondeo-12 p-20 borde-tarjeta mb-20">
+            <p class="texto-13 peso-700 color-principal mb-12">Modalidades de
               contratación aceptadas:</p>
             <div style="display:flex;gap:20px;margin-bottom:24px;flex-wrap:wrap;font-size:13px;" data-catalogo="modalidad_contratacion" data-catalogo-como="casillas" data-catalogo-nombre="modalidad_contratacion" data-catalogo-clase="catalogo-casilla" data-catalogo-marcados="horas"></div>
-            <p style="font-size:13px;font-weight:700;color:var(--texto-principal);margin-bottom:12px;">Con retiro o sin retiro del domicilio:</p>
+            <p class="texto-13 peso-700 color-principal mb-12">Con retiro o sin retiro del domicilio:</p>
             <div style="display:flex;gap:20px;margin-bottom:24px;flex-wrap:wrap;font-size:13px;" data-catalogo="retiro" data-catalogo-como="casillas" data-catalogo-nombre="retiro" data-catalogo-clase="catalogo-casilla" data-catalogo-marcados="con_retiro"></div>
             <div class="form-group" style="margin-top:16px;max-width:300px;">
               <label for="valor-hora">Valor Hora Deseado ($ ARS / hora)</label>
@@ -414,9 +415,9 @@
                  cada turno salen de data/catalogo-vocabularios.json; los textos del paso,
                  de data/catalogo-disponibilidad.json. Las junta js/disponibilidad.js. -->
             <p id="disponibilidad-titulo"
-              style="font-size:13px;font-weight:700;color:var(--texto-principal);margin-bottom:4px;"></p>
+              class="texto-13 peso-700 color-principal mb-4"></p>
             <p id="disponibilidad-bajada"
-              style="font-size:12.5px;color:var(--texto-secundario);margin-bottom:12px;"></p>
+              class="texto-12-5 color-secundario mb-12"></p>
             <div id="grilla-disponibilidad"></div>
             <p id="disponibilidad-ayuda"
               style="font-size:11.5px;color:var(--texto-secundario);margin:8px 0 0 0;"></p>
@@ -424,76 +425,76 @@
             <div id="preguntas-disponibilidad" style="margin-top:20px;"></div>
           </div>
 
-          <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="3"
-              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
-                style="margin-right:8px;"></i> Anterior</button>
+          <div class="flex justificar-entre mt-24">
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step borde-color-tarjeta color-secundario" data-prev="3"
+             ><i class="fas fa-arrow-left mr-8"
+               ></i> Anterior</button>
             <button type="button" class="btn btn-primario btn-next-step" data-next="5">Siguiente Paso <i
-                class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+                class="fas fa-arrow-right ml-8"></i></button>
           </div>
         </div>
 
         <!-- PASO 5: LEGAJO — FICHAS REPETIBLES (matrícula, estudios, experiencia, referencias) -->
         <!-- Se dibuja desde data/catalogo-fichas.json vía js/fichas-legajo.js («los formularios se declaran, no se dibujan»). -->
-        <div class="wizard-step-pane" id="step-pane-5" style="display:none;">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-titulo);"><i
+        <div class="wizard-step-pane oculto" id="step-pane-5">
+          <h3 class="texto-18 peso-700 mb-16 color-titulo"><i
               class="fas fa-folder-open"></i> Paso 5: Legajo</h3>
-          <p id="ficha-matricula-obligatoria-aviso" style="display:none;font-size:12.5px;color:var(--tono-atencion-texto);background:var(--tono-atencion-fondo);border-radius:8px;padding:10px;margin-bottom:16px;">
+          <p class="oculto" id="ficha-matricula-obligatoria-aviso" style="font-size:12.5px;color:var(--tono-atencion-texto);background:var(--tono-atencion-fondo);border-radius:8px;padding:10px;margin-bottom:16px;">
             El Tipo de Asistente que eligió exige Matrícula vigente y verificada para poder publicarse. Cárguela acá.
           </p>
-          <div id="ficha-matricula" style="margin-bottom:24px;"></div>
-          <div id="ficha-estudio" style="margin-bottom:24px;"></div>
-          <div id="ficha-experiencia_laboral" style="margin-bottom:24px;"></div>
-          <div id="ficha-referencia" style="margin-bottom:24px;"></div>
+          <div id="ficha-matricula" class="mb-24"></div>
+          <div id="ficha-estudio" class="mb-24"></div>
+          <div id="ficha-experiencia_laboral" class="mb-24"></div>
+          <div id="ficha-referencia" class="mb-24"></div>
 
-          <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="4"
-              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
-                style="margin-right:8px;"></i> Anterior</button>
+          <div class="flex justificar-entre mt-24">
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step borde-color-tarjeta color-secundario" data-prev="4"
+             ><i class="fas fa-arrow-left mr-8"
+               ></i> Anterior</button>
             <button type="button" class="btn btn-primario btn-next-step" data-next="6">Siguiente Paso <i
-                class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+                class="fas fa-arrow-right ml-8"></i></button>
           </div>
         </div>
 
         <!-- PASO 6: REFERENCIAS Y CONFIRMACIÓN -->
-        <div class="wizard-step-pane" id="step-pane-6" style="display:none;">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-titulo);"><i
+        <div class="wizard-step-pane oculto" id="step-pane-6">
+          <h3 class="texto-18 peso-700 mb-16 color-titulo"><i
               class="fas fa-user-check"></i> Paso 6: Documentación y Aval</h3>
 
           <!-- CARGA DE DOCUMENTOS: DNI, PENALES, TÍTULO -->
           <div
-            style="background:var(--superficie-hover);border-radius:12px;padding:20px;border:1px solid var(--borde-card);margin-bottom:20px;">
-            <h4 style="font-size:14px;font-weight:700;color:var(--texto-titulo);margin-bottom:6px;"><i
-                class="fas fa-file-upload" style="color:var(--azul-medio-texto);"></i> Documentación Digital (Obligatoria)</h4>
+            class="fondo-superficie-hover redondeo-12 p-20 borde-tarjeta mb-20">
+            <h4 class="texto-14 peso-700 color-titulo mb-6"><i
+                class="fas fa-file-upload color-azul-medio"></i> Documentación Digital (Obligatoria)</h4>
             <p style="font-size:12px;color:var(--texto-secundario);margin:0 0 14px 0;">Todos los documentos se almacenan de forma
               encriptada. Máximo 10MB por archivo. Formatos: JPG, PNG, PDF.</p>
 
-            <div class="form-group" style="margin-bottom:14px;">
-              <label style="font-weight:700;font-size:13px;"><i class="fas fa-id-card"
-                  style="color:var(--azul-medio-texto);"></i> DNI Frente + Dorso <span style="color:var(--rojo-peligro-texto);">*</span></label>
+            <div class="form-group mb-14">
+              <label class="peso-700 texto-13"><i class="fas fa-id-card color-azul-medio"
+                 ></i> DNI Frente + Dorso <span class="color-peligro">*</span></label>
               <input type="file" id="file-dni" name="file-dni" accept="image/*,.pdf" multiple required
                 style="display:block;width:100%;margin-top:6px;padding:8px;border:1.5px dashed var(--borde-card);border-radius:8px;font-size:12px;cursor:pointer;background: var(--superficie);" />
-              <p id="file-dni-status" style="font-size:11px;color:var(--verde-exito-texto);margin:4px 0 0 0;display:none;"><i
+              <p id="file-dni-status" class="texto-11 color-exito m-solo-arriba-4 oculto"><i
                   class="fas fa-check-circle"></i> Archivo listo para subir</p>
             </div>
 
-            <div class="form-group" style="margin-bottom:14px;">
-              <label style="font-weight:700;font-size:13px;"><i class="fas fa-shield-alt"
-                  style="color:var(--azul-medio-texto);"></i> Certificado de Antecedentes Penales <span
-                  style="color:var(--rojo-peligro-texto);">*</span></label>
+            <div class="form-group mb-14">
+              <label class="peso-700 texto-13"><i class="fas fa-shield-alt color-azul-medio"
+                 ></i> Certificado de Antecedentes Penales <span
+                  class="color-peligro">*</span></label>
               <input type="file" id="file-penales" name="file-penales" accept="image/*,.pdf" required
                 style="display:block;width:100%;margin-top:6px;padding:8px;border:1.5px dashed var(--borde-card);border-radius:8px;font-size:12px;cursor:pointer;background: var(--superficie);" />
-              <p id="file-penales-status" style="font-size:11px;color:var(--verde-exito-texto);margin:4px 0 0 0;display:none;"><i
+              <p id="file-penales-status" class="texto-11 color-exito m-solo-arriba-4 oculto"><i
                   class="fas fa-check-circle"></i> Archivo listo para subir</p>
             </div>
 
             <div class="form-group">
-              <label style="font-weight:700;font-size:13px;"><i class="fas fa-graduation-cap"
-                  style="color:var(--azul-medio-texto);"></i> Título o Certificado de Formación <span
-                  style="color:var(--rojo-peligro-texto);">*</span></label>
+              <label class="peso-700 texto-13"><i class="fas fa-graduation-cap color-azul-medio"
+                 ></i> Título o Certificado de Formación <span
+                  class="color-peligro">*</span></label>
               <input type="file" id="file-titulo" name="file-titulo" accept="image/*,.pdf" required
                 style="display:block;width:100%;margin-top:6px;padding:8px;border:1.5px dashed var(--borde-card);border-radius:8px;font-size:12px;cursor:pointer;background: var(--superficie);" />
-              <p id="file-titulo-status" style="font-size:11px;color:var(--verde-exito-texto);margin:4px 0 0 0;display:none;"><i
+              <p id="file-titulo-status" class="texto-11 color-exito m-solo-arriba-4 oculto"><i
                   class="fas fa-check-circle"></i> Archivo listo para subir</p>
             </div>
           </div>
@@ -509,19 +510,19 @@
             <strong>"Validado por Prestadora"</strong> en el directorio visible para las familias.
           </div>
 
-          <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="5"
-              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
-                style="margin-right:8px;"></i> Anterior</button>
+          <div class="flex justificar-entre mt-24">
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step borde-color-tarjeta color-secundario" data-prev="5"
+             ><i class="fas fa-arrow-left mr-8"
+               ></i> Anterior</button>
             <button type="button" class="btn btn-primario btn-next-step" data-next="7">Siguiente Paso <i
-                class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+                class="fas fa-arrow-right ml-8"></i></button>
           </div>
         </div>
 
         <!-- PASO 7: CIERRE — LO QUE LA PERSONA AUTORIZA A PUBLICAR -->
         <!-- Texto, orden y valor inicial vienen de data/catalogo-autorizaciones.json. -->
-        <div class="wizard-step-pane" id="step-pane-7" style="display:none;">
-          <h3 id="cierre-titulo" style="font-size:18px;font-weight:700;margin-bottom:8px;color:var(--texto-titulo);"><i
+        <div class="wizard-step-pane oculto" id="step-pane-7">
+          <h3 id="cierre-titulo" class="texto-18 peso-700 mb-8 color-titulo"><i
               class="fas fa-circle-check"></i></h3>
           <p id="cierre-bajada" style="font-size:13.5px;color:var(--texto-secundario);margin-bottom:16px;"></p>
           <p id="cierre-recordatorio" style="font-size:12.5px;color:var(--tono-exito-texto);background:var(--tono-exito-fondo);border-radius:8px;padding:10px;margin-bottom:20px;"></p>
@@ -539,10 +540,10 @@
             </label>
           </div>
 
-          <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="6"
-              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
-                style="margin-right:8px;"></i> Anterior</button>
+          <div class="flex justificar-entre mt-24">
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step borde-color-tarjeta color-secundario" data-prev="6"
+             ><i class="fas fa-arrow-left mr-8"
+               ></i> Anterior</button>
             <button type="submit" class="btn btn-secundario" id="btn-submit-cuidador" style="padding:12px 32px;"><i
                 class="fas fa-check-circle"></i> <span id="cierre-boton">Terminar el alta</span></button>
           </div>
@@ -551,8 +552,8 @@
                seguidas —la Prestadora, los archivos, la ficha, el legajo— y hasta el
                26 de agosto de 2026 ninguna decía nada mientras corría: el botón se
                apagaba y la pantalla se quedaba igual. -->
-          <div id="alta-estado"
-            style="display:none;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px;padding:12px 14px;border-radius:12px;font-size:13px;">
+          <div class="oculto" id="alta-estado"
+            style="align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px;padding:12px 14px;border-radius:12px;font-size:13px;">
             <i id="alta-estado-rueda" class="fas fa-circle-notch fa-spin" aria-hidden="true"></i>
             <span id="alta-estado-texto"></span>
           </div>
@@ -560,27 +561,27 @@
           <!-- Falta confirmar el correo. La cuenta ya quedó creada y el legajo
                sigue cargado en pantalla: no se perdió nada, sólo falta el clic
                del enlace que llegó al mail. -->
-          <div id="cierre-confirmar"
-            style="display:none;margin-top:16px;background:var(--tono-atencion-fondo);border:1px solid var(--tono-atencion-borde);border-radius:12px;padding:16px;font-size:13px;color:var(--texto-principal);">
-            <p style="font-weight:700;margin-bottom:8px;">La cuenta quedó creada. Falta un paso.</p>
-            <p style="margin-bottom:10px;">Se envió un correo a <strong id="cierre-correo"></strong> con un enlace para
+          <div class="oculto" id="cierre-confirmar"
+            style="margin-top:16px;background:var(--tono-atencion-fondo);border:1px solid var(--tono-atencion-borde);border-radius:12px;padding:16px;font-size:13px;color:var(--texto-principal);">
+            <p class="peso-700 mb-8">La cuenta quedó creada. Falta un paso.</p>
+            <p class="mb-10">Se envió un correo a <strong id="cierre-correo"></strong> con un enlace para
               confirmar la dirección. Lo cargado sigue en esta pantalla: no se perdió nada.</p>
             <ol style="margin:0 0 12px 18px;line-height:1.6;">
               <li>Abrir ese correo y tocar el enlace.</li>
               <li>Volver a esta pestaña —conviene no cerrarla— y tocar el botón de abajo.</li>
             </ol>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <div class="flex gap-10 envolver">
               <button type="button" class="btn btn-secundario" id="btn-ya-confirme" style="padding:10px 20px;"><i
                   class="fas fa-check"></i> <span id="ya-confirme-texto">Ya confirmé, continuar</span></button>
               <button type="button" class="btn btn-sobre-oscuro" id="btn-reenviar-confirmacion"
                 style="padding:10px 20px;border-color:var(--borde-card);color:var(--texto-secundario);">Volver a mandar el correo</button>
             </div>
             <p id="cierre-confirmar-aviso"
-              style="display:none;margin-top:12px;padding:10px;border-radius:8px;font-size:12.5px;"></p>
+              class="oculto mt-12 p-10 redondeo-8 texto-12-5"></p>
           </div>
 
-          <div id="form-success" class="form-success"
-            style="display:none;margin-top:16px;background:var(--tono-exito-fondo);color:var(--verde-exito-texto);padding:16px;border-radius:12px;font-weight:700;text-align:center;font-size:14px;border:1px solid var(--tono-exito-borde);">
+          <div id="form-success" class="form-success oculto"
+            style="margin-top:16px;background:var(--tono-exito-fondo);color:var(--verde-exito-texto);padding:16px;border-radius:12px;font-weight:700;text-align:center;font-size:14px;border:1px solid var(--tono-exito-borde);">
             ✓ ¡Registro recibido exitosamente! Su legajo completo ha ingresado al proceso de auditoría y entrevistas del
             plantel.
           </div>
@@ -668,7 +669,7 @@
       const rueda = document.getElementById(zona + '-estado-rueda');
       const color = COLOR_DEL_ESTADO[cual] || COLOR_DEL_ESTADO.cargando;
       texto.textContent = clave ? Texto.frase(clave, huecos) : '';
-      rueda.style.display = (cual === 'cargando') ? '' : 'none';
+      rueda.classList.toggle('oculto', cual !== 'cargando');
       caja.style.background = color[0];
       caja.style.color = color[1];
       caja.style.display = cual ? 'flex' : 'none';
@@ -706,7 +707,10 @@
       // se escribe **antes** de que las frases hayan podido llegar, y una clave
       // que todavía no está no dice nada. Ésa es una de las cinco frases de
       // arranque, que viven en `js/catalogo.js` justo para este momento.
-      reintentar.style.display = 'none';
+      // Esconder es estado, no estilo: el botón nace con la clase `oculto` y
+      // se prende y se apaga con ella. Escribirlo en el atributo `style` dejaba
+      // el elemento escondido para siempre, porque al vaciarlo vuelve la clase.
+      reintentar.classList.add('oculto');
       altaMostrar('legajo', 'cargando', 'catalogo.cargando');
 
       try {
@@ -729,7 +733,7 @@
         // sigue armando un formulario que nadie va a poder terminar. Sin esta
         // rama, cero opciones y una falla se ven igual.
         if (!tiposDeAsistente.length) {
-          reintentar.style.display = '';
+          reintentar.classList.remove('oculto');
           altaMostrar('legajo', 'vacio', 'alta.legajo_vacio');
           return;
         }
@@ -787,7 +791,7 @@
       } catch (err) {
         // Estado error, con el botón para volver a intentarlo: lo cargado en los
         // pasos que sí se armaron sigue en pantalla y no se pierde nada.
-        reintentar.style.display = '';
+        reintentar.classList.remove('oculto');
         altaMostrar('legajo', 'error', Texto.claveDeError(err, 'armar el formulario del legajo'));
       }
     }
@@ -1161,8 +1165,8 @@
           altaEsperandoCorreo = { email, clave };
           document.getElementById('cierre-correo').textContent = email;
           avisarConfirmacion('');
-          document.getElementById('cierre-confirmar').style.display = 'block';
-          submitBtn.style.display = 'none';
+          document.getElementById('cierre-confirmar').classList.remove('oculto');
+          submitBtn.classList.add('oculto');
           document.getElementById('cierre-confirmar').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           return;
         }
@@ -1202,8 +1206,8 @@
         // Guardado. Se olvida la contraseña y la pantalla vuelve a quedar como
         // estaba, por si en la misma máquina se da de alta a otra persona.
         altaEsperandoCorreo = null;
-        document.getElementById('cierre-confirmar').style.display = 'none';
-        document.getElementById('btn-submit-cuidador').style.display = '';
+        document.getElementById('cierre-confirmar').classList.add('oculto');
+        document.getElementById('btn-submit-cuidador').classList.remove('oculto');
       } catch (err) {
         avisarConfirmacion(Texto.mensajeDeError(err, 'entrar después de confirmar el correo'));
       } finally {

@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles-pwa.css" />
+  <link rel="stylesheet" href="css/utilidades.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     body {
@@ -545,16 +546,16 @@
         <p id="menu-user-email" style="margin:2px 0 0 0;font-size:11px;opacity:0.8;">familiar@ejemplo.com</p>
       </div>
       <div style="flex:1;padding:16px 0;">
-        <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home" style="width:20px;color:var(--texto-secundario);"></i> Inicio</a>
-        <a class="drawer-menu-item" href="../directorio.html"><i class="fas fa-search" style="width:20px;color:var(--texto-secundario);"></i> Buscar Asistente</a>
-        <a class="drawer-menu-item" onclick="navigate('reportes')"><i class="fas fa-book-medical" style="width:20px;color:var(--texto-secundario);"></i> Reportes de cuidado</a>
-        <a class="drawer-menu-item" href="../cursos.html"><i class="fas fa-graduation-cap" style="width:20px;color:var(--texto-secundario);"></i> Cursos</a>
-        <a class="drawer-menu-item" href="../soporte-remoto.html"><i class="fas fa-headset" style="width:20px;color:var(--texto-secundario);"></i> Acompañamiento Online</a>
+        <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home ancho-20 color-secundario"></i> Inicio</a>
+        <a class="drawer-menu-item" href="../directorio.html"><i class="fas fa-search ancho-20 color-secundario"></i> Buscar Asistente</a>
+        <a class="drawer-menu-item" onclick="navigate('reportes')"><i class="fas fa-book-medical ancho-20 color-secundario"></i> Reportes de cuidado</a>
+        <a class="drawer-menu-item" href="../cursos.html"><i class="fas fa-graduation-cap ancho-20 color-secundario"></i> Cursos</a>
+        <a class="drawer-menu-item" href="../soporte-remoto.html"><i class="fas fa-headset ancho-20 color-secundario"></i> Acompañamiento Online</a>
         <div style="border-top:1px solid var(--borde-card);margin:8px 0;"></div>
-        <button type="button" class="drawer-menu-item" id="btn-logout" style="color:var(--rojo-peligro-texto);"><i class="fas fa-sign-out-alt" style="width:20px;color:var(--rojo-peligro-texto);"></i> Cerrar sesión</button>
+        <button type="button" class="drawer-menu-item color-peligro" id="btn-logout"><i class="fas fa-sign-out-alt ancho-20 color-peligro"></i> Cerrar sesión</button>
       </div>
-      <div style="padding:16px;text-align:center;font-size:10px;color:var(--texto-secundario);border-top:1px solid var(--borde-card);">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
+      <div class="p-16 centrar-texto texto-10 color-secundario borde-arriba">
+        Powered by <strong class="color-marca-acento">{{producto}}</strong>
       </div>
     </div>
 
@@ -573,7 +574,7 @@
         <div class="input-wrapper">
           <input type="password" id="login-pass" placeholder="Contraseña" required />
         </div>
-        <button type="button" class="btn-login" id="btn-action-login" style="width:100%;">Ingresar a {{producto}} Familia</button>
+        <button type="button" class="btn-login ancho-total" id="btn-action-login">Ingresar a {{producto}} Familia</button>
       </div>
 
       <!-- Los estados del arranque. Nace vacío y su texto lo pone el guion desde
@@ -584,24 +585,24 @@
       <p class="pwa-estado" id="arranque-aviso" hidden></p>
 
       <div style="text-align:center;margin-top:auto;font-size:10px;color:var(--texto-secundario);padding-top:20px;">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
+        Powered by <strong class="color-marca-acento">{{producto}}</strong>
       </div>
     </div>
 
     <!-- 2. VISTA: DASHBOARD PRINCIPAL -->
-    <div class="app-screen" id="screen-dashboard" style="padding-bottom:64px;">
+    <div class="app-screen pb-64" id="screen-dashboard">
       <div class="dashboard-header">
-        <button class="btn-back" id="btn-open-menu" style="font-size:20px;"><i class="fas fa-bars"></i></button>
+        <button class="btn-back texto-20" id="btn-open-menu"><i class="fas fa-bars"></i></button>
         <div style="display:flex;align-items:center;gap:6px;">
           <img src="../assets/images/logotipo.png" class="tenant-logo" style="height:24px;" alt="Logo" />
-          <span class="tenant-name" style="font-size:14px;font-weight:800;color:var(--marca-prestadora);">{{organizacion}}</span>
+          <span class="tenant-name texto-14 peso-800 color-marca">{{organizacion}}</span>
         </div>
-        <div><i class="fas fa-bell" style="font-size:18px;color:var(--texto-secundario);"></i></div>
+        <div><i class="fas fa-bell texto-18 color-secundario"></i></div>
       </div>
 
-      <div class="verification-widget" style="margin-top:16px;">
+      <div class="verification-widget mt-16">
         <i class="fas fa-exclamation-triangle"></i>
-        <div style="flex:1;">
+        <div class="flex-1">
           <h5>Complete las Verificaciones</h5>
           <p>Email: ✓ Validado | Celular: ⌛ Pendiente</p>
         </div>
@@ -610,11 +611,11 @@
       <!-- GRID DE SERVICIOS -->
       <div class="grid-services">
         <a class="service-btn" href="../directorio.html">
-          <div class="icon-box" style="background:var(--azul-oscuro);"><i class="fas fa-user-search"></i></div>
+          <div class="icon-box fondo-azul-oscuro"><i class="fas fa-user-search"></i></div>
           <span>Buscar Asistente</span>
         </a>
         <a class="service-btn" href="../soporte-remoto.html">
-          <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-headset"></i></div>
+          <div class="icon-box fondo-azul-medio"><i class="fas fa-headset"></i></div>
           <span>Acompañante Online</span>
         </a>
         <div class="service-btn" onclick="navigate('reportes')">
@@ -626,11 +627,11 @@
           <span>Nuevo Aviso</span>
         </div>
         <div class="service-btn" onclick="alert('Vida Activa: Estimulación Cognitiva.')">
-          <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-running"></i></div>
+          <div class="icon-box fondo-azul-medio"><i class="fas fa-running"></i></div>
           <span>Vida Activa</span>
         </div>
         <div class="service-btn" onclick="alert('Contactando al Gestor de Cuidados asignado...')">
-          <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-user-tie"></i></div>
+          <div class="icon-box fondo-azul-medio"><i class="fas fa-user-tie"></i></div>
           <span>Gestor</span>
         </div>
       </div>
@@ -672,7 +673,7 @@
       </template>
 
       <div style="text-align:center;padding:24px 0;font-size:10px;color:var(--texto-secundario);">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
+        Powered by <strong class="color-marca-acento">{{producto}}</strong>
       </div>
 
       <div class="bottom-tab-bar">
@@ -684,15 +685,15 @@
     </div>
 
     <!-- 3. VISTA: REPORTES DE CUIDADO -->
-    <div class="app-screen" id="screen-reportes" style="padding-bottom:64px;">
+    <div class="app-screen pb-64" id="screen-reportes">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
         <h1>Reportes de cuidado</h1>
-        <div style="width:24px;"></div>
+        <div class="ancho-24"></div>
       </div>
 
       <div class="reportes-header">
-        <h3 style="margin:0;font-size:16px;">Abuela Rosa</h3>
+        <h3 class="m-0 texto-16">Abuela Rosa</h3>
         <div class="reportes-paciente">
           <img src="../assets/images/retrato_generico.svg" alt="Sin foto" />
           <div>
@@ -715,50 +716,50 @@
     </div>
 
     <!-- 4. VISTA: PUBLICAR NUEVA BÚSQUEDA DE ASISTENTE (Inline — Offline Safe) -->
-    <div class="app-screen" id="screen-publicar" style="padding-bottom:64px;">
+    <div class="app-screen pb-64" id="screen-publicar">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
-        <h1><i class="fas fa-plus-circle" style="color:var(--marca-prestadora-acento);"></i> Nuevo Aviso</h1>
-        <div style="width:24px;"></div>
+        <h1><i class="fas fa-plus-circle color-marca-acento"></i> Nuevo Aviso</h1>
+        <div class="ancho-24"></div>
       </div>
 
-      <div style="padding:16px;">
+      <div class="p-16">
         <p style="font-size:12px;color:var(--texto-secundario);margin:0 0 16px 0;">Complete los datos del cuidado que necesita y le encontramos el asistente ideal.</p>
 
         <form id="form-nuevo-aviso" novalidate>
 
           <!-- Datos del Paciente -->
-          <div style="background: var(--superficie);border:1px solid var(--borde-card);border-radius:16px;padding:16px;margin-bottom:12px;">
+          <div class="fondo-superficie borde-tarjeta redondeo-16 p-16 mb-12">
             <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--marca-prestadora);">
               <i class="fas fa-user-injured" style="margin-right:6px;"></i>Datos del Paciente
             </h4>
-            <div style="margin-bottom:10px;">
-              <label style="display:block;font-size:11px;font-weight:700;color:var(--texto-secundario);margin-bottom:4px;">Nombre del Paciente</label>
+            <div class="mb-10">
+              <label class="bloque texto-11 peso-700 color-secundario mb-4">Nombre del Paciente</label>
               <input type="text" id="pb-nombre" placeholder="Ej: Abuela Rosa" required
-                style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid var(--borde-card);font-size:13px;box-sizing:border-box;background:var(--superficie-hundida);" />
+                class="ancho-total p-9-12 redondeo-10 borde-tarjeta-15 texto-13 caja-borde fondo-superficie-hundida" />
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+            <div class="grilla grilla-2 gap-10 mb-10">
               <div>
-                <label style="display:block;font-size:11px;font-weight:700;color:var(--texto-secundario);margin-bottom:4px;">Edad</label>
+                <label class="bloque texto-11 peso-700 color-secundario mb-4">Edad</label>
                 <input type="number" id="pb-edad" placeholder="80" min="50" max="110"
-                  style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid var(--borde-card);font-size:13px;box-sizing:border-box;background:var(--superficie-hundida);" />
+                  class="ancho-total p-9-12 redondeo-10 borde-tarjeta-15 texto-13 caja-borde fondo-superficie-hundida" />
               </div>
               <div>
-                <label style="display:block;font-size:11px;font-weight:700;color:var(--texto-secundario);margin-bottom:4px;">Zona / Barrio</label>
+                <label class="bloque texto-11 peso-700 color-secundario mb-4">Zona / Barrio</label>
                 <select id="pb-zona" required data-catalogo="zona" data-catalogo-vacio="— Seleccionar —"
-                  style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid var(--borde-card);font-size:13px;box-sizing:border-box;background:var(--superficie-hundida);"></select>
+                  class="ancho-total p-9-12 redondeo-10 borde-tarjeta-15 texto-13 caja-borde fondo-superficie-hundida"></select>
               </div>
             </div>
           </div>
 
           <!-- Tipo de Cuidado -->
-          <div style="background: var(--superficie);border:1px solid var(--borde-card);border-radius:16px;padding:16px;margin-bottom:12px;">
+          <div class="fondo-superficie borde-tarjeta redondeo-16 p-16 mb-12">
             <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--marca-prestadora);">
               <i class="fas fa-calendar-alt" style="margin-right:6px;"></i>Tipo de Cuidado
             </h4>
-            <label style="display:block;font-size:11px;font-weight:700;color:var(--texto-secundario);margin-bottom:4px;">Modalidad de Servicio</label>
+            <label class="bloque texto-11 peso-700 color-secundario mb-4">Modalidad de Servicio</label>
             <select id="pb-tipo" required
-              style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid var(--borde-card);font-size:13px;box-sizing:border-box;background:var(--superficie-hundida);margin-bottom:10px;" data-catalogo="modalidad_contratacion" data-catalogo-vacio="— Seleccionar —"></select>
+              class="ancho-total p-9-12 redondeo-10 borde-tarjeta-15 texto-13 caja-borde fondo-superficie-hundida mb-10" data-catalogo="modalidad_contratacion" data-catalogo-vacio="— Seleccionar —"></select>
             <!-- La grilla no se dibuja acá. Los días, los turnos y las horas que
                  cubre cada turno salen de data/catalogo-vocabularios.json; los
                  textos del paso, de data/catalogo-disponibilidad.json. Las junta
@@ -778,16 +779,16 @@
           </div>
 
           <!-- Patologías -->
-          <div style="background: var(--superficie);border:1px solid var(--borde-card);border-radius:16px;padding:16px;margin-bottom:16px;">
+          <div class="fondo-superficie borde-tarjeta redondeo-16 p-16 mb-16">
             <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--marca-prestadora);">
               <i class="fas fa-notes-medical" style="margin-right:6px;"></i>Condición del Paciente
             </h4>
-            <label style="display:block;font-size:11px;font-weight:700;color:var(--texto-secundario);margin-bottom:8px;">Patologías presentes (seleccione todas las que apliquen):</label>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" data-catalogo="patologia" data-catalogo-como="casillas" data-catalogo-nombre="patologia" data-catalogo-clase="catalogo-casilla"></div>
-            <div style="margin-top:12px;">
-              <label style="display:block;font-size:11px;font-weight:700;color:var(--texto-secundario);margin-bottom:4px;">Descripción adicional (opcional)</label>
+            <label class="bloque texto-11 peso-700 color-secundario mb-8">Patologías presentes (seleccione todas las que apliquen):</label>
+            <div class="grilla grilla-2 gap-8" data-catalogo="patologia" data-catalogo-como="casillas" data-catalogo-nombre="patologia" data-catalogo-clase="catalogo-casilla"></div>
+            <div class="mt-12">
+              <label class="bloque texto-11 peso-700 color-secundario mb-4">Descripción adicional (opcional)</label>
               <textarea id="pb-descripcion" placeholder="Cuéntenos más sobre la situación del paciente..." rows="3"
-                style="width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid var(--borde-card);font-size:13px;box-sizing:border-box;background:var(--superficie-hundida);"></textarea>
+                class="ancho-total p-9-12 redondeo-10 borde-tarjeta-15 texto-13 caja-borde fondo-superficie-hundida"></textarea>
             </div>
           </div>
 
@@ -796,8 +797,8 @@
             style="width:100%;padding:14px;border-radius:14px;background:var(--marca-prestadora-acento);color:var(--texto-sobre-color);font-weight:800;font-size:14px;border:none;cursor:pointer;box-shadow:var(--sombra-alta);">
             <i class="fas fa-search"></i> Buscar mi Asistente Ideal
           </button>
-          <div id="pb-success"
-            style="display:none;background:var(--tono-exito-fondo);color:var(--verde-exito-texto);padding:14px;border-radius:12px;font-weight:700;text-align:center;font-size:13px;border:1px solid var(--tono-exito-borde);margin-top:12px;">
+          <div class="oculto" id="pb-success"
+            style="background:var(--tono-exito-fondo);color:var(--verde-exito-texto);padding:14px;border-radius:12px;font-weight:700;text-align:center;font-size:13px;border:1px solid var(--tono-exito-borde);margin-top:12px;">
             ✓ ¡El aviso quedó publicado! Nos vamos a comunicar a la brevedad con los mejores perfiles.
           </div>
         </form>

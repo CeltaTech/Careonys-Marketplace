@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/utilidades.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 
@@ -51,7 +52,7 @@
   </section>
 
   <!-- INTRO -->
-  <section class="feature-section" style="background:var(--superficie-hover);">
+  <section class="feature-section fondo-superficie-hover">
     <div class="feature-layout">
       <div class="feature-text fade-in">
         <p class="eyebrow">Aprender a cuidar mejor</p>
@@ -60,12 +61,12 @@
           específicamente para personas que cuidan a un familiar mayor. Se aprende desde aspectos técnicos del
           cuidado
           hasta cómo sostener el propio bienestar emocional.</p>
-        <p style="margin-top:12px;">Los cursos son en modalidad online, a ritmo propio, con material descargable y acceso
+        <p class="mt-12">Los cursos son en modalidad online, a ritmo propio, con material descargable y acceso
           desde cualquier dispositivo.</p>
       </div>
       <div class="feature-image fade-in">
         <img src="assets/images/cursos_familias.png" alt="Cursos para familias"
-          style="height:380px;object-fit:cover;border-radius:var(--redondeo-grande);" />
+          class="alto-380 cubrir redondeo-grande" />
       </div>
     </div>
   </section>
@@ -73,7 +74,7 @@
   <!-- CURSOS -->
   <section style="background:var(--superficie-hover);padding:40px 24px 80px;" id="cursos">
     <div style="max-width:1100px;margin:0 auto;">
-      <h2 style="font-size:28px;font-weight:800;margin-bottom:12px;text-align:center;" class="fade-in">Cursos
+      <h2 class="fade-in texto-28 peso-800 mb-12 centrar-texto">Cursos
         disponibles</h2>
       <p style="text-align:center;color:var(--texto-secundario);font-size:14px;max-width:640px;margin:0 auto 40px auto;"
         class="fade-in">Esta es la oferta general de capacitaciones. La inscripción se pide en el formulario del final
@@ -101,8 +102,8 @@
       <div
         style="background: var(--superficie);border:1px solid var(--borde-card);border-radius:var(--redondeo-grande);padding:40px;margin-top:50px;box-shadow:var(--sombra-suave);text-align:center;"
         class="fade-in">
-        <span class="eyebrow"
-          style="color:var(--tono-info-texto);font-weight:700;font-size:13px;text-transform:uppercase;">{{producto}}
+        <span class="eyebrow color-info peso-700 texto-13 mayusculas"
+         >{{producto}}
           Academy</span>
         <h2 style="font-size:26px;font-weight:800;color:var(--texto-principal);margin:6px 0 10px 0;">Evaluación de
           competencias</h2>

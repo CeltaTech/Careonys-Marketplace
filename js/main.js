@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         && tieneClave(card, 'patologia', patologia)
         && tieneClave(card, 'comprobacion', comprobacion);
 
-      card.style.display = isVisible ? '' : 'none';
+      card.classList.toggle('oculto', !isVisible);
       if (isVisible) visibleCount++;
     });
 

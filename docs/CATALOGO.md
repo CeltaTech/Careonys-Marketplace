@@ -235,7 +235,7 @@ un dato de catálogo. Está sin tomar.
 
 ## Lo que falta
 
-Está en `docs/PENDIENTES.md`, pendiente 8. En resumen: estos dos archivos son la semilla, no el
+Está en `docs/PENDIENTES.md`, pendiente 7. En resumen: estos dos archivos son la semilla, no el
 destino. El destino son las tablas de Careonys, porque este proyecto es una modalidad suya y no un
 producto aparte: ver `docs/ALCANCE.md` §3. Antes de escribirlas hay que ver cuánto de este
 catálogo ya existe allá —`tipos_asistente` y `zonas_cobertura` seguro, y hay tabla de tareas—.

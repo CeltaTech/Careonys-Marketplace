@@ -94,7 +94,7 @@ const FichasLegajo = {
         // mirar una propiedad del vocabulario solo dice cuando pasa a ser obligatorio.
         visible = /==\s*['"]/.test(campo.obligatorio_si) ? seCumple : true;
       }
-      grupo.style.display = visible ? '' : 'none';
+      grupo.classList.toggle('oculto', !visible);
       if (obligatorio) el.setAttribute('required', ''); else el.removeAttribute('required');
       if (!visible) {
         if (el.type === 'checkbox') el.checked = false; else el.value = '';
@@ -161,7 +161,7 @@ const FichasLegajo = {
       const t = this._textoCampo(campo);
       const esCasilla = campo.tipo === 'casilla';
       const idCampo = Texto.escapar(`ficha-${tipoFicha}-${campo.clave}-${indice}`);
-      return `<div class="form-group" data-clave="${Texto.escapar(campo.clave)}" style="margin-bottom:12px;${esCasilla ? 'display:flex;align-items:center;gap:8px;' : ''}">
+      return `<div class="form-group mb-12${esCasilla ? ' flex alinear-centro gap-8' : ''}" data-clave="${Texto.escapar(campo.clave)}">
         ${esCasilla
           ? `${/* seguro: es marcado que arma este mismo módulo, y sus datos ya van escapados ahí */ this._inputCampo(tipoFicha, campo, indice)}<label for="${idCampo}" style="margin:0;cursor:pointer;">${Texto.escapar(t.etiqueta)}</label>`
           : `<label for="${idCampo}">${Texto.escapar(t.etiqueta)}${campo.obligatorio ? ' <span style="color:var(--rojo-peligro-texto);">*</span>' : ''}</label>${/* seguro: es marcado que arma este mismo módulo, y sus datos ya van escapados ahí */ this._inputCampo(tipoFicha, campo, indice)}`}
@@ -318,7 +318,7 @@ const FichasLegajo = {
     let valido = true;
     contenedor.querySelectorAll('.ficha-bloque [required]').forEach(campo => {
       const grupo = campo.closest('.form-group');
-      if (grupo && grupo.style.display === 'none') return;
+      if (grupo && grupo.classList.contains('oculto')) return;
       const vacio = campo.type === 'file' ? (!campo.files || campo.files.length === 0)
         : campo.type === 'checkbox' ? false
         : !campo.value || !String(campo.value).trim();

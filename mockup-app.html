@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/utilidades.css" />
   <link rel="stylesheet" href="css/mockup-app.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -36,11 +37,11 @@
         <a class="drawer-menu-item" href="cursos.html"><i class="fas fa-graduation-cap"></i> Cursos</a>
         <a class="drawer-menu-item" href="soporte-remoto.html"><i class="fas fa-headset"></i> Acompañamiento Online</a>
         <div style="border-top:1px solid var(--borde-card);margin:8px 0;"></div>
-        <button type="button" class="drawer-menu-item" id="btn-logout" style="color:var(--rojo-peligro-texto);"><i class="fas fa-sign-out-alt"
-            style="color:var(--rojo-peligro-texto);"></i> Cerrar sesión</button>
+        <button type="button" class="drawer-menu-item color-peligro" id="btn-logout"><i class="fas fa-sign-out-alt color-peligro"
+           ></i> Cerrar sesión</button>
       </div>
-      <div style="padding:16px;text-align:center;font-size:10px;color:var(--texto-secundario);border-top:1px solid var(--borde-card);">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
+      <div class="p-16 centrar-texto texto-10 color-secundario borde-arriba">
+        Powered by <strong class="color-marca-acento">{{producto}}</strong>
       </div>
     </div>
 
@@ -83,7 +84,7 @@
       </div>
 
       <div style="text-align:center;margin-top:auto;font-size:10px;color:var(--texto-secundario);padding-top:20px;">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
+        Powered by <strong class="color-marca-acento">{{producto}}</strong>
       </div>
     </div>
 
@@ -92,56 +93,56 @@
       <div class="app-header">
         <button class="btn-back" id="btn-signup-back"><i class="fas fa-arrow-left"></i></button>
         <h1>Registrarse</h1>
-        <div style="width:24px;"></div>
+        <div class="ancho-24"></div>
       </div>
 
       <div style="padding:20px 0;text-align:center;">
         <h3 style="font-size:18px;font-weight:800;color:var(--marca-prestadora);margin:0 0 6px 0;">¿Cómo
           desea
           ingresar?</h3>
-        <p style="font-size:12px;color:var(--texto-secundario);margin:0;">Seleccione su tipo de cuenta para comenzar</p>
+        <p class="texto-12 color-secundario m-0">Seleccione su tipo de cuenta para comenzar</p>
       </div>
 
       <div class="role-card" data-role="familiar">
-        <h4><i class="fas fa-users" style="color:var(--marca-prestadora-acento);"></i> Como familiar</h4>
+        <h4><i class="fas fa-users color-marca-acento"></i> Como familiar</h4>
         <p>Soy una persona que busca un Asistente calificado para asistir a un familiar o ser querido mayor.</p>
         <div class="circle-select"></div>
       </div>
 
       <div class="role-card" data-role="asistente">
-        <h4><i class="fas fa-user-md" style="color:var(--marca-prestadora);"></i> Como Asistente</h4>
+        <h4><i class="fas fa-user-md color-marca"></i> Como Asistente</h4>
         <p>Soy un profesional que busca registrarse para trabajar brindando servicios de cuidado domiciliario.</p>
         <div class="circle-select"></div>
       </div>
 
       <div style="margin-top:auto;padding-bottom:20px;">
-        <button type="button" class="btn-login" id="btn-signup-confirm"
-          style="display:none;background:var(--marca-prestadora);box-shadow:none;">Confirmar Selección</button>
+        <button type="button" class="btn-login oculto" id="btn-signup-confirm"
+          style="background:var(--marca-prestadora);box-shadow:none;">Confirmar Selección</button>
       </div>
     </div>
 
     <!-- 3. VISTA: DASHBOARD PRINCIPAL DE LA FAMILIA -->
-    <div class="app-screen" id="screen-dashboard" style="padding-bottom:64px;">
+    <div class="app-screen pb-64" id="screen-dashboard">
 
       <!-- CABECERA -->
       <div class="dashboard-header">
-        <button class="btn-back" id="btn-open-menu" style="font-size:20px;"><i class="fas fa-bars"></i></button>
+        <button class="btn-back texto-20" id="btn-open-menu"><i class="fas fa-bars"></i></button>
         <div style="display:flex;align-items:center;gap:6px;">
           <img src="assets/images/logotipo.png" class="tenant-logo" style="height:24px;" alt="Logo" />
-          <span class="tenant-name"
-            style="font-size:14px;font-weight:800;color:var(--marca-prestadora);">{{organizacion}}</span>
+          <span class="tenant-name texto-14 peso-800 color-marca"
+           >{{organizacion}}</span>
         </div>
-        <div style="position:relative;cursor:pointer;">
-          <i class="fas fa-bell" style="font-size:18px;color:var(--texto-secundario);"></i>
+        <div class="relativo mano">
+          <i class="fas fa-bell texto-18 color-secundario"></i>
           <span
             style="position:absolute;top:-4px;right:-4px;background:var(--rojo-peligro);width:8px;height:8px;border-radius:50%;"></span>
         </div>
       </div>
 
       <!-- METRICAS / VERIFICACIONES -->
-      <div class="verification-widget" style="margin-top:16px;">
+      <div class="verification-widget mt-16">
         <i class="fas fa-exclamation-triangle"></i>
-        <div style="flex:1;">
+        <div class="flex-1">
           <h5>Complete las Verificaciones</h5>
           <p>Email: ✓ Validado | Celular: ⌛ Pendiente</p>
         </div>
@@ -151,11 +152,11 @@
       <!-- WIDGET FICHADO GPS -->
       <div
         style="background:var(--tono-info-fondo); border:1px solid var(--tono-info-borde); border-radius:16px; padding:14px 16px; margin:0 16px 16px 16px; display:flex; align-items:center; justify-content:space-between;">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <i class="fas fa-map-marker-alt" style="color:var(--tono-info-texto); font-size:20px;"></i>
+        <div class="flex alinear-centro gap-12">
+          <i class="fas fa-map-marker-alt color-info texto-20"></i>
           <div>
-            <h5 style="margin:0; font-size:13px; font-weight:700; color:var(--tono-info-texto);">Fichaje de Asistencia (GPS)</h5>
-            <p id="gps-status" style="margin:2px 0 0 0; font-size:11px; color:var(--tono-info-texto);">Marcar clock-in / clock-out</p>
+            <h5 class="m-0 texto-13 peso-700 color-info">Fichaje de Asistencia (GPS)</h5>
+            <p id="gps-status" class="m-solo-arriba-2 texto-11 color-info">Marcar clock-in / clock-out</p>
           </div>
         </div>
         <div style="display:flex; gap:6px;">
@@ -169,11 +170,11 @@
       <!-- GRID DE SERVICIOS (7 BOTONES) -->
       <div class="grid-services">
         <a class="service-btn" href="directorio.html">
-          <div class="icon-box" style="background:var(--azul-oscuro);"><i class="fas fa-user-search"></i></div>
+          <div class="icon-box fondo-azul-oscuro"><i class="fas fa-user-search"></i></div>
           <span>Buscar Asistente</span>
         </a>
         <a class="service-btn" href="soporte-remoto.html">
-          <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-headset"></i></div>
+          <div class="icon-box fondo-azul-medio"><i class="fas fa-headset"></i></div>
           <span>Acompañante Online</span>
         </a>
         <div class="service-btn" onclick="navigate('reportes')">
@@ -185,15 +186,15 @@
           <span>Cursos</span>
         </a>
         <div class="service-btn" onclick="alert('Módulo de Estimulación Cognitiva y Actividades en desarrollo.')">
-          <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-running"></i></div>
+          <div class="icon-box fondo-azul-medio"><i class="fas fa-running"></i></div>
           <span>Vida Activa</span>
         </div>
         <div class="service-btn" onclick="alert('Contactando con el Gestor de Cuidados asignado...')">
-          <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-user-tie"></i></div>
+          <div class="icon-box fondo-azul-medio"><i class="fas fa-user-tie"></i></div>
           <span>Gestor</span>
         </div>
         <div class="service-btn" onclick="alert('Accediendo al catálogo de Alquiler de Camas y Sillas de ruedas...')">
-          <div class="icon-box" style="background:var(--azul-medio);"><i class="fas fa-shopping-cart"></i></div>
+          <div class="icon-box fondo-azul-medio"><i class="fas fa-shopping-cart"></i></div>
           <span>Productos</span>
         </div>
       </div>
@@ -241,22 +242,22 @@
 
       <div class="horizontal-slider">
         <a href="cursos.html" class="caregiver-card" style="width:160px;min-width:160px;text-align:left;">
-          <h6 style="margin:0;font-size:11px;color:var(--marca-prestadora-acento);text-transform:uppercase;">Gratuito</h6>
+          <h6 class="m-0 texto-11 color-marca-acento mayusculas">Gratuito</h6>
           <h5 style="margin:4px 0 0 0;font-size:12px;white-space:normal;height:32px;overflow:hidden;">Introducción al
             Cuidado de Alzheimer</h5>
-          <span style="font-size:9px;color:var(--texto-secundario);font-weight:700;"><i class="far fa-clock"></i> 4 hs. estimadas</span>
+          <span class="texto-9 color-secundario peso-700"><i class="far fa-clock"></i> 4 hs. estimadas</span>
         </a>
         <a href="cursos.html" class="caregiver-card" style="width:160px;min-width:160px;text-align:left;">
-          <h6 style="margin:0;font-size:11px;color:var(--marca-prestadora-acento);text-transform:uppercase;">Academy</h6>
+          <h6 class="m-0 texto-11 color-marca-acento mayusculas">Academy</h6>
           <h5 style="margin:4px 0 0 0;font-size:12px;white-space:normal;height:32px;overflow:hidden;">RCP y Primeros
             Auxilios Domiciliarios</h5>
-          <span style="font-size:9px;color:var(--texto-secundario);font-weight:700;"><i class="far fa-clock"></i> 8 hs. estimadas</span>
+          <span class="texto-9 color-secundario peso-700"><i class="far fa-clock"></i> 8 hs. estimadas</span>
         </a>
       </div>
 
       <!-- FOOTER DISCRETO -->
       <div style="text-align:center;padding:24px 0;font-size:10px;color:var(--texto-secundario);">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
+        Powered by <strong class="color-marca-acento">{{producto}}</strong>
       </div>
 
       <!-- BARRA DE TABS INFERIOR -->
@@ -276,8 +277,8 @@
         <a class="tab-item" onclick="navigate('chat')" id="tab-chat">
           <i class="fas fa-comments"></i>
           <span>Chat</span>
-          <span id="chat-badge"
-            style="display:none;position:absolute;top:-2px;right:18px;background:var(--rojo-peligro);width:8px;height:8px;border-radius:50%;"></span>
+          <span class="oculto" id="chat-badge"
+            style="position:absolute;top:-2px;right:18px;background:var(--rojo-peligro);width:8px;height:8px;border-radius:50%;"></span>
         </a>
         <a class="tab-item" onclick="navigate('reportes')">
           <i class="fas fa-book-medical"></i>
@@ -288,11 +289,11 @@
     </div>
 
     <!-- 5. VISTA: CHAT EN TIEMPO REAL (Supabase Realtime) -->
-    <div class="app-screen" id="screen-chat" style="padding-bottom:64px;display:none;flex-direction:column;">
+    <div class="app-screen oculto" id="screen-chat" style="padding-bottom:64px;flex-direction:column;">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
-        <h1><i class="fas fa-comments" style="color:var(--marca-prestadora-acento);"></i> Chat con Asistente</h1>
-        <div style="width:24px;"></div>
+        <h1><i class="fas fa-comments color-marca-acento"></i> Chat con Asistente</h1>
+        <div class="ancho-24"></div>
       </div>
 
       <!-- Burbuja de info de la asistente activa -->
@@ -301,8 +302,8 @@
         <img src="assets/images/perfil_maria.png" onerror="this.onerror=null;this.src='assets/images/retrato_generico.svg'" alt=""
           style="width:40px;height:40px;border-radius:50%;object-fit:cover;" />
         <div>
-          <p id="chat-contact-name" style="margin:0;font-size:13px;font-weight:800;color:var(--texto-titulo);">Asistente activa</p>
-          <p id="chat-contact-status" style="margin:0;font-size:11px;color:var(--verde-exito-texto);">⚫ Online</p>
+          <p id="chat-contact-name" class="m-0 texto-13 peso-800 color-titulo">Asistente activa</p>
+          <p id="chat-contact-status" class="m-0 texto-11 color-exito">⚫ Online</p>
         </div>
       </div>
 
@@ -315,8 +316,7 @@
 
       <!-- Por qué no salió el mensaje. Vive fuera del área de mensajes a propósito:
            el mensaje no se envió, así que no puede aparecer como una burbuja más. -->
-      <div id="chat-aviso" role="status" style="display:none;padding:10px 14px;background:var(--tono-atencion-fondo);
-        color:var(--tono-atencion-texto);border-top:1px solid var(--tono-atencion-borde);font-size:12px;line-height:1.45;"></div>
+      <div class="oculto" id="chat-aviso" role="status" style="padding:10px 14px;background:var(--tono-atencion-fondo);color:var(--tono-atencion-texto);border-top:1px solid var(--tono-atencion-borde);font-size:12px;line-height:1.45;"></div>
 
       <!-- Input de mensaje -->
       <div
@@ -325,7 +325,7 @@
           style="flex:1;padding:9px 14px;border-radius:20px;border:1.5px solid var(--borde-card);font-size:13px;outline:none;" />
         <button id="chat-send-btn"
           style="background:var(--marca-prestadora);color:var(--texto-sobre-color);border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i
-            class="fas fa-paper-plane" style="font-size:14px;"></i></button>
+            class="fas fa-paper-plane texto-14"></i></button>
       </div>
 
       <!-- BARRA DE TABS INFERIOR -->
@@ -339,7 +339,7 @@
     </div>
 
     <!-- 4. VISTA: REPORTES DE CUIDADO -->
-    <div class="app-screen" id="screen-reportes" style="padding-bottom:64px;">
+    <div class="app-screen pb-64" id="screen-reportes">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
         <h1>Reportes de cuidado</h1>
@@ -348,7 +348,7 @@
       </div>
 
       <div class="reportes-header">
-        <h3 style="margin:0;font-size:16px;">Abuela Rosa</h3>
+        <h3 class="m-0 texto-16">Abuela Rosa</h3>
         <div class="reportes-paciente">
           <img src="assets/images/retrato_generico.svg" alt="Sin foto" />
           <div>
@@ -385,34 +385,34 @@
     </div>
 
     <!-- MODAL: UN REPORTE NUEVO -->
-    <div id="modal-reporte"
-      style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:var(--velo-modal); z-index:300; justify-content:center; align-items:center;">
+    <div class="oculto" id="modal-reporte"
+      style="position:absolute;top:0;left:0;width:100%;height:100%;background:var(--velo-modal);z-index:300;justify-content:center;align-items:center;">
       <div
         style="background: var(--superficie); width:90%; max-width:360px; padding:20px; border-radius:20px; box-shadow:var(--sombra-media); box-sizing:border-box;">
         <h4
           style="margin:0 0 16px 0; color:var(--marca-prestadora); font-size:16px; font-weight:800; display:flex; justify-content:space-between; align-items:center;">
           <span>Nueva Novedad</span>
           <button onclick="document.getElementById('modal-reporte').style.display='none'"
-            style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
+            class="sin-fondo sin-borde texto-20 mano">&times;</button>
         </h4>
-        <div class="form-group" style="margin-bottom:12px;"><label style="font-size:11px; font-weight:700;">Presión
+        <div class="form-group mb-12"><label class="texto-11 peso-700">Presión
             Arterial</label><input type="text" id="bit-presion" placeholder="Ej: 120/80"
-            style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--borde-card); font-size:12px; box-sizing:border-box;" />
+            class="ancho-total p-8 redondeo-8 borde-tarjeta texto-12 caja-borde" />
         </div>
-        <div class="form-group" style="margin-bottom:12px;"><label
-            style="font-size:11px; font-weight:700;">Glucemia</label><input type="text" id="bit-glucemia"
+        <div class="form-group mb-12"><label
+            class="texto-11 peso-700">Glucemia</label><input type="text" id="bit-glucemia"
             placeholder="Ej: 95 mg/dl"
-            style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--borde-card); font-size:12px; box-sizing:border-box;" />
+            class="ancho-total p-8 redondeo-8 borde-tarjeta texto-12 caja-borde" />
         </div>
-        <div class="form-group" style="margin-bottom:12px;"><label style="font-size:11px; font-weight:700;">Medicamentos
+        <div class="form-group mb-12"><label class="texto-11 peso-700">Medicamentos
             Suministrados</label><input type="text" id="bit-medicamentos" placeholder="Ej: Donepecilo 10mg"
-            style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--borde-card); font-size:12px; box-sizing:border-box;" />
+            class="ancho-total p-8 redondeo-8 borde-tarjeta texto-12 caja-borde" />
         </div>
-        <div class="form-group" style="margin-bottom:16px;"><label style="font-size:11px; font-weight:700;">Notas
+        <div class="form-group mb-16"><label class="texto-11 peso-700">Notas
             Diarias / Novedades</label><textarea id="bit-notas" placeholder="¿Cómo pasó el día el paciente?"
-            style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--borde-card); font-size:12px; box-sizing:border-box; height:60px;"
+            class="ancho-total p-8 redondeo-8 borde-tarjeta texto-12 caja-borde alto-60"
             required></textarea></div>
-        <button id="btn-guardar-reporte" class="btn-login" style="width:100%;">Guardar Novedad</button>
+        <button id="btn-guardar-reporte" class="btn-login ancho-total">Guardar Novedad</button>
       </div>
     </div>
 

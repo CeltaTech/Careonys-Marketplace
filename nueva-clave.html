@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/utilidades.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script>
     // Lo primero de la página, antes incluso de cargar el SDK de Supabase: se
@@ -38,21 +39,21 @@
       </div>
 
       <!-- Estado: el enlace no sirve (venció, ya se usó, o se entró de frente) -->
-      <div id="estado-sin-enlace" style="display:none;">
+      <div id="estado-sin-enlace" class="oculto">
         <!-- El título lleva `id` porque no siempre dice lo mismo: cuando la
              comprobación falla, lo que hay que decir es que no se pudo
              comprobar, y no que el enlace no sirve. Lo cambia `arrancar()`. -->
         <h2 id="titulo-sin-enlace"
-          style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;"
+          class="texto-20 peso-800 color-titulo mb-8"
           data-frase="nueva.enlace_no_sirve">
           El enlace ya no sirve
         </h2>
         <div id="aviso-sin-enlace" class="acceso-aviso critico"></div>
-        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-bottom:20px;"
+        <p class="texto-14 color-secundario interlineado-16 mb-20"
           data-frase="nueva.cada_enlace">
           Cada enlace sirve una sola vez y vence en una hora. Se puede pedir otro.
         </p>
-        <a href="recuperar-clave.html" class="btn btn-primario" style="width:100%;"
+        <a href="recuperar-clave.html" class="btn btn-primario ancho-total"
           data-frase="nueva.pedir_otro">
           Pedir un enlace nuevo
         </a>
@@ -62,8 +63,8 @@
       </div>
 
       <!-- Estado: listo -->
-      <form id="estado-listo" style="display:none;" novalidate>
-        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;"
+      <form id="estado-listo" class="oculto" novalidate>
+        <h2 class="texto-20 peso-800 color-titulo mb-8"
           data-frase="nueva.titulo">
           Elegir una contraseña nueva
         </h2>
@@ -73,15 +74,15 @@
              Y el largo mínimo tampoco se dice acá: lo dice la indicación que
              `js/clave.js` le pone a todo campo de contraseña, que es el único
              lugar donde ese número existe. Repetirlo era tener dos. -->
-        <p style="font-size:15px;font-weight:700;color:var(--texto-titulo);line-height:1.6;">
+        <p class="texto-15 peso-700 color-titulo interlineado-16">
           <strong id="correo-en-curso"></strong>
         </p>
-        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-bottom:20px;"
+        <p class="texto-14 color-secundario interlineado-16 mb-20"
           data-frase="nueva.explicacion">
           Se cambia la contraseña de esa cuenta.
         </p>
 
-        <div id="aviso-error-cambio" class="acceso-aviso critico" style="display:none;"></div>
+        <div id="aviso-error-cambio" class="acceso-aviso critico oculto"></div>
 
         <div class="form-group">
           <label for="clave" data-frase="nueva.clave_nueva">Contraseña nueva</label>
@@ -93,22 +94,22 @@
           <input type="password" id="clave-repetida" autocomplete="new-password" required />
         </div>
 
-        <button type="submit" class="btn btn-primario" id="btn-guardar" style="width:100%;margin-top:8px;">
+        <button type="submit" class="btn btn-primario ancho-total mt-8" id="btn-guardar">
           <span id="texto-btn-guardar" data-frase="nueva.guardar">Guardar la contraseña</span>
         </button>
       </form>
 
       <!-- Estado: quedó cambiada -->
-      <div id="estado-hecho" style="display:none;">
-        <h2 style="font-size:20px;font-weight:800;color:var(--texto-titulo);margin-bottom:8px;"
+      <div id="estado-hecho" class="oculto">
+        <h2 class="texto-20 peso-800 color-titulo mb-8"
           data-frase="nueva.cambiada">
           Contraseña cambiada
         </h2>
-        <p style="font-size:14px;color:var(--texto-secundario);line-height:1.6;margin-bottom:20px;"
+        <p class="texto-14 color-secundario interlineado-16 mb-20"
           data-frase="nueva.ya_se_puede">
           Ya se puede entrar con la contraseña nueva.
         </p>
-        <a href="acceso.html" class="btn btn-primario" style="width:100%;"
+        <a href="acceso.html" class="btn btn-primario ancho-total"
           data-frase="nueva.ir_al_acceso">Ir al acceso</a>
       </div>
 
@@ -132,9 +133,12 @@
 
     function mostrar(cual) {
       Object.keys(paneles).forEach(nombre => {
-        // Vacio y no 'block': asi el panel recupera el display que le dio el CSS.
-        // Imponerle 'block' aplasta un panel que sea grid o flex, y no avisa.
-        paneles[nombre].style.display = (nombre === cual) ? '' : 'none';
+        // Esconder es estado, no estilo: el panel que no toca se lleva la clase
+        // `oculto` y el que toca la suelta. Asi ninguno pierde el display que le
+        // dio el CSS —el que sea grid o flex sigue siendolo— y no hace falta
+        // imponerle 'block' a nada. Vaciar el atributo `style` ya no sirve: sin
+        // nada escrito ahi vuelve a mandar la clase y el panel queda escondido.
+        paneles[nombre].classList.toggle('oculto', nombre !== cual);
       });
     }
 

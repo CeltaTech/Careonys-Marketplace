@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles-pwa.css" />
+  <link rel="stylesheet" href="css/utilidades.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     body {
@@ -300,14 +301,14 @@
         <p id="menu-user-email" style="margin:2px 0 0 0;font-size:11px;opacity:0.8;">asistente@ejemplo.com</p>
       </div>
       <div style="flex:1;padding:16px 0;">
-        <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home" style="width:20px;color:var(--texto-secundario);"></i> Inicio</a>
-        <a class="drawer-menu-item" onclick="navigate('registro')"><i class="fas fa-user-plus" style="width:20px;color:var(--texto-secundario);"></i> Completar Legajo</a>
-        <a class="drawer-menu-item" onclick="navigate('capacitaciones')"><i class="fas fa-graduation-cap" style="width:20px;color:var(--texto-secundario);"></i> Mis Capacitaciones</a>
+        <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home ancho-20 color-secundario"></i> Inicio</a>
+        <a class="drawer-menu-item" onclick="navigate('registro')"><i class="fas fa-user-plus ancho-20 color-secundario"></i> Completar Legajo</a>
+        <a class="drawer-menu-item" onclick="navigate('capacitaciones')"><i class="fas fa-graduation-cap ancho-20 color-secundario"></i> Mis Capacitaciones</a>
         <div style="border-top:1px solid var(--borde-card);margin:8px 0;"></div>
-        <button type="button" class="drawer-menu-item" id="btn-logout" style="color:var(--rojo-peligro-texto);"><i class="fas fa-sign-out-alt" style="width:20px;color:var(--rojo-peligro-texto);"></i> Cerrar sesión</button>
+        <button type="button" class="drawer-menu-item color-peligro" id="btn-logout"><i class="fas fa-sign-out-alt ancho-20 color-peligro"></i> Cerrar sesión</button>
       </div>
-      <div style="padding:16px;text-align:center;font-size:10px;color:var(--texto-secundario);border-top:1px solid var(--borde-card);">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
+      <div class="p-16 centrar-texto texto-10 color-secundario borde-arriba">
+        Powered by <strong class="color-marca-acento">{{producto}}</strong>
       </div>
     </div>
 
@@ -336,27 +337,27 @@
         </div>
       </div>
       <div style="text-align:center;margin-top:auto;font-size:10px;color:var(--texto-secundario);padding-top:20px;">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
+        Powered by <strong class="color-marca-acento">{{producto}}</strong>
       </div>
     </div>
 
     <!-- 2. VISTA: DASHBOARD PRINCIPAL -->
-    <div class="app-screen" id="screen-dashboard" style="padding-bottom:64px;">
+    <div class="app-screen pb-64" id="screen-dashboard">
       <div class="dashboard-header">
-        <button class="btn-back" id="btn-open-menu" style="font-size:20px;"><i class="fas fa-bars"></i></button>
+        <button class="btn-back texto-20" id="btn-open-menu"><i class="fas fa-bars"></i></button>
         <div style="display:flex;align-items:center;gap:6px;">
           <img src="../assets/images/logotipo.png" class="tenant-logo" style="height:24px;" alt="Logo" onerror="this.style.display='none'" />
-          <span class="tenant-name" style="font-size:14px;font-weight:800;color:var(--marca-prestadora);">{{organizacion}}</span>
+          <span class="tenant-name texto-14 peso-800 color-marca">{{organizacion}}</span>
         </div>
-        <div style="width:24px;"></div>
+        <div class="ancho-24"></div>
       </div>
 
       <!-- ESTADO LEGAJO -->
-      <div class="status-badge-container" id="status-container" style="margin-top:16px;">
-        <i class="fas fa-user-check" style="color:var(--tono-info-texto);font-size:20px;"></i>
+      <div class="status-badge-container mt-16" id="status-container">
+        <i class="fas fa-user-check color-info texto-20"></i>
         <div style="flex:1;text-align:left;">
-          <h5 style="margin:0;font-size:13px;color:var(--tono-info-texto);font-weight:700;">Estado del Legajo</h5>
-          <p id="legajo-estado-txt" style="margin:2px 0 0 0;font-size:11px;color:var(--tono-info-texto);">Cargando estado...</p>
+          <h5 class="m-0 texto-13 color-info peso-700">Estado del Legajo</h5>
+          <p id="legajo-estado-txt" class="m-solo-arriba-2 texto-11 color-info">Cargando estado...</p>
         </div>
         <button onclick="navigate('registro')" style="font-size:10px;font-weight:700;padding:4px 10px;border-radius:8px;background:var(--azul-medio);color:var(--texto-sobre-color);border:none;cursor:pointer;">Completar</button>
       </div>
@@ -364,11 +365,11 @@
       <!-- WIDGET FICHADO GPS -->
       <div class="gps-widget">
         <i class="fas fa-map-marked-alt"></i>
-        <h4 style="margin:0;font-size:15px;color:var(--texto-titulo);font-weight:800;">Fichador GPS Laboral</h4>
-        <p id="gps-status" style="margin:4px 0 0 0;font-size:12px;color:var(--texto-secundario);">Presione para marcar entrada o salida en el domicilio.</p>
+        <h4 class="m-0 texto-15 color-titulo peso-800">Fichador GPS Laboral</h4>
+        <p id="gps-status" class="m-solo-arriba-4 texto-12 color-secundario">Presione para marcar entrada o salida en el domicilio.</p>
         <div class="gps-actions">
-          <button class="btn-gps" id="btn-gps-in" style="background:var(--azul-medio);">Marcar Entrada</button>
-          <button class="btn-gps" id="btn-gps-out" style="background:var(--rojo-peligro);">Marcar Salida</button>
+          <button class="btn-gps fondo-azul-medio" id="btn-gps-in">Marcar Entrada</button>
+          <button class="btn-gps fondo-peligro" id="btn-gps-out">Marcar Salida</button>
         </div>
       </div>
 
@@ -389,13 +390,13 @@
         </div>
         <div class="form-group-pwa">
           <label>Notas Diarias / Reporte del Servicio</label>
-          <textarea id="bit-notas" placeholder="Escriba el estado del paciente, alimentación, novedades..." style="height:60px;"></textarea>
+          <textarea id="bit-notas" placeholder="Escriba el estado del paciente, alimentación, novedades..." class="alto-60"></textarea>
         </div>
-        <button type="button" class="btn-login" id="btn-guardar-reporte" style="margin-top:8px;">Guardar Novedad</button>
+        <button type="button" class="btn-login mt-8" id="btn-guardar-reporte">Guardar Novedad</button>
       </div>
 
       <div style="text-align:center;padding:12px 0 24px 0;font-size:10px;color:var(--texto-secundario);">
-        Powered by <strong style="color:var(--marca-prestadora-acento)">{{producto}}</strong>
+        Powered by <strong class="color-marca-acento">{{producto}}</strong>
       </div>
 
       <div class="bottom-tab-bar">
@@ -408,7 +409,7 @@
     <!-- 3. VISTA: WIZARD REGISTRO DE LEGAJO (Inline — 100% Offline Safe) -->
     <div class="app-screen" id="screen-registro">
       <div class="wizard-header-bar">
-        <button onclick="navigate('dashboard')" style="background:none;border:none;color:var(--texto-sobre-color);font-size:18px;cursor:pointer;"><i class="fas fa-arrow-left"></i></button>
+        <button onclick="navigate('dashboard')" class="sin-fondo sin-borde color-sobre-color texto-18 mano"><i class="fas fa-arrow-left"></i></button>
         <h2>Registro de Legajo Digital</h2>
       </div>
 
@@ -466,7 +467,7 @@
             </div>
             <p style="font-size:12px;font-weight:700;color:var(--texto-principal);margin:12px 0 6px;">Cursos y Certificaciones ({{producto}} Academy):</p>
             <div class="wcheck-group" data-catalogo="certificacion" data-catalogo-como="casillas" data-catalogo-nombre="certificacion" data-catalogo-clase="catalogo-casilla"></div>
-            <p style="font-size:11px;font-weight:700;color:var(--texto-secundario);margin:12px 0 6px;"><i class="fas fa-shield-alt" style="color:var(--rojo-peligro-texto);"></i> Documentación requerida:</p>
+            <p style="font-size:11px;font-weight:700;color:var(--texto-secundario);margin:12px 0 6px;"><i class="fas fa-shield-alt color-peligro"></i> Documentación requerida:</p>
             <div class="wfield"><label>📸 Foto de Perfil (tipo carnet)</label><input type="file" id="w-foto" accept="image/*" /></div>
             <div class="wfield"><label>🛡️ Foto DNI (Frente y Dorso)</label><input type="file" accept="image/*,.pdf" /></div>
             <div class="wfield"><label>📋 Antecedentes Penales (vigente)</label><input type="file" accept="image/*,.pdf" /></div>
@@ -478,7 +479,7 @@
                  Hasta el 24 de agosto de 2026 esta pantalla no las tenía, así que
                  quien se daba de alta desde el teléfono quedaba sin matrícula, sin
                  estudios, sin experiencia y con la referencia como texto suelto. -->
-            <p id="ficha-matricula-obligatoria-aviso" style="display:none;font-size:10px;color:var(--tono-atencion-texto);background:var(--tono-atencion-fondo);border-radius:8px;padding:10px;margin:14px 0 0;">
+            <p class="oculto" id="ficha-matricula-obligatoria-aviso" style="font-size:10px;color:var(--tono-atencion-texto);background:var(--tono-atencion-fondo);border-radius:8px;padding:10px;margin:14px 0 0;">
               El Tipo de Asistente que eligió exige Matrícula vigente y verificada para poder publicarse. Cárguela acá.
             </p>
             <div id="ficha-matricula" style="margin-top:14px;"></div>
@@ -493,12 +494,12 @@
           <!-- PASO 3: APTITUDES Y PATOLOGÍAS -->
           <div class="wpane" id="wp3">
             <h3><i class="fas fa-clipboard-list"></i> Paso 3: Experiencia y Aptitudes</h3>
-            <p style="font-size:12px;font-weight:700;color:var(--texto-principal);margin-bottom:8px;">Patologías atendidas con experiencia comprobable:</p>
-            <div class="wcheck-group" style="margin-bottom:16px;" data-catalogo="patologia" data-catalogo-como="casillas" data-catalogo-nombre="patologia" data-catalogo-clase="catalogo-casilla"></div>
-            <p style="font-size:12px;font-weight:700;color:var(--texto-principal);margin-bottom:8px;">Tareas autorizadas a realizar:</p>
+            <p class="texto-12 peso-700 color-principal mb-8">Patologías atendidas con experiencia comprobable:</p>
+            <div class="wcheck-group mb-16" data-catalogo="patologia" data-catalogo-como="casillas" data-catalogo-nombre="patologia" data-catalogo-clase="catalogo-casilla"></div>
+            <p class="texto-12 peso-700 color-principal mb-8">Tareas autorizadas a realizar:</p>
             <div class="wcheck-group" data-catalogo="tarea_cuidado" data-catalogo-como="casillas" data-catalogo-nombre="tarea_cuidado" data-catalogo-clase="catalogo-casilla"></div>
 
-            <div id="ficha-experiencia_laboral" style="margin-top:16px;"></div>
+            <div id="ficha-experiencia_laboral" class="mt-16"></div>
 
             <div class="wnav">
               <button type="button" class="wbtn-prev" onclick="wPrev(2)"><i class="fas fa-arrow-left"></i></button>
@@ -509,10 +510,10 @@
           <!-- PASO 4: DISPONIBILIDAD HORARIA -->
           <div class="wpane" id="wp4">
             <h3><i class="fas fa-calendar-alt"></i> Paso 4: Disponibilidad Horaria</h3>
-            <p style="font-size:12px;font-weight:700;color:var(--texto-principal);margin-bottom:6px;">Modalidades de contratación aceptadas:</p>
-            <div class="wcheck-group" style="margin-bottom:14px;" data-catalogo="modalidad_contratacion" data-catalogo-como="casillas" data-catalogo-nombre="modalidad_contratacion" data-catalogo-clase="catalogo-casilla" data-catalogo-marcados="horas"></div>
-            <p style="font-size:12px;font-weight:700;color:var(--texto-principal);margin-bottom:6px;">Con retiro o sin retiro:</p>
-            <div class="wcheck-group" style="margin-bottom:14px;" data-catalogo="retiro" data-catalogo-como="casillas" data-catalogo-nombre="retiro" data-catalogo-clase="catalogo-casilla" data-catalogo-marcados="con_retiro"></div>
+            <p class="texto-12 peso-700 color-principal mb-6">Modalidades de contratación aceptadas:</p>
+            <div class="wcheck-group mb-14" data-catalogo="modalidad_contratacion" data-catalogo-como="casillas" data-catalogo-nombre="modalidad_contratacion" data-catalogo-clase="catalogo-casilla" data-catalogo-marcados="horas"></div>
+            <p class="texto-12 peso-700 color-principal mb-6">Con retiro o sin retiro:</p>
+            <div class="wcheck-group mb-14" data-catalogo="retiro" data-catalogo-como="casillas" data-catalogo-nombre="retiro" data-catalogo-clase="catalogo-casilla" data-catalogo-marcados="con_retiro"></div>
             <div class="wfield" style="max-width:180px;">
               <label>Valor Hora ($ ARS)</label>
               <input type="number" id="w-valor-hora" placeholder="Ej: 3500" required />
@@ -557,7 +558,7 @@
 
             <div style="display:flex;align-items:flex-start;gap:8px;margin:12px 0;font-size:12px;color:var(--texto-principal);">
               <input type="checkbox" id="w-terminos" required style="width:18px;height:18px;margin-top:2px;flex-shrink:0;" />
-              <label for="w-terminos" style="cursor:pointer;">Acepto los Términos y Condiciones de Legajo para Asistentes de {{producto}}.</label>
+              <label for="w-terminos" class="mano">Acepto los Términos y Condiciones de Legajo para Asistentes de {{producto}}.</label>
             </div>
             <div class="wnav">
               <button type="button" class="wbtn-prev" onclick="wPrev(4)"><i class="fas fa-arrow-left"></i></button>

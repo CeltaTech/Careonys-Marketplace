@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/utilidades.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 
@@ -30,20 +31,20 @@
       </div>
 
       <!-- Estado: no se pudo llegar al servidor -->
-      <div id="estado-error" style="display:none;">
+      <div id="estado-error" class="oculto">
         <div class="acceso-aviso critico" data-frase="acceso.sin_servidor">
           No se pudo conectar con el servidor. Puede ser la conexión de este equipo.
         </div>
-        <button type="button" class="btn btn-secundario" id="btn-reintentar" style="width:100%;"
+        <button type="button" class="btn btn-secundario ancho-total" id="btn-reintentar"
           data-frase="acceso.reintentar">
           Reintentar
         </button>
       </div>
 
       <!-- Estado: listo -->
-      <form id="estado-listo" style="display:none;" novalidate>
-        <div id="aviso-prestadora" class="acceso-aviso atencion" style="display:none;"></div>
-        <div id="aviso-error-acceso" class="acceso-aviso critico" style="display:none;"></div>
+      <form id="estado-listo" class="oculto" novalidate>
+        <div id="aviso-prestadora" class="acceso-aviso atencion oculto"></div>
+        <div id="aviso-error-acceso" class="acceso-aviso critico oculto"></div>
 
         <div class="form-group">
           <label for="acceso-email" data-frase="acceso.correo">Correo electrónico</label>
@@ -55,7 +56,7 @@
           <input type="password" id="acceso-clave" autocomplete="current-password" required />
         </div>
 
-        <button type="submit" class="btn btn-primario" id="btn-entrar" style="width:100%;margin-top:8px;">
+        <button type="submit" class="btn btn-primario ancho-total mt-8" id="btn-entrar">
           <span id="texto-btn-entrar" data-frase="acceso.entrar">Entrar</span>
         </button>
 
@@ -88,9 +89,12 @@
 
     function mostrar(cual) {
       Object.keys(paneles).forEach(nombre => {
-        // Vacio y no 'block': asi el panel recupera el display que le dio el CSS.
-        // Imponerle 'block' aplasta un panel que sea grid o flex, y no avisa.
-        paneles[nombre].style.display = (nombre === cual) ? '' : 'none';
+        // Esconder es estado, no estilo: el panel que no toca se lleva la clase
+        // `oculto` y el que toca la suelta. Asi ninguno pierde el display que le
+        // dio el CSS —el que sea grid o flex sigue siendolo— y no hace falta
+        // imponerle 'block' a nada. Vaciar el atributo `style` ya no sirve: sin
+        // nada escrito ahi vuelve a mandar la clase y el panel queda escondido.
+        paneles[nombre].classList.toggle('oculto', nombre !== cual);
       });
     }
 

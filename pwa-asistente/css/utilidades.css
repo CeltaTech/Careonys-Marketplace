@@ -1,0 +1,189 @@
+/* ===================================================
+   Utilidades — una clase por decisión de estilo repetida
+   ===================================================
+
+   De qué se trata. Hasta el 26 de agosto de 2026 las páginas de este producto
+   llevaban 694 atributos `style=` escritos a mano, con 2199 declaraciones
+   adentro. La mayoría no eran decisiones distintas: eran la misma decisión
+   copiada. `color:var(--texto-secundario)` aparecía 112 veces y
+   `font-weight:700` otras 104. Esta hoja les pone nombre una vez, y las
+   páginas lo usan. Es el pendiente 8.
+
+   Cómo se usan. Se apilan: lo que antes era
+   `style="font-size:11px;color:var(--texto-secundario);margin-top:4px"`
+   ahora es `class="texto-11 color-secundario mt-4"`, en el mismo orden, para
+   que se pueda seguir leyendo igual.
+
+   Por qué el selector está escrito dos veces. `.texto-11.texto-11` señala
+   exactamente lo mismo que `.texto-11`, pero pesa el doble a la hora de
+   decidir quién gana. Hace falta: un atributo `style=` le gana a cualquier
+   regla de una hoja, así que al pasarlo a clase la decisión podía perder
+   contra reglas que ya existían, como `.card p`. Escrito dos veces, la
+   utilidad gana esas y sigue perdiendo contra lo que el guion escriba en el
+   atributo `style` del elemento, que es justo lo que se quiere: prender y
+   apagar desde el guion tiene que seguir funcionando.
+
+   Un aviso sobre `.oculto`. Esconder dejó de ser estilo y pasó a ser estado.
+   Para mostrar, el guion escribe `elemento.style.display = 'flex'` —o lo que
+   corresponda—, y eso le gana a la clase. Lo que **no** funciona es
+   `elemento.style.display = ''`: sin nada en el atributo, vuelve a mandar la
+   clase y el elemento se queda escondido. Ahí va
+   `elemento.classList.remove('oculto')`.
+
+   Los nombres no se inventan por gusto: describen la decisión, no dónde se
+   usa, para que no haya que renombrarlos cuando cambie la pantalla.
+
+   Y esta hoja es provisoria por diseño. Cuando este producto se fusione con
+   Careonys hay que congeniar los dos sistemas de estilo, y lo que sobreviva de
+   acá será poco. Por eso no se gastó esfuerzo en más de lo que hacía falta:
+   sólo las decisiones que se repiten. Las 210 que aparecen una sola vez
+   siguen escritas donde estaban.
+=================================================== */
+
+/* ---- Qué se ve y qué no ---- */
+/* `.oculto` va escrito tres veces y no dos a propósito: un elemento puede
+   llevar `oculto` junto con `flex` o `grilla` —se esconde y se muestra, y
+   cuando se muestra va en fila—, y escondido tiene que ganar siempre. */
+.oculto.oculto.oculto { display:none; }
+.flex.flex { display:flex; }
+.grilla.grilla { display:grid; }
+.bloque.bloque { display:block; }
+
+/* ---- Cómo se acomoda lo de adentro ---- */
+.alinear-centro.alinear-centro { align-items:center; }
+.justificar-centro.justificar-centro { justify-content:center; }
+.flex-1.flex-1 { flex:1; }
+.justificar-entre.justificar-entre { justify-content:space-between; }
+.grilla-2.grilla-2 { grid-template-columns:1fr 1fr; }
+.envolver.envolver { flex-wrap:wrap; }
+.gap-10.gap-10 { gap:10px; }
+.gap-12.gap-12 { gap:12px; }
+.gap-16.gap-16 { gap:16px; }
+.gap-8.gap-8 { gap:8px; }
+.grilla-fila-entera.grilla-fila-entera { grid-column:1 / -1; }
+
+/* ---- Color de la letra ---- */
+.color-secundario.color-secundario { color:var(--texto-secundario); }
+.color-principal.color-principal { color:var(--texto-principal); }
+.color-titulo.color-titulo { color:var(--texto-titulo); }
+.color-sobre-color.color-sobre-color { color:var(--texto-sobre-color); }
+.color-azul-medio.color-azul-medio { color:var(--azul-medio-texto); }
+.color-info.color-info { color:var(--tono-info-texto); }
+.color-marca-acento.color-marca-acento { color:var(--marca-prestadora-acento); }
+.color-exito.color-exito { color:var(--verde-exito-texto); }
+.color-peligro.color-peligro { color:var(--rojo-peligro-texto); }
+.color-marca.color-marca { color:var(--marca-prestadora); }
+
+/* ---- Color del fondo ---- */
+.fondo-superficie.fondo-superficie { background:var(--superficie); }
+.fondo-azul-oscuro.fondo-azul-oscuro { background:var(--azul-oscuro); }
+.fondo-azul-medio.fondo-azul-medio { background:var(--azul-medio); }
+.fondo-superficie-hover.fondo-superficie-hover { background:var(--superficie-hover); }
+.fondo-neutro.fondo-neutro { background:var(--tono-neutro-fondo); }
+.fondo-superficie-hundida.fondo-superficie-hundida { background:var(--superficie-hundida); }
+.fondo-exito.fondo-exito { background:var(--tono-exito-fondo); }
+.fondo-peligro.fondo-peligro { background:var(--rojo-peligro); }
+.sin-fondo.sin-fondo { background:none; }
+.fondo-info.fondo-info { background:var(--tono-info-fondo); }
+.fondo-velo-oscuro.fondo-velo-oscuro { background:var(--velo-oscuro-sobre-color); }
+
+/* ---- La letra ---- */
+.peso-700.peso-700 { font-weight:700; }
+.texto-11.texto-11 { font-size:11px; }
+.texto-13.texto-13 { font-size:13px; }
+.texto-12.texto-12 { font-size:12px; }
+.centrar-texto.centrar-texto { text-align:center; }
+.peso-800.peso-800 { font-weight:800; }
+.texto-14.texto-14 { font-size:14px; }
+.texto-10.texto-10 { font-size:10px; }
+.mayusculas.mayusculas { text-transform:uppercase; }
+.texto-18.texto-18 { font-size:18px; }
+.texto-20.texto-20 { font-size:20px; }
+.interlineado-16.interlineado-16 { line-height:1.6; }
+.texto-9.texto-9 { font-size:9px; }
+.texto-12-5.texto-12-5 { font-size:12.5px; }
+.peso-600.peso-600 { font-weight:600; }
+.texto-16.texto-16 { font-size:16px; }
+.texto-28.texto-28 { font-size:28px; }
+.texto-15.texto-15 { font-size:15px; }
+
+/* ---- Aire alrededor ---- */
+.mb-12.mb-12 { margin-bottom:12px; }
+.mb-16.mb-16 { margin-bottom:16px; }
+.mb-8.mb-8 { margin-bottom:8px; }
+.m-0.m-0 { margin:0; }
+.mb-20.mb-20 { margin-bottom:20px; }
+.m-centrado.m-centrado { margin:0 auto; }
+.mr-8.mr-8 { margin-right:8px; }
+.mt-24.mt-24 { margin-top:24px; }
+.ml-8.ml-8 { margin-left:8px; }
+.mt-16.mt-16 { margin-top:16px; }
+.mt-12.mt-12 { margin-top:12px; }
+.mb-6.mb-6 { margin-bottom:6px; }
+.mb-24.mb-24 { margin-bottom:24px; }
+.mb-4.mb-4 { margin-bottom:4px; }
+.mb-10.mb-10 { margin-bottom:10px; }
+.mb-14.mb-14 { margin-bottom:14px; }
+.m-solo-arriba-4.m-solo-arriba-4 { margin:4px 0 0 0; }
+.m-centrado-abajo-8.m-centrado-abajo-8 { margin:0 auto 8px auto; }
+.mt-4.mt-4 { margin-top:4px; }
+.m-solo-arriba-2.m-solo-arriba-2 { margin:2px 0 0 0; }
+.mt-8.mt-8 { margin-top:8px; }
+
+/* ---- Aire adentro ---- */
+.p-20.p-20 { padding:20px; }
+.p-16.p-16 { padding:16px; }
+.p-8.p-8 { padding:8px; }
+.p-10.p-10 { padding:10px; }
+.pb-64.pb-64 { padding-bottom:64px; }
+.p-14.p-14 { padding:14px; }
+.p-6-12.p-6-12 { padding:6px 12px; }
+.p-9-12.p-9-12 { padding:9px 12px; }
+.pt-20.pt-20 { padding-top:20px; }
+
+/* ---- Tamaño ---- */
+.ancho-total.ancho-total { width:100%; }
+.cubrir.cubrir { object-fit:cover; }
+.caja-borde.caja-borde { box-sizing:border-box; }
+.ancho-20.ancho-20 { width:20px; }
+.ancho-36.ancho-36 { width:36px; }
+.alto-36.alto-36 { height:36px; }
+.recortar.recortar { overflow:hidden; }
+.ancho-22.ancho-22 { width:22px; }
+.alto-22.alto-22 { height:22px; }
+.ancho-24.ancho-24 { width:24px; }
+.alto-380.alto-380 { height:380px; }
+.ancho-minimo-140.ancho-minimo-140 { min-width:140px; }
+.ancho-maximo-280.ancho-maximo-280 { max-width:280px; }
+.ancho-160.ancho-160 { width:160px; }
+.alto-60.alto-60 { height:60px; }
+
+/* ---- Bordes, esquinas y sombra ---- */
+.circulo.circulo { border-radius:50%; }
+.redondeo-8.redondeo-8 { border-radius:8px; }
+.borde-tarjeta.borde-tarjeta { border:1px solid var(--borde-card); }
+.borde-color-tarjeta.borde-color-tarjeta { border-color:var(--borde-card); }
+.redondeo-12.redondeo-12 { border-radius:12px; }
+.redondeo-grande.redondeo-grande { border-radius:var(--redondeo-grande); }
+.sin-borde.sin-borde { border:none; }
+.sombra-alta.sombra-alta { box-shadow:var(--sombra-alta); }
+.redondeo-20.redondeo-20 { border-radius:20px; }
+.redondeo-16.redondeo-16 { border-radius:16px; }
+.borde-arriba.borde-arriba { border-top:1px solid var(--borde-card); }
+.borde-tarjeta-15.borde-tarjeta-15 { border:1.5px solid var(--borde-card); }
+.redondeo-10.redondeo-10 { border-radius:10px; }
+.redondeo-32.redondeo-32 { border-radius:32px; }
+.borde-azul-oscuro-3.borde-azul-oscuro-3 { border:3px solid var(--azul-oscuro); }
+.sombra-media.sombra-media { box-shadow:var(--sombra-media); }
+.borde-abajo.borde-abajo { border-bottom:1px solid var(--borde-card); }
+.redondeo-6.redondeo-6 { border-radius:6px; }
+.sombra-suave.sombra-suave { box-shadow:var(--sombra-suave); }
+.redondeo-40.redondeo-40 { border-radius:40px; }
+.redondeo-28.redondeo-28 { border-radius:28px; }
+.redondeo-22.redondeo-22 { border-radius:22px; }
+
+/* ---- Lo demás ---- */
+.mano.mano { cursor:pointer; }
+.z-2.z-2 { z-index:2; }
+.transicion.transicion { transition:all 0.3s ease; }
+.relativo.relativo { position:relative; }

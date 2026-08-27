@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/utilidades.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 
@@ -19,11 +20,11 @@
 
   <header class="tenant-header">
     <div class="tenant-brand">
-      <i class="fas fa-hospital-user" style="color:var(--azul-medio-texto);"></i>
+      <i class="fas fa-hospital-user color-azul-medio"></i>
       <span>{{organizacion}}</span>
       <span class="tenant-badge">Organización: {{organizacion}}</span>
     </div>
-    <div style="font-size:13px;">
+    <div class="texto-13">
       <i class="fas fa-user-shield"></i> Operador: RRHH {{organizacion}} | <a href="index.html"
         style="color:var(--texto-sobre-color);text-decoration:underline;">Volver al Portal</a>
     </div>
@@ -51,28 +52,28 @@
           <div class="kpi-label">Asistentes Validados</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-val" style="color:var(--verde-exito-texto);">100%</div>
+          <div class="kpi-val color-exito">100%</div>
           <div class="kpi-label">Presentismo GPS Hoy</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-val" style="color:var(--azul-medio-texto);">0</div>
+          <div class="kpi-val color-azul-medio">0</div>
           <div class="kpi-label">Alertas Urgentes</div>
         </div>
       </div>
 
       <div class="card-dashboard">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div class="flex justificar-entre alinear-centro mb-16">
           <div>
-            <h3 style="margin:0;font-size:18px;color:var(--texto-titulo);"><i class="fas fa-clipboard-check"></i>
+            <h3 class="m-0 texto-18 color-titulo"><i class="fas fa-clipboard-check"></i>
               Legajos de Asistentes para Auditoría</h3>
-            <p style="margin:4px 0 0 0;font-size:13px;color:var(--texto-secundario);">Legajos digitales enviados desde {{producto}}
+            <p class="m-solo-arriba-4 texto-13 color-secundario">Legajos digitales enviados desde {{producto}}
               Marketplace para la revisión y entrevista de la prestadora.</p>
           </div>
           <button class="btn btn-secundario" id="btn-actualizar-aspirantes" onclick="cargarAspirantes();" style="font-size:12px;padding:8px 16px;"><i
               class="fas fa-sync-alt"></i> Actualizar</button>
         </div>
 
-        <div id="estado-tabla" style="padding:16px;border-radius:10px;font-size:13px;line-height:1.5;margin-bottom:12px;display:none;"></div>
+        <div class="oculto" id="estado-tabla" style="padding:16px;border-radius:10px;font-size:13px;line-height:1.5;margin-bottom:12px;"></div>
 
         <table class="aspirantes-table">
           <thead>
@@ -98,38 +99,38 @@
     <div class="modal-box">
       <div
         style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid var(--borde-card);padding-bottom:12px;">
-        <h3 style="margin:0;color:var(--texto-titulo);"><i class="fas fa-id-card"></i> Auditoría de Legajo & Entrevista
+        <h3 class="m-0 color-titulo"><i class="fas fa-id-card"></i> Auditoría de Legajo & Entrevista
           de Selección</h3>
         <button onclick="document.getElementById('modal-auditoria').style.display='none';"
-          style="background:none;border:none;font-size:20px;cursor:pointer;">&times;</button>
+          class="sin-fondo sin-borde texto-20 mano">&times;</button>
       </div>
 
-      <div id="detalles-aspirante-content" style="font-size:13px;line-height:1.6;color:var(--texto-principal);">
+      <div id="detalles-aspirante-content" class="texto-13 interlineado-16 color-principal">
         <!-- Contenido inyectado por JS -->
       </div>
 
       <div style="background:var(--superficie-hundida);padding:16px;border-radius:12px;margin:16px 0;border:1px solid var(--borde-card);">
         <h4 style="margin:0 0 8px 0;font-size:14px;color:var(--texto-titulo);"><i class="fas fa-user-check"></i>
           Resolución de la Prestadora {{organizacion}}:</h4>
-        <div style="margin-bottom:12px;">
-          <label style="font-weight:700;font-size:12px;">Notas de la Entrevista Psicotécnica y Evaluación:</label>
+        <div class="mb-12">
+          <label class="peso-700 texto-12">Notas de la Entrevista Psicotécnica y Evaluación:</label>
           <textarea id="nota-entrevista"
-            style="width:100%;height:60px;padding:8px;font-size:12px;border-radius:6px;border:1px solid var(--borde-card);margin-top:4px;"
+            class="ancho-total alto-60 p-8 texto-12 redondeo-6 borde-tarjeta mt-4"
             placeholder="Ej: Entrevista aprobada vía videollamada. Excelente manejo en demencias. DNI y Penales verificados."></textarea>
         </div>
-        <div style="display:flex;gap:12px;">
+        <div class="flex gap-12">
           <button class="btn" id="btn-aprobar-aspirante" style="background:var(--verde-exito);color:var(--texto-sobre-color);font-weight:800;font-size:13px;flex:1;"
             onclick="aprobarAspirante();">
             <i class="fas fa-check-circle"></i> OTORGAR AVAL: "VALIDADO POR PRESTADORA"
           </button>
-          <button class="btn" id="btn-rechazar-aspirante" style="background:var(--rojo-peligro);color:var(--texto-sobre-color);font-weight:700;font-size:13px;"
+          <button class="btn fondo-peligro color-sobre-color peso-700 texto-13" id="btn-rechazar-aspirante"
             onclick="rechazarAspirante();">
             Rechazar
           </button>
         </div>
       </div>
 
-      <p style="font-size:11px;color:var(--texto-secundario);margin:0;">* Nota legal: {{producto}} provee únicamente el software SaaS. El
+      <p class="texto-11 color-secundario m-0">* Nota legal: {{producto}} provee únicamente el software SaaS. El
         otorgamiento del aval y la selección son responsabilidad exclusiva de {{organizacion}}.</p>
     </div>
   </div>

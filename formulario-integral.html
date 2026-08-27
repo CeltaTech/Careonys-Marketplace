@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/utilidades.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 
@@ -58,9 +59,9 @@
   <!-- PUBLICAR UN AVISO, PASO A PASO: SEIS PASOS -->
   <section class="container" style="margin-top:-30px;margin-bottom:60px;">
     <div class="wizard-container">
-      <div style="text-align:center;margin-bottom:24px;">
-        <span class="eyebrow"
-          style="color:var(--tono-info-texto);font-weight:700;font-size:12px;text-transform:uppercase;">Publicación paso a paso</span>
+      <div class="centrar-texto mb-24">
+        <span class="eyebrow color-info peso-700 texto-12 mayusculas"
+         >Publicación paso a paso</span>
         <h2 style="font-size:24px;font-weight:800;color:var(--texto-titulo);margin-top:4px;">Publicar un Aviso de
           cuidado</h2>
       </div>
@@ -98,9 +99,9 @@
 
         <!-- PASO 1: PACIENTE Y URGENCIA -->
         <div class="wizard-step-pane" id="step-pane-1">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-principal);">Paso 1: Datos del
+          <h3 class="texto-18 peso-700 mb-16 color-principal">Paso 1: Datos del
             Paciente y Urgencia</h3>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="grilla grilla-2 gap-16">
             <div class="form-group">
               <label for="w-patient-age">Edad del paciente</label>
               <input type="number" id="w-patient-age" placeholder="Ej. 82" required />
@@ -110,31 +111,31 @@
               <select id="w-patient-gender" required data-catalogo="genero" data-catalogo-vacio="— Seleccionar —"></select>
             </div>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="grilla grilla-2 gap-16">
             <div class="form-group">
               <label for="w-pref-gender">Preferencia de género del Asistente</label>
               <select id="w-pref-gender" data-catalogo="genero_preferido"></select>
             </div>
             <div class="form-group">
               <label>¿Es un reemplazo o contratación urgente?</label>
-              <div style="display:flex;gap:16px;margin-top:8px;">
-                <label style="cursor:pointer;"><input type="radio" name="w-urgent" value="si" /> <span
+              <div class="flex gap-16 mt-8">
+                <label class="mano"><input type="radio" name="w-urgent" value="si" /> <span
                     class="badge-verified urgent"><i class="fas fa-bolt"></i> SÍ (Urgente)</span></label>
-                <label style="cursor:pointer;"><input type="radio" name="w-urgent" value="no" checked /> No</label>
+                <label class="mano"><input type="radio" name="w-urgent" value="no" checked /> No</label>
               </div>
             </div>
           </div>
           <div style="display:flex;justify-content:flex-end;margin-top:24px;">
             <button type="button" class="btn btn-primario btn-next-step" data-next="2">Siguiente Paso <i
-                class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+                class="fas fa-arrow-right ml-8"></i></button>
           </div>
         </div>
 
         <!-- PASO 2: TAREAS DE CUIDADO REQUERIDAS -->
-        <div class="wizard-step-pane" id="step-pane-2" style="display:none;">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;color:var(--texto-principal);">Paso 2: Tareas de Cuidado
+        <div class="wizard-step-pane oculto" id="step-pane-2">
+          <h3 class="texto-18 peso-700 mb-8 color-principal">Paso 2: Tareas de Cuidado
             Requeridas</h3>
-          <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:16px;">Seleccione todas las tareas que el
+          <p class="texto-13 color-secundario mb-16">Seleccione todas las tareas que el
             asistente deberá realizar:</p>
 
           <!-- Las tarjetas salen del vocabulario `tarea_cuidado`, con su ícono y
@@ -143,20 +144,20 @@
           <div class="card-select-grid" data-catalogo="tarea_cuidado"
             data-catalogo-como="tarjetas" data-catalogo-nombre="tarea"></div>
 
-          <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="1"
-              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
-                style="margin-right:8px;"></i> Anterior</button>
+          <div class="flex justificar-entre mt-24">
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step borde-color-tarjeta color-secundario" data-prev="1"
+             ><i class="fas fa-arrow-left mr-8"
+               ></i> Anterior</button>
             <button type="button" class="btn btn-primario btn-next-step" data-next="3">Siguiente Paso <i
-                class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+                class="fas fa-arrow-right ml-8"></i></button>
           </div>
         </div>
 
         <!-- PASO 3: TIPO DE ASISTENTE REQUERIDO -->
-        <div class="wizard-step-pane" id="step-pane-3" style="display:none;">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:8px;color:var(--texto-principal);">Paso 3: Tipo de
+        <div class="wizard-step-pane oculto" id="step-pane-3">
+          <h3 class="texto-18 peso-700 mb-8 color-principal">Paso 3: Tipo de
             Asistente requerido</h3>
-          <p style="font-size:13px;color:var(--texto-secundario);margin-bottom:16px;">Seleccione el Tipo de Asistente o el nivel de
+          <p class="texto-13 color-secundario mb-16">Seleccione el Tipo de Asistente o el nivel de
             formación deseado:</p>
 
           <!-- Se elige uno solo, y por eso `tarjetas-una`: a la columna
@@ -165,21 +166,21 @@
           <div class="card-select-grid" data-catalogo="tipo_asistente"
             data-catalogo-como="tarjetas-una" data-catalogo-nombre="tipo-asistente"></div>
 
-          <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="2"
-              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
-                style="margin-right:8px;"></i> Anterior</button>
+          <div class="flex justificar-entre mt-24">
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step borde-color-tarjeta color-secundario" data-prev="2"
+             ><i class="fas fa-arrow-left mr-8"
+               ></i> Anterior</button>
             <button type="button" class="btn btn-primario btn-next-step" data-next="4">Siguiente Paso <i
-                class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+                class="fas fa-arrow-right ml-8"></i></button>
           </div>
         </div>
 
         <!-- PASO 4: MODALIDAD Y HORARIOS -->
-        <div class="wizard-step-pane" id="step-pane-4" style="display:none;">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-principal);">Paso 4: Modalidad y
+        <div class="wizard-step-pane oculto" id="step-pane-4">
+          <h3 class="texto-18 peso-700 mb-16 color-principal">Paso 4: Modalidad y
             Horarios</h3>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="grilla grilla-2 gap-16">
             <div class="form-group">
               <label>Modalidad de Trabajo</label>
               <select id="w-modality" data-catalogo="modalidad_contratacion"></select>
@@ -200,26 +201,26 @@
                ninguna parte. Era el pendiente 40. -->
           <div class="form-group">
             <p id="franjas-cuidado-titulo"
-              style="font-size:13px;font-weight:700;color:var(--texto-principal);margin-bottom:4px;"></p>
+              class="texto-13 peso-700 color-principal mb-4"></p>
             <p id="franjas-cuidado-bajada"
-              style="font-size:12.5px;color:var(--texto-secundario);margin-bottom:12px;"></p>
+              class="texto-12-5 color-secundario mb-12"></p>
             <div id="grilla-cuidado"></div>
             <p id="franjas-cuidado-ayuda"
               style="font-size:11.5px;color:var(--texto-secundario);margin:8px 0 0 0;"></p>
           </div>
 
-          <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="3"
-              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
-                style="margin-right:8px;"></i> Anterior</button>
+          <div class="flex justificar-entre mt-24">
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step borde-color-tarjeta color-secundario" data-prev="3"
+             ><i class="fas fa-arrow-left mr-8"
+               ></i> Anterior</button>
             <button type="button" class="btn btn-primario btn-next-step" data-next="5">Siguiente Paso <i
-                class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+                class="fas fa-arrow-right ml-8"></i></button>
           </div>
         </div>
 
         <!-- PASO 5: TITULO Y DESCRIPCIÓN -->
-        <div class="wizard-step-pane" id="step-pane-5" style="display:none;">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-principal);">Paso 5: Detalles del
+        <div class="wizard-step-pane oculto" id="step-pane-5">
+          <h3 class="texto-18 peso-700 mb-16 color-principal">Paso 5: Detalles del
             Aviso</h3>
 
           <div class="form-group">
@@ -235,39 +236,39 @@
               required></textarea>
           </div>
 
-          <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="4"
-              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
-                style="margin-right:8px;"></i> Anterior</button>
+          <div class="flex justificar-entre mt-24">
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step borde-color-tarjeta color-secundario" data-prev="4"
+             ><i class="fas fa-arrow-left mr-8"
+               ></i> Anterior</button>
             <button type="button" class="btn btn-primario btn-next-step" data-next="6">Ver Resumen <i
-                class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
+                class="fas fa-arrow-right ml-8"></i></button>
           </div>
         </div>
 
         <!-- PASO 6: CONFIRMACIÓN -->
-        <div class="wizard-step-pane" id="step-pane-6" style="display:none;">
-          <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;color:var(--texto-principal);">Paso 6: Confirmación y
+        <div class="wizard-step-pane oculto" id="step-pane-6">
+          <h3 class="texto-18 peso-700 mb-16 color-principal">Paso 6: Confirmación y
             Vista Previa</h3>
 
-          <div style="background:var(--superficie-hover);border-radius:12px;padding:20px;margin-bottom:20px;">
-            <h4 id="summary-title" style="font-size:16px;color:var(--texto-titulo);margin-bottom:8px;">Asistente para
+          <div class="fondo-superficie-hover redondeo-12 p-20 mb-20">
+            <h4 id="summary-title" class="texto-16 color-titulo mb-8">Asistente para
               asistencia general</h4>
-            <p id="summary-desc" style="font-size:13px;color:var(--texto-secundario);margin-bottom:12px;">Se requiere asistencia
+            <p id="summary-desc" class="texto-13 color-secundario mb-12">Se requiere asistencia
               para adulto mayor en zona de Buenos Aires.</p>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <div class="flex gap-8 envolver">
               <span class="badge-verified cert"><i class="fas fa-check"></i> Oferta Verificada</span>
               <span class="badge-verified dni"><i class="fas fa-clock"></i> Horario Flexible</span>
             </div>
           </div>
 
-          <div style="display:flex;justify-content:space-between;margin-top:24px;">
-            <button type="button" class="btn btn-sobre-oscuro btn-prev-step" data-prev="5"
-              style="border-color:var(--borde-card);color:var(--texto-secundario);"><i class="fas fa-arrow-left"
-                style="margin-right:8px;"></i> Anterior</button>
+          <div class="flex justificar-entre mt-24">
+            <button type="button" class="btn btn-sobre-oscuro btn-prev-step borde-color-tarjeta color-secundario" data-prev="5"
+             ><i class="fas fa-arrow-left mr-8"
+               ></i> Anterior</button>
             <button type="submit" class="btn btn-secundario" id="btn-submit-wizard">PUBLICAR EL AVISO AHORA</button>
           </div>
-          <div id="wizard-success-msg"
-            style="display:none;margin-top:16px;background:var(--tono-exito-fondo);color:var(--verde-exito-texto);padding:12px;border-radius:8px;font-weight:700;text-align:center;">
+          <div class="oculto" id="wizard-success-msg"
+            style="margin-top:16px;background:var(--tono-exito-fondo);color:var(--verde-exito-texto);padding:12px;border-radius:8px;font-weight:700;text-align:center;">
             ✓ ¡El aviso quedó publicado! Va a recibir postulaciones de Asistentes verificados.
           </div>
         </div>
@@ -283,8 +284,8 @@
         <img src="assets/images/mujer_consultando.png" alt="Solicitar Asistente" />
       </div>
       <div class="contact-form fade-in">
-        <p class="eyebrow"
-          style="color:var(--tono-info-texto);font-weight:700;font-size:13px;text-transform:uppercase;margin-bottom:8px;">
+        <p class="eyebrow color-info peso-700 texto-13 mayusculas mb-8"
+         >
           Formulario 1 — Familias</p>
         <h2>Podemos ayudarle (Solicitar Asistente)</h2>
         <p>Si es familiar y tiene dudas o quiere solicitar un asistente, puede dejarnos sus datos para poder asistirlo.</p>
@@ -316,7 +317,7 @@
             </div>
           </div>
           <button type="submit" class="btn btn-secundario">ENVIAR CONSULTA</button>
-          <div class="form-success" style="display:none;margin-top:12px;color:var(--verde-exito-texto);font-weight:600;">✓ ¡Gracias! Nos
+          <div class="form-success oculto mt-12 color-exito peso-600">✓ ¡Gracias! Nos
             pondremos en contacto a la brevedad.</div>
         </form>
       </div>
@@ -331,8 +332,8 @@
         <img src="assets/images/vida_activa.png" alt="Registrarme como Asistente" />
       </div>
       <div class="contact-form fade-in">
-        <p class="eyebrow"
-          style="color:var(--tono-info-texto);font-weight:700;font-size:13px;text-transform:uppercase;margin-bottom:8px;">
+        <p class="eyebrow color-info peso-700 texto-13 mayusculas mb-8"
+         >
           Formulario 2 — Profesionales</p>
         <h2>Regístrese como Asistente</h2>
         <p>Complete sus datos y nos pondremos en contacto para guiarlo en el proceso de verificación e incorporación a
@@ -366,7 +367,7 @@
             </div>
           </div>
           <button type="submit" class="btn btn-secundario">ENVIAR SOLICITUD DE REGISTRO</button>
-          <div class="form-success" style="display:none;margin-top:12px;color:var(--verde-exito-texto);font-weight:600;">✓ ¡Solicitud
+          <div class="form-success oculto mt-12 color-exito peso-600">✓ ¡Solicitud
             recibida! Nos pondremos en contacto a la brevedad.</div>
         </form>
       </div>
@@ -374,11 +375,11 @@
   </section>
 
   <!-- 3. FORMULARIO DE FILTROS Y BÚSQUEDA DEL DIRECTORIO (De directorio.html) -->
-  <section class="contact-section" id="busqueda-directorio" style="background:var(--superficie-hover);">
+  <section class="contact-section fondo-superficie-hover" id="busqueda-directorio">
     <div style="max-width:1000px;margin:0 auto;">
       <div style="text-align:center;margin-bottom:32px;">
-        <p class="eyebrow"
-          style="color:var(--tono-info-texto);font-weight:700;font-size:13px;text-transform:uppercase;margin-bottom:8px;">
+        <p class="eyebrow color-info peso-700 texto-13 mayusculas mb-8"
+         >
           Formulario 3 — Catálogo & Filtros</p>
         <h2 style="font-size:32px;font-weight:800;color:var(--texto-principal);">Filtro y Búsqueda en la Red de Asistentes
         </h2>

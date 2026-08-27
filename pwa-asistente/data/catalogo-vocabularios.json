@@ -4,11 +4,11 @@
       "titulo": "Género de la persona",
       "cerrada": true,
       "usado_en": [
-        "directorio.html:276",
-        "formulario-integral.html:110",
-        "perfil.html:288",
-        "pwa-asistente/index.html:446",
-        "registrar-asistente.html:301"
+        "directorio.html:277",
+        "formulario-integral.html:111",
+        "perfil.html:289",
+        "pwa-asistente/index.html:447",
+        "registrar-asistente.html:302"
       ],
       "items": [
         {
@@ -34,7 +34,7 @@
       "titulo": "Género de Asistente que la Familia prefiere",
       "cerrada": true,
       "usado_en": [
-        "formulario-integral.html:116"
+        "formulario-integral.html:117"
       ],
       "items": [
         {
@@ -56,16 +56,16 @@
       "cerrada": true,
       "usado_en": [
         "data/catalogo-fichas.json:107",
-        "directorio.html:259",
-        "directorio.html:79",
-        "formulario-integral.html:165",
-        "formulario-integral.html:355",
-        "formulario-integral.html:400",
+        "directorio.html:260",
+        "directorio.html:80",
+        "formulario-integral.html:166",
+        "formulario-integral.html:356",
+        "formulario-integral.html:401",
         "mockup-app.html:458",
-        "perfil.html:283",
-        "pwa-asistente/index.html:461",
-        "pwa-familia/index.html:911",
-        "registrar-asistente.html:332"
+        "perfil.html:284",
+        "pwa-asistente/index.html:462",
+        "pwa-familia/index.html:912",
+        "registrar-asistente.html:333"
       ],
       "items": [
         {
@@ -131,7 +131,7 @@
       "titulo": "Condición frente a AFIP",
       "cerrada": true,
       "usado_en": [
-        "registrar-asistente.html:307"
+        "registrar-asistente.html:308"
       ],
       "items": [
         {
@@ -156,8 +156,8 @@
       "titulo": "Nivel educativo alcanzado",
       "cerrada": true,
       "usado_en": [
-        "pwa-asistente/index.html:465",
-        "registrar-asistente.html:336"
+        "pwa-asistente/index.html:466",
+        "registrar-asistente.html:337"
       ],
       "items": [
         {
@@ -183,12 +183,12 @@
       "titulo": "Patologías con las que el Asistente trabaja",
       "cerrada": false,
       "usado_en": [
-        "directorio.html:318",
-        "directorio.html:82",
-        "perfil.html:342",
-        "pwa-asistente/index.html:497",
-        "pwa-familia/index.html:786",
-        "registrar-asistente.html:380"
+        "directorio.html:319",
+        "directorio.html:83",
+        "perfil.html:346",
+        "pwa-asistente/index.html:498",
+        "pwa-familia/index.html:787",
+        "registrar-asistente.html:381"
       ],
       "items": [
         {
@@ -275,10 +275,10 @@
       "cerrada": false,
       "usado_en": [
         "data/catalogo-fichas.json:180",
-        "formulario-integral.html:143",
+        "formulario-integral.html:144",
         "js/catalogo.js:325",
-        "pwa-asistente/index.html:499",
-        "registrar-asistente.html:384"
+        "pwa-asistente/index.html:500",
+        "registrar-asistente.html:385"
       ],
       "items": [
         {
@@ -344,11 +344,11 @@
       "titulo": "Intensidad de la contratación",
       "cerrada": true,
       "usado_en": [
-        "formulario-integral.html:185",
-        "formulario-integral.html:405",
-        "pwa-asistente/index.html:513",
-        "pwa-familia/index.html:761",
-        "registrar-asistente.html:405"
+        "formulario-integral.html:186",
+        "formulario-integral.html:406",
+        "pwa-asistente/index.html:514",
+        "pwa-familia/index.html:762",
+        "registrar-asistente.html:406"
       ],
       "items": [
         {
@@ -370,7 +370,7 @@
       "titulo": "Frecuencia del servicio",
       "cerrada": true,
       "usado_en": [
-        "formulario-integral.html:189"
+        "formulario-integral.html:190"
       ],
       "items": [
         {
@@ -452,7 +452,7 @@
       "titulo": "Nivel del Asistente en el catálogo",
       "cerrada": true,
       "usado_en": [
-        "formulario-integral.html:410"
+        "formulario-integral.html:411"
       ],
       "items": [
         {
@@ -512,9 +512,9 @@
       "titulo": "Lo que se le comprobó a un Asistente y el directorio dice",
       "cerrada": true,
       "usado_en": [
-        "directorio.html:290",
-        "directorio.html:90",
-        "perfil.html:298"
+        "directorio.html:291",
+        "directorio.html:91",
+        "perfil.html:299"
       ],
       "origen": "La columna `comprobaciones` de la vista `directorio` (migración 0026). Las cinco claves son exactamente las que la base ya tenía restringidas en `ponderacion_comprobacion` desde la migración 0018, así que acá no se inventó ninguna palabra.",
       "items": [
@@ -547,8 +547,8 @@
       "titulo": "Cursos acreditados que el Asistente declara",
       "cerrada": false,
       "usado_en": [
-        "pwa-asistente/index.html:468",
-        "registrar-asistente.html:346"
+        "pwa-asistente/index.html:469",
+        "registrar-asistente.html:347"
       ],
       "items": [
         {
@@ -578,10 +578,10 @@
       "titulo": "Motivo por el que una Familia escribe",
       "cerrada": true,
       "usado_en": [
-        "formulario-integral.html:309",
-        "index.html:275",
-        "solicitar-asistente.html:312",
-        "soporte-remoto.html:143"
+        "formulario-integral.html:310",
+        "index.html:276",
+        "solicitar-asistente.html:313",
+        "soporte-remoto.html:144"
       ],
       "items": [
         {
@@ -623,14 +623,14 @@
       "titulo": "Zona de cobertura",
       "cerrada": true,
       "usado_en": [
-        "directorio.html:260",
-        "directorio.html:76",
-        "formulario-integral.html:395",
+        "directorio.html:261",
+        "directorio.html:77",
+        "formulario-integral.html:396",
         "mockup-app.html:459",
-        "perfil.html:284",
-        "pwa-familia/index.html:748",
-        "pwa-familia/index.html:912",
-        "registrar-asistente.html:313"
+        "perfil.html:285",
+        "pwa-familia/index.html:749",
+        "pwa-familia/index.html:913",
+        "registrar-asistente.html:314"
       ],
       "nota": "Las dos pantallas listaban zonas de distinto tamaño: una, barrios; la otra, regiones enteras. No son dos listas rivales sino dos escalones de la misma, así que cada barrio queda colgado de su región. Qué barrios y partidos cubre el servicio de verdad no está escrito en el proyecto: esta lista es la que estaba en las pantallas, no un mapa de cobertura.",
       "items": [
@@ -832,8 +832,8 @@
       "titulo": "Con retiro o sin retiro del domicilio",
       "cerrada": false,
       "usado_en": [
-        "pwa-asistente/index.html:515",
-        "registrar-asistente.html:407"
+        "pwa-asistente/index.html:516",
+        "registrar-asistente.html:408"
       ],
       "origen": "Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas. Las dos palabras son las que usa el rubro.",
       "items": [
@@ -887,8 +887,8 @@
       "titulo": "Cómo se cursa",
       "cerrada": true,
       "usado_en": [
-        "cursos.html:91",
-        "pwa-asistente/index.html:769"
+        "cursos.html:92",
+        "pwa-asistente/index.html:770"
       ],
       "items": [
         {
@@ -910,7 +910,7 @@
       "titulo": "Nivel del curso",
       "cerrada": true,
       "usado_en": [
-        "pwa-asistente/index.html:767"
+        "pwa-asistente/index.html:768"
       ],
       "items": [
         {

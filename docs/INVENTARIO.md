@@ -336,20 +336,24 @@ opiniones sobre el diseño):
 
 | Archivo | Renglones | Lo usa |
 |---|---:|---|
-| `css/styles.css` | 2.250 | Las 10 páginas de la raíz |
-| `css/mockup-app.css` | 124 | Sólo `mockup-app.html` |
-| `pwa-asistente/css/styles-pwa.css` | 104 | Sólo la aplicación de asistentes |
-| `pwa-familia/css/styles-pwa.css` | 104 | Sólo la de familias (**copia idéntica de la anterior**) |
+| `css/styles.css` | 2.196 | Las 10 páginas de la raíz |
+| `css/tokens.css` | 363 | Las 16 pantallas, en tres copias (raíz y las dos PWA) |
+| `css/utilidades.css` | 189 | Las 16 pantallas, en tres copias. Las 125 clases del pendiente 8 |
+| `css/mockup-app.css` | 137 | Sólo `mockup-app.html` |
+| `pwa-asistente/css/styles-pwa.css` | 285 | Sólo la aplicación de asistentes |
+| `pwa-familia/css/styles-pwa.css` | 285 | Sólo la de familias (**copia idéntica de la anterior**) |
 
-Más **767 renglones de CSS en bloques `<style>` adentro del HTML**: 519 en `pwa-familia/index.html`
-y 248 en `pwa-asistente/index.html`. Las diez páginas del sitio público no tienen bloques `<style>`.
+Más **790 renglones de CSS en bloques `<style>` adentro del HTML**: 518 en `pwa-familia/index.html`
+y 272 en `pwa-asistente/index.html`. Las diez páginas del sitio público no tienen bloques `<style>`.
 
-**Y 2.566 declaraciones más pegadas a las etiquetas**, en 772 atributos `style=`, repartidas por
-los doce archivos. Ahí hay 430 colores escritos a mano, 66 distintos, y **38 no existen en
-`css/styles.css`**. El reparto por archivo está en `docs/PENDIENTES.md`.
+**Y 982 declaraciones más pegadas a las etiquetas**, en 249 atributos `style=`. Eran 2.199 en 694
+atributos hasta el 26 de agosto de 2026: los colores escritos a mano se fueron el 25 y el resto
+pasó a las 125 clases de `css/utilidades.css` el 26 —el pendiente 8, contado entero en
+`docs/ALCANCE.md`—. Lo que queda son las decisiones que aparecen una sola vez, que se dejaron a
+propósito, y `scripts/verificar_estilos.mjs` impide que vuelvan a escribirse a mano las que ya
+tienen clase.
 
-**Total: 2.582 renglones en hojas de estilo, 767 adentro del HTML y 2.566 declaraciones sueltas.**
-Casi la mitad del diseño vive fuera de las hojas de estilo.
+**Total: 3.455 renglones en hojas de estilo, 790 adentro del HTML y 982 declaraciones sueltas.**
 
 ### 5.2 Framework
 

@@ -13,7 +13,7 @@
 
 | Módulo | Estado |
 |---|---|
-| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:367` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs`. **El alta de Asistente exige confirmar el correo, y se queda así**: decidido por el Desarrollador el 2026-08-26 (pendiente 21 cerrado) — el alta es de dos pasos, pero nadie puede darse de alta con el correo de otra persona; `supabase/config.toml` tiene `mailer_autoconfirm: false` |
+| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:443` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs`. **El alta de Asistente exige confirmar el correo, y se queda así**: decidido por el Desarrollador el 2026-08-26 (pendiente 21 cerrado) — el alta es de dos pasos, pero nadie puede darse de alta con el correo de otra persona; `supabase/config.toml` tiene `mailer_autoconfirm: false` |
 | Directorio de Asistentes con filtros | Maquetado y navegable |
 | Perfil del Asistente | Maquetado |
 | Portal de registro de Asistentes | Maquetado, con el legajo funcionando: `registrar-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en las tablas de la migración 0004, y la disponibilidad horaria en las de la 0012 |
@@ -1142,6 +1142,85 @@ perfecto. No hay nada roto en las hojas de estilo: **el color que elige una Pres
 versión de noche**, y `js/apiClient.js` lo escribe encima de los tokens igual. Es el punto 2 de la
 lista de acá abajo, y de noche cuesta el doble.
 
+### Los estilos pegados al HTML pasaron a clases, y quedaron en poco más de un tercio
+
+Cierra el pendiente 8 entero, el 26 de agosto de 2026. La mitad de colores ya estaba cerrada el
+día anterior —la sección de acá arriba—; esto es la otra mitad, la que el Desarrollador puso en
+palabras ese mismo día: «cuantos menos sean mejor, me parece un despropósito tantos estilos.
+Depura», con un límite al lado: «los estilos después habrá que congeniarlos con los de Careonys,
+así que tratá de gastar el menor esfuerzo posible en eso».
+
+**Qué había.** 694 atributos `style=` escritos a mano en las pantallas, con 2.199 declaraciones
+adentro. Pero apenas 360 formas distintas: la mayoría no eran decisiones diferentes, era la misma
+decisión copiada. `color:var(--texto-secundario)` aparecía 112 veces, `font-weight:700` otras
+104 y `display:none` 39.
+
+**Qué se hizo, y en qué orden.** Primero se midió qué convenía nombrar. Convertir *formas enteras*
+—el atributo completo, tal cual está— habría mudado 458 atributos a 120 clases, pero cada clase
+habría servido a un solo lugar. Convertir *declaraciones sueltas* rinde mucho más, porque se
+apilan: 125 clases cubren las 445 conversiones, y lo que era
+`style="font-size:11px;color:var(--texto-secundario);margin-top:4px"` ahora es
+`class="texto-11 color-secundario mt-4"`, en el mismo orden, para que se siga leyendo igual. Las
+125 viven en `css/utilidades.css`, agrupadas por lo que deciden y con el motivo escrito arriba
+(`css/utilidades.css:17`).
+
+**Sólo se convirtió el atributo cuyas declaraciones estaban todas nombradas.** Con una sola que no
+lo estuviera, el atributo se quedó donde estaba. Es lo que pedía la condición de cierre: las
+decisiones que aparecen una sola vez no se tocan.
+
+**Por qué el selector está escrito dos veces.** `.texto-11.texto-11` señala exactamente lo mismo
+que `.texto-11`, pero pesa el doble al decidir quién gana. Hace falta: un atributo `style=` le
+gana a cualquier regla de una hoja, así que al pasarlo a clase la decisión podía perder contra
+reglas que ya existían, como `.card p`. Escrito dos veces gana esas, y sigue perdiendo contra lo
+que el guion escriba en el atributo `style` del elemento, que es justo lo que se quiere: prender
+y apagar desde el guion tiene que seguir funcionando. **No se usó `!important`** por ese mismo
+motivo: hay unos treinta y cinco lugares donde el guion escribe color, fondo o borde en el
+atributo, y `!important` los habría dejado sin efecto.
+
+**Y `.oculto` está escrito tres veces** (`css/utilidades.css:47`), porque un elemento puede
+llevar `oculto` junto con `flex` o `grilla` —se esconde y se muestra, y cuando se muestra va
+en fila—, y escondido tiene que ganar siempre. Comprobado en el navegador el mismo día sobre el
+caso real que lo pedía: el grupo de una casilla del legajo (`js/fichas-legajo.js:97`) mide
+`flex` visible, `none` con la clase puesta y `flex` de nuevo al sacársela.
+
+**Esconder dejó de ser estilo y pasó a ser estado.** Los 39 `display:none` enteros y 16 más que
+venían mezclados con otras declaraciones salieron del atributo y son la clase `oculto`. Eso
+obligó a cambiar el interruptor de «los cuatro estados», y ahí estaba el riesgo real de todo el
+trabajo: el idioma anterior era `panel.style.display = ''`, que **con la clase puesta ya no
+muestra nada**, porque sin nada escrito en el atributo vuelve a mandar la clase. Las seis pantallas
+que lo usaban dicen ahora `classList.toggle('oculto', …)` (`acceso.html:97`), que además no le
+impone forma a ningún panel: el que se muestra recupera la que le dio el CSS. Comprobado en el
+navegador en `directorio.html` y `perfil.html`, estado por estado, y en `directorio.html` se
+ve lo que estaba en juego: la grilla de resultados vuelve a `display: grid`, no a `block`.
+
+**Y se borró lo que no usaba nadie**, que es la parte (c): 19 clases de utilidad en inglés que
+habían quedado escritas y no aparecen en ninguna pantalla, 15 bloques de reglas de diseño que
+tampoco —la matriz de disponibilidad semanal, el desglose de tarifas, las insignias de
+verificación— y 3 renglones en `css/mockup-app.css`. `css/styles.css` pasó de 2.395 a 2.196
+renglones. Nada de eso se pierde: el repositorio lo guarda, y se recupera con
+`git show 8cfcc3e:css/styles.css`.
+
+**Cómo quedó.** **249 atributos `style=`, con 982 declaraciones**, contra los 694 y 2.199 de
+antes. La condición de cierre pedía bajar de 300. De los 249, **229 están en el marcado** y son
+las decisiones que aparecen una sola vez —las que no se tocan a propósito— y **51 están adentro de
+guiones**, armando HTML desde una plantilla; de esos 51, 28 podrían convertirse el día que se
+quiera, y el chequeo los cuenta en voz alta para que el número no se pierda.
+
+**El chequeo número 20.** `scripts/verificar_estilos.mjs` vigila que esto no se deshaga solo, y
+su regla es una sola: **si todo lo que dice un atributo `style=` ya tiene clase, ese atributo
+sobra** (`scripts/verificar_estilos.mjs:12`). No prohíbe el atributo —las decisiones únicas
+siguen escritas donde están—: prohíbe volver a escribir a mano lo que la hoja ya nombra. No lleva
+ningún número adentro: lee las clases de `css/utilidades.css`, así que agregar una alcanza para
+que empiece a vigilarla. **Y se comprobó que puede fallar** antes de darlo por bueno: se le metió
+a propósito un `style="font-weight:700;color:var(--texto-secundario);"` en `directorio.html`,
+falló nombrando el renglón y la clase que correspondía, y el archivo se dejó como estaba.
+
+**Esta hoja es provisoria por diseño, y eso no es un defecto.** El día que el Marketplace se
+fusione con Careonys hay que congeniar los dos sistemas de estilo y de acá va a sobrevivir poco.
+Por eso no se rehízo el diseño: se nombró lo que se repetía, se borró lo muerto y nada más. Las
+tres carpetas llevan copia de la hoja —las PWA no alcanzan la del padre sin conexión— y
+`scripts/verificar_copias.mjs` compara las tres byte a byte.
+
 ### El plan técnico heredado se borró, y lo que servía quedó en una página
 
 El 25 de agosto de 2026.
@@ -1805,12 +1884,16 @@ puede fallar no prueba nada».
 interruptor está escrito ocho veces en ocho pantallas, y las copias no eran equivalentes: cuatro
 encendían el panel con `display: 'block'` y dos con `display: ''`. No es lo mismo. `'block'` le
 impone al panel una forma; `''` le devuelve la que le había dado el CSS. Y en este proyecto ya hay
-un panel que no es `block`: `.directory-grid` es `display: grid` (`css/styles.css:1120`), y por eso
+un panel que no es `block`: `.directory-grid` es `display: grid` (`css/styles.css:1098`), y por eso
 `directorio.html` tuvo que usar la forma vacía. Las otras cuatro —`acceso.html`, `examen.html`,
 `nueva-clave.html` y `recuperar-clave.html`— andaban de casualidad, porque hoy ninguno de sus
 paneles es grid ni flex, y el día que alguien agregara uno se habría aplastado sin avisar. Las seis
-que conmutan `display` dicen ahora `''`, con el motivo escrito al lado para que nadie lo devuelva a
-`'block'`. Que sigan siendo ocho copias es parte del pendiente 13.
+que conmutan `display` dijeron `''` desde ese día, con el motivo escrito al lado. **Y el 26 de
+agosto de 2026 dejaron de conmutar `display` del todo**: al pasar esconder a la clase `oculto` —el
+pendiente 8—, vaciar el atributo dejó de mostrar nada, porque sin nada escrito ahí vuelve a mandar
+la clase. Las seis dicen ahora `classList.toggle('oculto', …)` (`acceso.html:97`), que no impone
+forma ninguna: el panel que se muestra recupera la que le dio el CSS, sea grid, flex o la que sea.
+Que sigan siendo ocho copias es parte del pendiente 13.
 
 **La «toda operación destructiva se confirma» se midió en el mismo rato y salió todavía más corta.** Pide confirmación explícita
 ante toda operación destructiva, y la medición encontró que en este proyecto hay exactamente una:
@@ -2954,7 +3037,7 @@ prestación.
 
 El mercado es de una Prestadora: sus Asistentes ofreciendo, sus Familias buscando. Muchos de un
 lado y muchos del otro, pero **todos adentro de la misma Organización**. Es lo que ya hace
-`directorio.html:304`, que resuelve una Prestadora y muestra a los suyos.
+`directorio.html:341`, que resuelve una Prestadora y muestra a los suyos.
 
 **Ninguna búsqueda, en ninguna modalidad, mezcla Asistentes de dos Prestadoras.** Mezclarlas sería
 abandonar el aislamiento entre Organizaciones para conseguir un desorden general. No

@@ -52,6 +52,9 @@ export const GRUPOS = [
   ['data/catalogo-frases.json', 'pwa-asistente/data/catalogo-frases.json',
    'pwa-familia/data/catalogo-frases.json'],
   ['css/tokens.css', 'pwa-asistente/css/tokens.css', 'pwa-familia/css/tokens.css'],
+  // Las clases de utilidad: las tres carpetas escriben las mismas, y una copia
+  // que se despegue esconde o muestra distinto en una sola de las tres.
+  ['css/utilidades.css', 'pwa-asistente/css/utilidades.css', 'pwa-familia/css/utilidades.css'],
   ['pwa-asistente/css/styles-pwa.css', 'pwa-familia/css/styles-pwa.css']
 ];
 

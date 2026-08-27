@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/utilidades.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 
@@ -66,20 +67,20 @@
 
   <!-- FILTER BAR -->
   <div class="filter-bar">
-    <div class="filter-inner" style="flex-wrap:wrap;gap:12px;">
+    <div class="filter-inner envolver gap-12">
       <input type="text" id="dir-search" data-frase-placeholder="directorio.buscar"
         placeholder="🔍 Buscar por nombre o zona…" style="flex:2;min-width:220px;" />
       <!-- Los cuatro desplegables salen del catálogo («los catálogos salen de la base»): acá sólo se declara
            cuál vocabulario manda en cada uno. Las claves que eligen son las mismas que
            llevan las tarjetas en sus `data-`, así que el filtro compara clave con clave
            y no depende de cómo esté escrita una palabra en la pantalla. -->
-      <select id="dir-zone" style="flex:1;min-width:140px;" data-catalogo="zona"
+      <select id="dir-zone" class="flex-1 ancho-minimo-140" data-catalogo="zona"
         data-frase-data-catalogo-vacio="directorio.todas_zonas"
         data-catalogo-vacio="Todas las zonas"></select>
-      <select id="dir-type" style="flex:1;min-width:140px;" data-catalogo="tipo_asistente"
+      <select id="dir-type" class="flex-1 ancho-minimo-140" data-catalogo="tipo_asistente"
         data-frase-data-catalogo-vacio="directorio.todos_tipos"
         data-catalogo-vacio="Todos los tipos"></select>
-      <select id="dir-patologia" style="flex:1;min-width:140px;" data-catalogo="patologia"
+      <select id="dir-patologia" class="flex-1 ancho-minimo-140" data-catalogo="patologia"
         data-frase-data-catalogo-vacio="directorio.todas_patologias"
         data-catalogo-vacio="Todas las patologías"></select>
       <!-- El cuarto desplegable volvió el 26 de agosto de 2026, cuando el Desarrollador
@@ -87,7 +88,7 @@
            y el consentimiento pasó a nombrarlo. Sale del vocabulario `comprobacion`, que
            tiene cinco claves y no las siete de `verificacion`: documento, antecedentes
            penales y certificado de salud se comprueban igual y no salen nunca. -->
-      <select id="dir-comprobacion" style="flex:1;min-width:140px;" data-catalogo="comprobacion"
+      <select id="dir-comprobacion" class="flex-1 ancho-minimo-140" data-catalogo="comprobacion"
         data-frase-data-catalogo-vacio="directorio.cualquier_comprobacion"
         data-catalogo-vacio="Cualquier comprobación"></select>
     </div>
@@ -105,19 +106,19 @@
       <span data-frase="directorio.cargando">Cargando el directorio…</span>
     </div>
 
-    <div class="directorio-estado" id="dir-error" style="display:none;">
+    <div class="directorio-estado oculto" id="dir-error">
       <p id="dir-error-texto"></p>
       <button type="button" class="btn btn-secundario" id="dir-reintentar"
         data-frase="acceso.reintentar">Reintentar</button>
     </div>
 
-    <div class="directorio-estado" id="dir-vacio" style="display:none;">
+    <div class="directorio-estado oculto" id="dir-vacio">
       <p data-frase="directorio.vacio">Todavía no hay Asistentes publicados en este directorio.</p>
       <p class="directorio-estado-bajada" data-frase="directorio.vacio_bajada">Un Asistente aparece acá cuando su Prestadora validó el legajo y esa persona autorizó a publicar
         su perfil. Las dos cosas, no una.</p>
     </div>
 
-    <div class="directory-grid" id="directory-grid" style="display:none;"></div>
+    <div class="directory-grid oculto" id="directory-grid"></div>
 
     <!-- El molde de una tarjeta. El diseño vive en la pantalla y el contenido llega
          de la base: es el mismo reparto con el que `js/catalogo.js` dibuja los
@@ -149,8 +150,8 @@
         <div class="card-footer">
           <a class="btn btn-primario" data-parte="ver-perfil"
             data-frase="directorio.ver_perfil">Ver perfil</a>
-          <a class="btn btn-sobre-oscuro" data-parte="contactar" data-frase="directorio.contactar"
-            style="border-color:var(--borde-card);color:var(--texto-secundario);">Contactar</a>
+          <a class="btn btn-sobre-oscuro borde-color-tarjeta color-secundario" data-parte="contactar" data-frase="directorio.contactar"
+           >Contactar</a>
         </div>
       </article>
     </template>
@@ -239,10 +240,10 @@
 
       function mostrar(cual) {
         Object.keys(paneles).forEach((nombre) => {
-          paneles[nombre].style.display = (nombre === cual) ? '' : 'none';
+          paneles[nombre].classList.toggle('oculto', nombre !== cual);
         });
         // La cuenta es del estado «listo»: sin tarjetas no hay nada que contar.
-        cuenta.style.display = (cual === 'listo') ? '' : 'none';
+        cuenta.classList.toggle('oculto', cual !== 'listo');
       }
 
       // Traducir una clave guardada al texto que se lee, y buscar una tarea en

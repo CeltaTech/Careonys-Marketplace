@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/utilidades.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     .examen-pantalla {
@@ -206,7 +207,7 @@
       </div>
 
       <!-- Estado: error -->
-      <div id="estado-error" style="display:none;">
+      <div id="estado-error" class="oculto">
         <!-- Vacío a propósito, igual que el panel de al lado: qué falló se sabe
              recién cuando falla, así que la clave se la pone el guion desde
              `decirError`. Antes acá estaba escrito «no se pudo conectar con el
@@ -216,14 +217,14 @@
              clave: una clave no se renombra, y la misma frase escrita dos veces
              se traduce dos veces y se corrige una sola. -->
         <div class="examen-aviso critico" id="texto-error"></div>
-        <button type="button" class="btn btn-secundario" id="btn-reintentar" style="width:100%;"
+        <button type="button" class="btn btn-secundario ancho-total" id="btn-reintentar"
           data-frase="acceso.reintentar">
           Reintentar
         </button>
       </div>
 
       <!-- Estado: vacío -->
-      <div id="estado-vacio" style="display:none;">
+      <div id="estado-vacio" class="oculto">
         <h1 class="examen-titulo" data-frase="examen.titulo">Evaluaciones</h1>
         <!-- Vacío a propósito: cuál de los tres motivos es se sabe recién al
              pedir los datos, así que la clave se la pone el guion. -->
@@ -232,7 +233,7 @@
       </div>
 
       <!-- Estado: listo, eligiendo qué rendir -->
-      <div id="estado-lista" style="display:none;">
+      <div id="estado-lista" class="oculto">
         <h1 class="examen-titulo" data-frase="examen.titulo">Evaluaciones</h1>
         <p class="examen-bajada" data-frase="examen.bajada">
           Las evaluaciones se corrigen en el servidor. El resultado queda registrado en el legajo.
@@ -241,19 +242,19 @@
       </div>
 
       <!-- Estado: listo, rindiendo -->
-      <form id="estado-examen" style="display:none;" novalidate>
+      <form id="estado-examen" class="oculto" novalidate>
         <!-- El nombre de la evaluación y sus condiciones los pone el guion: el
              primero lo escribió alguien de la Prestadora y no se traduce; las
              segundas cambian de frase según cuántas preguntas tenga. -->
         <h1 class="examen-titulo" id="examen-nombre"></h1>
         <p class="examen-bajada" id="examen-condiciones"></p>
 
-        <div id="aviso-intentos" class="examen-aviso info" style="display:none;"></div>
-        <div id="aviso-examen" class="examen-aviso critico" style="display:none;"></div>
+        <div id="aviso-intentos" class="examen-aviso info oculto"></div>
+        <div id="aviso-examen" class="examen-aviso critico oculto"></div>
 
         <div id="examen-preguntas"></div>
 
-        <button type="submit" class="btn btn-primario" id="btn-entregar" style="width:100%;">
+        <button type="submit" class="btn btn-primario ancho-total" id="btn-entregar">
           <span id="texto-btn-entregar" data-frase="examen.entregar">Entregar respuestas</span>
         </button>
 
@@ -261,13 +262,13 @@
       </form>
 
       <!-- Estado: listo, ya corregido -->
-      <div id="estado-resultado" style="display:none;">
+      <div id="estado-resultado" class="oculto">
         <div id="resultado-caja" class="examen-aviso">
           <p class="examen-resultado-cifra" id="resultado-porcentaje"></p>
           <p id="resultado-titulo" style="font-weight:700;margin:0 0 6px;"></p>
-          <p id="resultado-detalle" style="margin:0;"></p>
+          <p id="resultado-detalle" class="m-0"></p>
         </div>
-        <button type="button" class="btn btn-primario" id="btn-otra-vez" style="width:100%;display:none;"
+        <button type="button" class="btn btn-primario ancho-total oculto" id="btn-otra-vez"
           data-frase="examen.rendir_de_nuevo">
           Rendir de nuevo
         </button>
@@ -295,9 +296,12 @@
 
     function mostrar(cual) {
       Object.keys(paneles).forEach(nombre => {
-        // Vacio y no 'block': asi el panel recupera el display que le dio el CSS.
-        // Imponerle 'block' aplasta un panel que sea grid o flex, y no avisa.
-        paneles[nombre].style.display = (nombre === cual) ? '' : 'none';
+        // Esconder es estado, no estilo: el panel que no toca se lleva la clase
+        // `oculto` y el que toca la suelta. Asi ninguno pierde el display que le
+        // dio el CSS —el que sea grid o flex sigue siendolo— y no hace falta
+        // imponerle 'block' a nada. Vaciar el atributo `style` ya no sirve: sin
+        // nada escrito ahi vuelve a mandar la clase y el panel queda escondido.
+        paneles[nombre].classList.toggle('oculto', nombre !== cual);
       });
     }
 

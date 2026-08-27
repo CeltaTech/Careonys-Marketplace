@@ -127,9 +127,6 @@ button:disabled:hover { transform:none; box-shadow:none; opacity:0.55; }
 button.drawer-menu-item { width:100%; background:none; border:none; font-family:inherit; text-align:left; }
 .drawer-menu-item i { color:var(--texto-secundario); width:20px; font-size:16px; }
 
-.cuaderno-header { background:var(--azul-oscuro); color:var(--superficie); padding:20px; border-radius:0 0 24px 24px; }
-.cuaderno-paciente { display:flex; align-items:center; gap:12px; margin-top:10px; }
-.cuaderno-paciente img { width:44px; height:44px; border-radius:50%; border:2px solid var(--superficie); }
 
 .timeline-log { padding:20px; position:relative; }
 .timeline-log::after { content:''; position:absolute; top:24px; left:31px; width:2px; height:calc(100% - 48px); background:var(--borde-card); }

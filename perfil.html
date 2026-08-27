@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/utilidades.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 
@@ -58,8 +59,8 @@
   <!-- Breadcrumb -->
   <div style="background:var(--superficie-hover);padding:12px 24px;border-bottom:1px solid var(--borde-card);">
     <div style="max-width:900px;margin:0 auto;font-size:13px;color:var(--texto-secundario);">
-      <a href="index.html" style="color:var(--tono-info-texto);" data-frase="nav.inicio">Inicio</a> &gt;
-      <a href="directorio.html" style="color:var(--tono-info-texto);" data-frase="pie.directorio">Directorio</a> &gt;
+      <a href="index.html" class="color-info" data-frase="nav.inicio">Inicio</a> &gt;
+      <a href="directorio.html" class="color-info" data-frase="pie.directorio">Directorio</a> &gt;
       <span id="breadcrumb-name" data-frase="perfil.miga">Perfil</span>
     </div>
   </div>
@@ -72,28 +73,28 @@
       data-frase="perfil.cargando">Cargando el perfil…</span>
   </div>
 
-  <div class="directorio-estado" id="perfil-error" style="display:none;">
+  <div class="directorio-estado oculto" id="perfil-error">
     <p id="perfil-error-texto"></p>
-    <p style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+    <p class="mt-16 flex gap-12 justificar-centro envolver">
       <button type="button" class="btn btn-secundario" id="perfil-reintentar"
         data-frase="acceso.reintentar">Reintentar</button>
-      <a class="btn btn-sobre-oscuro" href="directorio.html" data-frase="perfil.volver"
-        style="border-color:var(--borde-card);color:var(--texto-secundario);">Volver al directorio</a>
+      <a class="btn btn-sobre-oscuro borde-color-tarjeta color-secundario" href="directorio.html" data-frase="perfil.volver"
+       >Volver al directorio</a>
     </p>
   </div>
 
-  <div class="directorio-estado" id="perfil-vacio" style="display:none;">
+  <div class="directorio-estado oculto" id="perfil-vacio">
     <p><strong data-frase="perfil.no_disponible">Este perfil no está disponible.</strong></p>
     <p class="directorio-estado-bajada" data-frase="perfil.no_disponible_bajada">
       Un Asistente se ve acá cuando su Prestadora validó el legajo y esa persona autorizó a publicar
       su perfil. Las dos cosas, no una. Puede que el enlace haya quedado viejo, o que quien figuraba
       haya dejado de publicarse.
     </p>
-    <p style="margin-top:16px;"><a class="btn btn-primario" href="directorio.html"
+    <p class="mt-16"><a class="btn btn-primario" href="directorio.html"
         data-frase="perfil.volver">Volver al directorio</a></p>
   </div>
 
-  <div id="perfil-listo" style="display:none;">
+  <div id="perfil-listo" class="oculto">
 
     <!-- PERFIL -->
     <section class="profile-hero">
@@ -106,7 +107,7 @@
           <h1 id="perfil-nombre"></h1>
           <p class="sub" id="perfil-tipo-y-zona"></p>
           <p class="perfil-precio" id="perfil-precio"></p>
-          <div class="profile-urgent" id="perfil-urgencias" style="display:none;">
+          <div class="profile-urgent oculto" id="perfil-urgencias">
             <i class="fas fa-clock" aria-hidden="true"></i> <span
               data-frase="directorio.urgencias">Disponible para reemplazos urgentes</span>
           </div>
@@ -119,7 +120,7 @@
           <!-- Qué se le comprobó. Sale de la misma vista que el directorio, así que
                dice lo mismo en las dos pantallas y no hay una segunda regla que
                mantener. -->
-          <div class="lista-comprobaciones" id="perfil-comprobaciones" style="display:none;"></div>
+          <div class="lista-comprobaciones oculto" id="perfil-comprobaciones"></div>
         </div>
       </div>
     </section>
@@ -131,7 +132,7 @@
           <div class="profile-section fade-in">
             <h3 data-frase="perfil.que_atiende">Qué atiende</h3>
             <div class="spec-list" id="perfil-etiquetas"></div>
-            <p id="perfil-sin-etiquetas" style="display:none;" data-frase="perfil.sin_etiquetas">
+            <p id="perfil-sin-etiquetas" class="oculto" data-frase="perfil.sin_etiquetas">
               Todavía no cargó qué patologías atiende ni qué tareas hace.
             </p>
           </div>
@@ -153,8 +154,8 @@
             <div class="profile-acciones">
               <a class="btn btn-primario" href="acceso.html"
                 data-frase="perfil.entrar_familia">Entrar como Familia</a>
-              <a class="btn btn-sobre-oscuro" href="solicitar-asistente.html" data-frase="nav.publicar_aviso"
-                style="border-color:var(--borde-card);color:var(--texto-secundario);">Publicar un Aviso</a>
+              <a class="btn btn-sobre-oscuro borde-color-tarjeta color-secundario" href="solicitar-asistente.html" data-frase="nav.publicar_aviso"
+               >Publicar un Aviso</a>
             </div>
           </div>
         </div>
@@ -245,7 +246,7 @@
 
       function mostrar(cual) {
         Object.keys(paneles).forEach((nombre) => {
-          paneles[nombre].style.display = (nombre === cual) ? '' : 'none';
+          paneles[nombre].classList.toggle('oculto', nombre !== cual);
         });
       }
 
@@ -298,7 +299,10 @@
             marca.textContent = Catalogo.etiquetaSiExiste('comprobacion', clave) || clave;
             lista.appendChild(marca);
           });
-          lista.style.display = '';
+          // Esconder es estado, no estilo: el elemento nace con la clase
+          // `oculto` y se muestra sacándosela. Vaciar el atributo `style` no
+          // alcanzaría —sin nada escrito ahí vuelve a mandar la clase—.
+          lista.classList.remove('oculto');
         } else {
           document.getElementById('perfil-comprobaciones').remove();
         }
@@ -331,7 +335,7 @@
         }
 
         if (fila.reemplazos_urgentes) {
-          document.getElementById('perfil-urgencias').style.display = '';
+          document.getElementById('perfil-urgencias').classList.remove('oculto');
         }
 
         // Las patologías y las tareas son las mismas etiquetas del directorio, y
@@ -344,7 +348,7 @@
 
         if (textos.length === 0) {
           contenedor.remove();
-          document.getElementById('perfil-sin-etiquetas').style.display = '';
+          document.getElementById('perfil-sin-etiquetas').classList.remove('oculto');
         } else {
           textos.forEach((texto) => {
             const etiqueta = document.createElement('span');
