@@ -2293,7 +2293,8 @@ pantallas es una decisión de diseño, y ésas se consultan.
 cada `commit` con cinco reglas —la clave existe, tiene los tres idiomas, ninguna sobra, ninguna
 pantalla ya convertida volvió a tener texto a mano, y las cinco frases de emergencia no están
 duplicadas— y ve también las claves que pone el código, no sólo las escritas en el HTML. Dice
-además cuánto falta: hoy, **4 de 45 archivos**.
+además cuánto falta: el día que se escribió esto, **4 de 45 archivos**. La cuenta de hoy está
+más abajo, en la sección de la segunda tanda.
 
 **El singular y el plural son dos frases, no una con un pedazo cambiado.** «Rendida 3 veces» no se
 arma pegando «Rendida», el número y «veces»: cada idioma arma su oración y elige su plural, y hay
@@ -2968,6 +2969,115 @@ no lo recibe ninguna tabla: hoy viaja adentro del correo, que es mejor que perde
 guardarlo. Y `formulario-integral.html` no se borró aunque el Desarrollador la dio por sentenciada:
 adentro tiene lo único que publica un aviso de verdad —el paso a paso, por `js/main.js:202`—, y ese
 paso a paso choca con exactamente la misma pared. Las dos cosas están en el pendiente 64.
+
+### Cuatro pantallas se convirtieron a la vez, y hacerlo a la vez mostró tres defectos del mecanismo
+
+El 26 de agosto de 2026, con los carteles falsos ya cerrados, se convirtieron al multiidioma
+`index.html`, `cursos.html`, `soporte-remoto.html` y `solicitar-asistente.html`: **205 frases
+nuevas**, que dejan el catálogo en 460 y el chequeo en «10 de 46 archivos ya convertidos». La
+quinta, `formulario-integral.html`, se dejó como está: está sentenciada a borrarse en el
+pendiente 64, y traducir a tres idiomas 119 frases de una pantalla que se va es trabajo tirado.
+Lo que falta bajó de 665 frases distintas a 479.
+
+**Se hicieron las cuatro a la vez a propósito, y eso fue lo que encontró los tres defectos.** Las
+cuatro traen el mismo formulario de consulta, así que lo que en una habría parecido un caso raro
+apareció cuatro veces y se vio que era del mecanismo y no de la pantalla.
+
+**Uno: el `value` de un redondel no es texto visible, y se estaba contando como tal.**
+`scripts/texto_visible.mjs` leía todos los `value` por igual. Pero el de un redondel, un
+casillero, un campo escondido o una opción de lista **no se lee en la pantalla**: es el dato que
+viaja al servidor, y `js/formulario-consulta.js` lo compara letra por letra —`novedades === 'si'`—.
+Traducirlo rompía el sí/no de novedades en los tres idiomas a la vez, en las cuatro pantallas.
+Ahora lo saca `sinValoresGuardados()` (`scripts/texto_visible.mjs:42`), que deja adentro el
+`value` de un botón porque ése sí se lee, y tiene una prueba de seis casos donde dos tienen que
+fallar: si la función se pasara de larga y tapara también el rótulo de un botón, la prueba se
+pone en rojo. **Y la misma regla estaba escrita dos veces**: `scripts/inventario_textos.mjs`
+tenía su propia copia, más floja —no miraba el `type`, así que contaba todo `<input>` con
+`value`—. Se borró y consume la compartida, que es lo que pide «ningún patrón repetido sin punto
+único de verdad».
+
+**Dos: lo que cuelga de un `<template>` no se traducía nunca.** `Catalogo._llenarOferta()`
+clonaba el molde, lo rellenaba con los datos del ítem y llamaba a `Identidad`, pero no a
+`Catalogo.traducir()`. Como lo que está adentro de un `<template>` no está en el documento, la
+traducción de arranque tampoco lo alcanza: las copias llegaban siempre con el castellano de
+respaldo. Eran las 21 frases de las tarjetas de curso de `cursos.html` y el cartel «Próximamente»
+de `index.html`. Se agregó la llamada (`js/catalogo.js:456`) y se comprobó en el navegador, que
+es donde esto se ve: `cursos.html?idioma=en` dice hoy «8 hours / Certificate / ENROL», e
+`index.html?idioma=pt-BR` dice «Em breve».
+
+**Tres: un campo con sus tres idiomas colgando se dibujaba «[object Object]».** `campo()`
+resolvía el idioma sólo para el nombre; `descripcion` y `etiqueta` salían por `String(valor)`.
+Hoy no se nota porque esos campos todavía son una cadena suelta en castellano, pero se rompía
+justo el día que dejaran de serlo, que es el trabajo siguiente. Pasa por el mismo criterio de
+idioma que el nombre.
+
+**Lo que falta para que esas cuatro pantallas estén de verdad traducidas es el contenido de los
+datos.** El marco cambia de idioma y las tarjetas no: `data/catalogo-oferta.json` —9 servicios, 6
+cursos y 1 evaluación— y los 142 ítems de los 24 vocabularios de `data/catalogo-vocabularios.json`
+están sólo en `es-AR`. El mecanismo ya los soporta, `Catalogo.textoDe()` los busca por idioma: los
+campos están vacíos, nada más. Medido en el navegador el mismo día: `cursos.html?idioma=en` tiene
+el encabezado, el pie y los rótulos en inglés y los seis cursos en castellano.
+
+Y una decisión que no toma la línea de comandos: **«Careonys Academy»** (`cursos.html:121`), que
+estaba escrito así desde antes y quedó igual en los tres idiomas. Es un nombre comercial, y la
+regla de la empresa deja los nombres de marca como estén; pero la tabla de equivalencias pide
+castellano existiendo la forma castellana. Anotado en el pendiente 9 para que lo decida el
+Desarrollador.
+
+
+### Y después, la mitad que no se ve desde el chequeo de frases: el contenido de los datos
+
+Una pantalla puede tener las 46 frases de su marco traducidas y seguir mostrándole al visitante
+seis tarjetas de curso en castellano. Eso es lo que pasaba el 26 de agosto de 2026 con
+`cursos.html?idioma=en`, y el chequeo de frases lo daba por bueno, porque lo que hay adentro de
+las tarjetas no lo escribe la pantalla: sale de `data/catalogo-oferta.json` y de
+`data/catalogo-vocabularios.json`. El mecanismo ya lo soportaba —`Catalogo.textoDe()`
+(`js/catalogo.js:285`) elige el idioma de cualquier texto que traiga sus tres idiomas colgando—;
+lo que faltaba era el texto.
+
+**Quedaron 218 textos en los tres idiomas**: los 24 títulos de vocabulario, sus 142 ítems, las 10
+bajadas, y los 43 de la oferta —9 servicios, 6 cursos y la evaluación entera, con sus preguntas y
+sus opciones—.
+
+**Comprobado en el navegador, no supuesto.** `cursos.html?idioma=en` dibuja «Introduction to
+caring for older adults», «Basic level» y su descripción en inglés; `directorio.html?idioma=pt-BR`
+abre sus cuatro desplegables en portugués: «Todas as zonas», «Assistente / Cuidador domiciliar»,
+«Todas as patologias», «Endereço comprovado».
+
+**Lo que junta no confía en lo que le dan.** Antes de escribir nada comprueba que el `es-AR` de
+cada traducción coincida **byte a byte** con el del archivo real —compara `Buffer` y no cadenas,
+para que una tilde escrita descompuesta no pase inadvertida—, que no falte ni sobre ninguna clave
+mirado en las dos direcciones, y que `en` y `pt-BR` estén y no estén vacíos. Y se probó contra
+cuatro copias rotas a propósito —falta una clave, sobra una clave, `es-AR` cambiado, `pt-BR`
+vacío— más una sana, porque una comprobación que no puede fallar no comprueba nada: ve las cuatro
+y deja pasar la sana.
+
+**Una sola quedó sin traducir, y a propósito.** «Guardia de 12 horas», del vocabulario
+`modalidad_contratacion`. Guardia es palabra del glosario de los dos productos y no está traducida
+en ningún archivo del proyecto; la palabra obvia en inglés, *shift*, ya está tomada por «turno», y
+el glosario dice que una Guardia **no** es un turno, así que reusarla pisaría una distinción que
+el glosario define a propósito. Se dejó sin `en` ni `pt-BR`: así `Catalogo.textoDe()` cae al
+castellano, que es lo que ya se veía, en vez de mostrar un cartel raro. La pregunta quedó anotada.
+
+**Y traducir los datos mostró algo que no se veía desde ninguna pantalla: el inglés y el portugués
+no estaban parejos entre catálogos.** Cada archivo de `data/` se escribió aparte, así que la misma
+palabra del negocio salió distinta en cada uno. `Asistente` era «Caregiver» en las 47 apariciones
+del catálogo de frases, y «assistant» —minúscula, y otra palabra— en tres sueltas de
+`catalogo-autorizaciones.json` y `catalogo-disponibilidad.json`; en portugués, «assistente» en
+minúscula donde el resto escribe «Assistente». La ortografía inglesa mezclaba las dos escuelas:
+«authorised», «recognised» y «licence» conviviendo con «specialized» y «Personalized», y
+«wellbeing» con «well-being». Y la Matrícula era «Matrícula» en `catalogo-fichas.json`, que en
+portugués de Brasil es la inscripción a un curso y no la habilitación profesional, contra «registro
+profissional» en los otros dos. Se emparejaron los trece, eligiendo en cada caso la forma que ya
+dominaba. Sale de eso `servicios.asistente_virtual`, que dice «Virtual assistant» a propósito:
+ahí Asistente no nombra a la persona del glosario sino a un programa, que es justo el caso que el
+glosario advierte cuando una palabra aprobada aparece nombrando otra cosa.
+
+**Leer los 142 ítems uno por uno —que es la primera vez que alguien los leyó todos seguidos—
+destapó además tres cosas del castellano**, que no se arreglaron acá porque cada una es una
+decisión: el organismo fiscal que cambió de nombre y una lista impositiva que sólo vale en un país
+(pendiente 84), el campo `etiqueta` de los cursos que repite lo que ya dice `nivel` (85), y tres
+textos escritos distinto de sus vecinos sin motivo (86).
 
 
 ## 2. Falta construir

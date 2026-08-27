@@ -73,6 +73,18 @@ const IGUALES_EN_TODOS = new Set([
   'nav.instagram',
   'nav.linkedin',
   'nav.youtube',
+  /* Los tres medios que citan al producto en la portada. El nombre de un
+     diario no se traduce; el texto de la cita, sí, y está aparte. */
+  'inicio.prensa_la_nacion',
+  'inicio.prensa_el_cronista',
+  'inicio.prensa_pymes',
+
+  /* Nombre comercial de lo que se vende. La regla de la empresa deja los
+     nombres de marca como estén, y éste ya estaba escrito en `cursos.html`
+     antes de convertirla al multiidioma; no se inventó acá. Que sea en
+     inglés y no esté aprobado es una pregunta abierta, anotada en
+     `docs/PENDIENTES.md`. */
+  'cursos.academia',
 ]);
 
 // ── El catálogo ────────────────────────────────────────────────────────────

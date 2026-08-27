@@ -16,7 +16,7 @@
       "nota": "El glosario la define con número, vigencia y archivo, y esos tres son los que faltaban. Vence: una Matrícula vencida inhabilita para atender, en cualquier modalidad.",
       "es-AR": { "titulo": "Matrícula", "titulo_nuevo": "Agregar matrícula", "titulo_editar": "Editar matrícula" },
       "en": { "titulo": "Professional licence", "titulo_nuevo": "Add licence", "titulo_editar": "Edit licence" },
-      "pt-BR": { "titulo": "Matrícula", "titulo_nuevo": "Adicionar matrícula", "titulo_editar": "Editar matrícula" },
+      "pt-BR": { "titulo": "Registro profissional", "titulo_nuevo": "Adicionar registro profissional", "titulo_editar": "Editar registro profissional" },
       "campos": [
         {
           "clave": "organismo",

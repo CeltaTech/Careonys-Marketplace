@@ -377,6 +377,14 @@
       const clave = arroba === -1 ? nombre : nombre.slice(0, arroba);
       const valor = clave === 'nombre' ? this.texto(item) : item[clave];
       if (valor === undefined || valor === null || valor === false) return '';
+      // Un campo que trae sus tres idiomas colgando —`{ "es-AR": …, "en": … }`—
+      // pasa por el mismo criterio que el nombre. Sin esto, `descripcion` y
+      // `etiqueta` se dibujaban con `String(objeto)`, o sea «[object Object]»,
+      // el día que dejaran de ser una cadena suelta. Hoy todavía lo son.
+      if (typeof valor === 'object') {
+        const traducido = this.textoDe(valor);
+        return arroba === -1 ? traducido : this._etiquetaYaCargada(nombre.slice(arroba + 1), traducido);
+      }
       if (arroba === -1) return String(valor);
       return this._etiquetaYaCargada(nombre.slice(arroba + 1), String(valor));
     },
@@ -454,6 +462,19 @@
         contenedor.appendChild(copia);
       });
       if (window.Identidad) window.Identidad.aplicarEnDocumento(contenedor);
+      /* Lo que cuelga de un `<template>` no está en el documento, así que la
+         traducción de arranque no lo alcanza: las copias recién puestas
+         llegan acá con el castellano que trae el molde. Se traducen una vez,
+         cuando ya están todas puestas. No se espera el resultado a propósito
+         —`_llenarOferta` no es asíncrona—, y no hace falta: para cuando se
+         llega hasta acá, `traducir()` ya corrió sobre la pantalla entera y el
+         catálogo de frases está en memoria.
+         Un elemento del molde lleva `data-frase` (un rótulo fijo) o
+         `data-campo` (un dato del ítem), nunca los dos: si alguna vez
+         llevara ambos, ganaría el rótulo, que no es lo que se querría.
+         Apareció el 26 de agosto de 2026, al convertir `cursos.html`: sus
+         moldes tienen 21 `data-frase` que se veían siempre en castellano. */
+      this.traducir(contenedor);
     },
 
     // Un aviso puesto como texto adentro de un <select> no se ve: el navegador

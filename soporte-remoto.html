@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Acompañamiento Online — {{organizacion}}</title>
-  <meta name="description"
-    content="Mejore su calidad de vida y la de sus familiares a través del acompañamiento y orientación especializada de {{producto}}." />
+  <title data-frase="acompanamiento.titulo">Acompañamiento en línea</title>
+  <meta name="description" data-frase-content="acompanamiento.descripcion"
+    content="Mejore su calidad de vida y la de sus familiares con el acompañamiento y la orientación especializada de {{producto}}." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
@@ -21,50 +21,54 @@
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="navbar-logo">
-        <img src="assets/images/logotipo.png" alt="{{organizacion}}" />
+        <img class="tenant-logo" src="assets/images/logotipo.png"
+          data-frase-alt="nav.inicio" alt="Inicio" />
       </a>
       <div class="navbar-links">
-        <a href="solicitar-asistente.html">Solicitar Asistente</a>
-        <a href="registrar-asistente.html">Registrarme como Asistente</a>
-        <a href="directorio.html">Red de Asistentes</a>
-        <a href="formulario-integral.html">Publicar un Aviso</a>
+        <a href="solicitar-asistente.html" data-frase="nav.solicitar_asistente">Solicitar Asistente</a>
+        <a href="registrar-asistente.html" data-frase="nav.registrarme_asistente">Registrarme como Asistente</a>
+        <a href="directorio.html" data-frase="nav.red_asistentes">Red de Asistentes</a>
+        <a href="formulario-integral.html" data-frase="nav.publicar_aviso">Publicar un Aviso</a>
       </div>
       <div class="navbar-social">
-        <a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i class="fab fa-youtube"></i></a>
-        <a href="mailto:{{contacto}}"><i class="fas fa-envelope"></i></a>
+        <a href="#" data-frase-aria-label="nav.facebook" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" data-frase-aria-label="nav.instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" data-frase-aria-label="nav.linkedin" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" data-frase-aria-label="nav.youtube" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="mailto:{{contacto}}" data-frase-aria-label="nav.correo" aria-label="Correo electrónico"><i
+            class="fas fa-envelope"></i></a>
       </div>
-      <button class="hamburger"><span></span><span></span><span></span></button>
+      <button class="hamburger" data-frase-aria-label="nav.menu" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
     </div>
     <div class="mobile-menu">
-      <a href="solicitar-asistente.html">Solicitar Asistente</a>
-      <a href="registrar-asistente.html">Registrarme como Asistente</a>
-      <a href="directorio.html">Red de Asistentes</a>
-      <a href="formulario-integral.html">Publicar un Aviso</a>
+      <a href="solicitar-asistente.html" data-frase="nav.solicitar_asistente">Solicitar Asistente</a>
+      <a href="registrar-asistente.html" data-frase="nav.registrarme_asistente">Registrarme como Asistente</a>
+      <a href="directorio.html" data-frase="nav.red_asistentes">Red de Asistentes</a>
+      <a href="formulario-integral.html" data-frase="nav.publicar_aviso">Publicar un Aviso</a>
     </div>
   </nav>
 
   <section class="inner-hero">
-    <h1>Acompañamiento Online</h1>
-    <p>Mejore su calidad de vida y la de sus familiares a través del acompañamiento y orientación especializada. Nuestro
-      equipo de profesionales brinda soporte emocional y práctico.</p>
-    <a href="#contacto" class="btn btn-atencion">Quiero una consulta gratuita</a>
+    <h1 data-frase="acompanamiento.titulo">Acompañamiento en línea</h1>
+    <p data-frase="acompanamiento.bajada">Mejore su calidad de vida y la de sus familiares a través del acompañamiento y la orientación especializada. Nuestro equipo de profesionales brinda apoyo emocional y práctico.</p>
+    <a href="#contacto" class="btn btn-atencion"
+      data-frase="acompanamiento.pedir_consulta">Quiero una consulta gratuita</a>
   </section>
 
   <!-- QUÉ ES -->
   <section class="feature-section">
     <div class="feature-layout">
       <div class="feature-text fade-in">
-        <p class="eyebrow">¿Qué es el acompañamiento online?</p>
-        <h2>Orientación y soporte especializado para familias cuidadoras.</h2>
-        <p>Entendemos que cuidar a un familiar mayor puede ser emocionalmente agotador y generar muchas dudas. Nuestro
-          servicio de acompañamiento online conecta con profesionales en gerontología, psicología y trabajo social
-          que brindan orientación personalizada.</p>
-        <p class="mt-12">Se puede acceder desde el celular o la computadora, en el horario que mejor
-          convenga, sin necesidad de trasladarse.</p>
+        <p class="eyebrow" data-frase="acompanamiento.que_es_rotulo">¿Qué es el acompañamiento en línea?</p>
+        <h2 data-frase="acompanamiento.que_es_titulo">Orientación y acompañamiento especializado para las familias que cuidan.</h2>
+        <p data-frase="acompanamiento.que_es_texto">Cuidar a un familiar mayor puede ser emocionalmente agotador y generar muchas dudas. El servicio de acompañamiento en línea conecta con profesionales en gerontología, psicología y trabajo social que brindan orientación personalizada.</p>
+        <p class="mt-12" data-frase="acompanamiento.desde_donde">Se puede acceder desde el celular o la computadora, en el horario que mejor convenga, sin necesidad de trasladarse.</p>
       </div>
       <div class="feature-image fade-in">
-        <img src="assets/images/acompanamiento_online.png" alt="Acompañamiento online"
+        <img src="assets/images/acompanamiento_online.png"
+          data-frase-alt="acompanamiento.titulo" alt="Acompañamiento en línea"
           style="height:400px;object-fit:cover;border-radius:var(--redondeo-grande);" />
       </div>
     </div>
@@ -73,85 +77,96 @@
   <!-- BENEFICIOS -->
   <section class="help-section fondo-superficie">
     <div class="container">
-      <h2 class="fade-in">¿Qué incluye el servicio?</h2>
+      <h2 class="fade-in" data-frase="acompanamiento.que_incluye">¿Qué incluye el servicio?</h2>
       <div class="help-grid">
         <div class="help-card fade-in">
-          <div class="icon">💬</div>
-          <h4>Consultas por chat</h4>
-          <p>Respondemos las dudas por mensaje en tiempo real con profesionales.</p>
+          <div class="icon" aria-hidden="true">💬</div>
+          <h4 data-frase="acompanamiento.mensajes_titulo">Consultas por mensaje</h4>
+          <p data-frase="acompanamiento.mensajes_texto">Respondemos las dudas por mensaje y en tiempo real, con profesionales del equipo.</p>
         </div>
         <div class="help-card fade-in">
-          <div class="icon">📹</div>
-          <h4>Videollamadas</h4>
-          <p>Sesiones de orientación personalizada por video conferencia.</p>
+          <div class="icon" aria-hidden="true">📹</div>
+          <h4 data-frase="acompanamiento.videollamadas_titulo">Videollamadas</h4>
+          <p data-frase="acompanamiento.videollamadas_texto">Sesiones de orientación personalizada por videoconferencia.</p>
         </div>
         <div class="help-card fade-in">
-          <div class="icon">🧠</div>
-          <h4>Apoyo psicológico</h4>
-          <p>Soporte emocional para cuidadores y familiares que atraviesan el proceso.</p>
+          <div class="icon" aria-hidden="true">🧠</div>
+          <h4 data-frase="acompanamiento.apoyo_psicologico_titulo">Apoyo psicológico</h4>
+          <p data-frase="acompanamiento.apoyo_psicologico_texto">Apoyo emocional para quienes cuidan y para el resto de la familia.</p>
         </div>
         <div class="help-card fade-in">
-          <div class="icon">📋</div>
-          <h4>Plan de cuidado personalizado</h4>
-          <p>Diseñamos un plan de cuidado adaptado a las necesidades específicas.</p>
+          <div class="icon" aria-hidden="true">📋</div>
+          <h4 data-frase="acompanamiento.plan_titulo">Plan de cuidado personalizado</h4>
+          <p data-frase="acompanamiento.plan_texto">Se diseña un plan de cuidado adaptado a las necesidades de cada caso.</p>
         </div>
         <div class="help-card fade-in">
-          <div class="icon">🩺</div>
-          <h4>Orientación médica</h4>
-          <p>Coordinación con médicos geriatras para el seguimiento del paciente.</p>
+          <div class="icon" aria-hidden="true">🩺</div>
+          <h4 data-frase="acompanamiento.orientacion_medica_titulo">Orientación médica</h4>
+          <p data-frase="acompanamiento.orientacion_medica_texto">Coordinación con médicos geriatras para el seguimiento del paciente.</p>
         </div>
         <div class="help-card fade-in">
-          <div class="icon">📚</div>
-          <h4>Material educativo</h4>
-          <p>Acceso a guías, videos y recursos para entender el momento vital.</p>
+          <div class="icon" aria-hidden="true">📚</div>
+          <h4 data-frase="acompanamiento.material_titulo">Material educativo</h4>
+          <p data-frase="acompanamiento.material_texto">Acceso a guías, videos y recursos para entender el momento vital.</p>
         </div>
         <div class="help-card fade-in">
-          <div class="icon">👥</div>
-          <h4>Grupos de apoyo</h4>
-          <p>Conéctese con otras familias en situaciones similares.</p>
+          <div class="icon" aria-hidden="true">👥</div>
+          <h4 data-frase="acompanamiento.grupos_titulo">Grupos de apoyo</h4>
+          <p data-frase="acompanamiento.grupos_texto">Conéctese con otras familias que están en una situación parecida.</p>
         </div>
         <div class="help-card fade-in">
-          <div class="icon">🚨</div>
-          <h4>Urgencias y crisis</h4>
-          <p>Línea de soporte para situaciones urgentes y crisis familiares.</p>
+          <div class="icon" aria-hidden="true">🚨</div>
+          <h4 data-frase="acompanamiento.urgencias_titulo">Urgencias y crisis</h4>
+          <p data-frase="acompanamiento.urgencias_texto">Línea de atención para situaciones urgentes y crisis familiares.</p>
         </div>
       </div>
     </div>
   </section>
 
   <div class="cta-banner">
-    <a href="#contacto" class="btn btn-atencion">CONSULTAR AHORA</a>
+    <!-- El botón se lee en mayúsculas por el estilo de `.cta-banner .btn`, no por
+         cómo esté escrita la frase: en el catálogo va en su forma normal. -->
+    <a href="#contacto" class="btn btn-atencion"
+      data-frase="acompanamiento.consultar_ahora">Consultar ahora</a>
   </div>
 
   <!-- CONTACT -->
   <section class="contact-section" id="contacto">
     <div class="contact-layout">
       <div class="contact-image fade-in">
-        <img src="assets/images/mujer_consultando.png" alt="Contacto" />
+        <img src="assets/images/mujer_consultando.png" data-frase-alt="pie.contacto" alt="Contacto" />
       </div>
       <div class="contact-form fade-in">
-        <h2>Solicite una consulta gratuita</h2>
-        <p>Complete sus datos y un profesional de nuestro equipo se comunicará con usted en las próximas horas.</p>
+        <h2 data-frase="acompanamiento.consulta_titulo">Solicite una consulta gratuita</h2>
+        <p data-frase="acompanamiento.consulta_bajada">Complete sus datos y un profesional del equipo se comunicará con usted en las próximas horas.</p>
         <form id="contact-form" data-consulta data-guion-propio novalidate>
-          <div class="form-group"><label for="nombre">Nombre y apellido</label><input type="text" id="nombre"
+          <div class="form-group"><label for="nombre"
+              data-frase="consulta.dato_nombre">Nombre y apellido</label><input type="text" id="nombre"
               required /></div>
-          <div class="form-group"><label for="email">Correo electrónico</label><input type="email" id="email"
+          <div class="form-group"><label for="email"
+              data-frase="consulta.dato_correo">Correo electrónico</label><input type="email" id="email"
               required /></div>
-          <div class="form-group"><label for="celular">Número de celular</label><input type="tel" id="celular"
+          <div class="form-group"><label for="celular"
+              data-frase="consulta.dato_celular">Número de celular</label><input type="tel" id="celular"
               required /></div>
           <div class="form-group">
-            <label for="consulta">¿Cuál es su situación?</label>
-            <select id="consulta" required data-catalogo="motivo_consulta" data-catalogo-vacio="— Por favor, elija una opción —"></select>
+            <label for="consulta" data-frase="acompanamiento.campo_situacion">¿Cuál es su situación?</label>
+            <select id="consulta" required data-catalogo="motivo_consulta"
+              data-frase-data-catalogo-vacio="acompanamiento.elija_opcion"
+              data-catalogo-vacio="— Por favor, elija una opción —"></select>
           </div>
           <div class="form-group">
-            <label>¿Se suscribe al newsletter?</label>
+            <label data-frase="acompanamiento.campo_novedades">¿Desea recibir novedades?</label>
             <div class="radio-group">
-              <label><input type="radio" name="newsletter" value="si" checked /> Sí</label>
-              <label><input type="radio" name="newsletter" value="no" /> No</label>
+              <label><input type="radio" name="newsletter" value="si" checked /> <span
+                  data-frase="comun.si">Sí</span></label>
+              <label><input type="radio" name="newsletter" value="no" /> <span
+                  data-frase="comun.no">No</span></label>
             </div>
           </div>
-          <button type="submit" class="btn btn-secundario">ENVIAR</button>
-          <div id="form-success" class="form-success">✓ ¡Gracias! Un profesional se comunicará a la brevedad.</div>
+          <button type="submit" class="btn btn-secundario" data-frase="acompanamiento.enviar">Enviar</button>
+          <div id="form-success" class="form-success"><span aria-hidden="true">✓</span> <span
+              data-frase="acompanamiento.consulta_recibida">¡Gracias! Un profesional se comunicará a la brevedad.</span></div>
         </form>
       </div>
     </div>
@@ -160,30 +175,35 @@
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-brand">
-        <div class="logo"><img src="assets/images/logotipo.png" alt="{{organizacion}}" /><span>{{organizacion}} — Servicios de
-            Cuidado</span></div>
-        <p>Conectamos familias con Asistentes calificados.</p>
+        <div class="logo">
+          <img class="tenant-logo" src="assets/images/logotipo.png" alt="" />
+          <span class="tenant-name"></span>
+        </div>
+        <p data-frase="pie.lema">Conectamos familias con Asistentes calificados.</p>
         <div class="footer-social">
           <a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-instagram"></i></a>
           <a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i class="fab fa-youtube"></i></a>
         </div>
       </div>
       <div class="footer-col">
-        <h4>Para Familias</h4>
-        <a href="solicitar-asistente.html">Solicitar Asistente</a>
-        <a href="directorio.html">Directorio</a>
-        <a href="soporte-remoto.html">Acompañamiento</a>
-        <a href="cursos.html">Cursos</a>
+        <h4 data-frase="pie.para_familias">Para Familias</h4>
+        <a href="solicitar-asistente.html" data-frase="nav.solicitar_asistente">Solicitar Asistente</a>
+        <a href="directorio.html" data-frase="pie.directorio">Directorio</a>
+        <a href="soporte-remoto.html" data-frase="pie.acompanamiento">Acompañamiento</a>
+        <a href="cursos.html" data-frase="pie.cursos">Cursos</a>
       </div>
       <div class="footer-col">
-        <h4>Para Asistentes</h4><a href="registrar-asistente.html">Registrarme como Asistente</a>
+        <h4 data-frase="pie.para_asistentes">Para Asistentes</h4><a href="registrar-asistente.html"
+          data-frase="nav.registrarme_asistente">Registrarme como Asistente</a>
       </div>
       <div class="footer-col">
-        <h4>Empresa</h4><a href="#">Sobre {{producto}}</a><a href="#">Contacto</a>
+        <h4 data-frase="pie.empresa">Empresa</h4><a href="#" data-frase="pie.sobre_producto">Sobre {{producto}}</a><a
+          href="#" data-frase="pie.contacto">Contacto</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 {{organizacion}} — Servicios de Cuidado. Todos los derechos reservados.</p>
+      <p>© 2025 <span class="tenant-name"></span>
+        <span data-frase="pie.derechos">Todos los derechos reservados.</span></p>
     </div>
   </footer>
   <script src="js/identidad.js"></script>

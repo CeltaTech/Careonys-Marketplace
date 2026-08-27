@@ -1,9 +1,13 @@
 # Plan: los tres idiomas
 
 > **El mecanismo está construido y funcionando; el trabajo de mudar las frases recién empieza.**
-> Al 26 de agosto de 2026: **4 de 45 archivos convertidos** y **99 frases** en los tres idiomas.
-> Lo que falta son las otras 41 pantallas, y una sola decisión del Desarrollador —quién traduce—,
-> que es la número 2 de la sección 5.
+> Al 26 de agosto de 2026: **10 de 46 archivos convertidos** y **460 frases** en los tres idiomas.
+> Lo que falta son las otras 36 pantallas —seis de ellas trabadas por una decisión del
+> Desarrollador, contadas en el pendiente 9— y **el contenido de los datos**, que es la mitad que
+> este plan no miraba: `data/catalogo-oferta.json` y `data/catalogo-vocabularios.json` están sólo
+> en castellano, así que una pantalla traducida todavía muestra sus tarjetas y sus listas de
+> opciones en un solo idioma. Queda además la única decisión abierta del Desarrollador —quién
+> traduce—, que es la número 2 de la sección 5.
 >
 > Corresponde al pendiente 9. Cuando esté todo convertido, este archivo se borra.
 

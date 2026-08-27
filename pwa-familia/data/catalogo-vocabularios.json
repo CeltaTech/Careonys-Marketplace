@@ -1,7 +1,11 @@
 {
   "vocabularios": {
     "genero": {
-      "titulo": "Género de la persona",
+      "titulo": {
+        "es-AR": "Género de la persona",
+        "en": "Gender of the person",
+        "pt-BR": "Gênero da pessoa"
+      },
       "cerrada": true,
       "usado_en": [
         "directorio.html:277",
@@ -13,25 +17,37 @@
       "items": [
         {
           "clave": "femenino",
-          "es-AR": "Femenino"
+          "es-AR": "Femenino",
+          "en": "Female",
+          "pt-BR": "Feminino"
         },
         {
           "clave": "masculino",
-          "es-AR": "Masculino"
+          "es-AR": "Masculino",
+          "en": "Male",
+          "pt-BR": "Masculino"
         },
         {
           "clave": "otro",
-          "es-AR": "Otro"
+          "es-AR": "Otro",
+          "en": "Other",
+          "pt-BR": "Outro"
         },
         {
           "clave": "sin_declarar",
-          "es-AR": "Prefiero no decirlo"
+          "es-AR": "Prefiero no decirlo",
+          "en": "Prefer not to say",
+          "pt-BR": "Prefiro não dizer"
         }
       ],
       "nota": "Tres pantallas tenían tres listas distintas: una sin «Prefiero no decirlo», otra que lo fusionaba con «Otro». Se unifica en cuatro."
     },
     "genero_preferido": {
-      "titulo": "Género de Asistente que la Familia prefiere",
+      "titulo": {
+        "es-AR": "Género de Asistente que la Familia prefiere",
+        "en": "Gender of Caregiver the Family prefers",
+        "pt-BR": "Gênero de Assistente que a Família prefere"
+      },
       "cerrada": true,
       "usado_en": [
         "formulario-integral.html:117"
@@ -39,20 +55,30 @@
       "items": [
         {
           "clave": "indistinto",
-          "es-AR": "Indistinto"
+          "es-AR": "Indistinto",
+          "en": "No preference",
+          "pt-BR": "Indiferente"
         },
         {
           "clave": "femenino",
-          "es-AR": "Femenino únicamente"
+          "es-AR": "Femenino únicamente",
+          "en": "Female only",
+          "pt-BR": "Somente feminino"
         },
         {
           "clave": "masculino",
-          "es-AR": "Masculino únicamente"
+          "es-AR": "Masculino únicamente",
+          "en": "Male only",
+          "pt-BR": "Somente masculino"
         }
       ]
     },
     "tipo_asistente": {
-      "titulo": "Tipo de Asistente",
+      "titulo": {
+        "es-AR": "Tipo de Asistente",
+        "en": "Type of Caregiver",
+        "pt-BR": "Tipo de Assistente"
+      },
       "cerrada": true,
       "usado_en": [
         "data/catalogo-fichas.json:107",
@@ -73,62 +99,90 @@
           "es-AR": "Asistente / Cuidador domiciliario",
           "icono": "fa-user-nurse",
           "bajada": {
-            "es-AR": "Asistencia integral en el hogar"
+            "es-AR": "Asistencia integral en el hogar",
+            "en": "Comprehensive assistance at home",
+            "pt-BR": "Assistência integral no domicílio"
           },
-          "requiere_matricula": false
+          "requiere_matricula": false,
+          "en": "Caregiver / Home carer",
+          "pt-BR": "Assistente / Cuidador domiciliar"
         },
         {
           "clave": "enfermero_universitario",
           "es-AR": "Enfermero universitario",
           "icono": "fa-stethoscope",
           "bajada": {
-            "es-AR": "Cuidados clínicos y curaciones"
+            "es-AR": "Cuidados clínicos y curaciones",
+            "en": "Clinical care and wound dressing",
+            "pt-BR": "Cuidados clínicos e curativos"
           },
-          "requiere_matricula": true
+          "requiere_matricula": true,
+          "en": "University-trained nurse",
+          "pt-BR": "Enfermeiro com formação universitária"
         },
         {
           "clave": "auxiliar_enfermeria",
           "es-AR": "Auxiliar de enfermería",
-          "requiere_matricula": true
+          "requiere_matricula": true,
+          "en": "Nursing auxiliary",
+          "pt-BR": "Auxiliar de enfermagem"
         },
         {
           "clave": "acompanante_terapeutico",
           "es-AR": "Acompañante terapéutico",
           "icono": "fa-hands-helping",
           "bajada": {
-            "es-AR": "Soporte emocional y conductual"
+            "es-AR": "Soporte emocional y conductual",
+            "en": "Emotional and behavioural support",
+            "pt-BR": "Apoio emocional e comportamental"
           },
-          "requiere_matricula": true
+          "requiere_matricula": true,
+          "en": "Therapeutic companion",
+          "pt-BR": "Acompanhante terapêutico"
         },
         {
           "clave": "gerontologo",
           "es-AR": "Especialista en gerontología",
           "icono": "fa-ribbon",
           "bajada": {
-            "es-AR": "Atención especializada en adultos mayores"
+            "es-AR": "Atención especializada en adultos mayores",
+            "en": "Specialised care for older adults",
+            "pt-BR": "Atendimento especializado a pessoas idosas"
           },
-          "requiere_matricula": true
+          "requiere_matricula": true,
+          "en": "Gerontology specialist",
+          "pt-BR": "Especialista em gerontologia"
         },
         {
           "clave": "voluntario",
           "es-AR": "Voluntario / Acompañante",
-          "requiere_matricula": false
+          "requiere_matricula": false,
+          "en": "Volunteer / Companion",
+          "pt-BR": "Voluntário / Acompanhante"
         },
         {
           "clave": "promotor_salud",
           "es-AR": "Promotor de salud",
-          "requiere_matricula": true
+          "requiere_matricula": true,
+          "en": "Health promoter",
+          "pt-BR": "Promotor de saúde"
         },
         {
           "clave": "otro",
           "es-AR": "Otro",
-          "requiere_matricula": false
+          "requiere_matricula": false,
+          "en": "Other",
+          "pt-BR": "Outro"
         }
       ],
       "nota": "Cuatro pantallas, cuatro listas distintas: dos incluían «Voluntario», dos no; dos incluían «Otro», dos no; «Gerontólogo» aparecía con tres nombres. Se unifica en siete. Se agrega `requiere_matricula` porque el glosario ya lo exige —un Tipo de Asistente define sus Tareas y si requiere Matrícula— y la lista no lo guardaba: la regla estaba escrita y el dato no existía. Se agrega «Promotor de salud», que faltaba. Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas. El 24 de agosto de 2026 se le agregaron dos campos optativos, `icono` y `bajada`, que salieron de las tarjetas escritas a mano en `formulario-integral.html`: la pantalla dibujaba su propia lista con su propio texto, y ahora la pide. Los ítems sin esos dos campos se dibujan igual, con su etiqueta y un ícono neutro; ponerles una bajada inventada sería volver a escribir texto de producto donde no va."
     },
     "condicion_fiscal": {
-      "titulo": "Condición frente a AFIP",
+      "titulo": {
+        "es-AR": "Condición frente a AFIP",
+        "en": "Tax status with AFIP",
+        "pt-BR": "Situação fiscal perante a AFIP"
+      },
       "cerrada": true,
       "usado_en": [
         "registrar-asistente.html:308"
@@ -136,24 +190,36 @@
       "items": [
         {
           "clave": "monotributo_social",
-          "es-AR": "Monotributo social"
+          "es-AR": "Monotributo social",
+          "en": "Monotributo social",
+          "pt-BR": "Monotributo social"
         },
         {
           "clave": "monotributo_general",
-          "es-AR": "Monotributo general"
+          "es-AR": "Monotributo general",
+          "en": "Monotributo general",
+          "pt-BR": "Monotributo general"
         },
         {
           "clave": "responsable_inscripto",
-          "es-AR": "Responsable inscripto"
+          "es-AR": "Responsable inscripto",
+          "en": "Responsable inscripto",
+          "pt-BR": "Responsable inscripto"
         },
         {
           "clave": "no_inscripto",
-          "es-AR": "No inscripto / En trámite"
+          "es-AR": "No inscripto / En trámite",
+          "en": "Not registered / Application in progress",
+          "pt-BR": "Não inscrito / Em andamento"
         }
       ]
     },
     "nivel_educativo": {
-      "titulo": "Nivel educativo alcanzado",
+      "titulo": {
+        "es-AR": "Nivel educativo alcanzado",
+        "en": "Highest level of education reached",
+        "pt-BR": "Nível de escolaridade alcançado"
+      },
       "cerrada": true,
       "usado_en": [
         "pwa-asistente/index.html:466",
@@ -162,25 +228,37 @@
       "items": [
         {
           "clave": "secundario",
-          "es-AR": "Secundario completo"
+          "es-AR": "Secundario completo",
+          "en": "Secondary school completed",
+          "pt-BR": "Ensino médio completo"
         },
         {
           "clave": "terciario",
-          "es-AR": "Terciario o tecnólogo universitario"
+          "es-AR": "Terciario o tecnólogo universitario",
+          "en": "Tertiary education or university technical degree",
+          "pt-BR": "Curso técnico ou tecnólogo"
         },
         {
           "clave": "universitario_en_curso",
-          "es-AR": "Universitario en curso"
+          "es-AR": "Universitario en curso",
+          "en": "University studies in progress",
+          "pt-BR": "Ensino superior em andamento"
         },
         {
           "clave": "universitario_graduado",
-          "es-AR": "Universitario graduado"
+          "es-AR": "Universitario graduado",
+          "en": "University graduate",
+          "pt-BR": "Ensino superior completo"
         }
       ],
       "nota": "Se conserva como nivel alcanzado, pero no alcanza: un título que respalda una Matrícula necesita institución, título, año y archivo, y eso es una ficha repetible, no una opción de lista. Ver docs/CATALOGO.md."
     },
     "patologia": {
-      "titulo": "Patologías con las que el Asistente trabaja",
+      "titulo": {
+        "es-AR": "Patologías con las que el Asistente trabaja",
+        "en": "Conditions the Caregiver works with",
+        "pt-BR": "Patologias com as quais o Assistente trabalha"
+      },
       "cerrada": false,
       "usado_en": [
         "directorio.html:319",
@@ -193,85 +271,127 @@
       "items": [
         {
           "clave": "alzheimer",
-          "es-AR": "Alzheimer"
+          "es-AR": "Alzheimer",
+          "en": "Alzheimer's",
+          "pt-BR": "Alzheimer"
         },
         {
           "clave": "deterioro_cognitivo",
-          "es-AR": "Deterioro cognitivo"
+          "es-AR": "Deterioro cognitivo",
+          "en": "Cognitive impairment",
+          "pt-BR": "Declínio cognitivo"
         },
         {
           "clave": "parkinson",
-          "es-AR": "Parkinson"
+          "es-AR": "Parkinson",
+          "en": "Parkinson's",
+          "pt-BR": "Parkinson"
         },
         {
           "clave": "acv",
-          "es-AR": "ACV"
+          "es-AR": "ACV",
+          "en": "Stroke",
+          "pt-BR": "AVC"
         },
         {
           "clave": "epilepsia",
-          "es-AR": "Epilepsia o convulsiones"
+          "es-AR": "Epilepsia o convulsiones",
+          "en": "Epilepsy or seizures",
+          "pt-BR": "Epilepsia ou convulsões"
         },
         {
           "clave": "psiquiatricas",
-          "es-AR": "Patologías psiquiátricas"
+          "es-AR": "Patologías psiquiátricas",
+          "en": "Psychiatric conditions",
+          "pt-BR": "Patologias psiquiátricas"
         },
         {
           "clave": "diabetes",
-          "es-AR": "Diabetes"
+          "es-AR": "Diabetes",
+          "en": "Diabetes",
+          "pt-BR": "Diabetes"
         },
         {
           "clave": "hipertension",
-          "es-AR": "Hipertensión"
+          "es-AR": "Hipertensión",
+          "en": "Hypertension",
+          "pt-BR": "Hipertensão"
         },
         {
           "clave": "anticoagulados",
-          "es-AR": "Pacientes anticoagulados"
+          "es-AR": "Pacientes anticoagulados",
+          "en": "Patients on anticoagulants",
+          "pt-BR": "Pacientes anticoagulados"
         },
         {
           "clave": "arritmias",
-          "es-AR": "Arritmias"
+          "es-AR": "Arritmias",
+          "en": "Arrhythmias",
+          "pt-BR": "Arritmias"
         },
         {
           "clave": "coronarias",
-          "es-AR": "Enfermedades coronarias"
+          "es-AR": "Enfermedades coronarias",
+          "en": "Coronary heart disease",
+          "pt-BR": "Doenças coronarianas"
         },
         {
           "clave": "epoc",
-          "es-AR": "EPOC"
+          "es-AR": "EPOC",
+          "en": "COPD",
+          "pt-BR": "DPOC"
         },
         {
           "clave": "sincope",
-          "es-AR": "Síncope"
+          "es-AR": "Síncope",
+          "en": "Syncope",
+          "pt-BR": "Síncope"
         },
         {
           "clave": "obesidad",
-          "es-AR": "Obesidad"
+          "es-AR": "Obesidad",
+          "en": "Obesity",
+          "pt-BR": "Obesidade"
         },
         {
           "clave": "ceguera",
-          "es-AR": "Ceguera"
+          "es-AR": "Ceguera",
+          "en": "Blindness",
+          "pt-BR": "Cegueira"
         },
         {
           "clave": "amputaciones",
-          "es-AR": "Amputaciones"
+          "es-AR": "Amputaciones",
+          "en": "Amputations",
+          "pt-BR": "Amputações"
         },
         {
           "clave": "postrados",
-          "es-AR": "Pacientes postrados"
+          "es-AR": "Pacientes postrados",
+          "en": "Bedbound patients",
+          "pt-BR": "Pacientes acamados"
         },
         {
           "clave": "paliativos",
-          "es-AR": "Cuidados paliativos"
+          "es-AR": "Cuidados paliativos",
+          "en": "Palliative care",
+          "pt-BR": "Cuidados paliativos"
         },
         {
           "clave": "oncologico",
-          "es-AR": "Paciente oncológico"
+          "es-AR": "Paciente oncológico",
+          "en": "Cancer patient",
+          "pt-BR": "Paciente oncológico"
         }
       ],
       "nota": "Eran siete y quedan diecinueve. Las que faltaban no son casos raros: hipertensión, anticoagulación, EPOC, arritmias y deterioro cognitivo son de las más comunes en cuidado domiciliario, y sin ellas en la lista un Asistente con esa experiencia no la podía declarar y una Familia no la podía buscar. Se escriben por su nombre clínico y no de forma coloquial. Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas."
     },
     "tarea_cuidado": {
-      "titulo": "Tareas de cuidado que el Asistente realiza",
+      "titulo": {
+        "es-AR": "Tareas de cuidado que el Asistente realiza",
+        "en": "Care tasks the Caregiver performs",
+        "pt-BR": "Tarefas de cuidado que o Assistente realiza"
+      },
       "cerrada": false,
       "usado_en": [
         "data/catalogo-fichas.json:180",
@@ -286,62 +406,94 @@
           "es-AR": "Higiene y confort del paciente",
           "icono": "fa-bath",
           "bajada": {
-            "es-AR": "Baño, cambio de pañales, aseo personal"
-          }
+            "es-AR": "Baño, cambio de pañales, aseo personal",
+            "en": "Bathing, changing incontinence pads, personal grooming",
+            "pt-BR": "Banho, troca de fraldas, higiene pessoal"
+          },
+          "en": "Patient hygiene and comfort",
+          "pt-BR": "Higiene e conforto do paciente"
         },
         {
           "clave": "signos",
           "es-AR": "Control de signos vitales",
           "icono": "fa-heartbeat",
           "bajada": {
-            "es-AR": "Presión, glucemia, saturación"
-          }
+            "es-AR": "Presión, glucemia, saturación",
+            "en": "Blood pressure, blood glucose, oxygen saturation",
+            "pt-BR": "Pressão, glicemia, saturação"
+          },
+          "en": "Monitoring of vital signs",
+          "pt-BR": "Controle de sinais vitais"
         },
         {
           "clave": "medicacion",
           "es-AR": "Administración de medicación",
           "icono": "fa-pills",
           "bajada": {
-            "es-AR": "Recordatorio y administración de dosis"
-          }
+            "es-AR": "Recordatorio y administración de dosis",
+            "en": "Dose reminders and administration",
+            "pt-BR": "Lembrete e administração de doses"
+          },
+          "en": "Administration of medication",
+          "pt-BR": "Administração de medicação"
         },
         {
           "clave": "inyecciones",
-          "es-AR": "Aplicación de inyecciones y sondas"
+          "es-AR": "Aplicación de inyecciones y sondas",
+          "en": "Giving injections and fitting tubes",
+          "pt-BR": "Aplicação de injeções e sondas"
         },
         {
           "clave": "cocina",
           "es-AR": "Cocina adaptada al paciente y nutrición",
           "icono": "fa-utensils",
           "bajada": {
-            "es-AR": "Cocina ligera, dieta especial"
-          }
+            "es-AR": "Cocina ligera, dieta especial",
+            "en": "Light cooking, special diets",
+            "pt-BR": "Cozinha leve, dieta especial"
+          },
+          "en": "Cooking adapted to the patient, and nutrition",
+          "pt-BR": "Cozinha adaptada ao paciente e nutrição"
         },
         {
           "clave": "movilizacion",
           "es-AR": "Movilización de paciente sin movilidad",
           "icono": "fa-wheelchair",
           "bajada": {
-            "es-AR": "Silla de ruedas, paseos, transferencias"
-          }
+            "es-AR": "Silla de ruedas, paseos, transferencias",
+            "en": "Wheelchair, walks, transfers",
+            "pt-BR": "Cadeira de rodas, passeios, transferências"
+          },
+          "en": "Moving a patient with no mobility",
+          "pt-BR": "Mobilização de paciente sem mobilidade"
         },
         {
           "clave": "estimulacion_cognitiva",
           "es-AR": "Estimulación cognitiva y juegos de memoria",
           "icono": "fa-brain",
           "bajada": {
-            "es-AR": "Acompañamiento, juegos de memoria"
-          }
+            "es-AR": "Acompañamiento, juegos de memoria",
+            "en": "Companionship, memory games",
+            "pt-BR": "Acompanhamento, jogos de memória"
+          },
+          "en": "Cognitive stimulation and memory games",
+          "pt-BR": "Estimulação cognitiva e jogos de memória"
         },
         {
           "clave": "solo_acompanamiento",
-          "es-AR": "Solo acompañamiento, sin tareas de cuidado"
+          "es-AR": "Solo acompañamiento, sin tareas de cuidado",
+          "en": "Companionship only, no care tasks",
+          "pt-BR": "Somente acompanhamento, sem tarefas de cuidado"
         }
       ],
       "nota": "Antes era una sola lista de seis que mezclaba cuidar a una persona con limpiar una casa. Se parte en tres —cuidado, hogar, acompañamiento— porque no son la misma clase de trabajo y no tienen el mismo encuadre legal: la Ley 26.844 rige el trabajo en casas particulares y el cuidado de la salud no entra ahí. Una lista que las mezcla no permite saber qué se acordó. `tramites` salió de acá: su etiqueta decía «Acompañamiento a turnos y paseos», que son dos cosas y ninguna es un trámite; quedó desarmada en la lista de acompañamiento. El 24 de agosto de 2026 se le agregaron dos campos optativos, `icono` y `bajada`, que salieron de las tarjetas escritas a mano en `formulario-integral.html`: la pantalla dibujaba su propia lista con su propio texto, y ahora la pide. Los ítems sin esos dos campos se dibujan igual, con su etiqueta y un ícono neutro; ponerles una bajada inventada sería volver a escribir texto de producto donde no va."
     },
     "modalidad_contratacion": {
-      "titulo": "Intensidad de la contratación",
+      "titulo": {
+        "es-AR": "Intensidad de la contratación",
+        "en": "Intensity of the engagement",
+        "pt-BR": "Intensidade da contratação"
+      },
       "cerrada": true,
       "usado_en": [
         "formulario-integral.html:186",
@@ -353,21 +505,30 @@
       "items": [
         {
           "clave": "horas",
-          "es-AR": "Por horas"
+          "es-AR": "Por horas",
+          "en": "By the hour",
+          "pt-BR": "Por hora"
         },
         {
           "clave": "guardia_12",
-          "es-AR": "Guardia de 12 horas"
+          "es-AR": "Guardia de 12 horas",
+          "nota": "«Guardia» es palabra del glosario de los dos productos y no está traducida en ningún archivo del proyecto. «turno» ya es «shift»/«turno», y el glosario dice que una Guardia NO es un turno, así que reusar esa palabra pisaría una distinción que el glosario define a propósito. Se deja sin «en» ni «pt-BR» —cae al castellano— hasta que el Desarrollador decida. Anotado en docs/PENDIENTES.md."
         },
         {
           "clave": "jornada_completa",
-          "es-AR": "Jornada completa"
+          "es-AR": "Jornada completa",
+          "en": "Full working day",
+          "pt-BR": "Jornada completa"
         }
       ],
       "nota": "Tenía cinco opciones de tres ejes distintos y obligaba a elegir una sola. «Con retiro» y «sin retiro» pasaron a su propia lista, porque no son excluyentes: quien trabaja de las dos formas antes no lo podía declarar. «Urgencia» no es una modalidad sino una disponibilidad del Asistente: vive en data/catalogo-disponibilidad.json y se guarda en disponibilidad_asistente, no en una lista de opciones. La nota decía «bandera», que era como la línea de comandos había traducido flag; el Desarrollador cambió esa palabra el 24 de agosto de 2026."
     },
     "frecuencia": {
-      "titulo": "Frecuencia del servicio",
+      "titulo": {
+        "es-AR": "Frecuencia del servicio",
+        "en": "Frequency of the service",
+        "pt-BR": "Frequência do serviço"
+      },
       "cerrada": true,
       "usado_en": [
         "formulario-integral.html:190"
@@ -375,16 +536,24 @@
       "items": [
         {
           "clave": "recurrente",
-          "es-AR": "Recurrente (días fijos por semana)"
+          "es-AR": "Recurrente (días fijos por semana)",
+          "en": "Recurring (fixed days each week)",
+          "pt-BR": "Recorrente (dias fixos por semana)"
         },
         {
           "clave": "eventual",
-          "es-AR": "Eventual (por única vez)"
+          "es-AR": "Eventual (por única vez)",
+          "en": "One-off (a single occasion)",
+          "pt-BR": "Eventual (uma única vez)"
         }
       ]
     },
     "dia_semana": {
-      "titulo": "Días de la semana",
+      "titulo": {
+        "es-AR": "Días de la semana",
+        "en": "Days of the week",
+        "pt-BR": "Dias da semana"
+      },
       "cerrada": false,
       "usado_en": [
         "data/catalogo-disponibilidad.json:31",
@@ -393,37 +562,55 @@
       "items": [
         {
           "clave": "lunes",
-          "es-AR": "Lunes"
+          "es-AR": "Lunes",
+          "en": "Monday",
+          "pt-BR": "Segunda-feira"
         },
         {
           "clave": "martes",
-          "es-AR": "Martes"
+          "es-AR": "Martes",
+          "en": "Tuesday",
+          "pt-BR": "Terça-feira"
         },
         {
           "clave": "miercoles",
-          "es-AR": "Miércoles"
+          "es-AR": "Miércoles",
+          "en": "Wednesday",
+          "pt-BR": "Quarta-feira"
         },
         {
           "clave": "jueves",
-          "es-AR": "Jueves"
+          "es-AR": "Jueves",
+          "en": "Thursday",
+          "pt-BR": "Quinta-feira"
         },
         {
           "clave": "viernes",
-          "es-AR": "Viernes"
+          "es-AR": "Viernes",
+          "en": "Friday",
+          "pt-BR": "Sexta-feira"
         },
         {
           "clave": "sabado",
-          "es-AR": "Sábado"
+          "es-AR": "Sábado",
+          "en": "Saturday",
+          "pt-BR": "Sábado"
         },
         {
           "clave": "domingo",
-          "es-AR": "Domingo"
+          "es-AR": "Domingo",
+          "en": "Sunday",
+          "pt-BR": "Domingo"
         }
       ],
       "nota": "Estaban guardados como «L M X J V S D». Una letra suelta no se traduce a otro idioma ni se ordena sola."
     },
     "turno": {
-      "titulo": "Franja horaria",
+      "titulo": {
+        "es-AR": "Franja horaria",
+        "en": "Time band",
+        "pt-BR": "Faixa horária"
+      },
       "cerrada": false,
       "usado_en": [
         "data/catalogo-disponibilidad.json:30",
@@ -433,23 +620,33 @@
         {
           "clave": "manana",
           "es-AR": "Mañana",
-          "horario": "6 a 14"
+          "horario": "6 a 14",
+          "en": "Morning",
+          "pt-BR": "Manhã"
         },
         {
           "clave": "tarde",
           "es-AR": "Tarde",
-          "horario": "14 a 22"
+          "horario": "14 a 22",
+          "en": "Afternoon",
+          "pt-BR": "Tarde"
         },
         {
           "clave": "noche",
           "es-AR": "Noche",
-          "horario": "22 a 6"
+          "horario": "22 a 6",
+          "en": "Night",
+          "pt-BR": "Noite"
         }
       ],
       "nota": "Las claves tenían eñe («mañana»). Una clave con eñe se rompe en direcciones web y en nombres de columna."
     },
     "nivel_reputacion": {
-      "titulo": "Nivel del Asistente en el catálogo",
+      "titulo": {
+        "es-AR": "Nivel del Asistente en el catálogo",
+        "en": "Level of the Caregiver in the catalogue",
+        "pt-BR": "Nível do Assistente no catálogo"
+      },
       "cerrada": true,
       "usado_en": [
         "formulario-integral.html:411"
@@ -457,59 +654,87 @@
       "items": [
         {
           "clave": "bronce",
-          "es-AR": "Asistente verificado (Bronce)"
+          "es-AR": "Asistente verificado (Bronce)",
+          "en": "Verified Caregiver (Bronze)",
+          "pt-BR": "Assistente verificado (Bronze)"
         },
         {
           "clave": "plata",
-          "es-AR": "Asistente senior (Plata)"
+          "es-AR": "Asistente senior (Plata)",
+          "en": "Senior Caregiver (Silver)",
+          "pt-BR": "Assistente sênior (Prata)"
         },
         {
           "clave": "oro",
-          "es-AR": "Asistente destacado (Oro)"
+          "es-AR": "Asistente destacado (Oro)",
+          "en": "Distinguished Caregiver (Gold)",
+          "pt-BR": "Assistente destacado (Ouro)"
         }
       ],
       "nota": "Se sube de nivel con puntos de reputación. Cuántos hacen falta para pasar de uno a otro no está escrito en ninguna parte del proyecto."
     },
     "verificacion": {
-      "titulo": "Verificaciones del legajo del Asistente",
+      "titulo": {
+        "es-AR": "Verificaciones del legajo del Asistente",
+        "en": "Verifications of the Caregiver's personal file",
+        "pt-BR": "Verificações do cadastro do Assistente"
+      },
       "cerrada": false,
       "usado_en": [],
       "origen": "Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas.",
       "items": [
         {
           "clave": "dni",
-          "es-AR": "Documento de identidad"
+          "es-AR": "Documento de identidad",
+          "en": "Identity document",
+          "pt-BR": "Documento de identidade"
         },
         {
           "clave": "domicilio",
-          "es-AR": "Domicilio"
+          "es-AR": "Domicilio",
+          "en": "Home address",
+          "pt-BR": "Endereço"
         },
         {
           "clave": "titulo",
-          "es-AR": "Título que respalda la profesión"
+          "es-AR": "Título que respalda la profesión",
+          "en": "Qualification backing the profession",
+          "pt-BR": "Diploma que respalda a profissão"
         },
         {
           "clave": "matricula",
-          "es-AR": "Matrícula vigente"
+          "es-AR": "Matrícula vigente",
+          "en": "Valid professional licence",
+          "pt-BR": "Registro profissional vigente"
         },
         {
           "clave": "penales",
-          "es-AR": "Certificado de antecedentes penales"
+          "es-AR": "Certificado de antecedentes penales",
+          "en": "Criminal record certificate",
+          "pt-BR": "Certificado de antecedentes criminais"
         },
         {
           "clave": "salud",
-          "es-AR": "Certificado de salud"
+          "es-AR": "Certificado de salud",
+          "en": "Health certificate",
+          "pt-BR": "Atestado de saúde"
         },
         {
           "clave": "referencia",
-          "es-AR": "Referencia laboral verificada"
+          "es-AR": "Referencia laboral verificada",
+          "en": "Verified work reference",
+          "pt-BR": "Referência profissional verificada"
         }
       ],
       "nota": "Eran tres. Faltaban domicilio, matrícula, salud y referencias. Cuáles bloquean el alta y cuáles son opcionales es una decisión de negocio y no vive acá: ver docs/CATALOGO.md.",
       "no_es_lo_que_se_publica": "Esta lista es la de adentro: los siete papeles que la Prestadora le controla a un legajo. Al directorio no salen los siete, salen cinco, y esos están en `comprobacion`, acá abajo. Este vocabulario no se usa para filtrar ninguna pantalla pública."
     },
     "comprobacion": {
-      "titulo": "Lo que se le comprobó a un Asistente y el directorio dice",
+      "titulo": {
+        "es-AR": "Lo que se le comprobó a un Asistente y el directorio dice",
+        "en": "What has been checked about a Caregiver and the directory states",
+        "pt-BR": "O que foi comprovado sobre um Assistente e o diretório informa"
+      },
       "cerrada": true,
       "usado_en": [
         "directorio.html:291",
@@ -520,23 +745,33 @@
       "items": [
         {
           "clave": "domicilio",
-          "es-AR": "Domicilio comprobado"
+          "es-AR": "Domicilio comprobado",
+          "en": "Home address checked",
+          "pt-BR": "Endereço comprovado"
         },
         {
           "clave": "referencia",
-          "es-AR": "Referencias comprobadas"
+          "es-AR": "Referencias comprobadas",
+          "en": "References checked",
+          "pt-BR": "Referências comprovadas"
         },
         {
           "clave": "matricula",
-          "es-AR": "Matrícula comprobada"
+          "es-AR": "Matrícula comprobada",
+          "en": "Professional licence checked",
+          "pt-BR": "Registro profissional comprovado"
         },
         {
           "clave": "titulo",
-          "es-AR": "Título comprobado"
+          "es-AR": "Título comprobado",
+          "en": "Qualification checked",
+          "pt-BR": "Diploma comprovado"
         },
         {
           "clave": "curso_aprobado",
-          "es-AR": "Curso aprobado"
+          "es-AR": "Curso aprobado",
+          "en": "Approved course",
+          "pt-BR": "Curso aprovado"
         }
       ],
       "por_que_es_cerrada": "Porque la base la cierra. Agregar una clave acá no hace que el directorio la devuelva: la lista sale de la vista, y una clave de más sería un filtro que no encuentra a nadie nunca.",
@@ -544,7 +779,11 @@
       "lo_que_tampoco_se_dice": "Ni cuándo se comprobó, ni con qué número, ni qué le falta a la persona. Decir qué falta es publicar el estado de los papeles de alguien, que es justo lo que el consentimiento no promete."
     },
     "certificacion": {
-      "titulo": "Cursos acreditados que el Asistente declara",
+      "titulo": {
+        "es-AR": "Cursos acreditados que el Asistente declara",
+        "en": "Accredited courses the Caregiver declares",
+        "pt-BR": "Cursos acreditados que o Assistente declara"
+      },
       "cerrada": false,
       "usado_en": [
         "pwa-asistente/index.html:469",
@@ -553,74 +792,108 @@
       "items": [
         {
           "clave": "curso_gerontologico",
-          "es-AR": "Curso general de asistente de cuidado domiciliario"
+          "es-AR": "Curso general de asistente de cuidado domiciliario",
+          "en": "General course for home care Caregivers",
+          "pt-BR": "Curso geral de assistente de cuidado domiciliar"
         },
         {
           "clave": "deterioro_cognitivo",
-          "es-AR": "Especialización en deterioro cognitivo y Alzheimer"
+          "es-AR": "Especialización en deterioro cognitivo y Alzheimer",
+          "en": "Specialisation in cognitive impairment and Alzheimer's",
+          "pt-BR": "Especialização em declínio cognitivo e Alzheimer"
         },
         {
           "clave": "primeros_auxilios",
-          "es-AR": "Primeros auxilios y soporte vital básico (RCP)"
+          "es-AR": "Primeros auxilios y soporte vital básico (RCP)",
+          "en": "First aid and basic life support (CPR)",
+          "pt-BR": "Primeiros socorros e suporte básico de vida (RCP)"
         },
         {
           "clave": "nutricion",
-          "es-AR": "Nutrición, dietética y cocina adaptada"
+          "es-AR": "Nutrición, dietética y cocina adaptada",
+          "en": "Nutrition, dietetics and adapted cooking",
+          "pt-BR": "Nutrição, dietética e cozinha adaptada"
         },
         {
           "clave": "pacientes_complejos",
-          "es-AR": "Cuidado de pacientes postrados y manejo de sondas"
+          "es-AR": "Cuidado de pacientes postrados y manejo de sondas",
+          "en": "Care of bedbound patients and management of tubes",
+          "pt-BR": "Cuidado de pacientes acamados e manejo de sondas"
         }
       ],
       "nota": "La cuarta clave se escribía «nutricion_cocina» en una pantalla y «nutricion» en la otra: el mismo curso guardado con dos nombres distintos."
     },
     "motivo_consulta": {
-      "titulo": "Motivo por el que una Familia escribe",
+      "titulo": {
+        "es-AR": "Motivo por el que una Familia escribe",
+        "en": "Reason a Family is writing",
+        "pt-BR": "Motivo pelo qual uma Família escreve"
+      },
       "cerrada": true,
       "usado_en": [
         "formulario-integral.html:310",
-        "index.html:276",
-        "solicitar-asistente.html:313",
-        "soporte-remoto.html:144"
+        "index.html:281",
+        "solicitar-asistente.html:353",
+        "soporte-remoto.html:154"
       ],
       "items": [
         {
           "clave": "busco_asistente",
-          "es-AR": "Busco un Asistente"
+          "es-AR": "Busco un Asistente",
+          "en": "Looking for a Caregiver",
+          "pt-BR": "Procuro um Assistente"
         },
         {
           "clave": "acompanamiento_online",
-          "es-AR": "Acompañamiento y asesoramiento online"
+          "es-AR": "Acompañamiento y asesoramiento online",
+          "en": "Online companionship and guidance",
+          "pt-BR": "Acompanhamento e orientação online"
         },
         {
           "clave": "cursos",
-          "es-AR": "Cursos para familias"
+          "es-AR": "Cursos para familias",
+          "en": "Courses for families",
+          "pt-BR": "Cursos para famílias"
         },
         {
           "clave": "orientacion",
-          "es-AR": "Orientación para cuidar a un familiar"
+          "es-AR": "Orientación para cuidar a un familiar",
+          "en": "Guidance on caring for a relative",
+          "pt-BR": "Orientação para cuidar de um familiar"
         },
         {
           "clave": "apoyo_cuidador",
-          "es-AR": "Apoyo emocional para quien cuida"
+          "es-AR": "Apoyo emocional para quien cuida",
+          "en": "Emotional support for whoever cares",
+          "pt-BR": "Apoio emocional para quem cuida"
         },
         {
           "clave": "entender_salud",
-          "es-AR": "Entender la situación de salud de un familiar"
+          "es-AR": "Entender la situación de salud de un familiar",
+          "en": "Understanding a relative's health situation",
+          "pt-BR": "Entender a situação de saúde de um familiar"
         },
         {
           "clave": "coordinar",
-          "es-AR": "Coordinar cuidados entre varios familiares"
+          "es-AR": "Coordinar cuidados entre varios familiares",
+          "en": "Coordinating care among several relatives",
+          "pt-BR": "Coordenar cuidados entre vários familiares"
         },
         {
           "clave": "otro",
-          "es-AR": "Otro"
+          "es-AR": "Otro",
+          "en": "Other",
+          "pt-BR": "Outro"
         }
       ],
       "nota": "Cuatro formularios con cuatro listas. Tres compartían las mismas tres opciones con nombres distintos; el de acompañamiento online tenía cuatro propias. Se unifican en ocho y cada pantalla muestra el subconjunto que le corresponde."
     },
     "zona": {
-      "titulo": "Zona de cobertura",
+      "titulo": {
+        "es-AR": "Zona de cobertura",
+        "en": "Coverage area",
+        "pt-BR": "Zona de cobertura"
+      },
       "cerrada": true,
       "usado_en": [
         "directorio.html:261",
@@ -637,107 +910,151 @@
         {
           "clave": "caba",
           "es-AR": "Ciudad de Buenos Aires",
-          "region": null
+          "region": null,
+          "en": "City of Buenos Aires",
+          "pt-BR": "Cidade de Buenos Aires"
         },
         {
           "clave": "palermo",
           "es-AR": "Palermo",
-          "region": "caba"
+          "region": "caba",
+          "en": "Palermo",
+          "pt-BR": "Palermo"
         },
         {
           "clave": "belgrano",
           "es-AR": "Belgrano",
-          "region": "caba"
+          "region": "caba",
+          "en": "Belgrano",
+          "pt-BR": "Belgrano"
         },
         {
           "clave": "recoleta",
           "es-AR": "Recoleta",
-          "region": "caba"
+          "region": "caba",
+          "en": "Recoleta",
+          "pt-BR": "Recoleta"
         },
         {
           "clave": "villa_urquiza",
           "es-AR": "Villa Urquiza",
-          "region": "caba"
+          "region": "caba",
+          "en": "Villa Urquiza",
+          "pt-BR": "Villa Urquiza"
         },
         {
           "clave": "nunez",
           "es-AR": "Núñez",
-          "region": "caba"
+          "region": "caba",
+          "en": "Núñez",
+          "pt-BR": "Núñez"
         },
         {
           "clave": "caballito",
           "es-AR": "Caballito",
-          "region": "caba"
+          "region": "caba",
+          "en": "Caballito",
+          "pt-BR": "Caballito"
         },
         {
           "clave": "flores",
           "es-AR": "Flores",
-          "region": "caba"
+          "region": "caba",
+          "en": "Flores",
+          "pt-BR": "Flores"
         },
         {
           "clave": "san_telmo",
           "es-AR": "San Telmo",
-          "region": "caba"
+          "region": "caba",
+          "en": "San Telmo",
+          "pt-BR": "San Telmo"
         },
         {
           "clave": "zona_norte",
           "es-AR": "Zona Norte",
-          "region": null
+          "region": null,
+          "en": "North Zone",
+          "pt-BR": "Zona Norte"
         },
         {
           "clave": "san_isidro",
           "es-AR": "San Isidro",
-          "region": "zona_norte"
+          "region": "zona_norte",
+          "en": "San Isidro",
+          "pt-BR": "San Isidro"
         },
         {
           "clave": "vicente_lopez",
           "es-AR": "Vicente López",
-          "region": "zona_norte"
+          "region": "zona_norte",
+          "en": "Vicente López",
+          "pt-BR": "Vicente López"
         },
         {
           "clave": "grand_bourg",
           "es-AR": "Grand Bourg",
-          "region": "zona_norte"
+          "region": "zona_norte",
+          "en": "Grand Bourg",
+          "pt-BR": "Grand Bourg"
         },
         {
           "clave": "zona_sur",
           "es-AR": "Zona Sur",
-          "region": null
+          "region": null,
+          "en": "South Zone",
+          "pt-BR": "Zona Sul"
         },
         {
           "clave": "quilmes",
           "es-AR": "Quilmes",
-          "region": "zona_sur"
+          "region": "zona_sur",
+          "en": "Quilmes",
+          "pt-BR": "Quilmes"
         },
         {
           "clave": "avellaneda",
           "es-AR": "Avellaneda",
-          "region": "zona_sur"
+          "region": "zona_sur",
+          "en": "Avellaneda",
+          "pt-BR": "Avellaneda"
         },
         {
           "clave": "lomas",
           "es-AR": "Lomas de Zamora",
-          "region": "zona_sur"
+          "region": "zona_sur",
+          "en": "Lomas de Zamora",
+          "pt-BR": "Lomas de Zamora"
         },
         {
           "clave": "zona_oeste",
           "es-AR": "Zona Oeste",
-          "region": null
+          "region": null,
+          "en": "West Zone",
+          "pt-BR": "Zona Oeste"
         },
         {
           "clave": "moron",
           "es-AR": "Morón",
-          "region": "zona_oeste"
+          "region": "zona_oeste",
+          "en": "Morón",
+          "pt-BR": "Morón"
         },
         {
           "clave": "ramos_mejia",
           "es-AR": "Ramos Mejía",
-          "region": "zona_oeste"
+          "region": "zona_oeste",
+          "en": "Ramos Mejía",
+          "pt-BR": "Ramos Mejía"
         }
       ]
     },
     "tarea_hogar": {
-      "titulo": "Tareas domésticas que el Asistente realiza",
+      "titulo": {
+        "es-AR": "Tareas domésticas que el Asistente realiza",
+        "en": "Household tasks the Caregiver performs",
+        "pt-BR": "Tarefas domésticas que o Assistente realiza"
+      },
       "cerrada": false,
       "usado_en": [
         "data/catalogo-fichas.json:180",
@@ -747,33 +1064,49 @@
       "items": [
         {
           "clave": "limpieza",
-          "es-AR": "Limpieza del hogar"
+          "es-AR": "Limpieza del hogar",
+          "en": "Cleaning the home",
+          "pt-BR": "Limpeza da casa"
         },
         {
           "clave": "tendido_cama",
-          "es-AR": "Tendido de cama"
+          "es-AR": "Tendido de cama",
+          "en": "Making the beds",
+          "pt-BR": "Arrumação das camas"
         },
         {
           "clave": "lavado",
-          "es-AR": "Lavado de ropa"
+          "es-AR": "Lavado de ropa",
+          "en": "Washing clothes",
+          "pt-BR": "Lavagem de roupa"
         },
         {
           "clave": "planchado",
-          "es-AR": "Planchado de ropa"
+          "es-AR": "Planchado de ropa",
+          "en": "Ironing clothes",
+          "pt-BR": "Passar roupa"
         },
         {
           "clave": "cocina_hogar",
-          "es-AR": "Cocina para el hogar"
+          "es-AR": "Cocina para el hogar",
+          "en": "Cooking for the household",
+          "pt-BR": "Cozinhar para a casa"
         },
         {
           "clave": "compras",
-          "es-AR": "Compras para el hogar"
+          "es-AR": "Compras para el hogar",
+          "en": "Shopping for the household",
+          "pt-BR": "Compras para a casa"
         }
       ],
       "nota": "Se separa del cuidado a propósito: es lo que la Ley 26.844 mira. Si una Familia acuerda estas tareas, el encuadre de la relación cambia, y eso tiene que poder verse en el acuerdo. «Cocina para el hogar» y «Cocina adaptada al paciente» son distintas por el mismo motivo."
     },
     "tarea_acompanamiento": {
-      "titulo": "Tareas de acompañamiento que el Asistente realiza",
+      "titulo": {
+        "es-AR": "Tareas de acompañamiento que el Asistente realiza",
+        "en": "Companionship tasks the Caregiver performs",
+        "pt-BR": "Tarefas de acompanhamento que o Assistente realiza"
+      },
       "cerrada": false,
       "usado_en": [
         "data/catalogo-fichas.json:180",
@@ -783,53 +1116,79 @@
       "items": [
         {
           "clave": "paseos",
-          "es-AR": "Pasear con el paciente"
+          "es-AR": "Pasear con el paciente",
+          "en": "Going out for walks with the patient",
+          "pt-BR": "Passear com o paciente"
         },
         {
           "clave": "turnos_medicos",
-          "es-AR": "Acompañar a turnos médicos"
+          "es-AR": "Acompañar a turnos médicos",
+          "en": "Accompanying to medical appointments",
+          "pt-BR": "Acompanhar em consultas médicas"
         },
         {
           "clave": "tramites",
-          "es-AR": "Realizar trámites"
+          "es-AR": "Realizar trámites",
+          "en": "Running errands and paperwork",
+          "pt-BR": "Realizar trâmites"
         },
         {
           "clave": "tramites_obra_social",
-          "es-AR": "Trámites ante la Obra Social"
+          "es-AR": "Trámites ante la Obra Social",
+          "en": "Paperwork with the health insurance provider",
+          "pt-BR": "Trâmites junto ao plano de saúde"
         }
       ]
     },
     "discapacidad": {
-      "titulo": "Discapacidades con las que el Asistente tiene experiencia",
+      "titulo": {
+        "es-AR": "Discapacidades con las que el Asistente tiene experiencia",
+        "en": "Disabilities the Caregiver has experience with",
+        "pt-BR": "Deficiências com as quais o Assistente tem experiência"
+      },
       "cerrada": false,
       "usado_en": [],
       "origen": "Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas.",
       "items": [
         {
           "clave": "visual",
-          "es-AR": "Discapacidad visual"
+          "es-AR": "Discapacidad visual",
+          "en": "Visual disability",
+          "pt-BR": "Deficiência visual"
         },
         {
           "clave": "auditiva",
-          "es-AR": "Discapacidad auditiva"
+          "es-AR": "Discapacidad auditiva",
+          "en": "Hearing disability",
+          "pt-BR": "Deficiência auditiva"
         },
         {
           "clave": "motora",
-          "es-AR": "Discapacidad motora"
+          "es-AR": "Discapacidad motora",
+          "en": "Motor disability",
+          "pt-BR": "Deficiência motora"
         },
         {
           "clave": "intelectual",
-          "es-AR": "Discapacidad intelectual"
+          "es-AR": "Discapacidad intelectual",
+          "en": "Intellectual disability",
+          "pt-BR": "Deficiência intelectual"
         },
         {
           "clave": "visceral",
-          "es-AR": "Discapacidad visceral"
+          "es-AR": "Discapacidad visceral",
+          "en": "Visceral disability",
+          "pt-BR": "Deficiência visceral"
         }
       ],
       "nota": "Eje nuevo. No es una patología y por eso no entra en esa lista: una patología es un diagnóstico, una discapacidad es una condición de vida. Hasta ahora un Asistente con experiencia en discapacidad motora no tenía dónde declararlo."
     },
     "retiro": {
-      "titulo": "Con retiro o sin retiro del domicilio",
+      "titulo": {
+        "es-AR": "Con retiro o sin retiro del domicilio",
+        "en": "Living out or living in at the home",
+        "pt-BR": "Com ou sem dormida no domicílio"
+      },
       "cerrada": false,
       "usado_en": [
         "pwa-asistente/index.html:516",
@@ -839,17 +1198,25 @@
       "items": [
         {
           "clave": "con_retiro",
-          "es-AR": "Con retiro"
+          "es-AR": "Con retiro",
+          "en": "Living out",
+          "pt-BR": "Sem dormir na casa"
         },
         {
           "clave": "sin_retiro",
-          "es-AR": "Sin retiro, cama adentro"
+          "es-AR": "Sin retiro, cama adentro",
+          "en": "Living in, sleeping at the home",
+          "pt-BR": "Com dormida, morando na casa"
         }
       ],
       "nota": "No excluyentes: se puede declarar una, la otra o las dos. Al menos una."
     },
     "puesto_experiencia": {
-      "titulo": "Puesto declarado en una experiencia laboral anterior",
+      "titulo": {
+        "es-AR": "Puesto declarado en una experiencia laboral anterior",
+        "en": "Position declared in previous work experience",
+        "pt-BR": "Cargo declarado em uma experiência profissional anterior"
+      },
       "cerrada": true,
       "usado_en": [
         "data/catalogo-fichas.json:136"
@@ -858,56 +1225,82 @@
       "items": [
         {
           "clave": "cuidador_domiciliario",
-          "es-AR": "Cuidador domiciliario"
+          "es-AR": "Cuidador domiciliario",
+          "en": "Home carer",
+          "pt-BR": "Cuidador domiciliar"
         },
         {
           "clave": "auxiliar_enfermeria",
-          "es-AR": "Auxiliar de enfermería"
+          "es-AR": "Auxiliar de enfermería",
+          "en": "Nursing auxiliary",
+          "pt-BR": "Auxiliar de enfermagem"
         },
         {
           "clave": "gerontologo",
-          "es-AR": "Asistente gerontológico"
+          "es-AR": "Asistente gerontológico",
+          "en": "Gerontological Caregiver",
+          "pt-BR": "Assistente gerontológico"
         },
         {
           "clave": "acompanante_terapeutico",
-          "es-AR": "Acompañante terapéutico"
+          "es-AR": "Acompañante terapéutico",
+          "en": "Therapeutic companion",
+          "pt-BR": "Acompanhante terapêutico"
         },
         {
           "clave": "personal_casas_particulares",
-          "es-AR": "Personal de casas particulares"
+          "es-AR": "Personal de casas particulares",
+          "en": "Private household staff",
+          "pt-BR": "Empregado em casas particulares"
         },
         {
           "clave": "otro",
-          "es-AR": "Otro"
+          "es-AR": "Otro",
+          "en": "Other",
+          "pt-BR": "Outro"
         }
       ],
       "nota": "Usa las mismas claves que `tipo_asistente` donde el puesto es el mismo, a propósito: un competidor mantiene dos vocabularios paralelos que no se corresponden, y por eso lo que un Asistente declara como experiencia no se puede cruzar con lo que declara saber hacer."
     },
     "modalidad_curso": {
-      "titulo": "Cómo se cursa",
+      "titulo": {
+        "es-AR": "Cómo se cursa",
+        "en": "How the course is delivered",
+        "pt-BR": "Como o curso é feito"
+      },
       "cerrada": true,
       "usado_en": [
-        "cursos.html:92",
+        "cursos.html:105",
         "pwa-asistente/index.html:770"
       ],
       "items": [
         {
           "clave": "online",
-          "es-AR": "Online"
+          "es-AR": "Online",
+          "en": "Online",
+          "pt-BR": "Online"
         },
         {
           "clave": "presencial",
-          "es-AR": "Presencial"
+          "es-AR": "Presencial",
+          "en": "In person",
+          "pt-BR": "Presencial"
         },
         {
           "clave": "mixta",
-          "es-AR": "Mixta"
+          "es-AR": "Mixta",
+          "en": "Blended",
+          "pt-BR": "Mista"
         }
       ],
       "nota": "Sale de la ficha de cada curso, donde la modalidad se guarda como clave («online») y la pantalla la muestra como texto. Las seis fichas de hoy dicen «online»; las otras dos opciones existen porque la lista guardada tiene que admitir el curso presencial antes de que exista, no después."
     },
     "nivel_curso": {
-      "titulo": "Nivel del curso",
+      "titulo": {
+        "es-AR": "Nivel del curso",
+        "en": "Level of the course",
+        "pt-BR": "Nível do curso"
+      },
       "cerrada": true,
       "usado_en": [
         "pwa-asistente/index.html:768"
@@ -915,15 +1308,21 @@
       "items": [
         {
           "clave": "basico",
-          "es-AR": "Nivel básico"
+          "es-AR": "Nivel básico",
+          "en": "Basic level",
+          "pt-BR": "Nível básico"
         },
         {
           "clave": "intermedio",
-          "es-AR": "Nivel intermedio"
+          "es-AR": "Nivel intermedio",
+          "en": "Intermediate level",
+          "pt-BR": "Nível intermediário"
         },
         {
           "clave": "avanzado",
-          "es-AR": "Nivel avanzado"
+          "es-AR": "Nivel avanzado",
+          "en": "Advanced level",
+          "pt-BR": "Nível avançado"
         }
       ],
       "nota": "Las tres claves no se eligieron acá: ya estaban guardadas en la columna `cursos.nivel` desde la migración 0008, que siembra los seis cursos con `basico`, `intermedio` y `avanzado`. Lo que faltaba era el texto para mostrarlas, y por eso «Mis Capacitaciones» no decía el nivel de ningún curso. La etiqueta dice «Nivel básico» y no «Básico» porque la tarjeta la pone al lado de «8 horas» y «Online», donde una palabra suelta no dice de qué habla. No confundir con el campo `etiqueta` de `data/catalogo-oferta.json`, que es otra cosa: ahí conviven «Nivel básico», «Bienestar» y «Salud», así que no es el nivel sino un rótulo libre de la vidriera pública, y decidir qué hace ese campo no es parte de esto."

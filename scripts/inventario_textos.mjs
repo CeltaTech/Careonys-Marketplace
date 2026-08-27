@@ -43,7 +43,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative } from 'node:path';
-import { despejar } from './texto_visible.mjs';
+import { despejar, sinValoresGuardados } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const detalle = process.argv.includes('--detalle');
@@ -147,7 +147,13 @@ for (const ruta of archivos(raiz, ['.html'])) {
   const meta = /<meta[^>]+name\s*=\s*"(description|og:[^"]*)"[^>]+content\s*=\s*"([^"]*)"/gi;
   while ((m = meta.exec(bruto))) agregar(rel, 'meta ' + m[1], m[2]);
   const botones = /<(?:input|button)[^>]*\bvalue\s*=\s*"([^"]*)"/gi;
-  while ((m = botones.exec(bruto))) agregar(rel, 'rótulo de botón', m[1]);
+  // El mismo criterio que el chequeo de frases, y sale del mismo lugar: el
+  // `value` de un redondel, un casillero, un campo escondido o una opción es
+  // dato guardado, no rótulo. Acá había una segunda copia de la regla que no
+  // miraba el `type`, y contaba como texto a traducir el `si`/`no` de los
+  // formularios de novedades del portal.
+  const conBotones = sinValoresGuardados(bruto);
+  while ((m = botones.exec(conBotones))) agregar(rel, 'rótulo de botón', m[1]);
 }
 
 // --- LOS GUIONES ---

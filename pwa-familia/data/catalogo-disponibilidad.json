@@ -56,12 +56,12 @@
     },
     "en": {
       "titulo": "When is care needed?",
-      "bajada": "Tick the shifts when the assistant is needed. This can be changed later.",
+      "bajada": "Tick the shifts when the Caregiver is needed. This can be changed later.",
       "ayuda_grilla": "Tap each cell to tick or untick it."
     },
     "pt-BR": {
       "titulo": "Quando o cuidado é necessário?",
-      "bajada": "Marque os turnos em que o assistente é necessário. Pode ser alterado depois.",
+      "bajada": "Marque os turnos em que o Assistente é necessário. Pode ser alterado depois.",
       "ayuda_grilla": "Toque em cada quadro para marcar ou desmarcar."
     }
   },

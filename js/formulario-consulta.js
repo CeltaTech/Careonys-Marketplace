@@ -39,10 +39,14 @@
    no en la consola, **listo** cuando el guardado salió, y el cuarto —que
    acá no es «vacío» sino «no hay a dónde mandarlo»— con su propio cartel.
 
-   El texto sale del catálogo en los tres idiomas. Las cuatro pantallas
-   todavía no están convertidas al multiidioma —no tienen un solo
-   `data-frase`, y ponérselo prendería de golpe los avisos de todo el texto
-   que les falta—, así que lo que se traduce es lo que escribe este archivo.
+   El texto sale del catálogo en los tres idiomas. Cuando este archivo se
+   escribió, ninguna de las cuatro pantallas estaba convertida al
+   multiidioma, así que lo único traducido era lo que escribe acá. **El 26 de
+   agosto de 2026 se convirtieron las cuatro** —`index.html`, `cursos.html`,
+   `soporte-remoto.html` y `solicitar-asistente.html`—, y la quinta,
+   `formulario-integral.html`, sigue sin convertir porque está sentenciada a
+   borrarse (pendiente 64). Lo de acá no cambia: los carteles del envío los
+   escribe este guion y los sigue pidiendo al catálogo.
    =================================================== */
 
 (function () {
@@ -50,9 +54,10 @@
 
   /* El texto se pide por `Texto.frase`, que es `Catalogo.frase` con red
      abajo: si el catálogo no llegó, contesta lo genérico en vez de dejar un
-     cartel en blanco. Estas cuatro pantallas cargan `js/catalogo.js`, pero
-     `Catalogo.traducir()` se va temprano en las que no están convertidas, y
-     ahí el catálogo no se carga solo. Se lo pide de una. */
+     cartel en blanco. Las cinco pantallas cargan `js/catalogo.js`, pero
+     `Catalogo.traducir()` se va temprano en la que no está convertida —hoy
+     sólo `formulario-integral.html`—, y ahí el catálogo no se carga solo. Se
+     lo pide de una, que además no cuesta nada en las que sí lo cargaron. */
   const frase = (clave) => (window.Texto ? Texto.frase(clave) : '');
 
   /* Los campos se buscan por su nombre —`nombre`, `email`, `celular`,

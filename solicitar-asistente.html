@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Solicitar Asistente — {{organizacion}}</title>
-  <meta name="description"
+  <title data-frase="nav.solicitar_asistente">Solicitar Asistente</title>
+  <meta name="description" data-frase-content="solicitar.descripcion"
     content="Encuentre al Asistente ideal para su familiar mayor. Publique su aviso y reciba postulaciones de Asistentes calificados en su zona." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,47 +22,56 @@
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="navbar-logo">
-        <img src="assets/images/logotipo.png" alt="{{organizacion}}" />
+        <img class="tenant-logo" src="assets/images/logotipo.png"
+          data-frase-alt="nav.inicio" alt="Inicio" />
       </a>
       <div class="navbar-links">
-        <a href="solicitar-asistente.html" class="active">Solicitar Asistente</a>
-        <a href="registrar-asistente.html">Registrarme como Asistente</a>
-        <a href="directorio.html">Red de Asistentes</a>
-        <a href="formulario-integral.html">Publicar un Aviso</a>
+        <a href="solicitar-asistente.html" class="active" data-frase="nav.solicitar_asistente">Solicitar Asistente</a>
+        <a href="registrar-asistente.html" data-frase="nav.registrarme_asistente">Registrarme como Asistente</a>
+        <a href="directorio.html" data-frase="nav.red_asistentes">Red de Asistentes</a>
+        <a href="formulario-integral.html" data-frase="nav.publicar_aviso">Publicar un Aviso</a>
       </div>
       <div class="navbar-social">
-        <a href="#"><i class="fab fa-facebook-f"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-        <a href="#"><i class="fab fa-youtube"></i></a>
-        <a href="mailto:{{contacto}}"><i class="fas fa-envelope"></i></a>
+        <a href="#" data-frase-aria-label="nav.facebook" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" data-frase-aria-label="nav.instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" data-frase-aria-label="nav.linkedin" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" data-frase-aria-label="nav.youtube" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="mailto:{{contacto}}" data-frase-aria-label="nav.correo" aria-label="Correo electrónico"><i
+            class="fas fa-envelope"></i></a>
       </div>
-      <button class="hamburger"><span></span><span></span><span></span></button>
+      <button class="hamburger" data-frase-aria-label="nav.menu" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
     </div>
     <div class="mobile-menu">
-      <a href="solicitar-asistente.html">Solicitar Asistente</a>
-      <a href="registrar-asistente.html">Registrarme como Asistente</a>
-      <a href="directorio.html">Red de Asistentes</a>
-      <a href="formulario-integral.html">Publicar un Aviso</a>
+      <a href="solicitar-asistente.html" data-frase="nav.solicitar_asistente">Solicitar Asistente</a>
+      <a href="registrar-asistente.html" data-frase="nav.registrarme_asistente">Registrarme como Asistente</a>
+      <a href="directorio.html" data-frase="nav.red_asistentes">Red de Asistentes</a>
+      <a href="formulario-integral.html" data-frase="nav.publicar_aviso">Publicar un Aviso</a>
     </div>
   </nav>
 
   <!-- HERO -->
   <section class="inner-hero">
-    <h1>Solicitar Asistente</h1>
-    <p>{{producto}} facilita el acceso a cientos de Asistentes calificados con múltiples herramientas que facilitan la
+    <h1 data-frase="nav.solicitar_asistente">Solicitar Asistente</h1>
+    <p data-frase="solicitar.bajada">{{producto}} facilita el acceso a cientos de Asistentes calificados con múltiples herramientas que facilitan la
       búsqueda y gestión del día a día en el cuidado de su ser querido.</p>
     <div class="flex gap-16 justificar-centro envolver">
-      <a href="directorio.html" class="btn btn-atencion">Ver Asistentes disponibles</a>
-      <a href="#como-funciona" class="btn btn-sobre-oscuro">Cómo funciona</a>
+      <a href="directorio.html" class="btn btn-atencion"
+        data-frase="solicitar.ver_asistentes">Ver Asistentes disponibles</a>
+      <a href="#como-funciona" class="btn btn-sobre-oscuro"
+        data-frase="solicitar.como_funciona">Cómo funciona</a>
     </div>
   </section>
 
   <!-- SERVICIOS -->
   <section class="services-grid" style="background:var(--azul-oscuro);padding:60px 24px;">
     <div style="text-align:center;margin-bottom:40px;">
-      <h2 class="color-sobre-color texto-28 peso-800">Nuestros servicios para familias</h2>
+      <h2 class="color-sobre-color texto-28 peso-800"
+        data-frase="solicitar.servicios_titulo">Nuestros servicios para familias</h2>
     </div>
+    <!-- Las tarjetas salen del catálogo de la oferta, con su nombre y su bajada ya
+         traducidos: acá no hay ningún texto que convertir. -->
     <div class="grid" style="max-width:1200px;margin:0 auto;" data-oferta="servicios"
       data-oferta-solo="busco_asistente,acompanamiento_online,cursos,monitoreo,asistente_virtual,vida_activa">
       <template>
@@ -82,30 +91,33 @@
     <div style="max-width:960px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;">
       <div>
         <span class="eyebrow color-info peso-700 texto-13 mayusculas"
-         >Facturación &
-          Cobertura</span>
-        <h2 style="font-size:26px;font-weight:800;color:var(--texto-principal);margin:8px 0 12px 0;">¿Cuenta con Obra Social o
-          Prepaga?</h2>
-        <p class="color-secundario texto-14 interlineado-16 mb-20">Brindamos el
-          asesoramiento legal y los comprobantes de facturación oficial necesarios para gestionar el **reintegro total o
-          parcial del costo de cuidado** ante su cobertura médica (OSDE, Swiss Medical, Galeno, PAMI, etc.).</p>
+          data-frase="solicitar.cobertura_eyebrow">Facturación y cobertura</span>
+        <h2 style="font-size:26px;font-weight:800;color:var(--texto-principal);margin:8px 0 12px 0;"
+          data-frase="solicitar.cobertura_pregunta">¿Cuenta con Obra Social o Prepaga?</h2>
+        <p class="color-secundario texto-14 interlineado-16 mb-20"
+          data-frase="solicitar.cobertura_bajada">Brindamos el
+          asesoramiento legal y los comprobantes de facturación oficial necesarios para gestionar el reintegro total o
+          parcial del costo de cuidado ante su cobertura médica (OSDE, Swiss Medical, Galeno, PAMI, etc.).</p>
         <ul
           style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--texto-principal);font-weight:600;">
-          <li><i class="fas fa-check-circle color-azul-medio mr-8"></i> Facturación Electrónica
-            AFIP Acreditada.</li>
-          <li><i class="fas fa-check-circle color-azul-medio mr-8"></i> Resumen de Horas y
-            Reportes de Cuidado Firmados.</li>
-          <li><i class="fas fa-check-circle color-azul-medio mr-8"></i> Asesoramiento para
-            Amparos y Coberturas Especiales.</li>
+          <li><i class="fas fa-check-circle color-azul-medio mr-8"></i> <span
+              data-frase="solicitar.cobertura_punto_facturacion">Facturación Electrónica AFIP Acreditada.</span></li>
+          <li><i class="fas fa-check-circle color-azul-medio mr-8"></i> <span
+              data-frase="solicitar.cobertura_punto_reportes">Resumen de Horas y Reportes de Cuidado Firmados.</span></li>
+          <li><i class="fas fa-check-circle color-azul-medio mr-8"></i> <span
+              data-frase="solicitar.cobertura_punto_amparos">Asesoramiento para Amparos y Coberturas Especiales.</span></li>
         </ul>
       </div>
       <div
         style="background:var(--superficie-hundida);border:1px solid var(--borde-card);padding:28px;border-radius:var(--redondeo-grande);text-align:center;">
         <i class="fas fa-file-invoice-dollar" style="font-size:42px;color:var(--texto-titulo);margin-bottom:12px;"></i>
-        <h4 style="margin:0 0 8px 0;font-size:16px;font-weight:700;">Solicitar Asesoría de Reintegro</h4>
-        <p style="font-size:12px;color:var(--texto-secundario);margin-bottom:18px;">Nuestro equipo analiza su cobertura e
+        <h4 style="margin:0 0 8px 0;font-size:16px;font-weight:700;"
+          data-frase="solicitar.asesoria_titulo">Solicitar Asesoría de Reintegro</h4>
+        <p style="font-size:12px;color:var(--texto-secundario);margin-bottom:18px;"
+          data-frase="solicitar.asesoria_bajada">Nuestro equipo analiza su cobertura e
           indica la documentación requerida.</p>
-        <a href="#contact" class="btn btn-secundario" style="font-size:13px;padding:10px 24px;">Consultar Cobertura</a>
+        <a href="#contact" class="btn btn-secundario" style="font-size:13px;padding:10px 24px;"
+          data-frase="solicitar.asesoria_boton">Consultar Cobertura</a>
       </div>
     </div>
   </section>
@@ -116,24 +128,26 @@
     <div style="max-width:960px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;">
       <div class="fade-in">
         <span class="eyebrow color-info peso-700 texto-13 mayusculas"
-         >Supervisión
-          Personalizada</span>
-        <h2 style="font-size:28px;font-weight:800;color:var(--texto-principal);margin:8px 0 12px 0;">Gestor del Cuidado
-          Asignado</h2>
-        <p class="color-secundario texto-14 interlineado-16 mb-20">Un especialista
+          data-frase="solicitar.gestor_eyebrow">Supervisión personalizada</span>
+        <h2 style="font-size:28px;font-weight:800;color:var(--texto-principal);margin:8px 0 12px 0;"
+          data-frase="solicitar.gestor_titulo">Gestor del Cuidado Asignado</h2>
+        <p class="color-secundario texto-14 interlineado-16 mb-20"
+          data-frase="solicitar.gestor_bajada">Un especialista
           gerontológico dedicado a su familia que elabora el plan de cuidado, realiza el seguimiento diario y supervisa
-          al asistente en el domicilio.</p>
+          al Asistente en el domicilio.</p>
         <div class="flex gap-12 envolver mb-20">
           <span
             class="fondo-info color-info texto-12 peso-700 p-6-12 redondeo-20"><i
-              class="fas fa-video"></i> Videollamada de Diagnóstico Gratuita</span>
+              class="fas fa-video"></i> <span
+              data-frase="solicitar.gestor_videollamada_gratis">Videollamada de Diagnóstico Gratuita</span></span>
           <span
             style="background:var(--tono-exito-fondo);color:var(--tono-exito-texto);font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;"><i
-              class="fas fa-user-check"></i> Supervisión Semanal</span>
+              class="fas fa-user-check"></i> <span
+              data-frase="solicitar.gestor_supervision_semanal">Supervisión Semanal</span></span>
         </div>
         <button onclick="document.getElementById('modal-videollamada').style.display='flex';" class="btn btn-secundario"
-          style="font-size:14px;padding:12px 28px;"><i class="fas fa-calendar-check"></i> Agendar Videollamada con un
-          Gestor</button>
+          style="font-size:14px;padding:12px 28px;"><i class="fas fa-calendar-check"></i> <span
+            data-frase="solicitar.gestor_agendar">Agendar Videollamada con un Gestor</span></button>
       </div>
 
       <!-- TARJETA DE ALERTA DE REEMPLAZO URGENTE EN <2hs -->
@@ -143,16 +157,20 @@
         <div class="flex alinear-centro gap-10 mb-12">
           <span
             style="background:var(--rojo-peligro);color:var(--texto-sobre-color);font-size:10px;font-weight:800;padding:3px 8px;border-radius:12px;text-transform:uppercase;"><i
-              class="fas fa-bolt"></i> Cobertura 24/7</span>
-          <h4 class="m-0 texto-18 peso-800 color-sobre-color">Garantía de Reemplazo Urgente</h4>
+              class="fas fa-bolt"></i> <span data-frase="solicitar.urgente_cobertura">Cobertura 24/7</span></span>
+          <h4 class="m-0 texto-18 peso-800 color-sobre-color"
+            data-frase="solicitar.urgente_titulo">Garantía de Reemplazo Urgente</h4>
         </div>
-        <p style="font-size:13px;opacity:0.9;line-height:1.5;margin-bottom:20px;">Si su asistente habitual tiene un
-          imprevisto o enfermedad, activamos la **Alerta de Reemplazo Inmediato** para enviar un profesional suplente a
+        <p style="font-size:13px;opacity:0.9;line-height:1.5;margin-bottom:20px;"
+          data-frase="solicitar.urgente_bajada">Si su Asistente habitual tiene un
+          imprevisto o una enfermedad, se activa la Alerta de Reemplazo Inmediato para enviar a un profesional suplente a
           su domicilio en menos de 2 horas.</p>
+        <!-- El aviso sale del catálogo, como cualquier otro texto que se lee. La clave
+             se pide con `Texto.frase`, que contesta lo genérico si el catálogo no llegó. -->
         <button
-          onclick="alert('✓ Alerta de Reemplazo Urgente activada. Notificando a asistentes disponibles en un radio de 5km.');"
+          onclick="alert(Texto.frase('solicitar.urgente_alerta'));"
           class="btn btn-atencion ancho-total centrar-texto peso-800"><i class="fas fa-ambulance"></i>
-          SOLICITAR REEMPLAZO URGENTE (&lt;2HS)</button>
+          <span data-frase="solicitar.urgente_boton">SOLICITAR REEMPLAZO URGENTE (&lt;2HS)</span></button>
       </div>
     </div>
   </section>
@@ -165,24 +183,25 @@
       <button onclick="document.getElementById('modal-videollamada').style.display='none';"
         style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;">&times;</button>
       <h3 style="margin-top:0;font-size:20px;font-weight:800;color:var(--texto-titulo);"><i class="fas fa-video color-azul-medio"
-         ></i> Agendar Videollamada con Gestor</h3>
-      <p class="texto-13 color-secundario mb-20">Seleccione la fecha y el horario para su sesión
+         ></i> <span data-frase="solicitar.modal_titulo">Agendar Videollamada con Gestor</span></h3>
+      <p class="texto-13 color-secundario mb-20" data-frase="solicitar.modal_bajada">Seleccione la fecha y el horario para su sesión
         de evaluación inicial gratuita:</p>
       <form
-        onsubmit="event.preventDefault(); alert('✓ ¡Videollamada agendada exitosamente! Le enviamos el enlace de conexión por email y WhatsApp.'); document.getElementById('modal-videollamada').style.display='none';">
+        onsubmit="event.preventDefault(); alert(Texto.frase('solicitar.modal_agendada')); document.getElementById('modal-videollamada').style.display='none';">
         <div class="form-group mb-14">
-          <label for="vv-fecha">Fecha preferida</label>
+          <label for="vv-fecha" data-frase="solicitar.modal_fecha">Fecha preferida</label>
           <input type="date" id="vv-fecha" class="form-control" required />
         </div>
         <div class="form-group" style="margin-bottom:18px;">
-          <label for="vv-hora">Turno disponible</label>
+          <label for="vv-hora" data-frase="solicitar.modal_turno">Turno disponible</label>
           <select id="vv-hora" class="form-control" required>
-            <option value="10">10:00 hs — Turno Mañana</option>
-            <option value="14">14:30 hs — Turno Tarde</option>
-            <option value="17">17:00 hs — Turno Tarde</option>
+            <option value="10" data-frase="solicitar.modal_turno_10">10:00 hs — Turno Mañana</option>
+            <option value="14" data-frase="solicitar.modal_turno_1430">14:30 hs — Turno Tarde</option>
+            <option value="17" data-frase="solicitar.modal_turno_17">17:00 hs — Turno Tarde</option>
           </select>
         </div>
-        <button type="submit" class="btn btn-secundario ancho-total">CONFIRMAR CITA VIRTUAL</button>
+        <button type="submit" class="btn btn-secundario ancho-total"
+          data-frase="solicitar.modal_confirmar">CONFIRMAR CITA VIRTUAL</button>
       </form>
     </div>
   </div>
@@ -190,7 +209,10 @@
   <!-- CÓMO FUNCIONA -->
   <section class="steps-section" id="como-funciona">
     <div class="container">
-      <h2 class="fade-in">El Asistente que se necesita,<br>en tres simples pasos.</h2>
+      <!-- Dos claves y no una: lo que necesita una etiqueta adentro se parte en dos,
+           porque una frase se escribe entera y el corte de renglón es del diseño. -->
+      <h2 class="fade-in"><span data-frase="solicitar.pasos_titulo_1">El Asistente que se necesita,</span><br><span
+          data-frase="solicitar.pasos_titulo_2">en tres simples pasos.</span></h2>
       <div class="steps-layout">
         <div class="steps-phone fade-in">
           <div
@@ -199,21 +221,26 @@
               <div
                 style="background:linear-gradient(to right, var(--verde-exito), var(--naranja-alerta), var(--azul-medio));height:4px;border-radius:2px;margin-bottom:12px;">
               </div>
-              <h4 class="texto-14 peso-800 centrar-texto color-titulo mb-10">
-                Nuevo Aviso</h4>
-              <div class="texto-11 color-secundario mb-6">Tipo de cuidado:</div>
-              <div class="borde-tarjeta redondeo-6 p-8 texto-12 mb-8">
-                Cuidado domiciliario diurno</div>
-              <div class="texto-11 color-secundario mb-6">Zona / Barrio:</div>
-              <div class="borde-tarjeta redondeo-6 p-8 texto-12 mb-8">
-                Buenos Aires, CABA</div>
-              <div class="texto-11 color-secundario mb-6">Características del paciente:</div>
+              <!-- El dibujo de un celular. Lo que se lee adentro se lee igual que el
+                   resto de la pantalla, así que sale del catálogo y no de acá. -->
+              <h4 class="texto-14 peso-800 centrar-texto color-titulo mb-10"
+                data-frase="solicitar.mock_nuevo_aviso">Nuevo Aviso</h4>
+              <div class="texto-11 color-secundario mb-6"
+                data-frase="solicitar.mock_tipo_cuidado">Tipo de cuidado:</div>
+              <div class="borde-tarjeta redondeo-6 p-8 texto-12 mb-8"
+                data-frase="solicitar.mock_tipo_valor">Cuidado domiciliario diurno</div>
+              <div class="texto-11 color-secundario mb-6"
+                data-frase="solicitar.mock_zona">Zona / Barrio:</div>
+              <div class="borde-tarjeta redondeo-6 p-8 texto-12 mb-8"
+                data-frase="solicitar.mock_zona_valor">Buenos Aires, CABA</div>
+              <div class="texto-11 color-secundario mb-6"
+                data-frase="solicitar.mock_caracteristicas">Características del paciente:</div>
               <div
-                style="border:1px solid var(--borde-card);border-radius:6px;padding:8px;font-size:12px;height:50px;margin-bottom:12px;color:var(--texto-secundario);">
-                Adulto mayor con deterioro...</div>
+                style="border:1px solid var(--borde-card);border-radius:6px;padding:8px;font-size:12px;height:50px;margin-bottom:12px;color:var(--texto-secundario);"
+                data-frase="solicitar.mock_caracteristicas_valor">Adulto mayor con deterioro…</div>
               <div
-                class="fondo-azul-oscuro color-sobre-color redondeo-6 p-10 centrar-texto texto-12 peso-700">
-                CONFIRMAR AVISO</div>
+                class="fondo-azul-oscuro color-sobre-color redondeo-6 p-10 centrar-texto texto-12 peso-700"
+                data-frase="solicitar.mock_confirmar">CONFIRMAR AVISO</div>
             </div>
           </div>
         </div>
@@ -221,23 +248,23 @@
           <div class="step-item fade-in">
             <div class="step-number">1</div>
             <div class="step-content">
-              <h4>Descargue {{producto}} en su celular</h4>
-              <p>Regístrese y complete sus datos y los de su ser querido.</p>
+              <h4 data-frase="solicitar.paso1_titulo">Descargue {{producto}} en su celular</h4>
+              <p data-frase="solicitar.paso1_bajada">Regístrese y complete sus datos y los de su ser querido.</p>
             </div>
           </div>
           <div class="step-item fade-in">
             <div class="step-number">2</div>
             <div class="step-content">
-              <h4>Publique y busque</h4>
-              <p>Publique un aviso con las necesidades concretas que requiere su familiar. Los Asistentes calificados se
+              <h4 data-frase="solicitar.paso2_titulo">Publique y busque</h4>
+              <p data-frase="solicitar.paso2_bajada">Publique un aviso con las necesidades concretas que requiere su familiar. Los Asistentes calificados se
                 postularán.</p>
             </div>
           </div>
           <div class="step-item fade-in">
             <div class="step-number">3</div>
             <div class="step-content">
-              <h4>Encuentre a su Asistente</h4>
-              <p>Entreviste a los candidatos por Chat o Video Conferencia y elija al que mejor se adapte a sus
+              <h4 data-frase="solicitar.paso3_titulo">Encuentre a su Asistente</h4>
+              <p data-frase="solicitar.paso3_bajada">Entreviste a los candidatos por chat o videollamada y elija al que mejor se adapte a sus
                 necesidades.</p>
             </div>
           </div>
@@ -248,21 +275,26 @@
 
   <!-- CTA BANNER -->
   <div class="cta-banner">
-    <a href="directorio.html" class="btn btn-atencion">VER ASISTENTES DISPONIBLES</a>
+    <!-- La misma frase que el botón del encabezado. Las mayúsculas las pone el estilo
+         —`.cta-banner .btn`—, así que no hacen falta dos claves. -->
+    <a href="directorio.html" class="btn btn-atencion"
+      data-frase="solicitar.ver_asistentes">Ver Asistentes disponibles</a>
   </div>
 
   <!-- SEGURIDAD -->
   <section class="feature-section">
     <div class="feature-layout">
       <div class="feature-text fade-in">
-        <p class="eyebrow">Seguridad y transparencia</p>
-        <h2>{{producto}} facilita el acceso a cientos de Asistentes calificados.</h2>
-        <p>Cada Asistente completa su legajo incorporando la información necesaria para que el familiar pueda
+        <p class="eyebrow" data-frase="solicitar.seguridad_eyebrow">Seguridad y transparencia</p>
+        <h2 data-frase="solicitar.seguridad_titulo">{{producto}} facilita el acceso a cientos de Asistentes calificados.</h2>
+        <p data-frase="solicitar.seguridad_bajada">Cada Asistente completa su legajo incorporando la información necesaria para que el familiar pueda
           verificarlo: antecedentes penales, referencias laborales y recomendaciones de otros usuarios.</p>
-        <a href="directorio.html" class="btn btn-primario">Ver directorio</a>
+        <a href="directorio.html" class="btn btn-primario"
+          data-frase="solicitar.ver_directorio">Ver directorio</a>
       </div>
       <div class="feature-image fade-in">
-        <img src="assets/images/perfil_sandra.png" alt="Asistentes calificados"
+        <img src="assets/images/perfil_sandra.png"
+          data-frase-alt="solicitar.seguridad_imagen_alt" alt="Asistentes calificados"
           style="height:400px;object-fit:cover;border-radius:var(--redondeo-grande);" />
       </div>
     </div>
@@ -272,15 +304,17 @@
   <section class="feature-section fondo-superficie" id="gestor">
     <div class="feature-layout" style="max-width:1100px;margin:0 auto;">
       <div class="feature-image fade-in">
-        <img src="assets/images/gestor_medicamentos.png" alt="Gestor del cuidado"
+        <img src="assets/images/gestor_medicamentos.png"
+          data-frase-alt="solicitar.gestion_titulo" alt="Gestor del cuidado"
           class="alto-380 cubrir redondeo-grande" />
       </div>
       <div class="feature-text fade-in">
-        <p class="eyebrow">Gestión inteligente</p>
-        <h2>Gestor del cuidado</h2>
-        <p>Un especialista que nos ayuda a gestionar y monitorear todo el cuidado en nuestras casa. La organización
+        <p class="eyebrow" data-frase="solicitar.gestion_eyebrow">Gestión inteligente</p>
+        <h2 data-frase="solicitar.gestion_titulo">Gestor del cuidado</h2>
+        <p data-frase="solicitar.gestion_bajada">Un especialista que ayuda a gestionar y monitorear todo el cuidado en la casa. La organización
           diaria del cuidado genera estrés y falta de tiempo para dedicar a lo verdaderamente esencial.</p>
-        <a href="#como-funciona" class="btn btn-atencion">Empezar ahora</a>
+        <a href="#como-funciona" class="btn btn-atencion"
+          data-frase="solicitar.empezar">Empezar ahora</a>
       </div>
     </div>
   </section>
@@ -289,11 +323,12 @@
   <section class="contact-section" id="contact">
     <div class="contact-layout">
       <div class="contact-image fade-in">
-        <img src="assets/images/mujer_consultando.png" alt="Podemos ayudarle" />
+        <img src="assets/images/mujer_consultando.png"
+          data-frase-alt="solicitar.consulta_titulo" alt="Podemos ayudarle" />
       </div>
       <div class="contact-form fade-in">
-        <h2>Podemos ayudarle</h2>
-        <p>Si es familiar y tiene dudas, puede dejarnos sus datos para que podamos asistirle.</p>
+        <h2 data-frase="solicitar.consulta_titulo">Podemos ayudarle</h2>
+        <p data-frase="solicitar.consulta_bajada">Si es familiar y tiene dudas, puede dejarnos sus datos para que podamos asistirle.</p>
         <!-- `data-guion-propio` le dice a js/main.js que no se meta. `data-consulta` se
              lo da a `js/formulario-consulta.js`, que atiende los cuatro formularios de
              consulta del portal con el mismo guion. Hasta el 26 de agosto de 2026 el
@@ -302,25 +337,36 @@
              resuelta —401 sin sesión, 403 con una cuenta nueva— y el guion compartido
              lo dice en vez de fallar. -->
         <form id="contact-form" data-consulta data-guion-propio novalidate>
-          <div class="form-group"><label for="nombre">Nombre y apellido</label><input type="text" id="nombre"
+          <div class="form-group"><label for="nombre"
+              data-frase="consulta.dato_nombre">Nombre y apellido</label><input type="text" id="nombre"
               required /></div>
-          <div class="form-group"><label for="email">Correo electrónico</label><input type="email" id="email"
+          <div class="form-group"><label for="email"
+              data-frase="consulta.dato_correo">Correo electrónico</label><input type="email" id="email"
               required /></div>
-          <div class="form-group"><label for="celular">Número de celular</label><input type="tel" id="celular"
+          <div class="form-group"><label for="celular"
+              data-frase="consulta.dato_celular">Número de celular</label><input type="tel" id="celular"
               required /></div>
           <div class="form-group">
-            <label for="consulta">¿Cuál es su consulta?</label>
-            <select id="consulta" required data-catalogo="motivo_consulta" data-catalogo-vacio="— Por favor, elija una opción —"></select>
+            <label for="consulta" data-frase="solicitar.consulta_motivo">¿Cuál es su consulta?</label>
+            <!-- Las opciones salen del vocabulario `motivo_consulta` y se traducen ahí.
+                 Acá sólo se nombra la opción vacía. -->
+            <select id="consulta" required data-catalogo="motivo_consulta"
+              data-frase-data-catalogo-vacio="solicitar.elija_opcion"
+              data-catalogo-vacio="— Por favor, elija una opción —"></select>
           </div>
           <div class="form-group">
-            <label>¿Desea suscribirse al newsletter?</label>
+            <label data-frase="solicitar.consulta_novedades">¿Desea recibir novedades?</label>
             <div class="radio-group">
-              <label><input type="radio" name="newsletter" value="si" checked /> Sí</label>
-              <label><input type="radio" name="newsletter" value="no" /> No</label>
+              <label><input type="radio" name="newsletter" value="si" checked /> <span
+                  data-frase="comun.si">Sí</span></label>
+              <label><input type="radio" name="newsletter" value="no" /> <span
+                  data-frase="comun.no">No</span></label>
             </div>
           </div>
-          <button type="submit" class="btn btn-secundario">ENVIAR</button>
-          <div id="form-success" class="form-success">✓ ¡Gracias! Nos pondremos en contacto a la brevedad.</div>
+          <button type="submit" class="btn btn-secundario"
+            data-frase="solicitar.consulta_enviar">ENVIAR</button>
+          <div id="form-success" class="form-success"
+            data-frase="solicitar.consulta_gracias">✓ ¡Gracias! Nos pondremos en contacto a la brevedad.</div>
         </form>
       </div>
     </div>
@@ -330,34 +376,42 @@
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-brand">
-        <div class="logo"><img src="assets/images/logotipo.png" alt="{{organizacion}}" /><span>{{organizacion}} — Servicios de
-            Cuidado</span></div>
-        <p>Conectamos familias con Asistentes calificados.</p>
+        <div class="logo">
+          <img class="tenant-logo" src="assets/images/logotipo.png" alt="" />
+          <span class="tenant-name"></span>
+        </div>
+        <p data-frase="pie.lema">Conectamos familias con Asistentes calificados.</p>
         <div class="footer-social">
-          <a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-instagram"></i></a>
-          <a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i class="fab fa-youtube"></i></a>
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
           <a href="mailto:{{contacto}}"><i class="fas fa-envelope"></i></a>
         </div>
       </div>
       <div class="footer-col">
-        <h4>Para Familias</h4>
-        <a href="solicitar-asistente.html">Solicitar Asistente</a>
-        <a href="directorio.html">Directorio</a>
-        <a href="soporte-remoto.html">Acompañamiento</a>
-        <a href="cursos.html">Cursos</a>
+        <h4 data-frase="pie.para_familias">Para Familias</h4>
+        <a href="solicitar-asistente.html" data-frase="nav.solicitar_asistente">Solicitar Asistente</a>
+        <a href="directorio.html" data-frase="pie.directorio">Directorio</a>
+        <a href="soporte-remoto.html" data-frase="pie.acompanamiento">Acompañamiento</a>
+        <a href="cursos.html" data-frase="pie.cursos">Cursos</a>
       </div>
       <div class="footer-col">
-        <h4>Para Asistentes</h4>
-        <a href="registrar-asistente.html">Registrarme como Asistente</a>
-        <a href="registrar-asistente.html#registro">Registrarme</a>
+        <h4 data-frase="pie.para_asistentes">Para Asistentes</h4>
+        <a href="registrar-asistente.html" data-frase="nav.registrarme_asistente">Registrarme como Asistente</a>
+        <a href="registrar-asistente.html#registro" data-frase="pie.registrarme">Registrarme</a>
       </div>
       <div class="footer-col">
-        <h4>Empresa</h4>
-        <a href="#">Sobre {{producto}}</a><a href="#">Contacto</a><a href="#">Términos</a>
+        <h4 data-frase="pie.empresa">Empresa</h4>
+        <a href="#" data-frase="pie.sobre_producto">Sobre {{producto}}</a>
+        <a href="#" data-frase="pie.contacto">Contacto</a>
+        <a href="#" data-frase="pie.terminos">Términos</a>
+        <a href="#" data-frase="pie.privacidad">Privacidad</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 {{organizacion}} — Servicios de Cuidado. Todos los derechos reservados.</p>
+      <p>© 2025 <span class="tenant-name"></span>
+        <span data-frase="pie.derechos">Todos los derechos reservados.</span></p>
     </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cursos para Familias — {{organizacion}}</title>
-  <meta name="description"
+  <title data-frase="cursos.titulo">Cursos para Familias</title>
+  <meta name="description" data-frase-content="cursos.descripcion"
     content="Cursos para familiares de personas mayores que deseen adquirir herramientas para entender el momento vital y cuidar del otro adecuadamente." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,54 +18,62 @@
 
 <body>
 
+  <!-- NAVBAR -->
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="navbar-logo">
-        <img src="assets/images/logotipo.png" alt="{{organizacion}}" />
+        <img class="tenant-logo" src="assets/images/logotipo.png"
+          data-frase-alt="nav.inicio" alt="Inicio" />
       </a>
       <div class="navbar-links">
-        <a href="solicitar-asistente.html">Solicitar Asistente</a>
-        <a href="registrar-asistente.html">Registrarme como Asistente</a>
-        <a href="directorio.html">Red de Asistentes</a>
-        <a href="formulario-integral.html">Publicar un Aviso</a>
+        <a href="solicitar-asistente.html" data-frase="nav.solicitar_asistente">Solicitar Asistente</a>
+        <a href="registrar-asistente.html" data-frase="nav.registrarme_asistente">Registrarme como Asistente</a>
+        <a href="directorio.html" data-frase="nav.red_asistentes">Red de Asistentes</a>
+        <a href="formulario-integral.html" data-frase="nav.publicar_aviso">Publicar un Aviso</a>
       </div>
       <div class="navbar-social">
-        <a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i class="fab fa-youtube"></i></a>
-        <a href="mailto:{{contacto}}"><i class="fas fa-envelope"></i></a>
+        <a href="#" data-frase-aria-label="nav.facebook" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" data-frase-aria-label="nav.instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" data-frase-aria-label="nav.linkedin" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" data-frase-aria-label="nav.youtube" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="mailto:{{contacto}}" data-frase-aria-label="nav.correo" aria-label="Correo electrónico"><i
+            class="fas fa-envelope"></i></a>
       </div>
-      <button class="hamburger"><span></span><span></span><span></span></button>
+      <button class="hamburger" data-frase-aria-label="nav.menu" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
     </div>
     <div class="mobile-menu">
-      <a href="solicitar-asistente.html">Solicitar Asistente</a>
-      <a href="registrar-asistente.html">Registrarme como Asistente</a>
-      <a href="directorio.html">Red de Asistentes</a>
-      <a href="formulario-integral.html">Publicar un Aviso</a>
+      <a href="solicitar-asistente.html" data-frase="nav.solicitar_asistente">Solicitar Asistente</a>
+      <a href="registrar-asistente.html" data-frase="nav.registrarme_asistente">Registrarme como Asistente</a>
+      <a href="directorio.html" data-frase="nav.red_asistentes">Red de Asistentes</a>
+      <a href="formulario-integral.html" data-frase="nav.publicar_aviso">Publicar un Aviso</a>
     </div>
   </nav>
 
   <section class="inner-hero">
-    <h1>Cursos para Familias</h1>
-    <p>Para familiares de personas mayores y cualquier persona de su entorno que desee adquirir herramientas para
+    <h1 data-frase="cursos.titulo">Cursos para Familias</h1>
+    <p data-frase="cursos.bajada">Para familiares de personas mayores y cualquier persona de su entorno que desee adquirir herramientas para
       entender el momento vital, cuidar del otro y de sí mismo adecuadamente.</p>
-    <a href="#cursos" class="btn btn-atencion">Ver cursos disponibles</a>
+    <a href="#cursos" class="btn btn-atencion" data-frase="cursos.ver_disponibles">Ver cursos disponibles</a>
   </section>
 
   <!-- INTRO -->
   <section class="feature-section fondo-superficie-hover">
     <div class="feature-layout">
       <div class="feature-text fade-in">
-        <p class="eyebrow">Aprender a cuidar mejor</p>
-        <h2>Herramientas prácticas para familiares que cuidan.</h2>
-        <p>Nuestros cursos están diseñados por profesionales en gerontología, psicología y salud, pensados
+        <p class="eyebrow" data-frase="cursos.aprender_a_cuidar">Aprender a cuidar mejor</p>
+        <h2 data-frase="cursos.herramientas_practicas">Herramientas prácticas para familiares que cuidan.</h2>
+        <p data-frase="cursos.intro_bajada">Nuestros cursos están diseñados por profesionales en gerontología, psicología y salud, pensados
           específicamente para personas que cuidan a un familiar mayor. Se aprende desde aspectos técnicos del
           cuidado
           hasta cómo sostener el propio bienestar emocional.</p>
-        <p class="mt-12">Los cursos son en modalidad online, a ritmo propio, con material descargable y acceso
+        <p class="mt-12" data-frase="cursos.intro_modalidad">Los cursos son en modalidad online, a ritmo propio, con material descargable y acceso
           desde cualquier dispositivo.</p>
       </div>
       <div class="feature-image fade-in">
-        <img src="assets/images/cursos_familias.png" alt="Cursos para familias"
+        <img src="assets/images/cursos_familias.png"
+          data-frase-alt="cursos.imagen_intro" alt="Cursos para familias"
           class="alto-380 cubrir redondeo-grande" />
       </div>
     </div>
@@ -74,12 +82,16 @@
   <!-- CURSOS -->
   <section style="background:var(--superficie-hover);padding:40px 24px 80px;" id="cursos">
     <div style="max-width:1100px;margin:0 auto;">
-      <h2 class="fade-in texto-28 peso-800 mb-12 centrar-texto">Cursos
-        disponibles</h2>
+      <h2 class="fade-in texto-28 peso-800 mb-12 centrar-texto"
+        data-frase="cursos.disponibles">Cursos disponibles</h2>
       <p style="text-align:center;color:var(--texto-secundario);font-size:14px;max-width:640px;margin:0 auto 40px auto;"
-        class="fade-in">Esta es la oferta general de capacitaciones. La inscripción se pide en el formulario del final
+        class="fade-in" data-frase="cursos.oferta_bajada">Esta es la oferta general de capacitaciones. La inscripción se pide en el formulario del final
         de esta página.</p>
       <div class="courses-grid" data-oferta="cursos">
+        <!-- El molde de una tarjeta. Lo que lleva `data-campo` o `data-attr-…` lo
+             rellena `data/catalogo-oferta.json` y no se traduce acá; lo que está
+             escrito fijo —el rótulo de las horas, el sello del certificado, el
+             botón— es texto de la pantalla y sale del catálogo de frases. -->
         <template>
           <div class="course-card fade-in">
             <div class="course-card-img"><img data-attr-src="imagen" data-attr-alt="nombre" /></div>
@@ -88,11 +100,14 @@
               <h3 data-campo="nombre"></h3>
               <p data-campo="descripcion"></p>
               <div class="course-meta">
-                <span><i class="fas fa-clock"></i> <span data-campo="horas"></span> horas</span>
+                <span><i class="fas fa-clock"></i> <span data-campo="horas"></span> <span
+                    data-frase="cursos.horas">horas</span></span>
                 <span><i class="fas fa-video"></i> <span data-campo="modalidad@modalidad_curso"></span></span>
-                <span data-si="certificado"><i class="fas fa-certificate"></i> Certificado</span>
+                <span data-si="certificado"><i class="fas fa-certificate"></i> <span
+                    data-frase="cursos.certificado">Certificado</span></span>
               </div>
-              <a href="#inscribirse" class="btn btn-primario" style="font-size:12px;padding:10px 20px;">Inscribirse</a>
+              <a href="#inscribirse" class="btn btn-primario" style="font-size:12px;padding:10px 20px;"
+                data-frase="cursos.inscribirse">Inscribirse</a>
             </div>
           </div>
         </template>
@@ -103,65 +118,75 @@
         style="background: var(--superficie);border:1px solid var(--borde-card);border-radius:var(--redondeo-grande);padding:40px;margin-top:50px;box-shadow:var(--sombra-suave);text-align:center;"
         class="fade-in">
         <span class="eyebrow color-info peso-700 texto-13 mayusculas"
-         >{{producto}}
-          Academy</span>
-        <h2 style="font-size:26px;font-weight:800;color:var(--texto-principal);margin:6px 0 10px 0;">Evaluación de
-          competencias</h2>
-        <p style="color:var(--texto-secundario);font-size:14px;max-width:600px;margin:0 auto 24px auto;">Los cursos que
-          otorgan certificado tienen su evaluación. La corrige el servidor y el resultado queda registrado en el
-          legajo, a la vista de la Prestadora.</p>
-        <a href="examen.html" class="btn btn-primario" style="padding:12px 28px;"><i class="fas fa-edit"></i> Rendir una
-          evaluación</a>
-        <p style="color:var(--texto-secundario);font-size:13px;margin:14px 0 0 0;">Hace falta iniciar sesión con una
-          cuenta de Asistente.</p>
+          data-frase="cursos.academia">{{producto}} Academy</span>
+        <h2 style="font-size:26px;font-weight:800;color:var(--texto-principal);margin:6px 0 10px 0;"
+          data-frase="cursos.evaluacion_competencias">Evaluación de competencias</h2>
+        <p style="color:var(--texto-secundario);font-size:14px;max-width:600px;margin:0 auto 24px auto;"
+          data-frase="cursos.evaluacion_bajada">Los cursos que otorgan certificado tienen su evaluación. La corrige el servidor y el resultado queda
+          registrado en el legajo, a la vista de la Prestadora.</p>
+        <a href="examen.html" class="btn btn-primario" style="padding:12px 28px;"><i class="fas fa-edit"></i> <span
+            data-frase="cursos.rendir_evaluacion">Rendir una evaluación</span></a>
+        <p style="color:var(--texto-secundario);font-size:13px;margin:14px 0 0 0;"
+          data-frase="cursos.hace_falta_sesion">Hace falta iniciar sesión con una cuenta de Asistente.</p>
       </div>
     </div>
   </section>
 
   <div class="cta-banner">
-    <a href="#inscribirse" class="btn btn-atencion">INSCRIBIRME A UN CURSO</a>
+    <a href="#inscribirse" class="btn btn-atencion" data-frase="cursos.inscribirme_ya">INSCRIBIRME A UN CURSO</a>
   </div>
 
   <!-- INSCRIPCIÓN -->
   <section class="contact-section" id="inscribirse">
     <div class="contact-layout">
       <div class="contact-image fade-in">
-        <img src="assets/images/mujer_consultando.png" alt="Inscripción" />
+        <img src="assets/images/mujer_consultando.png"
+          data-frase-alt="cursos.imagen_inscripcion" alt="Inscripción" />
       </div>
       <div class="contact-form fade-in">
-        <h2>Inscríbase a un curso</h2>
-        <p>Complete sus datos y le enviaremos información sobre el curso que le interesa y el proceso de inscripción.
+        <h2 data-frase="cursos.inscribase">Inscríbase a un curso</h2>
+        <p data-frase="cursos.inscripcion_bajada">Complete sus datos y le enviaremos información sobre el curso que le interesa y el proceso de inscripción.
         </p>
         <!-- Igual que en las otras tres, con una diferencia: acá no se pregunta el
                motivo, porque ya se sabe. `data-motivo` lo dice, con la clave del
                vocabulario `motivo_consulta` y no con la etiqueta. -->
           <form id="contact-form" data-consulta data-motivo="cursos" data-guion-propio novalidate>
-          <div class="form-group"><label for="nombre">Nombre y apellido</label><input type="text" id="nombre"
+          <div class="form-group"><label for="nombre"
+              data-frase="consulta.dato_nombre">Nombre y apellido</label><input type="text" id="nombre"
               required /></div>
-          <div class="form-group"><label for="email">Correo electrónico</label><input type="email" id="email"
+          <div class="form-group"><label for="email"
+              data-frase="consulta.dato_correo">Correo electrónico</label><input type="email" id="email"
               required /></div>
-          <div class="form-group"><label for="celular">Número de celular</label><input type="tel" id="celular"
+          <div class="form-group"><label for="celular"
+              data-frase="consulta.dato_celular">Número de celular</label><input type="tel" id="celular"
               required /></div>
           <div class="form-group">
-            <label for="curso">Curso de interés</label>
+            <label for="curso" data-frase="consulta.dato_curso">Curso de interés</label>
             <!-- Las opciones las pone el catálogo. Acá había un `<template>` que no
                  funcionaba nunca: el navegador tira todo lo que no sea `<option>`
                  adentro de un `<select>` al leer la página, así que el molde no
                  llegaba al documento y el desplegable quedaba en «Cargando las
                  opciones…». Ahora `js/catalogo.js` arma las opciones sin molde. -->
             <select id="curso" required data-oferta="cursos"
+              data-frase-data-catalogo-vacio="cursos.elegir_curso"
               data-catalogo-vacio="— Seleccionar el curso —"></select>
           </div>
           <div class="form-group">
-            <label>¿Se suscribe al newsletter?</label>
+            <label data-frase="cursos.desea_novedades">¿Desea recibir novedades?</label>
             <div class="radio-group">
-              <label><input type="radio" name="newsletter" value="si" checked /> Sí</label>
-              <label><input type="radio" name="newsletter" value="no" /> No</label>
+              <!-- `si` y `no` son lo guardado, no lo visible: los compara
+                   `js/formulario-consulta.js` para redactar la consulta. El texto
+                   que se lee va al lado, en su propia frase. -->
+              <label><input type="radio" name="newsletter" value="si" checked /> <span
+                  data-frase="comun.si">Sí</span></label>
+              <label><input type="radio" name="newsletter" value="no" /> <span
+                  data-frase="comun.no">No</span></label>
             </div>
           </div>
-          <button type="submit" class="btn btn-secundario">ENVIAR SOLICITUD</button>
-          <div id="form-success" class="form-success">✓ ¡Solicitud enviada! Recibirá información del curso en su
-            email.
+          <button type="submit" class="btn btn-secundario"
+            data-frase="cursos.enviar_solicitud">ENVIAR SOLICITUD</button>
+          <div id="form-success" class="form-success"
+            data-frase="cursos.solicitud_enviada">✓ ¡Solicitud enviada! Recibirá información del curso en su correo.
           </div>
         </form>
       </div>
@@ -171,30 +196,36 @@
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-brand">
-        <div class="logo"><img src="assets/images/logotipo.png" alt="{{organizacion}}" /><span>{{organizacion}} — Servicios de
-            Cuidado</span></div>
-        <p>Conectamos familias con Asistentes calificados.</p>
+        <div class="logo">
+          <img class="tenant-logo" src="assets/images/logotipo.png" alt="" />
+          <span class="tenant-name"></span>
+        </div>
+        <p data-frase="pie.lema">Conectamos familias con Asistentes calificados.</p>
         <div class="footer-social">
           <a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i class="fab fa-instagram"></i></a>
           <a href="#"><i class="fab fa-linkedin-in"></i></a><a href="#"><i class="fab fa-youtube"></i></a>
         </div>
       </div>
       <div class="footer-col">
-        <h4>Para Familias</h4>
-        <a href="solicitar-asistente.html">Solicitar Asistente</a>
-        <a href="directorio.html">Directorio</a>
-        <a href="soporte-remoto.html">Acompañamiento</a>
-        <a href="cursos.html">Cursos</a>
+        <h4 data-frase="pie.para_familias">Para Familias</h4>
+        <a href="solicitar-asistente.html" data-frase="nav.solicitar_asistente">Solicitar Asistente</a>
+        <a href="directorio.html" data-frase="pie.directorio">Directorio</a>
+        <a href="soporte-remoto.html" data-frase="pie.acompanamiento">Acompañamiento</a>
+        <a href="cursos.html" data-frase="pie.cursos">Cursos</a>
       </div>
       <div class="footer-col">
-        <h4>Para Asistentes</h4><a href="registrar-asistente.html">Registrarme como Asistente</a>
+        <h4 data-frase="pie.para_asistentes">Para Asistentes</h4>
+        <a href="registrar-asistente.html" data-frase="nav.registrarme_asistente">Registrarme como Asistente</a>
       </div>
       <div class="footer-col">
-        <h4>Empresa</h4><a href="#">Sobre {{producto}}</a><a href="#">Contacto</a>
+        <h4 data-frase="pie.empresa">Empresa</h4>
+        <a href="#" data-frase="pie.sobre_producto">Sobre {{producto}}</a>
+        <a href="#" data-frase="pie.contacto">Contacto</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 {{organizacion}} — Servicios de Cuidado. Todos los derechos reservados.</p>
+      <p>© 2025 <span class="tenant-name"></span>
+        <span data-frase="pie.derechos">Todos los derechos reservados.</span></p>
     </div>
   </footer>
   <script src="js/identidad.js"></script>

@@ -8,7 +8,9 @@
    Qué cuenta como visible:
    - el texto entre etiquetas de un `.html`, sin los comentarios ni el `<style>`;
    - los atributos que se leen en pantalla (`placeholder`, `title`, `alt`,
-     `aria-label`, `value`, `content`, `label`);
+     `aria-label`, `value`, `content`, `label`), menos el `value` de un casillero,
+     un redondel, un campo escondido o una opción de lista, que es dato guardado
+     y no texto —ver `sinValoresGuardados()`—;
    - las cadenas de texto de los bloques `<script>`, de los archivos de `js/` y
      del catálogo de `data/`, porque de ahí sale lo que la pantalla muestra.
 
@@ -26,6 +28,30 @@ const ATRIBUTOS = 'placeholder|title|alt|aria-label|value|content|label';
 /* Reemplaza por espacios en vez de borrar para que el número de renglón siga
    siendo el de verdad. */
 export const enBlanco = (t) => t.replace(/[^\n]/g, ' ');
+
+/* El `value` de un casillero, de un redondel, de un campo escondido o de una
+   opción de lista **no se lee en la pantalla**: es el dato que viaja al
+   servidor, y traducirlo rompe a quien lo compara del otro lado. El rótulo que
+   sí se lee está al lado, adentro del `<label>` o del `<option>`, y ése se sigue
+   mirando como siempre.
+   Sale de acá el `value` de un botón —`<input type="submit" value="Enviar">`—,
+   que es texto visible de verdad y tiene que seguir contando.
+   Apareció el 26 de agosto de 2026 al convertir tres pantallas del portal a la
+   vez: las tres tienen un sí/no de novedades cuyo valor `js/formulario-consulta.js`
+   compara con la cadena `'si'`. */
+export function sinValoresGuardados(html) {
+  return html.replace(/<(input|option)\b[^>]*>/gi, (etiqueta, nombre) => {
+    if (/^input$/i.test(nombre)) {
+      const tipo = (etiqueta.match(/(?<![-\w])type\s*=\s*"([^"]*)"|(?<![-\w])type\s*=\s*'([^']*)'/i) || [])
+        .slice(1).filter(Boolean)[0] || 'text';
+      if (!/^(radio|checkbox|hidden)$/i.test(tipo)) return etiqueta;
+    }
+    return etiqueta.replace(
+      /((?<![-\w])value\s*=\s*")([^"]*)(")|((?<![-\w])value\s*=\s*')([^']*)(')/gi,
+      (todo, a, v1, b, c, v2, d) => (a ? a + enBlanco(v1) + b : c + enBlanco(v2) + d)
+    );
+  });
+}
 
 /**
  * Deja fuera lo que está escrito en inglés y en portugués.
@@ -119,7 +145,7 @@ export function visible(crudo, esHtml) {
     }
   }
 
-  const sinGuion = limpio.replace(/<script\b[\s\S]*?<\/script>/gi, enBlanco);
+  const sinGuion = sinValoresGuardados(limpio.replace(/<script\b[\s\S]*?<\/script>/gi, enBlanco));
 
   // `(?<![-\w])` y no `\b`: con `\b`, `alt` casa también adentro de
   // `data-frase-alt`, porque el guión es un carácter de corte. Lo que se

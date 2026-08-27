@@ -3,141 +3,255 @@
     {
       "clave": "busco_asistente",
       "es-AR": "Busco Asistente",
-      "descripcion": "Acceso a Asistentes calificados, con herramientas para buscar y para gestionar el día a día del cuidado de un ser querido.",
+      "descripcion": {
+        "es-AR": "Acceso a Asistentes calificados, con herramientas para buscar y para gestionar el día a día del cuidado de un ser querido.",
+        "en": "Access to qualified Caregivers, with tools to search for and to manage the day-to-day care of a loved one.",
+        "pt-BR": "Acesso a Assistentes qualificados, com ferramentas para buscar e para gerenciar o dia a dia do cuidado de um ente querido."
+      },
       "estado": "publicado",
       "imagen": "assets/images/hero_cuidadores.png",
-      "enlace": "solicitar-asistente.html"
+      "enlace": "solicitar-asistente.html",
+      "en": "Looking for a Caregiver",
+      "pt-BR": "Procuro um Assistente"
     },
     {
       "clave": "acompanamiento_online",
       "es-AR": "Acompañamiento online",
-      "descripcion": "Orientación especializada para mejorar la calidad de vida de la persona cuidada y de su familia.",
+      "descripcion": {
+        "es-AR": "Orientación especializada para mejorar la calidad de vida de la persona cuidada y de su familia.",
+        "en": "Specialised guidance to improve the quality of life of the person being cared for and of their family.",
+        "pt-BR": "Orientação especializada para melhorar a qualidade de vida da pessoa cuidada e da sua família."
+      },
       "estado": "publicado",
       "imagen": "assets/images/acompanamiento_online.png",
-      "enlace": "soporte-remoto.html"
+      "enlace": "soporte-remoto.html",
+      "en": "Online companionship",
+      "pt-BR": "Acompanhamento online"
     },
     {
       "clave": "cursos",
       "es-AR": "Cursos para familias",
-      "descripcion": "Formación para familiares de personas mayores y para cualquiera de su entorno que quiera entender el momento vital y cuidar del otro y de sí mismo.",
+      "descripcion": {
+        "es-AR": "Formación para familiares de personas mayores y para cualquiera de su entorno que quiera entender el momento vital y cuidar del otro y de sí mismo.",
+        "en": "Training for relatives of older people, and for anyone close to them, who wants to understand this stage of life and to care for another person and for themselves.",
+        "pt-BR": "Formação para familiares de pessoas idosas e para qualquer pessoa do seu convívio que queira entender este momento da vida e cuidar do outro e de si mesmo."
+      },
       "estado": "publicado",
       "imagen": "assets/images/cursos_familias.png",
-      "enlace": "cursos.html"
+      "enlace": "cursos.html",
+      "en": "Courses for families",
+      "pt-BR": "Cursos para famílias"
     },
     {
       "clave": "monitoreo",
       "es-AR": "Monitoreo del cuidado",
-      "descripcion": "Organización diaria del cuidado, para que no se lleve el tiempo que hace falta para lo esencial.",
+      "descripcion": {
+        "es-AR": "Organización diaria del cuidado, para que no se lleve el tiempo que hace falta para lo esencial.",
+        "en": "Day-to-day organisation of care, so that it does not take up the time needed for what matters most.",
+        "pt-BR": "Organização diária do cuidado, para que não tome o tempo necessário para o essencial."
+      },
       "estado": "publicado",
       "imagen": "assets/images/monitoreo_cuidado.png",
       "enlace": "solicitar-asistente.html#monitoreo",
-      "ancla": "monitoreo"
+      "ancla": "monitoreo",
+      "en": "Monitoring of care",
+      "pt-BR": "Monitoramento do cuidado"
     },
     {
       "clave": "asistente_virtual",
       "es-AR": "Asistente virtual",
-      "descripcion": "Respuestas a las dudas de quien acompaña a un familiar.",
+      "descripcion": {
+        "es-AR": "Respuestas a las dudas de quien acompaña a un familiar.",
+        "en": "Answers to the questions of whoever is accompanying a relative.",
+        "pt-BR": "Respostas às dúvidas de quem acompanha um familiar."
+      },
       "estado": "publicado",
       "imagen": "assets/images/asistente_telefono.png",
       "enlace": "solicitar-asistente.html#asistente",
-      "ancla": "asistente"
+      "ancla": "asistente",
+      "en": "Virtual assistant",
+      "pt-BR": "Assistente virtual"
     },
     {
       "clave": "vida_activa",
       "es-AR": "Vida activa",
-      "descripcion": "Bienestar físico, psíquico y social de la persona mayor.",
+      "descripcion": {
+        "es-AR": "Bienestar físico, psíquico y social de la persona mayor.",
+        "en": "Physical, mental and social wellbeing of the older person.",
+        "pt-BR": "Bem-estar físico, psíquico e social da pessoa idosa."
+      },
       "estado": "publicado",
       "imagen": "assets/images/vida_activa.png",
       "enlace": "solicitar-asistente.html#vida-activa",
-      "ancla": "vida-activa"
+      "ancla": "vida-activa",
+      "en": "Active life",
+      "pt-BR": "Vida ativa"
     },
     {
       "clave": "gestor_cuidado",
       "es-AR": "Gestor del cuidado",
-      "descripcion": "Un especialista que ayuda a gestionar y monitorear todo el cuidado en el domicilio.",
+      "descripcion": {
+        "es-AR": "Un especialista que ayuda a gestionar y monitorear todo el cuidado en el domicilio.",
+        "en": "A specialist who helps to manage and monitor all the care at the home.",
+        "pt-BR": "Um especialista que ajuda a gerenciar e monitorar todo o cuidado no domicílio."
+      },
       "estado": "publicado",
       "imagen": "assets/images/gestor_medicamentos.png",
-      "enlace": "solicitar-asistente.html#gestor"
+      "enlace": "solicitar-asistente.html#gestor",
+      "en": "Care manager",
+      "pt-BR": "Gestor do cuidado"
     },
     {
       "clave": "productos_hogar",
       "es-AR": "Productos para el hogar",
-      "descripcion": "Provisión de alimentos y servicios en el domicilio.",
-      "estado": "proximamente"
+      "descripcion": {
+        "es-AR": "Provisión de alimentos y servicios en el domicilio.",
+        "en": "Supply of food and services at the home.",
+        "pt-BR": "Fornecimento de alimentos e serviços no domicílio."
+      },
+      "estado": "proximamente",
+      "en": "Products for the home",
+      "pt-BR": "Produtos para a casa"
     },
     {
       "clave": "home",
       "es-AR": "Home",
-      "descripcion": "Circuito de dispositivos integrados para el monitoreo en el domicilio.",
-      "estado": "proximamente"
+      "descripcion": {
+        "es-AR": "Circuito de dispositivos integrados para el monitoreo en el domicilio.",
+        "en": "A circuit of connected devices for monitoring at the home.",
+        "pt-BR": "Circuito de dispositivos integrados para o monitoramento no domicílio."
+      },
+      "estado": "proximamente",
+      "en": "Home",
+      "pt-BR": "Home"
     }
   ],
   "cursos": [
     {
       "clave": "introduccion",
       "es-AR": "Introducción al cuidado del adulto mayor",
-      "descripcion": "Conceptos fundamentales del envejecimiento, necesidades básicas y cómo acompañar a un familiar en el día a día.",
+      "descripcion": {
+        "es-AR": "Conceptos fundamentales del envejecimiento, necesidades básicas y cómo acompañar a un familiar en el día a día.",
+        "en": "Core concepts of ageing, basic needs and how to accompany a relative day by day.",
+        "pt-BR": "Conceitos fundamentais do envelhecimento, necessidades básicas e como acompanhar um familiar no dia a dia."
+      },
       "horas": 8,
       "nivel": "basico",
       "modalidad": "online",
       "certificado": true,
       "imagen": "assets/images/monitoreo_cuidado.png",
-      "etiqueta": "Nivel básico"
+      "etiqueta": {
+        "es-AR": "Nivel básico",
+        "en": "Basic level",
+        "pt-BR": "Nível básico"
+      },
+      "en": "Introduction to caring for older adults",
+      "pt-BR": "Introdução ao cuidado da pessoa idosa"
     },
     {
       "clave": "demencias",
       "es-AR": "Alzheimer y otras demencias: qué esperar y cómo actuar",
-      "descripcion": "Guía práctica para entender el deterioro cognitivo, manejar situaciones difíciles y sostener la calidad de vida de la persona cuidada.",
+      "descripcion": {
+        "es-AR": "Guía práctica para entender el deterioro cognitivo, manejar situaciones difíciles y sostener la calidad de vida de la persona cuidada.",
+        "en": "A practical guide to understanding cognitive impairment, handling difficult situations and sustaining the quality of life of the person being cared for.",
+        "pt-BR": "Guia prático para entender o declínio cognitivo, lidar com situações difíceis e sustentar a qualidade de vida da pessoa cuidada."
+      },
       "horas": 12,
       "nivel": "intermedio",
       "modalidad": "online",
       "certificado": true,
       "imagen": "assets/images/acompanamiento_online.png",
-      "etiqueta": "Intermedio"
+      "etiqueta": {
+        "es-AR": "Intermedio",
+        "en": "Intermediate",
+        "pt-BR": "Intermediário"
+      },
+      "en": "Alzheimer's and other dementias: what to expect and how to act",
+      "pt-BR": "Alzheimer e outras demências: o que esperar e como agir"
     },
     {
       "clave": "bienestar_cuidador",
       "es-AR": "El bienestar de quien cuida",
-      "descripcion": "Herramientas para prevenir el síndrome del cuidador, manejar el estrés y sostener la propia salud emocional.",
+      "descripcion": {
+        "es-AR": "Herramientas para prevenir el síndrome del cuidador, manejar el estrés y sostener la propia salud emocional.",
+        "en": "Tools to prevent caregiver burnout syndrome, manage stress and sustain one's own emotional health.",
+        "pt-BR": "Ferramentas para prevenir a síndrome do cuidador, lidar com o estresse e sustentar a própria saúde emocional."
+      },
       "horas": 6,
       "nivel": "basico",
       "modalidad": "online",
       "certificado": true,
       "imagen": "assets/images/vida_activa.png",
-      "etiqueta": "Bienestar"
+      "etiqueta": {
+        "es-AR": "Bienestar",
+        "en": "Wellbeing",
+        "pt-BR": "Bem-estar"
+      },
+      "en": "The wellbeing of whoever cares",
+      "pt-BR": "O bem-estar de quem cuida"
     },
     {
       "clave": "medicamentos",
       "es-AR": "Administración de medicamentos y control de salud en el hogar",
-      "descripcion": "Organizar la medicación, reconocer señales de alerta y coordinar con el equipo médico.",
+      "descripcion": {
+        "es-AR": "Organizar la medicación, reconocer señales de alerta y coordinar con el equipo médico.",
+        "en": "Organising medication, recognising warning signs and coordinating with the medical team.",
+        "pt-BR": "Organizar a medicação, reconhecer sinais de alerta e coordenar com a equipe médica."
+      },
       "horas": 5,
       "nivel": "intermedio",
       "modalidad": "online",
       "certificado": true,
       "imagen": "assets/images/gestor_medicamentos.png",
-      "etiqueta": "Salud"
+      "etiqueta": {
+        "es-AR": "Salud",
+        "en": "Health",
+        "pt-BR": "Saúde"
+      },
+      "en": "Administration of medicines and health monitoring at home",
+      "pt-BR": "Administração de medicamentos e controle de saúde em casa"
     },
     {
       "clave": "comunicacion",
       "es-AR": "Comunicación empática con un familiar mayor",
-      "descripcion": "Técnicas de comunicación adaptadas al envejecimiento, cómo dar malas noticias y cómo manejar conflictos familiares.",
+      "descripcion": {
+        "es-AR": "Técnicas de comunicación adaptadas al envejecimiento, cómo dar malas noticias y cómo manejar conflictos familiares.",
+        "en": "Communication techniques adapted to ageing, how to give bad news and how to handle family conflicts.",
+        "pt-BR": "Técnicas de comunicação adaptadas ao envelhecimento, como dar más notícias e como lidar com conflitos familiares."
+      },
       "horas": 4,
       "nivel": "basico",
       "modalidad": "online",
       "certificado": true,
       "imagen": "assets/images/asistente_telefono.png",
-      "etiqueta": "Comunicación"
+      "etiqueta": {
+        "es-AR": "Comunicación",
+        "en": "Communication",
+        "pt-BR": "Comunicação"
+      },
+      "en": "Empathetic communication with an older relative",
+      "pt-BR": "Comunicação empática com um familiar idoso"
     },
     {
       "clave": "cuidados_avanzados",
       "es-AR": "Cuidados avanzados: pacientes postrados y cuidados paliativos",
-      "descripcion": "Movilización, prevención de escaras, cuidados al final de la vida y acompañamiento emocional.",
+      "descripcion": {
+        "es-AR": "Movilización, prevención de escaras, cuidados al final de la vida y acompañamiento emocional.",
+        "en": "Moving and handling, prevention of pressure sores, end-of-life care and emotional companionship.",
+        "pt-BR": "Mobilização, prevenção de escaras, cuidados no fim da vida e acompanhamento emocional."
+      },
       "horas": 16,
       "nivel": "avanzado",
       "modalidad": "online",
       "certificado": true,
       "imagen": "assets/images/hero_cuidadores.png",
-      "etiqueta": "Avanzado"
+      "etiqueta": {
+        "es-AR": "Avanzado",
+        "en": "Advanced",
+        "pt-BR": "Avançado"
+      },
+      "en": "Advanced care: bedbound patients and palliative care",
+      "pt-BR": "Cuidados avançados: pacientes acamados e cuidados paliativos"
     }
   ],
   "evaluaciones": [
@@ -153,14 +267,20 @@
             {
               "clave": "fowler",
               "es-AR": "Posición Fowler (semisentado, 45 a 90°)",
-              "correcta": true
+              "correcta": true,
+              "en": "Fowler's position (semi-seated, 45 to 90°)",
+              "pt-BR": "Posição de Fowler (semissentado, 45 a 90°)"
             },
             {
               "clave": "acostado",
               "es-AR": "Completamente acostado",
-              "correcta": false
+              "correcta": false,
+              "en": "Lying completely flat",
+              "pt-BR": "Completamente deitado"
             }
-          ]
+          ],
+          "en": "What is the recommended position for feeding a bedbound patient?",
+          "pt-BR": "Qual é a posição recomendada para alimentar um paciente acamado?"
         },
         {
           "clave": "baja_presion",
@@ -169,16 +289,24 @@
             {
               "clave": "trendelenburg",
               "es-AR": "Recostarlo y elevarle las piernas a 45° (Trendelenburg)",
-              "correcta": true
+              "correcta": true,
+              "en": "Lay the person down and raise their legs to 45° (Trendelenburg)",
+              "pt-BR": "Deitar a pessoa e elevar as suas pernas a 45° (Trendelenburg)"
             },
             {
               "clave": "caminar",
               "es-AR": "Hacerlo caminar rápidamente",
-              "correcta": false
+              "correcta": false,
+              "en": "Make the person walk quickly",
+              "pt-BR": "Fazer a pessoa caminhar rapidamente"
             }
-          ]
+          ],
+          "en": "When an older adult's blood pressure drops suddenly, what should be done?",
+          "pt-BR": "Diante de uma queda repentina de pressão em uma pessoa idosa, o que deve ser feito?"
         }
-      ]
+      ],
+      "en": "Gerontological care and first aid",
+      "pt-BR": "Cuidado gerontológico e primeiros socorros"
     }
   ]
 }
