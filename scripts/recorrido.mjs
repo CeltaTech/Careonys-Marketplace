@@ -88,3 +88,49 @@ export function archivos(carpeta, extensiones, ademas = [], encontrados = []) {
   }
   return encontrados;
 }
+
+/* ===================================================
+   Y LA OTRA MITAD: QUE HAYA ENCONTRADO ALGO
+
+   Un chequeo que revisó cero archivos no revisó nada, pero escribe el mismo ✔
+   que el que los revisó todos, con un número más chico que nadie mira. Es la
+   regla de la empresa —«una prueba que no puede fallar no prueba nada»— vista
+   del lado del corpus y no del detector: casi todos los chequeos ya se prueban
+   a sí mismos contra textos de mentira escritos adentro, y esa prueba pasa
+   igual aunque el recorrido no les entregue un solo archivo.
+
+   Medido el 28 de agosto de 2026 sobre una copia del proyecto entero donde se
+   renombraron las dieciséis pantallas de `.html` a `.jsx`, que es exactamente
+   lo que va a pasar el día de la migración: **diecisiete de los veinte
+   chequeos siguieron diciendo ✔**. `estilos` llegó a informar «ninguno de los
+   0 atributos `style=` del marcado» y contarlo como éxito.
+
+   Por eso `hayArchivos` en vez de `archivos` en todo chequeo, y `seRevisaron`
+   donde lo que se cuenta no sale de un recorrido sino de una lista escrita a
+   mano o de un catálogo.
+=================================================== */
+
+/**
+ * Devuelve `cuantos` si es mayor que cero, y si no corta el chequeo.
+ * `que` es lo que se estaba por revisar, para que el mensaje diga qué faltó.
+ */
+export function seRevisaron(cuantos, que) {
+  if (cuantos > 0) return cuantos;
+  throw new Error(
+    `No se encontró ${que}, así que este chequeo no probó nada.\n` +
+    'Un chequeo que mira cero cosas pasa siempre: no está diciendo que todo ' +
+    'esté bien, está diciendo que no miró.\n' +
+    'Suele ser que algo se renombró, cambió de extensión o se mudó de carpeta, ' +
+    'y hay que ponerlo al día acá.'
+  );
+}
+
+/** `archivos()`, pero se planta si el recorrido no encontró ni uno. */
+export function hayArchivos(carpeta, extensiones, ademas = []) {
+  const encontrados = archivos(carpeta, extensiones, ademas);
+  seRevisaron(
+    encontrados.length,
+    `un solo archivo ${extensiones.join(' ni ')} colgando de «${carpeta}»`
+  );
+  return encontrados;
+}

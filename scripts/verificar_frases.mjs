@@ -42,7 +42,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { archivos } from './recorrido.mjs';
+import { hayArchivos, seRevisaron } from './recorrido.mjs';
 import { visible, enBlanco, despejar, sinEntidades } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -93,6 +93,7 @@ const { frases } = JSON.parse(crudoCatalogo);
 /* Una clave que empieza con guión bajo es un separador para poder leer el
    archivo, no una frase. JSON no tiene comentarios y es la única forma. */
 const claves = Object.keys(frases).filter((c) => c[0] !== '_');
+seRevisaron(claves.length, 'una sola frase en `data/catalogo-frases.json`');
 
 // ── Lo que se saca antes de buscar texto a mano ────────────────────────────
 
@@ -170,7 +171,7 @@ const usadasEnTodo = new Set();
 let convertidas = 0;
 let revisados = 0;
 
-for (const camino of archivos(raiz, ['.html', '.js'], AJENAS)) {
+for (const camino of hayArchivos(raiz, ['.html', '.js'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   if (nombre.endsWith('sw.js')) continue;
   revisados++;

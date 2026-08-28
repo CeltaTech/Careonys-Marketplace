@@ -2347,7 +2347,7 @@ idiomas siguen viendo todo.
 
 ### Las cajas fuertes se reconocen por lo que dicen, no por cómo se escriben
 
-`scripts/recorrido.mjs` es por donde pasan los dieciocho chequeos para leer archivos, y era también
+`scripts/recorrido.mjs` es por donde pasan todos los chequeos para leer archivos, y era también
 donde se hacía cumplir la regla de `F:\proyectos\CLAUDE.md`: una carpeta que anuncia que guarda
 claves no se abre, no se lista y no se cita. **Lo hacía comparando el nombre exacto**, así que
 alcanzaba justo para las cinco carpetas que existían el día que se escribió la lista: una llamada
@@ -2377,7 +2377,7 @@ porque la línea de comandos ya está enlazada— y se revisó contra él. **Y e
 de una sola vez:** quedó escrita como `scripts/probar_permisos_en_vivo.mjs`, que la repite cuando se
 la llame, contra la base enlazada o contra la local con `--local`. Hoy da cuatro comprobaciones
 en rojo —que son el pendiente 67— y una en verde, que es la que las contiene: las 34 políticas
-piden sesión. Se corre a mano y no entra en los dieciocho chequeos del `commit`, porque necesita
+piden sesión. Se corre a mano y no entra en los veintiún chequeos del `commit`, porque necesita
 hablar con la base. **Aparecieron dos agujeros,
 que quedaron como pendientes 66 y 67, y siete cosas que están bien.** Se anotan las siete para que
 nadie las vuelva a investigar:
@@ -2789,7 +2789,7 @@ de franjas, treinta y cinco de avisos y todo el contenido de los cuatro legajos 
 nadie les mirara los valores.**
 
 Un chequeo que no mira no es un chequeo que pasa: es un chequeo que no existe. Ahora reconoce las
-dos formas (`scripts/verificar_claves.mjs:212`) y conoce cinco columnas más —modalidad y nivel de
+dos formas (`scripts/verificar_claves.mjs:213`) y conoce cinco columnas más —modalidad y nivel de
 un curso, día y turno de una franja, puesto de una experiencia—.
 
 **Se probó que puede fallar**, que es la única forma de saber que sirve. Con dos valores
@@ -3373,7 +3373,9 @@ son los que impiden que vuelvan los colores a mano, el tuteo, las claves en el c
 pantallas mudas y los textos escritos adentro del HTML. **Medido el 26 de agosto de 2026 leyendo
 los dieciséis, no de memoria.**
 
-**El hallazgo: nueve chequeos no se rompen, se callan.**
+**El hallazgo: nueve chequeos no se rompen, se callan.** *(Se midió de nuevo el 28 de agosto
+de 2026 corriendo la red en vez de leyéndola, y eran once. La cuenta corregida está al final de
+esta sección.)*
 
 `scripts/recorrido.mjs` recorre el proyecto y **cada chequeo le pide una lista de extensiones**.
 Ninguno de los dieciséis nombra `.jsx` ni `.tsx`. Así que el día que la primera pantalla deja de
@@ -3421,7 +3423,7 @@ en un componente no es un atributo sino una llamada.
 | `esquema` | Lo mismo: las 24 tablas y sus políticas |
 | `cajas` | Comprueba que las carpetas cerradas sigan cerradas, con su propio árbol de mentira. No depende de cómo esté escrito el producto |
 | `referencias` | Comprueba que cada cita `archivo:renglón` de la documentación apunte a algo. **Va a fallar, y a propósito**: al renombrarse las pantallas, las 154 citas dejan de encontrar su archivo. Es el único que avisa fuerte de la migración, y conviene no apagarlo |
-| `copias` | Compara 27 archivos que tienen que ser iguales byte a byte. También falla fuerte, porque la lista nombra caminos exactos. Y **la migración es la ocasión de que deje de hacer falta**: las tres copias existen porque hoy no hay forma de compartir código entre las tres aplicaciones, y con una herramienta de armado sí la hay |
+| `copias` | Compara 27 archivos que tienen que ser iguales byte a byte. **No falla, contra lo que decía este renglón hasta el 28 de agosto de 2026**: su lista nombra `.js`, `.json` y `.css`, y ningún `.html`, así que renombrar las pantallas la deja igual —se corrió la simulación y dio los mismos 29 grupos, sin una sola diferencia—. Y **la migración es la ocasión de que deje de hacer falta**: las tres copias existen porque hoy no hay forma de compartir código entre las tres aplicaciones, y con una herramienta de armado sí la hay |
 
 **Lo que se midió y salió al revés de lo esperado.**
 
@@ -3437,7 +3439,7 @@ módulo nuevo, donde `module.exports` no significa nada, y no protesta. O sea qu
 
 Que eso se note depende de una casualidad afortunada: los dos chequeos usan lo que cargaron
 enseguida y sin preguntar —`IDENTIDAD.nombre` en `scripts/verificar_identidad.mjs:57`,
-`Contacto.revisarCon(...)` en `scripts/verificar_contacto.mjs:74`—, así que revientan en el acto y
+`Contacto.revisarCon(...)` en `scripts/verificar_contacto.mjs:77`—, así que revientan en el acto y
 el `commit` se frena. **Si alguno hubiera preguntado antes «¿tiene nombre?», habría pasado en
 verde sin haber comprobado nada.** Es exactamente la trampa que la regla de la empresa describe:
 `undefined < 3` da falso, y un control escrito así deja pasar justo el caso que no entendió.
@@ -3447,13 +3449,60 @@ verde sin haber comprobado nada.** Es exactamente la trampa que la regla de la e
 1. **Antes de la primera pantalla portada**, no después: agregar `.jsx`/`.tsx` a las listas de los
    nueve que sólo cambian de extensión, y darles a `paleta`, `temas`, `escapado` y `frases` la
    forma que esas cuatro cosas tienen en React.
-2. **Que la red se pruebe a sí misma.** Hoy `cajas` y `referencias` ya lo hacen —se arman un
-   ejemplo malo y comprueban que lo agarran—. Conviene que lo hagan todos los que se toquen, para
-   que ninguno pueda quedar mirando cero archivos y decir ✔.
+2. **Que la red se pruebe a sí misma. Hecho el 28 de agosto de 2026, y antes de la migración
+   porque protege hoy.** Ningún chequeo puede ya quedar mirando cero archivos y decir ✔: se
+   plantan. El cómo está al final de esta sección.
 3. **`guiones` no se adapta: se jubila.** Comprueba la sintaxis de los guiones sueltos adentro del
    HTML, y esa categoría desaparece; de eso pasa a ocuparse la herramienta de armado, que no
    compila un componente con un error de sintaxis.
 4. **`copias` se jubila también, pero recién cuando las tres copias dejen de existir**, no antes.
+
+**Medido de nuevo el 28 de agosto de 2026, corriendo la red en vez de leyéndola.**
+
+La medición de arriba se hizo leyendo los chequeos. La del 28 se hizo **haciendo la mudanza en
+una copia**: el proyecto entero duplicado afuera del repositorio, con los dieciséis `.html`
+renombrados a `.jsx` y nada más, y la red corrida contra esa copia. Salió distinto en tres
+puntos, y en los tres la lectura había sido optimista.
+
+- **No eran nueve los que se callaban, eran once**, y el número que importa es otro:
+  **diecisiete de los veinte chequeos siguieron diciendo ✔.** Sólo tres se pusieron en rojo
+  —`frases`, `referencias` y `usos`—.
+- **`estilos` era uno de los callados y no estaba en la lista.** Informó *«ninguno de los 0
+  atributos `style=` del marcado»* y lo contó como éxito.
+- **`copias` no avisa**, contra lo que decía la tabla de los que sobreviven.
+
+Lo que cada uno contó antes y después, que es lo que nadie estaba mirando: `arranque` 10 y 7 → 3
+y 3; `botones` 21 y 11 → 1 y 1; `escapado` 46 → 30; `estados` 58, 220 y 45 → 18, 174 y 30;
+`estilos` 125, 229, 51 y 28 → 125, 0, 31 y 15; `guiones` 40 → 28; `organizacion` 56 → 40;
+`paleta` 53 → 37; `temas` 26 → 10; `trato` 63 → 47; `vocabulario` 62 → 47. `cajas`, `claves`,
+`contacto`, `copias` y `esquema` dieron idéntico.
+
+**Lo que se construyó con eso, el mismo día.** `scripts/recorrido.mjs` —que es el punto único por
+donde cualquier chequeo pide archivos— tiene ahora dos funciones: `seRevisaron(cuantos, qué)`,
+que corta el chequeo si el número es cero y explica que no probó nada, y `hayArchivos(...)`, que
+es el recorrido de siempre con esa guarda puesta. **Están conectadas en los diecinueve chequeos
+que recorren algo**: dieciséis puntos donde se pedían archivos, y ocho más donde lo que podía
+quedar vacío era una lista o un catálogo —las migraciones de `claves` y `esquema`, los grupos de
+`copias`, los archivos de tokens de `temas`, las clases de utilidad y las pantallas de
+`estilos`, las frases de `frases`, los vocabularios de `usos` y las reglas e idiomas de
+`contacto`—.
+
+**Y la guarda tiene su propio vigilante**, porque una regla que se aplica a mano se despega:
+`scripts/verificar_red.mjs` es el chequeo número 21 y exige que **cada** `verificar_*.mjs` la
+tenga. Lee el archivo **sin sus comentarios**, para que nombrarla en un encabezado no cuente como
+tenerla, y lleva una lista de exentos donde cada exento va con su motivo escrito al lado —hoy hay
+uno solo, `cajas`, que se arma su propio árbol de prueba y ya comprueba que no venga vacío—.
+Se comprobó que puede fallar: en la copia de prueba se le sacó la guarda a `verificar_trato.mjs`,
+y lo nombró y salió en rojo.
+
+**Lo que esto todavía no tapa**, y está abierto como pendiente: perder **parte** del corpus sigue
+sin avisar. Casi todos los chequeos piden `['.html', '.js']` juntos, así que renombrar las
+pantallas les deja los treinta `.js` y la guarda no se dispara. Con la guarda puesta, la misma
+simulación pone en rojo **uno solo más** que antes, `guiones`, que es el único que pide `.html` a
+secas. Exigir que cada extensión nombrada encuentre algo rompería hoy mismo, porque
+`scripts/verificar_identidad.mjs:39` nombra `.webmanifest` y `.txt` y el proyecto no tiene ni un
+archivo de ninguna de las dos. Elegir entre las salidas posibles es decidir una política de
+exenciones, y eso no se inventa acá.
 
 
 ---

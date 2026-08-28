@@ -23,6 +23,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { createRequire } from 'node:module';
+import { seRevisaron } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -30,6 +31,8 @@ const { Contacto } = require(join(raiz, 'js', 'contacto.js'));
 const reglas = JSON.parse(readFileSync(join(raiz, 'data', 'patrones-contacto.json'), 'utf8'));
 
 const IDIOMAS = ['es-AR', 'en', 'pt-BR'];
+seRevisaron((reglas.reglas || []).length, 'una sola regla en `data/patrones-contacto.json`');
+seRevisaron(IDIOMAS.length, 'un solo idioma contra el que probar');
 
 /* Cada uno con la clave que se espera que lo reconozca: si mañana el mensaje
    queda bloqueado por otra regla, el chequeo lo dice en vez de darlo por bueno. */

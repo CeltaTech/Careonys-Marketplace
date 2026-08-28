@@ -19,6 +19,7 @@
 import { readFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve, sep } from 'node:path';
+import { seRevisaron } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -93,6 +94,12 @@ export function verificarCopias(soloGrupo) {
       }
     }
   }
+  /* Sin esto, un `soloGrupo` mal escrito descarta los diecisiete grupos y
+     devuelve «0 problemas», que se lee igual que «está todo bien». */
+  seRevisaron(
+    comparadas + problemas.length,
+    soloGrupo ? `el grupo «${soloGrupo}» en la lista de copias` : 'un solo grupo de copias'
+  );
   return { problemas, comparadas };
 }
 

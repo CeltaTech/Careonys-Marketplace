@@ -26,7 +26,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { archivos } from './recorrido.mjs';
+import { hayArchivos } from './recorrido.mjs';
 import { visible, soloCastellano } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -91,7 +91,7 @@ if (noDetecta.length || sePasa.length) {
 const fallas = [];
 let revisados = 0;
 
-for (const camino of archivos(raiz, ['.html', '.js', '.json'], AJENAS)) {
+for (const camino of hayArchivos(raiz, ['.html', '.js', '.json'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   if (nombre.endsWith('manifest.json') || nombre.endsWith('sw.js')) continue;
   revisados++;

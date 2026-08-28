@@ -43,7 +43,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { archivos } from './recorrido.mjs';
+import { hayArchivos } from './recorrido.mjs';
 import { enBlanco } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -133,7 +133,7 @@ if (noDetecta.length || sePasa.length) {
 const fallas = [];
 let revisados = 0;
 
-for (const camino of archivos(raiz, ['.html', '.css', '.js'], AJENAS)) {
+for (const camino of hayArchivos(raiz, ['.html', '.css', '.js'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   if (TOKENS.has(nombre)) continue;
   revisados++;

@@ -27,7 +27,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { archivos } from './recorrido.mjs';
+import { hayArchivos } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -73,7 +73,7 @@ function sinComentarios(texto, extension) {
 }
 
 const hallazgos = [];
-for (const ruta of archivos(raiz, EXTENSIONES, AJENAS)) {
+for (const ruta of hayArchivos(raiz, EXTENSIONES, AJENAS)) {
   const rel = relative(raiz, ruta);
   if (ARCHIVOS_EXENTOS.has(rel) || GENERADOS.has(rel)) continue;
   if (rel.toLowerCase().endsWith('.md')) continue;

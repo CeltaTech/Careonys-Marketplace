@@ -70,7 +70,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
-import { archivos } from './recorrido.mjs';
+import { hayArchivos } from './recorrido.mjs';
 import { soloCodigo, cuerpo, dentroDeTry, sinBloquesDeComentario } from './bloques.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -527,7 +527,7 @@ if (noDetecta.length || sePasa.length || noDetectaM.length || sePasaM.length
 /* ── El proyecto ────────────────────────────────────────────────────────── */
 
 const revisados = [];
-for (const camino of archivos(raiz, ['.html', '.js'], AJENAS)) {
+for (const camino of hayArchivos(raiz, ['.html', '.js'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   if (PANTALLAS_QUE_SE_VAN.has(nombre)) continue;
   revisados.push({

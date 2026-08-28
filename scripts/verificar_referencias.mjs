@@ -45,7 +45,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { archivos } from './recorrido.mjs';
+import { hayArchivos } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -152,7 +152,7 @@ const fallas = [];
 let revisados = 0;
 let citas = 0;
 
-for (const camino of archivos(join(raiz, 'docs'), ['.md'], AJENAS)) {
+for (const camino of hayArchivos(join(raiz, 'docs'), ['.md'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   if (FOTOS.has(nombre)) continue;
   revisados++;

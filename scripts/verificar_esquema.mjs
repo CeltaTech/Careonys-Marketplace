@@ -56,6 +56,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
+import { seRevisaron } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const carpeta = join(raiz, 'supabase', 'migrations');
@@ -354,6 +355,7 @@ if (ME_CORRIERON_A_MI) {
   let tablas = 0;
   let funciones = 0;
   const migraciones = readdirSync(carpeta).filter((n) => n.endsWith('.sql')).sort();
+  seRevisaron(migraciones.length, 'una sola migración `.sql` para revisar');
   const textos = migraciones.map((n) => readFileSync(join(carpeta, n), 'utf8'));
 
   /* Primero se leen las quince juntas: una tabla puede recibir su columna de

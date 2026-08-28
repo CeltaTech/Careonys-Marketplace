@@ -26,6 +26,7 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve, sep } from 'node:path';
+import { seRevisaron } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SALTAR = new Set(['node_modules', '.git', 'assets', 'supabase']);
@@ -60,6 +61,7 @@ function clasesDeUtilidad() {
   for (const m of hoja.matchAll(/^\.([a-zA-Z][\w-]*)(?:\.\1)+\s*\{\s*([^}]+?)\s*\}/gm)) {
     for (const d of declaraciones(m[2])) porDeclaracion.set(d, m[1]);
   }
+  seRevisaron(porDeclaracion.size, 'una sola clase de utilidad en `css/utilidades.css`');
   return porDeclaracion;
 }
 
@@ -93,7 +95,9 @@ export function verificarEstilos() {
   const problemas = [];
   let enMarcado = 0, enGuion = 0, sobranEnGuion = 0;
 
-  for (const ruta of archivos(raiz)) {
+  const rutas = archivos(raiz);
+  seRevisaron(rutas.length, 'un solo archivo de pantalla que revisar');
+  for (const ruta of rutas) {
     const texto = readFileSync(ruta, 'utf8');
     const rel = relative(raiz, ruta).split(sep).join('/');
     const esGuion = rel.endsWith('.js');

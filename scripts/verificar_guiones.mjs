@@ -25,7 +25,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 import vm from 'node:vm';
 
-import { archivos } from './recorrido.mjs';
+import { hayArchivos } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
@@ -45,7 +45,7 @@ function revisar(codigo, nombre) {
 const fallas = [];
 let revisados = 0;
 
-for (const camino of archivos(raiz, ['.html'], AJENAS)) {
+for (const camino of hayArchivos(raiz, ['.html'], AJENAS)) {
   const pantalla = relative(raiz, camino).split(sep).join('/');
   const crudo = readFileSync(camino, 'utf8');
   const bloques = crudo.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi);
@@ -57,9 +57,9 @@ for (const camino of archivos(raiz, ['.html'], AJENAS)) {
   }
 }
 
-for (const camino of archivos(join(raiz, 'js'), ['.js'], AJENAS).concat(
-  archivos(join(raiz, 'pwa-asistente', 'js'), ['.js'], AJENAS),
-  archivos(join(raiz, 'pwa-familia', 'js'), ['.js'], AJENAS))) {
+for (const camino of hayArchivos(join(raiz, 'js'), ['.js'], AJENAS).concat(
+  hayArchivos(join(raiz, 'pwa-asistente', 'js'), ['.js'], AJENAS),
+  hayArchivos(join(raiz, 'pwa-familia', 'js'), ['.js'], AJENAS))) {
   revisados++;
   const nombre = relative(raiz, camino).split(sep).join('/');
   const error = revisar(readFileSync(camino, 'utf8'), nombre);

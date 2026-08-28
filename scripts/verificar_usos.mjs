@@ -60,7 +60,7 @@
 import { readFileSync, writeFileSync, copyFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve, sep } from 'node:path';
-import { archivos } from './recorrido.mjs';
+import { hayArchivos, seRevisaron } from './recorrido.mjs';
 import { GRUPOS } from './verificar_copias.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -81,6 +81,7 @@ for (const [original, ...copias] of GRUPOS) {
 export function calcularUsos() {
   const catalogo = JSON.parse(readFileSync(aRuta(CATALOGO), 'utf8'));
   const nombres = new Set(Object.keys(catalogo.vocabularios));
+  seRevisaron(nombres.size, 'un solo vocabulario en el catálogo');
 
   /* Nombre del vocabulario → conjunto de `archivo:renglón`. Conjunto y no lista
      porque dos formas distintas pueden caer en el mismo renglón. */
@@ -102,7 +103,7 @@ export function calcularUsos() {
   };
 
   // --- Formas 1, 2 y 5: en el marcado y en los guiones ---------------------
-  const mirados = archivos(raiz, ['.html', '.js'], ['docs', 'supabase', 'scripts']);
+  const mirados = hayArchivos(raiz, ['.html', '.js'], ['docs', 'supabase', 'scripts']);
 
   for (const camino of mirados) {
     const relativa = camino.slice(raiz.length + 1).split(sep).join('/');

@@ -44,7 +44,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { archivos } from './recorrido.mjs';
+import { hayArchivos, seRevisaron } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -207,8 +207,10 @@ for (const rel of COPIAS) {
   }
 }
 
+seRevisaron(comparados + fallas.length, 'un solo archivo de tokens que comparar');
+
 let revisados = 0;
-for (const camino of archivos(raiz, ['.html', '.css'], AJENAS)) {
+for (const camino of hayArchivos(raiz, ['.html', '.css'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   revisados++;
   const extension = nombre.slice(nombre.lastIndexOf('.'));

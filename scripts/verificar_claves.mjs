@@ -37,6 +37,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { seRevisaron } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -335,7 +336,10 @@ const carpeta = join(raiz, 'supabase', 'migrations');
 const fallas = [];
 let revisados = 0;
 
-for (const nombre of readdirSync(carpeta).filter((n) => n.endsWith('.sql')).sort()) {
+const migraciones = readdirSync(carpeta).filter((n) => n.endsWith('.sql')).sort();
+seRevisaron(migraciones.length, 'una sola migración `.sql` para revisar');
+
+for (const nombre of migraciones) {
   revisados++;
   for (const r of revisarSql(readFileSync(join(carpeta, nombre), 'utf8'))) {
     fallas.push(`supabase/migrations/${nombre}:${r.renglon}  ${r.columna}: ${r.motivo}`
