@@ -179,9 +179,9 @@
     },
     "condicion_fiscal": {
       "titulo": {
-        "es-AR": "Condición frente a ARCA",
-        "en": "Tax status with ARCA",
-        "pt-BR": "Situação fiscal perante a ARCA"
+        "es-AR": "Condición fiscal",
+        "en": "Tax status",
+        "pt-BR": "Situação fiscal"
       },
       "cerrada": true,
       "usado_en": [

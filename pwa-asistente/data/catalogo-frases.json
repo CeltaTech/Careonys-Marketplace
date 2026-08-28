@@ -2191,9 +2191,9 @@
       "pt-BR": "Oferecemos a orientação jurídica e os comprovantes de faturamento oficial necessários para solicitar o reembolso total ou parcial do custo do cuidado ao seu plano de saúde (OSDE, Swiss Medical, Galeno, PAMI e outros)."
     },
     "solicitar.cobertura_punto_facturacion": {
-      "es-AR": "Facturación Electrónica ARCA Acreditada.",
-      "en": "Accredited ARCA electronic invoicing.",
-      "pt-BR": "Faturamento eletrônico credenciado pela ARCA."
+      "es-AR": "Facturación electrónica acreditada.",
+      "en": "Accredited electronic invoicing.",
+      "pt-BR": "Faturamento eletrônico credenciado."
     },
     "solicitar.cobertura_punto_reportes": {
       "es-AR": "Resumen de Horas y Reportes de Cuidado Firmados.",
