@@ -26,6 +26,16 @@
       no llegó; tenerlas en los dos lados significa corregir una sola y creer que
       se corrigieron las dos.
 
+   6. **Ninguna fecha, hora o importe lleva el idioma escrito adentro.** Una
+      fecha con el idioma clavado muestra «08/12/2026» en inglés queriendo decir
+      el 12 de agosto, y un precio en pesos se lee como si fueran dólares.
+   7. **Ningún módulo se guarda el idioma, ni se lo pisa al catálogo.** El
+      idioma se decide una sola vez por página, en `idiomaDelEntorno()` de
+      `js/catalogo.js`, y esa regla ya está escrita ahí: «tenerlo en un solo
+      lugar es lo que evita la pantalla mitad en un idioma y mitad en otro». Un
+      módulo que guarda su propia copia la deja en castellano para siempre, y si
+      además se la escribe al catálogo, arrastra a la pantalla entera con él.
+
    QUÉ NO MIRA, Y HAY QUE LEER CON OJOS
    - **Si la traducción es buena.** Esto comprueba que haya texto, no que diga lo
      que tiene que decir.
@@ -128,6 +138,24 @@ const sinComentarios = (crudo, esHtml) => (esHtml
    justamente lo que se quiere. */
 const IDIOMA_ESCRITO = /\bIntl\.[A-Za-z]+\s*\(\s*(?:\[\s*)?('[^'\n]*'|"[^"\n]*")/g;
 
+/* Regla 7: el idioma guardado en un módulo, y el idioma pisado al catálogo.
+
+   Son dos formas del mismo error y por eso van juntas. La primera es un módulo
+   que arranca con `idioma: 'es-AR'` y no lo resuelve nunca: todo lo que dibuje
+   sale en castellano aunque la página esté en inglés. La segunda es peor,
+   porque no se queda adentro: `Catalogo.idioma = this.idioma` le escribe esa
+   copia al punto único de verdad, y desde ese renglón en adelante **toda** la
+   pantalla habla castellano. Pasó en `js/disponibilidad.js`, y el síntoma era
+   una grilla en castellano en medio de un formulario en inglés.
+
+   Lo que sí está bien es preguntarlo —un `get idioma()` que devuelve
+   `window.Catalogo.idioma`—, que no lleva dos puntos y por eso no casa; y
+   resolverlo, que es lo que hace `idioma: idiomaDelEntorno()` en
+   `js/catalogo.js`, que tampoco casa porque no es ni un literal ni el valor de
+   omisión. */
+const IDIOMA_GUARDADO = /\bidioma\s*:\s*('[^'\n]*'|"[^"\n]*"|IDIOMA_POR_DEFECTO\b)/g;
+const IDIOMA_PISADO = /\bCatalogo\.idioma\s*=(?!=)/g;
+
 // ── Qué claves usa cada archivo ────────────────────────────────────────────
 
 function clavesUsadas(crudo, prefijos) {
@@ -188,6 +216,21 @@ for (const camino of hayArchivos(raiz, ['.html', '.js'], AJENAS)) {
     fallas.push(`${nombre}:${renglon}  ${m[0].trim()}… tiene el idioma escrito adentro.\n`
       + '    Una fecha, una hora o un importe se escriben en el idioma de la pantalla,'
       + ' que sale de `Catalogo`, como el resto.');
+  }
+
+  // Regla 7. Igual que la 6: vale para todo archivo, convertido o no.
+  for (const m of sinNotas.matchAll(IDIOMA_GUARDADO)) {
+    const renglon = sinNotas.slice(0, m.index).split('\n').length;
+    fallas.push(nombre + ':' + renglon + '  ' + m[0].trim()
+      + ' se guarda el idioma en vez de preguntarlo.\n'
+      + '    El idioma se decide una sola vez, en `idiomaDelEntorno()` de `js/catalogo.js`.'
+      + ' Acá va un `get idioma()` que devuelva `window.Catalogo.idioma`.');
+  }
+  for (const m of sinNotas.matchAll(IDIOMA_PISADO)) {
+    const renglon = sinNotas.slice(0, m.index).split('\n').length;
+    fallas.push(nombre + ':' + renglon + '  le escribe el idioma al catálogo.\n'
+      + '    Desde ese renglón en adelante la pantalla entera queda en el idioma que'
+      + ' traiga este módulo. El catálogo lo resuelve solo; no hay que ayudarlo.');
   }
 
   // La regla 4 es de pantallas. Un `.js` con `data-frase` adentro es el propio
@@ -295,7 +338,41 @@ const IDIOMA_NO_DEBE_CASAR = [
   "const IDIOMA_DE_FORMA_POR_OMISION = 'es-AR';"
 ];
 
+/* Y con la regla 7, que es la que más fácil se pasa de largo: la forma buena y
+   la mala se parecen mucho, y la diferencia son dos caracteres. */
+const GUARDADO_DEBE_CASAR = [
+  "    idioma: 'es-AR',",
+  '  idioma: "pt-BR",',
+  '    idioma: IDIOMA_POR_DEFECTO,'
+];
+const GUARDADO_NO_DEBE_CASAR = [
+  '    get idioma() { return window.Catalogo.idioma; },',
+  '    idioma: idiomaDelEntorno(),',
+  "const IDIOMA_POR_DEFECTO = 'es-AR';"
+];
+const PISADO_DEBE_CASAR = [
+  '        Catalogo.idioma = this.idioma;',
+  'window.Catalogo.idioma="en"'
+];
+const PISADO_NO_DEBE_CASAR = [
+  '  if (Catalogo.idioma === IDIOMA_POR_DEFECTO) return;',
+  '      return window.Catalogo.idioma || IDIOMA_POR_DEFECTO;'
+];
+
 const roto = [];
+for (const [regla, forma, casan, noCasan] of [
+  ['la regla 7 (idioma guardado)', IDIOMA_GUARDADO, GUARDADO_DEBE_CASAR, GUARDADO_NO_DEBE_CASAR],
+  ['la regla 7 (idioma pisado)', IDIOMA_PISADO, PISADO_DEBE_CASAR, PISADO_NO_DEBE_CASAR]
+]) {
+  for (const linea of casan) {
+    forma.lastIndex = 0;
+    if (!forma.test(linea)) roto.push(regla + ' no ve: ' + linea);
+  }
+  for (const linea of noCasan) {
+    forma.lastIndex = 0;
+    if (forma.test(linea)) roto.push(regla + ' se queja de: ' + linea);
+  }
+}
 for (const linea of IDIOMA_DEBE_CASAR) {
   IDIOMA_ESCRITO.lastIndex = 0;
   if (!IDIOMA_ESCRITO.test(linea)) roto.push('la regla 6 no ve: ' + linea);

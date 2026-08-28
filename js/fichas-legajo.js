@@ -10,7 +10,14 @@
 const FichasLegajo = {
   fichas: null,
   vocabularios: null,
-  idioma: 'es-AR',
+  // El idioma no lo guarda este módulo: lo pregunta. `js/catalogo.js` lo
+  // resuelve una sola vez por página en `idiomaDelEntorno()`, y una segunda
+  // copia acá es exactamente lo que dejaba media pantalla en un idioma y media
+  // en otro. Se cae al castellano sólo mientras el catálogo no llegó.
+  get idioma() {
+    return (typeof window !== 'undefined' && window.Catalogo && window.Catalogo.idioma)
+      || 'es-AR';
+  },
   contadores: {},
 
   async cargar() {

@@ -3148,6 +3148,54 @@ distintas y dos cosas que no son texto: aparecen las cuatro, no aparecen las dos
 que el arreglo no toca dieron el mismo número antes y después —588 apariciones—, así que cambió lo
 que tenía que cambiar y nada más.
 
+### Tres módulos se guardaban su propio idioma, y uno se lo escribía al catálogo
+
+Apareció el 28 de agosto de 2026 comprobando otra cosa: en una pantalla cargada con
+`?idioma=pt-BR`, `document.documentElement.lang` decía `pt-BR` y `Catalogo.idioma` decía `es-AR` en
+la misma carga. Los dos no pueden tener razón.
+
+**El defecto tiene dos capas, y la segunda es la que hace daño.** La primera: `js/disponibilidad.js`,
+`js/autorizaciones.js` y `js/fichas-legajo.js` arrancaban con `idioma: 'es-AR'` y no lo resolvían
+nunca, así que todo lo que dibujaban salía en castellano aunque la página estuviera en inglés. La
+segunda: `js/disponibilidad.js` además le **escribía** esa copia al catálogo —`Catalogo.idioma =
+this.idioma`, adentro de `montarGrilla()`—, y desde ese renglón en adelante la pantalla entera
+hablaba castellano. Era una carrera: lo que el catálogo dibujaba antes de que montara la grilla
+salía bien, y todo lo de después salía mal.
+
+**Reproducido antes de tocar nada**, en `registrar-asistente.html?idioma=en`: la grilla decía
+«¿Cuándo puede trabajar?» en castellano, y después de montarse
+`Catalogo.textoDe(Catalogo.items('zona')[0])` devolvía «Ciudad de Buenos Aires» en vez de «City of
+Buenos Aires».
+
+**La regla que rompía ya estaba escrita**, en `js/catalogo.js:40`: «El idioma es uno solo para las
+tres cosas —opciones, oferta y frases— y se decide en `idiomaDelEntorno()`. Tenerlo en un solo
+lugar es lo que evita la pantalla mitad en un idioma y mitad en otro.» Por eso el arreglo no
+necesitó decidir nada: es la regla «ningún patrón repetido sin punto único de verdad» aplicada.
+
+**El arreglo es que los módulos pregunten en vez de guardar.** Cada uno cambió su propiedad por un
+`get idioma()` que devuelve `window.Catalogo.idioma` y se cae al valor de omisión sólo mientras el
+catálogo no llegó; y la línea que le escribía el idioma al catálogo se borró. Nadie más le asigna
+nada a esas propiedades —las dos únicas asignaciones a un `.idioma` en todo el proyecto eran la
+legítima de `js/catalogo.js` y ésta—, así que un lector sin escritor alcanza. Las cuatro copias
+que `scripts/verificar_copias.mjs` declara se refrescaron.
+
+**Y para que no vuelva, `scripts/verificar_frases.mjs` tiene una regla 7**, con la misma forma que
+la 6: se queja de un `idioma:` guardado como literal o como valor de omisión, y de cualquier
+escritura a `Catalogo.idioma`. **Probada rompiendo el archivo a propósito**: devolviendo
+`js/disponibilidad.js` a su forma vieja, el chequeo señala los dos renglones y sale en rojo;
+restaurado, vuelve a verde. Tiene además diez casos escritos de las dos formas que se parecen y
+significan cosas distintas —`get idioma()` y `idioma: idiomaDelEntorno()` no tienen que casar,
+`idioma: IDIOMA_POR_DEFECTO` sí—, porque la diferencia entre la forma buena y la mala son dos
+caracteres.
+
+**Comprobado en el navegador en los dos idiomas que no son el de omisión.** En inglés las cinco
+cosas dicen `en` y la grilla dice «When are you available to work?»; en portugués dicen `pt-BR` y
+«Quando você pode trabalhar?», con la zona en «Cidade de Buenos Aires».
+
+**Lo que esto no cubre:** la regla 7 mira que nadie se guarde el idioma, no que lo use bien. Un
+módulo que pregunte el idioma y después dibuje una fecha a mano sigue pasando —eso lo mira la
+regla 6, y sólo para `Intl`—.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,

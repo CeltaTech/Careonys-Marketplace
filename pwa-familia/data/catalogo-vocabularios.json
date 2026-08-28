@@ -179,9 +179,9 @@
     },
     "condicion_fiscal": {
       "titulo": {
-        "es-AR": "Condición frente a AFIP",
-        "en": "Tax status with AFIP",
-        "pt-BR": "Situação fiscal perante a AFIP"
+        "es-AR": "Condición frente a ARCA",
+        "en": "Tax status with ARCA",
+        "pt-BR": "Situação fiscal perante a ARCA"
       },
       "cerrada": true,
       "usado_en": [

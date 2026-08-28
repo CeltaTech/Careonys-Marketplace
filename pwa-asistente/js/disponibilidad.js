@@ -158,7 +158,14 @@
 
   const Disponibilidad = {
 
-    idioma: IDIOMA_POR_DEFECTO,
+    // El idioma no lo guarda este módulo: lo pregunta. `js/catalogo.js` lo
+    // resuelve una sola vez por página en `idiomaDelEntorno()`, y una segunda
+    // copia acá es exactamente lo que dejaba media pantalla en un idioma y
+    // media en otro. Se cae al de omisión sólo mientras el catálogo no llegó.
+    get idioma() {
+      return (typeof window !== 'undefined' && window.Catalogo && window.Catalogo.idioma)
+        || IDIOMA_POR_DEFECTO;
+    },
 
     // Trae la declaración una sola vez por página, aunque la pidan diez veces.
     cargar() {
@@ -221,7 +228,6 @@
       try {
         await this.cargar();
         await Catalogo.cargar();
-        Catalogo.idioma = this.idioma;
         grilla = declaracion[nombreBloque || 'grilla'];
         if (!grilla) throw new Error('No hay una grilla llamada «' + nombreBloque + '»');
         dias = Catalogo.items(grilla.columnas);
