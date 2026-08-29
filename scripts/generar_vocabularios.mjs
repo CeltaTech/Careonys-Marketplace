@@ -103,6 +103,26 @@ export function armar(deLaBase, delArchivo) {
   return { vocabularios: salida };
 }
 
+/** Dos objetos con las mismas claves en distinto orden son el mismo objeto, y
+ *  `JSON.stringify` dice que no: PostgREST devuelve el `jsonb` con sus claves
+ *  ordenadas a su manera y el archivo las tiene en el orden en que se
+ *  escribieron. Sin esto, todo el catálogo aparece distinto y ninguna diferencia
+ *  de verdad se distingue del ruido. **El orden de los `items` sí se respeta**:
+ *  ahí el orden es dato, es en el que la persona ve las opciones. */
+function igual(a, b) {
+  return JSON.stringify(ordenado(a)) === JSON.stringify(ordenado(b));
+}
+
+function ordenado(valor) {
+  if (Array.isArray(valor)) return valor.map(ordenado);   // el orden del arreglo se conserva
+  if (valor && typeof valor === 'object') {
+    const salida = {};
+    for (const clave of Object.keys(valor).sort()) salida[clave] = ordenado(valor[clave]);
+    return salida;
+  }
+  return valor;
+}
+
 /** Compara el contenido, no el orden de las claves de cada objeto, que JSON no
  *  fija. El orden de los `items` sí importa y sí se compara: es el orden en que
  *  la persona ve las opciones en la pantalla. */
@@ -121,7 +141,7 @@ export function diferencias(nuevo, viejo) {
   for (const c of enLaBase.filter((c) => enElArchivo.includes(c))) {
     const n = nuevo.vocabularios[c];
     const v = viejo.vocabularios[c];
-    if (JSON.stringify(n.titulo) !== JSON.stringify(v.titulo)) {
+    if (!igual(n.titulo, v.titulo)) {
       problemas.push(`El título de «${c}» no coincide entre la base y el archivo.`);
     }
     if (n.cerrada !== v.cerrada) {
@@ -139,7 +159,7 @@ export function diferencias(nuevo, viejo) {
       continue;
     }
     for (let k = 0; k < clavesBase.length; k++) {
-      if (JSON.stringify(n.items[k]) !== JSON.stringify(v.items[k])) {
+      if (!igual(n.items[k], v.items[k])) {
         problemas.push(`La opción «${c}/${clavesBase[k]}» no coincide entre la base y el archivo.`);
       }
     }
