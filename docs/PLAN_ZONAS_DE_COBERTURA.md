@@ -260,6 +260,9 @@ romper sin que ninguna prueba se enterara.
 ### Lo que queda abierto de este plan
 
 - **La pantalla donde la Prestadora arma su lista de zonas.** Hoy las zonas se cargan por
-  migración. Está en la lista de pendientes del producto.
+  migración, que es tanto como decir que la función no existe: la carga el que programa, no la
+  Prestadora. Al mirarlo el 29 de agosto de 2026 apareció que no era propio de las zonas —**la
+  Prestadora no tiene dónde configurar nada**—, así que quedó abierto como pendiente 95, con ese
+  alcance.
 - **`pwa-asistente/index.html` sigue preguntando una sola zona**, escrita a mano en el propio HTML
   (`pwa-asistente/index.html:451`). No se tocó en este plan y quedó anotada aparte.
