@@ -87,10 +87,10 @@
         "formulario-integral.html:166",
         "formulario-integral.html:356",
         "formulario-integral.html:401",
-        "mockup-app.html:458",
+        "mockup-app.html:457",
         "perfil.html:284",
         "pwa-asistente/index.html:462",
-        "pwa-familia/index.html:912",
+        "pwa-familia/index.html:911",
         "registrar-asistente.html:333"
       ],
       "items": [
@@ -265,7 +265,7 @@
         "directorio.html:83",
         "perfil.html:346",
         "pwa-asistente/index.html:498",
-        "pwa-familia/index.html:787",
+        "pwa-familia/index.html:786",
         "registrar-asistente.html:381"
       ],
       "items": [
@@ -499,7 +499,7 @@
         "formulario-integral.html:186",
         "formulario-integral.html:406",
         "pwa-asistente/index.html:514",
-        "pwa-familia/index.html:762",
+        "pwa-familia/index.html:761",
         "registrar-asistente.html:406"
       ],
       "items": [
@@ -899,10 +899,10 @@
         "directorio.html:261",
         "directorio.html:77",
         "formulario-integral.html:396",
-        "mockup-app.html:459",
+        "mockup-app.html:458",
         "perfil.html:285",
-        "pwa-familia/index.html:749",
-        "pwa-familia/index.html:913",
+        "pwa-familia/index.html:748",
+        "pwa-familia/index.html:912",
         "registrar-asistente.html:314"
       ],
       "nota": "Las dos pantallas listaban zonas de distinto tamaño: una, barrios; la otra, regiones enteras. No son dos listas rivales sino dos escalones de la misma, así que cada barrio queda colgado de su región. Qué barrios y partidos cubre el servicio de verdad no está escrito en el proyecto: esta lista es la que estaba en las pantallas, no un mapa de cobertura.",

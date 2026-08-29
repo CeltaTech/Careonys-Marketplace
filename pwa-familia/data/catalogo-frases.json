@@ -1682,9 +1682,9 @@
       "pt-BR": "Segurança e transparência"
     },
     "inicio.seguridad_titulo": {
-      "es-AR": "{{producto}} facilita el acceso a cientos de Asistentes calificados.",
-      "en": "{{producto}} opens access to hundreds of qualified Caregivers.",
-      "pt-BR": "{{producto}} facilita o acesso a centenas de Assistentes qualificados."
+      "es-AR": "{{organizacion}} facilita el acceso a cientos de Asistentes calificados.",
+      "en": "{{organizacion}} opens access to hundreds of qualified Caregivers.",
+      "pt-BR": "{{organizacion}} facilita o acesso a centenas de Assistentes qualificados."
     },
     "inicio.seguridad_texto": {
       "es-AR": "Cada Asistente completa su legajo con la información necesaria para que la Familia pueda verificarlo: antecedentes penales, referencias laborales y recomendaciones de otras personas.",
@@ -1850,9 +1850,9 @@
       "pt-BR": "Acompanhamento on-line"
     },
     "acompanamiento.descripcion": {
-      "es-AR": "Mejore su calidad de vida y la de sus familiares con el acompañamiento y la orientación especializada de {{producto}}.",
-      "en": "Improve your quality of life and that of your relatives with the companion support and specialised guidance of {{producto}}.",
-      "pt-BR": "Melhore sua qualidade de vida e a de seus familiares com o acompanhamento e a orientação especializada de {{producto}}."
+      "es-AR": "Mejore su calidad de vida y la de sus familiares con el acompañamiento y la orientación especializada de {{organizacion}}.",
+      "en": "Improve your quality of life and that of your relatives with the companion support and specialised guidance of {{organizacion}}.",
+      "pt-BR": "Melhore sua qualidade de vida e a de seus familiares com o acompanhamento e a orientação especializada de {{organizacion}}."
     },
     "acompanamiento.bajada": {
       "es-AR": "Mejore su calidad de vida y la de sus familiares a través del acompañamiento y la orientación especializada. Nuestro equipo de profesionales brinda apoyo emocional y práctico.",
@@ -2156,9 +2156,9 @@
       "pt-BR": "Encontre o Assistente ideal para o seu familiar idoso. Publique o seu anúncio e receba candidaturas de Assistentes qualificados na sua zona."
     },
     "solicitar.bajada": {
-      "es-AR": "{{producto}} facilita el acceso a cientos de Asistentes calificados con múltiples herramientas que facilitan la búsqueda y gestión del día a día en el cuidado de su ser querido.",
-      "en": "{{producto}} opens access to hundreds of qualified Caregivers, with a range of tools that make the search and the day-to-day running of a loved one's care simpler.",
-      "pt-BR": "{{producto}} facilita o acesso a centenas de Assistentes qualificados, com várias ferramentas que simplificam a busca e a gestão do dia a dia no cuidado de quem você ama."
+      "es-AR": "{{organizacion}} facilita el acceso a cientos de Asistentes calificados con múltiples herramientas que facilitan la búsqueda y gestión del día a día en el cuidado de su ser querido.",
+      "en": "{{organizacion}} opens access to hundreds of qualified Caregivers, with a range of tools that make the search and the day-to-day running of a loved one's care simpler.",
+      "pt-BR": "{{organizacion}} facilita o acesso a centenas de Assistentes qualificados, com várias ferramentas que simplificam a busca e a gestão do dia a dia no cuidado de quem você ama."
     },
     "solicitar.ver_asistentes": {
       "es-AR": "Ver Asistentes disponibles",
@@ -2406,9 +2406,9 @@
       "pt-BR": "Segurança e transparência"
     },
     "solicitar.seguridad_titulo": {
-      "es-AR": "{{producto}} facilita el acceso a cientos de Asistentes calificados.",
-      "en": "{{producto}} opens access to hundreds of qualified Caregivers.",
-      "pt-BR": "{{producto}} facilita o acesso a centenas de Assistentes qualificados."
+      "es-AR": "{{organizacion}} facilita el acceso a cientos de Asistentes calificados.",
+      "en": "{{organizacion}} opens access to hundreds of qualified Caregivers.",
+      "pt-BR": "{{organizacion}} facilita o acesso a centenas de Assistentes qualificados."
     },
     "solicitar.seguridad_bajada": {
       "es-AR": "Cada Asistente completa su legajo incorporando la información necesaria para que el familiar pueda verificarlo: antecedentes penales, referencias laborales y recomendaciones de otras personas usuarias.",

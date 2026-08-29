@@ -106,6 +106,12 @@
         ahí es la política y no una tabla vacía.
     40. Ni las puede cambiar.
 
+   Y sobre las zonas de cobertura, que son de cada Prestadora (migración 0035):
+
+    41. Cada Prestadora ve sus zonas, y las dos ven un número que no es cero.
+    42. Ninguna ve una sola zona de la otra.
+    43. Nadie carga una zona en la Prestadora de otro.
+
    Todo con datos inventados. No toca ni una fila que ya estuviera cargada, y
    borra lo que crea. No muestra ninguna clave: usa la publicable, que es la
    que ya viaja al navegador.
@@ -897,6 +903,44 @@ console.log('Dos Familias de la misma Prestadora');
     Array.isArray(retoquePonderacion.cuerpo) && retoquePonderacion.cuerpo.length === 0,
     'tocó ' + (Array.isArray(retoquePonderacion.cuerpo) ? retoquePonderacion.cuerpo.length : '?') + ' filas');
 }
+
+// --- Las zonas de cobertura son de cada Prestadora (migración 0035) ---------
+// Las dos Prestadoras tienen listas distintas cargadas por la propia migración,
+// y por eso esta prueba puede fallar: cada una tiene que ver un número que no
+// es cero y que no es el de la otra. Ver cero no probaría nada.
+{
+  const zonasPorCuenta = [];
+  for (const c of cuentas) {
+    const { cuerpo } = await rest(
+      '/rest/v1/zonas_cobertura?select=id,nombre,tenant_id', {}, c.token);
+    zonasPorCuenta.push(Array.isArray(cuerpo) ? cuerpo : []);
+  }
+  const [zonasA, zonasB] = zonasPorCuenta;
+
+  comprobar('Cada Prestadora ve sus zonas de cobertura, y las dos ven algo',
+    zonasA.length > 0 && zonasB.length > 0,
+    'A: ' + zonasA.length + ' zonas   B: ' + zonasB.length + ' zonas');
+
+  comprobar('Y ninguna ve una sola zona de la otra',
+    zonasA.every((z) => z.tenant_id === cuentas[0].prestadora.id) &&
+    zonasB.every((z) => z.tenant_id === cuentas[1].prestadora.id),
+    'ajenas en A: ' + zonasA.filter((z) => z.tenant_id !== cuentas[0].prestadora.id).length +
+    '   ajenas en B: ' + zonasB.filter((z) => z.tenant_id !== cuentas[1].prestadora.id).length);
+
+  const zonaAjena = await rest('/rest/v1/zonas_cobertura', {
+    method: 'POST',
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify({
+      tenant_id: cuentas[1].prestadora.id,
+      clave: 'prueba_ajena_' + sello,
+      nombre: 'Zona metida en la Prestadora ajena'
+    })
+  }, cuentas[0].token);
+  comprobar('Nadie carga una zona en la Prestadora de otro',
+    zonaAjena.estado >= 400,
+    'respondió ' + zonaAjena.estado);
+}
+
 
 // --- Limpieza ---------------------------------------------------------------
 console.log('');

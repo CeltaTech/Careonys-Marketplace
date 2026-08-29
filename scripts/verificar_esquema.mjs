@@ -83,7 +83,12 @@ const AL_ALCANCE_ANONIMO = new Map([
    'vista `directorio` no publicara ya, y esa vista no tiene datos de contacto; ' +
    'migración 0021'],
   ['perfil_del_directorio',
-   'la misma puerta, para una sola persona; migración 0021']
+   'la misma puerta, para una sola persona; migración 0021'],
+  ['zonas_de',
+   'quien completa el formulario de reclutamiento todavía no tiene cuenta y necesita ver ' +
+   'la lista de zonas para tildar las suyas; exige el nombre corto, así que devuelve las de ' +
+   'una sola Prestadora, y sólo el nombre y el orden de cada zona, que es lo mismo que ya ' +
+   'muestra el formulario; migración 0035']
 ]);
 
 /* Importes que hoy se guardan sin moneda, con su motivo y su pendiente. */
