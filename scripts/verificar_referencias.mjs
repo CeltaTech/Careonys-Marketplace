@@ -67,6 +67,16 @@ const AJENOS = new Map([
    'La cita queda porque de ahí sale la frase que se transcribe']
 ]);
 
+/* Documentos que hablan de otro repositorio. Sus citas a archivos que acá no
+   existen no están rotas: apuntan a código que vive en otro lado y no se toca
+   desde acá. **Lo que sí se les sigue comprobando son sus citas a este
+   repositorio**, que son las que se despegan solas cuando alguien mueve un
+   renglón. Eximir el documento entero convertiría el permiso en un agujero. */
+const DE_OTRO_REPOSITORIO = new Map([
+  ['docs/APORTES_A_CAREONYS.md',
+   'compara lo que hay acá con lo que hay en Careonys, que tiene su propio repositorio']
+]);
+
 /* Carpetas de trabajo de quien desarrolla: no son documentación del proyecto. */
 const AJENAS = ['Nueva carpeta'];
 
@@ -158,7 +168,12 @@ for (const camino of hayArchivos(join(raiz, 'docs'), ['.md'], AJENAS)) {
   revisados++;
   const texto = readFileSync(camino, 'utf8');
   citas += [...texto.matchAll(CITA)].length;
+  // Al documento que habla de otro repositorio se le calla una sola cosa: que el
+  // archivo no esté acá. Un renglón equivocado de un archivo que sí está le
+  // sigue fallando igual.
+  const deOtro = DE_OTRO_REPOSITORIO.has(nombre);
   for (const [renglon, cita, motivo] of citasRotas(texto, leer, existe)) {
+    if (deOtro && /ese archivo no existe/.test(motivo)) continue;
     fallas.push(`${nombre}:${renglon}  ${cita}\n  ${motivo}`);
   }
 }
@@ -177,4 +192,4 @@ if (fallas.length > 0) {
 
 console.log(
   `Citas verificadas: ${citas} con renglón en ${revisados} documentos, todas apuntando a algo ` +
-  `(${FOTOS.size} documentos exentos por ser una foto fechada).`);
+  `(${FOTOS.size} exentos por ser una foto fechada, ${DE_OTRO_REPOSITORIO.size} por hablar de otro repositorio).`);

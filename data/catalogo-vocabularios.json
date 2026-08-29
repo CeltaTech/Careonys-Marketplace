@@ -396,7 +396,7 @@
       "usado_en": [
         "data/catalogo-fichas.json:180",
         "formulario-integral.html:144",
-        "js/catalogo.js:325",
+        "js/catalogo.js:362",
         "pwa-asistente/index.html:500",
         "registrar-asistente.html:388"
       ],
@@ -1057,7 +1057,7 @@
       "cerrada": false,
       "usado_en": [
         "data/catalogo-fichas.json:180",
-        "js/catalogo.js:325"
+        "js/catalogo.js:362"
       ],
       "origen": "Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas. Ninguna pantalla nuestra ofrecía declarar trabajo doméstico.",
       "items": [
@@ -1109,7 +1109,7 @@
       "cerrada": false,
       "usado_en": [
         "data/catalogo-fichas.json:180",
-        "js/catalogo.js:325"
+        "js/catalogo.js:362"
       ],
       "origen": "Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas.",
       "items": [

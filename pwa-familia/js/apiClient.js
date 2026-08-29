@@ -235,6 +235,28 @@ const ClienteDatos = {
     return await this._supabaseRequest('POST', 'rpc/zonas_de', { p_slug: slug }) || [];
   },
 
+  // Los vocabularios: el catálogo general que trae el producto más las opciones
+  // que agregó esta Prestadora. Desde la migración 0038 viven en tablas, y hasta
+  // entonces vivían en un archivo servido al navegador — donde nadie podía
+  // agregar una opción sin publicar una versión nueva.
+  //
+  // Va por `vocabularios_de` y no leyendo `vocabularios`: la mitad de las
+  // pantallas que piden el catálogo son públicas —el directorio, el formulario
+  // de reclutamiento— y quien las usa todavía no tiene cuenta. Es la misma
+  // puerta que `prestadora_por_slug` y `zonas_de`, y exige el nombre corto por
+  // el mismo motivo: no existe forma de pedir las opciones de todas.
+  //
+  // **Sin Prestadora resuelta devuelve el catálogo general, y eso es correcto**,
+  // al revés de lo que pasa con las zonas. Ahí la lista vacía mentía —«esta
+  // Prestadora no cargó zonas» cuando la verdad era «todavía no sé cuál es»—;
+  // acá el catálogo general es lo que ve cualquier cliente el día que se da de
+  // alta, así que la respuesta es verdadera aunque la Prestadora no se resuelva.
+  async vocabulariosDePrestadora() {
+    const prestadora = this.currentTenant || await this.initTenant();
+    const slug = prestadora ? prestadora.slug : null;
+    return await this._supabaseRequest('POST', 'rpc/vocabularios_de', { p_slug: slug });
+  },
+
   // Guarda el legajo del Asistente: las cuatro fichas repetibles, lo que
   // autoriza al cerrar el alta (migración 0004) y su disponibilidad horaria
   // (migración 0012). Las claves de cada fila salen de data/catalogo-fichas.json,

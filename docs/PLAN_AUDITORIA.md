@@ -80,7 +80,7 @@ cliente por su cuenta.
 quién lo ejecuta**. La pantalla sí lo sabe: `panel-prestadora.html:448` pide el perfil y lo usa para
 el control de rol. Pero esa variable es local al arranque de la pantalla y nunca baja hasta la
 función. Lo único de la identidad que llega al servidor es el testigo de sesión en el encabezado
-(`js/apiClient.js:624`). O sea: **el servidor puede saber quién fue; el navegador no lo está
+(`js/apiClient.js:654`). O sea: **el servidor puede saber quién fue; el navegador no lo está
 diciendo.** El lugar donde el dato existe con seguridad es la base.
 
 ## 4. La forma de la tabla

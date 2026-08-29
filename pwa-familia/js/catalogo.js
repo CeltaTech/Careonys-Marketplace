@@ -174,9 +174,46 @@
 
   const ARCHIVO = direccionDelArchivo();
 
-  // Los dos únicos puntos que saben de dónde sale el catálogo. Acá se cambia el
-  // día que viva en tablas.
+  // ── DE DÓNDE SALE EL CATÁLOGO ────────────────────────────────────────
+  // Desde la migración 0038 los vocabularios viven en tablas, y la verdad es la
+  // base: `vocabularios_de` devuelve el catálogo general del producto más las
+  // opciones que agregó esta Prestadora. Antes vivían en un archivo servido al
+  // navegador, y eso significaba que agregar una opción exigía publicar una
+  // versión nueva del sitio.
+  //
+  // **El archivo no desaparece: pasa a ser una copia generada.** Los dos
+  // programas para el teléfono lo guardan para funcionar sin conexión
+  // (`service-worker.js`), así que sigue estando y sigue haciendo falta. Lo
+  // genera `scripts/generar_vocabularios.mjs` desde la base, y una comprobación
+  // rompe la construcción si los dos se despegaron. Es el mismo trato que le da
+  // Careonys a su código repetido.
+  //
+  // Así que acá hay un orden y no dos fuentes: primero la base, y el archivo
+  // sólo cuando la base no contesta —sin conexión, o en las tres pantallas que
+  // ni siquiera cargan `apiClient.js`—. Al revés sería peor de lo que parece:
+  // la pantalla mostraría opciones viejas sin que nadie se entere.
   async function _traer() {
+    const desdeLaBase = await _traerDeLaBase();
+    if (desdeLaBase) return desdeLaBase;
+    return await _traerDelArchivo();
+  }
+
+  // Devuelve `null` —no tira— cuando la base no está al alcance, porque eso no
+  // es un error: es el caso sin conexión, y para eso está el archivo.
+  async function _traerDeLaBase() {
+    const cliente = window.ClienteDatos;
+    if (!cliente || typeof cliente.vocabulariosDePrestadora !== 'function') return null;
+    try {
+      const vocabularios = await cliente.vocabulariosDePrestadora();
+      if (!vocabularios || typeof vocabularios !== 'object') return null;
+      if (Object.keys(vocabularios).length === 0) return null;
+      return vocabularios;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async function _traerDelArchivo() {
     const respuesta = await fetch(ARCHIVO('catalogo-vocabularios'), { cache: 'no-cache' });
     if (!respuesta.ok) throw new Error('El catálogo respondió ' + respuesta.status);
     const datos = await respuesta.json();

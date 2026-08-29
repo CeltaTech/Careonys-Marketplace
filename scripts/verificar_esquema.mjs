@@ -88,7 +88,13 @@ const AL_ALCANCE_ANONIMO = new Map([
    'quien completa el formulario de reclutamiento todavía no tiene cuenta y necesita ver ' +
    'la lista de zonas para tildar las suyas; exige el nombre corto, así que devuelve las de ' +
    'una sola Prestadora, y sólo el nombre y el orden de cada zona, que es lo mismo que ya ' +
-   'muestra el formulario; migración 0035']
+   'muestra el formulario; migración 0035'],
+  ['vocabularios_de',
+   'las listas de opciones las piden pantallas que se ven sin cuenta —el directorio y el ' +
+   'formulario de reclutamiento—, así que la puerta se abre sin sesión o esas pantallas ' +
+   'quedan sin opciones; exige el nombre corto, devuelve el catálogo general del producto ' +
+   'más lo que agregó esa sola Prestadora, y ninguna de las dos cosas es dato de una ' +
+   'persona: son las opciones que la pantalla iba a mostrar igual; migración 0038']
 ]);
 
 /* Importes que hoy se guardan sin moneda, con su motivo y su pendiente. */
