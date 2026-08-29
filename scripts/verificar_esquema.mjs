@@ -94,7 +94,13 @@ const AL_ALCANCE_ANONIMO = new Map([
    'formulario de reclutamiento—, así que la puerta se abre sin sesión o esas pantallas ' +
    'quedan sin opciones; exige el nombre corto, devuelve el catálogo general del producto ' +
    'más lo que agregó esa sola Prestadora, y ninguna de las dos cosas es dato de una ' +
-   'persona: son las opciones que la pantalla iba a mostrar igual; migración 0038']
+   'persona: son las opciones que la pantalla iba a mostrar igual; migración 0038'],
+  ['guias_de',
+   'la guía la lee el Asistente en el domicilio, donde la aplicación puede estar mostrando ' +
+   'la pantalla antes de resolver la sesión, así que cuelga de la misma puerta que el ' +
+   'catálogo del que depende; exige el nombre corto, devuelve la guía general del producto ' +
+   'más la que escribió esa sola Prestadora, y sólo las publicadas; ninguna es dato de una ' +
+   'persona: son textos sobre una patología, nunca sobre un Paciente; migración 0041']
 ]);
 
 /* Importes que hoy se guardan sin moneda, con su motivo y su pendiente. */

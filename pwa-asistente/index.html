@@ -304,6 +304,7 @@
         <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home ancho-20 color-secundario"></i> Inicio</a>
         <a class="drawer-menu-item" onclick="navigate('registro')"><i class="fas fa-user-plus ancho-20 color-secundario"></i> Completar Legajo</a>
         <a class="drawer-menu-item" onclick="navigate('capacitaciones')"><i class="fas fa-graduation-cap ancho-20 color-secundario"></i> Mis Capacitaciones</a>
+        <a class="drawer-menu-item" onclick="navigate('guias')"><i class="fas fa-book-medical ancho-20 color-secundario"></i> <span id="gui-menu"></span></a>
         <div style="border-top:1px solid var(--borde-card);margin:8px 0;"></div>
         <button type="button" class="drawer-menu-item color-peligro" id="btn-logout"><i class="fas fa-sign-out-alt ancho-20 color-peligro"></i> Cerrar sesión</button>
       </div>
@@ -638,6 +639,91 @@
       </div>
     </div>
 
+    <!-- 5. VISTA: GUÍAS DE CUIDADO -->
+    <!--
+      Qué es la patología, qué se ve en la casa, qué señales obligan a avisar y
+      cómo actuar en una emergencia. Es material de consulta: están todas las
+      guías que la Prestadora publicó, no la de un Paciente en particular,
+      porque hoy no existe la pantalla donde el Asistente ve al Paciente que va
+      a cuidar. El día que exista, la guía tiene que aparecer también ahí y sin
+      buscarla (pendiente 105).
+
+      **Los tratamientos no están, y es a propósito.** Decir qué tratamiento
+      corresponde convierte al producto en fuente de indicación clínica, y
+      entonces alguien tiene que responder cuando un Asistente lo siga y salga
+      mal. Es la diferencia entre avisar y prescribir, y la pantalla lo dice en
+      voz alta arriba de todo en vez de dejarlo supuesto.
+
+      A diferencia de las otras pantallas de esta aplicación, ésta nace
+      traducida: ni una palabra suya está escrita acá. El texto fijo lo pide el
+      guion con `Catalogo.frase()` y lo que escribió una persona sale de la base
+      en el idioma en que lo escribió.
+
+      Se pide desde el guion y no con `data-frase` por una razón del propio
+      chequeo, no por gusto: una pantalla queda «convertida» apenas tiene un
+      solo `data-frase`, y desde ese momento se le exige el archivo entero. Este
+      archivo tiene ciento ocho textos escritos a mano que son otra tarea, así
+      que ponerle una clave declarativa acá no dejaría el archivo mejor: dejaría
+      el chequeo en rojo hasta terminar esa otra tarea, o —peor— empujaría a
+      apagarlo. `Catalogo.frase()` da exactamente el mismo resultado en las tres
+      lenguas y no miente sobre en qué estado está el resto.
+    -->
+    <div class="app-screen" id="screen-guias">
+      <div class="wizard-header-bar">
+        <button type="button" class="btn-volver-cabecera" id="gui-volver">
+          <i class="fas fa-arrow-left"></i></button>
+        <h2 id="gui-titulo"></h2>
+      </div>
+
+      <div class="capacitaciones-cuerpo">
+        <div class="pwa-estado" id="gui-cargando"></div>
+
+        <div class="pwa-estado" id="gui-error" hidden>
+          <p id="gui-error-texto"></p>
+          <button type="button" class="btn btn-primario" id="gui-reintentar"></button>
+        </div>
+
+        <div class="pwa-estado" id="gui-vacio" hidden>
+          <p id="gui-vacio-texto"></p>
+          <p class="pwa-estado-bajada" id="gui-vacio-bajada"></p>
+        </div>
+
+        <div id="gui-listo" hidden>
+          <p class="capacitaciones-bajada" id="gui-aclaracion"></p>
+
+          <div class="input-wrapper">
+            <input type="search" id="gui-buscar" />
+          </div>
+
+          <!-- Se muestra sólo cuando el filtro no deja ninguna. Es distinto de
+               que no haya guías, y por eso no es el estado «vacío». -->
+          <p class="pwa-estado-bajada" id="gui-sin-resultado" hidden></p>
+
+          <div id="gui-lista"></div>
+
+          <!-- El molde de una guía. Las partes se marcan con `data-parte` y se
+               llenan con `textContent`: así ningún texto que alguien cargue
+               puede llegar a la pantalla como etiqueta de HTML. -->
+          <template id="molde-guia">
+            <div class="curso-tarjeta">
+              <h3 data-parte="patologia"></h3>
+              <span class="curso-datos" data-parte="propia"></span>
+              <p data-parte="descripcion"></p>
+
+              <h4 data-parte="rotulo-esperar"></h4>
+              <p data-parte="que-esperar"></p>
+
+              <h4 data-parte="rotulo-senales"></h4>
+              <ul data-parte="senales"></ul>
+
+              <h4 data-parte="rotulo-emergencia"></h4>
+              <ol data-parte="emergencia"></ol>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /phone-container -->
 
   <!-- JS LOCAL (dentro del scope del Service Worker) -->
@@ -683,6 +769,11 @@
         } catch (err) {
           console.error('Portal del Asistente, texto de la pantalla:', err);
         }
+
+        // El texto fijo de la pantalla de Guías de cuidado, apenas llega el
+        // catálogo. Se escribe acá y no al entrar a la pantalla para que la
+        // entrada del menú y el rótulo estén en su idioma desde el arranque.
+        guiTextoFijo();
 
         await ClienteDatos.initTenant();
         montarDisponibilidad();
@@ -834,6 +925,138 @@
     document.getElementById('cap-volver').addEventListener('click', () => navigate('dashboard'));
     document.getElementById('cap-reintentar').addEventListener('click', capCargar);
 
+
+    // ── Guías de cuidado ───────────────────────────
+    // Lo que el Asistente necesita saber antes de entrar a una casa. Sale de
+    // `guias_de`, que es una puerta: exige el nombre corto de la Prestadora y
+    // devuelve el catálogo general del producto más lo que agregó esa
+    // Prestadora, **donde lo suyo reemplaza a lo general**. Ese reemplazo lo
+    // resuelve la base y no esta pantalla, a propósito: si lo decidiera acá,
+    // habría que decidirlo igual en la aplicación de la Familia y en el sitio,
+    // y tres decisiones iguales escritas en tres lados son tres oportunidades
+    // de que una quede vieja.
+    //
+    // Y sólo llegan las publicadas, que también lo garantiza la base. Un
+    // borrador que se ve es una indicación que nadie firmó.
+
+    // Todo el texto fijo de la pantalla, del catálogo. Se vuelve a llamar sola
+    // cuando alguien cambia de idioma, porque `Catalogo.cambiarIdioma` reescribe
+    // el documento y lo que se puso desde el guion no viaja en ese recorrido.
+    function guiTextoFijo() {
+      const poner = (id, clave) => {
+        document.getElementById(id).textContent = Catalogo.frase(clave);
+      };
+      poner('gui-titulo', 'guia.titulo');
+      poner('gui-menu', 'guia.titulo');
+      poner('gui-cargando', 'guia.cargando');
+      poner('gui-reintentar', 'guia.reintentar');
+      poner('gui-vacio-texto', 'guia.vacio');
+      poner('gui-vacio-bajada', 'guia.vacio_bajada');
+      poner('gui-aclaracion', 'guia.aclaracion');
+      poner('gui-sin-resultado', 'guia.sin_resultado');
+      document.getElementById('gui-buscar')
+        .setAttribute('placeholder', Catalogo.frase('guia.buscar'));
+    }
+
+    function guiMostrar(cual) {
+      for (const estado of ['cargando', 'error', 'vacio', 'listo']) {
+        document.getElementById('gui-' + estado).hidden = estado !== cual;
+      }
+    }
+
+    // Las guías que trajo la puerta, aplanadas y ya ordenadas por el nombre que
+    // se ve. Se guardan para poder filtrar sin volver a preguntar.
+    let guiTodas = [];
+
+    // Una lista de renglones —las señales, los pasos de la emergencia— dentro
+    // del elemento que la contiene. Cada renglón por `textContent`.
+    function guiRenglones(donde, textos) {
+      donde.textContent = '';
+      for (const texto of textos || []) {
+        const li = document.createElement('li');
+        li.textContent = texto;
+        donde.appendChild(li);
+      }
+      return (textos || []).length;
+    }
+
+    function guiTarjeta(entrada) {
+      const nodo = document.getElementById('molde-guia').content.cloneNode(true);
+      const parte = (nombre) => nodo.querySelector('[data-parte="' + nombre + '"]');
+
+      parte('patologia').textContent = entrada.nombre;
+
+      // El distintivo aparece sólo cuando la guía la escribió la Prestadora.
+      // Importa que se note: es la que manda sobre la general, y quien la lee
+      // tiene derecho a saber quién responde por lo que está leyendo.
+      if (entrada.guia.propia) parte('propia').textContent = Catalogo.frase('guia.propia');
+      else parte('propia').remove();
+
+      parte('descripcion').textContent = Catalogo.textoDe(entrada.guia.descripcion);
+
+      parte('rotulo-esperar').textContent = Catalogo.frase('guia.que_esperar');
+      parte('que-esperar').textContent = Catalogo.textoDe(entrada.guia.que_esperar);
+
+      parte('rotulo-senales').textContent = Catalogo.frase('guia.senales');
+      guiRenglones(parte('senales'), Catalogo.textoDe(entrada.guia.senales_de_alarma));
+
+      parte('rotulo-emergencia').textContent = Catalogo.frase('guia.emergencia');
+      guiRenglones(parte('emergencia'), Catalogo.textoDe(entrada.guia.en_emergencia));
+
+      return nodo;
+    }
+
+    // Redibuja la lista con lo que coincida con lo buscado. Sin nada escrito
+    // están todas.
+    function guiDibujar() {
+      const buscado = (document.getElementById('gui-buscar').value || '').trim().toLowerCase();
+      const lista = document.getElementById('gui-lista');
+      lista.textContent = '';
+      const muestra = buscado
+        ? guiTodas.filter((e) => e.nombre.toLowerCase().includes(buscado))
+        : guiTodas;
+      for (const entrada of muestra) lista.appendChild(guiTarjeta(entrada));
+      // Que el filtro no deje ninguna no es lo mismo que no haber guías, así
+      // que se dice distinto y no se manda la pantalla al estado «vacío».
+      document.getElementById('gui-sin-resultado').hidden = muestra.length > 0;
+    }
+
+    async function guiCargar() {
+      guiTextoFijo();
+      guiMostrar('cargando');
+      try {
+        // El catálogo hace falta para el nombre visible de cada patología: la
+        // base guarda la clave y el nombre se traduce acá.
+        const [guias] = await Promise.all([
+          ClienteDatos.guiasDePrestadora(),
+          Catalogo.cargar()
+        ]);
+
+        guiTodas = [];
+        for (const [vocabulario, opciones] of Object.entries(guias || {})) {
+          for (const [clave, guia] of Object.entries(opciones || {})) {
+            guiTodas.push({
+              nombre: Catalogo.etiquetaSiExiste(vocabulario, clave) || clave,
+              guia: guia
+            });
+          }
+        }
+        guiTodas.sort((a, b) => a.nombre.localeCompare(b.nombre, Catalogo.idioma));
+
+        if (guiTodas.length === 0) { guiMostrar('vacio'); return; }
+        guiDibujar();
+        guiMostrar('listo');
+      } catch (err) {
+        document.getElementById('gui-error-texto').textContent =
+          Texto.mensajeDeError(err, 'traer las guías de cuidado');
+        guiMostrar('error');
+      }
+    }
+
+    document.getElementById('gui-volver').addEventListener('click', () => navigate('dashboard'));
+    document.getElementById('gui-reintentar').addEventListener('click', guiCargar);
+    document.getElementById('gui-buscar').addEventListener('input', guiDibujar);
+
     // ── Navegación Multi-Pantalla ──────────────────
     function navigate(screenId) {
       document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
@@ -845,6 +1068,7 @@
       // Las pantallas que leen de la base se llenan al entrar, no al arrancar
       // la aplicación: quien nunca abre capacitaciones no le pide nada a nadie.
       if (screenId === 'capacitaciones') capCargar();
+      if (screenId === 'guias') guiCargar();
     }
 
     // ── Estado del Legajo ──────────────────────────

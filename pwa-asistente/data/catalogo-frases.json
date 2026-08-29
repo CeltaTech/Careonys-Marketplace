@@ -2536,6 +2536,67 @@
       "es-AR": "✓ ¡Gracias! Nos pondremos en contacto a la brevedad.",
       "en": "✓ Thank you. We will be in touch shortly.",
       "pt-BR": "✓ Obrigado. Entraremos em contato em breve."
+    },
+    "_________________________________________": "── La pantalla de Guías de cuidado del Asistente ──",
+    "guia.titulo": {
+      "es-AR": "Guías de cuidado",
+      "en": "Care guides",
+      "pt-BR": "Guias de cuidado"
+    },
+    "guia.cargando": {
+      "es-AR": "Buscando las guías de cuidado...",
+      "en": "Loading the care guides…",
+      "pt-BR": "Buscando os guias de cuidado..."
+    },
+    "guia.reintentar": {
+      "es-AR": "Reintentar",
+      "en": "Try again",
+      "pt-BR": "Tentar de novo"
+    },
+    "guia.vacio": {
+      "es-AR": "Todavía no hay ninguna guía publicada.",
+      "en": "No guide has been published yet.",
+      "pt-BR": "Ainda não há nenhum guia publicado."
+    },
+    "guia.vacio_bajada": {
+      "es-AR": "Aparecen acá en cuanto se publique la primera. Una guía sin revisar no llega a esta pantalla.",
+      "en": "They appear here as soon as the first one is published. An unreviewed guide never reaches this screen.",
+      "pt-BR": "Aparecem aqui assim que o primeiro for publicado. Um guia sem revisão não chega a esta tela."
+    },
+    "guia.buscar": {
+      "es-AR": "Buscar una patología",
+      "en": "Search for a condition",
+      "pt-BR": "Buscar uma patologia"
+    },
+    "guia.sin_resultado": {
+      "es-AR": "Ninguna guía coincide con lo que se buscó.",
+      "en": "No guide matches that search.",
+      "pt-BR": "Nenhum guia corresponde à busca."
+    },
+    "guia.que_esperar": {
+      "es-AR": "Qué esperar en el domicilio",
+      "en": "What to expect in the home",
+      "pt-BR": "O que esperar no domicílio"
+    },
+    "guia.senales": {
+      "es-AR": "Señales de alarma",
+      "en": "Warning signs",
+      "pt-BR": "Sinais de alarme"
+    },
+    "guia.emergencia": {
+      "es-AR": "Ante una emergencia",
+      "en": "In an emergency",
+      "pt-BR": "Em caso de emergência"
+    },
+    "guia.propia": {
+      "es-AR": "Guía de su Prestadora",
+      "en": "Your provider's guide",
+      "pt-BR": "Guia da sua prestadora"
+    },
+    "guia.aclaracion": {
+      "es-AR": "Estas guías dicen qué observar y cuándo avisar. No indican tratamientos.",
+      "en": "These guides say what to watch for and when to report it. They do not prescribe treatment.",
+      "pt-BR": "Estes guias dizem o que observar e quando avisar. Não indicam tratamentos."
     }
   }
 }

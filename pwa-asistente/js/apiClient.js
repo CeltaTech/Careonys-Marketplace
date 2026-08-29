@@ -257,6 +257,37 @@ const ClienteDatos = {
     return await this._supabaseRequest('POST', 'rpc/vocabularios_de', { p_slug: slug });
   },
 
+  // Las Guías de cuidado: qué es la patología, qué se ve en el domicilio, qué
+  // señales obligan a avisar y cómo actuar en una emergencia. Cuelgan de una
+  // opción de vocabulario —no de una tabla de patologías—, así que las
+  // discapacidades y las tareas de cuidado pueden tener la suya sin una tabla
+  // nueva (migración 0041).
+  //
+  // Va por `guias_de` y no leyendo `guias_cuidado` por el mismo motivo que los
+  // vocabularios: la tabla no le concede nada a `anon`, y la pantalla que
+  // necesita esto puede estar mostrándose sin sesión.
+  //
+  // **La guía de la Prestadora reemplaza a la general; no se suman.** Es la
+  // diferencia con `vocabulariosDePrestadora`, y no es un descuido: dos
+  // opciones distintas en una lista conviven, pero dos textos que explican la
+  // misma patología se contradicen, y el Asistente no tiene cómo saber a cuál
+  // hacerle caso. Manda quien responde por él, que es su Prestadora.
+  //
+  // **Sólo salen las publicadas.** Una guía sin revisar no llega a ninguna
+  // pantalla, porque la base exige que quede escrito quién la revisó y cuándo
+  // antes de dejar publicarla. Un borrador que se ve es una indicación que
+  // nadie firmó.
+  //
+  // Y no hay copia en `data/`, al revés del catálogo: el archivo del catálogo
+  // viaja a todos los teléfonos, y lo que escribió una Prestadora no puede
+  // repartirse a cualquiera. Que su gente igual la necesita en una casa sin
+  // señal es cierto, y está anotado sin resolver (pendiente 102).
+  async guiasDePrestadora() {
+    const prestadora = this.currentTenant || await this.initTenant();
+    const slug = prestadora ? prestadora.slug : null;
+    return await this._supabaseRequest('POST', 'rpc/guias_de', { p_slug: slug });
+  },
+
   // Guarda el legajo del Asistente: las cuatro fichas repetibles, lo que
   // autoriza al cerrar el alta (migración 0004) y su disponibilidad horaria
   // (migración 0012). Las claves de cada fila salen de data/catalogo-fichas.json,

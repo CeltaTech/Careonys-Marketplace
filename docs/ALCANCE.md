@@ -538,7 +538,7 @@ Cierra el pendiente 38, el 24 de agosto de 2026.
 Ya no queda ninguna contraseña de mentira en pantalla. La de acceso venía prellenada con seis
 dígitos para poder mostrar el producto sin tipear, y el correo que la acompañaba tampoco
 correspondía a ninguna cuenta. Los cuatro campos se vaciaron el 25 de agosto de 2026 y arrancan
-con su indicación adentro (`pwa-asistente/index.html:310` y `:313`,
+con su indicación adentro (`pwa-asistente/index.html:325` y `:328`,
 `pwa-familia/index.html:571` y `:574`). Lo que falta para cerrar el pendiente 47 es la otra mitad:
 que exista una cuenta de Asistente ficticia con la que se pueda entrar, y eso depende del tope de
 correos del pendiente 45.
@@ -749,7 +749,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
   que esa fila no entraba y la persona no se enteraba.
 - **Y el alta del teléfono creaba cuentas sin dueño.** `registrarAspirante` no escribía `user_id`,
   así que la persona quedaba con cuenta y con legajo, pero el legajo no era de nadie y no lo podía
-  abrir. Se agrega en `guardarLegajo` (`pwa-asistente/index.html:1147`), que es donde ya se sabe
+  abrir. Se agrega en `guardarLegajo` (`pwa-asistente/index.html:1371`), que es donde ya se sabe
   quién inició sesión.
 
 **Cómo se comprobó, el 25 de agosto de 2026.** En dos mitades, porque el servidor alojado todavía
@@ -1455,14 +1455,14 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
   la Prestadora», que es la condición que la vista ya exige para devolver la fila, y la de
   reemplazos urgentes, que sale de `disponibilidad_asistente`.
 - **El filtro por Prestadora vive en el cliente de datos y no es optativo**
-  (`js/apiClient.js:534`). El resto del archivo filtra «si hay Prestadora resuelta», y eso no sirve
+  (`js/apiClient.js:624`). El resto del archivo filtra «si hay Prestadora resuelta», y eso no sirve
   para una pantalla que se ve sin cuenta: sin sesión, la que no filtra devuelve las dos mezcladas.
   Acá, si no hay Prestadora, no se pide nada.
 - **Y si la dirección nombra una Prestadora que no existe, tampoco se muestra otra.** Comprobado
   en el navegador antes de tocar nada: `directorio.html?t=prestadora-que-no-existe` mostraba los
   cuatro Asistentes de PresDemo, porque el respaldo devuelve la primera Prestadora de la base. El
   respaldo sirve para una dirección que no nombra ninguna, no para una que nombra mal. Ahora se
-  distingue un caso del otro (`js/apiClient.js:535`) y el segundo avisa. **Y desde la
+  distingue un caso del otro (`js/apiClient.js:626`) y el segundo avisa. **Y desde la
   migración 0021 el respaldo ya no existe**: mostrar la primera Prestadora de la base era
   leer la lista de clientes de CeltaTech, y esa lista no la ve nadie. Quien entra sin
   enlace ahora ve que le falta el enlace.
@@ -2891,7 +2891,7 @@ ficticia y sesión simulada: el legajo se creó con fecha de alta del **1 de ene
 `update` posterior la corrió al **1 de enero de 2010**. Las dos veces la base guardó lo que le
 mandaron.
 
-**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:706` la traduce a `fechaRegistro` y ese
+**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:759` la traduce a `fechaRegistro` y ese
 nombre no aparece en ningún otro archivo del proyecto—, así que no había consecuencia visible. Se
 arregló igual, porque la antigüedad es exactamente la clase de dato que después se usa para ordenar
 un directorio o para decidir a quién se muestra primero, y ese día el agujero pasa a ser una
@@ -3195,6 +3195,65 @@ cosas dicen `en` y la grilla dice «When are you available to work?»; en portug
 **Lo que esto no cubre:** la regla 7 mira que nadie se guarde el idioma, no que lo use bien. Un
 módulo que pregunte el idioma y después dibuje una fecha a mano sigue pasando —eso lo mira la
 regla 6, y sólo para `Intl`—.
+
+### La Guía de cuidado: qué mirar y cómo actuar, sin decir qué tratamiento dar
+
+Migración 0041, el 29 de agosto de 2026. Nace de una pregunta del Desarrollador —qué necesita
+saber un Asistente antes de entrar a una casa— y de tres decisiones suyas: el alcance es
+**descripción, señales de alarma y cómo actuar ante una emergencia**; la escriben **dos**, el
+producto lo general y cada Prestadora lo suyo; y la palabra aprobada es **«Guía de cuidado»**.
+
+**Los tratamientos quedan afuera a propósito.** Decir qué tratamiento corresponde convierte al
+producto en fuente de indicación clínica, y entonces alguien tiene que responder cuando un
+Asistente lo siga y salga mal. Avisar no es prescribir, y la pantalla lo dice arriba de todo en vez
+de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No indican tratamientos.»*
+
+- **La tabla es `guias_cuidado`** (`supabase/migrations/0041_las_guias_de_cuidado.sql:109`), y cada
+  guía cuelga de una opción del catálogo —hoy de una patología—, no de un texto suelto. Cuatro
+  columnas de contenido: `descripcion`, `que_esperar`, `senales_de_alarma` y `en_emergencia`. Las
+  dos primeras son texto, las dos últimas son listas, porque una señal se mira de a una y un paso
+  de emergencia se sigue en orden.
+- **Los dos escalones son el mismo patrón que ya usa el catálogo desde la 0038**: `tenant_id` en
+  nulo es lo que trae el producto, `tenant_id` cargado es lo que agregó esa Prestadora. **Y acá lo
+  propio reemplaza a lo general**, no se suma —al revés que las opciones del catálogo, que se
+  suman—. El reemplazo lo resuelve la base con un `distinct on` que ordena por «tiene dueño
+  primero», y no la pantalla: si lo decidiera la pantalla habría que decidirlo igual en la
+  aplicación de la Familia y en el sitio, y tres decisiones iguales escritas en tres lados son tres
+  oportunidades de que una quede vieja.
+- **Los tres idiomas para lo que escribe el producto, el suyo para lo que escribe la clienta**
+  (`:130`). Es la misma decisión de la 0035 con las zonas y de la 0038 con las opciones: la regla
+  de i18n rige el texto del producto, no el que carga el cliente. Las listas tienen su par de
+  funciones propias —`i18n_lista_completa` e `i18n_lista_minima` (`:49`, `:73`)—, porque las que ya
+  existían miran una cadena y una lista no lo es.
+- **Ninguna guía se publica sin firma** (`:145`). `publicada` en verdadero exige `revisada_por` con
+  texto y `revisada_el` con fecha. Lo que el Asistente lee al entrar a una casa no sale de acá sin
+  que alguien responda por ello, y eso lo impide la base, no la pantalla.
+- **Una guía general por opción, y una por Prestadora** —restricción única más un índice parcial
+  (`:153`, `:156`), porque en Postgres dos `null` no chocan y la restricción sola dejaba cargar la
+  general dos veces.
+- **Y una guía no cruza Prestadoras** (`:184`): un disparador impide que la guía de una cuelgue de
+  una opción de otra, y que el catálogo general escriba guías sobre las opciones privadas de una
+  clienta —de las que el producto no sabe nada y sobre las que no le corresponde opinar—.
+- **La puerta es `guias_de(p_slug)`** (`:272`), del mismo tipo que `vocabularios_de`: la tabla no le
+  concede nada a `anon` (`:254`), y lo que sale a la calle es una función que **exige el nombre
+  corto**, devuelve la general más la de esa sola Prestadora, y sólo las publicadas. Está anotada
+  con su motivo en `scripts/verificar_esquema.mjs:97`, que es donde viven las funciones que llegan
+  al alcance anónimo a propósito.
+- **La pantalla nueva es `screen-guias`** en la aplicación del Asistente
+  (`pwa-asistente/index.html:671`), con los cuatro estados y un buscador. **Es una biblioteca de
+  consulta, no la guía del Paciente de hoy**, y eso es una carencia conocida: no existe todavía
+  ninguna pantalla donde el Asistente vea al Paciente que va a atender, así que no hay dónde colgar
+  la guía. Queda como pendiente 105.
+- **Su chequeo es `scripts/verificar_guias.mjs`**, y le pregunta a las dos bases: la de esta
+  máquina dice si la migración está bien escrita, la de verdad dice si además está aplicada donde
+  entran las pantallas. Mira que la tabla siga cerrada, que la puerta conteste, que las guías
+  generales traigan sus cuatro partes en los tres idiomas, y que pidiendo con el nombre de una
+  Prestadora no aparezca texto de otra. **Cuando no puede probar el aislamiento lo dice en voz alta
+  en el renglón final**, porque con cero guías cargadas la comparación da «no se cruzó» exactamente
+  igual que si estuviera bien.
+- **Lo que falta es el contenido**: diecinueve patologías sin una sola guía general escrita
+  (pendiente 104), ninguna pantalla donde la Prestadora escriba la suya (pendiente 103), y la guía
+  no llega al teléfono sin señal (pendiente 102), que es justo cuando más se necesita.
 
 ## 2. Falta construir
 
