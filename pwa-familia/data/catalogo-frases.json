@@ -714,6 +714,11 @@
       "en": "Any check",
       "pt-BR": "Qualquer verificação"
     },
+    "directorio.zonas_y_mas": {
+      "es-AR": "y {cuantas} más",
+      "en": "and {cuantas} more",
+      "pt-BR": "e mais {cuantas}"
+    },
     "directorio.urgencias": {
       "es-AR": "Disponible para reemplazos urgentes",
       "en": "Available for urgent cover",
@@ -796,6 +801,16 @@
       "es-AR": "Un Asistente se ve acá cuando su Prestadora validó el legajo y esa persona autorizó a publicar su perfil. Las dos cosas, no una. Puede que el enlace haya quedado viejo, o que quien figuraba haya dejado de publicarse.",
       "en": "A Caregiver is shown here when their Provider has validated the personal file and that person has authorised their profile to be published. Both things, not one. The link may be out of date, or whoever appeared there may have stopped being published.",
       "pt-BR": "Um Assistente aparece aqui quando a sua Prestadora validou o cadastro e essa pessoa autorizou a publicação do seu perfil. As duas coisas, não uma. Pode ser que o link tenha ficado velho, ou que quem figurava tenha deixado de se publicar."
+    },
+    "perfil.donde_trabaja": {
+      "es-AR": "Dónde trabaja",
+      "en": "Where they work",
+      "pt-BR": "Onde trabalha"
+    },
+    "perfil.sin_zonas": {
+      "es-AR": "Todavía no dijo dónde puede trabajar.",
+      "en": "Has not said yet where they can work.",
+      "pt-BR": "Ainda não informou onde pode trabalhar."
     },
     "perfil.que_atiende": {
       "es-AR": "Qué atiende",
@@ -1273,6 +1288,48 @@
     },
 
     "_______________": "── Los estados del alta de un Asistente ──",
+
+    "alta.zonas_etiqueta": {
+      "es-AR": "Zonas de cobertura",
+      "en": "Coverage areas",
+      "pt-BR": "Áreas de cobertura"
+    },
+
+    "alta.zonas_ayuda": {
+      "es-AR": "Tilde todas las que correspondan. Tildar una región entera vale por toda la región.",
+      "en": "Tick every one that applies. Ticking a whole region covers the entire region.",
+      "pt-BR": "Marque todas as que corresponderem. Marcar uma região inteira vale por toda a região."
+    },
+
+    "alta.zonas_cargando": {
+      "es-AR": "Cargando las zonas de cobertura…",
+      "en": "Loading the coverage areas…",
+      "pt-BR": "Carregando as áreas de cobertura…"
+    },
+
+    "alta.zonas_libre_etiqueta": {
+      "es-AR": "¿Dónde puede trabajar?",
+      "en": "Where can you work?",
+      "pt-BR": "Onde você pode trabalhar?"
+    },
+
+    "alta.zonas_libre_ayuda": {
+      "es-AR": "Todavía no hay una lista de zonas para tildar. Escriba con sus palabras las localidades o los barrios donde aceptaría trabajo.",
+      "en": "There is no list of areas to tick yet. Describe in your own words the towns or neighbourhoods where you would take work.",
+      "pt-BR": "Ainda não há uma lista de áreas para marcar. Escreva com suas palavras as localidades ou os bairros onde aceitaria trabalho."
+    },
+
+    "alta.zonas_libre_marcador": {
+      "es-AR": "Por ejemplo: el centro de la ciudad y las localidades vecinas",
+      "en": "For example: the city centre and the neighbouring towns",
+      "pt-BR": "Por exemplo: o centro da cidade e as localidades vizinhas"
+    },
+
+    "alta.zonas_falta": {
+      "es-AR": "Indique al menos una zona de cobertura.",
+      "en": "Please indicate at least one coverage area.",
+      "pt-BR": "Indique pelo menos uma área de cobertura."
+    },
 
     "alta.legajo_cargando": {
       "es-AR": "Preparando el formulario del legajo…",

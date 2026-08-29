@@ -129,6 +129,17 @@
       <div class="profile-grid">
 
         <div>
+          <!-- Dónde trabaja. Está aparte de «Qué atiende» porque son dos
+               preguntas distintas, y porque quien cubre cinco zonas necesita
+               renglones: en la línea de arriba entran las regiones y nada más. -->
+          <div class="profile-section fade-in">
+            <h3 data-frase="perfil.donde_trabaja">Dónde trabaja</h3>
+            <div id="perfil-zonas"></div>
+            <p id="perfil-sin-zonas" class="oculto" data-frase="perfil.sin_zonas">
+              Todavía no dijo dónde puede trabajar.
+            </p>
+          </div>
+
           <div class="profile-section fade-in">
             <h3 data-frase="perfil.que_atiende">Qué atiende</h3>
             <div class="spec-list" id="perfil-etiquetas"></div>
@@ -217,6 +228,8 @@
        dice `enfermero_universitario`, y el cliente de datos para traer la fila. -->
   <script src="js/catalogo.js"></script>
   <script src="js/apiClient.js"></script>
+  <!-- Ver `directorio.html`: de acá sale cómo se escriben las zonas. -->
+  <script src="js/zonas.js"></script>
   <script src="js/main.js"></script>
   <script>
     /* ---- El perfil lo dibuja la base ----
@@ -282,13 +295,47 @@
         document.getElementById('perfil-nombre').textContent = nombre;
 
         const tipo = Catalogo.etiquetaSiExiste('tipo_asistente', fila.profession);
-        const zona = Catalogo.etiquetaSiExiste('zona', fila.zone);
+        // Arriba las regiones, que es lo que ubica de un vistazo. Acá van
+        // todas: el «y 2 más» existe porque una tarjeta del directorio no tiene
+        // lugar, y esta pantalla sí — decir «y 2 más» con la lista entera cinco
+        // centímetros abajo sería esconder algo que está a la vista.
+        //
+        // Y cuando la respuesta es texto libre, esta línea queda vacía a
+        // propósito: es una frase escrita a mano, no un rótulo, y abajo está
+        // entera. Repetirla acá la diría dos veces en la misma pantalla.
+        const zona = (fila.zonas || []).length ? Zonas.resumen(fila, Infinity) : '';
         // «Prefiero no decirlo» no se escribe: es la respuesta de quien no quiso
         // decirlo, y ponerla igual sería publicarla con otras palabras.
         const genero = fila.gender === 'sin_declarar'
           ? '' : Catalogo.etiquetaSiExiste('genero', fila.gender);
         document.getElementById('perfil-tipo-y-zona').textContent =
           [tipo, genero, zona].filter(Boolean).join(' · ');
+
+        // Dónde trabaja, con el detalle. Cada región es un renglón; adentro,
+        // los municipios que tildó. Una región tildada entera queda con el
+        // renglón y sin municipios, que es exactamente lo que contestó.
+        const grupos = Zonas.detalle(fila);
+        if (grupos.length === 0) {
+          document.getElementById('perfil-zonas').remove();
+          document.getElementById('perfil-sin-zonas').classList.remove('oculto');
+        } else {
+          const donde = document.getElementById('perfil-zonas');
+          document.getElementById('perfil-sin-zonas').remove();
+          grupos.forEach((grupo) => {
+            const renglon = document.createElement('p');
+            renglon.className = 'perfil-zona-region';
+            if (grupo.region) {
+              const titulo = document.createElement('strong');
+              titulo.textContent = grupo.region;
+              renglon.appendChild(titulo);
+            }
+            if (grupo.partes.length > 0) {
+              renglon.appendChild(document.createTextNode(
+                (grupo.region ? ': ' : '') + grupo.partes.join(', ')));
+            }
+            donde.appendChild(renglon);
+          });
+        }
 
         const comprobadas = fila.comprobaciones || [];
         if (comprobadas.length > 0) {

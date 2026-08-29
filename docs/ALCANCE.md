@@ -910,7 +910,7 @@ uno por uno con `grep` antes de borrarlos.
 no hacía falta preguntar: el consentimiento que la persona firma ya dice que sólo las Familias
 registradas pueden comunicarse con ella, y que lo hacen por la plataforma
 (`data/catalogo-autorizaciones.json`, `perfil_publicado`). En su lugar la pantalla explica eso mismo
-(`perfil.html:148`) y ofrece las dos puertas que sí existen: entrar como Familia y publicar un aviso.
+(`perfil.html:160`) y ofrece las dos puertas que sí existen: entrar como Familia y publicar un aviso.
 Lo que falta —empezar una conversación con esa persona en particular— quedó anotado como pendiente 46.
 
 **Tres traducciones que estaban por escribirse dos veces subieron a los archivos compartidos**
@@ -1899,7 +1899,7 @@ Que sigan siendo ocho copias es parte del pendiente 13.
 ante toda operación destructiva, y la medición encontró que en este proyecto hay exactamente una:
 rechazar un legajo (`panel-prestadora.html:349`). No hay un solo `delete` contra la base en las
 cuarenta y cuatro pantallas y guiones —lo único que se parece son dos `delete` de JavaScript sobre
-un objeto en memoria, `js/apiClient.js:248` y `js/apiClient.js:280`, que no tocan nada guardado—, y
+un objeto en memoria, `js/apiClient.js:274` y `js/apiClient.js:318`, que no tocan nada guardado—, y
 salir de la sesión no
 destruye nada. La única que hay ya pregunta antes, y la pregunta dice qué queda después:
 «Se va a rechazar este legajo. Queda cerrado y la persona no aparece en el plantel activo.
@@ -2891,7 +2891,7 @@ ficticia y sesión simulada: el legajo se creó con fecha de alta del **1 de ene
 `update` posterior la corrió al **1 de enero de 2010**. Las dos veces la base guardó lo que le
 mandaron.
 
-**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:667` la traduce a `fechaRegistro` y ese
+**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:706` la traduce a `fechaRegistro` y ese
 nombre no aparece en ningún otro archivo del proyecto—, así que no había consecuencia visible. Se
 arregló igual, porque la antigüedad es exactamente la clase de dato que después se usa para ordenar
 un directorio o para decidir a quién se muestra primero, y ese día el agujero pasa a ser una
@@ -3110,7 +3110,7 @@ que el primero acababa de decidir.
 del paso 1 vacíos, la pantalla decía «Faltan completar campos o archivos obligatorios» **y pasaba
 al paso 2 lo mismo**. Los siete pasos quedaban así: la validación existía, se ejecutaba, avisaba,
 y no servía para nada. Lo único que la salvaba era el envío final, que revalida los siete
-(`registrar-asistente.html:1100`), así que a la base nunca llegó un alta incompleta —pero quien
+(`registrar-asistente.html:1144`), así que a la base nunca llegó un alta incompleta —pero quien
 se anotaba se enteraba de lo que le faltaba recién al final, después de siete pasos.
 
 **El arreglo es pedir por la pantalla propia antes de enganchar nada.** Ese bloque de `js/main.js`

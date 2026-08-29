@@ -211,6 +211,9 @@
   <!-- Las opciones de los tres filtros salen de acá, no del HTML. -->
   <script src="js/catalogo.js"></script>
   <script src="js/apiClient.js"></script>
+  <!-- El mismo archivo que dibuja las casillas del formulario dice cómo se
+       escriben las zonas de alguien que ya contestó. Acá se usa sólo eso. -->
+  <script src="js/zonas.js"></script>
   <script src="js/main.js"></script>
   <script>
     /* ---- El directorio lo dibuja la base ----
@@ -258,14 +261,22 @@
         const tarjeta = nodo.querySelector('.caregiver-card');
 
         const tipo = Catalogo.etiquetaSiExiste('tipo_asistente', fila.profession);
-        const zona = Catalogo.etiquetaSiExiste('zona', fila.zone);
+        // Las regiones, no los municipios: ocho nombres en una tarjeta que se
+        // lee de un vistazo la vuelven ilegible. El detalle está en el perfil.
+        const zona = Zonas.resumen(fila);
         const patologias = fila.pathologies || [];
         const tareas = fila.tasks || [];
 
         // Lo que el filtro compara. Son claves de catálogo, no texto visible: así
         // «medicos» encuentra a «Médicos» y ningún cambio de redacción rompe nada.
         tarjeta.dataset.name = (fila.full_name || '').toLowerCase();
-        tarjeta.dataset.zone = fila.zone || '';
+        // El filtro compara clave con clave, y una tarjeta lleva todas las
+        // suyas separadas por espacios —igual que las patologías—. Quién
+        // alcanza a quién lo resuelve la base en `zonas_claves` (migración
+        // 0037): ahí «toda la Zona Norte» ya viene con San Isidro adentro.
+        const claves = (fila.zonas_claves || []).slice();
+        if (claves.length === 0 && fila.zone) claves.push(fila.zone);
+        tarjeta.dataset.zone = claves.join(' ');
         tarjeta.dataset.type = fila.profession || '';
         tarjeta.dataset.patologia = patologias.join(' ');
         tarjeta.dataset.comprobacion = (fila.comprobaciones || []).join(' ');

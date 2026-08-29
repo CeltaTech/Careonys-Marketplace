@@ -310,8 +310,11 @@
             <div class="form-group grilla-fila-entera"><label for="domicilio">Domicilio Completo (Calle, Nro,
                 Piso, Localidad)</label><input type="text" id="domicilio"
                 placeholder="Ej: Av. Santa Fe 1234, Palermo, CABA" required /></div>
-            <div class="form-group"><label for="zona">Barrio o zona de cobertura</label><select id="zona"
-                data-catalogo="zona" data-catalogo-vacio="— Seleccionar —" required></select></div>
+            <!-- El rótulo, la ayuda y las casillas las arma js/zonas.js: la lista
+                 sale de la base y es de cada Prestadora, así que no puede estar
+                 escrita acá. Con la Prestadora sin lista cargada, este mismo
+                 hueco muestra el campo de texto libre. -->
+            <div class="form-group grilla-fila-entera" id="zonas"></div>
             <div class="form-group"><label for="cbu-alias">CBU / Alias</label><input type="text"
                 id="cbu-alias" placeholder="22 dígitos de CBU o su Alias" required /></div>
           </div>
@@ -637,6 +640,7 @@
   <script src="js/fichas-legajo.js"></script>
   <script src="js/disponibilidad.js"></script>
   <script src="js/autorizaciones.js"></script>
+  <script src="js/zonas.js"></script>
   <script>
     // LEGAJO: FICHAS, DISPONIBILIDAD Y CIERRE (pendientes 18, 19 y 23)
     // Se dibujan desde data/catalogo-fichas.json, data/catalogo-disponibilidad.json
@@ -757,6 +761,11 @@
         profesionSelect.addEventListener('change', actualizarAvisoMatricula);
         actualizarAvisoMatricula();
 
+        // Las zonas de cobertura. La lista es de cada Prestadora y sale de la
+        // base, así que el módulo la trae y arma el campo; si esa Prestadora no
+        // cargó ninguna, el mismo hueco pasa a ser el de texto libre.
+        await Zonas.montar('zonas');
+
         // Paso 6: la disponibilidad. La grilla y la pregunta de los reemplazos
         // urgentes las arma el módulo; acá sólo se le dice dónde.
         const declaracionDisponibilidad = await Disponibilidad.cargar();
@@ -820,6 +829,36 @@
           field.addEventListener('input', () => { field.style.borderColor = ''; }, { once: true });
         }
       });
+
+      // Paso 1: las zonas de cobertura. No se validan con `required` como los
+      // demás campos porque hay dos formas de contestar —tildar una o más zonas,
+      // o escribir a mano cuando la Prestadora no cargó lista—, y cuál de las
+      // dos se mostró lo sabe el módulo. Preguntarle a él es lo que evita tener
+      // la misma decisión escrita en dos lados.
+      const hueco = pane.querySelector('#zonas');
+      if (hueco && typeof Zonas !== 'undefined' && !Zonas.hayRespuesta('zonas')) {
+        valid = false;
+        hueco.style.outline = '2px solid var(--rojo-peligro)';
+        hueco.style.borderRadius = '4px';
+        // El aviso general dice «faltan campos» y no alcanza: acá el campo puede
+        // ser una lista de casillas, que no se ve vacía como se ve un renglón
+        // vacío. El texto sale del catálogo, en los tres idiomas.
+        let avisoZonas = hueco.querySelector('.gd-zonas-falta');
+        if (!avisoZonas) {
+          avisoZonas = document.createElement('p');
+          avisoZonas.className = 'gd-pregunta-ayuda gd-zonas-falta';
+          avisoZonas.style.color = 'var(--rojo-peligro)';
+          hueco.appendChild(avisoZonas);
+        }
+        avisoZonas.textContent = Texto.frase('alta.zonas_falta');
+        const despejarZonas = () => {
+          hueco.style.outline = '';
+          if (avisoZonas.parentNode) avisoZonas.remove();
+        };
+        hueco.addEventListener('change', despejarZonas, { once: true });
+        hueco.addEventListener('input', despejarZonas, { once: true });
+        if (!firstInvalidField) firstInvalidField = hueco.querySelector('input, textarea');
+      }
 
       // Paso 5 (Legajo): las fichas ya validan sus propios bloques, y la Matrícula
       // es obligatoria sólo cuando el Tipo de Asistente elegido la exige.
@@ -986,6 +1025,12 @@
         // es lo que esperan las columnas de franjas_asistente.
         const disponibilidad = Disponibilidad.recolectar('grilla-disponibilidad', 'preguntas-disponibilidad');
 
+        // Las zonas llegan en un solo objeto porque hay dos formas de contestar
+        // y quien guarda no tiene por qué saber cuál se mostró: las tildadas van
+        // a zonas_asistente con el legajo, y lo escrito a mano va a caregivers
+        // con el resto del alta.
+        const zonasElegidas = Zonas.recolectar('zonas');
+
         // 4. Registrar en Supabase (tabla caregivers)
         const data = {
           user_id: userId,
@@ -1000,7 +1045,7 @@
           domicilio: document.getElementById('domicilio').value,
           cbu: document.getElementById('cbu-alias').value,
           profesion: document.getElementById('profesion').value,
-          zona: document.getElementById('zona').value,
+          zonasTexto: zonasElegidas.texto,
           patologias,
           tareas,
           educacion: {
@@ -1030,7 +1075,8 @@
           experiencia: FichasLegajo.recolectar('ficha-experiencia_laboral', 'experiencia_laboral'),
           referencias: FichasLegajo.recolectar('ficha-referencia', 'referencia'),
           autorizaciones: Autorizaciones.recolectar('autorizaciones-container'),
-          disponibilidad
+          disponibilidad,
+          zonas: zonasElegidas.zonas
         };
 
         // Los archivos de matrícula y estudio van al depósito privado; en la tabla

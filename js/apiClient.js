@@ -209,6 +209,32 @@ const ClienteDatos = {
     return await this._supabasePost('caregivers', dbData);
   },
 
+  // Las zonas de cobertura que ofrece esta Prestadora, para que el formulario
+  // de reclutamiento las muestre y la persona tilde las suyas.
+  //
+  // Va por `zonas_de` y no pidiéndole filas a `zonas_cobertura`: quien completa
+  // ese formulario todavía no tiene cuenta, y desde la migración 0035 esa tabla
+  // no se lee sin sesión. Es la misma clase de puerta que `prestadora_por_slug`,
+  // y exige el nombre corto por el mismo motivo: así no existe forma de pedir
+  // las zonas de todas las Prestadoras.
+  //
+  // **La Prestadora se resuelve antes, no se da por resuelta**, igual que en
+  // `getPerfilDelDirectorio`. Preguntar sólo por `currentTenant` parece
+  // equivalente y no lo es: si esto corre antes de que `initTenant` termine, la
+  // respuesta es la lista vacía, y vacío no significa «todavía no sé» sino «esta
+  // Prestadora no cargó zonas». La pantalla mostraría el campo de texto libre a
+  // todo el mundo y nadie vería un error. Pasó la primera vez que se probó.
+  //
+  // Con la Prestadora de verdad sin resolver sí devuelve la lista vacía, y ahí
+  // el texto libre es lo correcto: no se sabe de quién es el formulario, así que
+  // no hay lista que mostrar.
+  async zonasDePrestadora() {
+    const prestadora = this.currentTenant || await this.initTenant();
+    const slug = prestadora ? prestadora.slug : null;
+    if (!slug) return [];
+    return await this._supabaseRequest('POST', 'rpc/zonas_de', { p_slug: slug }) || [];
+  },
+
   // Guarda el legajo del Asistente: las cuatro fichas repetibles, lo que
   // autoriza al cerrar el alta (migración 0004) y su disponibilidad horaria
   // (migración 0012). Las claves de cada fila salen de data/catalogo-fichas.json,
@@ -252,6 +278,18 @@ const ClienteDatos = {
         guardado.franjas = await this._supabaseRequest('POST', 'franjas_asistente',
           franjas.map(marcar));
       }
+    }
+
+    // Las zonas tildadas, una fila por zona (migración 0035). Lo que la persona
+    // escribió cuando no había lista para tildar no viene por acá: ése es un
+    // campo de `caregivers` y lo lleva el alta, junto con los demás datos.
+    //
+    // Una región tildada entra como una fila más, sin sus municipios, y eso es
+    // deliberado: «trabajo en todo el Oeste» no es lo mismo que la lista de sus
+    // municipios el día que la Prestadora agregue uno.
+    if (legajo.zonas && legajo.zonas.length > 0) {
+      guardado.zonas = await this._supabaseRequest('POST', 'zonas_asistente',
+        legajo.zonas.map((zonaId) => marcar({ zona_id: zonaId })));
     }
 
     return guardado;
@@ -651,6 +689,7 @@ const ClienteDatos = {
         email: row.email,
         profesion: row.profession,
         zona: row.zone,
+        zonasTexto: row.zonas_texto || '',
         patologias: row.pathologies || [],
         tareas: row.tasks || [],
         documentos: row.documents || {},
@@ -726,6 +765,7 @@ const ClienteDatos = {
       llevar('profesion', 'profession');
       llevar('zona', 'zone', (v) => v || data.zonaResidencia);
       conocidas.add('zonaResidencia');   // se lee ahí arriba: no es un perdido
+      llevar('zonasTexto', 'zonas_texto');
       llevar('patologias', 'pathologies');
       llevar('tareas', 'tasks');
       llevar('documentos', 'documents');

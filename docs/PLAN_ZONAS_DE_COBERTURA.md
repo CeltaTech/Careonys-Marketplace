@@ -43,7 +43,7 @@ alguien puede elegir «Zona Norte» o «Palermo» y no hay forma de decir las do
 (`supabase/migrations/0001_esquema_inicial.sql:87`). La leen la vista del directorio
 (`supabase/migrations/0002_aislamiento_por_prestadora.sql:141`) y la del directorio con
 consentimiento (`supabase/migrations/0007_directorio_con_consentimiento.sql:52`), y del lado del
-navegador la escribe `registrar-asistente.html:1004` y la traduce `js/apiClient.js:727`.
+navegador la escribe `registrar-asistente.html:1004` y la traduce `js/apiClient.js:758`.
 
 **No hay ninguna tabla de zonas.** La lista vive en un archivo `.json`, no en la base, que es lo
 contrario de lo que pide la regla «los catálogos salen de la base».
@@ -204,5 +204,62 @@ Dos cosas aparecieron construyéndolo y no estaban en el plan:
   legítima de segundo nivel **sí** entra: sin eso, una tabla que rechazara todo pasaría la prueba
   igual.
 
-**Lo que falta es del paso 3 en adelante**: la pantalla con sus cuatro estados, el módulo que la
-dibuja, el guardado, y el arrastre por el directorio y el perfil.
+## 10. La pantalla, el guardado y el arrastre: qué quedó hecho
+
+**El campo del formulario está construido y probado en los dos caminos.** Lo dibuja `js/zonas.js`,
+que deduce el modo en vez de preguntarlo: con lista cargada muestra las casillas en dos escalones,
+y sin lista muestra el campo de texto libre. El estado vacío de ese módulo no es un cartel de
+disculpa — es el otro camino, y funciona.
+
+**Probado en el navegador de manera que pudiera fallar.** Con `presdemo` —20 zonas— salen las
+cuatro regiones y sus municipios, y la prueba de interacción devolvió: al abrir, ninguna tildada;
+tildando una región, sus municipios quedan tildados y apagados y se guarda **una sola** fila;
+tildando dos municipios sueltos, la región queda a medias (`indeterminate`); y destildando la
+región, sus municipios vuelven a encenderse y quedan vacíos. Con `cuidarsur` —cero zonas a
+propósito— aparece «¿Dónde puede trabajar?» con el campo libre, y `hayRespuesta` pasa a verdadero
+al escribir. Los rótulos salen del catálogo en los tres idiomas y los nombres de zona se traducen
+por su `clave` cuando la tienen: en inglés «Coverage areas» y «City of Buenos Aires», en portugués
+«Áreas de cobertura» y «Cidade de Buenos Aires».
+
+**Un defecto real apareció acá, y no avisaba.** `Zonas.montar` corría antes de que terminara
+`initTenant()`, así que `zonasDePrestadora()` no encontraba Prestadora y devolvía la lista vacía —y
+la lista vacía significa, legítimamente, «mostrá el campo de texto libre». O sea: **todas las
+Prestadoras se degradaban a texto libre en silencio**, sin un solo error en ninguna parte. Se
+arregló con el mismo precedente que ya usaba `getPerfilDelDirectorio`: pedir la Prestadora y
+esperarla si todavía no llegó.
+
+### El arrastre: el directorio y el perfil (migraciones 0036 y 0037)
+
+`directorio` seguía devolviendo una sola zona. La 0036 le agrega al final `zonas` —cada zona
+con su nombre, su clave, si es una región y de qué región cuelga— y `zonas_texto`. La tarjeta
+muestra **las regiones**, a lo sumo tres y después «y N más», que es la decisión 7c; el perfil
+muestra el detalle completo, agrupado por región, en su propia sección «Dónde trabaja».
+
+**Y el consentimiento se corrigió en el mismo movimiento.** Decía «su zona» en los tres idiomas, y
+lo que se publica ahora son varias: pasa a decir «sus zonas de cobertura». Un consentimiento que
+nombra menos de lo que se publica no es un consentimiento, y la propia vista lo tiene escrito al
+lado: una columna que el consentimiento no nombre no puede salir por ahí.
+
+**La 0037 nació de una prueba que falló.** Marta Quiroga cubre toda la Zona Norte —una sola fila, tal
+como la 0035 decidió— y buscando «San Isidro» **no aparecía**. La respuesta era falsa. La columna
+`zonas_claves` dice hasta dónde llega una respuesta, y es aparte de `zonas` a propósito: `zonas` es
+lo que la persona contestó y es lo que se muestra; `zonas_claves` es su alcance y sólo sirve para
+filtrar. Mezclarlas le pondría a Marta en el perfil tres municipios que no eligió. Ahora buscar
+«San Isidro» la encuentra, buscar «Vicente López» también, y buscar «Lomas de Zamora» no encuentra a
+nadie —que es lo que hace que la prueba signifique algo—.
+
+**Los datos ficticios se repartieron para que la pantalla se ejercite.** Después de la 0035 cada
+legajo tenía exactamente una zona, así que el directorio dibujaba lo mismo que antes y habría
+pasado la prueba sin probar nada. Ahora hay quien cubre tres barrios de una región, quien cubre una
+región entera, quien cubre dos regiones, y quien cubre cuatro —el que hace aparecer el «y 1 más»—.
+Y Cuidar Sur, que no tiene lista, pasó a tener un legajo publicado: sin él, `zonas_texto` se podía
+romper sin que ninguna prueba se enterara.
+
+**Los 21 chequeos pasan.**
+
+### Lo que queda abierto de este plan
+
+- **La pantalla donde la Prestadora arma su lista de zonas.** Hoy las zonas se cargan por
+  migración. Está en la lista de pendientes del producto.
+- **`pwa-asistente/index.html` sigue preguntando una sola zona**, escrita a mano en el propio HTML
+  (`pwa-asistente/index.html:451`). No se tocó en este plan y quedó anotada aparte.

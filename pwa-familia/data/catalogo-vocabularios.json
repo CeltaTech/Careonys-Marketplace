@@ -8,9 +8,9 @@
       },
       "cerrada": true,
       "usado_en": [
-        "directorio.html:277",
+        "directorio.html:288",
         "formulario-integral.html:111",
-        "perfil.html:289",
+        "perfil.html:310",
         "pwa-asistente/index.html:447",
         "registrar-asistente.html:302"
       ],
@@ -82,16 +82,16 @@
       "cerrada": true,
       "usado_en": [
         "data/catalogo-fichas.json:107",
-        "directorio.html:260",
+        "directorio.html:263",
         "directorio.html:80",
         "formulario-integral.html:166",
         "formulario-integral.html:356",
         "formulario-integral.html:401",
         "mockup-app.html:457",
-        "perfil.html:284",
+        "perfil.html:297",
         "pwa-asistente/index.html:462",
         "pwa-familia/index.html:911",
-        "registrar-asistente.html:333"
+        "registrar-asistente.html:336"
       ],
       "items": [
         {
@@ -223,7 +223,7 @@
       "cerrada": true,
       "usado_en": [
         "pwa-asistente/index.html:466",
-        "registrar-asistente.html:337"
+        "registrar-asistente.html:340"
       ],
       "items": [
         {
@@ -261,12 +261,12 @@
       },
       "cerrada": false,
       "usado_en": [
-        "directorio.html:319",
+        "directorio.html:330",
         "directorio.html:83",
-        "perfil.html:346",
+        "perfil.html:393",
         "pwa-asistente/index.html:498",
         "pwa-familia/index.html:786",
-        "registrar-asistente.html:381"
+        "registrar-asistente.html:384"
       ],
       "items": [
         {
@@ -398,7 +398,7 @@
         "formulario-integral.html:144",
         "js/catalogo.js:325",
         "pwa-asistente/index.html:500",
-        "registrar-asistente.html:385"
+        "registrar-asistente.html:388"
       ],
       "items": [
         {
@@ -500,7 +500,7 @@
         "formulario-integral.html:406",
         "pwa-asistente/index.html:514",
         "pwa-familia/index.html:761",
-        "registrar-asistente.html:406"
+        "registrar-asistente.html:409"
       ],
       "items": [
         {
@@ -737,9 +737,9 @@
       },
       "cerrada": true,
       "usado_en": [
-        "directorio.html:291",
+        "directorio.html:302",
         "directorio.html:91",
-        "perfil.html:299"
+        "perfil.html:346"
       ],
       "origen": "La columna `comprobaciones` de la vista `directorio` (migración 0026). Las cinco claves son exactamente las que la base ya tenía restringidas en `ponderacion_comprobacion` desde la migración 0018, así que acá no se inventó ninguna palabra.",
       "items": [
@@ -787,7 +787,7 @@
       "cerrada": false,
       "usado_en": [
         "pwa-asistente/index.html:469",
-        "registrar-asistente.html:347"
+        "registrar-asistente.html:350"
       ],
       "items": [
         {
@@ -896,14 +896,13 @@
       },
       "cerrada": true,
       "usado_en": [
-        "directorio.html:261",
         "directorio.html:77",
         "formulario-integral.html:396",
+        "js/zonas.js:145",
+        "js/zonas.js:218",
         "mockup-app.html:458",
-        "perfil.html:285",
         "pwa-familia/index.html:748",
-        "pwa-familia/index.html:912",
-        "registrar-asistente.html:314"
+        "pwa-familia/index.html:912"
       ],
       "nota": "Las dos pantallas listaban zonas de distinto tamaño: una, barrios; la otra, regiones enteras. No son dos listas rivales sino dos escalones de la misma, así que cada barrio queda colgado de su región. Qué barrios y partidos cubre el servicio de verdad no está escrito en el proyecto: esta lista es la que estaba en las pantallas, no un mapa de cobertura.",
       "items": [
@@ -1192,7 +1191,7 @@
       "cerrada": false,
       "usado_en": [
         "pwa-asistente/index.html:516",
-        "registrar-asistente.html:408"
+        "registrar-asistente.html:411"
       ],
       "origen": "Relevamiento de un competidor en actividad, agosto de 2026. No salió de nuestras pantallas. Las dos palabras son las que usa el rubro.",
       "items": [
