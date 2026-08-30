@@ -119,6 +119,40 @@ export function despejar(html) {
    mano —y ninguna traducción iba a cambiarlo—. */
 export const sinEntidades = (html) => html.replace(/&(?:#\d+|#x[0-9a-f]+|[a-z][a-z0-9]{1,10});/gi, enBlanco);
 
+/**
+ * Devuelve pares `[renglón, texto]` del texto visible que guarda una migración.
+ *
+ * Una migración es código, pero además **carga texto que después se lee en la
+ * pantalla**: las etiquetas de los 24 vocabularios entran en la base escritas
+ * en `0039`, y las 19 Guías de cuidado en `0042`. Ese texto se escapaba de los
+ * chequeos que miran cómo está escrito el castellano, porque `supabase/` estaba
+ * en la lista de carpetas que no abrían: una guía podía tutear al Asistente y
+ * nadie se enteraba hasta verla en el teléfono.
+ *
+ * Se reconoce por el rótulo del idioma y no por el lugar: se toma lo que está
+ * bajo la clave `"es-AR"`, sea una frase o una lista de frases. Todo lo demás
+ * del archivo —las sentencias, los nombres de tabla, los comentarios, y los
+ * otros dos idiomas— queda afuera por construcción, que es más seguro que
+ * intentar sacarlo después. Por eso esto no necesita `soloCastellano()`: no
+ * borra los otros idiomas, nunca los mira.
+ */
+export function visibleDeMigracion(crudo) {
+  const trozos = [];
+  /* El valor puede ser una frase o una lista de frases: las señales de alarma y
+     los pasos de la emergencia son listas. */
+  const rotulado = /"es-AR"\s*:\s*("(?:[^"\\]|\\.)*"|\[[^\]]*\])/g;
+  const frase = /"((?:[^"\\]|\\.)*)"/g;
+  for (const encontrado of crudo.matchAll(rotulado)) {
+    const desde = encontrado.index + encontrado[0].length - encontrado[1].length;
+    frase.lastIndex = 0;
+    for (const cada of encontrado[1].matchAll(frase)) {
+      const texto = cada[1].replace(/\\"/g, '"').replace(/\\n/g, ' ').trim();
+      if (texto) trozos.push([crudo.slice(0, desde + cada.index).split('\n').length, texto]);
+    }
+  }
+  return trozos;
+}
+
 /** Devuelve pares `[renglón, texto]` de lo que ve una persona. */
 export function visible(crudo, esHtml) {
   const trozos = [];

@@ -51,12 +51,18 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
 import { hayArchivos } from './recorrido.mjs';
-import { visible, soloCastellano } from './texto_visible.mjs';
+import { visible, visibleDeMigracion, soloCastellano } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
-   este: el vocabulario se revisa en el texto que ve una persona. */
-const AJENAS = ['docs', 'supabase', 'scripts', 'assets'];
+   este: el vocabulario se revisa en el texto que ve una persona.
+
+   `supabase/` sí se mira, desde el 30 de agosto de 2026: una migración es código,
+   pero además **carga texto que después se lee en la pantalla** —las etiquetas de
+   los vocabularios, las Guías de cuidado—, y ese texto se escapaba de acá. De
+   cada `.sql` se mira sólo lo rotulado `"es-AR"`, nunca las sentencias ni los
+   comentarios: eso lo resuelve `visibleDeMigracion()`. */
+const AJENAS = ['docs', 'scripts', 'assets'];
 
 /* Pantallas donde la palabra nombra a otra persona, con el motivo escrito. */
 const PANTALLAS_EXENTAS = new Map([
@@ -179,14 +185,16 @@ const avisos = [];
 const viejas = [];
 let revisados = 0;
 
-for (const camino of hayArchivos(raiz, ['.html', '.js', '.json'], AJENAS)) {
+for (const camino of hayArchivos(raiz, ['.html', '.js', '.json', '.sql'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   if (nombre.endsWith('manifest.json') || nombre.endsWith('sw.js')) continue;
   if (PANTALLAS_EXENTAS.has(nombre)) continue;
   revisados++;
   const crudo = readFileSync(camino, 'utf8');
   const vistos = new Set();
-  for (const [renglon, texto] of visible(soloCastellano(crudo), nombre.endsWith('.html'))) {
+  for (const [renglon, texto] of nombre.endsWith('.sql')
+    ? visibleDeMigracion(crudo)
+    : visible(soloCastellano(crudo), nombre.endsWith('.html'))) {
     const sobra = apariciónQueSobra(texto);
     if (sobra && !vistos.has(renglon + sobra)) {
       vistos.add(renglon + sobra);

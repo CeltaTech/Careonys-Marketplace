@@ -3672,6 +3672,33 @@ Lo único que sigue escrito a mano es de qué es cada servidor de afuera —«do
 de bibliotecas»—, porque eso no se puede medir. Está atado a que sean cuatro: el día que aparezca
 un quinto, el renglón dice que hay que escribirlo de nuevo en vez de repetir la frase de antes.
 
+### El texto que carga una migración también es texto visible
+
+*(30 de agosto de 2026)*
+
+`verificar_trato` y `verificar_vocabulario` revisan cómo está escrito el castellano que ve una
+persona, y los dos tenían `supabase/` en la lista de carpetas que no abren. La lista estaba
+pensada para código, y una migración es código —pero además **carga texto que después se lee en la
+pantalla**: las etiquetas de los 24 vocabularios entran en la base escritas en
+`supabase/migrations/0039_el_catalogo_general_entra_en_las_tablas.sql`, y las cuatro partes de
+las 19 Guías de cuidado en `supabase/migrations/0042_las_diecinueve_guias_generales.sql`. Son 76
+textos de guía más 166 etiquetas que nadie estaba mirando: una guía podía tutear al Asistente y no
+se sabía hasta verla en el teléfono.
+
+Ahora los dos abren `supabase/` y miran también los `.sql`. De un `.sql` se mira **sólo lo
+rotulado `"es-AR"`**, sea una frase o una lista de frases, y eso lo resuelve
+`visibleDeMigracion()` en `scripts/texto_visible.mjs:139`. Elegir por el rótulo del idioma y no
+por el lugar deja afuera por construcción las sentencias, los nombres de tabla, los comentarios y
+los otros dos idiomas, que es más seguro que sacarlos después: por eso esta función no necesita
+`soloCastellano()` —no borra los otros idiomas, nunca los mira—.
+
+**Se comprobó que puede fallar**, y con texto de verdad y no con un comentario agregado al final:
+se cambió una señal de alarma real de la guía del ACV por «Fijate si el cuidador nota la caída de
+un lado de la cara», y los dos chequeos la nombraron en su renglón exacto. Y se comprobó lo
+contrario, que es lo que suele quedar sin probar: en `0039` hay dos etiquetas en portugués que
+dicen «Cuidador domiciliar» —que en portugués es la palabra correcta— y ninguna de las dos se
+informa. Los archivos revisados pasaron de 65 a 107 en el trato y de 64 a 106 en el vocabulario.
+
 ---
 
 ## 6. Deuda del código actual
