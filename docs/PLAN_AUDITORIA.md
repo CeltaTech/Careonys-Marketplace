@@ -77,7 +77,7 @@ cliente por su cuenta.
 
 **Cuatro: el navegador ni siquiera está mandando quién es.** `cambiarEstadoAspirante`
 (`js/apiClient.js:298`) recibe tres cosas —el legajo, el estado nuevo y una nota— y **ninguna es
-quién lo ejecuta**. La pantalla sí lo sabe: `panel-prestadora.html:448` pide el perfil y lo usa para
+quién lo ejecuta**. La pantalla sí lo sabe: `panel-prestadora.html:449` pide el perfil y lo usa para
 el control de rol. Pero esa variable es local al arranque de la pantalla y nunca baja hasta la
 función. Lo único de la identidad que llega al servidor es el testigo de sesión en el encabezado
 (`js/apiClient.js:654`). O sea: **el servidor puede saber quién fue; el navegador no lo está
@@ -213,7 +213,7 @@ dejar nada**. No es un `DELETE` y ningún disparador de estas tres tablas lo ve.
 de datos real y hoy no está en ningún pendiente. **Se abre pendiente aparte.**
 
 **Dos: el motivo de la decisión más crítica se está perdiendo, y no es culpa de que falte el
-rastro.** `panel-prestadora.html:392` y `:407` juntan la nota de la entrevista —el motivo de aprobar
+rastro.** `panel-prestadora.html:393` y `:408` juntan la nota de la entrevista —el motivo de aprobar
 o de rechazar—, `cambiarEstadoAspirante` la manda como `notaPrestadora` (`js/apiClient.js:299`), y
 **`_mapToDatabase` la descarta**: no está en la lista de campos de `caregivers` (`js/apiClient.js:719-741`),
 así que se pierde con un aviso en la consola y nada más. Comprobado el 27 de agosto de 2026 leyendo

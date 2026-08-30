@@ -3073,6 +3073,312 @@
       "es-AR": "Rendir la evaluación",
       "en": "Take the assessment",
       "pt-BR": "Realizar a avaliação"
+    },
+    "_3": "── La pantalla donde la Prestadora escribe sus propias Guías de cuidado ──",
+    "panel.guia_titulo": {
+      "es-AR": "Guías de cuidado — {{organizacion}}",
+      "en": "Care guides — {{organizacion}}",
+      "pt-BR": "Guias de cuidado — {{organizacion}}"
+    },
+    "panel.guia_descripcion": {
+      "es-AR": "La pantalla donde una Prestadora escribe, corrige y borra sus propias Guías de cuidado.",
+      "en": "The screen where a Provider writes, edits and deletes its own care guides.",
+      "pt-BR": "A tela onde uma Prestadora escreve, corrige e exclui os seus próprios guias de cuidado."
+    },
+    "panel.guia_organizacion": {
+      "es-AR": "Organización: {{organizacion}}",
+      "en": "Organization: {{organizacion}}",
+      "pt-BR": "Organização: {{organizacion}}"
+    },
+    "panel.guia_operador": {
+      "es-AR": "Operador: RRHH {{organizacion}}",
+      "en": "Operator: {{organizacion}} HR",
+      "pt-BR": "Operador: RH {{organizacion}}"
+    },
+    "panel.guia_volver_portal": {
+      "es-AR": "Volver al Portal",
+      "en": "Back to the Portal",
+      "pt-BR": "Voltar ao Portal"
+    },
+    "panel.guia_menu_legajos": {
+      "es-AR": "Reclutamiento y Legajos",
+      "en": "Recruitment and personnel files",
+      "pt-BR": "Recrutamento e cadastros funcionais"
+    },
+    "panel.guia_menu_guias": {
+      "es-AR": "Guías de cuidado",
+      "en": "Care guides",
+      "pt-BR": "Guias de cuidado"
+    },
+    "panel.guia_encabezado": {
+      "es-AR": "Guías de cuidado de esta Prestadora",
+      "en": "This Provider’s care guides",
+      "pt-BR": "Guias de cuidado desta Prestadora"
+    },
+    "panel.guia_bajada": {
+      "es-AR": "Lo que el Asistente necesita saber sobre una opción del catálogo antes de entrar al domicilio: qué es, qué esperar, qué mirar y cómo actuar en una emergencia. Lo que se escriba acá reemplaza a la guía general para el personal de esta Prestadora.",
+      "en": "What the Caregiver needs to know about a catalogue entry before entering the home: what it is, what to expect, what to watch for and how to act in an emergency. Whatever is written here replaces the general guide for this Provider’s staff.",
+      "pt-BR": "O que o Assistente precisa saber sobre uma opção do catálogo antes de entrar no domicílio: o que é, o que esperar, o que observar e como agir numa emergência. O que for escrito aqui substitui o guia geral para a equipe desta Prestadora."
+    },
+    "panel.guia_aviso_sin_tratamientos": {
+      "es-AR": "Una guía dice qué mirar y cómo actuar, nunca qué tratamiento aplicar. Y no llega a ningún teléfono mientras no esté publicada, cosa que exige dejar escrito quién la revisó y cuándo.",
+      "en": "A guide says what to watch for and how to act, never what treatment to apply. And it reaches no phone until it is published, which requires stating who reviewed it and when.",
+      "pt-BR": "Um guia diz o que observar e como agir, nunca qual tratamento aplicar. E não chega a nenhum telefone enquanto não for publicado, o que exige registrar quem o revisou e quando."
+    },
+    "panel.guia_lista_titulo": {
+      "es-AR": "Las guías escritas por esta Prestadora",
+      "en": "The guides written by this Provider",
+      "pt-BR": "Os guias escritos por esta Prestadora"
+    },
+    "panel.guia_actualizar": {
+      "es-AR": "Actualizar",
+      "en": "Refresh",
+      "pt-BR": "Atualizar"
+    },
+    "panel.guia_tabla_lista": {
+      "es-AR": "Lista",
+      "en": "List",
+      "pt-BR": "Lista"
+    },
+    "panel.guia_tabla_opcion": {
+      "es-AR": "Opción",
+      "en": "Entry",
+      "pt-BR": "Opção"
+    },
+    "panel.guia_tabla_estado": {
+      "es-AR": "Estado",
+      "en": "Status",
+      "pt-BR": "Situação"
+    },
+    "panel.guia_tabla_revision": {
+      "es-AR": "Revisión",
+      "en": "Review",
+      "pt-BR": "Revisão"
+    },
+    "panel.guia_tabla_acciones": {
+      "es-AR": "Acciones",
+      "en": "Actions",
+      "pt-BR": "Ações"
+    },
+    "panel.guia_estado_borrador": {
+      "es-AR": "Borrador",
+      "en": "Draft",
+      "pt-BR": "Rascunho"
+    },
+    "panel.guia_estado_publicada": {
+      "es-AR": "Publicada",
+      "en": "Published",
+      "pt-BR": "Publicado"
+    },
+    "panel.guia_sin_revision": {
+      "es-AR": "Sin revisar",
+      "en": "Not reviewed",
+      "pt-BR": "Sem revisão"
+    },
+    "panel.guia_corregir": {
+      "es-AR": "Corregir",
+      "en": "Edit",
+      "pt-BR": "Corrigir"
+    },
+    "panel.guia_borrar": {
+      "es-AR": "Borrar",
+      "en": "Delete",
+      "pt-BR": "Excluir"
+    },
+    "panel.guia_cargando": {
+      "es-AR": "Buscando las guías escritas por esta Prestadora...",
+      "en": "Loading the guides written by this Provider…",
+      "pt-BR": "Buscando os guias escritos por esta Prestadora..."
+    },
+    "panel.guia_vacio": {
+      "es-AR": "Todavía no hay ninguna guía escrita acá. Hasta que se escriba la primera, para cada opción rige la guía general.",
+      "en": "No guide has been written here yet. Until the first one is written, the general guide applies to every entry.",
+      "pt-BR": "Ainda não há nenhum guia escrito aqui. Até que o primeiro seja escrito, para cada opção vale o guia geral."
+    },
+    "panel.guia_no_esta": {
+      "es-AR": "Esa guía ya no está en la lista. Conviene actualizar antes de corregirla.",
+      "en": "That guide is no longer in the list. Refresh before editing it.",
+      "pt-BR": "Esse guia já não está na lista. Convém atualizar antes de corrigi-lo."
+    },
+    "panel.guia_form_nueva": {
+      "es-AR": "Escribir una guía nueva",
+      "en": "Write a new guide",
+      "pt-BR": "Escrever um guia novo"
+    },
+    "panel.guia_form_correccion": {
+      "es-AR": "Corregir una guía ya escrita",
+      "en": "Edit an existing guide",
+      "pt-BR": "Corrigir um guia já escrito"
+    },
+    "panel.guia_campo_lista": {
+      "es-AR": "Lista de la que sale la opción",
+      "en": "List the entry comes from",
+      "pt-BR": "Lista de onde sai a opção"
+    },
+    "panel.guia_campo_opcion": {
+      "es-AR": "Opción sobre la que se escribe",
+      "en": "Entry the guide is about",
+      "pt-BR": "Opção sobre a qual se escreve"
+    },
+    "panel.guia_elegir_lista": {
+      "es-AR": "Elija una lista…",
+      "en": "Choose a list…",
+      "pt-BR": "Escolha uma lista…"
+    },
+    "panel.guia_elegir_opcion": {
+      "es-AR": "Elija una opción…",
+      "en": "Choose an entry…",
+      "pt-BR": "Escolha uma opção…"
+    },
+    "panel.guia_propia": {
+      "es-AR": "opción propia",
+      "en": "own entry",
+      "pt-BR": "opção própria"
+    },
+    "panel.guia_listas_cargando": {
+      "es-AR": "Buscando sobre qué listas se puede escribir una guía...",
+      "en": "Loading which lists a guide can be written about…",
+      "pt-BR": "Buscando sobre quais listas se pode escrever um guia..."
+    },
+    "panel.guia_listas_vacio": {
+      "es-AR": "No hay ninguna lista sobre la que se pueda escribir una guía.",
+      "en": "There is no list a guide can be written about.",
+      "pt-BR": "Não há nenhuma lista sobre a qual se possa escrever um guia."
+    },
+    "panel.guia_opciones_cargando": {
+      "es-AR": "Buscando las opciones de esa lista...",
+      "en": "Loading that list’s entries…",
+      "pt-BR": "Buscando as opções dessa lista..."
+    },
+    "panel.guia_opciones_vacio": {
+      "es-AR": "Esa lista ya tiene escrita la guía de todas sus opciones.",
+      "en": "Every entry in that list already has its guide written.",
+      "pt-BR": "Essa lista já tem o guia escrito de todas as suas opções."
+    },
+    "panel.guia_campo_descripcion": {
+      "es-AR": "Qué es",
+      "en": "What it is",
+      "pt-BR": "O que é"
+    },
+    "panel.guia_hueco_descripcion": {
+      "es-AR": "En dos o tres renglones, qué es esta condición.",
+      "en": "In two or three lines, what this condition is.",
+      "pt-BR": "Em duas ou três linhas, o que é esta condição."
+    },
+    "panel.guia_campo_que_esperar": {
+      "es-AR": "Qué esperar en el domicilio",
+      "en": "What to expect in the home",
+      "pt-BR": "O que esperar no domicílio"
+    },
+    "panel.guia_hueco_que_esperar": {
+      "es-AR": "Con qué se va a encontrar quien llega a la casa.",
+      "en": "What whoever arrives at the house will find.",
+      "pt-BR": "Com o que vai se deparar quem chega à casa."
+    },
+    "panel.guia_campo_senales": {
+      "es-AR": "Señales de alarma",
+      "en": "Warning signs",
+      "pt-BR": "Sinais de alerta"
+    },
+    "panel.guia_hueco_senales": {
+      "es-AR": "Qué obliga a avisar. Una señal por renglón.",
+      "en": "What must be reported. One sign per line.",
+      "pt-BR": "O que obriga a avisar. Um sinal por linha."
+    },
+    "panel.guia_campo_emergencia": {
+      "es-AR": "En una emergencia",
+      "en": "In an emergency",
+      "pt-BR": "Numa emergência"
+    },
+    "panel.guia_hueco_emergencia": {
+      "es-AR": "Los pasos, en el orden en que se hacen. Uno por renglón.",
+      "en": "The steps, in the order they are taken. One per line.",
+      "pt-BR": "Os passos, na ordem em que são feitos. Um por linha."
+    },
+    "panel.guia_ayuda_lineas": {
+      "es-AR": "Una por renglón.",
+      "en": "One per line.",
+      "pt-BR": "Uma por linha."
+    },
+    "panel.guia_campo_publicada": {
+      "es-AR": "Publicar esta guía",
+      "en": "Publish this guide",
+      "pt-BR": "Publicar este guia"
+    },
+    "panel.guia_ayuda_publicar": {
+      "es-AR": "Mientras no esté publicada, la guía no llega a ningún teléfono. Para publicarla hay que dejar escrito quién la revisó y cuándo.",
+      "en": "Until it is published, the guide reaches no phone. Publishing it requires stating who reviewed it and when.",
+      "pt-BR": "Enquanto não estiver publicado, o guia não chega a nenhum telefone. Para publicá-lo é preciso registrar quem o revisou e quando."
+    },
+    "panel.guia_campo_revisada_por": {
+      "es-AR": "Quién la revisó",
+      "en": "Who reviewed it",
+      "pt-BR": "Quem o revisou"
+    },
+    "panel.guia_hueco_revisada_por": {
+      "es-AR": "Nombre y matrícula de quien responde por el texto.",
+      "en": "Name and licence number of whoever is answerable for the text.",
+      "pt-BR": "Nome e registro profissional de quem responde pelo texto."
+    },
+    "panel.guia_campo_revisada_el": {
+      "es-AR": "Cuándo la revisó",
+      "en": "When it was reviewed",
+      "pt-BR": "Quando o revisou"
+    },
+    "panel.guia_guardar": {
+      "es-AR": "Guardar la guía",
+      "en": "Save the guide",
+      "pt-BR": "Salvar o guia"
+    },
+    "panel.guia_guardando": {
+      "es-AR": "Guardando la guía...",
+      "en": "Saving the guide…",
+      "pt-BR": "Salvando o guia..."
+    },
+    "panel.guia_cancelar": {
+      "es-AR": "Cancelar",
+      "en": "Cancel",
+      "pt-BR": "Cancelar"
+    },
+    "panel.guia_guardada": {
+      "es-AR": "La guía quedó guardada.",
+      "en": "The guide was saved.",
+      "pt-BR": "O guia foi salvo."
+    },
+    "panel.guia_corregida": {
+      "es-AR": "La corrección quedó guardada.",
+      "en": "The edit was saved.",
+      "pt-BR": "A correção foi salva."
+    },
+    "panel.guia_falta_opcion": {
+      "es-AR": "Falta elegir sobre qué opción se escribe la guía.",
+      "en": "Choose which entry the guide is about.",
+      "pt-BR": "Falta escolher sobre qual opção se escreve o guia."
+    },
+    "panel.guia_falta_texto": {
+      "es-AR": "Las cuatro partes son obligatorias: qué es, qué esperar, las señales de alarma y qué hacer en una emergencia.",
+      "en": "All four parts are required: what it is, what to expect, the warning signs and what to do in an emergency.",
+      "pt-BR": "As quatro partes são obrigatórias: o que é, o que esperar, os sinais de alerta e o que fazer numa emergência."
+    },
+    "panel.guia_falta_firma": {
+      "es-AR": "Para publicar una guía hay que dejar escrito quién la revisó y cuándo.",
+      "en": "Publishing a guide requires stating who reviewed it and when.",
+      "pt-BR": "Para publicar um guia é preciso registrar quem o revisou e quando."
+    },
+    "panel.guia_borrar_pregunta": {
+      "es-AR": "Se va a borrar esta guía, y el personal de esta Prestadora vuelve a ver la guía general de esa opción. Desde acá no se puede deshacer. ¿Se borra igual?",
+      "en": "This guide will be deleted, and this Provider’s staff will see the general guide for that entry again. This cannot be undone from here. Delete it anyway?",
+      "pt-BR": "Este guia será excluído, e a equipe desta Prestadora voltará a ver o guia geral dessa opção. Daqui não é possível desfazer. Excluir mesmo assim?"
+    },
+    "panel.guia_borrando": {
+      "es-AR": "Borrando la guía...",
+      "en": "Deleting the guide…",
+      "pt-BR": "Excluindo o guia..."
+    },
+    "panel.guia_borrada": {
+      "es-AR": "La guía quedó borrada.",
+      "en": "The guide was deleted.",
+      "pt-BR": "O guia foi excluído."
     }
   }
 }

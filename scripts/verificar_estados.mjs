@@ -120,9 +120,15 @@ const PUERTAS_DE_DATOS = [
 ];
 
 /* Escribir en la pantalla. Sólo lo que escribe de verdad: poner el resultado en
-   una variable no es mostrarlo. Los cuatro ayudantes con nombre propio
-   —`mostrar`, `estadoTabla` y los dos `avisar`— son los que este proyecto usa
-   para prender un estado y apagar los otros. */
+   una variable no es mostrarlo. Los ayudantes con nombre propio —`mostrar`, los
+   dos `avisar`— son los que este proyecto usa para prender un estado y apagar
+   los otros.
+
+   `estado` con mayúscula detrás —`estadoTabla`, `estadoLista`, `estadoForm`— es
+   una forma y no una lista de nombres: una pantalla con dos cargas que corren a
+   la vez necesita un cartel por cada una, y con la lista escrita nombre por
+   nombre el segundo cartel nacía sin que este chequeo lo reconociera. Pasó el
+   30 de agosto de 2026 al escribir `guias-prestadora.html`, que tiene dos. */
 const ESCRIBE = [
   /\.(textContent|innerHTML|innerText)\s*=[^=]/,
   /\.appendChild\s*\(/,
@@ -130,7 +136,7 @@ const ESCRIBE = [
   /\.replaceChildren\s*\(/,
   /\.setAttribute\s*\(\s*['"]data-frase/,
   /\.style\.display\s*=/,
-  /\b(mostrar|[a-z]{2,4}Mostrar|estadoTabla|avisar|_avisar|_avisarEnOferta|migaPorClave)\s*\(/,
+  /\b(mostrar|[a-z]{2,4}Mostrar|estado[A-Z]\w*|avisar|_avisar|_avisarEnOferta|migaPorClave)\s*\(/,
   /\balert\s*\(/
 ];
 

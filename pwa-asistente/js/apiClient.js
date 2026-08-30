@@ -288,6 +288,86 @@ const ClienteDatos = {
     return await this._supabaseRequest('POST', 'rpc/guias_de', { p_slug: slug });
   },
 
+  // ── LAS GUÍAS QUE ESCRIBE LA PRESTADORA ────────────────────────────────
+  // Lo de arriba es la puerta de lectura: devuelve lo publicado y sirve sin
+  // sesión, que es lo que necesita el teléfono del Asistente. Lo de acá abajo
+  // es el otro lado, el de quien las escribe, y va contra la tabla y no contra
+  // la puerta por dos motivos: la puerta esconde los borradores —justamente lo
+  // que hay que poder editar— y funde la guía general con la propia, que es
+  // exactamente la distinción que esta pantalla no puede perder.
+  //
+  // Nada de esto necesita que la pantalla se acuerde de filtrar por
+  // Prestadora: las cuatro políticas de la migración 0041 ya lo hacen, y la de
+  // alta, cambio y baja exige además `tenant_id is not null`, así que la guía
+  // general no se toca ni equivocándose.
+
+  // Las listas sobre las que tiene sentido escribir una guía. Sale de la base
+  // —columna `admite_guia`, migración 0043— y no de una lista escrita acá:
+  // ofrecerle a alguien escribir la guía de cuidado del «día de la semana» es
+  // el síntoma de un catálogo que se resolvió en la pantalla.
+  async vocabulariosConGuia() {
+    return await this._supabaseRequest('GET', 'vocabularios', null, {
+      select: 'id,clave,i18n',
+      admite_guia: 'is.true',
+      activo: 'is.true',
+      order: 'orden.asc'
+    });
+  },
+
+  // Las opciones de una de esas listas. Vienen las del catálogo general y las
+  // propias de esta Prestadora, porque eso es lo que devuelve la política de
+  // lectura de `vocabulario_items`; las de otra Prestadora no llegan acá.
+  async opcionesConGuia(vocabularioId) {
+    return await this._supabaseRequest('GET', 'vocabulario_items', null, {
+      select: 'id,clave,i18n,tenant_id',
+      vocabulario_id: `eq.${vocabularioId}`,
+      activo: 'is.true',
+      order: 'orden.asc'
+    });
+  },
+
+  // Sus guías, sólo las suyas. El `tenant_id=not.is.null` no es la seguridad
+  // —de eso se ocupa la política— sino la pantalla: sin él entrarían también
+  // las diecinueve generales publicadas, que ella no escribió y no puede
+  // corregir, y la lista diría que tiene veintiuna guías propias.
+  async misGuias() {
+    return await this._supabaseRequest('GET', 'guias_cuidado', null, {
+      select: 'id,vocabulario_item_id,descripcion,que_esperar,senales_de_alarma,' +
+        'en_emergencia,publicada,revisada_por,revisada_el,created_at,' +
+        'vocabulario_items(clave,i18n,vocabularios(id,clave,i18n))',
+      tenant_id: 'not.is.null',
+      order: 'created_at.desc'
+    });
+  },
+
+  // El alta escribe el `tenant_id` desde la Prestadora que ya resolvió la
+  // sesión. Si no hay ninguna se corta acá y no se manda el pedido: sin ese
+  // valor la política lo rechazaría igual, pero con un error de la base en vez
+  // de uno que la pantalla sepa contar.
+  async crearGuia(datos) {
+    const prestadora = this.currentTenant || await this.initTenant();
+    if (!prestadora || !prestadora.id) {
+      throw new Error('No se pudo resolver la Prestadora de esta sesión.');
+    }
+    const filas = await this._supabaseRequest('POST', 'guias_cuidado',
+      Object.assign({ tenant_id: prestadora.id }, datos));
+    return filas[0] || null;
+  },
+
+  // El cambio no toca `tenant_id` ni `vocabulario_item_id`: de qué opción
+  // habla una guía no se corrige, se borra y se escribe la otra. Cambiarlo
+  // dejaría el historial diciendo que siempre habló de la nueva.
+  async actualizarGuia(id, datos) {
+    const filas = await this._supabaseRequest('PATCH', 'guias_cuidado', datos,
+      { id: `eq.${id}` });
+    return filas[0] || null;
+  },
+
+  async borrarGuia(id) {
+    return await this._supabaseRequest('DELETE', 'guias_cuidado', null,
+      { id: `eq.${id}` });
+  },
+
   // Guarda el legajo del Asistente: las cuatro fichas repetibles, lo que
   // autoriza al cerrar el alta (migración 0004) y su disponibilidad horaria
   // (migración 0012). Las claves de cada fila salen de data/catalogo-fichas.json,

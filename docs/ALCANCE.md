@@ -13,7 +13,7 @@
 
 | Módulo | Estado |
 |---|---|
-| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:443` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs`. **El alta de Asistente exige confirmar el correo, y se queda así**: decidido por el Desarrollador el 2026-08-26 (pendiente 21 cerrado) — el alta es de dos pasos, pero nadie puede darse de alta con el correo de otra persona; `supabase/config.toml` tiene `mailer_autoconfirm: false` |
+| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:444` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs`. **El alta de Asistente exige confirmar el correo, y se queda así**: decidido por el Desarrollador el 2026-08-26 (pendiente 21 cerrado) — el alta es de dos pasos, pero nadie puede darse de alta con el correo de otra persona; `supabase/config.toml` tiene `mailer_autoconfirm: false` |
 | Directorio de Asistentes con filtros | Maquetado y navegable |
 | Perfil del Asistente | Maquetado |
 | Portal de registro de Asistentes | Maquetado, con el legajo funcionando: `registrar-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en las tablas de la migración 0004, y la disponibilidad horaria en las de la 0012 |
@@ -216,7 +216,7 @@ se metía adentro del marcado ahora pasan por `Texto.escapar`, en seis archivos:
 - **Escapar no alcanzaba ahí, y por eso se sacó el `onclick`.** Adentro de un atributo el
   navegador deshace el escapado antes de leer el contenido como código, así que un `&#39;` vuelve
   a ser una comilla y cierra la cadena igual. El identificador ahora se pasa por
-  `addEventListener` (`panel-prestadora.html:235`), que nunca vuelve a leer texto como programa.
+  `addEventListener` (`panel-prestadora.html:236`), que nunca vuelve a leer texto como programa.
 - **Un solo punto de verdad**, como pide «ningún patrón repetido sin punto único de verdad»: `js/texto.js` (77 renglones) tiene
   `Texto.escapar` y `Texto.mensajeDeError`, y lo cargan las catorce pantallas. Antes de esto el
   único archivo que cargaban todas era `js/identidad.js`; ahora son dos. La copia local de
@@ -1455,14 +1455,14 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
   la Prestadora», que es la condición que la vista ya exige para devolver la fila, y la de
   reemplazos urgentes, que sale de `disponibilidad_asistente`.
 - **El filtro por Prestadora vive en el cliente de datos y no es optativo**
-  (`js/apiClient.js:624`). El resto del archivo filtra «si hay Prestadora resuelta», y eso no sirve
+  (`js/apiClient.js:704`). El resto del archivo filtra «si hay Prestadora resuelta», y eso no sirve
   para una pantalla que se ve sin cuenta: sin sesión, la que no filtra devuelve las dos mezcladas.
   Acá, si no hay Prestadora, no se pide nada.
 - **Y si la dirección nombra una Prestadora que no existe, tampoco se muestra otra.** Comprobado
   en el navegador antes de tocar nada: `directorio.html?t=prestadora-que-no-existe` mostraba los
   cuatro Asistentes de PresDemo, porque el respaldo devuelve la primera Prestadora de la base. El
   respaldo sirve para una dirección que no nombra ninguna, no para una que nombra mal. Ahora se
-  distingue un caso del otro (`js/apiClient.js:626`) y el segundo avisa. **Y desde la
+  distingue un caso del otro (`js/apiClient.js:706`) y el segundo avisa. **Y desde la
   migración 0021 el respaldo ya no existe**: mostrar la primera Prestadora de la base era
   leer la lista de clientes de CeltaTech, y esa lista no la ve nadie. Quien entra sin
   enlace ahora ve que le falta el enlace.
@@ -1563,7 +1563,7 @@ pantalla vacía.
 
 **El daño no era igual en las cuatro pantallas, y conviene decirlo así en vez de dejarlo parejo.**
 
-- **Una sola quedaba muda de verdad.** En `panel-prestadora.html:378`, una tabla sin legajos se ve
+- **Una sola quedaba muda de verdad.** En `panel-prestadora.html:379`, una tabla sin legajos se ve
   igual esté rota o esté bien: es idéntica a la de una Prestadora que todavía no cargó ninguno.
   Ahora el fallo escribe en la propia tabla «No se pudo preparar la pantalla. Conviene volver a
   cargarla», que es el estado de error que faltaba.
@@ -1780,7 +1780,7 @@ el servidor.
 para decir una sola cosa: `validado` y `validado_prestadora`. La `0007:8` ya había escrito qué
 significa —«Validado quiere decir "la Prestadora revisó los papeles"»—, que es exactamente lo que
 dice `validado_prestadora` con todas las letras. Los dos pasaban en todos lados, y **el corto no lo
-escribía nadie**: el único lugar que asigna un estado validado es `panel-prestadora.html:392`, y
+escribía nadie**: el único lugar que asigna un estado validado es `panel-prestadora.html:393`, y
 pone el largo. El corto sólo aparecía leído, y en una fila de ejemplo.
 
 La `0017` lo saca: pasa las filas que decían `validado` a decir `validado_prestadora`, y el
@@ -1897,9 +1897,9 @@ Que sigan siendo ocho copias es parte del pendiente 13.
 
 **La «toda operación destructiva se confirma» se midió en el mismo rato y salió todavía más corta.** Pide confirmación explícita
 ante toda operación destructiva, y la medición encontró que en este proyecto hay exactamente una:
-rechazar un legajo (`panel-prestadora.html:349`). No hay un solo `delete` contra la base en las
+rechazar un legajo (`panel-prestadora.html:350`). No hay un solo `delete` contra la base en las
 cuarenta y cuatro pantallas y guiones —lo único que se parece son dos `delete` de JavaScript sobre
-un objeto en memoria, `js/apiClient.js:296` y `js/apiClient.js:340`, que no tocan nada guardado—, y
+un objeto en memoria, `js/apiClient.js:407` y `js/apiClient.js:451`, que no tocan nada guardado—, y
 salir de la sesión no
 destruye nada. La única que hay ya pregunta antes, y la pregunta dice qué queda después:
 «Se va a rechazar este legajo. Queda cerrado y la persona no aparece en el plantel activo.
@@ -2232,7 +2232,7 @@ lea las mismas reglas, no una segunda copia de ellas.
 el pendiente 15. No era una cuestión de prolijidad. Quien escribe la llamada a mano decide solo si
 manda el token de quien inició sesión o la clave pública, y de ese renglón depende que la base
 sepa quién está preguntando. Ahora son `ClienteDatos.getMensajes()` y
-`ClienteDatos.enviarMensaje()` (`js/apiClient.js:548`), que arman el pedido una sola vez para
+`ClienteDatos.enviarMensaje()` (`js/apiClient.js:676`), que arman el pedido una sola vez para
 todos.
 
 Se ganó algo que no se buscaba: la lectura vieja miraba `res.ok` y, si venía en falso, seguía de
