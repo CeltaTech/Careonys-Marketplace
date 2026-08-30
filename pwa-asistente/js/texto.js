@@ -84,18 +84,41 @@ function idiomaDeForma() {
    evita que un precio por hora se lea como cuatro dólares y medio. */
 const MONEDA_POR_OMISION = 'ARS';
 
+/* Una fecha sin hora —«2026-08-30», que es lo que devuelve una columna `date`—
+   no tiene huso horario: es ese día acá y en cualquier parte. Pero
+   `new Date('2026-08-30')` la lee como medianoche en Greenwich, y al escribirla
+   con la hora de acá —tres horas atrás— queda el día anterior.
+
+   Pasó el 30 de agosto de 2026, cargando desde la pantalla la fecha de revisión
+   de una guía de cuidado: se guardó el 30 y la lista mostró «29/08/2026». Es de
+   los errores que no se ven hasta que alguien tiene que responder por esa fecha,
+   porque el número que sale es una fecha creíble.
+
+   Por eso una fecha sin hora se arma a mano, con la hora de esta máquina, y sólo
+   ésa: lo que trae hora es una marca de tiempo de la base, y ésa sí se convierte,
+   que para eso trae el huso. */
+const SOLO_FECHA = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+function fechaDeValor(valor) {
+  const partes = typeof valor === 'string' ? valor.match(SOLO_FECHA) : null;
+  const fecha = partes
+    ? new Date(Number(partes[1]), Number(partes[2]) - 1, Number(partes[3]))
+    : new Date(valor);
+  return isNaN(fecha.getTime()) ? null : fecha;
+}
+
 const Texto = {
   /**
    * Una fecha, escrita como se escribe en el idioma de la pantalla: «12/08/2026»
    * en castellano de acá, «08/12/2026» en inglés de los Estados Unidos. Entra lo
-   * que devuelve la base —un texto con fecha y hora— y sale sólo el día. Sin
-   * fecha, o con algo que no lo sea, devuelve la cadena vacía, para que la
-   * pantalla pueda no mostrar nada en vez de mostrar «Invalid Date».
+   * que devuelve la base —con hora o sin ella— y sale sólo el día. Sin fecha, o
+   * con algo que no lo sea, devuelve la cadena vacía, para que la pantalla pueda
+   * no mostrar nada en vez de mostrar «Invalid Date».
    */
   fechaCorta(valor) {
     if (!valor) return '';
-    const fecha = new Date(valor);
-    if (isNaN(fecha.getTime())) return '';
+    const fecha = fechaDeValor(valor);
+    if (!fecha) return '';
     return new Intl.DateTimeFormat(idiomaDeForma(), {
       day: '2-digit', month: '2-digit', year: 'numeric'
     }).format(fecha);
