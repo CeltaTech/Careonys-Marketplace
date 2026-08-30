@@ -1448,6 +1448,23 @@ button:disabled:hover,
   line-height: 1.6;
 }
 
+/* ---- Bandas de `solicitar-asistente.html` ----
+   Las dos nombraban su clase en el marcado y ninguna hoja la declaraba: el
+   dibujo iba escrito a mano en el atributo `style` de la etiqueta. Dicen acá
+   exactamente lo que decían ahí. Se distinguen sólo por el fondo, que es lo
+   que las alterna. */
+.insurance-section {
+  background: var(--superficie);
+  padding: 50px 24px;
+  border-bottom: 1px solid var(--borde-card);
+}
+
+.care-manager-section {
+  background: var(--superficie-hundida);
+  padding: 60px 24px;
+  border-bottom: 1px solid var(--borde-card);
+}
+
 /* ---- Responsive ---- */
 @media (max-width: 900px) {
   .services-grid .grid {

@@ -87,7 +87,7 @@
   </section>
 
   <!-- REINTEGROS DE OBRA SOCIAL Y FACTURACIÓN -->
-  <section class="insurance-section" style="background: var(--superficie);padding:50px 24px;border-bottom:1px solid var(--borde-card);">
+  <section class="insurance-section">
     <div style="max-width:960px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;">
       <div>
         <span class="eyebrow color-info peso-700 texto-13 mayusculas"
@@ -123,8 +123,7 @@
   </section>
 
   <!-- MÓDULO DEL GESTOR DEL CUIDADO & VIDEOLLAMADA DE DIAGNÓSTICO -->
-  <section class="care-manager-section" style="background:var(--superficie-hundida);padding:60px 24px;border-bottom:1px solid var(--borde-card);"
-    id="gestor-cuidado">
+  <section class="care-manager-section" id="gestor-cuidado">
     <div style="max-width:960px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;">
       <div class="fade-in">
         <span class="eyebrow color-info peso-700 texto-13 mayusculas"
@@ -190,11 +189,11 @@
         onsubmit="event.preventDefault(); alert(Texto.frase('solicitar.modal_agendada')); document.getElementById('modal-videollamada').style.display='none';">
         <div class="form-group mb-14">
           <label for="vv-fecha" data-frase="solicitar.modal_fecha">Fecha preferida</label>
-          <input type="date" id="vv-fecha" class="form-control" required />
+          <input type="date" id="vv-fecha" required />
         </div>
         <div class="form-group" style="margin-bottom:18px;">
           <label for="vv-hora" data-frase="solicitar.modal_turno">Turno disponible</label>
-          <select id="vv-hora" class="form-control" required>
+          <select id="vv-hora" required>
             <option value="10" data-frase="solicitar.modal_turno_10">10:00 hs — Turno Mañana</option>
             <option value="14" data-frase="solicitar.modal_turno_1430">14:30 hs — Turno Tarde</option>
             <option value="17" data-frase="solicitar.modal_turno_17">17:00 hs — Turno Tarde</option>

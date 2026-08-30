@@ -327,7 +327,7 @@ Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2
   `caregivers.profession` y las claves `domiciliaria`, `enfermera`, `auxiliar` y `at`. Esas
   palabras no eran filas: eran los `<option>` y los `data-` de `directorio.html`. Se verificó
   además que ninguna pantalla escribe hoy una clave inventada en esa columna —`registrar-asistente.html:319`
-  y `formulario-integral.html:355` toman las suyas del catálogo—, y de la
+  y `formulario-integral.html:353` toman las suyas del catálogo—, y de la
   base misma no se puede afirmar nada desde acá, porque `caregivers` no se deja leer sin sesión.
 - **Los cuatro filtros salen del catálogo** (`directorio.html:76`): zona, Tipo de Asistente,
   patología y verificación. Eran veinticinco opciones escritas a mano contra «los catálogos salen de la base»; ahora
@@ -3275,9 +3275,12 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
   se guarda como fecha y no como instante** desde
   `supabase/migrations/0044_la_fecha_de_revision_es_una_fecha.sql`: guardada como instante, un día
   declarado acá se mostraba como el anterior.
+- **Y el aislamiento de la puerta se compara ahora en cualquier base**, incluida la publicada,
+  desde que `supabase/migrations/0045_cada_prestadora_ficticia_con_su_propia_guia.sql` carga la
+  guía propia de dos Prestadoras ficticias. Antes de eso, la prueba de la pantalla vivía sólo en
+  datos cargados a mano y se perdía con la base.
 - **Lo demás que falta**: la guía no llega al teléfono sin señal (pendiente 102), que es justo
-  cuando más se necesita; y en la base publicada el aislamiento de la puerta todavía no se puede
-  comparar, porque ahí ninguna Prestadora escribió la suya (pendiente 108).
+  cuando más se necesita.
 
 ## 2. Falta construir
 
@@ -3715,6 +3718,79 @@ un lado de la cara», y los dos chequeos la nombraron en su renglón exacto. Y s
 contrario, que es lo que suele quedar sin probar: en `0039` hay dos etiquetas en portugués que
 dicen «Cuidador domiciliar» —que en portugués es la palabra correcta— y ninguna de las dos se
 informa. Los archivos revisados pasaron de 65 a 107 en el trato y de 64 a 106 en el vocabulario.
+
+### El chequeo veinticinco: clases nombradas que ninguna hoja declara
+
+*(30 de agosto de 2026)*
+
+**Qué se encontró.** El campo de fecha y la lista de horarios de `solicitar-asistente.html`
+llevaban `class="form-control"`, que es el nombre que usa Bootstrap y que este proyecto no
+declara en ninguna parte: cero apariciones en los diez `.css` y en los `<style>` de las
+pantallas. Con ellos aparecieron dos bandas —`insurance-section` y `care-manager-section`— y un
+envoltorio, `inner-hero-content`, igual de inexistentes.
+
+**Y hay que decir con cuidado qué estaba roto, porque no era lo que parecía.** Los dos campos
+**se veían bien**: `css/styles.css:599` declara `.form-group input, .form-group select,
+.form-group textarea` y los dos están adentro de un `.form-group`, así que el estilo les llegaba
+por descendencia. `form-control` no dibujaba nada ni tapaba nada; era peso muerto. El daño es de
+lectura, y por eso dura: el marcado afirma que ese campo tiene un estilo propio, alguien lo va a
+buscar a la hoja el día que haya que cambiarlo, y no está. Las dos bandas sí tenían el dibujo
+escrito a mano en su atributo `style=`, nombrando además una clase que nadie declaraba; ahora
+dicen en `css/styles.css` exactamente lo que decían ahí.
+
+**El chequeo.** `scripts/verificar_clases.mjs` compara toda clase nombrada en un `class="…"`
+contra tres fuentes: las hojas `.css`, los `<style>` escritos adentro de una pantalla —que es
+donde vive buena parte de este producto— y **los nombres que cualquier guion mencione entre
+comillas**, porque una clase también sirve de agarradera para el programa y ésas no se dibujan.
+De las 345 nombradas, cinco existen sólo por esa tercera vía: `btn-next-step`, `btn-prev-step`,
+`fade-in`, `tenant-logo` y `wizard-step-pane`.
+
+Font Awesome es la única familia exenta, y se saltea por prefijo —`fas`, `far`, `fab` y todo lo
+que empiece con `fa-`— porque su hoja no está en este repositorio. La excepción está escrita
+adentro del chequeo para que agregar una segunda cueste discutirlo.
+
+**Se comprobó que puede fallar**, y de las dos maneras. El detector se prueba a sí mismo contra
+once casos escritos —una clase comentada que no cuenta, `fas` y `fa-user` que no se informan, un
+selector con varias clases de un saque del que hay que ver todas y no sólo la primera—, y se
+planta si alguno da vuelto. Y sobre el proyecto de verdad: se le devolvió el `class="form-control"`
+al campo de fecha, informó la clase y el archivo, y el archivo se dejó como estaba.
+
+### El aislamiento de las Guías se probó desde la pantalla, y esa prueba duró unas horas
+
+*(30 de agosto de 2026)*
+
+**Lo que se probó.** Con las dos coordinadoras ficticias, cada una escribió desde
+`guias-prestadora.html` la guía de su Prestadora, la publicó con quién la revisó y cuándo, y
+después se miró desde la sesión de la otra: `guiasQueVe:1, veLaDePresDemo:0, cambioLaDePresDemo:0,
+borroLaDePresDemo:0`. Con las dos cargadas, `scripts/verificar_guias.mjs:268` pudo hacer por fin
+la comparación que tenía escrita desde el principio —lo que la puerta `guias_de` le devuelve a una
+contra lo que le devuelve a otra— y pasó.
+
+**Lo que pasó unas horas después.** La base de esta máquina se volvió a levantar de cero y las dos
+guías se fueron con ella. El chequeo no falló: volvió a decir que no podía probar nada, que es lo
+correcto y también lo inútil. **Una prueba que vive sólo en datos cargados a mano es una foto, no
+un chequeo**, y la regla del producto ya lo decía —«el seed carga siempre al menos dos Prestadoras
+con datos, porque sin eso la prueba de aislamiento no se puede correr», `CLAUDE.md` §3—.
+
+**Cómo quedó.** `supabase/migrations/0045_cada_prestadora_ficticia_con_su_propia_guia.sql` carga
+las dos guías propias, y con eso la comparación corre en cualquier base recién construida,
+incluida la publicada, donde antes no había ninguna. Las dos escriben sobre **la misma** patología
+—`alzheimer`— con texto distinto cada una, y eso es lo que le permite fallar: sobre opciones
+distintas los textos no podrían coincidir nunca y el chequeo pasaría siempre, incluso con el
+aislamiento roto. La tercera Prestadora ficticia se deja sin guía propia a propósito, que es el
+caso de quien no escribió ninguna.
+
+**La firma se escribe ahí y no se escribió en la 0042**, y la línea que las separa es a quién
+alcanza cada guía: una general la lee el personal de cualquier Prestadora, incluidas las reales, y
+esa firma la pone una persona que se hace responsable; una propia no sale nunca de la Prestadora
+que la escribió, y estas dos son ficticias, firmadas por personas inventadas igual que las
+Familias y los Asistentes que esas mismas Prestadoras ya tienen cargados. Ninguna guía general se
+publica en la 0045.
+
+**Se comprobó que puede fallar**, y con el caso que importa: se le copió a una Prestadora el texto
+de la otra en la base de esta máquina, el chequeo nombró la guía y las dos Prestadoras, y los
+datos se dejaron como estaban. La propia migración se defiende igual: se planta si no quedaron dos
+guías publicadas, y también si las dos dicen lo mismo.
 
 ---
 
