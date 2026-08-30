@@ -3259,8 +3259,25 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
   devuelve publicadas— todavía no entrega ninguna, y la pantalla del Asistente muestra el estado
   «todavía no hay guías». **Eso es lo correcto y no es el final**: falta la revisión profesional
   (pendiente 104).
-- **Lo demás que falta**: ninguna pantalla donde la Prestadora escriba la suya (pendiente 103), y la
-  guía no llega al teléfono sin señal (pendiente 102), que es justo cuando más se necesita.
+- **La Prestadora escribe la suya desde `guias-prestadora.html`**, que es una pantalla del panel y
+  pide rol `coordinador`. Elige la lista y la opción del catálogo, escribe las cuatro partes,
+  guarda como borrador, corrige, publica firmando quién la revisó y cuándo, y borra. La pantalla
+  valida en castellano antes que la base —`guias-prestadora.html:466`—, así que quien intenta
+  publicar sin firma lee «Para publicar una guía hay que dejar escrito quién la revisó y cuándo» y
+  no el texto crudo de una restricción. Borrar avisa antes qué consecuencia tiene y se puede
+  cancelar (`guias-prestadora.html:539`).
+- **Se comprobó desde la pantalla, con las dos Prestadoras ficticias.** El 30 de agosto de 2026,
+  con una coordinadora en cada una (`scripts/preparar_coordinadores_locales.mjs`) y contra la base
+  de esta máquina: cada una escribió la suya, la corrigió, la publicó y la vio en la lista; ninguna
+  vio la de la otra; y a la ajena, pidiéndola por su identificador desde la sesión de la otra, no
+  la pudo leer, ni cambiar, ni borrar. Contra la general, la coordinadora no pudo crear una, ni
+  cambiar la que hay, ni borrarla; y sin sesión la pantalla manda a `acceso.html`. **La revisión
+  se guarda como fecha y no como instante** desde
+  `supabase/migrations/0044_la_fecha_de_revision_es_una_fecha.sql`: guardada como instante, un día
+  declarado acá se mostraba como el anterior.
+- **Lo demás que falta**: la guía no llega al teléfono sin señal (pendiente 102), que es justo
+  cuando más se necesita; y en la base publicada el aislamiento de la puerta todavía no se puede
+  comparar, porque ahí ninguna Prestadora escribió la suya (pendiente 108).
 
 ## 2. Falta construir
 

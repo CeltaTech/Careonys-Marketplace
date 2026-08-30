@@ -313,7 +313,7 @@ for (const base of bases) {
   } else {
     let dicho = `${base.nombre}: la puerta contesta y la tabla no`;
     if (r.cobertura) dicho += `, ${r.cobertura.con} de ${r.cobertura.total} patologías con guía general publicada (pendiente 104)`;
-    if (r.sinAislamiento) dicho += `; el aislamiento NO se probó ahí: ${r.sinAislamiento} (pendiente 103)`;
+    if (r.sinAislamiento) dicho += `; el aislamiento NO se probó ahí: ${r.sinAislamiento} (pendiente 108)`;
     dichos.push(dicho);
   }
 }
