@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{{producto}} Asistente — Portal Móvil</title>
-  <meta name="description" content="Aplicación del Asistente de Cuidado de {{producto}}. Fichado GPS, reportes de cuidado y registro de legajo." />
+  <title data-frase="asistente.titulo_pagina">{{producto}} Asistente — Portal Móvil</title>
+  <meta name="description" data-frase-content="asistente.descripcion_pagina"
+    content="Aplicación del Asistente de Cuidado de {{producto}}. Fichado GPS, reportes de cuidado y registro de legajo." />
   <link rel="manifest" href="manifest.json" />
   <!-- CSS LOCAL (dentro del scope del Service Worker) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -296,49 +297,54 @@
     <!-- DRAWER SIDEBAR -->
     <div class="sidebar-drawer" id="drawer">
       <div class="drawer-header">
-        <img src="../assets/images/retrato_generico.svg" alt="Sin foto" />
-        <h4 id="menu-user-name">Asistente de Prueba</h4>
-        <p id="menu-user-email" style="margin:2px 0 0 0;font-size:11px;opacity:0.8;">asistente@ejemplo.com</p>
+        <img src="../assets/images/retrato_generico.svg" alt="Sin foto" data-frase-alt="asistente.sin_foto" />
+        <h4 id="menu-user-name"></h4>
+        <p id="menu-user-email" style="margin:2px 0 0 0;font-size:11px;opacity:0.8;"></p>
       </div>
       <div style="flex:1;padding:16px 0;">
-        <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home ancho-20 color-secundario"></i> Inicio</a>
-        <a class="drawer-menu-item" onclick="navigate('registro')"><i class="fas fa-user-plus ancho-20 color-secundario"></i> Completar Legajo</a>
-        <a class="drawer-menu-item" onclick="navigate('capacitaciones')"><i class="fas fa-graduation-cap ancho-20 color-secundario"></i> Mis Capacitaciones</a>
-        <a class="drawer-menu-item" onclick="navigate('guias')"><i class="fas fa-book-medical ancho-20 color-secundario"></i> <span id="gui-menu"></span></a>
+        <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home ancho-20 color-secundario"></i> <span data-frase="nav.inicio">Inicio</span></a>
+        <a class="drawer-menu-item" onclick="navigate('registro')"><i class="fas fa-user-plus ancho-20 color-secundario"></i> <span data-frase="asistente.menu_legajo">Completar Legajo</span></a>
+        <a class="drawer-menu-item" onclick="navigate('capacitaciones')"><i class="fas fa-graduation-cap ancho-20 color-secundario"></i> <span data-frase="capacitacion.titulo">Mis Capacitaciones</span></a>
+        <a class="drawer-menu-item" onclick="navigate('guias')"><i class="fas fa-book-medical ancho-20 color-secundario"></i> <span data-frase="guia.titulo">Guías de cuidado</span></a>
         <div style="border-top:1px solid var(--borde-card);margin:8px 0;"></div>
-        <button type="button" class="drawer-menu-item color-peligro" id="btn-logout"><i class="fas fa-sign-out-alt ancho-20 color-peligro"></i> Cerrar sesión</button>
+        <button type="button" class="drawer-menu-item color-peligro" id="btn-logout"><i class="fas fa-sign-out-alt ancho-20 color-peligro"></i> <span data-frase="asistente.menu_cerrar_sesion">Cerrar sesión</span></button>
       </div>
       <div class="p-16 centrar-texto texto-10 color-secundario borde-arriba">
-        Powered by <strong class="color-marca-acento">{{producto}}</strong>
+        <span data-frase="pie.sello_producto">Con la tecnología de</span> <strong class="color-marca-acento" data-frase="comun.producto">{{producto}}</strong>
       </div>
     </div>
 
     <!-- 1. VISTA: LOGIN -->
     <div class="app-screen active" id="screen-intro">
       <div class="intro-logo-container">
-        <img src="../assets/images/logotipo.png" class="tenant-logo" alt="Logo" onerror="this.style.display='none'" />
-        <h2 class="tenant-name">{{organizacion}}</h2>
-        <p>Portal del Asistente de Cuidado</p>
+        <img src="../assets/images/logotipo.png" class="tenant-logo" alt="Logo de la Prestadora"
+             data-frase-alt="asistente.logo_prestadora" onerror="this.style.display='none'" />
+        <h2 class="tenant-name" data-frase="comun.organizacion">{{organizacion}}</h2>
+        <p data-frase="asistente.portal_bajada">Portal del Asistente de Cuidado</p>
       </div>
       <div class="login-card">
         <div class="input-wrapper">
-          <input type="email" id="login-email" placeholder="Correo electrónico" required />
+          <input type="email" id="login-email" placeholder="Correo electrónico"
+                 data-frase-placeholder="acceso.correo" required />
         </div>
         <div class="input-wrapper">
-          <input type="password" id="login-pass" placeholder="Contraseña" required />
+          <input type="password" id="login-pass" placeholder="Contraseña"
+                 data-frase-placeholder="acceso.contrasena" required />
         </div>
-        <button type="button" class="btn-login" id="btn-action-login">Ingresar a {{producto}} Asistente</button>
+        <button type="button" class="btn-login" id="btn-action-login"
+                data-frase="asistente.entrar">Ingresar a {{producto}} Asistente</button>
         <!-- El estado error del arranque. Antes, si algo del arranque fallaba, el
              detalle se iba a la consola y la pantalla quedaba idéntica a la de
              quien nunca inició sesión: no había forma de distinguir «no hay
              sesión» de «no se pudo preguntar». -->
         <p class="warranque-aviso" id="arranque-aviso"></p>
         <div class="btn-register-link">
-          ¿No tiene cuenta? <a onclick="navigate('registro')">Registrarse como Asistente</a>
+          <span data-frase="asistente.sin_cuenta">¿No tiene cuenta?</span>
+          <a onclick="navigate('registro')" data-frase="asistente.registrarse">Registrarse como Asistente</a>
         </div>
       </div>
       <div style="text-align:center;margin-top:auto;font-size:10px;color:var(--texto-secundario);padding-top:20px;">
-        Powered by <strong class="color-marca-acento">{{producto}}</strong>
+        <span data-frase="pie.sello_producto">Con la tecnología de</span> <strong class="color-marca-acento" data-frase="comun.producto">{{producto}}</strong>
       </div>
     </div>
 
@@ -347,8 +353,10 @@
       <div class="dashboard-header">
         <button class="btn-back texto-20" id="btn-open-menu"><i class="fas fa-bars"></i></button>
         <div style="display:flex;align-items:center;gap:6px;">
-          <img src="../assets/images/logotipo.png" class="tenant-logo" style="height:24px;" alt="Logo" onerror="this.style.display='none'" />
-          <span class="tenant-name texto-14 peso-800 color-marca">{{organizacion}}</span>
+          <img src="../assets/images/logotipo.png" class="tenant-logo" style="height:24px;" alt="Logo de la Prestadora"
+               data-frase-alt="asistente.logo_prestadora" onerror="this.style.display='none'" />
+          <span class="tenant-name texto-14 peso-800 color-marca"
+                data-frase="comun.organizacion">{{organizacion}}</span>
         </div>
         <div class="ancho-24"></div>
       </div>
@@ -357,53 +365,62 @@
       <div class="status-badge-container mt-16" id="status-container">
         <i class="fas fa-user-check color-info texto-20"></i>
         <div style="flex:1;text-align:left;">
-          <h5 class="m-0 texto-13 color-info peso-700">Estado del Legajo</h5>
-          <p id="legajo-estado-txt" class="m-solo-arriba-2 texto-11 color-info">Cargando estado...</p>
+          <h5 class="m-0 texto-13 color-info peso-700" data-frase="asistente.estado_legajo">Estado del Legajo</h5>
+          <p id="legajo-estado-txt" class="m-solo-arriba-2 texto-11 color-info"
+             data-frase="asistente.cargando_estado">Cargando el estado…</p>
         </div>
-        <button onclick="navigate('registro')" style="font-size:10px;font-weight:700;padding:4px 10px;border-radius:8px;background:var(--azul-medio);color:var(--texto-sobre-color);border:none;cursor:pointer;">Completar</button>
+        <button onclick="navigate('registro')" style="font-size:10px;font-weight:700;padding:4px 10px;border-radius:8px;background:var(--azul-medio);color:var(--texto-sobre-color);border:none;cursor:pointer;" data-frase="asistente.completar">Completar</button>
       </div>
 
       <!-- WIDGET FICHADO GPS -->
       <div class="gps-widget">
         <i class="fas fa-map-marked-alt"></i>
-        <h4 class="m-0 texto-15 color-titulo peso-800">Fichador GPS Laboral</h4>
-        <p id="gps-status" class="m-solo-arriba-4 texto-12 color-secundario">Presione para marcar entrada o salida en el domicilio.</p>
+        <h4 class="m-0 texto-15 color-titulo peso-800" data-frase="asistente.fichador">Fichador GPS Laboral</h4>
+        <p id="gps-status" class="m-solo-arriba-4 texto-12 color-secundario"
+           data-frase="asistente.fichador_bajada">Presione para marcar entrada o salida en el domicilio.</p>
         <div class="gps-actions">
-          <button class="btn-gps fondo-azul-medio" id="btn-gps-in">Marcar Entrada</button>
-          <button class="btn-gps fondo-peligro" id="btn-gps-out">Marcar Salida</button>
+          <button class="btn-gps fondo-azul-medio" id="btn-gps-in"
+                  data-frase="asistente.marcar_entrada">Marcar Entrada</button>
+          <button class="btn-gps fondo-peligro" id="btn-gps-out"
+                  data-frase="asistente.marcar_salida">Marcar Salida</button>
         </div>
       </div>
 
       <!-- FORMULARIO DE REPORTES -->
       <div class="novedades-form">
-        <h4 style="margin:0 0 16px 0;font-size:14px;font-weight:800;color:var(--marca-prestadora);"><i class="fas fa-notes-medical"></i> Registrar un reporte</h4>
+        <h4 style="margin:0 0 16px 0;font-size:14px;font-weight:800;color:var(--marca-prestadora);"><i class="fas fa-notes-medical"></i> <span data-frase="reporte.titulo">Registrar un reporte</span></h4>
         <div class="form-group-pwa">
-          <label>Presión Arterial (P.A.)</label>
-          <input type="text" id="bit-presion" placeholder="Ej: 120/80" />
+          <label data-frase="reporte.presion">Presión Arterial (P.A.)</label>
+          <input type="text" id="bit-presion" placeholder="Ej: 120/80"
+                 data-frase-placeholder="reporte.presion_ejemplo" />
         </div>
         <div class="form-group-pwa">
-          <label>Glucemia</label>
-          <input type="text" id="bit-glucemia" placeholder="Ej: 95 mg/dl" />
+          <label data-frase="reporte.glucemia">Glucemia</label>
+          <input type="text" id="bit-glucemia" placeholder="Ej: 95 mg/dl"
+                 data-frase-placeholder="reporte.glucemia_ejemplo" />
         </div>
         <div class="form-group-pwa">
-          <label>Medicamentos Administrados</label>
-          <input type="text" id="bit-medicamentos" placeholder="Ej: Donepecilo 10mg" />
+          <label data-frase="reporte.medicamentos">Medicamentos Administrados</label>
+          <input type="text" id="bit-medicamentos" placeholder="Ej: qué se administró y a qué hora"
+                 data-frase-placeholder="reporte.medicamentos_ejemplo" />
         </div>
         <div class="form-group-pwa">
-          <label>Notas Diarias / Reporte del Servicio</label>
-          <textarea id="bit-notas" placeholder="Escriba el estado del paciente, alimentación, novedades..." class="alto-60"></textarea>
+          <label data-frase="reporte.notas">Notas Diarias / Reporte del Servicio</label>
+          <textarea id="bit-notas" placeholder="Escriba el estado del Paciente, alimentación, novedades…"
+                    data-frase-placeholder="reporte.notas_ejemplo" class="alto-60"></textarea>
         </div>
-        <button type="button" class="btn-login mt-8" id="btn-guardar-reporte">Guardar Novedad</button>
+        <button type="button" class="btn-login mt-8" id="btn-guardar-reporte"
+                data-frase="reporte.guardar">Guardar Novedad</button>
       </div>
 
       <div style="text-align:center;padding:12px 0 24px 0;font-size:10px;color:var(--texto-secundario);">
-        Powered by <strong class="color-marca-acento">{{producto}}</strong>
+        <span data-frase="pie.sello_producto">Con la tecnología de</span> <strong class="color-marca-acento" data-frase="comun.producto">{{producto}}</strong>
       </div>
 
       <div class="bottom-tab-bar">
-        <a class="tab-item active" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span>Inicio</span></a>
-        <a class="tab-item" onclick="navigate('registro')"><i class="fas fa-user-plus"></i><span>Mi Legajo</span></a>
-        <a class="tab-item" onclick="navigate('capacitaciones')"><i class="fas fa-graduation-cap"></i><span>Cursos</span></a>
+        <a class="tab-item active" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span data-frase="nav.inicio">Inicio</span></a>
+        <a class="tab-item" onclick="navigate('registro')"><i class="fas fa-user-plus"></i><span data-frase="asistente.tab_legajo">Mi Legajo</span></a>
+        <a class="tab-item" onclick="navigate('capacitaciones')"><i class="fas fa-graduation-cap"></i><span data-frase="asistente.tab_cursos">Cursos</span></a>
       </div>
     </div>
 
@@ -411,68 +428,77 @@
     <div class="app-screen" id="screen-registro">
       <div class="wizard-header-bar">
         <button onclick="navigate('dashboard')" class="sin-fondo sin-borde color-sobre-color texto-18 mano"><i class="fas fa-arrow-left"></i></button>
-        <h2>Registro de Legajo Digital</h2>
+        <h2 data-frase="legajo.titulo">Registro de Legajo Digital</h2>
       </div>
 
       <div class="wizard-body">
         <!-- Barra de Progreso -->
         <div class="wizard-progress-bar" id="wizard-progress">
-          <div class="wstep"><div class="wstep-circle active" id="wc1">1</div><span class="wstep-label active">Identidad</span></div>
-          <div class="wstep"><div class="wstep-circle" id="wc2">2</div><span class="wstep-label">Legajo</span></div>
-          <div class="wstep"><div class="wstep-circle" id="wc3">3</div><span class="wstep-label">Aptitudes</span></div>
-          <div class="wstep"><div class="wstep-circle" id="wc4">4</div><span class="wstep-label">Horarios</span></div>
-          <div class="wstep"><div class="wstep-circle" id="wc5">5</div><span class="wstep-label">Confirmar</span></div>
+          <div class="wstep"><div class="wstep-circle active" id="wc1">1</div><span class="wstep-label active" data-frase="legajo.paso1_rotulo">Identidad</span></div>
+          <div class="wstep"><div class="wstep-circle" id="wc2">2</div><span class="wstep-label" data-frase="legajo.paso2_rotulo">Legajo</span></div>
+          <div class="wstep"><div class="wstep-circle" id="wc3">3</div><span class="wstep-label" data-frase="legajo.paso3_rotulo">Aptitudes</span></div>
+          <div class="wstep"><div class="wstep-circle" id="wc4">4</div><span class="wstep-label" data-frase="legajo.paso4_rotulo">Horarios</span></div>
+          <div class="wstep"><div class="wstep-circle" id="wc5">5</div><span class="wstep-label" data-frase="legajo.paso5_rotulo">Confirmar</span></div>
         </div>
 
         <form id="form-legajo-pwa" novalidate>
 
           <!-- PASO 1: DATOS PERSONALES -->
           <div class="wpane active" id="wp1">
-            <h3><i class="fas fa-id-card"></i> Paso 1: Datos Personales y Fiscales</h3>
+            <h3><i class="fas fa-id-card"></i> <span data-frase="legajo.paso1_titulo">Paso 1: Datos Personales y Fiscales</span></h3>
             <div class="wgrid-2">
-              <div class="wfield wgrid-2-full"><label>Nombre y Apellido</label><input type="text" id="w-nombre" required /></div>
-              <div class="wfield"><label>DNI</label><input type="number" id="w-dni" placeholder="8 dígitos" required /></div>
-              <div class="wfield"><label>CUIT / CUIL</label><input type="number" id="w-cuit" placeholder="11 dígitos" required /></div>
-              <div class="wfield"><label>Correo Electrónico</label><input type="email" id="w-email" required /></div>
+              <div class="wfield wgrid-2-full"><label data-frase="legajo.nombre">Nombre y Apellido</label><input type="text" id="w-nombre" required /></div>
+              <div class="wfield"><label data-frase="legajo.dni">DNI</label><input type="number" id="w-dni" placeholder="8 dígitos"
+                data-frase-placeholder="legajo.dni_ejemplo" required /></div>
+              <div class="wfield"><label data-frase="legajo.cuit">CUIT / CUIL</label><input type="number" id="w-cuit" placeholder="11 dígitos"
+                data-frase-placeholder="legajo.cuit_ejemplo" required /></div>
+              <div class="wfield"><label data-frase="acceso.correo">Correo electrónico</label><input type="email" id="w-email" required /></div>
               <!-- La contraseña se pregunta, como en cualquier alta. Hasta el 24
                    de agosto de 2026 esta pantalla no la pedía: creaba la cuenta
                    con el número de documento, que está escrito tres renglones
                    más arriba. El largo mínimo, el aviso de qué falta y el botón
                    de ver lo escrito salen de js/clave.js. -->
-              <div class="wfield wgrid-2-full"><label>Contraseña</label><input type="password" id="w-clave" autocomplete="new-password" required /></div>
-              <div class="wfield wgrid-2-full"><label>Repetir la contraseña</label><input type="password" id="w-clave-repetida" autocomplete="new-password" required /></div>
-              <div class="wfield"><label>Celular (WhatsApp)</label><input type="tel" id="w-celular" placeholder="11 2345 6789" required /></div>
-              <div class="wfield"><label>Fecha de Nacimiento</label><input type="date" id="w-fecha-nac" required /></div>
+              <div class="wfield wgrid-2-full"><label data-frase="acceso.contrasena">Contraseña</label><input type="password" id="w-clave" autocomplete="new-password" required /></div>
+              <div class="wfield wgrid-2-full"><label data-frase="legajo.repetir_contrasena">Repetir la contraseña</label><input type="password" id="w-clave-repetida" autocomplete="new-password" required /></div>
+              <div class="wfield"><label data-frase="legajo.celular">Celular (WhatsApp)</label><input type="tel" id="w-celular" placeholder="11 2345 6789" required /></div>
+              <div class="wfield"><label data-frase="legajo.nacimiento">Fecha de Nacimiento</label><input type="date" id="w-fecha-nac" required /></div>
               <div class="wfield">
-                <label>Género</label>
-                <select id="w-genero" required data-catalogo="genero" data-catalogo-vacio="— Seleccionar —"></select>
+                <label data-frase="legajo.genero">Género</label>
+                <select id="w-genero" required data-catalogo="genero" data-catalogo-vacio="— Seleccionar —"
+                        data-frase-data-catalogo-vacio="comun.seleccionar"></select>
               </div>
-              <div class="wfield"><label>Nacionalidad</label><input type="text" id="w-nac" placeholder="Ej: Argentina" required /></div>
-              <div class="wfield wgrid-2-full"><label>Domicilio Completo</label><input type="text" id="w-domicilio" placeholder="Calle, Nro, Localidad" required /></div>
-              <div class="wfield"><label>Zona de Cobertura</label><input type="text" id="w-zona" placeholder="Ej: Palermo" required /></div>
-              <div class="wfield"><label>CBU o Alias Bancario</label><input type="text" id="w-cbu" placeholder="Para liquidación de haberes" required /></div>
+              <div class="wfield"><label data-frase="legajo.nacionalidad">Nacionalidad</label><input type="text" id="w-nac" placeholder="Ej: Argentina"
+                data-frase-placeholder="legajo.nacionalidad_ejemplo" required /></div>
+              <div class="wfield wgrid-2-full"><label data-frase="legajo.domicilio">Domicilio Completo</label><input type="text" id="w-domicilio" placeholder="Calle, Nro, Localidad"
+                data-frase-placeholder="legajo.domicilio_ejemplo" required /></div>
+              <div class="wfield"><label data-frase="legajo.zona">Zona de Cobertura</label><input type="text" id="w-zona" placeholder="Ej: Palermo"
+                data-frase-placeholder="legajo.zona_ejemplo" required /></div>
+              <div class="wfield"><label data-frase="legajo.cbu">CBU o Alias Bancario</label><input type="text" id="w-cbu" placeholder="Para liquidación de haberes"
+                data-frase-placeholder="legajo.cbu_ejemplo" required /></div>
             </div>
-            <div class="wnav"><button type="button" class="wbtn-next" onclick="wNext(2)">Siguiente <i class="fas fa-arrow-right"></i></button></div>
+            <div class="wnav"><button type="button" class="wbtn-next" onclick="wNext(2)"><span data-frase="legajo.siguiente">Siguiente</span> <i class="fas fa-arrow-right"></i></button></div>
           </div>
 
           <!-- PASO 2: FORMACIÓN -->
           <div class="wpane" id="wp2">
-            <h3><i class="fas fa-file-invoice"></i> Paso 2: Nivel Profesional y Documentación</h3>
+            <h3><i class="fas fa-file-invoice"></i> <span data-frase="legajo.paso2_titulo">Paso 2: Nivel Profesional y Documentación</span></h3>
             <div class="wfield">
-              <label>Tipo de Asistente principal</label>
-              <select id="w-profesion" required data-catalogo="tipo_asistente" data-catalogo-vacio="— Seleccione el tipo —"></select>
+              <label data-frase="legajo.tipo_asistente">Tipo de Asistente principal</label>
+              <select id="w-profesion" required data-catalogo="tipo_asistente" data-catalogo-vacio="— Seleccione el tipo —"
+                      data-frase-data-catalogo-vacio="legajo.elegir_tipo"></select>
             </div>
             <div class="wfield">
-              <label>Nivel de Estudios</label>
-              <select id="w-estudios" required data-catalogo="nivel_educativo" data-catalogo-vacio="— Seleccionar —"></select>
+              <label data-frase="legajo.estudios">Nivel de Estudios</label>
+              <select id="w-estudios" required data-catalogo="nivel_educativo" data-catalogo-vacio="— Seleccionar —"
+                      data-frase-data-catalogo-vacio="comun.seleccionar"></select>
             </div>
-            <p style="font-size:12px;font-weight:700;color:var(--texto-principal);margin:12px 0 6px;">Cursos y Certificaciones ({{producto}} Academy):</p>
+            <p style="font-size:12px;font-weight:700;color:var(--texto-principal);margin:12px 0 6px;" data-frase="legajo.certificaciones">Cursos y Certificaciones ({{producto}} Academy):</p>
             <div class="wcheck-group" data-catalogo="certificacion" data-catalogo-como="casillas" data-catalogo-nombre="certificacion" data-catalogo-clase="catalogo-casilla"></div>
-            <p style="font-size:11px;font-weight:700;color:var(--texto-secundario);margin:12px 0 6px;"><i class="fas fa-shield-alt color-peligro"></i> Documentación requerida:</p>
-            <div class="wfield"><label>📸 Foto de Perfil (tipo carnet)</label><input type="file" id="w-foto" accept="image/*" /></div>
-            <div class="wfield"><label>🛡️ Foto DNI (Frente y Dorso)</label><input type="file" accept="image/*,.pdf" /></div>
-            <div class="wfield"><label>📋 Antecedentes Penales (vigente)</label><input type="file" accept="image/*,.pdf" /></div>
-            <div class="wfield"><label>📜 Título / Certificados</label><input type="file" accept="image/*,.pdf" /></div>
+            <p style="font-size:11px;font-weight:700;color:var(--texto-secundario);margin:12px 0 6px;"><i class="fas fa-shield-alt color-peligro"></i> <span data-frase="legajo.documentacion">Documentación requerida:</span></p>
+            <div class="wfield"><label data-frase="legajo.doc_foto">📸 Foto de Perfil (tipo carnet)</label><input type="file" id="w-foto" accept="image/*" /></div>
+            <div class="wfield"><label data-frase="legajo.doc_dni">🛡️ Foto DNI (Frente y Dorso)</label><input type="file" accept="image/*,.pdf" /></div>
+            <div class="wfield"><label data-frase="legajo.doc_penales">📋 Antecedentes Penales (vigente)</label><input type="file" accept="image/*,.pdf" /></div>
+            <div class="wfield"><label data-frase="legajo.doc_titulo">📜 Título / Certificados</label><input type="file" accept="image/*,.pdf" /></div>
 
             <!-- Las fichas repetibles del legajo. Salen de data/catalogo-fichas.json
                  y las dibuja js/fichas-legajo.js, el mismo archivo que usa el
@@ -480,44 +506,44 @@
                  Hasta el 24 de agosto de 2026 esta pantalla no las tenía, así que
                  quien se daba de alta desde el teléfono quedaba sin matrícula, sin
                  estudios, sin experiencia y con la referencia como texto suelto. -->
-            <p class="oculto" id="ficha-matricula-obligatoria-aviso" style="font-size:10px;color:var(--tono-atencion-texto);background:var(--tono-atencion-fondo);border-radius:8px;padding:10px;margin:14px 0 0;">
-              El Tipo de Asistente que eligió exige Matrícula vigente y verificada para poder publicarse. Cárguela acá.
-            </p>
+            <p class="oculto" id="ficha-matricula-obligatoria-aviso" style="font-size:10px;color:var(--tono-atencion-texto);background:var(--tono-atencion-fondo);border-radius:8px;padding:10px;margin:14px 0 0;"
+               data-frase="legajo.matricula_obligatoria">El Tipo de Asistente que eligió exige Matrícula vigente y verificada para poder publicarse. Cárguela acá.</p>
             <div id="ficha-matricula" style="margin-top:14px;"></div>
             <div id="ficha-estudio" style="margin-top:14px;"></div>
 
             <div class="wnav">
               <button type="button" class="wbtn-prev" onclick="wPrev(1)"><i class="fas fa-arrow-left"></i></button>
-              <button type="button" class="wbtn-next" onclick="wNext(3)">Siguiente <i class="fas fa-arrow-right"></i></button>
+              <button type="button" class="wbtn-next" onclick="wNext(3)"><span data-frase="legajo.siguiente">Siguiente</span> <i class="fas fa-arrow-right"></i></button>
             </div>
           </div>
 
           <!-- PASO 3: APTITUDES Y PATOLOGÍAS -->
           <div class="wpane" id="wp3">
-            <h3><i class="fas fa-clipboard-list"></i> Paso 3: Experiencia y Aptitudes</h3>
-            <p class="texto-12 peso-700 color-principal mb-8">Patologías atendidas con experiencia comprobable:</p>
+            <h3><i class="fas fa-clipboard-list"></i> <span data-frase="legajo.paso3_titulo">Paso 3: Experiencia y Aptitudes</span></h3>
+            <p class="texto-12 peso-700 color-principal mb-8" data-frase="legajo.patologias">Patologías atendidas con experiencia comprobable:</p>
             <div class="wcheck-group mb-16" data-catalogo="patologia" data-catalogo-como="casillas" data-catalogo-nombre="patologia" data-catalogo-clase="catalogo-casilla"></div>
-            <p class="texto-12 peso-700 color-principal mb-8">Tareas autorizadas a realizar:</p>
+            <p class="texto-12 peso-700 color-principal mb-8" data-frase="legajo.tareas">Tareas autorizadas a realizar:</p>
             <div class="wcheck-group" data-catalogo="tarea_cuidado" data-catalogo-como="casillas" data-catalogo-nombre="tarea_cuidado" data-catalogo-clase="catalogo-casilla"></div>
 
             <div id="ficha-experiencia_laboral" class="mt-16"></div>
 
             <div class="wnav">
               <button type="button" class="wbtn-prev" onclick="wPrev(2)"><i class="fas fa-arrow-left"></i></button>
-              <button type="button" class="wbtn-next" onclick="wNext(4)">Siguiente <i class="fas fa-arrow-right"></i></button>
+              <button type="button" class="wbtn-next" onclick="wNext(4)"><span data-frase="legajo.siguiente">Siguiente</span> <i class="fas fa-arrow-right"></i></button>
             </div>
           </div>
 
           <!-- PASO 4: DISPONIBILIDAD HORARIA -->
           <div class="wpane" id="wp4">
-            <h3><i class="fas fa-calendar-alt"></i> Paso 4: Disponibilidad Horaria</h3>
-            <p class="texto-12 peso-700 color-principal mb-6">Modalidades de contratación aceptadas:</p>
+            <h3><i class="fas fa-calendar-alt"></i> <span data-frase="legajo.paso4_titulo">Paso 4: Disponibilidad Horaria</span></h3>
+            <p class="texto-12 peso-700 color-principal mb-6" data-frase="legajo.modalidades">Modalidades de contratación aceptadas:</p>
             <div class="wcheck-group mb-14" data-catalogo="modalidad_contratacion" data-catalogo-como="casillas" data-catalogo-nombre="modalidad_contratacion" data-catalogo-clase="catalogo-casilla" data-catalogo-marcados="horas"></div>
-            <p class="texto-12 peso-700 color-principal mb-6">Con retiro o sin retiro:</p>
+            <p class="texto-12 peso-700 color-principal mb-6" data-frase="legajo.retiro">Con retiro o sin retiro:</p>
             <div class="wcheck-group mb-14" data-catalogo="retiro" data-catalogo-como="casillas" data-catalogo-nombre="retiro" data-catalogo-clase="catalogo-casilla" data-catalogo-marcados="con_retiro"></div>
             <div class="wfield" style="max-width:180px;">
-              <label>Valor Hora ($ ARS)</label>
-              <input type="number" id="w-valor-hora" placeholder="Ej: 3500" required />
+              <label data-frase="legajo.valor_hora">Valor Hora ($ ARS)</label>
+              <input type="number" id="w-valor-hora" placeholder="Ej: 3500"
+                     data-frase-placeholder="legajo.valor_hora_ejemplo" required />
             </div>
             <!-- Los días y los turnos salen de data/catalogo-vocabularios.json y los
                  textos del paso de data/catalogo-disponibilidad.json; los junta
@@ -529,13 +555,13 @@
             <div id="preguntas-disponibilidad"></div>
             <div class="wnav">
               <button type="button" class="wbtn-prev" onclick="wPrev(3)"><i class="fas fa-arrow-left"></i></button>
-              <button type="button" class="wbtn-next" onclick="wNext(5)">Siguiente <i class="fas fa-arrow-right"></i></button>
+              <button type="button" class="wbtn-next" onclick="wNext(5)"><span data-frase="legajo.siguiente">Siguiente</span> <i class="fas fa-arrow-right"></i></button>
             </div>
           </div>
 
           <!-- PASO 5: REFERENCIAS Y CONFIRMACIÓN -->
           <div class="wpane" id="wp5">
-            <h3><i class="fas fa-user-check"></i> Paso 5: Referencias y Confirmación</h3>
+            <h3><i class="fas fa-user-check"></i> <span data-frase="legajo.paso5_titulo">Paso 5: Referencias y Confirmación</span></h3>
             <!-- La referencia era un nombre y un teléfono sueltos que terminaban
                  como texto adentro de `caregivers.reference_info`, que es el
                  formato viejo. Ahora es la misma ficha del portal y va a
@@ -543,8 +569,8 @@
             <div id="ficha-referencia"></div>
 
             <div class="winfo-box">
-              <strong><i class="fas fa-info-circle"></i> Proceso de Selección:</strong><br />
-              La solicitud quedará en estado "En Revisión". El equipo de <strong class="tenant-name">{{organizacion}}</strong> auditará la documentación y lo convocará a una entrevista.
+              <strong><i class="fas fa-info-circle"></i> <span data-frase="legajo.seleccion_titulo">Proceso de Selección:</span></strong><br />
+              <span data-frase="legajo.seleccion_texto">La solicitud quedará en estado «En Revisión». El equipo de {{organizacion}} auditará la documentación y lo convocará a una entrevista.</span>
             </div>
             <!-- El paso de cierre: qué se muestra de la persona y a quién. El
                  texto, el orden y el valor inicial de cada casilla salen de
@@ -559,25 +585,29 @@
 
             <div style="display:flex;align-items:flex-start;gap:8px;margin:12px 0;font-size:12px;color:var(--texto-principal);">
               <input type="checkbox" id="w-terminos" required style="width:18px;height:18px;margin-top:2px;flex-shrink:0;" />
-              <label for="w-terminos" class="mano">Acepto los Términos y Condiciones de Legajo para Asistentes de {{producto}}.</label>
+              <label for="w-terminos" class="mano"
+                     data-frase="legajo.terminos">Acepto los Términos y Condiciones de Legajo para Asistentes de {{producto}}.</label>
             </div>
             <div class="wnav">
               <button type="button" class="wbtn-prev" onclick="wPrev(4)"><i class="fas fa-arrow-left"></i></button>
-              <button type="submit" class="wbtn-submit"><i class="fas fa-check-circle"></i> <span id="cierre-boton">Enviar Legajo</span></button>
+              <button type="submit" class="wbtn-submit"><i class="fas fa-check-circle"></i> <span id="cierre-boton"></span></button>
             </div>
             <!-- El servidor puede exigir confirmar el correo antes de dar
                  sesión. Ahí la cuenta ya quedó creada y el legajo sigue cargado
                  en esta pantalla: no se perdió nada, falta tocar el enlace. -->
             <div class="wespera-correo" id="w-espera-correo">
-              <strong>La cuenta quedó creada. Falta un paso.</strong>
-              <p>Se envió un correo a <strong id="w-espera-correo-mail"></strong> con un enlace para confirmar la dirección. Lo cargado sigue acá: no se perdió nada.</p>
+              <strong data-frase="legajo.espera_titulo">La cuenta quedó creada. Falta un paso.</strong>
+              <p><strong id="w-espera-correo-mail"></strong></p>
+              <p data-frase="legajo.espera_texto">Se envió un correo con un enlace para confirmar la dirección. Lo cargado sigue acá: no se perdió nada.</p>
               <ol>
-                <li>Abrir ese correo y tocar el enlace.</li>
-                <li>Volver a esta pantalla y tocar el botón de abajo.</li>
+                <li data-frase="legajo.espera_paso1">Abrir ese correo y tocar el enlace.</li>
+                <li data-frase="legajo.espera_paso2">Volver a esta pantalla y tocar el botón de abajo.</li>
               </ol>
               <div class="wespera-correo-botones">
-                <button type="button" class="wbtn-next" id="w-ya-confirme">Ya confirmé, continuar</button>
-                <button type="button" class="wbtn-prev" id="w-reenviar-confirmacion">Volver a mandar el correo</button>
+                <button type="button" class="wbtn-next" id="w-ya-confirme"
+                        data-frase="legajo.ya_confirme">Ya confirmé, continuar</button>
+                <button type="button" class="wbtn-prev" id="w-reenviar-confirmacion"
+                        data-frase="legajo.reenviar">Volver a mandar el correo</button>
               </div>
               <p class="wespera-correo-aviso" id="w-espera-correo-aviso"></p>
             </div>
@@ -585,7 +615,8 @@
                  varias tablas y sube archivos: puede tardar, y sin este cartel
                  la espera se veía igual que un formulario que no hizo nada. -->
             <p class="wguardando" id="w-guardando"></p>
-            <div class="wsuccess-msg" id="w-success">✓ ¡Legajo enviado! Ha ingresado al proceso de auditoría.</div>
+            <div class="wsuccess-msg" id="w-success"
+                 data-frase="legajo.enviado">✓ ¡Legajo enviado! Ha ingresado al proceso de auditoría.</div>
           </div>
 
         </form>
@@ -597,26 +628,26 @@
       <div class="wizard-header-bar">
         <button type="button" class="btn-volver-cabecera" id="cap-volver">
           <i class="fas fa-arrow-left"></i></button>
-        <h2>Mis Capacitaciones</h2>
+        <h2 data-frase="capacitacion.titulo">Mis Capacitaciones</h2>
       </div>
 
       <div class="capacitaciones-cuerpo">
-        <div class="pwa-estado" id="cap-cargando">Buscando sus capacitaciones...</div>
+        <div class="pwa-estado" id="cap-cargando" data-frase="capacitacion.cargando">Buscando sus capacitaciones…</div>
 
         <div class="pwa-estado" id="cap-error" hidden>
           <p id="cap-error-texto"></p>
-          <button type="button" class="btn btn-primario" id="cap-reintentar">Reintentar</button>
+          <button type="button" class="btn btn-primario" id="cap-reintentar"
+                  data-frase="acceso.reintentar">Reintentar</button>
         </div>
 
         <div class="pwa-estado" id="cap-vacio" hidden>
-          <p>Todavía no hay cursos publicados.</p>
-          <p class="pwa-estado-bajada">Cuando la Prestadora publique su oferta aparece acá.</p>
+          <p data-frase="capacitacion.vacio">Todavía no hay cursos publicados.</p>
+          <p class="pwa-estado-bajada" data-frase="capacitacion.vacio_bajada">Cuando la Prestadora publique su oferta aparece acá.</p>
         </div>
 
         <div id="cap-listo" hidden>
-          <p class="capacitaciones-bajada">
-            Lo que rinda queda registrado en su legajo, a la vista de la Prestadora.
-          </p>
+          <p class="capacitaciones-bajada"
+             data-frase="capacitacion.aclaracion">Lo que rinda queda registrado en su legajo, a la vista de la Prestadora.</p>
           <div id="cap-lista"></div>
 
         <!-- El molde de una tarjeta de curso. Las partes se marcan con
@@ -632,7 +663,7 @@
               <i data-parte="icono"></i>
               <span data-parte="resultado-texto"></span>
             </div>
-            <a class="btn btn-primario" data-parte="rendir">Rendir la evaluación</a>
+            <a class="btn btn-primario" data-parte="rendir" data-frase="capacitacion.rendir">Rendir la evaluación</a>
           </div>
         </template>
         </div>
@@ -654,50 +685,46 @@
       mal. Es la diferencia entre avisar y prescribir, y la pantalla lo dice en
       voz alta arriba de todo en vez de dejarlo supuesto.
 
-      A diferencia de las otras pantallas de esta aplicación, ésta nace
-      traducida: ni una palabra suya está escrita acá. El texto fijo lo pide el
-      guion con `Catalogo.frase()` y lo que escribió una persona sale de la base
-      en el idioma en que lo escribió.
-
-      Se pide desde el guion y no con `data-frase` por una razón del propio
-      chequeo, no por gusto: una pantalla queda «convertida» apenas tiene un
-      solo `data-frase`, y desde ese momento se le exige el archivo entero. Este
-      archivo tiene ciento ocho textos escritos a mano que son otra tarea, así
-      que ponerle una clave declarativa acá no dejaría el archivo mejor: dejaría
-      el chequeo en rojo hasta terminar esa otra tarea, o —peor— empujaría a
-      apagarlo. `Catalogo.frase()` da exactamente el mismo resultado en las tres
-      lenguas y no miente sobre en qué estado está el resto.
+      El texto fijo sale del catálogo por `data-frase`, y lo que escribió una
+      persona sale de la base en el idioma en que lo escribió. Nació pidiéndolo
+      desde el guion, cuando el resto del archivo todavía tenía sus ciento ocho
+      textos escritos a mano y una sola clave declarativa habría dejado el
+      chequeo en rojo hasta terminarlos. Ya están todos, así que esta pantalla
+      se declara como las demás.
     -->
     <div class="app-screen" id="screen-guias">
       <div class="wizard-header-bar">
         <button type="button" class="btn-volver-cabecera" id="gui-volver">
           <i class="fas fa-arrow-left"></i></button>
-        <h2 id="gui-titulo"></h2>
+        <h2 data-frase="guia.titulo">Guías de cuidado</h2>
       </div>
 
       <div class="capacitaciones-cuerpo">
-        <div class="pwa-estado" id="gui-cargando"></div>
+        <div class="pwa-estado" id="gui-cargando" data-frase="guia.cargando">Buscando las guías de cuidado...</div>
 
         <div class="pwa-estado" id="gui-error" hidden>
           <p id="gui-error-texto"></p>
-          <button type="button" class="btn btn-primario" id="gui-reintentar"></button>
+          <button type="button" class="btn btn-primario" id="gui-reintentar"
+                  data-frase="guia.reintentar">Reintentar</button>
         </div>
 
         <div class="pwa-estado" id="gui-vacio" hidden>
-          <p id="gui-vacio-texto"></p>
-          <p class="pwa-estado-bajada" id="gui-vacio-bajada"></p>
+          <p data-frase="guia.vacio">Todavía no hay ninguna guía publicada.</p>
+          <p class="pwa-estado-bajada" data-frase="guia.vacio_bajada">Aparecen acá en cuanto se publique la primera. Una guía sin revisar no llega a esta pantalla.</p>
         </div>
 
         <div id="gui-listo" hidden>
-          <p class="capacitaciones-bajada" id="gui-aclaracion"></p>
+          <p class="capacitaciones-bajada" data-frase="guia.aclaracion">Estas guías dicen qué observar y cuándo avisar. No indican tratamientos.</p>
 
           <div class="input-wrapper">
-            <input type="search" id="gui-buscar" />
+            <input type="search" id="gui-buscar" placeholder="Buscar una patología"
+                   data-frase-placeholder="guia.buscar" />
           </div>
 
           <!-- Se muestra sólo cuando el filtro no deja ninguna. Es distinto de
                que no haya guías, y por eso no es el estado «vacío». -->
-          <p class="pwa-estado-bajada" id="gui-sin-resultado" hidden></p>
+          <p class="pwa-estado-bajada" id="gui-sin-resultado" hidden
+             data-frase="guia.sin_resultado">Ninguna guía coincide con lo que se buscó.</p>
 
           <div id="gui-lista"></div>
 
@@ -758,22 +785,17 @@
       const avisoArranque = document.getElementById('arranque-aviso');
       botonEntrar.disabled = true;
       try {
-        // El texto de esta pantalla se pide explícitamente. Esta pantalla todavía
-        // no está convertida —no tiene ni un `data-frase`—, así que el recorrido
-        // del catálogo no trae las frases solo, y de ahí salen todos los avisos
-        // de este guion. Va en su propio `try`: un catálogo que no llega no es un
+        // El texto de la pantalla, del catálogo, antes de seguir: `initTenant`
+        // resuelve enseguida `{{organizacion}}` y `{{producto}}` sobre lo que ya
+        // esté escrito, así que traducir después dejaría los marcadores a la
+        // vista. Va en su propio `try`: un catálogo que no llega no es un
         // servidor caído, y confundirlos escondería el formulario por una
-        // traducción que faltó.
+        // traducción que faltó. Sin catálogo queda el castellano del HTML.
         try {
-          await Catalogo.cargarFrases();
+          await Catalogo.aplicarEnDocumento();
         } catch (err) {
           console.error('Portal del Asistente, texto de la pantalla:', err);
         }
-
-        // El texto fijo de la pantalla de Guías de cuidado, apenas llega el
-        // catálogo. Se escribe acá y no al entrar a la pantalla para que la
-        // entrada del menú y el rótulo estén en su idioma desde el arranque.
-        guiTextoFijo();
 
         await ClienteDatos.initTenant();
         montarDisponibilidad();
@@ -939,25 +961,6 @@
     // Y sólo llegan las publicadas, que también lo garantiza la base. Un
     // borrador que se ve es una indicación que nadie firmó.
 
-    // Todo el texto fijo de la pantalla, del catálogo. Se vuelve a llamar sola
-    // cuando alguien cambia de idioma, porque `Catalogo.cambiarIdioma` reescribe
-    // el documento y lo que se puso desde el guion no viaja en ese recorrido.
-    function guiTextoFijo() {
-      const poner = (id, clave) => {
-        document.getElementById(id).textContent = Catalogo.frase(clave);
-      };
-      poner('gui-titulo', 'guia.titulo');
-      poner('gui-menu', 'guia.titulo');
-      poner('gui-cargando', 'guia.cargando');
-      poner('gui-reintentar', 'guia.reintentar');
-      poner('gui-vacio-texto', 'guia.vacio');
-      poner('gui-vacio-bajada', 'guia.vacio_bajada');
-      poner('gui-aclaracion', 'guia.aclaracion');
-      poner('gui-sin-resultado', 'guia.sin_resultado');
-      document.getElementById('gui-buscar')
-        .setAttribute('placeholder', Catalogo.frase('guia.buscar'));
-    }
-
     function guiMostrar(cual) {
       for (const estado of ['cargando', 'error', 'vacio', 'listo']) {
         document.getElementById('gui-' + estado).hidden = estado !== cual;
@@ -1022,7 +1025,6 @@
     }
 
     async function guiCargar() {
-      guiTextoFijo();
       guiMostrar('cargando');
       try {
         // El catálogo hace falta para el nombre visible de cada patología: la

@@ -2597,6 +2597,482 @@
       "es-AR": "Estas guías dicen qué observar y cuándo avisar. No indican tratamientos.",
       "en": "These guides say what to watch for and when to report it. They do not prescribe treatment.",
       "pt-BR": "Estes guias dizem o que observar e quando avisar. Não indicam tratamentos."
+    },
+
+    "__________________________________________": "── Los marcadores de marca, que resuelve js/identidad.js con el nombre de verdad ──",
+
+    "comun.producto": {
+      "es-AR": "{{producto}}",
+      "en": "{{producto}}",
+      "pt-BR": "{{producto}}"
+    },
+    "comun.seleccionar": {
+      "es-AR": "— Seleccionar —",
+      "en": "— Select —",
+      "pt-BR": "— Selecionar —"
+    },
+    "comun.organizacion": {
+      "es-AR": "{{organizacion}}",
+      "en": "{{organizacion}}",
+      "pt-BR": "{{organizacion}}"
+    },
+    "___________________________________________": "── La aplicación del Asistente: el cajón, la pantalla de acceso y el tablero ──",
+
+    "asistente.titulo_pagina": {
+      "es-AR": "{{producto}} Asistente — Portal Móvil",
+      "en": "{{producto}} Care Assistant — Mobile Portal",
+      "pt-BR": "{{producto}} Assistente de Cuidado — Portal Móvel"
+    },
+    "asistente.descripcion_pagina": {
+      "es-AR": "Aplicación del Asistente de Cuidado de {{producto}}. Fichado GPS, reportes de cuidado y registro de legajo.",
+      "en": "Care Assistant application of {{producto}}. GPS time tracking, care reports and personnel file registration.",
+      "pt-BR": "Aplicativo do Assistente de Cuidado do {{producto}}. Registro de ponto por GPS, relatórios de cuidado e cadastro da ficha funcional."
+    },
+    "asistente.sin_foto": {
+      "es-AR": "Sin foto",
+      "en": "No photo",
+      "pt-BR": "Sem foto"
+    },
+    "asistente.menu_legajo": {
+      "es-AR": "Completar Legajo",
+      "en": "Complete Personnel File",
+      "pt-BR": "Preencher Ficha Funcional"
+    },
+    "asistente.menu_cerrar_sesion": {
+      "es-AR": "Cerrar sesión",
+      "en": "Sign out",
+      "pt-BR": "Sair da sessão"
+    },
+    "asistente.logo_prestadora": {
+      "es-AR": "Logo de la Prestadora",
+      "en": "Provider logo",
+      "pt-BR": "Logotipo da Prestadora"
+    },
+    "asistente.portal_bajada": {
+      "es-AR": "Portal del Asistente de Cuidado",
+      "en": "Care Assistant Portal",
+      "pt-BR": "Portal do Assistente de Cuidado"
+    },
+    "asistente.entrar": {
+      "es-AR": "Ingresar a {{producto}} Asistente",
+      "en": "Sign in to {{producto}} Care Assistant",
+      "pt-BR": "Entrar no {{producto}} Assistente de Cuidado"
+    },
+    "asistente.sin_cuenta": {
+      "es-AR": "¿No tiene cuenta?",
+      "en": "No account yet?",
+      "pt-BR": "Ainda não tem conta?"
+    },
+    "asistente.registrarse": {
+      "es-AR": "Registrarse como Asistente",
+      "en": "Register as a Care Assistant",
+      "pt-BR": "Cadastrar-se como Assistente de Cuidado"
+    },
+    "asistente.estado_legajo": {
+      "es-AR": "Estado del Legajo",
+      "en": "Personnel File Status",
+      "pt-BR": "Situação da Ficha Funcional"
+    },
+    "asistente.cargando_estado": {
+      "es-AR": "Cargando el estado…",
+      "en": "Loading the status…",
+      "pt-BR": "Carregando a situação…"
+    },
+    "asistente.completar": {
+      "es-AR": "Completar",
+      "en": "Complete",
+      "pt-BR": "Preencher"
+    },
+    "asistente.fichador": {
+      "es-AR": "Fichador GPS Laboral",
+      "en": "GPS Work Time Clock",
+      "pt-BR": "Registrador de Ponto por GPS"
+    },
+    "asistente.fichador_bajada": {
+      "es-AR": "Presione para marcar entrada o salida en el domicilio.",
+      "en": "Press to register the arrival or the departure at the residence.",
+      "pt-BR": "Pressione para registrar a entrada ou a saída no domicílio."
+    },
+    "asistente.marcar_entrada": {
+      "es-AR": "Marcar Entrada",
+      "en": "Clock In",
+      "pt-BR": "Registrar Entrada"
+    },
+    "asistente.marcar_salida": {
+      "es-AR": "Marcar Salida",
+      "en": "Clock Out",
+      "pt-BR": "Registrar Saída"
+    },
+    "asistente.tab_legajo": {
+      "es-AR": "Mi Legajo",
+      "en": "My Personnel File",
+      "pt-BR": "Minha Ficha Funcional"
+    },
+    "asistente.tab_cursos": {
+      "es-AR": "Cursos",
+      "en": "Courses",
+      "pt-BR": "Capacitações"
+    },
+    "____________________________________________": "── El reporte de cuidado que carga el Asistente desde el teléfono ──",
+
+    "reporte.titulo": {
+      "es-AR": "Registrar un reporte",
+      "en": "Record a report",
+      "pt-BR": "Registrar um relatório"
+    },
+    "reporte.presion": {
+      "es-AR": "Presión Arterial (P.A.)",
+      "en": "Blood Pressure (BP)",
+      "pt-BR": "Pressão Arterial (P.A.)"
+    },
+    "reporte.presion_ejemplo": {
+      "es-AR": "Ej: 120/80",
+      "en": "E.g.: 120/80",
+      "pt-BR": "Ex.: 120/80"
+    },
+    "reporte.glucemia": {
+      "es-AR": "Glucemia",
+      "en": "Blood glucose",
+      "pt-BR": "Glicemia"
+    },
+    "reporte.glucemia_ejemplo": {
+      "es-AR": "Ej: 95 mg/dl",
+      "en": "E.g.: 95 mg/dl",
+      "pt-BR": "Ex.: 95 mg/dl"
+    },
+    "reporte.medicamentos": {
+      "es-AR": "Medicamentos Administrados",
+      "en": "Medications Administered",
+      "pt-BR": "Medicação Administrada"
+    },
+    "reporte.medicamentos_ejemplo": {
+      "es-AR": "Ej: qué se administró y a qué hora",
+      "en": "E.g.: what was administered and at what time",
+      "pt-BR": "Ex.: o que foi administrado e em que horário"
+    },
+    "reporte.notas": {
+      "es-AR": "Notas Diarias / Reporte del Servicio",
+      "en": "Daily Notes / Service Report",
+      "pt-BR": "Notas Diárias / Relatório do Serviço"
+    },
+    "reporte.notas_ejemplo": {
+      "es-AR": "Escriba el estado del Paciente, alimentación, novedades…",
+      "en": "Enter the Patient's condition, meals, developments…",
+      "pt-BR": "Descreva a condição do Paciente, a alimentação, as novidades…"
+    },
+    "reporte.guardar": {
+      "es-AR": "Guardar Novedad",
+      "en": "Save Entry",
+      "pt-BR": "Salvar Registro"
+    },
+    "_____________________________________________": "── El registro de legajo desde el teléfono, los cinco pasos ──",
+
+    "legajo.titulo": {
+      "es-AR": "Registro de Legajo Digital",
+      "en": "Digital Personnel File Registration",
+      "pt-BR": "Cadastro da Ficha Funcional Digital"
+    },
+    "legajo.paso1_rotulo": {
+      "es-AR": "Identidad",
+      "en": "Identity",
+      "pt-BR": "Identidade"
+    },
+    "legajo.paso2_rotulo": {
+      "es-AR": "Legajo",
+      "en": "Personnel File",
+      "pt-BR": "Ficha funcional"
+    },
+    "legajo.paso3_rotulo": {
+      "es-AR": "Aptitudes",
+      "en": "Skills",
+      "pt-BR": "Aptidões"
+    },
+    "legajo.paso4_rotulo": {
+      "es-AR": "Horarios",
+      "en": "Availability",
+      "pt-BR": "Horários"
+    },
+    "legajo.paso5_rotulo": {
+      "es-AR": "Confirmar",
+      "en": "Confirmation",
+      "pt-BR": "Confirmação"
+    },
+    "legajo.paso1_titulo": {
+      "es-AR": "Paso 1: Datos Personales y Fiscales",
+      "en": "Step 1: Personal and tax information",
+      "pt-BR": "Etapa 1: Dados pessoais e fiscais"
+    },
+    "legajo.nombre": {
+      "es-AR": "Nombre y Apellido",
+      "en": "Full name",
+      "pt-BR": "Nome completo"
+    },
+    "legajo.dni": {
+      "es-AR": "DNI",
+      "en": "National identity document number",
+      "pt-BR": "Número do documento de identidade"
+    },
+    "legajo.dni_ejemplo": {
+      "es-AR": "8 dígitos",
+      "en": "8 digits",
+      "pt-BR": "8 algarismos"
+    },
+    "legajo.cuit": {
+      "es-AR": "CUIT / CUIL",
+      "en": "Tax identification number",
+      "pt-BR": "Número de identificação fiscal"
+    },
+    "legajo.cuit_ejemplo": {
+      "es-AR": "11 dígitos",
+      "en": "11 digits",
+      "pt-BR": "11 algarismos"
+    },
+    "legajo.repetir_contrasena": {
+      "es-AR": "Repetir la contraseña",
+      "en": "Re-enter the password",
+      "pt-BR": "Repetir a senha"
+    },
+    "legajo.celular": {
+      "es-AR": "Celular (WhatsApp)",
+      "en": "Mobile phone (WhatsApp)",
+      "pt-BR": "Telefone celular (WhatsApp)"
+    },
+    "legajo.nacimiento": {
+      "es-AR": "Fecha de Nacimiento",
+      "en": "Date of birth",
+      "pt-BR": "Data de nascimento"
+    },
+    "legajo.genero": {
+      "es-AR": "Género",
+      "en": "Gender",
+      "pt-BR": "Gênero"
+    },
+    "legajo.nacionalidad": {
+      "es-AR": "Nacionalidad",
+      "en": "Nationality",
+      "pt-BR": "Nacionalidade"
+    },
+    "legajo.nacionalidad_ejemplo": {
+      "es-AR": "Ej: Argentina",
+      "en": "E.g.: Argentina",
+      "pt-BR": "Ex.: Argentina"
+    },
+    "legajo.domicilio": {
+      "es-AR": "Domicilio Completo",
+      "en": "Full address",
+      "pt-BR": "Endereço completo"
+    },
+    "legajo.domicilio_ejemplo": {
+      "es-AR": "Calle, Nro, Localidad",
+      "en": "Street, number, city",
+      "pt-BR": "Rua, número, cidade"
+    },
+    "legajo.zona": {
+      "es-AR": "Zona de Cobertura",
+      "en": "Coverage area",
+      "pt-BR": "Área de cobertura"
+    },
+    "legajo.zona_ejemplo": {
+      "es-AR": "Ej: Palermo",
+      "en": "E.g.: Palermo",
+      "pt-BR": "Ex.: Palermo"
+    },
+    "legajo.cbu": {
+      "es-AR": "CBU o Alias Bancario",
+      "en": "Bank account key or account alias",
+      "pt-BR": "Chave bancária ou apelido da conta"
+    },
+    "legajo.cbu_ejemplo": {
+      "es-AR": "Para liquidación de haberes",
+      "en": "Used for salary payments",
+      "pt-BR": "Para o pagamento da remuneração"
+    },
+    "legajo.siguiente": {
+      "es-AR": "Siguiente",
+      "en": "Next",
+      "pt-BR": "Avançar"
+    },
+    "legajo.paso2_titulo": {
+      "es-AR": "Paso 2: Nivel Profesional y Documentación",
+      "en": "Step 2: Professional level and documentation",
+      "pt-BR": "Etapa 2: Nível profissional e documentação"
+    },
+    "legajo.tipo_asistente": {
+      "es-AR": "Tipo de Asistente principal",
+      "en": "Main Care Assistant type",
+      "pt-BR": "Tipo principal de Assistente de Cuidado"
+    },
+    "legajo.estudios": {
+      "es-AR": "Nivel de Estudios",
+      "en": "Level of education",
+      "pt-BR": "Nível de escolaridade"
+    },
+    "legajo.elegir_tipo": {
+      "es-AR": "— Seleccione el tipo —",
+      "en": "— Select the type —",
+      "pt-BR": "— Selecione o tipo —"
+    },
+    "legajo.certificaciones": {
+      "es-AR": "Cursos y Certificaciones ({{producto}} Academy):",
+      "en": "Courses and certifications ({{producto}} Academy):",
+      "pt-BR": "Cursos e certificações ({{producto}} Academy):"
+    },
+    "legajo.documentacion": {
+      "es-AR": "Documentación requerida:",
+      "en": "Required documentation:",
+      "pt-BR": "Documentação exigida:"
+    },
+    "legajo.doc_foto": {
+      "es-AR": "📸 Foto de Perfil (tipo carnet)",
+      "en": "📸 Profile photo (identity document style)",
+      "pt-BR": "📸 Foto de perfil (estilo documento)"
+    },
+    "legajo.doc_dni": {
+      "es-AR": "🛡️ Foto DNI (Frente y Dorso)",
+      "en": "🛡️ Photo of the identity document (front and back)",
+      "pt-BR": "🛡️ Foto do documento de identidade (frente e verso)"
+    },
+    "legajo.doc_penales": {
+      "es-AR": "📋 Antecedentes Penales (vigente)",
+      "en": "📋 Criminal record certificate (current)",
+      "pt-BR": "📋 Certidão de antecedentes criminais (vigente)"
+    },
+    "legajo.doc_titulo": {
+      "es-AR": "📜 Título / Certificados",
+      "en": "📜 Diploma / Certificates",
+      "pt-BR": "📜 Diploma / Certificados"
+    },
+    "legajo.matricula_obligatoria": {
+      "es-AR": "El Tipo de Asistente que eligió exige Matrícula vigente y verificada para poder publicarse. Cárguela acá.",
+      "en": "The type of Care Assistant selected requires a current, verified professional registration in order to be published. Please upload it here.",
+      "pt-BR": "O tipo de Assistente de Cuidado selecionado exige registro profissional vigente e verificado para poder ser publicado. Favor carregá-lo aqui."
+    },
+    "legajo.paso3_titulo": {
+      "es-AR": "Paso 3: Experiencia y Aptitudes",
+      "en": "Step 3: Experience and skills",
+      "pt-BR": "Etapa 3: Experiência e aptidões"
+    },
+    "legajo.patologias": {
+      "es-AR": "Patologías atendidas con experiencia comprobable:",
+      "en": "Conditions cared for with verifiable experience:",
+      "pt-BR": "Patologias atendidas com experiência comprovável:"
+    },
+    "legajo.tareas": {
+      "es-AR": "Tareas autorizadas a realizar:",
+      "en": "Tasks authorized to be carried out:",
+      "pt-BR": "Tarefas autorizadas a realizar:"
+    },
+    "legajo.paso4_titulo": {
+      "es-AR": "Paso 4: Disponibilidad Horaria",
+      "en": "Step 4: Schedule availability",
+      "pt-BR": "Etapa 4: Disponibilidade de horários"
+    },
+    "legajo.modalidades": {
+      "es-AR": "Modalidades de contratación aceptadas:",
+      "en": "Accepted hiring arrangements:",
+      "pt-BR": "Modalidades de contratação aceitas:"
+    },
+    "legajo.retiro": {
+      "es-AR": "Con retiro o sin retiro:",
+      "en": "Live-out or live-in:",
+      "pt-BR": "Sem pernoite ou com pernoite no domicílio:"
+    },
+    "legajo.valor_hora": {
+      "es-AR": "Valor Hora ($ ARS)",
+      "en": "Hourly rate (ARS $)",
+      "pt-BR": "Valor da hora (ARS $)"
+    },
+    "legajo.valor_hora_ejemplo": {
+      "es-AR": "Ej: 3500",
+      "en": "E.g.: 3500",
+      "pt-BR": "Ex.: 3500"
+    },
+    "legajo.paso5_titulo": {
+      "es-AR": "Paso 5: Referencias y Confirmación",
+      "en": "Step 5: References and confirmation",
+      "pt-BR": "Etapa 5: Referências e confirmação"
+    },
+    "legajo.seleccion_titulo": {
+      "es-AR": "Proceso de Selección:",
+      "en": "Selection process:",
+      "pt-BR": "Processo de seleção:"
+    },
+    "legajo.seleccion_texto": {
+      "es-AR": "La solicitud quedará en estado «En Revisión». El equipo de {{organizacion}} auditará la documentación y lo convocará a una entrevista.",
+      "en": "The application will remain in «Under review» status. The {{organizacion}} team will audit the documentation and will call you in for an interview.",
+      "pt-BR": "A solicitação ficará com o estado «Em revisão». A equipe de {{organizacion}} auditará a documentação e o convocará para uma entrevista."
+    },
+    "legajo.terminos": {
+      "es-AR": "Acepto los Términos y Condiciones de Legajo para Asistentes de {{producto}}.",
+      "en": "I accept the Terms and Conditions of the {{producto}} personnel file for Care Assistants.",
+      "pt-BR": "Aceito os Termos e Condições do cadastro funcional para Assistentes de Cuidado de {{producto}}."
+    },
+    "legajo.espera_titulo": {
+      "es-AR": "La cuenta quedó creada. Falta un paso.",
+      "en": "The account has been created. One step remains.",
+      "pt-BR": "A conta foi criada. Falta uma etapa."
+    },
+    "legajo.espera_texto": {
+      "es-AR": "Se envió un correo con un enlace para confirmar la dirección. Lo cargado sigue acá: no se perdió nada.",
+      "en": "An email with a link to confirm the address has been sent. What was entered is still here: nothing was lost.",
+      "pt-BR": "Foi enviado um e-mail com um link para confirmar o endereço. O que foi carregado continua aqui: nada se perdeu."
+    },
+    "legajo.espera_paso1": {
+      "es-AR": "Abrir ese correo y tocar el enlace.",
+      "en": "Open that email and tap the link.",
+      "pt-BR": "Abrir esse e-mail e tocar no link."
+    },
+    "legajo.espera_paso2": {
+      "es-AR": "Volver a esta pantalla y tocar el botón de abajo.",
+      "en": "Return to this screen and tap the button below.",
+      "pt-BR": "Voltar a esta tela e tocar no botão abaixo."
+    },
+    "legajo.ya_confirme": {
+      "es-AR": "Ya confirmé, continuar",
+      "en": "Already confirmed, continue",
+      "pt-BR": "Já confirmei, continuar"
+    },
+    "legajo.reenviar": {
+      "es-AR": "Volver a mandar el correo",
+      "en": "Send the email again",
+      "pt-BR": "Enviar o e-mail novamente"
+    },
+    "legajo.enviado": {
+      "es-AR": "✓ ¡Legajo enviado! Ha ingresado al proceso de auditoría.",
+      "en": "✓ Personnel file submitted. It has entered the audit process.",
+      "pt-BR": "✓ Cadastro funcional enviado. Ele entrou no processo de auditoria."
+    },
+    "______________________________________________": "── Mis Capacitaciones, en la aplicación del Asistente ──",
+
+    "capacitacion.titulo": {
+      "es-AR": "Mis Capacitaciones",
+      "en": "My training courses",
+      "pt-BR": "Minhas capacitações"
+    },
+    "capacitacion.cargando": {
+      "es-AR": "Buscando sus capacitaciones…",
+      "en": "Looking up the training courses…",
+      "pt-BR": "Buscando as capacitações…"
+    },
+    "capacitacion.vacio": {
+      "es-AR": "Todavía no hay cursos publicados.",
+      "en": "There are no published courses yet.",
+      "pt-BR": "Ainda não há cursos publicados."
+    },
+    "capacitacion.vacio_bajada": {
+      "es-AR": "Cuando la Prestadora publique su oferta aparece acá.",
+      "en": "When the Provider publishes its offering, it will appear here.",
+      "pt-BR": "Quando a Prestadora publicar sua oferta, ela aparecerá aqui."
+    },
+    "capacitacion.aclaracion": {
+      "es-AR": "Lo que rinda queda registrado en su legajo, a la vista de la Prestadora.",
+      "en": "Each assessment taken is recorded in the personnel file, visible to the Provider.",
+      "pt-BR": "Cada avaliação realizada fica registrada no cadastro funcional, à vista da Prestadora."
+    },
+    "capacitacion.rendir": {
+      "es-AR": "Rendir la evaluación",
+      "en": "Take the assessment",
+      "pt-BR": "Realizar a avaliação"
     }
   }
 }

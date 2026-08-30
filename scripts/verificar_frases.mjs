@@ -95,6 +95,15 @@ const IGUALES_EN_TODOS = new Set([
      inglés y no esté aprobado es una pregunta abierta, anotada en
      `docs/PENDIENTES.md`. */
   'cursos.academia',
+
+  /* Los dos marcadores de marca. No son texto: son el hueco donde
+     `js/identidad.js` escribe el nombre de verdad del producto y de la
+     Prestadora, que es el mismo en los tres idiomas. Existen como clave
+     porque el nombre a veces va solo en su propio elemento —el sello del
+     pie, el título de la pantalla de acceso—, y todo elemento visible de una
+     pantalla convertida tiene que tener la suya. */
+  'comun.producto',
+  'comun.organizacion',
 ]);
 
 // ── El catálogo ────────────────────────────────────────────────────────────
