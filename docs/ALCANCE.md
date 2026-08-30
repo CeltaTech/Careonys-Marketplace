@@ -3619,6 +3619,59 @@ archivo de ninguna de las dos. Elegir entre las salidas posibles es decidir una 
 exenciones, y eso no se inventa acá.
 
 
+### El chequeo veinticuatro: que la copia del teléfono no sirva texto viejo
+
+*(30 de agosto de 2026.)*
+
+**Qué pasó.** Al convertir a los tres idiomas los textos de la aplicación del Asistente, las
+frases nuevas quedaron en las tres copias del catálogo, el servidor las entregaba, y la pantalla
+seguía en castellano. Contestaba la copia que el programa guarda adentro del navegador para poder
+abrirse sin señal: `asistente-v18`. Lo único que hace caducar esa copia es el nombre con que se
+guardó —`CACHE_NAME`, `pwa-asistente/service-worker.js:7`—, y ese nombre se sube a mano.
+
+**Por qué es peor que un error común.** La comprobación en el navegador **no puede fallar sola**:
+mientras conteste la copia vieja, verificar una frase nueva da el resultado de antes y se lee como
+que el cambio no anduvo. Es la regla «una prueba que no puede fallar no prueba nada» vista desde
+el lado del navegador, y no había nada que la cuidara.
+
+**Qué hace el chequeo.** `scripts/verificar_sinconexion.mjs` busca por nombre todos los
+`service-worker.js` del proyecto —el día que haya un tercer programa para el teléfono entra
+solo— y les exige dos cosas. Una: que ninguno de los archivos de `ASSETS_TO_CACHE` haya cambiado
+después del commit donde se puso el `CACHE_NAME` que el archivo tiene hoy; si el número que hay
+no está en ningún commit, es que se acaba de subir y eso es justo lo que se pide. Dos: que todos
+esos archivos existan, porque `cache.addAll()` es todo o nada y un solo 404 tira abajo la
+instalación entera sin decir nada.
+
+El commit del número **no se busca con `git log -S`**, que informa el commit donde la cuenta de
+apariciones cambió y no distingue el que puso el número nuevo del que sacó el viejo: se camina el
+historial del archivo del más nuevo al más viejo mientras el número siga siendo el mismo.
+
+**Se comprobó que puede fallar**, las dos reglas por separado: con un renglón agregado a
+`pwa-asistente/index.html` nombró el archivo y el número que había quedado atrás, y con una
+entrada de mentira en la lista nombró el archivo que no existe. Los números se subieron a mano
+esta vez —`asistente-v19` y `familia-v17`—, y desde ahora olvidarse rompe el commit.
+
+### La tabla del estado real ya no se escribe a mano
+
+*(30 de agosto de 2026)*
+
+El README abre con una tabla de números bajo el título «Estado real», con la fecha en que se
+midió al lado. Al ir a corregir un renglón apareció que la tabla no estaba vieja: estaba
+**equivocada desde el día que se midió**. Decía 24 migraciones cuando ese día había 27 —hoy hay
+42— y 13 chequeos cuando ese día había 14 —hoy hay 24—. Contar a mano cuarenta archivos sale mal,
+y sale mal en silencio, porque un número escrito con su fecha al lado parece verificado.
+
+Ahora la tabla sale de `scripts/medir_estado.mjs`, que la mide y la deja escrita en el README
+con `--escribir`. **No es un chequeo**: no se planta ni tiene opinión, informa, y por eso no se
+llama `verificar_` y `scripts/verificar_todo.mjs` no lo levanta. Recorre con el mismo
+`scripts/recorrido.mjs` que los chequeos, así que tampoco abre una caja fuerte, y respeta los
+finales de línea de Windows del README para que poner al día ocho números no se vea como un
+cambio de mil renglones.
+
+Lo único que sigue escrito a mano es de qué es cada servidor de afuera —«dos de tipografías y dos
+de bibliotecas»—, porque eso no se puede medir. Está atado a que sean cuatro: el día que aparezca
+un quinto, el renglón dice que hay que escribirlo de nuevo en vez de repetir la frase de antes.
+
 ---
 
 ## 6. Deuda del código actual

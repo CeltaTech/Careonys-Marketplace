@@ -26,18 +26,19 @@ dos repositorios y dos proyectos de Supabase independientes.
 Sitio estático en HTML, CSS y JavaScript plano, en proceso de migración a React + Vite para
 alinearse con el stack de Careonys.
 
-Medido el 25 de agosto de 2026 sobre el árbol de trabajo, no copiado de una versión anterior.
+Medido el 30 de agosto de 2026 sobre el árbol de trabajo con `node scripts/medir_estado.mjs`, que es de
+donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
-| 16 pantallas HTML, 8.290 renglones | sin ruteo: cada pantalla es un archivo |
-| 8.423 renglones de JavaScript propio, en 28 archivos | 5.084 de ellos son copias byte a byte de otro archivo (pendiente 13) |
-| 2.883 renglones más metidos adentro del HTML | en 13 bloques `<script>` |
-| 4.170 renglones de hojas de estilo, en 7 archivos | 64 tokens con nombre en `css/tokens.css`, sin framework |
-| 2.166 declaraciones más, pegadas al HTML | en 687 atributos `style=` (pendiente 8) |
+| 16 pantallas HTML, 9.545 renglones | sin ruteo: cada pantalla es un archivo |
+| 11.479 renglones de JavaScript propio, en 31 archivos | 6.545 de ellos son copias byte a byte de otro archivo (pendiente 13) |
+| 3.723 renglones más metidos adentro del HTML | en 12 bloques `<script>` |
+| 4.621 renglones de hojas de estilo, en 10 archivos | 64 tokens con nombre en `css/tokens.css`, sin framework |
+| 982 declaraciones más, pegadas al HTML | en 249 atributos `style=` (pendiente 8) |
 | Supabase Auth funcionando | 11 de las 16 pantallas rescatan la sesión al abrir |
 | 4 servidores de afuera, sin `package.json` ni compilación | dos de tipografías y dos de bibliotecas |
-| 24 tablas y 24 migraciones en el repositorio | 13 chequeos las miran antes de cada commit |
+| 23 tablas y 42 migraciones en el repositorio | 24 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
@@ -120,7 +121,7 @@ aislamiento. Una prueba que devuelve una lista vacía no distingue "aislado" de 
 Copiar `.env.example` a `.env.local` y completar los valores antes de levantar nada. Los `.env`
 nunca se suben (ver `.gitignore`).
 
-## Los trece chequeos, y el comando que hace falta una sola vez
+## Los chequeos, y el comando que hace falta una sola vez
 
 Cada regla que se arregló una vez tiene un guion que impide que vuelva. Se corren todos juntos
 en menos de un segundo:
@@ -130,22 +131,34 @@ node scripts/verificar_todo.mjs
 ```
 
 Ese guion no tiene la lista escrita: busca los `scripts/verificar_*.mjs` de la carpeta, así que
-un chequeo nuevo se suma solo con existir.
+un chequeo nuevo se suma solo con existir. Acá tampoco va la cuenta, por el mismo motivo: el
+título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de esos veinticuatro.
 
 | Chequeo | Qué impide que vuelva |
 |---|---|
 | `verificar_arranque` | Que el arranque de una pantalla falle sin que nadie lo diga, ni en pantalla ni en la consola |
 | `verificar_botones` | Que un botón dispare una operación sin apagarse mientras corre, y dos toques sean dos escrituras |
+| `verificar_cajas` | Que un chequeo entre a leer una caja fuerte por estar escrita con otra tipografía |
+| `verificar_catalogo` | Que el archivo del catálogo se despegue de lo que dice la base |
 | `verificar_claves` | Que se guarde en la base una opción que el catálogo no tiene |
-| `verificar_copias` | Que las cinco copias byte a byte se separen sin que nadie se entere |
+| `verificar_contacto` | Que el chat vuelva a dejar pasar un teléfono, un correo o un domicilio |
+| `verificar_copias` | Que las copias byte a byte se separen sin que nadie se entere |
 | `verificar_escapado` | Que un texto de la base entre a la pantalla como si fuera HTML |
 | `verificar_esquema` | Que una tabla nueva nazca sin RLS, que una función que se saltea la RLS quede al alcance de quien no inició sesión, que falte la columna de la Organización, que la clave primaria no sea `uuid` o que un importe se guarde sin moneda |
+| `verificar_estados` | Que algo que carga datos se olvide de uno de sus cuatro estados: cargando, error, vacío, listo |
+| `verificar_estilos` | Que se escriba a mano en un `style=` lo que ya dice una clase de utilidad |
+| `verificar_frases` | Que quede texto visible escrito a mano en una pantalla ya convertida a los tres idiomas |
+| `verificar_guias` | Que una Guía de cuidado se vea sin estar publicada, o que se cruce entre dos Prestadoras |
 | `verificar_guiones` | Que el JavaScript de una pantalla quede sin poder leerse |
 | `verificar_identidad` | Que la marca vuelva a estar escrita a mano |
+| `verificar_organizacion` | Que una pantalla nombre a una Prestadora del seed, o escriba otro logotipo |
 | `verificar_paleta` | Que vuelva un color escrito con su número en vez de un token |
+| `verificar_red` | Que un chequeo mire cero archivos, no encuentre nada y salga en verde igual |
 | `verificar_referencias` | Que una cita `archivo:renglón` de la documentación apunte a la nada |
+| `verificar_sinconexion` | Que la copia que el teléfono guarda para andar sin señal siga sirviendo un archivo viejo |
 | `verificar_temas` | Que se rompa el modo oscuro: las dos copias separadas, o un token de letra pintando un fondo |
 | `verificar_trato` | Que el texto visible tutee a quien lo lee |
+| `verificar_usos` | Que el catálogo diga que una opción se usa en un renglón donde ya no se usa |
 | `verificar_vocabulario` | Que «cuidador» vuelva a ser el término general, o que «búsqueda» nombre lo que una Familia publica |
 
 **El comando que hace falta una sola vez por máquina**, para que se corran solos antes de cada
