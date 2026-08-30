@@ -283,6 +283,12 @@ async function interrogar(base) {
   // B5. Cobertura. Se informa y no falla: falta contenido, no anda nada mal.
   //     Está anotado como pendiente 104, y hacer fallar el gancho por trabajo
   //     ya registrado lo convierte en ruido, y un gancho que molesta se apaga.
+  //
+  //     Cuenta **publicadas**, porque la puerta no devuelve otra cosa, y se
+  //     dice con esa palabra a propósito: desde la 0042 las 19 guías generales
+  //     están escritas y ninguna está publicada, así que un número en cero ya
+  //     no significa lo mismo que antes. Lo que falta ahora es la firma de
+  //     quien las revisó, no el texto.
   const cat = await rpc('vocabularios_de', { p_slug: null });
   if (cat.ok) {
     const items = ((cat.datos || {}).patologia || {}).items || [];
@@ -306,7 +312,7 @@ for (const base of bases) {
     dichos.push(`${base.nombre} contesta pero no tiene \`guias_de\`: la migración 0041 todavía no está aplicada ahí, así que ahí no se probó nada`);
   } else {
     let dicho = `${base.nombre}: la puerta contesta y la tabla no`;
-    if (r.cobertura) dicho += `, ${r.cobertura.con} de ${r.cobertura.total} patologías con guía general (pendiente 104)`;
+    if (r.cobertura) dicho += `, ${r.cobertura.con} de ${r.cobertura.total} patologías con guía general publicada (pendiente 104)`;
     if (r.sinAislamiento) dicho += `; el aislamiento NO se probó ahí: ${r.sinAislamiento} (pendiente 103)`;
     dichos.push(dicho);
   }

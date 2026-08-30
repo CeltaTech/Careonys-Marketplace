@@ -3251,9 +3251,16 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
   Prestadora no aparezca texto de otra. **Cuando no puede probar el aislamiento lo dice en voz alta
   en el renglón final**, porque con cero guías cargadas la comparación da «no se cruzó» exactamente
   igual que si estuviera bien.
-- **Lo que falta es el contenido**: diecinueve patologías sin una sola guía general escrita
-  (pendiente 104), ninguna pantalla donde la Prestadora escriba la suya (pendiente 103), y la guía
-  no llega al teléfono sin señal (pendiente 102), que es justo cuando más se necesita.
+- **Las diecinueve guías generales están escritas y ninguna está publicada.** La migración
+  `supabase/migrations/0042_las_diecinueve_guias_generales.sql` cargó las 19 patologías del catálogo
+  con sus cuatro partes en los tres idiomas, **como borrador**. La base no deja publicar una guía
+  sin que quede escrito quién la revisó y cuándo, y esa firma no la puede poner una migración: es
+  una persona haciéndose responsable de lo que ahí dice, no un dato. Así que la puerta —que sólo
+  devuelve publicadas— todavía no entrega ninguna, y la pantalla del Asistente muestra el estado
+  «todavía no hay guías». **Eso es lo correcto y no es el final**: falta la revisión profesional
+  (pendiente 104).
+- **Lo demás que falta**: ninguna pantalla donde la Prestadora escriba la suya (pendiente 103), y la
+  guía no llega al teléfono sin señal (pendiente 102), que es justo cuando más se necesita.
 
 ## 2. Falta construir
 
