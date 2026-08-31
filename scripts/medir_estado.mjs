@@ -27,12 +27,20 @@
 
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname, join, relative, sep, basename } from 'node:path';
+import { dirname, join, relative, resolve, sep, basename } from 'node:path';
 import { createHash } from 'node:crypto';
 import { archivos, seRevisaron } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const escribir = process.argv.includes('--escribir');
+
+/* Este guion también se importa: `scripts/verificar_estado.mjs` le pide los
+   renglones medidos para compararlos con los que están escritos en el README.
+   Importarlo no tiene que imprimir nada ni escribir nada, así que todo lo que
+   sale por pantalla queda detrás de esta pregunta. Medir es barato y no toca
+   ningún archivo, así que la medición en sí corre igual en los dos casos. */
+const corriendoSolo = Boolean(process.argv[1]) &&
+  fileURLToPath(import.meta.url) === resolve(process.argv[1]);
 
 const leer = (camino) => readFileSync(camino, 'utf8');
 const nombreDe = (camino) => relative(raiz, camino).split(sep).join('/');
@@ -191,11 +199,17 @@ const tabla =
   '| | |\n|---|---|\n' +
   renglonesTabla.map(([a, b]) => `| ${a} | ${b} |`).join('\n') + '\n';
 
-if (!escribir) {
+/* Los renglones medidos, para que `verificar_estado.mjs` los compare con los
+   que están escritos en el README. La fecha no se exporta a propósito: cambia
+   todos los días y compararla pondría el chequeo en rojo cada mañana. */
+export { renglonesTabla, tabla };
+
+if (!corriendoSolo) {
+  // Importado: ya midió, que es todo lo que le pedían.
+} else if (!escribir) {
   console.log(tabla);
   console.log('Para dejarla escrita en README.md:  node scripts/medir_estado.mjs --escribir');
-  process.exit(0);
-}
+} else {
 
 /* ── DEJARLA ESCRITA ─────────────────────────────────────────────────────
    Se reemplaza desde el renglón de la fecha hasta el final de la tabla. El
@@ -223,3 +237,4 @@ if (despues === antes) {
 writeFileSync(dondeReadme, crlf ? despues.split('\n').join('\r\n') : despues);
 console.log('Tabla del estado real puesta al día en README.md:\n');
 console.log(tabla);
+}

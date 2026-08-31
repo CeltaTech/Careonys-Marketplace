@@ -3677,9 +3677,14 @@ esta vez —`asistente-v19` y `familia-v17`—, y desde ahora olvidarse rompe el
 
 El README abre con una tabla de números bajo el título «Estado real», con la fecha en que se
 midió al lado. Al ir a corregir un renglón apareció que la tabla no estaba vieja: estaba
-**equivocada desde el día que se midió**. Decía 24 migraciones cuando ese día había 27 —hoy hay
-42— y 13 chequeos cuando ese día había 14 —hoy hay 24—. Contar a mano cuarenta archivos sale mal,
-y sale mal en silencio, porque un número escrito con su fecha al lado parece verificado.
+**equivocada desde el día que se midió**. Decía 24 migraciones cuando ese día había 27, y 13
+chequeos cuando ese día había 14. Contar a mano cuarenta archivos sale mal, y sale mal en
+silencio, porque un número escrito con su fecha al lado parece verificado.
+
+**Y este mismo párrafo lo estaba cometiendo.** Decía «hoy hay 42» migraciones y «hoy hay 24»
+chequeos, y para el 31 de agosto de 2026 los dos números eran falsos: eran 47 y 26. Los «hoy» se
+sacaron y **no se reemplazaron por otros**, porque el punto de la anécdota no necesita ninguno y
+cualquier número suelto que se escriba acá vuelve a envejecer solo.
 
 Ahora la tabla sale de `scripts/medir_estado.mjs`, que la mide y la deja escrita en el README
 con `--escribir`. **No es un chequeo**: no se planta ni tiene opinión, informa, y por eso no se
@@ -4186,7 +4191,7 @@ prueba de aislamiento, en tres documentos, y las tres equivocadas**: dieciséis 
 Son 52. Cada número fue cierto el día que se escribió y después la prueba creció sin que nadie
 volviera a pasar por ahí.
 
-**Ninguno de los 26 chequeos podía agarrarlo, y no por descuido: el número no se puede contar
+**Ninguno de los chequeos podía agarrarlo, y no por descuido: el número no se puede contar
 leyendo el archivo.** Hay 44 llamadas a `comprobar()` y salen 52 renglones, porque varias están
 adentro de un bucle. Un chequeo estático daría 44 y pondría en rojo a los documentos que dijeran la
 verdad. Y `verificar_todo.mjs` corre en el gancho de `commit`, sin red y sin base levantada, así que
@@ -4202,6 +4207,38 @@ documento y no la prueba. El código del añadido está en `scripts/probar_aisla
 **Comprobado en los dos sentidos**, como pide la regla de la casa: con `docs/INVENTARIO.md` falseado
 a propósito la prueba sale con código 1 y nombra el archivo y la frase que buscó; con el número
 verdadero sale con 0 y los cuatro documentos dan verde.
+
+### Y la tabla del README decía de sí misma que no quedaba vieja
+
+Tirando de ese hilo apareció el mismo error una vez más, y esta vez en el archivo que cualquiera
+abre primero. El README arranca con una tabla de números bajo el título «Estado real», y arriba
+dice, con todas las letras, que **no se escribe a mano y no queda vieja**. La segunda mitad era
+falsa: decía 31 archivos de JavaScript cuando ya había 32. La cuenta se había corrido esa misma
+tarde, al cerrar el pendiente 94, que agregó `pwa-asistente/js/zonas.js`.
+
+**La tabla se mide sola desde el 30 de agosto de 2026, pero nadie corría al medidor.**
+`scripts/medir_estado.mjs` la calcula bien; lo que faltaba era que alguien lo llamara. No lo llamaba
+el gancho de `commit`, no lo llamaba ningún chequeo, y no lo nombraba ningún documento fuera del
+propio README. Un generador que hay que acordarse de correr es un archivo escrito a mano con pasos
+de más.
+
+**Ahora lo mira `scripts/verificar_estado.mjs`**, que entra en la tanda del gancho de `commit`. Le
+pide los renglones al medidor, los compara con los que están escritos, y si alguno no coincide dice
+cuál y con qué comando se arregla. **La fecha queda afuera de la comparación a propósito**: cambia
+todos los días, y compararla pondría esto en rojo cada mañana sin que nadie hubiera tocado nada
+—un chequeo que ladra todos los días es un chequeo que se aprende a ignorar—. Para poder
+importárselo, `medir_estado.mjs` distingue ahora si lo corrieron o lo importaron, y sólo imprime y
+escribe en el primer caso.
+
+**Esto sí se puede hacer en el gancho de `commit`, y la prueba de aislamiento no**: estos números
+salen de leer archivos, así que se miden sin red y sin base levantada, que es lo único que hay
+cuando el gancho corre.
+
+**Comprobado en los dos sentidos**: con un renglón del README falseado a mano el chequeo sale con
+código 1 y muestra el renglón escrito al lado del medido; con la tabla al día sale con 0. Y de
+paso se comprobó solo: el primer intento salió en rojo porque la tabla decía 26 chequeos y con él
+adentro ya eran 27. Además `verificar_red.mjs` lo rechazó la primera vez, con razón —podía pasar
+comparando cero renglones contra cero renglones—, y se arregló con `seRevisaron()`.
 
 ---
 
