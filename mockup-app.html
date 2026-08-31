@@ -666,10 +666,15 @@
         document.getElementById('menu-user-name').textContent =
           (user.user_metadata?.full_name || user.email.split('@')[0]).toUpperCase();
 
-        // Routing por rol
-        const role = user.user_metadata?.role || 'familiar';
-        if (role === 'admin_sistema' || role === 'coordinador') {
-          // Redirigir al panel de la prestadora
+        // A dónde va cada quien después de entrar. El rol sale de `profiles`,
+        // por `Sesion.perfil()`, y nunca de los metadatos de la cuenta: esos los
+        // escribe quien se registra, así que un rol leído de ahí sería un rol
+        // que la persona se dio a sí misma. La base ya lo dice de su lado
+        // —`supabase/migrations/0005_acceso_por_sesion.sql:66`, donde
+        // `coordinador` no está entre los roles que se pueden pedir al
+        // registrarse—; acá se dice del lado de la pantalla.
+        const perfil = await Sesion.perfil();
+        if (perfil && perfil.role === 'coordinador') {
           window.location.href = 'panel-prestadora.html';
         } else {
           navigate('dashboard');

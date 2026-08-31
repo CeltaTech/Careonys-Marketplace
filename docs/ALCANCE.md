@@ -209,7 +209,7 @@ se metía adentro del marcado ahora pasan por `Texto.escapar`, en seis archivos:
   proyecto quien lee suele ser el personal de la Prestadora, o sea justo quien tiene los permisos,
   o una familia mirando los reportes de cuidado.
 - **Los dos peores casos** no estaban donde decía el pendiente. Uno era el mensaje de chat de
-  `mockup-app.html:783`, que lo escribe una persona y lo lee otra. El otro era
+  `mockup-app.html:788`, que lo escribe una persona y lo lee otra. El otro era
   `panel-prestadora.html`, la pantalla que el pendiente daba por arreglada: tenía el renglón de la
   tabla de Asistentes entero sin escapar —nombre, documento, teléfono, profesión y zona— y el
   único `onclick` escrito en el marcado de todo el proyecto.
@@ -1569,7 +1569,7 @@ pantalla vacía.
   cargarla», que es el estado de error que faltaba.
 - **Las otras tres caen en la pantalla de acceso**, y eso ya era la verdad: sin sesión rescatada,
   lo que corresponde mostrar es el acceso. Lo que se perdía era el rastro. Ahora
-  `mockup-app.html:435` y `:904`, `pwa-asistente/index.html:823` y `pwa-familia/index.html:883`
+  `mockup-app.html:435` y `:909`, `pwa-asistente/index.html:823` y `pwa-familia/index.html:883`
   dejan el detalle técnico en la consola en lugar de tirarlo.
 - **`js/auth.js:224` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
   cargan ese archivo —no en las dieciséis, y el comentario decía catorce hasta que se contaron—, y su
