@@ -4450,6 +4450,42 @@ servir el día que los chequeos empezaron a seguir la extensión.
 
 ---
 
+### La regla de la bóveda estaba escrita en dos lugares, y la que usaban todos era la más floja
+
+Encontrado el 31 de agosto de 2026, tirando del mismo hilo que lo anterior. `F:\proyectos\CLAUDE.md`
+cierra tres cosas: las carpetas que anuncian que no se suben, **las carpetas `Exclusivo
+<cliente>`** y **los archivos cuyo nombre anuncia que guardan claves**. `scripts/recorrido.mjs`
+—el que usan los veintiocho chequeos— cerraba la primera y ninguna de las otras dos.
+`scripts/inventario_textos.mjs` las cerraba las tres, en una función propia, porque el 26 de
+agosto de 2026 ese mismo guion había entrado en una caja fuerte y contado las frases de un archivo
+que no tenía que abrir.
+
+Así que la regla existía dos veces, con dos contenidos distintos, y **la que gobernaba a los
+veintiocho era la más floja**. Es la regla de la empresa sobre el patrón repetido, con el agravante
+de que acá lo repetido es una regla de seguridad: se arregla en un lado, se olvida en el otro, y
+nadie lo nota porque los dos siguen dando ✔.
+
+**Cómo quedó.** `nuncaSeAbre()` decide sola, y cierra también las `Exclusivo <cliente>` —por el
+arranque del nombre, porque lo que sigue es el nombre del cliente y no se puede saber de
+antemano— y los nombres que anuncian una clave. `inventario_textos.mjs` borró su copia y pregunta
+la misma función.
+
+**Y se probó de las dos puntas, porque cerrar de más también es una falla.** `nueva-clave.html` es
+la pantalla donde alguien cambia su contraseña, no un lugar donde haya una guardada: si la palabra
+sola alcanzara, el recorrido perdería seis archivos de código de verdad —las dos pantallas,
+`js/clave.js` y sus dos copias, `scripts/verificar_claves.mjs` y una migración— sin decir nada.
+`scripts/verificar_cajas.mjs` comprueba ahora 24 formas de nombrar una carpeta cerrada, 6 de
+nombrar un archivo cerrado y 13 nombres parecidos que sí se recorren; se lo puso en rojo tres
+veces, sacándole la regla de `Exclusivo`, sacándole la de las claves, y sacándole la excepción del
+código, y las tres veces dijo cuál faltaba.
+
+**Lo que no cambió: ningún chequeo perdió corpus.** Se guardaron los números de los veintiocho
+antes y después, y son idénticos salvo el mensaje del propio `cajas`. Era la comprobación
+necesaria: una regla que cierra de más se ve exactamente igual que una que anda bien, salvo por el
+número que nadie mira.
+
+---
+
 ---
 
 ## 6. Deuda del código actual

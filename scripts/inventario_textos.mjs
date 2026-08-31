@@ -74,7 +74,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative } from 'node:path';
 import { despejar, sinValoresGuardados, visible } from './texto_visible.mjs';
-import { EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
+import { EXTENSIONES_DE_PANTALLA, nuncaSeAbre } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const detalle = process.argv.includes('--detalle');
@@ -94,26 +94,15 @@ const AJENAS = new Set(['node_modules', '.git', 'assets', 'supabase', 'docs', 'd
    Se decide por parecido y no por lista exacta, porque la lista exacta falla
    con la carpeta que alguien nombre distinto mañana. Si el nombre se parece a
    una caja fuerte, no se entra: **de más queda afuera una carpeta común, que se
-   arregla agregándole una excepción; de menos se lee algo que no se podía**. */
-const FUENTE = /\.(html|js|mjs|css|json|md|sql|ts|tsx|jsx|svg)$/i;
+   arregla agregándole una excepción; de menos se lee algo que no se podía**.
 
-function esCajaFuerte(nombre) {
-  const n = nombre.toLowerCase().replace(/[_\-\s]+/g, ' ').trim();
-
-  // Lo que anuncia en el nombre que no se sube ni se comparte.
-  if (n.includes('no commit') || n.includes('no hacer commit') || n.includes('nohacercommit')
-    || n.includes('no pushear') || n.includes('referencia') || n.startsWith('exclusivo ')) return true;
-
-  // Y lo que anuncia que guarda claves. Pero **un archivo de código no es una
-  // caja fuerte por llamarse `nueva-clave.html`**: esa es la pantalla donde
-  // alguien cambia su contraseña, no un lugar donde haya ninguna guardada. La
-  // primera versión de esto se las comió a las tres —`nueva-clave.html`,
-  // `recuperar-clave.html` y `js/clave.js`— y el inventario salió corto sin
-  // avisar. Así que la palabra sola frena sólo cuando el nombre no es código:
-  // un `claves.txt`, un `credenciales.env`, una carpeta `contraseñas`.
-  if (FUENTE.test(nombre)) return false;
-  return /clave|contrase|secret|credencial|password/.test(n);
-}
+   **Y hasta el 31 de agosto de 2026 eso estaba escrito acá adentro**, con la
+   regla completa —las carpetas `Exclusivo <cliente>` y los nombres que anuncian
+   una clave—, mientras `scripts/recorrido.mjs`, que es el que usan los otros
+   veintisiete chequeos, sólo cerraba las cinco carpetas de la lista vieja. Una
+   regla de seguridad escrita en dos lugares es una regla que se cumple en uno.
+   Ahora la única que decide es `nuncaSeAbre()`, y las dos formas que faltaban
+   se prueban en `scripts/verificar_cajas.mjs`. */
 
 /* Los atributos que una persona llega a leer. `value` sólo en botones, porque
    en un campo de texto es un dato y no un rótulo. */
@@ -121,7 +110,7 @@ const ATRIBUTOS = ['placeholder', 'alt', 'title', 'aria-label'];
 
 function archivos(dir, ext, acc = []) {
   for (const nombre of readdirSync(dir)) {
-    if (AJENAS.has(nombre) || esCajaFuerte(nombre)) continue;
+    if (AJENAS.has(nombre) || nuncaSeAbre(nombre)) continue;
     const ruta = join(dir, nombre);
     if (statSync(ruta).isDirectory()) archivos(ruta, ext, acc);
     else if (ext.some((e) => nombre.endsWith(e))) acc.push(ruta);

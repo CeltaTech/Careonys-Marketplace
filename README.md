@@ -138,7 +138,7 @@ título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de e
 |---|---|
 | `verificar_arranque` | Que el arranque de una pantalla falle sin que nadie lo diga, ni en pantalla ni en la consola |
 | `verificar_botones` | Que un botón dispare una operación sin apagarse mientras corre, y dos toques sean dos escrituras |
-| `verificar_cajas` | Que un chequeo entre a leer una caja fuerte por estar escrita con otra tipografía |
+| `verificar_cajas` | Que un chequeo entre a leer una caja fuerte por estar escrita con otra tipografía, o que cierre de más y deje de revisar código de verdad |
 | `verificar_catalogo` | Que el archivo del catálogo se despegue de lo que dice la base |
 | `verificar_claves` | Que se guarde en la base una opción que el catálogo no tiene |
 | `verificar_contacto` | Que el chat vuelva a dejar pasar un teléfono, un correo o un domicilio |

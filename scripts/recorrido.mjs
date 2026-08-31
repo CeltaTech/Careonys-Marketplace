@@ -39,6 +39,34 @@ const CAJAS_FUERTES = [
   'referencia no hacer commit'
 ];
 
+/* Y las carpetas de un cliente, que la regla de la bóveda nombra aparte: una
+   `Exclusivo Sendler` se abre únicamente cuando el trabajo es de ese cliente, y
+   un chequeo que recorre el proyecto entero nunca lo es. No están en la lista de
+   arriba porque no se comparan por igualdad sino por el arranque del nombre: lo
+   que viene después es el nombre del cliente, y no se puede saber de antemano.
+
+   Encontrado el 31 de agosto de 2026: esta mitad de la regla estaba escrita en
+   `scripts/inventario_textos.mjs` y no acá, así que un solo guion la cumplía y
+   los veintisiete restantes no. La otra mitad de ese mismo hallazgo es lo de
+   abajo. */
+const EXCLUSIVO_DE_UN_CLIENTE = /^exclusivo/;
+
+/* Lo que anuncia en el nombre que adentro hay una clave. **Pero un archivo de
+   código no es una caja fuerte por llamarse `nueva-clave.html`**: ésa es la
+   pantalla donde alguien cambia su contraseña, no un lugar donde haya ninguna
+   guardada. Hoy el proyecto tiene seis nombres así —las dos pantallas,
+   `js/clave.js` y sus dos copias, `scripts/verificar_claves.mjs` y una
+   migración—, y tomarlos por cajas fuertes sacaría del recorrido a seis
+   archivos de código de verdad, que es la falla del otro lado: cerrar de más
+   deja de revisar y tampoco avisa.
+
+   Por eso la palabra sola frena únicamente cuando el nombre **no** es código:
+   un `claves.txt`, un `credenciales.env`, una carpeta `contraseñas`. Y `.md` y
+   `.txt` quedan a propósito afuera de la lista de código: un documento que se
+   llama así no es una pantalla, es una nota con lo que guarda adentro. */
+const ANUNCIA_UNA_CLAVE = /clave|contrase|secret|credencial|password/;
+const ES_CODIGO = /\.(html|js|mjs|cjs|css|json|sql|ts|tsx|jsx|svg|webmanifest)$/i;
+
 /* Deja el nombre en su forma más desnuda: separa las palabras pegadas en
    mayúscula —`NoHacerCommit`— y borra todo lo que no sea una letra. Así
    `no_commit`, `No commit`, `NO HACER COMMIT` y `ReferenciaNoHacerCommit`
@@ -61,9 +89,14 @@ const NO_ES_DEL_PROYECTO = new Set([
   'fuera de uso'
 ]);
 
-/** ¿Este nombre de carpeta se saltea? */
-export const nuncaSeAbre = (nombre) =>
-  CERRADAS.has(desnudo(nombre)) || NO_ES_DEL_PROYECTO.has(nombre);
+/** ¿Este nombre de carpeta o de archivo se saltea? */
+export const nuncaSeAbre = (nombre) => {
+  if (NO_ES_DEL_PROYECTO.has(nombre)) return true;
+  const limpio = desnudo(nombre);
+  if (CERRADAS.has(limpio) || EXCLUSIVO_DE_UN_CLIENTE.test(limpio)) return true;
+  if (ES_CODIGO.test(nombre)) return false;
+  return ANUNCIA_UNA_CLAVE.test(nombre.toLowerCase());
+};
 
 /* Se sigue exportando la lista para quien la quiera mostrar, pero **quien
    decide es `nuncaSeAbre`**: un `Set` sólo sabe comparar el nombre exacto, que

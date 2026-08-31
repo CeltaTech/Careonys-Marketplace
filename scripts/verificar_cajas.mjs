@@ -12,6 +12,18 @@
    la lista. Una llamada `no-commit` o `NoCommit` —el mismo pedido, otra
    tipografía— se habría recorrido entera.
 
+   El 31 de agosto de 2026 apareció que la regla estaba escrita **en dos lugares
+   y con dos contenidos distintos**: `scripts/inventario_textos.mjs` cerraba
+   además las carpetas `Exclusivo <cliente>` y los archivos que anuncian una
+   clave en el nombre, y `scripts/recorrido.mjs` —que es el que usan los otros
+   veintisiete chequeos— no. La regla de la bóveda nombra las dos cosas. Se
+   juntaron en `recorrido.mjs`, y las dos se prueban acá.
+
+   Y se prueban de las dos puntas, porque cerrar de más también es una falla:
+   `nueva-clave.html` es la pantalla donde alguien cambia su contraseña, no un
+   lugar donde haya una guardada, y tomarla por caja fuerte sacaría del recorrido
+   a seis archivos de código de verdad sin que nadie se entere.
+
    CÓMO SE PRUEBA, Y POR QUÉ ASÍ
    No se mira el proyecto: se arma un árbol de mentira en la carpeta temporal del
    sistema, con un archivo adentro de cada nombre de caja fuerte y uno afuera, y
@@ -37,7 +49,25 @@ const CERRADAS = [
   'NO HACER COMMIT', 'no hacer commit', 'NoHacerCommit', 'no_hacer_commit',
   'no pushear', 'no_pushear', 'NoPushear',
   'no subir', 'NoSubir',
-  'ReferenciaNoHacerCommit', 'referencia no hacer commit'
+  'ReferenciaNoHacerCommit', 'referencia no hacer commit',
+  'Exclusivo Sendler', 'exclusivo-sendler', 'ExclusivoSendler', 'Exclusivo',
+  'contraseñas', 'credenciales', 'secretos'
+];
+
+// Archivos, no carpetas: el nombre anuncia que adentro hay una clave y ninguno
+// es código del proyecto. Se preguntan sin disco, porque acá lo que importa es
+// el nombre y no dónde esté.
+const ARCHIVOS_CERRADOS = [
+  'claves.txt', 'credenciales.env', 'passwords.csv', 'contraseñas.md',
+  'secret.pem', 'CLAVES Y CONTRASEÑAS.txt'
+];
+
+// Y la otra punta: código del proyecto que nombra la palabra sin guardar nada.
+// Los seis primeros existen hoy; si alguno de éstos se cerrara, el recorrido
+// perdería archivos de verdad y este chequeo tiene que agarrarlo.
+const CODIGO_QUE_SE_ABRE = [
+  'nueva-clave.html', 'recuperar-clave.html', 'clave.js', 'verificar_claves.mjs',
+  '0010_claves_de_catalogo_en_la_siembra.sql', 'clave.jsx', 'claves.json'
 ];
 
 // Y las que sí se abren, para que la comparación no sea de una sola punta. Si
@@ -87,6 +117,16 @@ try {
   for (const nombre of ABIERTAS) {
     if (nuncaSeAbre(nombre)) fallas.push('«' + nombre + '» se tomó por caja fuerte y no lo es');
   }
+  for (const nombre of ARCHIVOS_CERRADOS) {
+    if (!nuncaSeAbre(nombre)) {
+      fallas.push('«' + nombre + '» anuncia una clave en el nombre y se abrió igual');
+    }
+  }
+  for (const nombre of CODIGO_QUE_SE_ABRE) {
+    if (nuncaSeAbre(nombre)) {
+      fallas.push('«' + nombre + '» es código del proyecto y se lo tomó por caja fuerte');
+    }
+  }
 } finally {
   rmSync(raiz, { recursive: true, force: true });
 }
@@ -99,6 +139,8 @@ if (fallas.length) {
 }
 
 console.log(
-  'Cajas fuertes verificadas: ' + CERRADAS.length + ' formas de nombrarlas, todas cerradas, ' +
-  'y ' + ABIERTAS.length + ' carpetas parecidas que sí se recorren.'
+  'Cajas fuertes verificadas: ' + CERRADAS.length + ' formas de nombrar una carpeta y ' +
+  ARCHIVOS_CERRADOS.length + ' de nombrar un archivo, todas cerradas; y ' +
+  (ABIERTAS.length + CODIGO_QUE_SE_ABRE.length) + ' nombres parecidos que sí se recorren, ' +
+  'para que la regla no cierre de más.'
 );
