@@ -48,8 +48,8 @@ valor que la columna `porcentaje_para_aprobar` trae por defecto
 - **De qué curso cuelga:** de ninguno. Es una prueba de competencias general, y por eso su
   `curso_id` está vacío a propósito (`supabase/migrations/0008_cursos_y_evaluaciones.sql:84`). Los seis cursos de la
   oferta general que están cargados desde `data/catalogo-oferta.json` —Introducción al cuidado
-  del adulto mayor, Alzheimer y otras demencias, El bienestar de quien cuida, Administración de
-  medicamentos y control de salud en el hogar, Comunicación empática con un familiar mayor y
+  de la persona mayor, Alzheimer y otras demencias, El bienestar de quien cuida, Administración de
+  medicamentos y control de salud en el hogar, Comunicación empática con la persona cuidada y
   Cuidados avanzados— **no tienen hoy ninguna evaluación propia**. Si alguno tiene que tenerla, se
   escribe aparte.
 - **Intentos:** 3 hoy. Con diez preguntas de cuatro opciones y 70 % para aprobar, tres intentos ya

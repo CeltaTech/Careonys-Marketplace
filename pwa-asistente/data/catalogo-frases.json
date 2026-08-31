@@ -2087,19 +2087,19 @@
     "___________________": "── Los cursos ──",
 
     "cursos.titulo": {
-      "es-AR": "Cursos para Familias",
-      "en": "Courses for Families",
-      "pt-BR": "Cursos para Famílias"
+      "es-AR": "Cursos de cuidado",
+      "en": "Care courses",
+      "pt-BR": "Cursos de cuidado"
     },
     "cursos.descripcion": {
-      "es-AR": "Cursos para familiares de personas mayores que deseen adquirir herramientas para entender el momento vital y cuidar del otro adecuadamente.",
-      "en": "Courses for relatives of older people who wish to gain tools to understand this stage of life and care for another person properly.",
-      "pt-BR": "Cursos para familiares de pessoas idosas que desejem adquirir ferramentas para entender este momento da vida e cuidar do outro adequadamente."
+      "es-AR": "Cursos sobre el cuidado de personas mayores, con herramientas para entender el momento vital y para cuidar adecuadamente a quien lo necesita.",
+      "en": "Courses on the care of older people, with tools to understand this stage of life and to care properly for whoever needs it.",
+      "pt-BR": "Cursos sobre o cuidado de pessoas idosas, com ferramentas para entender este momento da vida e para cuidar adequadamente de quem precisa."
     },
     "cursos.bajada": {
-      "es-AR": "Para familiares de personas mayores y cualquier persona de su entorno que desee adquirir herramientas para entender el momento vital, cuidar del otro y de sí mismo adecuadamente.",
-      "en": "For relatives of older people, and anyone close to them, who wishes to gain tools to understand this stage of life and to care for another person and for themselves properly.",
-      "pt-BR": "Para familiares de pessoas idosas e qualquer pessoa do seu convívio que deseje adquirir ferramentas para entender este momento da vida e cuidar do outro e de si mesmo adequadamente."
+      "es-AR": "Para quien cuida a una persona mayor y para quien quiera prepararse para hacerlo: herramientas para entender el momento vital, cuidar del otro y cuidarse a sí mismo.",
+      "en": "For anyone who cares for an older person, and for anyone getting ready to do so: tools to understand this stage of life, to care for another person and to look after oneself.",
+      "pt-BR": "Para quem cuida de uma pessoa idosa e para quem quer se preparar para isso: ferramentas para entender este momento da vida, cuidar do outro e cuidar de si mesmo."
     },
     "cursos.ver_disponibles": {
       "es-AR": "Ver cursos disponibles",
@@ -2112,14 +2112,14 @@
       "pt-BR": "Aprender a cuidar melhor"
     },
     "cursos.herramientas_practicas": {
-      "es-AR": "Herramientas prácticas para familiares que cuidan.",
-      "en": "Practical tools for relatives who provide care.",
-      "pt-BR": "Ferramentas práticas para familiares que cuidam."
+      "es-AR": "Herramientas prácticas para quien cuida.",
+      "en": "Practical tools for anyone who provides care.",
+      "pt-BR": "Ferramentas práticas para quem cuida."
     },
     "cursos.intro_bajada": {
-      "es-AR": "Nuestros cursos están diseñados por profesionales en gerontología, psicología y salud, pensados específicamente para personas que cuidan a un familiar mayor. Se aprende desde aspectos técnicos del cuidado hasta cómo sostener el propio bienestar emocional.",
-      "en": "Our courses are designed by professionals in gerontology, psychology and health, and are meant specifically for people who care for an older relative. They cover everything from the technical side of care to how to sustain one’s own emotional wellbeing.",
-      "pt-BR": "Nossos cursos são elaborados por profissionais de gerontologia, psicologia e saúde, pensados especificamente para quem cuida de um familiar idoso. Vão desde os aspectos técnicos do cuidado até como sustentar o próprio bem-estar emocional."
+      "es-AR": "Nuestros cursos están diseñados por profesionales en gerontología, psicología y salud, y están pensados para quien cuida a una persona mayor, sea cual sea el vínculo que los une. Se aprende desde aspectos técnicos del cuidado hasta cómo sostener el propio bienestar emocional.",
+      "en": "Our courses are designed by professionals in gerontology, psychology and health, and are meant for anyone who cares for an older person, whatever the bond between them. They cover everything from the technical side of care to how to sustain one’s own emotional wellbeing.",
+      "pt-BR": "Nossos cursos são elaborados por profissionais de gerontologia, psicologia e saúde, e são pensados para quem cuida de uma pessoa idosa, qualquer que seja o vínculo entre as duas. Vão desde os aspectos técnicos do cuidado até como sustentar o próprio bem-estar emocional."
     },
     "cursos.intro_modalidad": {
       "es-AR": "Los cursos son en modalidad online, a ritmo propio, con material descargable y acceso desde cualquier dispositivo.",
@@ -2127,9 +2127,9 @@
       "pt-BR": "Os cursos são online, no ritmo de cada um, com material para baixar e acesso a partir de qualquer dispositivo."
     },
     "cursos.imagen_intro": {
-      "es-AR": "Una familia haciendo un curso de cuidado",
-      "en": "A family taking a care course",
-      "pt-BR": "Uma família fazendo um curso de cuidado"
+      "es-AR": "Una persona haciendo un curso de cuidado",
+      "en": "A person taking a care course",
+      "pt-BR": "Uma pessoa fazendo um curso de cuidado"
     },
     "cursos.disponibles": {
       "es-AR": "Cursos disponibles",
