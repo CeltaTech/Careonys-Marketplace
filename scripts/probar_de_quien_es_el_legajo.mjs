@@ -15,11 +15,14 @@
    carpeta del depósito donde quedan sus papeles. La política del personal de
    la Prestadora es `for all` y su `with check` exige dos cosas —que la
    Prestadora sea la suya y que quien pide sea personal— y **no nombra esa
-   columna**. Así que hoy un coordinador puede ponerse a su nombre el legajo
-   de otra persona: sus matrículas, sus estudios, sus papeles.
+   columna**. Así que hasta el 31 de agosto de 2026 un coordinador podía
+   ponerse a su nombre el legajo de otra persona: sus matrículas, sus estudios,
+   sus papeles.
 
-   Es el pendiente 74, de la misma familia que el 66: una política que decide
-   por fila sobre una tabla donde lo que importa es qué columna se toca.
+   Era el pendiente 74, de la misma familia que el 66, y lo cerró la migración
+   0047 con un disparador: una política decide por fila, y acá lo que importa es
+   qué columna se toca. **ESTA PRUEBA FALLABA A PROPÓSITO Y HOY PASA. Si vuelve
+   a dar rojo, el dueño de un legajo volvió a poder cambiarse.**
 
    POR QUÉ PUEDE FALLAR. Los tres rechazos podrían dar «bien» por un motivo
    tonto —que la coordinadora no tenga sesión, que la tabla esté cerrada para
@@ -287,10 +290,11 @@ sostener('y no alcanza el legajo de la Prestadora ajena',
   'respuesta ' + r5.estado + ', ' + tocadas + ' filas tocadas');
 
 // --- Limpieza ---------------------------------------------------------------
-// Con la clave de administración y no con la sesión de cada persona. Mientras
-// el pendiente 74 siga abierto, un legajo que cambió de dueño ya no lo ve
-// quien lo creó, así que su `DELETE` tocaría cero filas y lo dejaría cargado.
-// Pasó en la primera corrida.
+// Con la clave de administración y no con la sesión de cada persona. Cuando el
+// pendiente 74 estaba abierto, un legajo que cambiaba de dueño dejaba de verlo
+// quien lo creó, así que su `DELETE` tocaba cero filas y lo dejaba cargado.
+// Pasó en la primera corrida. Se cerró el 31 de agosto de 2026, y la limpieza
+// sigue igual: la clave de administración no depende de quién sea el dueño.
 for (const quien of gente) {
   await rest('/rest/v1/caregivers?id=eq.' + quien.legajo.id,
     { method: 'DELETE' }, claveServicio);
@@ -331,6 +335,7 @@ if (fallos === 0) {
   process.exit(0);
 }
 console.log(fallos + (fallos === 1 ? ' comprobación' : ' comprobaciones') + ' en rojo.');
-console.log('Es el pendiente 74, y hasta que se arregle esta prueba tiene que dar rojo:');
-console.log('un coordinador se queda con el legajo entero de otra persona.');
+console.log('Esta prueba pasa desde el 31 de agosto de 2026, cuando la migración 0047 cerró');
+console.log('el pendiente 74. Si da rojo, un coordinador volvió a quedarse con el legajo');
+console.log('entero de otra persona: sus matrículas, sus estudios, sus papeles.');
 process.exit(1);

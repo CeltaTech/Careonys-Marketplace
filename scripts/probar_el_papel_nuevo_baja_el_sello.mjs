@@ -10,7 +10,8 @@
        supabase start -x edge-runtime -x vector -x supavisor -x logflare
        supabase migration up --local
 
-   QUÉ MIRA. El pendiente 75, y la opción A que eligió el Desarrollador: **el
+   QUÉ MIRA. Lo que fue el pendiente 75 —cerrado el 31 de agosto de 2026 por la
+   migración 0047—, y la opción A que eligió el Desarrollador: **el
    sello siempre habla de los papeles que están hoy.** Sin esto, una persona
    con el legajo ya sellado cambia `documents` y el sello queda diciendo que
    la Prestadora revisó unos papeles que ya no están. La Familia no tiene cómo
@@ -326,6 +327,7 @@ if (fallos === 0) {
   process.exit(0);
 }
 console.log(fallos + (fallos === 1 ? ' comprobación' : ' comprobaciones') + ' en rojo.');
-console.log('Es el pendiente 75: el legajo dice «validado» sobre papeles que la');
-console.log('Prestadora no miró, y la Familia no tiene cómo notarlo.');
+console.log('Esto pasa desde el 31 de agosto de 2026, cuando la migración 0047 cerró el');
+console.log('pendiente 75. Si da rojo, el legajo volvió a decir «validado» sobre papeles');
+console.log('que la Prestadora no miró, y la Familia no tiene cómo notarlo.');
 process.exit(1);

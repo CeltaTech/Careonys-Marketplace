@@ -6,13 +6,13 @@
    Hasta el 26 de agosto de 2026 las pantallas de este producto llevaban 694
    atributos `style=` escritos a mano. La mayoría no eran decisiones distintas:
    eran la misma decisión copiada —`color:var(--texto-secundario)` aparecía 112
-   veces—. El pendiente 8 les puso nombre una vez en `css/utilidades.css` y las
-   pantallas pasaron a usarlo.
+   veces—. El pendiente 8, cerrado el 26 de agosto de 2026, les puso nombre una
+   vez en `css/utilidades.css` y las pantallas pasaron a usarlo.
 
    Esto vigila que no se deshaga solo. La regla es una sola: **si todo lo que
    dice un atributo `style=` ya tiene clase, ese atributo sobra**. No se prohíbe
    el atributo —las decisiones que aparecen una sola vez siguen escritas donde
-   están, y así lo pide el pendiente 8—: se prohíbe volver a escribir a mano lo
+   están, y así lo pidió el pendiente 8 al cerrarse—: se prohíbe volver a escribir a mano lo
    que la hoja de utilidades ya nombra.
 
    El guion no sabe de antemano qué clases hay: las lee de `css/utilidades.css`.

@@ -3100,7 +3100,7 @@ que está sentenciado a borrarse; el hilo llevó a otra cosa.
 
 **Dos navegadores de pasos escuchaban el mismo botón.** `registrar-asistente.html` tiene el suyo,
 escrito adentro de la pantalla, que **valida el paso antes de dejar pasar al siguiente**
-(`registrar-asistente.html:881`). Y `js/main.js` traía otro, el del asistente por pasos de
+(`registrar-asistente.html:917`). Y `js/main.js` traía otro, el del asistente por pasos de
 `formulario-integral.html`, que se enganchaba a `.btn-next-step` en cualquier pantalla que
 cargara el archivo —y `registrar-asistente.html` lo carga— **sin validar nada**
 (`js/main.js:206`). Los dos corrían en cada clic, en ese orden, así que el segundo deshacía lo
@@ -4300,6 +4300,45 @@ Quedaron cerradas las dos puertas:
 **Comprobado en los dos sentidos.** La prueba pasa hoy, y sacándole a mano una de las seis puertas
 de la lista vuelve a dar rojo —y avisa que quedó inservible si el nombre ya no se encuentra—. La
 guarda nueva se probó cambiando el 89 por un número inventado: corta ahí y dice cuál.
+
+---
+
+### Y no era una sola: veinticuatro comentarios del código decían que un agujero seguía abierto
+
+Encontrado el mismo 31 de agosto de 2026, tirando del hilo anterior. Si una prueba pudo quedar
+anotada contra un pendiente cerrado, la pregunta que sigue es cuántos textos más hablan en presente
+de algo que ya se arregló. Se contaron: **157 citas a un pendiente en 128 archivos**, y 39 apuntando
+a un número que ya no está en la lista.
+
+Quince de esas 39 estaban bien escritas y era el detector el que no las entendía: «eran el pendiente
+15», «era el pendiente 23», «el pendiente 101 estuvo abierto por eso». El tiempo verbal ya dice que
+se cerró. Las otras **24 estaban mal de verdad**, y tres de ellas en el peor lugar posible:
+
+- `probar_de_quien_es_el_legajo.mjs` decía «hoy un coordinador puede ponerse a su nombre el legajo
+  de otra persona». No puede desde el 31 de agosto de 2026: lo cerró la migración 0047.
+- `probar_el_papel_nuevo_baja_el_sello.mjs` y `probar_el_rol_y_la_prestadora_del_perfil.mjs`
+  presentaban los pendientes 75 y 82 como agujeros abiertos, cerrados por la misma migración.
+
+Son tres pruebas que **pasan**, con un encabezado que dice que el producto está roto. Quien las
+corra y las vea en verde tiene dos versiones y ningún motivo para creerle a una más que a la otra
+—que es exactamente lo que dejó a la prueba de permisos cinco días en rojo sin que nadie mirara—.
+
+**Lo que evita que vuelva a pasar** es `scripts/verificar_pendientes.mjs`, que corre con los demás
+antes de cada `commit`: falla si un archivo nombra «pendiente N» y ese N ya no es una fila abierta
+de `docs/PENDIENTES.md`, salvo que el texto diga ahí mismo que se cerró. **No pide borrar la cita**
+—casi siempre conviene dejarla, porque explica de dónde salió una decisión—: pide que esté en
+pasado.
+
+**Qué queda afuera, a propósito.** `docs/ALCANCE.md` —este archivo— y los `docs/PLAN_*.md` narran un
+momento con fecha, y las migraciones aplicadas no se editan jamás. Medido: este archivo tiene 122
+citas, 66 a pendientes ya cerrados, y ninguna es un error. Pedirle a un relato fechado que hable del
+futuro es convertirlo en un documento que hay que reescribir cada vez que se cierra algo.
+
+**Comprobado en los dos sentidos.** El chequeo se prueba a sí mismo contra seis textos de mentira
+antes de mirar el proyecto —uno en presente tiene que ser señalado, uno en pasado tiene que pasar,
+un «fue» lejos de la cita no tiene que valer—, se planta si no logra leer ningún pendiente abierto o
+si no encuentra ninguna cita, y se le agregó a mano una cita a un «pendiente 99999» en el README
+para ver que la señala. Después se sacó.
 
 ---
 

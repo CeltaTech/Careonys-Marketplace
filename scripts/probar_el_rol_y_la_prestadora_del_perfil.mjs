@@ -17,9 +17,9 @@
    se asciende y se muda de Organización, y con eso se lleva puesto el
    aislamiento entero.
 
-   ESTA PRUEBA NO ARRANCA EN ROJO, Y ESO ESTÁ DICHO A PROPÓSITO. El pendiente
-   82 no es un agujero abierto: es una trampa armada. Hoy los dos intentos se
-   rechazan, pero no por la política —que dice «cada quien escribe su propia
+   ESTA PRUEBA NUNCA ARRANCÓ EN ROJO, Y ESO ESTÁ DICHO A PROPÓSITO. Lo que fue
+   el pendiente 82 no era un agujero abierto: era una trampa armada. Los dos
+   intentos ya se rechazaban, pero no por la política —que dice «cada quien escribe su propia
    fila» y no nombra ninguna columna— sino por un permiso escrito seis
    renglones más abajo, `grant update (full_name) on public.profiles to
    authenticated`. Un solo `grant update on public.profiles to authenticated`
@@ -29,8 +29,11 @@
    equivocado**: «Grant the required privileges … GRANT UPDATE ON
    public.profiles TO authenticated», que es la línea que abre el agujero.
 
-   Por eso esta prueba vale como red permanente y no como alarma de hoy: es
-   la que va a avisar el día que alguien vuelva a escribir ese `grant`.
+   Desde el 31 de agosto de 2026 hay además un disparador: la migración 0047
+   cerró el pendiente 82 y rechaza el cambio de `role` y de `tenant_id` diga lo
+   que diga el permiso. **Las dos redes valen, porque cuidan de cosas
+   distintas**: el disparador, de quien intenta el cambio; esta prueba, del día
+   que alguien vuelva a escribir ese `grant` creyendo que con eso alcanza.
 
    POR QUÉ PUEDE FALLAR. Los tres rechazos darían «bien» también sobre una
    tabla cerrada para todos, y entonces no probarían nada. Por eso la
@@ -256,6 +259,7 @@ if (fallos === 0) {
   process.exit(0);
 }
 console.log(fallos + (fallos === 1 ? ' comprobación' : ' comprobaciones') + ' en rojo.');
-console.log('Es el pendiente 82: alguien con sesión se asciende o se muda de Organización,');
-console.log('y de `tenant_id` cuelgan las políticas de todas las tablas.');
+console.log('Esto lo cerró la migración 0047 el 31 de agosto de 2026: era el pendiente 82.');
+console.log('Si da rojo, alguien con sesión se asciende o se muda de Organización, y de');
+console.log('`tenant_id` cuelgan las políticas de todas las tablas.');
 process.exit(1);

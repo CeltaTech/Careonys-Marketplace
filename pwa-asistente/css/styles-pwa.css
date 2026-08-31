@@ -148,10 +148,11 @@ label { font-size: 12px; font-weight: 700; color: var(--texto-secundario); displ
 /* ---- Mis Capacitaciones ---- */
 /* Van acá y no en el bloque `<style>` de `pwa-asistente/index.html` a propósito:
    ese bloque son 271 renglones de CSS pegados al HTML que hay que repartir
-   (pendiente 8), y no se le agrega. */
+   —lo que quedó del pendiente 8 al cerrarse, y que hoy va adentro de la
+   migración a React—, y no se le agrega. */
 /* El botón de volver de una cabecera de color. La pantalla del legajo tiene uno
-   igual escrito con estilo pegado al HTML; cuando le toque el reparto del
-   pendiente 8, pasa a usar este. */
+   igual escrito con estilo pegado al HTML; cuando le toque el reparto que dejó
+   abierto el pendiente 8 al cerrarse, pasa a usar este. */
 .btn-volver-cabecera {
   background: none;
   border: none;
@@ -263,7 +264,8 @@ label { font-size: 12px; font-weight: 700; color: var(--texto-secundario); displ
    Las usan las dos aplicaciones: el alta del Asistente para decir cuándo puede
    trabajar, y la Familia para decir cuándo se necesita el cuidado. Los colores
    todavía están escritos con su número y no con un identificador del sistema de
-   diseño; eso es el pendiente 8 y alcanza a toda la hoja, no a este bloque. */
+   diseño; eso fue el pendiente 8, cerrado, y lo que quedó de él alcanza a toda
+   la hoja, no a este bloque. */
 .grilla-disponibilidad {
   display: grid;
   gap: 2px; text-align: center; font-size: 9px;

@@ -178,7 +178,7 @@ De ahí salen dos reglas:
   contacta por la plataforma.
 - **El directorio no puede quedar abierto a los buscadores.** **Hecho el 24 de agosto
   de 2026:** `directorio.html` y `perfil.html` llevan `noindex, nofollow`. **Y decidido el
-  mismo día (pendiente 2):** el directorio sí se ve sin iniciar sesión, con nombre y foto,
+  mismo día, en lo que fue el pendiente 2, cerrado:** el directorio sí se ve sin iniciar sesión, con nombre y foto,
   porque es lo que convence a una Familia que todavía no es clienta. Lo que no se ve nunca
   son los datos de contacto, y comunicarse es sólo para Familias registradas.
 - **El chat es la tercera puerta, y hay que cerrarla igual que las otras dos.** El chat existe
@@ -197,8 +197,8 @@ Ninguna de las dos se vuelve a proponer como casilla de un formulario. Si alguna
 discutirlo, se discute como decisión comercial.
 
 La primera es el consentimiento de la persona para ser publicada. Sin ellas, publicar un
-legajo es una decisión que toma el sistema por alguien que no la tomó. Tocan directamente el
-pendiente 2. El interruptor es de esta modalidad y el registro del consentimiento es del legajo:
+legajo es una decisión que toma el sistema por alguien que no la tomó. Tocan directamente lo que fue el
+pendiente 2, cerrado el 24 de agosto de 2026. El interruptor es de esta modalidad y el registro del consentimiento es del legajo:
 ver `docs/MODULOS.md`.
 
 **Se preguntan al terminar de cargar los datos, como último paso del alta.** No son una opción
