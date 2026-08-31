@@ -5174,6 +5174,48 @@ De paso salió otro número escrito a mano que ya estaba viejo: un comentario de
 hablaba de leer «las quince juntas» cuando las migraciones son 49. Dice ahora «todas juntas», que
 no envejece.
 
+---
+
+### El catálogo escrito a mano tenía regla, tenía historia y no tenía quien lo mirara
+
+Dos reglas dicen lo mismo desde hace tiempo. La de la empresa: «Los catálogos salen de la base. Una
+lista de opciones nunca se escribe adentro de una pantalla». La del producto, más filosa, porque
+dice qué queda cuando no se cumple: «Cada lista de opciones que hoy esté escrita adentro de un
+componente es una tabla que alguien no creó» (`CLAUDE.md:42`). Y hasta ahora no había nada que las
+hiciera cumplir.
+
+Medido antes de escribir nada, sobre las 17 pantallas: seis `<option>` en total. Uno vive adentro
+de un comentario de `cursos.html` que explica algo que ya no está. Dos son el renglón vacío que
+abre un desplegable —«Elija una opción…»—, que no es un catálogo. **Y tres son de verdad**: los
+horarios de turno de `solicitar-asistente.html:197`, `:198` y `:199`. Las opciones que los guiones
+arman con `createElement('option')` salen de datos, que es la forma correcta, y no se cuentan.
+
+Esos tres no son un descuido suelto: son la misma enfermedad del **pendiente 31**.
+`avisos.schedule_type` junta hoy cuatro formas de decir lo mismo —`turno_manana`,
+`guardia_12`, `flexible`, `A coordinar`— porque cada pantalla escribió la suya, y ninguna es clave
+de ningún vocabulario. Mientras la columna no tenga vocabulario, `scripts/verificar_claves.mjs` no
+la puede mirar, así que el día que entre la quinta forma no se entera nadie. Lo que hace
+`scripts/verificar_opciones.mjs` es impedir que entre la quinta.
+
+La exención está escrita distinto de casi todas las del proyecto, y a propósito: **no perdona la
+pantalla, perdona los tres valores exactos**. Perdonar el archivo entero apagaría el chequeo sobre
+todo lo que ese archivo tenga después, que es exactamente la forma en que una exención deja de
+eximir y pasa a tapar —lo que estas noches vinieron persiguiendo—. Una opción nueva en
+`solicitar-asistente.html` se planta igual.
+
+Falsificado de tres maneras. Con las pruebas de adentro del propio archivo, dos casos `MAL` y tres
+`BIEN`. Vaciando la exención, que pone rojo los tres renglones reales —y eso lo comprueba solo
+`scripts/probar_exenciones.mjs`, que lo tomó sin tocarle nada: van 12 exenciones en 29 chequeos—.
+Y agregándole un `<option value="rcp">` a `cursos.html`, que lo nombra por su renglón.
+
+**Y la red de chequeos lo corrigió mientras nacía.** La primera versión escribía la clave de la
+exención como `solicitar-asistente.html`, con la extensión adentro; `scripts/verificar_red.mjs` se
+plantó en el acto por las dos cosas que sabe mirar: que la extensión de las pantallas no se escriba
+a mano ni siquiera escondida en la clave de una exención, y que la tabla del README nombre a todos
+los chequeos. Las dos reglas se escribieron el 31 de agosto de 2026, y al día siguiente ya habían
+atajado a un chequeo nuevo. Un guardarraíl que corrige al que lo escribió es la única prueba
+convincente de que sirve.
+
 ## 6. Deuda del código actual
 
 Está toda en `docs/PENDIENTES.md`, con condición de cierre para cada punto. Acá no se repite,

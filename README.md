@@ -38,7 +38,7 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | 976 declaraciones más, pegadas al HTML | en 247 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 12 de las 17 pantallas rescatan la sesión al abrir |
 | 4 servidores de afuera, sin `package.json` ni compilación | dos de tipografías y dos de bibliotecas |
-| 23 tablas y 49 migraciones en el repositorio | 29 chequeos las miran antes de cada commit |
+| 23 tablas y 49 migraciones en el repositorio | 30 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
@@ -165,6 +165,7 @@ título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de e
 | `verificar_guiones` | Que el JavaScript de una pantalla quede sin poder leerse |
 | `verificar_identidad` | Que la marca vuelva a estar escrita a mano |
 | `verificar_organizacion` | Que una pantalla nombre a una Prestadora del seed, o escriba otro logotipo |
+| `verificar_opciones` | Que una lista de opciones vuelva a escribirse adentro de una pantalla, y con ella un valor que ningún vocabulario gobierna |
 | `verificar_paleta` | Que vuelva un color escrito con su número en vez de un token |
 | `verificar_pendientes` | Que un archivo siga diciendo en presente que un agujero está abierto después de haberse cerrado, y una roja esperada se vuelva un permiso para no mirar |
 | `verificar_red` | Que un chequeo mire cero archivos, no encuentre nada y salga en verde igual; que la extensión de las pantallas vuelva a escribirse a mano —suelta, o metida adentro de la clave de una exención— en vez de pedirse a `scripts/recorrido.mjs`; que una exención de `scripts/` se quede nombrando un archivo que ya no está —o una columna que ninguna migración declara—, y siga apagando el chequeo sobre él; y que esta misma tabla se quede atrás, nombrando un chequeo que ya no existe o callando uno que sí |
