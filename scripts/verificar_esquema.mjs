@@ -1,5 +1,5 @@
 /* ===================================================
-   VERIFICA LAS CATORCE REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
+   VERIFICA LAS QUINCE REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
 
        node scripts/verificar_esquema.mjs
 
@@ -8,7 +8,7 @@
    Lo que corre hoy en el servidor es otra pregunta y se responde mirando el
    servidor (regla de la empresa «el estado real está por encima del documentado»).
 
-   Las catorce:
+   Las quince:
 
    1. **Toda tabla nueva enciende su RLS en la misma migración que la crea**
       (regla de la empresa «RLS estricta en toda tabla nueva»). Encenderla después, a mano desde el panel, deja una ventana
@@ -270,6 +270,48 @@
       pide el `;` o la palabra pegada. Hay un caso en el banco de pruebas que lo
       comprueba, para que la distinción no dependa de que alguien la recuerde.
 
+  15. **Quien llega sin sesión entra por la puerta de una Prestadora, o no
+      entra** (regla de los dos productos «no hay lista de Prestadoras ni listado
+      suelto… no existe ningún listado que no sea de una Prestadora», decidida el
+      2026-08-25). Son dos mitades y hasta hoy no miraba ninguna nadie.
+
+      **15 a. A `anon` no le queda ningún permiso neto sobre una tabla ni una
+      vista de `public`.** «Neto» es la palabra que importa, y es lo que hace que
+      esta mitad no se pueda juzgar archivo por archivo: la 0002, la 0007, la
+      0012 y la 0017 le conceden `select` a `anon` sobre la misma vista y las
+      cuatro están bien, porque la 0021 se lo revocó —y la 0032 otra vez—. Mirando
+      una sola migración, esas cuatro saldrían en rojo para siempre por algo que
+      ya no está. Así que `alcanceAnonimo()` corre todas en orden y se queda con lo
+      que sobrevive, siguiendo los renombres y los `drop`; la falla se informa en
+      el renglón **donde se concedió** el permiso, que es donde hay que ir a
+      sacarlo. Y `PUBLIC` cuenta como sin sesión, porque `anon` hereda de él.
+
+      El seguimiento del renombre no es prolijidad. Sin él este mismo cálculo
+      decía que `caregivers_publicos` seguía abierta desde la 0012, cuando la 0015
+      la había renombrado a `directorio` y los dos `revoke` estaban escritos
+      con el nombre nuevo. Un renombre no es un `revoke`: el permiso viaja con el
+      objeto, no con el nombre. La base publicada lo dice de frente y hay que
+      saber leerlo: contesta `PGRST205` —«no existe»— al nombre viejo y `42501`
+      —«sin permiso»— al nuevo, que son dos hechos distintos.
+
+      **15 b. Y la función que sí abre esa puerta exige de verdad el nombre
+      corto.** Cinco de las seis exenciones de `AL_ALCANCE_ANONIMO` lo afirman en
+      su motivo —«exige el nombre corto», «la que nombra el argumento»— y eso era
+      prosa: nadie iba a mirar si seguía siendo cierto. Ahora se le piden tres
+      cosas a cada una: que el primer parámetro sea un `text` con nombre, que el
+      cuerpo lo compare contra `slug`, y que el cuerpo **no** escriba `<parámetro>
+      is null or`. Es la misma forma de la undécima bis, «lo que sostiene a una
+      exenta se comprueba, no se cree».
+
+      Lo tercero merece su renglón, porque la trampa está al revés de lo que
+      parece. `vocabularios_de` y `guias_de` reciben el nombre corto con `default
+      null` y escriben `p_slug is not null and t.slug = p_slug`. Ese `is not null`
+      **no protege nada**: `t.slug = null` no da falso, da nulo, y no coincide con
+      ninguna fila igual. Exigirlo hubiera sido una regla que no puede fallar. Lo
+      que sí convierte la puerta de una Prestadora en el listado de todas es la
+      disyunción —`p_slug is null or t.slug = p_slug`—, una palabra de distancia,
+      y eso es lo que la regla prohíbe.
+
    Las cuentas de cuántas tablas y cuántas funciones hay no se escriben acá: las
    dice el renglón verde al terminar, que sale de contar los archivos. Un número
    escrito a mano en un encabezado queda viejo el día que se agrega una
@@ -323,6 +365,15 @@
      quieren decir lo mismo. Borrar una tabla y crear otra parecida al lado no
      lo ve nadie, y está bien: eso no arrastra ningún nombre viejo adentro de
      los datos, que es justo lo que la regla viene a evitar.
+   - De la decimoquinta, la primera mitad mira los permisos de tabla y de vista,
+     no los de función: para ésas está la segunda regla, con su lista de exentas.
+     Y la segunda mitad mira la forma de la puerta —que el nombre corto esté,
+     que se compare, que el nulo no abra—, no que lo que devuelve sea de esa
+     Prestadora. Una función que compare el `slug` en un rincón y después
+     devuelva otra cosa pasa igual, lo mismo que en la octava y en la undécima.
+   - Y no consulta la base: si alguien concedió un permiso a mano contra el
+     servidor, ninguna migración lo dice y este cálculo no lo ve. Eso se pregunta
+     desde afuera, y lo hace `scripts/probar_permisos_en_vivo.mjs`.
    - Una siembra acotada a una Prestadora por su nombre corto no es un barrido y
      no se mira. Es lo que hacen las migraciones de datos ficticios.
 =================================================== */
@@ -550,14 +601,53 @@ const DEDUCE_LA_ORGANIZACION =
 const LA_RESUELVE = 'prestadora_actual';
 const SOLO_LEE = /\bfor\s+(?:select|delete)\b/i;
 const ESCRIBE = /\b(?:insert|update|delete)\b/i;
+/* Para la decimoquinta. Un permiso sobre una tabla o una vista de `public`,
+   concedido o revocado, con el objeto y los roles. Es `GRANT_DE_TABLA` abierto a
+   los dos verbos, porque esta regla no mira lo que dice una migracion sino el
+   **neto** de todas: un `grant` de la 0002 revocado en la 0021 no es un agujero,
+   y uno de la 0012 que nadie revoco lo es aunque su migracion se vea prolija. */
+const PERMISO_DE_TABLA =
+  /\b(grant|revoke)\s+([a-z][a-z0-9_,\s()]*?)\s+on\s+(?:table\s+)?"?public"?\."?([a-z_]+)"?\s+(?:to|from)\s+([a-z_,\s"]+)/gi;
+/* Un `drop` de tabla o de vista: el objeto se va y con el se van sus permisos,
+   asi que lo que hubiera concedido antes deja de contar. Aca las vistas se
+   borran y se vuelven a crear seguido —`caregivers_publicos` tres veces— y sin
+   esto el neto arrastraria permisos de un objeto que ya no es el mismo. */
+const BORRA_EL_OBJETO =
+  /drop\s+(?:table|(?:materialized\s+)?view)\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_]+)"?/gi;
+/* Quien entra sin sesion. `PUBLIC` entra porque `anon` hereda de el: conceder a
+   `PUBLIC` es conceder a todos, incluido el que no inicio sesion. */
+const SIN_SESION = /^(?:anon|public)$/i;
+/* Una funcion con sus parametros y su cuerpo, para mirarle la puerta. */
+const FUNCION_CON_PARAMETROS =
+  /create\s+(?:or\s+replace\s+)?function\s+(?:"?public"?\.)?"?([a-z_]+)"?\s*\(([^)]*)\)([\s\S]{0,400}?)\$([a-z_]*)\$([\s\S]*?)\$\4\$/gi;
+/* El nombre corto de una Prestadora, que es lo que la puerta publica exige.
+   El nombre del parametro no se fija aca a proposito: lo que hace de puerta no
+   es como se llama el parametro sino que el cuerpo lo compare contra `slug`. */
+const COMPARA_EL_NOMBRE_CORTO = (parametro) =>
+  new RegExp('\\bslug\\s*=\\s*' + parametro + '\\b|\\b' + parametro + '\\s*=\\s*[a-z_]*\\.?slug\\b', 'i');
+/* Y la forma con la que un nombre corto opcional se vuelve un listado suelto:
+   `p_slug is null or t.slug = p_slug`, que con nulo **deja pasar todo**. No se
+   exige lo contrario —el `p_slug is not null` que escriben las dos funciones que
+   hoy lo tienen opcional— porque eso no protege nada: `t.slug = null` no da
+   verdadero, da nulo, y no coincide con ninguna fila igual. Lo que hay que
+   impedir es la disyuncion, que es donde el nulo se convierte en «todas». */
+const EL_NULO_DEJA_PASAR = (parametro) =>
+  new RegExp(parametro + '\\s+is\\s+null\\s+or\\b|\\bor\\s+' + parametro + '\\s+is\\s+null\\b', 'i');
 const DEL_SERVIDOR = /service_role/i;
 const DEL_PEDIDO = /current_setting\s*\(|request\.headers|request\.jwt|auth\.jwt\s*\(/i;
 const NOMBRA_ORGANIZACION = /prestadora_actual\s*\(\s*\)|\btenant_id\b|\bprestadora_id\b/i;
 const ACOTADA = /\bwhere\b[^;]*\b(?:slug|id)\s*=/i;
 const DISPARADOR =
   /create\s+(?:or\s+replace\s+)?trigger\s+"?[a-z_]+"?[^;]*\bon\s+(?:"?public"?\.)?"?tenants"?[^;]*\bexecute\s+(?:function|procedure)\s+(?:"?public"?\.)?"?([a-z_]+)"?/gi;
+/* Sigue el nombre de una tabla **y el de una vista**. Las vistas entraron el
+   31 de agosto de 2026, y no por prolijidad: sin ellas este seguimiento decia
+   que `caregivers_publicos` seguia existiendo con `select` para `anon` desde la
+   0012, cuando la 0015 la habia renombrado a `directorio` y la 0021 le
+   habia revocado ese permiso con el nombre nuevo. La base publicada contesta
+   `PGRST205` —«no existe»— al nombre viejo y `42501` —«sin permiso»— al nuevo, que
+   son dos hechos distintos y hay que poder distinguirlos. */
 const RENOMBRA =
-  /alter\s+table\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_]+)"?\s+rename\s+to\s+"?([a-z_]+)"?/gi;
+  /alter\s+(?:table|(?:materialized\s+)?view)\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_]+)"?\s+rename\s+to\s+"?([a-z_]+)"?/gi;
 /* Para `columnasDeclaradas`: las tres cosas que le pasan a una columna despues
    de nacer. */
 const AGREGA_COLUMNA =
@@ -910,18 +1000,105 @@ export function siembraQueSeSigueSola(textos) {
 }
 
 /**
+ * Lo que le queda a quien entra sin sesion sobre las tablas y las vistas de
+ * `public`, una vez corridas todas las migraciones en orden: el **neto** de
+ * cada `grant` y cada `revoke`. Devuelve `Map<archivo, [[indice, objeto, verbo]]>`,
+ * ubicando cada concesion que sobrevive en el renglon donde se la concedio, que
+ * es donde hay que ir a sacarla.
+ *
+ * **Ninguna migracion sola contesta esta pregunta**, y por eso no se juzga
+ * archivo por archivo. La 0002, la 0007 y la 0012 le conceden `select` a `anon`
+ * sobre la misma vista y las tres estan bien: la 0021 se lo revoco. Y al reves,
+ * un `grant` que nadie revoco es un agujero aunque su migracion se vea prolija.
+ *
+ * Sigue los renombres —`caregivers_publicos` es `directorio` desde la 0015— y
+ * los `drop`: un objeto que se borra se lleva sus permisos, y aca las vistas se
+ * borran y se vuelven a crear seguido.
+ */
+export function alcanceAnonimo(textos, migraciones) {
+  const limpios = textos.map((x) =>
+    x.replace(/\r\n/g, '\n').split('\n')
+      .map((l) => (/^\s*--/.test(l) ? ' '.repeat(l.length) : l)).join('\n'));
+
+  /* Primero todos los renombres juntos: un permiso concedido en la 0012 con el
+     nombre viejo se revoca en la 0021 con el nuevo, y hay que verlos iguales. */
+  const renombres = new Map();
+  for (const t of limpios) {
+    for (const m of t.matchAll(RENOMBRA)) {
+      renombres.set(m[1].toLowerCase(), m[2].toLowerCase());
+    }
+  }
+
+  const tiene = new Map();
+  const tocados = new Set();
+  for (const [i, t] of limpios.entries()) {
+    const archivo = (migraciones && migraciones[i]) || '';
+    for (const m of t.matchAll(PERMISO_DE_TABLA)) {
+      const concede = m[1].toLowerCase() === 'grant';
+      const verbos = m[2].toLowerCase().replace(/\([^)]*\)/g, '')
+        .split(',').map((v) => v.trim()).filter(Boolean);
+      const objeto = nombreDeHoy(m[3].toLowerCase(), renombres);
+      const roles = m[4].replace(/"/g, '').split(',').map((r) => r.trim()).filter(Boolean);
+      if (!roles.some((r) => SIN_SESION.test(r))) continue;
+      for (const verbo of verbos) {
+        const clave = objeto + '|' + verbo;
+        if (concede) {
+          tiene.set(clave, { archivo, indice: m.index, objeto, verbo });
+          tocados.add(objeto);
+        }
+        else tiene.delete(clave);
+        /* `revoke all` se lleva todo lo del objeto, no solo el verbo `all`. */
+        if (!concede && verbo === 'all') {
+          for (const k of [...tiene.keys()]) {
+            if (k.startsWith(objeto + '|')) tiene.delete(k);
+          }
+        }
+      }
+    }
+    /* El objeto que se borra se lleva sus permisos. Va despues de los permisos
+       del mismo archivo y no antes, porque la forma normal de redefinir una
+       vista es `drop`, `create` y `grant`, los tres seguidos: mirar el `drop`
+       primero borraria justamente el permiso que se acaba de conceder. */
+    for (const m of t.matchAll(BORRA_EL_OBJETO)) {
+      const objeto = nombreDeHoy(m[1].toLowerCase(), renombres);
+      for (const [k, v] of [...tiene]) {
+        if (k.startsWith(objeto + '|') && v.indice < m.index) tiene.delete(k);
+      }
+    }
+  }
+
+  const porArchivo = new Map();
+  for (const v of tiene.values()) {
+    if (!porArchivo.has(v.archivo)) porArchivo.set(v.archivo, []);
+    porArchivo.get(v.archivo).push([v.indice, v.objeto, v.verbo]);
+  }
+  /* Y de paso, cuántos objetos estuvieron abiertos alguna vez y hoy no lo están.
+     Es lo que el renglón verde puede decir sin escribir un número a mano, y es
+     una cuenta que **puede** bajar: si alguien saca un `revoke`, baja. Un «cero
+     abiertos» solo no prueba nada, porque también da cero un esquema que nunca
+     concedió nada. */
+  const siguenAbiertos = new Set([...tiene.values()].map((v) => v.objeto));
+  porArchivo.cerrados = [...tocados].filter((o) => !siguenAbiertos.has(o)).length;
+  return porArchivo;
+}
+
+/**
  * Lo que incumple una migración. Devuelve `[renglón, qué pasa]` por cada cosa.
  * `conColumna` son las tablas que reciben su columna de Organización en alguna
  * migración, `claves` las claves primarias de todas, y `sigue` lo que ya atiende
  * un disparador: ninguna de las tres cosas está obligada a estar en esta
  * migración. Sin esos datos se mira sólo este texto.
  */
-export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, bajas) {
+export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, bajas,
+                                     alcance) {
   const t = texto.replace(/\r\n/g, '\n');
   const bajo = t.toLowerCase();
   const tienen = conColumna || conOrganizacion([t]);
   const primarias = claves || clavesPrimarias([t]);
   const siembra = sigue || siembraQueSeSigueSola([t]);
+  /* Sin el neto de todas las migraciones se mira este solo texto, que es lo
+     que hace falta para las pruebas de más abajo. */
+  const alAlcance = alcance || alcanceAnonimo([t], [nombre || '']);
   const fallas = [];
 
   for (const m of t.matchAll(TABLA)) {
@@ -1201,6 +1378,70 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, b
     }
   }
 
+
+  /* 15. Quien llega sin sesión entra por la puerta de una Prestadora, o no
+     entra. Son las dos mitades de la misma regla de los dos productos —«no hay
+     lista de Prestadoras ni listado suelto… no existe ningún listado que no sea
+     de una Prestadora»—, y hasta hoy ninguna de las dos la miraba nadie. */
+
+  /* 15 a. Ninguna tabla ni vista de `public` le queda al alcance del que no
+     inició sesión. Se mide el neto, no lo que dice esta migración: la falla se
+     informa en el renglón donde se concedió el permiso que sobrevivió, que es
+     donde hay que ir a sacarlo. */
+  for (const [indice, objeto, verbo] of (alAlcance.get(nombre || '') || [])) {
+    fallas.push([renglonDe(t, indice),
+      'este permiso le deja `' + verbo + '` sobre `' + objeto + '` a quien entra ' +
+      'sin sesión, y ninguna migración posterior se lo saca. Una tabla o una vista ' +
+      'de `public` es además una dirección web, porque PostgREST publica ese ' +
+      'esquema: no hay condición que la acote a una sola Prestadora, así que es ' +
+      'un listado suelto, y de paso publica quiénes son los clientes. La puerta ' +
+      'sin sesión se abre con una función que exija el nombre corto, nunca con un ' +
+      'permiso de tabla']);
+  }
+
+  /* 15 b. Y la función que sí abre esa puerta exige de verdad el nombre corto.
+     Cinco de las seis exenciones de `AL_ALCANCE_ANONIMO` lo afirman en su motivo
+     —«exige el nombre corto», «la que nombra el argumento»— y hasta hoy eso era
+     prosa: nadie iba a mirar si seguía siendo cierto. Es la misma forma de la
+     undécima bis, «lo que sostiene a una exenta se comprueba, no se cree». */
+  for (const m of t.matchAll(FUNCION_CON_PARAMETROS)) {
+    const funcion = m[1].toLowerCase();
+    if (!AL_ALCANCE_ANONIMO.has(funcion)) continue;
+    const renglon = renglonDe(t, m.index);
+    const primero = (m[2].split(',')[0] || '').trim();
+    const cuerpo = m[5];
+    const parametro = (primero.match(/^"?([a-z_][a-z0-9_]*)"?\s/i) || [])[1];
+
+    if (!parametro || !/\btext\b/i.test(primero)) {
+      fallas.push([renglon,
+        '`' + funcion + '()` se abre sin sesión y su primer parámetro no es el nombre ' +
+        'corto de una Prestadora. Lo que hace de puerta es ese parámetro: sin él la ' +
+        'función contesta sobre todas, que es el listado suelto que no existe']);
+      continue;
+    }
+    if (!COMPARA_EL_NOMBRE_CORTO(parametro).test(cuerpo)) {
+      fallas.push([renglon,
+        '`' + funcion + '()` se abre sin sesión y su cuerpo no compara `' + parametro +
+        '` contra `slug`: recibe el nombre corto y no lo usa para acotar, así que ' +
+        'lo que devuelve no está atado a ninguna Prestadora']);
+      continue;
+    }
+    /* Y el nombre corto no se vuelve opcional por la puerta de atrás. Las dos
+       funciones que hoy lo tienen con `default` devuelven, sin él, el catálogo
+       general del producto y nada de ninguna Prestadora, que es legítimo y está
+       escrito en su exención. Lo que no es legítimo es escribir `is null or`:
+       ahí el que llama sin argumento pasa a verlas **todas**, con una sola
+       palabra de diferencia y sin que se rompa nada. */
+    if (EL_NULO_DEJA_PASAR(parametro).test(cuerpo)) {
+      fallas.push([renglon,
+        '`' + funcion + '()` se abre sin sesión y su cuerpo escribe `' + parametro +
+        ' is null or`: llamada sin nombre corto, esa condición da verdadero para ' +
+        'todas las filas, así que la puerta de una Prestadora se convierte en el ' +
+        'listado de todas. Comparar contra nulo no hace eso —da nulo y no ' +
+        'coincide con nada—; la disyunción sí']);
+    }
+  }
+
   return fallas.sort((a, b) => a[0] - b[0]);
 }
 
@@ -1238,7 +1479,28 @@ const DEPOSITO = (condicion) =>
   'create policy "Papeles de cualquiera" on storage.objects\n' +
   '  for select to authenticated\n  using (\n    ' + condicion + '\n  );\n';
 
+/* Para la decimoquinta. Una puerta sin sesión de verdad: `directorio_de` esta
+   en `AL_ALCANCE_ANONIMO`, asi que la regla la juzga. Los parametros y la
+   condicion se pasan por afuera para poder escribirla bien y mal sin repetir
+   el resto, que es siempre igual. */
+const PUERTA = (parametros, condicion) =>
+  'create or replace function public.directorio_de(' + parametros + ')\n' +
+  '  returns jsonb language sql stable security definer as $$\n' +
+  '  select jsonb_agg(t.*) from public.tenants t where ' + condicion + ';\n' +
+  '$$;\n' +
+  'revoke all on function public.directorio_de(text) from public;\n';
+
 const MAL = [
+  ['un permiso de tabla que deja mirar al que no inició sesión',
+   'grant select on table public.visitas to anon;\n'],
+  ['el mismo, concedido a `PUBLIC`, de quien `anon` hereda',
+   'grant select on table public.visitas to public;\n'],
+  ['una puerta sin sesión cuyo primer parámetro no es el nombre corto',
+   PUERTA('p_todas boolean', 'p_todas')],
+  ['una puerta sin sesión que recibe el nombre corto y no lo compara',
+   PUERTA('p_slug text', 'true')],
+  ['una puerta sin sesión donde el nulo deja pasar todo',
+   PUERTA('p_slug text default null', 'p_slug is null or t.slug = p_slug')],
   ['un permiso de tabla que concede `all`, con `truncate` adentro',
    'grant all on table public.visitas to anon, authenticated;\n'],
   ['el mismo, nombrando `truncate` de frente',
@@ -1319,6 +1581,15 @@ const MAL = [
 ];
 
 const BIEN = [
+  ['una puerta sin sesión que exige el nombre corto de una Prestadora',
+   PUERTA('p_slug text', 't.slug = p_slug')],
+  ['el mismo nombre corto opcional: sin él no hay Prestadora, y sin ella no hay filas',
+   PUERTA('p_slug text default null', 't.slug = p_slug')],
+  ['un permiso sin sesión que la misma migración se vuelve a llevar',
+   'grant select on table public.visitas to anon;\n' +
+   'revoke all on table public.visitas from anon;\n'],
+  ['el permiso de mirar para quien sí inició sesión',
+   'grant select on table public.visitas to authenticated;\n'],
   ['los cuatro verbos escritos uno por uno',
    'grant select, insert, update, delete on public.visitas to authenticated;\n'],
   ['`all` para `service_role`, que es la llave del servidor',
@@ -1474,6 +1745,7 @@ if (ME_CORRIERON_A_MI) {
   let quietas = 0;
   let enteras = 0;
   let renombres = 0;
+  let puertas = 0;
   const migraciones = readdirSync(carpeta).filter((n) => n.endsWith('.sql')).sort();
   seRevisaron(migraciones.length, 'una sola migración `.sql` para revisar');
   const textos = migraciones.map((n) => readFileSync(join(carpeta, n), 'utf8'));
@@ -1497,6 +1769,13 @@ if (ME_CORRIERON_A_MI) {
      `with check (true)` las borra la 0002, y juzgando archivo por archivo la
      0001 saldría en rojo para siempre por algo que ya no está en la base. */
   const bajas = politicasDadasDeBaja(textos, migraciones);
+
+  /* Y lo mismo, más todavía, con lo que le queda al que entra sin sesión: eso no
+     lo contesta ninguna migración sola. La 0002, la 0007, la 0012 y la 0017 le
+     conceden `select` a `anon` sobre la misma vista y las cuatro están bien,
+     porque la 0021 se lo revocó; juzgando archivo por archivo las cuatro sale ían
+     en rojo para siempre por algo que ya no está. */
+  const alcance = alcanceAnonimo(textos, migraciones);
 
   for (const [i, nombre] of migraciones.entries()) {
     const texto = textos[i];
@@ -1545,6 +1824,13 @@ if (ME_CORRIERON_A_MI) {
         renombres += [...sinProsa.matchAll(expresion)].length;
       }
     }
+    /* Cada vez que una migración escribe una de las funciones que se abren sin
+       sesión. Se cuentan las veces y no las funciones distintas a propósito:
+       una función reescrita más adelante vuelve a pasar por la regla, que es
+       lo que hay que poder decir. */
+    for (const m of texto.matchAll(FUNCION_CON_PARAMETROS)) {
+      if (AL_ALCANCE_ANONIMO.has(m[1].toLowerCase())) puertas++;
+    }
     if (nombre.slice(0, 4) >= EL_AVISO_EMPIEZA && CAMBIA_EL_ESQUEMA.test(
       texto.split('\n').map((l) => (/^\s*--/.test(l) ? '' : l)).join('\n'))) {
       avisos++;
@@ -1557,7 +1843,8 @@ if (ME_CORRIERON_A_MI) {
       }
     }
     for (const [renglon, motivo] of
-      fallasDeUnaMigracion(texto, tienenColumna, primarias, sigue, nombre, bajas)) {
+      fallasDeUnaMigracion(texto, tienenColumna, primarias, sigue, nombre, bajas,
+                           alcance)) {
       fallas.push(`supabase/migrations/${nombre}:${renglon}  ${motivo}`);
     }
   }
@@ -1567,7 +1854,7 @@ if (ME_CORRIERON_A_MI) {
     for (const falla of fallas) console.error('  - ' + falla);
     console.error(
       `\n${fallas.length} ${fallas.length === 1 ? 'incumplimiento' : 'incumplimientos'}. ` +
-      'Las catorce reglas están en el encabezado de este archivo, con el porqué de cada\n' +
+      'Las quince reglas están en el encabezado de este archivo, con el porqué de cada\n' +
       'una. La RLS y la revocación van en la misma migración que crea la tabla o la\n' +
       'función, nunca en una posterior y nunca a mano desde el panel de Supabase; la\n' +
       'columna de Organización, la clave primaria y la moneda pueden llegar después,\n' +
@@ -1597,6 +1884,11 @@ if (ME_CORRIERON_A_MI) {
       'Y toda migración entra entera o no entra: nada corta la transacción que la\n' +
       'envuelve, y nada que no pueda correr adentro de una se escribe adentro de\n' +
       'ella, porque eso no falla hoy sino el día que se aplica.\n' +
+      'Y quien llega sin sesión entra por la puerta de una Prestadora o no entra:\n' +
+      'a `anon` no le queda ningún permiso sobre una tabla ni una vista de `public`\n' +
+      '—y lo que cuenta es el neto de todas las migraciones, no lo que diga ésta—,\n' +
+      'y la función que sí se abre sin sesión recibe el nombre corto, lo compara\n' +
+      'contra `slug` y no escribe `is null or`, que con el nulo abre todas.\n' +
       'Si un caso no puede cumplirla, va a SIN_ORGANIZACION, a SIN_MONEDA, a\n' +
       'AL_ALCANCE_ANONIMO, a SIN_ORGANIZACION_EN_EL_DEPOSITO o a\n' +
       'SIN_ORGANIZACION_AL_ESCRIBIR de este mismo\n' +
@@ -1633,5 +1925,13 @@ if (ME_CORRIERON_A_MI) {
     `el nombre a nada de lo ya guardado: los ${renombres} renombres que hay son ` +
     'todos del acomodamiento del glosario, que cerró en la 0022. ' +
     `Y las ${enteras} entran enteras o no entran: ninguna corta la transacción ` +
-    'que la envuelve, ni trae nada que no pueda correr adentro de una.');
+    'que la envuelve, ni trae nada que no pueda correr adentro de una. ' +
+    'Y quien llega sin sesión entra por la puerta de una Prestadora o no entra: ' +
+    `de los ${alcance.cerrados} objetos de \`public\` que alguna vez estuvieron a su ` +
+    `alcance no le queda ninguno, contando el neto de las ${migraciones.length} ` +
+    'migraciones y siguiendo los renombres; y las ' +
+    `${puertas} veces que una migración escribe una de las ` +
+    `${AL_ALCANCE_ANONIMO.size} funciones que sí se abren sin sesión, las ${puertas} ` +
+    'exigen el nombre corto de una Prestadora, lo comparan contra `slug` y no ' +
+    'dejan que el nulo abra todas.');
 }
