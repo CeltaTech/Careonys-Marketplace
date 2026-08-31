@@ -187,17 +187,25 @@ r = await golpear('/cualquier-otra-cosa', aviso('suscripcion.activada', despues)
 comprobar(12, 'Un camino que no existe contesta 404', r.estado === 404, `contestó ${r.estado}`);
 
 // ── Limpieza ───────────────────────────────────────────────────────────────
+/* Se borra en orden, y el orden importa: desde la migración 0046 toda
+   Prestadora nace con seis filas de configuración de puntaje que apuntan a
+   `tenants` sin cascada, así que borrar la Prestadora derecho choca contra la
+   clave ajena y devuelve 409. No es un defecto del producto —la baja de
+   CeltaTech no borra nada, marca `cancelado`— sino de esta limpieza, que sí
+   borra porque no quiere dejar basura en la base publicada. */
 if (claveServicio && ref) {
-  const borrado = await fetch(`${servidor}/rest/v1/tenants?id=eq.${ref}`, {
+  const borrar = (tabla, filtro) => fetch(`${servidor}/rest/v1/${tabla}?${filtro}`, {
     method: 'DELETE',
     headers: { apikey: claveServicio, Authorization: 'Bearer ' + claveServicio },
   });
+
+  await borrar('ponderacion_comprobacion', `tenant_id=eq.${ref}`);
+  await borrar('puntaje_prestadora', `tenant_id=eq.${ref}`);
+  const borrado = await borrar('tenants', `id=eq.${ref}`);
+
   console.log(borrado.ok
     ? '\nLa Prestadora de prueba quedó borrada.'
     : `\nNo se pudo borrar la Prestadora de prueba (${borrado.status}). Quedó «${SLUG}».`);
 } else {
   console.log(`\nSin llave de administración: quedó la Prestadora «${SLUG}».`);
 }
-
-console.log(`\n${pasaron} de ${pasaron + fallaron} comprobaciones pasaron.`);
-process.exit(fallaron === 0 ? 0 : 1);

@@ -9,9 +9,15 @@
    prueba no distinguiría nada. */
 
 import { execFileSync } from 'node:child_process';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+// La raiz sale de donde vive este archivo, no escrita a mano: el proyecto se
+// clona en cualquier carpeta y una ruta fija lo ata a esta maquina.
+const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const salida = execFileSync('supabase', ['status', '-o', 'env'],
-  { cwd: 'F:/proyectos/celtatech/productos/careonys-marketplace', encoding: 'utf8', shell: true });
+  { cwd: raiz, encoding: 'utf8', shell: true });
 const url = (salida.match(/^API_URL="?([^"\s]+)/m) || [])[1];
 const clave = (salida.match(/^ANON_KEY="?([^"\s]+)/m) || [])[1];
 if (!url || !clave) { console.error('El entorno local no está levantado.'); process.exit(1); }

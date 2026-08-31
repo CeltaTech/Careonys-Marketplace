@@ -4046,12 +4046,19 @@ comandos y confirmada con `supabase migration list --linked`. De las tres prueba
 `probar_aislamiento.mjs` no corre contra el servidor publicado porque ahí el alta pide confirmar el
 correo, que es una limitación de siempre y no de esta tanda.
 
-**Lo que esta tanda destapó y no arregla.** `probar_alta_y_baja.mjs` pasó a dar 9 de 12 contra la
-base publicada, y el motivo no es el 0047: **desde la migración 0046 ninguna Prestadora nace
-borrable**, porque el disparador que le deja su configuración de puntaje escribe seis filas en dos
-tablas que apuntan a `tenants` con `no action`. La baja de CeltaTech choca contra la clave ajena,
-la Prestadora ficticia de una corrida anterior quedó cargada, y con ella un aviso posterior ya
-aplicado que hace fallar tres comprobaciones por arrastre. Es el **pendiente 107**.
+**Lo que esta tanda destapó, y lo que se creyó ver mal.** `probar_alta_y_baja.mjs` pasó a dar 9 de
+12 contra la base publicada, y el motivo no es el 0047. La primera lectura fue **equivocada y se
+escribió acá antes de verificarla**: se dijo que desde la migración 0046 ninguna Prestadora se
+podía dar de baja. **La puerta de baja de CeltaTech no borra nada ni borró nunca** —marca `activo`,
+`suspendido` o `cancelado`, `supabase/functions/alta-y-baja/index.ts:102`—, y el estado protege de
+verdad: por el camino real, `directorio_de()` devuelve las personas con la Prestadora activa y
+ninguna con la Prestadora suspendida o cancelada. El `409` era de **la limpieza de la propia
+prueba**, que sí borra con la llave de administración y chocaba contra las seis filas de puntaje
+que la 0046 le cuelga a toda Prestadora al nacer; ya está arreglado borrando en orden. Lo que sí
+queda abierto —y es el aporte real de haberlo mirado— es que **nadie decidió nunca qué pasa con las
+personas si alguna vez se borra una Prestadora**, y el esquema hoy se contradice: el legajo
+sobreviviría y sus papeles no podrían. Está en `docs/PLAN_BAJA_DE_PRESTADORA.md`, sin aprobar, y es
+el **pendiente 107**.
 
 **Y lo que la opción A todavía le debe a quien la sufre.** Que la persona vea, **antes** de cambiar
 un papel, que hacerlo le baja el sello. Hoy no se puede escribir: ninguna pantalla cambia
