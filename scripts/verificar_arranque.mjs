@@ -3,8 +3,8 @@
 
        node scripts/verificar_arranque.mjs
 
-   La «los cuatro estados» pide cuatro estados —cargando, error, vacío, listo—
-   a todo componente que carga datos. Lo primero que carga datos en cualquier
+   La regla de los cuatro estados —cargando, error, vacío, listo— alcanza a todo
+   componente que carga datos. Lo primero que carga datos en cualquier
    pantalla es su arranque, y es justo lo que nadie mira: el 25 de agosto de 2026
    había ocho arranques y **ninguno de los ocho** tenía quién atrapara un fallo.
 

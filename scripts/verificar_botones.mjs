@@ -3,8 +3,8 @@
 
        node scripts/verificar_botones.mjs
 
-   La «todo botón que dispara una operación se apaga» pide que todo botón que dispara una operación se
-   deshabilite mientras está en curso, «nunca doble envío». Es fácil de escribir
+   «Todo botón que dispara una operación se apaga mientras la operación corre»
+   es regla de la empresa, y termina con «nunca dos envíos». Es fácil de escribir
    y fácil de olvidar: el 25 de agosto de 2026 había veintidós manejadores de
    este tipo y seis no apagaban nada. Uno de ellos otorgaba el aval de la
    Prestadora sobre el legajo de una persona, y dos clics eran dos escrituras.

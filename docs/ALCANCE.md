@@ -1895,8 +1895,8 @@ la clase. Las seis dicen ahora `classList.toggle('oculto', …)` (`acceso.html:9
 forma ninguna: el panel que se muestra recupera la que le dio el CSS, sea grid, flex o la que sea.
 Que sigan siendo ocho copias es parte del pendiente 13.
 
-**La «toda operación destructiva se confirma» se midió en el mismo rato y salió todavía más corta.** Pide confirmación explícita
-ante toda operación destructiva, y la medición encontró que en este proyecto hay exactamente una:
+**«Toda operación destructiva se confirma» se midió en el mismo rato y salió todavía más
+corta.** La regla pide confirmación explícita ante cada una, y la medición encontró que en este proyecto hay exactamente una:
 rechazar un legajo (`panel-prestadora.html:350`). No hay un solo `delete` contra la base en las
 cuarenta y cuatro pantallas y guiones —lo único que se parece son dos `delete` de JavaScript sobre
 un objeto en memoria, `js/apiClient.js:407` y `js/apiClient.js:451`, que no tocan nada guardado—, y
