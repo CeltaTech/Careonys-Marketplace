@@ -151,9 +151,6 @@ const EXENTOS = new Map([
    'documento de negocio heredado, escrito antes del glosario de la empresa'],
   ['docs/modelo_de_negocios_prestadora.md',
    'documento de negocio heredado, escrito antes del glosario de la empresa'],
-  ['docs/Nueva carpeta/MAPA_DE_VOCABULARIO.md',
-   'es el mapa de la palabra vieja a la nueva: ahí la palabra vieja **es** la ' +
-   'columna izquierda, y sacarla dejaría el mapa sin de dónde partir'],
   ['supabase/config.toml',
    'nombra tres entornos de Supabase que existen en la máquina del ' +
    'Desarrollador; cómo se llama un entorno no lo decide este repositorio'],
