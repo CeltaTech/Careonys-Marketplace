@@ -184,7 +184,7 @@ const renglonesTabla = [
   [`${enEspanol(renglonesHojas)} renglones de hojas de estilo, en ${enEspanol(hojas.length)} archivos`,
    `${enEspanol(tokens.size)} tokens con nombre en \`css/tokens.css\`, sin framework`],
   [`${enEspanol(declaraciones)} declaraciones más, pegadas al HTML`,
-   `en ${enEspanol(atributosStyle)} atributos \`style=\` (pendiente 8)`],
+   `en ${enEspanol(atributosStyle)} atributos \`style=\` (fue el pendiente 8, cerrado)`],
   ['Supabase Auth funcionando',
    `${enEspanol(conSesion.length)} de las ${enEspanol(pantallas.length)} pantallas rescatan la sesión al abrir`],
   [`${enEspanol(afuera.size)} servidores de afuera, sin \`package.json\` ni compilación`,

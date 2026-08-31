@@ -119,10 +119,10 @@ Los nueve guiones de línea de comandos, y el módulo que comparten:
 | `scripts/verificar_identidad.mjs` | Falla —código de salida 1— si el nombre, el dominio o el correo aparecen escritos a mano fuera de `js/identidad.js`. Verifica además que los manifiestos estén al día, y le pide a `verificar_copias.mjs` la comparación de las tres copias del archivo de identidad, para no tener dos veces escrita la misma revisión. Ignora la documentación y los comentarios del código. |
 | `scripts/verificar_clases.mjs` | Falla si el marcado nombra en un `class="…"` una clase que ninguna hoja `.css` declara, que ningún `<style>` de una pantalla declara y que ningún guion menciona entre comillas —esto último porque una clase también sirve de agarradera para el programa y ésas no se dibujan—. Nombrar una que no existe no rompe nada, y por eso dura: el marcado afirma que ese campo tiene estilo propio, y el día que haya que cambiarlo no está en la hoja. Font Awesome es la única familia exenta, por venir de afuera, y se saltea por prefijo. |
 | `scripts/verificar_base.mjs` | Falla si la dirección de la base o su clave publicable aparecen escritas fuera de `js/apiClient.js` y sus dos copias registradas —la lista de dónde se permite sale de `scripts/verificar_copias.mjs:27`, no de una segunda lista escrita acá—. Mira además que `js/auth.js` las siga sacando de `ClienteDatos` con una asignación, que toda pantalla que carga `js/auth.js` cargue antes `js/apiClient.js`, y que en ningún archivo del proyecto haya una clave con forma de secreta ni un token con forma de JWT, esto último sin exentos. No escribe adentro ninguno de los valores que busca: los lee del proyecto, y los de su autoprueba los arma por pedazos. |
-| `scripts/probar_todo.mjs` | Corre de una vez las siete pruebas que van contra la base de esta máquina —`probar_el_rol_y_la_prestadora_del_perfil`, `probar_de_quien_es_el_legajo`, `probar_sello_de_la_prestadora`, `probar_el_papel_nuevo_baja_el_sello`, `probar_permisos_en_vivo`, `probar_pisado_de_archivos` y `probar_aislamiento`— y falla si falla alguna. **No entra en `verificar_todo.mjs`**: éstas necesitan la base levantada, y el gancho de `commit` corre sin base y sin red. Lleva anotadas las rojas a propósito con el pendiente que las explica, y **falla igual si una de ésas pasa**, porque entonces el pendiente está cerrado y la lista quedó vieja. **Y antes de correr una sola prueba comprueba que ese pendiente siga abierto** en `docs/PENDIENTES.md`: sin eso una roja queda perdonada para siempre apuntando a un número que ya no existe, que es exactamente lo que pasó con `probar_permisos_en_vivo.mjs` y el pendiente 67. Nombra las dos que deja afuera —`probar_alta_y_baja.mjs` y `probar_consulta_publica.mjs`, que van contra el servidor publicado— para que nadie cuente siete y crea que están todas. Existe porque las dos cosas que se destaparon el 31 de agosto de 2026 fueron lo mismo: una herramienta que hay que acordarse de correr es una herramienta que no corre. |
+| `scripts/probar_todo.mjs` | Corre de una vez las siete pruebas que van contra la base de esta máquina —`probar_el_rol_y_la_prestadora_del_perfil`, `probar_de_quien_es_el_legajo`, `probar_sello_de_la_prestadora`, `probar_el_papel_nuevo_baja_el_sello`, `probar_permisos_en_vivo`, `probar_pisado_de_archivos` y `probar_aislamiento`— y falla si falla alguna. **No entra en `verificar_todo.mjs`**: éstas necesitan la base levantada, y el gancho de `commit` corre sin base y sin red. Lleva anotadas las rojas a propósito con el pendiente que las explica, y **falla igual si una de ésas pasa**, porque entonces el pendiente está cerrado y la lista quedó vieja. **Y antes de correr una sola prueba comprueba que ese pendiente siga abierto** en `docs/PENDIENTES.md`: sin eso una roja queda perdonada para siempre apuntando a un número que ya no existe, que es exactamente lo que pasó con `probar_permisos_en_vivo.mjs` y el pendiente 67, ya cerrado. Nombra las dos que deja afuera —`probar_alta_y_baja.mjs` y `probar_consulta_publica.mjs`, que van contra el servidor publicado— para que nadie cuente siete y crea que están todas. Existe porque las dos cosas que se destaparon el 31 de agosto de 2026 fueron lo mismo: una herramienta que hay que acordarse de correr es una herramienta que no corre. |
 | `scripts/verificar_todo.mjs` | Corre todos los chequeos de una vez y falla si falla alguno. No lleva la lista escrita adentro: busca en `scripts/` todo `verificar_*.mjs`, así que el próximo entra solo. Es lo que llama el gancho `pre-commit` |
 | `.githooks/pre-commit` | El gancho que git corre antes de cada commit. Frena el commit si algún chequeo falla. Para que git lo use hay que decírselo una vez por máquina: `git config core.hooksPath .githooks` |
-| `scripts/servidor_local.py` | El servidor para mirar las pantallas mientras se trabaja. Es `python -m http.server` con cuatro diferencias, y cada una es el motivo de que exista. **No deja guardar copias**, porque si no el navegador sigue mostrando la versión vieja de un archivo después de haberlo cambiado, sin avisar (pendiente 42). **No publica las cajas fuertes** ni `.git`: hasta el 30 de agosto de 2026 publicaba la carpeta entera, y adentro hay una. **Sabe apuntar a la base de esta máquina** con `--base-local`, cambiando la dirección en el texto que sale por la red y nunca en el archivo. **Y acepta 128 conexiones esperando** en vez de las 5 de fábrica: una pantalla pide nueve archivos a la vez y el sistema cortaba las que sobraban, que se veía como `js/auth.js` que no llegaba una recarga sí y otra no. |
+| `scripts/servidor_local.py` | El servidor para mirar las pantallas mientras se trabaja. Es `python -m http.server` con cuatro diferencias, y cada una es el motivo de que exista. **No deja guardar copias**, porque si no el navegador sigue mostrando la versión vieja de un archivo después de haberlo cambiado, sin avisar (fue el pendiente 42, cerrado). **No publica las cajas fuertes** ni `.git`: hasta el 30 de agosto de 2026 publicaba la carpeta entera, y adentro hay una. **Sabe apuntar a la base de esta máquina** con `--base-local`, cambiando la dirección en el texto que sale por la red y nunca en el archivo. **Y acepta 128 conexiones esperando** en vez de las 5 de fábrica: una pantalla pide nueve archivos a la vez y el sistema cortaba las que sobraban, que se veía como `js/auth.js` que no llegaba una recarga sí y otra no. |
 | `scripts/preparar_coordinadores_locales.mjs` | Deja dos cuentas con rol `coordinador`, una en cada Prestadora ficticia, **sólo en la base de esta máquina**: se planta si la dirección no es local. Existen porque las pantallas del panel piden ese rol y ese rol no se puede pedir al registrarse —lo filtra el disparador de la migración 0005 a propósito—, así que sin ellas lo que se comprobaba era la política y nunca la pantalla. No inventa ninguna clave: la toma de `CLAVE_PRUEBA_LOCAL` y sin esa variable no corre. |
 | `scripts/recorrido.mjs` | No es un guion: es la lista de carpetas que ningún chequeo abre —las cajas fuertes de la bóveda, las dependencias, el estado de las herramientas— y el recorrido que todos usan. Estaba copiada en cuatro archivos con cuatro contenidos distintos. |
 
@@ -225,14 +225,21 @@ llevaba detrás una copia que escribía en el navegador. Esa copia nunca corría
 sin que nadie lo notara, y en un caso sí corría y era peor: `js/main.js` guardaba la búsqueda de
 la familia en el navegador y la pantalla anunciaba éxito. Se sacaron las dos cosas.
 
-**b) Escritos adentro del HTML.** Sigue siendo la fuente de las dos pantallas del directorio,
-y no se toca hasta que se decida el pendiente 2:
+**b) Escritos adentro del HTML.** Ya no es la fuente de ninguna pantalla del directorio.
+Hasta el 25 de agosto de 2026 lo era: `perfil.html` llevaba ocho fichas completas escritas como
+objeto JavaScript —unos 230 renglones— y no consultaba nada, y `directorio.html` tenía ocho
+tarjetas escritas a mano. **Las dos leen hoy de la base**: `directorio_de` y
+`perfil_del_directorio`, que salen de `directorio` y no devuelven ningún dato de contacto.
+Comprobado el 31 de agosto de 2026 leyendo las dos pantallas: cargan `js/apiClient.js`, dibujan
+desde un molde `<template>` y no queda ni una ficha escrita adentro.
 
-- `perfil.html` lleva **8 fichas completas de asistentes escritas como objeto JavaScript adentro
-  del HTML**: unos 230 renglones con nombre, edad, zona, biografía, estudios, especialidades,
-  referencias y certificaciones. Esta página **nunca consulta Supabase**.
-- `directorio.html` trae 8 tarjetas de asistentes escritas a mano en el HTML, que sólo se
-  reemplazan si Supabase devuelve registros.
+Lo que sí queda escrito a mano, y es el pendiente 65:
+
+- `pwa-familia/index.html` y `mockup-app.html` traen un recuadro de verificaciones —«Email: ✓
+  Validado | Celular: ⌛ Pendiente»— y una ficha de paciente entera que no escribe ningún guion.
+  Quien entra lee un estado que nadie consultó.
+- `panel-prestadora.html` muestra dos de sus cuatro recuadros con números fijos, que es el
+  pendiente 100.
 - `cursos.html` ya no: sus seis cursos y su desplegable salen del catálogo.
 - `soporte-remoto.html` es contenido fijo salvo su desplegable, que sale del catálogo.
 
@@ -242,14 +249,15 @@ borró el 24 de agosto de 2026.
 
 | Archivo | Registros | Qué es |
 |---|---:|---|
-| `data/catalogo-vocabularios.json` | 22 listas, 133 opciones | El catálogo del producto: perfiles profesionales, zonas, patologías, tareas, modalidades, niveles. Explicado en `docs/CATALOGO.md` |
+| `data/catalogo-vocabularios.json` | 24 listas, 142 opciones | El catálogo del producto: perfiles profesionales, zonas, patologías, tareas, modalidades, niveles. Explicado en `docs/CATALOGO.md` |
 | `data/catalogo-oferta.json` | 9 servicios, 6 cursos, 1 evaluación | Lo que el producto ofrece |
 | `data/catalogo-fichas.json`, `data/catalogo-autorizaciones.json`, `data/catalogo-verificaciones.json` | — | Definiciones de las fichas del legajo |
 | `data/catalogo-disponibilidad.json` | 7 días × 3 turnos | La grilla horaria del alta y la pregunta de los reemplazos urgentes. Lo dibuja `js/disponibilidad.js` |
 
-Quedan **dos modelos de datos distintos para la misma cosa**: el de `perfil.html` (con `pts`,
-`starsCount`, `levelBar`) y el de la base traducido por `_mapFromDatabase` (con `estado`,
-`documentos`, `valorHora`). No coinciden, y el primero se va con el pendiente 2.
+**Ya no quedan dos modelos de datos para la misma cosa.** Había uno propio de `perfil.html`
+—con `pts`, `starsCount`, `levelBar`— al lado del que traduce `_mapFromDatabase` —con `estado`,
+`documentos`, `valorHora`—, y no coincidían. El primero se fue con las fichas escritas a mano:
+ninguno de esos tres nombres aparece hoy en ningún `.html` ni en ningún `.js` del proyecto.
 
 ### 3.2 Direcciones de red
 
@@ -347,24 +355,31 @@ opiniones sobre el diseño):
 
 | Archivo | Renglones | Lo usa |
 |---|---:|---|
-| `css/styles.css` | 2.196 | Las 10 páginas de la raíz |
+| `css/styles.css` | 2.274 | Las 10 páginas de la raíz |
 | `css/tokens.css` | 363 | Las 16 pantallas, en tres copias (raíz y las dos PWA) |
-| `css/utilidades.css` | 189 | Las 16 pantallas, en tres copias. Las 125 clases del pendiente 8 |
-| `css/mockup-app.css` | 137 | Sólo `mockup-app.html` |
+| `css/utilidades.css` | 189 | Las 16 pantallas, en tres copias. Las 125 clases del pendiente 8, cerrado |
+| `css/mockup-app.css` | 138 | Sólo `mockup-app.html` |
 | `pwa-asistente/css/styles-pwa.css` | 285 | Sólo la aplicación de asistentes |
 | `pwa-familia/css/styles-pwa.css` | 285 | Sólo la de familias (**copia idéntica de la anterior**) |
 
-Más **790 renglones de CSS en bloques `<style>` adentro del HTML**: 518 en `pwa-familia/index.html`
-y 272 en `pwa-asistente/index.html`. Las diez páginas del sitio público no tienen bloques `<style>`.
+La tabla cuenta cada original una vez. **En disco hay diez archivos y 4.638 renglones**, porque
+`tokens.css` y `utilidades.css` viven además en cada PWA: son las copias que `verificar_copias.mjs`
+compara byte a byte. Ese 4.638 es el número que sale de `node scripts/medir_estado.mjs` y el que
+lleva el README.
 
-**Y 982 declaraciones más pegadas a las etiquetas**, en 249 atributos `style=`. Eran 2.199 en 694
+Más **963 renglones de CSS en bloques `<style>` adentro del HTML**: 517 en `pwa-familia/index.html`,
+271 en `pwa-asistente/index.html` y 175 en `examen.html`. Las demás pantallas de la raíz no tienen
+bloques `<style>`.
+
+**Y 976 declaraciones más pegadas a las etiquetas**, en 247 atributos `style=`. Eran 2.199 en 694
 atributos hasta el 26 de agosto de 2026: los colores escritos a mano se fueron el 25 y el resto
-pasó a las 125 clases de `css/utilidades.css` el 26 —el pendiente 8, contado entero en
+pasó a las 125 clases de `css/utilidades.css` el 26 —el pendiente 8, ya cerrado y contado entero en
 `docs/ALCANCE.md`—. Lo que queda son las decisiones que aparecen una sola vez, que se dejaron a
 propósito, y `scripts/verificar_estilos.mjs` impide que vuelvan a escribirse a mano las que ya
 tienen clase.
 
-**Total: 3.455 renglones en hojas de estilo, 790 adentro del HTML y 982 declaraciones sueltas.**
+**Total: 4.638 renglones en hojas de estilo —de los cuales 3.534 son originales distintos—,
+963 adentro del HTML y 976 declaraciones sueltas.** Medido el 31 de agosto de 2026.
 
 ### 5.2 Framework
 

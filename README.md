@@ -35,7 +35,7 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | 12.380 renglones de JavaScript propio, en 32 archivos | 7.283 de ellos son copias byte a byte de otro archivo (pendiente 13) |
 | 4.173 renglones más metidos adentro del HTML | en 13 bloques `<script>` |
 | 4.638 renglones de hojas de estilo, en 10 archivos | 64 tokens con nombre en `css/tokens.css`, sin framework |
-| 976 declaraciones más, pegadas al HTML | en 247 atributos `style=` (pendiente 8) |
+| 976 declaraciones más, pegadas al HTML | en 247 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 12 de las 17 pantallas rescatan la sesión al abrir |
 | 4 servidores de afuera, sin `package.json` ni compilación | dos de tipografías y dos de bibliotecas |
 | 23 tablas y 47 migraciones en el repositorio | 27 chequeos las miran antes de cada commit |
