@@ -1,5 +1,5 @@
 /* ===================================================
-   VERIFICA LAS DIEZ REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
+   VERIFICA LAS DOCE REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
 
        node scripts/verificar_esquema.mjs
 
@@ -8,7 +8,7 @@
    Lo que corre hoy en el servidor es otra pregunta y se responde mirando el
    servidor (regla de la empresa «el estado real está por encima del documentado»).
 
-   Las diez:
+   Las doce:
 
    1. **Toda tabla nueva enciende su RLS en la misma migración que la crea**
       (regla de la empresa «RLS estricta en toda tabla nueva»). Encenderla después, a mano desde el panel, deja una ventana
@@ -188,6 +188,42 @@
       0033 tuvo que devolverlo—, y era lo único de todo el archivo que no
       miraba nadie.
 
+  12. **La Organización se resuelve en un solo lugar** (regla de la empresa
+      «cuando la plataforma no deja compartir código, el punto único de verdad
+      es una función SQL reutilizada por todas las políticas, nunca la misma
+      condición copiada política por política»). En Postgres una política no
+      puede llamar a otra ni heredar de ninguna: la única manera de no repetir
+      la condición es que todas le pregunten a la misma función. Acá esa función
+      es `public.prestadora_actual()`.
+
+      **Por qué importa, si la copia contesta lo mismo hoy.** Porque contesta lo
+      mismo *hoy*. El día que la función aprenda algo —que la membresía tenga
+      que estar activa, que una sesión de soporte no cuente, que una persona
+      dada de baja deje de ver— la copia sigue contestando lo de antes. Y no lo
+      nota nadie, porque leer sigue funcionando igual: lo que cambia es a quién
+      se le sigue dejando entrar. Es la misma forma de todas las reglas de este
+      archivo, la que no se ve mientras anda.
+
+      La regla mira dos lugares. Adentro de una política, que toda comparación
+      contra la columna de la Organización se conteste llamando a la función y
+      no rehaciendo la cuenta con un `select` o un `auth.uid()`. Y afuera, que
+      ninguna otra función deduzca la Organización sacándola de una tabla por
+      quien inició sesión: una segunda función que lo hiciera sería la misma
+      copia, escondida un piso más abajo y más difícil de ver.
+
+      **La única que tiene derecho a deducirla no es una exención con otro
+      nombre.** `LA_RESUELVE` no está en un `Map` de exenciones porque no
+      perdona nada: nombra el punto único de verdad que la regla existe para
+      proteger. Si mañana la resolviera otra función, lo que cambia es ese
+      renglón, y la regla sigue diciendo exactamente lo mismo —una sola—, que
+      es justo lo contrario de lo que hace una lista de exenciones, que crece.
+
+      **Sólo lo que está pegado a la comparación.** Del lado derecho del `=` se
+      mira hasta el primer `and` o el primer `or`, porque lo que viene después
+      ya es otra condición: una política puede tener un `exists (select …)`
+      legítimo —comprobar que quien pregunta participa del aviso— sin que eso
+      tenga nada que ver con cómo resolvió la Organización.
+
    Las cuentas de cuántas tablas y cuántas funciones hay no se escriben acá: las
    dice el renglón verde al terminar, que sale de contar los archivos. Un número
    escrito a mano en un encabezado queda viejo el día que se agrega una
@@ -226,6 +262,12 @@
      que gobierna la fila nueva, no que esté bien usada. Una política que la
      nombre y después la ignore pasa igual, lo mismo que en la octava. Y no
      compara el `with check` con el `using`: uno más angosto es legítimo.
+   - De la duodécima mira **cómo se resuelve** la Organización, no si el
+     resultado es el correcto. Una política que le pregunte a la función y
+     después la ignore pasa igual, lo mismo que en la octava y en la undécima. Y
+     no sabe si dos funciones distintas contestan lo mismo: reconoce la forma de
+     la deducción —sacar la columna de una tabla por quien inició sesión—, no su
+     resultado.
    - Una siembra acotada a una Prestadora por su nombre corto no es un barrido y
      no se mira. Es lo que hacen las migraciones de datos ficticios.
 =================================================== */
@@ -371,6 +413,21 @@ const ABRE_DE_MAS = /\ball\b|\btruncate\b/i;
 const POLITICA_DE_TABLA =
   /create\s+policy\s+"([^"]+)"\s+on\s+(?:"?([a-z_]+)"?\s*\.\s*)?(%I|"?[a-z_]+"?)/gi;
 const BAJA_DE_POLITICA = /drop\s+policy\s+(?:if\s+exists\s+)?"([^"]+)"/gi;
+/* Para la duodécima. La comparación con la columna de la Organización y lo que
+   viene a contestarla; y la deducción hecha a mano, que es sacar esa columna de
+   una tabla preguntando quién inició sesión. */
+const COMPARA_ORGANIZACION =
+  /\b(?:tenant_id|prestadora_id)\s*(?:=|<>|!=|\bin\b)\s*(\(?[\s\S]{0,140})/gi;
+const RESUELVE_SOLA = /\bselect\b|auth\.uid\s*\(/i;
+const FUNCION_CON_CUERPO =
+  /create\s+(?:or\s+replace\s+)?function\s+(?:"?public"?\.)?"?([a-z_]+)"?[\s\S]{0,400}?\$([a-z_]*)\$([\s\S]*?)\$\2\$/gi;
+const DEDUCE_LA_ORGANIZACION =
+  /\bselect\b[\s\S]{0,120}?\b(?:tenant_id|prestadora_id)\b[\s\S]{0,120}?\bfrom\b[\s\S]{0,200}?auth\.uid\s*\(/i;
+/* La única que tiene derecho a deducirla. **No es una exención con otro
+   nombre**: es el punto único de verdad que la regla viene a proteger, y por eso
+   no va a un `Map` de exenciones sino acá. Si mañana la resolviera otra, lo que
+   cambia es este renglón, y la regla sigue diciendo lo mismo: una sola. */
+const LA_RESUELVE = 'prestadora_actual';
 const SOLO_LEE = /\bfor\s+(?:select|delete)\b/i;
 const ESCRIBE = /\b(?:insert|update|delete)\b/i;
 const DEL_SERVIDOR = /service_role/i;
@@ -532,7 +589,14 @@ const renglonDe = (texto, posicion) => texto.slice(0, posicion).split('\n').leng
 function politicasDadasDeBaja(textos, nombres) {
   const bajas = new Map();
   for (const [i, texto] of textos.entries()) {
-    const limpio = texto.split('\n')
+    /* Los finales de renglón se unifican **antes** de medir. En Windows el
+       archivo llega con dos caracteres por renglón y quien juzga las altas mide
+       sobre el texto ya unificado: si las bajas se midieran sobre el crudo, cada
+       posición vendría corrida hacia adelante tantos caracteres como renglones
+       haya arriba, y una política creada debajo de su propio `drop policy if
+       exists` —que es como se escriben todas acá— parecería creada **antes** de
+       esa baja, o sea dada de baja después. Se la saltearía sin decirlo. */
+    const limpio = texto.replace(/\r\n/g, '\n').split('\n')
       .map((l) => (/^\s*--/.test(l) ? ' '.repeat(l.length) : l)).join('\n');
     for (const m of limpio.matchAll(BAJA_DE_POLITICA)) {
       if (!bajas.has(m[1])) bajas.set(m[1], []);
@@ -542,19 +606,26 @@ function politicasDadasDeBaja(textos, nombres) {
   return bajas;
 }
 
-/* Las políticas de `public` que dejan una fila escrita: `[nombre, tabla,
-   posición, cuerpo]`. La regla y la cuenta del renglón verde salen de acá, para
-   que no se puedan despegar. Las de `storage` no entran: son de la séptima. */
-function politicasQueEscriben(sinComentarios) {
+/* Todas las políticas de `public`: `[nombre, tabla, posición, cuerpo]`. Las de
+   `storage` no entran: son de la séptima. La undécima y la duodécima leen las
+   políticas de distinta manera pero las reconocen igual, así que reconocerlas
+   está una sola vez —que es la misma regla de la empresa que la duodécima viene
+   a hacer cumplir, un piso más arriba—. */
+function politicasDeTabla(sinComentarios) {
   const salida = [];
   for (const m of sinComentarios.matchAll(POLITICA_DE_TABLA)) {
     if ((m[2] || 'public').toLowerCase() !== 'public') continue;
     const corte = sinComentarios.indexOf(';', m.index);
     const cuerpo = sinComentarios.slice(m.index, corte > 0 ? corte : sinComentarios.length);
-    if (SOLO_LEE.test(cuerpo)) continue;
     salida.push([m[1], m[3].replace(/"/g, '').toLowerCase(), m.index, cuerpo]);
   }
   return salida;
+}
+
+/* Las que dejan una fila escrita. La regla y la cuenta del renglón verde salen
+   de acá, para que no se puedan despegar. */
+function politicasQueEscriben(sinComentarios) {
+  return politicasDeTabla(sinComentarios).filter(([, , , cuerpo]) => !SOLO_LEE.test(cuerpo));
 }
 
 /** Si a esta política la borra una migración posterior a donde se la crea. */
@@ -853,6 +924,44 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, b
     }
   }
 
+  /* 12. La Organización se resuelve en un solo lugar. La octava dice de dónde
+     **no** puede salir; ésta dice que no se la vuelva a deducir. Adentro de una
+     política, la comparación con la columna de la Organización se contesta
+     llamando a la función, no rehaciendo la cuenta. Una condición copiada no
+     aprende: el día que la función sepa algo nuevo —que la membresía tenga que
+     estar activa, por ejemplo— la copia sigue contestando lo de antes, y no lo
+     nota nadie, porque leer sigue funcionando igual. */
+  for (const [politica, tabla, posicion, cuerpo] of politicasDeTabla(sinComentarios)) {
+    if (yaNoEsta(politica, nombre, posicion, bajas)) continue;
+    for (const m of cuerpo.matchAll(COMPARA_ORGANIZACION)) {
+      /* Sólo lo que está pegado a la comparación: hasta el primer `and` o el
+         primer `or`, que ya es otra condición y puede traer una subconsulta que
+         no resuelve nada de esto —comprobar que quien pregunta participa del
+         aviso, por ejemplo—. */
+      const derecha = m[1].split(/\band\b|\bor\b/i)[0];
+      if (!RESUELVE_SOLA.test(derecha)) continue;
+      fallas.push([renglonDe(t, posicion + m.index),
+        'la política «' + politica + '» ' + (tabla === '%i'
+          ? 'de las tablas que arma el bucle'
+          : 'de `' + tabla + '`') + ' deduce la Organización en vez de pedírsela ' +
+        'a `public.' + LA_RESUELVE + '()`: es la misma condición copiada, y una ' +
+        'copia no aprende lo que la función aprenda después']);
+    }
+  }
+
+  /* 12 bis. Y afuera de las políticas, lo mismo. Una segunda función que dedujera
+     la Organización sería la misma condición copiada, escondida un piso más
+     abajo y más difícil de ver. */
+  for (const m of sinComentarios.matchAll(FUNCION_CON_CUERPO)) {
+    if (m[1].toLowerCase() === LA_RESUELVE) continue;
+    if (!DEDUCE_LA_ORGANIZACION.test(m[3])) continue;
+    fallas.push([renglonDe(t, m.index),
+      '`' + m[1] + '()` deduce la Organización sacándola de una tabla por quien ' +
+      'inició sesión, que es lo que hace `public.' + LA_RESUELVE + '()`. Dos ' +
+      'lugares que contestan lo mismo se separan el día que uno de los dos ' +
+      'aprende algo, y el que quede viejo decide permisos igual']);
+  }
+
   return fallas.sort((a, b) => a[0] - b[0]);
 }
 
@@ -947,7 +1056,14 @@ const MAL = [
    'create policy "Lo mío" on public.%I for all to authenticated\n' +
    '  with check (user_id = auth.uid());\n'],
   ['un permiso que deja escribir `profiles` sin nombrar columnas',
-   'grant update on table public.profiles to authenticated;\n']
+   'grant update on table public.profiles to authenticated;\n'],
+  ['una política que rehace la cuenta de la Organización en vez de pedirla',
+   'create policy "Lo mío" on public.cosas for select to authenticated\n' +
+   '  using (tenant_id = (select tenant_id from public.profiles where id = auth.uid()));\n'],
+  ['una segunda función que la deduce, que es la misma copia un piso más abajo',
+   'create function public.mi_prestadora() returns uuid language sql security definer as $$\n' +
+   '  select tenant_id from public.profiles where id = auth.uid();\n$$;\n' +
+   'revoke all on function public.mi_prestadora() from public, anon;\n']
 ];
 
 const BIEN = [
@@ -1042,7 +1158,18 @@ const BIEN = [
    'create policy "Lo mío" on public.%I for all to authenticated\n' +
    '  with check (tenant_id = public.prestadora_actual());\n'],
   ['el permiso de `profiles` nombrando la columna que sí se puede tocar',
-   'grant update (full_name) on table public.profiles to authenticated;\n']
+   'grant update (full_name) on table public.profiles to authenticated;\n'],
+  ['la que le pregunta a la función y además tiene una subconsulta que no viene al caso',
+   'create policy "Lo mío" on public.cosas for select to authenticated\n' +
+   '  using (tenant_id = public.prestadora_actual()\n' +
+   '     and exists (select 1 from public.avisos a where a.id = aviso_id));\n'],
+  ['`prestadora_actual()` misma, que es la única que tiene derecho a deducirla',
+   'create function public.prestadora_actual() returns uuid language sql security definer as $$\n' +
+   '  select tenant_id from public.profiles where id = auth.uid();\n$$;\n' +
+   'revoke all on function public.prestadora_actual() from public, anon;\n'],
+  ['la columna comparada contra la de otra tabla, que no deduce nada',
+   'create policy "Del aviso" on public.cosas for select to authenticated\n' +
+   '  using (tenant_id = a.tenant_id);\n']
 ];
 
 /* De acá para abajo está la verificación. De acá para arriba está la regla que
@@ -1079,6 +1206,7 @@ if (ME_CORRIERON_A_MI) {
   let permisos = 0;
   let avisos = 0;
   let escrituras = 0;
+  let resoluciones = 0;
   const migraciones = readdirSync(carpeta).filter((n) => n.endsWith('.sql')).sort();
   seRevisaron(migraciones.length, 'una sola migración `.sql` para revisar');
   const textos = migraciones.map((n) => readFileSync(join(carpeta, n), 'utf8'));
@@ -1112,10 +1240,20 @@ if (ME_CORRIERON_A_MI) {
         texto.slice(m.index, fin > 0 ? fin : texto.length))) funciones++;
     }
     politicas += [...texto.matchAll(POLITICA_DEPOSITO)].length;
-    /* La cuenta sale del mismo lugar que la regla, para que no se despeguen. */
+    /* La cuenta sale del mismo lugar que la regla, para que no se despeguen, y
+       sobre el texto con los finales de renglón unificados, que es donde miden
+       las bajas contra las que se la compara. */
     for (const [politica, , posicion] of politicasQueEscriben(
-      texto.split('\n').map((l) => (/^\s*--/.test(l) ? ' '.repeat(l.length) : l)).join('\n'))) {
+      texto.replace(/\r\n/g, '\n').split('\n')
+        .map((l) => (/^\s*--/.test(l) ? ' '.repeat(l.length) : l)).join('\n'))) {
       if (!yaNoEsta(politica, nombre, posicion, bajas)) escrituras++;
+    }
+    /* Y lo mismo con la duodécima: la cuenta sale del mismo lugar que la regla. */
+    for (const [politica, , posicion, cuerpo] of politicasDeTabla(
+      texto.replace(/\r\n/g, '\n').split('\n')
+        .map((l) => (/^\s*--/.test(l) ? ' '.repeat(l.length) : l)).join('\n'))) {
+      if (yaNoEsta(politica, nombre, posicion, bajas)) continue;
+      resoluciones += [...cuerpo.matchAll(COMPARA_ORGANIZACION)].length;
     }
     if (nombre.slice(0, 4) >= LA_PUERTA_SE_CERRO) {
       /* Sin los renglones comentados, igual que la regla: la 0047 cita un
@@ -1149,7 +1287,7 @@ if (ME_CORRIERON_A_MI) {
     for (const falla of fallas) console.error('  - ' + falla);
     console.error(
       `\n${fallas.length} ${fallas.length === 1 ? 'incumplimiento' : 'incumplimientos'}. ` +
-      'Las once reglas están en el encabezado de este archivo, con el porqué de cada\n' +
+      'Las doce reglas están en el encabezado de este archivo, con el porqué de cada\n' +
       'una. La RLS y la revocación van en la misma migración que crea la tabla o la\n' +
       'función, nunca en una posterior y nunca a mano desde el panel de Supabase; la\n' +
       'columna de Organización, la clave primaria y la moneda pueden llegar después,\n' +
@@ -1168,6 +1306,10 @@ if (ME_CORRIERON_A_MI) {
       'gobierna la fila que queda escrita, que es el `with check` cuando está y el\n' +
       '`using` cuando no: pedirla sólo para leer deja entrar y deja mudar la fila a\n' +
       'otra Prestadora.\n' +
+      'Y la Organización se resuelve en un solo lugar: toda política se la pide a\n' +
+      '`public.prestadora_actual()` en vez de rehacer la cuenta, y ninguna otra\n' +
+      'función la deduce. Una condición copiada contesta lo mismo hoy y no aprende\n' +
+      'lo que la función aprenda mañana.\n' +
       'Si un caso no puede cumplirla, va a SIN_ORGANIZACION, a SIN_MONEDA, a\n' +
       'AL_ALCANCE_ANONIMO, a SIN_ORGANIZACION_EN_EL_DEPOSITO o a\n' +
       'SIN_ORGANIZACION_AL_ESCRIBIR de este mismo\n' +
@@ -1196,5 +1338,8 @@ if (ME_CORRIERON_A_MI) {
     `Y de las ${escrituras} políticas que siguen en pie y dejan escribir, todas ` +
     'nombran la Organización en la condición que gobierna la fila que queda escrita ' +
     `(${SIN_ORGANIZACION_AL_ESCRIBIR.size} exenta, con su motivo y con el permiso por ` +
-    'columna que la sostiene, comprobado acá mismo).');
+    'columna que la sostiene, comprobado acá mismo). ' +
+    `Y las ${resoluciones} veces que una política viva compara contra la columna ` +
+    `de la Organización, las ${resoluciones} se la piden a \`public.${LA_RESUELVE}()\`: ` +
+    'ninguna rehace la cuenta por su lado, y ninguna otra función la deduce.');
 }

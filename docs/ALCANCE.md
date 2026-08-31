@@ -3237,7 +3237,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 - **La puerta es `guias_de(p_slug)`** (`:272`), del mismo tipo que `vocabularios_de`: la tabla no le
   concede nada a `anon` (`:254`), y lo que sale a la calle es una función que **exige el nombre
   corto**, devuelve la general más la de esa sola Prestadora, y sólo las publicadas. Está anotada
-  con su motivo en `scripts/verificar_esquema.mjs:280`, que es donde viven las funciones que llegan
+  con su motivo en `scripts/verificar_esquema.mjs:322`, que es donde viven las funciones que llegan
   al alcance anónimo a propósito.
 - **La pantalla nueva es `screen-guias`** en la aplicación del Asistente
   (`pwa-asistente/index.html:702`), con los cuatro estados y un buscador. **Es una biblioteca de
@@ -5521,6 +5521,63 @@ de `git status -z` —primero el nombre nuevo, después el viejo— y el lector 
 como si fuera otro cambio, sacando su estado de las dos primeras letras del propio nombre. Una
 falsificación que sólo prueba los casos que uno ya pensó no prueba nada; éste salió del único
 caso que se probó de dos maneras.
+
+### La regla que se defiende sola, y el error que encontró adentro de la anterior
+
+La duodécima regla del chequeo de esquema hace cumplir un renglón de `CLAUDE.md` de la empresa que
+hasta ahora vivía sólo en prosa: **cuando la plataforma no deja compartir código, el punto único de
+verdad es una función SQL reutilizada por todas las políticas, nunca la misma condición copiada
+política por política**. En Postgres una política no puede llamar a otra ni heredar de ninguna, así
+que la única manera de no repetir la condición es que todas le pregunten a la misma función. Acá
+esa función es `public.prestadora_actual()`, definida en la 0002 y en ningún otro lado.
+
+**Se midió antes de escribir una línea, y salió verde entera.** Treinta y tres comparaciones contra
+la columna de la Organización en las políticas que siguen en pie, las treinta y tres resueltas
+llamando a la función; ninguna que rehaga la cuenta con un `select` propio, ni siquiera entre las
+políticas ya dadas de baja; y ninguna segunda función que deduzca la Organización. Por eso este
+chequeo **no lleva límite de migración ni lista de exenciones**: no hace falta perdonar nada, sólo
+impedir el primero.
+
+**Y la única que tiene derecho a deducirla no es una exención con otro nombre.** `LA_RESUELVE` no
+está en un `Map` de exenciones porque no perdona: nombra el punto único de verdad que la regla
+existe para proteger. Una lista de exenciones crece; esto es siempre una sola, y el día que la
+resuelva otra función lo que cambia es ese renglón, no la regla.
+
+**Por qué importa una copia que hoy contesta lo mismo.** Porque contesta lo mismo *hoy*. El día que
+la función aprenda algo —que la membresía tenga que estar activa, que una sesión de soporte no
+cuente, que una persona dada de baja deje de ver— la copia sigue contestando lo de antes. Y no lo
+nota nadie, porque leer sigue funcionando igual: lo que cambia es a quién se le sigue dejando
+entrar. Es la forma de siempre en este archivo, la que no se ve mientras anda.
+
+**La falsificación encontró un agujero adentro de la undécima, que ya estaba publicada.** Para
+probar que la regla nueva podía fallar se rompió una política real: se le hizo resolver la
+Organización con un `select` propio, y el chequeo **pasó en verde**. La política estaba escrita
+debajo de su propio `drop policy if exists` —que es como se escriben todas acá— y el chequeo la
+daba por dada de baja. El motivo: las bajas se medían sobre el archivo tal como llega del disco y
+las altas sobre el texto con los finales de renglón unificados. En Windows cada renglón ocupa dos
+caracteres, así que **toda posición del archivo crudo viene corrida hacia adelante tantos
+caracteres como renglones haya arriba**, y a partir de cierta altura del archivo la baja parece
+estar *después* del alta que la precede.
+
+**Ocho políticas vivas no las miraba nadie, y siete de ellas escriben.** Cuatro de la 0020 —los
+mensajes, los reportes, las fichadas y el puntaje de la Prestadora— y las cuatro de la 0041. La
+undécima regla llevaba desde que se publicó sin juzgarlas. Se comprobó de la única manera que
+prueba algo: poniéndole `with check (true)` al puntaje de la Prestadora, que es el agujero entero,
+y corriendo las dos versiones contra el mismo archivo roto. **La publicada pasó en verde; la de hoy
+lo encuentra.**
+
+**Y el contador iba por el otro carril.** La cuenta del renglón verde medía sobre el archivo crudo,
+así que era correcta: decía veinte políticas de escritura en pie, y son veinte. Lo que se había
+despegado no era el número sino el juicio: el renglón verde afirmaba que las veinte nombran la
+Organización cuando sólo trece se habían mirado. El comentario que está justo encima de esa cuenta
+dice «la cuenta sale del mismo lugar que la regla, para que no se despeguen», y se habían despegado
+igual, un piso más abajo de donde ese comentario mira. Las dos mediciones se unificaron sobre el
+mismo texto.
+
+**Tres veces seguidas la falsificación encontró algo que no se estaba buscando**: el renombre
+preparado en el chequeo de migraciones, la doble cuenta de mi propia medición, y ahora una regla
+publicada que se salteaba ocho políticas sin decirlo. Ninguna de las tres apareció leyendo el
+código; las tres aparecieron rompiendo un archivo real y mirando si el chequeo se daba cuenta.
 
 ## 6. Deuda del código actual
 
