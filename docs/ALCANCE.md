@@ -3840,7 +3840,7 @@ falta:**
 **Y las cinco formas se eligieron por una sola condición: que no tengan hoy ningún uso legítimo.**
 Se contó sobre los 224 archivos de texto del proyecto y las cinco dan cero. Lo único con forma de
 credencial que hay escrito son las tres apariciones de la clave publicable —el original y sus dos
-copias, decidido y anotado en `docs/INVENTARIO.md:379`— y cinco contraseñas de cuentas ficticias
+copias, decidido y anotado en `docs/INVENTARIO.md:383`— y cinco contraseñas de cuentas ficticias
 adentro de los guiones de prueba, que es como se entra a la base de esta máquina para probar. Por
 eso la contraseña escrita a mano **no** entra en la lista: daría cinco rojos que habría que
 perdonar de a uno, y una lista de perdones sobre credenciales es exactamente lo que esta regla no

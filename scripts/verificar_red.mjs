@@ -16,7 +16,7 @@
    atributos `style=` del marcado» y lo contó como éxito. Está en el pendiente
    69 de `docs/PENDIENTES.md`.
 
-   QUÉ EXIGE, QUE SON CINCO COSAS
+   QUÉ EXIGE, QUE SON SEIS COSAS
    1. Que todo chequeo llame por lo menos una vez a `seRevisaron()` o a
       `hayArchivos()`, las dos de `scripts/recorrido.mjs`, que son las que se
       plantan cuando la cuenta da cero. La llamada se busca **con los
@@ -41,9 +41,28 @@
       al revés, una fila sin archivo detrás es una regla que se cree sostenida
       y no lo está. Queda afuera `verificar_todo.mjs`, que no es un chequeo
       sino el que los corre.
+   6. Que si un documento manda a correr `node scripts/X`, `X` exista y
+      `docs/INVENTARIO.md` diga qué hace. Es la quinta un paso afuera de la red:
+      aquélla mira los chequeos, que entran solos en `verificar_todo.mjs`; ésta
+      mira las herramientas que **hay que acordarse de correr**, y de ésas
+      dice el `CLAUDE.md` del producto que una que hay que acordarse de correr
+      es una que no corre. Medido el 31 de agosto de 2026: de los doce
+      guiones que la documentación manda a correr, **dos no figuraban en
+      ninguna parte del inventario** —`comprobar_publicacion.mjs`, que es la
+      única herramienta que certifica una publicación, y
+      `probar_alta_y_baja.mjs`, que prueba la puerta de alta y baja contra el
+      servidor—, y un tercero, `medir_estado.mjs`, de donde salen todos los
+      números que la documentación no escribe a mano, sólo se nombraba de paso
+      adentro del párrafo de otro. La lista del inventario **es una selección a
+      propósito** —lo dice ahí mismo: «los demás no hace falta recordarlos»—, así
+      que la regla no le pide que estén todos: le pide que esté el que un
+      documento te manda a correr, que es el único caso en que no saber qué
+      hace te frena. Y del otro lado exige que exista: una orden de correr
+      algo que ya no está es peor que ninguna, porque manda a alguien a
+      buscar un archivo que se renombró y no dice adónde fue.
 
    CÓMO SE PRUEBA, Y POR QUÉ ASÍ
-   Cinco veces, porque las cinco pueden fallar:
+   Seis veces, porque las seis pueden fallar:
    1. Contra la función de verdad: `seRevisaron(0, …)` tiene que cortar y
       `seRevisaron(3, …)` tiene que devolver 3. Sin esto, la guarda podría estar
       vacía por dentro y todos los chequeos «cumplirían» igual.
@@ -58,6 +77,12 @@
       corresponde. Los tres tienen que salir como salen.
    5. Contra una tabla del README de mentira, para que el lector de la tabla no
       confunda una fila con un nombre citado al pasar en un párrafo.
+   6. Contra un documento de mentira que manda a correr tres guiones y nombra
+      un cuarto sin mandarlo, y contra una lista de inventario de mentira. Los
+      dos lectores tienen que separar **la orden de correr** de la simple
+      mención, y **la fila** del nombre citado en un párrafo: son las dos formas
+      en que esta regla se pondría roja sin motivo, y un rojo sin motivo en un
+      chequeo del gancho de `commit` termina en que alguien lo apaga.
 =================================================== */
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -247,6 +272,34 @@ function enLaTablaDelReadme(texto) {
 }
 
 
+/* ── Y QUE EL INVENTARIO DIGA QUÉ HACE LO QUE TE MANDAN A CORRER ────────
+   La quinta mira los chequeos, que no hace falta recordar: `verificar_todo.mjs`
+   los busca en la carpeta y el próximo entra solo. Ésta mira las otras, las
+   que **hay que acordarse de correr**, y son las que se pierden.
+
+   Se cuenta como orden `node scripts/X` y no la simple mención del nombre, que
+   es otra cosa: un documento puede nombrar un guion para contar una historia
+   —«esto lo encontró tal chequeo»— sin mandar a nadie a correrlo. De los
+   sesenta y ocho guiones que la documentación nombra, doce se mandan a
+   correr, y son ésos los que tienen que estar. */
+function mandadosACorrer(texto) {
+  return new Set(
+    Array.from(texto.matchAll(/\bnode (scripts\/[a-zA-Z_]+\.\.?(?:mjs|py))/g))
+      .map((a) => a[1])
+  );
+}
+
+/* Y las filas de la lista de guiones del inventario. Fila, no mención: tiene
+   que empezar el renglón, igual que en la tabla del README, porque el inventario
+   nombra guiones adentro de la descripción de otros todo el tiempo. */
+function enLaListaDelInventario(texto) {
+  return new Set(
+    Array.from(texto.matchAll(/^\| `(scripts\/[a-zA-Z_]+\.\.?(?:mjs|py))` \|/gm))
+      .map((a) => a[1])
+  );
+}
+
+
 /* ── 1 y 2. Que la guarda de verdad se plante ───────────────────────────── */
 
 const fallas = [];
@@ -423,6 +476,44 @@ if (enLaTablaDelReadme('Acá se nombra a `verificar_uno` en el medio de un rengl
   fallas.push('Tomó por fila de la tabla a un chequeo nombrado en un párrafo.');
 }
 
+/* ── 7. Que separe la orden de correr de la simple mención ───────────── */
+
+const DOCUMENTO_DE_MENTIRA = [
+  'Para medir se corre `node scripts/medir_de_mentira.mjs`, y para arreglarlo',
+  '`node scripts/arreglar_de_mentira.mjs --escribir`. El servidor es',
+  '`node scripts/servidor_de_mentira.py`.',
+  'Esto lo encontró `scripts/mirar_de_mentira.mjs`, que no se manda a correr.'
+].join('\n');
+
+const mandados = mandadosACorrer(DOCUMENTO_DE_MENTIRA);
+if (mandados.size !== 3) {
+  fallas.push(
+    'El lector de `node scripts/X` leyó ' + mandados.size + ' y tenía que leer 3.');
+}
+if (mandados.has('scripts/mirar_de_mentira.mjs')) {
+  fallas.push('Tomó por orden de correr a un guion nombrado al pasar.');
+}
+if (!mandados.has('scripts/servidor_de_mentira.py')) {
+  fallas.push('El lector de `node scripts/X` no vio el guion de Python.');
+}
+
+const LISTA_DE_MENTIRA = [
+  '| Archivo | Qué hace |',
+  '|---|---|',
+  '| `scripts/medir_de_mentira.mjs` | Mide algo. |',
+  '| `scripts/servidor_de_mentira.py` | Sirve algo. |',
+  'Acá se nombra a `scripts/arreglar_de_mentira.mjs` en el medio de un renglón.'
+].join('\n');
+
+const conFila = enLaListaDelInventario(LISTA_DE_MENTIRA);
+if (conFila.size !== 2) {
+  fallas.push('El lector del inventario leyó ' + conFila.size + ' filas y tenía que leer 2.');
+}
+if (conFila.has('scripts/arreglar_de_mentira.mjs')) {
+  fallas.push('Tomó por fila del inventario a un guion nombrado en un párrafo.');
+}
+
+
 /* ── El recorrido de verdad ─────────────────────────────────────────────── */
 
 const chequeos = readdirSync(aca)
@@ -522,6 +613,40 @@ for (const nombre of [...enElReadme].filter((n) => !enLaCarpeta.has(n))) {
   );
 }
 
+/* Y los documentos contra el inventario. El corpus son todos los `.md` del
+   proyecto, con el recorrido que ya excluye las cajas fuertes. */
+const documentos = archivos(join(aca, '..'), ['.md']);
+seRevisaron(documentos.length, 'ningún documento en el que buscar `node scripts/X`');
+
+const ordenados = new Map();
+for (const doc of documentos) {
+  const relativo = doc.slice(join(aca, '..').length + 1).split(/[\\\/]/).join('/');
+  for (const guion of mandadosACorrer(readFileSync(doc, 'utf8'))) {
+    if (!ordenados.has(guion)) ordenados.set(guion, relativo);
+  }
+}
+seRevisaron(ordenados.size, 'ningún guion que la documentación mande a correr');
+
+const conSuFila = enLaListaDelInventario(
+  readFileSync(join(aca, '..', 'docs', 'INVENTARIO.md'), 'utf8'));
+seRevisaron(conSuFila.size, 'ninguna fila en la lista de guiones del inventario');
+
+for (const [guion, donde] of ordenados) {
+  if (!existsSync(join(aca, '..', guion))) {
+    fallas.push(
+      `\`${donde}\` manda a correr \`${guion}\` y ese archivo no está.` +
+      '\n      Una orden de correr algo que ya no existe manda a buscar un archivo\n' +
+      '      que se renombró sin decir adónde fue.');
+    continue;
+  }
+  if (!conSuFila.has(guion)) {
+    fallas.push(
+      `\`${donde}\` manda a correr \`${guion}\` y \`docs/INVENTARIO.md\` no lo nombra.` +
+      '\n      Una herramienta que hay que acordarse de correr y que además no dice en\n' +
+      '      ninguna parte qué hace es una herramienta que no corre.');
+  }
+}
+
 for (const nombre of sinGuarda) {
   fallas.push(
     `\`scripts/${nombre}\` no llama a \`seRevisaron()\` ni a \`hayArchivos()\`.\n` +
@@ -569,7 +694,11 @@ if (fallas.length > 0) {
     'Y una exención que nombra un archivo que ya no está se saca: casi todas están\n' +
     'escritas por archivo, así que apagan el chequeo sobre él entero. Si el archivo\n' +
     'se renombró, se corrige la clave; si se fue, se borra el renglón. Lo mismo\n' +
-    'vale para la que nombra una columna: sale de las migraciones, no de la base.'
+    'vale para la que nombra una columna: sale de las migraciones, no de la base.\n' +
+    'Y el guion que un documento manda a correr se agrega a la lista de guiones\n' +
+    'de `docs/INVENTARIO.md`, con una fila que empiece el renglón. Esa lista es una\n' +
+    'selección a propósito y no tiene que estar entera; tiene que estar el que\n' +
+    'alguien va a ir a correr sin saber qué hace.'
   );
   process.exit(1);
 }
@@ -580,5 +709,8 @@ console.log(
   `pantallas escrita a mano ni metida adentro de la clave de una exención, y los ` +
   `${enElReadme.size} nombrados en la tabla del README. Y en los ${guiones.length} guiones ` +
   `de \`scripts/\`, ninguna exención que nombre un archivo que ya no está ni una ` +
-  `columna que no declara ninguna de las ${migraciones.length} migraciones.`
+  `columna que no declara ninguna de las ${migraciones.length} migraciones. Y de los ` +
+  `${ordenados.size} guiones que los ${documentos.length} documentos mandan a correr, los ` +
+  `${ordenados.size} existen y los ${ordenados.size} tienen su fila entre las ` +
+  `${conSuFila.size} de la lista de \`docs/INVENTARIO.md\`.`
 );
