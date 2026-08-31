@@ -1,5 +1,22 @@
 # Política de Datos Personales
 
+> **Esto es un modelo, y quien lo adopta es su Prestadora.** El texto lo redactó **CeltaTech**,
+> que desarrolla y licencia el software Careonys, y lo entrega **a título de sugerencia**: cada
+> Prestadora decide si lo adopta como política propia, la cambia o escribe la suya. Lo que
+> CeltaTech sí sabe, y verificó, es **qué hace su software**; lo que no le corresponde decir es
+> qué datos pide una Prestadora, para qué los usa y ante quién responde por ellos: **eso es de
+> ella**. CeltaTech no presta el servicio de cuidado, no es parte de este trato y **no asume
+> ninguna responsabilidad sobre este texto**: no es asesoramiento legal, ningún abogado lo revisó
+> todavía, se entrega tal como está —sin garantía de que sirva para el caso de una Prestadora en
+> particular, ni de que siga al día cuando la ley cambie—, y **responde por él quien lo publica
+> bajo su nombre**.
+>
+> **Y hoy el software todavía no permite eso**, así que se dice acá en vez de esconderlo: este
+> archivo es uno solo, igual para todas las Prestadoras, y ninguna lo adoptó ni lo pudo cambiar.
+> Las tres pantallas que lo enlazan lo muestran como si fuera de la Prestadora por la que se
+> entró, y no es de ninguna. Está anotado como pendiente 133 y se cierra cuando cada Prestadora
+> tenga dónde poner sus propios textos.
+
 > **Documento vivo.** Rige tal como está desde el 31 de agosto de 2026 **por decisión del
 > Desarrollador**, que resolvió tomarlo por válido sin esperar a nadie: **mientras el
 > proyecto no esté concluido, ésta es la versión válida**. Al
@@ -18,7 +35,7 @@
 | | |
 |---|---|
 | **A quién le habla** | A toda persona cuyos datos entran en Careonys: la **Familia**, el **Paciente**, el **Asistente**, y quien figure como referencia de un Asistente |
-| **De quién es esta política** | De la **Prestadora** que presta el servicio |
+| **De quién es esta política** | De la **Prestadora** que la adopte. CeltaTech sólo entrega el modelo |
 | **Con qué software** | Careonys, licenciado por **CeltaTech** |
 | **Jurisdicción** | República Argentina |
 | **Última actualización** | 31 de agosto de 2026 |
@@ -396,6 +413,7 @@ lo acepte de nuevo.
 | Fecha | Qué cambió |
 |---|---|
 | 31 de agosto de 2026 | Primera redacción. Se escribió de cero, midiendo cada afirmación contra el código y contra las migraciones. Se declararon por primera vez la geolocalización al fichar, los datos de salud del Reporte diario, los datos de terceros, qué expone exactamente el directorio público, que el software no usa cookies ni rastreadores, que no hay registro de auditoría y que la baja no borra nada. Quedan marcados como huecos el organismo de control, el reparto de responsabilidad con CeltaTech, los tribunales, los plazos de conservación y el procedimiento de supresión |
+| 31 de agosto de 2026 | **El documento se declara lo que es: un modelo.** El Desarrollador precisó ese día que los documentos legales de un producto de CeltaTech viven adentro de sus términos y de sus contratos con el Cliente, y que a la Prestadora CeltaTech sólo puede entregarle **un modelo, a título de sugerencia y sin ninguna responsabilidad sobre él**. El encabezado ahora lo dice en su cara —quién lo entrega, que no es asesoramiento legal, que se entrega tal como está y que adoptarlo es decisión de la Prestadora— y **admite que el producto todavía no cumple esa forma**, porque el texto no se entrega sino que se acepta. Cambian el encabezado y la ficha de arriba |
 | 31 de agosto de 2026 | **Se separaron los dos mundos**, por decisión del Desarrollador de ese día: CeltaTech licencia el software a la Prestadora y no tiene vínculo de ninguna índole con la Familia, el Paciente, el Asistente ni nadie que trate con una Prestadora, y **la Prestadora no le traslada a CeltaTech ninguna responsabilidad por el uso que hace del software**. Cambia la §2.2, y el hueco de la §2.4 se achica: el reparto queda contestado y sigue abierta sólo la nomenclatura ante el organismo de control |
 
 ---

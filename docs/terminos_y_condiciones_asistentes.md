@@ -1,5 +1,21 @@
 # Términos y Condiciones para Asistentes
 
+> **Esto es un modelo, y quien lo adopta es su Prestadora.** El texto lo redactó **CeltaTech**,
+> que desarrolla y licencia el software Careonys, y lo entrega **a título de sugerencia**: cada
+> Prestadora decide si lo adopta como propio, lo cambia o escribe el suyo. CeltaTech **no presta
+> el servicio de cuidado, no es parte de este trato y no asume ninguna responsabilidad sobre este
+> texto**. Dicho sin vueltas: **no es asesoramiento legal**, ningún abogado lo revisó todavía, se
+> entrega tal como está —sin garantía de que sirva para el caso de una Prestadora en particular,
+> ni de que siga al día cuando la ley cambie—, y **responde por él quien lo publica bajo su
+> nombre**. Adaptarlo a lo que hace y hacerlo revisar por su propio abogado antes de publicarlo
+> es decisión de la Prestadora.
+>
+> **Y hoy el software todavía no permite eso**, así que se dice acá en vez de esconderlo: este
+> archivo es uno solo, igual para todas las Prestadoras, y ninguna lo adoptó ni lo pudo cambiar.
+> Peor: no se entrega, **se acepta**, con una casilla obligatoria al darse de alta. Un modelo que
+> alguien firma dejó de ser un modelo. Está anotado como pendiente 133 y se cierra cuando cada
+> Prestadora tenga dónde poner sus propios textos.
+
 > **Documento vivo.** Rige tal como está desde el 31 de agosto de 2026 **por decisión del
 > Desarrollador**, que resolvió tomarlo por válido sin esperar a nadie: **mientras el
 > proyecto no esté concluido, ésta es la versión válida**: es la
@@ -17,7 +33,7 @@
 | | |
 |---|---|
 | **A quién le habla** | A la persona que se registra como **Asistente** |
-| **De quién son estos términos** | De la **Prestadora** que le dio acceso |
+| **De quién son estos términos** | De la **Prestadora** que los adopte, que es la que le dio acceso. CeltaTech sólo entrega el modelo |
 | **Con qué software** | Careonys, licenciado por **CeltaTech** |
 | **Jurisdicción** | República Argentina |
 | **Última actualización** | 31 de agosto de 2026 |
@@ -396,6 +412,7 @@ aceptación de la versión nueva.
 | 25 de agosto de 2026 | Vocabulario al glosario: donde decía «Cuidador» dice **Asistente**, y donde decía «Empresa Prestadora Cliente» dice **Prestadora**. Ninguna cláusula cambió |
 | 31 de agosto de 2026 | Reescritura completa. Sale la advertencia de borrador que se contradecía con las pantallas (pendiente 49); se ordena en trece capítulos; se apoyan las cláusulas en la ley argentina que corresponde —art. 23 de la LCT, Ley 25.326, Ley 24.004—; se saca el nombre de una Prestadora del semillero y se dice «su Prestadora»; y se agregan los capítulos de autonomía, Guías de cuidado, confidencialidad, cuenta, baja, responsabilidad, ley aplicable y este registro |
 | 31 de agosto de 2026 | Se agregan las cláusulas que faltaban, medidas contra los dos documentos de un competidor en actividad relevados ese día. Entran: nadie del sistema es personal de CeltaTech (§3.5); por acá no pasa dinero (§3.6); qué se ve del Perfil y quién lo ve (§4.8); dónde quedan los archivos del Legajo, y que la fotografía va a un depósito público (§4.9); **las referencias son datos de un tercero** (§4.10); la posición que se guarda al fichar (§4.11); el enlace a `docs/politica_de_datos.md` (§4.12); conducta prohibida (§5.6); nada de papeles ni datos bancarios de otra persona (§6.4); edad mínima (§8.4); una cuenta por persona (§8.5); datos reales y al día (§8.6); y qué pasa cuando se da de baja un Legajo (§9.4 y §9.5). Se reescribe la §7.4: el documento ya no fija condiciones de devolución de un curso, porque el software no cobra nada. **No se copió** nada de lo que el competidor tiene y este software no hace —packs de contactos, membresías, renovación automática, débito de tarjeta, reembolsos, publicidad, programa de recomendación con premios e interfaz para que terceros desarrollen encima—, ni su criterio de que todo sea público salvo lo que se marque privado, que es el contrario al de este producto. Quedan **dos huecos marcados**: el organismo de control (§4.13) y el reparto de responsabilidad con el tribunal competente (§12.3) |
+| 31 de agosto de 2026 | **El documento se declara lo que es: un modelo.** El Desarrollador precisó ese día que los documentos legales de un producto de CeltaTech viven adentro de sus términos y de sus contratos con el Cliente, y que a la Prestadora CeltaTech sólo puede entregarle **un modelo, a título de sugerencia y sin ninguna responsabilidad sobre él**. El encabezado ahora lo dice en su cara —quién lo entrega, que no es asesoramiento legal, que se entrega tal como está y que adoptarlo es decisión de la Prestadora— y **admite que el producto todavía no cumple esa forma**, porque el texto no se entrega sino que se acepta. Cambian el encabezado y la ficha de arriba |
 | 31 de agosto de 2026 | **Se separaron los dos mundos**, por decisión del Desarrollador de ese día: CeltaTech licencia el software a la Prestadora y no tiene vínculo de ninguna índole con el Asistente, la Familia ni nadie que trate con una Prestadora. El documento ponía a CeltaTech adentro de la cadena de responsabilidad hacia usted —decía que «responde por el funcionamiento del software»— y eso era falso: lo que CeltaTech deba por el software se lo debe a la Prestadora, en el acuerdo entre las dos. Cambian la §1.3 y la §10.1, y **se cierra el hueco de la §12.3**, que preguntaba cómo se repartía una responsabilidad que no se reparte. Queda un solo hueco marcado: el organismo de control (§4.13) |
 
 ## 12. Ley aplicable
