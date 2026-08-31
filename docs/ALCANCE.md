@@ -4240,6 +4240,39 @@ paso se comprobó solo: el primer intento salió en rojo porque la tabla decía 
 adentro ya eran 27. Además `verificar_red.mjs` lo rechazó la primera vez, con razón —podía pasar
 comparando cero renglones contra cero renglones—, y se arregló con `seRevisaron()`.
 
+### Las dos cosas eran la misma, y ahora hay un comando que las junta
+
+Los dos hallazgos del día tienen la misma forma, y conviene decirlo junto porque la conclusión no
+es de ninguno de los dos por separado. La prueba de aislamiento sabía correr contra la base de esta
+máquina desde que se escribió, y no se corría. El medidor del README sabía medir, y no se corría.
+Ninguna de las dos herramientas estaba rota. **Una herramienta que hay que acordarse de correr es
+una herramienta que no corre**, y la lista de pendientes no alcanza para acordarse: la de
+aislamiento estaba anotada ahí, con un renglón que además decía mal lo que trababa.
+
+Los chequeos que leen archivos ya tenían resuelto ese problema —los corre `verificar_todo.mjs`
+desde el gancho de `commit`, sin que nadie los llame—. Las pruebas que necesitan una base levantada
+no podían entrar ahí, y quedaban sueltas: seis archivos con seis nombres largos que hay que
+recordar de a uno.
+
+**`node scripts/probar_todo.mjs` las corre a las seis.** No es un chequeo más: es el equivalente de
+`verificar_todo.mjs` para el otro lado de la línea, el de las pruebas que registran cuentas
+ficticias, les hacen escribir y preguntan quién ve qué. Tres decisiones que valen la pena:
+
+- **Las rojas a propósito están anotadas con el pendiente que las explica**, y no tumban la corrida.
+  Hoy hay una: `probar_permisos_en_vivo.mjs`, que es el pendiente 67.
+- **Pero si una de ésas pasa, la corrida falla igual**, y dice que hay que sacarla de la lista y
+  cerrar el pendiente. Una prueba que perdona un rojo para siempre deja de mirar, y con el tiempo se
+  vuelve un archivo que dice ✔ sin haber comprobado nada.
+- **Las dos que quedan afuera están nombradas adentro del guion y en su salida**, con el motivo:
+  `probar_alta_y_baja.mjs` necesita la clave de firma y su limpieza borra datos publicados
+  (pendiente 107), y `probar_consulta_publica.mjs` va contra el servidor publicado. Un recorte
+  callado se lee como «estaban todas».
+
+**Comprobado en los dos sentidos, y en los dos que importan**: con una prueba inexistente agregada a
+la lista salió con código 1 nombrándola; con una roja esperada que en realidad pasaba salió con
+código 1 pidiendo cerrar el pendiente; y tal como queda, con la base local levantada, las cinco que
+tienen que pasar pasan y la sexta da el rojo que tiene que dar.
+
 ---
 
 ## 6. Deuda del código actual

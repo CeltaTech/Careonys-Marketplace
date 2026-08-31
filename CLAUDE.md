@@ -91,6 +91,16 @@ terminado, así que va al cerrar, después del `push`. **Y comprueba además lo 
 que servir**: hasta el 31 de agosto de 2026 subía el repositorio entero, con la lista de
 pendientes y las migraciones adentro. Lo cierra `.vercelignore`; el guion avisa si se reabre.
 
+**Las pruebas que necesitan la base levantada se corren juntas:** `node scripts/probar_todo.mjs`.
+Son seis, van contra la base de esta máquina y por eso **no entran en `verificar_todo.mjs`** —el
+gancho de `commit` corre sin base y sin red, igual que pasa con la comprobación de la publicación—.
+Antes hay que levantarla: `supabase start …` y `supabase migration up --local`. El guion nombra
+adentro las dos pruebas que quedan afuera, que van contra el servidor publicado. Existe por lo que
+pasó el 31 de agosto de 2026: la prueba de aislamiento sabía correr con `--local` desde que se
+escribió y hacía cinco días que nadie la corría, y la tabla del README se había quedado vieja
+porque nadie corría al medidor. **Una herramienta que hay que acordarse de correr es una
+herramienta que no corre.**
+
 **Al cerrar cualquier tarea:** ¿se mantuvo el aislamiento entre Organizaciones? ¿RLS en toda tabla
 nueva? ¿algún término nuevo sin aprobar? ¿algún catálogo escrito a mano? ¿los cuatro estados?
 ¿documentación al día? Si alguna respuesta es no, la tarea no está terminada.
