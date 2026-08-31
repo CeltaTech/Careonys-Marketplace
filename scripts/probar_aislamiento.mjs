@@ -105,7 +105,7 @@
     40. Y no sale poniendo el identificador de la **cuenta** donde va el del
         **legajo**, que es lo que mandaba el teléfono del Asistente hasta el 31
         de agosto de 2026 —por eso `clock_ins` no tenía una sola fila en toda la
-        base, pendiente 112—.
+        base; fue el pendiente 112, cerrado ese mismo día—.
     41. Y sin legajo propio y sin ser personal no se lee ninguna fichada.
     42. No lee cómo pondera su puntaje la Prestadora (migración 0018), aunque
         esas filas existan: las siembra la propia migración, así que ver cero
@@ -976,8 +976,9 @@ console.log('Dos Familias de la misma Prestadora');
   /* Y acá va el identificador de la **cuenta** donde va el del **legajo**, que
      no son el mismo dato: `legajo_propio()` devuelve `caregivers.id`, y la
      cuenta es `caregivers.user_id`. Tiene que ser rechazado. Se comprueba
-     porque es justo la confusión que tenía escrita el teléfono —ver el
-     pendiente 112—, y porque una prueba que sólo mira el camino bueno deja
+     porque es justo la confusión que tenía escrita el teléfono —fue el
+     pendiente 112, cerrado—, y porque una prueba que sólo mira el camino
+     bueno deja
      que el malo parezca igual de válido. */
   const fichadaConLaCuenta = await rest('/rest/v1/clock_ins', {
     method: 'POST',

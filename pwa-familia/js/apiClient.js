@@ -526,7 +526,8 @@ const ClienteDatos = {
   //
   // Hasta el 31 de agosto de 2026 las dos pantallas mandaban el de la cuenta,
   // así que la base las rechazaba siempre y `clock_ins` no tenía una sola fila
-  // (pendiente 112). Vive acá y no en la pantalla porque son dos lugares que
+  // (fue el pendiente 112, cerrado ese mismo día). Vive acá y no en la
+  // pantalla porque son dos lugares que
   // necesitan el mismo dato, y porque la regla de resolverlo es una sola.
   //
   // Devuelve nulo si quien mira no tiene legajo. Quien llama decide qué hacer

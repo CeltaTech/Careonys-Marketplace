@@ -103,7 +103,8 @@ const LA_SIEMBRA_NO_PUEDE = new Map([
 
    Vale el mismo criterio de dos mitades que arriba, y las dos hacen falta:
    que una migración no la pueda llenar **y** que algo sí la recorra. Hoy no
-   hay ninguna adentro, y las cuatro que quedan vacías son el pendiente 111. */
+   hay ninguna adentro, y las que quedan vacías son el pendiente 111 —eran
+   cuatro; la migración 0049 sembró las fichadas y quedan tres—. */
 const LA_SIEMBRA_NO_PUEDE_TABLA = new Map([]);
 
 let fallos = 0;

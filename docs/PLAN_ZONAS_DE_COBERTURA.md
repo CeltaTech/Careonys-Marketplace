@@ -43,7 +43,7 @@ alguien puede elegir «Zona Norte» o «Palermo» y no hay forma de decir las do
 (`supabase/migrations/0001_esquema_inicial.sql:87`). La leen la vista del directorio
 (`supabase/migrations/0002_aislamiento_por_prestadora.sql:141`) y la del directorio con
 consentimiento (`supabase/migrations/0007_directorio_con_consentimiento.sql:52`), y del lado del
-navegador la escribe `registrar-asistente.html:1004` y la traduce `js/apiClient.js:758`.
+navegador la escribe `registrar-asistente.html:1004` y la traduce `js/apiClient.js:926`.
 
 **No hay ninguna tabla de zonas.** La lista vive en un archivo `.json`, no en la base, que es lo
 contrario de lo que pide la regla «los catálogos salen de la base».

@@ -4904,8 +4904,51 @@ a pedazos no la ve `verificar_frases.mjs` desde afuera. Migrar no hay qué: la t
 —el pedido exacto que hacía el teléfono— y exige que lo rechacen. Sale `respuesta 403`. Al lado
 va el control positivo, la misma fichada con el legajo bien puesto, que sí entra; sin él, un
 403 no distinguiría «rechazó lo que tenía que rechazar» de «rechaza todo». Pero **eso prueba
-la base, no el teléfono**: nadie apretó todavía el botón con el arreglo puesto. El pendiente 112
-queda abierto por esa mitad.
+la base, no el teléfono**: nadie había apretado todavía el botón con el arreglo puesto.
+
+### Y entonces se apretó el botón
+
+Esa mitad se cerró el mismo 31 de agosto de 2026, y para cerrarla hubo que construir con qué.
+La aplicación del Asistente sólo sabe hablarle a la base publicada —la dirección está escrita en
+`js/apiClient.js:8`, sin ninguna llave para cambiarla—, así que «fichar desde el teléfono»
+significaba escribir en la base de verdad. `scripts/servidor_local.py --base-local` ya resolvía
+la mitad: cambia la dirección **en el texto que sale por la red y nunca en el archivo**, para que
+nadie se olvide de volverlo atrás. Faltaba una cuenta de Asistente **con legajo detrás**, que es
+exactamente el dato que el arreglo empezó a mandar, y la dejó `scripts/preparar_asistente_local.mjs`:
+toma la clave de una variable de entorno, se niega a correr contra cualquier base que no sea la de
+esta máquina, y **engancha un legajo de la siembra en vez de inventar uno**, para que la pantalla
+se mire con un legajo que tiene nombre, fichas y verificaciones y no con uno vacío hecho al paso.
+
+Con eso, la pantalla andando: entró, guardó un reporte de cuidado y marcó una entrada y una salida.
+Las tres filas quedaron, colgadas del **legajo** y con `presdemo` resuelto por la política, y
+`event_type` guardado como `entrada` y `salida` y no como el texto visible. Fue el pendiente 112,
+cerrado.
+
+**Lo único que no se probó, y conviene decirlo en vez de que se note después:** el navegador de
+esta herramienta niega la posición, así que la primera vez el botón contestó «Habilite los permisos
+de GPS» —que es, de paso, ese camino de error funcionando— y para seguir hubo que **reemplazar el
+sensor por una posición inventada**. El botón, la resolución del legajo, lo que viaja, la política
+y las filas son de verdad; que un teléfono de verdad entregue una posición, no. Es la única
+pieza del recorrido que sigue sin ejercitarse, y no la tapa ninguna prueba.
+
+**Y de ahí salió algo que no se veía.** Con las tres filas escritas, la comprobación de la siembra
+pasó a contestar que `clock_ins` y `reportes` tenían filas, y era cierto. Pero **ninguna migración
+las repone**: la primera base armada desde cero volvía a tenerlas vacías. Verde hoy, rojo mañana,
+sin que nadie hubiera tocado nada — y un verde intermitente se lee como «anda» las veces que anda,
+que es peor que un rojo constante. Así que la fichada se sembró de verdad, en la migración 0049:
+nueve filas en las dos Prestadoras que tienen gente cargada, cuatro turnos cerrados y **uno
+abierto**, porque una entrada sin su salida es el estado normal de quien todavía está trabajando y
+es justo el caso que hace fallar a la pantalla que sume horas restando una de otra. Cada fichada
+cae en una zona que esa Asistente cubre según `zonas_asistente`: una entrada marcada donde esa
+persona no trabaja es un dato falso aunque la persona sea inventada. Eso cierra el grupo (b) del
+pendiente 111, y las tablas sin una sola fila pasaron de cuatro a tres.
+
+Y lo escrito a mano se fue, por el mismo motivo: `scripts/soltar_asistente_local.mjs` borra las
+filas que se escribieron apretando el botón y deja las sembradas. Las distingue sin ninguna lista
+escrita a mano —**una fila cuyo identificador nombra alguna migración es de la siembra; una que no
+lo nombra ninguna la escribió una persona**—, y el propio guion lo mostró funcionando: del mismo
+legajo separó dos fichadas sembradas de dos escritas a mano. Después de limpiar, la comprobación
+volvió a nombrar `reportes` entre las vacías, que es la verdad.
 
 ### Y la prueba que se veía limpia y no lo estaba
 
