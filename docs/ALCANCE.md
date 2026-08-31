@@ -4619,8 +4619,8 @@ con otro número: **revisó menos y lo contó como éxito**.
 mensaje tiene cuatro números y sólo dos cambian; a ojo se lee igual. Es la misma lección una vez
 más, ahora del otro lado: **el número escrito a mano no sólo envejece, además nace incompleto**.
 
-La prueba se comprobó en las dos direcciones. Da rojo hoy —nueve ciegos, trece plantados, cinco que
-no miran los `.js`—. Y sabe dar verde: dejándole ver los `.ts` a uno de los nueve, ese chequeo pasó
+La prueba se comprobó en las dos direcciones. Da rojo hoy, con nueve ciegos; los pares de
+números y el reparto de las otras columnas los imprime el guión y acá no se copian. Y sabe dar verde: dejándole ver los `.ts` a uno de los nueve, ese chequeo pasó
 solo de la columna de los ciegos a la de los que no perdieron nada. Se planta además si la copia
 salió vacía, si no hubo un `.js` que renombrar, si ningún chequeo mira los `.js`, o si alguno ya
 viene fallando en el proyecto sin tocar —esto último saltó solo en la primera corrida, porque el
@@ -4639,7 +4639,7 @@ La pregunta hermana de la de arriba —qué pasa cuando a un chequeo le sacan la
 qué pasa cuando no le queda nada. Esa ya estaba contestada: es el pendiente 69, y el 28 de agosto
 de 2026 se cerró poniendo `seRevisaron()` y `hayArchivos()` en la red entera, con `verificar_red.mjs`
 de vigilante. Se corrió igual, para ver, y **la red pasó**: en una copia que sólo lleva `scripts/`
-se plantan 26 de 27 chequeos, cada uno nombrando qué le faltó —«no se encontró un solo archivo
+se planta la red entera menos su exento, cada chequeo nombrando qué le faltó —«no se encontró un solo archivo
 .html ni .js», «ENOENT … docs/PENDIENTES.md»—, y el único verde es `cajas`, que se fabrica su propio
 árbol de prueba y por eso no depende del proyecto. Un negativo verificado, que es un resultado y no
 un trámite: **la red nota cuando el corpus desaparece; lo que no nota es cuando se achica.** Esa

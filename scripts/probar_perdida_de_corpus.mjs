@@ -64,6 +64,14 @@
    · `verificar_guias.mjs` sale a la red, así que su texto cambia según qué
      conteste el servidor y no según qué archivos vio. Compararlo daría rojo por
      un motivo que no es éste.
+   · **El que ya sale en rojo en la copia sin tocar.** Ésos no se eligen a mano:
+     la red corre en la copia **antes** de renombrar nada, y al que ahí ya esté
+     rojo se lo informa como no medible en vez de acreditarlo. Hasta el 31 de
+     agosto de 2026 se los contaba entre los que se plantaron, y eran tres cuyo
+     rojo no hablaba del corpus: `deriva` y `sinconexion` le preguntan al
+     historial de `git`, que la copia no tiene, y `referencias` sigue citas que
+     salen del proyecto hacia `..\..\docs\`. **Un chequeo acreditado de más es
+     un chequeo que nadie vuelve a mirar.**
    De la segunda, además, los de `ARMAN_SU_PROPIO_CORPUS` —hoy `verificar_cajas`,
    que se fabrica un árbol de mentira en la carpeta temporal—. Esa lista **no se
    escribe acá**: sale de `scripts/recorrido.mjs`, que es donde vive la guarda, y
@@ -81,7 +89,7 @@
    exento—, y dio rojo con un chequeo escrito a propósito para colarse.
 
    No entra en `verificar_todo.mjs` a propósito: copia el proyecto y corre la red
-   entera tres veces, que es demasiado para el gancho de `commit`. Va en
+   entera varias veces, que es demasiado para el gancho de `commit`. Va en
    `scripts/probar_todo.mjs`, y es la única de ahí que no necesita la base
    levantada ni red.
 =================================================== */
@@ -127,7 +135,76 @@ for (const camino of archivos(raiz, [''])) {
 }
 seRevisaron(copiados, 'ningún archivo copiado a la carpeta de prueba');
 
-/* ── EL RENOMBRE ──────────────────────────────────────────────────────────
+/* ── CORRER LOS DOS LADOS ───────────────────────
+   El camino de la raíz aparece en algunos mensajes, y es distinto de cada lado.
+   Se reemplaza por una marca antes de comparar, para no contar como diferencia
+   lo único que forzosamente cambia. */
+const sinLaRaiz = (texto, cual) =>
+  texto.split(cual).join('«raíz»').split(cual.split('\\').join('/')).join('«raíz»');
+
+function correr(donde, chequeo) {
+  const salida = spawnSync(process.execPath, [join(donde, 'scripts', chequeo)], {
+    encoding: 'utf8',
+    cwd: donde
+  });
+  return {
+    codigo: salida.status,
+    texto: sinLaRaiz((salida.stdout || '') + (salida.stderr || ''), donde).trim()
+  };
+}
+
+/* ── EL CONTROL, ANTES DE TOCAR NADA ──────────────────
+   La red corre en la copia **tal cual**, sin renombrar todavía un solo archivo.
+   El que ya esté en rojo ahí no se puede medir: cuando después se le saque el
+   corpus va a seguir en rojo, y contarlo entre los que se plantaron es
+   acreditarlo por un motivo que no es el suyo. **Y un chequeo acreditado de más
+   es un chequeo que nadie vuelve a mirar.** Pasa con tres, medido el 31 de
+   agosto de 2026: `deriva` y `sinconexion` le preguntan al historial de `git`, y
+   la copia no lo tiene —se arma con `archivos()`, que no abre `.git`—; y
+   `referencias` sigue citas que salen del proyecto hacia `..\..\docs\`, que del
+   otro lado de la copia no están. Ninguno de esos tres rojos habla del corpus.
+
+   Es la misma disciplina que el rojo de entrada de más abajo, aplicada un paso
+   después: aquel pregunta si el proyecto está sano, éste si la copia lo está.
+
+   La comparación de después se hace **contra este texto**, no contra el de la
+   raíz: de los dos lados es la misma carpeta, así que lo único que cambia entre
+   una corrida y la otra es el renombre, que es justo lo que se quiere medir. */
+const rotosDeEntrada = [];
+const noSeMiden = [];
+const enLaCopia = new Map();
+
+for (const chequeo of chequeos) {
+  if (correr(raiz, chequeo).codigo !== 0) {
+    rotosDeEntrada.push(chequeo);
+    continue;
+  }
+  const control = correr(destino, chequeo);
+  if (control.codigo !== 0) {
+    noSeMiden.push({ chequeo, motivo: (control.texto.split('\n')[0] || '').trim() });
+    continue;
+  }
+  enLaCopia.set(chequeo, control.texto);
+}
+
+const corto = (n) => n.replace(/^verificar_/, '').replace(/\.mjs$/, '');
+
+if (rotosDeEntrada.length) {
+  rmSync(destino, { recursive: true, force: true });
+  console.error(
+    '\nEstos chequeos ya fallan en el proyecto sin tocar, así que no hay contra qué\n' +
+    'comparar: ' + rotosDeEntrada.map(corto).join(', ') + '.\n' +
+    'Se arreglan primero — `node scripts/verificar_todo.mjs` dice qué les pasa.\n'
+  );
+  process.exit(1);
+}
+
+seRevisaron(
+  enLaCopia.size,
+  'ningún chequeo que se pueda medir: todos fallan en la copia sin tocar'
+);
+
+/* ── EL RENOMBRE ──────────────────────────────────
    `.mjs` no termina en `.js`, así que los guiones de `scripts/` no se tocan:
    los que se van son los del producto, que es justo el corpus que se quiere
    hacer desaparecer. */
@@ -146,40 +223,15 @@ let renombrados = 0;
 })(destino);
 seRevisaron(renombrados, 'ningún `.js` que renombrar en la copia');
 
-/* ── CORRER LOS DOS LADOS ─────────────────────────────────────────────────
-   El camino de la raíz aparece en algunos mensajes, y es distinto de cada lado.
-   Se reemplaza por una marca antes de comparar, para no contar como diferencia
-   lo único que forzosamente cambia. */
-const sinLaRaiz = (texto, cual) =>
-  texto.split(cual).join('«raíz»').split(cual.split('\\').join('/')).join('«raíz»');
-
-function correr(donde, chequeo) {
-  const salida = spawnSync(process.execPath, [join(donde, 'scripts', chequeo)], {
-    encoding: 'utf8',
-    cwd: donde
-  });
-  return {
-    codigo: salida.status,
-    texto: sinLaRaiz((salida.stdout || '') + (salida.stderr || ''), donde).trim()
-  };
-}
-
 const seLoNoto = [];
 const noMiraJs = [];
 const ciegos = [];
-const rotosDeEntrada = [];
 
-for (const chequeo of chequeos) {
-  const antes = correr(raiz, chequeo);
-  if (antes.codigo !== 0) {
-    rotosDeEntrada.push(chequeo);
-    continue;
-  }
+for (const [chequeo, antes] of enLaCopia) {
   const despues = correr(destino, chequeo);
-
   if (despues.codigo !== 0) seLoNoto.push(chequeo);
-  else if (despues.texto === antes.texto) noMiraJs.push(chequeo);
-  else ciegos.push({ chequeo, antes: antes.texto, despues: despues.texto });
+  else if (despues.texto === antes) noMiraJs.push(chequeo);
+  else ciegos.push({ chequeo, antes, despues: despues.texto });
 }
 
 rmSync(destino, { recursive: true, force: true });
@@ -190,17 +242,6 @@ seRevisaron(
   seLoNoto.length + ciegos.length,
   'ningún chequeo que mire los `.js`, así que renombrarlos no le sacó nada a nadie'
 );
-
-const corto = (n) => n.replace(/^verificar_/, '').replace(/\.mjs$/, '');
-
-if (rotosDeEntrada.length) {
-  console.error(
-    '\nEstos chequeos ya fallan en el proyecto sin tocar, así que no hay contra qué\n' +
-    'comparar: ' + rotosDeEntrada.map(corto).join(', ') + '.\n' +
-    'Se arreglan primero — `node scripts/verificar_todo.mjs` dice qué les pasa.\n'
-  );
-  process.exit(1);
-}
 
 /* ── LA OTRA MITAD: EL CORPUS QUE DESAPARECE DEL TODO ───────────────────
    Arriba se pregunta qué pasa cuando a un chequeo le sacan **la mitad** del
@@ -227,7 +268,7 @@ seRevisaron(guionesCopiados, 'ningún guion copiado a la carpeta sin corpus');
 
 const sinCorpusSePlanto = [];
 const sinCorpusVerde = [];
-for (const chequeo of chequeos) {
+for (const chequeo of enLaCopia.keys()) {
   (correr(soloGuiones, chequeo).codigo !== 0 ? sinCorpusSePlanto : sinCorpusVerde).push(chequeo);
 }
 rmSync(soloGuiones, { recursive: true, force: true });
@@ -238,15 +279,19 @@ const sinCorpusMal = sinCorpusVerde.filter((n) => !ARMAN_SU_PROPIO_CORPUS.has(n)
 
 console.log(
   `\nSe renombraron ${renombrados} archivos \`.js\` en una copia de ${copiados} archivos ` +
-  `y se corrieron ${chequeos.length} chequeos de los dos lados.\n`
+  `y se corrieron ${enLaCopia.size} chequeos de los dos lados.\n`
 );
 console.log(`  ✔ Se plantaron, que es lo que corresponde: ${seLoNoto.length}`);
 console.log(`  · No miran los \`.js\`, así que no perdieron nada: ${noMiraJs.length}`);
 for (const [nombre, motivo] of AFUERA) console.log(`  · Afuera: ${corto(nombre)} — ${motivo}`);
+for (const { chequeo, motivo } of noSeMiden) {
+  console.log(`  · No se puede medir: ${corto(chequeo)} — ya sale en rojo en la copia sin tocar`);
+  console.log(`      ${motivo}`);
+}
 
 console.log(
   `\nY sin corpus —una copia con los ${guionesCopiados} guiones y nada más— ` +
-  `se plantaron ${sinCorpusSePlanto.length} de ${chequeos.length}.`
+  `se plantaron ${sinCorpusSePlanto.length} de ${enLaCopia.size}.`
 );
 for (const [nombre, motivo] of ARMAN_SU_PROPIO_CORPUS) {
   console.log(`  · Afuera: ${corto(nombre)} — ${motivo}`);
