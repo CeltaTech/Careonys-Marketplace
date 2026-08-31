@@ -4770,8 +4770,9 @@ medias del lado de la Prestadora»— y dejó ésta afuera sin decirlo.
 son justo las cinco de los catálogos de dos escalones, porque leídas de a una parecen correctas: un
 `tenant_id` nulo ahí **es** un valor válido y no un hueco. Lo que las delata es la pregunta
 generalizada, no el ojo. Por eso quedó como prueba y no como informe:
-`scripts/probar_coherencia_de_la_siembra.mjs`, en `probar_todo.mjs`, roja esperada contra el
-pendiente 110.
+`scripts/probar_coherencia_de_la_siembra.mjs`, en `probar_todo.mjs`, roja esperada contra los
+pendientes 110 y 111 —el segundo es una cuarta comprobación que llegó después, y está más
+abajo—.
 
 Mira además dos cosas que ya estaban bien y conviene que sigan estando: que ninguna fila pertenezca
 a una Prestadora que no existe, y que ninguna apunte a una fila de **otra** Prestadora. Es el
@@ -4831,6 +4832,44 @@ El resto de la prueba pasó la revisión con motivo escrito: los legajos y los a
 porque los crea una comprobación anterior que sí se mira; las quince filas de la ponderación y los
 trece legajos sembrados los pone una migración; y el examen y las carpetas del depósito se juzgan
 por el código de respuesta, que no se puede vaciar.
+
+### La prueba de la siembra no podía ver una tabla vacía
+
+La comprobación de las columnas que nunca se llenan tenía un escalón más arriba que no miraba, y
+no por descuido: **no lo podía mirar**. Trae los datos con `supabase db dump --local
+--data-only`, y ese volcado **sólo nombra las tablas que tienen filas**. Una tabla entera sin
+sembrar no aparece en ningún renglón, así que desde ahí «ninguna tabla vacía» es verdad porque
+no hay ninguna a la vista. Es la misma forma que la de arriba: una afirmación que no puede
+fallar.
+
+La corrección es pedir un segundo volcado, el del esquema —el mismo comando sin `--data-only`—,
+del que salen las 29 tablas por sus `CREATE TABLE`, y comparar. Eso trajo la cuarta
+comprobación, `Toda tabla tiene alguna fila`, con su propio exento aparte,
+`LA_SIEMBRA_NO_PUEDE_TABLA`, bajo el mismo criterio de dos mitades: que una migración no la pueda
+llenar **y** que algo sí la recorra. Hoy no hay ninguna adentro. **Y la comprobación nueva trae
+su propia guarda**, porque el segundo volcado también se puede romper: el esquema tiene que
+traer al menos las tablas que el de datos ya nombró, o si no la lista quedaría vacía y volvería
+a decir «ninguna vacía» sin haber mirado ninguna. Falsificada rompiendo el corte del nombre:
+salió `ROTA ... 0 tablas en el esquema` y se plantó en vez de medir.
+
+**Encontró cuatro tablas sin una sola fila, y no son todas el mismo hueco** —están separadas así
+en el pendiente 111—. `messages` y `reportes` sí se recorren, con cuentas de verdad y pasando
+por las políticas, y quedan vacías porque `probar_aislamiento.mjs` las borra al limpiar.
+`clock_ins` la escribe una pantalla —`pwa-asistente/index.html:1147`— y no la recorre ninguna
+prueba, así que su política no se ejercitó nunca.
+
+**Y la cuarta es un agujero del producto, no de la siembra.** A `documentos_asistente` no la
+escribe nadie: ni una pantalla, ni un guion, ni una prueba. Lo que sí pasa es que
+`registrar-asistente.html:996-1000` sube el documento de identidad, los antecedentes penales y el
+título, y guarda **sólo los caminos** en la columna `documents` de `caregivers`
+(`registrar-asistente.html:1057`, y de ahí a la base por `js/apiClient.js:904`). O sea que hay
+dos formas de guardar el mismo hecho y una está muerta, como ya pasó con `messages` y las
+`conversaciones` heredadas. Y la que quedó viva es la pobre: la tabla dedicada tiene `tipo`,
+`presentado_el`, `vencimiento` y `verificado`, y el objeto de `documents` no tiene ninguno de los
+cuatro, así que **hoy el producto sube el papel y no anota qué papel es, cuándo se presentó ni
+cuándo vence**. `docs/PLAN_VENCIMIENTOS.md:40` apoya el pendiente 98 justamente en
+`documentos_asistente.vencimiento`, que es una columna de una tabla que no escribe nadie. Esa no
+se cierra sembrando: primero hay que elegir cuál de las dos formas queda.
 
 ---
 

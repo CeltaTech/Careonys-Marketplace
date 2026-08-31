@@ -48,9 +48,11 @@
    · `probar_perdida_de_corpus.mjs` es el pendiente 91 —nueve chequeos dan ✔ con
      menos archivos cuando se les saca la mitad del corpus, y la salida son tres
      políticas de exención entre las que hay que elegir—.
-   · `probar_coherencia_de_la_siembra.mjs` es el pendiente 110 —siete columnas
-     que la siembra no llena ni una vez, y a una de ellas no la escribe nadie
-     en ningún lado. Eran catorce: la 0048 cerró cinco y dos quedaron exentas—.
+   · `probar_coherencia_de_la_siembra.mjs` son los pendientes 110 y 111 —siete
+     columnas que la siembra no llena ni una vez, y cuatro tablas enteras sin
+     una sola fila. De las columnas eran catorce: la 0048 cerró cinco y dos
+     quedaron exentas. Una prueba puede traer más de un pendiente, y por eso
+     la lista de abajo guarda una lista de números y no un número—.
 
    **Y el pendiente que la explica tiene que estar abierto.** Si no está, esto
    falla antes de correr ninguna prueba. Sin esa comprobación la lista perdona
@@ -93,10 +95,17 @@ const PRUEBAS = [
 /* Rojas a propósito, con el pendiente que lo explica al lado. Sacar de acá lo
    que se arregle: si una de éstas pasa, esta corrida falla y dice por qué. */
 const ROJAS_ESPERADAS = new Map([
-  ['probar_pisado_de_archivos.mjs', 89],
-  ['probar_perdida_de_corpus.mjs', 91],
-  ['probar_coherencia_de_la_siembra.mjs', 110]
+  ['probar_pisado_de_archivos.mjs', [89]],
+  ['probar_perdida_de_corpus.mjs', [91]],
+  ['probar_coherencia_de_la_siembra.mjs', [110, 111]]
 ]);
+
+/* Una roja puede tener más de un motivo, así que cada una guarda su lista de
+   pendientes. Se nombran todos: perdonar el rojo diciendo sólo uno esconde el
+   otro, que es exactamente lo que esta lista viene a evitar. */
+const nombrar = (numeros) => numeros.length === 1
+  ? 'pendiente ' + numeros[0]
+  : 'pendientes ' + numeros.slice(0, -1).join(', ') + ' y ' + numeros[numeros.length - 1];
 
 /* Y el pendiente que explica cada roja tiene que existir. Sin esto la lista de
    arriba perdona un rojo para siempre apuntando a un número que ya no está en
@@ -115,11 +124,13 @@ if (abiertos.size === 0) {
   process.exit(1);
 }
 
-const fantasmas = [...ROJAS_ESPERADAS].filter(([, n]) => !abiertos.has(n));
+const fantasmas = [...ROJAS_ESPERADAS]
+  .map(([prueba, numeros]) => [prueba, numeros.filter((n) => !abiertos.has(n))])
+  .filter(([, cerrados]) => cerrados.length > 0);
 if (fantasmas.length > 0) {
   console.error(
     '\nHay rojas esperadas anotadas contra un pendiente que no está abierto:\n' +
-    fantasmas.map(([p, n]) => '  ' + p + ' → pendiente ' + n).join('\n') + '\n\n' +
+    fantasmas.map(([p, n]) => '  ' + p + ' → ' + nombrar(n)).join('\n') + '\n\n' +
     'O el pendiente se cerró y la prueba tiene que pasar a contarse como las demás,\n' +
     'o el rojo viene de otra cosa y hace falta un pendiente que lo explique.\n'
   );
@@ -146,7 +157,7 @@ for (const prueba of PRUEBAS) {
     /* Pasó una que tenía que fallar. No es una buena noticia silenciosa: es una
        lista desactualizada, y hay que tocarla. */
     sorpresas.push(nombre);
-    console.log(`  ✘ ${nombre}  — pasó, y estaba anotada como roja esperada (pendiente ${rojaEsperada})`);
+    console.log(`  ✘ ${nombre}  — pasó, y estaba anotada como roja esperada (${nombrar(rojaEsperada)})`);
     continue;
   }
 
@@ -163,7 +174,7 @@ for (const prueba of PRUEBAS) {
 
   if (rojaEsperada) {
     esperadas.push(nombre);
-    console.log(`  · ${nombre}  — roja esperada, es el pendiente ${rojaEsperada}`);
+    console.log(`  · ${nombre}  — roja esperada: ${nombrar(rojaEsperada)}`);
     continue;
   }
 

@@ -20,6 +20,10 @@
        perfecta sobre datos ya mezclados no separa nada.
     3. Que ninguna columna quede sin llenarse ni una sola vez, salvo las que
        una migración no puede llenar, que están abajo con su motivo escrito.
+    4. Que ninguna tabla quede sin una sola fila. Es lo mismo que el punto 3 un
+       escalón más arriba, y hace falta pedirlo aparte: el volcado de datos
+       sólo nombra las tablas que tienen filas, así que una tabla entera sin
+       sembrar no aparece en ningún renglón y desde ahí es invisible.
 
    CONTRA QUÉ BASE. Contra la de esta máquina, que es la que sale de correr
    `supabase/migrations/` y nada más. La publicada no sirve para esto: ahí la
@@ -89,6 +93,19 @@ const LA_SIEMBRA_NO_PUEDE = new Map([
      ningún lado. Queda roja hasta que alguien la escriba. */
 ]);
 
+/* --- Y lo mismo un escalón más arriba: las tablas ------------------------
+   Una tabla entera sin una sola fila es el mismo argumento que la columna que
+   nunca se llena, y **desde el volcado de datos es invisible**: ese volcado
+   sólo nombra las tablas que tienen filas, así que una tabla vacía no aparece
+   en ningún renglón y nadie la extraña. Por eso abajo se pide también el
+   volcado del esquema: sin él, «ninguna tabla vacía» sería verdad porque no
+   habría ninguna a la vista.
+
+   Vale el mismo criterio de dos mitades que arriba, y las dos hacen falta:
+   que una migración no la pueda llenar **y** que algo sí la recorra. Hoy no
+   hay ninguna adentro, y las cuatro que quedan vacías son el pendiente 111. */
+const LA_SIEMBRA_NO_PUEDE_TABLA = new Map([]);
+
 let fallos = 0;
 let inservible = false;
 
@@ -117,17 +134,22 @@ if (process.argv.includes('--linked')) {
   process.exit(1);
 }
 
-// --- El volcado de datos ----------------------------------------------------
+// --- Los dos volcados: los datos, y el esquema para ver las tablas vacías ---
 const carpeta = mkdtempSync(join(tmpdir(), 'siembra-'));
-const destino = join(carpeta, 'datos.sql');
-let volcado;
-try {
+function traer(nombre, extra) {
+  const destino = join(carpeta, nombre);
   execFileSync(
     'npx',
-    ['supabase', 'db', 'dump', '--local', '--data-only', '--schema', 'public', '-f', destino],
+    ['supabase', 'db', 'dump', '--local'].concat(extra, ['--schema', 'public', '-f', destino]),
     { cwd: raiz, encoding: 'utf8', shell: true, stdio: ['ignore', 'pipe', 'pipe'] }
   );
-  volcado = readFileSync(destino, 'utf8');
+  return readFileSync(destino, 'utf8');
+}
+let volcado;
+let esquema;
+try {
+  volcado = traer('datos.sql', ['--data-only']);
+  esquema = traer('esquema.sql', []);
 } catch (error) {
   const dicho = `${(error && error.stderr) || ''}${(error && error.stdout) || ''}`.trim();
   console.error('No se pudo traer los datos de la base de esta máquina.');
@@ -136,6 +158,19 @@ try {
   process.exit(1);
 } finally {
   rmSync(carpeta, { recursive: true, force: true });
+}
+
+/* Las tablas del esquema, leídas sin expresión regular: cada `CREATE TABLE`
+   trae el nombre entrecomillado detrás del esquema, y alcanza con cortar. */
+const tablasDelEsquema = [];
+for (const renglon of esquema.split('\n')) {
+  if (!renglon.startsWith('CREATE TABLE')) continue;
+  const marca = '"public"."';
+  const desde = renglon.indexOf(marca);
+  if (desde < 0) continue;
+  const resto = renglon.slice(desde + marca.length);
+  const hasta = resto.indexOf('"');
+  if (hasta > 0) tablasDelEsquema.push(resto.slice(0, hasta));
 }
 
 /* --- Partir una tupla de SQL en sus valores --------------------------------
@@ -233,6 +268,15 @@ sostener('y las tres Prestadoras ficticias están',
   (filas.get('tenants') || []).length === 3,
   (filas.get('tenants') || []).length + ' en `tenants`');
 
+/* Y el volcado del esquema tiene que traer al menos las tablas que el de datos
+   ya nombró. Sin esto, un esquema que no se entendiera dejaría la lista vacía y
+   la comprobación 4 diría «ninguna tabla vacía» sin haber mirado ninguna. */
+const faltanEnElEsquema = [...filas.keys()].filter((t) => !tablasDelEsquema.includes(t));
+sostener('y el esquema trae todas las tablas que tienen datos',
+  tablasDelEsquema.length > 0 && faltanEnElEsquema.length === 0,
+  tablasDelEsquema.length + ' tablas en el esquema' +
+  (faltanEnElEsquema.length ? ', y no trae ' + enLista(faltanEnElEsquema) : ''));
+
 if (inservible) {
   console.log('');
   console.log('La prueba no está en condiciones de medir nada, así que no mide.');
@@ -327,12 +371,45 @@ if (nuncaLlenas.length) {
   console.log('escribiendo en `LA_SIEMBRA_NO_PUEDE` por qué una migración no puede.');
 }
 
+// --- 4. Ninguna tabla queda sin una sola fila -------------------------------
+/* Una tabla entera vacía es lo mismo que la columna que nunca se llena, un
+   escalón más arriba, y se ve peor: la columna al menos aparece nombrada en el
+   volcado de datos, y la tabla vacía no aparece en ningún renglón. */
+console.log('');
+console.log('Las tablas que la siembra no llena');
+
+const tablasVacias = tablasDelEsquema.filter((t) =>
+  (filas.get(t) || []).length === 0 && !LA_SIEMBRA_NO_PUEDE_TABLA.has(t));
+
+seRevisaron(tablasDelEsquema.length, 'no se miró una sola tabla');
+comprobar('Toda tabla tiene alguna fila',
+  tablasVacias.length === 0,
+  tablasVacias.length
+    ? tablasVacias.length + ' vacías de las ' + tablasDelEsquema.length + ' del esquema'
+    : tablasDelEsquema.length + ' tablas revisadas');
+
+for (const [cual, motivo] of LA_SIEMBRA_NO_PUEDE_TABLA) {
+  console.log('   · Afuera: ' + cual + ' — ' + motivo);
+}
+
+if (tablasVacias.length) {
+  console.log('');
+  console.log('Sin una sola fila en toda la base:');
+  for (const cual of tablasVacias.sort()) console.log('     ' + cual);
+  console.log('');
+  console.log('Una tabla vacía no prueba nada, y además esconde de qué clase es el');
+  console.log('hueco: no es lo mismo una que escribe una pantalla y la siembra no,');
+  console.log('que una que no escribe absolutamente nadie. Están separadas así en el');
+  console.log('pendiente 111, que es donde se cierra esto.');
+}
+
 // --- El veredicto -----------------------------------------------------------
 console.log('');
 if (fallos === 0) {
   console.log('La siembra es coherente: ninguna fila cuelga de una Prestadora que no está,');
-  console.log('ninguna apunta a los datos de otra, y toda columna se llena alguna vez.');
+  console.log('ninguna apunta a los datos de otra, toda columna se llena alguna vez y');
+  console.log('ninguna tabla queda sin una sola fila.');
 } else {
-  console.log(fallos + ' de 3 comprobaciones fallaron.');
+  console.log(fallos + ' de 4 comprobaciones fallaron.');
 }
 if (fallos > 0) process.exitCode = 1;
