@@ -35,7 +35,7 @@
 
    Lo que acá no se mide: que el legajo sellado aparezca en el directorio
    público y el que no, no. Eso ya lo mide
-   `scripts/probar_sello_de_la_prestadora.mjs`, que es la del pendiente 66.
+   `scripts/probar_sello_de_la_prestadora.mjs`, la que cerró el pendiente 66.
 
    No deja nada atrás: los tres legajos ficticios y las cuatro cuentas se
    borran al final.

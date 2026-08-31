@@ -17,11 +17,12 @@
    su consentimiento, y ese directorio se ve sin iniciar sesión. Así que esa
    columna es la única cosa que separa a un desconocido del sello.
 
-   HOY ESTA PRUEBA FALLA, Y ESTÁ BIEN QUE FALLE. Es el pendiente 66: la
-   política que le deja al Asistente ser dueño de su propio legajo no nombra
-   esa columna, así que se la escribe él. La prueba se escribió antes que el
-   arreglo, a propósito, para que el día que el arreglo exista se sepa que
-   funcionó por algo más que por mirarlo.
+   ESTA PRUEBA FALLABA A PROPÓSITO, Y HOY PASA. Era el pendiente 66: la
+   política que le deja al Asistente ser dueño de su propio legajo no nombraba
+   esa columna, así que se la escribía él. Se escribió antes que el arreglo,
+   a propósito, para que el día que el arreglo existiera se supiera que
+   funcionó por algo más que por mirarlo. Ese día fue el 31 de agosto de 2026,
+   con la migración 0047. **Si vuelve a dar rojo, algo se rompió.**
 
    POR QUÉ PUEDE FALLAR. Las tres comprobaciones del sello podrían dar
    «bien» por un motivo tonto —que la cuenta no tenga sesión, que la
@@ -257,6 +258,7 @@ if (fallos === 0) {
   process.exit(0);
 }
 console.log(fallos + (fallos === 1 ? ' comprobación' : ' comprobaciones') + ' en rojo.');
-console.log('Es el pendiente 66, y hasta que se arregle esta prueba tiene que dar rojo:');
-console.log('un Asistente se pone solo el sello que dice que la Prestadora lo revisó.');
+console.log('Esta prueba pasa desde el 31 de agosto de 2026, cuando la migración 0047 cerró');
+console.log('el pendiente 66. Si da rojo, un Asistente volvió a poder ponerse solo el sello');
+console.log('que dice que la Prestadora lo revisó, y con eso entra al directorio público.');
 process.exit(1);
