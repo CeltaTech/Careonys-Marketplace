@@ -31,9 +31,9 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
-| 17 pantallas HTML, 10.215 renglones | sin ruteo: cada pantalla es un archivo |
+| 17 pantallas HTML, 10.219 renglones | sin ruteo: cada pantalla es un archivo |
 | 12.461 renglones de JavaScript propio, en 32 archivos | 7.337 de ellos son copias byte a byte de otro archivo (pendiente 13) |
-| 4.201 renglones más metidos adentro del HTML | en 13 bloques `<script>` |
+| 4.205 renglones más metidos adentro del HTML | en 13 bloques `<script>` |
 | 4.642 renglones de hojas de estilo, en 10 archivos | 64 tokens con nombre en `css/tokens.css`, sin framework |
 | 976 declaraciones más, pegadas al HTML | en 247 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 12 de las 17 pantallas rescatan la sesión al abrir |
@@ -161,7 +161,7 @@ título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de e
 | `verificar_estado` | Que un número escrito en la documentación quede viejo sin que nada avise: los cuatro bloques que se miden salen del medidor y se comparan acá |
 | `verificar_estados` | Que algo que carga datos se olvide de uno de sus cuatro estados: cargando, error, vacío, listo |
 | `verificar_estilos` | Que se escriba a mano en un `style=` lo que ya dice una clase de utilidad |
-| `verificar_frases` | Que quede texto visible escrito a mano en una pantalla ya convertida a los tres idiomas |
+| `verificar_frases` | Que quede texto visible escrito a mano en una pantalla ya convertida a los tres idiomas —en el marcado si tiene `data-frase`, y en el guión si el guión ya pide frases, que son dos conversiones distintas y no siempre van juntas |
 | `verificar_glosario` | Que una palabra que el glosario sacó siga escrita en algún lado: **en la documentación, en un comentario o en un mensaje de commit**, que son las superficies que la regla nombra y que el chequeo del vocabulario deja afuera a propósito, porque ése mira sólo el texto que ve una persona |
 | `verificar_guias` | Que una Guía de cuidado se vea sin estar publicada, o que se cruce entre dos Prestadoras |
 | `verificar_guiones` | Que el JavaScript de una pantalla quede sin poder leerse |

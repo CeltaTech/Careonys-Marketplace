@@ -5727,6 +5727,49 @@ Y el error de fondo es anterior a la búsqueda. La regla de la empresa dice que 
 algo que ya podría existir hay que buscarlo primero**, en el código real. `verificar_esquema.mjs`
 ya cubría ésta, con su número y su banco de pruebas. Se lo leyó después de medir, no antes.
 
+### Dos pantallas del mismo botón, juzgadas con distinta vara
+
+La regla 4 de `scripts/verificar_frases.mjs` pide que en una pantalla ya convertida no quede texto
+escrito a mano, y son en realidad dos: la **4a** mira el HTML y la **4b** mira el guión. Hasta el
+31 de agosto de 2026 las dos abrían con el mismo portero —que la pantalla tuviera algún
+`data-frase`— y ahí estaba el agujero: **son dos conversiones distintas y no siempre van juntas.**
+El HTML se convierte marcando elementos; el guión se convierte pidiendo frases. Y lo primero que
+se suele traducir de una pantalla son sus avisos, que viven en el guión.
+
+`pwa-familia/index.html` tenía hecha la segunda y no la primera: siete llamadas al catálogo
+adentro del guión y ningún `data-frase` en el marcado. Con un solo portero salía **entera exenta**,
+y tenía tres textos escritos a mano al lado de los que sí salían del catálogo. Su gemela
+`pwa-asistente/index.html` —el mismo programa, el mismo botón— sí entraba, y por eso estaba limpia.
+Las dos pantallas del mismo botón se estaban juzgando con distinta vara, y la que quedaba afuera
+era justamente la que peor estaba.
+
+**Y el portero tenía un segundo agujero, más chico y más viejo.** La 4b buscaba lo que el guión
+escribe en el documento —`textContent`, `innerHTML`, `innerText`, `placeholder`, `alert`— y no
+miraba `confirm` ni `prompt`. Son las dos únicas ventanas del navegador que además **preguntan**,
+así que su texto es de los que más importa que se lean en el idioma de quien contesta: ahí se
+decide si algo se borra. Ahora las siete formas se miran igual.
+
+**Lo que apareció al abrir el portero fueron cuatro renglones, no cuatrocientos**, y por eso se
+arreglaron en el momento en vez de anotarse:
+
+| Dónde | Qué decía a mano | Qué dice ahora |
+|---|---|---|
+| `pwa-familia/index.html` | la pregunta de cerrar la sesión | `comun.confirmar_salir` |
+| `pwa-familia/index.html` | «Ingresando…» | `acceso.entrando` |
+| `pwa-familia/index.html` | «Ingresar», repuesto al terminar | el rótulo que traía el botón |
+| `registrar-asistente.html` | el aviso de campos obligatorios | `alta.faltan_obligatorios` |
+
+El tercero no es sólo un texto sin traducir: reponer «Ingresar» a mano **le borraba al botón el
+nombre del producto**, que la pantalla le pone al abrir. Es exactamente la corrección que su gemela
+ya tenía hecha, con el comentario que la explica; la Familia se había quedado sin ella porque el
+chequeo no la miraba.
+
+Y la pregunta de cerrar la sesión estaba escrita **dos veces**: a mano en la Familia y en el
+catálogo como `asistente.confirmar_salir`, palabra por palabra la misma en los tres idiomas. Ahora
+es una sola clave para las dos, `comun.confirmar_salir`, que es lo que la pantalla de la Familia ya
+hacía para el aviso de datos faltantes y explica en un comentario: «una sola clave para las dos
+pantallas, no dos textos que se corrigen por separado».
+
 ### Lo único que el sistema operativo tapa solo
 
 El chequeo de rutas verifica que toda dirección local escrita en una pantalla, una hoja de estilos

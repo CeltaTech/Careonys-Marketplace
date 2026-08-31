@@ -876,7 +876,7 @@
       }
 
       if (!valid) {
-        alert('Faltan completar campos o archivos obligatorios. Están marcados en rojo.');
+        alert(Texto.frase('alta.faltan_obligatorios'));
         if (firstInvalidField) firstInvalidField.focus();
       }
       return valid;

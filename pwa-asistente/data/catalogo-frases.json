@@ -925,7 +925,7 @@
       "pt-BR": "🟢 Validado — habilitado para trabalhar"
     },
 
-    "asistente.confirmar_salir": {
+    "comun.confirmar_salir": {
       "es-AR": "¿Confirma que quiere cerrar la sesión? Para volver a entrar hay que escribir de nuevo el correo y la contraseña.",
       "en": "Do you confirm that you want to sign out? To come back in, the email address and the password have to be entered again.",
       "pt-BR": "Confirma que deseja encerrar a sessão? Para entrar de novo é preciso digitar outra vez o e-mail e a senha."
@@ -1371,6 +1371,12 @@
       "es-AR": "Mandando el correo…",
       "en": "Sending the email…",
       "pt-BR": "Enviando o e-mail…"
+    },
+
+    "alta.faltan_obligatorios": {
+      "es-AR": "Faltan completar campos o archivos obligatorios. Están marcados en rojo.",
+      "en": "Some required fields or files are still missing. They are marked in red.",
+      "pt-BR": "Faltam preencher campos ou arquivos obrigatórios. Estão marcados em vermelho."
     },
 
     "alta.faltan_terminos": {

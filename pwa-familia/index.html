@@ -1010,7 +1010,11 @@
       // clave para las dos pantallas, no dos textos que se corrigen por
       // separado.
       if (!email || !password) { alert(Catalogo.frase('acceso.faltan_datos')); return; }
-      btn.textContent = 'Ingresando...';
+      // El rótulo original se guarda y se repone. Antes se reponía escrito a
+      // mano —«Ingresar»— y el botón perdía para siempre el nombre del producto
+      // que trae la pantalla. Es la misma corrección que ya tenía su gemela.
+      const rotuloEntrar = btn.textContent;
+      btn.textContent = Catalogo.frase('acceso.entrando');
       btn.disabled = true;
       try {
         const user = await Sesion.login(email, password);
@@ -1021,7 +1025,7 @@
       } catch (err) {
         alert(Texto.mensajeDeError(err, 'iniciar sesión'));
       } finally {
-        btn.textContent = 'Ingresar';
+        btn.textContent = rotuloEntrar;
         btn.disabled = false;
       }
     });
@@ -1048,7 +1052,7 @@
     // pudo cerrar, se dice —antes el error no llegaba a ninguna parte y la persona
     // se quedaba mirando el menú, creyendo que había salido—.
     document.getElementById('btn-logout').addEventListener('click', async () => {
-      if (!confirm('¿Confirma que quiere cerrar la sesión? Para volver a entrar hay que escribir de nuevo el correo y la contraseña.')) return;
+      if (!confirm(Catalogo.frase('comun.confirmar_salir'))) return;
       const boton = document.getElementById('btn-logout');
       const original = boton.innerHTML;
       boton.disabled = true;

@@ -252,23 +252,42 @@ for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJEN
   // golpe los cien avisos de texto a mano que esa pantalla todavía tiene por
   // delante. Pasó dos veces el 26 de agosto de 2026, en dos archivos
   // distintos, escribiendo justamente el comentario que explicaba la regla.
-  if (!esHtml || !/\bdata-frase\b/.test(sinNotas)) continue;
-  convertidas++;
+  //
+  // Y son dos porteros, no uno. El `data-frase` abre la regla 4a, que es del
+  // HTML. La 4b, que es del guión, abre además cuando el guión ya pide frases,
+  // aunque el HTML no esté convertido: son dos conversiones distintas y no
+  // siempre van juntas —el HTML se convierte marcando elementos, el guión se
+  // convierte pidiendo frases, y lo primero que se suele traducir de una
+  // pantalla son sus avisos—. Con un solo portero, `pwa-familia/index.html`
+  // —siete llamadas al catálogo adentro del guión y ningún `data-frase` en el
+  // HTML— salía entera exenta, y tenía tres textos escritos a mano al lado de
+  // los que sí salían del catálogo. Su gemela `pwa-asistente/index.html` sí
+  // entraba, así que las dos pantallas del mismo botón se juzgaban con
+  // distinta vara. Encontrado el 31 de agosto de 2026.
+  if (!esHtml) continue;
 
-  // Regla 4a: en el HTML no puede quedar texto que una persona lea y que no
-  // salga del catálogo.
-  const limpio = sinEntidades(sinMetas(sinGuiones(despejar(crudo))));
-  for (const [renglon, texto] of visible(limpio, true)) {
-    if (!/[A-Za-zÀ-ÿ]{2,}/.test(texto)) continue;
-    fallas.push(`${nombre}:${renglon}  texto escrito a mano: «${texto.slice(0, 70)}»`);
+  const guiones = (crudo.match(/<script\b[^>]*>([\s\S]*?)<\/script>/gi) || []).join('\n')
+    .replace(/\/\/[^\n]*|\/\*[\s\S]*?\*\//g, enBlanco);
+  const guionHablaCatalogo = /(?:Catalogo|Texto)\.frase\s*\(/.test(guiones);
+
+  if (/\bdata-frase\b/.test(sinNotas)) {
+    convertidas++;
+
+    // Regla 4a: en el HTML no puede quedar texto que una persona lea y que no
+    // salga del catálogo.
+    const limpio = sinEntidades(sinMetas(sinGuiones(despejar(crudo))));
+    for (const [renglon, texto] of visible(limpio, true)) {
+      if (!/[A-Za-zÀ-ÿ]{2,}/.test(texto)) continue;
+      fallas.push(`${nombre}:${renglon}  texto escrito a mano: «${texto.slice(0, 70)}»`);
+    }
+  } else if (!guionHablaCatalogo) {
+    continue;
   }
 
   // Regla 4b: y en el guión de esa pantalla, tampoco. Se mira sólo lo que
   // escribe en el documento —no toda cadena entre comillas—, porque un
   // identificador o una dirección no es texto visible.
-  const guiones = (crudo.match(/<script\b[^>]*>([\s\S]*?)<\/script>/gi) || []).join('\n')
-    .replace(/\/\/[^\n]*|\/\*[\s\S]*?\*\//g, enBlanco);
-  const escribe = /(?:textContent|innerHTML|innerText|placeholder|alert)\s*(?:=|\()\s*('[^'\n]{2,}'|"[^"\n]{2,}")/g;
+  const escribe = /(?:textContent|innerHTML|innerText|placeholder|alert|confirm|prompt)\s*(?:=|\()\s*('[^'\n]{2,}'|"[^"\n]{2,}")/g;
   for (const m of guiones.matchAll(escribe)) {
     const texto = m[1].slice(1, -1);
     if (!/[A-Za-zÀ-ÿ]{2,}/.test(texto)) continue;
