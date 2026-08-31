@@ -91,13 +91,16 @@ terminado, así que va al cerrar, después del `push`. **Y comprueba además lo 
 que servir**: hasta el 31 de agosto de 2026 subía el repositorio entero, con la lista de
 pendientes y las migraciones adentro. Lo cierra `.vercelignore`; el guion avisa si se reabre.
 
-**Las pruebas que necesitan la base levantada se corren juntas:** `node scripts/probar_todo.mjs`.
-Son siete, van contra la base de esta máquina y por eso **no entran en `verificar_todo.mjs`** —el
-gancho de `commit` corre sin base y sin red, igual que pasa con la comprobación de la publicación—.
-Antes hay que levantarla: `supabase start …` y `supabase migration up --local`. El guion nombra
-adentro las dos pruebas que quedan afuera, que van contra el servidor publicado. Existe por lo que
-pasó el 31 de agosto de 2026: la prueba de aislamiento sabía correr con `--local` desde que se
-escribió y hacía cinco días que nadie la corría, y la tabla del README se había quedado vieja
+**Lo que no entra en el gancho de `commit` se corre junto:** `node scripts/probar_todo.mjs`.
+Son ocho. Siete **necesitan la base de esta máquina levantada**, y por eso quedan afuera de
+`verificar_todo.mjs`, que corre sin base y sin red —igual que pasa con la comprobación de la
+publicación—. La octava, `probar_perdida_de_corpus.mjs`, no necesita ni base ni red: queda
+afuera porque **copia el proyecto y corre la red de chequeos dos veces**, que es demasiado
+para cada `commit`.
+Antes de las siete hay que levantar la base: `supabase start …` y
+`supabase migration up --local`. El guion nombra adentro las dos pruebas que quedan afuera del
+todo, que van contra el servidor publicado. Existe por lo que pasó el 31 de agosto de 2026: la
+prueba de aislamiento sabía correr con `--local` desde que se escribió y hacía cinco días que nadie la corría, y la tabla del README se había quedado vieja
 porque nadie corría al medidor. **Una herramienta que hay que acordarse de correr es una
 herramienta que no corre.**
 

@@ -4600,6 +4600,39 @@ verdad— cobrándose sola: el error vivía en la copia, y sin copia no hay dón
 
 ---
 
+### La novena medición a mano del mismo día pasó a ser un guion, y encontró uno más
+
+El pendiente 91 dice que perder la mitad del corpus no pone en rojo a nadie, y lo decía con ocho
+pares de números medidos a mano: `escapado` de 49 archivos a 17, `estados` de 267 bloques a 56,
+`paleta` de 56 a 24. La medición se había hecho armando una copia del proyecto con los `.js`
+renombrados a `.ts` y mirando, uno por uno, cuáles seguían diciendo ✔.
+
+Después de encontrar cuatro números escritos a mano que ya estaban viejos, dejar el noveno escrito
+igual no tenía defensa. Así que el experimento se volvió `scripts/probar_perdida_de_corpus.mjs`:
+copia el proyecto —con `archivos()`, para que el guardián de las cajas fuertes venga puesto—,
+renombra los `.js`, corre la red de los dos lados y reparte cada chequeo en tres columnas. Se plantó:
+notó que le faltaban archivos. Dijo exactamente lo mismo: no mira los `.js`, no perdió nada. Dijo ✔
+con otro número: **revisó menos y lo contó como éxito**.
+
+**Y la primera vez que corrió encontró nueve, no ocho.** El que faltaba era `estilos`, que pasa de
+51 atributos `style=` adentro de guiones a 20 y sigue en verde. No lo había visto nadie porque su
+mensaje tiene cuatro números y sólo dos cambian; a ojo se lee igual. Es la misma lección una vez
+más, ahora del otro lado: **el número escrito a mano no sólo envejece, además nace incompleto**.
+
+La prueba se comprobó en las dos direcciones. Da rojo hoy —nueve ciegos, trece plantados, cinco que
+no miran los `.js`—. Y sabe dar verde: dejándole ver los `.ts` a uno de los nueve, ese chequeo pasó
+solo de la columna de los ciegos a la de los que no perdieron nada. Se planta además si la copia
+salió vacía, si no hubo un `.js` que renombrar, si ningún chequeo mira los `.js`, o si alguno ya
+viene fallando en el proyecto sin tocar —esto último saltó solo en la primera corrida, porque el
+guion recién escrito había cambiado la cuenta de guiones de `docs/INVENTARIO.md` y el bloque
+generado del día anterior lo agarró en el acto—.
+
+**Lo que la prueba no hace es elegir la salida.** Las tres posibles están en el pendiente 91 y son
+una política de exenciones, o sea una decisión. Lo que cambia es que ahora la elección tiene con
+qué comprobarse, y que el día que alguien la crea resuelta hay un comando que contesta.
+
+---
+
 ---
 
 ## 6. Deuda del código actual

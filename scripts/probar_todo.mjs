@@ -4,8 +4,9 @@
        node scripts/probar_todo.mjs
 
    `verificar_todo.mjs` junta los chequeos que leen archivos y corren sin red.
-   Éste junta las pruebas que necesitan una base levantada: registran cuentas
-   ficticias, les hacen escribir y subir papeles, y preguntan quién ve qué.
+   Éste junta lo que no entra ahí: casi todo porque necesita una base levantada
+   —registran cuentas ficticias, les hacen escribir y subir papeles, y preguntan
+   quién ve qué— y una porque tarda demasiado para el gancho de `commit`.
 
    Existe por lo que pasó el 31 de agosto de 2026. La prueba de aislamiento
    sabía correr contra la base local desde que se escribió, y hacía cinco días
@@ -15,6 +16,11 @@
    el problema fue el mismo: **una herramienta que hay que acordarse de correr
    es una herramienta que no corre.**
 
+   **La que no necesita base ni red** es `probar_perdida_de_corpus.mjs`: copia el
+   proyecto, le renombra los `.js` y corre la red entera del otro lado para ver
+   quién se da cuenta de que le sacaron archivos. Correr la red dos veces sobre
+   una copia del proyecto es demasiado para cada `commit`, así que vive acá.
+
    Antes hay que levantar la base:
 
        supabase start -x edge-runtime -x vector -x supavisor -x logflare
@@ -23,7 +29,7 @@
    ── Lo que NO corre acá, y por qué ────────────────────────────────────────
 
    Dos pruebas quedan afuera a propósito, y se dice cuáles para que nadie
-   cuente estas siete y crea que están todas:
+   cuente estas ocho y crea que están todas:
 
    · `probar_alta_y_baja.mjs` — va contra el servidor publicado, necesita la
      clave de firma de la caja fuerte, y su limpieza **borra datos publicados**.
@@ -33,10 +39,15 @@
 
    ── La que tiene que dar rojo ─────────────────────────────────────────────
 
-   Una sale en rojo a propósito y dice adentro por qué:
-   `probar_pisado_de_archivos.mjs` es el pendiente 89 —subir dos veces el mismo
-   papel borra el primero, y el arreglo depende de una decisión que todavía no
-   se tomó—. Acá se cuenta como esperada y no tumba la corrida.
+   Dos salen en rojo a propósito y dicen adentro por qué. Acá se cuentan como
+   esperadas y no tumban la corrida:
+
+   · `probar_pisado_de_archivos.mjs` es el pendiente 89 —subir dos veces el mismo
+     papel borra el primero, y el arreglo depende de una decisión que todavía no
+     se tomó—.
+   · `probar_perdida_de_corpus.mjs` es el pendiente 91 —nueve chequeos dan ✔ con
+     menos archivos cuando se les saca la mitad del corpus, y la salida son tres
+     políticas de exención entre las que hay que elegir—.
 
    **Y el pendiente que la explica tiene que estar abierto.** Si no está, esto
    falla antes de correr ninguna prueba. Sin esa comprobación la lista perdona
@@ -58,9 +69,9 @@ import { readFileSync } from 'node:fs';
 
 const aca = dirname(fileURLToPath(import.meta.url));
 
-/* Las siete que saben correr contra la base local. En este orden: primero las
-   chicas, que son rápidas y dicen enseguida si la base está sana, y al final la
-   de aislamiento, que es la larga. */
+/* En este orden: primero las chicas, que son rápidas y dicen enseguida si la
+   base está sana; después la de aislamiento, que es la larga; y al final la del
+   corpus, que no necesita base pero corre la red de chequeos dos veces. */
 const PRUEBAS = [
   'probar_el_rol_y_la_prestadora_del_perfil.mjs',
   'probar_de_quien_es_el_legajo.mjs',
@@ -68,13 +79,15 @@ const PRUEBAS = [
   'probar_el_papel_nuevo_baja_el_sello.mjs',
   'probar_permisos_en_vivo.mjs',
   'probar_pisado_de_archivos.mjs',
-  'probar_aislamiento.mjs'
+  'probar_aislamiento.mjs',
+  'probar_perdida_de_corpus.mjs'
 ];
 
 /* Rojas a propósito, con el pendiente que lo explica al lado. Sacar de acá lo
    que se arregle: si una de éstas pasa, esta corrida falla y dice por qué. */
 const ROJAS_ESPERADAS = new Map([
-  ['probar_pisado_de_archivos.mjs', 89]
+  ['probar_pisado_de_archivos.mjs', 89],
+  ['probar_perdida_de_corpus.mjs', 91]
 ]);
 
 /* Y el pendiente que explica cada roja tiene que existir. Sin esto la lista de
