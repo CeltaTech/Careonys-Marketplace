@@ -1,7 +1,8 @@
 # Términos y Condiciones para Asistentes
 
-> **Documento vivo.** Rige tal como está desde el 31 de agosto de 2026. Lo revisó el
-> Desarrollador y **mientras el proyecto no esté concluido, ésta es la versión válida**: es la
+> **Documento vivo.** Rige tal como está desde el 31 de agosto de 2026 **por decisión del
+> Desarrollador**, que resolvió tomarlo por válido sin esperar a nadie: **mientras el
+> proyecto no esté concluido, ésta es la versión válida**: es la
 > que las pantallas enlazan y la que la persona acepta al darse de alta. Al cerrar el proyecto
 > los dos documentos de términos van a revisión de un abogado, y lo que esa revisión corrija se
 > escribe acá. Como todo documento vivo, entre una cosa y la otra puede cambiar —se agregan
@@ -96,6 +97,25 @@ hacerlo cambiaría la naturaleza de la relación.
 > cierre del proyecto. El marco de referencia ya está escrito, en
 > `..\careonys\docs\legal\argentina.md`.
 
+**3.5. Nadie del sistema es personal de CeltaTech.** Ni usted, ni el personal de su
+Prestadora, ni las Familias son empleados, contratados ni representantes de CeltaTech.
+CeltaTech licencia el software y nada más: no emplea, no contrata, no dirige, no supervisa y
+no le paga a ninguna de las personas que lo usan. **Tampoco responde por lo que esas personas
+hagan, digan, recomienden o indiquen**, adentro o afuera del sistema.
+
+**3.6. Por acá no pasa dinero.** El software no cobra, no debita, no retiene comisión, no
+liquida honorarios y no emite comprobantes: no tiene con qué. No hay ninguna pasarela de
+pagos, no se guarda ninguna tarjeta, y ni siquiera se guarda la identificación fiscal de la
+Prestadora, porque acá no se factura
+(`supabase/migrations/0025_a_cada_prestadora_la_nombra_celtatech.sql:20`). Lo único que el
+sistema guarda sobre su dinero son los datos bancarios que usted carga para que le paguen
+(`supabase/migrations/0001_esquema_inicial.sql:96`): son un dato más del Legajo, no una
+autorización a debitarle nada. El precio por hora que aparece en su Perfil es el que usted
+declaró, no una tarifa que fije el software. Cuánto cobra, cómo y cuándo se lo pagan se
+acuerda con su Prestadora o con quien lo contrate, y se paga por fuera de este sistema.
+**Aceptar este documento no lo obliga a pagar nada, y tampoco le garantiza un pago**: lo que
+se le deba sale de su Vínculo, no de acá.
+
 ## 4. Su Legajo y sus datos personales
 
 Lo que sigue se apoya en la **Ley N° 25.326 de Protección de los Datos Personales**.
@@ -136,6 +156,72 @@ un título, una matrícula o un certificado que no le pertenece, o que está ven
 suficiente para que su Prestadora dé de baja su Legajo, sin perjuicio de lo que corresponda
 por otra vía.
 
+**4.8. Qué se ve de su Perfil, y quién lo ve.** Publicar el Perfil es una decisión suya y
+**empieza apagada**: la autorización nace en «no» (`data/catalogo-autorizaciones.json:46`), y
+no contestar nunca vale por un sí. Mientras esté apagada, o mientras su Prestadora no haya
+validado su Legajo, usted no aparece en ninguna parte: el directorio muestra solamente a quien
+tiene las dos cosas, el Legajo validado y el Perfil publicado
+(`supabase/migrations/0037_quien_cubre_una_region_entera_aparece_por_sus_municipios.sql:119-120`).
+Publicado, el Perfil **se ve sin iniciar sesión**, porque una Familia mira antes de
+registrarse; la pantalla del directorio les pide a los buscadores que no lo indexen
+(`directorio.html:11`). Lo que se muestra ahí es lo dicho en la §4.4, y nunca su documento, su
+teléfono, su correo ni su domicilio, marque lo que marque
+(`data/catalogo-autorizaciones.json:27`). Apagar la publicación lo saca del directorio.
+
+**4.9. Los archivos que sube, y dónde quedan.** Los papeles del Legajo —documento,
+certificado de antecedentes, títulos, matrícula— van a un depósito **privado**, que no le
+contesta a nadie desde afuera (`supabase/migrations/0006_archivos_del_legajo.sql:29`). Cada
+archivo queda en una carpeta que es de su cuenta y de ninguna otra, y sólo usted los sube, los
+reemplaza y los borra (`supabase/migrations/0006_archivos_del_legajo.sql:52`). El personal de
+su Prestadora los **lee**, para poder auditarlos, y no los modifica
+(`supabase/migrations/0006_archivos_del_legajo.sql:78`). Y cuando hay que mostrarle uno, el
+sistema pide un enlace temporal que vence a los cinco minutos (`js/auth.js:265`), en vez de
+una dirección fija que quede dando vueltas.
+
+**Con la fotografía es distinto, y conviene que lo sepa.** La foto del Perfil vive en un
+depósito **público** (`supabase/migrations/0006_archivos_del_legajo.sql:39`), porque el
+directorio se ve sin iniciar sesión y las fotos tienen que poder cargarse ahí. Quien conozca
+su dirección exacta puede abrirla sin tener cuenta. Si eso no le sirve, no suba fotografía.
+
+**4.10. Las referencias que carga son datos de otra persona.** Cuando carga una referencia
+laboral, lo que queda guardado no es suyo: es el nombre, el teléfono, la relación y el
+comentario de un tercero que no está usando el sistema y que no aceptó nada
+(`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:98-106`). Por eso van
+tres reglas juntas:
+
+- **Avísele a esa persona antes de cargarla.** El sistema se lo recuerda en la misma pantalla,
+  con todas las letras (`data/catalogo-fichas.json:207`), pero el aviso lo da usted: nadie del
+  sistema la llama para pedirle permiso.
+- **Alguien de su Prestadora puede llamarla** para confirmar lo que usted contó. Para eso está
+  el teléfono, y para nada más.
+- **Nunca sale al Perfil.** Una referencia no se muestra en su Perfil, no la ve ninguna
+  Familia y no sale al directorio público, ni entera ni en parte
+  (`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:111`).
+
+Cargue solamente referencias de personas que le dieron el visto bueno, y no escriba de ellas
+nada que no haga falta para llamarlas.
+
+**4.11. La posición desde donde ficha.** Cuando marca el check-in y el check-out, el sistema
+le pide al navegador dónde está y guarda esa posición junto con la marca
+(`supabase/migrations/0001_esquema_inicial.sql:109-113`). Se guarda **solamente en ese
+instante**: no hay seguimiento continuo, no se registra su recorrido y no se mira dónde está
+entre una marca y la otra. El permiso lo da usted en el navegador y lo puede negar; si lo
+niega, no se guarda nada, ni la posición ni la marca. Para qué sirve: para dejar constancia de
+que la Guardia se cumplió en el domicilio acordado.
+
+**4.12. Dónde está el detalle.** Qué guarda el sistema, con qué finalidad, por cuánto tiempo y
+cómo se ejercen los derechos de la §4.5 está desarrollado en la **Política de Datos
+Personales**, en `docs/politica_de_datos.md`. Este capítulo dice lo que le toca a su Legajo;
+aquel documento cubre el sistema entero.
+
+**4.13. Punto pendiente: el organismo de control.** La ley de protección de datos personales
+prevé un organismo ante el cual reclamar, y **este documento todavía no lo nombra**. El motivo
+está escrito: los avisos legales de este producto salen del documento legal del país
+—`..\careonys\docs\legal\argentina.md`—, ese documento hoy no lo trae, y la regla de la
+empresa es que un aviso legal no se deduce por parecido con otro país ni se improvisa. El
+hueco queda marcado y se completa cuando ese documento lo incluya. **Mientras tanto el reclamo
+se le hace a su Prestadora**, que es la responsable de la base.
+
 ## 5. Qué puede hacer y qué no
 
 **5.1. Nunca por encima de su habilitación.** Sólo puede realizar las tareas que su tipo de
@@ -159,6 +245,25 @@ servicio de salud.**
 **5.5. Conducta.** Trato respetuoso y profesional con el Paciente, con su familia y con el
 personal de la Prestadora. Puntualidad, y aviso apenas sepa que no va a poder cumplir.
 
+**5.6. Lo que no se hace con el sistema.** Además de lo anterior, usted se compromete a no:
+
+- entrar, ni intentar entrar, a la cuenta de otra persona, ni usar una cuenta que no sea la
+  suya;
+- acosar, amenazar, insultar ni discriminar a nadie, y no cargar en ningún campo contenido
+  ofensivo, violento ni sexual;
+- hacerse pasar por otra persona, ni atribuirse un tipo de Asistente, un título o una
+  matrícula que no tiene;
+- recolectar de forma automática los datos del directorio ni de ninguna otra pantalla, ni con
+  programas ni copiándolos a mano para armar una lista aparte;
+- usar el sistema para ofrecer o vender otra cosa, para hacer publicidad, ni para invitar a
+  nadie a un negocio ajeno al cuidado acordado;
+- entorpecer el funcionamiento del sistema, saltear sus controles de acceso o cargarle trabajo
+  artificial;
+- ni ayudar a otra persona a hacer cualquiera de estas cosas.
+
+**Incumplir cualquiera de estos puntos habilita a su Prestadora a suspender o dar de baja su
+Legajo**, como dice el capítulo 9.
+
 ## 6. Confidencialidad
 
 **6.1.** Todo lo que conozca del Paciente y de su familia por razón de su trabajo es
@@ -170,6 +275,14 @@ grabación, dato ni relato identificable del Paciente o de su casa.
 
 **6.3.** Lo que escriba en los reportes de cuidado es para su Prestadora y para quien tenga
 derecho a leerlo. No se comparte por fuera del sistema.
+
+**6.4. Los papeles y el dinero de otra persona.** Lo que el sistema le pide es **suyo**: su
+documento, sus certificados y, si los carga, sus datos bancarios para cobrar
+(`supabase/migrations/0001_esquema_inicial.sql:96`). No cargue, no muestre y no difunda el
+documento de identidad, la clave, la cuenta bancaria ni el medio de cobro de ninguna otra
+persona —ni del Paciente, ni de su familia, ni de un compañero de trabajo—, ni adentro del
+sistema ni fuera de él. El directorio público no expone datos de esa clase de nadie, y así
+está construido (`supabase/migrations/0002_aislamiento_por_prestadora.sql:133`).
 
 ## 7. Cursos y evaluaciones
 
@@ -184,9 +297,13 @@ pudiera hacer.
 **7.3. Honestidad.** La evaluación la rinde usted. Hacerla rendir por otra persona anula el
 certificado.
 
-**7.4. Cursos pagos.** Si el curso tiene precio, la condición de devolución es de **diez días
-corridos** desde la compra, siempre que no lo haya comenzado ni haya accedido a los
-materiales. La devolución la gestiona quien le cobró.
+**7.4. Si un curso tuviera precio.** Este software **no cobra**: no pide una tarjeta, no
+debita y no emite comprobantes, como dice la §3.6. Que un curso se dicte sin cargo o con un
+precio es una decisión comercial de quien lo dicta, y **este documento no la toma en ningún
+sentido**: no promete que los cursos sean gratuitos ni anuncia que se cobren. Si alguna vez
+alguno tuviera precio, sus condiciones —cuánto, a quién se le paga, por qué medio y qué pasa
+si se arrepiente— se las tiene que dar por escrito quien se lo cobre, antes de cobrarle, y se
+aceptan aparte de este documento. **Nada de lo que acepta acá lo obliga a pagar nada.**
 
 ## 8. Su cuenta
 
@@ -197,6 +314,28 @@ avise a su Prestadora y cambie la clave.
 
 **8.3.** Su correo se confirma antes de poder entrar, para que nadie pueda registrarse con el
 correo de otra persona.
+
+**8.4. Edad mínima.** Para registrarse como Asistente hay que ser mayor de 18 años, y al
+aceptar estos términos usted lo declara. El sistema le pide la fecha de nacimiento al armar el
+Legajo (`registrar-asistente.html:298`) y la guarda, pero **hoy no hace por su cuenta ninguna
+comprobación de la edad**: la exigencia se sostiene en lo que usted declara y en el documento
+de identidad, que es la única verificación que frena el alta del Legajo
+(`data/catalogo-verificaciones.json:14-17`). Registrarse siendo menor de edad es motivo de
+baja.
+
+**8.5. Una cuenta por persona.** Una persona tiene una sola cuenta, y esa cuenta tiene un solo
+Legajo: la base no admite que una misma cuenta quede dueña de dos
+(`supabase/migrations/0005_acceso_por_sesion.sql:39-41`). No abra cuentas con el nombre, el
+correo o el documento de otra persona, ni cuentas de más para usted mismo.
+
+**8.6. Datos reales y al día.** Lo que carga tiene que ser verdadero, suyo y estar vigente
+—la §4.7 lo dice de los papeles del Legajo y vale igual para el resto—. Su teléfono y su
+correo son por donde su Prestadora lo ubica: si cambian, actualícelos. Y tenga presente que
+**cambiar un papel del Legajo devuelve el sello de validación a «en revisión»** hasta que su
+Prestadora lo mire otra vez
+(`supabase/migrations/0047_las_columnas_que_ninguna_politica_miraba.sql:115-120`). No es una
+sanción: el sello habla de los papeles que están cargados hoy, así que cuando cambia uno,
+vuelve a revisarse.
 
 ## 9. Suspensión y baja
 
@@ -209,6 +348,19 @@ plazo de guarda.
 
 **9.3.** Suspender el acceso al software no es rescindir el Vínculo, ni al revés. Son dos
 cosas distintas y cada una sigue su camino.
+
+**9.4. Qué pasa cuando se da de baja un Legajo.** Su Perfil deja de aparecer en el directorio
+en ese mismo momento, porque ahí sólo se muestra el Legajo validado
+(`supabase/migrations/0037_quien_cubre_una_region_entera_aparece_por_sus_municipios.sql:119`).
+Lo que ya ocurrió **no se borra**: las Guardias cumplidas, las marcas de check-in y de
+check-out y los reportes quedan donde están, porque son la constancia del trabajo hecho y de
+lo que se le deba. Su Legajo y sus archivos quedan bajo la guarda de su Prestadora por el
+plazo de la §4.6, y si quiere que se supriman sus datos se pide como dice la §4.5.
+
+**9.5. No se vuelve por otra puerta.** Quien tenga el Legajo dado de baja por incumplimiento
+no abre otra cuenta para volver a entrar sin que su Prestadora lo sepa. Hoy el sistema no lo
+detecta por su cuenta, así que la regla vale porque acá queda escrita —y porque volver así es,
+por sí solo, un incumplimiento nuevo—.
 
 ## 10. Responsabilidad
 
@@ -233,6 +385,7 @@ aceptación de la versión nueva.
 | 4 de agosto de 2026 | Primera redacción |
 | 25 de agosto de 2026 | Vocabulario al glosario: donde decía «Cuidador» dice **Asistente**, y donde decía «Empresa Prestadora Cliente» dice **Prestadora**. Ninguna cláusula cambió |
 | 31 de agosto de 2026 | Reescritura completa. Sale la advertencia de borrador que se contradecía con las pantallas (pendiente 49); se ordena en trece capítulos; se apoyan las cláusulas en la ley argentina que corresponde —art. 23 de la LCT, Ley 25.326, Ley 24.004—; se saca el nombre de una Prestadora del semillero y se dice «su Prestadora»; y se agregan los capítulos de autonomía, Guías de cuidado, confidencialidad, cuenta, baja, responsabilidad, ley aplicable y este registro |
+| 31 de agosto de 2026 | Se agregan las cláusulas que faltaban, medidas contra los dos documentos de un competidor en actividad relevados ese día. Entran: nadie del sistema es personal de CeltaTech (§3.5); por acá no pasa dinero (§3.6); qué se ve del Perfil y quién lo ve (§4.8); dónde quedan los archivos del Legajo, y que la fotografía va a un depósito público (§4.9); **las referencias son datos de un tercero** (§4.10); la posición que se guarda al fichar (§4.11); el enlace a `docs/politica_de_datos.md` (§4.12); conducta prohibida (§5.6); nada de papeles ni datos bancarios de otra persona (§6.4); edad mínima (§8.4); una cuenta por persona (§8.5); datos reales y al día (§8.6); y qué pasa cuando se da de baja un Legajo (§9.4 y §9.5). Se reescribe la §7.4: el documento ya no fija condiciones de devolución de un curso, porque el software no cobra nada. **No se copió** nada de lo que el competidor tiene y este software no hace —packs de contactos, membresías, renovación automática, débito de tarjeta, reembolsos, publicidad, programa de recomendación con premios e interfaz para que terceros desarrollen encima—, ni su criterio de que todo sea público salvo lo que se marque privado, que es el contrario al de este producto. Quedan **dos huecos marcados**: el organismo de control (§4.13) y el reparto de responsabilidad con el tribunal competente (§12.3) |
 
 ## 12. Ley aplicable
 
@@ -240,6 +393,14 @@ aceptación de la versión nueva.
 
 **12.2.** El tribunal competente y el domicilio a los efectos de cualquier reclamo son los que
 fije el acuerdo entre usted y su Prestadora. Este documento no los establece.
+
+**12.3. Punto pendiente: quién responde por qué, y ante qué tribunales.** Del otro lado de un
+servicio como éste suele haber una sola empresa. Acá hay dos cosas distintas: **su
+Prestadora**, que es con quien usted tiene trato y quien responde por su Vínculo y por su
+Legajo, y **CeltaTech**, que licencia el software. Cómo se reparte la responsabilidad entre
+las dos ante un reclamo, y ante qué tribunal se litiga, **no está decidido y no se completa
+adivinando**: es de lo primero que se le pone delante al abogado que revise este documento al
+cierre del proyecto. Hasta entonces vale lo dicho en la §12.2.
 
 ## 13. Contacto
 

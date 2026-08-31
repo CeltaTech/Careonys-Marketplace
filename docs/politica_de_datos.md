@@ -1,0 +1,412 @@
+# Política de Datos Personales
+
+> **Documento vivo.** Rige tal como está desde el 31 de agosto de 2026 **por decisión del
+> Desarrollador**, que resolvió tomarlo por válido sin esperar a nadie: **mientras el
+> proyecto no esté concluido, ésta es la versión válida**. Al
+> cerrar el proyecto pasa a revisión de un abogado, junto con los dos documentos de términos, y
+> lo que esa revisión corrija se escribe acá. Como todo documento vivo, entre una cosa y la otra
+> puede cambiar —se agregan cláusulas, se corrigen y se sacan—, y cada cambio queda anotado en
+> la §15.2.
+>
+> **Cómo está escrito, que es lo que lo hace confiable.** Este documento describe **lo que el
+> software hace**, no lo que sería deseable que hiciera. Cada cosa que declara se midió contra el
+> código y contra las migraciones que construyen la base, y va con el archivo y el renglón donde
+> cualquiera lo puede comprobar. **Lo que no se pudo comprobar no se escribió como si estuviera
+> hecho**: está en la §14, que es la lista de lo que este documento todavía no puede contestar.
+> Un documento de datos que promete de más es peor que no tenerlo.
+
+| | |
+|---|---|
+| **A quién le habla** | A toda persona cuyos datos entran en Careonys: la **Familia**, el **Paciente**, el **Asistente**, y quien figure como referencia de un Asistente |
+| **De quién es esta política** | De la **Prestadora** que presta el servicio |
+| **Con qué software** | Careonys, licenciado por **CeltaTech** |
+| **Jurisdicción** | República Argentina |
+| **Última actualización** | 31 de agosto de 2026 |
+
+---
+
+## 1. Qué dice y qué no dice este documento
+
+**1.1. Qué dice.** Qué datos guarda el software, en qué lugar los guarda, quién los puede mirar,
+qué se ve sin iniciar sesión, qué se registra de lo que cada quien hace, y qué pasa con todo eso
+cuando una Prestadora deja de operar.
+
+**1.2. Qué no dice.** No dice qué hace la Prestadora **fuera** del software: los papeles que
+archiva en su oficina, las conversaciones que tiene por teléfono y lo que anota en su propia
+contabilidad no pasan por acá y no los alcanza esta política. Tampoco dice qué se acordó entre la
+Familia y la Prestadora: eso está en el contrato entre ellas.
+
+**1.3. Los dos documentos hermanos.** Los Términos y Condiciones para Familias y los Términos y
+Condiciones para Asistentes dicen qué es el servicio y qué se compromete cada parte. Este
+documento dice qué pasa con los datos. Donde los tres hablen del mismo hecho, dicen lo mismo.
+
+---
+
+## 2. Quién responde por sus datos
+
+**2.1. La Prestadora.** Es con quien la Familia y el Asistente tienen trato, es quien decide qué
+datos pide y para qué los usa, y es a quien hay que dirigirse por cualquier cosa relativa a
+ellos.
+
+**2.2. CeltaTech.** Licencia el software a la Prestadora. No es parte del cuidado, no elige qué
+datos se piden y no interviene en la relación entre la Familia, el Paciente y el Asistente.
+
+**2.3. La responsable de la base es la Prestadora**, y es lo mismo que dicen los dos documentos de
+términos: todo pedido sobre sus datos se le hace a ella.
+
+**2.4. Y queda un punto pendiente, que no se rellena adivinando.** Una cosa es a quién se le pide,
+que está contestado, y otra **cómo se reparte esa responsabilidad entre la Prestadora y CeltaTech
+ante un organismo de control**: son dos personas jurídicas distintas, una presta el servicio y la
+otra opera el software, y la respuesta es jurídica, no técnica. Queda anotado en la §14 y se
+completa cuando la revisión legal lo resuelva.
+
+---
+
+## 3. Qué datos se guardan
+
+**3.1. Del Asistente, cuando carga su legajo.** Nombre y apellido, documento, correo, celular,
+CUIT o CUIL, fecha de nacimiento, género, nacionalidad, domicilio, zonas donde trabaja, CBU o
+alias bancario, tipo de Asistente, nivel de estudios, cursos, patologías que sabe atender, tareas
+para las que está autorizado, modalidades de contratación, valor hora pretendido y disponibilidad
+por día y turno. La columna de cada uno está declarada en
+`supabase/migrations/0001_esquema_inicial.sql:80-102`, y ahí se ven una por una: el nombre en
+`supabase/migrations/0001_esquema_inicial.sql:82`, el documento en `:83`, el teléfono en `:84`, el
+correo en `:85`, el domicilio en `:95` y los datos bancarios en `:96`.
+
+**3.2. Y además, el legajo se completa con fichas.** Matrícula, estudios, experiencia laboral,
+papeles presentados y referencias son tablas aparte, una fila por cada cosa cargada, creadas en
+`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql`.
+
+**3.3. De la Familia y del Paciente, cuando se publica un Aviso.** El nombre del Paciente
+—`supabase/migrations/0001_esquema_inicial.sql:67`—, sus patologías —`:68`—, la zona, la
+modalidad, los días y los turnos, y cómo volver a comunicarse con quien publicó, que se guarda en
+`supabase/migrations/0009_contacto_de_la_busqueda.sql:40` y que la propia migración describe como
+«nombre, correo y teléfono» en `supabase/migrations/0009_contacto_de_la_busqueda.sql:43`.
+
+**3.4. Hay un campo de texto libre, y conviene saberlo antes de escribir en él.** El Aviso tiene
+una descripción donde la Familia cuenta la situación con sus palabras
+—`supabase/migrations/0013_lo_que_la_familia_pide.sql:50`—. La propia migración lo dice sin
+adornos: es «la única que puede traer datos de una persona sin que nadie los haya pedido»
+(`supabase/migrations/0013_lo_que_la_familia_pide.sql:64-65`). **Conviene contar lo necesario y no
+más.**
+
+**3.5. Datos de otras personas, que ni la Familia ni el Asistente son.** Son dos casos y los dos
+existen. El primero: la Familia carga los datos del **Paciente**, que casi nunca es quien está
+escribiendo. El segundo: el Asistente carga **referencias**, con el nombre, el teléfono y la
+relación de una persona que no está presente
+—`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:102-104`—. En los dos
+casos, quien los carga tiene que estar autorizado a hacerlo. Las referencias no salen nunca al
+directorio, y así está escrito en la propia tabla:
+`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:110-111`.
+
+---
+
+## 4. La geolocalización al fichar
+
+**4.1. Qué se guarda.** Cuando el Asistente marca su entrada o su salida desde el teléfono, el
+software guarda **la posición desde donde marcó**, junto con el momento y el tipo de marca. Las
+dos columnas están declaradas en `supabase/migrations/0001_esquema_inicial.sql:112-113`.
+
+**4.2. Qué NO se guarda.** **No se guarda ningún recorrido.** El software pide la posición una
+sola vez por cada toque del botón y nunca queda siguiendo al teléfono: la instrucción que serviría
+para eso no aparece en ninguna parte del código. Tampoco se guarda ningún dato del aparato.
+
+**4.3. Quién la ve.** El propio Asistente, y el personal de la Prestadora. Nadie más: la regla que
+lo decide está en `supabase/migrations/0020_la_barrera_tambien_va_entre_familias.sql:130-134`, y
+no tiene ninguna rama que se la muestre a una Familia.
+
+**4.4. Y hay algo que hoy falta, y se dice acá porque callarlo sería faltar a la regla de este
+documento.** La pantalla que ficha **no advierte, antes de tomar la posición, que la posición
+queda guardada y que la Prestadora la va a ver**. Lo único que aparece es el pedido de permiso que
+hace el navegador por su cuenta. Queda anotado en la §14.
+
+---
+
+## 5. Los datos de salud
+
+**5.1. El Reporte diario.** Cada jornada, el Asistente puede dejar asentada la presión, la
+glucemia, la medicación que administró y las novedades del día. Las cuatro columnas están en
+`supabase/migrations/0001_esquema_inicial.sql:126-129`, y la tabla pasó a llamarse por lo que es
+en `supabase/migrations/0019_el_cuaderno_se_llama_reporte.sql:34`.
+
+**5.2. Las novedades del día son texto libre.** Vale lo mismo que en la §3.4: lo necesario para el
+cuidado, y no más.
+
+**5.3. Las patologías, que son dos cosas distintas y no conviene confundirlas.** Las del
+**Paciente** son un dato de salud suyo y las carga la Familia
+—`supabase/migrations/0001_esquema_inicial.sql:68`—. Las del **Asistente** no son un dato de salud
+de nadie: son la lista de lo que sabe atender, o sea su experiencia
+—`supabase/migrations/0001_esquema_inicial.sql:88`—, y por eso, y sólo por eso, esas sí se
+publican en el directorio.
+
+**5.4. Lo que el software no guarda.** No hay historia clínica: no existe ninguna columna de
+diagnóstico, de alergias ni de tratamiento en toda la base. Lo que hay son esos cuatro campos por
+jornada y nada más.
+
+**5.5. Quién lee el Reporte diario.** El Asistente que lo escribió y el personal de la Prestadora
+—`supabase/migrations/0020_la_barrera_tambien_va_entre_familias.sql:119-123`—. **Hoy la Familia no
+lo ve**, y la pantalla que debería mostrárselo aparece vacía: el reporte no guarda para qué Aviso
+es, así que no hay forma de darle los suyos sin darle también los ajenos, y entre mostrar de más y
+no mostrar nada se eligió no mostrar nada.
+
+---
+
+## 6. Los archivos y las fotos
+
+**6.1. Cuáles son.** Cuatro: la foto del Perfil, el documento de identidad, el certificado de
+antecedentes y el título o certificado de formación.
+
+**6.2. Los tres papeles se guardan en un depósito privado.** Está declarado privado en la misma
+migración que lo crea: `supabase/migrations/0006_archivos_del_legajo.sql:29`. Un papel de ésos no
+tiene dirección pública. Cuando el personal de la Prestadora necesita abrir uno, el software pide
+una dirección firmada que **vence sola a los pocos minutos** —la función que la fabrica es
+`urlFirmada()`, de `js/auth.js`, y es la única puerta—.
+
+**6.3. Quién alcanza esos papeles.** Su dueño, porque la carpeta es la suya
+—`supabase/migrations/0006_archivos_del_legajo.sql:56`—, y el personal de la Prestadora de ese
+legajo, y de ninguna otra
+—`supabase/migrations/0006_archivos_del_legajo.sql:86-87`—.
+
+**6.4. La foto del Perfil es distinta, y hay que decirlo con todas las letras.** Está en un
+depósito **público** —`supabase/migrations/0006_archivos_del_legajo.sql:39`—, porque el directorio
+se mira sin iniciar sesión y la foto tiene que verse ahí. Consecuencia medida: **quien conozca la
+dirección exacta de una foto la puede abrir sin sesión, esté o no publicado ese Perfil.** Esa
+dirección no sale del directorio ni de ninguna otra pantalla, así que no se llega por casualidad;
+pero el depósito no distingue entre una foto publicada y una que no lo está. Queda anotado en la
+§14.
+
+---
+
+## 7. Qué se ve sin iniciar sesión
+
+**7.1. Sólo el directorio de una Prestadora, y sólo de quien aceptó aparecer.** Ninguna tabla ni
+vista de la base está al alcance de quien no inició sesión: el permiso se quitó en
+`supabase/migrations/0021_el_directorio_es_de_una_sola_prestadora.sql:87-88` y se volvió a quitar
+en `supabase/migrations/0032_los_permisos_de_tabla_al_minimo.sql:151`. Lo único que contesta sin
+sesión son tres funciones que **exigen el nombre corto de una Prestadora**
+—`supabase/migrations/0021_el_directorio_es_de_una_sola_prestadora.sql:180-185`—, así que no
+existe la respuesta que mezcla dos empresas ni la lista de todas.
+
+**7.2. Qué muestra exactamente un Perfil del directorio.** Nombre, tipo de Asistente, zonas,
+patologías que atiende, tareas, valor hora, género, foto, si acepta reemplazos urgentes, desde
+cuándo está, y qué comprobaciones le hizo su Prestadora. La lista se lee entera en
+`supabase/migrations/0037_quien_cubre_una_region_entera_aparece_por_sus_municipios.sql:37-48`.
+
+**7.3. Qué NO sale del directorio, nunca.** Ni teléfono, ni correo, ni documento, ni domicilio, ni
+CUIT, ni datos bancarios, ni fecha de nacimiento, ni ninguno de los tres papeles del legajo. De
+todos los archivos del legajo, lo único que la vista deja salir es la foto
+—`supabase/migrations/0037_quien_cubre_una_region_entera_aparece_por_sus_municipios.sql:46`—.
+Cuando en un Perfil aparece «domicilio comprobado», lo que sale es **que se comprobó**, no el
+domicilio.
+
+**7.4. Y hay que estar publicado y validado, las dos cosas.** Un Perfil aparece sólo si la
+Prestadora terminó de validar el legajo **y** el Asistente autorizó que se publique
+—`supabase/migrations/0037_quien_cubre_una_region_entera_aparece_por_sus_municipios.sql:119-120`—.
+Esa autorización **arranca apagada**
+—`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:164`—: no contestar nunca
+termina en un Perfil publicado.
+
+**7.5. Ningún Aviso se ve sin sesión.** Lo que una Familia publica no está en ninguna pantalla
+abierta.
+
+---
+
+## 8. Quién ve qué adentro de una Organización
+
+**8.1. La Organización es la Prestadora.** Cada una tiene su propio espacio de datos, y el
+software está construido para que uno no alcance al otro.
+
+**8.2. Cómo se decide de qué Prestadora es quien está mirando.** Por su membresía, resuelta en la
+base contra la sesión firmada, en una única función que consultan todas las reglas:
+`supabase/migrations/0002_aislamiento_por_prestadora.sql:34`, cuyo cuerpo entero es el renglón
+`supabase/migrations/0002_aislamiento_por_prestadora.sql:41`. **Nunca sale de algo que venga en el
+pedido**, y así lo declara la propia base en
+`supabase/migrations/0002_aislamiento_por_prestadora.sql:49`. Al guardar tampoco se puede elegir:
+la Prestadora se pone sola —`supabase/migrations/0002_aislamiento_por_prestadora.sql:74-78`—, «así
+ninguna pantalla puede elegirla, ni por error ni a propósito»
+(`supabase/migrations/0002_aislamiento_por_prestadora.sql:72-73`).
+
+**8.3. Las tres barreras.** Entre Prestadoras, por la membresía. Entre Asistentes, porque cada uno
+alcanza su propio legajo y ninguno más
+—`supabase/migrations/0005_acceso_por_sesion.sql:125`—. Y **entre Familias de una misma
+Prestadora**, porque cada Aviso sabe quién lo publicó y sólo lo ve quien lo publicó
+—`supabase/migrations/0020_la_barrera_tambien_va_entre_familias.sql:62` y
+`supabase/migrations/0020_la_barrera_tambien_va_entre_familias.sql:80`—. Esa tercera barrera es la
+que impide que una Familia vea los Avisos, los horarios, los mensajes, los reportes ni los
+fichajes de otra.
+
+**8.4. El personal de la Prestadora ve todo lo de su Prestadora.** Legajos, Avisos, mensajes,
+Reportes diarios y fichajes, incluidos los datos de salud y las posiciones. Quién cuenta como
+personal lo resuelve una única función
+—`supabase/migrations/0005_acceso_por_sesion.sql:106`— y **no se autoasigna**: quien se registra
+por su cuenta no puede tomar ese lugar, y así está escrito en
+`supabase/migrations/0005_acceso_por_sesion.sql:67-68`. Desde una sesión, además, ni el rol ni la
+Prestadora de un perfil se pueden reescribir
+—`supabase/migrations/0047_las_columnas_que_ninguna_politica_miraba.sql:169-173`—.
+
+**8.5. CeltaTech, adentro de los datos de una Prestadora, no entra por ninguna otra puerta.**
+
+---
+
+## 9. Cookies, rastreo y lo que queda en el navegador
+
+**9.1. El software no usa cookies. Ninguna.** No hay una sola línea que escriba ni lea una cookie
+en todo el sitio.
+
+**9.2. No hay medidor de visitas, ni píxel, ni etiqueta publicitaria, ni socio publicitario.** No
+se mide a quién entra, no se arma ningún perfil de navegación y no se le entrega nada a terceros
+con fines de publicidad. **Esto es una ventaja y por eso queda escrito.**
+
+**9.3. Lo que el navegador sí guarda, y para qué.** Tres cosas, y ninguna es un rastreador: el
+**idioma** elegido, para no volver a preguntarlo; el **correo** escrito en la pantalla de acceso,
+sólo mientras se pasa a la pantalla de recuperar la clave, y se borra apenas se usó; y el
+**testigo de la sesión**, que es lo que evita tener que escribir la clave en cada pantalla.
+
+**9.4. Tres piezas vienen de afuera, y hay que decir qué implica.** La tipografía, los iconos y la
+biblioteca que habla con la base se piden a servidores de terceros. **Ninguna de las tres pone
+cookies ni rastrea**, pero las tres, por el solo hecho de entregar el archivo, ven la dirección de
+red de quien entró. Es un hecho medido y se dice tal cual.
+
+**9.5. Los programas de teléfono guardan sólo su propio armazón.** Guardan las pantallas y los
+catálogos fijos para poder abrirse sin señal, y **tienen escrito que no guarden ninguna respuesta
+con datos de personas**.
+
+---
+
+## 10. Qué queda registrado de quién hizo qué
+
+**10.1. Hoy no hay registro de auditoría, y ésta es la falta más grande de este documento.** No
+queda escrito quién miró un dato, quién dio de alta o de baja a una Prestadora, ni quién cambió un
+permiso. Se revisaron las migraciones que construyen la base y ninguna crea una tabla que lo
+asiente.
+
+**10.2. Lo único que hoy queda firmado es la verificación de un papel del legajo.** Ahí sí se
+guarda **quién** verificó y **cuándo**
+—`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:145-146`—. Y guarda la
+constancia, no el contenido: dice que el papel se verificó, no lo que el papel decía. Con una
+salvedad medida: hay **una sola fila por papel**
+—`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:148`—, así que queda el
+último estado y no el historial.
+
+**10.3. Quién puede leer esas verificaciones.** El personal de la Prestadora, y el Asistente las
+suyas, **que puede mirar y no puede tocar**
+—`supabase/migrations/0005_acceso_por_sesion.sql:231-233`—.
+
+**10.4. Está anotado en la §14**, porque un servicio que guarda datos de salud tiene que poder
+decir quién los miró, y hoy no puede.
+
+---
+
+## 11. La baja, y qué queda escrito igual
+
+**11.1. Darse de baja no borra nada.** Cuando una Prestadora deja de operar, lo que cambia es su
+estado —`supabase/migrations/0023_la_puerta_por_donde_celtatech_da_de_alta_y_de_baja.sql:52`— y
+nada más. Legajos, Avisos, Reportes diarios, fichajes y verificaciones **quedan escritos**.
+
+**11.2. Lo que sí cambia enseguida.** Una Prestadora que no está activa **desaparece del
+directorio público** —`supabase/migrations/0021_el_directorio_es_de_una_sola_prestadora.sql:142`—.
+Deja de tener puerta de calle, mientras su personal, que tiene cuenta, sigue entrando.
+
+**11.3. Lo que un Asistente puede hacer hoy con su Perfil.** Puede dejar de publicarlo, y entonces
+sale del directorio. Su legajo sigue guardado en su Prestadora: dejar de mostrarse y borrarse no
+son la misma cosa.
+
+**11.4. Y acá hay dos cosas que faltan.** **No hay plazo de conservación decidido** —cuánto tiempo
+se guarda un legajo, un Reporte diario o un fichaje después de que terminó el servicio—, y **no
+hay procedimiento escrito de supresión**. Hoy el pedido de suprimir se atiende a mano, se le hace
+a la Prestadora, y el software no lo asiste. Las dos quedan anotadas en la §14.
+
+---
+
+## 12. Sus derechos
+
+**12.1. Cuáles son.** Por la **Ley 25.326 de Protección de los Datos Personales**, usted puede
+pedir acceder a sus datos, rectificarlos, actualizarlos y suprimirlos.
+
+**12.2. A quién se los pide.** A **su Prestadora**. Hoy el software no tiene una pantalla que haga
+ninguna de esas cuatro cosas de punta a punta: lo que un Asistente sí puede hacer por su cuenta es
+corregir su propio legajo y dejar de publicar su Perfil. El resto se pide y se atiende a mano.
+
+**12.3. Punto pendiente: el organismo de control.** Esa ley prevé un organismo ante el cual
+reclamar, y **este documento todavía no lo nombra**, igual que los dos documentos de términos. El
+motivo es el mismo y está escrito: los avisos legales de este producto salen del documento legal
+del país, ese documento hoy no trae nada sobre protección de datos personales, y la regla de la
+empresa es que un aviso legal no se deduce por parecido con otro país ni se improvisa. **Mientras
+tanto el reclamo se le hace a su Prestadora**, que es la responsable de la base.
+
+**12.4. Y falta además** decidir cómo se reparte la responsabilidad entre la Prestadora y
+CeltaTech ante ese organismo. Está en la §2.4 y anotado en la §14.
+
+---
+
+## 13. Seguridad
+
+**13.1. Cada Prestadora vive aislada de las demás**, y el aislamiento lo sostiene la base, no la
+pantalla: aunque alguien pidiera un dato ajeno sin pasar por ninguna pantalla, la base no se lo
+da. Es lo de la §8.
+
+**13.2. Los papeles del legajo se guardan privados** y se sirven con dirección firmada que vence
+sola. Es lo de la §6.
+
+**13.3. Cada quien recibe el permiso mínimo que su función necesita**, y ante la duda el software
+niega en lugar de permitir.
+
+**13.4. La clave.** El software nunca la muestra ni la manda por correo, y quien la escribe es el
+único que la conoce. **No compartirla con nadie es parte de la seguridad de sus datos**, porque
+quien entra con la clave de otro entra como esa persona.
+
+**13.5. Lo que ningún sistema puede prometer.** Ninguna medida vuelve imposible un incidente. Lo
+que sí se puede prometer es que lo que este documento declara está construido y se puede
+comprobar, renglón por renglón.
+
+---
+
+## 14. Lo que este documento todavía no puede contestar
+
+Están acá y no escondidos adentro de un capítulo, porque un hueco tapado es peor que un hueco
+declarado. Ninguno se rellena adivinando.
+
+| Qué falta | Por qué no se contesta acá |
+|---|---|
+| **Cuál es el organismo de control** ante el que se reclama | El documento legal de Argentina de este producto no trae nada sobre protección de datos personales, y un aviso legal no se improvisa ni se deduce por parecido con otro país. Se completa cuando ese documento lo incluya (§12.3) |
+| **Cómo se reparte la responsabilidad sobre los datos** entre la Prestadora y CeltaTech ante ese organismo | Son dos personas jurídicas distintas, y la respuesta es jurídica, no técnica. Va con la revisión legal del cierre del proyecto (§2.4) |
+| **Ante qué tribunales se litiga** por un asunto de datos personales | Depende de la respuesta anterior y del contrato entre la Familia y su Prestadora |
+| **Cuánto tiempo se conserva cada dato** | Hoy no se borra nada, y ningún plazo está decidido (§11.1) |
+| **Cómo se ejerce la supresión** de punta a punta | El software no la asiste: hoy se pide y se atiende a mano (§12.2) |
+| **Que quede registrado quién miró o cambió un dato** | No existe ningún registro de auditoría en la base (§10.1) |
+| **Que la pantalla avise antes de tomar la posición** al fichar | Hoy sólo aparece el pedido de permiso del navegador (§4.4) |
+| **Que la foto del Perfil deje de estar al alcance de quien conozca su dirección** | El depósito de fotos es público porque el directorio se ve sin sesión, y no distingue entre publicada y no publicada (§6.4) |
+
+---
+
+## 15. Cambios de este documento
+
+**15.1. Cómo cambia.** Este documento cambia. Cuando cambie, la fecha de la tabla de arriba se
+actualiza y el cambio se anota abajo. Si un cambio afecta algo que usted ya aceptó, se le pide que
+lo acepte de nuevo.
+
+**15.2. Registro de cambios.**
+
+| Fecha | Qué cambió |
+|---|---|
+| 31 de agosto de 2026 | Primera redacción. Se escribió de cero, midiendo cada afirmación contra el código y contra las migraciones. Se declararon por primera vez la geolocalización al fichar, los datos de salud del Reporte diario, los datos de terceros, qué expone exactamente el directorio público, que el software no usa cookies ni rastreadores, que no hay registro de auditoría y que la baja no borra nada. Quedan marcados como huecos el organismo de control, el reparto de responsabilidad con CeltaTech, los tribunales, los plazos de conservación y el procedimiento de supresión |
+
+---
+
+## 16. Ley aplicable
+
+Este documento se rige por las leyes de la **República Argentina**, y en particular por la **Ley
+25.326 de Protección de los Datos Personales**. El tribunal competente es el que corresponda al
+acuerdo entre usted y su Prestadora, con la salvedad de la §14.
+
+---
+
+## 17. Contacto
+
+Por cualquier cosa relativa a sus datos —acceder, corregir, actualizar, suprimir, o simplemente
+entender qué se guarda— escriba a **su Prestadora**: es quien responde. Sus datos de contacto
+están en la pantalla por la que entró.
+
+---
+
+*Careonys es un producto de CeltaTech.*

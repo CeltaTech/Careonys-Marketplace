@@ -1,7 +1,8 @@
 # Términos y Condiciones para Familias
 
-> **Documento vivo.** Rige tal como está desde el 31 de agosto de 2026. Lo revisó el
-> Desarrollador y **mientras el proyecto no esté concluido, ésta es la versión válida**: es la
+> **Documento vivo.** Rige tal como está desde el 31 de agosto de 2026 **por decisión del
+> Desarrollador**, que resolvió tomarlo por válido sin esperar a nadie: **mientras el
+> proyecto no esté concluido, ésta es la versión válida**: es la
 > que las pantallas enlazan y la que la persona acepta al darse de alta. Al cerrar el proyecto
 > los dos documentos de términos van a revisión de un abogado, y lo que esa revisión corrija se
 > escribe acá. Como todo documento vivo, entre una cosa y la otra puede cambiar —se agregan
@@ -76,6 +77,12 @@ recomendación de este software ni un aval sobre su idoneidad. Lo que se muestra
 Prestadora auditó y publicó; **quien responde por esa verificación es la Prestadora**, y el
 alcance de lo verificado se lo tiene que decir ella.
 
+**2.5. Qué disponibilidad tiene.** El software se ofrece tal como está disponible. Puede haber
+interrupciones —mantenimiento, fallas de la conexión, cortes del servicio donde está alojado—, y
+este documento no fija un tiempo de respuesta ni un porcentaje de disponibilidad. Si una pantalla
+no abre, el cuidado sigue igual: se resuelve por teléfono con su Prestadora. Y ante una urgencia
+rige la §2.3, que no depende de que este software esté funcionando.
+
 ---
 
 ## 3. Quién responde por el cuidado
@@ -101,6 +108,11 @@ haya empezado en este software no cambia eso ni lo traslada a nadie. **Si el Asi
 plantel de la Prestadora, quien emplea es ella**; si usted contrata por afuera, quien emplea es
 usted. Ante la duda, consulte a un profesional antes de acordar. El detalle del marco legal
 argentino está en `..\careonys\docs\legal\argentina.md`.
+
+**3.5. Nadie de los que aparecen acá trabaja para CeltaTech.** Ni el Asistente, ni el personal de
+su Prestadora, ni la Prestadora misma son empleados, socios ni representantes de CeltaTech.
+CeltaTech no los emplea, no los selecciona, no los dirige y **no responde por lo que hagan, digan
+o recomienden**. Si alguien le habla «de parte del sistema», quien le habla es su Prestadora.
 
 ---
 
@@ -159,6 +171,11 @@ tenga por qué estar. Se piden a su Prestadora, que es quien responde por esos d
 Guardia cumplida. Son el registro de un servicio prestado, y se conservan por el tiempo que las
 obligaciones legales y contractuales de la Prestadora exijan.
 
+**5.6. Dónde está el detalle.** Qué datos se guardan, para qué, por cuánto tiempo, quién los ve y
+cómo se ejercen los derechos de la §5.4 está escrito aparte, en `docs/politica_de_datos.md`. Los
+dos documentos se leen juntos: éste dice qué es el servicio y qué se puede esperar de él, y aquél
+dice cómo se tratan los datos.
+
 ---
 
 ## 6. El dinero
@@ -208,6 +225,46 @@ cuenta como hecho por usted.
 **8.3. Lo que escribe queda.** Lo que carga en un Aviso, en una descripción o en un mensaje queda
 registrado con su nombre y la fecha.
 
+**8.4. Quién puede tener cuenta.** Para tener cuenta hay que tener 18 años cumplidos y capacidad
+para obligarse por sí mismo. **Este software no le pide la fecha de nacimiento y no lo
+comprueba**: se lo toma por declarado, igual que en la §4.2. Que usted organice el cuidado en
+nombre de otra persona no cambia esto: la cuenta es suya y usted responde por ella.
+
+**8.5. Una persona, una cuenta.** La cuenta se identifica por un correo electrónico y una clave.
+Un correo abre una sola cuenta, y no corresponde tener dos a la vez: los Avisos, los mensajes y lo
+que se registre del cuidado tienen que quedar en un solo lugar, o su Prestadora termina atendiendo
+dos veces a la misma persona sin saber que es la misma. Según cómo esté configurada la entrada de
+su Prestadora, puede que antes de entrar por primera vez haya que confirmar el correo abriendo el
+enlace que llega a él.
+
+**8.6. Datos ciertos y al día.** Lo que carga tiene que ser cierto y suyo. Su nombre, su correo y
+su celular son con lo que su Prestadora le devuelve el llamado: un dato falso o vencido la deja
+sin manera de contestarle. Si alguno cambia, corríjalo. Cargar datos falsos es una de las razones
+de baja de la §9.2.
+
+**8.7. Lo que no se hace desde su cuenta.** Nada de esto está permitido, y hacerlo es motivo de
+baja:
+
+- entrar, o intentar entrar, a la cuenta de otra persona, y usar una cuenta que no es suya aunque
+  se la hayan prestado;
+- hostigar, amenazar, insultar o discriminar a un Asistente, a otra Familia o al personal de su
+  Prestadora, en un mensaje o en cualquier texto que el software guarde;
+- escribir contenido ofensivo, o usar los mensajes y los Avisos para algo ajeno a organizar un
+  cuidado: propaganda, ofertas de otra cosa, cadenas;
+- recorrer, bajar o juntar de forma automática las fichas del directorio, los datos que muestran o
+  las fotos. **El directorio se ve sin iniciar sesión para que una Familia pueda mirar antes de
+  decidir, no para que nadie se lo lleve entero**;
+- intentar llegar a datos que no le corresponden, o rodear los controles que mantienen separada a
+  una Prestadora de otra;
+- hacerse pasar por otra persona.
+
+**8.8. Datos de otras personas.** No escriba en un Aviso, en una nota ni en un mensaje el número
+de documento ni ningún dato bancario de otra persona —ni del Asistente, ni de un familiar, ni de
+nadie—, y tampoco los publique en ningún otro lado. **En este software no hay ningún campo donde
+vayan**, que es la mejor señal de que no hacen falta para organizar un cuidado. El documento y los
+datos bancarios de un Asistente viven en su Legajo, que usted no ve: los ve su Prestadora, que es
+quien tiene que auditarlos.
+
 ---
 
 ## 9. Baja
@@ -221,6 +278,16 @@ razones que su contrato con ella prevea. Tiene que decirle cuál fue el motivo.
 
 **9.3. Lo que sigue después.** Los datos del Paciente que ya se cargaron siguen bajo la
 responsabilidad de la Prestadora y bajo lo que la §5.4 le permite pedir.
+
+**9.4. Qué pasa después de una baja.** Perder la cuenta no borra lo que ya ocurrió —vale la
+§5.5— y tampoco cierra por sí solo el servicio de cuidado: son dos cosas distintas, y qué pasa con
+el servicio sale del contrato que usted tenga con su Prestadora. Si la cuenta se borra, los Avisos
+que publicó no se borran con ella: **quedan sin dueño, y pasa a verlos sólo el personal de su
+Prestadora**. Y abrir una cuenta nueva con otro correo para volver a entrar después de una baja no
+corresponde: el software no lo detecta solo, y por eso se dice acá.
+
+**9.5. Cómo se pide una baja.** No hay una pantalla donde darse de baja por cuenta propia. Se le
+pide a su Prestadora, por los datos de contacto de la §13, y la hace ella.
 
 ---
 
@@ -254,6 +321,7 @@ que lo acepte de nuevo.
 | 4 de agosto de 2026 | Primera redacción |
 | 25 de agosto de 2026 | Ajustes de vocabulario |
 | 31 de agosto de 2026 | Reescritura completa. Se sacó el aviso de borrador, se corrigió el vocabulario al glosario, se sacó el nombre de una Prestadora de ejemplo, **se sacó entero el capítulo de suscripciones, renovación automática y reembolsos porque el software no cobra nada**, y se declararon por primera vez la geolocalización al fichar, los datos de salud del Reporte diario y que el directorio se ve sin iniciar sesión |
+| 31 de agosto de 2026 | Se agregaron las cláusulas que faltaban, medidas contra lo que declaran los términos publicados por otro servicio del mismo rubro en la Argentina: la disponibilidad (§2.5), que nadie de los que aparecen acá trabaja para CeltaTech (§3.5), dónde está el detalle de los datos (§5.6), la edad mínima, una cuenta por persona, los datos ciertos, la conducta prohibida y los datos de otras personas (§8.4 a §8.8), qué pasa después de una baja y cómo se pide (§9.4 y §9.5), y el punto pendiente del tribunal competente (§12). Ninguna frase se copió: cada cláusula se redactó de cero |
 
 ---
 
@@ -261,6 +329,12 @@ que lo acepte de nuevo.
 
 Este documento se rige por las leyes de la **República Argentina**. El tribunal competente es el
 que corresponda al acuerdo entre usted y su Prestadora.
+
+**Punto pendiente: ante qué tribunales se litiga.** Lo de arriba alcanza para lo que sea del trato
+entre usted y su Prestadora. Para lo que sea del software en sí —es decir, de CeltaTech—
+**todavía no está decidido, y acá no se adivina**: del otro lado no hay una sola empresa, y la
+Prestadora y CeltaTech pueden estar en jurisdicciones distintas. Queda como punto abierto hasta la
+revisión profesional que anuncia el encabezado de este documento.
 
 ---
 
