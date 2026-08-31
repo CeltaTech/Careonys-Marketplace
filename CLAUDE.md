@@ -77,6 +77,18 @@ antes de escribir una tabla**, no después.
 **Al iniciar**, además de los tres archivos de arriba: `docs/GLOSARIO.md`, `docs/PENDIENTES.md` y
 `docs/ALCANCE.md`.
 
+**Dónde se comprueba la publicación, y cómo.** El sitio de este producto es
+`careonys-marketplace.vercel.app`, y el `push` a `main` lo despliega solo. **`careonys.com` no es
+este producto**: hoy es una página de obra de un solo archivo que contesta `200` con la misma
+página para **cualquier** dirección que se le pida, incluso una inventada. Así que pedirle la raíz
+y ver un `200` no comprueba nada —es una prueba que no puede fallar— y se hizo así más de una vez.
+Eso lo hace `node scripts/comprobar_publicacion.mjs`, que toma los archivos del último commit,
+los pide al sitio y compara el tamaño y el tipo de contenido contra los de acá. **Arranca por el
+control negativo** —una dirección inventada tiene que contestar `404`— y si ese control no pasa se
+corta ahí, porque contra un servidor con comodín ninguna de las otras comprobaciones significa
+nada. No entra en `verificar_todo.mjs` a propósito: necesita red y necesita que el despliegue haya
+terminado, así que va al cerrar, después del `push`.
+
 **Al cerrar cualquier tarea:** ¿se mantuvo el aislamiento entre Organizaciones? ¿RLS en toda tabla
 nueva? ¿algún término nuevo sin aprobar? ¿algún catálogo escrito a mano? ¿los cuatro estados?
 ¿documentación al día? Si alguna respuesta es no, la tarea no está terminada.

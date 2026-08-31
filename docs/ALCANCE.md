@@ -4107,6 +4107,29 @@ Cerró el pendiente 94, el 31 de agosto de 2026.
 
 ---
 
+### «Publicación comprobada» era una prueba que no podía fallar
+
+Salió el 31 de agosto de 2026, al ir a comprobar lo del pendiente 94.
+
+- **Lo que se venía haciendo.** Después de cada `push` se le pedía la raíz a `careonys.com`, y un
+  `200` se leía como «publicado». Quedó escrito así en más de un cierre de tarea.
+- **Por qué no probaba nada, y son dos motivos.** El primero: `careonys.com` **no es este
+  producto**. Es una página de obra de un solo archivo, `noindex`, que hoy no tiene nada que ver
+  con el Marketplace. El segundo, peor: contesta ese mismo `200`, con esa misma página, para
+  **cualquier** dirección —se le pidió `assets/images/logotipo.png` y una dirección inventada, y
+  las dos volvieron `200 text/html`—. O sea que el `200` iba a salir igual con el despliegue roto,
+  con el archivo sin subir o con el repositorio vacío.
+- **Dónde vive de verdad**: `careonys-marketplace.vercel.app`, que sí contesta `404` a una
+  dirección inventada y sirve cada archivo con su tipo de contenido.
+- **Y ahora lo comprueba un guion**, `scripts/comprobar_publicacion.mjs`: toma los archivos del
+  último commit, los pide al sitio y compara tamaño y tipo de contenido contra los de acá.
+  **Arranca por el control negativo** y se corta ahí si no pasa. Probado en los dos sentidos: en
+  verde contra el sitio de verdad, y en rojo contra `careonys.com` —justo el caso que engañó—.
+- **No entra en los veintiséis chequeos** a propósito: necesita red y necesita que el despliegue
+  haya terminado, así que va al cerrar, después del `push`. Queda escrito en `CLAUDE.md:80`.
+
+---
+
 ## 6. Deuda del código actual
 
 Está toda en `docs/PENDIENTES.md`, con condición de cierre para cada punto. Acá no se repite,
