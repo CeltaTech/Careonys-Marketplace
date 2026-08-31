@@ -48,6 +48,9 @@ const salida = execFileSync('supabase', ['status', '-o', 'env'],
   { cwd: raiz, encoding: 'utf8', shell: true });
 const url   = (salida.match(/^API_URL="?([^"\s]+)/m) || [])[1];
 const clave = (salida.match(/^ANON_KEY="?([^"\s]+)/m) || [])[1];
+// Y la de administración, que hace falta sólo para borrar la cuenta ficticia al
+// terminar. Sin ella la prueba mide igual, así que no se planta: avisa.
+const claveServicio = (salida.match(/^SERVICE_ROLE_KEY="?([^"\s]+)/m) || [])[1];
 
 if (!url || !clave) {
   console.error('No se pudo averiguar la dirección de la base local ni su clave publicable.');
@@ -240,10 +243,27 @@ const { cuerpo: despues } = await rest('/rest/v1/rpc/directorio_de', {
 });
 const quedo = Array.isArray(despues) ? despues.some((x) => x.full_name === nombre) : true;
 
+/* Y la cuenta, que hasta el 31 de agosto de 2026 se quedaba. El legajo sí se
+   borraba, así que del directorio no sobraba nada y la fuga no se veía desde
+   acá: se veía contando `auth.users`, donde habían quedado diecinueve cuentas
+   `prueba.sello.*`, una por cada vez que se corrió esto. Una cuenta ficticia
+   sin dueño es basura con permisos, igual que en las pruebas hermanas. */
+let cuentaBorrada = false;
+if (claveServicio) {
+  const r = await fetch(base + '/auth/v1/admin/users/' + userId, {
+    method: 'DELETE',
+    headers: { apikey: claveServicio, Authorization: 'Bearer ' + claveServicio }
+  });
+  cuentaBorrada = r.ok;
+}
+
 console.log('');
 console.log(quedo
   ? 'ATENCIÓN: el legajo ficticio quedó en el directorio. Hay que borrarlo a mano.'
   : 'Limpieza: el legajo ficticio ya no está en el directorio.');
+console.log(cuentaBorrada
+  ? 'Limpieza: la cuenta ficticia tampoco quedó.'
+  : 'ATENCIÓN: la cuenta ficticia quedó en la base. Hay que borrarla a mano.');
 
 // --- El resultado -----------------------------------------------------------
 console.log('');

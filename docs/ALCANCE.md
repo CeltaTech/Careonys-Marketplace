@@ -4907,6 +4907,36 @@ va el control positivo, la misma fichada con el legajo bien puesto, que sí entr
 la base, no el teléfono**: nadie apretó todavía el botón con el arreglo puesto. El pendiente 112
 queda abierto por esa mitad.
 
+### Y la prueba que se veía limpia y no lo estaba
+
+Un rato después apareció otra de la misma familia, y por una vía distinta: contando las cuentas
+de la base de esta máquina. Había **87 sin nada detrás**, todas con correo `@ejemplo.invalid` y
+prefijo `prueba.`. Diecinueve eran de `probar_sello_de_la_prestadora.mjs`, una por cada vez que
+se había corrido.
+
+Lo interesante es **por qué no se veía**. Esa prueba sí limpiaba: borraba el legajo ficticio, y
+después preguntaba al directorio si había quedado y escribía «Limpieza: el legajo ficticio ya no
+está en el directorio». O sea que tenía una comprobación de limpieza, la pasaba, y lo decía por
+pantalla. **La comprobación miraba una cosa y la basura estaba en otra.** Una cuenta ficticia
+sin dueño no aparece en ningún directorio: aparece en `auth.users`, que esa prueba no miraba.
+
+El arreglo de la prueba es el de las hermanas —borrar también la cuenta, con la clave de
+administración que el entorno local ya da—. **Pero arreglar la que se encontró no impide la
+próxima**, y la de aislamiento ya había tenido la suya, tapada unos días antes por su cuenta.
+Dos veces la misma forma es una regla, no una casualidad. Así que la guarda subió un piso:
+**`probar_todo.mjs` cuenta `auth.users` antes y después del lote entero, y se planta si el
+número creció**. Ninguna prueba puede taparlo, porque no lo mide ella. Y no lo perdona una roja
+esperada: una prueba puede dar el rojo que tiene anotado y llevarse igual lo que creó.
+
+Falsificada desactivando a propósito la limpieza recién puesta: salió `ATENCIÓN: la base pasó de
+91 cuentas a 92` y la corrida terminó en rojo. Con la limpieza puesta dice `La base quedó con
+las 91 cuentas que tenía`.
+
+**Lo viejo no se barrió**, porque barrerlo es borrar datos y eso se consulta. La herramienta
+queda hecha —`scripts/limpiar_cuentas_de_prueba.mjs`, que lista y no toca nada sin `--borrar`—
+y el pendiente 113 la espera. De paso quedó comprobado que **los 13 legajos del directorio están
+limpios**: son los sembrados por las migraciones y ninguno es residuo.
+
 ---
 
 ## 6. Deuda del código actual

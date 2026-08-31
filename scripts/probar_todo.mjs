@@ -69,7 +69,7 @@
 
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { spawnSync, execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 
 const aca = dirname(fileURLToPath(import.meta.url));
@@ -139,6 +139,45 @@ if (fantasmas.length > 0) {
 
 const nombreCorto = (a) => a.replace(/^probar_/, '').replace(/\.mjs$/, '');
 
+/* Cuántas cuentas hay antes de correr nada, y cuántas quedan después. Cada
+   prueba que registra cuentas ficticias tiene que llevárselas al terminar, y
+   la de aislamiento ya se lo pregunta a sí misma. Esto lo pregunta del lote
+   entero, que es distinto: agarra a la que ni siquiera sabe que está dejando
+   basura.
+
+   Existe por lo que apareció el 31 de agosto de 2026. `probar_sello_de_la_
+   prestadora.mjs` borraba el legajo ficticio y lo decía por pantalla, así que
+   pasaba por limpia; la cuenta se quedaba. Habían juntado diecinueve, una por
+   corrida, y no se veían desde ninguna prueba: se vieron contando `auth.users`.
+   Una cuenta ficticia sin dueño es basura con permisos.
+
+   El total lo contesta el propio servidor en `x-total-count`. Contar sólo lo
+   que cada prueba se acuerda de haber creado mediría otra cosa: lo que se creó
+   por un camino que nadie anotó quedaría igual, y el mensaje diría que se
+   limpió todo. */
+function credenciales() {
+  try {
+    const salida = execFileSync('supabase', ['status', '-o', 'env'],
+      { cwd: join(aca, '..'), encoding: 'utf8', shell: true });
+    return {
+      base: (salida.match(/^API_URL=\"?([^\"\s]+)/m) || [])[1],
+      clave: (salida.match(/^SERVICE_ROLE_KEY=\"?([^\"\s]+)/m) || [])[1]
+    };
+  } catch { return {}; }
+}
+const { base: urlBase, clave: claveServicio } = credenciales();
+
+async function cuantasCuentas() {
+  if (!urlBase || !claveServicio) return null;
+  try {
+    const res = await fetch(urlBase.replace(/\/$/, '') + '/auth/v1/admin/users?page=1&per_page=1',
+      { headers: { apikey: claveServicio, Authorization: 'Bearer ' + claveServicio } });
+    const dicho = res.headers.get('x-total-count');
+    return dicho === null ? null : Number(dicho);
+  } catch { return null; }
+}
+const cuentasAlEmpezar = await cuantasCuentas();
+
 const fallaron = [];
 const esperadas = [];
 const sorpresas = [];
@@ -183,6 +222,23 @@ for (const prueba of PRUEBAS) {
   if (salida) console.log(salida.split('\n').map((l) => '      ' + l).join('\n'));
 }
 
+/* El balance del lote. No lo perdona ninguna roja esperada: una prueba puede
+   dar el rojo que tiene anotado y llevarse igual lo que creó. */
+const cuentasAlTerminar = await cuantasCuentas();
+let cuentasDeMas = 0;
+console.log('');
+if (cuentasAlEmpezar === null || cuentasAlTerminar === null) {
+  console.log('Las cuentas ficticias no se contaron: no se pudo leer la clave de');
+  console.log('administración del entorno local. O sea que esta corrida no dice nada');
+  console.log('sobre si alguna prueba dejó basura atrás.');
+} else if (cuentasAlTerminar === cuentasAlEmpezar) {
+  console.log('La base quedó con las ' + cuentasAlEmpezar + ' cuentas que tenía.');
+} else {
+  cuentasDeMas = cuentasAlTerminar - cuentasAlEmpezar;
+  console.log('ATENCIÓN: la base pasó de ' + cuentasAlEmpezar + ' cuentas a ' +
+    cuentasAlTerminar + '.');
+}
+
 console.log('');
 console.log('Quedaron afuera a propósito, porque van contra el servidor publicado:');
 console.log('  probar_alta_y_baja.mjs      necesita la clave de firma y borra datos publicados');
@@ -199,6 +255,16 @@ if (sorpresas.length > 0) {
 
 if (fallaron.length > 0) {
   console.error(`\n${fallaron.length} de ${PRUEBAS.length} pruebas fallaron: ${fallaron.join(', ')}.`);
+  process.exit(1);
+}
+
+if (cuentasDeMas !== 0) {
+  console.error(
+    `\nAlguna prueba dejó ${cuentasDeMas} cuenta(s) ficticia(s) en la base.\n` +
+    'Se busca cuál por el prefijo del correo —cada prueba usa el suyo— y se le\n' +
+    'agrega la limpieza, como ya la tienen las hermanas. Dejarlas es ensuciar la\n' +
+    'base de a poco, y una cuenta ficticia sin dueño es basura con permisos.\n'
+  );
   process.exit(1);
 }
 
