@@ -685,9 +685,14 @@ if (!coordinador) {
   const prohibidas = ['dni', 'phone', 'email', 'address', 'bank_info', 'cuit',
                       'documents', 'birthdate', 'reference_info', 'education_info'];
   const filtradas = prohibidas.filter(k => columnas.includes(k));
+  /* El `columnas.length > 0` no sobra: si la función no devolviera ninguna
+     fila, `columnas` quedaría vacía, ninguna prohibida estaría adentro y esto
+     daría bien sin haber mirado nada. */
   comprobar('El directorio no devuelve ningún dato personal',
-    filtradas.length === 0,
-    filtradas.length ? 'devuelve ' + filtradas.join(', ') : columnas.length + ' columnas, ninguna personal');
+    columnas.length > 0 && filtradas.length === 0,
+    filtradas.length ? 'devuelve ' + filtradas.join(', ')
+      : columnas.length > 0 ? columnas.length + ' columnas, ninguna personal'
+      : 'la función no devolvió ninguna fila, así que esto no probó nada');
 }
 
 // --- 21 a 27: el examen -----------------------------------------------------
@@ -868,26 +873,56 @@ console.log('Dos Familias de la misma Prestadora');
 
   // Los horarios y la conversación cuelgan del aviso y no deciden nada por su
   // cuenta: si el aviso no se ve, esto tampoco tiene que verse.
-  await rest('/rest/v1/franjas_aviso', {
+  /* El horario se escribe y se mira que haya quedado escrito, por lo mismo que
+     el mensaje de abajo: el único horario de este aviso lo carga esta línea, así
+     que si la carga fallara la lectura de al lado vería cero filas y daría bien
+     con el aislamiento roto. */
+  const franja = await rest('/rest/v1/franjas_aviso', {
     method: 'POST',
+    headers: { Prefer: 'return=representation' },
     body: JSON.stringify({ aviso_id: otraFamilia.avisoId, dia: 'lunes', turno: 'manana' })
   }, otraFamilia.token);
+  const franjaEscrita = Array.isArray(franja.cuerpo) && franja.cuerpo.length === 1;
   const { cuerpo: franjasAjenas } = await rest(
     '/rest/v1/franjas_aviso?select=id&aviso_id=eq.' + otraFamilia.avisoId,
     {}, unaFamilia.token);
   comprobar('Tampoco ve los horarios del aviso ajeno',
-    Array.isArray(franjasAjenas) && franjasAjenas.length === 0,
-    Array.isArray(franjasAjenas) ? franjasAjenas.length + ' filas' : JSON.stringify(franjasAjenas));
+    franjaEscrita && Array.isArray(franjasAjenas) && franjasAjenas.length === 0,
+    franjaEscrita
+      ? (Array.isArray(franjasAjenas) ? franjasAjenas.length + ' filas'
+                                      : JSON.stringify(franjasAjenas))
+      : 'no se pudo escribir el horario de prueba (' + franja.estado +
+        '), así que esto no probó nada');
 
-  await rest('/rest/v1/messages', {
+  /* El `author_id` va escrito y el resultado se mira, y las dos cosas son la
+     misma corrección. Hasta el 31 de agosto de 2026 esta carga salía sin
+     `author_id` —la columna no tiene valor por omisión— y la política de la
+     0020 la rechazaba, porque pide ser personal de la Prestadora o ser quien
+     escribe. Así que **no había ningún mensaje**, y la comprobación de abajo
+     veía cero filas y daba bien: pasaba igual con el aislamiento roto. Es lo
+     mismo que el reporte de más abajo ya tenía resuelto, y por eso se copia
+     su forma: si el mensaje no se pudo escribir, la comprobación lo dice en
+     vez de contar un cero por un acierto. */
+  const mensaje = await rest('/rest/v1/messages', {
     method: 'POST',
-    body: JSON.stringify({ content: 'Mensaje ficticio', aviso_id: otraFamilia.avisoId })
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify({
+      content: 'Mensaje ficticio',
+      aviso_id: otraFamilia.avisoId,
+      author_id: otraFamilia.userId
+    })
   }, otraFamilia.token);
+  otraFamilia.mensajeId = Array.isArray(mensaje.cuerpo) && mensaje.cuerpo[0]
+    ? mensaje.cuerpo[0].id : null;
   const { cuerpo: mensajesAjenos } = await rest(
     '/rest/v1/messages?select=id&aviso_id=eq.' + otraFamilia.avisoId, {}, unaFamilia.token);
   comprobar('Ni la conversación de ese aviso',
-    Array.isArray(mensajesAjenos) && mensajesAjenos.length === 0,
-    Array.isArray(mensajesAjenos) ? mensajesAjenos.length + ' filas' : JSON.stringify(mensajesAjenos));
+    otraFamilia.mensajeId && Array.isArray(mensajesAjenos) && mensajesAjenos.length === 0,
+    otraFamilia.mensajeId
+      ? (Array.isArray(mensajesAjenos) ? mensajesAjenos.length + ' filas'
+                                       : JSON.stringify(mensajesAjenos))
+      : 'no se pudo escribir el mensaje de prueba (' + mensaje.estado +
+        '), así que esto no probó nada');
 
   // El reporte es lo más delicado que hay acá adentro: presión, glucemia y
   // medicación. Lo escribe el Asistente desde su legajo; ninguna otra cuenta de
@@ -1036,6 +1071,12 @@ console.log('Dos Familias de la misma Prestadora');
 
 // --- Limpieza ---------------------------------------------------------------
 console.log('');
+/* Primero los mensajes: `messages.aviso_id` borra con `set null` y no en
+   cascada, así que un mensaje sobrevive al aviso que lo llevaba y se quedaría
+   en la base sin nada que lo nombre. */
+for (const f of familias) {
+  if (f.mensajeId) await rest('/rest/v1/messages?id=eq.' + f.mensajeId, { method: 'DELETE' }, f.token);
+}
 for (const f of [cuentas[0], familias[0]]) {
   for (const aviso of [f.avisoId, f.avisoSuplantado]) {
     if (aviso) await rest('/rest/v1/avisos?id=eq.' + aviso, { method: 'DELETE' }, f.token);
@@ -1116,8 +1157,8 @@ if (contraLocal && claveServicio) {
 // El 31 de agosto de 2026 tres documentos escribían tres números distintos
 // —dieciséis, cuarenta y cuarenta y nueve— y ninguno era el de la prueba.
 // Ninguna comprobación de `verificar_todo.mjs` puede agarrar eso, porque el
-// número no se puede contar leyendo el archivo: hay 44 llamadas a
-// `comprobar()` y salen 52 renglones, porque varias están adentro de un
+// número no se puede contar leyendo el archivo: hay 48 llamadas a
+// `comprobar()` y salen 55 renglones, porque varias están adentro de un
 // bucle. El único que sabe el número de verdad es el que acaba de correr,
 // así que lo revisa él.
 const CENTENAS = ['', 'diez', 'veinte', 'treinta', 'cuarenta', 'cincuenta',

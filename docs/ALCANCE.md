@@ -4202,7 +4202,7 @@ cuenta las que hizo y busca en los cuatro documentos la frase que dice cuántas 
 letras o en cifras según el documento. Un desajuste **no** dice que el aislamiento falle —eso sería
 enseñarle a la próxima persona a desconfiar del mensaje—: el veredicto del aislamiento sale
 primero y completo, y el desajuste sale después, como nota al pie, diciendo que se corrige el
-documento y no la prueba. El código del añadido está en `scripts/probar_aislamiento.mjs:1049`.
+documento y no la prueba. El código del añadido está en `scripts/probar_aislamiento.mjs:1156`.
 
 **Comprobado en los dos sentidos**, como pide la regla de la casa: con `docs/INVENTARIO.md` falseado
 a propósito la prueba sale con código 1 y nombra el archivo y la frase que buscó; con el número
@@ -4797,6 +4797,40 @@ disimularlo: el sesgo va en una sola dirección, una fila de más sólo puede **
 nunca inventarlo, así que **lo que encuentra es real** y lo que no encuentra se lee limpio recién
 después de un `supabase db reset --local`. Contra el servidor publicado directamente se niega a
 correr: ahí una columna llena por alguien de verdad taparía justo lo que viene a mirar.
+
+### Una comprobación de la prueba de aislamiento nunca había podido fallar
+
+La prueba decía que una Familia no ve la conversación del aviso de otra, y era verdad que veía
+cero mensajes. Lo que no era verdad es que hubiera algo escondido: **el mensaje que tenía que
+esconder nunca se había escrito**. La carga salía sin `author_id` —esa columna no tiene valor por
+omisión, a diferencia de `tenant_id`— y la política de la 0020 la rechazaba, porque pide ser
+personal de la Prestadora o ser quien escribe. El resultado de la carga se descartaba, así que
+nadie se enteraba. Leído desde la base, el síntoma estaba a la vista y nadie lo había mirado:
+`messages` tenía cero filas después de cada corrida, y ninguna limpieza las borraba.
+
+Esa comprobación **daba bien con el aislamiento roto**, que es la definición de no probar nada. La
+corrección son las dos mitades juntas: se escribe el `author_id` y **se mira que el mensaje haya
+quedado escrito**, con la misma forma que el bloque de los reportes ya tenía tres comprobaciones
+más abajo —si no se pudo escribir, lo dice en vez de contar un cero por un acierto—. Falsificada
+leyendo con la sesión de la propia autora: salió `MAL   Ni la conversación de ese aviso  — 1
+filas`. Y la limpieza tuvo que crecer: `messages_aviso_id_fkey` borra con `set null` y no en
+cascada, así que el mensaje sobrevive al aviso que lo llevaba —por eso se borra aparte, y antes
+que el aviso—.
+
+**Y después se revisó la prueba entera buscando la misma forma**, que es lo que había que hacer:
+toda afirmación de «acá no se ve nada» cuyo «nada» lo pone la propia prueba. Aparecieron dos
+más, y las dos estaban sanas por casualidad y no por diseño. El horario del aviso ajeno se
+escribía de verdad —la carga funciona— pero el resultado se descartaba igual, así que el día que
+esa carga se rompa la comprobación se pondría verde en vez de roja. Y la del directorio miraba que
+la función no devolviera ninguna columna con dato personal, sin exigir que devolviera **alguna**
+columna: sin una sola fila, «ninguna prohibida» es verdad porque no hay ninguna. Las dos llevan
+ahora su control positivo —`franjaEscrita &&` y `columnas.length > 0 &&`— y siguen en verde, con
+el detalle diciendo qué vio: 16 columnas, ninguna personal.
+
+El resto de la prueba pasó la revisión con motivo escrito: los legajos y los avisos ajenos existen
+porque los crea una comprobación anterior que sí se mira; las quince filas de la ponderación y los
+trece legajos sembrados los pone una migración; y el examen y las carpetas del depósito se juzgan
+por el código de respuesta, que no se puede vaciar.
 
 ---
 
