@@ -21,8 +21,13 @@
    Leyendo los archivos de este repositorio no se puede saber cuál de las dos
    hace, así que la única respuesta honesta es preguntárselo al servidor.
 
-   **No escribe nada**: no crea cuentas, no borra ninguna y no cambia ningún
-   dato. Las tres pruebas son intentos de entrada fallidos.
+   **No escribe nada, salvo que se le pida.** Las tres pruebas son intentos de
+   entrada fallidos y no cambian nada. Lo único que puede escribir es la cuenta sin
+   confirmar que hace falta para medir la tercera clase, y sólo si se la pide con
+   `--crear-la-que-falta`; **contra la base de esta máquina y ninguna otra**, porque
+   antes de crearla mira que la dirección del servidor sea local y si no lo es se niega.
+   La cuenta se llama como el residuo que barre `scripts/limpiar_cuentas_de_prueba.mjs`,
+   así que se va con las demás el día que se barran.
 
    **No imprime ninguna clave ni ninguna dirección de correo**, ni siquiera
    tapada. Lee las claves del entorno local para poder llamar al servidor y no
@@ -46,6 +51,16 @@ const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 // se mide es qué contesta el servidor cuando la contraseña está mal.
 const CLAVE_EQUIVOCADA = 'esta-no-es-la-contrasena-de-nadie-9f2b';
 const SIN_CUENTA = 'no.tiene.cuenta.9f2b@ejemplo.invalid';
+
+/* La cuenta sin confirmar que se crea cuando en la base no hay ninguna. El nombre
+   sigue la convención de residuo de `limpiar_cuentas_de_prueba.mjs` —`prueba.`
+   adelante y `@ejemplo.invalid` atrás—, para que se barra junto con las demás
+   cuando llegue esa orden y no quede una cuenta huérfana que nadie sepa de dónde
+   salió. Su contraseña no es la equivocada, porque si lo fuera la tercera prueba
+   entraría en vez de fallar, y lo que se mide es qué contesta cuando falla. */
+const SIN_CONFIRMAR = 'prueba.entrada.sin.confirmar@ejemplo.invalid';
+const CLAVE_DE_ESA = 'clave-inventada-para-medir-la-entrada-4c7d';
+const CREAR = process.argv.includes('--crear-la-que-falta');
 
 function negarse(...renglones) {
   for (const r of renglones) console.error(r);
@@ -102,6 +117,69 @@ if (!cuentas.length) {
     'La base de esta máquina no tiene ninguna cuenta, así que no hay nada que medir.',
     'Correr la siembra primero.'
   );
+}
+
+/* Una dirección del servidor de esta máquina y ninguna otra. Falla cerrado a
+   propósito: ante una dirección que no entiende contesta que no, porque crear una
+   cuenta contra un servidor publicado es justo lo que no tiene que poder pasar por
+   descuido. */
+function esDeEstaMaquina(direccion) {
+  try {
+    const nombre = new URL(direccion).hostname;
+    return nombre === '127.0.0.1' || nombre === 'localhost' || nombre === '[::1]';
+  } catch {
+    return false;
+  }
+}
+
+/* La tercera clase de dirección puede no estar en la base, y sin ella la medición
+   queda a la mitad. Con `--crear-la-que-falta` se crea una. Se da de alta por la
+   puerta común, con la llave pública, para que quede exactamente igual que la de
+   cualquiera que se registra: si se creara con la llave de servicio nacería
+   confirmada seguro.
+
+   **Y aun así puede nacer confirmada**, que es lo que pasó el 31 de agosto de 2026:
+   `supabase/config.toml` pide `enable_confirmations = true` y el servidor de esta
+   máquina confirmó igual, porque el que está corriendo se levantó con otra
+   configuración y `supabase start` la lee una sola vez, al arrancar. Cuando pasa,
+   el guion lo dice y no lo esconde: dar por buena la tercera clase con una cuenta
+   confirmada haría que las tres respuestas dieran iguales **por casualidad**, y esa
+   es la peor manera de dar por buena una regla de seguridad. */
+if (CREAR && !cuentas.some((u) => u.email && !u.email_confirmed_at)) {
+  if (!esDeEstaMaquina(API)) {
+    negarse(
+      'Se pidió crear la cuenta que falta y el servidor no es el de esta máquina.',
+      'No se crea ninguna cuenta contra un servidor publicado.'
+    );
+  }
+  const alta = await fetch(`${API}/auth/v1/signup`, {
+    method: 'POST',
+    headers: { apikey: ANON, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: SIN_CONFIRMAR, password: CLAVE_DE_ESA })
+  });
+  if (!alta.ok) {
+    negarse(
+      'No se pudo crear la cuenta sin confirmar que falta para medir,',
+      `y el servidor contestó ${alta.status}.`
+    );
+  }
+  const otraVez = await fetch(`${API}/auth/v1/admin/users?per_page=1000`, {
+    headers: { apikey: SERVICIO, Authorization: `Bearer ${SERVICIO}` }
+  }).then((r) => r.json()).catch(() => ({}));
+  cuentas.length = 0;
+  cuentas.push(...(Array.isArray(otraVez.users) ? otraVez.users : []));
+  console.log('Se creó una cuenta de prueba sin confirmar, que hacía falta para medir la');
+  console.log('tercera clase. Queda entre el residuo que barre');
+  console.log('`scripts/limpiar_cuentas_de_prueba.mjs`.');
+  if (!cuentas.some((u) => u.email && !u.email_confirmed_at)) {
+    console.log('');
+    console.log('Pero nació **confirmada**, así que sigue faltando la tercera clase. El');
+    console.log('servidor de esta máquina confirma solo, aunque `supabase/config.toml` pida');
+    console.log('`enable_confirmations = true`: el que está corriendo se levantó con otra');
+    console.log('configuración, y esa se lee una sola vez al arrancar. Para medir la tercera');
+    console.log('clase hay que bajar y volver a levantar la base.');
+  }
+  console.log('');
 }
 
 const confirmadas = cuentas.filter((u) => u.email && u.email_confirmed_at);
