@@ -4130,6 +4130,34 @@ Salió el 31 de agosto de 2026, al ir a comprobar lo del pendiente 94.
 
 ---
 
+### El sitio publicado servía la documentación interna entera
+
+Salió el 31 de agosto de 2026, del mismo tirón que lo de arriba: al ir a comprobar bien la
+publicación se vio qué más contestaba el servidor.
+
+- **Qué estaba abierto.** No había `.vercelignore`, así que se subía el repositorio entero.
+  Cualquiera con la dirección leía `docs/PENDIENTES.md` —125 KB con la lista enumerada de todo lo
+  que este producto todavía no resuelve, sección de Seguridad incluida—, `docs/ALCANCE.md`, las 47
+  migraciones con cada política de RLS escrita, los guiones de comprobación y el `CLAUDE.md` de
+  este producto. Medido pidiéndolos: los cinco contestaban `200`.
+- **Qué gravedad tiene cada cosa, sin exagerar ni minimizar.** Que el esquema y las políticas se
+  lean **no** rompe el aislamiento: la base no depende de que nadie las conozca, y publicarlas no
+  le da a nadie una fila que la RLS no le daría igual. La lista de pendientes es otra cosa: le
+  ahorra el trabajo a quien busque por dónde entrar, porque le dice en castellano dónde están los
+  agujeros conocidos y cuáles siguen abiertos. Y no hay ningún motivo para publicarla.
+- **Cerrado con `.vercelignore`**, que además deja afuera las cajas fuertes por su nombre: hoy no
+  llegan porque `git` no las rastrea, pero la línea de comandos de Vercel no mira `.gitignore`, así
+  que una publicación hecha desde esta carpeta y no desde el repositorio las habría subido.
+- **Quedan servidos a propósito los dos documentos legales**, porque los enlazan las pantallas
+  públicas (`index.html:517`, `registrar-asistente.html:539`, `formulario-integral.html:418`). Que
+  se muestren estando sin revisión profesional es el pendiente 49 y no se toca desde acá.
+- **Comprobado en los dos sentidos.** Antes del despliegue el guion daba rojo en los cinco; después
+  da verde, y las quince pantallas del sitio, las cuatro hojas de estilo, el catálogo, el logotipo,
+  las dos aplicaciones de teléfono y los dos documentos legales siguen contestando `200` con el
+  mismo tamaño que tienen acá.
+
+---
+
 ## 6. Deuda del código actual
 
 Está toda en `docs/PENDIENTES.md`, con condición de cierre para cada punto. Acá no se repite,

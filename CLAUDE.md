@@ -87,7 +87,9 @@ los pide al sitio y compara el tamaño y el tipo de contenido contra los de acá
 control negativo** —una dirección inventada tiene que contestar `404`— y si ese control no pasa se
 corta ahí, porque contra un servidor con comodín ninguna de las otras comprobaciones significa
 nada. No entra en `verificar_todo.mjs` a propósito: necesita red y necesita que el despliegue haya
-terminado, así que va al cerrar, después del `push`.
+terminado, así que va al cerrar, después del `push`. **Y comprueba además lo que el sitio no tiene
+que servir**: hasta el 31 de agosto de 2026 subía el repositorio entero, con la lista de
+pendientes y las migraciones adentro. Lo cierra `.vercelignore`; el guion avisa si se reabre.
 
 **Al cerrar cualquier tarea:** ¿se mantuvo el aislamiento entre Organizaciones? ¿RLS en toda tabla
 nueva? ¿algún término nuevo sin aprobar? ¿algún catálogo escrito a mano? ¿los cuatro estados?
