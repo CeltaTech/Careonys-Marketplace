@@ -7,8 +7,9 @@
    Cada prueba que registra cuentas ficticias se las lleva al terminar, y desde
    el 31 de agosto de 2026 `probar_todo.mjs` cuenta `auth.users` antes y después
    del lote entero para que ninguna se olvide. Pero lo que ya quedó de antes no
-   se va solo, y quedó bastante: ochenta y siete cuentas `prueba.*` sin nada
-   detrás. Este guion las junta y, si se lo pide, las borra.
+   se va solo, y quedó bastante. Este guion las junta y, si se lo pide, las
+   borra. **La cuenta no se escribe acá**: la dice el guion al correr, porque un
+   número escrito en un comentario queda viejo el día que una prueba deja una más.
 
    ── Qué toca y qué no ─────────────────────────────────────────────────────
 
