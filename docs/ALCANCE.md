@@ -5681,6 +5681,32 @@ ya escrito es historia y no se reescribe, así que cada palabra se exige desde e
 de usarse. Los seis mensajes que usan la palabra vieja son todos del 26 de agosto de 2026, tres
 días antes de que la palabra se decidiera.
 
+### Una medición que contesta «no hay ninguna» cuando quería decir «no sé»
+
+El 31 de agosto de 2026 salió publicado un mensaje de commit —`6f8dc03`— diciendo que la regla
+«todo importe se guarda con su moneda» no tenía hoy a qué aplicarse, que en todo el esquema había
+dos columnas numéricas y que ninguna era plata. **Las tres cosas son falsas**, y quedan escritas
+para siempre, porque un mensaje de commit no se arregla después. La corrección está en el commit
+siguiente.
+
+Lo cierto es que la regla ya estaba vigilada, y desde antes: es la **cuarta** de
+`verificar_esquema.mjs`, tiene su banco de pruebas y tiene hoy un incumplimiento conocido, anotado
+ahí mismo con su motivo y su pendiente. La columna es `caregivers.hourly_rate`
+(`supabase/migrations/0001_esquema_inicial.sql:102`), guarda un importe y su tabla no tiene columna
+de moneda. El chequeo no lo tapa: lo deja a la vista y evita que entre uno nuevo.
+
+**Por qué la medición dio otra cosa, que es lo que vale la pena guardar.** La búsqueda pedía el
+nombre de la columna pegado a su tipo, y en la 0001 el nombre va entre comillas —`"hourly_rate"
+numeric`—, así que no lo encontró. Un carácter de diferencia, y una búsqueda que no entendió lo que
+miraba contestó **«no hay ninguna»** en vez de **«no sé»**. Es exactamente la forma del hallazgo
+del 30 de agosto, cuando el buscador propio contestaba «nada» ante un patrón que no sabía leer: una
+herramienta que no distingue «busqué y no está» de «no supe buscar» miente en la dirección más
+cómoda, que es la que nadie revisa.
+
+Y el error de fondo es anterior a la búsqueda. La regla de la empresa dice que **antes de agregar
+algo que ya podría existir hay que buscarlo primero**, en el código real. `verificar_esquema.mjs`
+ya cubría ésta, con su número y su banco de pruebas. Se lo leyó después de medir, no antes.
+
 ### Lo único que el sistema operativo tapa solo
 
 El chequeo de rutas verifica que toda dirección local escrita en una pantalla, una hoja de estilos
