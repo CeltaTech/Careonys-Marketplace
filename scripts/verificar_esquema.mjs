@@ -1,5 +1,5 @@
 /* ===================================================
-   VERIFICA LAS DOCE REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
+   VERIFICA LAS TRECE REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
 
        node scripts/verificar_esquema.mjs
 
@@ -8,7 +8,7 @@
    Lo que corre hoy en el servidor es otra pregunta y se responde mirando el
    servidor (regla de la empresa «el estado real está por encima del documentado»).
 
-   Las doce:
+   Las trece:
 
    1. **Toda tabla nueva enciende su RLS en la misma migración que la crea**
       (regla de la empresa «RLS estricta en toda tabla nueva»). Encenderla después, a mano desde el panel, deja una ventana
@@ -224,6 +224,32 @@
       legítimo —comprobar que quien pregunta participa del aviso— sin que eso
       tenga nada que ver con cómo resolvió la Organización.
 
+  13. **Lo que ya está guardado no se renombra** (regla de la empresa «lo que
+      se guarda para siempre se nombra por lo que hace, y no se renombra»). Son
+      tres capas y no se mezclan: lo **visible** puede cambiar cuando cambia la
+      marca; lo **guardado** —tablas, columnas, claves, prefijos de archivo— se
+      nombra por su función y no cambia nunca; y lo **histórico** ya quedó
+      escrito y no se toca. Un renombre las mezcla y convierte un cambio de
+      nombre en una migración de datos.
+
+      **El costo no se paga una vez.** El nombre viejo no se va: queda en los
+      datos de antes, en toda migración anterior —que no se puede editar— y en
+      los chequeos, que a partir de ahí tienen que seguirle el hilo.
+      `nombreDeHoy()` está en este mismo archivo por eso, y va a seguir estando
+      aunque no se renombre nada más. Cuando el nombre de hoy quedó mal, la
+      salida es agregar lo nuevo y dejar de escribir lo viejo.
+
+      **Las políticas entran también.** Acá cada una se vuelve a crear con un
+      `drop policy if exists` que la busca por el nombre: una renombrada deja
+      esos drops apuntando a nada, y la undécima y la duodécima la dan por viva
+      cuando ya no lo está.
+
+      Rige **desde la 0023**. Los renombres que hay son todos del mismo
+      acomodamiento del glosario, cerrado entre el 24 y el 25 de agosto de 2026
+      y terminado en la 0022, cuyo encabezado dice por qué salía barato: «la
+      base todavía no tiene datos reales». Es una fecha, no una lista de
+      perdones, y del otro lado no hay ninguno.
+
    Las cuentas de cuántas tablas y cuántas funciones hay no se escriben acá: las
    dice el renglón verde al terminar, que sale de contar los archivos. Un número
    escrito a mano en un encabezado queda viejo el día que se agrega una
@@ -268,6 +294,10 @@
      no sabe si dos funciones distintas contestan lo mismo: reconoce la forma de
      la deducción —sacar la columna de una tabla por quien inició sesión—, no su
      resultado.
+   - De la decimotercera mira las sentencias que renombran, no si dos nombres
+     quieren decir lo mismo. Borrar una tabla y crear otra parecida al lado no
+     lo ve nadie, y está bien: eso no arrastra ningún nombre viejo adentro de
+     los datos, que es justo lo que la regla viene a evitar.
    - Una siembra acotada a una Prestadora por su nombre corto no es un barrido y
      no se mira. Es lo que hacen las migraciones de datos ficticios.
 =================================================== */
@@ -405,6 +435,30 @@ const EL_AVISO_EMPIEZA = '0025';
 const GRANT_DE_TABLA =
   /grant\s+([a-z][a-z0-9_,\s()]*?)\s+on\s+(?:table\s+)?"?public"?\."?([a-z_]+)"?\s+to\s+([a-z_,\s"]+)/gi;
 const ABRE_DE_MAS = /\ball\b|\btruncate\b/i;
+/* Para la decimotercera. Todo lo que le cambia el nombre a algo ya guardado.
+   Las políticas entran a propósito: acá cada una se vuelve a crear con un
+   `drop policy if exists` que la busca por el nombre, así que una renombrada
+   deja esos drops apuntando a nada, y de paso la undécima y la duodécima la
+   dan por viva cuando ya no lo está. */
+const RENOMBRA_LO_GUARDADO = [
+  ['una tabla', /alter\s+table\s+(?:if\s+exists\s+)?\S+\s+rename\s+to\s+/gi],
+  ['una columna', /alter\s+table\s+(?:if\s+exists\s+)?[\s\S]{0,80}?\brename\s+column\s+/gi],
+  ['una restricción', /\brename\s+constraint\s+/gi],
+  ['un índice', /alter\s+index\s+[\s\S]{0,60}?\brename\s+to\s+/gi],
+  ['una vista', /alter\s+(?:materialized\s+)?view\s+[\s\S]{0,60}?\brename\s+to\s+/gi],
+  ['una secuencia', /alter\s+sequence\s+[\s\S]{0,60}?\brename\s+to\s+/gi],
+  ['un tipo', /alter\s+type\s+[\s\S]{0,60}?\brename\s+/gi],
+  ['una función', /alter\s+function\s+[\s\S]{0,80}?\brename\s+to\s+/gi],
+  ['una política', /alter\s+policy\s+[\s\S]{0,80}?\brename\s+to\s+/gi],
+];
+/* Los renombres que hay son todos del mismo acomodamiento del glosario
+   —«bandera», `care_searches`, `logbook_entries`, `peso`—, que el Desarrollador
+   cerró entre el 24 y el 25 de agosto de 2026 y que termina en la 0022. El
+   encabezado de esa migración dice incluso por qué salía barato: «sale barato
+   porque la base todavía no tiene datos reales». Desde la siguiente rige la
+   regla. **No es una lista de perdones: es una fecha**, y del otro lado no hay
+   ninguno. */
+const NO_SE_RENOMBRA_DESDE = '0023';
 /* Para la undécima. Una política de `public`, su baja, y los dos verbos que
    no dejan ninguna fila escrita. El `%I` del final es el nombre de tabla que
    deja escrito un `execute format`: la 0005 y la 0012 crean cuatro políticas
@@ -962,6 +1016,29 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, b
       'aprende algo, y el que quede viejo decide permisos igual']);
   }
 
+  /* 13. Lo que ya está guardado no se renombra. Son las tres capas que la
+     regla de la empresa no deja mezclar: lo **visible**, que puede cambiar
+     cuando cambia la marca; lo **guardado**, que se nombra por lo que hace y no
+     cambia nunca; y lo **histórico**, que ya quedó escrito. Un renombre las
+     mezcla, y convierte un cambio de nombre en una migración de datos.
+
+     Y el costo no se paga una vez, se paga siempre: `nombreDeHoy()` existe en
+     este mismo archivo para seguirle el hilo a los renombres que ya están, y va
+     a seguir existiendo aunque no se agregue ninguno más. */
+  if (!nombre || nombre.slice(0, 4) >= NO_SE_RENOMBRA_DESDE) {
+    for (const [que, expresion] of RENOMBRA_LO_GUARDADO) {
+      for (const m of sinComentarios.matchAll(expresion)) {
+        fallas.push([renglonDe(t, m.index),
+          'esto le cambia el nombre a ' + que + ' que ya está guardada, y lo ' +
+          'guardado se nombra por lo que hace y no se renombra. El nombre viejo ' +
+          'no se va: queda en los datos de antes, en toda migración anterior ' +
+          '—que no se puede editar— y en los chequeos que tienen que seguirle ' +
+          'el hilo. Si el nombre de hoy quedó mal, lo que corresponde es agregar ' +
+          'lo nuevo y dejar de escribir lo viejo, no renombrarlo']);
+      }
+    }
+  }
+
   return fallas.sort((a, b) => a[0] - b[0]);
 }
 
@@ -1057,6 +1134,14 @@ const MAL = [
    '  with check (user_id = auth.uid());\n'],
   ['un permiso que deja escribir `profiles` sin nombrar columnas',
    'grant update on table public.profiles to authenticated;\n'],
+  ['una migración nueva que le cambia el nombre a una tabla ya guardada',
+   'alter table public.visitas rename to jornadas;\n' + AVISO, '0050_prueba.sql'],
+  ['y una que se lo cambia a una columna, que es lo mismo un piso más adentro',
+   'alter table public.visitas rename column peso to ponderacion;\n' + AVISO,
+   '0050_prueba.sql'],
+  ['y una que se lo cambia a una política, que es como se la busca para bajarla',
+   'alter policy "Lo mío" on public.visitas rename to "Lo nuestro";\n' + AVISO,
+   '0050_prueba.sql'],
   ['una política que rehace la cuenta de la Organización en vez de pedirla',
    'create policy "Lo mío" on public.cosas for select to authenticated\n' +
    '  using (tenant_id = (select tenant_id from public.profiles where id = auth.uid()));\n'],
@@ -1124,7 +1209,13 @@ const BIEN = [
    "insert into public.visitas (tenant_id)\nselect id from public.tenants where slug = 'presdemo';\n"],
   ['la siembra de una tabla que después se renombró',
    'insert into public.pesos (tenant_id)\nselect id from public.tenants;\n' +
-   'alter table public.pesos rename to visitas;\n' + SIEMBRA_DIRECTA],
+   'alter table public.pesos rename to visitas;\n' + SIEMBRA_DIRECTA,
+   '0022_prueba.sql'],
+  ['el mismo renombre pero en el acomodamiento del glosario, que ya está escrito',
+   'alter table public.visitas rename to jornadas;\n', '0015_prueba.sql'],
+  ['un comentario que cuenta un renombre viejo, que es prosa y no una sentencia',
+   '-- alter table public.visitas rename to jornadas;\nselect 1;\n',
+   '0050_prueba.sql'],
   ['un `insert` que nombra `tenants` adentro de un comentario',
    '-- insert into public.visitas select id from public.tenants;\n' +
    'select 1;\n'],
@@ -1207,6 +1298,8 @@ if (ME_CORRIERON_A_MI) {
   let avisos = 0;
   let escrituras = 0;
   let resoluciones = 0;
+  let quietas = 0;
+  let renombres = 0;
   const migraciones = readdirSync(carpeta).filter((n) => n.endsWith('.sql')).sort();
   seRevisaron(migraciones.length, 'una sola migración `.sql` para revisar');
   const textos = migraciones.map((n) => readFileSync(join(carpeta, n), 'utf8'));
@@ -1265,6 +1358,18 @@ if (ME_CORRIERON_A_MI) {
         if (!/^\s*execute\b/i.test(m[1])) permisos++;
       }
     }
+    /* Y la cuenta de la decimotercera, del mismo lugar que la regla: cuántas
+       se juzgaron de este lado del límite, y cuántos renombres quedaron del
+       otro, que son los que este archivo va a seguir arrastrando. */
+    if (nombre.slice(0, 4) >= NO_SE_RENOMBRA_DESDE) {
+      quietas++;
+    } else {
+      const sinProsa = texto.split('\n')
+        .map((l) => (/^\s*--/.test(l) ? '' : l)).join('\n');
+      for (const [, expresion] of RENOMBRA_LO_GUARDADO) {
+        renombres += [...sinProsa.matchAll(expresion)].length;
+      }
+    }
     if (nombre.slice(0, 4) >= EL_AVISO_EMPIEZA && CAMBIA_EL_ESQUEMA.test(
       texto.split('\n').map((l) => (/^\s*--/.test(l) ? '' : l)).join('\n'))) {
       avisos++;
@@ -1287,7 +1392,7 @@ if (ME_CORRIERON_A_MI) {
     for (const falla of fallas) console.error('  - ' + falla);
     console.error(
       `\n${fallas.length} ${fallas.length === 1 ? 'incumplimiento' : 'incumplimientos'}. ` +
-      'Las doce reglas están en el encabezado de este archivo, con el porqué de cada\n' +
+      'Las trece reglas están en el encabezado de este archivo, con el porqué de cada\n' +
       'una. La RLS y la revocación van en la misma migración que crea la tabla o la\n' +
       'función, nunca en una posterior y nunca a mano desde el panel de Supabase; la\n' +
       'columna de Organización, la clave primaria y la moneda pueden llegar después,\n' +
@@ -1310,6 +1415,10 @@ if (ME_CORRIERON_A_MI) {
       '`public.prestadora_actual()` en vez de rehacer la cuenta, y ninguna otra\n' +
       'función la deduce. Una condición copiada contesta lo mismo hoy y no aprende\n' +
       'lo que la función aprenda mañana.\n' +
+      'Y lo que ya está guardado no se renombra: el nombre viejo queda en los\n' +
+      'datos de antes y en toda migración anterior, que no se puede editar. Si\n' +
+      'el nombre de hoy quedó mal, se agrega lo nuevo y se deja de escribir lo\n' +
+      'viejo.\n' +
       'Si un caso no puede cumplirla, va a SIN_ORGANIZACION, a SIN_MONEDA, a\n' +
       'AL_ALCANCE_ANONIMO, a SIN_ORGANIZACION_EN_EL_DEPOSITO o a\n' +
       'SIN_ORGANIZACION_AL_ESCRIBIR de este mismo\n' +
@@ -1341,5 +1450,8 @@ if (ME_CORRIERON_A_MI) {
     'columna que la sostiene, comprobado acá mismo). ' +
     `Y las ${resoluciones} veces que una política viva compara contra la columna ` +
     `de la Organización, las ${resoluciones} se la piden a \`public.${LA_RESUELVE}()\`: ` +
-    'ninguna rehace la cuenta por su lado, y ninguna otra función la deduce.');
+    'ninguna rehace la cuenta por su lado, y ninguna otra función la deduce. ' +
+    `Y las ${quietas} migraciones desde la ${NO_SE_RENOMBRA_DESDE} no le cambian ` +
+    `el nombre a nada de lo ya guardado: los ${renombres} renombres que hay son ` +
+    'todos del acomodamiento del glosario, que cerró en la 0022.');
 }

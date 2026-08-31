@@ -3237,7 +3237,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 - **La puerta es `guias_de(p_slug)`** (`:272`), del mismo tipo que `vocabularios_de`: la tabla no le
   concede nada a `anon` (`:254`), y lo que sale a la calle es una función que **exige el nombre
   corto**, devuelve la general más la de esa sola Prestadora, y sólo las publicadas. Está anotada
-  con su motivo en `scripts/verificar_esquema.mjs:322`, que es donde viven las funciones que llegan
+  con su motivo en `scripts/verificar_esquema.mjs:352`, que es donde viven las funciones que llegan
   al alcance anónimo a propósito.
 - **La pantalla nueva es `screen-guias`** en la aplicación del Asistente
   (`pwa-asistente/index.html:702`), con los cuatro estados y un buscador. **Es una biblioteca de
@@ -5578,6 +5578,47 @@ mismo texto.
 preparado en el chequeo de migraciones, la doble cuenta de mi propia medición, y ahora una regla
 publicada que se salteaba ocho políticas sin decirlo. Ninguna de las tres apareció leyendo el
 código; las tres aparecieron rompiendo un archivo real y mirando si el chequeo se daba cuenta.
+
+### El nombre que ya se guardó, y por qué el costo no se paga una vez
+
+La decimotercera regla del chequeo de esquema hace cumplir otro renglón de `CLAUDE.md` que hasta
+ahora vivía sólo en prosa: **lo que se guarda para siempre se nombra por lo que hace, y no se
+renombra**. Son tres capas y la regla existe para que no se mezclen. Lo **visible** puede cambiar
+cuando cambia la marca. Lo **guardado** —tablas, columnas, claves, prefijos de archivo— se nombra
+por su función y no cambia nunca. Y lo **histórico** ya quedó escrito y no se toca. Un renombre las
+mezcla, y convierte lo que parecía un cambio de nombre en una migración de datos.
+
+**El costo no se paga una vez, se paga siempre.** El nombre viejo no se va a ningún lado: queda en
+las filas cargadas antes, queda en toda migración anterior —que por la regla de la empresa no se
+puede editar— y queda adentro de los chequeos, que a partir de ese día tienen que seguirle el hilo
+para saber de qué tabla se está hablando. La prueba está en el propio archivo que ahora hace
+cumplir la regla: `nombreDeHoy()` existe en `scripts/verificar_esquema.mjs` únicamente para
+recorrer la cadena de renombres viejos, y va a seguir existiendo aunque no se renombre nada más.
+
+**Se midió antes de escribir una línea.** Hay dieciocho renombres en las cuarenta y nueve
+migraciones, y están los dieciocho en cuatro archivos: la 0012, la 0015, la 0019 y la 0022. No son
+dieciocho motivos: es uno solo. Los cuatro encabezados cuentan el mismo acomodamiento del glosario
+—«bandera» que no era una casilla, `care_searches` que no guardaba una búsqueda, `logbook_entries`
+que se llamaba de tres maneras a la vez, `peso` que se leía como dinero—, decidido por el
+Desarrollador entre el 24 y el 25 de agosto de 2026. El encabezado de la 0022 dice incluso por qué
+en ese momento salía barato: *«sale barato porque la base todavía no tiene datos reales»*. Ese es
+justo el argumento que deja de valer el día que los tenga.
+
+**Por eso el chequeo lleva una fecha y no una lista de perdones.** `NO_SE_RENOMBRA_DESDE = '0023'`
+es la migración siguiente a la última que renombró; de ese lado del límite hay veintisiete
+migraciones y ningún renombre. Una lista de exenciones habría dicho lo mismo hoy y habría crecido
+mañana; un límite no crece: o la migración es anterior al día que se cerró el glosario, o la regla
+la juzga.
+
+**Las políticas entran también, y no por simetría.** Acá cada política se vuelve a crear con un
+`drop policy if exists` que la busca por el nombre. Una política renombrada deja esos drops
+apuntando a nada —y deja a la undécima y a la duodécima dándola por viva cuando ya no lo está—, que
+es exactamente la clase de error que no se ve mientras el sistema anda.
+
+**Y la falsificación se corrió contra un archivo real, no sólo contra el banco de pruebas.** Se le
+agregó a la 0041 un `rename column` de verdad, puesto antes del `notify` para que ninguna otra
+regla pudiera dispararse y confundir el resultado, y se corrieron las dos versiones contra el mismo
+archivo roto: **la publicada pasó en verde y la de hoy lo encuentra**, con el renglón exacto.
 
 ## 6. Deuda del código actual
 
