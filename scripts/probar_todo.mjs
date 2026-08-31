@@ -5,7 +5,7 @@
 
    `verificar_todo.mjs` junta los chequeos que leen archivos y corren sin red.
    Éste junta las pruebas que necesitan una base levantada: registran cuentas
-   ficticias, les hacen escribir, y preguntan quién ve qué.
+   ficticias, les hacen escribir y subir papeles, y preguntan quién ve qué.
 
    Existe por lo que pasó el 31 de agosto de 2026. La prueba de aislamiento
    sabía correr contra la base local desde que se escribió, y hacía cinco días
@@ -23,7 +23,7 @@
    ── Lo que NO corre acá, y por qué ────────────────────────────────────────
 
    Dos pruebas quedan afuera a propósito, y se dice cuáles para que nadie
-   cuente estas seis y crea que están todas:
+   cuente estas siete y crea que están todas:
 
    · `probar_alta_y_baja.mjs` — va contra el servidor publicado, necesita la
      clave de firma de la caja fuerte, y su limpieza **borra datos publicados**.
@@ -33,9 +33,11 @@
 
    ── La que tiene que dar rojo ─────────────────────────────────────────────
 
-   `probar_permisos_en_vivo.mjs` sale en rojo a propósito: es el pendiente 67,
-   y su propio texto dice que hasta que se arregle tiene que dar rojo. Acá se
-   cuenta como esperada y no tumba la corrida. **Pero si algún día pasa, esto
+   Dos salen en rojo a propósito, y cada una dice adentro por qué:
+   `probar_permisos_en_vivo.mjs` es el pendiente 67, y
+   `probar_pisado_de_archivos.mjs` es el 89 —subir dos veces el mismo papel
+   borra el primero, y el arreglo depende de una decisión que todavía no se
+   tomó—. Acá se cuentan como esperadas y no tumban la corrida. **Pero si algún día pasa, esto
    falla igual**, porque entonces el pendiente 67 está cerrado y hay que sacarlo
    de esta lista. Una prueba que perdona un rojo para siempre deja de mirar.
 =================================================== */
@@ -46,7 +48,7 @@ import { spawnSync } from 'node:child_process';
 
 const aca = dirname(fileURLToPath(import.meta.url));
 
-/* Las seis que saben correr contra la base local. En este orden: primero las
+/* Las siete que saben correr contra la base local. En este orden: primero las
    chicas, que son rápidas y dicen enseguida si la base está sana, y al final la
    de aislamiento, que es la larga. */
 const PRUEBAS = [
@@ -55,13 +57,15 @@ const PRUEBAS = [
   'probar_sello_de_la_prestadora.mjs',
   'probar_el_papel_nuevo_baja_el_sello.mjs',
   'probar_permisos_en_vivo.mjs',
+  'probar_pisado_de_archivos.mjs',
   'probar_aislamiento.mjs'
 ];
 
 /* Rojas a propósito, con el pendiente que lo explica al lado. Sacar de acá lo
    que se arregle: si una de éstas pasa, esta corrida falla y dice por qué. */
 const ROJAS_ESPERADAS = new Map([
-  ['probar_permisos_en_vivo.mjs', 67]
+  ['probar_permisos_en_vivo.mjs', 67],
+  ['probar_pisado_de_archivos.mjs', 89]
 ]);
 
 const nombreCorto = (a) => a.replace(/^probar_/, '').replace(/\.mjs$/, '');
@@ -131,5 +135,9 @@ if (fallaron.length > 0) {
 
 console.log(
   `\nLas ${PRUEBAS.length - esperadas.length} pruebas que tenían que pasar pasaron` +
-  (esperadas.length ? `, y ${esperadas.length} dio el rojo que tenía que dar.` : '.')
+  (esperadas.length
+    ? esperadas.length === 1
+      ? ', y 1 dio el rojo que tenía que dar.'
+      : `, y las ${esperadas.length} anotadas dieron el rojo que tenían que dar.`
+    : '.')
 );

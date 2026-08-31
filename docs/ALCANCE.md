@@ -4273,6 +4273,44 @@ la lista salió con código 1 nombrándola; con una roja esperada que en realida
 código 1 pidiendo cerrar el pendiente; y tal como queda, con la base local levantada, las cinco que
 tienen que pasar pasan y la sexta da el rojo que tiene que dar.
 
+### El pendiente 89 dejó de ser una afirmación y pasó a ser una prueba
+
+El pendiente 89 decía, desde el 27 de agosto de 2026, que subir dos veces el mismo papel borra el
+primero. Estaba comprobado leyendo las dos puntas del código y nada más: no había forma de que el
+día que se arreglara alguien se enterara, ni de que si mañana se rompía de nuevo algo lo dijera.
+Ahora hay `scripts/probar_pisado_de_archivos.mjs`, que lo mide.
+
+**Lo difícil no era medirlo: era medirlo sin haber elegido todavía el arreglo.** El pendiente tiene
+tres salidas —que el camino lleve la fecha, que el depósito guarde versiones, o que pisar quede
+prohibido— y la elección es del Desarrollador. Una prueba escrita contra una de las tres da rojo
+para siempre si se elige otra, y ese rojo se lee como «no se arregló». Así que la prueba mira **las
+dos causas por separado**, y con que se corte una alcanza:
+
+- **La causa A, contra la base:** sube un papel ficticio, sube otro al mismo camino, y pregunta si
+  el primero sigue estando. Se pone en verde si la segunda subida vuelve rechazada o si el viejo se
+  sigue pudiendo bajar.
+- **La causa B, leída del código:** si el camino que arman las dos puntas deja de ser siempre el
+  mismo, la segunda subida cae en otro lado y no pisa nada. El guion imprime las dos plantillas tal
+  como están escritas hoy, y si alguna deja de encontrarse **no da por buena la prueba**: la declara
+  inservible. Un chequeo que no encuentra lo que busca y sigue adelante escribe su ✔ sin haber
+  mirado nada.
+
+La tercera salida —versiones en el depósito— no se mide desde ahí, porque la versión anterior no
+está en ningún camino que se pueda pedir. **Está dicho adentro del guion**, para que si se elige ésa
+el rojo no se confunda con el defecto.
+
+**Comprobada en los dos sentidos.** Tal como está el código, da rojo. Poniendo `upsert: false` a
+mano en `js/auth.js` la segunda subida vuelve rechazada y pasa a verde; devolviendo eso y poniendo
+en cambio la fecha adentro de las dos plantillas del camino, también pasa a verde por el otro lado.
+Las dos veces se restauró el código original.
+
+**Y midiéndolo apareció un segundo defecto que el pendiente no tenía.** No hace falta subir dos
+veces el mismo papel: `js/fichas-legajo.js:307` numera los archivos por su **posición** en la lista,
+así que sacar una matrícula del medio y guardar escribe el papel de la fila siguiente encima del de
+la anterior, y deja además un archivo suelto que ya no nombra ninguna fila. Eso cambia la elección
+que hay que hacer: **prohibir pisar, solo, no alcanza**, porque rechazaría ese guardado, que es
+legítimo. Hay que dejar de numerar por posición igual. Quedó escrito en el pendiente 89.
+
 ---
 
 ## 6. Deuda del código actual

@@ -92,7 +92,7 @@ que servir**: hasta el 31 de agosto de 2026 subía el repositorio entero, con la
 pendientes y las migraciones adentro. Lo cierra `.vercelignore`; el guion avisa si se reabre.
 
 **Las pruebas que necesitan la base levantada se corren juntas:** `node scripts/probar_todo.mjs`.
-Son seis, van contra la base de esta máquina y por eso **no entran en `verificar_todo.mjs`** —el
+Son siete, van contra la base de esta máquina y por eso **no entran en `verificar_todo.mjs`** —el
 gancho de `commit` corre sin base y sin red, igual que pasa con la comprobación de la publicación—.
 Antes hay que levantarla: `supabase start …` y `supabase migration up --local`. El guion nombra
 adentro las dos pruebas que quedan afuera, que van contra el servidor publicado. Existe por lo que
