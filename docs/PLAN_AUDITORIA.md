@@ -240,7 +240,7 @@ lo tiene. Se eligió a favor de la regla de privacidad, a conciencia.
 
 ## 10. Cómo se prueba, y por qué la prueba puede fallar
 
-Va adentro de `scripts/probar_aislamiento.mjs`, que es donde ya viven las 52 comprobaciones y las
+Va adentro de `scripts/probar_aislamiento.mjs`, que es donde ya viven las 55 comprobaciones y las
 tres cuentas ficticias. En el tramo que corre con `--local`, que es el único donde se puede ascender
 a alguien a coordinador.
 

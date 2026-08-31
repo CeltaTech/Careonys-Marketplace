@@ -122,7 +122,7 @@ Cómo quedó:
   perfil (`js/apiClient.js:60`); sin sesión, el enlace elige qué directorio se muestra y nada más.
 - **Los archivos siguen la misma regla.** Ver la fila «Archivos del legajo» de arriba.
 
-Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, **cincuenta y dos
+Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, **cincuenta y cinco
 comprobaciones, contadas y pasadas el 31 de agosto de 2026** contra la base de esta máquina. Y
 falsificado a propósito para verificar que se pone en rojo cuando corresponde.
 
@@ -4168,7 +4168,7 @@ sin poder correr, y eso era sólo medio cierto.** Lo que no puede correr es cont
 publicado, porque ahí el alta pide confirmar el correo y la prueba nunca llega a tener sesión.
 Contra la base de esta máquina corre entera, y el propio encabezado del guion lo dice desde que se
 escribió: `scripts/probar_aislamiento.mjs:9`. El 31 de agosto de 2026 se corrió con `--local` y
-**pasaron las 52 comprobaciones**, incluidas las dos que sólo existen ahí —ascender a alguien a
+**pasaron las 55 comprobaciones**, incluidas las dos que sólo existen ahí —ascender a alguien a
 coordinador para ver si el personal lee los papeles de su Prestadora y no los de la otra—, porque
 ascender pide la clave de administración y ésa vive nada más que en el entorno local.
 
@@ -4697,7 +4697,7 @@ que avisa.
 
 ---
 
-### La siembra tiene catorce columnas que nunca se llenan, y ninguna pantalla lo muestra
+### La siembra tenía catorce columnas que nunca se llenan, y ninguna pantalla lo mostraba
 
 Las tres Prestadoras ficticias son el banco de pruebas del producto: si algo no se puede hacer con
 ellas, no se puede hacer. Así que vale preguntarles lo mismo que a una base de un cliente, y la
@@ -4712,10 +4712,34 @@ El 31 de agosto de 2026 se midió: **catorce de las 225 columnas de las 25 tabla
 todas en el pendiente 110, agrupadas por lo que significa cada una, y el grupo que importa es el
 primero: `cursos`, `evaluaciones`, `preguntas_evaluacion`, `opciones_pregunta` y `vocabularios`
 guardan la oferta general con `tenant_id` nulo y lo propio de una Prestadora con `tenant_id`
-cargado, y **la siembra sólo carga lo general**. O sea que la mitad `tenant_id =
-prestadora_actual()` de cinco políticas de RLS no tiene una sola fila que la ejercite, y la prueba
-de aislamiento no la puede agarrar porque el dato no existe. Ahí no hay nada roto todavía: hay cinco
-puertas que nadie probó.
+cargado, y **la siembra sólo cargaba lo general**. O sea que la mitad `tenant_id =
+prestadora_actual()` de cinco políticas de RLS no tenía una sola fila que la ejercite, y la prueba
+de aislamiento no la podía agarrar porque el dato no existía. Ahí no había nada roto: había cinco
+puertas que nadie había probado.
+
+**Cuatro de esas cinco las cerró la migración 0048**, el mismo día. En vez de cargar una fila
+cualquiera para llenar la columna, hace que PresDemo arme **su** curso: ya tenía una certificación
+propia en los vocabularios —`certificacion/rcp_avanzada`—, y una Prestadora que le exige a su gente
+algo que la oferta general no dicta es exactamente la que arma su propio curso. Con eso vienen su
+evaluación final —que de paso llena `evaluaciones.curso_id`, vacía hasta entonces—, sus dos
+preguntas y sus ocho opciones. **Y sembrar no alcanza: hay que ejercitarlo**, así que
+`scripts/probar_aislamiento.mjs` ganó tres comprobaciones —las dos Prestadoras ven la misma oferta
+general; la dueña ve lo suyo en los tres catálogos; ninguna ve una sola fila propia de la otra— y
+pasó de 52 a 55. **La segunda se falsificó moviendo el curso a la otra Prestadora**: salió roja
+nombrando `cursos`, y después se devolvió a su dueña. Las otras dos no se pueden falsificar
+moviendo datos —sólo se ponen en rojo si la política pierde una de sus mitades, y una política no
+se cambia a mano contra la base—; es la misma forma que ya tiene el bloque de las zonas de
+cobertura, y se deja dicho en vez de hacerlo pasar por lo que no es. **No se prueba que nadie
+escriba en estos catálogos**: la 0008 le quita a `authenticated` el permiso de escritura sobre la
+tabla entera, así que una carga cruzada daría error igual con el aislamiento roto —sería una prueba
+que no puede fallar—.
+
+**La quinta no se cierra sembrando, porque no es un hueco de siembra.** `vocabularios.tenant_id`
+sigue vacía a propósito: los **ítems** propios de una Prestadora ya existen —cinco en
+`vocabulario_items`—, pero una **lista** entera propia es otra función, y antes de sembrarla hay que
+contestar qué pasa cuando una Prestadora quiere su propia lista de patologías junto a la general:
+si la reemplaza, si la extiende o si conviven. Sembrarla sin contestar eso es elegir la respuesta a
+escondidas. Queda en el pendiente 110, que hoy son **nueve** columnas y no catorce.
 
 **Una de las catorce ninguna migración la puede llenar hoy**, y eso es un hallazgo aparte:
 `verificaciones_asistente.verificado_por` dice quién comprobó un papel, y los perfiles los crea el

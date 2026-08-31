@@ -968,6 +968,72 @@ console.log('Dos Familias de la misma Prestadora');
 }
 
 
+// --- Los catálogos de dos escalones (migraciones 0008 y 0048) --------------
+// `cursos`, `evaluaciones` y `preguntas_evaluacion` guardan dos cosas en la
+// misma tabla: con `tenant_id` nulo, la oferta general de CeltaTech, que ven
+// todas; con `tenant_id` cargado, lo que armó una Prestadora, que no ve
+// ninguna otra. Hasta la 0048 la siembra cargaba sólo lo general, así que la
+// mitad `tenant_id = prestadora_actual()` de esas políticas no tenía una sola
+// fila que la ejercitara, y acá no se podía mirar: sin dato propio, la
+// política correcta y la que se olvidó el escalón propio contestan lo mismo.
+//
+// Ahora PresDemo tiene su curso de RCP avanzada, con su evaluación y sus dos
+// preguntas, y estas tres comprobaciones fallan por los dos lados: si la
+// política perdiera la mitad propia, la dueña dejaría de ver lo suyo; si
+// perdiera la condición de Prestadora, la otra lo vería.
+//
+// No se prueba acá que nadie escriba en estos catálogos: la 0008 le quita el
+// permiso de escritura a `authenticated` sobre la tabla entera, así que un
+// intento de carga cruzada daría error igual con el aislamiento roto. Sería
+// una prueba que no puede fallar.
+{
+  const CATALOGOS = ['cursos', 'evaluaciones', 'preguntas_evaluacion'];
+  const visto = new Map();   // tabla -> [filasDeA, filasDeB]
+  for (const tabla of CATALOGOS) {
+    const porCuenta = [];
+    for (const c of cuentas) {
+      const { cuerpo } = await rest(
+        '/rest/v1/' + tabla + '?select=id,clave,tenant_id', {}, c.token);
+      porCuenta.push(Array.isArray(cuerpo) ? cuerpo : []);
+    }
+    visto.set(tabla, porCuenta);
+  }
+  const general = (filas) => filas.filter((f) => f.tenant_id === null);
+  const propias = (filas, duenia) => filas.filter((f) => f.tenant_id === duenia);
+  const ajenas  = (filas, duenia) => filas.filter((f) => f.tenant_id !== null &&
+                                                        f.tenant_id !== duenia);
+
+  const sinOferta = CATALOGOS.filter((t) => {
+    const [a, b] = visto.get(t);
+    return general(a).length === 0 || general(a).length !== general(b).length;
+  });
+  comprobar('Las dos Prestadoras ven la misma oferta general de CeltaTech',
+    sinOferta.length === 0,
+    sinOferta.length ? 'no coincide en: ' + sinOferta.join(', ')
+                     : CATALOGOS.map((t) => t + ': ' + general(visto.get(t)[0]).length).join('   '));
+
+  // El `> 0` no sobra: sin una sola fila propia cargada, «ninguna ajena» es
+  // verdad porque no hay ninguna, y la comprobación de abajo pasaría sola.
+  const sinLoSuyo = CATALOGOS.filter((t) =>
+    propias(visto.get(t)[0], cuentas[0].prestadora.id).length === 0);
+  comprobar('La Prestadora ve el curso que armó ella, con su evaluación y sus preguntas',
+    sinLoSuyo.length === 0,
+    sinLoSuyo.length ? 'no ve lo propio en: ' + sinLoSuyo.join(', ')
+                     : CATALOGOS.map((t) => t + ': ' +
+                         propias(visto.get(t)[0], cuentas[0].prestadora.id).length).join('   '));
+
+  const seCuelan = [];
+  for (const t of CATALOGOS) {
+    const [a, b] = visto.get(t);
+    const cruce = ajenas(a, cuentas[0].prestadora.id).length +
+                  ajenas(b, cuentas[1].prestadora.id).length;
+    if (cruce > 0) seCuelan.push(t + ': ' + cruce);
+  }
+  comprobar('Y ninguna Prestadora ve una sola fila propia de la otra',
+    seCuelan.length === 0,
+    seCuelan.length ? seCuelan.join('   ') : 'ninguna ajena en los tres catálogos');
+}
+
 // --- Limpieza ---------------------------------------------------------------
 console.log('');
 for (const f of [cuentas[0], familias[0]]) {
