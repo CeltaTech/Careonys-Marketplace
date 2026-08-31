@@ -74,6 +74,27 @@ export function tieneGuarda(texto) {
   return GUARDAS.some((g) => limpio.includes(g));
 }
 
+/* ── LA EXTENSIÓN DE LAS PANTALLAS, ESCRITA A MANO ────────────────────────
+   La otra forma de que un chequeo pase sin mirar nada, y es la que se ve
+   menos: no se queda sin corpus, se queda con menos. Medido el 31 de agosto de
+   2026 sobre una copia con las quince pantallas renombradas a `.jsx`, con la
+   extensión todavía escrita a mano en cada llamada: seis chequeos se plantaron
+   y **once siguieron dando ✔ con un número más chico**. `botones` pasó de 21
+   manejadores en 11 pantallas a 1 en 1; `estilos` dijo que ninguno de los
+   **cero** atributos `style=` repetía nada, y lo dijo en verde.
+
+   Con la misma copia y `EXTENSIONES_DE_PANTALLA` puesto en `['.jsx']`, un
+   renglón, los once volvieron a sus números de siempre. Por eso se pide acá:
+   la extensión sale de `scripts/recorrido.mjs` y de ningún otro lado.
+
+   No se miran los comentarios, que hablan de esto todo el tiempo. */
+const A_MANO = /['"`]\.html['"`]/;
+
+/** ¿Este texto escribe a mano la extensión de las pantallas? */
+export function escribeLaExtension(texto) {
+  return A_MANO.test(sinComentarios(texto));
+}
+
 /* ── 1 y 2. Que la guarda de verdad se plante ───────────────────────────── */
 
 const fallas = [];
@@ -122,6 +143,34 @@ if (tieneGuarda(SOLO_EN_UN_COMENTARIO)) {
 }
 if (!tieneGuarda(CON_GUARDA)) fallas.push('Marcó como falta un chequeo que sí tiene la guarda.');
 
+/* ── 4. Que reconozca la extensión escrita a mano ───────────────────────── */
+
+const CON_EXTENSION_A_MANO = `
+import { hayArchivos } from './recorrido.mjs';
+for (const c of hayArchivos(raiz, ['.html', '.js'])) revisar(c);
+`;
+
+const SOLO_EN_UN_COMENTARIO_2 = `
+// Antes esto decía ['.html'] y ahora sale de recorrido.mjs.
+import { hayArchivos, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
+for (const c of hayArchivos(raiz, EXTENSIONES_DE_PANTALLA)) revisar(c);
+`;
+
+const COMO_CORRESPONDE = `
+import { hayArchivos, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
+for (const c of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'])) revisar(c);
+`;
+
+if (!escribeLaExtension(CON_EXTENSION_A_MANO)) {
+  fallas.push('Dio por bueno un chequeo con la extensión de las pantallas escrita a mano.');
+}
+if (escribeLaExtension(SOLO_EN_UN_COMENTARIO_2)) {
+  fallas.push('Se quejó de una extensión que estaba nombrada en un comentario.');
+}
+if (escribeLaExtension(COMO_CORRESPONDE)) {
+  fallas.push('Se quejó de un chequeo que pide la extensión a `recorrido.mjs`.');
+}
+
 /* ── El recorrido de verdad ─────────────────────────────────────────────── */
 
 const chequeos = readdirSync(aca)
@@ -131,12 +180,20 @@ const chequeos = readdirSync(aca)
 seRevisaron(chequeos.length, 'un solo chequeo en `scripts/` que revisar');
 
 const sinGuarda = [];
+const conExtensionAMano = [];
 let revisados = 0;
 
 for (const nombre of chequeos) {
   if (EXENTOS.has(nombre)) continue;
   revisados++;
-  if (!tieneGuarda(readFileSync(join(aca, nombre), 'utf8'))) sinGuarda.push(nombre);
+  const texto = readFileSync(join(aca, nombre), 'utf8');
+  if (!tieneGuarda(texto)) sinGuarda.push(nombre);
+  /* `verificar_red.mjs` es el único que la escribe a propósito: sus pruebas de
+     adentro son textos de chequeo de mentira, y tienen que traerla escrita a
+     mano para que haya algo que reconocer. */
+  if (nombre !== 'verificar_red.mjs' && escribeLaExtension(texto)) {
+    conExtensionAMano.push(nombre);
+  }
 }
 
 seRevisaron(revisados, 'un solo chequeo que no esté exento');
@@ -148,6 +205,13 @@ for (const nombre of sinGuarda) {
   );
 }
 
+for (const nombre of conExtensionAMano) {
+  fallas.push(
+    `\`scripts/${nombre}\` escribe a mano la extensión de las pantallas.\n` +
+    '      El día que dejen de ser `.html` va a seguir dando ✔ con menos archivos.'
+  );
+}
+
 if (fallas.length > 0) {
   console.error('La red de chequeos puede pasar sin haber mirado nada:\n');
   for (const f of fallas) console.error('  · ' + f);
@@ -156,12 +220,15 @@ if (fallas.length > 0) {
     '`seRevisaron(cuantos, qué)` cuando lo que se cuenta sale de una lista o de un\n' +
     'catálogo. Las dos están en `scripts/recorrido.mjs`.\n' +
     'Si el chequeo de verdad no puede quedarse sin corpus, va a `EXENTOS` de este\n' +
-    'archivo con el motivo escrito.'
+    'archivo con el motivo escrito.\n' +
+    'Y la extensión de las pantallas se pide con `EXTENSIONES_DE_PANTALLA`, del\n' +
+    'mismo archivo, en vez de escribirla.'
   );
   process.exit(1);
 }
 
 console.log(
   `Red verificada: ${revisados} chequeos que se plantan si no encuentran nada ` +
-  `(${EXENTOS.size} exento, con su motivo).`
+  `(${EXENTOS.size} exento, con su motivo), y ninguno con la extensión de las ` +
+  'pantallas escrita a mano.'
 );

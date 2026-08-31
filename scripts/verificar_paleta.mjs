@@ -43,7 +43,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { hayArchivos } from './recorrido.mjs';
+import { hayArchivos, EXTENSIONES_DE_PANTALLA, esPantalla } from './recorrido.mjs';
 import { enBlanco } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -87,11 +87,11 @@ function coloresQueSobran(crudo, extension) {
    número de renglón siga siendo el de verdad. */
 function sinComentarios(texto, extension) {
   let t = texto;
-  if (extension === '.html') t = t.replace(/<!--[\s\S]*?-->/g, enBlanco);
-  if (extension === '.html' || extension === '.js' || extension === '.css') {
+  if (esPantalla(extension)) t = t.replace(/<!--[\s\S]*?-->/g, enBlanco);
+  if (esPantalla(extension) || extension === '.js' || extension === '.css') {
     t = t.replace(/\/\*[\s\S]*?\*\//g, enBlanco);
   }
-  if (extension === '.html' || extension === '.js') {
+  if (esPantalla(extension) || extension === '.js') {
     t = t.replace(/^([^\n'"`]*?)\/\/[^\n]*/gm, (m, antes) => antes + enBlanco(m.slice(antes.length)));
   }
   return t;
@@ -100,7 +100,7 @@ function sinComentarios(texto, extension) {
 /* Una prueba que no puede fallar no prueba nada: antes de recorrer el proyecto,
    el detector se prueba contra lo que tiene que saltar y contra lo que no. */
 const SOBRAN = [
-  ['<div style="background:#f8fafc">', '.html'],
+  ['<div style="background:#f8fafc">', EXTENSIONES_DE_PANTALLA[0]],
   ['  border: 1px solid #e2e8f0;', '.css'],
   ['aviso.style.color = \'#b71c1c\';', '.js'],
   ['  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);', '.css'],
@@ -108,17 +108,17 @@ const SOBRAN = [
   ['  background: oklch(0.65 0.13 250);', '.css']
 ];
 const NO_SOBRAN = [
-  ['<div style="background:var(--superficie)">', '.html'],
+  ['<div style="background:var(--superficie)">', EXTENSIONES_DE_PANTALLA[0]],
   ['  border: 1px solid var(--borde-card);', '.css'],
   ['aviso.style.color = \'var(--tono-critico-texto)\';', '.js'],
   ['/* Antes era #f8fafc, escrito a mano en once lugares. */', '.css'],
-  ['<!-- El fondo era #e2e8f0 y ahora sale del token. -->', '.html'],
+  ['<!-- El fondo era #e2e8f0 y ahora sale del token. -->', EXTENSIONES_DE_PANTALLA[0]],
   ['// El aviso usaba #b71c1c cuando el color estaba a mano.', '.js'],
-  ['<button style="background:#ea4335">Ingresar con Google</button>', '.html'],
-  ['<button style="background:#1877f2">Ingresar con Facebook</button>', '.html'],
+  ['<button style="background:#ea4335">Ingresar con Google</button>', EXTENSIONES_DE_PANTALLA[0]],
+  ['<button style="background:#1877f2">Ingresar con Facebook</button>', EXTENSIONES_DE_PANTALLA[0]],
   ['  padding: 12px 16px;', '.css'],
-  ['<a href="#formulario">Postularse</a>', '.html'],
-  ['<a href="#top">Volver arriba</a>', '.html']
+  ['<a href="#formulario">Postularse</a>', EXTENSIONES_DE_PANTALLA[0]],
+  ['<a href="#top">Volver arriba</a>', EXTENSIONES_DE_PANTALLA[0]]
 ];
 
 const noDetecta = SOBRAN.filter(([t, e]) => coloresQueSobran(t, e).length === 0);
@@ -133,7 +133,7 @@ if (noDetecta.length || sePasa.length) {
 const fallas = [];
 let revisados = 0;
 
-for (const camino of hayArchivos(raiz, ['.html', '.css', '.js'], AJENAS)) {
+for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.css', '.js'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   if (TOKENS.has(nombre)) continue;
   revisados++;

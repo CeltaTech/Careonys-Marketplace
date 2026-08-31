@@ -27,7 +27,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { hayArchivos } from './recorrido.mjs';
+import { hayArchivos, EXTENSIONES_DE_PANTALLA, esPantalla } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -36,7 +36,7 @@ const { IDENTIDAD } = require(join(raiz, 'js', 'identidad.js'));
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
    este: la documentación nombra la marca a propósito y todo el tiempo. */
 const AJENAS = ['docs'];
-const EXTENSIONES = ['.html', '.js', '.css', '.json', '.webmanifest', '.txt'];
+const EXTENSIONES = [...EXTENSIONES_DE_PANTALLA, '.js', '.css', '.json', '.webmanifest', '.txt'];
 const COPIAS_IDENTIDAD = [
   join('js', 'identidad.js'),
   join('pwa-asistente', 'js', 'identidad.js'),
@@ -62,7 +62,7 @@ const PROHIBIDO = [
 function sinComentarios(texto, extension) {
   let t = texto;
   const tapar = (m) => m.replace(/[^\r\n]/g, ' ');
-  if (extension === '.html') t = t.replace(/<!--[\s\S]*?-->/g, tapar);
+  if (esPantalla(extension)) t = t.replace(/<!--[\s\S]*?-->/g, tapar);
   if (extension === '.js' || extension === '.mjs' || extension === '.css') {
     t = t.replace(/\/\*[\s\S]*?\*\//g, tapar);
   }

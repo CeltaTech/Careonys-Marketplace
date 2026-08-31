@@ -26,7 +26,7 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve, sep } from 'node:path';
-import { seRevisaron } from './recorrido.mjs';
+import { seRevisaron, esPantalla } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SALTAR = new Set(['node_modules', '.git', 'assets', 'supabase']);
@@ -37,7 +37,7 @@ function archivos(dir, salida = []) {
     if (SALTAR.has(nombre) || /^no.?commit$/i.test(nombre)) continue;
     const ruta = join(dir, nombre);
     if (statSync(ruta).isDirectory()) archivos(ruta, salida);
-    else if (nombre.endsWith('.html') || nombre.endsWith('.js')) salida.push(ruta);
+    else if (esPantalla(nombre) || nombre.endsWith('.js')) salida.push(ruta);
   }
   return salida;
 }

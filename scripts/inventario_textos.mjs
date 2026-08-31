@@ -74,6 +74,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative } from 'node:path';
 import { despejar, sinValoresGuardados, visible } from './texto_visible.mjs';
+import { EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const detalle = process.argv.includes('--detalle');
@@ -154,7 +155,7 @@ const agregar = (archivo, grupo, texto) => {
 };
 
 // --- LAS PANTALLAS ---
-for (const ruta of archivos(raiz, ['.html'])) {
+for (const ruta of archivos(raiz, EXTENSIONES_DE_PANTALLA)) {
   const rel = relative(raiz, ruta).replace(/\\/g, '/');
   const bruto = despejar(readFileSync(ruta, 'utf8'));
   const enPantalla = sinLoQueNoSeVe(bruto);
@@ -321,7 +322,7 @@ const sinLoQueSeIntentaba = (t) => t.replace(
   /((?:clave|mensaje)DeError\s*\(\s*[^,()]{0,80},\s*)(?:'[^']*'|"[^"]*"|`[^`]*`)/g,
   (todo, antes) => antes
 );
-for (const ruta of archivos(raiz, ['.js', '.html'])) {
+for (const ruta of archivos(raiz, ['.js', ...EXTENSIONES_DE_PANTALLA])) {
   const rel = relative(raiz, ruta).replace(/\\/g, '/');
   const bruto = readFileSync(ruta, 'utf8');
   const guion = ruta.endsWith('.js')

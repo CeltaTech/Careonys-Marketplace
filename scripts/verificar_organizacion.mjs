@@ -49,7 +49,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve, sep } from 'node:path';
-import { hayArchivos } from './recorrido.mjs';
+import { hayArchivos, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const MIGRACIONES = join(raiz, 'supabase', 'migrations');
@@ -118,7 +118,7 @@ export function verificarOrganizacion() {
   const nombrada = [];
   const logotipos = [];
 
-  const mirados = hayArchivos(raiz, ['.html', '.js', '.css'], ['docs', 'supabase', 'scripts']);
+  const mirados = hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js', '.css'], ['docs', 'supabase', 'scripts']);
   for (const camino of mirados) {
     const relativa = camino.slice(raiz.length + 1).split(sep).join('/');
     readFileSync(camino, 'utf8').split('\n').forEach((renglon, i) => {

@@ -35,7 +35,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative } from 'node:path';
-import { hayArchivos } from './recorrido.mjs';
+import { hayArchivos, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const BARRA = String.fromCharCode(92);
@@ -105,7 +105,7 @@ if (rotas.length) {
 
 /* ── El proyecto ────────────────────────────────────────────────────────── */
 const hojas = hayArchivos(raiz, ['.css']);
-const paginas = hayArchivos(raiz, ['.html']);
+const paginas = hayArchivos(raiz, EXTENSIONES_DE_PANTALLA);
 const guiones = hayArchivos(raiz, ['.js']);
 
 const declaradas = new Set();

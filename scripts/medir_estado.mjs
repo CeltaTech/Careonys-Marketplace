@@ -29,7 +29,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve, sep, basename } from 'node:path';
 import { createHash } from 'node:crypto';
-import { archivos, seRevisaron } from './recorrido.mjs';
+import { archivos, seRevisaron, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const escribir = process.argv.includes('--escribir');
@@ -58,7 +58,7 @@ const enEspanol = (n) => n.toLocaleString('es-AR');
 /* ── LAS PANTALLAS ───────────────────────────────────────────────────────
    Cada archivo `.html` es una pantalla: no hay ruteo, así que la cuenta de
    archivos es la cuenta de pantallas. */
-const pantallas = archivos(raiz, ['.html']).sort();
+const pantallas = archivos(raiz, EXTENSIONES_DE_PANTALLA).sort();
 seRevisaron(pantallas.length, 'una sola pantalla');
 const renglonesPantallas = pantallas.reduce((t, c) => t + renglones(leer(c)), 0);
 

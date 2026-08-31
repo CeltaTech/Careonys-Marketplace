@@ -50,7 +50,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { hayArchivos } from './recorrido.mjs';
+import { hayArchivos, EXTENSIONES_DE_PANTALLA, esPantalla } from './recorrido.mjs';
 import { visible, visibleDeMigracion, soloCastellano } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -185,7 +185,7 @@ const avisos = [];
 const viejas = [];
 let revisados = 0;
 
-for (const camino of hayArchivos(raiz, ['.html', '.js', '.json', '.sql'], AJENAS)) {
+for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js', '.json', '.sql'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   if (nombre.endsWith('manifest.json') || nombre.endsWith('sw.js')) continue;
   if (PANTALLAS_EXENTAS.has(nombre)) continue;
@@ -194,7 +194,7 @@ for (const camino of hayArchivos(raiz, ['.html', '.js', '.json', '.sql'], AJENAS
   const vistos = new Set();
   for (const [renglon, texto] of nombre.endsWith('.sql')
     ? visibleDeMigracion(crudo)
-    : visible(soloCastellano(crudo), nombre.endsWith('.html'))) {
+    : visible(soloCastellano(crudo), esPantalla(nombre))) {
     const sobra = apariciónQueSobra(texto);
     if (sobra && !vistos.has(renglon + sobra)) {
       vistos.add(renglon + sobra);

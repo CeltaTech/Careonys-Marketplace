@@ -55,7 +55,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { hayArchivos, seRevisaron } from './recorrido.mjs';
+import { hayArchivos, seRevisaron, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rutaLista = join(raiz, 'docs', 'PENDIENTES.md');
@@ -91,7 +91,7 @@ const aplanar = (t) => t.replace(/[\s*\/#>|-]+/g, ' ');
 const PASADO = /\b(era|eran|fue|fueron)\s+(el|la|los|las)?\s*$/i;
 const PEGADO = 60;
 
-const EXTENSIONES = ['.md', '.mjs', '.js', '.html', '.css', '.sql'];
+const EXTENSIONES = ['.md', '.mjs', '.js', ...EXTENSIONES_DE_PANTALLA, '.css', '.sql'];
 
 /* Narran un momento con fecha, o son historia que no se corrige. El motivo de
    cada uno está en el encabezado. */

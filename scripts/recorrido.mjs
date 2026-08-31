@@ -70,6 +70,33 @@ export const nuncaSeAbre = (nombre) =>
    es justamente lo que acá no alcanza. */
 export const NUNCA_SE_ABRE = new Set([...CAJAS_FUERTES, ...NO_ES_DEL_PROYECTO]);
 
+/* ── DE QUÉ SON LAS PANTALLAS ─────────────────────────────────────────────
+   Estaba escrito `'.html'` a mano en cuarenta llamadas repartidas por
+   diecinueve guiones —once en `verificar_paleta.mjs` sin ir más lejos—. Medido
+   el 31 de agosto de 2026 en una copia del proyecto con las quince pantallas
+   renombradas a `.jsx`: seis chequeos se plantan y avisan, **once siguen dando
+   ✔ con un número más chico que nadie mira**. `botones` pasaba de 21
+   manejadores en 11 pantallas a 1 en 1; `estilos` decía que ninguno de los
+   **0** atributos `style=` estaba mal, y lo decía en verde.
+
+   Con la extensión acá y en ningún otro lado, el día de la mudanza esa lista
+   cambia una vez y los diecinueve guiones la siguen: en la misma copia, con
+   este renglón puesto en `['.jsx']`, los once volvieron a sus números de
+   siempre y quedaron tres en rojo, que son los tres que tienen que gritar
+   —`estado`, `usos` y `estados` buscan por el nombre del archivo, y esos
+   nombres están escritos en la documentación—. **No arregla todo**: cuatro
+   chequeos
+   buscan formas que en React no existen —el color adentro de `style="…"`, las
+   plantillas que arman marcado, los manejadores escritos en el marcado y el
+   atributo `data-frase`—, y ésos hay que reescribirlos igual. Lo que sí termina
+   es la parte silenciosa. */
+export const EXTENSIONES_DE_PANTALLA = ['.html'];
+
+/** ¿Este archivo es una pantalla? Sirve tanto con el nombre como con la sola
+ *  extensión, que es como lo preguntan algunos chequeos. */
+export const esPantalla = (nombre) =>
+  EXTENSIONES_DE_PANTALLA.some((e) => nombre.toLowerCase().endsWith(e));
+
 /**
  * Los archivos con alguna de esas extensiones, colgando de `carpeta`.
  * `ademas` son los nombres de carpeta que este chequeo en particular no mira.

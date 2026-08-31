@@ -42,7 +42,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 
-import { hayArchivos, seRevisaron } from './recorrido.mjs';
+import { hayArchivos, seRevisaron, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
 import { GRUPOS } from './verificar_copias.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -62,7 +62,7 @@ if (!GRUPO) {
 }
 const DONDE_SE_PERMITE = new Set(GRUPO);
 
-const EXTENSIONES = ['.html', '.js', '.mjs', '.css', '.json', '.webmanifest',
+const EXTENSIONES = [...EXTENSIONES_DE_PANTALLA, '.js', '.mjs', '.css', '.json', '.webmanifest',
                      '.md', '.sql', '.py', '.toml', '.txt', '.yml', '.yaml'];
 
 /* Con forma de secreta o de token: no van al navegador ni en broma, así que no
@@ -193,7 +193,7 @@ export function verificarBase() {
   /* Y el orden de los `<script>`, que `auth.js` necesita y nadie ve hasta que
      falla. Se mira sólo en las pantallas que cargan los dos. */
   let pantallas = 0;
-  for (const camino of hayArchivos(raiz, ['.html'])) {
+  for (const camino of hayArchivos(raiz, EXTENSIONES_DE_PANTALLA)) {
     const ruta = comoLoEscribeElProyecto(relative(raiz, camino));
     const html = readFileSync(camino, 'utf8');
     const dondeAuth = html.search(/<script[^>]+src="[^"]*\bauth\.js/);

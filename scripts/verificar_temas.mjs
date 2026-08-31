@@ -44,7 +44,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { hayArchivos, seRevisaron } from './recorrido.mjs';
+import { hayArchivos, seRevisaron, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -169,15 +169,15 @@ const MAL_TEMA = [
 const MAL_FONDO = [
   ['.x { background: var(--tono-exito-texto); }', '.css'],
   ['.x { background-color: var(--texto-principal); }', '.css'],
-  ['<style>.x { background: var(--azul-medio-texto); }</style>', '.html'],
-  ['<div style="background:var(--tono-critico-texto)">Hola</div>', '.html']
+  ['<style>.x { background: var(--azul-medio-texto); }</style>', EXTENSIONES_DE_PANTALLA[0]],
+  ['<div style="background:var(--tono-critico-texto)">Hola</div>', EXTENSIONES_DE_PANTALLA[0]]
 ];
 const BIEN_FONDO = [
   ['.x { background: var(--relleno-exito); }', '.css'],
   ['.x { color: var(--tono-exito-texto); }', '.css'],
   ['.x { border-color: var(--texto-principal); }', '.css'],
   ['.hamburger span { background: var(--texto-principal); }', '.css'],
-  ['<div style="color:var(--tono-critico-texto)">Hola</div>', '.html']
+  ['<div style="color:var(--tono-critico-texto)">Hola</div>', EXTENSIONES_DE_PANTALLA[0]]
 ];
 
 const noDetectaTema = MAL_TEMA.filter(([, css]) => problemasDeTema(css).length === 0);
@@ -210,7 +210,7 @@ for (const rel of COPIAS) {
 seRevisaron(comparados + fallas.length, 'un solo archivo de tokens que comparar');
 
 let revisados = 0;
-for (const camino of hayArchivos(raiz, ['.html', '.css'], AJENAS)) {
+for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.css'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   revisados++;
   const extension = nombre.slice(nombre.lastIndexOf('.'));

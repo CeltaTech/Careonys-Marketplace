@@ -54,7 +54,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { hayArchivos } from './recorrido.mjs';
+import { hayArchivos, EXTENSIONES_DE_PANTALLA, esPantalla } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -354,13 +354,13 @@ if (noDetecta.length || sePasa.length) {
 const fallas = [];
 let revisados = 0;
 
-for (const camino of hayArchivos(raiz, ['.html', '.js'], AJENAS)) {
+for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   revisados++;
   const crudo = readFileSync(camino, 'utf8');
   const reparos = [];
 
-  if (nombre.endsWith('.html')) {
+  if (esPantalla(nombre)) {
     const sinEstilo = crudo.replace(/<!--[\s\S]*?-->/g, enBlanco);
     for (const g of sinEstilo.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
       if (/\bsrc\s*=/i.test(g[1])) continue;

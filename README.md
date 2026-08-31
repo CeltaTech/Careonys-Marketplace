@@ -153,7 +153,7 @@ título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de e
 | `verificar_identidad` | Que la marca vuelva a estar escrita a mano |
 | `verificar_organizacion` | Que una pantalla nombre a una Prestadora del seed, o escriba otro logotipo |
 | `verificar_paleta` | Que vuelva un color escrito con su número en vez de un token |
-| `verificar_red` | Que un chequeo mire cero archivos, no encuentre nada y salga en verde igual |
+| `verificar_red` | Que un chequeo mire cero archivos, no encuentre nada y salga en verde igual; y que la extensión de las pantallas vuelva a escribirse a mano en vez de pedirse a `scripts/recorrido.mjs` |
 | `verificar_referencias` | Que una cita `archivo:renglón` de la documentación apunte a la nada |
 | `verificar_sinconexion` | Que la copia que el teléfono guarda para andar sin señal siga sirviendo un archivo viejo |
 | `verificar_temas` | Que se rompa el modo oscuro: las dos copias separadas, o un token de letra pintando un fondo |

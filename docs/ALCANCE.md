@@ -4402,6 +4402,54 @@ la anterior, y deja además un archivo suelto que ya no nombra ninguna fila. Eso
 que hay que hacer: **prohibir pisar, solo, no alcanza**, porque rechazaría ese guardado, que es
 legítimo. Hay que dejar de numerar por posición igual. Quedó escrito en el pendiente 89.
 
+### La extensión de las pantallas estaba escrita cuarenta veces, y once chequeos se callaban
+
+Encontrado y hecho el 31 de agosto de 2026. El pendiente 69 venía diciendo desde el 26 de agosto
+que el día que las pantallas dejaran de ser `.html` un puñado de chequeos iba a seguir dando ✔
+mirando menos archivos. En vez de leerlo otra vez, se corrió: una copia del proyecto con las
+quince pantallas renombradas a `.jsx`, y la red entera encima.
+
+**Seis se plantaron y once siguieron en verde con un número más chico.** El peor no era el más
+ruidoso sino el más tranquilo: `estilos` informó que ninguno de los **cero** atributos `style=`
+del marcado repetía nada, y lo contó como éxito. `botones` pasó de 21 manejadores en 11 pantallas
+a 1 en 1. Ninguno de los once dijo que algo faltaba, porque desde adentro no faltaba nada: cada
+uno pidió los archivos que sabía pedir y revisó todos los que le dieron.
+
+**Por qué pasaba.** `'.html'` estaba escrito a mano en cuarenta llamadas repartidas por diecinueve
+guiones —once en `scripts/verificar_paleta.mjs` sin ir más lejos—. Es el caso de manual de la
+regla de la empresa que dice que ningún patrón repetido queda sin punto único de verdad: la misma
+decisión, tomada cuarenta veces, y para cambiarla hay que acertarle a las cuarenta.
+
+**Cómo quedó.** La extensión vive ahora en `scripts/recorrido.mjs`, en `EXTENSIONES_DE_PANTALLA`,
+y en ningún otro lado. Los guiones que juntan archivos piden esa lista; los que preguntan por un
+archivo suelto usan `esPantalla()`. En la misma copia renombrada, con ese solo renglón puesto en
+`['.jsx']`, **los once volvieron a sus números de siempre** y de veintiocho chequeos quedaron tres
+en rojo: `estado` y `usos`, que comparan nombres de archivo escritos en la documentación, y
+`estados`, que busca las frases de su catálogo por el nombre de la pantalla. Los tres tienen que
+gritar, porque documentación y catálogo hay que corregirlos a mano.
+
+**Lo que no arregla, dicho para que no se lea de más.** Cuatro chequeos buscan formas que en React
+no existen —el color adentro de `style="…"`, las plantillas que arman marcado, los manejadores
+escritos en el marcado y el atributo `data-frase`—. No aparecieron en rojo en esta prueba, y no
+porque estén resueltos: un renombre no cambia el contenido del archivo. Se van a caer cuando el
+marcado sea React de verdad, y hay que reescribirlos igual.
+
+**El vigilante.** `scripts/verificar_red.mjs` ya exigía que cada chequeo se plante si no encuentra
+nada; ahora también se pone en rojo si alguno vuelve a escribir la extensión a mano. Se probó con
+las tres formas: escrita, nombrada sólo adentro de un comentario —que no cuenta—, y pedida como
+corresponde. Él es el único exento, porque sus pruebas de adentro son textos de chequeo de mentira
+y la tienen que traer escrita para que haya algo que reconocer.
+
+**Y la misma prueba, corrida al revés, dejó una medición nueva.** Si se renombran los 32 `.js` en
+vez de las pantallas, **doce chequeos se plantan y ocho siguen dando ✔ con menos archivos**:
+`escapado` cae de 49 archivos a 17 —dos tercios menos, y lo suyo es justamente que los datos y los
+errores no salgan crudos a la pantalla, que es código—, `estados` de 267 bloques asincrónicos a
+56, `paleta` de 56 archivos a 24, `trato` de 114 a 82. Ése es el pendiente 91, que ahora tiene una
+prueba que puede fallar contra la red de hoy; la vieja, la de renombrar las pantallas, dejó de
+servir el día que los chequeos empezaron a seguir la extensión.
+
+---
+
 ---
 
 ## 6. Deuda del código actual

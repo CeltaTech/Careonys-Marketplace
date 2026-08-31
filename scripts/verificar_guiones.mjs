@@ -25,7 +25,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 import vm from 'node:vm';
 
-import { hayArchivos } from './recorrido.mjs';
+import { hayArchivos, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
@@ -45,7 +45,7 @@ function revisar(codigo, nombre) {
 const fallas = [];
 let revisados = 0;
 
-for (const camino of hayArchivos(raiz, ['.html'], AJENAS)) {
+for (const camino of hayArchivos(raiz, EXTENSIONES_DE_PANTALLA, AJENAS)) {
   const pantalla = relative(raiz, camino).split(sep).join('/');
   const crudo = readFileSync(camino, 'utf8');
   const bloques = crudo.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi);

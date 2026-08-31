@@ -44,7 +44,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
-import { hayArchivos } from './recorrido.mjs';
+import { hayArchivos, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
 import { soloCodigo, cuerpo, dentroDeTry } from './bloques.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -152,7 +152,7 @@ const fallas = [];
 let revisados = 0;
 let arranques = 0;
 
-for (const camino of hayArchivos(raiz, ['.html', '.js'], AJENAS)) {
+for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   const texto = readFileSync(camino, 'utf8');
   const lineas = texto.split('\n');
