@@ -5652,6 +5652,36 @@ lo podía ver: mira si hay rojo, no dónde apunta. Se arregló poniendo la palab
 cada expresión y midiendo desde ahí; se comprobó rompiendo la 0041 de las dos maneras, y las dos
 señalan el renglón 327, que es el renglón. La versión publicada pasaba en verde las dos veces.
 
+### Lo único que el sistema operativo tapa solo
+
+El chequeo de rutas verifica que toda dirección local escrita en una pantalla, una hoja de estilos
+o un manifiesto llegue a algún lado **en el sitio publicado**. Son dos preguntas, y las dos dan que
+sí en esta máquina y pueden dar que no allá.
+
+**La primera es la caja de las letras.** Esta máquina es Windows y el sitio se sirve desde Linux.
+Windows contesta que sí cuando se le pide `js/Auth.js` y el archivo es `js/auth.js`; Linux contesta
+404. Es la regla de la empresa «compatibilidad multiplataforma obligatoria» en el único lugar donde
+**el sistema operativo la tapa solo**: abrir la pantalla acá y verla andar no prueba nada, porque
+anda siempre. Ninguna prueba corrida en esta máquina lo puede ver, y por eso hacía falta un lector
+que compare tramo por tramo contra el listado de cada carpeta en vez de preguntarle al sistema.
+
+**La segunda es que el archivo se publique.** Desde el 31 de agosto de 2026 el sitio ya no sube el
+repositorio entero: `.vercelignore` deja afuera `docs/`, `scripts/`, `supabase/` y las cajas
+fuertes. Un archivo que está acá y no allá se abre igual de bien en el navegador de esta máquina y
+da 404 en el sitio. Hoy hay cinco pantallas que enlazan documentos de `docs/` —los dos textos
+legales— y andan sólo porque alguien se acordó de escribir las dos líneas con `!` que los vuelven a
+incluir. El lector de `.vercelignore` **se corta ante una forma de comodín que no sepa leer**, en
+vez de seguir: entenderla mal daría por publicado un archivo que no se publica, que es exactamente
+el error que este chequeo busca.
+
+**Salió verde en las 404 direcciones**, y encontró un agujero en un chequeo que ya estaba.
+`verificar_sinconexion.mjs` comprobaba con `existsSync` los archivos que guarda cada service
+worker. Con `./js/Auth.js` puesto a mano en la lista de `pwa-familia`, **los treinta y tres
+chequeos pasaron en verde** —y `cache.addAll()` es todo o nada, así que la copia sin conexión de
+esa aplicación no se habría instalado entera—. Su propio mensaje dice «es todo o nada». Ahora los
+dos leen el disco con la misma función, que vive en `scripts/recorrido.mjs` y no adentro de
+ninguno de los dos.
+
 ## 6. Deuda del código actual
 
 Está toda en `docs/PENDIENTES.md`, con condición de cierre para cada punto. Acá no se repite,

@@ -26,7 +26,7 @@
 =================================================== */
 
 import { readdirSync, statSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative, sep } from 'node:path';
 
 /* Las cajas fuertes se reconocen **por lo que dicen y no por cómo están
    escritas**. Antes se comparaba el nombre exacto, y eso alcanzaba justo para
@@ -210,3 +210,63 @@ export function hayArchivos(carpeta, extensiones, ademas = []) {
   );
   return encontrados;
 }
+
+/* ===================================================
+   Y LEER EL DISCO COMO LO LEE EL SERVIDOR, NO COMO LO LEE WINDOWS
+
+   Esta máquina es Windows y el sitio se sirve desde Linux. Windows contesta
+   que sí cuando se le pide `js/Auth.js` y el archivo es `js/auth.js`; Linux
+   contesta que no. Así que una dirección con la caja de letras cambiada
+   **anda en todas las pantallas de acá y da 404 publicada**, y ninguna prueba
+   corrida en esta máquina la puede ver: `existsSync` miente por diseño.
+
+   Es la regla de la empresa «compatibilidad multiplataforma obligatoria» en el
+   único lugar donde el sistema operativo la tapa solo.
+
+   Encontrado el 31 de agosto de 2026, al escribir `verificar_rutas.mjs`:
+   `verificar_sinconexion.mjs` comprobaba con `existsSync` los archivos que
+   guarda cada service worker. Con `'./js/Auth.js'` puesto a mano en la lista de
+   `pwa-familia`, los treinta y tres chequeos pasaron en verde —y `cache.addAll()`
+   es todo o nada, así que la copia sin conexión de esa aplicación no se habría
+   instalado entera—. El propio mensaje de ese chequeo dice «es todo o nada».
+=================================================== */
+
+/* El disco se lee una vez por carpeta: son cientos de direcciones y casi todas
+   caen en el mismo puñado de carpetas. */
+const listados = new Map();
+const listar = (carpeta) => {
+  if (!listados.has(carpeta)) {
+    try {
+      listados.set(carpeta, readdirSync(carpeta));
+    } catch {
+      listados.set(carpeta, null);
+    }
+  }
+  return listados.get(carpeta);
+};
+
+/**
+ * ¿Ese archivo está escrito **exactamente así**, tramo por tramo?
+ * `camino` es absoluto y tiene que colgar de `raiz`.
+ * Devuelve `true` si está tal cual; el nombre con el que sí está, si lo único
+ * que cambia es la caja de las letras; y `false` si no está de ninguna forma.
+ */
+export function conLaMismaCaja(raiz, camino) {
+  const relativo = relative(raiz, camino);
+  if (relativo.startsWith('..')) return false;
+  let actual = raiz;
+  for (const tramo of relativo.split(sep)) {
+    if (tramo === '') continue;
+    const hay = listar(actual);
+    if (!hay) return false;
+    if (!hay.includes(tramo)) {
+      const flojo = hay.find((n) => n.toLowerCase() === tramo.toLowerCase());
+      return flojo || false;
+    }
+    actual = join(actual, tramo);
+  }
+  return true;
+}
+
+/** Lo mismo, en una sola respuesta, para quien no necesita el detalle. */
+export const estaTalCual = (raiz, camino) => conLaMismaCaja(raiz, camino) === true;

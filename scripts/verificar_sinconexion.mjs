@@ -40,11 +40,11 @@
    versiones: ahí se planta, porque el número lo compara contra el historial.
 =================================================== */
 
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep, basename } from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { archivos, seRevisaron } from './recorrido.mjs';
+import { archivos, seRevisaron, estaTalCual } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -155,11 +155,18 @@ for (const camino of programas) {
     `${carpeta}/${pedido.replace(/^\.\//, '') || 'index.html'}`);
   guardados += caminos.length;
 
-  const faltan = caminos.filter((c) => !existsSync(join(raiz, c)));
+  /* No `existsSync`: en Windows contesta que sí a `js/Auth.js` cuando el
+     archivo es `js/auth.js`, y el sitio se sirve desde Linux, que contesta 404.
+     Comprobado el 31 de agosto de 2026 poniendo esa misma caja de letras a mano
+     en la lista de `pwa-familia`: los treinta y tres chequeos pasaron en verde,
+     y `cache.addAll()` es todo o nada, así que la copia sin conexión de esa
+     aplicación no se habría instalado entera. El lector es el mismo que usa
+     `verificar_rutas.mjs`, y vive en `scripts/recorrido.mjs`. */
+  const faltan = caminos.filter((c) => !estaTalCual(raiz, join(raiz, ...c.split('/'))));
   if (faltan.length) {
     const cuantos = faltan.length === 1
-      ? 'un archivo que no existe'
-      : `${faltan.length} archivos que no existen`;
+      ? 'un archivo que no está con ese nombre exacto'
+      : `${faltan.length} archivos que no están con ese nombre exacto`;
     fallas.push(
       `${nombre}  guarda ${cuantos}, y \`cache.addAll()\` es todo o nada:\n` +
       faltan.map((c) => `      - ${c}`).join('\n'));
@@ -187,4 +194,5 @@ if (fallas.length > 0) {
 
 console.log(
   `Copia sin conexión verificada: ${programas.length} programas de teléfono guardan ` +
-  `${guardados} archivos, todos existentes y ninguno cambiado después del número de copia.`);
+  `${guardados} archivos, todos existentes —con esa misma caja de letras, que es lo que ` +
+  `distingue el servidor y esta máquina no— y ninguno cambiado después del número de copia.`);

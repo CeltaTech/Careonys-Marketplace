@@ -38,7 +38,7 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | 976 declaraciones más, pegadas al HTML | en 247 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 12 de las 17 pantallas rescatan la sesión al abrir |
 | 4 servidores de afuera, sin `package.json` ni compilación | dos de tipografías y dos de bibliotecas |
-| 23 tablas y 49 migraciones en el repositorio | 33 chequeos las miran antes de cada commit |
+| 23 tablas y 49 migraciones en el repositorio | 34 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
@@ -172,8 +172,9 @@ título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de e
 | `verificar_pendientes` | Que un archivo siga diciendo en presente que un agujero está abierto después de haberse cerrado, y una roja esperada se vuelva un permiso para no mirar |
 | `verificar_red` | Que un chequeo mire cero archivos, no encuentre nada y salga en verde igual; que la extensión de las pantallas vuelva a escribirse a mano —suelta, o metida adentro de la clave de una exención— en vez de pedirse a `scripts/recorrido.mjs`; que una exención de `scripts/` se quede nombrando un archivo que ya no está —o una columna que ninguna migración declara—, y siga apagando el chequeo sobre él; y que esta misma tabla se quede atrás, nombrando un chequeo que ya no existe o callando uno que sí |
 | `verificar_referencias` | Que una cita `archivo:renglón` de la documentación apunte a la nada |
+| `verificar_rutas` | Que una pantalla, una hoja o un manifiesto pidan un archivo con la caja de las letras cambiada —que **acá anda siempre y publicado da 404**, porque esta máquina es Windows y el sitio se sirve desde Linux—, o que enlacen algo que existe acá y `.vercelignore` no sube |
 | `verificar_sensibles` | Que un dato de una persona salga por las dos puertas que guardan sin que nadie se lo pida: la barra de direcciones —que queda en el historial del navegador, en el «compartir» y en el registro de cualquier intermediario— y el registro de actividades, que se ve en la consola de cualquiera que abra la pantalla y no se ve en la pantalla, así que nadie lo nota |
-| `verificar_sinconexion` | Que la copia que el teléfono guarda para andar sin señal siga sirviendo un archivo viejo |
+| `verificar_sinconexion` | Que la copia que el teléfono guarda para andar sin señal siga sirviendo un archivo viejo, o que guarde uno que no está con ese nombre exacto —y `cache.addAll()` es todo o nada, así que la copia entera no se instala— |
 | `verificar_temas` | Que se rompa el modo oscuro: las dos copias separadas, o un token de letra pintando un fondo |
 | `verificar_trato` | Que el texto visible tutee a quien lo lee |
 | `verificar_usos` | Que el catálogo diga que una opción se usa en un renglón donde ya no se usa |
