@@ -4147,9 +4147,24 @@ Salió el 31 de agosto de 2026, al ir a comprobar lo del pendiente 94.
 - **Dónde vive de verdad**: `careonys-marketplace.vercel.app`, que sí contesta `404` a una
   dirección inventada y sirve cada archivo con su tipo de contenido.
 - **Y ahora lo comprueba un guion**, `scripts/comprobar_publicacion.mjs`: toma los archivos del
-  último commit, los pide al sitio y compara tamaño y tipo de contenido contra los de acá.
-  **Arranca por el control negativo** y se corta ahí si no pasa. Probado en los dos sentidos: en
-  verde contra el sitio de verdad, y en rojo contra `careonys.com` —justo el caso que engañó—.
+  último commit, los pide al sitio y compara el contenido entero y el tipo contra lo que git
+  subió. **Arranca por el control negativo** y se corta ahí si no pasa. Probado en los dos
+  sentidos: en verde contra el sitio de verdad, y en rojo contra `careonys.com` —justo el caso
+  que engañó—.
+- **Compara contra lo que git subió, no contra el disco**, y eso lo corrigió el 31 de agosto de
+  2026 el propio guión al dar tres rojos: decía que las tres copias de `js/auth.js` no habían
+  llegado, con 305 bytes de diferencia, y los 305 eran los 305 retornos de carro de un archivo
+  de 305 renglones. El archivo de trabajo tiene `CRLF` y el objeto que git guarda —el que
+  Vercel clona— tiene `LF`. **Un rojo falso en la única herramienta que dice «la publicación
+  salió bien» es peor que no tenerla**, porque el día que se ponga roja de verdad ya nadie le
+  cree. De paso arregló lo otro, que era más callado: contra el disco también medía los
+  cambios sin subir, así que un archivo editado y no publicado salía en rojo por no estar
+  publicado.
+- **Y compara el contenido, no el tamaño.** Dos archivos distintos del mismo largo pasaban de
+  largo, que no es un caso raro —cambiar una palabra por otra de igual largo alcanza—.
+  Falsificado con un solo byte dado vuelta: sale rojo y dice desde qué byte difieren. **De
+  estos archivos no se imprime una sola letra**, sólo la posición, porque `js/auth.js` es
+  justamente el que una vez llevó una clave a la pantalla.
 - **No entra en los veintiséis chequeos** a propósito: necesita red y necesita que el despliegue
   haya terminado, así que va al cerrar, después del `push`. Queda escrito en `CLAUDE.md:80`.
 

@@ -83,7 +83,10 @@ este producto**: hoy es una página de obra de un solo archivo que contesta `200
 página para **cualquier** dirección que se le pida, incluso una inventada. Así que pedirle la raíz
 y ver un `200` no comprueba nada —es una prueba que no puede fallar— y se hizo así más de una vez.
 Eso lo hace `node scripts/comprobar_publicacion.mjs`, que toma los archivos del último commit,
-los pide al sitio y compara el tamaño y el tipo de contenido contra los de acá. **Arranca por el
+los pide al sitio y compara **el contenido entero y el tipo** contra **lo que git subió**, que no
+es lo mismo que el archivo de esta máquina: en Windows el de trabajo tiene `CRLF` y el que se
+publica tiene `LF`, y comparar tamaños contra el disco daba tres rojos falsos en `js/auth.js`
+por los 305 retornos de carro de un archivo de 305 renglones. **Arranca por el
 control negativo** —una dirección inventada tiene que contestar `404`— y si ese control no pasa se
 corta ahí, porque contra un servidor con comodín ninguna de las otras comprobaciones significa
 nada. No entra en `verificar_todo.mjs` a propósito: necesita red y necesita que el despliegue haya

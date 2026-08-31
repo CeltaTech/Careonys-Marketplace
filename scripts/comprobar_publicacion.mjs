@@ -12,6 +12,27 @@
    ninguna de las otras comprobaciones significa nada. Recién con ese control en
    verde tiene sentido pedir los archivos de verdad.
 
+   Y lo que se compara **no es el archivo de esta máquina, es el que git subió**.
+   No es lo mismo y el 31 de agosto de 2026 este guión dio tres rojos falsos por
+   eso: decía que las tres copias de `js/auth.js` «todavía no llegaron», con 305
+   bytes de diferencia, y los 305 eran los 305 retornos de carro de un archivo
+   de 305 renglones. En Windows el archivo de trabajo tiene `CRLF` y el objeto
+   que git guarda —y que Vercel clona— tiene `LF`. Comparar contra el disco es
+   comparar contra algo que nunca se publicó.
+
+   Un rojo falso en la única herramienta que dice «la publicación salió bien» es
+   peor que no tenerla: el día que se ponga roja de verdad ya nadie le va a
+   creer. Y de paso corrige lo otro, que era más callado: comparar contra el
+   disco también medía los cambios **sin commitear**, así que un archivo editado
+   y no subido salía en rojo por no estar publicado, que es exactamente lo que
+   tenía que pasar.
+
+   Y ahora compara **el contenido entero**, no el tamaño. Dos archivos distintos
+   del mismo tamaño pasaban de largo, y no es un caso raro: cambiar una palabra
+   por otra de igual largo alcanza. Cuando difieren se dice en qué byte empiezan
+   a diferir y nada más: de estos archivos no se imprime una sola letra, porque
+   `js/auth.js` es justamente el que una vez llevó una clave a la pantalla.
+
    Uso:
      node scripts/comprobar_publicacion.mjs                    (los archivos del último commit)
      node scripts/comprobar_publicacion.mjs ruta/al/archivo …  (los que se nombren)
@@ -41,6 +62,26 @@ const TIPOS = {
 
 // Lo que no se sirve: no vive en el sitio y pedirlo sería un rojo falso.
 const NO_SE_SIRVE = /^(docs|scripts|supabase|\.githooks|\.claude|\.agents)\/|^(CLAUDE|README)\.md$|^\./;
+
+/* Lo que git tiene guardado para esa ruta en el último commit, que es lo que el
+   sitio clona. Devuelve nulo si la ruta no está en el commit —se la nombró a
+   mano y nunca se subió—, y ahí se cae al disco avisando. */
+function delUltimoCommit(ruta) {
+  try {
+    return execFileSync('git', ['cat-file', '-p', 'HEAD:' + ruta],
+      { cwd: raiz, maxBuffer: 64 * 1024 * 1024 });
+  } catch {
+    return null;
+  }
+}
+
+/* En qué byte empiezan a diferir dos contenidos. Se informa la posición y nunca
+   lo que hay en ella. */
+function dondeDifieren(a, b) {
+  const hasta = Math.min(a.length, b.length);
+  for (let i = 0; i < hasta; i++) if (a[i] !== b[i]) return i;
+  return hasta;
+}
 
 function archivosDelUltimoCommit() {
   const salida = execFileSync('git', ['show', '--name-only', '--pretty=format:', 'HEAD'],
@@ -104,18 +145,21 @@ if (!candidatos.length) {
 
 // ── Y ahora sí, los archivos ───────────────────────────────────────────────
 for (const ruta of candidatos) {
-  const local = readFileSync(join(raiz, ruta));
+  const subido = delUltimoCommit(ruta);
+  const local = subido || readFileSync(join(raiz, ruta));
   const r = await fetch(`${sitio}/${ruta}`, { redirect: 'follow' });
   const cuerpo = Buffer.from(await r.arrayBuffer());
   const tipo = (r.headers.get('content-type') || '').toLowerCase();
   const esperado = TIPOS[ruta.slice(ruta.lastIndexOf('.'))];
 
-  const igual = cuerpo.length === local.length;
+  const igual = cuerpo.equals(local);
   const tipoBien = !esperado || tipo.includes(esperado);
 
   decir(r.ok && igual && tipoBien,
     `${ruta}: ${r.status}, ${cuerpo.length} bytes` +
-    (igual ? '' : ` (acá tiene ${local.length}: todavía no llegó)`) +
+    (subido ? '' : ' (no está en el último commit: se compara contra el disco)') +
+    (igual ? '' : ` (el commit tiene ${local.length} y difieren desde el byte ` +
+      `${dondeDifieren(cuerpo, local)}: todavía no llegó)`) +
     (tipoBien ? '' : ` (contesta «${tipo}», se esperaba ${esperado})`));
 }
 
