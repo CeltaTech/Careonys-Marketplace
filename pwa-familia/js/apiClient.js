@@ -923,8 +923,6 @@ const ClienteDatos = {
       llevar('telefono', 'phone');
       llevar('email', 'email');
       llevar('profesion', 'profession');
-      llevar('zona', 'zone', (v) => v || data.zonaResidencia);
-      conocidas.add('zonaResidencia');   // se lee ahí arriba: no es un perdido
       llevar('zonasTexto', 'zonas_texto');
       llevar('patologias', 'pathologies');
       llevar('tareas', 'tasks');

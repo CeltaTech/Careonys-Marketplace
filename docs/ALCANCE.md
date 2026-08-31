@@ -550,7 +550,7 @@ Comprobado el 24 de agosto de 2026 contra el proyecto real: el servidor tiene ap
 distancia costaba dos cosas que ya no cuestan:
 
 - **La columna del contacto existe.** La 0009 agregó `avisos.contact_info`, que es donde
-  `js/apiClient.js:952` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
+  `js/apiClient.js:950` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
   público de `solicitar-asistente.html` mandaba una columna que la base no tenía.
 - **Las filas de ejemplo hablan el idioma del catálogo.** La 0010 reemplazó las claves viejas de
   las cuatro filas ficticias —«enfermero» y compañía— por las que las pantallas esperan.
@@ -4087,7 +4087,7 @@ el **pendiente 107**.
 
 **Y lo que la opción A todavía le debe a quien la sufre.** Que la persona vea, **antes** de cambiar
 un papel, que hacerlo le baja el sello. Hoy no se puede escribir: ninguna pantalla cambia
-`documents` —el mapeo existe en `js/apiClient.js:931` y no lo usa nadie— y el chequeo de frases se
+`documents` —el mapeo existe en `js/apiClient.js:929` y no lo usa nadie— y el chequeo de frases se
 pone en rojo con toda frase de catálogo que ninguna pantalla nombre. La frase entra el día que
 entre la pantalla; es el **pendiente 108**.
 
@@ -4121,8 +4121,17 @@ Cerró el pendiente 94, el 31 de agosto de 2026.
   pregunta al módulo antes de enviar, y si no hay respuesta el formulario vuelve al paso 1 y lleva
   la vista al campo (`pwa-asistente/index.html:1492`).
 - **Se guarda donde se lee**: las claves van a `zonas_asistente` y el texto libre a `zonas_texto`,
-  por `js/apiClient.js:424` y `:928`. `caregivers.zone` no la escribe más nadie, y eso abrió el
+  por `js/apiClient.js:424` y `:926`. `caregivers.zone` no la escribe más nadie, y eso abrió el
   **pendiente 109**.
+- **Y el 109 se cerró esa misma noche, por la salida que no borra datos.** Se midió
+  primero: ninguna pantalla manda `zona` ni `zonaResidencia` al escribir un legajo, así
+  que el mapeo de `js/apiClient.js` estaba esperando un dato que ya nadie manda. Se sacó
+  de las tres copias, y **la columna se quedó**: guarda la zona de los legajos anteriores a
+  la migración 0035 y la leen tres respaldos, así que borrarla sería borrar la zona de
+  las personas cargadas antes de que existiera `zonas_asistente`. Que es histórica y de
+  sólo lectura **queda dicho en la base**, no en un documento: lo escribe
+  `supabase/migrations/0050_zone_queda_dicha_como_historica.sql:31`, porque un comentario
+  de columna viaja con el esquema y ahí es donde va a mirar quien la encuentre.
 - **Arrastró las tres cosas que el pendiente anticipaba.** `js/zonas.js` entró por primera vez en
   los grupos de copias de `scripts/verificar_copias.mjs:46`, porque hasta hoy ninguna aplicación
   de teléfono lo cargaba; entró en la lista de la copia sin conexión con el número de versión
@@ -4898,7 +4907,7 @@ que las otras dos, que la limpieza se la lleva.
 escribe nadie: ni una pantalla, ni un guion, ni una prueba. Lo que sí pasa es que
 `registrar-asistente.html:996-1000` sube el documento de identidad, los antecedentes penales y el
 título, y guarda **sólo los caminos** en la columna `documents` de `caregivers`
-(`registrar-asistente.html:1057`, y de ahí a la base por `js/apiClient.js:931`). O sea que hay
+(`registrar-asistente.html:1057`, y de ahí a la base por `js/apiClient.js:929`). O sea que hay
 dos formas de guardar el mismo hecho y una está muerta, como ya pasó con `messages` y las
 `conversaciones` heredadas. Y la que quedó viva es la pobre: la tabla dedicada tiene `tipo`,
 `presentado_el`, `vencimiento` y `verificado`, y el objeto de `documents` no tiene ninguno de los
@@ -5010,10 +5019,15 @@ Falsificada desactivando a propósito la limpieza recién puesta: salió `ATENCI
 91 cuentas a 92` y la corrida terminó en rojo. Con la limpieza puesta dice `La base quedó con
 las 91 cuentas que tenía`.
 
-**Lo viejo no se barrió**, porque barrerlo es borrar datos y eso se consulta. La herramienta
-queda hecha —`scripts/limpiar_cuentas_de_prueba.mjs`, que lista y no toca nada sin `--borrar`—
-y el pendiente 113 la espera. De paso quedó comprobado que **los 13 legajos del directorio están
-limpios**: son los sembrados por las migraciones y ninguno es residuo.
+**Y lo viejo se barrió**, con la orden del Desarrollador del 31 de agosto de 2026 —era el
+pendiente 113, cerrado ese mismo día—. `node scripts/limpiar_cuentas_de_prueba.mjs --borrar`
+contestó `Borradas: 88` y `Quedan de prueba y sin legajo: 0`, sobre las 92 cuentas que tenía
+la base: 68 `prueba.aislamiento.*`, 19 `prueba.sello.*` y 1 `prueba.entrada.*`, la que
+dejó la medición del pendiente 119 esa misma noche. **Las 4 que quedan son las cuentas de
+trabajo del entorno local**, que las tres condiciones del guion no rozan. Y la cuenta no la
+escribió nadie a mano: la dice el guion al correr, porque el renglón que la tenía escrita
+decía 87 cuando ya eran 88. De paso quedó comprobado que **los 13 legajos del directorio
+están limpios**: son los sembrados por las migraciones y ninguno es residuo.
 
 ### Y un plan escrito el mismo día ya decía de más
 
