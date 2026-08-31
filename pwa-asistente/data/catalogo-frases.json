@@ -973,6 +973,12 @@
       "pt-BR": "A mensagem foi enviada de novo. Pode levar alguns minutos para chegar."
     },
 
+    "fichado.sin_legajo": {
+      "es-AR": "No hay legajo abierto para esta cuenta, así que no se puede fichar. Corresponde completar el registro de Asistente.",
+      "en": "There is no caregiver record open for this account, so the clock-in cannot be saved. The caregiver registration needs to be completed first.",
+      "pt-BR": "Não há cadastro de Assistente aberto para esta conta, então não é possível marcar o ponto. É preciso concluir o cadastro."
+    },
+
     "fichado.entrada": {
       "es-AR": "Entrada",
       "en": "Clock-in",

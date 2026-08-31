@@ -122,7 +122,7 @@ Cómo quedó:
   perfil (`js/apiClient.js:60`); sin sesión, el enlace elige qué directorio se muestra y nada más.
 - **Los archivos siguen la misma regla.** Ver la fila «Archivos del legajo» de arriba.
 
-Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, **cincuenta y cinco
+Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, **cincuenta y ocho
 comprobaciones, contadas y pasadas el 31 de agosto de 2026** contra la base de esta máquina. Y
 falsificado a propósito para verificar que se pone en rojo cuando corresponde.
 
@@ -1462,7 +1462,7 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
   en el navegador antes de tocar nada: `directorio.html?t=prestadora-que-no-existe` mostraba los
   cuatro Asistentes de PresDemo, porque el respaldo devuelve la primera Prestadora de la base. El
   respaldo sirve para una dirección que no nombra ninguna, no para una que nombra mal. Ahora se
-  distingue un caso del otro (`js/apiClient.js:706`) y el segundo avisa. **Y desde la
+  distingue un caso del otro (`js/apiClient.js:732`) y el segundo avisa. **Y desde la
   migración 0021 el respaldo ya no existe**: mostrar la primera Prestadora de la base era
   leer la lista de clientes de CeltaTech, y esa lista no la ve nadie. Quien entra sin
   enlace ahora ve que le falta el enlace.
@@ -4168,7 +4168,7 @@ sin poder correr, y eso era sólo medio cierto.** Lo que no puede correr es cont
 publicado, porque ahí el alta pide confirmar el correo y la prueba nunca llega a tener sesión.
 Contra la base de esta máquina corre entera, y el propio encabezado del guion lo dice desde que se
 escribió: `scripts/probar_aislamiento.mjs:9`. El 31 de agosto de 2026 se corrió con `--local` y
-**pasaron las 55 comprobaciones**, incluidas las dos que sólo existen ahí —ascender a alguien a
+**pasaron las 58 comprobaciones**, incluidas las dos que sólo existen ahí —ascender a alguien a
 coordinador para ver si el personal lee los papeles de su Prestadora y no los de la otra—, porque
 ascender pide la clave de administración y ésa vive nada más que en el entorno local.
 
@@ -4855,8 +4855,9 @@ salió `ROTA ... 0 tablas en el esquema` y se plantó en vez de medir.
 **Encontró cuatro tablas sin una sola fila, y no son todas el mismo hueco** —están separadas así
 en el pendiente 111—. `messages` y `reportes` sí se recorren, con cuentas de verdad y pasando
 por las políticas, y quedan vacías porque `probar_aislamiento.mjs` las borra al limpiar.
-`clock_ins` la escribe una pantalla —`pwa-asistente/index.html:1147`— y no la recorre ninguna
-prueba, así que su política no se ejercitó nunca.
+`clock_ins` no la escribía nadie, y tirar de ese hilo el mismo día encontró por qué: es la
+sección de acá abajo. Hoy la recorren tres comprobaciones nuevas, y queda vacía por lo mismo
+que las otras dos, que la limpieza se la lleva.
 
 **Y la cuarta es un agujero del producto, no de la siembra.** A `documentos_asistente` no la
 escribe nadie: ni una pantalla, ni un guion, ni una prueba. Lo que sí pasa es que
@@ -4870,6 +4871,41 @@ cuatro, así que **hoy el producto sube el papel y no anota qué papel es, cuán
 cuándo vence**. `docs/PLAN_VENCIMIENTOS.md:40` apoya el pendiente 98 justamente en
 `documentos_asistente.vencimiento`, que es una columna de una tabla que no escribe nadie. Esa no
 se cierra sembrando: primero hay que elegir cuál de las dos formas queda.
+
+### Y la segunda de las cuatro era un agujero peor
+
+`clock_ins` estaba vacía porque **la única pantalla que la escribe lo hacía mal**, y de una
+manera que la base rechazaba siempre. `caregivers` tiene dos columnas de identificador que no
+son la misma: `id` es el **legajo** y `user_id` es la **cuenta**. La función que resuelve el
+permiso, `legajo_propio()`, devuelve el primero, y la clave foránea de la fichada también apunta
+al primero. El teléfono mandaba el segundo. Contra eso hay dos paredes —la clave foránea y la
+política—, así que no entraba nunca. **Y lo mismo pasaba con el reporte de cuidado**, que es la
+otra cosa que ese teléfono escribe: `reportes.caregiver_id` apunta igual al legajo. O sea que
+**ninguna de las dos cosas que escribe el teléfono del Asistente se pudo escribir nunca**.
+
+En el mismo bloque había otras dos. **Un identificador escrito a mano** como valor de repuesto
+para cuando no hay sesión —que sin sesión no escribe igual, porque `anon` no alcanza la tabla
+desde la 0002—. Y **el texto visible guardado como dato**: el botón mandaba `'Entrada'`, que es
+la traducción al castellano de `fichado.entrada`, así que la misma fichada marcada con la
+pantalla en inglés habría quedado guardada como `Clock-in`. El comentario que había ahí
+defendía eso diciendo que los fichados ya escritos decían «Entrada» —y no había ninguno
+escrito, ni podía haberlo—. Es justo la distancia entre lo visible, que cambia con el idioma,
+y lo guardado, que se nombra por su función y no cambia.
+
+Las tres corregidas. El legajo se resuelve **una sola vez**, en `js/apiClient.js:535`, porque son
+dos pantallas que necesitan el mismo dato; si no hay legajo lo dice y se planta, con una frase
+nueva en los tres idiomas, en vez de inventar uno. Y `event_type` guarda `entrada` y `salida`,
+que son las claves que el catálogo de frases **ya usaba** —no hace falta ninguna palabra nueva—,
+emparejadas con su frase en un mapa literal y no armadas con un `+`, porque una clave construida
+a pedazos no la ve `verificar_frases.mjs` desde afuera. Migrar no hay qué: la tabla está en cero.
+
+**Lo que prueba esto y lo que no.** La prueba de aislamiento creció tres comprobaciones, de 55 a
+58, y la del medio es la que decide: manda el identificador de la cuenta donde va el del legajo
+—el pedido exacto que hacía el teléfono— y exige que lo rechacen. Sale `respuesta 403`. Al lado
+va el control positivo, la misma fichada con el legajo bien puesto, que sí entra; sin él, un
+403 no distinguiría «rechazó lo que tenía que rechazar» de «rechaza todo». Pero **eso prueba
+la base, no el teléfono**: nadie apretó todavía el botón con el arreglo puesto. El pendiente 112
+queda abierto por esa mitad.
 
 ---
 

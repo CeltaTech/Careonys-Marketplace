@@ -101,16 +101,22 @@
     36. No ve los horarios de ese aviso.
     37. Ni la conversación.
     38. No lee ningún reporte: ni presión, ni glucemia, ni medicación.
-    39. No lee cómo pondera su puntaje la Prestadora (migración 0018), aunque
+    39. La fichada sale a nombre del legajo de quien la marca.
+    40. Y no sale poniendo el identificador de la **cuenta** donde va el del
+        **legajo**, que es lo que mandaba el teléfono del Asistente hasta el 31
+        de agosto de 2026 —por eso `clock_ins` no tenía una sola fila en toda la
+        base, pendiente 112—.
+    41. Y sin legajo propio y sin ser personal no se lee ninguna fichada.
+    42. No lee cómo pondera su puntaje la Prestadora (migración 0018), aunque
         esas filas existan: las siembra la propia migración, así que ver cero
         ahí es la política y no una tabla vacía.
-    40. Ni las puede cambiar.
+    43. Ni las puede cambiar.
 
    Y sobre las zonas de cobertura, que son de cada Prestadora (migración 0035):
 
-    41. Cada Prestadora ve sus zonas, y las dos ven un número que no es cero.
-    42. Ninguna ve una sola zona de la otra.
-    43. Nadie carga una zona en la Prestadora de otro.
+    44. Cada Prestadora ve sus zonas, y las dos ven un número que no es cero.
+    45. Ninguna ve una sola zona de la otra.
+    46. Nadie carga una zona en la Prestadora de otro.
 
    Los números de arriba son los puntos, no las comprobaciones: varias corren
    adentro de un bucle y salen más renglones que llamadas. Por eso, al final,
@@ -798,7 +804,7 @@ if (!evaluacion || !Array.isArray(preguntas) || preguntas.length !== 2) {
     cuarto.estado >= 400, 'devolvió ' + cuarto.estado);
 }
 
-// --- 28 a 39: la barrera entre Familias -------------------------------------
+// --- 29 a 43: la barrera entre Familias -------------------------------------
 // Las cuentas A y B están en Prestadoras distintas, así que entre ellas alcanza
 // con el `tenant_id` y no prueban nada nuevo. A y C están en la MISMA
 // Prestadora: son el único par que puede mostrar si la barrera de la migración
@@ -944,6 +950,55 @@ console.log('Dos Familias de la misma Prestadora');
     reporteId && Array.isArray(reportesAjenos) && reportesAjenos.length === 0,
     reporteId ? (Array.isArray(reportesAjenos) ? reportesAjenos.length + ' filas' : JSON.stringify(reportesAjenos))
               : 'no se pudo escribir el reporte de prueba, así que esto no probó nada');
+
+  /* La fichada es la otra cosa que escribe el teléfono del Asistente, y su
+     política —la de la 0002, rehecha por la 0020— no la había recorrido nunca
+     nadie: `clock_ins` estaba sin una sola fila en toda la base (pendiente
+     111). Se recorre igual que el reporte, y con la misma forma: se escribe
+     primero y se pregunta después, con el control positivo puesto.
+
+     No hace falta limpiarla aparte: `clock_ins_caregiver_id_fkey` borra en
+     cascada, así que la fichada se va con el legajo. Es al revés del mensaje,
+     que sobrevive al aviso porque el suyo borra con `set null`. */
+  const fichada = await rest('/rest/v1/clock_ins', {
+    method: 'POST',
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify({
+      caregiver_id: unaFamilia.legajoId,
+      event_type: 'entrada',
+      latitude: -34.6037, longitude: -58.3816
+    })
+  }, unaFamilia.token);
+  const fichadaEscrita = Array.isArray(fichada.cuerpo) && fichada.cuerpo.length === 1;
+  comprobar('La fichada sale a nombre del legajo de quien la marca',
+    fichadaEscrita, 'respuesta ' + fichada.estado);
+
+  /* Y acá va el identificador de la **cuenta** donde va el del **legajo**, que
+     no son el mismo dato: `legajo_propio()` devuelve `caregivers.id`, y la
+     cuenta es `caregivers.user_id`. Tiene que ser rechazado. Se comprueba
+     porque es justo la confusión que tenía escrita el teléfono —ver el
+     pendiente 112—, y porque una prueba que sólo mira el camino bueno deja
+     que el malo parezca igual de válido. */
+  const fichadaConLaCuenta = await rest('/rest/v1/clock_ins', {
+    method: 'POST',
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify({
+      caregiver_id: unaFamilia.userId,
+      event_type: 'entrada',
+      latitude: -34.6037, longitude: -58.3816
+    })
+  }, unaFamilia.token);
+  comprobar('Y no sale poniendo el identificador de la cuenta en vez del del legajo',
+    fichadaConLaCuenta.estado >= 400, 'respuesta ' + fichadaConLaCuenta.estado);
+
+  const { cuerpo: fichadasAjenas } = await rest(
+    '/rest/v1/clock_ins?select=id,event_type', {}, otraFamilia.token);
+  comprobar('Sin legajo propio y sin ser personal, no se lee ninguna fichada',
+    fichadaEscrita && Array.isArray(fichadasAjenas) && fichadasAjenas.length === 0,
+    fichadaEscrita
+      ? (Array.isArray(fichadasAjenas) ? fichadasAjenas.length + ' filas'
+                                       : JSON.stringify(fichadasAjenas))
+      : 'no se pudo escribir la fichada de prueba, así que esto no probó nada');
 
   // Y cómo pondera la Prestadora su puntaje (migraciones 0018 y 0022) es de su personal.
   // Las filas existen —las siembra la propia migración—, así que ver cero acá
@@ -1157,8 +1212,8 @@ if (contraLocal && claveServicio) {
 // El 31 de agosto de 2026 tres documentos escribían tres números distintos
 // —dieciséis, cuarenta y cuarenta y nueve— y ninguno era el de la prueba.
 // Ninguna comprobación de `verificar_todo.mjs` puede agarrar eso, porque el
-// número no se puede contar leyendo el archivo: hay 48 llamadas a
-// `comprobar()` y salen 55 renglones, porque varias están adentro de un
+// número no se puede contar leyendo el archivo: hay 51 llamadas a
+// `comprobar()` y salen 58 renglones, porque varias están adentro de un
 // bucle. El único que sabe el número de verdad es el que acaba de correr,
 // así que lo revisa él.
 const CENTENAS = ['', 'diez', 'veinte', 'treinta', 'cuarenta', 'cincuenta',

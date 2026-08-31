@@ -517,6 +517,32 @@ const ClienteDatos = {
   },
 
   // --- MÓDULO 3: FICHADO GPS Y REPORTES DE CUIDADO ---
+
+  // El identificador del **legajo** de quien tiene la sesión abierta, que no es
+  // el de su **cuenta**. Son dos columnas distintas de la misma tabla:
+  // `caregivers.id` es el legajo y `caregivers.user_id` es la cuenta. La
+  // función que resuelve el permiso, `legajo_propio()`, devuelve el primero, y
+  // la clave foránea de la fichada y la del reporte apuntan al primero.
+  //
+  // Hasta el 31 de agosto de 2026 las dos pantallas mandaban el de la cuenta,
+  // así que la base las rechazaba siempre y `clock_ins` no tenía una sola fila
+  // (pendiente 112). Vive acá y no en la pantalla porque son dos lugares que
+  // necesitan el mismo dato, y porque la regla de resolverlo es una sola.
+  //
+  // Devuelve nulo si quien mira no tiene legajo. Quien llama decide qué hacer
+  // con eso: acá no se inventa ninguno, que es lo que hacía el identificador
+  // escrito a mano que había antes.
+  async legajoPropio() {
+    if (!window.Sesion) return null;
+    const sesion = await Sesion.getSession();
+    const cuenta = sesion && sesion.user && sesion.user.id;
+    if (!cuenta) return null;
+    const filas = await this._supabaseRequest('GET', 'caregivers', null, {
+      user_id: `eq.${cuenta}`, select: 'id', limit: '1'
+    });
+    return filas && filas[0] ? filas[0].id : null;
+  },
+
   async registrarFichadoGPS(fichadoData) {
     return await this._supabaseRequest('POST', 'clock_ins', {
       caregiver_id: fichadoData.caregiverId,

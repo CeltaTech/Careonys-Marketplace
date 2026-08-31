@@ -1122,14 +1122,26 @@
       });
     }
 
-    // Entran dos cosas y son distintas a propósito. `tipo` es **lo que se
-    // guarda** en `event_type`, y por eso no se traduce ni se renombra: los
-    // fichados ya escritos dicen «Entrada» y «Salida», y cambiarlo sería una
-    // migración de datos disfrazada de traducción. `claveTipo` es **lo que se
-    // lee**, y sale del catálogo en el idioma de la pantalla.
-    async function ficharGPS(tipo, claveTipo) {
+    // Entra una sola cosa: la clave de lo que se ficha, `entrada` o `salida`.
+    // Es **lo que se guarda** en `event_type`, y de ella sale también **lo que
+    // se lee**, buscando `fichado.<clave>` en el catálogo.
+    //
+    // Antes entraban dos, y lo que se guardaba era el texto visible: el botón
+    // mandaba `'Entrada'`, que es la traducción al castellano de
+    // `fichado.entrada`, así que la misma fichada marcada con la pantalla en
+    // inglés habría quedado guardada como `Clock-in`. El comentario que había
+    // ací defendía eso diciendo que los fichados ya escritos decían «Entrada»,
+    // y **no había ninguno escrito**: la carga se rechazaba siempre por lo de
+    // abajo. Pendiente 112.
+    // La clave que se guarda y la frase que se lee van emparejadas acá, y no
+    // armadas con un `+`: el catálogo se revisa leyendo el archivo, y una clave
+    // construida a pedazos no la ve nadie desde afuera —ni para comprobar que
+    // está en los tres idiomas, ni para avisar que sobra—.
+    const FRASE_DEL_FICHADO = { entrada: 'fichado.entrada', salida: 'fichado.salida' };
+
+    async function ficharGPS(tipo) {
       const statusEl = document.getElementById('gps-status');
-      const nombreTipo = Catalogo.frase(claveTipo);
+      const nombreTipo = Catalogo.frase(FRASE_DEL_FICHADO[tipo]);
       statusEl.textContent = Catalogo.frase('fichado.buscando');
       if (!navigator.geolocation) {
         alert(Catalogo.frase('fichado.sin_soporte'));
@@ -1142,8 +1154,11 @@
         const lng = position.coords.longitude;
         statusEl.textContent = Catalogo.frase('fichado.registrando', { tipo: nombreTipo });
         try {
-          const session = await Sesion.getSession();
-          const caregiverId = session ? session.user.id : '2197bc14-d545-4939-9a98-979e69a120dc';
+          // El legajo, no la cuenta. Y si no hay legajo no se inventa ninguno:
+          // lo dice y se planta, en vez de mandar un identificador cualquiera
+          // para que lo rechace la base.
+          const caregiverId = await ClienteDatos.legajoPropio();
+          if (!caregiverId) throw new Error(Catalogo.frase('fichado.sin_legajo'));
           await ClienteDatos.registrarFichadoGPS({ caregiverId, lat, lng, event_type: tipo });
           const norte = lat.toFixed(5);
           const este = lng.toFixed(5);
@@ -1163,9 +1178,9 @@
       });
     }
     document.getElementById('btn-gps-in')
-      .addEventListener('click', () => ficharGPS('Entrada', 'fichado.entrada'));
+      .addEventListener('click', () => ficharGPS('entrada'));
     document.getElementById('btn-gps-out')
-      .addEventListener('click', () => ficharGPS('Salida', 'fichado.salida'));
+      .addEventListener('click', () => ficharGPS('salida'));
 
     // ── Reportes ────────────────────────────
     // «todo botón que dispara una operación se apaga»: guardar apaga el botón mientras la novedad viaja. Dos clics eran dos
@@ -1182,10 +1197,13 @@
       boton.disabled = true;
       boton.textContent = Catalogo.frase('reporte.guardando');
       try {
-        const session = await Sesion.getSession();
+        // Lo mismo que la fichada: `reportes.caregiver_id` apunta al legajo, y
+        // la política pide `caregiver_id = legajo_propio()`. Acá también iba el
+        // identificador de la cuenta, y también lo rechazaba siempre.
+        const caregiverId = await ClienteDatos.legajoPropio();
+        if (!caregiverId) throw new Error(Catalogo.frase('fichado.sin_legajo'));
         await ClienteDatos.registrarReporte({
-          presion, glucemia, medicamentos, notas,
-          caregiverId: session.user.id
+          presion, glucemia, medicamentos, notas, caregiverId
         });
         alert(Catalogo.frase('reporte.guardado'));
         document.getElementById('bit-presion').value = '';
