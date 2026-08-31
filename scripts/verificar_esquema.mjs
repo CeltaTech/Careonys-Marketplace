@@ -1,5 +1,5 @@
 /* ===================================================
-   VERIFICA LAS NUEVE REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
+   VERIFICA LAS DIEZ REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
 
        node scripts/verificar_esquema.mjs
 
@@ -8,7 +8,7 @@
    Lo que corre hoy en el servidor es otra pregunta y se responde mirando el
    servidor (regla de la empresa «el estado real está por encima del documentado»).
 
-   Las nueve:
+   Las diez:
 
    1. **Toda tabla nueva enciende su RLS en la misma migración que la crea**
       (regla de la empresa «RLS estricta en toda tabla nueva»). Encenderla después, a mano desde el panel, deja una ventana
@@ -97,6 +97,40 @@
       es la migración que cerró la puerta, y desde ella la regla rige entera.
       `service_role` queda afuera porque es la llave del servidor y tiene que
       poder todo, tal como lo dejó dicho la 0032.
+  10. **Toda migración que cambia el esquema termina con
+      `NOTIFY pgrst, 'reload schema';`** (regla de la empresa «todo cambio de
+      esquema termina con `NOTIFY pgrst, 'reload schema';`. Sin eso PostgREST
+      puede devolver 404 en tablas que sí existen»). PostgREST no lee la base
+      en cada pedido: guarda una copia de qué tablas, qué columnas y qué
+      funciones hay, y a quién le tocan. Una migración que agrega algo y no
+      avisa deja esa copia vieja, y entonces la pantalla pide una tabla que
+      **está creada** y recibe un 404. El error apunta al lugar equivocado: se
+      sale a buscar un permiso o una política, y lo que falta es un aviso.
+
+      **Va al final, y eso no es prolijidad.** El aviso manda recargar lo que
+      hay en ese momento: lo que se escriba después queda afuera de esa
+      recarga, así que un aviso en el medio deja el mismo agujero que no
+      ponerlo, y encima parece puesto.
+
+      Sembrar filas no es cambiar el esquema, y por eso un `insert` solo no
+      pide aviso: PostgREST no guarda filas. Ocho migraciones avisan sin
+      cambiar nada —la 0027, la 0028, la 0030, la 0031, la 0039, la 0040, la
+      0042 y la 0045— y eso no molesta a nadie: recargar de más no rompe.
+      Lo que rompe es no recargar.
+
+      **La regla empieza en la 0025 y no antes**, por el mismo motivo que la
+      novena empieza en la 0032. Veintiuna de las veinticuatro primeras
+      cambian el esquema y ninguna avisa; están aplicadas hace tiempo y una
+      migración aplicada no se edita jamás, así que ponerles rojo sólo
+      enseñaría a apagar el chequeo. El límite no es una exención de
+      veintiuna filas: es el renglón donde la regla empezó a cumplirse, y
+      desde ahí rige entera, con las quince que cambian el esquema en verde.
+      Y no se puede esquivar sin querer, porque una migración nueva siempre
+      lleva un número más alto.
+
+      **Esta regla tampoco tiene lista de exenciones**, por lo mismo que la
+      octava: hoy no hay ningún caso, y una lista vacía no la puede probar
+      `scripts/probar_exenciones.mjs`.
 
    Las cuentas de cuántas tablas y cuántas funciones hay no se escriben acá: las
    dice el renglón verde al terminar, que sale de contar los archivos. Un número
@@ -129,6 +163,9 @@
      y las funciones que ésa nombra. Una cadena de tres no la sigue, y hoy no hay
      ninguna. Tampoco sabe si el disparador siembra lo mismo que sembró la
      migración: sabe que escribe en esa tabla.
+   - De la décima no sabe si el aviso hizo falta de verdad: reconoce el cambio de
+     esquema por cómo empieza la sentencia, no por lo que PostgREST guarde. Una
+     migración que avise sin necesitarlo pasa, y así tiene que ser.
    - Una siembra acotada a una Prestadora por su nombre corto no es un barrido y
      no se mira. Es lo que hacen las migraciones de datos ficticios.
 =================================================== */
@@ -237,6 +274,13 @@ const POLITICA_DEPOSITO = /create\s+policy\s+"([^"]+)"\s+on\s+storage\.objects/g
    regla; antes está el volcado de la instalación, que es lo que ella vino a
    sacar y que ya no se puede editar. */
 const LA_PUERTA_SE_CERRO = '0032';
+/* Un cambio de esquema es lo que PostgREST guarda en su copia: qué tablas, qué
+   columnas, qué funciones hay y quién puede tocarlas. Los `insert` quedan
+   afuera a propósito —sembrar filas no cambia nada de eso—. */
+const CAMBIA_EL_ESQUEMA =
+  /^[ \t]*(?:create|alter|drop)\s+(?:or\s+replace\s+)?(?:table|function|policy|type|index|view|trigger|schema|sequence|extension|domain|publication|materialized)\b|^[ \t]*(?:grant|revoke)\b|^[ \t]*comment\s+on\b/im;
+const AVISA_A_POSTGREST = /^\s*notify\s+pgrst\s*,\s*'reload schema'\s*;\s*$/i;
+const EL_AVISO_EMPIEZA = '0025';
 const GRANT_DE_TABLA =
   /grant\s+([a-z][a-z0-9_,\s()]*?)\s+on\s+(?:table\s+)?"?public"?\."?([a-z_]+)"?\s+to\s+([a-z_,\s"]+)/gi;
 const ABRE_DE_MAS = /\ball\b|\btruncate\b/i;
@@ -612,6 +656,28 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre) {
     }
   }
 
+  /* 10. La migración que cambia el esquema termina avisándole a PostgREST.
+     Sólo se juzga a la que tiene nombre: los fragmentos de las pruebas de acá
+     abajo no son migraciones, y varios cambian el esquema a propósito para
+     probar otra regla. Las de la regla sí traen nombre. */
+  if (nombre && nombre.slice(0, 4) >= EL_AVISO_EMPIEZA &&
+      CAMBIA_EL_ESQUEMA.test(sinComentarios)) {
+    const rens = sinComentarios.split('\n');
+    let ultimo = rens.length - 1;
+    while (ultimo >= 0 && !rens[ultimo].trim()) ultimo--;
+    if (!AVISA_A_POSTGREST.test(rens[ultimo] || '')) {
+      const suelto = rens.findIndex((l) => AVISA_A_POSTGREST.test(l));
+      fallas.push([ultimo + 1, suelto >= 0
+        ? 'esta migración le avisa a PostgREST en el renglón ' + (suelto + 1) +
+          ' y después sigue cambiando el esquema: lo que venga detrás del aviso ' +
+          'queda afuera de esa recarga, así que el aviso parece puesto y no lo está'
+        : 'esta migración cambia el esquema y no termina con ' +
+          "`NOTIFY pgrst, 'reload schema';`. Sin ese aviso PostgREST sigue con la " +
+          'copia vieja y contesta 404 en tablas y columnas que sí existen, y el ' +
+          'error apunta al lugar equivocado']);
+    }
+  }
+
   return fallas.sort((a, b) => a[0] - b[0]);
 }
 
@@ -627,6 +693,7 @@ const CREA = 'create table if not exists public.visitas (\n' +
 /* Para la sexta. La siembra que recorre todas las Prestadoras, el disparador que
    la atiende de ahí en más, y el mismo disparador llamando a otra función, que es
    como está escrita la 0046. */
+const AVISO = "\nnotify pgrst, 'reload schema';\n";
 const BARRIDO = 'insert into public.visitas (tenant_id)\n' +
   'select id from public.tenants\non conflict do nothing;\n';
 const SIEMBRA_DIRECTA =
@@ -685,7 +752,15 @@ const MAL = [
   ['la misma siembra con un disparador colgado de otra tabla',
    BARRIDO + SIEMBRA_DIRECTA.replace('on public.tenants', 'on public.caregivers')],
   ['un disparador sobre `tenants` que escribe en otra tabla que la sembrada',
-   BARRIDO + SIEMBRA_DIRECTA.replace('into public.visitas', 'into public.otras')]
+   BARRIDO + SIEMBRA_DIRECTA.replace('into public.visitas', 'into public.otras')],
+  ['una migración nueva que cambia el esquema y no le avisa a PostgREST',
+   CREA + RLS, '0050_prueba.sql'],
+  ['la misma con el aviso puesto en el medio y un cambio de esquema detrás',
+   CREA + RLS + AVISO +
+   'alter table public.visitas add column if not exists nota text;\n',
+   '0050_prueba.sql'],
+  ['un permiso de tabla, que también cambia lo que PostgREST tiene guardado',
+   'grant select on table public.visitas to authenticated;\n', '0050_prueba.sql']
 ];
 
 const BIEN = [
@@ -749,7 +824,17 @@ const BIEN = [
    'alter table public.pesos rename to visitas;\n' + SIEMBRA_DIRECTA],
   ['un `insert` que nombra `tenants` adentro de un comentario',
    '-- insert into public.visitas select id from public.tenants;\n' +
-   'select 1;\n']
+   'select 1;\n'],
+  ['la misma migración nueva terminando con el aviso, que es como va',
+   CREA + RLS + AVISO, '0050_prueba.sql'],
+  ['una migración de datos, que no cambia el esquema y no necesita avisar',
+   "insert into public.visitas (tenant_id)\nselect id from public.tenants " +
+   "where slug = 'presdemo';\n", '0050_prueba.sql'],
+  ['el aviso nombrado adentro de un comentario, que no es un cambio de esquema',
+   "-- alter table public.visitas add column nota text;\nselect 1;\n",
+   '0050_prueba.sql'],
+  ['la migración vieja que cambia el esquema sin avisar: ya está aplicada y no se edita',
+   CREA + RLS, '0006_prueba.sql']
 ];
 
 /* De acá para abajo está la verificación. De acá para arriba está la regla que
@@ -762,8 +847,11 @@ const ME_CORRIERON_A_MI = process.argv[1] &&
   resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 
 if (ME_CORRIERON_A_MI) {
-  const noDetecta = MAL.filter(([, t]) => fallasDeUnaMigracion(t).length === 0);
-  const sePasa = BIEN.filter(([, t]) => fallasDeUnaMigracion(t).length > 0);
+  /* El tercer valor, cuando está, es el nombre del archivo: la novena regla y la
+     décima miran desde qué migración rigen, y sin nombre no se las puede probar. */
+  const juzgar = ([, t, n]) => fallasDeUnaMigracion(t, undefined, undefined, undefined, n);
+  const noDetecta = MAL.filter((c) => juzgar(c).length === 0);
+  const sePasa = BIEN.filter((c) => juzgar(c).length > 0);
   if (noDetecta.length || sePasa.length) {
     console.error('El detector está roto, así que no verifica nada:');
     for (const [q] of noDetecta) console.error('  no detecta: ' + q);
@@ -777,6 +865,7 @@ if (ME_CORRIERON_A_MI) {
   let siembras = 0;
   let politicas = 0;
   let permisos = 0;
+  let avisos = 0;
   const migraciones = readdirSync(carpeta).filter((n) => n.endsWith('.sql')).sort();
   seRevisaron(migraciones.length, 'una sola migración `.sql` para revisar');
   const textos = migraciones.map((n) => readFileSync(join(carpeta, n), 'utf8'));
@@ -815,6 +904,10 @@ if (ME_CORRIERON_A_MI) {
         if (!/^\s*execute\b/i.test(m[1])) permisos++;
       }
     }
+    if (nombre.slice(0, 4) >= EL_AVISO_EMPIEZA && CAMBIA_EL_ESQUEMA.test(
+      texto.split('\n').map((l) => (/^\s*--/.test(l) ? '' : l)).join('\n'))) {
+      avisos++;
+    }
     for (const m of texto.matchAll(INSERTA)) {
       const corte = texto.indexOf(';', m.index);
       const sentencia = texto.slice(m.index, corte > 0 ? corte : texto.length);
@@ -833,7 +926,7 @@ if (ME_CORRIERON_A_MI) {
     for (const falla of fallas) console.error('  - ' + falla);
     console.error(
       `\n${fallas.length} ${fallas.length === 1 ? 'incumplimiento' : 'incumplimientos'}. ` +
-      'Las nueve reglas están en el encabezado de este archivo, con el porqué de cada\n' +
+      'Las diez reglas están en el encabezado de este archivo, con el porqué de cada\n' +
       'una. La RLS y la revocación van en la misma migración que crea la tabla o la\n' +
       'función, nunca en una posterior y nunca a mano desde el panel de Supabase; la\n' +
       'columna de Organización, la clave primaria y la moneda pueden llegar después,\n' +
@@ -845,6 +938,9 @@ if (ME_CORRIERON_A_MI) {
       'membresía de quien inició sesión, nunca de un valor que arme quien llama.\n' +
       'Y ningún permiso de tabla concede `all` ni `truncate`, que se salta la RLS\n' +
       'entera: los verbos se escriben uno por uno.\n' +
+      "Y toda migración que cambia el esquema termina con `NOTIFY pgrst, 'reload\n" +
+      "schema';`, al final y no en el medio: lo que se escriba detrás del aviso queda\n" +
+      'afuera de esa recarga, y PostgREST contesta 404 en algo que sí existe.\n' +
       'Si un caso no puede cumplirla, va a SIN_ORGANIZACION, a SIN_MONEDA, a\n' +
       'AL_ALCANCE_ANONIMO o a SIN_ORGANIZACION_EN_EL_DEPOSITO de este mismo\n' +
       'archivo, con el motivo escrito y el pendiente que lo sigue.');
@@ -866,5 +962,7 @@ if (ME_CORRIERON_A_MI) {
     'sostiene el aislamiento en su lugar. Ninguna condición saca la Organización ' +
     'de un valor que venga en el pedido: sale de la membresía. Y de los ' +
     `${permisos} permisos de tabla escritos desde la ${LA_PUERTA_SE_CERRO}, ninguno ` +
-    'concede `all` ni `truncate` a quien inicia sesión.');
+    'concede `all` ni `truncate` a quien inicia sesión. ' +
+    `Y las ${avisos} migraciones desde la ${EL_AVISO_EMPIEZA} que cambian el esquema ` +
+    "terminan con `NOTIFY pgrst, 'reload schema';`.");
 }

@@ -3237,7 +3237,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 - **La puerta es `guias_de(p_slug)`** (`:272`), del mismo tipo que `vocabularios_de`: la tabla no le
   concede nada a `anon` (`:254`), y lo que sale a la calle es una función que **exige el nombre
   corto**, devuelve la general más la de esa sola Prestadora, y sólo las publicadas. Está anotada
-  con su motivo en `scripts/verificar_esquema.mjs:183`, que es donde viven las funciones que llegan
+  con su motivo en `scripts/verificar_esquema.mjs:220`, que es donde viven las funciones que llegan
   al alcance anónimo a propósito.
 - **La pantalla nueva es `screen-guias`** en la aplicación del Asistente
   (`pwa-asistente/index.html:702`), con los cuatro estados y un buscador. **Es una biblioteca de
@@ -5301,6 +5301,57 @@ nacería vacía; y una lista vacía no la puede probar `scripts/probar_exencione
 lo que ya está vacío no pone rojo a nadie. Sería una exención sin guarda, que es la enfermedad que
 estas noches vinieron persiguiendo. Es la segunda regla del proyecto que se escribe así, después de
 la octava de `scripts/verificar_esquema.mjs`.
+
+---
+
+### Una tabla que existe y contesta 404, y nada que lo impidiera
+
+La regla de la empresa es de un renglón y estaba escrita sólo en prosa: todo cambio de esquema
+termina con `NOTIFY pgrst, 'reload schema';`, porque sin eso PostgREST puede devolver 404 en tablas
+que sí existen. Ningún chequeo la miraba. Se comprobó buscando la palabra en los 61 guiones de
+`scripts/`: no aparecía en ninguno.
+
+Conviene entender por qué el error es tan confuso. PostgREST no le pregunta a la base en cada
+pedido: guarda una copia de qué tablas, qué columnas y qué funciones hay, y a quién le tocan. Una
+migración que agrega algo y no avisa deja esa copia vieja. Entonces la pantalla pide una tabla
+**que está creada**, recibe un 404, y quien lo mira sale a buscar un permiso, una política o un
+nombre mal escrito. Lo que falta es un aviso.
+
+Medido antes de escribir nada, sobre las 49 migraciones: **21 cambian el esquema y no avisan, y las
+21 están entre la 0001 y la 0024**. Desde la 0025 hay 15 que cambian el esquema y **las 15 avisan,
+y las 15 lo hacen en el último renglón**. La regla empezó a cumplirse sola en la 0025 y no se
+rompió una sola vez desde entonces.
+
+Eso decidió la forma del chequeo. Una lista de perdonados de veintiuna filas es exactamente la
+enfermedad que estas noches vinieron persiguiendo, y además las veintiuna comparten un único
+motivo: se escribieron antes y **una migración aplicada no se edita jamás**. Así que el límite se
+escribe una vez, como ya lo hace la novena regla con la 0032: la décima rige desde la 0025. No es
+una exención, es el renglón donde la regla empezó a cumplirse, y no se lo puede esquivar sin
+querer, porque una migración nueva siempre lleva un número más alto.
+
+Hay una segunda mitad que no se ve venir: **el aviso va al final, y eso no es prolijidad**. Recarga
+lo que hay en ese momento, así que lo que se escriba detrás queda afuera de esa recarga —y encima
+el aviso parece puesto—. El chequeo lo dice con otras palabras cuando pasa, y nombra el renglón
+donde está el aviso suelto.
+
+Sembrar filas no es cambiar el esquema, y por eso un `insert` solo no pide aviso: PostgREST no
+guarda filas. Ocho migraciones avisan sin cambiar nada —la 0027, la 0028, la 0030, la 0031, la
+0039, la 0040, la 0042 y la 0045— y eso no molesta a nadie. Recargar de más no rompe; lo que rompe
+es no recargar. Las dos últimas, la 0048 y la 0049, escriben en un comentario «sin cambios de
+esquema: no hace falta `NOTIFY pgrst`», que es la misma lectura hecha a mano.
+
+Falsificada de cinco maneras. Con las pruebas de adentro del propio archivo: una migración nueva
+que cambia el esquema y no avisa, la misma con el aviso puesto en el medio y un cambio detrás, y un
+`grant` suelto —que también cambia lo que PostgREST tiene guardado— dan rojo; la que termina con el
+aviso, la de datos que no lo necesita, el aviso nombrado adentro de un comentario y **la migración
+vieja con el número anterior al límite** dan verde. Y con dos sobre un archivo de verdad,
+restaurándolo después: sacándole el último renglón a la 0047, que la puso en rojo por lo que no
+avisa, y volviéndoselo a poner con un `alter table` detrás, que la puso en rojo por avisar en el
+medio.
+
+Para poder probar las dos reglas que tienen límite hizo falta un cambio chico en el arnés: los
+casos de prueba pueden traer un tercer valor, el nombre del archivo. Sin nombre no hay número, y
+sin número no se puede probar desde cuándo rige una regla.
 
 ## 6. Deuda del código actual
 
