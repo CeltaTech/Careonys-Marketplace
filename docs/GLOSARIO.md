@@ -63,8 +63,7 @@ y con ella cambiaron las 86 referencias al archivo, los 29 enlaces que la nombra
 textos de las pantallas y las cinco menciones de los documentos que usaban «postulación» para
 hablar de cargar datos. **Donde la palabra ya estaba bien puesta no se tocó**: en `index.html` y
 en `solicitar-asistente.html`, los Asistentes se postulan a un aviso, que es exactamente
-ofrecerse para algo; en `docs/terminos_y_condiciones_asistentes.md:25` el Asistente se postula
-para integrar el plantel de una Prestadora, que también lo es; y en `docs/MODULOS.md` y
+ofrecerse para algo; y en `docs/MODULOS.md` y
 `docs/ALCANCE.md` la palabra aparece dentro de la lista de términos de esta modalidad que el
 `CLAUDE.md` de este producto prohíbe en un módulo compartido, donde nombra la postulación a un aviso.
 
