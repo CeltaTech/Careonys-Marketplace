@@ -5353,6 +5353,63 @@ Para poder probar las dos reglas que tienen límite hizo falta un cambio chico e
 casos de prueba pueden traer un tercer valor, el nombre del archivo. Sin nombre no hay número, y
 sin número no se puede probar desde cuándo rige una regla.
 
+---
+
+### Las dos puertas que guardan sin que nadie se lo pida
+
+La regla de la empresa dice «nunca información sensible en registros, direcciones, parámetros ni
+mensajes públicos». Son cuatro superficies y había una sola mirada: los mensajes públicos, por
+`scripts/verificar_escapado.mjs`. Las otras tres —que en realidad son dos, porque «direcciones» y
+«parámetros» son la misma barra— no las miraba nada.
+
+Lo que las hace distintas de una pantalla es que **guardan sin que nadie se lo pida**. Una
+dirección queda en el historial del navegador, en el «compartir» y en el registro de cualquier
+intermediario que la vea pasar; nadie decidió guardarla. Un `console.log(legajo)` que quedó de
+cuando se estaba arreglando algo imprime un documento de identidad en la consola de cualquiera que
+abra esa pantalla, y no se ve en la pantalla, así que nadie lo nota.
+
+Medido antes de escribir nada, sobre los 49 archivos del producto —sin `scripts/`, que es la
+terminal de quien programa—:
+
+- **La barra: ocho nombres de parámetro en uso** —`id`, `tenant`, `t`, `idioma`, `volver`,
+  `evaluacion`, `error` y `error_code`—, veintiuna apariciones entre las que se escriben y las que
+  se leen. Ninguno lleva un dato de una persona: `id` es un uuid, `tenant` y `t` son el nombre
+  corto de la Prestadora, `evaluacion` es una clave del catálogo, y `error` y `error_code` los
+  escribe Supabase al devolver a quien vino de un correo de recuperación con el enlace vencido.
+- **El registro: 102 `console.*`**. Cien son `console.error` o `console.warn` con la forma
+  `'contexto:', err`. Los dos `console.log` avisan que se registró el trabajador del navegador.
+  Con la regla escrita —cada argumento lleva un texto o es un error— **fallan exactamente tres
+  renglones**, que son el mismo renglón en las tres copias de `js/catalogo.js` (pendiente 13).
+
+Esos tres comparten un motivo legítimo y por eso quedan como la única exención: imprimen el texto
+crudo del atributo `data-huecos` cuando no es un JSON válido. Lo escribe quien programa el marcado,
+no una persona que usa el producto, y sin verlo el aviso no sirve para arreglarlo. Es una exención
+con un renglón, escrita como Map, así que `scripts/probar_exenciones.mjs` la puede vaciar y exigir
+el rojo —y lo hace, igual que con el catálogo de parámetros—.
+
+**La parte difícil no fue detectar, fue distinguir.** Que una dirección lleve `?algo=` no dice que
+sea la barra: puede ser la fuente de letra o un `mailto:`. Dos intentos fallaron primero. Mirar
+«lo que hay antes en el mismo renglón» dio dos rojos falsos, porque el `mailto:` del formulario de
+consulta nombra el destino en un renglón y el asunto en el siguiente. Mirar hacia atrás hasta el
+`;` más cercano dio diecisiete, porque la dirección de Google Fonts lleva `;` adentro
+—`wght@400;500;600;700;800`— y el corte caía adentro de la propia dirección, escondiendo el `://`
+del principio. Lo que funciona es mirar **la cadena de textos escritos pegados con `+`**: la
+dirección de la fuente es un solo texto que contiene `://`, y `'?subject='` está a un eslabón de
+`'mailto:'`. Las dos formas quedan como casos de prueba adentro del archivo, para que el próximo
+intento de simplificar el detector se ponga rojo.
+
+El chequeo **no juzga si un nombre de parámetro suena sensible**. No sabría: `t` no suena a nada y
+`legajo` suena a todo, y el día que alguien mande el documento en un parámetro llamado `x` ningún
+guion lo va a adivinar. Lo que hace es obligar a que cada nombre esté declarado con su motivo
+escrito al lado, que es la única cosa que un guion puede sostener ahí: lo que viaje por la barra
+hay que decidirlo, no descubrirlo.
+
+Falsificado de cuatro maneras sobre archivos de verdad, restaurando cada uno después: cambiando
+`?id=` por `?dni=` en `directorio.html`, cambiando el `volver` que lee `acceso.html` por un
+`legajo`, agregando un `console.error(cual)` suelto en `js/catalogo.js` y agregando ahí mismo un
+`console.error('Catálogo: ' + JSON.stringify(cual))`, que es justo la forma que un chequeo ingenuo
+deja pasar porque lleva un texto adelante. Los cuatro dieron rojo, y ninguno quedó en el árbol.
+
 ## 6. Deuda del código actual
 
 Está toda en `docs/PENDIENTES.md`, con condición de cierre para cada punto. Acá no se repite,
