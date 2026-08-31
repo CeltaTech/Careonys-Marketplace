@@ -32,15 +32,32 @@ Y el catálogo de verificaciones lo tenía anotado desde el principio, con estas
 Esto es lo que se comprobó contra el código y contra las 47 migraciones el 31 de agosto de 2026,
 no contra lo que dicen los documentos.
 
-### 2.1. Las fechas ya están guardadas. Son tres, en tres tablas
+### 2.1. Las columnas están, las tres. Cargada hay una sola
 
-| Dónde | Columna | Cómo está |
-|---|---|---|
-| `matriculas_asistente` | `vencimiento` | `date not null` — `supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:49` |
-| `documentos_asistente` | `vencimiento` | `date`, puede faltar — `supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:125` |
-| `verificaciones_asistente` | `plazo_vence_el` | `date`, sólo en los tipos que llevan plazo — `supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:144` |
+| Dónde | Columna | Cómo está en el esquema | Qué tiene adentro hoy |
+|---|---|---|---|
+| `matriculas_asistente` | `vencimiento` | `date not null` — `supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:49` | **3 filas y las tres con fecha.** La escribe el producto: la ficha la pide obligatoria (`data/catalogo-fichas.json:40`) y la guarda `js/apiClient.js:378` |
+| `documentos_asistente` | `vencimiento` | `date`, puede faltar — `supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:125` | **Nada, y no porque falte sembrarla: la tabla no la escribe nadie.** Es el grupo (a) del pendiente 111 |
+| `verificaciones_asistente` | `plazo_vence_el` | `date`, sólo en los tipos que llevan plazo — `supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:144` | **14 filas y ninguna con plazo.** Es una de las siete columnas vacías del pendiente 110 |
 
-**El dato está. Lo que falta es alguien que lo mire.**
+Medido contra la base de esta máquina el 31 de agosto de 2026, tabla por tabla, y no contra las
+migraciones. **Está cargada justo la que sostiene la promesa** —la de la Matrícula, que es la
+ficha donde el producto dice «se avisa antes de que venza»—, así que el paso 3 se puede construir
+y probar con datos de verdad desde el primer día. Las otras dos no.
+
+**Y esa diferencia hay que decirla acá, porque si no se convierte en una prueba que no puede
+fallar.** Un control de vencimientos que mire las tres columnas por igual va a encontrar cero
+papeles vencidos en dos de las tres, siempre, y va a contestar «no hay nada que avisar» con toda
+la razón aparente. Sale verde por el mismo motivo por el que saldría verde si estuviera roto: no
+hay con qué distinguir un caso del otro. Por eso el control negativo del punto 1 de la sección 7
+—una matrícula vencida ayer que **sí** aparece hoy en el directorio— se hace con la Matrícula, que
+es la única de las tres que puede aportar el caso.
+
+Lo anterior decía «el dato está, lo que falta es alguien que lo mire». Es cierto en un tercio.
+**Antes de que alguien mire, en dos de las tres hay que conseguir qué mirar**, y eso no lo cierra
+este plan: el grupo (a) del pendiente 111 espera que el Desarrollador elija cuál de las dos formas
+de guardar los papeles queda, y `verificaciones_asistente.plazo_vence_el` espera lo mismo que el
+resto del pendiente 110.
 
 ### 2.2. El esquema fue escrito esperando esto, y lo que esperaba nunca llegó
 

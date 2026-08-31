@@ -4937,6 +4937,40 @@ queda hecha —`scripts/limpiar_cuentas_de_prueba.mjs`, que lista y no toca nada
 y el pendiente 113 la espera. De paso quedó comprobado que **los 13 legajos del directorio están
 limpios**: son los sembrados por las migraciones y ninguno es residuo.
 
+### Y un plan escrito el mismo día ya decía de más
+
+Tirando del grupo (a) del pendiente 111 apareció que el plan de los vencimientos
+—`docs/PLAN_VENCIMIENTOS.md`, escrito ese mismo 31 de agosto de 2026— arrancaba su inventario
+diciendo, en negrita: **«el dato está, lo que falta es alguien que lo mire»**, arriba de una tabla
+con las tres columnas de fecha en las que se apoya. Medido contra la base, es cierto en un tercio:
+
+| Columna | Lo que hay adentro |
+|---|---|
+| `matriculas_asistente.vencimiento` | 3 filas y las tres con fecha. La escribe el producto de punta a punta |
+| `documentos_asistente.vencimiento` | ni una fila: es la tabla que no escribe nadie, el grupo (a) del pendiente 111 |
+| `verificaciones_asistente.plazo_vence_el` | 14 filas y ninguna con plazo: una de las siete columnas vacías del pendiente 110 |
+
+**No es un detalle de redacción, es la misma trampa de siempre un escalón antes.** Un control de
+vencimientos construido sobre esa frase mira las tres columnas por igual, encuentra cero papeles
+vencidos en dos de las tres —siempre, en toda base, para siempre— y contesta «no hay nada que
+avisar» con toda la razón aparente. Sale verde por el mismo motivo por el que saldría verde si
+estuviera roto: no hay con qué distinguir un caso del otro. Una prueba que no puede fallar,
+sembrada en el paso de inventario, que es donde menos se la busca.
+
+Lo que salva al plan es que **la única de las tres que está cargada es justamente la que sostiene
+la promesa**: la fecha de la Matrícula, que es la ficha donde el producto dice «se avisa antes de
+que venza». Así que el control negativo que el propio plan pide —una matrícula vencida ayer que
+**sí** aparece hoy en el directorio— tiene con qué hacerse. Corregida la sección 2.1 con lo
+medido, y dicho ahí cuál de las tres puede aportar el caso y cuáles no.
+
+Y de paso quedó comprobada la otra mitad, la que la búsqueda de la mañana había dado mal: **a
+`matriculas_asistente` sí la escribe el producto**. `js/apiClient.js:378` la nombra en el mapa de
+las cuatro fichas repetibles del legajo, y la ficha pide la fecha como obligatoria
+(`data/catalogo-fichas.json:40`). La búsqueda que decía lo contrario había pasado un patrón con
+alternativas a `scripts/listar.mjs`, que no las entiende y las toma como texto: contestó «nada» y
+la respuesta parecía una respuesta. **Un buscador que no entiende el patrón no dice que no
+entiende: dice que no hay.** Se busca de a un patrón por llamada.
+
 ---
 
 ## 6. Deuda del código actual
