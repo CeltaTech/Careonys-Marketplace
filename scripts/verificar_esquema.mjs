@@ -1,5 +1,5 @@
 /* ===================================================
-   VERIFICA LAS OCHO REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
+   VERIFICA LAS NUEVE REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
 
        node scripts/verificar_esquema.mjs
 
@@ -8,7 +8,7 @@
    Lo que corre hoy en el servidor es otra pregunta y se responde mirando el
    servidor (regla de la empresa «el estado real está por encima del documentado»).
 
-   Las ocho:
+   Las nueve:
 
    1. **Toda tabla nueva enciende su RLS en la misma migración que la crea**
       (regla de la empresa «RLS estricta en toda tabla nueva»). Encenderla después, a mano desde el panel, deja una ventana
@@ -79,6 +79,24 @@
       es la enfermedad que este proyecto ya se pasó dos noches persiguiendo. El
       día que aparezca un caso legítimo se crea la lista **con ese caso adentro**,
       y ahí sí la prueba la alcanza.
+   9. **Ningún permiso de tabla le da `all` ni `truncate` a `anon` ni a
+      `authenticated`** (regla de la empresa «mínimo privilegio siempre»). Es
+      el agujero que encontró y cerró la 0032, escrito ahí con todas las
+      letras: «`TRUNCATE`, que no mira ninguna política. La RLS filtra filas;
+      vaciar la tabla no es filtrar filas. Cualquiera con sesión iniciada podía
+      vaciar cualquiera de las diecisiete tablas. Es el agujero de verdad»
+      (`supabase/migrations/0032_los_permisos_de_tabla_al_minimo.sql:16`). Un
+      `grant all` sobre una tabla concede además `REFERENCES` y `TRIGGER`, que
+      ninguna pantalla usa y que PostgREST no sabe pedir. Los verbos se escriben
+      uno por uno.
+
+      **La regla empieza en la 0032 y no antes.** La 0001 es el volcado que dejó
+      la instalación, con veintiún `GRANT ALL` que son justamente lo que la 0032
+      vino a sacar; una migración aplicada no se edita, así que ponerle rojo a la
+      historia sólo enseñaría a apagar el chequeo. El límite no es una exención:
+      es la migración que cerró la puerta, y desde ella la regla rige entera.
+      `service_role` queda afuera porque es la llave del servidor y tiene que
+      poder todo, tal como lo dejó dicho la 0032.
 
    Las cuentas de cuántas tablas y cuántas funciones hay no se escriben acá: las
    dice el renglón verde al terminar, que sale de contar los archivos. Un número
@@ -97,6 +115,12 @@
    - De la octava regla mira de dónde **no** puede salir la Organización, no que
      salga bien. Una política que llame a `prestadora_actual()` y después la
      ignore pasa igual.
+   - De la novena mira lo que **abre de más**, no lo que abre de menos. Que una
+     tabla nueva se olvide de conceder sus permisos no se avisa: desde la 0032
+     nace sin ninguno, así que falla cerrada —`42501` en la pantalla— y ésa es la
+     dirección segura. Además hay casos legítimos, como una tabla que sólo tocan
+     funciones `security definer`. Lo que no tiene caso legítimo es `truncate`,
+     que se salta la RLS entera.
    - Un importe se reconoce por el nombre de la columna. Una que se llame de otra
      manera no se detecta; hoy la única del esquema es `caregivers.hourly_rate`.
    - De la clave primaria mira el tipo, no que sea una sola columna. Una clave
@@ -209,6 +233,14 @@ const AGREGA_ORGANIZACION =
    y sin esto la sexta regla buscaría un nombre que ya no existe—. */
 const INSERTA = /insert\s+into\s+(?:"?public"?\.)?"?([a-z_]+)"?/gi;
 const POLITICA_DEPOSITO = /create\s+policy\s+"([^"]+)"\s+on\s+storage\.objects/gi;
+/* La migración que revocó los permisos por omisión. Desde ella rige la novena
+   regla; antes está el volcado de la instalación, que es lo que ella vino a
+   sacar y que ya no se puede editar. */
+const LA_PUERTA_SE_CERRO = '0032';
+const GRANT_DE_TABLA =
+  /grant\s+([a-z][a-z0-9_,\s()]*?)\s+on\s+(?:table\s+)?"?public"?\."?([a-z_]+)"?\s+to\s+([a-z_,\s"]+)/gi;
+const ABRE_DE_MAS = /\ball\b|\btruncate\b/i;
+const DEL_SERVIDOR = /service_role/i;
 const DEL_PEDIDO = /current_setting\s*\(|request\.headers|request\.jwt|auth\.jwt\s*\(/i;
 const NOMBRA_ORGANIZACION = /prestadora_actual\s*\(\s*\)|\btenant_id\b|\bprestadora_id\b/i;
 const ACOTADA = /\bwhere\b[^;]*\b(?:slug|id)\s*=/i;
@@ -424,7 +456,7 @@ export function siembraQueSeSigueSola(textos) {
  * un disparador: ninguna de las tres cosas está obligada a estar en esta
  * migración. Sin esos datos se mira sólo este texto.
  */
-export function fallasDeUnaMigracion(texto, conColumna, claves, sigue) {
+export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre) {
   const t = texto.replace(/\r\n/g, '\n');
   const bajo = t.toLowerCase();
   const tienen = conColumna || conOrganizacion([t]);
@@ -536,6 +568,23 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue) {
       'que hace `public.prestadora_actual()`']);
   }
 
+  /* 9. Ningún permiso de tabla abre de más. Rige desde la migración que cerró la
+     puerta: lo de antes es el volcado que ella vino a sacar, y una migración
+     aplicada no se edita. Sin nombre —las pruebas de acá abajo— rige igual. */
+  if (!nombre || nombre.slice(0, 4) >= LA_PUERTA_SE_CERRO) {
+    for (const m of sinComentarios.matchAll(GRANT_DE_TABLA)) {
+      const verbos = m[1];
+      if (/^\s*execute\b/i.test(verbos)) continue;
+      if (!ABRE_DE_MAS.test(verbos)) continue;
+      const quienes = m[3].replace(/[\s"]/g, '').split(',').filter((r) => !DEL_SERVIDOR.test(r));
+      if (quienes.length === 0) continue;
+      fallas.push([renglonDe(t, m.index),
+        'este permiso sobre `' + m[2] + '` le da «' + verbos.trim() + '» a ' +
+        quienes.join(' y ') + '; ahí adentro va `truncate`, que no mira ninguna ' +
+        'política y vacía la tabla entera. Los verbos se escriben uno por uno']);
+    }
+  }
+
   return fallas.sort((a, b) => a[0] - b[0]);
 }
 
@@ -573,6 +622,10 @@ const DEPOSITO = (condicion) =>
   '  for select to authenticated\n  using (\n    ' + condicion + '\n  );\n';
 
 const MAL = [
+  ['un permiso de tabla que concede `all`, con `truncate` adentro',
+   'grant all on table public.visitas to anon, authenticated;\n'],
+  ['el mismo, nombrando `truncate` de frente',
+   'grant select, truncate on public.visitas to authenticated;\n'],
   ['una política que saca la Organización de un encabezado del pedido',
    'create policy "Lo mío" on public.cosas for select to authenticated\n' +
    "  using (tenant_id = (current_setting('request.headers', true)::json->>'x-prestadora')::uuid);\n"],
@@ -609,6 +662,12 @@ const MAL = [
 ];
 
 const BIEN = [
+  ['los cuatro verbos escritos uno por uno',
+   'grant select, insert, update, delete on public.visitas to authenticated;\n'],
+  ['`all` para `service_role`, que es la llave del servidor',
+   'grant all on table public.visitas to service_role;\n'],
+  ['`grant execute` sobre una función, que no es un permiso de tabla',
+   'grant execute on function public.visitas_de() to authenticated;\n'],
   ['la misma política resolviendo la Organización por la membresía',
    'create policy "Lo mío" on public.cosas for select to authenticated\n' +
    '  using (tenant_id = public.prestadora_actual());\n'],
@@ -690,6 +749,7 @@ if (ME_CORRIERON_A_MI) {
   let funciones = 0;
   let siembras = 0;
   let politicas = 0;
+  let permisos = 0;
   const migraciones = readdirSync(carpeta).filter((n) => n.endsWith('.sql')).sort();
   seRevisaron(migraciones.length, 'una sola migración `.sql` para revisar');
   const textos = migraciones.map((n) => readFileSync(join(carpeta, n), 'utf8'));
@@ -718,6 +778,16 @@ if (ME_CORRIERON_A_MI) {
         texto.slice(m.index, fin > 0 ? fin : texto.length))) funciones++;
     }
     politicas += [...texto.matchAll(POLITICA_DEPOSITO)].length;
+    if (nombre.slice(0, 4) >= LA_PUERTA_SE_CERRO) {
+      /* Sin los renglones comentados, igual que la regla: la 0047 cita un
+         `grant` adentro de un comentario para explicarlo, y contar eso sería
+         contar prosa. */
+      const limpio = texto.split('\n')
+        .map((l) => (/^\s*--/.test(l) ? '' : l)).join('\n');
+      for (const m of limpio.matchAll(GRANT_DE_TABLA)) {
+        if (!/^\s*execute\b/i.test(m[1])) permisos++;
+      }
+    }
     for (const m of texto.matchAll(INSERTA)) {
       const corte = texto.indexOf(';', m.index);
       const sentencia = texto.slice(m.index, corte > 0 ? corte : texto.length);
@@ -726,7 +796,7 @@ if (ME_CORRIERON_A_MI) {
       }
     }
     for (const [renglon, motivo] of
-      fallasDeUnaMigracion(texto, tienenColumna, primarias, sigue)) {
+      fallasDeUnaMigracion(texto, tienenColumna, primarias, sigue, nombre)) {
       fallas.push(`supabase/migrations/${nombre}:${renglon}  ${motivo}`);
     }
   }
@@ -736,7 +806,7 @@ if (ME_CORRIERON_A_MI) {
     for (const falla of fallas) console.error('  - ' + falla);
     console.error(
       `\n${fallas.length} ${fallas.length === 1 ? 'incumplimiento' : 'incumplimientos'}. ` +
-      'Las ocho reglas están en el encabezado de este archivo, con el porqué de cada\n' +
+      'Las nueve reglas están en el encabezado de este archivo, con el porqué de cada\n' +
       'una. La RLS y la revocación van en la misma migración que crea la tabla o la\n' +
       'función, nunca en una posterior y nunca a mano desde el panel de Supabase; la\n' +
       'columna de Organización, la clave primaria y la moneda pueden llegar después,\n' +
@@ -746,6 +816,8 @@ if (ME_CORRIERON_A_MI) {
       'Y toda política del depósito de archivos nombra la Organización, porque ahí\n' +
       'no hay columna que la nombre por ella. Y la Organización sale siempre de la\n' +
       'membresía de quien inició sesión, nunca de un valor que arme quien llama.\n' +
+      'Y ningún permiso de tabla concede `all` ni `truncate`, que se salta la RLS\n' +
+      'entera: los verbos se escriben uno por uno.\n' +
       'Si un caso no puede cumplirla, va a SIN_ORGANIZACION, a SIN_MONEDA, a\n' +
       'AL_ALCANCE_ANONIMO o a SIN_ORGANIZACION_EN_EL_DEPOSITO de este mismo\n' +
       'archivo, con el motivo escrito y el pendiente que lo sigue.');
@@ -765,5 +837,7 @@ if (ME_CORRIERON_A_MI) {
     `${conOrg === 1 ? 'nombra' : 'nombran'} la Organización y ` +
     `${SIN_ORGANIZACION_EN_EL_DEPOSITO.size} están exentas con el motivo y con qué ` +
     'sostiene el aislamiento en su lugar. Ninguna condición saca la Organización ' +
-    'de un valor que venga en el pedido: sale de la membresía.');
+    'de un valor que venga en el pedido: sale de la membresía. Y de los ' +
+    `${permisos} permisos de tabla escritos desde la ${LA_PUERTA_SE_CERRO}, ninguno ` +
+    'concede `all` ni `truncate` a quien inicia sesión.');
 }

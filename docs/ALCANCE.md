@@ -3237,7 +3237,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 - **La puerta es `guias_de(p_slug)`** (`:272`), del mismo tipo que `vocabularios_de`: la tabla no le
   concede nada a `anon` (`:254`), y lo que sale a la calle es una función que **exige el nombre
   corto**, devuelve la general más la de esa sola Prestadora, y sólo las publicadas. Está anotada
-  con su motivo en `scripts/verificar_esquema.mjs:159`, que es donde viven las funciones que llegan
+  con su motivo en `scripts/verificar_esquema.mjs:183`, que es donde viven las funciones que llegan
   al alcance anónimo a propósito.
 - **La pantalla nueva es `screen-guias`** en la aplicación del Asistente
   (`pwa-asistente/index.html:702`), con los cuatro estados y un buscador. **Es una biblioteca de
@@ -5215,6 +5215,50 @@ a mano ni siquiera escondida en la clave de una exención, y que la tabla del RE
 los chequeos. Las dos reglas se escribieron el 31 de agosto de 2026, y al día siguiente ya habían
 atajado a un chequeo nuevo. Un guardarraíl que corrige al que lo escribió es la única prueba
 convincente de que sirve.
+
+---
+
+### La regla que abría de verdad estaba escrita en una migración, y no la miraba nadie
+
+La 0032 encontró un agujero y lo cerró. Lo dejó escrito con todas las letras: «`TRUNCATE`, que no
+mira ninguna política. La RLS filtra filas; vaciar la tabla no es filtrar filas. Cualquiera con
+sesión iniciada podía vaciar cualquiera de las diecisiete tablas. Es el agujero de verdad»
+(`supabase/migrations/0032_los_permisos_de_tabla_al_minimo.sql:16`). Y en el mismo encabezado dejó
+la consecuencia, con el título en mayúsculas: toda migración que cree algo tiene que conceder sus
+permisos explícitamente, o la pantalla recibe `42501` con una sesión válida.
+
+Lo que faltaba es lo de siempre: **esa regla vivía en la prosa de una migración**, que es el único
+lugar del proyecto que nadie vuelve a leer. Un `grant all` en la migración de mañana devuelve
+`TRUNCATE` a `authenticated`, y ninguna política se entera, porque `TRUNCATE` no pasa por las
+políticas.
+
+Medido antes de escribir nada: desde la 0032 hay **30 permisos de tabla**, ninguno con `all` ni con
+`truncate`, y los verbos escritos uno por uno. Otra vez no había nada que arreglar; faltaba lo que
+impide que entre el primero.
+
+Esa es la **novena regla de `scripts/verificar_esquema.mjs`**. Y tiene una decisión que no es la
+habitual: **empieza en la 0032 y no antes**. La 0001 es el volcado que dejó la instalación, con
+veintiún `GRANT ALL ON TABLE` adentro —catorce de ellos a `anon` o a `authenticated`, que es
+justamente lo que la 0032 vino a sacar—, y una migración aplicada no se edita. Ponerle rojo a esa historia sólo enseñaría a apagar el chequeo. El
+límite **no es una exención**: es la migración que cerró la puerta, y desde ella la regla rige
+entera, sin lista de perdonados y sin ninguna forma de agregar uno. `service_role` queda afuera
+porque es la llave del servidor y tiene que poder todo, tal como lo dejó dicho la 0032.
+
+Y mira **lo que abre de más, no lo que abre de menos**. Que una tabla nueva se olvide de conceder
+sus permisos no se avisa: desde la 0032 nace sin ninguno, así que falla cerrada —`42501` en la
+pantalla, ruidoso y del lado seguro—, y además hay casos legítimos, como una tabla que sólo tocan
+funciones `security definer`. Lo que no tiene caso legítimo es `truncate`.
+
+Falsificada de cuatro maneras, y la cuarta es la que importa. Con las pruebas de adentro del propio
+archivo —dos casos `MAL` y tres `BIEN`, entre ellos el `grant all` a `service_role` y un `grant
+execute`, que no es un permiso de tabla—. Agregándole un `grant all` a la 0041, que se pone rojo y
+nombra el renglón. Agregándole un `grant select, truncate`, ídem. Y **agregándole el mismo
+`GRANT ALL` a la 0001, donde tiene que seguir verde**: sin esa cuarta prueba, el límite entre la
+historia y la regla sería una afirmación del encabezado en vez de una conducta comprobada.
+
+De paso, la cuenta del renglón verde estuvo mal un rato y da un ejemplo chiquito de lo mismo: daba
+31 en vez de 30 porque contaba un `grant` que la 0047 **cita adentro de un comentario** para
+explicarlo. Un número que cuenta prosa es primo hermano de un número escrito a mano.
 
 ## 6. Deuda del código actual
 
