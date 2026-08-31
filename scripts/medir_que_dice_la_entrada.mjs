@@ -42,6 +42,7 @@
    =================================================== */
 
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -132,19 +133,55 @@ function esDeEstaMaquina(direccion) {
   }
 }
 
+/* Le saca la confirmación a una cuenta de esta máquina, escribiendo en la base por
+   dentro del contenedor. Va por `docker exec` y no por la dirección de la base para no
+   tener que pasar ninguna contraseña por ningún lado. El nombre del contenedor sale
+   del `project_id` del archivo de configuración, que es de donde lo saca el CLI. */
+function dejarlaSinConfirmar(correo) {
+  const config = readFileSync(join(raiz, 'supabase', 'config.toml'), 'utf8');
+  const proyecto = (config.match(/^project_id\s*=\s*"([^"]+)"/m) || [])[1];
+  if (!proyecto) return false;
+  try {
+    execFileSync('docker', [
+      'exec', `supabase_db_${proyecto}`,
+      'psql', '-U', 'postgres', '-d', 'postgres', '-tAc',
+      `update auth.users set email_confirmed_at = null where email = '${correo}';`
+    ], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /* La tercera clase de dirección puede no estar en la base, y sin ella la medición
    queda a la mitad. Con `--crear-la-que-falta` se crea una. Se da de alta por la
    puerta común, con la llave pública, para que quede exactamente igual que la de
    cualquiera que se registra: si se creara con la llave de servicio nacería
    confirmada seguro.
 
-   **Y aun así puede nacer confirmada**, que es lo que pasó el 31 de agosto de 2026:
-   `supabase/config.toml` pide `enable_confirmations = true` y el servidor de esta
-   máquina confirmó igual, porque el que está corriendo se levantó con otra
-   configuración y `supabase start` la lee una sola vez, al arrancar. Cuando pasa,
-   el guion lo dice y no lo esconde: dar por buena la tercera clase con una cuenta
-   confirmada haría que las tres respuestas dieran iguales **por casualidad**, y esa
-   es la peor manera de dar por buena una regla de seguridad. */
+   **Y nace confirmada**, aunque `supabase/config.toml:253` pida
+   `enable_confirmations = true`. La causa quedó medida el 31 de agosto de 2026, y no
+   es la que decía antes este comentario: el servidor de autenticación de esta
+   máquina **se creó el 2026-08-24** y el archivo de configuración cambió el
+   2026-08-25, y las variables de un contenedor quedan fijadas **cuando se lo crea**,
+   no cuando se lo enciende. Por eso bajar y volver a levantar la base no alcanzó
+   —eso lo enciende de nuevo, no lo crea de nuevo— y `/auth/v1/settings` del servidor
+   de esta máquina sigue contestando `mailer_autoconfirm: true`.
+
+   Recrearlo pondría de acuerdo a los dos, pero apagaría la confirmación automática
+   para todas las demás pruebas, que hoy se apoyan en ella para entrar con las
+   cuentas que crean. Ese trabajo es aparte y está anotado como pendiente 123; el 21,
+   que se cerró el 24 de agosto de 2026, es el que dejó el archivo diciendo la verdad
+   del servidor publicado.
+
+   Así que el guion hace lo único que no le mueve el piso a nadie más: **le saca la
+   confirmación a la cuenta que acaba de crear**, escribiendo en la base de esta
+   máquina. No es un simulacro —el servidor decide qué contestar mirando esa misma
+   columna—, la cuenta es inventada, y la barre después
+   `scripts/limpiar_cuentas_de_prueba.mjs`. Si ni así queda sin confirmar, el guion lo
+   dice y no lo esconde: dar por buena la tercera clase con una cuenta confirmada
+   haría que las tres respuestas dieran iguales **por casualidad**, y esa es la peor
+   manera de dar por buena una regla de seguridad. */
 if (CREAR && !cuentas.some((u) => u.email && !u.email_confirmed_at)) {
   if (!esDeEstaMaquina(API)) {
     negarse(
@@ -173,11 +210,21 @@ if (CREAR && !cuentas.some((u) => u.email && !u.email_confirmed_at)) {
   console.log('`scripts/limpiar_cuentas_de_prueba.mjs`.');
   if (!cuentas.some((u) => u.email && !u.email_confirmed_at)) {
     console.log('');
-    console.log('Pero nació **confirmada**, así que sigue faltando la tercera clase. El');
-    console.log('servidor de esta máquina confirma solo, aunque `supabase/config.toml` pida');
-    console.log('`enable_confirmations = true`: el que está corriendo se levantó con otra');
-    console.log('configuración, y esa se lee una sola vez al arrancar. Para medir la tercera');
-    console.log('clase hay que bajar y volver a levantar la base.');
+    console.log('Nació **confirmada**, porque el servidor de esta máquina confirma solo: se');
+    console.log('creó antes que el renglón 253 de `supabase/config.toml` y las variables de un');
+    console.log('contenedor quedan fijadas al crearlo. Se le saca la confirmación a esa');
+    console.log('cuenta, escribiendo en la base de esta máquina.');
+    if (!dejarlaSinConfirmar(SIN_CONFIRMAR)) {
+      negarse(
+        'No se pudo dejar sin confirmar la cuenta que se acaba de crear,',
+        'así que la tercera clase sigue faltando y la medición queda a la mitad.'
+      );
+    }
+    const tercera = await fetch(`${API}/auth/v1/admin/users?per_page=1000`, {
+      headers: { apikey: SERVICIO, Authorization: `Bearer ${SERVICIO}` }
+    }).then((r) => r.json()).catch(() => ({}));
+    cuentas.length = 0;
+    cuentas.push(...(Array.isArray(tercera.users) ? tercera.users : []));
   }
   console.log('');
 }
