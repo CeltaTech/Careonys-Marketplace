@@ -3237,7 +3237,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 - **La puerta es `guias_de(p_slug)`** (`:272`), del mismo tipo que `vocabularios_de`: la tabla no le
   concede nada a `anon` (`:254`), y lo que sale a la calle es una función que **exige el nombre
   corto**, devuelve la general más la de esa sola Prestadora, y sólo las publicadas. Está anotada
-  con su motivo en `scripts/verificar_esquema.mjs:132`, que es donde viven las funciones que llegan
+  con su motivo en `scripts/verificar_esquema.mjs:159`, que es donde viven las funciones que llegan
   al alcance anónimo a propósito.
 - **La pantalla nueva es `screen-guias`** en la aplicación del Asistente
   (`pwa-asistente/index.html:702`), con los cuatro estados y un buscador. **Es una biblioteca de
@@ -5132,6 +5132,47 @@ afuera; lo que la condición cuida es la escritura, que nadie deje una foto en l
 Mover el camino a `<Organización>/<cuenta>/<archivo>` no es sólo una migración: hay que mudar los
 archivos ya subidos, y eso toca datos publicados. Queda como **pendiente 115**, con las dos salidas
 escritas y con la honesta primero: hoy no es explotable, es latente y era silencioso.
+
+---
+
+### La Organización salía de la membresía porque estaba bien escrita, no porque algo lo exigiera
+
+La regla de la empresa nombra el peligro con todas las letras: la política resuelve la Organización
+por la membresía verificada de quien inició sesión, **nunca por un valor que venga en el pedido**
+—encabezado, subdominio, parámetro—, porque esas fuentes las falsifica quien llama. Quien llama
+arma el pedido entero: preguntarle a él de qué Organización es equivale a no preguntar nada.
+
+Medido antes de escribir nada, el proyecto estaba limpio: **ninguna** de las 59 políticas lee del
+pedido, y las 108 veces que aparece la Organización adentro de una condición salen de
+`public.prestadora_actual()`, que la va a buscar a `profiles` por `auth.uid()`
+(`supabase/migrations/0002_aislamiento_por_prestadora.sql:34`). Su comentario ya lo decía: «Sale de
+su membresía, nunca del pedido»
+(`supabase/migrations/0002_aislamiento_por_prestadora.sql:48`). Pero un comentario no obliga a
+nadie. Lo que faltaba no era arreglar algo, era **impedir que entre**.
+
+Eso es la **octava regla de `scripts/verificar_esquema.mjs`**: ninguna migración resuelve la
+Organización leyendo `current_setting(...)`, `request.headers`, `request.jwt.claims` ni
+`auth.jwt()`. Los tres primeros son literalmente el pedido. El cuarto entra aunque el token venga
+firmado, y ése es el que más engaña: adentro del token viaja `user_metadata`, que en Supabase **la
+escribe la propia cuenta**. Una política que sacara de ahí el `tenant_id` estaría dejando que cada
+quien se declare de la Organización que quiera. `auth.uid()` no entra en la lista y no tiene por
+qué: no es un valor del pedido, es quién inició sesión.
+
+Falsificada de las dos maneras. Con las pruebas de adentro del propio archivo, que ya tenían la
+forma —dos casos `MAL` que tienen que dar rojo y dos `BIEN` que tienen que pasar, y el chequeo se
+planta si el detector deja de distinguirlos—, y **contra una migración de verdad**: agregándole un
+`current_setting('request.headers', true)` se pone rojo y nombra el renglón; agregándole un
+`auth.jwt()`, también.
+
+**Y es la única regla del archivo sin lista de exenciones, a propósito.** Hoy no hay un solo caso,
+así que la lista nacería vacía, y una lista vacía no la puede probar `scripts/probar_exenciones.mjs`:
+vaciar lo que ya está vacío no pone rojo a nadie. Sería una exención sin ninguna guarda, que es la
+enfermedad que estas dos noches se dedicaron a perseguir. El día que aparezca un caso legítimo se
+crea la lista **con ese caso adentro**, y ahí sí la prueba la alcanza.
+
+De paso salió otro número escrito a mano que ya estaba viejo: un comentario del mismo archivo
+hablaba de leer «las quince juntas» cuando las migraciones son 49. Dice ahora «todas juntas», que
+no envejece.
 
 ## 6. Deuda del código actual
 

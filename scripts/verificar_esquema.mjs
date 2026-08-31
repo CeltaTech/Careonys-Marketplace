@@ -1,5 +1,5 @@
 /* ===================================================
-   VERIFICA LAS SIETE REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
+   VERIFICA LAS OCHO REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
 
        node scripts/verificar_esquema.mjs
 
@@ -8,7 +8,7 @@
    Lo que corre hoy en el servidor es otra pregunta y se responde mirando el
    servidor (regla de la empresa «el estado real está por encima del documentado»).
 
-   Las siete:
+   Las ocho:
 
    1. **Toda tabla nueva enciende su RLS en la misma migración que la crea**
       (regla de la empresa «RLS estricta en toda tabla nueva»). Encenderla después, a mano desde el panel, deja una ventana
@@ -55,6 +55,30 @@
       nombra, el aislamiento lo está sosteniendo alguna otra cosa, en algún otro
       archivo, y nadie lo dice. Por eso la exención pide dos cosas y no una: el
       motivo, y **qué lo sostiene en su lugar**.
+   8. **La Organización se resuelve por la membresía de quien inició sesión, y
+      nunca por un valor que venga en el pedido** (regla de la empresa «la
+      política resuelve la Organización por la membresía verificada de quien
+      inició sesión, nunca por un valor que venga en el pedido —encabezado,
+      subdominio, parámetro—: esas fuentes las falsifica quien llama»). Quien
+      llama arma el pedido entero, así que una condición que lea
+      `current_setting('request.headers')`, `request.jwt.claims` o
+      `auth.jwt()` está preguntándole al que quiere entrar de qué Organización
+      es. `auth.jwt()` entra en la lista aunque el token venga firmado: adentro
+      viaja `user_metadata`, que en Supabase lo escribe la propia cuenta.
+      Resolverla por membresía es lo que hace `public.prestadora_actual()`
+      (`supabase/migrations/0002_aislamiento_por_prestadora.sql:34`), que va a
+      buscar el `tenant_id` a `profiles` por `auth.uid()`. Su comentario ya
+      decía «sale de su membresía, nunca del pedido»
+      (`supabase/migrations/0002_aislamiento_por_prestadora.sql:48`); esta regla
+      es lo que hace que eso siga siendo cierto.
+
+      **Esta regla no tiene lista de exenciones, y es a propósito.** Hoy no hay
+      un solo caso en las migraciones, así que la lista nacería vacía, y una
+      lista vacía no la puede probar `scripts/probar_exenciones.mjs`: vaciar lo
+      que ya está vacío no pone rojo a nadie. Sería una exención sin guarda, que
+      es la enfermedad que este proyecto ya se pasó dos noches persiguiendo. El
+      día que aparezca un caso legítimo se crea la lista **con ese caso adentro**,
+      y ahí sí la prueba la alcanza.
 
    Las cuentas de cuántas tablas y cuántas funciones hay no se escriben acá: las
    dice el renglón verde al terminar, que sale de contar los archivos. Un número
@@ -70,6 +94,9 @@
      política mal escrita con la RLS encendida pasa igual. Las del depósito de
      archivos sí se leen, y de ellas se mira una sola cosa: si nombran la
      Organización. Que la nombre no quiere decir que la use bien.
+   - De la octava regla mira de dónde **no** puede salir la Organización, no que
+     salga bien. Una política que llame a `prestadora_actual()` y después la
+     ignore pasa igual.
    - Un importe se reconoce por el nombre de la columna. Una que se llame de otra
      manera no se detecta; hoy la única del esquema es `caregivers.hourly_rate`.
    - De la clave primaria mira el tipo, no que sea una sola columna. Una clave
@@ -182,6 +209,7 @@ const AGREGA_ORGANIZACION =
    y sin esto la sexta regla buscaría un nombre que ya no existe—. */
 const INSERTA = /insert\s+into\s+(?:"?public"?\.)?"?([a-z_]+)"?/gi;
 const POLITICA_DEPOSITO = /create\s+policy\s+"([^"]+)"\s+on\s+storage\.objects/gi;
+const DEL_PEDIDO = /current_setting\s*\(|request\.headers|request\.jwt|auth\.jwt\s*\(/i;
 const NOMBRA_ORGANIZACION = /prestadora_actual\s*\(\s*\)|\btenant_id\b|\bprestadora_id\b/i;
 const ACOTADA = /\bwhere\b[^;]*\b(?:slug|id)\s*=/i;
 const DISPARADOR =
@@ -496,6 +524,18 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue) {
       'Organización, y en el depósito no hay columna que la nombre por ella']);
   }
 
+  /* 8. La Organización no sale de nada que venga en el pedido. */
+  for (const renglon of sinComentarios.split('\n').entries()) {
+    const [i, texto] = renglon;
+    const m = texto.match(DEL_PEDIDO);
+    if (!m) continue;
+    fallas.push([i + 1,
+      'acá la Organización se estaría resolviendo con «' +
+      m[0].trim().replace(/\s*\($/, '') + '», que ' +
+      'es un valor que arma quien llama; se resuelve por la membresía, que es lo ' +
+      'que hace `public.prestadora_actual()`']);
+  }
+
   return fallas.sort((a, b) => a[0] - b[0]);
 }
 
@@ -533,6 +573,12 @@ const DEPOSITO = (condicion) =>
   '  for select to authenticated\n  using (\n    ' + condicion + '\n  );\n';
 
 const MAL = [
+  ['una política que saca la Organización de un encabezado del pedido',
+   'create policy "Lo mío" on public.cosas for select to authenticated\n' +
+   "  using (tenant_id = (current_setting('request.headers', true)::json->>'x-prestadora')::uuid);\n"],
+  ['una política que la saca de un dato que la cuenta se escribe sola',
+   'create policy "Lo mío" on public.cosas for select to authenticated\n' +
+   "  using (tenant_id = (auth.jwt()->'user_metadata'->>'tenant_id')::uuid);\n"],
   ['una política del depósito que no nombra la Organización',
    DEPOSITO("bucket_id = 'papeles'")],
   ['una tabla que se crea sin encender su RLS',
@@ -563,6 +609,12 @@ const MAL = [
 ];
 
 const BIEN = [
+  ['la misma política resolviendo la Organización por la membresía',
+   'create policy "Lo mío" on public.cosas for select to authenticated\n' +
+   '  using (tenant_id = public.prestadora_actual());\n'],
+  ['`auth.uid()`, que no es un valor del pedido sino quién inició sesión',
+   'create policy "Lo mío" on public.cosas for select to authenticated\n' +
+   '  using (user_id = auth.uid());\n'],
   ['una política del depósito que sí la nombra',
    DEPOSITO("bucket_id = 'papeles' and tenant_id = public.prestadora_actual()")],
   ['la misma política nombrada adentro de un comentario, que no cuenta',
@@ -642,7 +694,7 @@ if (ME_CORRIERON_A_MI) {
   seRevisaron(migraciones.length, 'una sola migración `.sql` para revisar');
   const textos = migraciones.map((n) => readFileSync(join(carpeta, n), 'utf8'));
 
-  /* Primero se leen las quince juntas: una tabla puede recibir su columna de
+  /* Primero se leen todas juntas: una tabla puede recibir su columna de
      Organización en una migración posterior a la que la crea, y juzgando archivo
      por archivo se avisaría de tres que están bien. */
   const tienenColumna = conOrganizacion(textos);
@@ -684,7 +736,7 @@ if (ME_CORRIERON_A_MI) {
     for (const falla of fallas) console.error('  - ' + falla);
     console.error(
       `\n${fallas.length} ${fallas.length === 1 ? 'incumplimiento' : 'incumplimientos'}. ` +
-      'Las siete reglas están en el encabezado de este archivo, con el porqué de cada\n' +
+      'Las ocho reglas están en el encabezado de este archivo, con el porqué de cada\n' +
       'una. La RLS y la revocación van en la misma migración que crea la tabla o la\n' +
       'función, nunca en una posterior y nunca a mano desde el panel de Supabase; la\n' +
       'columna de Organización, la clave primaria y la moneda pueden llegar después,\n' +
@@ -692,7 +744,8 @@ if (ME_CORRIERON_A_MI) {
       'Y una siembra que recorre las Prestadoras de hoy deja un disparador sobre\n' +
       '`tenants`, en ésta o en otra migración, o la que nazca mañana arranca sin eso.\n' +
       'Y toda política del depósito de archivos nombra la Organización, porque ahí\n' +
-      'no hay columna que la nombre por ella.\n' +
+      'no hay columna que la nombre por ella. Y la Organización sale siempre de la\n' +
+      'membresía de quien inició sesión, nunca de un valor que arme quien llama.\n' +
       'Si un caso no puede cumplirla, va a SIN_ORGANIZACION, a SIN_MONEDA, a\n' +
       'AL_ALCANCE_ANONIMO o a SIN_ORGANIZACION_EN_EL_DEPOSITO de este mismo\n' +
       'archivo, con el motivo escrito y el pendiente que lo sigue.');
@@ -711,5 +764,6 @@ if (ME_CORRIERON_A_MI) {
     `Y de las ${politicas} políticas del depósito de archivos, ${conOrg} ` +
     `${conOrg === 1 ? 'nombra' : 'nombran'} la Organización y ` +
     `${SIN_ORGANIZACION_EN_EL_DEPOSITO.size} están exentas con el motivo y con qué ` +
-    'sostiene el aislamiento en su lugar.');
+    'sostiene el aislamiento en su lugar. Ninguna condición saca la Organización ' +
+    'de un valor que venga en el pedido: sale de la membresía.');
 }
