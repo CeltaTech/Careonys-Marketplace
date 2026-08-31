@@ -29,7 +29,7 @@
    ── Lo que NO corre acá, y por qué ────────────────────────────────────────
 
    Dos pruebas quedan afuera a propósito, y se dice cuáles para que nadie
-   cuente estas ocho y crea que están todas:
+   cuente estas nueve y crea que están todas:
 
    · `probar_alta_y_baja.mjs` — va contra el servidor publicado, necesita la
      clave de firma de la caja fuerte, y su limpieza **borra datos publicados**.
@@ -39,7 +39,7 @@
 
    ── La que tiene que dar rojo ─────────────────────────────────────────────
 
-   Dos salen en rojo a propósito y dicen adentro por qué. Acá se cuentan como
+   Tres salen en rojo a propósito y dicen adentro por qué. Acá se cuentan como
    esperadas y no tumban la corrida:
 
    · `probar_pisado_de_archivos.mjs` es el pendiente 89 —subir dos veces el mismo
@@ -48,6 +48,9 @@
    · `probar_perdida_de_corpus.mjs` es el pendiente 91 —nueve chequeos dan ✔ con
      menos archivos cuando se les saca la mitad del corpus, y la salida son tres
      políticas de exención entre las que hay que elegir—.
+   · `probar_coherencia_de_la_siembra.mjs` es el pendiente 110 —catorce columnas
+     que la siembra no llena ni una vez, y una de ellas ninguna migración la
+     puede llenar hoy—.
 
    **Y el pendiente que la explica tiene que estar abierto.** Si no está, esto
    falla antes de correr ninguna prueba. Sin esa comprobación la lista perdona
@@ -69,10 +72,14 @@ import { readFileSync } from 'node:fs';
 
 const aca = dirname(fileURLToPath(import.meta.url));
 
-/* En este orden: primero las chicas, que son rápidas y dicen enseguida si la
-   base está sana; después la de aislamiento, que es la larga; y al final la del
-   corpus, que no necesita base pero corre la red de chequeos dos veces. */
+/* En este orden: primero la de la siembra, que no crea ni una cuenta y mira los
+   datos tal como los dejaron las migraciones —si arranca mal, lo de abajo mide
+   sobre una base que ya estaba torcida—; después las chicas, que son rápidas y
+   dicen enseguida si la base está sana; después la de aislamiento, que es la
+   larga; y al final la del corpus, que no necesita base pero corre la red de
+   chequeos dos veces. */
 const PRUEBAS = [
+  'probar_coherencia_de_la_siembra.mjs',
   'probar_el_rol_y_la_prestadora_del_perfil.mjs',
   'probar_de_quien_es_el_legajo.mjs',
   'probar_sello_de_la_prestadora.mjs',
@@ -87,7 +94,8 @@ const PRUEBAS = [
    que se arregle: si una de éstas pasa, esta corrida falla y dice por qué. */
 const ROJAS_ESPERADAS = new Map([
   ['probar_pisado_de_archivos.mjs', 89],
-  ['probar_perdida_de_corpus.mjs', 91]
+  ['probar_perdida_de_corpus.mjs', 91],
+  ['probar_coherencia_de_la_siembra.mjs', 110]
 ]);
 
 /* Y el pendiente que explica cada roja tiene que existir. Sin esto la lista de

@@ -4697,6 +4697,67 @@ que avisa.
 
 ---
 
+### La siembra tiene catorce columnas que nunca se llenan, y ninguna pantalla lo muestra
+
+Las tres Prestadoras ficticias son el banco de pruebas del producto: si algo no se puede hacer con
+ellas, no se puede hacer. Así que vale preguntarles lo mismo que a una base de un cliente, y la
+pregunta que más rinde no es «¿hay algo mal cargado?» sino **«qué columna no se llena ni una vez?»**
+Una así no se ve en ninguna pantalla, porque la pantalla se dibuja igual. Lo que no se ve es que
+**nada la está probando**: la consulta que la olvida y la que la trae contestan lo mismo. Es el
+argumento con el que la migración 0027 cargó comprobaciones en los legajos —«una consulta rota y una
+consulta correcta contra una tabla vacía contestan exactamente lo mismo»— aplicado a la siembra
+entera y no a una tabla.
+
+El 31 de agosto de 2026 se midió: **catorce de las 225 columnas de las 25 tablas con datos**. Están
+todas en el pendiente 110, agrupadas por lo que significa cada una, y el grupo que importa es el
+primero: `cursos`, `evaluaciones`, `preguntas_evaluacion`, `opciones_pregunta` y `vocabularios`
+guardan la oferta general con `tenant_id` nulo y lo propio de una Prestadora con `tenant_id`
+cargado, y **la siembra sólo carga lo general**. O sea que la mitad `tenant_id =
+prestadora_actual()` de cinco políticas de RLS no tiene una sola fila que la ejercite, y la prueba
+de aislamiento no la puede agarrar porque el dato no existe. Ahí no hay nada roto todavía: hay cinco
+puertas que nadie probó.
+
+**Una de las catorce ninguna migración la puede llenar hoy**, y eso es un hallazgo aparte:
+`verificaciones_asistente.verificado_por` dice quién comprobó un papel, y los perfiles los crea el
+disparador de alta (`supabase/migrations/0005_acceso_por_sesion.sql:80`), o sea que existen sólo
+para quien se registró. La siembra no tiene personal, así que no tiene a quién apuntar. La 0027
+escribió `verificado_el` a propósito —«un papel comprobado sin fecha de comprobación es un dato a
+medias del lado de la Prestadora»— y dejó ésta afuera sin decirlo.
+
+**Y la medición a mano encontró nueve; el guion encontró catorce.** Las cinco que se habían pasado
+son justo las cinco de los catálogos de dos escalones, porque leídas de a una parecen correctas: un
+`tenant_id` nulo ahí **es** un valor válido y no un hueco. Lo que las delata es la pregunta
+generalizada, no el ojo. Por eso quedó como prueba y no como informe:
+`scripts/probar_coherencia_de_la_siembra.mjs`, en `probar_todo.mjs`, roja esperada contra el
+pendiente 110.
+
+Mira además dos cosas que ya estaban bien y conviene que sigan estando: que ninguna fila pertenezca
+a una Prestadora que no existe, y que ninguna apunte a una fila de **otra** Prestadora. Es el
+aislamiento visto desde los datos y no desde la sesión —una política perfecta sobre datos ya
+mezclados no separa nada—, y el índice que lo resuelve se arma con todo lo leído, sin la lista de
+claves foráneas, para que una columna que apunta a otra tabla sin declararlo también se mire.
+**Comprobadas las tres en los dos sentidos**: eximiendo las catorce sale verde con 225 columnas
+revisadas; colgando una fila de una Prestadora inventada sale roja la primera; y poniendo una
+comprobación de una Prestadora sobre el legajo de otra sale roja la segunda, nombrando
+`verificaciones_asistente.caregiver_id → cuidarnorte`. **Y el primer intento de esa tercera
+falsificación no falló**, que era lo útil: había inventado la columna `avisos.caregiver_id`,
+que no existe, y el guion la salteó por no estar en la lista de columnas declaradas. Una prueba de
+que puede fallar tiene que romper algo que exista.
+
+Antes de mirar nada se planta si el volcado vino vacío, si no entendió ni una fila, si faltan las
+tres Prestadoras, o si el separador de valores no distingue lleno de vacío: ese último decide todo
+lo demás, porque uno roto que devolviera siempre nulo pondría media base en rojo, y uno que no
+devolviera ninguno la pondría toda en verde.
+
+**Lo que esta prueba puede tapar, y no arregla sola.** Las filas que la máquina tenga fuera de las
+migraciones se cuentan igual. No corre `db reset` —borrar datos se consulta— y lo dice en vez de
+disimularlo: el sesgo va en una sola dirección, una fila de más sólo puede **tapar** un hueco y
+nunca inventarlo, así que **lo que encuentra es real** y lo que no encuentra se lee limpio recién
+después de un `supabase db reset --local`. Contra el servidor publicado directamente se niega a
+correr: ahí una columna llena por alguien de verdad taparía justo lo que viene a mirar.
+
+---
+
 ## 6. Deuda del código actual
 
 Está toda en `docs/PENDIENTES.md`, con condición de cierre para cada punto. Acá no se repite,
