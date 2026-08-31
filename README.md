@@ -121,6 +121,15 @@ aislamiento. Una prueba que devuelve una lista vacía no distingue "aislado" de 
 Copiar `.env.example` a `.env.local` y completar los valores antes de levantar nada. Los `.env`
 nunca se suben (ver `.gitignore`).
 
+**Para buscar adentro del proyecto**, `node scripts/listar.mjs` y no un `grep -r` desde la raíz:
+acá al lado hay una caja fuerte y la regla de la bóveda dice que no se lista. El guion recorre
+con el mismo guardián que los chequeos, así que la trae puesta.
+
+```bash
+node scripts/listar.mjs .html            # sólo las pantallas
+node scripts/listar.mjs --buscar "TODO"  # archivo:renglón: texto
+```
+
 ## Los chequeos, y el comando que hace falta una sola vez
 
 Cada regla que se arregló una vez tiene un guion que impide que vuelva. Se corren todos juntos
