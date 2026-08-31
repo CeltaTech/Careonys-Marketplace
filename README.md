@@ -38,7 +38,7 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | 976 declaraciones más, pegadas al HTML | en 247 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 12 de las 17 pantallas rescatan la sesión al abrir |
 | 4 servidores de afuera, sin `package.json` ni compilación | dos de tipografías y dos de bibliotecas |
-| 23 tablas y 49 migraciones en el repositorio | 30 chequeos las miran antes de cada commit |
+| 23 tablas y 49 migraciones en el repositorio | 31 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
@@ -154,6 +154,7 @@ título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de e
 | `verificar_claves` | Que se guarde en la base una opción que el catálogo no tiene |
 | `verificar_contacto` | Que el chat vuelva a dejar pasar un teléfono, un correo o un domicilio |
 | `verificar_copias` | Que las copias byte a byte se separen sin que nadie se entere |
+| `verificar_deposito` | Que el código nombre un depósito de archivos que ninguna migración declara —y entonces el archivo no aparece y nada avisa—, que sirva por dirección pública uno declarado privado, o que le hable al depósito por afuera de las dos funciones que saben la diferencia entre un enlace que vence y una dirección para siempre |
 | `verificar_deriva` | Que una cita `archivo:renglón` apunte a un renglón que existe pero no es el que la frase dice: le pregunta al historial qué decía ese renglón el día en que se escribió la cita, y busca ese texto en el archivo de hoy |
 | `verificar_escapado` | Que un texto de la base entre a la pantalla como si fuera HTML |
 | `verificar_esquema` | Que una tabla nueva nazca sin RLS, que una función que se saltea la RLS quede al alcance de quien no inició sesión, que falte la columna de la Organización, que la clave primaria no sea `uuid`, que un importe se guarde sin moneda, que una política del depósito de archivos no nombre la Organización —que es lo único que ahí separa a una Prestadora de otra—, que la Organización se resuelva con un valor que venga en el pedido en vez de por la membresía de quien inició sesión, o que un permiso de tabla conceda `all` o `truncate`, que se saltea la RLS entera y vacía la tabla |

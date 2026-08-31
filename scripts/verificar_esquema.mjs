@@ -401,6 +401,33 @@ function nombreDeHoy(tabla, renombres) {
   return nombre;
 }
 
+/* Un depósito de archivos declarado: `values ('nombre', 'nombre', publico, …)`.
+   Se toma el primer valor —el `id`, que es con el que lo pide el navegador— y la
+   bandera que dice si es público. */
+const DEPOSITO_DECLARADO =
+  /insert\s+into\s+storage\.buckets\b[\s\S]{0,200}?values\s*\(\s*'([a-z0-9._-]+)'\s*,\s*'[a-z0-9._-]+'\s*,\s*(true|false)\b/gi;
+
+/**
+ * Los depósitos de archivos que declaran las migraciones, con su bandera de
+ * público: `Map<nombre, boolean>`. Vive acá por el mismo motivo que
+ * `columnasDeclaradas()`: acá está el punto único de verdad de cómo se leen las
+ * migraciones, y una segunda copia de esta lectura se despega de ésta el primer
+ * día. La usa `scripts/verificar_deposito.mjs`.
+ *
+ * Se sacan los comentarios de renglón entero antes de mirar, igual que allá: un
+ * depósito citado adentro de un comentario para explicar algo no está declarado.
+ */
+export function depositosDeclarados(textos) {
+  const depositos = new Map();
+  for (const texto of textos) {
+    const t = texto.replace(/\r\n/g, '\n').replace(/^[ \t]*--.*$/gm, '');
+    for (const m of t.matchAll(DEPOSITO_DECLARADO)) {
+      depositos.set(m[1].toLowerCase(), m[2].toLowerCase() === 'true');
+    }
+  }
+  return depositos;
+}
+
 /**
  * Lo que ya se sigue solo: las tablas donde escribe algún disparador colgado de
  * `tenants`, y el nombre de hoy de cada tabla que en el camino se renombró. Lo

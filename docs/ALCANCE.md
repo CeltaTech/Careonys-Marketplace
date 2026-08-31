@@ -5260,6 +5260,48 @@ De paso, la cuenta del renglón verde estuvo mal un rato y da un ejemplo chiquit
 31 en vez de 30 porque contaba un `grant` que la 0047 **cita adentro de un comentario** para
 explicarlo. Un número que cuenta prosa es primo hermano de un número escrito a mano.
 
+---
+
+### Dos depósitos, uno público y otro privado, y nada que comprobara cuál era cuál
+
+La regla de la empresa es de un renglón: los archivos se guardan privados y se sirven con dirección
+firmada y vencimiento, nunca con dirección pública. Este producto tiene **dos** depósitos y uno es
+público a propósito —`avatares`, porque la foto del directorio se ve sin cuenta—, así que acá la
+regla no puede ser «ninguno es público». Es que **cada uno se use como fue declarado**, y que quién
+es cuál salga de la migración que los crea y no de la memoria de quien escribe la pantalla.
+
+Medido antes de escribir nada: dos depósitos declarados en
+`supabase/migrations/0006_archivos_del_legajo.sql:27` y `:37`, diez nombres de depósito escritos en
+el código y nueve llamadas a `.storage.from(`, las nueve adentro de las tres copias de `js/auth.js`.
+Todo correcto. Otra vez no había nada que arreglar; faltaba lo que impide el primer error.
+
+Y el primer error tiene dos tamaños muy distintos, que conviene no mezclar. **Equivocarse el nombre
+falla callado**: el depósito no existe, `urlFirmada()` devuelve `null` y la pantalla no muestra el
+archivo sin decir por qué. **Confundirse de depósito en la dirección pública publica un documento de
+identidad**, que es el peor error posible de este producto. `js/apiClient.js:781` arma una dirección
+pública a mano, con el nombre del depósito pegado adentro del texto de la dirección: cambiar ahí una
+palabra por la otra es un renglón.
+
+La tercera regla es la que no se ve venir. `.storage.from(` sólo puede salir del archivo que define
+`urlPublica()` y `urlFirmada()`, porque ahí es donde está escrita **una sola vez** la diferencia
+entre un enlace que vence y una dirección para siempre. Una llamada suelta la vuelve a decidir, y
+ahí es donde se decide mal. El archivo no está nombrado por su ruta: se lo busca **por lo que
+define**, así que las tres copias de `js/auth.js` —el pendiente 13— pasan sin figurar en ninguna
+lista, y el día que se desdupliquen la regla sigue valiendo sin tocarla.
+
+Falsificado de siete maneras. Con las pruebas de adentro del propio archivo, cuatro casos `MAL` y
+cuatro `BIEN`. Y con tres sobre archivos de verdad, restaurándolos después: escribiéndole
+`documentos_cuidadores` con guión bajo a `panel-prestadora.html`, que lo nombra por su renglón;
+cambiando el depósito de la dirección pública de `js/apiClient.js` por el privado, que dice que un
+enlace eterno a un documento de identidad **es** el documento; y agregándole un `.storage.from(` a
+`js/catalogo.js`, que no define ninguna de las dos funciones.
+
+**No tiene lista de exenciones, y es a propósito.** Hoy no hay ningún caso que la necesite, así que
+nacería vacía; y una lista vacía no la puede probar `scripts/probar_exenciones.mjs`, porque vaciar
+lo que ya está vacío no pone rojo a nadie. Sería una exención sin guarda, que es la enfermedad que
+estas noches vinieron persiguiendo. Es la segunda regla del proyecto que se escribe así, después de
+la octava de `scripts/verificar_esquema.mjs`.
+
 ## 6. Deuda del código actual
 
 Está toda en `docs/PENDIENTES.md`, con condición de cierre para cada punto. Acá no se repite,
