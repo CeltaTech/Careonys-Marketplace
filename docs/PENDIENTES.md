@@ -165,27 +165,30 @@ mientras lea texto escrito a mano en vez del catálogo de frases, y
 
 Sirve para saber qué pantalla va a costar más y en qué orden conviene portar.
 
-Contada el 25 de agosto de 2026, y cambió bastante: las dos pantallas que se reescribieron son
-hoy las más limpias del proyecto, y aparecieron cuatro archivos que la cuenta anterior no miraba.
+**Esta tabla no se escribe a mano.** Sale de `node scripts/medir_estado.mjs --escribir` y
+`scripts/verificar_estado.mjs` falla si alguien la edita sin volver a medir. Se hizo así el 31 de
+agosto de 2026, porque la que estaba escrita a mano decía 687 atributos `style=` cuando ya eran
+247, y nombraba tres pantallas que hoy no tienen ninguno.
+
+<!-- reparto: lo escribe scripts/medir_estado.mjs, no se edita a mano -->
 
 | Archivo | Atributos `style=` | Declaraciones |
 |---|---:|---:|
-| `registrar-asistente.html` | 155 | 533 |
-| `mockup-app.html` | 101 | 329 |
-| `pwa-familia/index.html` | 76 | 229 |
-| `formulario-integral.html` | 73 | 202 |
-| `solicitar-asistente.html` | 58 | 229 |
-| `pwa-asistente/index.html` | 58 | 156 |
-| `index.html` | 54 | 235 |
-| `panel-prestadora.html` | 30 | 86 |
-| `cursos.html` | 14 | 43 |
-| `nueva-clave.html` | 13 | 32 |
-| `perfil.html` | 13 | 24 |
-| `examen.html` | 12 | 14 |
-| `recuperar-clave.html` | 11 | 26 |
-| `directorio.html` | 10 | 16 |
-| `acceso.html` | 6 | 7 |
-| `soporte-remoto.html` | 3 | 5 |
+| `mockup-app.html` | 51 | 218 |
+| `registrar-asistente.html` | 40 | 181 |
+| `pwa-familia/index.html` | 28 | 91 |
+| `solicitar-asistente.html` | 28 | 125 |
+| `index.html` | 27 | 122 |
+| `pwa-asistente/index.html` | 24 | 84 |
+| `formulario-integral.html` | 20 | 67 |
+| `panel-prestadora.html` | 14 | 43 |
+| `cursos.html` | 9 | 30 |
+| `directorio.html` | 2 | 3 |
+| `perfil.html` | 2 | 7 |
+| `examen.html` | 1 | 2 |
+| `soporte-remoto.html` | 1 | 3 |
 
-Las dos PWAs tienen además 763 renglones de CSS en bloques `<style>` adentro del HTML: 255 la del
-Asistente y 508 la de la Familia.
+Hay además 960 renglones de CSS en bloques `<style>` adentro del HTML:
+516 en `pwa-familia/index.html`, 270 en `pwa-asistente/index.html`, 174 en `examen.html`.
+
+<!-- fin del reparto -->

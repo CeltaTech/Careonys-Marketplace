@@ -118,12 +118,41 @@ const tokens = new Set(
    que entrar, las declaraciones dicen cuánto hay que mover. */
 let atributosStyle = 0;
 let declaraciones = 0;
+
+/* Y la misma cuenta pantalla por pantalla, más los renglones de CSS que cada
+   una lleva en un bloque `<style>`. Sirve para saber cuál va a costar más y en
+   qué orden conviene portarla, y vive acá y no escrita a mano en
+   `docs/PENDIENTES.md`, que es donde estuvo hasta el 31 de agosto de 2026
+   diciendo 687 atributos cuando ya eran 247. */
+const pegados = [];
 for (const camino of pantallas) {
-  for (const encontrado of leer(camino).matchAll(/\sstyle="([^"]*)"/gi)) {
-    atributosStyle += 1;
-    declaraciones += encontrado[1].split(';').filter((d) => d.trim()).length;
+  const fuente = leer(camino);
+  let deEsta = 0;
+  let declaracionesDeEsta = 0;
+  for (const encontrado of fuente.matchAll(/\sstyle="([^"]*)"/gi)) {
+    deEsta += 1;
+    declaracionesDeEsta += encontrado[1].split(';').filter((d) => d.trim()).length;
+  }
+  atributosStyle += deEsta;
+  declaraciones += declaracionesDeEsta;
+
+  let enBloque = 0;
+  for (const encontrado of fuente.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)) {
+    enBloque += renglones(encontrado[1].replace(/^\n/, '').replace(/\n[ \t]*$/, ''));
+  }
+
+  if (deEsta || enBloque) {
+    pegados.push({
+      archivo: nombreDe(camino),
+      atributos: deEsta,
+      declaraciones: declaracionesDeEsta,
+      bloque: enBloque
+    });
   }
 }
+pegados.sort((a, b) =>
+  b.atributos - a.atributos || b.bloque - a.bloque || a.archivo.localeCompare(b.archivo));
+seRevisaron(pegados.length, 'una sola pantalla con estilos pegados al HTML');
 
 /* ── LA SESIÓN ───────────────────────────────────────────────────────────
    Una pantalla rescata la sesión al abrir si carga `js/auth.js`, que es el
@@ -199,10 +228,28 @@ const tabla =
   '| | |\n|---|---|\n' +
   renglonesTabla.map(([a, b]) => `| ${a} | ${b} |`).join('\n') + '\n';
 
+/* ── LA TABLA DEL REPARTO, PARA docs/PENDIENTES.md ───────────────────────
+   La otra mitad de lo mismo: el total va al README y el detalle por pantalla
+   va a la lista de pendientes, donde dice qué va a costar más portar. Se
+   escribe entre dos marcas para que el medidor sepa qué reemplazar. */
+const conBloque = pegados.filter((c) => c.bloque > 0);
+const renglonesEnBloques = conBloque.reduce((t, c) => t + c.bloque, 0);
+
+const renglonesReparto = pegados
+  .filter((c) => c.atributos > 0)
+  .map((c) => `| \`${c.archivo}\` | ${enEspanol(c.atributos)} | ${enEspanol(c.declaraciones)} |`);
+
+const tablaReparto =
+  '| Archivo | Atributos `style=` | Declaraciones |\n|---|---:|---:|\n' +
+  renglonesReparto.join('\n') + '\n\n' +
+  `Hay además ${enEspanol(renglonesEnBloques)} renglones de CSS en bloques \`<style>\` adentro del ` +
+  'HTML:\n' +
+  conBloque.map((c) => `${enEspanol(c.bloque)} en \`${c.archivo}\``).join(', ') + '.\n';
+
 /* Los renglones medidos, para que `verificar_estado.mjs` los compare con los
    que están escritos en el README. La fecha no se exporta a propósito: cambia
    todos los días y compararla pondría el chequeo en rojo cada mañana. */
-export { renglonesTabla, tabla };
+export { renglonesTabla, tabla, renglonesReparto, tablaReparto };
 
 if (!corriendoSolo) {
   // Importado: ya midió, que es todo lo que le pedían.
@@ -230,11 +277,45 @@ if (!encontrado) {
 
 const despues = antes.slice(0, encontrado.index) + tabla +
   antes.slice(encontrado.index + encontrado[0].length);
+/* Y acá no se sale aunque el README ya esté al día: falta la otra tabla, y un
+   `process.exit(0)` en el medio la dejaría sin escribir cada vez que cambie
+   sólo el detalle por pantalla. */
 if (despues === antes) {
   console.log('La tabla del estado real ya estaba al día.');
-  process.exit(0);
+} else {
+  writeFileSync(dondeReadme, crlf ? despues.split('\n').join('\r\n') : despues);
+  console.log('Tabla del estado real puesta al día en README.md:\n');
+  console.log(tabla);
 }
-writeFileSync(dondeReadme, crlf ? despues.split('\n').join('\r\n') : despues);
-console.log('Tabla del estado real puesta al día en README.md:\n');
-console.log(tabla);
+
+/* ── Y EL DETALLE POR PANTALLA, EN docs/PENDIENTES.md ──────────────────
+   Entre dos marcas, porque acá la tabla está en el medio del archivo y no al
+   final de una sección reconocible. Si las marcas no están, se avisa y se sale
+   con error: un medidor que no encuentra dónde escribir y se calla deja la
+   tabla vieja pareciendo recién medida. */
+const dondePendientes = join(raiz, 'docs', 'PENDIENTES.md');
+const crudoP = leer(dondePendientes);
+const crlfP = crudoP.includes('\r\n');
+const antesP = crlfP ? crudoP.split('\r\n').join('\n') : crudoP;
+
+const ABRE = '<!-- reparto: lo escribe scripts/medir_estado.mjs, no se edita a mano -->';
+const CIERRA = '<!-- fin del reparto -->';
+const desdeP = antesP.indexOf(ABRE);
+const hastaP = antesP.indexOf(CIERRA);
+if (desdeP === -1 || hastaP === -1 || hastaP < desdeP) {
+  console.error('No se encontraron las dos marcas del reparto en docs/PENDIENTES.md,');
+  console.error('así que no se tocó. Tienen que estar, en este orden:');
+  console.error('  ' + ABRE);
+  console.error('  ' + CIERRA);
+  process.exit(1);
+}
+
+const despuesP =
+  antesP.slice(0, desdeP + ABRE.length) + '\n\n' + tablaReparto + '\n' + antesP.slice(hastaP);
+if (despuesP === antesP) {
+  console.log('La tabla del reparto ya estaba al día.');
+} else {
+  writeFileSync(dondePendientes, crlfP ? despuesP.split('\n').join('\r\n') : despuesP);
+  console.log('Tabla del reparto puesta al día en docs/PENDIENTES.md.');
+}
 }

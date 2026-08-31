@@ -4303,6 +4303,28 @@ guarda nueva se probó cambiando el 89 por un número inventado: corta ahí y di
 
 ---
 
+### Y una tabla de números escrita a mano decía casi el triple de lo que hay
+
+Encontrado el 31 de agosto de 2026, al lado de lo anterior. `docs/PENDIENTES.md` traía el reparto
+de los estilos pegados al HTML pantalla por pantalla —qué va a costar más portar, y en qué orden
+conviene—: 16 archivos y **687 atributos `style=`**. Hoy son 13 archivos y **247**. Tres de los que
+nombraba —`nueva-clave.html`, `recuperar-clave.html` y `acceso.html`— hace días que no tienen
+ninguno. Decía además que las dos PWAs suman 763 renglones de CSS en bloques `<style>`; son 960, y
+se olvidaba de `examen.html`, que tiene 174.
+
+La tabla llevaba escrito «Contada el 25 de agosto de 2026», que es honesto y no alcanza: una fecha
+avisa de que el número puede haber cambiado, no de que cambió. **Un número medido a mano envejece
+en silencio.** Es exactamente el defecto que `scripts/verificar_estado.mjs` ya existía para evitar
+en el README, aplicado a un documento donde nadie lo había mirado.
+
+**Cómo quedó.** El reparto sale ahora de `scripts/medir_estado.mjs`, que lo escribe entre dos
+marcas con `--escribir`, y `scripts/verificar_estado.mjs` lo compara antes de cada `commit` igual
+que la tabla del README. Se comprobó que puede fallar de tres maneras distintas: cambiándole un
+número a mano, sacando una de las dos marcas, y agregando una pantalla nueva con un `style=`
+adentro. Las tres dan rojo y dicen cuál es la diferencia.
+
+---
+
 ### Y no era una sola: veinticuatro comentarios del código decían que un agujero seguía abierto
 
 Encontrado el mismo 31 de agosto de 2026, tirando del hilo anterior. Si una prueba pudo quedar
