@@ -4966,10 +4966,22 @@ medido, y dicho ahí cuál de las tres puede aportar el caso y cuáles no.
 Y de paso quedó comprobada la otra mitad, la que la búsqueda de la mañana había dado mal: **a
 `matriculas_asistente` sí la escribe el producto**. `js/apiClient.js:378` la nombra en el mapa de
 las cuatro fichas repetibles del legajo, y la ficha pide la fecha como obligatoria
-(`data/catalogo-fichas.json:40`). La búsqueda que decía lo contrario había pasado un patrón con
-alternativas a `scripts/listar.mjs`, que no las entiende y las toma como texto: contestó «nada» y
-la respuesta parecía una respuesta. **Un buscador que no entiende el patrón no dice que no
-entiende: dice que no hay.** Se busca de a un patrón por llamada.
+(`data/catalogo-fichas.json:40`). La búsqueda que decía lo contrario había pasado a `scripts/listar.mjs` un patrón
+con alternativas escrito como lo escribe grep, con `\|`. Ahí adentro el patrón es una expresión
+regular de JavaScript, donde esa barra hace lo contrario: apaga en vez de encender. Así que no
+buscó «esto o aquello», buscó el texto con los palitos adentro, que no está en ningún lado, y
+contestó «Nada. Se revisaron 248 archivos». **Un buscador que no entiende el patrón no dice que
+no entiende: dice que no hay.** Y eso se lee igual que un «no está», que es lo que se creyó.
+
+Arreglado en la herramienta, no en la costumbre, que es de donde ya se había caído cuatro veces:
+**cuando `listar.mjs` no encuentra nada y el patrón trae alguno de los siete escapes de grep, lo
+vuelve a buscar leyéndolo como lo leería grep y avisa si así sí aparece**, diciendo cuántos
+renglones. No avisa por sospecha: avisa habiendo encontrado los que la primera lectura no vio.
+Falsificado con los tres casos que importan —el patrón que falló aquel día, que ahora contesta
+«Pero puede que esto no sea un “no está”» y ofrece los 90 renglones; una alternativa bien escrita,
+que sigue andando sin ruido; y una búsqueda de una barra de verdad que no encuentra nada, donde
+el aviso **no** sale, porque la segunda lectura tampoco encuentra nada—. Esa tercera es la que
+impide que la guarda se vuelva ruido.
 
 ---
 
