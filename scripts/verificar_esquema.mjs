@@ -132,6 +132,62 @@
       octava: hoy no hay ningún caso, y una lista vacía no la puede probar
       `scripts/probar_exenciones.mjs`.
 
+  11. **Toda política que deja escribir nombra la Organización en la condición
+      que gobierna la fila que queda escrita** (regla de la empresa
+      «aislamiento entre Organizaciones», que es de la que dependen todas las
+      demás). La octava mira de dónde sale la Organización; ésta mira algo
+      distinto y más callado: que se la pida al escribir, y no sólo al leer.
+
+      **Las dos condiciones de una política no son la misma.** El `using` dice
+      qué filas puedo tocar; el `with check` dice cómo puede quedar la fila
+      después de que la toque. Una política que pide la Organización en el
+      `using` y no en el `with check` deja entrar y deja **mudar**: la fila era
+      mía, la guardo con la Prestadora de al lado y ya no es de nadie de acá.
+      Nada de eso se ve leyendo, porque leer sigue andando bien.
+
+      Cuando el `with check` no está escrito, Postgres usa el `using` para las
+      dos cosas, así que la regla mira el `using`: no escribirlo no es un
+      agujero, escribirlo más flojo sí. Hoy hay dos políticas así y las dos
+      quedan en verde por el `using` que heredan.
+
+      **Un `with check` más angosto que su `using` es legítimo y no se juzga.**
+      Dos de la 0020 lo son a propósito: se puede *leer* un mensaje del aviso en
+      el que uno participa y no se puede *escribirlo* como si fuera de otro. Por
+      eso la regla no compara las dos condiciones —eso daría rojo en las dos—,
+      sino que le pide a la que gobierna la fila nueva una sola cosa: que nombre
+      la Organización. Las dos de la 0020 la nombran en las dos.
+
+      **Las políticas dadas de baja no se juzgan, y eso no es un límite
+      escrito.** Siete de la 0001 escriben `with check (true)`, que es el
+      agujero entero; las siete las da de baja la 0002 por su nombre. En vez de
+      una migración de corte como la novena y la décima, la regla mira si
+      alguna migración posterior la borra, y a la que sigue en pie la juzga
+      aunque sea de la 0001. Es más angosto que un límite: si alguien vuelve a
+      crear mañana una de esas siete con el mismo nombre, esta vez se juzga.
+
+      **Las que crea un bucle también se juzgan.** La 0005 y la 0012 escriben
+      cuatro políticas adentro de un `execute format`, una por cada tabla de un
+      arreglo. El texto del `create policy` está ahí, entero, y lo único que
+      falta es el nombre de la tabla, que llega como `%I`; la regla lo lee
+      igual y, cuando alguna de ésas falla, lo dice así en vez de inventar un
+      nombre de tabla. Lo que no vería es un `create policy` armado a pedazos
+      desde variables, y hoy no hay ninguno.
+
+      Las del depósito de archivos son de la séptima y no se juzgan dos veces:
+      ahí no hay columna de Organización y se miden con otra vara.
+
+      **La única exención se comprueba en vez de creerse.** `profiles` es la
+      tabla que **define** la Organización de cada persona —`prestadora_actual()`
+      la lee para contestarle a todas las demás políticas—, así que una política
+      suya que preguntara `prestadora_actual()` se estaría preguntando a sí
+      misma. Lo que impide mudarse de Prestadora, o hacerse `coordinador`, no es
+      su política: es el **permiso por columna**, `grant update (full_name)` y
+      nada más. Y como eso es lo único que la sostiene, el chequeo va y lo mira:
+      un permiso de escritura sobre esa tabla que no nombre sus columnas da rojo.
+      No es una precaución teórica —la 0032 sacó ese permiso sin querer y la
+      0033 tuvo que devolverlo—, y era lo único de todo el archivo que no
+      miraba nadie.
+
    Las cuentas de cuántas tablas y cuántas funciones hay no se escriben acá: las
    dice el renglón verde al terminar, que sale de contar los archivos. Un número
    escrito a mano en un encabezado queda viejo el día que se agrega una
@@ -166,6 +222,10 @@
    - De la décima no sabe si el aviso hizo falta de verdad: reconoce el cambio de
      esquema por cómo empieza la sentencia, no por lo que PostgREST guarde. Una
      migración que avise sin necesitarlo pasa, y así tiene que ser.
+   - De la undécima mira que la Organización **esté nombrada** en la condición
+     que gobierna la fila nueva, no que esté bien usada. Una política que la
+     nombre y después la ignore pasa igual, lo mismo que en la octava. Y no
+     compara el `with check` con el `using`: uno más angosto es legítimo.
    - Una siembra acotada a una Prestadora por su nombre corto no es un barrido y
      no se mira. Es lo que hacen las migraciones de datos ficticios.
 =================================================== */
@@ -247,6 +307,25 @@ const SIN_ORGANIZACION_EN_EL_DEPOSITO = new Map([
    'es la escritura: que nadie deje una foto en la carpeta de otro']
 ]);
 
+/* Políticas de escritura que no pueden nombrar la Organización, con el motivo
+   **y con qué la sostiene en su lugar**. Igual que en el depósito de archivos:
+   lo que no se escribe acá no existe. Y acá esa segunda mitad además **se
+   comprueba**: no alcanza con decir que el permiso por columna la sostiene, la
+   undécima regla va y mira que ese permiso siga nombrando sus columnas. */
+const SIN_ORGANIZACION_AL_ESCRIBIR = new Map([
+  ['Su propio perfil, de escritura',
+   { tabla: 'profiles',
+     motivo:
+       '`profiles` es la tabla que define la Organización de cada persona: ' +
+       '`prestadora_actual()` la lee para contestarle a todas las demás políticas, ' +
+       'así que una política suya que la preguntara se estaría preguntando a sí ' +
+       'misma. Lo que impide mudarse de Prestadora, o hacerse `coordinador`, es el ' +
+       'permiso por columna: `grant update (full_name)` y nada más ' +
+       '(0005_acceso_por_sesion.sql:160, que la 0032 sacó sin querer y la ' +
+       '0033_vuelve_el_permiso_por_columna_del_perfil.sql:36 devolvió). Eso no se ' +
+       'cree: se comprueba acá mismo.' }]
+]);
+
 /* Importes que hoy se guardan sin moneda, con su motivo y su pendiente. */
 const SIN_MONEDA = new Map([
   ['caregivers.hourly_rate',
@@ -284,6 +363,16 @@ const EL_AVISO_EMPIEZA = '0025';
 const GRANT_DE_TABLA =
   /grant\s+([a-z][a-z0-9_,\s()]*?)\s+on\s+(?:table\s+)?"?public"?\."?([a-z_]+)"?\s+to\s+([a-z_,\s"]+)/gi;
 const ABRE_DE_MAS = /\ball\b|\btruncate\b/i;
+/* Para la undécima. Una política de `public`, su baja, y los dos verbos que
+   no dejan ninguna fila escrita. El `%I` del final es el nombre de tabla que
+   deja escrito un `execute format`: la 0005 y la 0012 crean cuatro políticas
+   así, una por cada tabla de un arreglo, y sin esa alternativa el nombre de
+   la tabla se leía como `public`. */
+const POLITICA_DE_TABLA =
+  /create\s+policy\s+"([^"]+)"\s+on\s+(?:"?([a-z_]+)"?\s*\.\s*)?(%I|"?[a-z_]+"?)/gi;
+const BAJA_DE_POLITICA = /drop\s+policy\s+(?:if\s+exists\s+)?"([^"]+)"/gi;
+const SOLO_LEE = /\bfor\s+(?:select|delete)\b/i;
+const ESCRIBE = /\b(?:insert|update|delete)\b/i;
 const DEL_SERVIDOR = /service_role/i;
 const DEL_PEDIDO = /current_setting\s*\(|request\.headers|request\.jwt|auth\.jwt\s*\(/i;
 const NOMBRA_ORGANIZACION = /prestadora_actual\s*\(\s*\)|\btenant_id\b|\bprestadora_id\b/i;
@@ -436,6 +525,45 @@ function entreParentesis(texto, desde) {
 
 const renglonDe = (texto, posicion) => texto.slice(0, posicion).split('\n').length;
 
+/* Dónde da de baja cada política: `[archivo, posición]`, en orden de aplicación.
+   Una política que una migración posterior borra ya no está en la base, y
+   juzgarla sería ponerle rojo a algo que no existe. Es más angosto que una
+   migración de corte: la que sigue en pie se juzga aunque sea de la 0001. */
+function politicasDadasDeBaja(textos, nombres) {
+  const bajas = new Map();
+  for (const [i, texto] of textos.entries()) {
+    const limpio = texto.split('\n')
+      .map((l) => (/^\s*--/.test(l) ? ' '.repeat(l.length) : l)).join('\n');
+    for (const m of limpio.matchAll(BAJA_DE_POLITICA)) {
+      if (!bajas.has(m[1])) bajas.set(m[1], []);
+      bajas.get(m[1]).push([nombres[i], m.index]);
+    }
+  }
+  return bajas;
+}
+
+/* Las políticas de `public` que dejan una fila escrita: `[nombre, tabla,
+   posición, cuerpo]`. La regla y la cuenta del renglón verde salen de acá, para
+   que no se puedan despegar. Las de `storage` no entran: son de la séptima. */
+function politicasQueEscriben(sinComentarios) {
+  const salida = [];
+  for (const m of sinComentarios.matchAll(POLITICA_DE_TABLA)) {
+    if ((m[2] || 'public').toLowerCase() !== 'public') continue;
+    const corte = sinComentarios.indexOf(';', m.index);
+    const cuerpo = sinComentarios.slice(m.index, corte > 0 ? corte : sinComentarios.length);
+    if (SOLO_LEE.test(cuerpo)) continue;
+    salida.push([m[1], m[3].replace(/"/g, '').toLowerCase(), m.index, cuerpo]);
+  }
+  return salida;
+}
+
+/** Si a esta política la borra una migración posterior a donde se la crea. */
+function yaNoEsta(politica, archivo, posicion, bajas) {
+  const donde = (bajas || new Map()).get(politica) || [];
+  return donde.some(([a, p]) =>
+    (archivo ? a > archivo : false) || (a === archivo && p > posicion));
+}
+
 /** El nombre que tiene hoy una tabla que en el camino se renombró. */
 function nombreDeHoy(tabla, renombres) {
   let nombre = tabla;
@@ -527,7 +655,7 @@ export function siembraQueSeSigueSola(textos) {
  * un disparador: ninguna de las tres cosas está obligada a estar en esta
  * migración. Sin esos datos se mira sólo este texto.
  */
-export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre) {
+export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, bajas) {
   const t = texto.replace(/\r\n/g, '\n');
   const bajo = t.toLowerCase();
   const tienen = conColumna || conOrganizacion([t]);
@@ -678,6 +806,53 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre) {
     }
   }
 
+  /* 11. Toda política que deja escribir nombra la Organización en la condición
+     que gobierna la fila que queda escrita. El `using` dice qué filas puedo
+     tocar; el `with check`, cómo pueden quedar. Pedirla sólo en el primero deja
+     entrar y deja mudar: la fila se guarda dentro de otra Prestadora. */
+  for (const [politica, tabla, posicion, cuerpo] of politicasQueEscriben(sinComentarios)) {
+    if (yaNoEsta(politica, nombre, posicion, bajas)) continue;
+    if (SIN_ORGANIZACION_AL_ESCRIBIR.has(politica)) continue;
+
+    /* Sin `with check` escrito, Postgres usa el `using` para las dos cosas, así
+       que ahí el que gobierna la fila nueva es el `using`. */
+    const conCheck = cuerpo.search(/\bwith\s+check\b/i);
+    const conUsing = cuerpo.search(/\busing\b/i);
+    const desde = conCheck >= 0 ? conCheck : conUsing;
+    if (desde >= 0 && NOMBRA_ORGANIZACION.test(entreParentesis(cuerpo, desde))) continue;
+
+    fallas.push([renglonDe(t, posicion),
+      'la política «' + politica + '» ' + (tabla === '%i'
+        ? 'de las tablas que arma el bucle'
+        : 'de `' + tabla + '`') + ' deja escribir y ' +
+      (conCheck >= 0
+        ? 'su `with check` no nombra la Organización'
+        : 'no tiene condición que nombre la Organización') +
+      ': la fila que quede escrita se puede guardar dentro de otra Prestadora. ' +
+      'El `using` dice qué filas se pueden tocar; el `with check`, cómo pueden ' +
+      'quedar, y son cosas distintas']);
+  }
+
+  /* 11 bis. Lo que sostiene a una exenta se comprueba, no se cree. La de arriba
+     dice que la sostiene el permiso por columna: acá se mira que lo siga siendo.
+     Desde la 0032 por lo mismo que la novena —antes está el volcado que ella vino
+     a sacar—, y la 0032 es justo la que sacó ese permiso sin querer. */
+  if (!nombre || nombre.slice(0, 4) >= LA_PUERTA_SE_CERRO) {
+    const sostenidas = [...SIN_ORGANIZACION_AL_ESCRIBIR.values()].map((v) => v.tabla);
+    for (const m of sinComentarios.matchAll(GRANT_DE_TABLA)) {
+      if (!sostenidas.includes(m[2].toLowerCase())) continue;
+      if (!ESCRIBE.test(m[1]) || m[1].includes('(')) continue;
+      const quienes = m[3].replace(/[\s"]/g, '').split(',').filter((r) => !DEL_SERVIDOR.test(r));
+      if (quienes.length === 0) continue;
+      fallas.push([renglonDe(t, m.index),
+        'este permiso deja escribir `' + m[2] + '` a ' + quienes.join(' y ') +
+        ' sin nombrar columnas, y una política de esa tabla está exenta de la ' +
+        'undécima regla justamente porque el permiso por columna la sostenía. ' +
+        'Sin lista de columnas se puede escribir cualquiera, incluidas las que ' +
+        'deciden el rol y la Prestadora']);
+    }
+  }
+
   return fallas.sort((a, b) => a[0] - b[0]);
 }
 
@@ -760,7 +935,19 @@ const MAL = [
    'alter table public.visitas add column if not exists nota text;\n',
    '0050_prueba.sql'],
   ['un permiso de tabla, que también cambia lo que PostgREST tiene guardado',
-   'grant select on table public.visitas to authenticated;\n', '0050_prueba.sql']
+   'grant select on table public.visitas to authenticated;\n', '0050_prueba.sql'],
+  ['una política que deja escribir y pide la Organización sólo para leer',
+   'create policy "Lo mío" on public.cosas for all to authenticated\n' +
+   '  using      (tenant_id = public.prestadora_actual())\n' +
+   '  with check (user_id = auth.uid());\n'],
+  ['la misma dejando entrar cualquier fila',
+   'create policy "Lo mío" on public.cosas for insert to authenticated\n' +
+   '  with check (true);\n'],
+  ['una que la crea un bucle y tampoco la nombra',
+   'create policy "Lo mío" on public.%I for all to authenticated\n' +
+   '  with check (user_id = auth.uid());\n'],
+  ['un permiso que deja escribir `profiles` sin nombrar columnas',
+   'grant update on table public.profiles to authenticated;\n']
 ];
 
 const BIEN = [
@@ -834,7 +1021,28 @@ const BIEN = [
    "-- alter table public.visitas add column nota text;\nselect 1;\n",
    '0050_prueba.sql'],
   ['la migración vieja que cambia el esquema sin avisar: ya está aplicada y no se edita',
-   CREA + RLS, '0006_prueba.sql']
+   CREA + RLS, '0006_prueba.sql'],
+  ['la misma política nombrando la Organización también en el `with check`',
+   'create policy "Lo mío" on public.cosas for all to authenticated\n' +
+   '  using      (tenant_id = public.prestadora_actual())\n' +
+   '  with check (tenant_id = public.prestadora_actual() and user_id = auth.uid());\n'],
+  ['una de escritura sin `with check`, que Postgres copia del `using`',
+   'create policy "Lo mío" on public.cosas for all to authenticated\n' +
+   '  using (tenant_id = public.prestadora_actual());\n'],
+  ['un `with check` más angosto que su `using`, como las dos de la 0020',
+   'create policy "Lo mío" on public.cosas for all to authenticated\n' +
+   '  using      (tenant_id = public.prestadora_actual())\n' +
+   '  with check (tenant_id = public.prestadora_actual() and user_id = auth.uid());\n'],
+  ['la que abre de par en par pero una migración posterior da de baja',
+   'create policy "Vieja" on public.cosas for all to authenticated\n' +
+   '  with check (true);\n' +
+   'drop policy if exists "Vieja" on public.cosas;\n'],
+  ['la baja escrita antes del alta, como en el bucle de la 0012',
+   'drop policy if exists "Lo mío" on public.%I;\n' +
+   'create policy "Lo mío" on public.%I for all to authenticated\n' +
+   '  with check (tenant_id = public.prestadora_actual());\n'],
+  ['el permiso de `profiles` nombrando la columna que sí se puede tocar',
+   'grant update (full_name) on table public.profiles to authenticated;\n']
 ];
 
 /* De acá para abajo está la verificación. De acá para arriba está la regla que
@@ -848,8 +1056,12 @@ const ME_CORRIERON_A_MI = process.argv[1] &&
 
 if (ME_CORRIERON_A_MI) {
   /* El tercer valor, cuando está, es el nombre del archivo: la novena regla y la
-     décima miran desde qué migración rigen, y sin nombre no se las puede probar. */
-  const juzgar = ([, t, n]) => fallasDeUnaMigracion(t, undefined, undefined, undefined, n);
+     décima miran desde qué migración rigen, y sin nombre no se las puede probar.
+     Las bajas salen del mismo texto del caso, que es lo que deja probar que una
+     política dada de baja después ya no se juzga. */
+  const juzgar = ([, t, n]) => fallasDeUnaMigracion(
+    t, undefined, undefined, undefined, n,
+    politicasDadasDeBaja([t], [n]));
   const noDetecta = MAL.filter((c) => juzgar(c).length === 0);
   const sePasa = BIEN.filter((c) => juzgar(c).length > 0);
   if (noDetecta.length || sePasa.length) {
@@ -866,6 +1078,7 @@ if (ME_CORRIERON_A_MI) {
   let politicas = 0;
   let permisos = 0;
   let avisos = 0;
+  let escrituras = 0;
   const migraciones = readdirSync(carpeta).filter((n) => n.endsWith('.sql')).sort();
   seRevisaron(migraciones.length, 'una sola migración `.sql` para revisar');
   const textos = migraciones.map((n) => readFileSync(join(carpeta, n), 'utf8'));
@@ -885,6 +1098,11 @@ if (ME_CORRIERON_A_MI) {
      para siempre por algo que ya está arreglado. */
   const sigue = siembraQueSeSigueSola(textos);
 
+  /* Y lo mismo con las bajas: las siete políticas de la 0001 que escriben
+     `with check (true)` las borra la 0002, y juzgando archivo por archivo la
+     0001 saldría en rojo para siempre por algo que ya no está en la base. */
+  const bajas = politicasDadasDeBaja(textos, migraciones);
+
   for (const [i, nombre] of migraciones.entries()) {
     const texto = textos[i];
     tablas += [...texto.matchAll(TABLA)].length;
@@ -894,6 +1112,11 @@ if (ME_CORRIERON_A_MI) {
         texto.slice(m.index, fin > 0 ? fin : texto.length))) funciones++;
     }
     politicas += [...texto.matchAll(POLITICA_DEPOSITO)].length;
+    /* La cuenta sale del mismo lugar que la regla, para que no se despeguen. */
+    for (const [politica, , posicion] of politicasQueEscriben(
+      texto.split('\n').map((l) => (/^\s*--/.test(l) ? ' '.repeat(l.length) : l)).join('\n'))) {
+      if (!yaNoEsta(politica, nombre, posicion, bajas)) escrituras++;
+    }
     if (nombre.slice(0, 4) >= LA_PUERTA_SE_CERRO) {
       /* Sin los renglones comentados, igual que la regla: la 0047 cita un
          `grant` adentro de un comentario para explicarlo, y contar eso sería
@@ -916,7 +1139,7 @@ if (ME_CORRIERON_A_MI) {
       }
     }
     for (const [renglon, motivo] of
-      fallasDeUnaMigracion(texto, tienenColumna, primarias, sigue, nombre)) {
+      fallasDeUnaMigracion(texto, tienenColumna, primarias, sigue, nombre, bajas)) {
       fallas.push(`supabase/migrations/${nombre}:${renglon}  ${motivo}`);
     }
   }
@@ -926,7 +1149,7 @@ if (ME_CORRIERON_A_MI) {
     for (const falla of fallas) console.error('  - ' + falla);
     console.error(
       `\n${fallas.length} ${fallas.length === 1 ? 'incumplimiento' : 'incumplimientos'}. ` +
-      'Las diez reglas están en el encabezado de este archivo, con el porqué de cada\n' +
+      'Las once reglas están en el encabezado de este archivo, con el porqué de cada\n' +
       'una. La RLS y la revocación van en la misma migración que crea la tabla o la\n' +
       'función, nunca en una posterior y nunca a mano desde el panel de Supabase; la\n' +
       'columna de Organización, la clave primaria y la moneda pueden llegar después,\n' +
@@ -941,8 +1164,13 @@ if (ME_CORRIERON_A_MI) {
       "Y toda migración que cambia el esquema termina con `NOTIFY pgrst, 'reload\n" +
       "schema';`, al final y no en el medio: lo que se escriba detrás del aviso queda\n" +
       'afuera de esa recarga, y PostgREST contesta 404 en algo que sí existe.\n' +
+      'Y toda política que deja escribir nombra la Organización en la condición que\n' +
+      'gobierna la fila que queda escrita, que es el `with check` cuando está y el\n' +
+      '`using` cuando no: pedirla sólo para leer deja entrar y deja mudar la fila a\n' +
+      'otra Prestadora.\n' +
       'Si un caso no puede cumplirla, va a SIN_ORGANIZACION, a SIN_MONEDA, a\n' +
-      'AL_ALCANCE_ANONIMO o a SIN_ORGANIZACION_EN_EL_DEPOSITO de este mismo\n' +
+      'AL_ALCANCE_ANONIMO, a SIN_ORGANIZACION_EN_EL_DEPOSITO o a\n' +
+      'SIN_ORGANIZACION_AL_ESCRIBIR de este mismo\n' +
       'archivo, con el motivo escrito y el pendiente que lo sigue.');
     process.exit(1);
   }
@@ -964,5 +1192,9 @@ if (ME_CORRIERON_A_MI) {
     `${permisos} permisos de tabla escritos desde la ${LA_PUERTA_SE_CERRO}, ninguno ` +
     'concede `all` ni `truncate` a quien inicia sesión. ' +
     `Y las ${avisos} migraciones desde la ${EL_AVISO_EMPIEZA} que cambian el esquema ` +
-    "terminan con `NOTIFY pgrst, 'reload schema';`.");
+    "terminan con `NOTIFY pgrst, 'reload schema';`. " +
+    `Y de las ${escrituras} políticas que siguen en pie y dejan escribir, todas ` +
+    'nombran la Organización en la condición que gobierna la fila que queda escrita ' +
+    `(${SIN_ORGANIZACION_AL_ESCRIBIR.size} exenta, con su motivo y con el permiso por ` +
+    'columna que la sostiene, comprobado acá mismo).');
 }

@@ -3237,7 +3237,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 - **La puerta es `guias_de(p_slug)`** (`:272`), del mismo tipo que `vocabularios_de`: la tabla no le
   concede nada a `anon` (`:254`), y lo que sale a la calle es una función que **exige el nombre
   corto**, devuelve la general más la de esa sola Prestadora, y sólo las publicadas. Está anotada
-  con su motivo en `scripts/verificar_esquema.mjs:220`, que es donde viven las funciones que llegan
+  con su motivo en `scripts/verificar_esquema.mjs:280`, que es donde viven las funciones que llegan
   al alcance anónimo a propósito.
 - **La pantalla nueva es `screen-guias`** en la aplicación del Asistente
   (`pwa-asistente/index.html:702`), con los cuatro estados y un buscador. **Es una biblioteca de
@@ -5409,6 +5409,68 @@ Falsificado de cuatro maneras sobre archivos de verdad, restaurando cada uno des
 `legajo`, agregando un `console.error(cual)` suelto en `js/catalogo.js` y agregando ahí mismo un
 `console.error('Catálogo: ' + JSON.stringify(cual))`, que es justo la forma que un chequeo ingenuo
 deja pasar porque lleva un texto adelante. Los cuatro dieron rojo, y ninguno quedó en el árbol.
+
+### Tres reglas candidatas murieron al medirlas, y la cuarta encontró la asimetría
+
+La búsqueda de esa noche era la de siempre: una regla de la empresa que esté escrita en prosa y
+que no mire nadie. Aparecieron cuatro candidatas y **tres murieron al medirlas**, que es como
+tiene que ser: un chequeo que naciera rojo no es un chequeo, es un pendiente disfrazado.
+
+- **«Todo permiso de escritura nombra sus columnas.»** La primera medición dijo que faltaban
+  pocas. Estaba mal: el `grep` estaba anclado en `^grant (insert|update|delete)`, y así no ve las
+  veintidós escritas `grant select, insert, update, delete on table …`. Contadas bien, la regla
+  nacía rojo casi entero. La respuesta honesta era **tirar la regla, no acomodarla**, y la
+  corrección de mi propia medición vale tanto como el chequeo que sí salió.
+- **«Las tablas que deciden un permiso sólo se escriben por columna.»** Roja en `caregivers`, que
+  tiene el permiso de tabla entero —y que resulta estar bien protegida, por el `with check` de su
+  propia política—.
+- **«El `with check` nunca es más flojo que el `using`.»** Roja en dos de la 0020 que lo angostan
+  **a propósito**: se puede leer un mensaje del aviso en el que uno participa y no se lo puede
+  escribir como si fuera de otro.
+
+La cuarta midió verde y quedó escrita: **toda política que deja escribir nombra la Organización
+en la condición que gobierna la fila que queda escrita**.
+
+**Qué agujero cierra.** Una política tiene dos condiciones y no dicen lo mismo. El `using` dice
+**qué filas se pueden tocar**; el `with check`, **cómo pueden quedar después**. Una que pida la
+Prestadora sólo en la primera deja tocar nada más que las propias —parece bien— y después deja
+guardarlas **con la Prestadora de otro**. Leer sigue funcionando perfecto, la pantalla no cambia,
+y la fila se fue. Cuando el `with check` no está escrito Postgres copia el `using`, así que
+omitirlo es seguro: el agujero es escribirlo más flojo. Hoy hay dos así y las dos quedan verdes
+por herencia.
+
+**Las políticas muertas no se juzgan, y eso no es un límite escrito.** Siete de la 0001 escriben
+`with check (true)`, que es el agujero entero, y una migración aplicada no se edita. La novena
+regla y la décima resolvieron eso con una migración de corte —`0032`, `0025`—. Esta no hizo
+falta: la regla **calcula** si alguna migración posterior borra la política por su nombre. Las
+siete de la 0001 las borra la 0002, veintisiete de las cuarenta y siete están dadas de baja, y
+quedan veinte en pie. Es más angosto que un límite y además se rearma solo: si alguien vuelve a
+crear mañana una de esas siete con el mismo nombre, esta vez se juzga.
+
+**Y las que crea un bucle se juzgan igual.** La 0005 y la 0012 escriben cuatro políticas adentro
+de un `execute format`, una por cada tabla de un arreglo. El texto del `create policy` está ahí
+entero y lo único que llega como hueco es el nombre de la tabla, `%I`. La primera versión las
+leía igual pero les decía `public` de tabla, que es un nombre inventado; ahora dice «de las
+tablas que arma el bucle». Un nombre equivocado en un mensaje de falla sólo se ve el día que la
+regla se pone roja, que es justo el día en que tiene que estar bien.
+
+**La única exención se comprueba en vez de creerse.** `profiles` no puede preguntar
+`prestadora_actual()`: es la tabla de donde esa función saca la respuesta, así que una política
+suya que la preguntara se estaría preguntando a sí misma. Lo que impide mudarse de Prestadora, o
+hacerse `coordinador`, no es su política: es el **permiso por columna**, `grant update
+(full_name)` y nada más. Una exención común diría eso y pediría que se le crea. Ésta manda a
+mirar: el chequeo va y verifica que ningún permiso de escritura sobre `profiles` haya salido sin
+lista de columnas. **No es una precaución teórica —la 0032 sacó ese permiso sin querer y la 0033
+tuvo que devolverlo—**, así que es una regresión que ya pasó una vez y que no tenía quien la
+mirara.
+
+Falsificada sobre una migración de verdad, cambiando el `with check` de una política de la 0020
+por `true` y restaurándola después: dio rojo con el archivo, el renglón y el nombre de la
+política. Y diez casos nuevos adentro del banco de pruebas del propio chequeo, cuatro que tienen
+que dar rojo y seis que tienen que pasar —entre ellos el `with check` más angosto, la política sin
+`with check`, la que da de baja una migración posterior y el permiso por columna—. Uno de esos
+seis salió rojo la primera vez y estaba bien que saliera: el banco de pruebas no le pasaba las
+bajas al detector, así que la política dada de baja se juzgaba igual.
 
 ## 6. Deuda del código actual
 
