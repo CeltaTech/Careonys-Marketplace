@@ -915,8 +915,8 @@ Lo que falta —empezar una conversación con esa persona en particular— qued�
 
 **Tres traducciones que estaban por escribirse dos veces subieron a los archivos compartidos**
 («ningún patrón repetido sin punto único de verdad»): el precio en pesos es `Texto.importe` (`js/texto.js:88`), la etiqueta de una lista es
-`Catalogo.etiquetaSiExiste` (`js/catalogo.js:348`), y la de una tarea —que puede estar en cualquiera
-de tres listas— es `Catalogo.etiquetaDeTarea` (`js/catalogo.js:361`). Vivían adentro de
+`Catalogo.etiquetaSiExiste` (`js/catalogo.js:383`), y la de una tarea —que puede estar en cualquiera
+de tres listas— es `Catalogo.etiquetaDeTarea` (`js/catalogo.js:396`). Vivían adentro de
 `directorio.html`; ahora las dos pantallas las piden al mismo lugar.
 
 
@@ -3844,6 +3844,51 @@ apuntando a la base de esta máquina, la coordinadora ficticia de una de las dos
 por `acceso.html`, cayó en `panel-prestadora.html` con rol `coordinador` y su Prestadora resuelta,
 y las llamadas de la pantalla —perfil, Prestadora, legajos— contestaron todas. El archivo servido
 no nombra ninguna base: la única que nombra alguna es `js/apiClient.js`.
+
+### Ocho avisos que ya no aparecen, y un aviso que ahora dice quién los pidió
+
+*(30 de agosto de 2026 — cierra el pendiente 101)*
+
+**Qué decía el pendiente.** Al abrir `registrar-asistente.html`, la consola escribía ocho veces
+`Catálogo: no existe la frase «null».` — o sea `Catalogo.frase(null)`, que avisa y devuelve texto
+vacío. No rompía nada visible, y por eso llevaba ahí sin que nadie lo mirara: ocho renglones rojos
+en la pantalla que más se usa enseñan a no leer la consola. Lo que quedaba abierto no era el
+síntoma sino la pregunta: **quién los pedía**.
+
+**No se reprodujo, y no por falta de buscarlo.** Se enganchó el aviso en el único lugar del
+proyecto que lo escribe —`js/catalogo.js`, un solo `console.error` en los tres archivos— para que
+guardara además la pila de llamadas, y se abrió la pantalla en cinco escenarios: con el árbol de
+hoy contra la base de esta máquina; con el árbol de hoy contra la base publicada; con el árbol
+tal como estaba el 29 de agosto, que es el día del informe, sacado a una copia aparte del
+repositorio; en la publicada, directamente; y en inglés. **Cero avisos en los cinco.** No fue una
+pantalla a medio cargar: los nueve catálogos de la página resolvieron sus opciones —género,
+condición fiscal, tipo de Asistente, nivel educativo, certificaciones, patologías, tareas de
+cuidado, modalidades y retiro— y `frase()` se llamó treinta veces, ninguna con clave nula. También
+se descartó que hubiera una copia sin conexión sirviendo archivos viejos: no hay ninguna
+registrada en esa dirección.
+
+**La prueba puede fallar**, que es lo que la hace valer: pedidas a mano una clave nula y una
+inventada, las dos quedaron registradas con su pila. Sin eso, «no apareció» y «no estaba mirando»
+se escriben igual.
+
+**Así que no se sabe qué los causaba, y se dice.** Lo que sí se arregló es lo que dejó el
+pendiente abierto tres días: que el aviso no sirviera para encontrar al culpable.
+
+**Cómo quedó el aviso.** `js/catalogo.js` avisa ahora tres cosas donde antes avisaba una:
+
+1. **Desde dónde se pidió la frase.** La pila de llamadas va adentro del mensaje. La próxima vez
+   que aparezca uno de estos, el nombre de quien llama está en el mismo renglón rojo, y no hay que
+   volver a enganchar nada.
+2. **Una vez por clave, no una por llamada.** La misma clave pedida veinte veces mientras se
+   dibuja una lista es un solo problema. Ocho renglones iguales no se leen.
+3. **Una clave nula no es una clave escrita mal.** «Se pidió una frase sin clave» y «no existe la
+   frase tal» son fallas de lugares distintos —la primera es de quien llama, que no le pasó
+   ninguna; la segunda es una frase que falta en el catálogo—, y el mensaje las separa.
+
+Lo que **no** cambió es lo que la pantalla ve: una clave que falta sigue devolviendo la cadena
+vacía. La otra salida que el pendiente aceptaba —que una clave nula devolviera vacío **sin**
+avisar— se descartó a propósito: `frase(null)` es siempre una falla de quien llama, y callarla
+deja el producto sin la única señal que lo dice.
 
 ---
 

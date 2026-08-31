@@ -159,6 +159,39 @@
   let promesaFrases = null;
   let frases = null;    // El texto visible de las pantallas.
 
+  // ── CUANDO UNA FRASE NO ESTÁ ───────────────────────────────────────
+  // Falta una frase y hay que arreglarlo, así que se avisa. Pero el aviso dice
+  // además **desde dónde se la pidió**, y no se repite.
+  //
+  // Las dos cosas salen de un caso real. La pantalla de alta del Asistente
+  // escribía ocho veces al cargar «no existe la frase «null»», y con el mensaje
+  // suelto no hubo manera de saber quién la pedía: el pendiente 101 estuvo
+  // abierto por eso. Ocho renglones rojos iguales tampoco se leen —enseñan a no
+  // mirar la consola, que es lo peor que puede hacer un aviso—.
+  //
+  // Y una clave nula o vacía no es lo mismo que una escrita mal. La primera es
+  // de quien llama, que no le pasó ninguna; la segunda es una frase que falta
+  // en el catálogo. Se arreglan en lugares distintos, así que el mensaje las
+  // separa.
+  //
+  // Se avisa una vez por clave, no una por llamada: la misma clave pedida
+  // veinte veces mientras se dibuja una lista es un solo problema. La pila que
+  // se muestra es la del primer pedido.
+  const yaAvisadas = {};
+
+  function avisarFraseQueFalta(clave) {
+    const cual = String(clave);
+    if (yaAvisadas[cual]) return;
+    yaAvisadas[cual] = true;
+    const sinClave = clave === null || clave === undefined || clave === '';
+    console.error(
+      (sinClave
+        ? 'Catálogo: se pidió una frase sin clave (' + cual + '). No falta la frase: falta que quien llama le pase una.'
+        : 'Catálogo: no existe la frase «' + cual + '».') +
+      '\nSe pidió desde:\n' + (new Error().stack || '(el navegador no dio la pila)'));
+  }
+
+
   // La dirección del archivo se calcula desde la de este mismo guion. Así la
   // copia de cada PWA lee el JSON de su propia carpeta sin que nadie configure
   // nada, y una pantalla que viva en un subdirectorio tampoco se rompe.
@@ -281,11 +314,13 @@
     //
     // No espera nada, porque se la llama mientras se dibuja. Si la clave no
     // está —el archivo no llegó, o alguien la escribió mal— devuelve la cadena
-    // vacía y avisa por consola; quien la llamó decide qué hacer con el hueco.
+    // vacía y avisa por consola; quien la llamó decide qué hacer con el hueco. El
+    // aviso nombra a quien pidió la frase, y no se repite: `avisarFraseQueFalta`,
+    // más arriba, cuenta por qué.
     frase(clave, huecos) {
       const traducciones = (frases && frases[clave]) || ARRANQUE[clave];
       if (!traducciones) {
-        console.error('Catálogo: no existe la frase «' + clave + '».');
+        avisarFraseQueFalta(clave);
         return '';
       }
       let texto = traducciones[this.idioma] || traducciones[IDIOMA_POR_DEFECTO] || '';
