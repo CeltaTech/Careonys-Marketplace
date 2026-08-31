@@ -1571,7 +1571,7 @@ pantalla vacía.
   lo que corresponde mostrar es el acceso. Lo que se perdía era el rastro. Ahora
   `mockup-app.html:425` y `:889`, `pwa-asistente/index.html:811` y `pwa-familia/index.html:828`
   dejan el detalle técnico en la consola en lugar de tirarlo.
-- **`js/auth.js:201` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
+- **`js/auth.js:224` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
   cargan ese archivo —no en las dieciséis, y el comentario decía catorce hasta que se contaron—, y su
   único trabajo es pasarle el permiso al cliente de datos. Si falla, el primer pedido de esa
   pantalla va a fallar también, y esa pantalla sí sabe cómo decirlo; poner un cartel acá sería
@@ -3791,6 +3791,59 @@ publica en la 0045.
 de la otra en la base de esta máquina, el chequeo nombró la guía y las dos Prestadoras, y los
 datos se dejaron como estaban. La propia migración se defiende igual: se planta si no quedaron dos
 guías publicadas, y también si las dos dicen lo mismo.
+
+### La dirección de la base estaba escrita dos veces, y ninguna de las dos mandaba
+
+*(30 de agosto de 2026 — cierra el pendiente 106)*
+
+**Qué pasaba.** `js/apiClient.js` declaraba la dirección del servidor y su clave publicable, y
+`js/auth.js` las declaraba otra vez, con el mismo valor. No era una copia de la otra: eran dos
+afirmaciones sueltas del mismo hecho, sin ninguna que mandara sobre la otra, y quien cambiara una
+no tenía forma de enterarse de que había otra. Con las tres copias del pendiente 13, el mismo
+valor estaba escrito seis veces.
+
+**Cómo se descubrió.** Haciendo que el servidor local apuntara a la base de esta máquina.
+Cambiada una sola, las pantallas leían de una base y le pedían la sesión a la otra, donde esas
+cuentas no existen; salía «el correo o la contraseña no coinciden», que no dice ni de lejos lo que
+estaba pasando. `scripts/servidor_local.py` se acomodó entonces reemplazando la dirección en
+**todo** `.js` que sirve, y por eso lo sigue haciendo: el día que alguien la vuelva a escribir en
+otro archivo, esto no va a servir una copia a medias.
+
+**Cómo quedó.** Se declaran en `js/apiClient.js:8-9` y en ningún otro lado. `js/auth.js:31-32`
+las lee de `ClienteDatos`, y si ese archivo no se cargó antes se planta con un mensaje que dice
+qué falta, en vez de dejar un `ClienteDatos is not defined` suelto en la consola de una pantalla
+cualquiera. El orden de los `<script>` ya era el correcto en las doce pantallas que cargan los
+dos, y aun así se comprueba: un orden que hay que recordar se olvida.
+
+**El chequeo veintiséis, `scripts/verificar_base.mjs`, mira cuatro cosas y las cuatro hacen
+falta:**
+
+1. Que la dirección y la clave no estén escritas fuera del grupo de copias registrado. La lista de
+   dónde se permite sale de `scripts/verificar_copias.mjs:27`, no de una segunda lista escrita
+   adentro del chequeo: si mañana el original cambia de nombre o gana una copia, se entera solo.
+2. Que `js/auth.js` siga sacándolas de `ClienteDatos` **con una asignación**. Sin esto, borrar el
+   cableado dejaría el chequeo pasando: cero apariciones fuera del original es exactamente lo que
+   devuelve un producto que ya no se conecta a ninguna base. Y se pide la asignación y no la
+   mención, porque el nombre aparece también en el aviso de arranque.
+3. Que toda pantalla que carga `js/auth.js` cargue antes `js/apiClient.js`.
+4. Que en ningún archivo haya una clave con forma de secreta ni un token con forma de JWT. Ésas no
+   van al navegador nunca, ni siquiera en el archivo que sí puede tener la publicable, así que
+   esta cuarta no tiene exentos.
+
+**El chequeo no escribe adentro ninguno de los valores que busca.** Los lee del proyecto, y los de
+su autoprueba los arma por pedazos. Así no hay que hacerle una excepción a sí mismo, que es la
+manera más silenciosa de romper un chequeo como éste.
+
+**Se comprobó que puede fallar, con los cuatro casos, uno por uno:** un archivo suelto con la
+dirección adentro, el cableado de `auth.js` apuntado a otra cosa, `apiClient.js` cargado después
+de `auth.js` en `acceso.html`, y un archivo con una clave inventada con forma de secreta. Los
+cuatro dieron rojo y nombraron el archivo; todo se dejó como estaba.
+
+**Y se comprobó que sigue funcionando donde importa**, que es entrar: con el servidor local
+apuntando a la base de esta máquina, la coordinadora ficticia de una de las dos Prestadoras entró
+por `acceso.html`, cayó en `panel-prestadora.html` con rol `coordinador` y su Prestadora resuelta,
+y las llamadas de la pantalla —perfil, Prestadora, legajos— contestaron todas. El archivo servido
+no nombra ninguna base: la única que nombra alguna es `js/apiClient.js`.
 
 ---
 

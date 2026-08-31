@@ -4,8 +4,32 @@
    Requiere: @supabase/supabase-js v2 cargado antes que este script.
 =================================================== */
 
-const SUPABASE_URL  = 'https://pfbvpncavvlgmmvqkgbo.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_rmhuO0J5QsE5mw-5fgf-Hw_9tCHd1di';
+/* La dirección de la base y su clave publicable NO se escriben acá: salen de
+   `ClienteDatos`, en `js/apiClient.js`, que es el único lugar donde están
+   escritas.
+
+   Hasta el 30 de agosto de 2026 estaban también acá, con el mismo valor y sin
+   que ninguna de las dos mandara sobre la otra. No era una copia de la otra:
+   eran dos afirmaciones sueltas del mismo hecho, y quien cambiara una no tenía
+   forma de enterarse de que había otra. Se descubrió haciendo que el servidor
+   local apuntara a la base de esta máquina: cambiada una sola, las pantallas
+   leían de una base y le pedían la sesión a la otra, donde esas cuentas no
+   existen. Salía «el correo o la contraseña no coinciden», que no dice ni de
+   lejos lo que estaba pasando.
+
+   Y si `apiClient.js` no se cargó antes, esto se planta y lo dice. El orden de
+   los `<script>` es el correcto en las doce pantallas que cargan los dos, y aun
+   así se comprueba: un orden que hay que recordar se olvida, y sin este aviso
+   el síntoma sería un `ClienteDatos is not defined` suelto en la consola de una
+   pantalla cualquiera. */
+if (typeof ClienteDatos === 'undefined' ||
+    !ClienteDatos.supabaseUrl || !ClienteDatos.supabaseKey) {
+  throw new Error(
+    'js/auth.js necesita js/apiClient.js cargado antes: de ahí sale la dirección de la base.');
+}
+
+const SUPABASE_URL  = ClienteDatos.supabaseUrl;
+const SUPABASE_ANON = ClienteDatos.supabaseKey;
 
 // Instancia del SDK oficial (expuesta globalmente para Realtime)
 const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {

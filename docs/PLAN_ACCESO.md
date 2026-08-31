@@ -116,7 +116,7 @@ el tablero, sin migración que los declarara — contra la «toda migración ver
 
 Una dirección firmada vence. Guardarla es guardar algo que dentro de un rato deja de funcionar,
 así que en la base queda `<cuenta>/<archivo>` y la dirección se firma al mostrarla
-(`Sesion.urlFirmada`, `js/auth.js:176`; quince minutos en la pantalla de auditoría).
+(`Sesion.urlFirmada`, `js/auth.js:197`; quince minutos en la pantalla de auditoría).
 
 ### Un arreglo que no estaba en el plan
 

@@ -115,6 +115,7 @@ Los nueve guiones de línea de comandos, y el módulo que comparten:
 | `scripts/verificar_claves.mjs` | Falla si una migración siembra, en una columna gobernada por un vocabulario, un valor que ese vocabulario no tiene. La base acepta cualquier texto; la pantalla no: `js/catalogo.js` muestra la clave cruda cuando no encuentra su etiqueta, y el filtro que ofrece el catálogo busca por la clave buena. |
 | `scripts/verificar_identidad.mjs` | Falla —código de salida 1— si el nombre, el dominio o el correo aparecen escritos a mano fuera de `js/identidad.js`. Verifica además que los manifiestos estén al día, y le pide a `verificar_copias.mjs` la comparación de las tres copias del archivo de identidad, para no tener dos veces escrita la misma revisión. Ignora la documentación y los comentarios del código. |
 | `scripts/verificar_clases.mjs` | Falla si el marcado nombra en un `class="…"` una clase que ninguna hoja `.css` declara, que ningún `<style>` de una pantalla declara y que ningún guion menciona entre comillas —esto último porque una clase también sirve de agarradera para el programa y ésas no se dibujan—. Nombrar una que no existe no rompe nada, y por eso dura: el marcado afirma que ese campo tiene estilo propio, y el día que haya que cambiarlo no está en la hoja. Font Awesome es la única familia exenta, por venir de afuera, y se saltea por prefijo. |
+| `scripts/verificar_base.mjs` | Falla si la dirección de la base o su clave publicable aparecen escritas fuera de `js/apiClient.js` y sus dos copias registradas —la lista de dónde se permite sale de `scripts/verificar_copias.mjs:27`, no de una segunda lista escrita acá—. Mira además que `js/auth.js` las siga sacando de `ClienteDatos` con una asignación, que toda pantalla que carga `js/auth.js` cargue antes `js/apiClient.js`, y que en ningún archivo del proyecto haya una clave con forma de secreta ni un token con forma de JWT, esto último sin exentos. No escribe adentro ninguno de los valores que busca: los lee del proyecto, y los de su autoprueba los arma por pedazos. |
 | `scripts/verificar_todo.mjs` | Corre todos los chequeos de una vez y falla si falla alguno. No lleva la lista escrita adentro: busca en `scripts/` todo `verificar_*.mjs`, así que el próximo entra solo. Es lo que llama el gancho `pre-commit` |
 | `.githooks/pre-commit` | El gancho que git corre antes de cada commit. Frena el commit si algún chequeo falla. Para que git lo use hay que decírselo una vez por máquina: `git config core.hooksPath .githooks` |
 | `scripts/servidor_local.py` | El servidor para mirar las pantallas mientras se trabaja. Es `python -m http.server` con cuatro diferencias, y cada una es el motivo de que exista. **No deja guardar copias**, porque si no el navegador sigue mostrando la versión vieja de un archivo después de haberlo cambiado, sin avisar (pendiente 42). **No publica las cajas fuertes** ni `.git`: hasta el 30 de agosto de 2026 publicaba la carpeta entera, y adentro hay una. **Sabe apuntar a la base de esta máquina** con `--base-local`, cambiando la dirección en el texto que sale por la red y nunca en el archivo. **Y acepta 128 conexiones esperando** en vez de las 5 de fábrica: una pantalla pide nueve archivos a la vez y el sistema cortaba las que sobraban, que se veía como `js/auth.js` que no llegaba una recarga sí y otra no. |
@@ -248,8 +249,9 @@ Quedan **dos modelos de datos distintos para la misma cosa**: el de `perfil.html
 
 ### 3.2 Direcciones de red
 
-Todo va contra un mismo proyecto de Supabase, cuya dirección está escrita en el código en
-`js/apiClient.js:9` y `js/auth.js:7`.
+Todo va contra un mismo proyecto de Supabase, cuya dirección está escrita en el código en un
+solo lugar, `js/apiClient.js:8`, de donde la lee `js/auth.js` (`:31`). Que esté una sola vez lo
+sostiene `scripts/verificar_base.mjs`.
 
 **Interfaz REST** — `{supabase}/rest/v1/{tabla}`:
 
@@ -325,10 +327,13 @@ opiniones sobre el diseño):
 - `registrar-asistente.html:849` usa **el número de documento como contraseña inicial** de la
   cuenta que crea. Es un dato que el propio formulario acaba de mostrar en pantalla y que figura
   en el legajo.
-- La dirección del proyecto y la llave pública de Supabase están escritas en el código, en
-  `js/apiClient.js:9-10` y `js/auth.js:7-8`, y repetidas en las seis copias de esos archivos.
-  Siendo llave publicable, no es una filtración; pero al migrar a Vite corresponde que pase a
-  variables de entorno y quede en un solo lugar.
+- La dirección del proyecto y la clave publicable de Supabase están escritas en el código, en
+  `js/apiClient.js:8-9`, y repetidas en las dos copias registradas de ese archivo. Siendo clave
+  publicable, no es una filtración; pero al migrar a Vite corresponde que pasen a variables de
+  entorno. **Que estén en un solo lugar ya está hecho**: hasta el 30 de agosto de 2026 `js/auth.js`
+  las declaraba por segunda vez, con el mismo valor y sin que ninguna mandara sobre la otra, y hoy
+  las lee de `ClienteDatos` (`js/auth.js:31`). Lo sostiene `scripts/verificar_base.mjs`, que se
+  planta si vuelven a aparecer escritas fuera del original.
 
 ---
 

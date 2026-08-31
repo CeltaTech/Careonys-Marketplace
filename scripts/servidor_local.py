@@ -30,13 +30,16 @@ atrás, y el día que alguien se olvida el repositorio queda apuntando a
 `localhost` y la publicación sale rota.
 
 No se cambia un renglón sino **la dirección misma, en todo `.js` que salga**, y
-la dirección a reemplazar se lee del propio proyecto. El motivo se descubrió
-acá: la dirección del servidor está escrita **dos veces** —`js/apiClient.js` y
-`js/auth.js`—, así que cambiar una sola dejaba las pantallas leyendo de la base
-de esta máquina y pidiendo la sesión al servidor de verdad, donde esas cuentas
-no existen; se veía como «el correo o la contraseña no coinciden». Que esté
-escrita dos veces es un defecto del proyecto y está anotado aparte; esto no lo
-tapa, se acomoda a él.
+la dirección a reemplazar se lee del propio proyecto. Que sea en todo `.js` y no
+en uno solo se descubrió acá: la dirección estaba escrita **dos veces**
+—`js/apiClient.js` y `js/auth.js`—, así que cambiar una sola dejaba las
+pantallas leyendo de la base de esta máquina y pidiendo la sesión al servidor de
+verdad, donde esas cuentas no existen; se veía como «el correo o la contraseña
+no coinciden». Desde el 30 de agosto de 2026 está escrita una sola vez, en
+`js/apiClient.js`, y `scripts/verificar_base.mjs` se planta si vuelve a
+aparecer en otro lado. Esto sigue recorriendo todo `.js` igual: el día que
+alguien la escriba de nuevo, el chequeo lo va a decir y mientras tanto esto no
+va a servir una copia a medias.
 
 Publica siempre la carpeta del proyecto, la de este mismo archivo un nivel más
 arriba, y no aquella desde la que lo hayan llamado. El motivo es el mismo: el

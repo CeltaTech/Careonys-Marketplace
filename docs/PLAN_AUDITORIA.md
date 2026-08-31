@@ -64,15 +64,15 @@ la pantalla, de un guion o de la consola.
 **Dos: no hay un punto por donde pasen todas las escrituras.** Hay dos caminos y no uno. Todo lo
 REST pasa por `_supabaseRequest` (`js/apiClient.js:587`), que sí es un embudo único —las 15
 llamadas de datos entran por ahí—. Pero **la autenticación y los archivos no lo tocan nunca**:
-`Sesion.login` (`js/auth.js:37`), `Sesion.signup` (`js/auth.js:54`), `Sesion.cambiarClave`
-(`js/auth.js:85`) y `Sesion.uploadFile` (`js/auth.js:157`) hablan derecho con el cliente de la
+`Sesion.login` (`js/auth.js:60`), `Sesion.signup` (`js/auth.js:77`), `Sesion.cambiarClave`
+(`js/auth.js:108`) y `Sesion.uploadFile` (`js/auth.js:180`) hablan derecho con el cliente de la
 plataforma. Y ahí están, justamente, tres de las seis categorías que la regla nombra: la entrada
 administrativa, el cambio de rol y de Organización, y el cambio de credencial.
 
 **Tres: y aunque hubiera un punto, hoy hay tres copias de él.** `js/apiClient.js` y `js/auth.js`
 están triplicados **byte a byte** en `pwa-asistente/js/` y `pwa-familia/js/` —es el pendiente 13—,
 así que cada gancho habría que escribirlo tres veces o unificar los archivos primero. Y `window._sb`
-está expuesto en global (`js/auth.js:213`): cualquier pantalla puede saltearse `Sesion` y llamar al
+está expuesto en global (`js/auth.js:237`): cualquier pantalla puede saltearse `Sesion` y llamar al
 cliente por su cuenta.
 
 **Cuatro: el navegador ni siquiera está mandando quién es.** `cambiarEstadoAspirante`
@@ -207,7 +207,7 @@ Se elige por las seis categorías que nombra la regla, no por comodidad.
 
 ## 9. Lo que este plan NO cierra, dicho antes de que sorprenda
 
-**Uno: el pisado de archivos.** `Sesion.uploadFile` sube con `upsert: true` (`js/auth.js:157-158`) y
+**Uno: el pisado de archivos.** `Sesion.uploadFile` sube con `upsert: true` (`js/auth.js:180-181`) y
 el camino es determinístico, así que **subir dos veces el mismo documento destruye el primero sin
 dejar nada**. No es un `DELETE` y ningún disparador de estas tres tablas lo ve. Es una destrucción
 de datos real y hoy no está en ningún pendiente. **Se abre pendiente aparte.**
