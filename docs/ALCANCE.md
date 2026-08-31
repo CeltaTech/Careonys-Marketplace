@@ -122,9 +122,9 @@ Cómo quedó:
   perfil (`js/apiClient.js:60`); sin sesión, el enlace elige qué directorio se muestra y nada más.
 - **Los archivos siguen la misma regla.** Ver la fila «Archivos del legajo» de arriba.
 
-Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, cuarenta y nueve
-comprobaciones el 26 de agosto de 2026. Y falsificado a propósito para verificar que se pone en
-rojo cuando corresponde.
+Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, **cincuenta y dos
+comprobaciones, contadas y pasadas el 31 de agosto de 2026** contra la base de esta máquina. Y
+falsificado a propósito para verificar que se pone en rojo cuando corresponde.
 
 ### El nombre del producto salió del código
 
@@ -4155,6 +4155,53 @@ publicación se vio qué más contestaba el servidor.
   da verde, y las quince pantallas del sitio, las cuatro hojas de estilo, el catálogo, el logotipo,
   las dos aplicaciones de teléfono y los dos documentos legales siguen contestando `200` con el
   mismo tamaño que tienen acá.
+
+### La prueba de aislamiento se podía correr, y hacía cinco días que nadie la corría
+
+**El pendiente 45 decía que la comprobación de seguridad más importante del producto había quedado
+sin poder correr, y eso era sólo medio cierto.** Lo que no puede correr es contra el servidor
+publicado, porque ahí el alta pide confirmar el correo y la prueba nunca llega a tener sesión.
+Contra la base de esta máquina corre entera, y el propio encabezado del guion lo dice desde que se
+escribió: `scripts/probar_aislamiento.mjs:9`. El 31 de agosto de 2026 se corrió con `--local` y
+**pasaron las 52 comprobaciones**, incluidas las dos que sólo existen ahí —ascender a alguien a
+coordinador para ver si el personal lee los papeles de su Prestadora y no los de la otra—, porque
+ascender pide la clave de administración y ésa vive nada más que en el entorno local.
+
+**Conviene no confundir las dos cosas.** La corrida local prueba las migraciones de
+`supabase/migrations/`, que son los mismos archivos de los dos lados, y el guion se niega a arrancar
+si a la base le falta alguna. Lo que no alcanza a ver es una diferencia de configuración del
+proyecto alojado, que no viaja en ninguna migración. Así que el pendiente 45 sigue abierto por lo
+que siempre estuvo —el correo— y no por lo otro.
+
+**Y el intento de esa misma noche sin `--local` dejó otra cuenta huérfana en el proyecto alojado**,
+que es lo que pasa cada vez: la cuenta se crea, la sesión no vuelve, y borrarla pide la clave de
+servicio. Está anotado en el pendiente 45 para que el número que el Desarrollador tiene que limpiar
+en Authentication → Users siga siendo el de verdad.
+
+### Tres documentos decían tres números distintos, y ninguno era el bueno
+
+Al escribir lo de arriba aparecieron, de paso, **tres cuentas de cuántas comprobaciones tiene la
+prueba de aislamiento, en tres documentos, y las tres equivocadas**: dieciséis en
+`docs/INVENTARIO.md`, cuarenta en `docs/PLAN_AUDITORIA.md` y cuarenta y nueve en este mismo archivo.
+Son 52. Cada número fue cierto el día que se escribió y después la prueba creció sin que nadie
+volviera a pasar por ahí.
+
+**Ninguno de los 26 chequeos podía agarrarlo, y no por descuido: el número no se puede contar
+leyendo el archivo.** Hay 44 llamadas a `comprobar()` y salen 52 renglones, porque varias están
+adentro de un bucle. Un chequeo estático daría 44 y pondría en rojo a los documentos que dijeran la
+verdad. Y `verificar_todo.mjs` corre en el gancho de `commit`, sin red y sin base levantada, así que
+tampoco podía correr la prueba para averiguarlo.
+
+**Lo revisa entonces el único que sabe el número: la corrida.** Al terminar, `probar_aislamiento.mjs`
+cuenta las que hizo y busca en los cuatro documentos la frase que dice cuántas son, escrita en
+letras o en cifras según el documento. Un desajuste **no** dice que el aislamiento falle —eso sería
+enseñarle a la próxima persona a desconfiar del mensaje—: el veredicto del aislamiento sale
+primero y completo, y el desajuste sale después, como nota al pie, diciendo que se corrige el
+documento y no la prueba. El código del añadido está en `scripts/probar_aislamiento.mjs:988`.
+
+**Comprobado en los dos sentidos**, como pide la regla de la casa: con `docs/INVENTARIO.md` falseado
+a propósito la prueba sale con código 1 y nombra el archivo y la frase que buscó; con el número
+verdadero sale con 0 y los cuatro documentos dan verde.
 
 ---
 

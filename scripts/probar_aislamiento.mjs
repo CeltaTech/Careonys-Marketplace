@@ -112,6 +112,15 @@
     42. Ninguna ve una sola zona de la otra.
     43. Nadie carga una zona en la Prestadora de otro.
 
+   Los números de arriba son los puntos, no las comprobaciones: varias corren
+   adentro de un bucle y salen más renglones que llamadas. Por eso, al final,
+   la prueba **cuenta las que hizo y revisa los documentos que dicen cuántas
+   son**. El 31 de agosto de 2026 había tres documentos con tres números
+   distintos y ninguno era el bueno; ninguna comprobación de
+   `verificar_todo.mjs` podía agarrarlo, porque el número no se puede contar
+   leyendo el archivo. Un desajuste ahí **no** dice que el aislamiento falle:
+   sale como nota al pie, después del veredicto, y se corrige el documento.
+
    Todo con datos inventados. No toca ni una fila que ya estuviera cargada, y
    borra lo que crea. No muestra ninguna clave: usa la publicable, que es la
    que ya viaja al navegador.
@@ -264,8 +273,10 @@ console.log('Servidor: ' + new URL(url).hostname);
 console.log('');
 
 let fallos = 0;
+let hechas = 0;
 function comprobar(titulo, condicion, detalle) {
   console.log((condicion ? '   bien  ' : '   MAL   ') + titulo + (detalle ? '  — ' + detalle : ''));
+  hechas++;
   if (!condicion) fallos++;
 }
 
@@ -974,14 +985,73 @@ console.log('Las cuentas ficticias quedan en auth.users: se borran con el resto 
 console.log('de personas antes de producción. Todas tienen el correo @ejemplo.invalid, que es');
 console.log('un dominio que por norma no existe: no le llegó ni le puede llegar nada a nadie.');
 
+// ── Los documentos que dicen cuántas comprobaciones son ─────────────────
+// El 31 de agosto de 2026 tres documentos escribían tres números distintos
+// —dieciséis, cuarenta y cuarenta y nueve— y ninguno era el de la prueba.
+// Ninguna comprobación de `verificar_todo.mjs` puede agarrar eso, porque el
+// número no se puede contar leyendo el archivo: hay 44 llamadas a
+// `comprobar()` y salen 52 renglones, porque varias están adentro de un
+// bucle. El único que sabe el número de verdad es el que acaba de correr,
+// así que lo revisa él.
+const CENTENAS = ['', 'diez', 'veinte', 'treinta', 'cuarenta', 'cincuenta',
+                  'sesenta', 'setenta', 'ochenta', 'noventa'];
+const UNIDADES = ['', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete',
+                  'ocho', 'nueve'];
+const ESPECIALES = { 11: 'once', 12: 'doce', 13: 'trece', 14: 'catorce', 15: 'quince',
+                     16: 'dieciséis', 17: 'diecisiete', 18: 'dieciocho', 19: 'diecinueve',
+                     20: 'veinte', 21: 'veintiuno', 22: 'veintidós', 23: 'veintitrés',
+                     24: 'veinticuatro', 25: 'veinticinco', 26: 'veintiséis',
+                     27: 'veintisiete', 28: 'veintiocho', 29: 'veintinueve' };
+function enLetras(n) {
+  if (ESPECIALES[n]) return ESPECIALES[n];
+  const d = Math.floor(n / 10), u = n % 10;
+  return u === 0 ? CENTENAS[d] : CENTENAS[d] + ' y ' + UNIDADES[u];
+}
+
+const CLAMAN = [
+  ['docs/INVENTARIO.md',    'Las {letras} comprobaciones de que una Prestadora'],
+  ['docs/ALCANCE.md',       '**{letras} comprobaciones, contadas y pasadas'],
+  ['docs/PLAN_AUDITORIA.md', 'ya viven las {n} comprobaciones'],
+  ['docs/PENDIENTES.md',    'pasó sus {n} comprobaciones']
+];
+
 console.log('');
-if (fallos === 0) {
-  console.log('Pasaron todas. El límite lo pone la sesión: vale para las tablas, para los');
-  console.log('archivos y para el directorio, que además exige que la persona haya dicho que sí.');
+// El número se congela acá: los cuatro renglones que siguen también pasan por
+// `comprobar()`, así que sin esto cada uno se compararía contra un total ya
+// aumentado por el anterior y los cuatro dirían cosas distintas.
+const cuantas = hechas;
+const fallosDeAislamiento = fallos;
+console.log('Los documentos que dicen cuántas comprobaciones son (' + cuantas + ')');
+for (const [ruta, molde] of CLAMAN) {
+  const esperado = molde.replace('{letras}', enLetras(cuantas)).replace('{n}', String(cuantas));
+  let texto;
+  try {
+    texto = readFileSync(join(raiz, ...ruta.split('/')), 'utf8').replace(/\s+/g, ' ');
+  } catch {
+    comprobar(ruta + ': no se pudo leer', false, 'la prueba no puede revisar lo que no encuentra');
+    continue;
+  }
+  comprobar(ruta + ' dice que son ' + cuantas, texto.includes(esperado),
+    texto.includes(esperado) ? '' : 'busqué «' + esperado + '» y no está');
+}
+
+const fallosDeConteo = fallos - fallosDeAislamiento;
+
+console.log('');
+if (fallosDeAislamiento === 0) {
+  console.log('Pasaron las ' + cuantas + ' de aislamiento. El límite lo pone la sesión: vale para las tablas,');
+  console.log('para los archivos y para el directorio, que además exige que la persona haya');
+  console.log('dicho que sí.');
   console.log('El examen lo corrige la base: la respuesta correcta nunca sale de ahí.');
   console.log('Y la separación no es sólo entre Prestadoras: dos Familias de la misma');
   console.log('Prestadora tampoco se ven los avisos, los horarios, los mensajes ni los reportes.');
 } else {
-  console.log(fallos + ' comprobación(es) fallaron. El aislamiento NO está.');
-  process.exitCode = 1;
+  console.log(fallosDeAislamiento + ' comprobación(es) de aislamiento fallaron. El aislamiento NO está.');
 }
+if (fallosDeConteo > 0) {
+  console.log('');
+  console.log('Aparte de eso: el aislamiento se probó entero, pero ' + fallosDeConteo + ' documento(s)');
+  console.log('dicen un número de comprobaciones que ya no es el que corre. Son ' + cuantas + '.');
+  console.log('Se corrige el documento, no la prueba.');
+}
+if (fallos > 0) process.exitCode = 1;
