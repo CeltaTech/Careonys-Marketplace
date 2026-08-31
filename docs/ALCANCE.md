@@ -4484,6 +4484,86 @@ antes y después, y son idénticos salvo el mensaje del propio `cajas`. Era la c
 necesaria: una regla que cierra de más se ve exactamente igual que una que anda bien, salvo por el
 número que nadie mira.
 
+### El `grep -r` a mano entró a una caja fuerte por cuarta vez, y la respuesta fue una herramienta
+
+El 31 de agosto de 2026, buscando otra cosa, un `find` sin exclusiones tecleado desde la raíz del
+proyecto listó el nombre de un archivo de adentro de `No commit\`. No se leyó su contenido ni se
+citó nada, pero **es la cuarta vez**: el 26 de agosto fue la primera versión de
+`scripts/inventario_textos.mjs`, que entró y contó las frases de un archivo que no tenía que abrir;
+el 28 fue un `grep -rn` sin exclusiones; y el 31, dos veces, las dos con `find`.
+
+Las cuatro por lo mismo, y por eso vale escribirlo: **la regla estaba en la cabeza de quien
+tecleaba y no en la herramienta.** Después de la primera se arregló el guion; después de la segunda
+se arregló otro guion; y el hábito de escribir las exclusiones en cada comando siguió intacto,
+porque un hábito se cumple casi siempre y acá «casi siempre» no sirve de nada.
+
+Así que la herramienta: `scripts/listar.mjs`. Recorre con `scripts/recorrido.mjs` —el mismo
+guardián que usan los veintiocho chequeos, probado con cuarenta y tres casos en
+`scripts/verificar_cajas.mjs`—, así que trae las exclusiones puestas y no hay nada que recordar.
+`node scripts/listar.mjs .html` lista sólo las pantallas; `--buscar "patrón"` contesta
+`archivo:renglón: texto`, que es la forma en que este proyecto cita, y sale con 1 cuando no
+encontró nada, para que sirva adentro de una condición. Queda documentada en el README, en
+`docs/INVENTARIO.md` y en la memoria del proyecto, que ahora nombra la herramienta en vez del
+hábito.
+
+### Y con esa herramienta apareció una tercera tabla vieja, con seis números equivocados
+
+Buscando en la documentación con `listar.mjs` salió que tres documentos daban tres cifras distintas
+para la misma medición de estilos. Medidos los archivos, la que estaba mal era la de
+`docs/INVENTARIO.md` §5.1, y no en un número: en **seis**.
+
+Decía que `css/styles.css` la usaban «las 10 páginas de la raíz» —son 15—; que `tokens.css` y
+`utilidades.css` las usaban «las 16 pantallas» —son 17—; le daba 285 renglones a cada
+`styles-pwa.css` cuando tienen 287; y cerraba con un total de 4.638 donde el README, que sí sale de
+medir, decía 4.642.
+
+**Lo peor no son los renglones: es la columna «la enlazan».** Un número de renglones lo corrige
+cualquiera que abra el archivo. Esa columna sólo envejece cuando alguien agrega una pantalla, que
+es justo el momento en que nadie vuelve a leer una tabla de estilos. Se agregaron pantallas y la
+tabla no se enteró. Ahora sale de mirar los `<link href>` del marcado, así que se entera sola.
+
+Es la tercera tabla que pasa de escrita a medida: `scripts/medir_estado.mjs` la genera entre marcas
+y `scripts/verificar_estado.mjs` la compara antes de cada `commit`, igual que la del README y que el
+reparto de `docs/PENDIENTES.md`. Se comprobó que puede fallar **cuatro veces**: cambiándole un
+número a mano; sacándole la marca de apertura; agregando un `.css` nuevo que ninguna pantalla
+enlaza —que ejerce además el renglón «no la enlaza ninguna pantalla»—; y quitándole el `<link>` a
+`cursos.html`, que la puso en rojo con «15 de las 17» contra «14 de las 17». Verde otra vez las
+cuatro veces.
+
+De paso se juntaron en un solo lugar las cuatro constantes de las marcas, que estaban escritas una
+vez en el que escribe y otra vez en el que compara.
+
+### La tabla de chequeos del README llevaba cuatro de atraso, y nadie lo sabía
+
+Tirando del mismo hilo: `scripts/verificar_todo.mjs` encuentra los chequeos solos, buscando
+`scripts/verificar_*.mjs`, así que un chequeo nuevo entra a la red el día que se escribe. Lo que
+**no** es automático es la tabla `| Chequeo | Qué impide que vuelva |` del README, que es donde está
+escrito **qué impide cada uno**. Esa se escribe a mano, y estaba cuatro atrás:
+`scripts/verificar_base.mjs`, `verificar_clases.mjs`, `verificar_estado.mjs` y
+`verificar_pendientes.mjs` existían, corrían en cada `commit` y no figuraban en ninguna parte.
+
+No es un problema estético. **Un chequeo que nadie sabe que está ahí es una regla que el próximo
+que discuta el tema va a dar por no sostenida**, y va a construir alrededor de un agujero que en
+realidad está tapado —o va a pedir permiso para algo que el gancho de `commit` le va a rebotar sin
+que entienda por qué—. Y al revés: una fila sin archivo detrás es una regla que se cree sostenida y
+no lo está, que es peor todavía.
+
+`scripts/verificar_red.mjs` la compara ahora en los dos sentidos. Se comprobó en rojo tres veces:
+sacándole la fila a `verificar_clases`, agregando una fila con un nombre inventado, y sacándole a
+`verificar_red` su propia fila —esta última porque la primera versión no la habría notado, ya que
+comparaba contra la lista que deja afuera a los dos que no se revisan a sí mismos—. Queda afuera
+sólo `verificar_todo.mjs`, que no es un chequeo sino el que los corre.
+
+Con eso `verificar_red.mjs` mira tres cosas: que ninguno pueda recorrer cero archivos y decir ✔;
+que ninguno escriba a mano la extensión de las pantallas; y que la tabla que las explica esté al
+día. Las tres son la misma regla de la empresa mirada desde ángulos distintos —una prueba que no
+puede fallar no prueba nada—, aplicada a la red misma.
+
+**Y un cuarto hallazgo, chico:** `verificar_pendientes.mjs` daba por abierta una cita bien escrita,
+«las clases que cerraron el pendiente 8», porque su lista de formas de cierre tenía `cerró` y no
+`cerraron`. Se agregó, con su prueba, y **no** se agregó el futuro: «esto cerrará el pendiente N»
+habla de uno que sigue abierto, y ahora hay un caso que lo comprueba.
+
 ---
 
 ---

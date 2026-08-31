@@ -146,14 +146,17 @@ título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de e
 | Chequeo | Qué impide que vuelva |
 |---|---|
 | `verificar_arranque` | Que el arranque de una pantalla falle sin que nadie lo diga, ni en pantalla ni en la consola |
+| `verificar_base` | Que la dirección de la base o su clave publicable vuelvan a estar escritas fuera de `js/apiClient.js`, y dos afirmaciones sueltas del mismo hecho se contradigan en silencio |
 | `verificar_botones` | Que un botón dispare una operación sin apagarse mientras corre, y dos toques sean dos escrituras |
 | `verificar_cajas` | Que un chequeo entre a leer una caja fuerte por estar escrita con otra tipografía, o que cierre de más y deje de revisar código de verdad |
 | `verificar_catalogo` | Que el archivo del catálogo se despegue de lo que dice la base |
+| `verificar_clases` | Que el marcado nombre una clase que ninguna hoja declara, y el estilo que alguien vaya a buscar ahí no exista |
 | `verificar_claves` | Que se guarde en la base una opción que el catálogo no tiene |
 | `verificar_contacto` | Que el chat vuelva a dejar pasar un teléfono, un correo o un domicilio |
 | `verificar_copias` | Que las copias byte a byte se separen sin que nadie se entere |
 | `verificar_escapado` | Que un texto de la base entre a la pantalla como si fuera HTML |
 | `verificar_esquema` | Que una tabla nueva nazca sin RLS, que una función que se saltea la RLS quede al alcance de quien no inició sesión, que falte la columna de la Organización, que la clave primaria no sea `uuid` o que un importe se guarde sin moneda |
+| `verificar_estado` | Que una tabla de números de la documentación quede vieja sin que nada avise: las tres que se miden salen del medidor y se comparan acá |
 | `verificar_estados` | Que algo que carga datos se olvide de uno de sus cuatro estados: cargando, error, vacío, listo |
 | `verificar_estilos` | Que se escriba a mano en un `style=` lo que ya dice una clase de utilidad |
 | `verificar_frases` | Que quede texto visible escrito a mano en una pantalla ya convertida a los tres idiomas |
@@ -162,7 +165,8 @@ título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de e
 | `verificar_identidad` | Que la marca vuelva a estar escrita a mano |
 | `verificar_organizacion` | Que una pantalla nombre a una Prestadora del seed, o escriba otro logotipo |
 | `verificar_paleta` | Que vuelva un color escrito con su número en vez de un token |
-| `verificar_red` | Que un chequeo mire cero archivos, no encuentre nada y salga en verde igual; y que la extensión de las pantallas vuelva a escribirse a mano en vez de pedirse a `scripts/recorrido.mjs` |
+| `verificar_pendientes` | Que un archivo siga diciendo en presente que un agujero está abierto después de haberse cerrado, y una roja esperada se vuelva un permiso para no mirar |
+| `verificar_red` | Que un chequeo mire cero archivos, no encuentre nada y salga en verde igual; que la extensión de las pantallas vuelva a escribirse a mano en vez de pedirse a `scripts/recorrido.mjs`; y que esta misma tabla se quede atrás, nombrando un chequeo que ya no existe o callando uno que sí |
 | `verificar_referencias` | Que una cita `archivo:renglón` de la documentación apunte a la nada |
 | `verificar_sinconexion` | Que la copia que el teléfono guarda para andar sin señal siga sirviendo un archivo viejo |
 | `verificar_temas` | Que se rompa el modo oscuro: las dos copias separadas, o un token de letra pintando un fondo |

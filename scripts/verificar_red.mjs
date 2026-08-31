@@ -16,15 +16,28 @@
    atributos `style=` del marcado» y lo contó como éxito. Está en el pendiente
    69 de `docs/PENDIENTES.md`.
 
-   QUÉ EXIGE
-   Que todo chequeo llame por lo menos una vez a `seRevisaron()` o a
-   `hayArchivos()`, las dos de `scripts/recorrido.mjs`, que son las que se
-   plantan cuando la cuenta da cero. La llamada se busca **con los comentarios
-   quitados**: si no, a un chequeo le alcanzaría con nombrarlas en su encabezado
-   para pasar, y eso es justo lo que este archivo viene a impedir.
+   QUÉ EXIGE, QUE SON TRES COSAS
+   1. Que todo chequeo llame por lo menos una vez a `seRevisaron()` o a
+      `hayArchivos()`, las dos de `scripts/recorrido.mjs`, que son las que se
+      plantan cuando la cuenta da cero. La llamada se busca **con los
+      comentarios quitados**: si no, a un chequeo le alcanzaría con nombrarlas
+      en su encabezado para pasar, y eso es justo lo que este archivo viene a
+      impedir.
+   2. Que ninguno escriba a mano la extensión de las pantallas, que se pide a
+      `EXTENSIONES_DE_PANTALLA` del mismo archivo. Perder **parte** del corpus
+      no dispara la guarda de arriba, y es la forma silenciosa de lo mismo.
+   3. Que la tabla `| Chequeo | Qué impide que vuelva |` del README nombre a
+      todos los que existen y a ninguno que no. Se agregó el 31 de agosto de
+      2026, cuando se encontró que la tabla llevaba **cuatro chequeos de
+      atraso** —`base`, `clases`, `estado` y `pendientes` existían y no
+      figuraban en ninguna parte—. Un chequeo que nadie sabe que está ahí es
+      una regla que el próximo que discuta el tema va a dar por no sostenida; y
+      al revés, una fila sin archivo detrás es una regla que se cree sostenida
+      y no lo está. Queda afuera `verificar_todo.mjs`, que no es un chequeo
+      sino el que los corre.
 
    CÓMO SE PRUEBA, Y POR QUÉ ASÍ
-   Tres veces, porque las tres pueden fallar:
+   Cinco veces, porque las cinco pueden fallar:
    1. Contra la función de verdad: `seRevisaron(0, …)` tiene que cortar y
       `seRevisaron(3, …)` tiene que devolver 3. Sin esto, la guarda podría estar
       vacía por dentro y todos los chequeos «cumplirían» igual.
@@ -34,6 +47,11 @@
    3. Contra un chequeo de mentira escrito acá mismo que **no** llama a
       ninguna de las dos, y que tiene que ser señalado. Y contra otro que sí la
       llama pero sólo adentro de un comentario, que tampoco vale.
+   4. Contra tres chequeos de mentira para la extensión: uno que la escribe,
+      uno que sólo la nombra en un comentario y uno que la pide como
+      corresponde. Los tres tienen que salir como salen.
+   5. Contra una tabla del README de mentira, para que el lector de la tabla no
+      confunda una fila con un nombre citado al pasar en un párrafo.
 =================================================== */
 
 import { readdirSync, readFileSync } from 'node:fs';
@@ -94,6 +112,24 @@ const A_MANO = /['"`]\.html['"`]/;
 export function escribeLaExtension(texto) {
   return A_MANO.test(sinComentarios(texto));
 }
+/* ── Y QUE EL README LOS NOMBRE A TODOS ───────────────────────────────────
+   La tercera forma de que la red mienta, y la más barata de arreglar. El
+   README trae una tabla —«Chequeo | Qué impide que vuelva»— que es lo único
+   que dice para qué está cada uno. `verificar_todo.mjs` no tiene la lista
+   escrita, así que un chequeo nuevo entra solo y funciona desde el primer día;
+   la tabla, en cambio, se escribe a mano, y el 31 de agosto de 2026 le
+   faltaban cuatro: `verificar_base`, `verificar_clases`, `verificar_estado` y
+   `verificar_pendientes`. Cuatro reglas sostenidas por un guion que nadie
+   sabía que existía.
+
+   No es un detalle de documentación: la tabla es donde se mira antes de
+   escribir un chequeo nuevo, y lo que no figura ahí se vuelve a escribir. */
+function enLaTablaDelReadme(texto) {
+  return new Set(
+    Array.from(texto.matchAll(/^\| `(verificar_[a-z_]+)` \|/gm)).map((a) => a[1])
+  );
+}
+
 
 /* ── 1 y 2. Que la guarda de verdad se plante ───────────────────────────── */
 
@@ -171,6 +207,26 @@ if (escribeLaExtension(COMO_CORRESPONDE)) {
   fallas.push('Se quejó de un chequeo que pide la extensión a `recorrido.mjs`.');
 }
 
+/* ── 5. Que note una tabla a la que le falta un chequeo ─────────────────── */
+
+const TABLA_COMPLETA = [
+  '| Chequeo | Qué impide que vuelva |',
+  '|---|---|',
+  '| `verificar_uno` | Que vuelva lo uno |',
+  '| `verificar_dos` | Que vuelva lo otro |'
+].join('\n');
+
+const nombrados = enLaTablaDelReadme(TABLA_COMPLETA);
+if (!nombrados.has('verificar_uno') || !nombrados.has('verificar_dos')) {
+  fallas.push('No leyó los chequeos que la tabla del README sí nombra.');
+}
+if (nombrados.size !== 2) {
+  fallas.push('Leyó de la tabla del README algo que no era un chequeo.');
+}
+if (enLaTablaDelReadme('Acá se nombra a `verificar_uno` en el medio de un renglón.').size !== 0) {
+  fallas.push('Tomó por fila de la tabla a un chequeo nombrado en un párrafo.');
+}
+
 /* ── El recorrido de verdad ─────────────────────────────────────────────── */
 
 const chequeos = readdirSync(aca)
@@ -197,6 +253,39 @@ for (const nombre of chequeos) {
 }
 
 seRevisaron(revisados, 'un solo chequeo que no esté exento');
+
+/* Y la tabla del README contra la carpeta, en los dos sentidos: uno que no
+   figura es una regla que nadie sabe que está sostenida, y uno que figura sin
+   existir es una regla que se cree sostenida y no lo está. */
+const enElReadme = enLaTablaDelReadme(readFileSync(join(aca, '..', 'README.md'), 'utf8'));
+seRevisaron(enElReadme.size, 'ningún chequeo nombrado en la tabla del README');
+
+/* Los dos lados se comparan contra la carpeta entera menos `verificar_todo.mjs`,
+   que no es un chequeo sino el que los corre. Contra `chequeos` no serviría:
+   esa lista deja afuera también a `verificar_red.mjs` —porque no se revisa a sí
+   mismo— y entonces borrarle a él su fila del README no lo notaría nadie. */
+const EL_CORREDOR = 'verificar_todo.mjs';
+const enDisco = readdirSync(aca)
+  .filter((n) => n.startsWith('verificar_') && n.endsWith('.mjs') && n !== EL_CORREDOR)
+  .map((n) => n.replace('.mjs', ''))
+  .sort();
+seRevisaron(enDisco.length, 'ningún chequeo en `scripts/` con el que comparar la tabla');
+
+const sinFila = enDisco.filter((n) => !enElReadme.has(n));
+for (const nombre of sinFila) {
+  fallas.push(
+    `\`scripts/${nombre}.mjs\` existe y la tabla del README no lo nombra.\n` +
+    '      Lo que no figura ahí es una regla que nadie sabe que está sostenida.'
+  );
+}
+
+const enLaCarpeta = new Set(enDisco);
+for (const nombre of [...enElReadme].filter((n) => !enLaCarpeta.has(n))) {
+  fallas.push(
+    `La tabla del README nombra a \`${nombre}\` y ese chequeo no existe.\n` +
+    '      Una regla que se cree sostenida y no lo está.'
+  );
+}
 
 for (const nombre of sinGuarda) {
   fallas.push(
@@ -229,6 +318,6 @@ if (fallas.length > 0) {
 
 console.log(
   `Red verificada: ${revisados} chequeos que se plantan si no encuentran nada ` +
-  `(${EXENTOS.size} exento, con su motivo), y ninguno con la extensión de las ` +
-  'pantallas escrita a mano.'
+  `(${EXENTOS.size} exento, con su motivo), ninguno con la extensión de las ` +
+  `pantallas escrita a mano, y los ${enElReadme.size} nombrados en la tabla del README.`
 );

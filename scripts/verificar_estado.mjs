@@ -21,13 +21,21 @@
    números salen de leer archivos, así que se miden sin red y sin base
    levantada, que es lo único que hay cuando corre el gancho de `commit`.
 
-   **Y desde el 31 de agosto de 2026 son dos tablas, no una.** El mismo día
+   **Y desde el 31 de agosto de 2026 son tres tablas, no una.** El mismo día
    apareció que el reparto de estilos por pantalla, adentro de
    `docs/PENDIENTES.md`, decía 687 atributos `style=` cuando ya eran 247, y
    nombraba tres pantallas que hacía días no tenían ninguno. Estaba escrita a
    mano, con la fecha en que se midió y nada que avisara cuando esa fecha
    quedaba atrás. Hoy sale del mismo medidor, entre dos marcas, y se compara
    acá igual que la del README.
+
+   La tercera apareció el mismo día, tirando del mismo hilo: la tabla del CSS
+   de `docs/INVENTARIO.md` tenía seis números equivocados, y el peor no era un
+   renglonaje sino la columna de quién usa cada hoja —decía «las 10 páginas de
+   la raíz» y «las 16 pantallas» cuando son 15 y 17—, que es justo la que nadie
+   revisa cuando agrega una pantalla. **Un número escrito a mano en la
+   documentación envejece en silencio**, y con tres tablas ya no es una
+   sospecha: es lo que pasa siempre.
 =================================================== */
 
 import { readFileSync } from 'node:fs';
@@ -37,7 +45,10 @@ import { seRevisaron } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-const { renglonesTabla, renglonesReparto } = await import('./medir_estado.mjs');
+const {
+  renglonesTabla, renglonesReparto, renglonesHojasTabla,
+  ABRE_REPARTO, CIERRA_REPARTO, ABRE_HOJAS, CIERRA_HOJAS
+} = await import('./medir_estado.mjs');
 const medidos = renglonesTabla.map(([a, b]) => `| ${a} | ${b} |`);
 
 /* Sin esto, un medidor que dejara de medir daría cero renglones, el README
@@ -45,6 +56,7 @@ const medidos = renglonesTabla.map(([a, b]) => `| ${a} | ${b} |`);
    haber mirado nada. */
 seRevisaron(medidos.length, 'ningún renglón medido del estado real');
 seRevisaron(renglonesReparto.length, 'ninguna pantalla con estilos pegados al HTML');
+seRevisaron(renglonesHojasTabla.length, 'ninguna hoja de estilo');
 
 const readme = readFileSync(join(raiz, 'README.md'), 'utf8').split(/\r?\n/);
 
@@ -89,12 +101,10 @@ if (arranque === -1) {
    que alguien puede querer reescribir y las marcas dicen para qué están. Si
    faltan, es un problema y no un permiso para no mirar: sacarlas sería la
    forma más fácil de apagar este chequeo sin que se note. */
-const ABRE = '<!-- reparto: lo escribe scripts/medir_estado.mjs, no se edita a mano -->';
-const CIERRA = '<!-- fin del reparto -->';
 const pendientes = readFileSync(join(raiz, 'docs', 'PENDIENTES.md'), 'utf8').split(/\r?\n/);
 
-const abre = pendientes.indexOf(ABRE);
-const cierra = pendientes.indexOf(CIERRA);
+const abre = pendientes.indexOf(ABRE_REPARTO);
+const cierra = pendientes.indexOf(CIERRA_REPARTO);
 if (abre === -1 || cierra === -1 || cierra < abre) {
   problemas.push(
     'No se encontraron las dos marcas del reparto de estilos en docs/PENDIENTES.md.\n' +
@@ -124,6 +134,52 @@ if (abre === -1 || cierra === -1 || cierra < abre) {
   }
 }
 
+
+/* ── LA TERCERA TABLA: LAS HOJAS, EN docs/INVENTARIO.md ────────────────────
+   Encontrada el 31 de agosto de 2026, tirando del mismo hilo. La tabla del CSS
+   de `docs/INVENTARIO.md` tenía **seis números equivocados**: decía que
+   `css/styles.css` la usaban «las 10 páginas de la raíz» cuando son 15, que
+   `tokens.css` y `utilidades.css` las usaban «las 16 pantallas» cuando son 17,
+   le daba 285 renglones a cada `styles-pwa.css` cuando tienen 287, y sumaba
+   4.638 renglones en total donde el README —que sí sale de medir— decía 4.642.
+   Tres documentos del mismo repositorio, tres números distintos para lo mismo.
+
+   La columna que más envejeció fue la de quién usa cada hoja, y es la que
+   nadie iba a revisar: se agrega una pantalla y la tabla no se entera. Ahora
+   sale de leer los `<link href>` del marcado. */
+const inventario = readFileSync(join(raiz, 'docs', 'INVENTARIO.md'), 'utf8').split(/\r?\n/);
+
+const abreH = inventario.indexOf(ABRE_HOJAS);
+const cierraH = inventario.indexOf(CIERRA_HOJAS);
+if (abreH === -1 || cierraH === -1 || cierraH < abreH) {
+  problemas.push(
+    'No se encontraron las dos marcas de las hojas de estilo en docs/INVENTARIO.md.\n' +
+    'Tienen que estar las dos, en este orden:\n' +
+    '  ' + ABRE_HOJAS + '\n' +
+    '  ' + CIERRA_HOJAS
+  );
+} else {
+  const escritos = inventario.slice(abreH + 1, cierraH)
+    .map((r) => r.trim())
+    .filter((r) => r.startsWith('| `'));
+
+  if (escritos.length !== renglonesHojasTabla.length) {
+    problemas.push(
+      `La tabla de hojas de docs/INVENTARIO.md tiene ${escritos.length} archivos y la medición ` +
+      `da ${renglonesHojasTabla.length}.`
+    );
+  }
+  const cuantas = Math.max(escritos.length, renglonesHojasTabla.length);
+  for (let i = 0; i < cuantas; i++) {
+    if (escritos[i] === renglonesHojasTabla[i]) continue;
+    problemas.push(
+      'Este renglón de la tabla de hojas no es el que sale de medir los archivos:\n' +
+      '  docs/INVENTARIO.md dice:  ' + (escritos[i] || '— no está —') + '\n' +
+      '  y hoy es:                 ' + (renglonesHojasTabla[i] || '— sobra —')
+    );
+  }
+}
+
 if (problemas.length) {
   console.error(
     '\n' + problemas.join('\n\n') + '\n\n' +
@@ -134,6 +190,7 @@ if (problemas.length) {
 }
 
 console.log(
-  `Estado real verificado: los ${medidos.length} renglones de la tabla del README y las ` +
-  `${renglonesReparto.length} pantallas del reparto de docs/PENDIENTES.md salen de medir los archivos.`
+  `Estado real verificado: los ${medidos.length} renglones de la tabla del README, las ` +
+  `${renglonesReparto.length} pantallas del reparto de docs/PENDIENTES.md y las ` +
+  `${renglonesHojasTabla.length} hojas de estilo de docs/INVENTARIO.md salen de medir los archivos.`
 );

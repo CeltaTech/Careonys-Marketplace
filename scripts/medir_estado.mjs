@@ -111,6 +111,39 @@ const dondeTokens = join(raiz, 'css', 'tokens.css');
 const tokens = new Set(
   Array.from(leer(dondeTokens).matchAll(/(--[a-z0-9-]+)\s*:/gi)).map((a) => a[1]));
 
+/* ── Y QUIÉN ENLAZA CADA HOJA ────────────────────────────────────────────
+   La otra mitad de la misma pregunta: no cuántos renglones hay sino de quién
+   son. Se lee del marcado, resolviendo cada `<link href>` contra la carpeta de
+   la pantalla, así que una hoja que dejó de enlazarse deja de figurar sola.
+   Las de afuera —Font Awesome— no entran: la lista es de las hojas propias,
+   que son las que se cuentan arriba.
+
+   Se mide porque estaba escrito a mano en `docs/INVENTARIO.md` y era falso: el
+   31 de agosto de 2026 esa tabla decía que `css/styles.css` la usaban «las 10
+   páginas de la raíz» cuando son 15, que `tokens.css` y `utilidades.css` las
+   usaban «las 16 pantallas» cuando son 17, y le daba 285 renglones a cada
+   `styles-pwa.css` cuando tienen 287. */
+const laEnlazan = new Map(hojas.map((c) => [c, []]));
+for (const camino of pantallas) {
+  for (const encontrado of leer(camino).matchAll(/<link[^>]+href="([^"]+\.css)"/gi)) {
+    const destino = resolve(dirname(camino), encontrado[1]);
+    if (laEnlazan.has(destino)) laEnlazan.get(destino).push(nombreDe(camino));
+  }
+}
+
+/* Y cuál es copia byte a byte de cuál, con el mismo criterio que se usa para
+   el JavaScript: el primero en orden alfabético es el original y los demás son
+   copias. Lo comprueba aparte `verificar_copias.mjs`; acá sólo se nombra. */
+const originalDe = new Map();
+const porHuella = new Map();
+for (const camino of hojas) {
+  const huella = createHash('sha256').update(leer(camino)).digest('hex');
+  if (!porHuella.has(huella)) porHuella.set(huella, camino);
+  else originalDe.set(camino, porHuella.get(huella));
+}
+const renglonesCopiadosHojas = [...originalDe.keys()]
+  .reduce((t, c) => t + renglones(leer(c)), 0);
+
 /* ── LO PEGADO AL HTML ───────────────────────────────────────────────────
    Cada `style="…"` es un atributo, y adentro puede haber varias
    declaraciones separadas por punto y coma. Se informan las dos cuentas
@@ -246,10 +279,47 @@ const tablaReparto =
   'HTML:\n' +
   conBloque.map((c) => `${enEspanol(c.bloque)} en \`${c.archivo}\``).join(', ') + '.\n';
 
+/* ── LA TABLA DE LAS HOJAS, PARA docs/INVENTARIO.md ──────────────────────
+   Qué hoja hay, cuánto mide y quién la enlaza. La columna de la derecha decía
+   a mano cuántas pantallas eran, y era la parte que más envejeció: se agrega
+   una pantalla y nadie vuelve a esa tabla. Ahora sale del marcado. */
+const renglonesHojasTabla = hojas.map((camino) => {
+  const quienes = laEnlazan.get(camino);
+  const original = originalDe.get(camino);
+  let usa;
+  if (quienes.length === 0) usa = '**no la enlaza ninguna pantalla**';
+  else if (quienes.length === 1) usa = `Sólo \`${quienes[0]}\``;
+  else usa = `${enEspanol(quienes.length)} de las ${enEspanol(pantallas.length)} pantallas`;
+  if (original) usa += `. Copia byte a byte de \`${nombreDe(original)}\``;
+  return `| \`${nombreDe(camino)}\` | ${enEspanol(renglones(leer(camino)))} | ${usa} |`;
+});
+
+const tablaHojas =
+  '| Archivo | Renglones | La enlazan |\n|---|---:|---|\n' +
+  renglonesHojasTabla.join('\n') + '\n\n' +
+  `En disco hay ${enEspanol(hojas.length)} archivos y ${enEspanol(renglonesHojas)} renglones, ` +
+  `de los cuales ${enEspanol(renglonesCopiadosHojas)} son copias byte a byte de otro: son las que ` +
+  '`verificar_copias.mjs` compara.\n\n' +
+  `Hay además ${enEspanol(renglonesEnBloques)} renglones de CSS en bloques \`<style>\` adentro del ` +
+  'HTML: ' +
+  conBloque.map((c) => `${enEspanol(c.bloque)} en \`${c.archivo}\``).join(', ') + '. ' +
+  'Las demás pantallas no tienen ninguno.\n';
+
 /* Los renglones medidos, para que `verificar_estado.mjs` los compare con los
    que están escritos en el README. La fecha no se exporta a propósito: cambia
    todos los días y compararla pondría el chequeo en rojo cada mañana. */
-export { renglonesTabla, tabla, renglonesReparto, tablaReparto };
+/* Las dos marcas de cada tabla que va en el medio de un documento, acá y no
+   escritas dos veces: `verificar_estado.mjs` busca las mismas. */
+const ABRE_REPARTO = '<!-- reparto: lo escribe scripts/medir_estado.mjs, no se edita a mano -->';
+const CIERRA_REPARTO = '<!-- fin del reparto -->';
+const ABRE_HOJAS = '<!-- hojas: lo escribe scripts/medir_estado.mjs, no se edita a mano -->';
+const CIERRA_HOJAS = '<!-- fin de las hojas -->';
+
+export {
+  renglonesTabla, tabla,
+  renglonesReparto, tablaReparto, ABRE_REPARTO, CIERRA_REPARTO,
+  renglonesHojasTabla, tablaHojas, ABRE_HOJAS, CIERRA_HOJAS
+};
 
 if (!corriendoSolo) {
   // Importado: ya midió, que es todo lo que le pedían.
@@ -298,24 +368,51 @@ const crudoP = leer(dondePendientes);
 const crlfP = crudoP.includes('\r\n');
 const antesP = crlfP ? crudoP.split('\r\n').join('\n') : crudoP;
 
-const ABRE = '<!-- reparto: lo escribe scripts/medir_estado.mjs, no se edita a mano -->';
-const CIERRA = '<!-- fin del reparto -->';
-const desdeP = antesP.indexOf(ABRE);
-const hastaP = antesP.indexOf(CIERRA);
+const desdeP = antesP.indexOf(ABRE_REPARTO);
+const hastaP = antesP.indexOf(CIERRA_REPARTO);
 if (desdeP === -1 || hastaP === -1 || hastaP < desdeP) {
   console.error('No se encontraron las dos marcas del reparto en docs/PENDIENTES.md,');
   console.error('así que no se tocó. Tienen que estar, en este orden:');
-  console.error('  ' + ABRE);
-  console.error('  ' + CIERRA);
+  console.error('  ' + ABRE_REPARTO);
+  console.error('  ' + CIERRA_REPARTO);
   process.exit(1);
 }
 
 const despuesP =
-  antesP.slice(0, desdeP + ABRE.length) + '\n\n' + tablaReparto + '\n' + antesP.slice(hastaP);
+  antesP.slice(0, desdeP + ABRE_REPARTO.length) + '\n\n' + tablaReparto + '\n' + antesP.slice(hastaP);
 if (despuesP === antesP) {
   console.log('La tabla del reparto ya estaba al día.');
 } else {
   writeFileSync(dondePendientes, crlfP ? despuesP.split('\n').join('\r\n') : despuesP);
   console.log('Tabla del reparto puesta al día en docs/PENDIENTES.md.');
+}
+
+/* ── Y LA TABLA DE LAS HOJAS, EN docs/INVENTARIO.md ────────────────────
+   La tercera. Mismo mecanismo que la anterior y por el mismo motivo: estaba
+   escrita a mano, decía «las 10 páginas de la raíz» cuando son 15 y «las 16
+   pantallas» cuando son 17, y le daba dos renglones de menos a cada
+   `styles-pwa.css`. Seis números equivocados en una tabla que nadie miraba. */
+const dondeInventario = join(raiz, 'docs', 'INVENTARIO.md');
+const crudoI = leer(dondeInventario);
+const crlfI = crudoI.includes('\r\n');
+const antesI = crlfI ? crudoI.split('\r\n').join('\n') : crudoI;
+
+const desdeI = antesI.indexOf(ABRE_HOJAS);
+const hastaI = antesI.indexOf(CIERRA_HOJAS);
+if (desdeI === -1 || hastaI === -1 || hastaI < desdeI) {
+  console.error('No se encontraron las dos marcas de las hojas en docs/INVENTARIO.md,');
+  console.error('así que no se tocó. Tienen que estar, en este orden:');
+  console.error('  ' + ABRE_HOJAS);
+  console.error('  ' + CIERRA_HOJAS);
+  process.exit(1);
+}
+
+const despuesI =
+  antesI.slice(0, desdeI + ABRE_HOJAS.length) + '\n\n' + tablaHojas + '\n' + antesI.slice(hastaI);
+if (despuesI === antesI) {
+  console.log('La tabla de las hojas de estilo ya estaba al día.');
+} else {
+  writeFileSync(dondeInventario, crlfI ? despuesI.split('\n').join('\r\n') : despuesI);
+  console.log('Tabla de las hojas de estilo puesta al día en docs/INVENTARIO.md.');
 }
 }

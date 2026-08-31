@@ -73,8 +73,14 @@ const CITA = /\bpendientes?\b\s+(?:el\s+)?(\d+(?:\s*(?:,|y|\/|ni)\s*(?:el\s+)?\d
 
 /* Lo que alcanza para que una cita a algo cerrado no sea un error. Se busca en
    la misma frase, no en el archivo entero: una nota de cierre tres párrafos más
-   abajo no la lee quien está leyendo esta línea. */
-const CIERRE = /cerrad|cerró|se cierra|se cerr|al cerrar|ya no existe|ya no está|resuelt|estuvo abierto|quedó atrás/i;
+   abajo no la lee quien está leyendo esta línea.
+
+   Van las formas del pasado y ninguna del futuro: `cerraron` se agregó el 31 de
+   agosto de 2026 porque «las clases que cerraron el pendiente 8» salió en rojo
+   siendo una cita bien escrita. `cerrará` no entra a propósito —«esto cerrará
+   el pendiente N» habla de uno que sigue abierto—, y por eso no se pone el
+   verbo entero. */
+const CIERRE = /cerrad|cerró|cerraron|se cierra|se cerr|al cerrar|ya no existe|ya no está|resuelt|estuvo abierto|quedó atrás/i;
 const VENTANA = 220;
 
 /* Antes de buscar cualquiera de las dos cosas se aplana el texto: los espacios,
@@ -146,6 +152,8 @@ const PRUEBAS = [
   ['una cita a un pendiente cerrado que lo aclara', `fue el pendiente ${CERRADO}, cerrado el martes`, 0],
   ['una cita a un pendiente abierto', `esto lo traba el pendiente ${ABIERTO}`, 0],
   ['una cita en pasado', `eran el pendiente ${CERRADO}, y se arreglaron`, 0],
+  ['una cita en pasado y en plural', `las clases que cerraron el pendiente ${CERRADO}`, 0],
+  ['una cita en futuro', `esto cerrará el pendiente ${CERRADO} algún día`, 1],
   ['un «fue» lejos de la cita', `fue un lío. Hoy esto es el pendiente ${CERRADO}`, 1],
   ['una lista donde uno solo está cerrado', `los pendientes ${ABIERTO} y ${CERRADO}`, 1]
 ];

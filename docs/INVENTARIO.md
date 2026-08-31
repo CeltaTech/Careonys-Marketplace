@@ -106,7 +106,7 @@ Los guiones de línea de comandos. En `scripts/` hay **51 archivos `.mjs` y uno 
 | `scripts/generar_manifiestos.mjs` | Escribe los dos `manifest.json` desde la identidad. Hacen falta generados porque el navegador los lee como archivo, sin pasar por ninguna página: ahí no hay JavaScript que resuelva un marcador. |
 | `scripts/verificar_copias.mjs` | Compara byte a byte los ocho archivos que viven repetidos en dos o tres carpetas y falla si alguno se separó. Cuando encuentra una diferencia dice cuál de los dos es más nuevo, para no pisar el cambio bueno. |
 | `scripts/revisar_base.mjs` | Sonda de solo lectura: pregunta qué tablas puede enumerar y leer alguien **sin sesión**, y si alguna le muestra dos Prestadoras distintas. Se corre en el momento en que la base vuelva a responder, antes de cargar el primer dato. No escribe ni borra nada, y se niega a correr contra una base que no sea la de este proyecto. |
-| `scripts/verificar_estado.mjs` | Que **las dos tablas medidas** sean las que salen de medir los archivos, y no unas escritas a mano que quedaron viejas: la de números del README y el reparto de estilos por pantalla de `docs/PENDIENTES.md`, esta última entre dos marcas. Compara contra `scripts/medir_estado.mjs`, sin la fecha —cambia todos los días—, y también se pone en rojo si alguien saca las marcas. Se arregla con `node scripts/medir_estado.mjs --escribir`. |
+| `scripts/verificar_estado.mjs` | Que **las tres tablas medidas** sean las que salen de medir los archivos, y no unas escritas a mano que quedaron viejas: la de números del README, el reparto de estilos por pantalla de `docs/PENDIENTES.md` y las hojas de estilo del §5.1 de este archivo, las dos últimas entre marcas. Compara contra `scripts/medir_estado.mjs`, sin la fecha —cambia todos los días—, y también se pone en rojo si alguien saca las marcas. Se arregla con `node scripts/medir_estado.mjs --escribir`. |
 | `scripts/verificar_pendientes.mjs` | Falla si algún archivo del proyecto nombra «pendiente N» y ese N ya no es una fila abierta de `docs/PENDIENTES.md`, salvo que el texto diga ahí mismo que se cerró —basta el tiempo verbal: «eran el pendiente 15»—. Existe por lo del 31 de agosto de 2026: una prueba de seguridad estuvo en rojo cinco días y nadie la miró, porque su encabezado decía que el rojo era el pendiente 67 y ese pendiente ya estaba cerrado. **Una roja esperada contra un número que no existe es un permiso permanente para no mirar.** Deja afuera a propósito `docs/ALCANCE.md`, los `docs/PLAN_*.md` y las migraciones, que narran un momento con fecha. |
 | `scripts/probar_aislamiento.mjs` | Las cincuenta y dos comprobaciones de que una Prestadora no ve los datos de la otra, y de que dos Familias de la misma Prestadora tampoco se ven entre sí (la regla de la empresa «aislamiento entre Organizaciones»). Necesita las dos Prestadoras ficticias cargadas: con una sola, ver una sola no prueba nada. **Se corre con `--local`**: contra el servidor publicado el alta pide confirmar el correo y la prueba no llega a tener sesión (pendiente 45). |
 | `scripts/probar_consulta_publica.mjs` | Pregunta si una visita del portal, sin sesión, puede dejar su consulta en `avisos`. Es el mismo alta que hacen los cinco formularios de consulta. Trae su sostén —la misma fila, con una cuenta recién creada—, sin el cual una tabla cerrada para todos daría el mismo rojo y la prueba no distinguiría nada. Contestó **401 sin sesión y 403 con cuenta nueva** el 26 de agosto de 2026, y de ahí salió lo que hace `js/formulario-consulta.js`. Lee la dirección y la clave pública de la base local por `supabase status` adentro del guion, sin mostrarlas. |
@@ -126,6 +126,7 @@ Los guiones de línea de comandos. En `scripts/` hay **51 archivos `.mjs` y uno 
 | `scripts/servidor_local.py` | El servidor para mirar las pantallas mientras se trabaja. Es `python -m http.server` con cuatro diferencias, y cada una es el motivo de que exista. **No deja guardar copias**, porque si no el navegador sigue mostrando la versión vieja de un archivo después de haberlo cambiado, sin avisar (fue el pendiente 42, cerrado). **No publica las cajas fuertes** ni `.git`: hasta el 30 de agosto de 2026 publicaba la carpeta entera, y adentro hay una. **Sabe apuntar a la base de esta máquina** con `--base-local`, cambiando la dirección en el texto que sale por la red y nunca en el archivo. **Y acepta 128 conexiones esperando** en vez de las 5 de fábrica: una pantalla pide nueve archivos a la vez y el sistema cortaba las que sobraban, que se veía como `js/auth.js` que no llegaba una recarga sí y otra no. |
 | `scripts/preparar_coordinadores_locales.mjs` | Deja dos cuentas con rol `coordinador`, una en cada Prestadora ficticia, **sólo en la base de esta máquina**: se planta si la dirección no es local. Existen porque las pantallas del panel piden ese rol y ese rol no se puede pedir al registrarse —lo filtra el disparador de la migración 0005 a propósito—, así que sin ellas lo que se comprobaba era la política y nunca la pantalla. No inventa ninguna clave: la toma de `CLAVE_PRUEBA_LOCAL` y sin esa variable no corre. |
 | `scripts/recorrido.mjs` | No es un guion: es lo que ningún chequeo abre —las cajas fuertes de la bóveda, las carpetas `Exclusivo <cliente>`, los archivos que anuncian una clave en el nombre, las dependencias, el estado de las herramientas—, la extensión de las pantallas y el recorrido que todos usan. Estaba copiada en cuatro archivos con cuatro contenidos distintos, y la mitad de la regla de la bóveda vivía en un quinto hasta el 31 de agosto de 2026. |
+| `scripts/verificar_red.mjs` | El chequeo que revisa a los chequeos, en tres cosas: que ninguno pueda recorrer cero archivos y decir ✔ igual —tiene que llamar a `seRevisaron()` o a `hayArchivos()`, y leído sin comentarios, para que nombrarlas en el encabezado no cuente—; que ninguno escriba a mano la extensión de las pantallas en vez de pedirla a `recorrido.mjs`; y que la tabla `| Chequeo | Qué impide que vuelva |` del README los nombre a todos y a ninguno de más. Lo tercero se agregó el 31 de agosto de 2026, cuando esa tabla llevaba **cuatro chequeos de atraso**. |
 | `scripts/listar.mjs` | Los archivos del proyecto **sin las cajas fuertes**, para usar desde la línea de comandos en lugar de un `find` o un `grep -r` tecleados a mano. Recorre con `scripts/recorrido.mjs`, así que trae puesto el mismo guardián que los veintiocho chequeos y el que prueba `verificar_cajas.mjs`. Existe porque la regla de la bóveda ya falló cuatro veces —el 26 y el 28 de agosto de 2026, y dos más el 31—, y las cuatro por lo mismo: **la regla estaba en la cabeza de quien tecleaba y no en la herramienta**. `node scripts/listar.mjs .html` lista sólo ésas; `--buscar "patrón"` contesta `archivo:renglón: texto`, que es la forma en que este proyecto cita, y sale con 1 cuando no encontró nada, para que sirva adentro de una condición. |
 
 **Duplicación verificada por firma digital**: `js/apiClient.js`, `pwa-asistente/js/apiClient.js`
@@ -355,23 +356,36 @@ opiniones sobre el diseño):
 
 ### 5.1 Archivos y volumen
 
-| Archivo | Renglones | Lo usa |
+Esta tabla la escribe `node scripts/medir_estado.mjs --escribir` y la compara antes de cada
+`commit` `scripts/verificar_estado.mjs`. No se edita a mano: el 31 de agosto de 2026 se encontró
+que la escrita a mano tenía **seis números equivocados** —decía que `css/styles.css` la usaban
+«las 10 páginas de la raíz» cuando son 15, que `tokens.css` y `utilidades.css` las usaban «las 16
+pantallas» cuando son 17, le daba 285 renglones a cada `styles-pwa.css` cuando tienen 287, y sumaba
+4.638 donde el README, que sí sale de medir, decía 4.642—.
+
+<!-- hojas: lo escribe scripts/medir_estado.mjs, no se edita a mano -->
+
+| Archivo | Renglones | La enlazan |
 |---|---:|---|
-| `css/styles.css` | 2.274 | Las 10 páginas de la raíz |
-| `css/tokens.css` | 363 | Las 16 pantallas, en tres copias (raíz y las dos PWA) |
-| `css/utilidades.css` | 189 | Las 16 pantallas, en tres copias. Las 125 clases del pendiente 8, cerrado |
 | `css/mockup-app.css` | 138 | Sólo `mockup-app.html` |
-| `pwa-asistente/css/styles-pwa.css` | 285 | Sólo la aplicación de asistentes |
-| `pwa-familia/css/styles-pwa.css` | 285 | Sólo la de familias (**copia idéntica de la anterior**) |
+| `css/styles.css` | 2.274 | 15 de las 17 pantallas |
+| `css/tokens.css` | 363 | 15 de las 17 pantallas |
+| `css/utilidades.css` | 189 | 15 de las 17 pantallas |
+| `pwa-asistente/css/styles-pwa.css` | 287 | Sólo `pwa-asistente/index.html` |
+| `pwa-asistente/css/tokens.css` | 363 | Sólo `pwa-asistente/index.html`. Copia byte a byte de `css/tokens.css` |
+| `pwa-asistente/css/utilidades.css` | 189 | Sólo `pwa-asistente/index.html`. Copia byte a byte de `css/utilidades.css` |
+| `pwa-familia/css/styles-pwa.css` | 287 | Sólo `pwa-familia/index.html`. Copia byte a byte de `pwa-asistente/css/styles-pwa.css` |
+| `pwa-familia/css/tokens.css` | 363 | Sólo `pwa-familia/index.html`. Copia byte a byte de `css/tokens.css` |
+| `pwa-familia/css/utilidades.css` | 189 | Sólo `pwa-familia/index.html`. Copia byte a byte de `css/utilidades.css` |
 
-La tabla cuenta cada original una vez. **En disco hay diez archivos y 4.638 renglones**, porque
-`tokens.css` y `utilidades.css` viven además en cada PWA: son las copias que `verificar_copias.mjs`
-compara byte a byte. Ese 4.638 es el número que sale de `node scripts/medir_estado.mjs` y el que
-lleva el README.
+En disco hay 10 archivos y 4.642 renglones, de los cuales 1.391 son copias byte a byte de otro: son las que `verificar_copias.mjs` compara.
 
-Más **963 renglones de CSS en bloques `<style>` adentro del HTML**: 517 en `pwa-familia/index.html`,
-271 en `pwa-asistente/index.html` y 175 en `examen.html`. Las demás pantallas de la raíz no tienen
-bloques `<style>`.
+Hay además 960 renglones de CSS en bloques `<style>` adentro del HTML: 516 en `pwa-familia/index.html`, 270 en `pwa-asistente/index.html`, 174 en `examen.html`. Las demás pantallas no tienen ninguno.
+
+<!-- fin de las hojas -->
+
+`css/utilidades.css` es donde viven las 125 clases de utilidad que cerraron el pendiente 8, y
+`css/styles.css` es la hoja grande de la que todavía no se separó nada.
 
 **Y 976 declaraciones más pegadas a las etiquetas**, en 247 atributos `style=`. Eran 2.199 en 694
 atributos hasta el 26 de agosto de 2026: los colores escritos a mano se fueron el 25 y el resto
