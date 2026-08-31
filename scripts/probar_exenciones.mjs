@@ -46,8 +46,10 @@
    - Las exenciones de las **pruebas** —`probar_*.mjs`—: para correrlas hace
      falta la base de esta máquina, y una de ellas copia el proyecto y corre la
      red varias veces. Son cinco, contando la de acá mismo —que no se puede
-     mirar a sí misma—, y están anotadas en el pendiente 114 con lo que
-     haría falta para cuidarlas.
+     mirar a sí misma—. Lo que sí las alcanza son la séptima y la octava regla
+     de `verificar_red.mjs`, que se plantan cuando una clave de exención nombra
+     un archivo que ya no está o una columna que ninguna migración declara, que
+     es la forma barata de la misma enfermedad y no necesita la base.
    - `verificar_todo.mjs`, que no es un chequeo sino el que los corre, y
      `verificar_guias.mjs`, que sale a la red: su color no depende de los
      archivos.

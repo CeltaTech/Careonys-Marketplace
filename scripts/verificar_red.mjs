@@ -16,7 +16,7 @@
    atributos `style=` del marcado» y lo contó como éxito. Está en el pendiente
    69 de `docs/PENDIENTES.md`.
 
-   QUÉ EXIGE, QUE SON CUATRO COSAS
+   QUÉ EXIGE, QUE SON CINCO COSAS
    1. Que todo chequeo llame por lo menos una vez a `seRevisaron()` o a
       `hayArchivos()`, las dos de `scripts/recorrido.mjs`, que son las que se
       plantan cuando la cuenta da cero. La llamada se busca **con los
@@ -30,7 +30,9 @@
       acá se miran todos los guiones, no sólo los chequeos—. La única lista que
       nombra archivos de otro repositorio se mira al revés: los suyos no tienen
       que aparecer nunca acá.
-   4. Que la tabla `| Chequeo | Qué impide que vuelva |` del README nombre a
+   4. Que ninguna exención nombre una columna que ya no está declarada en las
+      migraciones, que es la misma enfermedad un escalón más adentro.
+   5. Que la tabla `| Chequeo | Qué impide que vuelva |` del README nombre a
       todos los que existen y a ninguno que no. Se agregó el 31 de agosto de
       2026, cuando se encontró que la tabla llevaba **cuatro chequeos de
       atraso** —`base`, `clases`, `estado` y `pendientes` existían y no
@@ -62,8 +64,9 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
-  seRevisaron, hayArchivos, ARMAN_SU_PROPIO_CORPUS, EXTENSIONES_DE_PANTALLA
+  seRevisaron, hayArchivos, archivos, ARMAN_SU_PROPIO_CORPUS, EXTENSIONES_DE_PANTALLA
 } from './recorrido.mjs';
+import { columnasDeclaradas } from './verificar_esquema.mjs';
 
 const aca = dirname(fileURLToPath(import.meta.url));
 
@@ -150,8 +153,9 @@ export function clavesConLaExtension(texto) {
    prueba no llega: **la clave que nombra un archivo que ya no existe**. Un
    archivo renombrado o borrado deja la exención hablando de un fantasma, y
    nadie se entera. Se mira sobre **todos** los guiones de `scripts/`, no sólo
-   sobre los chequeos, porque las exenciones de las pruebas —pendiente 114— no
-   se pueden vaciar sin la base de esta máquina, y ésta no necesita nada.
+   sobre los chequeos, porque las exenciones que viven adentro de las pruebas no
+   se pueden vaciar sin la base de esta máquina —`probar_exenciones.mjs` corre
+   la dueña de cada una y exige que se ponga roja—, y ésta no necesita nada.
 
    Se miran sólo las claves que traen extensión o barra: las otras nombran una
    tabla, una columna, una función o un color, y ahí no hay archivo que
@@ -188,6 +192,40 @@ export function exencionesQueMienten(archivo, texto, existe) {
     }
   }
   return mentiras;
+}
+
+/* ── LA EXENCIÓN QUE PERDIÓ SU COLUMNA ──────────────────
+   La misma enfermedad un escalón más adentro. No toda exención nombra un
+   archivo: las de la base nombran `tabla.columna`, y una columna renombrada o
+   sacada deja el renglón perdonando algo que no existe. El caso que la pide es
+   `LA_SIEMBRA_NO_PUEDE`, en `scripts/probar_coherencia_de_la_siembra.mjs`, que
+   era la única exención del proyecto sin ninguna guarda —y es la que más tapa:
+   cada renglón suyo apaga el hallazgo de una columna que nadie llena—.
+
+   Qué columnas hay sale de `columnasDeclaradas()`, de `verificar_esquema.mjs`,
+   que es donde vive la lectura de las migraciones. Una segunda copia de esa
+   lectura se despega de la primera el día uno.
+
+   Se miran sólo las claves con forma `algo.algo` que no terminen en extensión
+   de archivo: `verificar_todo.mjs` tiene un punto y no es ninguna columna. */
+const CON_PINTA_DE_COLUMNA = /^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$/;
+
+/** Las claves de exención de este texto que nombran una columna que no está. */
+export function clavesSinSuColumna(texto, columnas) {
+  const perdidas = [];
+  for (const mapa of sinComentarios(texto).matchAll(MAPA_CON_NOMBRE)) {
+    for (const clave of mapa[2].matchAll(CLAVE)) {
+      if (CON_PINTA_DE_ARCHIVO.test(clave[1])) continue;
+      if (!CON_PINTA_DE_COLUMNA.test(clave[1])) continue;
+      const [tabla, columna] = clave[1].split('.');
+      const suyas = columnas.get(tabla);
+      if (!suyas) perdidas.push({ lista: mapa[1], clave: clave[1], porque: 'esa tabla no est\u00e1' });
+      else if (!suyas.has(columna)) {
+        perdidas.push({ lista: mapa[1], clave: clave[1], porque: 'esa columna no est\u00e1' });
+      }
+    }
+  }
+  return perdidas;
 }
 
 /* ── Y QUE EL README LOS NOMBRE A TODOS ───────────────────────────────────
@@ -345,6 +383,26 @@ if (mienten('citas.mjs', conMapa('AJENOS', 'verificar_todo.mjs')).length === 0) 
   fallas.push('Dio por buena una exención que dice «vive afuera» sobre un archivo de acá.');
 }
 
+/* ── 8. Que reconozca la exención que perdió su columna ────────── */
+
+/* Un esquema de mentira, para que la prueba no dependa de qué columnas haya hoy
+   en las migraciones. */
+const ESQUEMA_DE_MENTIRA = new Map([['visitas', new Set(['id', 'motivo'])]]);
+const sinColumna = (texto) => clavesSinSuColumna(texto, ESQUEMA_DE_MENTIRA);
+
+if (sinColumna(conMapa('LA_SIEMBRA_NO_PUEDE', 'visitas.motivo')).length > 0) {
+  fallas.push('Se quejó de una exención cuya columna está declarada.');
+}
+if (sinColumna(conMapa('LA_SIEMBRA_NO_PUEDE', 'visitas.color')).length === 0) {
+  fallas.push('Dio por buena una exención que nombra una columna que no existe.');
+}
+if (sinColumna(conMapa('LA_SIEMBRA_NO_PUEDE', 'paseos.motivo')).length === 0) {
+  fallas.push('Dio por buena una exención que nombra una tabla que no existe.');
+}
+if (sinColumna(conMapa('AFUERA', 'verificar_todo.mjs')).length > 0) {
+  fallas.push('Confundió el nombre de un archivo con una columna.');
+}
+
 /* ── 6. Que note una tabla a la que le falta un chequeo ─────────────────── */
 
 const TABLA_COMPLETA = [
@@ -414,11 +472,20 @@ const existeElArchivo = (clave) =>
 const guiones = readdirSync(aca).filter((n) => n.endsWith('.mjs') && n !== YO).sort();
 seRevisaron(guiones.length, 'ningún guión en `scripts/` cuyas exenciones mirar');
 
+const carpetaDeMigraciones = join(aca, '..', 'supabase', 'migrations');
+const migraciones = archivos(carpetaDeMigraciones, ['.sql']);
+seRevisaron(migraciones.length, 'ninguna migración de la que sacar las columnas');
+const columnas = columnasDeclaradas(migraciones.map((m) => readFileSync(m, 'utf8')));
+seRevisaron(columnas.size, 'ninguna tabla en las migraciones');
+
 const exencionesTorcidas = [];
 for (const nombre of guiones) {
   const texto = readFileSync(join(aca, nombre), 'utf8');
   for (const mentira of exencionesQueMienten(nombre, texto, existeElArchivo)) {
     exencionesTorcidas.push([nombre, mentira]);
+  }
+  for (const perdida of clavesSinSuColumna(texto, columnas)) {
+    exencionesTorcidas.push([nombre, perdida]);
   }
 }
 
@@ -501,7 +568,8 @@ if (fallas.length > 0) {
     'compara.\n' +
     'Y una exención que nombra un archivo que ya no está se saca: casi todas están\n' +
     'escritas por archivo, así que apagan el chequeo sobre él entero. Si el archivo\n' +
-    'se renombró, se corrige la clave; si se fue, se borra el renglón.'
+    'se renombró, se corrige la clave; si se fue, se borra el renglón. Lo mismo\n' +
+    'vale para la que nombra una columna: sale de las migraciones, no de la base.'
   );
   process.exit(1);
 }
@@ -511,5 +579,6 @@ console.log(
   `(${ARMAN_SU_PROPIO_CORPUS.size} exento, con su motivo), ninguno con la extensión de las ` +
   `pantallas escrita a mano ni metida adentro de la clave de una exención, y los ` +
   `${enElReadme.size} nombrados en la tabla del README. Y en los ${guiones.length} guiones ` +
-  `de \`scripts/\`, ninguna exención que nombre un archivo que ya no está.`
+  `de \`scripts/\`, ninguna exención que nombre un archivo que ya no está ni una ` +
+  `columna que no declara ninguna de las ${migraciones.length} migraciones.`
 );

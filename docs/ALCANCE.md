@@ -5028,6 +5028,69 @@ impide que la guarda se vuelva ruido.
 
 ---
 
+---
+
+### A las exenciones de las pruebas no las probaba nadie, y dos reglas baratas alcanzaron
+
+La enfermedad ya estaba diagnosticada: **una exención que deja de eximir no queda inofensiva.**
+Casi todas están escritas por archivo, así que el chequeo se saltea el archivo entero y con él todo
+lo demás que hubiera mirado adentro. De ahí salió `scripts/probar_exenciones.mjs`, que las vacía de
+a una y exige que el chequeo dueño se ponga rojo.
+
+Esa prueba, sin embargo, sólo llega a los `verificar_*.mjs`. **Las exenciones que viven adentro de
+las pruebas y de los medidores quedaban afuera**, porque vaciarlas obliga a correr la prueba dueña
+y casi todas necesitan la base de esta máquina levantada. Eran cinco, y una de ellas no se puede
+mirar a sí misma.
+
+Mirando qué tenía cada una se ordenaron solas en dos montones. `ROJAS_ESPERADAS`, en
+`scripts/probar_todo.mjs`, ya tenía guarda propia: se planta si nombra un pendiente que ya se
+cerró, que es como esa lista se pudre. Y `DE_AFUERA`, en `scripts/medir_estado.mjs`, **no puede
+pudrirse en silencio por cómo está escrita**: la frase que describe los servidores de afuera sale
+de la lista sólo mientras la cuenta coincida, y el día que aparezca uno más el renglón pasa a
+nombrarlos a todos y a pedir por escrito que alguien diga de qué es cada uno
+(`scripts/medir_estado.mjs:253`). Comprobado corriéndolo con la cuenta cambiada: el renglón cambia
+y el pedido sale. Eso no es una exención sin vigilancia; es una que avisa.
+
+Las otras tres se cubrieron con **dos reglas nuevas en `scripts/verificar_red.mjs`**, que es el
+chequeo que revisa a los chequeos. Son la forma barata de lo mismo y no necesitan la base, así que
+se miran sobre **todos** los guiones de `scripts/`, no sólo sobre los chequeos:
+
+- **La clave que nombra un archivo que ya no está.** Un archivo renombrado o borrado deja la
+  exención hablando de un fantasma. Falsificada apuntando una clave real a un nombre que no existe:
+  la red se pone roja y nombra el renglón.
+- **La clave que nombra una columna que ninguna migración declara.** Es la misma enfermedad un
+  escalón más adentro, y es la que faltaba para `LA_SIEMBRA_NO_PUEDE`, en
+  `scripts/probar_coherencia_de_la_siembra.mjs`, que era la única lista del proyecto sin ninguna
+  guarda **y la que más tapa**: cada renglón suyo apaga el hallazgo de una columna que nadie llena.
+  Falsificada en las dos formas, con las claves de verdad: cambiándole la columna y cambiándole la
+  tabla.
+
+Qué columnas existen no se lee dos veces: sale de `columnasDeclaradas()`, en
+`scripts/verificar_esquema.mjs`, que es donde ya vivía la lectura de las migraciones. Una segunda
+copia de esa lectura se despega de la primera el día uno.
+
+**Y una de las cinco se mira al revés en vez de apagarse.** `AJENOS`, en `scripts/citas.mjs`,
+nombra archivos que viven en el repositorio de Careonys, así que la regla la habría acusado de
+señalar un fantasma cuando ésa es exactamente su razón de ser. La salida no fue eximirla —eso es
+volver a dejar de mirar— sino invertirle la pregunta: **los archivos que nombra no tienen que
+aparecer nunca acá**, y si alguno aparece, la exención pasó a decir algo falso y hay que sacarla.
+La lista que la declara la vigila `probar_exenciones.mjs`, que comprueba que vaciarla pone rojo a
+`verificar_red.mjs`.
+
+Escribir la segunda regla dejó además un hallazgo que vale por sí solo. La primera lectura de las
+migraciones decía que `avisos.grid_schedule_7x3` no existía, y sí existe
+(`supabase/migrations/0001_esquema_inicial.sql:70`). Lo que pasaba es que la 0016 escribió
+`alter table public.avisos drop column grid_schedule_7x3;` **adentro de un comentario**, para
+explicar lo que esa migración justamente **no** hacía (`supabase/migrations/0016_franjas_de_un_aviso.sql:34`).
+Leída sin sacar los comentarios, la explicación de lo que no se hizo lo hace. Por eso
+`columnasDeclaradas()` saca los comentarios de renglón entero antes de mirar, y por eso conviene
+dejarlo escrito: es la única migración del proyecto con SQL comentado adentro, y alcanzó para
+inventar una columna perdida.
+
+**Lo que estas reglas no dicen.** No dicen que una exención siga eximiendo algo: dicen que lo que
+nombra existe. Vaciarlas y exigir el rojo sigue siendo la prueba fuerte, y sigue necesitando la
+base. La diferencia es que ahora ninguna de las cinco está sin nada.
+
 ## 6. Deuda del código actual
 
 Está toda en `docs/PENDIENTES.md`, con condición de cierre para cada punto. Acá no se repite,

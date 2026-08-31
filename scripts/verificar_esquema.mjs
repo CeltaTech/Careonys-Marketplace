@@ -150,6 +150,14 @@ const DISPARADOR =
   /create\s+(?:or\s+replace\s+)?trigger\s+"?[a-z_]+"?[^;]*\bon\s+(?:"?public"?\.)?"?tenants"?[^;]*\bexecute\s+(?:function|procedure)\s+(?:"?public"?\.)?"?([a-z_]+)"?/gi;
 const RENOMBRA =
   /alter\s+table\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_]+)"?\s+rename\s+to\s+"?([a-z_]+)"?/gi;
+/* Para `columnasDeclaradas`: las tres cosas que le pasan a una columna despues
+   de nacer. */
+const AGREGA_COLUMNA =
+  /alter\s+table\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_]+)"?\s+add\s+column\s+(?:if\s+not\s+exists\s+)?"?([a-z_]+)"?/gi;
+const SACA_COLUMNA =
+  /alter\s+table\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_]+)"?\s+drop\s+column\s+(?:if\s+exists\s+)?"?([a-z_]+)"?/gi;
+const RENOMBRA_COLUMNA =
+  /alter\s+table\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_]+)"?\s+rename\s+column\s+"?([a-z_]+)"?\s+to\s+"?([a-z_]+)"?/gi;
 
 /** Las tablas que en algún lado reciben su columna de Organización. */
 export function conOrganizacion(textos) {
@@ -212,6 +220,59 @@ export function clavesPrimarias(textos) {
     salida.set(tabla, [nombre, (tipos.get(tabla) || new Map()).get(nombre) || '']);
   }
   return salida;
+}
+
+/**
+ * Las columnas que hoy tiene cada tabla: `tabla → Set(columnas)`. Se sigue el
+ * orden de las migraciones y se aplica lo que cada una hace, porque una columna
+ * no es sólo lo que dice el `create table`: puede agregarse, renombrarse o
+ * sacarse después, y la tabla entera puede cambiar de nombre en el medio.
+ *
+ * No la usa este chequeo: la usa la octava regla de `scripts/verificar_red.mjs`,
+ * que se planta cuando una exención nombra una columna que ya no existe. Vive
+ * acá porque acá está el punto único de verdad de cómo se leen las migraciones,
+ * y una segunda copia de esta lectura se despega de ésta el primer día.
+ *
+ * **Se sacan los comentarios de renglones enteros antes de mirar**, y no es
+ * cautela de más: la 0016 escribió `alter table public.avisos drop column
+ * grid_schedule_7x3;` adentro de un comentario, justamente para explicar lo que
+ * esa migración **no** hacía. Leído sin sacarlos, el esquema pierde una columna
+ * que está.
+ */
+export function columnasDeclaradas(textos) {
+  const columnas = new Map();
+  const poner = (tabla, columna) => {
+    if (!columnas.has(tabla)) columnas.set(tabla, new Set());
+    columnas.get(tabla).add(columna);
+  };
+  for (const texto of textos) {
+    const t = texto.replace(/\r\n/g, '\n').replace(/^[ \t]*--.*$/gm, '');
+    for (const m of t.matchAll(TABLA)) {
+      const tabla = m[1].toLowerCase();
+      for (const nombre of tiposDeColumna(entreParentesis(t, m.index)).keys()) {
+        poner(tabla, nombre);
+      }
+    }
+    for (const m of t.matchAll(AGREGA_COLUMNA)) poner(m[1].toLowerCase(), m[2].toLowerCase());
+    for (const m of t.matchAll(RENOMBRA_COLUMNA)) {
+      const suyas = columnas.get(m[1].toLowerCase());
+      if (!suyas) continue;
+      suyas.delete(m[2].toLowerCase());
+      suyas.add(m[3].toLowerCase());
+    }
+    for (const m of t.matchAll(SACA_COLUMNA)) {
+      const suyas = columnas.get(m[1].toLowerCase());
+      if (suyas) suyas.delete(m[2].toLowerCase());
+    }
+    for (const m of t.matchAll(RENOMBRA)) {
+      const antes = m[1].toLowerCase();
+      const despues = m[2].toLowerCase();
+      if (!columnas.has(antes)) continue;
+      columnas.set(despues, columnas.get(antes));
+      columnas.delete(antes);
+    }
+  }
+  return columnas;
 }
 
 /* De la paréntesis que abre hasta la que cierra, contando. Una definición de
