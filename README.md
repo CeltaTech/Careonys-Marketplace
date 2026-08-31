@@ -167,7 +167,7 @@ título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de e
 | `verificar_organizacion` | Que una pantalla nombre a una Prestadora del seed, o escriba otro logotipo |
 | `verificar_paleta` | Que vuelva un color escrito con su número en vez de un token |
 | `verificar_pendientes` | Que un archivo siga diciendo en presente que un agujero está abierto después de haberse cerrado, y una roja esperada se vuelva un permiso para no mirar |
-| `verificar_red` | Que un chequeo mire cero archivos, no encuentre nada y salga en verde igual; que la extensión de las pantallas vuelva a escribirse a mano en vez de pedirse a `scripts/recorrido.mjs`; y que esta misma tabla se quede atrás, nombrando un chequeo que ya no existe o callando uno que sí |
+| `verificar_red` | Que un chequeo mire cero archivos, no encuentre nada y salga en verde igual; que la extensión de las pantallas vuelva a escribirse a mano —suelta, o metida adentro de la clave de una exención— en vez de pedirse a `scripts/recorrido.mjs`; y que esta misma tabla se quede atrás, nombrando un chequeo que ya no existe o callando uno que sí |
 | `verificar_referencias` | Que una cita `archivo:renglón` de la documentación apunte a la nada |
 | `verificar_sinconexion` | Que la copia que el teléfono guarda para andar sin señal siga sirviendo un archivo viejo |
 | `verificar_temas` | Que se rompa el modo oscuro: las dos copias separadas, o un token de letra pintando un fondo |

@@ -57,7 +57,9 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { seRevisaron, hayArchivos, ARMAN_SU_PROPIO_CORPUS } from './recorrido.mjs';
+import {
+  seRevisaron, hayArchivos, ARMAN_SU_PROPIO_CORPUS, EXTENSIONES_DE_PANTALLA
+} from './recorrido.mjs';
 
 const aca = dirname(fileURLToPath(import.meta.url));
 
@@ -107,6 +109,31 @@ const A_MANO = /['"`]\.html['"`]/;
 export function escribeLaExtension(texto) {
   return A_MANO.test(sinComentarios(texto));
 }
+/* ── LA EXTENSIÓN METIDA ADENTRO DE UNA EXENCIÓN ──────────────────
+   La misma atadura, escondida donde no se la busca. Una exención se escribe
+   `['mockup-app.html', 'motivo']`, y esa clave se compara contra el nombre del
+   archivo: el día que las pantallas dejen de ser `.html` la clave no encuentra
+   a la suya, la pantalla vuelve al corpus y el chequeo se pone rojo por un
+   motivo que no es el suyo. Con la regla de arriba no alcanza —mira la
+   extensión sola, `'.html'`, y acá viene pegada a un nombre—, y así pasó
+   inadvertida hasta el 31 de agosto de 2026 en `verificar_estados.mjs`.
+
+   La clave de una exención que nombra una pantalla se escribe **sin
+   extensión**, y el chequeo se la saca a lo que compara. */
+const CLAVE = /^[ \t]*\[\s*'([^']+)'/gm;
+
+/** Las claves de exención de este texto que traen la extensión de las pantallas. */
+export function clavesConLaExtension(texto) {
+  const traidoras = [];
+  const MAPA = /new Map\(\[\r?\n([\s\S]*?)^\]\);/gm;
+  for (const mapa of sinComentarios(texto).matchAll(MAPA)) {
+    for (const clave of mapa[1].matchAll(CLAVE)) {
+      if (EXTENSIONES_DE_PANTALLA.some((e) => clave[1].endsWith(e))) traidoras.push(clave[1]);
+    }
+  }
+  return traidoras;
+}
+
 /* ── Y QUE EL README LOS NOMBRE A TODOS ───────────────────────────────────
    La tercera forma de que la red mienta, y la más barata de arreglar. El
    README trae una tabla —«Chequeo | Qué impide que vuelva»— que es lo único
@@ -202,7 +229,37 @@ if (escribeLaExtension(COMO_CORRESPONDE)) {
   fallas.push('Se quejó de un chequeo que pide la extensión a `recorrido.mjs`.');
 }
 
-/* ── 5. Que note una tabla a la que le falta un chequeo ─────────────────── */
+/* ── 5. Que reconozca la extensión metida adentro de una exención ─────── */
+
+const CLAVE_ATADA = [
+  'const PANTALLAS_QUE_SE_VAN = new Map([',
+  "  ['mockup-app.html', 'se va del proyecto']",
+  ']);'
+].join('\n');
+
+const CLAVE_SUELTA = [
+  'const PANTALLAS_QUE_SE_VAN = new Map([',
+  "  ['mockup-app', 'se va del proyecto']",
+  ']);'
+].join('\n');
+
+const CLAVE_QUE_NO_ES_PANTALLA = [
+  'const AJENOS = new Map([',
+  "  ['docs/FOTO.md', 'es una foto fechada']",
+  ']);'
+].join('\n');
+
+if (clavesConLaExtension(CLAVE_ATADA).length === 0) {
+  fallas.push('Dio por buena una exención con la extensión adentro de la clave.');
+}
+if (clavesConLaExtension(CLAVE_SUELTA).length > 0) {
+  fallas.push('Se quejó de una exención cuya clave no trae la extensión.');
+}
+if (clavesConLaExtension(CLAVE_QUE_NO_ES_PANTALLA).length > 0) {
+  fallas.push('Se quejó de una clave que no nombra una pantalla.');
+}
+
+/* ── 6. Que note una tabla a la que le falta un chequeo ─────────────────── */
 
 const TABLA_COMPLETA = [
   '| Chequeo | Qué impide que vuelva |',
@@ -232,6 +289,7 @@ seRevisaron(chequeos.length, 'un solo chequeo en `scripts/` que revisar');
 
 const sinGuarda = [];
 const conExtensionAMano = [];
+const conLaExtensionEnLaClave = [];
 let revisados = 0;
 
 for (const nombre of chequeos) {
@@ -244,6 +302,13 @@ for (const nombre of chequeos) {
      mano para que haya algo que reconocer. */
   if (nombre !== 'verificar_red.mjs' && escribeLaExtension(texto)) {
     conExtensionAMano.push(nombre);
+  }
+  /* Y lo mismo con la exención: acá adentro hay una escrita a propósito, en las
+     pruebas de más arriba, por el mismo motivo. */
+  if (nombre !== 'verificar_red.mjs') {
+    for (const clave of clavesConLaExtension(texto)) {
+      conLaExtensionEnLaClave.push([nombre, clave]);
+    }
   }
 }
 
@@ -296,6 +361,14 @@ for (const nombre of conExtensionAMano) {
   );
 }
 
+for (const [nombre, clave] of conLaExtensionEnLaClave) {
+  fallas.push(
+    `\`scripts/${nombre}\` tiene una exención con la extensión adentro de la clave: \`${clave}\`.\n` +
+    '      El día que las pantallas dejen de ser `.html` esa exención no encuentra la\n' +
+    '      suya, y el chequeo se pone rojo por un motivo que no es el suyo.'
+  );
+}
+
 if (fallas.length > 0) {
   console.error('La red de chequeos puede pasar sin haber mirado nada:\n');
   for (const f of fallas) console.error('  · ' + f);
@@ -305,9 +378,11 @@ if (fallas.length > 0) {
     'catálogo. Las dos están en `scripts/recorrido.mjs`.\n' +
     'Si el chequeo de verdad no puede quedarse sin corpus, va a\n' +
     '`ARMAN_SU_PROPIO_CORPUS` de `scripts/recorrido.mjs`, con su motivo escrito\n' +
-    'archivo con el motivo escrito.\n' +
+    'al lado.\n' +
     'Y la extensión de las pantallas se pide con `EXTENSIONES_DE_PANTALLA`, del\n' +
-    'mismo archivo, en vez de escribirla.'
+    'mismo archivo, en vez de escribirla. Cuando la clave de una exención nombra\n' +
+    'una pantalla, se escribe sin extensión y el chequeo se la saca a lo que\n' +
+    'compara.'
   );
   process.exit(1);
 }
@@ -315,5 +390,6 @@ if (fallas.length > 0) {
 console.log(
   `Red verificada: ${revisados} chequeos que se plantan si no encuentran nada ` +
   `(${ARMAN_SU_PROPIO_CORPUS.size} exento, con su motivo), ninguno con la extensión de las ` +
-  `pantallas escrita a mano, y los ${enElReadme.size} nombrados en la tabla del README.`
+  `pantallas escrita a mano ni metida adentro de la clave de una exención, y los ` +
+  `${enElReadme.size} nombrados en la tabla del README.`
 );

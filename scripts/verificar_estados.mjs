@@ -92,7 +92,7 @@ const EXENTOS = new Map([]);
    Se informa siempre cuáles son y por qué, abajo de todo. Una exención callada
    se lee como «acá está todo bien», que es justo lo contrario de lo que dice. */
 const PANTALLAS_QUE_SE_VAN = new Map([
-  ['mockup-app.html',
+  ['mockup-app',
    'Es un modelo estético: una vez que sirvió de modelo, no vale nada. Lo dijo el '
    + 'Desarrollador el 26 de agosto de 2026, y el pendiente 6 ya tiene escrito que '
    + 'se borra —«Recién entonces se borran él y `mockup-app.html`»— apenas sus dos '
@@ -100,6 +100,16 @@ const PANTALLAS_QUE_SE_VAN = new Map([
    + 'Hasta entonces se lo deja como está: sus ocho puntos de carga se arreglan en '
    + 'las pantallas que lo reemplacen, no acá.']
 ]);
+
+/* La clave se escribe **sin la extensión**, y acá se le saca a lo que se
+   compara. Con la extensión adentro —y así estuvo hasta el 31 de agosto de
+   2026— la exención queda atada a que las pantallas sean `.html`: el día que
+   dejen de serlo no encuentra la suya, la pantalla vuelve al corpus y este
+   chequeo se pone rojo por un motivo que no es el suyo. Lo mira
+   `scripts/verificar_red.mjs`, que se pone rojo si alguna clave de exención
+   vuelve a traerla. */
+const sinExtension = (nombre) => EXTENSIONES_DE_PANTALLA
+  .reduce((n, e) => (n.endsWith(e) ? n.slice(0, -e.length) : n), nombre);
 
 /* ── Qué es esperar datos, y qué es escribir en la pantalla ─────────────── */
 
@@ -535,7 +545,7 @@ if (noDetecta.length || sePasa.length || noDetectaM.length || sePasaM.length
 const revisados = [];
 for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
-  if (PANTALLAS_QUE_SE_VAN.has(nombre)) continue;
+  if (PANTALLAS_QUE_SE_VAN.has(sinExtension(nombre))) continue;
   revisados.push({
     nombre,
     /* Sin los comentarios de bloque: la cabecera de un archivo suele traer un
