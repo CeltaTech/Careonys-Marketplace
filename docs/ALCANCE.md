@@ -3934,6 +3934,137 @@ vacía. La otra salida que el pendiente aceptaba —que una clave nula devolvier
 avisar— se descartó a propósito: `frase(null)` es siempre una falla de quien llama, y callarla
 deja el producto sin la única señal que lo dice.
 
+### Las cuatro columnas que ninguna política miraba
+
+*(31 de agosto de 2026 — cierra los pendientes 66, 74, 75 y 82)*
+
+**Eran cuatro pendientes y era un solo defecto cuatro veces:** la política decide por fila, y lo
+que importaba era qué columna se toca. Las dos políticas de `caregivers` son `for all` y no nombran
+ninguna columna; la de `profiles` dice «cada quien escribe su propia fila»
+(`supabase/migrations/0005_acceso_por_sesion.sql:145` a `:180`). Las tres contestan bien la
+pregunta que se les hace —«¿esta fila es suya?»— y ninguna contesta la que hacía falta. Cuando la
+respuesta es sí, quien pide escribe la fila **entera**, incluidas las columnas donde vive el
+veredicto de otro:
+
+- **66** — un Asistente se ponía solo `verification_status`, que es el sello que dice que la
+  Prestadora le revisó los papeles, y con eso entraba al directorio público como validado.
+- **74** — el personal de una Prestadora se pasaba a su nombre, o al de un tercero, el `user_id`
+  de un legajo ajeno.
+- **82** — `role` y `tenant_id` de `profiles`, que es de donde salen `es_personal_de_prestadora()`
+  y `prestadora_actual()`, o sea las expresiones sobre las que se apoyan las políticas de todas
+  las tablas.
+- **75** — con el sello puesto, cambiar `documents` dejaba el sello hablando de papeles que ya no
+  estaban.
+
+**Por qué un disparador y no un permiso por columna.** Porque el permiso es por rol, y acá los dos
+lados son el mismo rol: el personal de la Prestadora y el Asistente entran los dos como
+`authenticated`. Quitarle a ese rol la escritura de `verification_status` se la quitaría también a
+quien tiene que ponerlo. Lo que los distingue no es el permiso, es la política, y **una política
+recibe la fila, no el cambio**. Un disparador `before` es lo único que ve el valor viejo y el
+nuevo a la vez.
+
+**Cómo quedó**, en `supabase/migrations/0047_las_columnas_que_ninguna_politica_miraba.sql`. Dos
+disparadores, uno por tabla:
+
+- Sobre `caregivers`, `before insert or update`: en el alta el sello **no se toma del pedido**, lo
+  pone el disparador; en la modificación, si cambia y quien pide no es personal, se rechaza. El
+  `user_id` no cambia después del alta, para nadie. Y el papel nuevo baja el sello, que es la
+  opción A.
+- Sobre `profiles`, `before update`: `role` y `tenant_id` no cambian desde una sesión. **Acá no hay
+  excepción para el personal, y es a propósito:** la política de `profiles` no le deja a nadie
+  alcanzar el perfil de otra persona, así que lo único que un permiso al personal habilitaría es
+  ascenderse a sí mismo y mudarse solo de Prestadora, que es justo el agujero.
+
+**Y sin sesión el disparador no interviene.** Cuando `auth.uid()` es nulo no hay a quién exigirle
+nada: es la base hablando consigo misma —una migración, una siembra— o la puerta de administración
+de CeltaTech, que ya la cuida quien tiene esa clave. Sin esa salvedad, toda migración que sembrara
+un legajo ya validado lo habría escrito sin sello y sin decirlo.
+
+**El permiso por columna del 82 se conservó, no se reemplazó.**
+`grant update (full_name) on public.profiles to authenticated`
+(`supabase/migrations/0005_acceso_por_sesion.sql:160`) sigue siendo la primera puerta; el
+disparador es la segunda, que es la que se lee donde se la busca. El 82 nunca fue un agujero
+abierto sino una trampa armada: la protección no vivía donde se la lee, y ya se había perdido una
+vez sin que nadie se enterara —la migración 0032 se la llevó puesta y la 0033 la repuso—. La
+migración 0047 agrega además una comprobación que se planta si alguna migración futura vuelve a
+conceder `update` sobre `profiles` sin nombrar columnas.
+
+**Sobre el pendiente 75, el Desarrollador eligió la opción A: el papel nuevo baja el sello.** Había
+tres defendibles —bajarlo, prohibir el cambio, o permitirlo y anotarlo para revisar después— y la
+elegida es la que hace que el sello signifique siempre lo mismo: **habla de los papeles que están
+hoy**. La tercera era la única que dejaba el sello mintiendo, porque mientras nadie revisara, el
+directorio seguía diciendo «validado» sobre un papel que nadie miró. El costo de la A —volver a
+revisar tras un cambio de papel— cae sobre la Prestadora, que es quien firma, y no sobre la
+Familia, que es quien no tiene cómo saber.
+
+**Con una excepción, y también a propósito: cuando el papel lo cambia el personal, el sello no se
+mueve.** Es quien firma, y está viendo lo que sube en el mismo acto; bajárselo a sí misma
+obligaría a la Prestadora a sellar dos veces cada corrección, que es burocracia inventada por el
+sistema.
+
+**Las cuatro pruebas viven en el repositorio y no se corrieron a mano.** Dos ya existían o se
+escribieron antes de la migración y **daban rojo a propósito**; las cuatro dan verde ahora, sin que
+se las haya tocado:
+
+| Prueba | Qué mide | Cómo arrancó |
+|---|---|---|
+| `scripts/probar_sello_de_la_prestadora.mjs` | 66 | 3 en rojo |
+| `scripts/probar_de_quien_es_el_legajo.mjs` | 74 | 2 en rojo de 3 |
+| `scripts/probar_el_rol_y_la_prestadora_del_perfil.mjs` | 82 | en verde, y se explica abajo |
+| `scripts/probar_el_papel_nuevo_baja_el_sello.mjs` | 75 | escrita después de elegida la opción |
+
+**Y cada una lleva su comprobación de sostén, que es lo que la hace poder fallar.** Sin eso,
+cerrar la tabla entera dejaría todos los rechazos en verde sin haber arreglado nada. Que la
+persona pueda corregirse el teléfono y el nombre; que la coordinadora pueda editar un legajo de su
+Prestadora y no alcance el de la ajena; que cambiar un papel de un legajo **sin** sellar salga bien
+y no mueva nada.
+
+**Las dos que no arrancaron en rojo, dichas como fueron y no como convenía.** La del 82 arrancó
+entera en verde, porque el permiso por columna la sostenía: ahí no había agujero que cerrar sino
+una protección escrita donde nadie la lee. Que puede fallar se comprobó aparte, poniendo a mano
+`grant update on public.profiles to authenticated` en la base de esta máquina: dos comprobaciones
+se pusieron en rojo, y el permiso se dejó exactamente como estaba. Y de las tres del 74, la tercera
+—que la persona regale su propio legajo— ya estaba tapada por el `with check` de «Su propio
+legajo». La del 75 se escribió después del arreglo, así que también se comprobó bajándole el
+disparador a la base local: la comprobación del sello se puso en rojo y el disparador se repuso.
+
+**Un rojo arrastrado se lee igual que un rojo propio**, y eso costó una corrida. La prueba del 74
+empezó midiendo sus tres comprobaciones sobre un mismo legajo, y la segunda leyó lo que había
+dejado la primera. Ahora cada comprobación estrena el suyo. Y los destinos de los traspasos son
+cuentas **sin** legajo, porque `user_id` tiene índice único —`idx_caregivers_user_unico`—, así que
+apuntar a alguien que ya tiene el suyo devuelve un conflicto: rechazado por chocar contra un índice
+no es lo mismo que rechazado por no tener derecho.
+
+**Las cuatro pruebas limpian lo que crearon**, incluidas las cuentas. Una cuenta ficticia ascendida
+a coordinador es basura con permisos, y justo aparece en la corrida en la que uno está mirando otra
+cosa.
+
+**Qué se comprobó después, y contra qué.** Las cuatro pruebas en verde y los veintiséis chequeos
+pasando contra la base de esta máquina; la migración aplicada a la base publicada desde la línea de
+comandos y confirmada con `supabase migration list --linked`. De las tres pruebas que ya existían,
+`probar_permisos_en_vivo.mjs` sigue con su único rojo declarado —el pendiente 67— sin moverse;
+`probar_aislamiento.mjs` no corre contra el servidor publicado porque ahí el alta pide confirmar el
+correo, que es una limitación de siempre y no de esta tanda.
+
+**Lo que esta tanda destapó y no arregla.** `probar_alta_y_baja.mjs` pasó a dar 9 de 12 contra la
+base publicada, y el motivo no es el 0047: **desde la migración 0046 ninguna Prestadora nace
+borrable**, porque el disparador que le deja su configuración de puntaje escribe seis filas en dos
+tablas que apuntan a `tenants` con `no action`. La baja de CeltaTech choca contra la clave ajena,
+la Prestadora ficticia de una corrida anterior quedó cargada, y con ella un aviso posterior ya
+aplicado que hace fallar tres comprobaciones por arrastre. Es el **pendiente 107**.
+
+**Y lo que la opción A todavía le debe a quien la sufre.** Que la persona vea, **antes** de cambiar
+un papel, que hacerlo le baja el sello. Hoy no se puede escribir: ninguna pantalla cambia
+`documents` —el mapeo existe en `js/apiClient.js:904` y no lo usa nadie— y el chequeo de frases se
+pone en rojo con toda frase de catálogo que ninguna pantalla nombre. La frase entra el día que
+entre la pantalla; es el **pendiente 108**.
+
+**Lo que sigue sin verse, que es el pendiente 70.** Cerrar estos cuatro impide que alguien se selle
+solo; **no** hace que se vea quién fue revisado y con qué. La lista `comprobaciones` de la tarjeta
+del directorio sigue vacía para todo el mundo, porque ninguna pantalla escribe
+`verificaciones_asistente`. O sea que la única señal que le permitiría a una Familia distinguir un
+legajo revisado de uno que no lo está sigue sin distinguir nada.
+
 ---
 
 ## 6. Deuda del código actual

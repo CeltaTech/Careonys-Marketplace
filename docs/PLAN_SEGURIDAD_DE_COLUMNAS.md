@@ -1,11 +1,18 @@
 # Plan — las columnas que ninguna política mira
 
-> **Estado: escrito y sin aprobar.** Toca el modelo de seguridad y se aplica sobre la base
-> publicada, así que no se escribe una línea de SQL hasta que el Desarrollador lo apruebe. Lo pide
-> el propio pendiente 66: «va con plan y aprobación antes de código».
+> **Estado: aprobado, ejecutado y aplicado el 31 de agosto de 2026.** El Desarrollador lo aprobó
+> entero y eligió además la **opción A** del punto 5: cambiar un papel devuelve el sello a «sin
+> revisar». Todo lo que se hizo está en
+> `supabase/migrations/0047_las_columnas_que_ninguna_politica_miraba.sql`, aplicada a la base de
+> esta máquina y a la publicada, y contado en `docs/ALCANCE.md`, sección «Las cuatro columnas que
+> ninguna política miraba». Los pendientes **66**, **74**, **75** y **82** están cerrados.
 >
-> Escrito el 26 de agosto de 2026. Cierra los pendientes **66**, **74**, **82** y **75** de
-> `docs/PENDIENTES.md`.
+> **Este plan queda como lo que se proponía, y no se edita.** La migración lo cita en su renglón
+> 4, y una migración aplicada no se toca nunca. Para saber cómo quedó de verdad, se lee
+> `docs/ALCANCE.md`; acá está por qué se eligió lo que se eligió. Lo que el plan pedía y todavía
+> no existe quedó anotado como pendientes **107** y **108** de `docs/PENDIENTES.md`.
+>
+> Escrito el 26 de agosto de 2026.
 
 ## 1. Qué tienen en común los cuatro
 

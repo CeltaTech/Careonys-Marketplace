@@ -4,9 +4,14 @@
 > publicadas, así que no se escribe una línea de SQL hasta que el Desarrollador lo apruebe. Lo pide
 > el propio pendiente **68**: «va con plan y aprobación antes de código».
 >
-> Escrito el 27 de agosto de 2026. Cierra el pendiente **68** de `docs/PENDIENTES.md` y destraba la
-> opción C del pendiente **75** (`docs/PLAN_SEGURIDAD_DE_COLUMNAS.md` §5), que hoy no se puede
-> elegir porque no hay dónde asentar nada.
+> Escrito el 27 de agosto de 2026. Cierra el pendiente **68** de `docs/PENDIENTES.md`. Cuando se
+> escribió, además destrababa la opción C del pendiente **75**
+> (`docs/PLAN_SEGURIDAD_DE_COLUMNAS.md` §5), que entonces no se podía elegir porque no había dónde
+> asentar nada. Esa decisión ya se tomó y no fue la C: el Desarrollador eligió la **A** —cambiar un
+> papel devuelve el sello a «sin revisar»—, y así quedó aplicado. El pendiente **75** está cerrado;
+> aquel plan sigue en pie como el relato de lo que se proponía, y lo que efectivamente quedó hecho
+> se cuenta en `docs/ALCANCE.md`, sección «Las cuatro columnas que ninguna política miraba». Ni
+> este plan espera nada de aquél, ni aquél de éste.
 
 ## 1. Qué falta, en una línea
 
@@ -143,9 +148,12 @@ descuido en vez de una decisión.
 sin punto único de verdad» aplicada al lugar donde más tienta copiarla.
 
 Va **`after insert or update or delete`**, no `before`. El motivo: `after` anota lo que realmente
-quedó, y encima corre después de los disparadores `before` que propone
-`docs/PLAN_SEGURIDAD_DE_COLUMNAS.md` §3 —así el rastro no registra intentos rechazados como si
-hubieran pasado—. Los dos planes se apilan; no chocan.
+quedó, y encima corre después de los disparadores `before` que propuso
+`docs/PLAN_SEGURIDAD_DE_COLUMNAS.md` §3 y que ya están puestos sobre `caregivers` y `profiles`
+—`el_legajo_no_se_sella_solo` y `el_rol_y_la_prestadora_no_se_escriben_solos`, tal como quedaron
+contados en `docs/ALCANCE.md`, sección «Las cuatro columnas que ninguna política miraba»—, así que
+el rastro no va a registrar como sucedidos los intentos que aquéllos rechazan. Los dos se apilan;
+no chocan.
 
 **Nadie recibe permiso de alta sobre `auditoria`. Ni `authenticated`, ni `anon`.** El pendiente
 pedía que el rol auditado pudiera insertar y no modificar ni borrar; esto es más fuerte y por el
@@ -261,11 +269,13 @@ devuelve una lista vacía no distingue 'aislado' de 'todo bloqueado'»*.
 4. **`docs/ESQUEMA.md`** y **`docs/ALCANCE.md`** al día, y el pendiente 68 cerrado con lo que
    quedó afuera anotado como pendientes nuevos (§9).
 
-**Sobre el orden con `docs/PLAN_SEGURIDAD_DE_COLUMNAS.md`:** los dos planes son independientes y se
-pueden aplicar en cualquier orden. Se apilan bien porque aquéllos son disparadores `before` que
-rechazan, y éste es un `after` que anota. Si se aplica primero el de columnas, este rastro nace
-anotando solamente cambios legítimos. Si se aplica primero éste, durante ese rato el rastro anota
-también los ilegítimos —que es mejor que no anotar nada—.
+**Sobre el orden con `docs/PLAN_SEGURIDAD_DE_COLUMNAS.md`:** la pregunta ya está contestada por
+los hechos. Los dos planes eran independientes y podían aplicarse en cualquier orden, y aquél se
+ejecutó entero primero: sus disparadores ya están puestos, y lo que quedó hecho se cuenta en
+`docs/ALCANCE.md`, sección «Las cuatro columnas que ninguna política miraba». Se apilan bien
+porque aquéllos son disparadores `before` que rechazan y éste es un `after` que anota, de modo que
+este rastro va a nacer anotando solamente cambios legítimos —que era el mejor de los dos órdenes
+posibles, y es el que tocó—.
 
 ## 12. Lo único que hace falta decidir, y es del Desarrollador
 

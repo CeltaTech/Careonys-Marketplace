@@ -26,7 +26,7 @@ dos repositorios y dos proyectos de Supabase independientes.
 Sitio estático en HTML, CSS y JavaScript plano, en proceso de migración a React + Vite para
 alinearse con el stack de Careonys.
 
-Medido el 30 de agosto de 2026 sobre el árbol de trabajo con `node scripts/medir_estado.mjs`, que es de
+Medido el 31 de agosto de 2026 sobre el árbol de trabajo con `node scripts/medir_estado.mjs`, que es de
 donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
@@ -38,7 +38,7 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | 976 declaraciones más, pegadas al HTML | en 247 atributos `style=` (pendiente 8) |
 | Supabase Auth funcionando | 12 de las 17 pantallas rescatan la sesión al abrir |
 | 4 servidores de afuera, sin `package.json` ni compilación | dos de tipografías y dos de bibliotecas |
-| 23 tablas y 46 migraciones en el repositorio | 26 chequeos las miran antes de cada commit |
+| 23 tablas y 47 migraciones en el repositorio | 26 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
