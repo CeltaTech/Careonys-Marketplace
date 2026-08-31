@@ -272,6 +272,21 @@ const base = url.replace(/\/$/, '');
 console.log('Servidor: ' + new URL(url).hostname);
 console.log('');
 
+/* Cuántas cuentas había antes de que esta prueba tocara nada. Al final se
+   vuelve a preguntar, y tienen que ser las mismas. Contar sólo las que la
+   prueba se acuerda de haber creado no prueba lo mismo: una cuenta creada por un
+   camino que nadie anotó en una lista quedaría igual, y el mensaje diría que se
+   limpió todo. El total lo contesta el propio servidor en `x-total-count`. */
+async function cuantasCuentas() {
+  if (!claveServicio) return null;
+  const res = await fetch(base + '/auth/v1/admin/users?page=1&per_page=1', {
+    headers: { apikey: claveServicio, Authorization: 'Bearer ' + claveServicio }
+  });
+  const dicho = res.headers.get('x-total-count');
+  return dicho === null ? null : Number(dicho);
+}
+const cuentasAlEmpezar = await cuantasCuentas();
+
 let fallos = 0;
 let hechas = 0;
 function comprobar(titulo, condicion, detalle) {
@@ -981,9 +996,55 @@ const { cuerpo: quedan } = await rest('/rest/v1/rpc/directorio_de', {
   : r.cuerpo }));
 console.log('Legajos de prueba borrados. Quedan visibles en el directorio: ' +
   (Array.isArray(quedan) ? quedan.length : '?'));
-console.log('Las cuentas ficticias quedan en auth.users: se borran con el resto de los datos');
-console.log('de personas antes de producción. Todas tienen el correo @ejemplo.invalid, que es');
-console.log('un dominio que por norma no existe: no le llegó ni le puede llegar nada a nadie.');
+
+/* Y las cuentas. Hasta el 31 de agosto de 2026 esta prueba las dejaba, con el
+   argumento de que su correo `@ejemplo.invalid` es un dominio que por norma no
+   existe y no le puede llegar nada a nadie. Es cierto y no alcanza, por dos
+   motivos que se midieron ese día sobre la base de esta máquina:
+
+   · Una de las cuatro se asciende a coordinador para poder probar las
+     comprobaciones 15 y 16, y una cuenta ficticia con el rol de coordinador es
+     basura con permisos: puede leer los papeles de la Prestadora entera. Había
+     **diecisiete**, una por corrida, todas con rol `coordinador` sobre PresDemo.
+   · Y ochenta y cuatro de las ochenta y seis cuentas de la base local eran
+     residuo de pruebas. Una base así deja de servir para mirarla.
+
+   Se borran sólo con `--local`, que es donde existe la clave de administración.
+   Contra el servidor alojado no hay con qué borrarlas, y eso es el pendiente 45,
+   que es también el motivo por el que esta prueba se corre siempre con `--local`. */
+/* No se suma a `fallos`: eso diría que falló el aislamiento, y lo que falló es la
+   limpieza. Se cuenta aparte y se ve en el código de salida. */
+let quedoSucia = false;
+const todasLasCuentas = [...cuentas, ...familias, ...(coordinador ? [coordinador] : [])];
+if (contraLocal && claveServicio) {
+  for (const quien of todasLasCuentas) {
+    if (!quien.userId) continue;
+    await fetch(base + '/auth/v1/admin/users/' + quien.userId, {
+      method: 'DELETE',
+      headers: { apikey: claveServicio, Authorization: 'Bearer ' + claveServicio }
+    });
+  }
+  /* Se cuenta lo que quedó, no lo que se pidió borrar: un `DELETE` que contesta
+     bien y no borra nada daría el mismo mensaje de éxito. Y se cuenta **el total
+     del servidor**, no la lista de arriba, para que una cuenta que la prueba creó
+     y no anotó en ninguna lista también se note. */
+  const cuentasAlTerminar = await cuantasCuentas();
+  const sobran = cuentasAlEmpezar === null || cuentasAlTerminar === null
+    ? -1
+    : cuentasAlTerminar - cuentasAlEmpezar;
+  console.log(sobran === 0
+    ? 'Cuentas ficticias borradas: ' + todasLasCuentas.length +
+      ', incluida la que se ascendió a coordinador. La base quedó con las ' +
+      cuentasAlEmpezar + ' cuentas que tenía.'
+    : 'ATENCIÓN: la base tenía ' + cuentasAlEmpezar + ' cuentas y ahora tiene ' +
+      cuentasAlTerminar + '. Hay que borrar a mano las que sobran.');
+  if (sobran !== 0) quedoSucia = true;
+} else {
+  console.log('Las cuentas ficticias quedan: borrarlas pide la clave de administración, y');
+  console.log('contra el servidor alojado no la hay. Es el pendiente 45. Todas tienen el');
+  console.log('correo @ejemplo.invalid, un dominio que por norma no existe, así que no le');
+  console.log('llegó ni le puede llegar nada a nadie —pero una de ellas es coordinador—.');
+}
 
 // ── Los documentos que dicen cuántas comprobaciones son ─────────────────
 // El 31 de agosto de 2026 tres documentos escribían tres números distintos
@@ -1054,4 +1115,4 @@ if (fallosDeConteo > 0) {
   console.log('dicen un número de comprobaciones que ya no es el que corre. Son ' + cuantas + '.');
   console.log('Se corrige el documento, no la prueba.');
 }
-if (fallos > 0) process.exitCode = 1;
+if (fallos > 0 || quedoSucia) process.exitCode = 1;

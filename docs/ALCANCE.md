@@ -4202,7 +4202,7 @@ cuenta las que hizo y busca en los cuatro documentos la frase que dice cuántas 
 letras o en cifras según el documento. Un desajuste **no** dice que el aislamiento falle —eso sería
 enseñarle a la próxima persona a desconfiar del mensaje—: el veredicto del aislamiento sale
 primero y completo, y el desajuste sale después, como nota al pie, diciendo que se corrige el
-documento y no la prueba. El código del añadido está en `scripts/probar_aislamiento.mjs:988`.
+documento y no la prueba. El código del añadido está en `scripts/probar_aislamiento.mjs:1049`.
 
 **Comprobado en los dos sentidos**, como pide la regla de la casa: con `docs/INVENTARIO.md` falseado
 a propósito la prueba sale con código 1 y nombra el archivo y la frase que buscó; con el número
@@ -4661,6 +4661,39 @@ que dicen lo mismo se arreglan una vez y queda mal la otra. La lista se mudó a
 comparten el que lee y el que corre. **Antes de agregar algo que ya podría existir, buscarlo
 primero** —y acá no se buscó: lo encontró el propio experimento, cuando el chequeo de mentira salió
 en rojo por `verificar_red.mjs` antes de que la prueba nueva llegara a correr.
+
+---
+
+### La prueba de aislamiento dejaba diecisiete coordinadoras ficticias
+
+`scripts/probar_aislamiento.mjs` crea cuatro cuentas, y a una la asciende a coordinador porque es
+la única forma de comprobar que el personal de una Prestadora lee los papeles de la suya y no los
+de la otra. Al terminar borraba los legajos y los archivos, y las cuentas las dejaba, con este
+argumento escrito: su correo es `@ejemplo.invalid`, un dominio que por norma no existe, así que no
+le llegó ni le puede llegar nada a nadie.
+
+Es cierto y no alcanza. El 31 de agosto de 2026 se contó sobre la base de esta máquina: de las
+**86 cuentas, 84 eran residuo de pruebas**, y **diecisiete tenían el rol `coordinador` sobre
+PresDemo**, una por corrida. Una cuenta ficticia con rol de coordinador no es inofensiva porque
+nadie pueda entrar por correo: es basura con permisos sobre los papeles de una Prestadora entera.
+El argumento contestaba la pregunta del daño por correo, que nadie había hecho, y no la del
+permiso. Otra prueba de la casa ya lo decía con todas las letras —«una cuenta ficticia ascendida a
+coordinador es basura con permisos: no se deja»— y era justamente la que no lo cumplía.
+
+La clave de administración que hace falta para borrarlas **ya estaba en el guion**: se usa para el
+ascenso. Así que con `--local` ahora se borran las cuatro. Contra el servidor alojado no hay con
+qué, y eso sigue siendo el pendiente 45.
+
+Lo que comprueba al final **no es que borró las que anotó**. Eso lo pasaría una prueba que crea una
+cuenta por un camino que ninguna lista registra: se borraría todo lo anotado y el mensaje diría que
+quedó limpio. Comprueba que la base terminó con **el mismo total de cuentas** con el que empezó, y
+el total lo contesta el servidor. **Comprobado en los dos sentidos**: con el guion entero da 0 y
+dice que la base quedó con las 86 que tenía; sacando al coordinador de la lista de borrado, da 1 y
+dice que tenía 86 y ahora tiene 87.
+
+Y el desajuste **no se suma a los fallos del aislamiento**: eso diría que falló el aislamiento
+cuando lo que falló fue la limpieza, y enseñar a desconfiar del veredicto es peor que el problema
+que avisa.
 
 ---
 
