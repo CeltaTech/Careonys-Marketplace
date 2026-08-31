@@ -215,7 +215,7 @@ Se elige por las seis categorías que nombra la regla, no por comodidad.
 
 ## 9. Lo que este plan NO cierra, dicho antes de que sorprenda
 
-**Uno: el pisado de archivos.** `Sesion.uploadFile` sube con `upsert: true` (`js/auth.js:180-181`) y
+**Uno: el pisado de archivos.** `Sesion.uploadFile` sube con `upsert: true` (`js/auth.js:250`) y
 el camino es determinístico, así que **subir dos veces el mismo documento destruye el primero sin
 dejar nada**. No es un `DELETE` y ningún disparador de estas tres tablas lo ve. Es una destrucción
 de datos real y hoy no está en ningún pendiente. **Se abre pendiente aparte.**

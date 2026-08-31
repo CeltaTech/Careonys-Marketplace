@@ -206,6 +206,11 @@
       "en": "That file type is not accepted. Images (JPG, PNG, WEBP) and PDF are allowed.",
       "pt-BR": "Esse tipo de arquivo não é aceito. São admitidas imagens (JPG, PNG, WEBP) e PDF."
     },
+    "error.archivo_deposito": {
+      "es-AR": "No se pudo guardar el archivo. Se avisó y se está revisando; conviene intentarlo más tarde.",
+      "en": "The file could not be stored. It has been reported and is being looked into; it is worth trying again later.",
+      "pt-BR": "Não foi possível guardar o arquivo. Já foi avisado e está em análise; é melhor tentar mais tarde."
+    },
     "error.sin_legajo": {
       "es-AR": "Para rendir hace falta tener el legajo cargado. Se completa desde «Mi Legajo».",
       "en": "Taking the assessment requires a completed personal file. It is filled in from “My file”.",

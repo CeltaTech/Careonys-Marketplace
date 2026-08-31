@@ -17,7 +17,7 @@
 | Directorio de Asistentes con filtros | Maquetado y navegable |
 | Perfil del Asistente | Maquetado |
 | Portal de registro de Asistentes | Maquetado, con el legajo funcionando: `registrar-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en las tablas de la migración 0004, y la disponibilidad horaria en las de la 0012 |
-| Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:197`). Declarados en `supabase/migrations/0006_archivos_del_legajo.sql`, no a mano |
+| Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:265`). Declarados en `supabase/migrations/0006_archivos_del_legajo.sql`, no a mano |
 | Consentimiento de publicación | Funciona de punta a punta. El alta pregunta al cerrar (`data/catalogo-autorizaciones.json`, paso 7) y guarda la respuesta en `autorizaciones_asistente`; el directorio cruza contra ella y **no muestra a nadie que no haya dicho que sí** (`supabase/migrations/0007_directorio_con_consentimiento.sql`). Sin respuesta no se publica: la casilla arranca sin marcar. Y el directorio va con `noindex`, que es lo que ese mismo consentimiento promete |
 | Evaluaciones de competencias | Funcionan, y **las corrige el servidor**. `examen.html` pide sesión, lista lo que la persona puede rendir y manda las respuestas a `rendir_evaluacion()`; la columna con la respuesta correcta no tiene permiso de lectura para nadie y las opciones salen de la vista `opciones_para_responder`, que no la incluye (`supabase/migrations/0008_cursos_y_evaluaciones.sql`). El intento no se puede escribir a mano: la tabla no tiene política de escritura y los permisos están revocados. `cursos.html` ya no tiene examen propio, enlaza a esta pantalla. Falta el contenido: ver `docs/PENDIENTES.md` punto 24 |
 | Motor de fichas del legajo (`js/fichas-legajo.js`) | Funciona. Dibuja, valida y recolecta Matrícula, estudio, experiencia y referencia leyendo `data/catalogo-fichas.json` y `data/catalogo-vocabularios.json`. Ninguna de las cuatro está escrita en la pantalla |
@@ -1571,7 +1571,7 @@ pantalla vacía.
   lo que corresponde mostrar es el acceso. Lo que se perdía era el rastro. Ahora
   `mockup-app.html:435` y `:909`, `pwa-asistente/index.html:823` y `pwa-familia/index.html:883`
   dejan el detalle técnico en la consola en lugar de tirarlo.
-- **`js/auth.js:224` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
+- **`js/auth.js:292` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
   cargan ese archivo —no en las dieciséis, y el comentario decía catorce hasta que se contaron—, y su
   único trabajo es pasarle el permiso al cliente de datos. Si falla, el primer pedido de esa
   pantalla va a fallar también, y esa pantalla sí sabe cómo decirlo; poner un cartel acá sería
@@ -5726,6 +5726,57 @@ cómoda, que es la que nadie revisa.
 Y el error de fondo es anterior a la búsqueda. La regla de la empresa dice que **antes de agregar
 algo que ya podría existir hay que buscarlo primero**, en el código real. `verificar_esquema.mjs`
 ya cubría ésta, con su número y su banco de pruebas. Se lo leyó después de medir, no antes.
+
+### El tope de 10 MB vivía en un solo lado, y era el lado tarde
+
+La regla de la empresa lo dice con esas palabras: «Se valida en el servidor lo que entra, aunque
+exista un control equivalente más abajo. **Un límite que sólo vive en el depósito de archivos actúa
+después de que el archivo ya ocupó la memoria**» (`celtatech\CLAUDE.md`, «Seguridad, privacidad y
+auditoría»). Hasta el 31 de agosto de 2026 este producto tenía el caso literal: los topes —10 MB
+para los documentos del legajo, 5 MB para las fotos— y las listas de tipos aceptados existían
+**solamente** en `supabase/migrations/0006_archivos_del_legajo.sql`. `Sesion.uploadFile` mandaba
+cualquier cosa. Una foto de 30 MB viajaba entera para que el servidor contestara que no.
+
+**De las dos salidas que el pendiente 118 planteaba se tomó la segunda**: declararlo de este lado y
+que un chequeo comprueba que coincida, en vez de preguntárselo al depósito al arrancar. Dos motivos.
+La regla de la empresa ya elige esa forma cuando la plataforma obliga a duplicar —«hay un original,
+las copias se generan desde él, y una comprobación automática rompe la construcción si alguna se
+despegó»—; y preguntar al arrancar agrega un pedido de red en cada carga para averiguar algo que
+casi nunca cambia.
+
+Así quedó repartido:
+
+| Pieza | Dónde | Qué es |
+|---|---|---|
+| El original | `supabase/migrations/0006_…sql` | `file_size_limit` y `allowed_mime_types` |
+| La lectura del original | `limitesDeclarados()`, en `scripts/verificar_esquema.mjs` | Ahí vive la lectura de las migraciones, y una segunda copia de esa lectura se despega el primer día |
+| La copia | `DEPOSITOS`, en `js/auth.js` | En el mismo archivo que ya define `urlPublica()` y `urlFirmada()` |
+| La decisión | `_porQueNoSeSube()`, en `js/auth.js` | Devuelve la clave del catálogo con el motivo, o `null` |
+| La guarda | 4ª regla de `scripts/verificar_deposito.mjs` | Rompe la construcción si difieren |
+
+**Que las dos listas digan lo mismo no prueba que el rechazo funcione**, así que la guarda no se
+conforma con compararlas: saca `_porQueNoSeSube()` del archivo real y lo corre con nueve casos
+armados a partir de los topes de la migración —de ahí que sigan valiendo si mañana el tope cambia—.
+La decisión tiene nombre propio y no está escrita adentro de `uploadFile` justamente para eso: para
+poder ejercerla.
+
+Entre esos nueve está el que la regla de la empresa nombra por su nombre: «nunca dejar que una
+comparación con un valor vacío decida un permiso: en JavaScript `undefined < 3` da falso». Si
+`uploadFile` recibe algo que no es un archivo, `undefined > 10485760` da falso y **pasa de largo
+justamente el caso que no entendió**. Por eso se pregunta que el tamaño sea un número antes de
+compararlo, y por eso hay un caso que lo prueba.
+
+**Falsificada de siete maneras**, cada una en su renglón: tres sobre la copia —un tope distinto, un
+tipo de más, un tipo de menos, y el archivo sin `DEPOSITOS`— y cuatro sobre la decisión —sin el
+control de tamaño, sin preguntar el tipo del dato, sin el control de tipo de archivo, y comparando
+el tipo sin bajarlo a minúsculas, que rechazaría un `IMAGE/JPEG` legítimo—. Las siete dan rojo y
+nombran el caso exacto; restaurado, verde.
+
+**Lo que esto no cierra**, y queda en el pendiente 118: el `accept=` de los seis selectores de
+archivo sigue escrito a mano y sigue sin coincidir —de menos en `js/fichas-legajo.js`, que deja
+afuera el `heic` con que fotografía un iPhone; de más en los `image/*`, que dejan elegir un `gif`
+para rechazarlo después—. Ya no es un agujero, porque el control real está antes de subir. Es una
+molestia, y una mentira sobre lo que se puede elegir.
 
 ### Dos pantallas del mismo botón, juzgadas con distinta vara
 

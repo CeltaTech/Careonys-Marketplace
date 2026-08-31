@@ -196,6 +196,15 @@ const Texto = {
   claveDeError(error, queSeIntentaba = '') {
     if (error) console.error(queSeIntentaba || 'Falla:', error);
 
+    /* Si el error ya trae su clave puesta, se le cree y no se clasifica nada.
+       Lo que sigue existe para adivinar de qué habla un texto crudo que escribió
+       el servidor; un error que tira el propio producto no tiene que hacerse
+       pasar por uno del servidor para que se lo entienda. Lo usa
+       `Sesion.uploadFile`, que rechaza el archivo antes de subirlo. */
+    if (error && typeof error.clave === 'string' && error.clave.indexOf('error.') === 0) {
+      return error.clave;
+    }
+
     const crudo = String(
       (error && (error.message || error.error_description)) || ''
     ).toLowerCase();

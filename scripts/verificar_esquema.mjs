@@ -791,6 +791,76 @@ export function depositosDeclarados(textos) {
   return depositos;
 }
 
+/* El mismo depósito, pero entero: la lista de columnas y la tupla de valores.
+   Se cierra en el `on conflict` o en el punto y coma, que es donde termina toda
+   sentencia. */
+const DEPOSITO_ENTERO =
+  /insert\s+into\s+storage\.buckets\s*\(([^)]*)\)\s*values\s*\(([\s\S]*?)\)\s*(?:on\s+conflict|;)/gi;
+
+/* Parte la tupla de un `values (...)` en sus valores, sin cortar adentro de un
+   `array[...]` ni adentro de una cadena. No entiende la comilla doblada de SQL
+   —`'no''va'`—, y no hace falta: los valores que se leen acá son nombres de
+   depósito y tipos de archivo, donde una comilla adentro no tiene sentido. */
+function partirTupla(cuerpo) {
+  const partes = [];
+  let actual = '';
+  let abiertos = 0;
+  let comilla = null;
+  for (const c of cuerpo) {
+    if (comilla) {
+      actual += c;
+      if (c === comilla) comilla = null;
+      continue;
+    }
+    if (c === "'" || c === '"') { comilla = c; actual += c; continue; }
+    if (c === '[' || c === '(') abiertos += 1;
+    if (c === ']' || c === ')') abiertos -= 1;
+    if (c === ',' && abiertos === 0) { partes.push(actual.trim()); actual = ''; continue; }
+    actual += c;
+  }
+  if (actual.trim()) partes.push(actual.trim());
+  return partes;
+}
+
+/**
+ * El tope de tamaño y los tipos de archivo que cada depósito declara:
+ * `Map<nombre, { limite, tipos }>`. Vive acá por el mismo motivo que
+ * `depositosDeclarados()`: la lectura de las migraciones tiene un solo lugar.
+ * La usa la cuarta regla de `scripts/verificar_deposito.mjs`, que exige que la
+ * copia declarada en el navegador diga exactamente lo mismo.
+ *
+ * Los valores se leen **por nombre de columna**, no por posición: el día que
+ * alguien agregue una columna en el medio, leer por posición devolvería otra
+ * cosa sin avisar. Un depósito que no declare tope o tipos sale con `null`, que
+ * no es lo mismo que declararlos vacíos.
+ */
+export function limitesDeclarados(textos) {
+  const limites = new Map();
+  for (const texto of textos) {
+    const t = texto.replace(/\r\n/g, '\n').replace(/^[ 	]*--.*$/gm, '');
+    for (const m of t.matchAll(DEPOSITO_ENTERO)) {
+      const columnas = m[1].split(',').map((c) => c.trim().toLowerCase());
+      const valores = partirTupla(m[2]);
+      if (columnas.length !== valores.length) continue;
+      const campo = (nombre) => {
+        const i = columnas.indexOf(nombre);
+        return i === -1 ? null : valores[i];
+      };
+      const id = (campo('id') || '').replace(/^'|'$/g, '').toLowerCase();
+      if (!id) continue;
+      const tope = campo('file_size_limit');
+      const tipos = campo('allowed_mime_types');
+      limites.set(id, {
+        limite: tope && /^\d+$/.test(tope) ? Number(tope) : null,
+        tipos: tipos
+          ? [...tipos.matchAll(/'([^']+)'/g)].map((x) => x[1].toLowerCase())
+          : null
+      });
+    }
+  }
+  return limites;
+}
+
 /**
  * Lo que ya se sigue solo: las tablas donde escribe algún disparador colgado de
  * `tenants`, y el nombre de hoy de cada tabla que en el camino se renombró. Lo

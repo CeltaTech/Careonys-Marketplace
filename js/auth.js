@@ -40,6 +40,66 @@ const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
   }
 });
 
+/* Lo que cada depósito de archivos acepta: cuánto puede pesar y de qué tipo
+   puede ser. **La verdad está en la migración 0006**, que es la que se lo dice
+   al servidor; esto es una copia, y `scripts/verificar_deposito.mjs` se pone
+   rojo si las dos se despegan.
+
+   Por qué la copia existe. La regla de la empresa dice que se valida en el
+   servidor lo que entra «aunque exista un control equivalente más abajo», y
+   explica por qué con este caso exacto: «un límite que sólo vive en el depósito
+   de archivos actúa **después** de que el archivo ya ocupó la memoria». Sin
+   esto, la persona que elige del teléfono una foto de 30 MB la sube entera,
+   espera, y recién entonces el servidor la rechaza. Con esto se entera antes de
+   empezar, y en su idioma.
+
+   El `accept=` de los campos de archivo no cuenta como control: es una
+   sugerencia para el buscador de archivos, se puede desactivar en el diálogo
+   mismo, y hoy no dice lo mismo que el depósito —`image/*` deja elegir un
+   `image/gif` que el depósito no acepta—. Es el pendiente que queda anotado. */
+const DEPOSITOS = {
+  'documentos-cuidadores': {
+    limite: 10485760,
+    tipos: ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'application/pdf']
+  },
+  avatares: {
+    limite: 5242880,
+    tipos: ['image/jpeg', 'image/png', 'image/webp', 'image/heic']
+  }
+};
+
+/* Por qué un archivo no se sube: devuelve la clave del catálogo con el motivo,
+   o `null` si se puede subir. Tiene nombre propio —y no está escrito adentro de
+   `uploadFile`— para que se lo pueda ejercer: la cuarta regla de
+   `scripts/verificar_deposito.mjs` lo saca de acá y le pasa casos inventados,
+   así que si esta decisión se rompe, el chequeo se pone rojo. */
+function _porQueNoSeSube(deposito, archivo) {
+  const acepta = Object.prototype.hasOwnProperty.call(DEPOSITOS, deposito)
+    ? DEPOSITOS[deposito] : null;
+  if (!acepta) return 'error.archivo_deposito';
+  /* Se pregunta que el tamaño **sea un número** antes de compararlo. Si no se
+     preguntara, un objeto que no es un archivo llegaría a
+     `undefined > 10485760`, que en JavaScript da falso, y pasaría de largo
+     justamente el caso que este control no entendió. */
+  if (!archivo || typeof archivo.size !== 'number') return 'error.archivo_tipo';
+  if (archivo.size > acepta.limite) return 'error.archivo_pesado';
+  if (acepta.tipos.indexOf(String(archivo.type || '').toLowerCase()) === -1) {
+    return 'error.archivo_tipo';
+  }
+  return null;
+}
+
+/* El error se va con la clave del catálogo puesta. Clasificar el texto crudo
+   del servidor es lo que hace `Texto.claveDeError`, y acá no hace falta
+   adivinar nada: quien tira el error ya sabe qué pasó. Las dos claves son las
+   mismas que usa el rechazo del servidor, así que la persona lee lo mismo
+   venga de donde venga. */
+function _rechazo(clave) {
+  const error = new Error(clave);
+  error.clave = clave;
+  return error;
+}
+
 const Sesion = {
 
   client: _sb,
@@ -177,7 +237,15 @@ const Sesion = {
   //
   // La primera carpeta del camino tiene que ser la cuenta dueña del archivo
   // (`<user_id>/<archivo>`): de ahí sale el permiso (migración 0006).
+  //
+  // Y antes de mandar nada se mira el archivo contra lo que el depósito acepta.
+  // Un depósito que no está en la tabla no se deja pasar «por las dudas»: se
+  // rechaza. Todo control de acceso falla cerrado, y un nombre de depósito que
+  // esta copia no conoce es exactamente el caso que no se entendió.
   async uploadFile(bucket, path, file) {
+    const motivo = _porQueNoSeSube(bucket, file);
+    if (motivo) throw _rechazo(motivo);
+
     const { data, error } = await _sb.storage.from(bucket).upload(path, file, {
       upsert: true,
       contentType: file.type
