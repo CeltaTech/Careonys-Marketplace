@@ -85,8 +85,14 @@ const SIN_ORGANIZACION = new Map([
 /* Funciones SECURITY DEFINER que conservan a propósito el permiso del rol
    anónimo, con el motivo escrito. Es la excepción más cara del archivo y por eso
    se nombra una por una: cualquier otra función así es un descuido, y el chequeo
-   la tiene que encontrar. */
-const AL_ALCANCE_ANONIMO = new Map([
+   la tiene que encontrar.
+
+   **Y es la única lista.** `scripts/probar_permisos_en_vivo.mjs` la importa de
+   acá en vez de tener la suya: tenía una copia con tres, y cuando las
+   migraciones 0035, 0038 y 0041 abrieron tres puertas más —con su motivo
+   escrito, acá— aquella prueba se puso en rojo y así se quedó. Una lista
+   repetida se despega, y la que se despega es siempre la que nadie mira. */
+export const AL_ALCANCE_ANONIMO = new Map([
   ['prestadora_por_slug',
    'la pantalla de ingreso tiene que saber qué nombre y qué colores mostrar antes de que ' +
    'exista ninguna sesión; devuelve una sola Prestadora, la que nombra el argumento, y ' +

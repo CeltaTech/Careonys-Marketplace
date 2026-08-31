@@ -14,12 +14,25 @@
    prueba mira la base y no los archivos: le pide el esquema real a la
    línea de comandos, que ya está enlazada y no pide contraseña.
 
-   HOY DA ROJO, Y ESTÁ BIEN QUE LO DÉ. Es el pendiente 67. Supabase deja
-   puesto un `ALTER DEFAULT PRIVILEGES` que le concede todo a `anon` y a
+   PARA QUÉ SE ESCRIBIÓ, Y CÓMO TERMINÓ. Nació en rojo a propósito: era el
+   pendiente 67, y lo que estaba mal era que Supabase deja puesto un
+   `ALTER DEFAULT PRIVILEGES` que le concede todo a `anon` y a
    `authenticated` sobre cada tabla, secuencia y función nueva, así que la
-   base va acumulando permisos que nadie escribió. La prueba se escribió
-   antes que el arreglo para que el día que el arreglo exista se sepa que
-   funcionó por algo más que por mirarlo.
+   base iba acumulando permisos que nadie escribió. Se escribió antes que el
+   arreglo para que el día que el arreglo existiera se supiera que funcionó
+   por algo más que por mirarlo. **El arreglo llegó el 26 de agosto de 2026**
+   —migraciones 0032 y 0033— y esta prueba se puso en verde ese día.
+
+   Y ENTONCES SE VOLVIÓ A PONER EN ROJO, SIN QUE NADA SE ROMPIERA. Tenía
+   escrita adentro su propia lista de funciones abiertas sin sesión: las tres
+   del directorio. Después las migraciones 0035, 0038 y 0041 abrieron tres
+   puertas más —las zonas, los vocabularios y las guías—, cada una con su
+   motivo escrito y comprobado, y esta prueba las vio como un hallazgo. Como
+   el rojo ya era «esperado», nadie lo miró: quedó anotada contra un pendiente
+   que hacía días estaba cerrado. **La lista ya no está acá**: se importa de
+   `scripts/verificar_esquema.mjs`, que es donde vive con el motivo de cada
+   una. Una lista repetida se despega, y la que se despega es siempre la que
+   nadie mira.
 
    QUÉ MIRA, Y QUÉ NO. Mira permisos —quién puede tocar la tabla—, que es
    el primer paso de los dos que hace Postgres. El segundo, qué filas ve,
@@ -35,21 +48,20 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
+import { AL_ALCANCE_ANONIMO } from './verificar_esquema.mjs';
+
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const local = process.argv.includes('--local');
 
 // --- Lo que está abierto a propósito ---------------------------------------
-// Las tres puertas del directorio que se ve sin iniciar sesión, decidido por
-// el Desarrollador el 24 de agosto de 2026. Cualquier otra función al alcance
-// de `anon` es un hallazgo.
-const FUNCIONES_ABIERTAS = new Set([
-  'directorio_de',
-  'perfil_del_directorio',
-  'prestadora_por_slug'
-]);
+// No se escribe acá: se importa de `verificar_esquema.mjs`, que la tiene con
+// el motivo de cada una y la migración que la abrió. Cualquier función al
+// alcance de `anon` que no esté en esa lista es un hallazgo, y para dejar de
+// serlo hay que escribirle el motivo allá.
+const FUNCIONES_ABIERTAS = new Set(AL_ALCANCE_ANONIMO.keys());
 
 // Ninguna tabla ni vista está abierta a `anon` a propósito: todo lo público
-// del producto pasa por esas tres funciones. La lista está acá y vacía para
+// del producto pasa por esas funciones. La lista está acá y vacía para
 // que el día que se decida abrir una haya dónde escribirla, con su motivo.
 const TABLAS_ABIERTAS = new Set([]);
 
@@ -105,9 +117,10 @@ const funcionesAnon = renglones
   .filter((r) => /^GRANT .* ON FUNCTION .* TO "anon";$/.test(r))
   .map((r) => (r.match(/ON FUNCTION "public"\."([^"]+)"/) || [])[1])
   .filter(Boolean);
-sostener('y los permisos de las funciones, que las tres puertas del directorio están',
+sostener('y los permisos de las funciones, que las puertas abiertas a propósito están',
   [...FUNCIONES_ABIERTAS].every((f) => funcionesAnon.includes(f)),
-  funcionesAnon.length + ' funciones al alcance anónimo');
+  funcionesAnon.length + ' funciones al alcance anónimo, y las ' +
+  FUNCIONES_ABIERTAS.size + ' que tienen motivo escrito están todas');
 
 // --- 1. El permiso por omisión ---------------------------------------------
 console.log('');
@@ -149,9 +162,12 @@ console.log('');
 console.log('Qué se puede llamar sin iniciar sesión');
 
 const deMas = funcionesAnon.filter((f) => !FUNCIONES_ABIERTAS.has(f));
-comprobar('ninguna función al alcance de `anon` fuera de las tres del directorio',
+comprobar('ninguna función al alcance de `anon` fuera de las que tienen motivo escrito',
   deMas.length === 0,
-  deMas.length === 0 ? '' : lista(deMas));
+  deMas.length === 0
+    ? 'las ' + FUNCIONES_ABIERTAS.size + ' de `verificar_esquema.mjs`, y ninguna más'
+    : lista(deMas) + ' — si están bien, el motivo se escribe en AL_ALCANCE_ANONIMO ' +
+      'de `scripts/verificar_esquema.mjs`');
 
 // --- 4. Lo que hoy contiene todo lo de arriba ------------------------------
 console.log('');
@@ -178,7 +194,9 @@ if (fallos === 0) {
   process.exit(0);
 }
 console.log(fallos + (fallos === 1 ? ' comprobación' : ' comprobaciones') + ' en rojo.');
-console.log('Es el pendiente 67, y hasta que se arregle esta prueba tiene que dar rojo.');
+console.log('Esta prueba pasa desde el 26 de agosto de 2026: si da rojo, algo cambió.');
+console.log('Un permiso que sobra puede estar bien, pero entonces el motivo se escribe en');
+console.log('AL_ALCANCE_ANONIMO de `scripts/verificar_esquema.mjs`, no acá.');
 console.log('Ojo con lo que significa: un permiso de más no abre nada mientras la política');
 console.log('niegue. Lo que está mal no es que hoy entre alguien, es que la puerta quede');
 console.log('lista para el día que se escriba una política más floja.');

@@ -33,18 +33,28 @@
 
    ── La que tiene que dar rojo ─────────────────────────────────────────────
 
-   Dos salen en rojo a propósito, y cada una dice adentro por qué:
-   `probar_permisos_en_vivo.mjs` es el pendiente 67, y
-   `probar_pisado_de_archivos.mjs` es el 89 —subir dos veces el mismo papel
-   borra el primero, y el arreglo depende de una decisión que todavía no se
-   tomó—. Acá se cuentan como esperadas y no tumban la corrida. **Pero si algún día pasa, esto
-   falla igual**, porque entonces el pendiente 67 está cerrado y hay que sacarlo
-   de esta lista. Una prueba que perdona un rojo para siempre deja de mirar.
+   Una sale en rojo a propósito y dice adentro por qué:
+   `probar_pisado_de_archivos.mjs` es el pendiente 89 —subir dos veces el mismo
+   papel borra el primero, y el arreglo depende de una decisión que todavía no
+   se tomó—. Acá se cuenta como esperada y no tumba la corrida.
+
+   **Y el pendiente que la explica tiene que estar abierto.** Si no está, esto
+   falla antes de correr ninguna prueba. Sin esa comprobación la lista perdona
+   un rojo apuntando a un número que ya no existe, y el motivo se vuelve
+   imposible de encontrar: le pasó a `probar_permisos_en_vivo.mjs`, anotada
+   contra el pendiente 67 cuando ese pendiente se había cerrado el 26 de agosto
+   de 2026, y su rojo venía en realidad de tres puertas nuevas abiertas a
+   propósito y con motivo escrito.
+
+   **Y si algún día la roja esperada pasa, esto falla igual**, porque entonces
+   el pendiente está cerrado y hay que sacarlo de esta lista. Una prueba que
+   perdona un rojo para siempre deja de mirar.
 =================================================== */
 
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 
 const aca = dirname(fileURLToPath(import.meta.url));
 
@@ -64,9 +74,36 @@ const PRUEBAS = [
 /* Rojas a propósito, con el pendiente que lo explica al lado. Sacar de acá lo
    que se arregle: si una de éstas pasa, esta corrida falla y dice por qué. */
 const ROJAS_ESPERADAS = new Map([
-  ['probar_permisos_en_vivo.mjs', 67],
   ['probar_pisado_de_archivos.mjs', 89]
 ]);
+
+/* Y el pendiente que explica cada roja tiene que existir. Sin esto la lista de
+   arriba perdona un rojo para siempre apuntando a un número que ya no está en
+   ninguna parte, y el motivo se vuelve imposible de encontrar. Pasó: la prueba
+   de permisos quedó anotada contra el pendiente 67, que se había cerrado el 26
+   de agosto de 2026, y su rojo —que venía de otra cosa, y de algo que estaba
+   bien— se dio por bueno cinco días. */
+const listaDePendientes = readFileSync(join(aca, '..', 'docs', 'PENDIENTES.md'), 'utf8');
+const abiertos = new Set(
+  [...listaDePendientes.matchAll(/^\|\s*(\d+)\s*\|/gm)].map((m) => Number(m[1]))
+);
+
+if (abiertos.size === 0) {
+  console.error('No se pudo leer ningún pendiente de docs/PENDIENTES.md.');
+  console.error('Sin eso esta comprobación diría que está todo bien sin haber mirado nada.');
+  process.exit(1);
+}
+
+const fantasmas = [...ROJAS_ESPERADAS].filter(([, n]) => !abiertos.has(n));
+if (fantasmas.length > 0) {
+  console.error(
+    '\nHay rojas esperadas anotadas contra un pendiente que no está abierto:\n' +
+    fantasmas.map(([p, n]) => '  ' + p + ' → pendiente ' + n).join('\n') + '\n\n' +
+    'O el pendiente se cerró y la prueba tiene que pasar a contarse como las demás,\n' +
+    'o el rojo viene de otra cosa y hace falta un pendiente que lo explique.\n'
+  );
+  process.exit(1);
+}
 
 const nombreCorto = (a) => a.replace(/^probar_/, '').replace(/\.mjs$/, '');
 

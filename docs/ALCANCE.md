@@ -4273,6 +4273,36 @@ la lista salió con código 1 nombrándola; con una roja esperada que en realida
 código 1 pidiendo cerrar el pendiente; y tal como queda, con la base local levantada, las cinco que
 tienen que pasar pasan y la sexta da el rojo que tiene que dar.
 
+### Una prueba de seguridad estuvo en rojo cinco días y nadie la miró, porque el rojo estaba anotado
+
+`scripts/probar_permisos_en_vivo.mjs` pregunta a la base qué funciones puede llamar alguien **sin
+sesión**. Pasó en verde el 26 de agosto de 2026, cuando las migraciones 0032 y 0033 cerraron el
+pendiente 67. Y desde entonces daba rojo, sin que nadie se enterara, hasta el 31 de agosto.
+
+**Nada se había roto.** Las migraciones 0035, 0038 y 0041 abrieron tres puertas más a `anon` —las
+zonas, los vocabularios y las guías— y las tres están abiertas a propósito, con el motivo escrito
+al lado en `AL_ALCANCE_ANONIMO` de `scripts/verificar_esquema.mjs`. Lo que estaba mal era otra cosa:
+**la prueba llevaba su propia lista, con las tres viejas.** Dos listas de lo mismo se despegan
+siempre, y la que se despega es la que nadie mira.
+
+Y no se miró por un segundo motivo, peor: el rojo estaba anotado en `scripts/probar_todo.mjs` como
+esperado, **contra el pendiente 67 — que ya estaba cerrado y ya no figuraba en la lista**. Una roja
+esperada contra un número que no existe es un permiso permanente para no mirar.
+
+Quedaron cerradas las dos puertas:
+
+- La prueba **importa** la lista de `verificar_esquema.mjs` en vez de tener la suya. Hay un solo
+  lugar donde se escribe qué está abierto y por qué.
+- `probar_todo.mjs` **comprueba que el pendiente de cada roja esperada siga abierto**, y si no lo
+  está corta antes de correr ninguna prueba. Si no puede leer ningún pendiente, también corta: un
+  chequeo que no encuentra lo que busca no escribe su ✔.
+
+**Comprobado en los dos sentidos.** La prueba pasa hoy, y sacándole a mano una de las seis puertas
+de la lista vuelve a dar rojo —y avisa que quedó inservible si el nombre ya no se encuentra—. La
+guarda nueva se probó cambiando el 89 por un número inventado: corta ahí y dice cuál.
+
+---
+
 ### El pendiente 89 dejó de ser una afirmación y pasó a ser una prueba
 
 El pendiente 89 decía, desde el 27 de agosto de 2026, que subir dos veces el mismo papel borra el
