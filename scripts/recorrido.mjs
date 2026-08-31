@@ -185,6 +185,22 @@ export function seRevisaron(cuantos, que) {
   );
 }
 
+/* Quién está exento de esa guarda, y por qué. Vive acá, pegado a la guarda,
+   y no adentro del chequeo que la exige: la lista la usan dos —
+   `verificar_red.mjs`, que comprueba **leyendo** que todo chequeo la nombre, y
+   `probar_perdida_de_corpus.mjs`, que comprueba **corriendo** que todo chequeo
+   se plante de verdad sin corpus—, y dos listas que dicen lo mismo se arreglan
+   una vez y quedan mal la otra.
+
+   `cajas` no recorre el proyecto: fabrica un árbol de mentira en la carpeta
+   temporal y le pide a `archivos()` que lo recorra, así que su corpus lo arma él
+   y no puede quedar vacío por un renombre. Y ya tiene su propia guarda:
+   comprueba que el archivo que dejó afuera de toda caja fuerte aparezca, para
+   que un recorrido que devolviera siempre la lista vacía no pase. */
+export const ARMAN_SU_PROPIO_CORPUS = new Map([
+  ['verificar_cajas.mjs', 'arma su propio árbol de prueba y ya comprueba que no venga vacío']
+]);
+
 /** `archivos()`, pero se planta si el recorrido no encontró ni uno. */
 export function hayArchivos(carpeta, extensiones, ademas = []) {
   const encontrados = archivos(carpeta, extensiones, ademas);

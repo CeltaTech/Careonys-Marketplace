@@ -57,7 +57,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { seRevisaron, hayArchivos } from './recorrido.mjs';
+import { seRevisaron, hayArchivos, ARMAN_SU_PROPIO_CORPUS } from './recorrido.mjs';
 
 const aca = dirname(fileURLToPath(import.meta.url));
 
@@ -65,15 +65,10 @@ const aca = dirname(fileURLToPath(import.meta.url));
    se revisa a sí mismo. */
 const NO_SON_CHEQUEOS = new Set(['verificar_todo.mjs', 'verificar_red.mjs']);
 
-/* La única excepción, con su motivo escrito. `cajas` no recorre el proyecto:
-   fabrica un árbol de mentira en la carpeta temporal y le pide a `archivos()`
-   que lo recorra, así que su corpus lo arma él y no puede quedar vacío por un
-   renombre. Y ya tiene su propia guarda: comprueba que el archivo que dejó
-   afuera de toda caja fuerte aparezca, para que un recorrido que devolviera
-   siempre la lista vacía no pase. */
-const EXENTOS = new Map([
-  ['verificar_cajas.mjs', 'arma su propio árbol de prueba y ya comprueba que no venga vacío']
-]);
+/* La única excepción, con su motivo escrito, sale de `scripts/recorrido.mjs`:
+   está pegada a la guarda de la que exime, y la comparte con
+   `probar_perdida_de_corpus.mjs`, que comprueba lo mismo corriendo los chequeos
+   en vez de leerlos. */
 
 const GUARDAS = ['seRevisaron(', 'hayArchivos('];
 
@@ -240,7 +235,7 @@ const conExtensionAMano = [];
 let revisados = 0;
 
 for (const nombre of chequeos) {
-  if (EXENTOS.has(nombre)) continue;
+  if (ARMAN_SU_PROPIO_CORPUS.has(nombre)) continue;
   revisados++;
   const texto = readFileSync(join(aca, nombre), 'utf8');
   if (!tieneGuarda(texto)) sinGuarda.push(nombre);
@@ -308,7 +303,8 @@ if (fallas.length > 0) {
     '\nSe arregla usando `hayArchivos()` en vez de `archivos()`, o llamando a\n' +
     '`seRevisaron(cuantos, qué)` cuando lo que se cuenta sale de una lista o de un\n' +
     'catálogo. Las dos están en `scripts/recorrido.mjs`.\n' +
-    'Si el chequeo de verdad no puede quedarse sin corpus, va a `EXENTOS` de este\n' +
+    'Si el chequeo de verdad no puede quedarse sin corpus, va a\n' +
+    '`ARMAN_SU_PROPIO_CORPUS` de `scripts/recorrido.mjs`, con su motivo escrito\n' +
     'archivo con el motivo escrito.\n' +
     'Y la extensión de las pantallas se pide con `EXTENSIONES_DE_PANTALLA`, del\n' +
     'mismo archivo, en vez de escribirla.'
@@ -318,6 +314,6 @@ if (fallas.length > 0) {
 
 console.log(
   `Red verificada: ${revisados} chequeos que se plantan si no encuentran nada ` +
-  `(${EXENTOS.size} exento, con su motivo), ninguno con la extensión de las ` +
+  `(${ARMAN_SU_PROPIO_CORPUS.size} exento, con su motivo), ninguno con la extensión de las ` +
   `pantallas escrita a mano, y los ${enElReadme.size} nombrados en la tabla del README.`
 );

@@ -1,13 +1,27 @@
 /* ===================================================
-   PERDER LA MITAD DEL CORPUS TIENE QUE PONER EN ROJO A QUIEN LA PERDIÓ
+   PERDER EL CORPUS TIENE QUE PONER EN ROJO A QUIEN LO PERDIÓ
 
        node scripts/probar_perdida_de_corpus.mjs
 
-   Copia el proyecto entero a una carpeta temporal, **renombra todos los `.js` a
-   `.ts`** y corre la red de chequeos en la copia. Después compara, uno por uno,
-   contra lo que cada chequeo dice acá.
+   Un chequeo revisa un conjunto de archivos. Si ese conjunto se achica y el
+   chequeo no se entera, sigue diciendo ✔ —y ese ✔ ya no significa que el
+   proyecto esté bien, significa que miró menos—. Acá se le saca el corpus a
+   toda la red y se mira quién avisa, de dos maneras distintas:
 
-   Un chequeo puede quedar en tres lugares, y sólo el tercero es un problema:
+   · **Se lo achica.** Copia el proyecto entero a una carpeta temporal,
+     **renombra todos los `.js` a `.ts`** y corre la red en la copia. Después
+     compara, uno por uno, contra lo que cada chequeo dice acá. Es el pendiente
+     91, y **hoy da rojo**.
+   · **Se lo saca entero.** Copia sólo `scripts/` —ningún `.html`, ningún
+     `.css`, ningún `.js`, ningún `.md`— y corre la red ahí. Es el pendiente
+     69, cerrado el 28 de agosto de 2026, y **hoy da verde**: lo que se prueba
+     es que siga dándolo.
+
+   Las dos mitades usan la misma copia de mecanismo y la misma lista de exentos,
+   que vive en `scripts/recorrido.mjs` pegada a la guarda de la que exime.
+
+   EN LA PRIMERA MITAD, un chequeo puede quedar en tres lugares, y sólo el
+   tercero es un problema:
 
    · **Se plantó** —salió con código distinto de 0—. Perfecto: notó que le
      faltaban archivos y lo dijo.
@@ -30,6 +44,14 @@
    **algunos**, y casi todos piden las pantallas y los `.js` juntos: perder unos
    les deja los otros, y el ✔ sale igual con un número más chico.
 
+   Y LA SEGUNDA MITAD existe porque esa guarda también se comprueba **leyendo**,
+   en `verificar_red.mjs`: ahí se mira que cada chequeo *nombre* a `hayArchivos`
+   o a `seRevisaron`. Nombrarlas no es plantarse. Un chequeo puede llamarlas para
+   un corpus y hacer su trabajo con otro, y la lectura no tiene cómo verlo: pasa
+   con las dos palabras escritas y cero archivos revisados. Correrlo sin corpus sí
+   lo ve. Se comprobó el 31 de agosto de 2026 escribiendo un chequeo así a
+   propósito: `verificar_red.mjs` lo dejó pasar y esta prueba lo agarró.
+
    HOY DA ROJO, Y TIENE QUE DARLO
    No se arregla desde acá: la salida son tres políticas de exención distintas,
    escritas en el pendiente 91, y elegir una es decisión del Desarrollador. Lo que
@@ -37,10 +59,16 @@
    número de chequeos ciegos deje de vivir en una frase.
 
    QUÉ QUEDA AFUERA, Y POR QUÉ
+   De las dos mitades:
    · `verificar_todo.mjs` no es un chequeo sino el que los corre.
    · `verificar_guias.mjs` sale a la red, así que su texto cambia según qué
      conteste el servidor y no según qué archivos vio. Compararlo daría rojo por
      un motivo que no es éste.
+   De la segunda, además, los de `ARMAN_SU_PROPIO_CORPUS` —hoy `verificar_cajas`,
+   que se fabrica un árbol de mentira en la carpeta temporal—. Esa lista **no se
+   escribe acá**: sale de `scripts/recorrido.mjs`, que es donde vive la guarda, y
+   la comparte con `verificar_red.mjs`. Dos listas que dicen lo mismo se arreglan
+   una vez y queda mal la otra.
 
    CÓMO SE PRUEBA, Y POR QUÉ ASÍ
    Se planta si la copia no se armó, si no encontró chequeos que correr, o si
@@ -48,8 +76,12 @@
    haber probado nada—. Y se planta también si algún chequeo falla **acá**, en el
    proyecto sin tocar: comparar contra una base que ya está en rojo no dice nada.
 
+   La segunda mitad se comprobó en los dos sentidos el 31 de agosto de 2026: da
+   verde con la red de hoy —26 chequeos plantados de 27, y el único verde es el
+   exento—, y dio rojo con un chequeo escrito a propósito para colarse.
+
    No entra en `verificar_todo.mjs` a propósito: copia el proyecto y corre la red
-   entera dos veces, que es demasiado para el gancho de `commit`. Va en
+   entera tres veces, que es demasiado para el gancho de `commit`. Va en
    `scripts/probar_todo.mjs`, y es la única de ahí que no necesita la base
    levantada ni red.
 =================================================== */
@@ -60,7 +92,9 @@ import { tmpdir } from 'node:os';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { archivos, nuncaSeAbre, seRevisaron } from './recorrido.mjs';
+import {
+  archivos, nuncaSeAbre, seRevisaron, ARMAN_SU_PROPIO_CORPUS
+} from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -168,6 +202,40 @@ if (rotosDeEntrada.length) {
   process.exit(1);
 }
 
+/* ── LA OTRA MITAD: EL CORPUS QUE DESAPARECE DEL TODO ───────────────────
+   Arriba se pregunta qué pasa cuando a un chequeo le sacan **la mitad** del
+   corpus. Acá se pregunta lo otro: qué pasa cuando no le queda **nada**.
+
+   Son dos preguntas distintas y tienen dos respuestas distintas. La de arriba
+   es el pendiente 91 y hoy da rojo. Ésta es el pendiente 69, cerrado el 28 de
+   agosto de 2026 poniendo `hayArchivos` y `seRevisaron` en la red entera, y hoy
+   da verde —así que lo que se prueba acá es que **siga** dando verde—. Una
+   guarda que nadie vuelve a correr se cae sola el día que alguien escribe un
+   chequeo sin ella, y se cae en silencio.
+
+   La copia lleva únicamente `scripts/`: ningún `.html`, ningún `.css`, ningún
+   `.js`, ningún `.md`, ningún catálogo y ninguna migración. */
+const soloGuiones = mkdtempSync(join(tmpdir(), 'sin-corpus-'));
+let guionesCopiados = 0;
+for (const camino of archivos(join(raiz, 'scripts'), [''])) {
+  const alla = join(soloGuiones, relative(raiz, camino));
+  mkdirSync(dirname(alla), { recursive: true });
+  cpSync(camino, alla);
+  guionesCopiados++;
+}
+seRevisaron(guionesCopiados, 'ningún guion copiado a la carpeta sin corpus');
+
+const sinCorpusSePlanto = [];
+const sinCorpusVerde = [];
+for (const chequeo of chequeos) {
+  (correr(soloGuiones, chequeo).codigo !== 0 ? sinCorpusSePlanto : sinCorpusVerde).push(chequeo);
+}
+rmSync(soloGuiones, { recursive: true, force: true });
+
+/* Un ✔ sin un solo archivo que revisar es exactamente la falla que el pendiente
+   69 vino a cerrar: no dice que todo esté bien, dice que no miró. */
+const sinCorpusMal = sinCorpusVerde.filter((n) => !ARMAN_SU_PROPIO_CORPUS.has(n));
+
 console.log(
   `\nSe renombraron ${renombrados} archivos \`.js\` en una copia de ${copiados} archivos ` +
   `y se corrieron ${chequeos.length} chequeos de los dos lados.\n`
@@ -176,9 +244,28 @@ console.log(`  ✔ Se plantaron, que es lo que corresponde: ${seLoNoto.length}`)
 console.log(`  · No miran los \`.js\`, así que no perdieron nada: ${noMiraJs.length}`);
 for (const [nombre, motivo] of AFUERA) console.log(`  · Afuera: ${corto(nombre)} — ${motivo}`);
 
+console.log(
+  `\nY sin corpus —una copia con los ${guionesCopiados} guiones y nada más— ` +
+  `se plantaron ${sinCorpusSePlanto.length} de ${chequeos.length}.`
+);
+for (const [nombre, motivo] of ARMAN_SU_PROPIO_CORPUS) {
+  console.log(`  · Afuera: ${corto(nombre)} — ${motivo}`);
+}
+
+if (sinCorpusMal.length) {
+  console.log(
+    `\n✘ ${sinCorpusMal.length} chequeos dijeron ✔ sin un solo archivo que revisar:\n  ` +
+    sinCorpusMal.map(corto).join(', ') + '.\n\n' +
+    'Eso es el pendiente 69 volviendo: un chequeo que mira cero cosas pasa siempre,\n' +
+    'y no está diciendo que todo esté bien sino que no miró. Se cierra usando\n' +
+    '`hayArchivos` en vez de `archivos`, o `seRevisaron` donde lo contado sale de\n' +
+    'una lista escrita a mano —las dos están en `scripts/recorrido.mjs`—.\n'
+  );
+}
+
 if (!ciegos.length) {
-  console.log('\nNingún chequeo dio ✔ con menos archivos. La red nota cuando se le achica el corpus.\n');
-  process.exit(0);
+  console.log('\nY ninguno dio ✔ con menos archivos: la red nota cuando se le achica el corpus.\n');
+  process.exit(sinCorpusMal.length ? 1 : 0);
 }
 
 console.log(`\n✘ ${ciegos.length} chequeos dijeron ✔ con menos archivos (pendiente 91):\n`);

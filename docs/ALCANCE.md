@@ -4633,6 +4633,35 @@ qué comprobarse, y que el día que alguien la crea resuelta hay un comando que 
 
 ---
 
+### Nombrar la guarda no es plantarse, y leyendo el archivo no se nota
+
+La pregunta hermana de la de arriba —qué pasa cuando a un chequeo le sacan la mitad del corpus— es
+qué pasa cuando no le queda nada. Esa ya estaba contestada: es el pendiente 69, y el 28 de agosto
+de 2026 se cerró poniendo `seRevisaron()` y `hayArchivos()` en la red entera, con `verificar_red.mjs`
+de vigilante. Se corrió igual, para ver, y **la red pasó**: en una copia que sólo lleva `scripts/`
+se plantan 26 de 27 chequeos, cada uno nombrando qué le faltó —«no se encontró un solo archivo
+.html ni .js», «ENOENT … docs/PENDIENTES.md»—, y el único verde es `cajas`, que se fabrica su propio
+árbol de prueba y por eso no depende del proyecto. Un negativo verificado, que es un resultado y no
+un trámite: **la red nota cuando el corpus desaparece; lo que no nota es cuando se achica.** Esa
+frase antes era una suposición razonable y ahora es una medición.
+
+Lo interesante apareció al preguntarse si valía la pena dejarlo probado, existiendo ya
+`verificar_red.mjs`. **Vale, porque no comprueban lo mismo.** `verificar_red.mjs` comprueba
+**leyendo**: mira que cada chequeo *nombre* a `hayArchivos` o a `seRevisaron`, sin los comentarios,
+para que citarlas en un encabezado no cuente. Pero nombrarlas no es plantarse. Un chequeo puede
+llamarlas para un corpus y hacer su trabajo con otro, y entonces pasa con las dos palabras escritas
+y cero archivos revisados. Se escribió uno así a propósito —pide `hayArchivos` sobre `scripts/` y
+cuenta pantallas con `archivos()`—: **la mitad que lee lo dejó pasar y la que corre lo agarró.**
+
+Escribir esa prueba tuvo además un costo que conviene anotar, porque es la regla de la empresa
+cobrándose al revés: la primera versión traía **su propia lista de exentos**, con `verificar_cajas`
+y su motivo, al lado de la lista idéntica que ya vivía adentro de `verificar_red.mjs`. Dos listas
+que dicen lo mismo se arreglan una vez y queda mal la otra. La lista se mudó a
+`ARMAN_SU_PROPIO_CORPUS`, en `scripts/recorrido.mjs`, pegada a la guarda de la que exime, y ahora la
+comparten el que lee y el que corre. **Antes de agregar algo que ya podría existir, buscarlo
+primero** —y acá no se buscó: lo encontró el propio experimento, cuando el chequeo de mentira salió
+en rojo por `verificar_red.mjs` antes de que la prueba nueva llegara a correr.
+
 ---
 
 ## 6. Deuda del código actual

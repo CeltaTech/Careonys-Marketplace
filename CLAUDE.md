@@ -95,7 +95,7 @@ pendientes y las migraciones adentro. Lo cierra `.vercelignore`; el guion avisa 
 Son ocho. Siete **necesitan la base de esta máquina levantada**, y por eso quedan afuera de
 `verificar_todo.mjs`, que corre sin base y sin red —igual que pasa con la comprobación de la
 publicación—. La octava, `probar_perdida_de_corpus.mjs`, no necesita ni base ni red: queda
-afuera porque **copia el proyecto y corre la red de chequeos dos veces**, que es demasiado
+afuera porque **copia el proyecto y corre la red de chequeos tres veces**, que es demasiado
 para cada `commit`.
 Antes de las siete hay que levantar la base: `supabase start …` y
 `supabase migration up --local`. El guion nombra adentro las dos pruebas que quedan afuera del
