@@ -17,12 +17,14 @@ scripts/
 supabase/
 CLAUDE.md
 
-# Salvo los dos documentos legales, que sí los enlazan las pantallas públicas
-# (`index.html:517`, `registrar-asistente.html:539`, `formulario-integral.html:418`).
+# Salvo los tres documentos legales, que sí los enlazan las pantallas públicas
+# (`index.html:517`, `registrar-asistente.html:539`, `formulario-integral.html:418`,
+# y «Privacidad» en `index.html`, `directorio.html` y `solicitar-asistente.html`).
 # Que se muestren estando sin revisión profesional es otro asunto, y es el
 # pendiente 49; acá sólo se respeta lo que hoy la pantalla necesita.
 !docs/terminos_y_condiciones_asistentes.md
 !docs/terminos_y_condiciones_familias.md
+!docs/politica_de_datos.md
 
 # Lo de la línea de comandos y de la máquina, que nunca fue del sitio.
 .githooks/

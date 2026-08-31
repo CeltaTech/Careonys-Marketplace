@@ -55,6 +55,12 @@ tipo tiene sus propias exigencias de título y de matrícula.
 emplea Asistentes, no elige a nadie y no entra al domicilio.** Le da a la Prestadora la
 herramienta con la que trabaja, y nada más.
 
+**Y no tiene trato con usted.** CeltaTech le licencia el software a su Prestadora, y ahí
+termina. No tiene con usted —ni con el Asistente, ni con nadie que trate con su Prestadora—
+vínculo comercial, laboral, contractual ni de ninguna otra clase. El software se entrega con
+una configuración estándar y cada Prestadora lo ajusta a lo que necesita: **cómo lo usa, y todo
+lo que haga con él, es de ella**.
+
 ---
 
 ## 2. Qué es este software y qué no es
@@ -92,8 +98,9 @@ la comprobación de sus títulos y matrículas, las entrevistas, la supervisión
 reemplazo cuando alguien falta son **de la Prestadora**, entera y exclusivamente.
 
 **3.2. CeltaTech no responde por el cuidado.** No responde por la conducta, el desempeño, los
-incumplimientos ni los daños que ocurran en el domicilio. Su responsabilidad se limita a que el
-software funcione, y está acotada en la §10.
+incumplimientos ni los daños que ocurran en el domicilio. Y no porque se haya eximido de algo que le tocaba: **no
+es parte de este trato**. Lo que CeltaTech deba por el software se lo debe a su Prestadora, en el
+acuerdo entre las dos, que no es éste. Está en la §10.
 
 **3.3. A quién reclamar.** Cualquier cosa que tenga que ver con el servicio de cuidado —lo que se
 hizo, lo que no se hizo, quién fue, cuánto se cobró— se reclama **a su Prestadora**. CeltaTech no
@@ -293,9 +300,13 @@ pide a su Prestadora, por los datos de contacto de la §13, y la hace ella.
 
 ## 10. Responsabilidad
 
-**10.1. De CeltaTech.** Responde por que el software funcione razonablemente. No responde por el
-cuidado prestado, por la conducta de ninguna persona, por lo que se acuerde con su Prestadora ni
-por los daños que ocurran en el domicilio.
+**10.1. De CeltaTech: ninguna hacia usted.** CeltaTech no es parte de este trato. Le licencia el
+software a su Prestadora y lo que deba por él —que funcione, que esté disponible, que se
+arregle cuando falla— se lo debe **a ella**, en el acuerdo entre las dos, que es otro documento y
+no éste. Hacia usted no responde por el cuidado, ni por la conducta de ninguna persona, ni por
+lo que acuerde con su Prestadora, ni por los daños que ocurran en el domicilio, **ni por el uso
+que su Prestadora haga del software**. Su Prestadora tampoco puede trasladarle a CeltaTech una
+responsabilidad suya.
 
 **10.2. De la Prestadora.** Responde por el servicio de cuidado y por quien lo presta, en los
 términos de su contrato con usted y de la ley.
@@ -322,6 +333,7 @@ que lo acepte de nuevo.
 | 25 de agosto de 2026 | Ajustes de vocabulario |
 | 31 de agosto de 2026 | Reescritura completa. Se sacó el aviso de borrador, se corrigió el vocabulario al glosario, se sacó el nombre de una Prestadora de ejemplo, **se sacó entero el capítulo de suscripciones, renovación automática y reembolsos porque el software no cobra nada**, y se declararon por primera vez la geolocalización al fichar, los datos de salud del Reporte diario y que el directorio se ve sin iniciar sesión |
 | 31 de agosto de 2026 | Se agregaron las cláusulas que faltaban, medidas contra lo que declaran los términos publicados por otro servicio del mismo rubro en la Argentina: la disponibilidad (§2.5), que nadie de los que aparecen acá trabaja para CeltaTech (§3.5), dónde está el detalle de los datos (§5.6), la edad mínima, una cuenta por persona, los datos ciertos, la conducta prohibida y los datos de otras personas (§8.4 a §8.8), qué pasa después de una baja y cómo se pide (§9.4 y §9.5), y el punto pendiente del tribunal competente (§12). Ninguna frase se copió: cada cláusula se redactó de cero |
+| 31 de agosto de 2026 | **Se separaron los dos mundos**, por decisión del Desarrollador de ese día: CeltaTech licencia el software a la Prestadora y no tiene vínculo de ninguna índole con la Familia, el Asistente ni nadie que trate con una Prestadora. El documento ponía a CeltaTech adentro de la cadena de responsabilidad hacia usted —decía que «responde por que el software funcione»— y eso era falso: lo que CeltaTech deba por el software se lo debe a la Prestadora, en el acuerdo entre las dos. Cambian la §1.5, la §3.2 y la §10.1, y **se cierra el punto pendiente del tribunal** de la §12, que preguntaba cómo se repartía una responsabilidad que no se reparte |
 
 ---
 
@@ -330,11 +342,12 @@ que lo acepte de nuevo.
 Este documento se rige por las leyes de la **República Argentina**. El tribunal competente es el
 que corresponda al acuerdo entre usted y su Prestadora.
 
-**Punto pendiente: ante qué tribunales se litiga.** Lo de arriba alcanza para lo que sea del trato
-entre usted y su Prestadora. Para lo que sea del software en sí —es decir, de CeltaTech—
-**todavía no está decidido, y acá no se adivina**: del otro lado no hay una sola empresa, y la
-Prestadora y CeltaTech pueden estar en jurisdicciones distintas. Queda como punto abierto hasta la
-revisión profesional que anuncia el encabezado de este documento.
+**Y no hay un segundo tribunal escondido.** Hasta el 31 de agosto de 2026 este documento dejaba
+abierto ante qué tribunal se litigaba «lo que sea del software en sí». Ya no queda abierto,
+porque la pregunta estaba mal planteada: **usted no tiene con CeltaTech nada que litigar**, ya
+que no tiene con CeltaTech ningún trato. Todo reclamo que nazca de este documento es contra su
+Prestadora, y el tribunal es el que fije el acuerdo entre ustedes dos. Lo decidió el Desarrollador
+ese día, y va igual a la revisión profesional que anuncia el encabezado, como todo lo demás.
 
 ---
 

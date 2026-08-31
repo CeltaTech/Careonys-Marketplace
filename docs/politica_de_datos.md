@@ -49,16 +49,22 @@ datos pide y para qué los usa, y es a quien hay que dirigirse por cualquier cos
 ellos.
 
 **2.2. CeltaTech.** Licencia el software a la Prestadora. No es parte del cuidado, no elige qué
-datos se piden y no interviene en la relación entre la Familia, el Paciente y el Asistente.
+datos se piden y no interviene en la relación entre la Familia, el Paciente y el Asistente. **Su
+única contraparte es la Prestadora**: con usted no tiene vínculo de ninguna clase. El software se
+entrega con una configuración estándar y cada Prestadora lo ajusta a lo que necesita, así que
+**qué datos se piden y para qué se usan es decisión de ella, no de CeltaTech**.
 
 **2.3. La responsable de la base es la Prestadora**, y es lo mismo que dicen los dos documentos de
 términos: todo pedido sobre sus datos se le hace a ella.
 
-**2.4. Y queda un punto pendiente, que no se rellena adivinando.** Una cosa es a quién se le pide,
-que está contestado, y otra **cómo se reparte esa responsabilidad entre la Prestadora y CeltaTech
-ante un organismo de control**: son dos personas jurídicas distintas, una presta el servicio y la
-otra opera el software, y la respuesta es jurídica, no técnica. Queda anotado en la §14 y se
-completa cuando la revisión legal lo resuelva.
+**2.4. Y queda un punto pendiente, más chico de lo que era.** El 31 de agosto de 2026 el
+Desarrollador decidió que **la Prestadora no le traslada a CeltaTech ninguna responsabilidad por
+el uso que hace del software**, ni ante usted ni ante nadie. Eso contesta el reparto. Lo que
+sigue sin contestar es de nomenclatura y es jurídico, no técnico: **con qué nombre figura cada
+una ante un organismo de control** —quién consta como responsable de la base y quién como quien
+la opera por cuenta de aquella—, porque son dos personas jurídicas distintas y la ley les da
+figuras con nombre propio. Queda anotado en la §14 y se completa cuando la revisión legal lo
+resuelva. **Para usted no cambia nada**: se le pide siempre a la Prestadora.
 
 ---
 
@@ -369,7 +375,7 @@ declarado. Ninguno se rellena adivinando.
 | Qué falta | Por qué no se contesta acá |
 |---|---|
 | **Cuál es el organismo de control** ante el que se reclama | El documento legal de Argentina de este producto no trae nada sobre protección de datos personales, y un aviso legal no se improvisa ni se deduce por parecido con otro país. Se completa cuando ese documento lo incluya (§12.3) |
-| **Cómo se reparte la responsabilidad sobre los datos** entre la Prestadora y CeltaTech ante ese organismo | Son dos personas jurídicas distintas, y la respuesta es jurídica, no técnica. Va con la revisión legal del cierre del proyecto (§2.4) |
+| **Con qué nombre figura cada una** ante ese organismo: quién consta como responsable de la base y quién como quien la opera por cuenta de aquella | El reparto ya no está abierto —la Prestadora responde por el uso que hace del software y no lo traslada (§2.4)—; lo que falta es cómo se llama cada figura ante el organismo, que es jurídico y no técnico. Va con la revisión legal del cierre del proyecto |
 | **Ante qué tribunales se litiga** por un asunto de datos personales | Depende de la respuesta anterior y del contrato entre la Familia y su Prestadora |
 | **Cuánto tiempo se conserva cada dato** | Hoy no se borra nada, y ningún plazo está decidido (§11.1) |
 | **Cómo se ejerce la supresión** de punta a punta | El software no la asiste: hoy se pide y se atiende a mano (§12.2) |
@@ -390,6 +396,7 @@ lo acepte de nuevo.
 | Fecha | Qué cambió |
 |---|---|
 | 31 de agosto de 2026 | Primera redacción. Se escribió de cero, midiendo cada afirmación contra el código y contra las migraciones. Se declararon por primera vez la geolocalización al fichar, los datos de salud del Reporte diario, los datos de terceros, qué expone exactamente el directorio público, que el software no usa cookies ni rastreadores, que no hay registro de auditoría y que la baja no borra nada. Quedan marcados como huecos el organismo de control, el reparto de responsabilidad con CeltaTech, los tribunales, los plazos de conservación y el procedimiento de supresión |
+| 31 de agosto de 2026 | **Se separaron los dos mundos**, por decisión del Desarrollador de ese día: CeltaTech licencia el software a la Prestadora y no tiene vínculo de ninguna índole con la Familia, el Paciente, el Asistente ni nadie que trate con una Prestadora, y **la Prestadora no le traslada a CeltaTech ninguna responsabilidad por el uso que hace del software**. Cambia la §2.2, y el hueco de la §2.4 se achica: el reparto queda contestado y sigue abierta sólo la nomenclatura ante el organismo de control |
 
 ---
 

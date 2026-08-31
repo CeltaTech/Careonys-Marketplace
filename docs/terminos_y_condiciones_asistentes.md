@@ -43,6 +43,12 @@ exigencias de título y de matrícula.
 servicios de cuidado, no contrata Asistentes, no asigna trabajo y no dirige a nadie.** Provee
 la herramienta con la que la Prestadora trabaja.
 
+**Y no tiene trato con usted.** CeltaTech le licencia el software a su Prestadora, y ahí
+termina. No tiene con usted —ni con las Familias, ni con nadie que trate con su Prestadora—
+vínculo laboral, comercial, contractual ni de ninguna otra clase. El software se entrega con una
+configuración estándar y cada Prestadora lo ajusta a lo que necesita: **cómo lo usa, y todo lo
+que haga con él, es de ella**.
+
 ## 2. Qué es este software y qué no es
 
 **2.1.** Careonys es una herramienta informática que la Prestadora usa para administrar su
@@ -364,10 +370,14 @@ por sí solo, un incumplimiento nuevo—.
 
 ## 10. Responsabilidad
 
-**10.1.** CeltaTech responde por el funcionamiento del software. **No responde** por el
-servicio de cuidado, por la conducta de las personas, por el cumplimiento del Vínculo, por lo
-que se acuerde entre usted y su Prestadora o entre usted y una Familia, ni por daños ocurridos
-en el domicilio del Paciente.
+**10.1. De CeltaTech: ninguna hacia usted.** CeltaTech no es parte de este trato. Le licencia el
+software a su Prestadora y lo que deba por él —que funcione, que esté disponible, que se
+arregle cuando falla— se lo debe **a ella**, en el acuerdo entre las dos, que es otro documento y
+no éste. Hacia usted **no responde** por el servicio de cuidado, por la conducta de las personas,
+por el cumplimiento del Vínculo, por lo que se acuerde entre usted y su Prestadora o entre usted
+y una Familia, por daños ocurridos en el domicilio del Paciente, **ni por el uso que su
+Prestadora haga del software**. Y su Prestadora no puede trasladarle a CeltaTech una
+responsabilidad suya.
 
 **10.2.** Su Prestadora responde por lo que le corresponda como empleadora o como contratante,
 según la forma del Vínculo, y conforme la ley argentina.
@@ -386,6 +396,7 @@ aceptación de la versión nueva.
 | 25 de agosto de 2026 | Vocabulario al glosario: donde decía «Cuidador» dice **Asistente**, y donde decía «Empresa Prestadora Cliente» dice **Prestadora**. Ninguna cláusula cambió |
 | 31 de agosto de 2026 | Reescritura completa. Sale la advertencia de borrador que se contradecía con las pantallas (pendiente 49); se ordena en trece capítulos; se apoyan las cláusulas en la ley argentina que corresponde —art. 23 de la LCT, Ley 25.326, Ley 24.004—; se saca el nombre de una Prestadora del semillero y se dice «su Prestadora»; y se agregan los capítulos de autonomía, Guías de cuidado, confidencialidad, cuenta, baja, responsabilidad, ley aplicable y este registro |
 | 31 de agosto de 2026 | Se agregan las cláusulas que faltaban, medidas contra los dos documentos de un competidor en actividad relevados ese día. Entran: nadie del sistema es personal de CeltaTech (§3.5); por acá no pasa dinero (§3.6); qué se ve del Perfil y quién lo ve (§4.8); dónde quedan los archivos del Legajo, y que la fotografía va a un depósito público (§4.9); **las referencias son datos de un tercero** (§4.10); la posición que se guarda al fichar (§4.11); el enlace a `docs/politica_de_datos.md` (§4.12); conducta prohibida (§5.6); nada de papeles ni datos bancarios de otra persona (§6.4); edad mínima (§8.4); una cuenta por persona (§8.5); datos reales y al día (§8.6); y qué pasa cuando se da de baja un Legajo (§9.4 y §9.5). Se reescribe la §7.4: el documento ya no fija condiciones de devolución de un curso, porque el software no cobra nada. **No se copió** nada de lo que el competidor tiene y este software no hace —packs de contactos, membresías, renovación automática, débito de tarjeta, reembolsos, publicidad, programa de recomendación con premios e interfaz para que terceros desarrollen encima—, ni su criterio de que todo sea público salvo lo que se marque privado, que es el contrario al de este producto. Quedan **dos huecos marcados**: el organismo de control (§4.13) y el reparto de responsabilidad con el tribunal competente (§12.3) |
+| 31 de agosto de 2026 | **Se separaron los dos mundos**, por decisión del Desarrollador de ese día: CeltaTech licencia el software a la Prestadora y no tiene vínculo de ninguna índole con el Asistente, la Familia ni nadie que trate con una Prestadora. El documento ponía a CeltaTech adentro de la cadena de responsabilidad hacia usted —decía que «responde por el funcionamiento del software»— y eso era falso: lo que CeltaTech deba por el software se lo debe a la Prestadora, en el acuerdo entre las dos. Cambian la §1.3 y la §10.1, y **se cierra el hueco de la §12.3**, que preguntaba cómo se repartía una responsabilidad que no se reparte. Queda un solo hueco marcado: el organismo de control (§4.13) |
 
 ## 12. Ley aplicable
 
@@ -394,13 +405,14 @@ aceptación de la versión nueva.
 **12.2.** El tribunal competente y el domicilio a los efectos de cualquier reclamo son los que
 fije el acuerdo entre usted y su Prestadora. Este documento no los establece.
 
-**12.3. Punto pendiente: quién responde por qué, y ante qué tribunales.** Del otro lado de un
-servicio como éste suele haber una sola empresa. Acá hay dos cosas distintas: **su
-Prestadora**, que es con quien usted tiene trato y quien responde por su Vínculo y por su
-Legajo, y **CeltaTech**, que licencia el software. Cómo se reparte la responsabilidad entre
-las dos ante un reclamo, y ante qué tribunal se litiga, **no está decidido y no se completa
-adivinando**: es de lo primero que se le pone delante al abogado que revise este documento al
-cierre del proyecto. Hasta entonces vale lo dicho en la §12.2.
+**12.3. Quién responde por qué, que hasta el 31 de agosto de 2026 figuraba como pendiente.**
+Del otro lado de un servicio como éste suele haber una sola empresa, y acá hay dos cosas
+distintas: **su Prestadora**, que es con quien usted tiene trato y quien responde por su Vínculo
+y por su Legajo, y **CeltaTech**, que le licencia el software a ella. Este documento preguntaba
+cómo se reparte la responsabilidad entre las dos. **No se reparte**: usted no tiene con CeltaTech
+ningún trato, y por lo tanto nada que reclamarle. Todo reclamo que nazca de este documento es
+contra su Prestadora, ante el tribunal que fije el acuerdo entre ustedes dos (§12.2). Lo decidió
+el Desarrollador ese día, y va igual a la revisión profesional del cierre del proyecto.
 
 ## 13. Contacto
 
