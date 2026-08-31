@@ -25,8 +25,15 @@
    - **Los nombres que no se leen**: `documentos-cuidadores` (el depósito),
      `hero_cuidadores.png` (una imagen), `btn-submit-cuidador` (un botón). Se
      reconocen por el guion o el guion bajo pegado, y cambiarlos rompe algo.
-   - **`soporte-remoto.html`**, entero: esa pantalla habla de las familias que
-     cuidan a un familiar mayor, que no son Asistentes ni quieren serlo.
+   Hubo una cuarta, y se fue el 31 de agosto de 2026: **`soporte-remoto.html`
+   estaba exenta entera** porque ahí los que cuidan son familiares. Cuando esa
+   pantalla se pasó a i18n el texto se llevó la palabra con él, la exención
+   dejó de eximir nada —cero apariciones en la pantalla y ninguna en el
+   catálogo de frases— y siguió salteando el archivo entero, con lo cual esa
+   pantalla quedó afuera también de las otras dos palabras que este chequeo
+   mira. Una exención que no exime nada no es inofensiva: apaga todo lo demás.
+   Si la palabra vuelve por el motivo legítimo, la exención se escribe **por
+   aparición**, nunca por archivo.
 
    **La segunda palabra: «búsqueda» no nombra lo que se publica.** El
    Desarrollador decidió el 25 de agosto de 2026 que lo que una Familia publica
@@ -63,11 +70,6 @@ const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
    cada `.sql` se mira sólo lo rotulado `"es-AR"`, nunca las sentencias ni los
    comentarios: eso lo resuelve `visibleDeMigracion()`. */
 const AJENAS = ['docs', 'scripts', 'assets'];
-
-/* Pantallas donde la palabra nombra a otra persona, con el motivo escrito. */
-const PANTALLAS_EXENTAS = new Map([
-  ['soporte-remoto.html', 'ahí «cuidadores» son los familiares que cuidan, no los Asistentes']
-]);
 
 /* `\b` de JavaScript no entiende las vocales acentuadas, así que el borde de
    palabra se marca con propiedades Unicode, igual que en el chequeo de trato.
@@ -188,7 +190,6 @@ let revisados = 0;
 for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js', '.json', '.sql'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   if (nombre.endsWith('manifest.json') || nombre.endsWith('sw.js')) continue;
-  if (PANTALLAS_EXENTAS.has(nombre)) continue;
   revisados++;
   const crudo = readFileSync(camino, 'utf8');
   const vistos = new Set();

@@ -16,10 +16,14 @@
    el problema fue el mismo: **una herramienta que hay que acordarse de correr
    es una herramienta que no corre.**
 
-   **La que no necesita base ni red** es `probar_perdida_de_corpus.mjs`: copia el
-   proyecto, le renombra los `.js` y corre la red entera del otro lado para ver
-   quién se da cuenta de que le sacaron archivos. Correr la red dos veces sobre
-   una copia del proyecto es demasiado para cada `commit`, así que vive acá.
+   **Las dos que no necesitan base ni red** son las que se miran a sí mismas.
+   `probar_perdida_de_corpus.mjs` copia el proyecto, le renombra los `.js` y
+   corre la red entera del otro lado para ver quién se da cuenta de que le
+   sacaron archivos. `probar_exenciones.mjs` le vacía a cada chequeo los
+   permisos escritos a mano, uno por uno, y exige que el chequeo se ponga rojo:
+   si sigue verde, esa exención ya no exime nada y lo único que hace es tapar
+   el resto del archivo que nombra. Las dos corren la red de chequeos muchas
+   veces, que es demasiado para cada `commit`, así que viven acá.
 
    Antes hay que levantar la base:
 
@@ -78,8 +82,8 @@ const aca = dirname(fileURLToPath(import.meta.url));
    datos tal como los dejaron las migraciones —si arranca mal, lo de abajo mide
    sobre una base que ya estaba torcida—; después las chicas, que son rápidas y
    dicen enseguida si la base está sana; después la de aislamiento, que es la
-   larga; y al final la del corpus, que no necesita base pero corre la red de
-   chequeos dos veces. */
+   larga; y al final las dos que no necesitan base y corren la red de chequeos
+   muchas veces. */
 const PRUEBAS = [
   'probar_coherencia_de_la_siembra.mjs',
   'probar_el_rol_y_la_prestadora_del_perfil.mjs',
@@ -89,7 +93,8 @@ const PRUEBAS = [
   'probar_permisos_en_vivo.mjs',
   'probar_pisado_de_archivos.mjs',
   'probar_aislamiento.mjs',
-  'probar_perdida_de_corpus.mjs'
+  'probar_perdida_de_corpus.mjs',
+  'probar_exenciones.mjs'
 ];
 
 /* Rojas a propósito, con el pendiente que lo explica al lado. Sacar de acá lo
