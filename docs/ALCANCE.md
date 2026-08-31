@@ -3831,9 +3831,29 @@ falta:**
    devuelve un producto que ya no se conecta a ninguna base. Y se pide la asignación y no la
    mención, porque el nombre aparece también en el aviso de arranque.
 3. Que toda pantalla que carga `js/auth.js` cargue antes `js/apiClient.js`.
-4. Que en ningún archivo haya una clave con forma de secreta ni un token con forma de JWT. Ésas no
-   van al navegador nunca, ni siquiera en el archivo que sí puede tener la publicable, así que
-   esta cuarta no tiene exentos.
+4. Que en ningún archivo haya nada con forma de credencial que no sea la publicable. Son cinco
+   formas: una clave secreta de la base, un jetón firmado, una dirección de base con la
+   contraseña adentro, una clave privada en formato PEM y una clave de AWS. Ninguna va al
+   navegador nunca, ni siquiera en el archivo que sí puede tener la publicable, así que esta
+   cuarta no tiene exentos.
+
+**Y las cinco formas se eligieron por una sola condición: que no tengan hoy ningún uso legítimo.**
+Se contó sobre los 224 archivos de texto del proyecto y las cinco dan cero. Lo único con forma de
+credencial que hay escrito son las tres apariciones de la clave publicable —el original y sus dos
+copias, decidido y anotado en `docs/INVENTARIO.md:379`— y cinco contraseñas de cuentas ficticias
+adentro de los guiones de prueba, que es como se entra a la base de esta máquina para probar. Por
+eso la contraseña escrita a mano **no** entra en la lista: daría cinco rojos que habría que
+perdonar de a uno, y una lista de perdones sobre credenciales es exactamente lo que esta regla no
+puede tener. Un exento acá sería una credencial subida con permiso.
+
+Las tres formas nuevas se falsificaron de las dos maneras. Cada una tiene en la autoprueba un caso
+que **tiene** que dar rojo y otro parecido que **no** debe darlo: una dirección de base sin
+contraseña —`postgres` hacia `localhost`, que es como se escribe en la documentación—, un
+certificado público, que empieza igual que una clave privada pero es lo contrario, y una palabra
+cualquiera que arranca con las mismas cuatro letras que una clave de AWS. Y además se probó en
+serio, metiendo un archivo con las tres formas adentro del proyecto y comprobando que el chequeo se
+pone rojo. La primera de las tres se falsificó sola: la escribí de ejemplo en el encabezado del
+propio chequeo, y el chequeo se plantó señalando su propio archivo.
 
 **El chequeo no escribe adentro ninguno de los valores que busca.** Los lee del proyecto, y los de
 su autoprueba los arma por pedazos. Así no hay que hacerle una excepción a sí mismo, que es la

@@ -27,10 +27,24 @@
    3. Que toda pantalla que carga `js/auth.js` cargue antes `js/apiClient.js`.
       El orden importa de verdad —`auth.js` se planta si no está—, y un orden que
       hay que recordar se olvida.
-   4. Que en ningún archivo del proyecto haya una clave con forma de secreta
-      —`sb_secret_…`— ni un token con forma de JWT. Ésas no van al navegador
-      nunca, ni siquiera en el archivo que sí puede tener la publicable. Esta
-      cuarta no tiene exentos.
+   4. Que en ningún archivo del proyecto haya nada con forma de credencial que
+      no sea la publicable: una clave secreta `sb_secret_…`, un jetón con forma
+      de JWT, una dirección de base con la contraseña adentro —la que va entre
+      los dos puntos y la arroba—, una clave privada en formato PEM o una
+      clave de AWS. Ninguna de esas cinco va al navegador, ni siquiera en el
+      archivo que sí puede tener la publicable, y **ninguna tiene hoy un uso
+      legítimo en este repositorio**: se midió el 31 de agosto de 2026 sobre
+      los 224 archivos de texto del proyecto y las cinco dieron cero. Esta
+      cuarta no tiene exentos, y es a propósito: la regla de la empresa dice
+      «toda credencial vive en variable de entorno, nunca en el código ni en el
+      repositorio», y un exento acá sería una credencial subida con permiso.
+
+      **Lo que no entra, y por qué.** Una contraseña escrita en un guion de
+      prueba sí tiene uso legítimo —hay cinco, todas de cuentas ficticias, que
+      es como se entra a la base de esta máquina para probar—, así que buscar
+      «password = "…"» daría cinco rojos que habría que perdonar de a uno, y
+      una lista de perdones sobre credenciales es exactamente lo que esta regla
+      no puede tener.
 
    Este archivo no escribe adentro ninguno de los valores que busca: los lee del
    proyecto, y los de la autoprueba los arma por pedazos. Así no hay que hacerle
@@ -69,7 +83,16 @@ const EXTENSIONES = [...EXTENSIONES_DE_PANTALLA, '.js', '.mjs', '.css', '.json',
    hay archivo exento de esto, ni siquiera el original. */
 const NUNCA_EN_NINGUN_LADO = [
   { que: 'una clave con forma de secreta', patron: /sb_secret_[A-Za-z0-9_-]{8,}/ },
-  { que: 'un token con forma de JWT', patron: /eyJ[A-Za-z0-9_-]{24,}\.[A-Za-z0-9_-]{16,}/ }
+  { que: 'un token con forma de JWT', patron: /eyJ[A-Za-z0-9_-]{24,}\.[A-Za-z0-9_-]{16,}/ },
+  /* La dirección de una base lleva la contraseña adentro, entre los dos puntos
+     y la arroba. Se exige que haya algo de los dos lados para no confundirla
+     con una dirección sin credenciales, que es la forma en que se escribe en
+     la documentación. */
+  { que: 'una dirección de base con la contraseña adentro',
+    patron: /postgres(ql)?:\/\/[^\s:'"`/]+:[^\s@'"`/]+@/ },
+  { que: 'una clave privada en formato PEM',
+    patron: /-----BEGIN [A-Z ]{0,20}PRIVATE KEY-----/ },
+  { que: 'una clave de AWS', patron: /\bAKIA[0-9A-Z]{16}\b/ }
 ];
 
 /* ---------- de dónde salen los valores que se buscan ---------- */
@@ -95,7 +118,11 @@ const DE_MENTIRA = {
   direccion: 'https://' + 'ejemplodepruebasola' + '.supabase' + '.co',
   clave: 'sb_' + 'publishable_' + 'ejemplo_de_prueba_0000',
   secreta: 'sb_' + 'secret_' + 'ejemplo_de_prueba_0000',
-  token: 'ey' + 'J' + 'abcdefghijklmnopqrstuvwxyz012345' + '.' + 'abcdefghijklmnopqrst'
+  token: 'ey' + 'J' + 'abcdefghijklmnopqrstuvwxyz012345' + '.' + 'abcdefghijklmnopqrst',
+  conexion: 'postgres' + '://' + 'alguien' + ':' + 'algo-que-no-es-de-nadie' + '@'
+            + 'servidor' + ':5432/base',
+  pem: '-----' + 'BEGIN RSA PRIVATE KEY' + '-----',
+  aws: 'AKIA' + 'ABCDEFGHIJKLMNOP'
 };
 
 function autoprueba() {
@@ -116,6 +143,18 @@ function autoprueba() {
   if (NUNCA_EN_NINGUN_LADO[0].patron.test(DE_MENTIRA.clave)) roto.push('confunde la publicable con una secreta');
   if (!NUNCA_EN_NINGUN_LADO[1].patron.test(DE_MENTIRA.token)) roto.push('no reconoce un token');
   if (NUNCA_EN_NINGUN_LADO[1].patron.test('eyJota es un apellido')) roto.push('llama token a cualquier palabra');
+  if (!NUNCA_EN_NINGUN_LADO[2].patron.test(DE_MENTIRA.conexion)) roto.push('no reconoce una dirección de base con contraseña');
+  if (NUNCA_EN_NINGUN_LADO[2].patron.test('postgres' + '://localhost:5432/base')) {
+    roto.push('llama credencial a una dirección de base sin contraseña');
+  }
+  if (!NUNCA_EN_NINGUN_LADO[3].patron.test(DE_MENTIRA.pem)) roto.push('no reconoce una clave privada');
+  if (NUNCA_EN_NINGUN_LADO[3].patron.test('-----' + 'BEGIN CERTIFICATE' + '-----')) {
+    roto.push('llama clave privada a un certificado público');
+  }
+  if (!NUNCA_EN_NINGUN_LADO[4].patron.test(DE_MENTIRA.aws)) roto.push('no reconoce una clave de AWS');
+  if (NUNCA_EN_NINGUN_LADO[4].patron.test('AKIAS' + ' es una palabra cualquiera')) {
+    roto.push('llama clave de AWS a cualquier palabra que empiece igual');
+  }
 
   if (roto.length) {
     console.error('El detector está roto, así que no verifica nada:\n  - ' + roto.join('\n  - '));
@@ -224,6 +263,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
   console.log(
     'Base verificada: ' + mirados + ' archivos sin la dirección ni la clave escritas a mano (' +
     agujas + ' formas de escribirlas), ' + pantallas +
-    ' pantallas que cargan `js/apiClient.js` antes que `js/auth.js`, y ninguna clave secreta ' +
-    'en ningún lado.');
+    ' pantallas que cargan `js/apiClient.js` antes que `js/auth.js`, y ninguna de las ' +
+    NUNCA_EN_NINGUN_LADO.length + ' formas de credencial que no van a ningún lado.');
 }
