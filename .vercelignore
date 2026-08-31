@@ -1,0 +1,40 @@
+# Qué NO se sube al sitio publicado.
+#
+# Existe porque hasta el 31 de agosto de 2026 se subía el repositorio entero, y
+# cualquiera con la dirección podía leer `docs/PENDIENTES.md` —o sea la lista
+# enumerada de todo lo que este producto todavía no resuelve, sección de
+# seguridad incluida—, las migraciones con cada política de RLS escrita, y los
+# guiones de comprobación. La regla de la empresa dice «nunca información
+# sensible en registros, direcciones, parámetros ni mensajes públicos», y una
+# lista de debilidades conocidas servida por HTTP es exactamente eso.
+#
+# Que el esquema se lea no rompe el aislamiento —la base no depende de que nadie
+# lo conozca— pero la lista de pendientes le ahorra el trabajo a quien busque
+# por dónde entrar, y no hay ningún motivo para publicarla.
+
+docs/*
+scripts/
+supabase/
+CLAUDE.md
+
+# Salvo los dos documentos legales, que sí los enlazan las pantallas públicas
+# (`index.html:517`, `registrar-asistente.html:539`, `formulario-integral.html:418`).
+# Que se muestren estando sin revisión profesional es otro asunto, y es el
+# pendiente 49; acá sólo se respeta lo que hoy la pantalla necesita.
+!docs/terminos_y_condiciones_asistentes.md
+!docs/terminos_y_condiciones_familias.md
+
+# Lo de la línea de comandos y de la máquina, que nunca fue del sitio.
+.githooks/
+.claude/
+.agents/
+.mcp.json
+
+# Y las cajas fuertes, por si alguna vez se publica desde esta carpeta y no
+# desde el repositorio: git ya no las rastrea, pero el `vercel` de la línea de
+# comandos no mira `.gitignore`.
+No commit/
+no_commit/
+NO HACER COMMIT/
+no pushear/
+ReferenciaNoHacerCommit/

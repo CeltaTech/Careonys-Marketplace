@@ -40,7 +40,7 @@ const TIPOS = {
 };
 
 // Lo que no se sirve: no vive en el sitio y pedirlo sería un rojo falso.
-const NO_SE_SIRVE = /^(docs|scripts|supabase|\.githooks|\.claude|\.agents)\//;
+const NO_SE_SIRVE = /^(docs|scripts|supabase|\.githooks|\.claude|\.agents)\/|^(CLAUDE|README)\.md$|^\./;
 
 function archivosDelUltimoCommit() {
   const salida = execFileSync('git', ['show', '--name-only', '--pretty=format:', 'HEAD'],
@@ -72,6 +72,29 @@ decir(control.status === 404,
 if (control.status !== 404) {
   console.log('\nSe corta acá a propósito.\n');
   process.exit(1);
+}
+
+// ── Lo que el sitio no tiene que servir ────────────────────────────────────
+/* Hasta el 31 de agosto de 2026 el sitio subía el repositorio entero, así que
+   cualquiera con la dirección leía `docs/PENDIENTES.md` —la lista enumerada de
+   todo lo que este producto no resuelve, sección de seguridad incluida—, las
+   migraciones con cada política de RLS escrita, y los guiones de comprobación.
+   Lo cerró `.vercelignore`; esto es lo que avisa si alguna vez se vuelve a
+   abrir. Los dos documentos legales quedan servidos a propósito: los enlazan
+   las pantallas públicas, y que estén sin revisión profesional es el
+   pendiente 49, no esto. */
+const NO_SE_PUBLICA = [
+  'CLAUDE.md',
+  'docs/PENDIENTES.md',
+  'docs/ALCANCE.md',
+  'scripts/verificar_todo.mjs',
+  'supabase/migrations/0001_esquema_inicial.sql',
+];
+
+for (const ruta of NO_SE_PUBLICA) {
+  const r = await fetch(`${sitio}/${ruta}`, { redirect: 'manual' });
+  decir(r.status === 404, `Cerrado: ${ruta} contesta ${r.status}` +
+    (r.status === 404 ? '' : ' y tendría que contestar 404 — está publicado'));
 }
 
 if (!candidatos.length) {
