@@ -471,8 +471,15 @@
                 data-frase-placeholder="legajo.nacionalidad_ejemplo" required /></div>
               <div class="wfield wgrid-2-full"><label data-frase="legajo.domicilio">Domicilio Completo</label><input type="text" id="w-domicilio" placeholder="Calle, Nro, Localidad"
                 data-frase-placeholder="legajo.domicilio_ejemplo" required /></div>
-              <div class="wfield"><label data-frase="legajo.zona">Zona de Cobertura</label><input type="text" id="w-zona" placeholder="Ej: Palermo"
-                data-frase-placeholder="legajo.zona_ejemplo" required /></div>
+              <!-- El rotulo, la ayuda y las casillas las arma js/zonas.js, igual que
+                   en el portal: la lista sale de la base y es de cada Prestadora,
+                   asi que no puede estar escrita aca. Con la Prestadora sin lista
+                   cargada, este mismo hueco muestra el campo de texto libre.
+                   Hasta el 31 de agosto de 2026 aca habia un campo de texto libre
+                   escrito a mano que se guardaba en `caregivers.zone`, y esa
+                   columna ya no la mira ni el directorio ni el perfil: la persona
+                   corregia su zona, veia que se guardaba, y no cambiaba nada. -->
+              <div class="wfield wgrid-2-full" id="zonas"></div>
               <div class="wfield"><label data-frase="legajo.cbu">CBU o Alias Bancario</label><input type="text" id="w-cbu" placeholder="Para liquidación de haberes"
                 data-frase-placeholder="legajo.cbu_ejemplo" required /></div>
             </div>
@@ -764,6 +771,7 @@
   <script src="js/autorizaciones.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/zonas.js"></script>
   <script>
     // ── Service Worker ─────────────────────────────
     if ('serviceWorker' in navigator) {
@@ -800,6 +808,7 @@
         await ClienteDatos.initTenant();
         montarDisponibilidad();
         montarLegajo();
+        montarZonas();
 
         // Restaurar sesión activa automáticamente
         const session = await Sesion.getSession();
@@ -1298,6 +1307,19 @@
       }
     }
 
+    // Las zonas de cobertura, que son de cada Prestadora y salen de la base
+    // (migracion 0035). El modulo decide cual de las dos formas de preguntar
+    // corresponde —la lista con casillas, o el texto libre cuando esa
+    // Prestadora todavia no cargo ninguna— y maneja sus propios estados de
+    // cargando y de error adentro del hueco.
+    async function montarZonas() {
+      try {
+        await Zonas.montar('zonas');
+      } catch (err) {
+        console.error('Zonas de cobertura del Asistente:', err);
+      }
+    }
+
     // Las cuatro fichas repetibles y el paso de cierre. Los dibujan los mismos
     // módulos que usa el portal; acá sólo se les dice dónde. Está en una función
     // aparte porque después de enviar hay que volver a montarlas: `form.reset()`
@@ -1398,6 +1420,7 @@
         document.getElementById('form-legajo-pwa').reset();
         Disponibilidad.limpiar('grilla-disponibilidad', 'preguntas-disponibilidad');
         Autorizaciones.limpiar('autorizaciones-container');
+        Zonas.limpiar('zonas');
         montarFichas();
         wGoTo(1);
         setTimeout(() => { document.getElementById('w-success').style.display = 'none'; }, 6000);
@@ -1443,6 +1466,18 @@
         return;
       }
 
+      // La zona: hay dos formas de contestarla y cual se mostro lo sabe el
+      // modulo, asi que se le pregunta a el. Antes lo cuidaba el `required` del
+      // campo de texto; una lista de casillas sin tildar no la agarra el
+      // navegador, y sin esto el legajo se enviaba sin zona ninguna.
+      if (!Zonas.hayRespuesta('zonas')) {
+        alert(Catalogo.frase('alta.zonas_falta'));
+        wGoTo(1);
+        document.getElementById('zonas').scrollIntoView({ block: 'center' });
+        return;
+      }
+      const zonasElegidas = Zonas.recolectar('zonas');
+
       const patologias = Array.from(document.querySelectorAll('input[name="patologia"]:checked')).map(cb => cb.value);
       const tareas = Array.from(document.querySelectorAll('input[name="tarea_cuidado"]:checked')).map(cb => cb.value);
       const cursos = Array.from(document.querySelectorAll('input[name="certificacion"]:checked')).map(cb => cb.value);
@@ -1460,7 +1495,8 @@
         experiencia: FichasLegajo.recolectar('ficha-experiencia_laboral', 'experiencia_laboral'),
         referencias: FichasLegajo.recolectar('ficha-referencia', 'referencia'),
         autorizaciones: Autorizaciones.recolectar('autorizaciones-container'),
-        disponibilidad
+        disponibilidad,
+        zonas: zonasElegidas.zonas
       };
 
       const data = {
@@ -1475,7 +1511,7 @@
         domicilio: document.getElementById('w-domicilio').value,
         cbu: document.getElementById('w-cbu').value,
         profesion: document.getElementById('w-profesion').value,
-        zona: document.getElementById('w-zona').value,
+        zonasTexto: zonasElegidas.texto,
         patologias, tareas,
         educacion: {
           nivelEstudios: document.getElementById('w-estudios').value,

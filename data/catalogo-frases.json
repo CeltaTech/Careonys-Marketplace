@@ -2867,16 +2867,6 @@
       "en": "Street, number, city",
       "pt-BR": "Rua, número, cidade"
     },
-    "legajo.zona": {
-      "es-AR": "Zona de Cobertura",
-      "en": "Coverage area",
-      "pt-BR": "Área de cobertura"
-    },
-    "legajo.zona_ejemplo": {
-      "es-AR": "Ej: Palermo",
-      "en": "E.g.: Palermo",
-      "pt-BR": "Ex.: Palermo"
-    },
     "legajo.cbu": {
       "es-AR": "CBU o Alias Bancario",
       "en": "Bank account key or account alias",

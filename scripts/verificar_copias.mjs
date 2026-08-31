@@ -43,6 +43,7 @@ export const GRUPOS = [
   ['js/fichas-legajo.js', 'pwa-asistente/js/fichas-legajo.js'],
   ['data/catalogo-fichas.json', 'pwa-asistente/data/catalogo-fichas.json'],
   ['js/autorizaciones.js', 'pwa-asistente/js/autorizaciones.js'],
+  ['js/zonas.js', 'pwa-asistente/js/zonas.js'],
   ['data/catalogo-autorizaciones.json', 'pwa-asistente/data/catalogo-autorizaciones.json'],
   ['data/catalogo-vocabularios.json', 'pwa-asistente/data/catalogo-vocabularios.json',
    'pwa-familia/data/catalogo-vocabularios.json'],

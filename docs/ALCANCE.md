@@ -4072,6 +4072,39 @@ del directorio sigue vacía para todo el mundo, porque ninguna pantalla escribe
 `verificaciones_asistente`. O sea que la única señal que le permitiría a una Familia distinguir un
 legajo revisado de uno que no lo está sigue sin distinguir nada.
 
+### La aplicación de teléfono del Asistente preguntaba una zona que ya no cambiaba nada
+
+Cerró el pendiente 94, el 31 de agosto de 2026.
+
+- **Lo que había era peor que no tener nada.** El formulario del teléfono pedía «Zona de
+  Cobertura» en un campo de texto libre escrito a mano adentro del propio HTML, y lo guardaba en
+  `caregivers.zone`. Desde la migración 0036 el directorio y el perfil se arman con `zonas` y
+  `zonas_texto`, así que quien corregía su zona desde el teléfono **veía que se guardaba y no
+  cambiaba ni su tarjeta del directorio ni su perfil**. El campo tampoco estaba en el catálogo:
+  seguía en castellano en las tres versiones de idioma.
+- **Ahora pregunta igual que la web.** El teléfono carga `js/zonas.js`
+  (`pwa-asistente/index.html:774`), lo monta en el hueco de
+  `pwa-asistente/index.html:482` y el módulo decide la forma: la lista con casillas cuando la
+  Prestadora tiene zonas cargadas, el texto libre cuando todavía no cargó ninguna. Comprobado en
+  el navegador **las dos**, contra la base de esta máquina.
+- **Marcar una región entera vale por toda la región, y no duplica.** Medido: al tildar «Zona
+  Norte» sus dos municipios quedan apagados y lo que se recolecta es una sola clave, la de la
+  región. Y los nombres salen traducidos por el vocabulario `zona`, cosa que el campo escrito a
+  mano nunca hizo.
+- **La zona sigue siendo obligatoria, y ahora lo cuida el envío.** El `required` del campo viejo
+  lo hacía el navegador; una lista de casillas sin tildar no la agarra ningún navegador. Se le
+  pregunta al módulo antes de enviar, y si no hay respuesta el formulario vuelve al paso 1 y lleva
+  la vista al campo (`pwa-asistente/index.html:1473`).
+- **Se guarda donde se lee**: las claves van a `zonas_asistente` y el texto libre a `zonas_texto`,
+  por `js/apiClient.js:424` y `:901`. `caregivers.zone` no la escribe más nadie, y eso abrió el
+  **pendiente 109**.
+- **Arrastró las tres cosas que el pendiente anticipaba.** `js/zonas.js` entró por primera vez en
+  los grupos de copias de `scripts/verificar_copias.mjs:46`, porque hasta hoy ninguna aplicación
+  de teléfono lo cargaba; entró en la lista de la copia sin conexión con el número de versión
+  subido, o el teléfono ya instalado se quedaba sin él; y las dos frases del campo viejo salieron
+  de las tres copias del catálogo, porque el chequeo de frases se pone en rojo con toda frase que
+  ninguna pantalla nombre.
+
 ---
 
 ## 6. Deuda del código actual
