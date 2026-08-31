@@ -69,6 +69,24 @@ const LA_SIEMBRA_NO_PUEDE = new Map([
    'la 0025 lo dice: a las ficticias no las dio de alta CeltaTech y nunca van a tener una'],
   ['avisos.grid_schedule_7x3',
    'la 0016 la reemplazó por filas y ya no se escribe; queda para no perder lo viejo'],
+  /* Estas dos apuntan a `auth.users`, y la 0030 escribió por qué no las llena:
+     dar de alta una cuenta desde una migración significa escribir una clave
+     adentro del repositorio. Eximirlas no tapa nada, y ése es el requisito:
+     `probar_aislamiento.mjs` recorre los dos caminos con cuentas de verdad
+     —carga legajos a nombre de quien inició sesión y publica avisos a nombre
+     de cada Familia, y comprueba de quién quedó cada uno—. La siembra es el
+     lugar equivocado para probarlas, no un lugar donde falten. */
+  ['caregivers.user_id',
+   'apunta a una cuenta, y la 0030 no crea cuentas; lo recorre probar_aislamiento.mjs'],
+  ['avisos.familia_id',
+   'apunta a una cuenta, y la 0030 no crea cuentas; lo recorre probar_aislamiento.mjs'],
+  /* Y `verificaciones_asistente.verificado_por` **no** se exime, aunque una
+     migración tampoco pueda llenarla: apunta a `profiles`, que sólo existen
+     para quien se registró. La diferencia con las dos de arriba es la que
+     decide, y conviene no perderla de vista: aquéllas las escribe algo, ésta
+     no la escribe nadie —ni una pantalla, ni un guion, ni una prueba—.
+     Eximirla sería esconder que quien comprobó un papel no queda anotado en
+     ningún lado. Queda roja hasta que alguien la escriba. */
 ]);
 
 let fallos = 0;

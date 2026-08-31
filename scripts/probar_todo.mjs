@@ -48,9 +48,9 @@
    · `probar_perdida_de_corpus.mjs` es el pendiente 91 —nueve chequeos dan ✔ con
      menos archivos cuando se les saca la mitad del corpus, y la salida son tres
      políticas de exención entre las que hay que elegir—.
-   · `probar_coherencia_de_la_siembra.mjs` es el pendiente 110 —nueve columnas
-     que la siembra no llena ni una vez, y una de ellas ninguna migración la
-     puede llenar hoy. Eran catorce hasta que la 0048 cerró cinco—.
+   · `probar_coherencia_de_la_siembra.mjs` es el pendiente 110 —siete columnas
+     que la siembra no llena ni una vez, y a una de ellas no la escribe nadie
+     en ningún lado. Eran catorce: la 0048 cerró cinco y dos quedaron exentas—.
 
    **Y el pendiente que la explica tiene que estar abierto.** Si no está, esto
    falla antes de correr ninguna prueba. Sin esa comprobación la lista perdona

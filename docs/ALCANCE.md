@@ -4739,7 +4739,25 @@ sigue vacía a propósito: los **ítems** propios de una Prestadora ya existen �
 `vocabulario_items`—, pero una **lista** entera propia es otra función, y antes de sembrarla hay que
 contestar qué pasa cuando una Prestadora quiere su propia lista de patologías junto a la general:
 si la reemplaza, si la extiende o si conviven. Sembrarla sin contestar eso es elegir la respuesta a
-escondidas. Queda en el pendiente 110, que hoy son **nueve** columnas y no catorce.
+escondidas. Queda en el pendiente 110.
+
+**Y dos de las catorce se cerraron sin sembrarlas, eximiéndolas —pero no por no poder—.**
+`caregivers.user_id` y `avisos.familia_id` apuntan a `auth.users`, y la 0030 ya había escrito
+por qué no las llena: dar de alta una cuenta desde una migración significa escribir una clave adentro
+del repositorio. Eso solo no alcanza para eximir nada, porque «no se puede» y «no se mira» terminan
+en el mismo lugar. Lo que las saca de la lista es lo otro: `probar_aislamiento.mjs` recorre los dos
+caminos con cuentas de verdad y comprueba de quién quedó cada legajo y cada aviso. La siembra era el
+lugar equivocado para probarlas, no un lugar donde faltaran.
+
+**Y con el mismo criterio, una que tampoco se puede sembrar se quedó adentro.**
+`verificaciones_asistente.verificado_por` dice quién comprobó un papel y apunta a `profiles`, que
+existen sólo para quien se registró: una migración no la puede llenar, igual que las dos de arriba.
+La diferencia es la que decide, y es toda la regla: **aquéllas las escribe algo, ésta no la escribe
+nadie.** Recorriendo el proyecto entero el 31 de agosto de 2026 no aparece ni una pantalla, ni un
+guion, ni una prueba que toque `verificaciones_asistente` fuera de las migraciones. O sea que el
+producto no anota quién comprobó un papel, y eximirla lo hubiera tapado. Queda roja.
+
+De las catorce quedan **siete**.
 
 **Una de las catorce ninguna migración la puede llenar hoy**, y eso es un hallazgo aparte:
 `verificaciones_asistente.verificado_por` dice quién comprobó un papel, y los perfiles los crea el
