@@ -16,7 +16,7 @@
    atributos `style=` del marcado» y lo contó como éxito. Está en el pendiente
    69 de `docs/PENDIENTES.md`.
 
-   QUÉ EXIGE, QUE SON TRES COSAS
+   QUÉ EXIGE, QUE SON CUATRO COSAS
    1. Que todo chequeo llame por lo menos una vez a `seRevisaron()` o a
       `hayArchivos()`, las dos de `scripts/recorrido.mjs`, que son las que se
       plantan cuando la cuenta da cero. La llamada se busca **con los
@@ -26,7 +26,11 @@
    2. Que ninguno escriba a mano la extensión de las pantallas, que se pide a
       `EXTENSIONES_DE_PANTALLA` del mismo archivo. Perder **parte** del corpus
       no dispara la guarda de arriba, y es la forma silenciosa de lo mismo.
-   3. Que la tabla `| Chequeo | Qué impide que vuelva |` del README nombre a
+   3. Que ninguna exención de `scripts/` nombre un archivo que ya no está —y
+      acá se miran todos los guiones, no sólo los chequeos—. La única lista que
+      nombra archivos de otro repositorio se mira al revés: los suyos no tienen
+      que aparecer nunca acá.
+   4. Que la tabla `| Chequeo | Qué impide que vuelva |` del README nombre a
       todos los que existen y a ninguno que no. Se agregó el 31 de agosto de
       2026, cuando se encontró que la tabla llevaba **cuatro chequeos de
       atraso** —`base`, `clases`, `estado` y `pendientes` existían y no
@@ -54,7 +58,7 @@
       confunda una fila con un nombre citado al pasar en un párrafo.
 =================================================== */
 
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
@@ -121,17 +125,69 @@ export function escribeLaExtension(texto) {
    La clave de una exención que nombra una pantalla se escribe **sin
    extensión**, y el chequeo se la saca a lo que compara. */
 const CLAVE = /^[ \t]*\[\s*'([^']+)'/gm;
+const MAPA = /new Map\(\[\r?\n([\s\S]*?)^\]\);/gm;
 
 /** Las claves de exención de este texto que traen la extensión de las pantallas. */
 export function clavesConLaExtension(texto) {
   const traidoras = [];
-  const MAPA = /new Map\(\[\r?\n([\s\S]*?)^\]\);/gm;
   for (const mapa of sinComentarios(texto).matchAll(MAPA)) {
     for (const clave of mapa[1].matchAll(CLAVE)) {
       if (EXTENSIONES_DE_PANTALLA.some((e) => clave[1].endsWith(e))) traidoras.push(clave[1]);
     }
   }
   return traidoras;
+}
+
+/* ── LA EXENCIÓN QUE PERDIÓ SU ARCHIVO ───────────────────
+   Una exención que ya no exime nada no queda inofensiva: **casi todas están
+   escritas por archivo**, así que el chequeo se saltea el archivo entero y con
+   él todo lo demás que hubiera mirado adentro. Eso ya pasó —el 31 de agosto de
+   2026, en `verificar_vocabulario.mjs`— y de ahí salió
+   `scripts/probar_exenciones.mjs`, que las vacía de a una y exige que el chequeo
+   dueño se ponga rojo.
+
+   Esta regla ataca la forma más barata de lo mismo, y llega donde aquella
+   prueba no llega: **la clave que nombra un archivo que ya no existe**. Un
+   archivo renombrado o borrado deja la exención hablando de un fantasma, y
+   nadie se entera. Se mira sobre **todos** los guiones de `scripts/`, no sólo
+   sobre los chequeos, porque las exenciones de las pruebas —pendiente 114— no
+   se pueden vaciar sin la base de esta máquina, y ésta no necesita nada.
+
+   Se miran sólo las claves que traen extensión o barra: las otras nombran una
+   tabla, una columna, una función o un color, y ahí no hay archivo que
+   encontrar. */
+const CON_PINTA_DE_ARCHIVO = /(\/|\.(mjs|js|html|css|md|sql|json|webmanifest))$/;
+const MAPA_CON_NOMBRE = /const ([A-Z][A-Z0-9_]*) = new Map\(\[\r?\n([\s\S]*?)^\]\);/gm;
+
+/* Y hay una exención cuyas claves **no tienen que estar**: `AJENOS`, en
+   `scripts/citas.mjs`, nombra archivos que viven en el repositorio de Careonys.
+   Para ella la regla se da vuelta en vez de apagarse —que es la diferencia
+   entre eximir y dejar de mirar—: si alguno de esos archivos aparece acá, la
+   exención pasó a decir algo falso y hay que sacarla. */
+const NOMBRAN_LO_DE_AFUERA = new Map([
+  ['citas.mjs AJENOS', 'nombra archivos del repositorio de Careonys, que acá no están']
+]);
+
+/** Las exenciones de este texto que nombran un archivo y se equivocan. */
+export function exencionesQueMienten(archivo, texto, existe) {
+  const mentiras = [];
+  for (const mapa of sinComentarios(texto).matchAll(MAPA_CON_NOMBRE)) {
+    const deAfuera = NOMBRAN_LO_DE_AFUERA.has(archivo + ' ' + mapa[1]);
+    for (const clave of mapa[2].matchAll(CLAVE)) {
+      if (!CON_PINTA_DE_ARCHIVO.test(clave[1])) continue;
+      const esta = existe(clave[1]);
+      if (!deAfuera && !esta) {
+        mentiras.push({ lista: mapa[1], clave: clave[1], porque: 'ese archivo no est\u00e1' });
+      }
+      if (deAfuera && esta) {
+        mentiras.push({
+          lista: mapa[1], clave: clave[1],
+          porque: 'la exenci\u00f3n dice que vive afuera y el archivo est\u00e1 ac\u00e1'
+        });
+      }
+    }
+  }
+  return mentiras;
 }
 
 /* ── Y QUE EL README LOS NOMBRE A TODOS ───────────────────────────────────
@@ -259,6 +315,36 @@ if (clavesConLaExtension(CLAVE_QUE_NO_ES_PANTALLA).length > 0) {
   fallas.push('Se quejó de una clave que no nombra una pantalla.');
 }
 
+/* ── 7. Que reconozca la exención que perdió su archivo ────────── */
+
+const conMapa = (lista, clave) => [
+  `const ${lista} = new Map([`,
+  `  ['${clave}', 'el motivo']`,
+  ']);'
+].join('\n');
+
+/* El `existe` de mentira contesta que sólo hay un archivo en el mundo, para que
+   la prueba no dependa de qué haya hoy en la carpeta. */
+const soloExisteElCorredor = (clave) => clave === 'verificar_todo.mjs';
+const mienten = (archivo, texto) => exencionesQueMienten(archivo, texto, soloExisteElCorredor);
+
+if (mienten('probar_x.mjs', conMapa('AFUERA', 'verificar_que_no_existe.mjs')).length === 0) {
+  fallas.push('Dio por buena una exención que nombra un archivo que no existe.');
+}
+if (mienten('probar_x.mjs', conMapa('AFUERA', 'verificar_todo.mjs')).length > 0) {
+  fallas.push('Se quejó de una exención cuyo archivo está donde dice.');
+}
+if (mienten('verificar_esquema.mjs', conMapa('SIN_ORGANIZACION', 'tenants')).length > 0) {
+  fallas.push('Se quejó de una clave que no nombra ningún archivo.');
+}
+/* Y la que va al revés, en los dos sentidos. */
+if (mienten('citas.mjs', conMapa('AJENOS', 'supabase/migrations/0999_de_careonys.sql')).length > 0) {
+  fallas.push('Se quejó de una exención que nombra a propósito un archivo de afuera.');
+}
+if (mienten('citas.mjs', conMapa('AJENOS', 'verificar_todo.mjs')).length === 0) {
+  fallas.push('Dio por buena una exención que dice «vive afuera» sobre un archivo de acá.');
+}
+
 /* ── 6. Que note una tabla a la que le falta un chequeo ─────────────────── */
 
 const TABLA_COMPLETA = [
@@ -313,6 +399,28 @@ for (const nombre of chequeos) {
 }
 
 seRevisaron(revisados, 'un solo chequeo que no esté exento');
+
+/* ── Las exenciones de toda la carpeta, no sólo las de los chequeos ────
+   Acá el corpus es otro: **todos** los guiones de `scripts/`. Las exenciones de
+   las pruebas y las de los módulos compartidos también nombran archivos, y
+   también se quedan hablando de un fantasma el día que ese archivo se va.
+   `verificar_red.mjs` queda afuera por lo mismo que en las otras dos reglas: sus
+   pruebas de adentro traen exenciones escritas a propósito, y una nombra un
+   archivo que no existe justamente para que haya algo que reconocer. */
+const YO = 'verificar_red.mjs';
+const existeElArchivo = (clave) =>
+  existsSync(join(aca, '..', clave)) || existsSync(join(aca, clave));
+
+const guiones = readdirSync(aca).filter((n) => n.endsWith('.mjs') && n !== YO).sort();
+seRevisaron(guiones.length, 'ningún guión en `scripts/` cuyas exenciones mirar');
+
+const exencionesTorcidas = [];
+for (const nombre of guiones) {
+  const texto = readFileSync(join(aca, nombre), 'utf8');
+  for (const mentira of exencionesQueMienten(nombre, texto, existeElArchivo)) {
+    exencionesTorcidas.push([nombre, mentira]);
+  }
+}
 
 /* Y la tabla del README contra la carpeta, en los dos sentidos: uno que no
    figura es una regla que nadie sabe que está sostenida, y uno que figura sin
@@ -369,6 +477,14 @@ for (const [nombre, clave] of conLaExtensionEnLaClave) {
   );
 }
 
+for (const [nombre, { lista, clave, porque }] of exencionesTorcidas) {
+  fallas.push(
+    `\`scripts/${nombre}\` exime a \`${clave}\` en \`${lista}\`, y ${porque}.\n` +
+    '      Una exención que ya no exime nada sigue salteando lo que nombra, así que\n' +
+    '      apaga el chequeo sobre eso y nadie se entera.'
+  );
+}
+
 if (fallas.length > 0) {
   console.error('La red de chequeos puede pasar sin haber mirado nada:\n');
   for (const f of fallas) console.error('  · ' + f);
@@ -382,7 +498,10 @@ if (fallas.length > 0) {
     'Y la extensión de las pantallas se pide con `EXTENSIONES_DE_PANTALLA`, del\n' +
     'mismo archivo, en vez de escribirla. Cuando la clave de una exención nombra\n' +
     'una pantalla, se escribe sin extensión y el chequeo se la saca a lo que\n' +
-    'compara.'
+    'compara.\n' +
+    'Y una exención que nombra un archivo que ya no está se saca: casi todas están\n' +
+    'escritas por archivo, así que apagan el chequeo sobre él entero. Si el archivo\n' +
+    'se renombró, se corrige la clave; si se fue, se borra el renglón.'
   );
   process.exit(1);
 }
@@ -391,5 +510,6 @@ console.log(
   `Red verificada: ${revisados} chequeos que se plantan si no encuentran nada ` +
   `(${ARMAN_SU_PROPIO_CORPUS.size} exento, con su motivo), ninguno con la extensión de las ` +
   `pantallas escrita a mano ni metida adentro de la clave de una exención, y los ` +
-  `${enElReadme.size} nombrados en la tabla del README.`
+  `${enElReadme.size} nombrados en la tabla del README. Y en los ${guiones.length} guiones ` +
+  `de \`scripts/\`, ninguna exención que nombre un archivo que ya no está.`
 );
