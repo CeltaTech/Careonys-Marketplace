@@ -294,6 +294,19 @@
       saber leerlo: contesta `PGRST205` —«no existe»— al nombre viejo y `42501`
       —«sin permiso»— al nuevo, que son dos hechos distintos.
 
+      **Y la vista que se abre a propósito se nombra, y lo que la sostiene se
+      comprueba.** `VISTAS_AL_ALCANCE_ANONIMO` es esa lista, y hoy tiene una sola
+      entrada: la oferta general de cursos, que el Desarrollador decidió publicar
+      el 31 de agosto de 2026. Una vista abierta a `anon` es una dirección web sin
+      puerta, así que lo único que la separa de ser un listado suelto es la
+      condición que lleva escrita adentro —y ésa no vive en ninguna política: vive
+      en el cuerpo de la vista—. Por eso acá no alcanza con escribir el motivo,
+      igual que en la undécima con `profiles`: la regla va y mira que el cuerpo
+      siga acotando a las filas generales del producto —`tenant_id is null`—, que
+      no lo haya vuelto opcional con la misma disyunción que prohíbe la 15 b, y
+      que el permiso que sobrevive sea `select` y ninguno más. El día que alguien
+      le saque la condición a la vista, la exención deja de valer sola.
+
       **15 b. Y la función que sí abre esa puerta exige de verdad el nombre
       corto.** Cinco de las seis exenciones de `AL_ALCANCE_ANONIMO` lo afirman en
       su motivo —«exige el nombre corto», «la que nombra el argumento»— y eso era
@@ -432,6 +445,30 @@ export const AL_ALCANCE_ANONIMO = new Map([
    'catálogo del que depende; exige el nombre corto, devuelve la guía general del producto ' +
    'más la que escribió esa sola Prestadora, y sólo las publicadas; ninguna es dato de una ' +
    'persona: son textos sobre una patología, nunca sobre un Paciente; migración 0041']
+]);
+
+/* Vistas de `public` que a propósito se ven sin sesión, con el motivo **y con
+   qué acota lo que publican**. Es la otra mitad de la decimoquinta regla, y la
+   segunda parte no es adorno: una vista abierta a `anon` es una dirección web
+   sin puerta, así que lo único que la separa de ser un listado suelto es la
+   condición que lleva escrita adentro. Por eso acá no alcanza con decirlo: la
+   regla va y mira que esa condición siga estando, igual que la undécima va a
+   mirar el permiso por columna de `profiles`.
+
+   **Y es la única lista**, por lo mismo que `AL_ALCANCE_ANONIMO`:
+   `scripts/probar_permisos_en_vivo.mjs` la importa de acá en vez de tener la
+   suya, que era un `Set` vacío guardado para el día que se decidiera abrir una.
+   Ese día llegó el 31 de agosto de 2026. */
+export const VISTAS_AL_ALCANCE_ANONIMO = new Map([
+  ['oferta_de_cursos',
+   'el Desarrollador decidió el 31 de agosto de 2026 que «la oferta de cursos, no el ' +
+   'contenido de los mismos, se hará disponible», y `cursos.html` es una pantalla que se ' +
+   've sin cuenta, así que la vista se abre sin sesión o esa pantalla no tiene qué ' +
+   'mostrar. No es un listado suelto: su cuerpo la acota a la oferta general del producto ' +
+   '—`tenant_id is null`— y a las publicadas, así que no sale por ahí ni un curso de una ' +
+   'Prestadora ni el nombre de ninguna. Y no publica una sola columna del contenido del ' +
+   'curso: ni evaluaciones, ni preguntas, ni opciones, que se siguen pidiendo con sesión; ' +
+   'migración 0051']
 ]);
 
 /* Políticas del depósito de archivos que no nombran la Organización, con el
@@ -1082,6 +1119,25 @@ export function alcanceAnonimo(textos, migraciones) {
   return porArchivo;
 }
 
+/* Para la decimoquinta. El cuerpo de una vista, que es donde vive la única
+   condición que puede acotar lo que publica: una vista no tiene política. Se
+   queda con la última definición de cada una, porque acá las vistas se vuelven
+   a crear —`caregivers_publicos` tres veces— y lo que vale es la que quedó. */
+const DEFINE_LA_VISTA =
+  /create\s+(?:or\s+replace\s+)?view\s+(?:"?public"?\.)?"?([a-z_]+)"?\s+as([\s\S]*?);/gi;
+
+export function cuerposDeVista(textos) {
+  const cuerpos = new Map();
+  for (const t of textos) {
+    const limpio = t.replace(/\r\n/g, '\n').split('\n')
+      .map((l) => (/^\s*--/.test(l) ? '' : l)).join('\n');
+    for (const m of limpio.matchAll(DEFINE_LA_VISTA)) {
+      cuerpos.set(m[1].toLowerCase(), m[2]);
+    }
+  }
+  return cuerpos;
+}
+
 /**
  * Lo que incumple una migración. Devuelve `[renglón, qué pasa]` por cada cosa.
  * `conColumna` son las tablas que reciben su columna de Organización en alguna
@@ -1090,7 +1146,7 @@ export function alcanceAnonimo(textos, migraciones) {
  * migración. Sin esos datos se mira sólo este texto.
  */
 export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, bajas,
-                                     alcance) {
+                                     alcance, vistas) {
   const t = texto.replace(/\r\n/g, '\n');
   const bajo = t.toLowerCase();
   const tienen = conColumna || conOrganizacion([t]);
@@ -1099,6 +1155,9 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, b
   /* Sin el neto de todas las migraciones se mira este solo texto, que es lo
      que hace falta para las pruebas de más abajo. */
   const alAlcance = alcance || alcanceAnonimo([t], [nombre || '']);
+  /* Y sin los cuerpos de todas, los de este solo texto: es lo que hace falta
+     para las pruebas de más abajo, donde cada caso es una migración sola. */
+  const cuerpos = vistas || cuerposDeVista([t]);
   const fallas = [];
 
   for (const m of t.matchAll(TABLA)) {
@@ -1389,6 +1448,37 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, b
      informa en el renglón donde se concedió el permiso que sobrevivió, que es
      donde hay que ir a sacarlo. */
   for (const [indice, objeto, verbo] of (alAlcance.get(nombre || '') || [])) {
+    /* La vista que se abre a propósito no queda perdonada por estar en la
+       lista: lo que la sostiene es la condición que lleva adentro, así que se
+       la va a mirar. Es la misma forma de la undécima con `profiles`. */
+    if (VISTAS_AL_ALCANCE_ANONIMO.has(objeto)) {
+      const cuerpo = cuerpos.get(objeto);
+      if (verbo !== 'select') {
+        fallas.push([renglonDe(t, indice),
+          '`' + objeto + '` está en `VISTAS_AL_ALCANCE_ANONIMO`, que perdona la ' +
+          'lectura y nada más, y este permiso le deja `' + verbo + '` a quien entra sin ' +
+          'sesión. Abrir una vista para que se lea no es abrirla para que se escriba']);
+      } else if (!cuerpo) {
+        fallas.push([renglonDe(t, indice),
+          '`' + objeto + '` está en `VISTAS_AL_ALCANCE_ANONIMO` y ninguna migración la ' +
+          'define como vista. Lo que sostiene esa exención es la condición escrita ' +
+          'adentro del cuerpo, y una tabla no lleva ninguna: sin ese cuerpo, lo que ' +
+          'queda abierto sin sesión es la tabla entera']);
+      } else if (!/tenant_id\s+is\s+null/i.test(cuerpo)) {
+        fallas.push([renglonDe(t, indice),
+          '`' + objeto + '` se ve sin sesión a propósito, pero su cuerpo ya no acota a ' +
+          'la oferta general del producto —`tenant_id is null`—, que es lo único que la ' +
+          'separaba de ser un listado suelto: así publica las filas de cada Prestadora, ' +
+          'y de paso quiénes son los clientes']);
+      } else if (/tenant_id\s+is\s+null\s+or\b/i.test(cuerpo)) {
+        fallas.push([renglonDe(t, indice),
+          '`' + objeto + '` se ve sin sesión a propósito y su cuerpo escribe ' +
+          '`tenant_id is null or`: esa disyunción deja pasar todo lo que venga después, ' +
+          'que es exactamente lo que la 15 b prohíbe en las puertas. La condición acota ' +
+          'o no acota; con un `or` al lado no acota']);
+      }
+      continue;
+    }
     fallas.push([renglonDe(t, indice),
       'este permiso le deja `' + verbo + '` sobre `' + objeto + '` a quien entra ' +
       'sin sesión, y ninguna migración posterior se lo saca. Una tabla o una vista ' +
@@ -1490,6 +1580,14 @@ const PUERTA = (parametros, condicion) =>
   '$$;\n' +
   'revoke all on function public.directorio_de(text) from public;\n';
 
+/* Y la otra mitad de la decimoquinta: la vista que se ve sin sesión a
+   propósito. `oferta_de_cursos` está en `VISTAS_AL_ALCANCE_ANONIMO`, así que la
+   regla no la perdona: le mira el cuerpo. La condición se pasa por afuera para
+   poder escribirla bien y mal sin repetir el resto. */
+const VISTA_ABIERTA = (condicion) =>
+  'create or replace view public.oferta_de_cursos as\n' +
+  '  select c.clave, c.horas from public.cursos c ' + condicion + ';\n';
+
 const MAL = [
   ['un permiso de tabla que deja mirar al que no inició sesión',
    'grant select on table public.visitas to anon;\n'],
@@ -1577,7 +1675,20 @@ const MAL = [
   ['una segunda función que la deduce, que es la misma copia un piso más abajo',
    'create function public.mi_prestadora() returns uuid language sql security definer as $$\n' +
    '  select tenant_id from public.profiles where id = auth.uid();\n$$;\n' +
-   'revoke all on function public.mi_prestadora() from public, anon;\n']
+   'revoke all on function public.mi_prestadora() from public, anon;\n'],
+  /* Y lo que sostiene a la vista exenta, que no se cree: se comprueba. Los
+     cuatro casos son las cuatro maneras de que la exención quede escrita y
+     dejando de ser cierta. */
+  ['la vista exenta a la que le sacaron la condición que la acotaba',
+   VISTA_ABIERTA('where c.publicado') + 'grant select on public.oferta_de_cursos to anon;\n'],
+  ['la misma condición vuelta opcional por un `or`, que es no acotar',
+   VISTA_ABIERTA('where c.tenant_id is null or c.publicado') +
+   'grant select on public.oferta_de_cursos to anon;\n'],
+  ['la exenta abierta también para escribir, cuando lo que se perdonó fue mirar',
+   VISTA_ABIERTA('where c.tenant_id is null') +
+   'grant select, insert on public.oferta_de_cursos to anon;\n'],
+  ['el nombre de la exenta puesto sobre algo que ninguna migración define como vista',
+   'grant select on table public.oferta_de_cursos to anon;\n']
 ];
 
 const BIEN = [
@@ -1585,6 +1696,9 @@ const BIEN = [
    PUERTA('p_slug text', 't.slug = p_slug')],
   ['el mismo nombre corto opcional: sin él no hay Prestadora, y sin ella no hay filas',
    PUERTA('p_slug text default null', 't.slug = p_slug')],
+  ['la vista exenta, con la condición que la acota escrita adentro del cuerpo',
+   VISTA_ABIERTA('where c.tenant_id is null and c.publicado') +
+   'grant select on public.oferta_de_cursos to anon;\n'],
   ['un permiso sin sesión que la misma migración se vuelve a llevar',
    'grant select on table public.visitas to anon;\n' +
    'revoke all on table public.visitas from anon;\n'],
@@ -1776,6 +1890,10 @@ if (ME_CORRIERON_A_MI) {
      porque la 0021 se lo revocó; juzgando archivo por archivo las cuatro sale ían
      en rojo para siempre por algo que ya no está. */
   const alcance = alcanceAnonimo(textos, migraciones);
+  /* Y los cuerpos de las vistas, por lo mismo: la condición que sostiene a una
+     vista exenta puede haberse escrito en otra migración que la del permiso que
+     sobrevive, y lo que vale es la última definición. */
+  const vistas = cuerposDeVista(textos);
 
   for (const [i, nombre] of migraciones.entries()) {
     const texto = textos[i];
@@ -1844,7 +1962,7 @@ if (ME_CORRIERON_A_MI) {
     }
     for (const [renglon, motivo] of
       fallasDeUnaMigracion(texto, tienenColumna, primarias, sigue, nombre, bajas,
-                           alcance)) {
+                           alcance, vistas)) {
       fallas.push(`supabase/migrations/${nombre}:${renglon}  ${motivo}`);
     }
   }
@@ -1885,12 +2003,15 @@ if (ME_CORRIERON_A_MI) {
       'envuelve, y nada que no pueda correr adentro de una se escribe adentro de\n' +
       'ella, porque eso no falla hoy sino el día que se aplica.\n' +
       'Y quien llega sin sesión entra por la puerta de una Prestadora o no entra:\n' +
-      'a `anon` no le queda ningún permiso sobre una tabla ni una vista de `public`\n' +
+      'a `anon` no le queda ningún permiso sobre una tabla ni una vista de `public`,\n' +
+      'salvo la vista que se abrió a propósito, que además tiene que seguir\n' +
+      'acotando adentro de su cuerpo lo que publica —y sólo para leer—,\n' +
       '—y lo que cuenta es el neto de todas las migraciones, no lo que diga ésta—,\n' +
       'y la función que sí se abre sin sesión recibe el nombre corto, lo compara\n' +
       'contra `slug` y no escribe `is null or`, que con el nulo abre todas.\n' +
       'Si un caso no puede cumplirla, va a SIN_ORGANIZACION, a SIN_MONEDA, a\n' +
-      'AL_ALCANCE_ANONIMO, a SIN_ORGANIZACION_EN_EL_DEPOSITO o a\n' +
+      'AL_ALCANCE_ANONIMO, a VISTAS_AL_ALCANCE_ANONIMO, a\n' +
+      'SIN_ORGANIZACION_EN_EL_DEPOSITO o a\n' +
       'SIN_ORGANIZACION_AL_ESCRIBIR de este mismo\n' +
       'archivo, con el motivo escrito y el pendiente que lo sigue.');
     process.exit(1);
@@ -1929,7 +2050,9 @@ if (ME_CORRIERON_A_MI) {
     'Y quien llega sin sesión entra por la puerta de una Prestadora o no entra: ' +
     `de los ${alcance.cerrados} objetos de \`public\` que alguna vez estuvieron a su ` +
     `alcance no le queda ninguno, contando el neto de las ${migraciones.length} ` +
-    'migraciones y siguiendo los renombres; y las ' +
+    `migraciones y siguiendo los renombres (${VISTAS_AL_ALCANCE_ANONIMO.size} vista ` +
+    'abierta a propósito, que sigue acotando adentro de su cuerpo lo que publica y ' +
+    'sólo deja leer, comprobado acá mismo); y las ' +
     `${puertas} veces que una migración escribe una de las ` +
     `${AL_ALCANCE_ANONIMO.size} funciones que sí se abren sin sesión, las ${puertas} ` +
     'exigen el nombre corto de una Prestadora, lo comparan contra `slug` y no ' +

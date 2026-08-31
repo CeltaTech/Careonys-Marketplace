@@ -23,7 +23,7 @@
    O sea que la única pantalla que decía la verdad la decía siempre en su
    forma mala: «no se pudo». Guardar una consulta pública exige abrirle la
    tabla a `anon`, y ampliar el acceso anónimo es decisión del Desarrollador
-   —es el pendiente 25—, no de este archivo.
+   —es el punto dos del pendiente 64—, no de este archivo.
 
    QUÉ HACE ENTONCES. Una sola cosa, y la dice como es:
 

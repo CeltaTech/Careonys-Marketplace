@@ -575,6 +575,29 @@ const ClienteDatos = {
 
   // --- LOS CURSOS ---
 
+  // La oferta general de cursos, la que se ve sin iniciar sesión. Es lo que
+  // muestra `cursos.html`, que es una pantalla pública: quien la abre todavía
+  // no tiene cuenta, así que nada de lo de abajo le sirve.
+  //
+  // Va contra la vista `oferta_de_cursos` y no contra la tabla `cursos`, que no
+  // le concede nada a `anon`. La vista publica columna por columna lo que se
+  // decidió publicar —el Desarrollador, el 31 de agosto de 2026— y lo acota a
+  // las filas generales del producto: el curso que arma una Prestadora no sale
+  // por ahí (migración 0051).
+  //
+  // **Y no trae el contenido del curso**: ni lo que se estudia, ni sus
+  // evaluaciones, ni sus preguntas. Eso se cursa con sesión y se pide con
+  // sesión, más abajo en este mismo archivo.
+  //
+  // Las filas llegan con la forma que espera `js/catalogo.js`, así que no hay
+  // que darlas vuelta acá: la vista ya las arma así.
+  async ofertaDeCursos() {
+    return await this._supabaseRequest('GET', 'oferta_de_cursos', null, {
+      select: '*',
+      order: 'orden.asc'
+    });
+  },
+
   // La oferta de cursos de quien inició sesión: la general de CeltaTech más la
   // de su Prestadora, nunca la de otra. Eso no lo decide este renglón sino la
   // política de la tabla (migración 0008), que es donde tiene que decidirse.

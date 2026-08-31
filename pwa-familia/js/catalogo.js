@@ -254,10 +254,35 @@
     return datos.vocabularios;
   }
 
+  // La oferta llega de dos lugares, y eso no es una etapa a medias: es el
+  // estado real de cada mitad. Los cursos ya tienen tabla —migración 0008— y
+  // desde la 0051 su oferta general se ve sin sesión, así que salen de la base.
+  // Los servicios y las evaluaciones todavía no tienen tabla —pendiente 7—, y
+  // hasta que la tengan el archivo es su único lugar.
   async function _traerOferta() {
     const respuesta = await fetch(ARCHIVO('catalogo-oferta'), { cache: 'no-cache' });
     if (!respuesta.ok) throw new Error('La oferta respondió ' + respuesta.status);
-    return await respuesta.json();
+    const datos = await respuesta.json();
+    const cursos = await _traerCursosDeLaBase();
+    if (cursos) datos.cursos = cursos;
+    return datos;
+  }
+
+  // Devuelve `null` —no tira— cuando la base no está al alcance, con el mismo
+  // criterio que `_traerDeLaBase()`: sin conexión, o en una pantalla que ni
+  // siquiera carga `apiClient.js`, la copia del archivo sigue sirviendo. Y lo
+  // que nunca sale de acá es el contenido de los cursos: la vista
+  // `oferta_de_cursos` publica la oferta y nada más.
+  async function _traerCursosDeLaBase() {
+    const cliente = window.ClienteDatos;
+    if (!cliente || typeof cliente.ofertaDeCursos !== 'function') return null;
+    try {
+      const cursos = await cliente.ofertaDeCursos();
+      if (!Array.isArray(cursos) || cursos.length === 0) return null;
+      return cursos;
+    } catch (e) {
+      return null;
+    }
   }
 
   async function _traerFrases() {

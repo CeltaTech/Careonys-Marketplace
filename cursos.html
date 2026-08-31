@@ -231,14 +231,18 @@
   <script src="js/identidad.js"></script>
   <script src="js/texto.js"></script>
   <script src="js/catalogo.js"></script>
-  <!-- La lista de cursos sale de `data/catalogo-oferta.json` y no de la base, y no es un
-       olvido. Las mismas seis filas están en la tabla `cursos` desde la migración 0008,
-       pero su política es `for select to authenticated`: la base no se las muestra a
-       quien no inició sesión, y esta pantalla es pública. Abrirle la lectura a `anon` es
-       ampliar el acceso anónimo, y eso no se hace sin decisión del Desarrollador: es el
-       pendiente 25, del que depende además el 7. Mientras tanto la pantalla lee el
-       archivo, que es de donde leen todas las pantallas portadas. Por eso tampoco carga
-       el cliente de datos ni el de sesión. -->
+  <!-- La lista de cursos sale de la base. El Desarrollador decidió el 31 de agosto de
+       2026 que la oferta de cursos —la oferta, no el contenido— es pública, así que la
+       migración 0051 abrió la vista `oferta_de_cursos`: sólo las filas generales del
+       producto, sólo las publicadas, y sólo las columnas con las que se arma la tarjeta.
+       La tabla `cursos` le sigue sin conceder nada a `anon`, y lo que se estudia, sus
+       evaluaciones y sus preguntas no salen por ahí. Por eso esta pantalla ahora sí carga
+       el cliente de datos; el de sesión sigue sin hacer falta, porque la vista se lee sin
+       iniciar sesión. Del archivo `data/catalogo-oferta.json` siguen saliendo los
+       servicios y las evaluaciones, que todavía no tienen tabla —pendiente 7—, y de ahí
+       salen también los cursos cuando la base no está al alcance: sin conexión, o contra
+       una base donde la 0051 todavía no corrió. -->
+  <script src="js/apiClient.js"></script>
   <script src="js/main.js"></script>
   <script src="js/formulario-consulta.js"></script>
 </body>

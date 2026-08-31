@@ -293,7 +293,7 @@ Cerró el pendiente 27, el 24 de agosto de 2026.
   —`movilidad_reducida`, `traslados`, `curaciones`, `estimulacion_cognitiva`—. Ninguno daba error
   en ninguna parte.
 - **El daño no está en la base, está en la pantalla.** Las columnas son texto libre y aceptan
-  cualquier cosa. `js/catalogo.js:373` traduce la clave guardada a su etiqueta y, cuando no la
+  cualquier cosa. `js/catalogo.js:398` traduce la clave guardada a su etiqueta y, cuando no la
   encuentra, muestra la clave cruda: la ficha decía «enfermero» en minúscula y con guión bajo. Y
   el filtro por Tipo de Asistente busca por la clave que ofrece el catálogo, así que esa fila no
   aparecía nunca.
@@ -550,7 +550,7 @@ Comprobado el 24 de agosto de 2026 contra el proyecto real: el servidor tiene ap
 distancia costaba dos cosas que ya no cuestan:
 
 - **La columna del contacto existe.** La 0009 agregó `avisos.contact_info`, que es donde
-  `js/apiClient.js:950` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
+  `js/apiClient.js:973` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
   público de `solicitar-asistente.html` mandaba una columna que la base no tenía.
 - **Las filas de ejemplo hablan el idioma del catálogo.** La 0010 reemplazó las claves viejas de
   las cuatro filas ficticias —«enfermero» y compañía— por las que las pantallas esperan.
@@ -884,7 +884,7 @@ atiende, precio por hora y si acepta reemplazos urgentes. Son exactamente los qu
 `directorio`, la vista que sólo deja pasar a quien tiene el legajo validado por la
 Prestadora **y** además autorizó que se lo publique.
 
-- **Lo trae `traerDelDirectorio` (`js/apiClient.js:750`)**, que pide una sola fila filtrando por
+- **Lo trae `traerDelDirectorio` (`js/apiClient.js:773`)**, que pide una sola fila filtrando por
   identificador y por Prestadora. Un identificador que no tiene forma de identificador se contesta
   sin preguntarle a la base: la base devolvería un error de sintaxis, y un error en pantalla se lee
   como que el sistema se rompió, cuando lo que hay es un enlace viejo. Los hay: hasta el 25 de
@@ -915,8 +915,8 @@ Lo que falta —empezar una conversación con esa persona en particular— qued�
 
 **Tres traducciones que estaban por escribirse dos veces subieron a los archivos compartidos**
 («ningún patrón repetido sin punto único de verdad»): el precio en pesos es `Texto.importe` (`js/texto.js:152`), la etiqueta de una lista es
-`Catalogo.etiquetaSiExiste` (`js/catalogo.js:383`), y la de una tarea —que puede estar en cualquiera
-de tres listas— es `Catalogo.etiquetaDeTarea` (`js/catalogo.js:396`). Vivían adentro de
+`Catalogo.etiquetaSiExiste` (`js/catalogo.js:408`), y la de una tarea —que puede estar en cualquiera
+de tres listas— es `Catalogo.etiquetaDeTarea` (`js/catalogo.js:421`). Vivían adentro de
 `directorio.html`; ahora las dos pantallas las piden al mismo lugar.
 
 
@@ -1462,7 +1462,7 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
   en el navegador antes de tocar nada: `directorio.html?t=prestadora-que-no-existe` mostraba los
   cuatro Asistentes de PresDemo, porque el respaldo devuelve la primera Prestadora de la base. El
   respaldo sirve para una dirección que no nombra ninguna, no para una que nombra mal. Ahora se
-  distingue un caso del otro (`js/apiClient.js:732`) y el segundo avisa. **Y desde la
+  distingue un caso del otro (`js/apiClient.js:756`) y el segundo avisa. **Y desde la
   migración 0021 el respaldo ya no existe**: mostrar la primera Prestadora de la base era
   leer la lista de clientes de CeltaTech, y esa lista no la ve nadie. Quien entra sin
   enlace ahora ve que le falta el enlace.
@@ -2232,7 +2232,7 @@ lea las mismas reglas, no una segunda copia de ellas.
 el pendiente 15. No era una cuestión de prolijidad. Quien escribe la llamada a mano decide solo si
 manda el token de quien inició sesión o la clave pública, y de ese renglón depende que la base
 sepa quién está preguntando. Ahora son `ClienteDatos.getMensajes()` y
-`ClienteDatos.enviarMensaje()` (`js/apiClient.js:703`), que arman el pedido una sola vez para
+`ClienteDatos.enviarMensaje()` (`js/apiClient.js:726`), que arman el pedido una sola vez para
 todos.
 
 Se ganó algo que no se buscaba: la lectura vieja miraba `res.ok` y, si venía en falso, seguía de
@@ -2468,7 +2468,7 @@ en el marcado; `data-campo="algo@X"`, que es lo mismo dicho desde la declaració
 los suyos; `"filas"` y `"columnas"` en `data/catalogo-disponibilidad.json`, de donde la grilla saca
 los días y los turnos; `Catalogo.items('X')` y `Catalogo.etiquetaSiExiste('X', …)`, que son las dos
 puertas del catálogo que reciben el nombre; y la lista que recorre `etiquetaDeTarea` en
-`js/catalogo.js:397`, que busca una tarea en tres vocabularios seguidos.
+`js/catalogo.js:422`, que busca una tarea en tres vocabularios seguidos.
 
 **Y lo que no cuenta importa igual que lo que cuenta.** Que el nombre aparezca entre comillas no
 alcanza: `genero`, `zona`, `frecuencia` y `patologia` son además nombres de columna de la base.
@@ -2891,7 +2891,7 @@ ficticia y sesión simulada: el legajo se creó con fecha de alta del **1 de ene
 `update` posterior la corrió al **1 de enero de 2010**. Las dos veces la base guardó lo que le
 mandaron.
 
-**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:866` la traduce a `fechaRegistro` y ese
+**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:889` la traduce a `fechaRegistro` y ese
 nombre no aparece en ningún otro archivo del proyecto—, así que no había consecuencia visible. Se
 arregló igual, porque la antigüedad es exactamente la clase de dato que después se usa para ordenar
 un directorio o para decidir a quién se muestra primero, y ese día el agujero pasa a ser una
@@ -3013,7 +3013,7 @@ clonaba el molde, lo rellenaba con los datos del ítem y llamaba a `Identidad`, 
 `Catalogo.traducir()`. Como lo que está adentro de un `<template>` no está en el documento, la
 traducción de arranque tampoco lo alcanza: las copias llegaban siempre con el castellano de
 respaldo. Eran las 21 frases de las tarjetas de curso de `cursos.html` y el cartel «Próximamente»
-de `index.html`. Se agregó la llamada (`js/catalogo.js:528`) y se comprobó en el navegador, que
+de `index.html`. Se agregó la llamada (`js/catalogo.js:553`) y se comprobó en el navegador, que
 es donde esto se ve: `cursos.html?idioma=en` dice hoy «8 hours / Certificate / ENROL», e
 `index.html?idioma=pt-BR` dice «Em breve».
 
@@ -3044,7 +3044,7 @@ seis tarjetas de curso en castellano. Eso es lo que pasaba el 26 de agosto de 20
 `cursos.html?idioma=en`, y el chequeo de frases lo daba por bueno, porque lo que hay adentro de
 las tarjetas no lo escribe la pantalla: sale de `data/catalogo-oferta.json` y de
 `data/catalogo-vocabularios.json`. El mecanismo ya lo soportaba —`Catalogo.textoDe()`
-(`js/catalogo.js:357`) elige el idioma de cualquier texto que traiga sus tres idiomas colgando—;
+(`js/catalogo.js:382`) elige el idioma de cualquier texto que traiga sus tres idiomas colgando—;
 lo que faltaba era el texto.
 
 **Quedaron 218 textos en los tres idiomas**: los 24 títulos de vocabulario, sus 142 ítems, las 10
@@ -3237,7 +3237,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 - **La puerta es `guias_de(p_slug)`** (`:272`), del mismo tipo que `vocabularios_de`: la tabla no le
   concede nada a `anon` (`:254`), y lo que sale a la calle es una función que **exige el nombre
   corto**, devuelve la general más la de esa sola Prestadora, y sólo las publicadas. Está anotada
-  con su motivo en `scripts/verificar_esquema.mjs:428`, que es donde viven las funciones que llegan
+  con su motivo en `scripts/verificar_esquema.mjs:441`, que es donde viven las funciones que llegan
   al alcance anónimo a propósito.
 - **La pantalla nueva es `screen-guias`** en la aplicación del Asistente
   (`pwa-asistente/index.html:702`), con los cuatro estados y un buscador. **Es una biblioteca de
@@ -4087,7 +4087,7 @@ el **pendiente 107**.
 
 **Y lo que la opción A todavía le debe a quien la sufre.** Que la persona vea, **antes** de cambiar
 un papel, que hacerlo le baja el sello. Hoy no se puede escribir: ninguna pantalla cambia
-`documents` —el mapeo existe en `js/apiClient.js:929` y no lo usa nadie— y el chequeo de frases se
+`documents` —el mapeo existe en `js/apiClient.js:952` y no lo usa nadie— y el chequeo de frases se
 pone en rojo con toda frase de catálogo que ninguna pantalla nombre. La frase entra el día que
 entre la pantalla; es el **pendiente 108**.
 
@@ -4121,7 +4121,7 @@ Cerró el pendiente 94, el 31 de agosto de 2026.
   pregunta al módulo antes de enviar, y si no hay respuesta el formulario vuelve al paso 1 y lleva
   la vista al campo (`pwa-asistente/index.html:1492`).
 - **Se guarda donde se lee**: las claves van a `zonas_asistente` y el texto libre a `zonas_texto`,
-  por `js/apiClient.js:424` y `:926`. `caregivers.zone` no la escribe más nadie, y eso abrió el
+  por `js/apiClient.js:424` y `:949`. `caregivers.zone` no la escribe más nadie, y eso abrió el
   **pendiente 109**.
 - **Y el 109 se cerró esa misma noche, por la salida que no borra datos.** Se midió
   primero: ninguna pantalla manda `zona` ni `zonaResidencia` al escribir un legajo, así
@@ -4907,7 +4907,7 @@ que las otras dos, que la limpieza se la lleva.
 escribe nadie: ni una pantalla, ni un guion, ni una prueba. Lo que sí pasa es que
 `registrar-asistente.html:996-1000` sube el documento de identidad, los antecedentes penales y el
 título, y guarda **sólo los caminos** en la columna `documents` de `caregivers`
-(`registrar-asistente.html:1057`, y de ahí a la base por `js/apiClient.js:929`). O sea que hay
+(`registrar-asistente.html:1057`, y de ahí a la base por `js/apiClient.js:952`). O sea que hay
 dos formas de guardar el mismo hecho y una está muerta, como ya pasó con `messages` y las
 `conversaciones` heredadas. Y la que quedó viva es la pobre: la tabla dedicada tiene `tipo`,
 `presentado_el`, `vencimiento` y `verificado`, y el objeto de `documents` no tiene ninguno de los
@@ -5175,7 +5175,7 @@ no se entera nadie el día que ese algo cambie. Ahora
 `scripts/probar_exenciones.mjs` la tomó sola: vaciarla pone rojo al chequeo, comprobado.
 
 El `avatares` es aparte y está bien: es público **a propósito** desde la 0006, porque la foto es lo
-que el directorio muestra sin cuenta (`js/apiClient.js:771`). Ahí no hay nada que aislar hacia
+que el directorio muestra sin cuenta (`js/apiClient.js:794`). Ahí no hay nada que aislar hacia
 afuera; lo que la condición cuida es la escritura, que nadie deje una foto en la carpeta de otro.
 
 Mover el camino a `<Organización>/<cuenta>/<archivo>` no es sólo una migración: hay que mudar los
@@ -5327,7 +5327,7 @@ Todo correcto. Otra vez no había nada que arreglar; faltaba lo que impide el pr
 Y el primer error tiene dos tamaños muy distintos, que conviene no mezclar. **Equivocarse el nombre
 falla callado**: el depósito no existe, `urlFirmada()` devuelve `null` y la pantalla no muestra el
 archivo sin decir por qué. **Confundirse de depósito en la dirección pública publica un documento de
-identidad**, que es el peor error posible de este producto. `js/apiClient.js:781` arma una dirección
+identidad**, que es el peor error posible de este producto. `js/apiClient.js:804` arma una dirección
 pública a mano, con el nombre del depósito pegado adentro del texto de la dirección: cambiar ahí una
 palabra por la otra es un renglón.
 
@@ -5879,6 +5879,56 @@ chequeos pasaron en verde** —y `cache.addAll()` es todo o nada, así que la co
 esa aplicación no se habría instalado entera—. Su propio mensaje dice «es todo o nada». Ahora los
 dos leen el disco con la misma función, que vive en `scripts/recorrido.mjs` y no adentro de
 ninguno de los dos.
+
+### La primera vista que se lee sin sesión, y por qué no fue una política
+
+El 31 de agosto de 2026 el Desarrollador decidió qué se hace público: *«La oferta de cursos, no el
+contenido de los mismos, se hará disponible, así como cualquier otra característica de acuerdo a la
+decisión comercial o de marketing, nada de injerencia tiene el sistema en estos temas»*. Con eso
+`cursos.html` dejó de sacar la lista de `data/catalogo-oferta.json` y pasó a pedírsela a la base.
+
+**No se abrió la tabla: se abrió una vista.** Una política para `anon` sobre `cursos` no habría
+mostrado nada, porque desde la migración 0032 `anon` no tiene ningún permiso de tabla y Postgres
+decide en dos pasos —primero si el rol puede tocar la tabla, y recién después qué filas ve—. Y
+darle el permiso habría abierto la tabla entera, con `publicado`, `tenant_id` y la fecha de alta
+adentro. La migración 0051 sigue el precedente del directorio: crea
+`public.oferta_de_cursos`, que acota a las filas del catálogo general —`tenant_id is null`— que
+están publicadas y expone sólo las doce columnas con las que se arma la tarjeta. **El contenido de
+los cursos no sale por ahí**: ni lo que se estudia, ni sus evaluaciones, ni sus preguntas, ni sus
+opciones. El comentario de la vista lo dice con la misma forma que usa la 0011: todo lo que se
+agregue ahí queda a la vista de cualquiera.
+
+**Medido contra la base de esta máquina, no supuesto.** Sin sesión, `oferta_de_cursos` devuelve las
+seis filas generales —el curso propio de PresDemo, que la migración 0048 le carga, no aparece— y
+`cursos`, `evaluaciones` y `preguntas_evaluacion` contestan **401** a la misma llave.
+
+**La regla que no tenía excepción, y ahora la tiene escrita y comprobada.** La quinceava de
+`scripts/verificar_esquema.mjs` exigía que a `anon` no le quedara ningún permiso neto sobre ninguna
+tabla ni vista de `public`, y no tenía lista de exenciones porque no hacía falta ninguna. Ahora
+tiene `VISTAS_AL_ALCANCE_ANONIMO`, con una sola entrada, **y estar en la lista no perdona nada**:
+es la misma forma que la undécima usa con `profiles`. El chequeo va a leer el cuerpo de la vista y
+señala cuatro cosas: que el permiso sea otra cosa que `select`; que ninguna migración la defina
+como vista —una tabla no lleva condición adentro, así que sin cuerpo lo que queda abierto es la
+tabla entera—; que el cuerpo haya dejado de acotar a `tenant_id is null`, que es lo único que la
+separa de publicar las filas de cada Prestadora y, de paso, quiénes son los clientes; y que el
+cuerpo escriba `tenant_id is null or`, porque una disyunción deja pasar todo lo que venga después.
+Los cinco casos de mentira que lo prueban están en el corpus del propio chequeo, uno bien y cuatro
+mal. `scripts/probar_permisos_en_vivo.mjs` importa esa misma lista y la mide contra la base: no la
+vuelve a escribir, porque una lista repetida se despega y la que se despega es siempre la que nadie
+mira.
+
+**Y el archivo no se borró, porque sigue haciendo falta.** `data/catalogo-oferta.json` es todavía
+la única fuente de los 9 servicios y de las evaluaciones de la oferta —no tienen tabla, y eso es lo
+que queda abierto del pendiente 7—, los dos programas para el teléfono lo guardan para andar sin
+conexión, y de ahí salen también los cursos cuando la base no está al alcance: sin conexión, o
+contra una base donde la 0051 todavía no corrió. `js/catalogo.js` lo pide siempre y le reemplaza
+sólo la lista de cursos cuando la base contesta, que es el mismo criterio con el que ya trataba a
+los vocabularios.
+
+**Lo que quedó a medias, anotado.** La 0051 le agregó a `cursos` las columnas `nombre_i18n` y
+`descripcion_i18n`, con los tres idiomas, y dejó en pie las viejas `nombre` y `descripcion`, de
+texto suelto y en uno solo. Sacarlas sin revisar quién las escribe y quién las lee pierde contenido
+sin avisar, así que se dejaron y el trabajo quedó en la lista de pendientes.
 
 ## 6. Deuda del código actual
 

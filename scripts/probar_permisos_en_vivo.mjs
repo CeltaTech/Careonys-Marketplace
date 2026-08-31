@@ -48,7 +48,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
-import { AL_ALCANCE_ANONIMO } from './verificar_esquema.mjs';
+import { AL_ALCANCE_ANONIMO, VISTAS_AL_ALCANCE_ANONIMO } from './verificar_esquema.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const local = process.argv.includes('--local');
@@ -60,10 +60,12 @@ const local = process.argv.includes('--local');
 // serlo hay que escribirle el motivo allá.
 const FUNCIONES_ABIERTAS = new Set(AL_ALCANCE_ANONIMO.keys());
 
-// Ninguna tabla ni vista está abierta a `anon` a propósito: todo lo público
-// del producto pasa por esas funciones. La lista está acá y vacía para
-// que el día que se decida abrir una haya dónde escribirla, con su motivo.
-const TABLAS_ABIERTAS = new Set([]);
+// Y lo mismo con las vistas. Hasta el 31 de agosto de 2026 no había ninguna
+// abierta: la lista vivía acá y vacía, esperando el día en que se decidiera
+// abrir una. Ese día llegó —la oferta general de cursos— y la lista se fue al
+// mismo lugar que la otra, con el motivo y con lo que la sostiene. Acá quedó
+// sólo el uso, que es como tenía que haber estado desde el principio.
+const TABLAS_ABIERTAS = new Set(VISTAS_AL_ALCANCE_ANONIMO.keys());
 
 let fallos = 0;
 let inservible = false;
@@ -144,7 +146,7 @@ const tablasAnon = [...new Set(renglones
   .map((r) => (r.match(/ON TABLE "public"\."([^"]+)"/) || [])[1])
   .filter(Boolean))].filter((t) => !TABLAS_ABIERTAS.has(t));
 
-comprobar('ninguna tabla ni vista le concede nada a `anon`',
+comprobar('ninguna tabla ni vista le concede nada a `anon`, salvo la que está abierta a propósito',
   tablasAnon.length === 0,
   tablasAnon.length === 0 ? '' : tablasAnon.length + ': ' + lista(tablasAnon));
 
