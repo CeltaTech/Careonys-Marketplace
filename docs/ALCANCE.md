@@ -2251,7 +2251,7 @@ Hasta el 26 de agosto de 2026 todo lo que una persona lee estaba escrito a mano 
 en castellano y nada más, mientras la regla de la empresa pide `es-AR`, `en` y `pt-BR` **desde el
 día uno**. Ese día se construyó el mecanismo entero, se convirtió el camino de la contraseña
 completo —entrar, pedir el enlace y elegir una contraseña nueva— y la pantalla de las evaluaciones.
-El inventario, el orden y lo que falta están en `docs/PLAN_MULTIIDIOMA.md`; acá está lo que existe.
+El inventario, el orden y lo que falta están en `docs/PLAN_I18N.md`; acá está lo que existe.
 
 **El texto vive donde ya vivían las opciones.** `data/catalogo-frases.json` es hermano de los seis
 catálogos que ya había y lo lee el mismo `js/catalogo.js`. La pantalla nombra y el catálogo
@@ -2960,7 +2960,7 @@ verdad de la marca.
 
 Todo el texto que escribe ese guion está en el catálogo en los tres idiomas, el botón se apaga
 mientras corre y el fallo se dice en la pantalla, no en la consola. Con eso **las cinco pantallas
-quedaron libres para convertirse al multiidioma**, que era lo que el cartel falso trababa:
+quedaron libres para convertirse al i18n**, que era lo que el cartel falso trababa:
 traducir una mentira a tres idiomas cuesta tres veces más sacarla.
 
 **Y probar los cinco en el navegador encontró otra cosa, que era la que de verdad tapaba el
@@ -2984,7 +2984,7 @@ paso a paso choca con exactamente la misma pared. Las dos cosas están en el pen
 
 ### Cuatro pantallas se convirtieron a la vez, y hacerlo a la vez mostró tres defectos del mecanismo
 
-El 26 de agosto de 2026, con los carteles falsos ya cerrados, se convirtieron al multiidioma
+El 26 de agosto de 2026, con los carteles falsos ya cerrados, se convirtieron al i18n
 `index.html`, `cursos.html`, `soporte-remoto.html` y `solicitar-asistente.html`: **205 frases
 nuevas**, que dejan el catálogo en 460 y el chequeo en «10 de 46 archivos ya convertidos». La
 quinta, `formulario-integral.html`, se dejó como está: está sentenciada a borrarse en el
@@ -3131,11 +3131,11 @@ Apareció el 27 de agosto de 2026 revisando de dónde salía cada frase que `scr
 decía sacar de los guiones. Decía 122; de verdad eran 30. **Lo que falta traducir no son 479
 frases distintas sino 414**, y la diferencia no es trabajo hecho: es una medición que estaba mal.
 
-Importa porque de este número cuelgan dos decisiones: cuánto trabajo es el multiidioma, y quién lo
-hace —la única decisión abierta del plan (`docs/PLAN_MULTIIDIOMA.md`, sección 5, punto 2)—. Un
+Importa porque de este número cuelgan dos decisiones: cuánto trabajo es el i18n, y quién lo
+hace —la única decisión abierta del plan (`docs/PLAN_I18N.md`, sección 5, punto 2)—. Un
 inventario que cuenta de más pide presupuesto de más.
 
-**Las seis familias de ruido y cómo se reconoce cada una están en `docs/PLAN_MULTIIDIOMA.md`
+**Las seis familias de ruido y cómo se reconoce cada una están en `docs/PLAN_I18N.md`
 sección 2.2.1**, y no se repiten acá. El criterio, sí: **ninguna se reconoce mirando si la cadena
 parece una frase.** Eso es adivinar, y adivinar es lo que hacía el guion viejo. Cada una se
 reconoce por algo que el proyecto ya escribió alrededor —que la cadena sea el argumento de
@@ -5651,6 +5651,35 @@ renglón de arriba, y el aviso señalaba **dos renglones antes del problema**. E
 lo podía ver: mira si hay rojo, no dónde apunta. Se arregló poniendo la palabra en el grupo 1 de
 cada expresión y midiendo desde ahí; se comprobó rompiendo la 0041 de las dos maneras, y las dos
 señalan el renglón 327, que es el renglón. La versión publicada pasaba en verde las dos veces.
+
+### Una palabra que se decide y no se barre no se decidió
+
+El glosario de la empresa dice a qué se aplica, y son seis superficies: «código, nombres de tablas
+y columnas, claves de idioma, texto visible, documentación y mensajes de commit». Hasta el 31 de
+agosto de 2026 había **una sola vigilada**. `verificar_vocabulario.mjs` mira el texto que ve una
+persona, y por eso deja afuera a propósito `docs/`, `scripts/` y los comentarios del código.
+
+Lo que se midió al escribir el chequeo que cubre las otras cinco: el 29 de agosto de 2026 se
+aprobó `i18n` y quedaron prohibidas sus hermanas, y **dos días después la palabra vieja seguía
+escrita 28 veces en once archivos** —la lista de pendientes, el alcance, el catálogo, tres guiones
+de chequeo, el plan de las zonas y las tres copias de `js/catalogo.js`—, y además le daba nombre a
+un documento entero, `docs/PLAN_I18N.md`, que hasta ese día se llamaba de la otra forma. Ninguna
+aparición estaba mal escrita a propósito: **todas citaban la regla de la empresa con el nombre que
+la regla tenía antes.** Están todas barridas, salvo la de una migración, que no se toca porque una
+migración aplicada no se edita jamás.
+
+**Sólo entran las palabras que no dependen del contexto.** El glosario prohíbe «app», «sistema» y
+«plataforma» *cuando se habla de una unidad vendible*, y «paquete» *cuando nombra un Plan*: un
+chequeo que no sabe distinguir el sentido avisa de más, y un chequeo que avisa de más se apaga.
+Tampoco entra `tenant`, que parece la primera candidata: «Organización» es la palabra del glosario,
+pero `tenants` y `tenant_id` son el nombre de una tabla y de una columna, y la regla «lo que se
+guarda para siempre se nombra por lo que hace, y no se renombra» los deja donde están —medidas 300
+apariciones, todas de esa forma—.
+
+**Y los mensajes de commit son la única superficie que no se puede arreglar después.** Un mensaje
+ya escrito es historia y no se reescribe, así que cada palabra se exige desde el commit en que dejó
+de usarse. Los seis mensajes que usan la palabra vieja son todos del 26 de agosto de 2026, tres
+días antes de que la palabra se decidiera.
 
 ### Lo único que el sistema operativo tapa solo
 

@@ -100,7 +100,7 @@ Organización y con la RLS escrita en la misma migración que las crea, como pid
 - **`caregivers.zonas_texto`** — lo que escribió quien no tuvo lista para tildar.
 
 **Los nombres de las zonas los escribe la Prestadora, en un idioma solo, y está bien.** No es texto
-del producto: es un dato de un cliente, como el nombre de una persona. La regla de multiidioma rige
+del producto: es un dato de un cliente, como el nombre de una persona. La regla de i18n rige
 el texto que escribimos nosotros —el rótulo, la ayuda, los mensajes—, no lo que carga quien usa el
 sistema. Eso queda dicho en el comentario de la migración para que nadie lo «arregle» más adelante.
 

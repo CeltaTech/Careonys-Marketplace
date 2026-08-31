@@ -15,7 +15,7 @@ otro lado:
 
 Los dos primeros son listas de opciones. Los cuatro que siguen, del 24 de agosto de 2026, no
 son listas: guardan preguntas de sí o no, la grilla horaria, formularios repetibles y plazos.
-Todos están declarados con su texto en los tres idiomas, porque «multiidioma desde el día uno» no admite construir
+Todos están declarados con su texto en los tres idiomas, porque «i18n desde el día uno» no admite construir
 en uno solo «para traducir después».
 
 `catalogo-autorizaciones.json` se llamaba `catalogo-banderas.json` hasta el 24 de agosto de
@@ -67,7 +67,7 @@ Cada una de esas diferencias es una persona que no aparece en una búsqueda.
 ## Cómo está armado
 
 Cada opción tiene una **clave** —el nombre corto, invariable, que va a la base de datos— y un
-texto en `es-AR`. La clave nunca cambia; el texto sí, y cuando llegue el multiidioma se
+texto en `es-AR`. La clave nunca cambia; el texto sí, y cuando llegue el i18n se
 traduce el texto y la clave queda igual. Por eso las claves no llevan eñes, tildes ni guiones
 medios: se usan en direcciones web y en nombres de columna, donde esos caracteres se rompen.
 

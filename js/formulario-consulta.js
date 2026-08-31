@@ -41,7 +41,7 @@
 
    El texto sale del catálogo en los tres idiomas. Cuando este archivo se
    escribió, ninguna de las cuatro pantallas estaba convertida al
-   multiidioma, así que lo único traducido era lo que escribe acá. **El 26 de
+   i18n, así que lo único traducido era lo que escribe acá. **El 26 de
    agosto de 2026 se convirtieron las cuatro** —`index.html`, `cursos.html`,
    `soporte-remoto.html` y `solicitar-asistente.html`—, y la quinta,
    `formulario-integral.html`, sigue sin convertir porque está sentenciada a

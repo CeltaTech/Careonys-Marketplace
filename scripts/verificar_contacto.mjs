@@ -97,7 +97,7 @@ for (const idioma of IDIOMAS) {
   }
 }
 
-/* «multiidioma desde el día uno»: ningún texto visible nace en un solo idioma. */
+/* «i18n desde el día uno»: ningún texto visible nace en un solo idioma. */
 for (const idioma of IDIOMAS) {
   if (!reglas.aviso || !reglas.aviso[idioma]) {
     fallas.push(`El aviso del chat no está en ${idioma}.`);

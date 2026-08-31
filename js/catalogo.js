@@ -282,7 +282,7 @@
     },
 
     // ── LAS FRASES DE LAS PANTALLAS ──────────────────────────────────────
-    // «Multiidioma desde el día uno». Ninguna frase que una persona lea está
+    // «i18n desde el día uno». Ninguna frase que una persona lea está
     // escrita adentro de una pantalla: la pantalla nombra una clave y el texto
     // sale de `data/catalogo-frases.json`, que es el mismo reparto que ya rige
     // para las opciones de los vocabularios.

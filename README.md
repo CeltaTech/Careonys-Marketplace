@@ -38,7 +38,7 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | 976 declaraciones más, pegadas al HTML | en 247 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 12 de las 17 pantallas rescatan la sesión al abrir |
 | 4 servidores de afuera, sin `package.json` ni compilación | dos de tipografías y dos de bibliotecas |
-| 23 tablas y 49 migraciones en el repositorio | 34 chequeos las miran antes de cada commit |
+| 23 tablas y 49 migraciones en el repositorio | 35 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
@@ -162,6 +162,7 @@ título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de e
 | `verificar_estados` | Que algo que carga datos se olvide de uno de sus cuatro estados: cargando, error, vacío, listo |
 | `verificar_estilos` | Que se escriba a mano en un `style=` lo que ya dice una clase de utilidad |
 | `verificar_frases` | Que quede texto visible escrito a mano en una pantalla ya convertida a los tres idiomas |
+| `verificar_glosario` | Que una palabra que el glosario sacó siga escrita en algún lado: **en la documentación, en un comentario o en un mensaje de commit**, que son las superficies que la regla nombra y que el chequeo del vocabulario deja afuera a propósito, porque ése mira sólo el texto que ve una persona |
 | `verificar_guias` | Que una Guía de cuidado se vea sin estar publicada, o que se cruce entre dos Prestadoras |
 | `verificar_guiones` | Que el JavaScript de una pantalla quede sin poder leerse |
 | `verificar_identidad` | Que la marca vuelva a estar escrita a mano |
@@ -187,9 +188,16 @@ título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de e
 git config core.hooksPath .githooks
 ```
 
-El gancho vive en `.githooks/pre-commit`, que sí se sube, porque `.git/hooks/` no se sube. Sin
-ese comando el gancho está en el repositorio y no lo llama nadie. Para saltearlo en un commit
-puntual: `git commit --no-verify`, y conviene que sea raro.
+**Son dos ganchos, y el mismo comando alcanza para los dos.** `.githooks/pre-commit` corre la
+red entera antes de cada commit. `.githooks/commit-msg` mira el mensaje, y existe porque el
+otro corre **antes de que el mensaje exista**: cuando `pre-commit` se ejecuta todavía no hay
+nada que leer. Y un mensaje de commit es lo único de este repositorio que no se puede arreglar
+después —una vez escrito es historia, y la historia no se reescribe—, así que ése es el único
+momento en que todavía se puede cambiar.
+
+Los dos viven en `.githooks/`, que sí se sube, porque `.git/hooks/` no se sube. Sin ese comando
+los ganchos están en el repositorio y no los llama nadie. Para saltearlos en un commit puntual:
+`git commit --no-verify`, y conviene que sea raro.
 
 ## Decisiones abiertas que bloquean el esquema
 

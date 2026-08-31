@@ -91,7 +91,7 @@ const IGUALES_EN_TODOS = new Set([
 
   /* Nombre comercial de lo que se vende. La regla de la empresa deja los
      nombres de marca como estén, y éste ya estaba escrito en `cursos.html`
-     antes de convertirla al multiidioma; no se inventó acá. Que sea en
+     antes de convertirla al i18n; no se inventó acá. Que sea en
      inglés y no esté aprobado es una pregunta abierta, anotada en
      `docs/PENDIENTES.md`. */
   'cursos.academia',

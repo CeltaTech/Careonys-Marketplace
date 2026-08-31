@@ -1,0 +1,28 @@
+#!/bin/sh
+# ===================================================
+# MIRA EL MENSAJE ANTES DE QUE SEA HISTORIA
+#
+# El gancho de `pre-commit` corre antes de que el mensaje exista, así que desde
+# ahí ningún chequeo lo puede ver. Y un mensaje de commit es lo único de este
+# repositorio que **no se puede arreglar después**: una vez escrito es historia,
+# y la historia no se reescribe. Este gancho es el único momento en que todavía
+# se puede cambiar.
+#
+# Vive acá y no en `.git/hooks/`, que no se sube. Para que git lo use hay que
+# decírselo una sola vez por máquina, lo mismo que para el otro:
+#
+#     git config core.hooksPath .githooks
+#
+# Para saltearlo en un commit puntual: `git commit --no-verify`.
+# ===================================================
+
+if ! command -v node >/dev/null 2>&1; then
+  echo "commit-msg: no se encuentra node, así que el mensaje no se revisó."
+  exit 1
+fi
+
+node "$(git rev-parse --show-toplevel)/scripts/verificar_glosario.mjs" --mensaje "$1" || {
+  echo ""
+  echo "El commit no se hizo. Arreglar el mensaje y volver a intentar."
+  exit 1
+}

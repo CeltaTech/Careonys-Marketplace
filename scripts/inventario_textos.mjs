@@ -6,7 +6,7 @@
 
    No es un chequeo y por eso no se llama `verificar_`: no falla nunca y no
    entra en `scripts/verificar_todo.mjs`. Es una medición, y existe porque el
-   pendiente 9 —el multiidioma— es un cambio grande, y la regla de la empresa
+   pendiente 9 —el i18n— es un cambio grande, y la regla de la empresa
    pide inventario antes que plan y plan antes que código. El inventario a mano
    queda viejo el día que alguien agrega una pantalla; éste se vuelve a correr.
 
