@@ -5472,6 +5472,56 @@ que dar rojo y seis que tienen que pasar —entre ellos el `with check` más ang
 seis salió rojo la primera vez y estaba bien que saliera: el banco de pruebas no le pasaba las
 bajas al detector, así que la política dada de baja se juzgaba igual.
 
+### La regla que nadie podía mirar leyendo los archivos, y la renumeración que encontró
+
+`CLAUDE.md` de la empresa abre «La base de datos: sólo por migraciones» con tres renglones
+numerados. El segundo —que la migración corra entera o no corra— lo mira `verificar_esquema.mjs`.
+**El primero y el tercero no los miraba nadie**, y no por descuido: son las dos únicas reglas del
+proyecto que **no se pueden mirar leyendo los archivos de hoy**. Una migración editada ayer se ve
+exactamente igual que una que nunca se tocó. La única fuente que lo sabe es el historial.
+
+**Lo que apareció al preguntarle a git.** Doce incumplimientos, todos del 24 y el 25 de agosto de
+2026, y ninguno después. Diez ediciones, una baja —la 0011 vieja— y, la que nadie había
+anotado, **una renumeración**: el 25 de agosto la `0015_franjas_de_una_busqueda.sql` pasó a
+llamarse `0016_franjas_de_un_aviso.sql` para meterle una nueva 0015 adelante. Es exactamente la
+reordenación que el tercer renglón prohíbe, hecha a propósito y sin que quedara escrito en
+ningún lado. Quien hubiera corrido las migraciones el día anterior tiene una base que ningún
+archivo de hoy explica.
+
+**Por qué el límite no es un perdón.** Igual que la novena regla del chequeo de esquema y la
+décima, éste lleva un límite —`SE_DEJARON_QUIETAS = '2026-08-25'`— en vez de doce exenciones. La
+diferencia con un perdón se muerde la cola y por eso es honesta: **la única manera de poner en
+verde a esos doce sería editar las migraciones o reescribir el historial, y las dos cosas son
+justamente lo que esta regla prohíbe.** No es que se los disculpe: es que ya no se pueden
+arreglar, y quien lo intente rompe la regla otra vez. Se cuentan igual y salen con `--detalle`,
+para que el número no desaparezca.
+
+**Doce, no catorce: mi propia medición contaba dos veces.** La primera cuenta dio catorce, con dos
+altas «con un número que el árbol ya había pasado». Las dos eran el mismo hecho contado de nuevo:
+la 0011 nueva entró en el commit que borra la 0011 vieja —mismo número, no se mueve nada—, y la
+0015 nueva entró en el commit que renumera la 0015 anterior, que es justamente el hueco que le
+hace lugar. Un hecho, un renglón. Se arregla midiendo el tope **sin contar los archivos que ese
+mismo commit está moviendo**, y en cualquier otra forma sigue apretando igual: si el commit borra
+la 0035 y trae una 0030, el tope baja a 0034 y la 0030 sigue dando rojo. Es la segunda vez en dos
+noches que una medición propia sale mal antes que el chequeo; el orden —medir, y recién después
+escribir— es lo que deja verlo.
+
+**Y mira lo que todavía no es un commit.** Este chequeo corre en el gancho de antes de cada
+commit, y ahí el commit no existe. Un chequeo que mirara sólo el historial avisaría **un commit
+tarde**: la migración ya movida, ya cometida y, con el `push` a `main` que despliega solo, ya
+publicada. Así que lo que está cambiado contra `HEAD` —preparado o no, y también lo que git
+todavía no conoce— se juzga como un commit más, con la fecha de hoy.
+
+**La falsificación encontró un error de verdad.** Seis pruebas contra archivos reales,
+restaurándolos después: editar una migración cometida, borrarla, renumerarla sin preparar,
+renumerarla con `git mv`, traer una 0040 cuando el árbol va por la 0049 —las cinco tienen que dar
+rojo—, y dos que **tienen que pasar**: una 0050 legítima y un renombre que no toca el número. La
+cuarta rompió el guion en vez de dar rojo: un renombre preparado ocupa **dos** campos en la salida
+de `git status -z` —primero el nombre nuevo, después el viejo— y el lector tomaba el nombre viejo
+como si fuera otro cambio, sacando su estado de las dos primeras letras del propio nombre. Una
+falsificación que sólo prueba los casos que uno ya pensó no prueba nada; éste salió del único
+caso que se probó de dos maneras.
+
 ## 6. Deuda del código actual
 
 Está toda en `docs/PENDIENTES.md`, con condición de cierre para cada punto. Acá no se repite,

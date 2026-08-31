@@ -38,7 +38,7 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | 976 declaraciones más, pegadas al HTML | en 247 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 12 de las 17 pantallas rescatan la sesión al abrir |
 | 4 servidores de afuera, sin `package.json` ni compilación | dos de tipografías y dos de bibliotecas |
-| 23 tablas y 49 migraciones en el repositorio | 32 chequeos las miran antes de cada commit |
+| 23 tablas y 49 migraciones en el repositorio | 33 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
@@ -165,6 +165,7 @@ título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de e
 | `verificar_guias` | Que una Guía de cuidado se vea sin estar publicada, o que se cruce entre dos Prestadoras |
 | `verificar_guiones` | Que el JavaScript de una pantalla quede sin poder leerse |
 | `verificar_identidad` | Que la marca vuelva a estar escrita a mano |
+| `verificar_migraciones` | Que una migración que ya entró al historial se mueva de lugar, que es lo único que no se puede ver leyendo los archivos de hoy —uno editado ayer se ve igual que uno que nunca se tocó—, así que le pregunta al historial: editada, borrada, renumerada, o una nueva con un número que el árbol ya había pasado. Las cuatro rompen lo mismo, que la base se pueda reconstruir corriendo los archivos en orden desde cero. **Y mira también lo que todavía no es un commit**, porque corriendo en el gancho de antes del commit, mirar sólo el historial avisaría un commit tarde, con la migración ya movida y publicada |
 | `verificar_organizacion` | Que una pantalla nombre a una Prestadora del seed, o escriba otro logotipo |
 | `verificar_opciones` | Que una lista de opciones vuelva a escribirse adentro de una pantalla, y con ella un valor que ningún vocabulario gobierna |
 | `verificar_paleta` | Que vuelva un color escrito con su número en vez de un token |
