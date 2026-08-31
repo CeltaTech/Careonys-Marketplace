@@ -24,15 +24,29 @@
       fin de un comentario o un renglón en blanco no son una cita: son el rastro
       de una que se corrió.
 
-   ---- Lo que este chequeo no puede ver ----
+   ---- Lo que este chequeo no ve, y quién lo ve ----
 
-   Una cita que se corrió a otro renglón **con contenido** pasa igual: el guion
-   no sabe de qué habla la frase. Atrapa el caso ruidoso, que es el más común
-   —el código crece por arriba y la cita cae en el hueco entre dos funciones—,
-   no todos. Se probó además exigir que un identificador nombrado en la misma
-   frase estuviera cerca del renglón citado: sobre las citas de hoy daba tres
-   avisos falsos de cada cinco, así que se descartó. Un chequeo que avisa de más
-   se termina apagando, y entonces no verifica nada.
+   Una cita que se corrió a otro renglón **con contenido** pasa igual: acá el
+   guion no sabe de qué habla la frase. Atrapa el caso ruidoso —el código crece
+   por arriba y la cita cae en el hueco entre dos funciones—, no todos.
+
+   **Y ese resto no es chico.** El 31 de agosto de 2026 se midió: de 321 citas
+   que se pudieron reconstruir, 81 apuntaban a otro renglón con este chequeo en
+   verde. Una de cada cuatro. El verde de acá dice «apunta a algo» y se lee
+   «apunta a lo que dice», que no es lo mismo.
+
+   Lo que falta lo mira `scripts/verificar_deriva.mjs`, que no adivina de qué
+   habla la frase: le pregunta al historial qué decía el renglón citado el día
+   que se escribió la cita, y busca ese texto en el archivo de hoy. Se había
+   probado antes adivinando —exigir que un identificador nombrado en la misma
+   frase estuviera cerca del renglón citado— y daba tres avisos falsos de cada
+   cinco, así que se descartó: un chequeo que avisa de más se termina apagando,
+   y entonces no verifica nada.
+
+   ---- Qué es una cita ----
+
+   La forma de una cita y la lista de documentos eximidos viven en
+   `scripts/citas.mjs`, porque las comparten los dos chequeos.
 
    ---- Qué documentos mira ----
 
@@ -46,61 +60,19 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
 import { hayArchivos } from './recorrido.mjs';
+import {
+  citasDe, SIN_CONTENIDO, renglonesDe,
+  FOTOS, AJENOS, DE_OTRO_REPOSITORIO, AJENAS
+} from './citas.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
-
-/* Documentos que son una foto de un día y no el estado de hoy. Sus citas
-   apuntan al código de esa fecha: están bien como están. */
-const FOTOS = new Map([
-  ['docs/INVENTARIO.md',
-   'lo dice en su renglón 7: es una foto del 22 de agosto de 2026, no el estado de hoy'],
-  ['docs/PLAN_ACCESO.md',
-   'es el inventario y el plan previos a tocar código del 24 de agosto de 2026, y sus citas ' +
-   'muestran los cinco problemas que había ese día — todos arreglados desde entonces']
-]);
-
-/* Archivos que no viven en este repositorio y por eso no se pueden abrir. */
-const AJENOS = new Map([
-  ['supabase/migrations/20260820190000_el_canal_del_asistente_se_elige_y_se_respeta.sql',
-   'es una migración de Careonys, que tiene su propio repositorio y no se toca desde acá ' +
-   '(regla de los productos Careonys: «Careonys no se toca desde el Marketplace»). ' +
-   'La cita queda porque de ahí sale la frase que se transcribe']
-]);
-
-/* Documentos que hablan de otro repositorio. Sus citas a archivos que acá no
-   existen no están rotas: apuntan a código que vive en otro lado y no se toca
-   desde acá. **Lo que sí se les sigue comprobando son sus citas a este
-   repositorio**, que son las que se despegan solas cuando alguien mueve un
-   renglón. Eximir el documento entero convertiría el permiso en un agujero. */
-const DE_OTRO_REPOSITORIO = new Map([
-  ['docs/APORTES_A_CAREONYS.md',
-   'compara lo que hay acá con lo que hay en Careonys, que tiene su propio repositorio']
-]);
-
-/* Carpetas de trabajo de quien desarrolla: no son documentación del proyecto. */
-const AJENAS = ['Nueva carpeta'];
-
-/* Una cita: `ruta.ext:123`, `ruta.ext:123-140` o `ruta.ext:12:34`. El acento
-   invertido de los dos lados es parte de la cita: sin él, `README.md:1` adentro
-   de una frase corriente no es una referencia sino una casualidad. */
-const CITA = /`([A-Za-z0-9_./-]+\.(?:html|js|mjs|json|md|sql|css|toml|sh|yml))((?::\d+)+(?:-\d+)?)`/g;
-
-/* Renglones que no son una cita, son el rastro de una que se corrió: vacío,
-   sólo signos de cierre, una etiqueta que cierra, o el fin de un comentario. */
-const SIN_CONTENIDO = /^(?:[)}\];,>{]*|<\/[A-Za-z][\w-]*>|-->|\*\/)$/;
-
-/** Los renglones que nombra una cita, sin repetir. */
-function renglonesDe(sufijo) {
-  return [...new Set(sufijo.match(/\d+/g).map(Number))];
-}
 
 /** Los problemas de las citas de un documento, cada uno con su renglón. */
 export function citasRotas(texto, leer, existe) {
   const problemas = [];
   const lineas = texto.split('\n');
   for (let i = 0; i < lineas.length; i++) {
-    for (const cita of lineas[i].matchAll(CITA)) {
-      const [entera, ruta, sufijo] = cita;
+    for (const { entera, ruta, sufijo } of citasDe(lineas[i])) {
       if (AJENOS.has(ruta)) continue;
       if (!existe(ruta)) {
         problemas.push([i + 1, entera, 'ese archivo no existe.']);
@@ -136,7 +108,8 @@ const MAL = [
   ['renglón que es una llave sola', 'Ver `x.js:4`.'],
   ['renglón que es una etiqueta de cierre', 'Ver `y.html:3`.'],
   ['renglón en blanco', 'Ver `x.js:5`.'],
-  ['un tramo con el final corrido', 'Ver `x.js:2-4`.']
+  ['un tramo con el final corrido', 'Ver `x.js:2-4`.'],
+  ['la forma corta, que hereda el archivo de la de al lado', 'Ver `x.js:1` y `:5`.']
 ];
 const BIEN = [
   ['una cita que apunta a algo', 'Ver `x.js:3`.'],
@@ -167,7 +140,7 @@ for (const camino of hayArchivos(join(raiz, 'docs'), ['.md'], AJENAS)) {
   if (FOTOS.has(nombre)) continue;
   revisados++;
   const texto = readFileSync(camino, 'utf8');
-  citas += [...texto.matchAll(CITA)].length;
+  for (const linea of texto.split(String.fromCharCode(10))) citas += citasDe(linea).length;
   // Al documento que habla de otro repositorio se le calla una sola cosa: que el
   // archivo no esté acá. Un renglón equivocado de un archivo que sí está le
   // sigue fallando igual.
@@ -186,7 +159,7 @@ if (fallas.length > 0) {
     `${fallas.length} ${plural}. Una cita con renglón vale mientras el renglón siga ahí:\n` +
     'se busca a qué apuntaba y se corrige el número, o se saca el número si ya no hace falta.\n' +
     'Si el documento es una foto de un día y sus citas apuntan al código de esa fecha a\n' +
-    'propósito, va a FOTOS de este mismo archivo, con el motivo escrito.');
+    'propósito, va a FOTOS de `scripts/citas.mjs`, con el motivo escrito.');
   process.exit(1);
 }
 

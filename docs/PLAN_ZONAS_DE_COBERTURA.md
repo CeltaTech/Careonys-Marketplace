@@ -1,10 +1,18 @@
 # Plan — Zonas de cobertura
 
-> **Escrito el 28 de agosto de 2026. La base está construida y probada; la pantalla no.** Las
-> tres decisiones de la sección 7 las delegó el Desarrollador ese mismo día —«te dejo a tu criterio
-> cómo armarlo»—, así que se tomaron las tres recomendaciones y quedan anotadas ahí como tomadas.
-> **Lo hecho está en la sección 9**, y es el primer paso de la sección 5: la migración 0035 y su
-> prueba de aislamiento. Del paso 3 en adelante no hay nada escrito todavía.
+> **Escrito el 28 de agosto de 2026, y ejecutado.** Las tres decisiones de la sección 7 las delegó
+> el Desarrollador ese mismo día —«te dejo a tu criterio cómo armarlo»—, así que se tomaron las
+> tres recomendaciones y quedan anotadas ahí como tomadas. **Lo construido está en las secciones 9
+> y 10**: los cuatro pasos de la sección 5 están hechos —la migración 0035, su prueba de
+> aislamiento, la pantalla de `js/zonas.js` en sus dos caminos y el arrastre al directorio y al
+> perfil con las migraciones 0036 y 0037—. Lo que quedó abierto está al final de la sección 10, y
+> son dos cosas que este plan no cierra: el pendiente 95 y la zona única de
+> `pwa-asistente/index.html`.
+>
+> **La sección 2 quedó atrás entera**, y se dejó como estaba porque es lo que se midió antes de
+> tocar nada. Se le sacaron los números de renglón que ya no significan nada: un renglón citado
+> de un archivo que después se movió no señala lo que decía, y corregirlo al de hoy sería peor,
+> porque haría parecer vigente una medición vieja.
 
 ## 1. Qué pidió el Desarrollador
 
@@ -27,7 +35,11 @@ Son cuatro cosas, y la cuarta es la que manda sobre las otras tres:
 4. **Nada de eso vale fuera del Área Metropolitana de Buenos Aires.** Ahí la lista la pone la
    Prestadora, y si no la puso, la persona escribe libremente.
 
-## 2. Qué hay hoy, medido
+## 2. Qué había el 28 de agosto de 2026, medido
+
+> Nada de esta sección sigue siendo cierto: la lista salió del archivo y está en la base, la
+> pantalla dejó de elegir una sola y las zonas son de cada Prestadora. Lo que pasó está en las
+> secciones 9 y 10.
 
 **La agrupación ya existe y nadie la usa.** El vocabulario `zona` de
 `data/catalogo-vocabularios.json` tiene 20 ítems en dos escalones: cuatro regiones —Ciudad de
@@ -35,15 +47,17 @@ Buenos Aires, Zona Norte, Zona Sur y Zona Oeste— y dieciséis barrios o partid
 ellas por una propiedad `region`. La nota del propio vocabulario ya lo dice: «cada barrio queda
 colgado de su región». **Lo que falta no es la lista: es la pantalla y el guardado.**
 
-**La pantalla elige una sola.** `registrar-asistente.html:313` es un `<select>` común, obligatorio,
-que muestra los veinte ítems planos —regiones y barrios mezclados en el mismo nivel—, así que hoy
-alguien puede elegir «Zona Norte» o «Palermo» y no hay forma de decir las dos.
+**La pantalla elige una sola.** En `registrar-asistente.html` hay un `<select>` común, obligatorio,
+que muestra los veinte ítems planos —regiones y barrios mezclados en el mismo nivel—, así que ese
+día alguien podía elegir «Zona Norte» o «Palermo» y no había forma de decir las dos.
 
 **La base guarda una sola, y como texto suelto.** `caregivers.zone` es una columna `text`
 (`supabase/migrations/0001_esquema_inicial.sql:87`). La leen la vista del directorio
 (`supabase/migrations/0002_aislamiento_por_prestadora.sql:141`) y la del directorio con
-consentimiento (`supabase/migrations/0007_directorio_con_consentimiento.sql:52`), y del lado del
-navegador la escribe `registrar-asistente.html:1004` y la traduce `js/apiClient.js:926`.
+consentimiento (`supabase/migrations/0007_directorio_con_consentimiento.sql:52`) —las tres citas
+son a migraciones, que no se editan nunca y por eso siguen valiendo—, y del lado del navegador la
+escribe el formulario de reclutamiento y la traduce `js/apiClient.js`. Ese mapeo **sigue en pie
+hoy, y ya ninguna pantalla manda el dato**: es el pendiente 109.
 
 **No hay ninguna tabla de zonas.** La lista vive en un archivo `.json`, no en la base, que es lo
 contrario de lo que pide la regla «los catálogos salen de la base».

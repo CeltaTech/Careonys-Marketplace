@@ -72,7 +72,7 @@ para integrar el plantel de una Prestadora, que también lo es; y en `docs/MODUL
 `docs/PLAN_ACCESO.md` son fotos fechadas —del 22 y del 24 de agosto de 2026—, y en esos días la
 pantalla de verdad se llamaba así. Corregirles el relato sería falsear lo que decían. Es el
 mismo motivo por el que `scripts/verificar_referencias.mjs` no les revisa los renglones citados,
-escrito en `scripts/verificar_referencias.mjs:52`. **Sí se les cambió el nombre del archivo**,
+escrito en `scripts/citas.mjs:31`. **Sí se les cambió el nombre del archivo**,
 que no es relato sino un puntero: una foto que remite a un archivo inexistente no le sirve a
 nadie. El relato quedó intacto, así que ahí adentro «postulación» sigue nombrando lo que en esos
 días se llamaba así.
