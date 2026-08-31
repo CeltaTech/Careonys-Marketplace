@@ -3845,6 +3845,50 @@ por `acceso.html`, cayó en `panel-prestadora.html` con rol `coordinador` y su P
 y las llamadas de la pantalla —perfil, Prestadora, legajos— contestaron todas. El archivo servido
 no nombra ninguna base: la única que nombra alguna es `js/apiClient.js`.
 
+### La configuración de fábrica se sembró una vez, y las que nacieron después nacieron sin nada
+
+*(30 de agosto de 2026 — cierra el pendiente 97)*
+
+**Qué pasaba.** La migración 0018 le dejó a cada Prestadora su puntaje de fábrica —una fila en
+`puntaje_prestadora` y cinco ponderaciones que suman 100— y lo hizo por un motivo que
+escribió ahí mismo: *«una tabla vacía no dice "todas valen uno", dice "todavía nadie configuró
+esto"»*. Lo que faltaba es que ese `insert` corrió **una sola vez**, sobre las Prestadoras que
+existían ese día. Comprobado contra la base de esta máquina: `presdemo` y `cuidarnorte` tenían 1 y
+5 filas; `cuidarsur`, que nace en la 0035, tenía 0 y 0. Y le pasaba lo mismo a toda Prestadora que
+entrara por la puerta de alta de CeltaTech, porque `alta_de_prestadora` —nacida en la 0023 y reescrita
+por última vez en la 0025— escribe la fila de `tenants` y nada más.
+
+**Dónde se puso el arreglo, y por qué ahí.** En un disparador sobre `tenants`
+—`supabase/migrations/0046_toda_prestadora_nace_con_su_configuracion.sql`—, no adentro del alta.
+Hay dos caminos por los que nace una Prestadora, la puerta de alta y una migración, y **el que
+falló fue el segundo**: ponerlo adentro del alta arreglaba el camino que nunca se rompió. El
+disparador llama a `configuracion_de_fabrica_del_puntaje`, que es también la que corre el arreglo
+de las que ya habían nacido sin ella: qué es la configuración de fábrica se dice en un solo lugar.
+
+**Lo que no toca.** La Prestadora que ya tiene ponderaciones cargadas no se toca, ni siquiera si
+tiene menos de cinco: un reparto de tres comprobaciones es alguien que borró dos a propósito, y
+completárselo con veintes le rompería el total de 100 sin avisarle. Se siembra la que no tiene
+**ninguna**, que es la que nunca configuró nada. Se comprobó: con una Prestadora dejada en tres
+comprobaciones, con reparto propio y sin calificar, la función corrió y no cambió ni un valor.
+
+**Se comprobó por los dos caminos y se comprobó que la prueba puede fallar.** Una Prestadora
+insertada a mano y otra creada por `alta_de_prestadora` nacieron las dos con 1 fila de puntaje y 5
+ponderaciones que suman 100; sacando el disparador, la misma alta quedó en 0 y 0. Las tres pruebas
+corrieron adentro de transacciones que se deshicieron, así que no quedó cargada ninguna Prestadora
+de prueba. La migración además se planta sola si al terminar queda alguna Prestadora sin
+configuración o si el disparador no quedó puesto, y correrla dos veces no duplica nada.
+
+**Y la sexta regla del chequeo del esquema**, `scripts/verificar_esquema.mjs`, es lo que queda de
+esto para la próxima: **toda siembra que recorre las Prestadoras que existen hoy tiene que dejar
+además un disparador sobre `tenants`**. Un `insert … select … from public.tenants` sin acotar corre
+una vez y no vuelve; el disparador es lo que atiende a las que vengan. No se exige que estén en la
+misma migración —acá el arreglo llegó veintiocho migraciones después— pero sí que estén las dos. La
+regla sigue un salto de llamadas, porque el disparador de la 0046 no siembra él mismo sino que
+llama a la función que sabe cuál es la configuración de fábrica, y resuelve los renombres, porque
+la 0022 le cambió el nombre justo a una de las dos tablas que siembra la 0018. Se comprobó que
+puede fallar contra el contenido real: sacándole el disparador a la 0046, las dos siembras de la
+0018 se pusieron en rojo con el nombre de hoy de cada tabla.
+
 ### Ocho avisos que ya no aparecen, y un aviso que ahora dice quién los pidió
 
 *(30 de agosto de 2026 — cierra el pendiente 101)*

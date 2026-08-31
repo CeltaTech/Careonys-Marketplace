@@ -1,5 +1,5 @@
 /* ===================================================
-   VERIFICA LAS CINCO REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
+   VERIFICA LAS SEIS REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
 
        node scripts/verificar_esquema.mjs
 
@@ -8,7 +8,7 @@
    Lo que corre hoy en el servidor es otra pregunta y se responde mirando el
    servidor (regla de la empresa «el estado real está por encima del documentado»).
 
-   Las cinco:
+   Las seis:
 
    1. **Toda tabla nueva enciende su RLS en la misma migración que la crea**
       (regla de la empresa «RLS estricta en toda tabla nueva»). Encenderla después, a mano desde el panel, deja una ventana
@@ -36,8 +36,16 @@
       cada referencia que las apunta. Con UUID no chocan. La clave se busca donde
       esté declarada —adentro del `create table` o en un `alter table … add
       constraint … primary key` posterior, que es como la declara la 0001—.
+   6. **Toda siembra que recorre las Prestadoras que existen hoy deja además un
+      disparador sobre `tenants`**, para las que vengan mañana. Un
+      `insert … select … from public.tenants` sin acotar corre una sola vez, sobre
+      las que había ese día, y toda Prestadora nacida después arranca sin eso. Ya
+      pasó: la 0018 sembró de fábrica el puntaje, y `cuidarsur`, nacida en la 0035,
+      tenía cero (pendiente 97, cerrado por la 0046). El disparador no tiene que
+      estar en la misma migración que la siembra —el arreglo llega después, como
+      llegó acá—, pero tiene que estar en alguna.
 
-   Cuatro están limpias —22 tablas, 5 funciones, 22 claves primarias `uuid`— y
+   Cinco están limpias —22 tablas, 5 funciones, 22 claves primarias `uuid`— y
    este chequeo está para que sigan así. La de la moneda tiene hoy un
    incumplimiento, anotado abajo con su motivo y su pendiente: el chequeo no lo
    tapa, lo deja a la vista y evita que entre uno nuevo.
@@ -51,6 +59,12 @@
      manera no se detecta; hoy la única del esquema es `caregivers.hourly_rate`.
    - De la clave primaria mira el tipo, no que sea una sola columna. Una clave
      compuesta de dos `uuid` pasaría, y hoy no hay ninguna.
+   - De la siembra sigue **un solo salto** de llamadas: la función del disparador,
+     y las funciones que ésa nombra. Una cadena de tres no la sigue, y hoy no hay
+     ninguna. Tampoco sabe si el disparador siembra lo mismo que sembró la
+     migración: sabe que escribe en esa tabla.
+   - Una siembra acotada a una Prestadora por su nombre corto no es un barrido y
+     no se mira. Es lo que hacen las migraciones de datos ficticios.
 =================================================== */
 
 import { readFileSync, readdirSync } from 'node:fs';
@@ -120,6 +134,16 @@ const CLAVE_APARTE =
   /alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?"?public"?\."?([a-z_]+)"?[^;]*add\s+constraint[^;]*primary\s+key\s*\(\s*"?([a-z_]+)"?/gi;
 const AGREGA_ORGANIZACION =
   /alter\s+table\s+(?:if\s+exists\s+)?"?public"?\."?([a-z_]+)"?[^;]*add\s+column[^;]*\b(?:prestadora_id|tenant_id)\b/gi;
+/* Para la sexta. Un `insert` que sale de recorrer `tenants`, el `create trigger`
+   colgado de esa misma tabla, y el `rename to` que le cambia el nombre a una
+   tabla en el medio —la 0022 renombró justo una de las dos que siembra la 0018,
+   y sin esto la sexta regla buscaría un nombre que ya no existe—. */
+const INSERTA = /insert\s+into\s+(?:"?public"?\.)?"?([a-z_]+)"?/gi;
+const ACOTADA = /\bwhere\b[^;]*\b(?:slug|id)\s*=/i;
+const DISPARADOR =
+  /create\s+(?:or\s+replace\s+)?trigger\s+"?[a-z_]+"?[^;]*\bon\s+(?:"?public"?\.)?"?tenants"?[^;]*\bexecute\s+(?:function|procedure)\s+(?:"?public"?\.)?"?([a-z_]+)"?/gi;
+const RENOMBRA =
+  /alter\s+table\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_]+)"?\s+rename\s+to\s+"?([a-z_]+)"?/gi;
 
 /** Las tablas que en algún lado reciben su columna de Organización. */
 export function conOrganizacion(textos) {
@@ -203,17 +227,76 @@ function entreParentesis(texto, desde) {
 
 const renglonDe = (texto, posicion) => texto.slice(0, posicion).split('\n').length;
 
+/** El nombre que tiene hoy una tabla que en el camino se renombró. */
+function nombreDeHoy(tabla, renombres) {
+  let nombre = tabla;
+  for (let vueltas = 0; vueltas < 10 && renombres.has(nombre); vueltas++) {
+    nombre = renombres.get(nombre);
+  }
+  return nombre;
+}
+
+/**
+ * Lo que ya se sigue solo: las tablas donde escribe algún disparador colgado de
+ * `tenants`, y el nombre de hoy de cada tabla que en el camino se renombró. Lo
+ * segundo hace falta de verdad: la 0022 le cambió el nombre justo a una de las
+ * dos tablas que siembra la 0018, y sin esto la sexta regla buscaría un nombre
+ * que ya no existe y avisaría de una tabla que sí está cubierta.
+ *
+ * Se sigue **un solo salto** de llamadas: la función que el disparador ejecuta,
+ * y las que ésa nombra. Con eso alcanza para la 0046, donde el disparador no
+ * siembra él mismo sino que llama a la que sabe cuál es la configuración de
+ * fábrica —que es como tiene que ser, porque esa misma función la usa también el
+ * arreglo de las Prestadoras que ya habían nacido sin ella—.
+ */
+export function siembraQueSeSigueSola(textos) {
+  const nombreActual = new Map();
+  const cuerpos = new Map();
+  const deDisparador = new Set();
+
+  for (const texto of textos) {
+    const t = texto.replace(/\r\n/g, '\n');
+    const bajo = t.toLowerCase();
+    for (const m of t.matchAll(RENOMBRA)) {
+      nombreActual.set(m[1].toLowerCase(), m[2].toLowerCase());
+    }
+    for (const m of t.matchAll(FUNCION)) {
+      const fin = bajo.indexOf('$$;', m.index);
+      cuerpos.set(m[1].toLowerCase(), bajo.slice(m.index, fin > 0 ? fin : bajo.length));
+    }
+    for (const m of t.matchAll(DISPARADOR)) deDisparador.add(m[1].toLowerCase());
+  }
+
+  const alcance = new Set(deDisparador);
+  for (const nombre of deDisparador) {
+    const cuerpo = cuerpos.get(nombre) || '';
+    for (const otra of cuerpos.keys()) {
+      if (otra !== nombre && new RegExp('\\b' + otra + '\\s*\\(').test(cuerpo)) alcance.add(otra);
+    }
+  }
+
+  const cubiertas = new Set();
+  for (const nombre of alcance) {
+    for (const m of (cuerpos.get(nombre) || '').matchAll(INSERTA)) {
+      cubiertas.add(nombreDeHoy(m[1].toLowerCase(), nombreActual));
+    }
+  }
+  return { cubiertas, nombreActual };
+}
+
 /**
  * Lo que incumple una migración. Devuelve `[renglón, qué pasa]` por cada cosa.
  * `conColumna` son las tablas que reciben su columna de Organización en alguna
- * migración, y `claves` las claves primarias de todas: ninguna de las dos cosas
- * está obligada a estar en esta migración. Sin esos datos se mira sólo este texto.
+ * migración, `claves` las claves primarias de todas, y `sigue` lo que ya atiende
+ * un disparador: ninguna de las tres cosas está obligada a estar en esta
+ * migración. Sin esos datos se mira sólo este texto.
  */
-export function fallasDeUnaMigracion(texto, conColumna, claves) {
+export function fallasDeUnaMigracion(texto, conColumna, claves, sigue) {
   const t = texto.replace(/\r\n/g, '\n');
   const bajo = t.toLowerCase();
   const tienen = conColumna || conOrganizacion([t]);
   const primarias = claves || clavesPrimarias([t]);
+  const siembra = sigue || siembraQueSeSigueSola([t]);
   const fallas = [];
 
   for (const m of t.matchAll(TABLA)) {
@@ -279,6 +362,23 @@ export function fallasDeUnaMigracion(texto, conColumna, claves) {
     }
   }
 
+  /* 6. La siembra que recorre las Prestadoras de hoy deja algo puesto para las
+     de mañana. Los renglones comentados se tapan con espacios y no se borran:
+     así el renglón que se informa sigue siendo el del archivo. */
+  const sinComentarios = t.split('\n')
+    .map((l) => (/^\s*--/.test(l) ? ' '.repeat(l.length) : l)).join('\n');
+  for (const m of sinComentarios.matchAll(INSERTA)) {
+    const corte = sinComentarios.indexOf(';', m.index);
+    const sentencia = sinComentarios.slice(m.index, corte > 0 ? corte : sinComentarios.length);
+    if (!/from\s+(?:"?public"?\.)?"?tenants"?\b/i.test(sentencia)) continue;
+    if (ACOTADA.test(sentencia)) continue;
+    const tabla = nombreDeHoy(m[1].toLowerCase(), siembra.nombreActual);
+    if (siembra.cubiertas.has(tabla)) continue;
+    fallas.push([renglonDe(t, m.index),
+      '`' + tabla + '` se siembra recorriendo las Prestadoras que existen hoy, y ningún ' +
+      'disparador sobre `tenants` la escribe: la que nazca mañana arranca sin eso']);
+  }
+
   return fallas.sort((a, b) => a[0] - b[0]);
 }
 
@@ -290,6 +390,25 @@ const RLS = 'alter table public.visitas enable row level security;';
 const CREA = 'create table if not exists public.visitas (\n' +
   '  id uuid primary key default gen_random_uuid(),\n' +
   '  prestadora_id uuid not null references public.tenants(id)\n);\n';
+
+/* Para la sexta. La siembra que recorre todas las Prestadoras, el disparador que
+   la atiende de ahí en más, y el mismo disparador llamando a otra función, que es
+   como está escrita la 0046. */
+const BARRIDO = 'insert into public.visitas (tenant_id)\n' +
+  'select id from public.tenants\non conflict do nothing;\n';
+const SIEMBRA_DIRECTA =
+  'create function public.al_nacer() returns trigger language plpgsql as $$\n' +
+  'begin\n  insert into public.visitas (tenant_id) values (new.id);\n' +
+  '  return null;\nend;\n$$;\n' +
+  'create trigger al_nacer after insert on public.tenants\n' +
+  '  for each row execute function public.al_nacer();\n';
+const SIEMBRA_LLAMADA =
+  'create function public.de_fabrica(p uuid) returns void language plpgsql as $$\n' +
+  'begin\n  insert into public.visitas (tenant_id) values (p);\nend;\n$$;\n' +
+  'create function public.al_nacer() returns trigger language plpgsql as $$\n' +
+  'begin\n  perform public.de_fabrica(new.id);\n  return null;\nend;\n$$;\n' +
+  'create trigger al_nacer after insert on public.tenants\n' +
+  '  for each row execute function public.al_nacer();\n';
 
 const MAL = [
   ['una tabla que se crea sin encender su RLS',
@@ -310,7 +429,13 @@ const MAL = [
    '  select true;\n$$;\n'],
   ['una función SECURITY DEFINER que sólo le revoca a PUBLIC',
    'create function public.mirar() returns boolean language sql security definer as $$\n' +
-   '  select true;\n$$;\nrevoke all on function public.mirar() from public;\n']
+   '  select true;\n$$;\nrevoke all on function public.mirar() from public;\n'],
+  ['una siembra que recorre las Prestadoras de hoy y no deja nada para las de mañana',
+   BARRIDO],
+  ['la misma siembra con un disparador colgado de otra tabla',
+   BARRIDO + SIEMBRA_DIRECTA.replace('on public.tenants', 'on public.caregivers')],
+  ['un disparador sobre `tenants` que escribe en otra tabla que la sembrada',
+   BARRIDO + SIEMBRA_DIRECTA.replace('into public.visitas', 'into public.otras')]
 ];
 
 const BIEN = [
@@ -346,7 +471,19 @@ const BIEN = [
    '  select true;\n$$;\n'],
   ['`numeric(10,2)` no corta la tabla por la mitad',
    'create table if not exists public.visitas (\n  id uuid primary key,\n' +
-   '  cantidad numeric(10,2),\n  prestadora_id uuid not null\n);\n' + RLS]
+   '  cantidad numeric(10,2),\n  prestadora_id uuid not null\n);\n' + RLS],
+  ['la siembra que además deja el disparador que la sigue',
+   BARRIDO + SIEMBRA_DIRECTA],
+  ['la misma, con el disparador llamando a otra función, como la 0046',
+   BARRIDO + SIEMBRA_LLAMADA],
+  ['la siembra acotada a una Prestadora, que no es un barrido',
+   "insert into public.visitas (tenant_id)\nselect id from public.tenants where slug = 'presdemo';\n"],
+  ['la siembra de una tabla que después se renombró',
+   'insert into public.pesos (tenant_id)\nselect id from public.tenants;\n' +
+   'alter table public.pesos rename to visitas;\n' + SIEMBRA_DIRECTA],
+  ['un `insert` que nombra `tenants` adentro de un comentario',
+   '-- insert into public.visitas select id from public.tenants;\n' +
+   'select 1;\n']
 ];
 
 /* De acá para abajo está la verificación. De acá para arriba está la regla que
@@ -371,6 +508,7 @@ if (ME_CORRIERON_A_MI) {
   const fallas = [];
   let tablas = 0;
   let funciones = 0;
+  let siembras = 0;
   const migraciones = readdirSync(carpeta).filter((n) => n.endsWith('.sql')).sort();
   seRevisaron(migraciones.length, 'una sola migración `.sql` para revisar');
   const textos = migraciones.map((n) => readFileSync(join(carpeta, n), 'utf8'));
@@ -385,6 +523,11 @@ if (ME_CORRIERON_A_MI) {
      declararla en otro. Se buscan todas antes de juzgar ninguna. */
   const primarias = clavesPrimarias(textos);
 
+  /* Y lo mismo con el disparador: la siembra está en la 0018 y el disparador que
+     la sigue, en la 0046. Juzgando archivo por archivo, la 0018 saldría en rojo
+     para siempre por algo que ya está arreglado. */
+  const sigue = siembraQueSeSigueSola(textos);
+
   for (const [i, nombre] of migraciones.entries()) {
     const texto = textos[i];
     tablas += [...texto.matchAll(TABLA)].length;
@@ -393,8 +536,15 @@ if (ME_CORRIERON_A_MI) {
       if (/security\s+definer/i.test(
         texto.slice(m.index, fin > 0 ? fin : texto.length))) funciones++;
     }
+    for (const m of texto.matchAll(INSERTA)) {
+      const corte = texto.indexOf(';', m.index);
+      const sentencia = texto.slice(m.index, corte > 0 ? corte : texto.length);
+      if (/from\s+(?:"?public"?\.)?"?tenants"?\b/i.test(sentencia) && !ACOTADA.test(sentencia)) {
+        siembras++;
+      }
+    }
     for (const [renglon, motivo] of
-      fallasDeUnaMigracion(texto, tienenColumna, primarias)) {
+      fallasDeUnaMigracion(texto, tienenColumna, primarias, sigue)) {
       fallas.push(`supabase/migrations/${nombre}:${renglon}  ${motivo}`);
     }
   }
@@ -404,11 +554,13 @@ if (ME_CORRIERON_A_MI) {
     for (const falla of fallas) console.error('  - ' + falla);
     console.error(
       `\n${fallas.length} ${fallas.length === 1 ? 'incumplimiento' : 'incumplimientos'}. ` +
-      'Las cinco reglas están en el encabezado de este archivo, con el porqué de cada\n' +
+      'Las seis reglas están en el encabezado de este archivo, con el porqué de cada\n' +
       'una. La RLS y la revocación van en la misma migración que crea la tabla o la\n' +
       'función, nunca en una posterior y nunca a mano desde el panel de Supabase; la\n' +
       'columna de Organización, la clave primaria y la moneda pueden llegar después,\n' +
       'pero tienen que llegar, y la clave tiene que ser `uuid`.\n' +
+      'Y una siembra que recorre las Prestadoras de hoy deja un disparador sobre\n' +
+      '`tenants`, en ésta o en otra migración, o la que nazca mañana arranca sin eso.\n' +
       'Si un caso no puede cumplirla, va a SIN_ORGANIZACION, a SIN_MONEDA o a\n' +
       'AL_ALCANCE_ANONIMO de este mismo\n' +
       'archivo, con el motivo escrito y el pendiente que lo sigue.');
@@ -420,5 +572,7 @@ if (ME_CORRIERON_A_MI) {
     `columna de Organización y clave primaria \`uuid\`, y ${funciones} funciones ` +
     `SECURITY DEFINER, ${AL_ALCANCE_ANONIMO.size} de ellas al alcance anónimo a ` +
     'propósito y las demás fuera de él ' +
-    `(${SIN_ORGANIZACION.size} tabla y ${SIN_MONEDA.size} importe exentos, con su motivo).`);
+    `(${SIN_ORGANIZACION.size} tabla y ${SIN_MONEDA.size} importe exentos, con su motivo). ` +
+    `Las ${siembras} siembras que recorren las Prestadoras dejan además un disparador ` +
+    'sobre `tenants`, así que la que nazca mañana nace igual que las de hoy.');
 }
