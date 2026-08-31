@@ -156,7 +156,7 @@ título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de e
 | `verificar_copias` | Que las copias byte a byte se separen sin que nadie se entere |
 | `verificar_deriva` | Que una cita `archivo:renglón` apunte a un renglón que existe pero no es el que la frase dice: le pregunta al historial qué decía ese renglón el día en que se escribió la cita, y busca ese texto en el archivo de hoy |
 | `verificar_escapado` | Que un texto de la base entre a la pantalla como si fuera HTML |
-| `verificar_esquema` | Que una tabla nueva nazca sin RLS, que una función que se saltea la RLS quede al alcance de quien no inició sesión, que falte la columna de la Organización, que la clave primaria no sea `uuid` o que un importe se guarde sin moneda |
+| `verificar_esquema` | Que una tabla nueva nazca sin RLS, que una función que se saltea la RLS quede al alcance de quien no inició sesión, que falte la columna de la Organización, que la clave primaria no sea `uuid`, que un importe se guarde sin moneda, o que una política del depósito de archivos no nombre la Organización, que es lo único que ahí separa a una Prestadora de otra |
 | `verificar_estado` | Que un número escrito en la documentación quede viejo sin que nada avise: los cuatro bloques que se miden salen del medidor y se comparan acá |
 | `verificar_estados` | Que algo que carga datos se olvide de uno de sus cuatro estados: cargando, error, vacío, listo |
 | `verificar_estilos` | Que se escriba a mano en un `style=` lo que ya dice una clase de utilidad |

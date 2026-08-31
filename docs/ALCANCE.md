@@ -3237,7 +3237,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 - **La puerta es `guias_de(p_slug)`** (`:272`), del mismo tipo que `vocabularios_de`: la tabla no le
   concede nada a `anon` (`:254`), y lo que sale a la calle es una función que **exige el nombre
   corto**, devuelve la general más la de esa sola Prestadora, y sólo las publicadas. Está anotada
-  con su motivo en `scripts/verificar_esquema.mjs:117`, que es donde viven las funciones que llegan
+  con su motivo en `scripts/verificar_esquema.mjs:132`, que es donde viven las funciones que llegan
   al alcance anónimo a propósito.
 - **La pantalla nueva es `screen-guias`** en la aplicación del Asistente
   (`pwa-asistente/index.html:702`), con los cuatro estados y un buscador. **Es una biblioteca de
@@ -5090,6 +5090,48 @@ inventar una columna perdida.
 **Lo que estas reglas no dicen.** No dicen que una exención siga eximiendo algo: dicen que lo que
 nombra existe. Vaciarlas y exigir el rojo sigue siendo la prueba fuerte, y sigue necesitando la
 base. La diferencia es que ahora ninguna de las cinco está sin nada.
+
+---
+
+### El aislamiento del depósito de archivos lo sostiene un índice de otra migración, y no lo decía nadie
+
+La regla de la empresa es literal: «Los archivos se guardan privados por defecto… **La ruta empieza
+por la Organización, y la política lo exige**». Acá el camino empieza por la **cuenta**:
+`<cuenta>/<archivo>`. Las dos políticas propias del depósito comparan la primera carpeta contra
+`auth.uid()` (`supabase/migrations/0006_archivos_del_legajo.sql:52` y `:63`), así que cada cuenta
+llega a la suya y a ninguna otra, y **hacia afuera no hay agujero**. La pregunta que faltaba
+contestar es otra: qué separa a una Prestadora de otra.
+
+La respuesta estaba, pero en otro archivo. **Una cuenta tiene un solo legajo**, por el índice único
+`idx_caregivers_user_unico` (`supabase/migrations/0005_acceso_por_sesion.sql:40`). La tercera
+política, la que deja mirar al personal de la Prestadora
+(`supabase/migrations/0006_archivos_del_legajo.sql:78`), llega a la carpeta **por ese legajo**. El
+día que una misma cuenta tenga legajo en dos Prestadoras —que es justo a donde apunta un mercado—
+las dos ven la carpeta entera, con los papeles que la persona subió para la otra. De las tres
+menciones que ese índice tiene en todo el proyecto, **ninguna dice que el depósito de archivos
+depende de él**.
+
+De ahí salió **la séptima regla de `scripts/verificar_esquema.mjs`**: toda política sobre
+`storage.objects` nombra la Organización en su condición. Es la única política que ese chequeo lee,
+y por un motivo. En una tabla, si la política se equivoca, todavía queda la columna de la
+Organización a la vista y las otras seis reglas la miran. En el depósito **no hay columna que
+mirar** —el camino es una cadena de texto—, así que la condición es lo único que separa a una
+Prestadora de otra.
+
+Y la exención pide **dos cosas, no una**: el motivo, y **qué sostiene el aislamiento en su lugar**.
+Esa segunda mitad es la que faltaba en el proyecto. Una política del depósito que no nombra la
+Organización siempre está apoyada en algo que vive en otro archivo, y lo que no se escribe al lado
+no se entera nadie el día que ese algo cambie. Ahora
+`SIN_ORGANIZACION_EN_EL_DEPOSITO` es donde esa dependencia está escrita, y
+`scripts/probar_exenciones.mjs` la tomó sola: vaciarla pone rojo al chequeo, comprobado.
+
+El `avatares` es aparte y está bien: es público **a propósito** desde la 0006, porque la foto es lo
+que el directorio muestra sin cuenta (`js/apiClient.js:771`). Ahí no hay nada que aislar hacia
+afuera; lo que la condición cuida es la escritura, que nadie deje una foto en la carpeta de otro.
+
+Mover el camino a `<Organización>/<cuenta>/<archivo>` no es sólo una migración: hay que mudar los
+archivos ya subidos, y eso toca datos publicados. Queda como **pendiente 115**, con las dos salidas
+escritas y con la honesta primero: hoy no es explotable, es latente y era silencioso.
 
 ## 6. Deuda del código actual
 

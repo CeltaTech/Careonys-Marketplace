@@ -1,5 +1,5 @@
 /* ===================================================
-   VERIFICA LAS SEIS REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
+   VERIFICA LAS SIETE REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
 
        node scripts/verificar_esquema.mjs
 
@@ -8,7 +8,7 @@
    Lo que corre hoy en el servidor es otra pregunta y se responde mirando el
    servidor (regla de la empresa «el estado real está por encima del documentado»).
 
-   Las seis:
+   Las siete:
 
    1. **Toda tabla nueva enciende su RLS en la misma migración que la crea**
       (regla de la empresa «RLS estricta en toda tabla nueva»). Encenderla después, a mano desde el panel, deja una ventana
@@ -44,17 +44,32 @@
       tenía cero (pendiente 97, cerrado por la 0046). El disparador no tiene que
       estar en la misma migración que la siembra —el arreglo llega después, como
       llegó acá—, pero tiene que estar en alguna.
+   7. **Toda política sobre `storage.objects` nombra la Organización en su
+      condición** (regla de la empresa «los archivos se guardan privados por
+      defecto… la ruta empieza por la Organización, y la política lo exige»).
+      Es la única política que este chequeo lee, y por un motivo: en una tabla,
+      si la política se equivoca, todavía queda la columna de Organización a la
+      vista y el resto de las reglas la miran. En el depósito de archivos no hay
+      columna que mirar —el camino es una cadena de texto—, así que **la
+      condición es lo único que separa a una Prestadora de otra**. Cuando no la
+      nombra, el aislamiento lo está sosteniendo alguna otra cosa, en algún otro
+      archivo, y nadie lo dice. Por eso la exención pide dos cosas y no una: el
+      motivo, y **qué lo sostiene en su lugar**.
 
-   Cinco están limpias —22 tablas, 5 funciones, 22 claves primarias `uuid`— y
-   este chequeo está para que sigan así. La de la moneda tiene hoy un
+   Las cuentas de cuántas tablas y cuántas funciones hay no se escriben acá: las
+   dice el renglón verde al terminar, que sale de contar los archivos. Un número
+   escrito a mano en un encabezado queda viejo el día que se agrega una
+   migración, y nadie vuelve a leerlo. La regla de la moneda tiene hoy un
    incumplimiento, anotado abajo con su motivo y su pendiente: el chequeo no lo
    tapa, lo deja a la vista y evita que entre uno nuevo.
 
    Qué NO mira, dicho de frente:
    - No sabe si la migración se aplicó. Un archivo acá describe lo que se quiso
      aplicar, no lo que corre.
-   - No lee la política, sólo que la RLS esté encendida. Una política mal escrita
-     con la RLS encendida pasa igual.
+   - De las tablas no lee la política, sólo que la RLS esté encendida. Una
+     política mal escrita con la RLS encendida pasa igual. Las del depósito de
+     archivos sí se leen, y de ellas se mira una sola cosa: si nombran la
+     Organización. Que la nombre no quiere decir que la use bien.
    - Un importe se reconoce por el nombre de la columna. Una que se llame de otra
      manera no se detecta; hoy la única del esquema es `caregivers.hourly_rate`.
    - De la clave primaria mira el tipo, no que sea una sola columna. Una clave
@@ -123,6 +138,27 @@ export const AL_ALCANCE_ANONIMO = new Map([
    'persona: son textos sobre una patología, nunca sobre un Paciente; migración 0041']
 ]);
 
+/* Políticas del depósito de archivos que no nombran la Organización, con el
+   motivo **y con qué sostiene el aislamiento en su lugar**. Esa segunda mitad no
+   es adorno: una política del depósito que no nombra la Organización siempre
+   está apoyada en algo que está en otro archivo, y lo que no se escribe acá no
+   se entera nadie el día que ese algo cambie. */
+const SIN_ORGANIZACION_EN_EL_DEPOSITO = new Map([
+  ['Documentos del legajo, los propios',
+   'la condición compara la primera carpeta del camino contra `auth.uid()`, así que ' +
+   'cada cuenta llega a la suya y a ninguna otra; no hay dos Organizaciones adentro de ' +
+   'esa condición que separar. Lo que las separa está en otro lado: **una cuenta tiene ' +
+   'un solo legajo**, por el índice único `idx_caregivers_user_unico` de la migración ' +
+   '0005. La política que deja mirar al personal de la Prestadora llega a la carpeta ' +
+   'por ese legajo, y si una misma cuenta llegara a tener legajo en dos Prestadoras, ' +
+   'las dos verían la carpeta entera, con los papeles que la persona subió para la otra'],
+  ['Avatar propio',
+   'la misma condición y el mismo apoyo, sobre el depósito `avatares`, que además es ' +
+   'público a propósito desde la 0006: la foto es lo que el directorio muestra sin ' +
+   'cuenta, así que ahí no hay nada que aislar hacia afuera. Lo que la condición cuida ' +
+   'es la escritura: que nadie deje una foto en la carpeta de otro']
+]);
+
 /* Importes que hoy se guardan sin moneda, con su motivo y su pendiente. */
 const SIN_MONEDA = new Map([
   ['caregivers.hourly_rate',
@@ -145,6 +181,8 @@ const AGREGA_ORGANIZACION =
    tabla en el medio —la 0022 renombró justo una de las dos que siembra la 0018,
    y sin esto la sexta regla buscaría un nombre que ya no existe—. */
 const INSERTA = /insert\s+into\s+(?:"?public"?\.)?"?([a-z_]+)"?/gi;
+const POLITICA_DEPOSITO = /create\s+policy\s+"([^"]+)"\s+on\s+storage\.objects/gi;
+const NOMBRA_ORGANIZACION = /prestadora_actual\s*\(\s*\)|\btenant_id\b|\bprestadora_id\b/i;
 const ACOTADA = /\bwhere\b[^;]*\b(?:slug|id)\s*=/i;
 const DISPARADOR =
   /create\s+(?:or\s+replace\s+)?trigger\s+"?[a-z_]+"?[^;]*\bon\s+(?:"?public"?\.)?"?tenants"?[^;]*\bexecute\s+(?:function|procedure)\s+(?:"?public"?\.)?"?([a-z_]+)"?/gi;
@@ -446,6 +484,18 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue) {
       'disparador sobre `tenants` la escribe: la que nazca mañana arranca sin eso']);
   }
 
+  /* 7. La política del depósito de archivos nombra la Organización. */
+  for (const m of sinComentarios.matchAll(POLITICA_DEPOSITO)) {
+    const nombre = m[1];
+    const corte = sinComentarios.indexOf(';', m.index);
+    const cuerpo = sinComentarios.slice(m.index, corte > 0 ? corte : sinComentarios.length);
+    if (NOMBRA_ORGANIZACION.test(cuerpo)) continue;
+    if (SIN_ORGANIZACION_EN_EL_DEPOSITO.has(nombre)) continue;
+    fallas.push([renglonDe(t, m.index),
+      'la política «' + nombre + '» del depósito de archivos no nombra la ' +
+      'Organización, y en el depósito no hay columna que la nombre por ella']);
+  }
+
   return fallas.sort((a, b) => a[0] - b[0]);
 }
 
@@ -477,7 +527,14 @@ const SIEMBRA_LLAMADA =
   'create trigger al_nacer after insert on public.tenants\n' +
   '  for each row execute function public.al_nacer();\n';
 
+/* Una política del depósito, con y sin la Organización adentro. */
+const DEPOSITO = (condicion) =>
+  'create policy "Papeles de cualquiera" on storage.objects\n' +
+  '  for select to authenticated\n  using (\n    ' + condicion + '\n  );\n';
+
 const MAL = [
+  ['una política del depósito que no nombra la Organización',
+   DEPOSITO("bucket_id = 'papeles'")],
   ['una tabla que se crea sin encender su RLS',
    CREA],
   ['una tabla sin columna de Organización',
@@ -506,6 +563,10 @@ const MAL = [
 ];
 
 const BIEN = [
+  ['una política del depósito que sí la nombra',
+   DEPOSITO("bucket_id = 'papeles' and tenant_id = public.prestadora_actual()")],
+  ['la misma política nombrada adentro de un comentario, que no cuenta',
+   '-- create policy "Papeles de cualquiera" on storage.objects using (true);\nselect 1;\n'],
   ['una tabla con su RLS y su columna de Organización',
    CREA + RLS],
   ['un importe con su moneda al lado',
@@ -576,6 +637,7 @@ if (ME_CORRIERON_A_MI) {
   let tablas = 0;
   let funciones = 0;
   let siembras = 0;
+  let politicas = 0;
   const migraciones = readdirSync(carpeta).filter((n) => n.endsWith('.sql')).sort();
   seRevisaron(migraciones.length, 'una sola migración `.sql` para revisar');
   const textos = migraciones.map((n) => readFileSync(join(carpeta, n), 'utf8'));
@@ -603,6 +665,7 @@ if (ME_CORRIERON_A_MI) {
       if (/security\s+definer/i.test(
         texto.slice(m.index, fin > 0 ? fin : texto.length))) funciones++;
     }
+    politicas += [...texto.matchAll(POLITICA_DEPOSITO)].length;
     for (const m of texto.matchAll(INSERTA)) {
       const corte = texto.indexOf(';', m.index);
       const sentencia = texto.slice(m.index, corte > 0 ? corte : texto.length);
@@ -621,19 +684,22 @@ if (ME_CORRIERON_A_MI) {
     for (const falla of fallas) console.error('  - ' + falla);
     console.error(
       `\n${fallas.length} ${fallas.length === 1 ? 'incumplimiento' : 'incumplimientos'}. ` +
-      'Las seis reglas están en el encabezado de este archivo, con el porqué de cada\n' +
+      'Las siete reglas están en el encabezado de este archivo, con el porqué de cada\n' +
       'una. La RLS y la revocación van en la misma migración que crea la tabla o la\n' +
       'función, nunca en una posterior y nunca a mano desde el panel de Supabase; la\n' +
       'columna de Organización, la clave primaria y la moneda pueden llegar después,\n' +
       'pero tienen que llegar, y la clave tiene que ser `uuid`.\n' +
       'Y una siembra que recorre las Prestadoras de hoy deja un disparador sobre\n' +
       '`tenants`, en ésta o en otra migración, o la que nazca mañana arranca sin eso.\n' +
-      'Si un caso no puede cumplirla, va a SIN_ORGANIZACION, a SIN_MONEDA o a\n' +
-      'AL_ALCANCE_ANONIMO de este mismo\n' +
+      'Y toda política del depósito de archivos nombra la Organización, porque ahí\n' +
+      'no hay columna que la nombre por ella.\n' +
+      'Si un caso no puede cumplirla, va a SIN_ORGANIZACION, a SIN_MONEDA, a\n' +
+      'AL_ALCANCE_ANONIMO o a SIN_ORGANIZACION_EN_EL_DEPOSITO de este mismo\n' +
       'archivo, con el motivo escrito y el pendiente que lo sigue.');
     process.exit(1);
   }
 
+  const conOrg = politicas - SIN_ORGANIZACION_EN_EL_DEPOSITO.size;
   console.log(
     `Esquema verificado: ${tablas} tablas con su RLS encendida donde se crean, su ` +
     `columna de Organización y clave primaria \`uuid\`, y ${funciones} funciones ` +
@@ -641,5 +707,9 @@ if (ME_CORRIERON_A_MI) {
     'propósito y las demás fuera de él ' +
     `(${SIN_ORGANIZACION.size} tabla y ${SIN_MONEDA.size} importe exentos, con su motivo). ` +
     `Las ${siembras} siembras que recorren las Prestadoras dejan además un disparador ` +
-    'sobre `tenants`, así que la que nazca mañana nace igual que las de hoy.');
+    'sobre `tenants`, así que la que nazca mañana nace igual que las de hoy. ' +
+    `Y de las ${politicas} políticas del depósito de archivos, ${conOrg} ` +
+    `${conOrg === 1 ? 'nombra' : 'nombran'} la Organización y ` +
+    `${SIN_ORGANIZACION_EN_EL_DEPOSITO.size} están exentas con el motivo y con qué ` +
+    'sostiene el aislamiento en su lugar.');
 }
