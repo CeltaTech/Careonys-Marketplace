@@ -3237,7 +3237,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 - **La puerta es `guias_de(p_slug)`** (`:272`), del mismo tipo que `vocabularios_de`: la tabla no le
   concede nada a `anon` (`:254`), y lo que sale a la calle es una función que **exige el nombre
   corto**, devuelve la general más la de esa sola Prestadora, y sólo las publicadas. Está anotada
-  con su motivo en `scripts/verificar_esquema.mjs:352`, que es donde viven las funciones que llegan
+  con su motivo en `scripts/verificar_esquema.mjs:377`, que es donde viven las funciones que llegan
   al alcance anónimo a propósito.
 - **La pantalla nueva es `screen-guias`** en la aplicación del Asistente
   (`pwa-asistente/index.html:702`), con los cuatro estados y un buscador. **Es una biblioteca de
@@ -5619,6 +5619,38 @@ es exactamente la clase de error que no se ve mientras el sistema anda.
 agregó a la 0041 un `rename column` de verdad, puesto antes del `notify` para que ninguna otra
 regla pudiera dispararse y confundir el resultado, y se corrieron las dos versiones contra el mismo
 archivo roto: **la publicada pasó en verde y la de hoy lo encuentra**, con el renglón exacto.
+
+### La migración entra entera, y los dos errores que encontró en sí misma
+
+La decimocuarta regla hace cumplir el segundo punto de `CLAUDE.md` §9: **toda migración corre entera
+o no corre, sin dejar la base a mitad de camino**. Es la regla de la que depende que el orden de los
+archivos signifique algo: si una migración puede quedar aplicada por la mitad, el número de arriba
+del archivo deja de decir en qué estado está la base, y reconstruirlo pasa a ser un trabajo aparte
+—que es exactamente lo que le pasó a Careonys con sus 76 `.sql` sueltos, y el motivo por el que la
+regla está escrita—.
+
+**Son dos maneras de romperla, con consecuencias distintas, y por eso avisan cosas distintas.** Un
+`commit`, un `rollback` o un `begin` en el medio cortan la transacción que envuelve a la migración:
+lo que está arriba del corte queda aplicado aunque lo de abajo falle, y nadie avisa. Un `create
+index concurrently`, un `vacuum` o un `alter system` no pueden correr adentro de una transacción, y
+cada migración corre adentro de una: eso no falla al escribirlo, falla el día que se aplica, y falla
+siempre, así que la migración entera se cae.
+
+**Salió verde en las cuarenta y nueve.** Ni límite de migración ni lista de exenciones: no hay nada
+que perdonar, sólo que impedir el primero.
+
+**El banco de pruebas encontró un punto ciego antes de que el chequeo se publicara.** El primer caso
+—una migración con un `commit;` en el medio— no se detectaba, porque la expresión estaba anclada al
+principio del renglón y en el caso el `commit;` quedaba pegado a la sentencia de arriba. Eso es SQL
+perfectamente válido: **una sentencia empieza donde termina la anterior, no donde empieza el
+renglón**. Ahora el patrón acepta el `;` de la anterior como comienzo.
+
+**Y esa misma corrección trajo el segundo error, que encontró la falsificación contra un archivo
+real.** Al aceptar el `;` de la sentencia anterior, el comienzo de la coincidencia caía en el
+renglón de arriba, y el aviso señalaba **dos renglones antes del problema**. El banco de pruebas no
+lo podía ver: mira si hay rojo, no dónde apunta. Se arregló poniendo la palabra en el grupo 1 de
+cada expresión y midiendo desde ahí; se comprobó rompiendo la 0041 de las dos maneras, y las dos
+señalan el renglón 327, que es el renglón. La versión publicada pasaba en verde las dos veces.
 
 ## 6. Deuda del código actual
 

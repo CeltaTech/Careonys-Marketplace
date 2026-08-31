@@ -1,5 +1,5 @@
 /* ===================================================
-   VERIFICA LAS TRECE REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
+   VERIFICA LAS CATORCE REGLAS QUE SE ESCRIBEN EN UNA MIGRACIÓN
 
        node scripts/verificar_esquema.mjs
 
@@ -8,7 +8,7 @@
    Lo que corre hoy en el servidor es otra pregunta y se responde mirando el
    servidor (regla de la empresa «el estado real está por encima del documentado»).
 
-   Las trece:
+   Las catorce:
 
    1. **Toda tabla nueva enciende su RLS en la misma migración que la crea**
       (regla de la empresa «RLS estricta en toda tabla nueva»). Encenderla después, a mano desde el panel, deja una ventana
@@ -250,6 +250,26 @@
       base todavía no tiene datos reales». Es una fecha, no una lista de
       perdones, y del otro lado no hay ninguno.
 
+  14. **La migración entra entera o no entra** (regla de la empresa «toda
+      migración corre entera o no corre, sin dejar la base a mitad de camino»).
+      Una base a mitad de camino no avisa: queda andando, con una parte de los
+      cambios puestos y la otra no, y el archivo que los escribió dice que se
+      aplicaron. Reconstruir ese estado después es un trabajo aparte —que es
+      justo el motivo por el que la regla existe—.
+
+      Son dos maneras distintas de romperla y avisan cosas distintas. Un
+      `commit`, un `rollback` o un `begin` **cortan la transacción que envuelve
+      a la migración**: lo que está arriba del corte queda aplicado aunque lo de
+      abajo falle. Y un `create index concurrently`, un `vacuum` o un `alter
+      system` **no pueden correr adentro de una transacción**, y cada migración
+      corre adentro de una: eso no falla al escribirlo, falla el día que se
+      aplica, y falla siempre.
+
+      El `begin` de una función plpgsql no cuenta, y no hace falta blanquear los
+      cuerpos para distinguirlo: ése viene seguido de un renglón nuevo y éste
+      pide el `;` o la palabra pegada. Hay un caso en el banco de pruebas que lo
+      comprueba, para que la distinción no dependa de que alguien la recuerde.
+
    Las cuentas de cuántas tablas y cuántas funciones hay no se escriben acá: las
    dice el renglón verde al terminar, que sale de contar los archivos. Un número
    escrito a mano en un encabezado queda viejo el día que se agrega una
@@ -294,6 +314,11 @@
      no sabe si dos funciones distintas contestan lo mismo: reconoce la forma de
      la deducción —sacar la columna de una tabla por quien inició sesión—, no su
      resultado.
+   - De la decimocuarta mira las formas conocidas de cortar la transacción o de
+     quedarse afuera de ella, no si la migración es correcta adentro de la suya.
+     Un `alter type … add value` tampoco entra: desde PostgreSQL 12 corre adentro
+     de una transacción, lo que no se puede es **usar** el valor nuevo en esa
+     misma, y eso ya es otra cosa.
    - De la decimotercera mira las sentencias que renombran, no si dos nombres
      quieren decir lo mismo. Borrar una tabla y crear otra parecida al lado no
      lo ve nadie, y está bien: eso no arrastra ningún nombre viejo adentro de
@@ -459,6 +484,47 @@ const RENOMBRA_LO_GUARDADO = [
    regla. **No es una lista de perdones: es una fecha**, y del otro lado no hay
    ninguno. */
 const NO_SE_RENOMBRA_DESDE = '0023';
+/* Para la decimocuarta. Dos maneras distintas de romper la misma regla —«toda
+   migración corre entera o no corre»— con consecuencias distintas, así que van
+   separadas y avisan cosas distintas.
+
+   La primera corta la transacción que envuelve a la migración: lo que quedó
+   arriba se aplica igual aunque lo de abajo falle. El `begin` de una función
+   plpgsql no entra acá, y no hace falta blanquear los cuerpos para eso: ése
+   viene seguido de un renglón nuevo, y éste pide el `;` o la palabra pegada.
+
+   **Una sentencia empieza donde termina la anterior, no donde empieza el
+   renglón.** Anclar al principio del renglón dejaba pasar un `commit;` escrito
+   pegado a la sentencia de arriba, que es SQL perfectamente válido; lo encontró
+   el primer caso del banco de pruebas, antes de que este chequeo se publicara.
+
+   **Y por eso la palabra va en el grupo 1 de cada expresión.** Al aceptar el
+   `;` de la sentencia anterior como parte del patrón, el comienzo de la
+   coincidencia cae en el renglón de arriba, y el aviso señalaba dos renglones
+   antes del problema. Lo encontró la falsificación contra un archivo real, no
+   el banco de pruebas, que sólo mira si hay rojo y no dónde. */
+const CORTA_LA_TRANSACCION = [
+  ['commit', /(?:^|;)\s*(commit\b)/gim],
+  ['rollback', /(?:^|;)\s*(rollback\b)/gim],
+  ['begin', /(?:^|;)\s*(begin\s*(?:;|transaction\b|work\b))/gim],
+  ['start transaction', /(?:^|;)\s*(start\s+transaction\b)/gim],
+  ['set transaction', /(?:^|;)\s*(set\s+transaction\b)/gim],
+];
+/* Y la segunda no puede correr adentro de una transacción, y cada migración
+   corre adentro de una: no falla al escribirla, falla el día que se aplica, y
+   falla siempre. */
+const NO_ENTRA_EN_UNA_TRANSACCION = [
+  ['create index concurrently', /(create\s+index\s+concurrently\b)/gi],
+  ['drop index concurrently', /(drop\s+index\s+concurrently\b)/gi],
+  ['reindex concurrently', /(reindex\b[\s\S]{0,40}?\bconcurrently\b)/gi],
+  ['refresh materialized view concurrently',
+   /(refresh\s+materialized\s+view\s+concurrently\b)/gi],
+  ['vacuum', /(?:^|;)\s*(vacuum\b)/gim],
+  ['create database', /(create\s+database\b)/gi],
+  ['drop database', /(drop\s+database\b)/gi],
+  ['alter system', /(alter\s+system\b)/gi],
+  ['create tablespace', /(create\s+tablespace\b)/gi],
+];
 /* Para la undécima. Una política de `public`, su baja, y los dos verbos que
    no dejan ninguna fila escrita. El `%I` del final es el nombre de tabla que
    deja escrito un `execute format`: la 0005 y la 0012 crean cuatro políticas
@@ -1039,6 +1105,32 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, b
     }
   }
 
+  /* 14. La migración entra entera o no entra. Es regla de la empresa, y existe
+     porque una base a mitad de camino no avisa: queda andando, con la mitad de
+     los cambios puestos y la otra mitad no, y el archivo que la escribió dice
+     que se aplicó. Reconstruir ese estado después es un trabajo aparte, que es
+     exactamente el motivo por el que la regla se escribió. */
+  /* El renglón es el de la palabra, no el del `;` que la precede. */
+  const dondeEmpieza = (m) => m.index + m[0].length - m[1].length;
+  for (const [que, expresion] of CORTA_LA_TRANSACCION) {
+    for (const m of sinComentarios.matchAll(expresion)) {
+      fallas.push([renglonDe(t, dondeEmpieza(m)),
+        '`' + que + '` corta acá la transacción que envuelve a la migración: lo ' +
+        'que está arriba queda aplicado aunque lo de abajo falle, y la base se ' +
+        'queda a mitad de camino sin que nadie avise. La migración entra entera ' +
+        'o no entra']);
+    }
+  }
+  for (const [que, expresion] of NO_ENTRA_EN_UNA_TRANSACCION) {
+    for (const m of sinComentarios.matchAll(expresion)) {
+      fallas.push([renglonDe(t, dondeEmpieza(m)),
+        '`' + que + '` no puede correr adentro de una transacción, y cada ' +
+        'migración corre adentro de una. Esto no falla al escribirlo: falla el ' +
+        'día que se aplique, y falla siempre, así que la migración entera se cae ' +
+        'y no entra nada']);
+    }
+  }
+
   return fallas.sort((a, b) => a[0] - b[0]);
 }
 
@@ -1134,6 +1226,11 @@ const MAL = [
    '  with check (user_id = auth.uid());\n'],
   ['un permiso que deja escribir `profiles` sin nombrar columnas',
    'grant update on table public.profiles to authenticated;\n'],
+  ['una migración que corta su propia transacción en el medio',
+   CREA + RLS + 'commit;\n' + AVISO, '0050_prueba.sql'],
+  ['una que trae algo que no puede correr adentro de una transacción',
+   CREA + RLS + 'create index concurrently idx_visitas on public.visitas (prestadora_id);\n' +
+   AVISO, '0050_prueba.sql'],
   ['una migración nueva que le cambia el nombre a una tabla ya guardada',
    'alter table public.visitas rename to jornadas;\n' + AVISO, '0050_prueba.sql'],
   ['y una que se lo cambia a una columna, que es lo mismo un piso más adentro',
@@ -1211,6 +1308,12 @@ const BIEN = [
    'insert into public.pesos (tenant_id)\nselect id from public.tenants;\n' +
    'alter table public.pesos rename to visitas;\n' + SIEMBRA_DIRECTA,
    '0022_prueba.sql'],
+  ['el `begin` con el que abre una función plpgsql, que no corta ninguna transacción',
+   'create function public.mirar() returns boolean language plpgsql security definer as $$\n' +
+   'begin\n  return true;\nend;\n$$;\n' +
+   'revoke all on function public.mirar() from public, anon;\n'],
+  ['la palabra `commit` contada adentro de un comentario',
+   '-- commit;\nselect 1;\n'],
   ['el mismo renombre pero en el acomodamiento del glosario, que ya está escrito',
    'alter table public.visitas rename to jornadas;\n', '0015_prueba.sql'],
   ['un comentario que cuenta un renombre viejo, que es prosa y no una sentencia',
@@ -1299,6 +1402,7 @@ if (ME_CORRIERON_A_MI) {
   let escrituras = 0;
   let resoluciones = 0;
   let quietas = 0;
+  let enteras = 0;
   let renombres = 0;
   const migraciones = readdirSync(carpeta).filter((n) => n.endsWith('.sql')).sort();
   seRevisaron(migraciones.length, 'una sola migración `.sql` para revisar');
@@ -1358,6 +1462,7 @@ if (ME_CORRIERON_A_MI) {
         if (!/^\s*execute\b/i.test(m[1])) permisos++;
       }
     }
+    enteras++;
     /* Y la cuenta de la decimotercera, del mismo lugar que la regla: cuántas
        se juzgaron de este lado del límite, y cuántos renombres quedaron del
        otro, que son los que este archivo va a seguir arrastrando. */
@@ -1392,7 +1497,7 @@ if (ME_CORRIERON_A_MI) {
     for (const falla of fallas) console.error('  - ' + falla);
     console.error(
       `\n${fallas.length} ${fallas.length === 1 ? 'incumplimiento' : 'incumplimientos'}. ` +
-      'Las trece reglas están en el encabezado de este archivo, con el porqué de cada\n' +
+      'Las catorce reglas están en el encabezado de este archivo, con el porqué de cada\n' +
       'una. La RLS y la revocación van en la misma migración que crea la tabla o la\n' +
       'función, nunca en una posterior y nunca a mano desde el panel de Supabase; la\n' +
       'columna de Organización, la clave primaria y la moneda pueden llegar después,\n' +
@@ -1419,6 +1524,9 @@ if (ME_CORRIERON_A_MI) {
       'datos de antes y en toda migración anterior, que no se puede editar. Si\n' +
       'el nombre de hoy quedó mal, se agrega lo nuevo y se deja de escribir lo\n' +
       'viejo.\n' +
+      'Y toda migración entra entera o no entra: nada corta la transacción que la\n' +
+      'envuelve, y nada que no pueda correr adentro de una se escribe adentro de\n' +
+      'ella, porque eso no falla hoy sino el día que se aplica.\n' +
       'Si un caso no puede cumplirla, va a SIN_ORGANIZACION, a SIN_MONEDA, a\n' +
       'AL_ALCANCE_ANONIMO, a SIN_ORGANIZACION_EN_EL_DEPOSITO o a\n' +
       'SIN_ORGANIZACION_AL_ESCRIBIR de este mismo\n' +
@@ -1453,5 +1561,7 @@ if (ME_CORRIERON_A_MI) {
     'ninguna rehace la cuenta por su lado, y ninguna otra función la deduce. ' +
     `Y las ${quietas} migraciones desde la ${NO_SE_RENOMBRA_DESDE} no le cambian ` +
     `el nombre a nada de lo ya guardado: los ${renombres} renombres que hay son ` +
-    'todos del acomodamiento del glosario, que cerró en la 0022.');
+    'todos del acomodamiento del glosario, que cerró en la 0022. ' +
+    `Y las ${enteras} entran enteras o no entran: ninguna corta la transacción ` +
+    'que la envuelve, ni trae nada que no pueda correr adentro de una.');
 }
