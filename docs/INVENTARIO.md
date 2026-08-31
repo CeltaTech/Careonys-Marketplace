@@ -99,14 +99,31 @@ PWA y los guiones de línea de comandos.
 | `pwa-asistente/service-worker.js` | 78 | Caché para uso sin conexión de la aplicación de asistentes. Guarda también `js/texto.js`: sin él las pantallas no dibujan nada. |
 | `pwa-familia/service-worker.js` | 78 | Ídem para la de familias. |
 
-Los guiones de línea de comandos. En `scripts/` hay **51 archivos `.mjs` y uno de Python**: 29 chequeos `verificar_*`, 10 pruebas `probar_*` y doce herramientas sueltas —medidores, generadores, el módulo que comparten y el servidor de trabajo—. Acá están los que conviene conocer para trabajar; los demás no hace falta recordarlos, porque `verificar_todo.mjs` busca solo todo `verificar_*.mjs` de la carpeta y `probar_todo.mjs` lleva la lista de las pruebas que corren contra la base de esta máquina. Contado el 31 de agosto de 2026.
+Los guiones de línea de comandos.
+
+<!-- guiones: lo escribe scripts/medir_estado.mjs, no se edita a mano -->
+
+En `scripts/` hay **52 archivos `.mjs` y uno de Python**: 29 chequeos `verificar_*`, 10 pruebas `probar_*` y 13 herramientas sueltas —medidores, generadores, el módulo que comparten y el servidor de trabajo—.
+
+<!-- fin de los guiones -->
+
+Acá están los que conviene conocer para trabajar; los demás no hace falta recordarlos,
+porque `verificar_todo.mjs` busca solo todo `verificar_*.mjs` de la carpeta y
+`probar_todo.mjs` lleva la lista de las pruebas que corren contra la base de esta máquina.
+
+**Esa cuenta no se escribe a mano**, y es la que muestra mejor por qué: la escrita a mano
+decía «51 archivos `.mjs`» y «doce herramientas sueltas», con «Contado el 31 de agosto de
+2026» al lado —el mismo día en que ya eran 52 y trece, porque `scripts/listar.mjs` se
+agregó unas horas después de contar—. **Una fecha avisa de que el número pudo cambiar, no
+de que cambió.** Ahora la escribe `node scripts/medir_estado.mjs --escribir` y la compara
+antes de cada `commit` `scripts/verificar_estado.mjs`.
 
 | Archivo | Qué hace |
 |---|---|
 | `scripts/generar_manifiestos.mjs` | Escribe los dos `manifest.json` desde la identidad. Hacen falta generados porque el navegador los lee como archivo, sin pasar por ninguna página: ahí no hay JavaScript que resuelva un marcador. |
 | `scripts/verificar_copias.mjs` | Compara byte a byte los ocho archivos que viven repetidos en dos o tres carpetas y falla si alguno se separó. Cuando encuentra una diferencia dice cuál de los dos es más nuevo, para no pisar el cambio bueno. |
 | `scripts/revisar_base.mjs` | Sonda de solo lectura: pregunta qué tablas puede enumerar y leer alguien **sin sesión**, y si alguna le muestra dos Prestadoras distintas. Se corre en el momento en que la base vuelva a responder, antes de cargar el primer dato. No escribe ni borra nada, y se niega a correr contra una base que no sea la de este proyecto. |
-| `scripts/verificar_estado.mjs` | Que **las tres tablas medidas** sean las que salen de medir los archivos, y no unas escritas a mano que quedaron viejas: la de números del README, el reparto de estilos por pantalla de `docs/PENDIENTES.md` y las hojas de estilo del §5.1 de este archivo, las dos últimas entre marcas. Compara contra `scripts/medir_estado.mjs`, sin la fecha —cambia todos los días—, y también se pone en rojo si alguien saca las marcas. Se arregla con `node scripts/medir_estado.mjs --escribir`. |
+| `scripts/verificar_estado.mjs` | Que **los cuatro bloques medidos** sean los que salen de medir los archivos, y no unos escritos a mano que quedaron viejos: la tabla de números del README, el reparto de estilos por pantalla de `docs/PENDIENTES.md`, las hojas de estilo del §5.1 de este archivo y la cuenta de guiones que abre esta misma lista, los tres últimos entre marcas. Compara contra `scripts/medir_estado.mjs`, sin la fecha —cambia todos los días—, y también se pone en rojo si alguien saca las marcas. Se arregla con `node scripts/medir_estado.mjs --escribir`. |
 | `scripts/verificar_pendientes.mjs` | Falla si algún archivo del proyecto nombra «pendiente N» y ese N ya no es una fila abierta de `docs/PENDIENTES.md`, salvo que el texto diga ahí mismo que se cerró —basta el tiempo verbal: «eran el pendiente 15»—. Existe por lo del 31 de agosto de 2026: una prueba de seguridad estuvo en rojo cinco días y nadie la miró, porque su encabezado decía que el rojo era el pendiente 67 y ese pendiente ya estaba cerrado. **Una roja esperada contra un número que no existe es un permiso permanente para no mirar.** Deja afuera a propósito `docs/ALCANCE.md`, los `docs/PLAN_*.md` y las migraciones, que narran un momento con fecha. |
 | `scripts/probar_aislamiento.mjs` | Las cincuenta y dos comprobaciones de que una Prestadora no ve los datos de la otra, y de que dos Familias de la misma Prestadora tampoco se ven entre sí (la regla de la empresa «aislamiento entre Organizaciones»). Necesita las dos Prestadoras ficticias cargadas: con una sola, ver una sola no prueba nada. **Se corre con `--local`**: contra el servidor publicado el alta pide confirmar el correo y la prueba no llega a tener sesión (pendiente 45). |
 | `scripts/probar_consulta_publica.mjs` | Pregunta si una visita del portal, sin sesión, puede dejar su consulta en `avisos`. Es el mismo alta que hacen los cinco formularios de consulta. Trae su sostén —la misma fila, con una cuenta recién creada—, sin el cual una tabla cerrada para todos daría el mismo rojo y la prueba no distinguiría nada. Contestó **401 sin sesión y 403 con cuenta nueva** el 26 de agosto de 2026, y de ahí salió lo que hace `js/formulario-consulta.js`. Lee la dirección y la clave pública de la base local por `supabase status` adentro del guion, sin mostrarlas. |

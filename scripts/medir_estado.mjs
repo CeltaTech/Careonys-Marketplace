@@ -25,7 +25,7 @@
    llama `verificar_` y `scripts/verificar_todo.mjs` no lo levanta.
 =================================================== */
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve, sep, basename } from 'node:path';
 import { createHash } from 'node:crypto';
@@ -308,17 +308,46 @@ const tablaHojas =
 /* Los renglones medidos, para que `verificar_estado.mjs` los compare con los
    que están escritos en el README. La fecha no se exporta a propósito: cambia
    todos los días y compararla pondría el chequeo en rojo cada mañana. */
+/* ── Y LOS GUIONES DE `scripts/` ───────────────────────────────────
+   `docs/INVENTARIO.md` abre la lista de guiones con una frase de tres números,
+   y esa frase envejeció en menos de un día: decía «51 archivos `.mjs`» y
+   «doce herramientas sueltas» con la fecha «Contada el 31 de agosto de 2026»
+   escrita al lado, del mismo día en que ya eran 52 y trece, porque
+   `scripts/listar.mjs` se agregó después de contar. Es el caso más corto de
+   la misma regla: **el número a mano envejece en silencio, y la fecha avisa
+   de que pudo cambiar, no de que cambió.** */
+const enScripts = readdirSync(join(raiz, 'scripts'));
+const guionesMjs = enScripts.filter((n) => n.endsWith('.mjs'));
+const guionesPy = enScripts.filter((n) => n.endsWith('.py'));
+const cuantosChequeos = guionesMjs.filter((n) => n.startsWith('verificar_')).length;
+const cuantasPruebas = guionesMjs.filter((n) => n.startsWith('probar_')).length;
+const cuantasSueltas = guionesMjs.length - cuantosChequeos - cuantasPruebas;
+
+seRevisaron(guionesMjs.length, 'ningún guion en `scripts/`');
+
+const parrafoGuiones =
+  `En \`scripts/\` hay **${enEspanol(guionesMjs.length)} archivos \`.mjs\` y ` +
+  `${guionesPy.length === 1 ? 'uno' : enEspanol(guionesPy.length)} de Python**: ${enEspanol(cuantosChequeos)} chequeos ` +
+  `\`verificar_*\`, ${enEspanol(cuantasPruebas)} pruebas \`probar_*\` y ` +
+  `${enEspanol(cuantasSueltas)} herramientas sueltas —medidores, generadores, el módulo que ` +
+  'comparten y el servidor de trabajo—.\n';
+
+const renglonesFraseGuiones = parrafoGuiones.trimEnd().split('\n');
+
 /* Las dos marcas de cada tabla que va en el medio de un documento, acá y no
    escritas dos veces: `verificar_estado.mjs` busca las mismas. */
 const ABRE_REPARTO = '<!-- reparto: lo escribe scripts/medir_estado.mjs, no se edita a mano -->';
 const CIERRA_REPARTO = '<!-- fin del reparto -->';
 const ABRE_HOJAS = '<!-- hojas: lo escribe scripts/medir_estado.mjs, no se edita a mano -->';
 const CIERRA_HOJAS = '<!-- fin de las hojas -->';
+const ABRE_GUIONES = '<!-- guiones: lo escribe scripts/medir_estado.mjs, no se edita a mano -->';
+const CIERRA_GUIONES = '<!-- fin de los guiones -->';
 
 export {
   renglonesTabla, tabla,
   renglonesReparto, tablaReparto, ABRE_REPARTO, CIERRA_REPARTO,
-  renglonesHojasTabla, tablaHojas, ABRE_HOJAS, CIERRA_HOJAS
+  renglonesHojasTabla, tablaHojas, ABRE_HOJAS, CIERRA_HOJAS,
+  renglonesFraseGuiones, parrafoGuiones, ABRE_GUIONES, CIERRA_GUIONES
 };
 
 if (!corriendoSolo) {
@@ -358,61 +387,67 @@ if (despues === antes) {
   console.log(tabla);
 }
 
-/* ── Y EL DETALLE POR PANTALLA, EN docs/PENDIENTES.md ──────────────────
-   Entre dos marcas, porque acá la tabla está en el medio del archivo y no al
-   final de una sección reconocible. Si las marcas no están, se avisa y se sale
-   con error: un medidor que no encuentra dónde escribir y se calla deja la
-   tabla vieja pareciendo recién medida. */
-const dondePendientes = join(raiz, 'docs', 'PENDIENTES.md');
-const crudoP = leer(dondePendientes);
-const crlfP = crudoP.includes('\r\n');
-const antesP = crlfP ? crudoP.split('\r\n').join('\n') : crudoP;
+/* ── Y LO QUE VA EN EL MEDIO DE OTRO DOCUMENTO, ENTRE MARCAS ────────────
+   Tres bloques distintos y un solo procedimiento, que es la regla de la
+   empresa sobre el patrón repetido. Estaban escritos tres veces, y el tercero
+   se copió del segundo con un error adentro: el aviso de «faltan las marcas»
+   del reparto nombraba dos constantes que no existían, así que el día que
+   faltaran de verdad esto se hubiera caído con otro error, en el único camino
+   que nadie prueba porque sólo corre cuando algo ya está mal.
 
-const desdeP = antesP.indexOf(ABRE_REPARTO);
-const hastaP = antesP.indexOf(CIERRA_REPARTO);
-if (desdeP === -1 || hastaP === -1 || hastaP < desdeP) {
-  console.error('No se encontraron las dos marcas del reparto en docs/PENDIENTES.md,');
-  console.error('así que no se tocó. Tienen que estar, en este orden:');
-  console.error('  ' + ABRE_REPARTO);
-  console.error('  ' + CIERRA_REPARTO);
-  process.exit(1);
+   Las marcas y no el título: un título es texto que alguien puede querer
+   reescribir, y las marcas dicen para qué están. Si faltan se sale con error;
+   un medidor que no encuentra dónde escribir y se calla deja lo viejo
+   pareciendo recién medido. Y los finales de línea de Windows se devuelven
+   como estaban: cambiarlos enteros convertiría una medición en un cambio de
+   mil renglones. */
+function escribirEntreMarcas(camino, abre, cierra, contenido, comoSeLlama) {
+  const donde = join(raiz, ...camino);
+  const crudoM = leer(donde);
+  const crlfM = crudoM.includes('\r\n');
+  const antesM = crlfM ? crudoM.split('\r\n').join('\n') : crudoM;
+
+  const desde = antesM.indexOf(abre);
+  const hasta = antesM.indexOf(cierra);
+  if (desde === -1 || hasta === -1 || hasta < desde) {
+    console.error(`No se encontraron las dos marcas de ${comoSeLlama} en ${camino.join('/')},`);
+    console.error('así que no se tocó. Tienen que estar, en este orden:');
+    console.error('  ' + abre);
+    console.error('  ' + cierra);
+    process.exit(1);
+  }
+
+  const despuesM =
+    antesM.slice(0, desde + abre.length) + '\n\n' +
+    /* Un renglon en blanco de cada lado, venga el contenido con salto final o sin él:
+       si no, cada bloque queda con un espaciado distinto según quién lo armó. */
+    contenido.replace(/\n+$/, '') + '\n\n' + antesM.slice(hasta);
+  if (despuesM === antesM) {
+    console.log(`${comoSeLlama} ya estaba al día.`);
+    return;
+  }
+  writeFileSync(donde, crlfM ? despuesM.split('\n').join('\r\n') : despuesM);
+  console.log(`${comoSeLlama} al día en ${camino.join('/')}.`);
 }
 
-const despuesP =
-  antesP.slice(0, desdeP + ABRE_REPARTO.length) + '\n\n' + tablaReparto + '\n' + antesP.slice(hastaP);
-if (despuesP === antesP) {
-  console.log('La tabla del reparto ya estaba al día.');
-} else {
-  writeFileSync(dondePendientes, crlfP ? despuesP.split('\n').join('\r\n') : despuesP);
-  console.log('Tabla del reparto puesta al día en docs/PENDIENTES.md.');
-}
+escribirEntreMarcas(
+  ['docs', 'PENDIENTES.md'], ABRE_REPARTO, CIERRA_REPARTO, tablaReparto,
+  'La tabla del reparto de estilos'
+);
 
-/* ── Y LA TABLA DE LAS HOJAS, EN docs/INVENTARIO.md ────────────────────
-   La tercera. Mismo mecanismo que la anterior y por el mismo motivo: estaba
-   escrita a mano, decía «las 10 páginas de la raíz» cuando son 15 y «las 16
-   pantallas» cuando son 17, y le daba dos renglones de menos a cada
-   `styles-pwa.css`. Seis números equivocados en una tabla que nadie miraba. */
-const dondeInventario = join(raiz, 'docs', 'INVENTARIO.md');
-const crudoI = leer(dondeInventario);
-const crlfI = crudoI.includes('\r\n');
-const antesI = crlfI ? crudoI.split('\r\n').join('\n') : crudoI;
+/* La de las hojas, encontrada el 31 de agosto de 2026: estaba escrita a mano,
+   decía «las 10 páginas de la raíz» cuando son 15 y «las 16 pantallas» cuando
+   son 17, y le daba dos renglones de menos a cada `styles-pwa.css`. Seis
+   números equivocados en una tabla que nadie miraba. */
+escribirEntreMarcas(
+  ['docs', 'INVENTARIO.md'], ABRE_HOJAS, CIERRA_HOJAS, tablaHojas,
+  'La tabla de las hojas de estilo'
+);
 
-const desdeI = antesI.indexOf(ABRE_HOJAS);
-const hastaI = antesI.indexOf(CIERRA_HOJAS);
-if (desdeI === -1 || hastaI === -1 || hastaI < desdeI) {
-  console.error('No se encontraron las dos marcas de las hojas en docs/INVENTARIO.md,');
-  console.error('así que no se tocó. Tienen que estar, en este orden:');
-  console.error('  ' + ABRE_HOJAS);
-  console.error('  ' + CIERRA_HOJAS);
-  process.exit(1);
-}
-
-const despuesI =
-  antesI.slice(0, desdeI + ABRE_HOJAS.length) + '\n\n' + tablaHojas + '\n' + antesI.slice(hastaI);
-if (despuesI === antesI) {
-  console.log('La tabla de las hojas de estilo ya estaba al día.');
-} else {
-  writeFileSync(dondeInventario, crlfI ? despuesI.split('\n').join('\r\n') : despuesI);
-  console.log('Tabla de las hojas de estilo puesta al día en docs/INVENTARIO.md.');
-}
+/* Y la frase de los guiones, del mismo archivo, que envejeció en menos de un
+   día. */
+escribirEntreMarcas(
+  ['docs', 'INVENTARIO.md'], ABRE_GUIONES, CIERRA_GUIONES, parrafoGuiones.trimEnd(),
+  'La frase de los guiones'
+);
 }

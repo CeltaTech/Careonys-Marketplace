@@ -4566,6 +4566,40 @@ habla de uno que sigue abierto, y ahora hay un caso que lo comprueba.
 
 ---
 
+### El cuarto número escrito a mano estaba mal el mismo día en que se contó
+
+Ya son cuatro, y éste es el que mejor lo muestra. `docs/INVENTARIO.md` abría su lista de guiones
+diciendo que en `scripts/` había «51 archivos `.mjs`» y «doce herramientas sueltas», y cerraba con
+«Contado el 31 de agosto de 2026». Son 52 y trece, **y ya lo eran ese mismo día**: `scripts/listar.mjs`
+se escribió unas horas después de contar, y nadie volvió al párrafo.
+
+Los tres casos anteriores se podían leer como descuido acumulado —la tabla del README con cinco
+días, el reparto de estilos con casi el triple, la tabla del CSS con seis números—. Éste no deja esa
+salida: la fecha estaba puesta, era la de hoy, y el número igual era falso. **Una fecha avisa de que
+el número pudo cambiar, no de que cambió**, y quien la lee entiende justo lo contrario. Un número
+con fecha reciente es más peligroso que uno sin fecha, porque el sin fecha al menos se desconfía.
+
+Así que la frase pasó a ser el cuarto bloque que sale del medidor: `scripts/medir_estado.mjs` cuenta
+los `.mjs` de la carpeta, los separa en chequeos `verificar_*`, pruebas `probar_*` y herramientas
+sueltas, y escribe la frase entre dos marcas; `scripts/verificar_estado.mjs` la compara antes de cada
+`commit`. Se comprobó en rojo cuatro veces: cambiando un número a mano, sacando una de las marcas,
+agregando un `scripts/probar_de_mentira.mjs` —que la puso en 53 archivos y 11 pruebas— y sacando las
+marcas del reparto, que es otro bloque.
+
+**Y esa última prueba encontró algo que no buscaba.** El aviso de «faltan las marcas» estaba escrito
+dos veces, una por bloque, y la copia nombraba `ABRE` y `CIERRA`: constantes que no existen en ese
+archivo. Nunca se había notado porque **ese camino sólo corre cuando algo ya está mal**, y hasta ese
+día nada lo había estado. Si alguien hubiera sacado las marcas de verdad, el chequeo no habría dicho
+«faltan las marcas»: se habría caído con un error de programación, que es exactamente el momento en
+que uno menos quiere leer un error que no explica nada.
+
+La corrección no fue arreglar la copia sino **borrarla**: los tres bloques que escribe el medidor
+pasan hoy por una sola `escribirEntreMarcas()`, y los tres que compara el chequeo por una sola
+`compararEntreMarcas()`. Es la regla de la empresa —ningún patrón repetido sin punto único de
+verdad— cobrándose sola: el error vivía en la copia, y sin copia no hay dónde esconderlo.
+
+---
+
 ---
 
 ## 6. Deuda del código actual
