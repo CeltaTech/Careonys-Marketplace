@@ -953,6 +953,40 @@
       </div>
 
       <div class="p-16">
+        <!-- La franja de alarmas, arriba de todo lo demás.
+
+             Es lo único de esta pantalla que la Familia no tendría que buscar:
+             la lista de marcas ya está más abajo, y darse cuenta sola de que
+             una jornada quedó abierta desde anteayer es justamente el trabajo
+             que el producto promete ahorrarle (migración 0057).
+
+             Es informativa igual que la lista: no hay «aprobar», no hay
+             «reclamar», no hay total de horas y no dice que nadie haya hecho
+             algo mal —la causa puede ser un teléfono sin batería, y el
+             software no la adivina—. Dice que la marca quedó a medias, que es
+             un hecho de la propia fichada, y ofrece lo único que se puede
+             hacer con eso: preguntar.
+
+             La función devuelve `clase` como clave y no como frase; el texto
+             sale del catálogo, más abajo, en los tres idiomas. -->
+        <div id="alarmas-franja" class="mb-12">
+          <h2 class="m-0 texto-13 peso-700" id="alarmas-titulo"></h2>
+          <p class="texto-11 color-secundario m-0 mt-8 mb-12" id="alarmas-bajada"></p>
+
+          <div class="pwa-estado" id="ala-cargando"></div>
+
+          <div class="pwa-estado" id="ala-error" hidden>
+            <p id="ala-error-texto"></p>
+            <button type="button" class="btn btn-primario" id="ala-reintentar"></button>
+          </div>
+
+          <div class="pwa-estado" id="ala-vacio" hidden>
+            <p id="ala-vacio-texto"></p>
+          </div>
+
+          <div id="alarmas-lista" hidden></div>
+        </div>
+
         <p class="texto-12 color-secundario m-0 mb-12" id="asistencia-bajada"></p>
 
         <!-- El filtro por vínculo. Sus opciones las escribe el guion con la
@@ -988,6 +1022,22 @@
           </div>
           <p class="texto-11 color-secundario m-0 mt-8" data-parte="ubicacion"></p>
           <a class="texto-11 color-marca" data-parte="mapa" target="_blank" rel="noopener noreferrer"></a>
+        </div>
+      </template>
+
+      <!-- El molde de cada alarma. Mismo criterio que el de al lado: se llena
+           con `textContent`, porque el nombre lo escribió otra persona y no
+           entra como marcado. -->
+      <template id="molde-alarma">
+        <div class="fondo-superficie borde-tarjeta redondeo-16 p-16 mb-12">
+          <div class="flex alinear-centro gap-12">
+            <div class="flex-1">
+              <h5 class="m-0 texto-13 peso-700" data-parte="nombre"></h5>
+              <p class="m-0 texto-11 color-secundario" data-parte="cuando"></p>
+            </div>
+          </div>
+          <p class="texto-12 m-0 mt-8 mb-8" data-parte="motivo"></p>
+          <button type="button" class="btn btn-primario ancho-total" data-parte="ir"></button>
         </div>
       </template>
     </div>
@@ -1188,6 +1238,13 @@
       ponerTexto('asi-cargando', Catalogo.frase('asistencia.cargando'));
       ponerTexto('asi-reintentar', Catalogo.frase('asistencia.reintentar'));
       ponerTexto('asi-vacio-texto', Catalogo.frase('asistencia.vacio'));
+      // La franja de alarmas vive adentro de la misma pantalla, así que su
+      // texto fijo se escribe acá y no en otro lado.
+      ponerTexto('alarmas-titulo', Catalogo.frase('alarmas.titulo'));
+      ponerTexto('alarmas-bajada', Catalogo.frase('alarmas.bajada'));
+      ponerTexto('ala-cargando', Catalogo.frase('alarmas.cargando'));
+      ponerTexto('ala-reintentar', Catalogo.frase('alarmas.reintentar'));
+      ponerTexto('ala-vacio-texto', Catalogo.frase('alarmas.vacio'));
     }
 
     // ── Quiénes se postularon ────────────────────────────────────────────────
@@ -1511,6 +1568,100 @@
 
     document.getElementById('asi-filtro').addEventListener('change', asiDibujar);
 
+    // ── Las alarmas: lo que quedó a medias ───────────────────────────────────
+    // La franja de arriba de esta misma pantalla. Sale de `mis_alarmas()`
+    // (migración 0057) y es informativa de punta a punta: no hay «aprobar», no
+    // hay «reclamar», no hay ninguna cuenta de horas y no se dice que nadie
+    // haya hecho algo mal. Se dice que la marca quedó incompleta —que es un
+    // hecho de la propia fichada— y se ofrece lo único que se puede hacer con
+    // eso, que es preguntarle a la otra parte.
+    //
+    // Quién ve qué no lo decide esta pantalla: lo decide la función adentro,
+    // que sólo mira los vínculos de quien inició sesión.
+
+    // La clave que devuelve la base y la frase que se lee van emparejadas acá,
+    // enteras y no armadas con un `+`: el catálogo se revisa leyendo el
+    // archivo, y una clave construida a pedazos no la ve nadie desde afuera
+    // —ni para comprobar que está en los tres idiomas, ni para avisar que
+    // sobra—. Es el mismo motivo que ya está escrito arriba de
+    // `FRASE_DEL_FICHADO`, en la aplicación del Asistente.
+    const FRASE_DE_LA_ALARMA = {
+      jornada_abierta: 'alarmas.jornada_abierta',
+      salida_sin_entrada: 'alarmas.salida_sin_entrada'
+    };
+
+    function alaMostrar(cual) {
+      for (const estado of ['cargando', 'error', 'vacio']) {
+        document.getElementById('ala-' + estado).hidden = estado !== cual;
+      }
+      document.getElementById('alarmas-lista').hidden = cual !== 'listo';
+    }
+
+    function alaTarjeta(fila) {
+      const nodo = document.getElementById('molde-alarma').content.cloneNode(true);
+      const parte = (nombre) => nodo.querySelector('[data-parte="' + nombre + '"]');
+
+      // El nombre puede no venir. No se rompe nada y no se inventa ninguno: el
+      // renglón queda vacío, igual que en la lista de conversaciones.
+      parte('nombre').textContent = fila.otra_parte || '';
+
+      // La fecha y la hora las escribe `js/texto.js` en el idioma de la
+      // pantalla; acá no se arma ningún formato a mano.
+      const fecha = Texto.fechaCorta(fila.ocurrio_el);
+      const hora = Texto.horaCorta(fila.ocurrio_el);
+      parte('cuando').textContent = [fecha, hora].filter(Boolean).join(' · ');
+
+      // Los dos huecos van siempre, aunque una de las dos frases no los tenga:
+      // la que no los usa los ignora, y así el emparejamiento de arriba queda
+      // en un solo llamado.
+      //
+      const clave = FRASE_DE_LA_ALARMA[fila.clase];
+      parte('motivo').textContent = clave
+        ? Catalogo.frase(clave, { horas: fila.horas, tope: fila.tope_horas })
+        : '';
+
+      // Preguntar es abrir la conversación de ese vínculo, y nada más. Sin
+      // conversación no hay a dónde ir: se saca el botón en vez de dejar uno
+      // que no lleva a ningún lado.
+      const ir = parte('ir');
+      if (fila.conversacion_id) {
+        ir.textContent = Catalogo.frase('alarmas.ir_a_la_conversacion');
+        ir.addEventListener('click', () => posIrAMensajes(fila.conversacion_id));
+      } else {
+        ir.remove();
+      }
+
+      return nodo;
+    }
+
+    async function cargarAlarmas() {
+      alaMostrar('cargando');
+      try {
+        const filas = await ClienteDatos.misAlarmas();
+        const lista = document.getElementById('alarmas-lista');
+        while (lista.firstChild) lista.removeChild(lista.firstChild);
+        // Una clase que esta pantalla no sabe nombrar no se dibuja muda: se
+        // deja afuera. Que aparezca una quiere decir que la base sabe de algo
+        // que acá todavía no tiene frase, y el aviso queda en la consola.
+        const alarmas = (filas || []).filter((fila) => {
+          if (FRASE_DE_LA_ALARMA[fila.clase]) return true;
+          console.error('Alarma de una clase que esta pantalla no conoce:', fila.clase);
+          return false;
+        });
+        if (alarmas.length === 0) { alaMostrar('vacio'); return; }
+        alarmas.forEach((fila) => lista.appendChild(alaTarjeta(fila)));
+        alaMostrar('listo');
+      } catch (err) {
+        console.error('Alarmas de la Familia:', err);
+        const aviso = Catalogo.frase('alarmas.error');
+        document.getElementById('ala-error-texto').textContent =
+          aviso + ' ' + Texto.mensajeDeError(err, aviso);
+        alaMostrar('error');
+      }
+    }
+
+    document.getElementById('ala-reintentar').addEventListener('click', cargarAlarmas);
+
     async function cargarReportes() {
       const listEl = document.getElementById('timeline-log-list');
       // El marcado se queda acá y el texto sale del catálogo: son dos cosas
@@ -1565,6 +1716,10 @@
       }
       if (screenId === 'asistencia') {
         cargarAsistencia();
+        // La franja de alarmas es de esta misma pantalla y se pide por su
+        // lado: son dos consultas distintas, y que una falle no tiene por qué
+        // dejar sin la otra a quien mira.
+        cargarAlarmas();
       }
       // El hilo abierto se refresca solo cada pocos segundos. Al salir de la
       // pantalla se para, o el reloj sigue pidiendo contra algo que nadie mira.

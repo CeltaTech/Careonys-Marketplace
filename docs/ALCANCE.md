@@ -122,7 +122,7 @@ Cómo quedó:
   perfil (`js/apiClient.js:60`); sin sesión, el enlace elige qué directorio se muestra y nada más.
 - **Los archivos siguen la misma regla.** Ver la fila «Archivos del legajo» de arriba.
 
-Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, **ciento ocho
+Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, **ciento diecinueve
 comprobaciones, contadas y pasadas el 1 de septiembre de 2026** contra la base de esta máquina. Y
 falsificado a propósito para verificar que se pone en rojo cuando corresponde.
 
@@ -550,7 +550,7 @@ Comprobado el 24 de agosto de 2026 contra el proyecto real: el servidor tiene ap
 distancia costaba dos cosas que ya no cuestan:
 
 - **La columna del contacto existe.** La 0009 agregó `avisos.contact_info`, que es donde
-  `js/apiClient.js:1170` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
+  `js/apiClient.js:1184` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
   público de `solicitar-asistente.html` mandaba una columna que la base no tenía.
 - **Las filas de ejemplo hablan el idioma del catálogo.** La 0010 reemplazó las claves viejas de
   las cuatro filas ficticias —«enfermero» y compañía— por las que las pantallas esperan.
@@ -1569,7 +1569,7 @@ pantalla vacía.
   cargarla», que es el estado de error que faltaba.
 - **Las otras tres caen en la pantalla de acceso**, y eso ya era la verdad: sin sesión rescatada,
   lo que corresponde mostrar es el acceso. Lo que se perdía era el rastro. Ahora
-  `mockup-app.html:435` y `:909`, `pwa-asistente/index.html:964` y `pwa-familia/index.html:1079`
+  `mockup-app.html:435` y `:909`, `pwa-asistente/index.html:964` y `pwa-familia/index.html:1129`
   dejan el detalle técnico en la consola en lugar de tirarlo.
 - **`js/auth.js:292` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
   cargan ese archivo —no en las dieciséis, y el comentario decía catorce hasta que se contaron—, y su
@@ -2891,7 +2891,7 @@ ficticia y sesión simulada: el legajo se creó con fecha de alta del **1 de ene
 `update` posterior la corrió al **1 de enero de 2010**. Las dos veces la base guardó lo que le
 mandaron.
 
-**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:1080` la traduce a `fechaRegistro` y ese
+**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:1094` la traduce a `fechaRegistro` y ese
 nombre no aparece en ningún otro archivo del proyecto—, así que no había consecuencia visible. Se
 arregló igual, porque la antigüedad es exactamente la clase de dato que después se usa para ordenar
 un directorio o para decidir a quién se muestra primero, y ese día el agujero pasa a ser una
@@ -4087,7 +4087,7 @@ el **pendiente 107**.
 
 **Y lo que la opción A todavía le debe a quien la sufre.** Que la persona vea, **antes** de cambiar
 un papel, que hacerlo le baja el sello. Hoy no se puede escribir: ninguna pantalla cambia
-`documents` —el mapeo existe en `js/apiClient.js:1143` y no lo usa nadie— y el chequeo de frases se
+`documents` —el mapeo existe en `js/apiClient.js:1157` y no lo usa nadie— y el chequeo de frases se
 pone en rojo con toda frase de catálogo que ninguna pantalla nombre. La frase entra el día que
 entre la pantalla; es el **pendiente 108**.
 
@@ -4121,7 +4121,7 @@ Cerró el pendiente 94, el 31 de agosto de 2026.
   pregunta al módulo antes de enviar, y si no hay respuesta el formulario vuelve al paso 1 y lleva
   la vista al campo (`pwa-asistente/index.html:2012`).
 - **Se guarda donde se lee**: las claves van a `zonas_asistente` y el texto libre a `zonas_texto`,
-  por `js/apiClient.js:424` y `:1140`. `caregivers.zone` no la escribe más nadie, y eso abrió el
+  por `js/apiClient.js:424` y `:1154`. `caregivers.zone` no la escribe más nadie, y eso abrió el
   **pendiente 109**.
 - **Y el 109 se cerró esa misma noche, por la salida que no borra datos.** Se midió
   primero: ninguna pantalla manda `zona` ni `zonaResidencia` al escribir un legajo, así
@@ -4212,7 +4212,7 @@ sin poder correr, y eso era sólo medio cierto.** Lo que no puede correr es cont
 publicado, porque ahí el alta pide confirmar el correo y la prueba nunca llega a tener sesión.
 Contra la base de esta máquina corre entera, y el propio encabezado del guion lo dice desde que se
 escribió: `scripts/probar_aislamiento.mjs:9`. El 1 de septiembre de 2026 se corrió con `--local` y
-**pasaron las 108 comprobaciones**, incluidas las cinco que sólo existen ahí —ascender a alguien a
+**pasaron las 119 comprobaciones**, incluidas las cinco que sólo existen ahí —ascender a alguien a
 coordinador para ver si el personal lee los papeles de su Prestadora y no los de la otra, y si no
 lee ninguna de las tres tablas de la modalidad—, porque ascender pide la clave de administración y ésa
 vive nada más que en el entorno local.
@@ -4247,7 +4247,7 @@ cuenta las que hizo y busca en los cuatro documentos la frase que dice cuántas 
 letras o en cifras según el documento. Un desajuste **no** dice que el aislamiento falle —eso sería
 enseñarle a la próxima persona a desconfiar del mensaje—: el veredicto del aislamiento sale
 primero y completo, y el desajuste sale después, como nota al pie, diciendo que se corrige el
-documento y no la prueba. El código del añadido está en `scripts/probar_aislamiento.mjs:1933`.
+documento y no la prueba. El código del añadido está en `scripts/probar_aislamiento.mjs:2114`.
 
 **Comprobado en los dos sentidos**, como pide la regla de la casa: con `docs/INVENTARIO.md` falseado
 a propósito la prueba sale con código 1 y nombra el archivo y la frase que buscó; con el número
@@ -4908,7 +4908,7 @@ que las otras dos, que la limpieza se la lleva.
 escribe nadie: ni una pantalla, ni un guion, ni una prueba. Lo que sí pasa es que
 `registrar-asistente.html:996-1000` sube el documento de identidad, los antecedentes penales y el
 título, y guarda **sólo los caminos** en la columna `documents` de `caregivers`
-(`registrar-asistente.html:1057`, y de ahí a la base por `js/apiClient.js:1143`). O sea que hay
+(`registrar-asistente.html:1057`, y de ahí a la base por `js/apiClient.js:1157`). O sea que hay
 dos formas de guardar el mismo hecho y una está muerta, como ya pasó con `messages` y las
 `conversaciones` heredadas. Y la que quedó viva es la pobre: la tabla dedicada tiene `tipo`,
 `presentado_el`, `vencimiento` y `verificado`, y el objeto de `documents` no tiene ninguno de los

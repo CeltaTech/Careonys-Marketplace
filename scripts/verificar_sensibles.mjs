@@ -105,6 +105,14 @@ const PARAMETROS_DE_LA_DIRECCION = new Map([
    copias; los valores, los argumentos exactos. Un argumento nuevo en el mismo
    archivo se planta igual. */
 const REGISTROS_PERDONADOS = new Map([
+  ['index', {
+    valores: ['fila.clase'],
+    motivo: 'es la clase de una alarma —`jornada_abierta` o `salida_sin_entrada`—, ' +
+      'que es una clave del vocabulario que escribe la propia migración 0057 y no ' +
+      'un dato de ninguna persona. Se imprime cuando la base manda una clase que ' +
+      'la pantalla todavía no sabe nombrar, y sin verla el aviso no sirve para ' +
+      'agregarle la frase que le falta'
+  }],
   ['catalogo', {
     valores: ['escrito'],
     motivo: 'es el texto crudo del atributo `data-huecos` cuando no es un JSON ' +

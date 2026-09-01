@@ -1140,6 +1140,51 @@
       "en": "Try again",
       "pt-BR": "Tentar de novo"
     },
+    "alarmas.titulo": {
+      "es-AR": "Algo quedó a medias",
+      "en": "Something is unfinished",
+      "pt-BR": "Algo ficou pela metade"
+    },
+    "alarmas.bajada": {
+      "es-AR": "{{producto}} avisa cuando una marca quedó incompleta. No dice que alguien haya hecho algo mal: puede ser un teléfono sin batería. Quien decide qué hacer es usted.",
+      "en": "{{producto}} lets you know when a record is incomplete. It does not mean anyone did anything wrong — it could be a phone that ran out of battery. What to do about it is your call.",
+      "pt-BR": "{{producto}} avisa quando um registro ficou incompleto. Não quer dizer que alguém tenha feito algo errado: pode ser um telefone sem bateria. Quem decide o que fazer é você."
+    },
+    "alarmas.cargando": {
+      "es-AR": "Revisando las marcas…",
+      "en": "Checking the records…",
+      "pt-BR": "Revisando os registros…"
+    },
+    "alarmas.error": {
+      "es-AR": "No se pudo revisar si quedó algo a medias.",
+      "en": "It was not possible to check for unfinished records.",
+      "pt-BR": "Não foi possível verificar se algo ficou pela metade."
+    },
+    "alarmas.reintentar": {
+      "es-AR": "Reintentar",
+      "en": "Try again",
+      "pt-BR": "Tentar de novo"
+    },
+    "alarmas.vacio": {
+      "es-AR": "No hay nada a medias. Todas las entradas tienen su salida.",
+      "en": "Nothing is unfinished. Every clock-in has its clock-out.",
+      "pt-BR": "Não há nada pela metade. Todas as entradas têm sua saída."
+    },
+    "alarmas.jornada_abierta": {
+      "es-AR": "Entró y no marcó la salida. Van {horas} horas, y el tope de esta Prestadora es {tope}.",
+      "en": "Clocked in and never clocked out. It has been {horas} hours, and this Provider's limit is {tope}.",
+      "pt-BR": "Entrou e não registrou a saída. Já são {horas} horas, e o limite desta Prestadora é {tope}."
+    },
+    "alarmas.salida_sin_entrada": {
+      "es-AR": "Marcó la salida sin haber marcado la entrada.",
+      "en": "Clocked out without having clocked in.",
+      "pt-BR": "Registrou a saída sem ter registrado a entrada."
+    },
+    "alarmas.ir_a_la_conversacion": {
+      "es-AR": "Preguntarle",
+      "en": "Ask about it",
+      "pt-BR": "Perguntar"
+    },
     "asistencia.filtro_todas": {
       "es-AR": "Todos los vínculos",
       "en": "All connections",

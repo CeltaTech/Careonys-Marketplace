@@ -995,6 +995,20 @@ const ClienteDatos = {
     return await this._supabaseRequest('GET', 'clock_ins', null, filtro);
   },
 
+  // Lo que la aplicación detecta que quedó incompleto en las fichadas de los
+  // vínculos de quien mira (migración 0057). Sirve a los dos lados: la Familia
+  // ve las de sus vínculos y el Asistente las suyas, y **quién ve qué lo
+  // decide la función adentro**, no esta llamada.
+  //
+  // Cada fila trae `clase` —`jornada_abierta` o `salida_sin_entrada`—, que es
+  // una clave y no una frase: el texto sale del catálogo y se traduce. Y no
+  // trae ningún juicio sobre la persona: dice que la marca quedó a medias, que
+  // es un hecho de la propia fichada. El software no sabe del trato y no puede
+  // decir que alguien faltó.
+  async misAlarmas() {
+    return await this._supabaseRequest('POST', 'rpc/mis_alarmas', {}) || [];
+  },
+
   // --- INTEGRACIÓN REST DE SUPABASE ---
   async _supabaseRequest(method, table, data = null, queryParams = {}) {
     const urlObj = new URL(`${this.supabaseUrl}/rest/v1/${table}`);

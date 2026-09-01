@@ -189,6 +189,27 @@
         suelta, y al lado se mira que las dos partes sí vean la suya. (Sólo
         con --local, por lo mismo que 15 y 16.)
 
+   Y sobre la alarma que sale de esas fichadas (migración 0057), que es lo
+   único que el producto promete avisar y no decidir.
+
+    69. Con cinco marcas cargadas a propósito —una jornada que cerró, una
+        salida sin entrada delante, una entrada vieja que nunca cerró y una
+        recién marcada— salen **exactamente dos** alarmas: la vieja abierta y
+        la salida huérfana. Las otras tres no alarman, y cada una prueba una
+        cosa distinta: que una jornada cerrada no molesta, y que el tope de
+        horas gobierna de verdad —sin él, la entrada de recién también
+        saldría—.
+    70. El Asistente ve las mismas dos, que son de su propio vínculo.
+    71. Otra Familia de la misma Prestadora no ve ninguna, y al lado se mira
+        que la del vínculo sí: si no, «cero» no distingue negado de vacío.
+    72. La alarma no trae ningún dato de contacto de nadie.
+    73. El personal de la Prestadora no ve ninguna alarma, y al lado se mira
+        que las dos partes sí. Mirar si una jornada quedó abierta es mirar los
+        horarios que cumple una persona. (Sólo con --local.)
+    74. El tope de horas lo escribe el personal de la Prestadora y no lo tocan
+        ni la Familia ni el Asistente, que tampoco lo leen.
+    75. Y sin sesión, `mis_alarmas()` no contesta.
+
    Los números de arriba son los puntos, no las comprobaciones: varias corren
    adentro de un bucle y salen más renglones que llamadas. Por eso, al final,
    la prueba **cuenta las que hizo y revisa los documentos que dicen cuántas
@@ -1836,6 +1857,166 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
         delPersonal.length === 0 && deLaFamilia.length > 0 && delAsistente.length > 0,
         'personal ' + delPersonal.length + '   Familia ' + deLaFamilia.length +
         '   Asistente ' + delAsistente.length);
+    }
+  }
+
+  // ── 69 a 75: la alarma que sale de esas fichadas, migración 0057 ──────
+  console.log('');
+  console.log('La alarma: avisa, y no decide');
+  {
+    /* Las cuatro marcas que siguen se cargan con la fecha puesta a mano, y es
+       la única forma de que esta prueba pueda fallar: la alarma de la jornada
+       abierta recién existe pasado el tope de horas, y una fichada marcada
+       ahora nunca lo pasa. `created_at` tiene valor por omisión pero se puede
+       escribir, y la política no mira esa columna.
+
+       Quedan, en orden, sobre el mismo vínculo y con la de «ahora» que ya dejó
+       el bloque anterior:
+
+         -100h  entrada   cierra con la de -99h        no alarma
+          -99h  salida    tiene su entrada delante     no alarma
+          -72h  salida    no tiene ninguna delante     ALARMA
+          -48h  entrada   nunca cerró, y pasó el tope  ALARMA
+          ahora entrada   nunca cerró, pero no lo pasó  no alarma
+
+       Son dos, y ni una más. Cada una de las tres que no alarman prueba algo
+       distinto: la de -100h que una jornada cerrada no molesta, la de -99h que
+       la salida con entrada delante tampoco, y la de «ahora» que el tope
+       gobierna de verdad —sin él serían tres—. */
+    const haceHoras = (h) => new Date(Date.now() - h * 3600 * 1000).toISOString();
+    const marcar = async (tipo, horas) => {
+      const { estado } = await rest('/rest/v1/clock_ins', {
+        method: 'POST',
+        body: JSON.stringify({
+          caregiver_id: asistenteUno.legajoId,
+          latitude: -34.6037,
+          longitude: -58.3816,
+          event_type: tipo,
+          conversacion_id: familiaDelAviso.conversacionId,
+          created_at: haceHoras(horas)
+        })
+      }, asistenteUno.token);
+      return estado;
+    };
+    const cargadas = [
+      await marcar('entrada', 100),
+      await marcar('salida',   99),
+      await marcar('salida',   72),
+      await marcar('entrada',  48)
+    ];
+    comprobar('Se cargan cuatro marcas fechadas a mano, para que la alarma pueda fallar',
+      cargadas.every((e) => e === 201), 'respuestas ' + cargadas.join(','));
+
+    const clases = (filas) => filas.map((f) => f.clase).sort().join(',');
+
+    // 69. La Familia ve exactamente dos, y son las dos que tienen que ser.
+    const deLaFamilia = await llamar(familiaDelAviso, 'mis_alarmas', {});
+    comprobar('La Familia ve las dos alarmas, y ninguna de las otras tres marcas',
+      deLaFamilia.estado === 200 &&
+      clases(deLaFamilia.filas) === 'jornada_abierta,salida_sin_entrada',
+      'respuesta ' + deLaFamilia.estado + ', ' + deLaFamilia.filas.length +
+      ' alarma(s): ' + (clases(deLaFamilia.filas) || 'ninguna'));
+
+    /* Y que la vieja sea la vieja, no la de recién: si la alarma saliera de la
+       última entrada, la comprobación de arriba daría verde igual. */
+    {
+      const abierta = deLaFamilia.filas.find((f) => f.clase === 'jornada_abierta');
+      comprobar('Y la jornada abierta que avisa es la vieja, no la que se marcó recién',
+        !!abierta && abierta.horas >= 47 && abierta.horas <= 49,
+        abierta ? 'lleva ' + abierta.horas + ' horas, tope ' + abierta.tope_horas
+                : 'no vino ninguna');
+    }
+
+    // 70. El Asistente ve las mismas dos.
+    {
+      const delAsistente = await llamar(asistenteUno, 'mis_alarmas', {});
+      comprobar('El Asistente ve las mismas dos, que son de su propio vínculo',
+        delAsistente.estado === 200 &&
+        clases(delAsistente.filas) === 'jornada_abierta,salida_sin_entrada',
+        delAsistente.filas.length + ' alarma(s)');
+    }
+
+    // 71. Otra Familia de la misma Prestadora no ve ninguna.
+    {
+      const deLaAjena = await llamar(familiaAjena, 'mis_alarmas', {});
+      comprobar('Otra Familia de la misma Prestadora no ve ninguna alarma, y la del vínculo sí',
+        deLaAjena.filas.length === 0 && deLaFamilia.filas.length > 0,
+        'la ajena ve ' + deLaAjena.filas.length + ', la del vínculo ve ' +
+        deLaFamilia.filas.length);
+    }
+
+    // 72. Y no sale ningún dato de contacto por ahí.
+    {
+      const filtradas = colar(deLaFamilia.filas, [CONTACTO_DEL_AVISO]);
+      comprobar('La alarma no trae ningún dato de contacto de nadie',
+        filtradas.length === 0 && deLaFamilia.filas.length > 0,
+        filtradas.length ? filtradas.join('   ')
+          : 'columnas: ' + Object.keys(deLaFamilia.filas[0] || {}).join(','));
+    }
+
+    // 73. El personal de la Prestadora no ve ninguna.
+    if (!coordinador) {
+      console.log('   (salteada) la alarma vista por el personal de la Prestadora:');
+      console.log('              hacen falta permisos que sólo están en el entorno local.');
+    } else {
+      const delPersonal = await llamar(coordinador, 'mis_alarmas', {});
+      comprobar('El personal de la Prestadora no ve ninguna alarma, y la Familia sí',
+        delPersonal.filas.length === 0 && deLaFamilia.filas.length > 0,
+        'personal ' + delPersonal.filas.length + '   Familia ' + deLaFamilia.filas.length);
+    }
+
+    // 74. El tope es de la Prestadora, y de nadie más.
+    {
+      const topesDe = async (quien) => {
+        const { estado, cuerpo } = await rest(
+          '/rest/v1/alarmas_prestadora?select=id,tenant_id,horas_jornada_abierta',
+          {}, quien.token);
+        return { estado, filas: Array.isArray(cuerpo) ? cuerpo : [] };
+      };
+      const escribir = async (quien, horas) => {
+        const { estado } = await rest(
+          '/rest/v1/alarmas_prestadora?tenant_id=eq.' + familiaDelAviso.prestadora.id,
+          { method: 'PATCH', body: JSON.stringify({ horas_jornada_abierta: horas }) },
+          quien.token);
+        return estado;
+      };
+
+      const deLaFamiliaTope   = await topesDe(familiaDelAviso);
+      const delAsistenteTope  = await topesDe(asistenteUno);
+      comprobar('Ni la Familia ni el Asistente leen el tope de horas',
+        deLaFamiliaTope.filas.length === 0 && delAsistenteTope.filas.length === 0,
+        'Familia ' + deLaFamiliaTope.filas.length +
+        '   Asistente ' + delAsistenteTope.filas.length);
+
+      /* Un PATCH que no alcanza ninguna fila contesta 204 igual que uno que sí:
+         no alcanza con mirar el número. Se pregunta después si el valor cambió,
+         y esa pregunta la contesta quien sí lo puede leer. */
+      await escribir(familiaDelAviso, 99);
+      await escribir(asistenteUno, 98);
+      if (!coordinador) {
+        console.log('   (salteada) la escritura del tope por el personal de la Prestadora:');
+        console.log('              hacen falta permisos que sólo están en el entorno local.');
+      } else {
+        const antes = await topesDe(coordinador);
+        comprobar('El personal de la Prestadora lee el tope, y sigue en el de fábrica',
+          antes.filas.length === 1 && antes.filas[0].horas_jornada_abierta === 16,
+          antes.filas.length ? 'dice ' + antes.filas[0].horas_jornada_abierta
+                             : 'no lee ninguna fila');
+        const cambio = await escribir(coordinador, 24);
+        const despues = await topesDe(coordinador);
+        comprobar('Y es el único que lo cambia',
+          cambio < 400 && despues.filas.length === 1 &&
+          despues.filas[0].horas_jornada_abierta === 24,
+          'respuesta ' + cambio + ', quedó en ' +
+          (despues.filas[0] ? despues.filas[0].horas_jornada_abierta : 'nada'));
+      }
+    }
+
+    // 75. Sin sesión no contesta.
+    {
+      const { estado } = await llamar(null, 'mis_alarmas', {});
+      comprobar('Sin sesión no se llama a mis_alarmas()',
+        estado >= 400, 'respuesta ' + estado);
     }
   }
 }
