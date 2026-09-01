@@ -40,6 +40,24 @@ mismo: un trato entre esas dos partes.
 **Ninguna búsqueda mezcla Asistentes de dos Prestadoras**, en ninguna modalidad y en ninguna
 pantalla. Si una consulta parece necesitarlo, está mal planteada.
 
+**El software no sabe del trato, y es a propósito.** Decidido por el Desarrollador el 31 de
+agosto de 2026: no se guarda ningún contrato, ningún precio acordado, ninguna condición y ninguna
+aceptación. **La finalidad es mantener a la Prestadora completamente afuera de la relación laboral
+y comercial entre la Familia y el Asistente, para que nadie pueda alegar relación de dependencia
+con ella.** Lo que sí queda guardado es **el contacto**, que es el hecho por el que la Prestadora
+cobra: quién contactó a quién, por cuál de los dos caminos y cuándo.
+
+**Y lo operativo sí lo acompaña, que es cosa distinta.** Precisado el mismo día: el producto
+ofrece sus programas para llevar el servicio, **en carácter informativo y sin tomar ninguna
+decisión**. Facilita el control de asistencia y la comunicación entre las partes, **no interviene
+en la gestión**, y **avisa a la Familia** cuando detecta que algo no está bien.
+
+**De ahí sale quién mira cada cosa, y no es opinable.** La fichada y el reporte de cuidado son de
+la Familia y del Asistente: son la herramienta que usan ellos. **La Prestadora no los mira**, ni
+uno ni otro, porque mirar los horarios que cumple una persona y lo que hizo en cada jornada es
+dirigir el trabajo, que es justo lo que esta modalidad evita. Lo que la Prestadora sí controla es
+**quién entra**: el legajo, las verificaciones y la validación del Aspirante.
+
 **Lo que este producto no es.** No es prestación directa: ahí la Prestadora dirige el trabajo, le
 cobra a la Familia, le paga al Asistente y se queda con el margen. Es otro modelo, y no es éste.
 `docs/modelo_de_negocios_prestadora.md` lo describe así y **arranca con una advertencia de que
