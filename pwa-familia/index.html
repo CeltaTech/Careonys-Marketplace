@@ -1686,15 +1686,31 @@
           item.className = 'log-item';
           let iconClass = 'fa-check';
           if (log.blood_pressure) iconClass = 'fa-heartbeat';
-          const timeStr = log.created_at ? Texto.horaCorta(log.created_at) + ' hs' : 'Recién';
+          /* La hora sale de `Texto.horaCorta`, que ya le da la forma del
+             idioma de la pantalla; el «hs» que venía pegado atrás era
+             castellano escrito a mano sobre una hora que en inglés termina
+             en «PM». Y las tres etiquetas de la línea chica son las mismas
+             que rotulan el formulario donde el Asistente cargó el dato, así
+             que salen de las mismas claves: dos textos para una sola cosa se
+             despegan el día que alguien corrige uno. */
+          const timeStr = log.created_at
+            ? Texto.horaCorta(log.created_at)
+            : Catalogo.frase('reporte.recien');
+          const titulo = log.blood_pressure
+            ? Catalogo.frase('reporte.tipo_signos')
+            : Catalogo.frase('reporte.tipo_nota');
+          const presion   = Catalogo.frase('reporte.presion');
+          const glucemia  = Catalogo.frase('reporte.glucemia');
+          const remedios  = Catalogo.frase('reporte.medicamentos');
+          const sinDato   = Catalogo.frase('reporte.sin_dato');
           item.innerHTML = `
             <div class="log-dot"><i class="fas ${iconClass}" style="font-size:8px;color:var(--marca-prestadora-acento);"></i></div>
             <div class="log-content">
-              <span class="time">${timeStr}</span>
-              <h5>${log.blood_pressure ? 'Control de Signos Vitales' : 'Nota de Cuidado'}</h5>
+              <span class="time">${Texto.escapar(timeStr)}</span>
+              <h5>${Texto.escapar(titulo)}</h5>
               <p>${Texto.escapar(log.daily_notes)}</p>
-              ${log.blood_pressure ? `<p style="margin-top:4px;font-size:11px;color:var(--azul-medio-texto);">🩺 P.A.: ${Texto.escapar(log.blood_pressure)} | Glucemia: ${Texto.escapar(log.glycemia || 'N/A')}</p>` : ''}
-              ${log.medications_administered ? `<p style="margin-top:2px;font-size:10px;color:var(--verde-exito-texto);">💊 Medicamento: ${Texto.escapar(log.medications_administered)}</p>` : ''}
+              ${log.blood_pressure ? `<p style="margin-top:4px;font-size:11px;color:var(--azul-medio-texto);">🩺 ${Texto.escapar(presion)}: ${Texto.escapar(log.blood_pressure)} | ${Texto.escapar(glucemia)}: ${Texto.escapar(log.glycemia || sinDato)}</p>` : ''}
+              ${log.medications_administered ? `<p style="margin-top:2px;font-size:10px;color:var(--verde-exito-texto);">💊 ${Texto.escapar(remedios)}: ${Texto.escapar(log.medications_administered)}</p>` : ''}
             </div>
           `;
           listEl.appendChild(item);

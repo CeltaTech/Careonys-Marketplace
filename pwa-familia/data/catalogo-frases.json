@@ -2901,6 +2901,26 @@
       "en": "Save Entry",
       "pt-BR": "Salvar Registro"
     },
+    "reporte.recien": {
+      "es-AR": "Recién",
+      "en": "Just now",
+      "pt-BR": "Agora mesmo"
+    },
+    "reporte.tipo_signos": {
+      "es-AR": "Control de signos vitales",
+      "en": "Vital signs check",
+      "pt-BR": "Controle de sinais vitais"
+    },
+    "reporte.tipo_nota": {
+      "es-AR": "Nota de cuidado",
+      "en": "Care note",
+      "pt-BR": "Nota de cuidado"
+    },
+    "reporte.sin_dato": {
+      "es-AR": "sin dato",
+      "en": "no data",
+      "pt-BR": "sem dado"
+    },
     "_____________________________________________": "── El registro de legajo desde el teléfono, los cinco pasos ──",
     "legajo.titulo": {
       "es-AR": "Registro de Legajo Digital",
