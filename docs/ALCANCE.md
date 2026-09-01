@@ -4175,7 +4175,7 @@ Salió el 31 de agosto de 2026, al ir a comprobar lo del pendiente 94.
   estos archivos no se imprime una sola letra**, sólo la posición, porque `js/auth.js` es
   justamente el que una vez llevó una clave a la pantalla.
 - **No entra en los veintiséis chequeos** a propósito: necesita red y necesita que el despliegue
-  haya terminado, así que va al cerrar, después del `push`. Queda escrito en `CLAUDE.md:80`.
+  haya terminado, así que va al cerrar, después del `push`. Queda escrito en `CLAUDE.md:115`.
 
 ---
 
@@ -5230,7 +5230,7 @@ no envejece.
 Dos reglas dicen lo mismo desde hace tiempo. La de la empresa: «Los catálogos salen de la base. Una
 lista de opciones nunca se escribe adentro de una pantalla». La del producto, más filosa, porque
 dice qué queda cuando no se cumple: «Cada lista de opciones que hoy esté escrita adentro de un
-componente es una tabla que alguien no creó» (`CLAUDE.md:42`). Y hasta ahora no había nada que las
+componente es una tabla que alguien no creó» (`CLAUDE.md:77`). Y hasta ahora no había nada que las
 hiciera cumplir.
 
 Medido antes de escribir nada, sobre las 17 pantallas: seis `<option>` en total. Uno vive adentro

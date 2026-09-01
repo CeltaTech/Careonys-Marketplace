@@ -11,7 +11,42 @@
 >
 > Si una regla está escrita arriba, acá no se escribe. Si aparece repetida, se borra de acá.
 
-## 1. Este producto es exploratorio, y qué permite
+## 1. Qué es este producto, y quién hace qué
+
+> **Se lee antes que todo lo demás.** Está acá porque este archivo se carga solo, y porque
+> perder este modelo de vista fue el error que más tiempo costó: la línea de comandos lo fue a
+> buscar a documentos de diseño viejos en vez de tenerlo presente.
+
+**Careonys Marketplace es la modalidad de este producto**: un mercado de cuidado domiciliario que
+vive **adentro de una Prestadora**. Muchos que ofrecen y muchos que buscan, todos de la misma
+Organización.
+
+| Actor | Qué hace |
+|---|---|
+| **Prestadora** | La empresa cliente, dueña del espacio. Decide **quién entra**: audita el legajo, valida al Aspirante y publica su perfil. Cobra su comisión |
+| **Familia** | Busca cuidado: compara perfiles, o publica un aviso |
+| **Asistente** | Ofrece su trabajo: se publica en el directorio, o se postula a un aviso |
+
+**El trato lo cierran la Familia y el Asistente. La Prestadora no reparte trabajo.** Decidido por
+el Desarrollador el 23 y el 24 de agosto de 2026 —`docs/ALCANCE.md` «Los muchos que ofrecen son
+los Asistentes, nunca las Prestadoras», y la definición aprobada de la modalidad en
+`docs/GLOSARIO.md`: la Familia **busca, compara, elige y contrata, en vez de recibir una
+asignación**.
+
+**Los dos caminos del mercado, y son los dos.** La Familia publica un aviso y los Asistentes se
+postulan; o la Familia mira el directorio, compara perfiles y contacta. Los dos terminan en lo
+mismo: un trato entre esas dos partes.
+
+**Ninguna búsqueda mezcla Asistentes de dos Prestadoras**, en ninguna modalidad y en ninguna
+pantalla. Si una consulta parece necesitarlo, está mal planteada.
+
+**Lo que este producto no es.** No es prestación directa: ahí la Prestadora dirige el trabajo, le
+cobra a la Familia, le paga al Asistente y se queda con el margen. Es otro modelo, y no es éste.
+`docs/modelo_de_negocios_prestadora.md` lo describe así y **arranca con una advertencia de que
+tiene una decisión sin resolver**: no se toma de ahí el modelo vigente. **Si cualquier documento
+dice que la Prestadora asigna trabajo, gana esta sección.**
+
+## 2. Este producto es exploratorio, y qué permite
 
 **La base no tiene datos reales y se rehace entera cuantas veces haga falta.** Eso permite
 equivocarse barato y hay que aprovecharlo: con datos inventados se puede **intentar romper el
@@ -20,7 +55,7 @@ aislamiento a propósito**, mientras el error no le cuesta nada a nadie.
 **Lo que no se relaja.** Explorar el producto no es explorar el rigor. Lo que se relaje ahora se
 paga en la fusión, y la seguridad no se relaja nunca.
 
-## 2. El vocabulario de este producto
+## 3. El vocabulario de este producto
 
 El glosario es el de los dos productos y **no se copia acá**. Lo único propio está en
 `docs/GLOSARIO.md`: los términos que este producto necesita y que allá no existen. Cuando los
@@ -31,7 +66,7 @@ parte de una palabra compuesta. El valor ya está guardado en tres tablas de Car
 otra cosa. **El término técnico es `modalidad`** y el nombre visible «modalidad de este producto»;
 «Careonys Marketplace» sigue siendo el nombre comercial. Decidido el 2026-08-24.
 
-## 3. Lo propio de este producto en el desarrollo
+## 4. Lo propio de este producto en el desarrollo
 
 **`prestadora_id` en toda tabla con datos de una Organización, aunque hoy siempre valga lo
 mismo.** Es lo que hace que la fusión futura sea una actualización y no una migración.
@@ -72,7 +107,7 @@ antes de escribir una tabla**, no después.
   reparto de `docs/MODULOS.md`.
 - Ya pasó lo que esto evita: `apiClient.js` está **triplicado byte a byte** (pendiente 13).
 
-## 4. Protocolo de sesión
+## 5. Protocolo de sesión
 
 **Al iniciar**, además de los tres archivos de arriba: `docs/GLOSARIO.md`, `docs/PENDIENTES.md` y
 `docs/ALCANCE.md`.
