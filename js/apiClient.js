@@ -548,13 +548,20 @@ const ClienteDatos = {
     return filas && filas[0] ? filas[0].id : null;
   },
 
+  // `conversacionId` es opcional y dice **para qué vínculo** fue esta jornada.
+  // Marcada, la Familia de ese vínculo ve la fichada; sin marcar, la ve el
+  // Asistente y nadie más, que es lo único que se podía hacer hasta la
+  // migración 0056. No se manda la clave cuando no hay vínculo, para no
+  // escribir un nulo donde la columna ya tiene su valor por omisión.
   async registrarFichadoGPS(fichadoData) {
-    return await this._supabaseRequest('POST', 'clock_ins', {
+    const fila = {
       caregiver_id: fichadoData.caregiverId,
       latitude: fichadoData.latitude || fichadoData.lat,
       longitude: fichadoData.longitude || fichadoData.lng,
       event_type: fichadoData.tipoEvent || fichadoData.event_type || fichadoData.estado
-    });
+    };
+    if (fichadoData.conversacionId) fila.conversacion_id = fichadoData.conversacionId;
+    return await this._supabaseRequest('POST', 'clock_ins', fila);
   },
 
   async registrarReporte(entryData) {
@@ -965,6 +972,27 @@ const ClienteDatos = {
       contenido: limpio
     });
     return (fila && fila[0]) || null;
+  },
+
+  // Las fichadas que quien mira tiene derecho a ver, de la más nueva a la más
+  // vieja. **Quién ve qué no lo decide esta función**: lo decide la RLS de
+  // `clock_ins` (migración 0056), que le da al Asistente las suyas y a la
+  // Familia las de sus vínculos. La misma llamada sirve a los dos lados, y por
+  // eso no lleva ningún filtro de persona: uno escrito acá no protegería nada
+  // —se saltea mandando el pedido a mano— y encima ocultaría que la barrera
+  // está abajo.
+  //
+  // `conversacionId` acota a un vínculo; sin él vienen todos. `desde` es una
+  // fecha en formato ISO y trae sólo lo posterior.
+  async fichadasDelVinculo(conversacionId, desde) {
+    const filtro = {
+      select: 'id,caregiver_id,conversacion_id,event_type,latitude,longitude,created_at',
+      order: 'created_at.desc',
+      limit: '200'
+    };
+    if (conversacionId) filtro['conversacion_id'] = `eq.${conversacionId}`;
+    if (desde) filtro['created_at'] = `gte.${desde}`;
+    return await this._supabaseRequest('GET', 'clock_ins', null, filtro);
   },
 
   // --- INTEGRACIÓN REST DE SUPABASE ---

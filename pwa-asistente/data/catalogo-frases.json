@@ -1080,6 +1080,86 @@
       "en": "GPS permission denied",
       "pt-BR": "Permissão de GPS negada"
     },
+    "fichado.para_quien": {
+      "es-AR": "¿Para quién es esta jornada?",
+      "en": "Who is this shift for?",
+      "pt-BR": "Para quem é este turno?"
+    },
+    "fichado.sin_vinculo": {
+      "es-AR": "Sin decir para quién",
+      "en": "Not saying who for",
+      "pt-BR": "Sem dizer para quem"
+    },
+    "fichado.vinculos_cargando": {
+      "es-AR": "Buscando con quién habló…",
+      "en": "Looking up who you have spoken with…",
+      "pt-BR": "Procurando com quem você falou…"
+    },
+    "fichado.vinculos_error": {
+      "es-AR": "No se pudo traer la lista. La jornada se puede marcar igual.",
+      "en": "The list could not be loaded. The shift can still be recorded.",
+      "pt-BR": "Não foi possível carregar a lista. O turno pode ser registrado mesmo assim."
+    },
+    "fichado.sin_vinculos": {
+      "es-AR": "Todavía no habló con ninguna Familia. La jornada se marca igual.",
+      "en": "You have not spoken with any Family yet. The shift is recorded anyway.",
+      "pt-BR": "Você ainda não falou com nenhuma Família. O turno é registrado mesmo assim."
+    },
+    "fichado.aclaracion_vinculo": {
+      "es-AR": "Si dice para quién, esa Familia ve la marca. Es informativo: nadie decide nada con esto.",
+      "en": "If you say who for, that Family sees the record. It is informational: nobody decides anything with it.",
+      "pt-BR": "Se você disser para quem, essa Família vê o registro. É informativo: ninguém decide nada com isso."
+    },
+    "asistencia.titulo": {
+      "es-AR": "Asistencia",
+      "en": "Attendance",
+      "pt-BR": "Presença"
+    },
+    "asistencia.bajada": {
+      "es-AR": "Las entradas y salidas que marcó cada Asistente. Es informativo: {{producto}} muestra lo que se marcó y no decide nada.",
+      "en": "The clock-ins and clock-outs each Assistant recorded. It is informational: {{producto}} shows what was recorded and decides nothing.",
+      "pt-BR": "As entradas e saídas que cada Assistente registrou. É informativo: {{producto}} mostra o que foi registrado e não decide nada."
+    },
+    "asistencia.cargando": {
+      "es-AR": "Buscando las marcas…",
+      "en": "Loading records…",
+      "pt-BR": "Procurando os registros…"
+    },
+    "asistencia.error": {
+      "es-AR": "No se pudieron traer las marcas.",
+      "en": "The records could not be loaded.",
+      "pt-BR": "Não foi possível carregar os registros."
+    },
+    "asistencia.vacio": {
+      "es-AR": "Todavía no hay ninguna marca. Aparecen acá cuando el Asistente marca su entrada diciendo que la jornada es para usted.",
+      "en": "There are no records yet. They appear here when the Assistant clocks in and says the shift is for you.",
+      "pt-BR": "Ainda não há nenhum registro. Eles aparecem aqui quando o Assistente registra a entrada dizendo que o turno é para você."
+    },
+    "asistencia.reintentar": {
+      "es-AR": "Reintentar",
+      "en": "Try again",
+      "pt-BR": "Tentar de novo"
+    },
+    "asistencia.filtro_todas": {
+      "es-AR": "Todos los vínculos",
+      "en": "All connections",
+      "pt-BR": "Todos os vínculos"
+    },
+    "asistencia.con_ubicacion": {
+      "es-AR": "Con ubicación",
+      "en": "With location",
+      "pt-BR": "Com localização"
+    },
+    "asistencia.sin_ubicacion": {
+      "es-AR": "Sin ubicación",
+      "en": "Without location",
+      "pt-BR": "Sem localização"
+    },
+    "asistencia.ver_mapa": {
+      "es-AR": "Ver en el mapa",
+      "en": "View on the map",
+      "pt-BR": "Ver no mapa"
+    },
     "reporte.falta_texto": {
       "es-AR": "Escriba un reporte o una nota del cuidado.",
       "en": "Please write a report or a care note.",

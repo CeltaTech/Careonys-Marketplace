@@ -171,6 +171,24 @@
         desde que existen, porque PostgREST publica el esquema `public`: la
         migración le revoca `anon`, y acá se comprueba que el revoque esté.
 
+   Y sobre la fichada atada al vínculo (migración 0056), que es la mitad
+   operativa: el software muestra lo que se marcó y no decide nada.
+
+    64. El Asistente marca una fichada diciendo para qué vínculo es, y la
+        Familia de ese vínculo la ve.
+    65. Otra Familia de la misma Prestadora no la ve, y al lado se mira que la
+        Familia del vínculo sí: si no, «cero» no distingue negado de vacío.
+    66. Una fichada **sin** vínculo no la ve ninguna Familia, y el Asistente
+        que la marcó sí. Es la que se podía marcar antes de la 0056, y no se
+        le abre a nadie por haberla dejado sin marcar.
+    67. El Asistente no puede colgar una fichada de una conversación ajena. Si
+        pudiera, le haría aparecer a una Familia una jornada que no es de su
+        Asistente, que es justo el aviso equivocado que esta mitad promete no
+        dar. Lo rechaza la base, no la pantalla.
+    68. El personal de la Prestadora no lee ninguna fichada, ni la atada ni la
+        suelta, y al lado se mira que las dos partes sí vean la suya. (Sólo
+        con --local, por lo mismo que 15 y 16.)
+
    Los números de arriba son los puntos, no las comprobaciones: varias corren
    adentro de un bucle y salen más renglones que llamadas. Por eso, al final,
    la prueba **cuenta las que hizo y revisa los documentos que dicen cuántas
@@ -1730,6 +1748,96 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
       abiertas.length === 0,
       abiertas.length ? abiertas.join('   ') : 'las cuatro niegan a anon');
   }
+
+  // ── 64 a 68: la fichada atada al vínculo, migración 0056 ─────────────
+  console.log('');
+  console.log('La mitad operativa: la fichada que la Familia sí ve');
+  {
+    const fichar = async (quien, tipo, conversacionId) => {
+      const fila = {
+        caregiver_id: quien.legajoId,
+        latitude: -34.6037,
+        longitude: -58.3816,
+        event_type: tipo
+      };
+      if (conversacionId) fila.conversacion_id = conversacionId;
+      const { estado, cuerpo } = await rest('/rest/v1/clock_ins', {
+        method: 'POST',
+        headers: { Prefer: 'return=representation' },
+        body: JSON.stringify(fila)
+      }, quien.token);
+      return { estado, fila: Array.isArray(cuerpo) ? cuerpo[0] : null };
+    };
+    const fichadasDe = (quien) =>
+      filasDe(quien, 'clock_ins', 'id,caregiver_id,conversacion_id,event_type,tenant_id');
+
+    /* Las dos que siguen son el control positivo de todo el bloque: sin ellas
+       cargadas, «la Familia ajena ve cero» lo daría igual una tabla vacía. */
+    const atada = await fichar(asistenteUno, 'entrada', familiaDelAviso.conversacionId);
+    comprobar('El Asistente marca una entrada diciendo para qué vínculo es',
+      atada.estado === 201 && atada.fila &&
+      atada.fila.conversacion_id === familiaDelAviso.conversacionId,
+      'respuesta ' + atada.estado);
+
+    const suelta = await fichar(asistenteUno, 'salida', null);
+    comprobar('Y marca otra sin decir para quién, que es lo que se podía hacer antes',
+      suelta.estado === 201 && suelta.fila && !suelta.fila.conversacion_id,
+      'respuesta ' + suelta.estado);
+
+    // 64. La Familia del vínculo ve la atada.
+    {
+      const deLaFamilia = await fichadasDe(familiaDelAviso);
+      const ids = deLaFamilia.map((f) => f.id);
+      comprobar('La Familia del vínculo ve la fichada que lleva su vínculo',
+        ids.includes(atada.fila.id),
+        've ' + deLaFamilia.length + ' fichada(s)');
+
+      // 66. Y no ve la suelta, que quedó sin decir para quién.
+      comprobar('Y no ve la que se marcó sin vínculo, aunque sea del mismo Asistente',
+        !ids.includes(suelta.fila.id),
+        'la suelta ' + (ids.includes(suelta.fila.id) ? 'se coló' : 'no aparece'));
+    }
+
+    // 65. Otra Familia de la misma Prestadora no ve ninguna de las dos.
+    {
+      const deLaAjena   = await fichadasDe(familiaAjena);
+      const deLaFamilia = await fichadasDe(familiaDelAviso);
+      comprobar('Otra Familia de la misma Prestadora no ve ninguna fichada, y la del vínculo sí',
+        deLaAjena.length === 0 && deLaFamilia.length > 0,
+        'la ajena ve ' + deLaAjena.length + ', la del vínculo ve ' + deLaFamilia.length);
+    }
+
+    // 66 (la otra mitad). El Asistente ve las dos suyas.
+    {
+      const delAsistente = await fichadasDe(asistenteUno);
+      const ids = delAsistente.map((f) => f.id);
+      comprobar('El Asistente ve las dos suyas, la atada y la suelta',
+        ids.includes(atada.fila.id) && ids.includes(suelta.fila.id),
+        've ' + delAsistente.length + ' fichada(s)');
+    }
+
+    // 67. Y no puede colgar una de una conversación ajena.
+    {
+      const ajena = await fichar(segundoAsistente, 'entrada', familiaDelAviso.conversacionId);
+      comprobar('Un Asistente no cuelga su fichada de una conversación que no es suya',
+        ajena.estado >= 400,
+        'respuesta ' + ajena.estado);
+    }
+
+    // 68. El personal de la Prestadora no lee ninguna.
+    if (!coordinador) {
+      console.log('   (salteada) la del personal de la Prestadora: hacen falta permisos');
+      console.log('              de administración, que sólo están en el entorno local.');
+    } else {
+      const delPersonal  = await fichadasDe(coordinador);
+      const deLaFamilia  = await fichadasDe(familiaDelAviso);
+      const delAsistente = await fichadasDe(asistenteUno);
+      comprobar('El personal de la Prestadora no lee ninguna fichada, y las dos partes sí',
+        delPersonal.length === 0 && deLaFamilia.length > 0 && delAsistente.length > 0,
+        'personal ' + delPersonal.length + '   Familia ' + deLaFamilia.length +
+        '   Asistente ' + delAsistente.length);
+    }
+  }
 }
 
 // --- Limpieza ---------------------------------------------------------------
@@ -1853,6 +1961,11 @@ function enLetras(n) {
   }
   if (ESPECIALES[n]) return ESPECIALES[n];
   const d = Math.floor(n / 10), u = n % 10;
+  // Por debajo del diez no hay decena, y el «y» es de la decena: sin esta
+  // rama, ciento ocho salía «ciento  y ocho». Antes no aparecía nunca, porque
+  // las comprobaciones se contaban de veinte para arriba y el resto de la
+  // centena recién existe desde que pasaron el cien.
+  if (d === 0) return UNIDADES[u];
   return u === 0 ? CENTENAS[d] : CENTENAS[d] + ' y ' + UNIDADES[u];
 }
 

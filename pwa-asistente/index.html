@@ -118,7 +118,7 @@
     }
     .form-group-pwa { margin-bottom: 12px; text-align: left; }
     .form-group-pwa label { display: block; font-size: 11px; font-weight: 700; color: var(--texto-secundario); margin-bottom: 4px; }
-    .form-group-pwa input, .form-group-pwa textarea {
+    .form-group-pwa input, .form-group-pwa select, .form-group-pwa textarea {
       width: 100%; padding: 8px 12px; border-radius: 8px;
       border: 1.5px solid var(--borde-card); font-size: 13px; box-sizing: border-box;
     }
@@ -380,6 +380,23 @@
         <h4 class="m-0 texto-15 color-titulo peso-800" data-frase="asistente.fichador">Fichador GPS Laboral</h4>
         <p id="gps-status" class="m-solo-arriba-4 texto-12 color-secundario"
            data-frase="asistente.fichador_bajada">Presione para marcar entrada o salida en el domicilio.</p>
+        <!-- PARA QUÉ VÍNCULO ES LA JORNADA
+             Opcional a propósito (migración 0056): si se elige una Familia, esa
+             Familia ve la marca; si no se elige ninguna, la ve el Asistente y
+             nadie más, que es lo único que se podía hacer hasta esa migración.
+             La Prestadora no la ve en ningún caso.
+             Los tres estados que no son «listo» los dice el renglón
+             `gps-vinculo-estado`, y ninguno apaga los botones de abajo: no
+             decir para quién es una respuesta válida. -->
+        <div class="form-group-pwa mt-16">
+          <label for="gps-vinculo" data-frase="fichado.para_quien">¿Para quién es esta jornada?</label>
+          <select id="gps-vinculo">
+            <option value="" data-frase="fichado.sin_vinculo">Sin decir para quién</option>
+          </select>
+          <p class="m-solo-arriba-4 texto-11 color-secundario" id="gps-vinculo-estado" hidden></p>
+          <p class="m-solo-arriba-4 texto-11 color-secundario"
+             data-frase="fichado.aclaracion_vinculo">Si dice para quién, esa Familia ve la marca. Es informativo: nadie decide nada con esto.</p>
+        </div>
         <div class="gps-actions">
           <button class="btn-gps fondo-azul-medio" id="btn-gps-in"
                   data-frase="asistente.marcar_entrada">Marcar Entrada</button>
@@ -1492,6 +1509,9 @@
 
       // Las pantallas que leen de la base se llenan al entrar, no al arrancar
       // la aplicación: quien nunca abre capacitaciones no le pide nada a nadie.
+      // Los vínculos que puede nombrar la fichada viven en el inicio, que es
+      // donde está el fichador. `vinCargar` se guarda de pedirlos dos veces.
+      if (screenId === 'dashboard') vinCargar();
       if (screenId === 'capacitaciones') capCargar();
       if (screenId === 'guias') guiCargar();
       if (screenId === 'avisos') avCargar();
@@ -1530,6 +1550,79 @@
       }
     }
 
+    // ── Para qué vínculo es la jornada ─────────────
+    // La fichada puede decir **para quién** fue, y entonces esa Familia la ve
+    // (migración 0056). Lo que ata a las dos personas es la conversación, que es
+    // el único lugar del software donde consta que esas dos partes se
+    // encontraron: no dice que hayan arreglado nada ni en qué condiciones.
+    //
+    // Es opcional a propósito, y de ahí sale cómo se portan los cuatro estados:
+    // ni la lista que todavía no llegó, ni la que falló, ni la que vino vacía le
+    // impiden a nadie marcar la jornada. Por eso acá no se toca ningún botón de
+    // fichado —los apaga `fichadoEnCurso`, y por el fichado en el aire, nunca
+    // por esta lista— y lo único que se apaga es el desplegable, que sin lista
+    // no tiene nada para elegir.
+
+    // Los tres estados que se cuentan con un renglón de texto. El cuarto —listo—
+    // apaga ese renglón y prende el desplegable, así que no lleva frase. Cada
+    // clave se escribe entera y no armada con un `+`, por lo mismo que
+    // `FRASE_DEL_FICHADO`: una clave hecha a pedazos no la ve nadie desde
+    // afuera, ni para comprobar que está en los tres idiomas ni para avisar que
+    // sobra.
+    const FRASE_DEL_VINCULO = {
+      cargando: 'fichado.vinculos_cargando',
+      error: 'fichado.vinculos_error',
+      vacio: 'fichado.sin_vinculos'
+    };
+
+    function vinMostrar(cual) {
+      const renglon = document.getElementById('gps-vinculo-estado');
+      const clave = FRASE_DEL_VINCULO[cual];
+      renglon.textContent = clave ? Catalogo.frase(clave) : '';
+      renglon.hidden = !clave;
+      document.getElementById('gps-vinculo').disabled = cual !== 'listo';
+    }
+
+    // La primera opción —marcar sin decir para quién— es parte de la pantalla y
+    // no de los datos: queda siempre, ya traducida, y es la que está elegida al
+    // entrar. Se borra de la segunda en adelante. El nombre de la otra parte
+    // sale de la fila y se escribe como texto, nunca como marcado.
+    function vinDibujar(conversaciones) {
+      const selector = document.getElementById('gps-vinculo');
+      while (selector.options.length > 1) selector.remove(1);
+      for (const conversacion of conversaciones) {
+        const opcion = document.createElement('option');
+        opcion.value = conversacion.id;
+        opcion.textContent = conversacion.otra_parte || '';
+        selector.appendChild(opcion);
+      }
+    }
+
+    // Se pide una sola vez, al entrar al inicio, y no en cada fichado: la lista
+    // de vínculos no cambia entre apretar entrada y apretar salida.
+    let vinPedidos = false;
+
+    async function vinCargar() {
+      if (vinPedidos) return;
+      vinPedidos = true;
+      vinMostrar('cargando');
+      try {
+        const conversaciones = await ClienteDatos.misConversaciones();
+        if (!conversaciones || conversaciones.length === 0) { vinMostrar('vacio'); return; }
+        vinDibujar(conversaciones);
+        vinMostrar('listo');
+      } catch (err) {
+        // El detalle crudo a la consola. A la pantalla, el renglón del catálogo,
+        // que además aclara que la jornada se marca igual.
+        console.error('Vínculos para el fichado del Asistente:', err);
+        vinMostrar('error');
+        // Y se vuelve a intentar la próxima vez que se entre al inicio: este
+        // desplegable no tiene botón de reintento propio, y dejarlo pedido para
+        // siempre lo apagaría hasta que alguien recargue la aplicación.
+        vinPedidos = false;
+      }
+    }
+
     // ── Fichado GPS ────────────────────────────────
     // «todo botón que dispara una operación se apaga»: mientras un fichado está en el aire, los dos botones se apagan. No es
     // un detalle: esperar al GPS puede tardar varios segundos, en ese rato el botón
@@ -1563,6 +1656,11 @@
     async function ficharGPS(tipo) {
       const statusEl = document.getElementById('gps-status');
       const nombreTipo = Catalogo.frase(FRASE_DEL_FICHADO[tipo]);
+      // Para qué vínculo es esta jornada, leído en el momento en que se aprieta
+      // y no cuando vuelve el GPS. Vacío es una respuesta válida y es la que
+      // viene elegida: ahí la fichada se guarda sin vínculo y no la ve nadie
+      // más que quien la marcó.
+      const conversacionId = document.getElementById('gps-vinculo').value;
       statusEl.textContent = Catalogo.frase('fichado.buscando');
       if (!navigator.geolocation) {
         alert(Catalogo.frase('fichado.sin_soporte'));
@@ -1580,7 +1678,9 @@
           // para que lo rechace la base.
           const caregiverId = await ClienteDatos.legajoPropio();
           if (!caregiverId) throw new Error(Catalogo.frase('fichado.sin_legajo'));
-          await ClienteDatos.registrarFichadoGPS({ caregiverId, lat, lng, event_type: tipo });
+          await ClienteDatos.registrarFichadoGPS({
+            caregiverId, lat, lng, event_type: tipo, conversacionId
+          });
           const norte = lat.toFixed(5);
           const este = lng.toFixed(5);
           const hora = Texto.horaCorta(new Date());

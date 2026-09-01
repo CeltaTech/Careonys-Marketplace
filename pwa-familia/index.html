@@ -567,6 +567,7 @@
         <a class="drawer-menu-item" href="../directorio.html"><i class="fas fa-search ancho-20 color-secundario"></i> Buscar Asistente</a>
         <a class="drawer-menu-item" onclick="navigate('postulaciones')"><i class="fas fa-inbox ancho-20 color-secundario"></i> <span id="menu-postulaciones"></span></a>
         <a class="drawer-menu-item" onclick="navigate('conversacion')"><i class="fas fa-comments ancho-20 color-secundario"></i> <span id="menu-mensajes"></span></a>
+        <a class="drawer-menu-item" onclick="navigate('asistencia')"><i class="fas fa-clock ancho-20 color-secundario"></i> <span id="menu-asistencia"></span></a>
         <a class="drawer-menu-item" onclick="navigate('reportes')"><i class="fas fa-book-medical ancho-20 color-secundario"></i> Reportes de cuidado</a>
         <a class="drawer-menu-item" href="../cursos.html"><i class="fas fa-graduation-cap ancho-20 color-secundario"></i> Cursos</a>
         <a class="drawer-menu-item" href="../soporte-remoto.html"><i class="fas fa-headset ancho-20 color-secundario"></i> Acompañamiento Online</a>
@@ -926,6 +927,71 @@
       </div>
     </div>
 
+    <!-- 7. VISTA: ASISTENCIA -->
+    <!-- La mitad operativa que el producto promete acompañar, y nada más que
+         eso. Acá la Familia ve las entradas y las salidas que marcó su
+         Asistente, tal como quedaron marcadas.
+
+         Es informativa de punta a punta: no hay «aprobar», no hay «rechazar» y
+         no hay ninguna cuenta de horas. El software no conoce el trato entre las
+         dos partes —no guarda ninguna condición ni ningún precio—, así que
+         sumar jornadas sería inventar un número sobre algo que no sabe. Muestra
+         lo que se marcó, y quien decide qué hacer con eso son las partes.
+
+         Quién ve qué no lo decide esta pantalla: lo decide la RLS de
+         `clock_ins` (migración 0056), que le da a la Familia las marcas de sus
+         vínculos y a nadie más. El personal de la Prestadora tampoco las ve.
+
+         El texto sale del catálogo desde el guion, como en el resto de esta
+         aplicación: el marcado no declara ninguna frase porque la mudanza
+         entera es el pendiente 9. -->
+    <div class="app-screen" id="screen-asistencia">
+      <div class="app-header">
+        <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
+        <h1 id="asistencia-titulo"></h1>
+        <div class="ancho-24"></div>
+      </div>
+
+      <div class="p-16">
+        <p class="texto-12 color-secundario m-0 mb-12" id="asistencia-bajada"></p>
+
+        <!-- El filtro por vínculo. Sus opciones las escribe el guion con la
+             lista de conversaciones, y cambiarlo vuelve a dibujar lo que ya
+             está en memoria: no se le pide nada más a la base. -->
+        <select id="asi-filtro"
+          class="ancho-total p-9-12 redondeo-10 borde-tarjeta-15 texto-13 caja-borde fondo-superficie-hundida mb-12" hidden></select>
+
+        <div class="pwa-estado" id="asi-cargando"></div>
+
+        <div class="pwa-estado" id="asi-error" hidden>
+          <p id="asi-error-texto"></p>
+          <button type="button" class="btn btn-primario" id="asi-reintentar"></button>
+        </div>
+
+        <div class="pwa-estado" id="asi-vacio" hidden>
+          <p id="asi-vacio-texto"></p>
+        </div>
+
+        <div id="asistencia-lista" hidden></div>
+      </div>
+
+      <!-- El molde de cada marca. Se llena con `textContent`: el nombre lo
+           escribió otra persona, así que no entra como marcado. -->
+      <template id="molde-marca">
+        <div class="fondo-superficie borde-tarjeta redondeo-16 p-16 mb-12">
+          <div class="flex alinear-centro gap-12">
+            <div class="flex-1">
+              <h5 class="m-0 texto-13 peso-700" data-parte="nombre"></h5>
+              <p class="m-0 texto-11 color-secundario" data-parte="cuando"></p>
+            </div>
+            <span class="texto-11 peso-700 color-marca" data-parte="tipo"></span>
+          </div>
+          <p class="texto-11 color-secundario m-0 mt-8" data-parte="ubicacion"></p>
+          <a class="texto-11 color-marca" data-parte="mapa" target="_blank" rel="noopener noreferrer"></a>
+        </div>
+      </template>
+    </div>
+
   </div>
 
   <!-- JS LOCAL (dentro del scope del Service Worker) -->
@@ -1113,6 +1179,15 @@
       ponerTexto('pos-vacio-bajada', Catalogo.frase('postulaciones.vacio_bajada'));
       ponerTexto('conversacion-titulo', Catalogo.frase('conversacion.titulo'));
       ponerTexto('conversacion-bajada', Catalogo.frase('conversacion.bajada'));
+      // La Asistencia no tiene clave propia en el menú: el destino se llama
+      // igual que la pantalla, así que se pide la misma frase en vez de
+      // inventar una segunda que después haya que corregir en dos lados.
+      ponerTexto('menu-asistencia', Catalogo.frase('asistencia.titulo'));
+      ponerTexto('asistencia-titulo', Catalogo.frase('asistencia.titulo'));
+      ponerTexto('asistencia-bajada', Catalogo.frase('asistencia.bajada'));
+      ponerTexto('asi-cargando', Catalogo.frase('asistencia.cargando'));
+      ponerTexto('asi-reintentar', Catalogo.frase('asistencia.reintentar'));
+      ponerTexto('asi-vacio-texto', Catalogo.frase('asistencia.vacio'));
     }
 
     // ── Quiénes se postularon ────────────────────────────────────────────────
@@ -1257,6 +1332,7 @@
     }
 
     document.getElementById('pos-reintentar').addEventListener('click', cargarPostulaciones);
+    document.getElementById('asi-reintentar').addEventListener('click', cargarAsistencia);
 
     // ── Los mensajes ─────────────────────────────────────────────────────────
     // La pantalla no dibuja nada: monta `js/conversacion.js` sobre su caja
@@ -1313,6 +1389,128 @@
       }
     }
 
+    // ── La asistencia: las marcas de entrada y de salida ─────────────────────
+    // Informativa y nada más. Se muestra lo que el Asistente marcó, sin ninguna
+    // cuenta encima: el software no conoce el trato entre las partes.
+    //
+    // La marca trae `caregiver_id` y no el nombre, así que el nombre sale de las
+    // conversaciones —el vínculo es el único lugar donde consta que esas dos
+    // partes se encontraron— y las dos listas se cruzan acá por
+    // `conversacion_id`. Se traen las dos de una sola vez: filtrar después es
+    // trabajo del navegador y no vuelve a molestar a la base.
+    let asiMarcas = [];
+    let asiNombres = new Map();
+
+    function asiMostrar(cual) {
+      for (const estado of ['cargando', 'error', 'vacio']) {
+        document.getElementById('asi-' + estado).hidden = estado !== cual;
+      }
+      document.getElementById('asistencia-lista').hidden = cual !== 'listo';
+      // El filtro se esconde mientras se busca y si algo falló; con la lista
+      // vacía se deja a la vista, porque el vacío puede ser del filtro elegido y
+      // sin él no habría cómo volver a todos los vínculos.
+      document.getElementById('asi-filtro').hidden = cual === 'cargando' || cual === 'error';
+    }
+
+    // Las opciones del filtro: primero todos los vínculos, y después uno por
+    // conversación. El nombre lo escribió otra persona: entra por `textContent`.
+    function asiOpciones(conversaciones) {
+      const filtro = document.getElementById('asi-filtro');
+      while (filtro.firstChild) filtro.removeChild(filtro.firstChild);
+      const todas = document.createElement('option');
+      todas.value = '';
+      todas.textContent = Catalogo.frase('asistencia.filtro_todas');
+      filtro.appendChild(todas);
+      conversaciones.forEach((conversacion) => {
+        const opcion = document.createElement('option');
+        opcion.value = conversacion.id;
+        opcion.textContent = conversacion.otra_parte || '';
+        filtro.appendChild(opcion);
+      });
+    }
+
+    function asiTarjeta(marca) {
+      const nodo = document.getElementById('molde-marca').content.cloneNode(true);
+      const parte = (nombre) => nodo.querySelector('[data-parte="' + nombre + '"]');
+
+      // Sin nombre no se dibuja un renglón en blanco: se saca el renglón.
+      const nombre = asiNombres.get(marca.conversacion_id) || '';
+      if (nombre) parte('nombre').textContent = nombre;
+      else parte('nombre').remove();
+
+      // Entrada o salida, con las frases que ya usa el fichador del Asistente.
+      parte('tipo').textContent = marca.event_type === 'salida'
+        ? Catalogo.frase('fichado.salida')
+        : Catalogo.frase('fichado.entrada');
+
+      // La fecha y la hora las escribe `js/texto.js` en el idioma de la
+      // pantalla; acá no se arma ningún formato a mano.
+      const fecha = Texto.fechaCorta(marca.created_at);
+      const hora = Texto.horaCorta(marca.created_at);
+      parte('cuando').textContent = [fecha, hora].filter(Boolean).join(' · ');
+
+      // La ubicación es opcional: el Asistente puede haber marcado sin permiso
+      // de ubicación, y eso no es una falta. Se dice cuál de las dos cosas pasó.
+      const mapa = parte('mapa');
+      const lat = marca.latitude;
+      const lon = marca.longitude;
+      if (lat === null || lat === undefined || lon === null || lon === undefined) {
+        parte('ubicacion').textContent = Catalogo.frase('asistencia.sin_ubicacion');
+        mapa.remove();
+      } else {
+        parte('ubicacion').textContent = Catalogo.frase('asistencia.con_ubicacion');
+        mapa.href = 'https://www.openstreetmap.org/?mlat=' + encodeURIComponent(lat)
+          + '&mlon=' + encodeURIComponent(lon)
+          + '#map=17/' + encodeURIComponent(lat) + '/' + encodeURIComponent(lon);
+        mapa.textContent = Catalogo.frase('asistencia.ver_mapa');
+      }
+
+      return nodo;
+    }
+
+    // Dibuja lo que ya está en memoria con el vínculo que esté elegido. No pide
+    // nada: cambiar el filtro no es traer datos de nuevo.
+    function asiDibujar() {
+      const lista = document.getElementById('asistencia-lista');
+      while (lista.firstChild) lista.removeChild(lista.firstChild);
+      const elegido = document.getElementById('asi-filtro').value;
+      const marcas = elegido
+        ? asiMarcas.filter((marca) => marca.conversacion_id === elegido)
+        : asiMarcas;
+      if (marcas.length === 0) { asiMostrar('vacio'); return; }
+      marcas.forEach((marca) => lista.appendChild(asiTarjeta(marca)));
+      asiMostrar('listo');
+    }
+
+    async function cargarAsistencia() {
+      asiMostrar('cargando');
+      try {
+        const [conversaciones, marcas] = await Promise.all([
+          ClienteDatos.misConversaciones(),
+          ClienteDatos.fichadasDelVinculo()
+        ]);
+        await Catalogo.cargar();
+        asiNombres = new Map();
+        (conversaciones || []).forEach((conversacion) => {
+          asiNombres.set(conversacion.id, conversacion.otra_parte || '');
+        });
+        // Una marca sin vínculo no tiene de quién ser acá: la RLS no se la da a
+        // ninguna Familia, y si igual llegara no se sabría a quién nombrarle.
+        asiMarcas = (marcas || []).filter((marca) => marca.conversacion_id);
+        asiOpciones(conversaciones || []);
+        if (asiMarcas.length === 0) { asiMostrar('vacio'); return; }
+        asiDibujar();
+      } catch (err) {
+        console.error('Asistencia de la Familia:', err);
+        const aviso = Catalogo.frase('asistencia.error');
+        document.getElementById('asi-error-texto').textContent =
+          aviso + ' ' + Texto.mensajeDeError(err, aviso);
+        asiMostrar('error');
+      }
+    }
+
+    document.getElementById('asi-filtro').addEventListener('change', asiDibujar);
+
     async function cargarReportes() {
       const listEl = document.getElementById('timeline-log-list');
       // El marcado se queda acá y el texto sale del catálogo: son dos cosas
@@ -1364,6 +1562,9 @@
       }
       if (screenId === 'postulaciones') {
         cargarPostulaciones();
+      }
+      if (screenId === 'asistencia') {
+        cargarAsistencia();
       }
       // El hilo abierto se refresca solo cada pocos segundos. Al salir de la
       // pantalla se para, o el reloj sigue pidiendo contra algo que nadie mira.
