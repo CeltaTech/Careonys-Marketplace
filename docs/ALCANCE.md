@@ -4247,7 +4247,7 @@ cuenta las que hizo y busca en los cuatro documentos la frase que dice cuántas 
 letras o en cifras según el documento. Un desajuste **no** dice que el aislamiento falle —eso sería
 enseñarle a la próxima persona a desconfiar del mensaje—: el veredicto del aislamiento sale
 primero y completo, y el desajuste sale después, como nota al pie, diciendo que se corrige el
-documento y no la prueba. El código del añadido está en `scripts/probar_aislamiento.mjs:2139`.
+documento y no la prueba. El código del añadido está en `scripts/probar_aislamiento.mjs:2177`.
 
 **Comprobado en los dos sentidos**, como pide la regla de la casa: con `docs/INVENTARIO.md` falseado
 a propósito la prueba sale con código 1 y nombra el archivo y la frase que buscó; con el número

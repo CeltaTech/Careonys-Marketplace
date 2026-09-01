@@ -50,13 +50,34 @@ import { join, resolve, sep } from 'node:path';
    difiere se cuenta aparte y se dice cuántas. */
 const FECHAS = /^'\d{4}-\d{2}-\d{2} \d{2}:\d{2}/;
 
-/* Tablas cuyo identificador se puede leer por una clave que sí es estable. */
+/* Un `uuid`, para saber si una clave natural todavía tiene adentro un
+   identificador que nadie resolvió. */
+const ES_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/* Tablas cuyo identificador se puede leer por una clave que sí es estable.
+   Cuando el valor es una lista, la clave está hecha de varias columnas.
+
+   Las tres últimas se agregaron el 1 de septiembre de 2026, y lo que arreglan
+   se veía a simple vista: la comparación devolvía 216 filas «que la base
+   publicada no tiene» y las mismas 216 «que ninguna migración carga». Eran las
+   mismas filas contadas dos veces. No se emparejaban porque adentro llevaban
+   un `uuid` que cada base genera distinto —el del vocabulario, el de la zona—,
+   así que el contenido era idéntico y la huella no. Cuatrocientos treinta y dos
+   renglones de ruido que hay que leer enteros para descubrir que no dicen nada,
+   y detrás de los cuales una diferencia de verdad pasa desapercibida. */
 const NATURALES = {
   tenants: 'slug',
   cursos: 'clave',
   evaluaciones: 'clave',
   preguntas_evaluacion: 'clave',
   opciones_pregunta: 'clave',
+  vocabularios: 'clave',
+  zonas_cobertura: 'nombre',
+  // La clave de un vocabulario no es única por sí sola: «femenino» está en el
+  // vocabulario de sexo y también en el de preferencia. Hace falta el
+  // vocabulario, que a su vez es un `uuid` hasta que la vuelta anterior lo
+  // resuelve, y por eso `porClaveNatural` repite.
+  vocabulario_items: ['vocabulario_id', 'clave'],
 };
 
 /** Parte los `INSERT INTO ... VALUES` en `{ tabla: { columnas, filas } }`. */
@@ -97,17 +118,41 @@ function partir(fila) {
   return campos;
 }
 
-/** El diccionario que cambia cada `uuid` generado por su clave natural. */
+/** El diccionario que cambia cada `uuid` generado por su clave natural.
+ *
+ *  Da más de una vuelta, y se detiene cuando el diccionario deja de crecer.
+ *  Una vuelta sola no alcanza porque una clave natural puede estar hecha de un
+ *  identificador que recién se resuelve en la vuelta anterior: un renglón de
+ *  vocabulario se nombra por su vocabulario más su clave, y el vocabulario es
+ *  un `uuid` hasta que el mapa lo cambia por el suyo.
+ *
+ *  Y mientras alguna parte de la clave siga siendo un `uuid` sin resolver, la
+ *  fila se saltea en vez de nombrarse a medias: un nombre con un `uuid` adentro
+ *  sale distinto en cada base, que es exactamente el problema que esto viene a
+ *  sacar. */
 function porClaveNatural(tablas) {
   const mapa = new Map();
-  for (const [tabla, clave] of Object.entries(NATURALES)) {
-    const t = tablas[tabla];
-    if (!t || !t.columnas.includes(clave)) continue;
-    const i = t.columnas.indexOf('id');
-    const n = t.columnas.indexOf(clave);
-    for (const fila of t.filas) {
-      const c = partir(fila);
-      mapa.set(c[i].replace(/'/g, ''), `<${tabla}.${c[n].replace(/'/g, '')}>`);
+  let antes = -1;
+  while (mapa.size !== antes) {
+    antes = mapa.size;
+    for (const [tabla, clave] of Object.entries(NATURALES)) {
+      const t = tablas[tabla];
+      if (!t) continue;
+      const partes = Array.isArray(clave) ? clave : [clave];
+      if (!t.columnas.includes('id')) continue;
+      if (!partes.every((columna) => t.columnas.includes(columna))) continue;
+      const i = t.columnas.indexOf('id');
+      for (const fila of t.filas) {
+        const c = partir(fila);
+        const propio = c[i].replace(/'/g, '');
+        if (mapa.has(propio)) continue;
+        const nombre = partes.map((columna) => {
+          const crudo = c[t.columnas.indexOf(columna)].replace(/'/g, '');
+          return mapa.get(crudo) ?? crudo;
+        });
+        if (nombre.some((parte) => ES_UUID.test(parte))) continue;
+        mapa.set(propio, `<${tabla}.${nombre.join('.')}>`);
+      }
     }
   }
   return mapa;

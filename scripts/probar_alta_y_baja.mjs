@@ -61,14 +61,27 @@ if (!secreto) {
 }
 
 /* La de administración sirve para una sola cosa: borrar al final la Prestadora
-   que creó la prueba. Sin ella la prueba corre igual y avisa que dejó la fila. */
+   que creó la prueba.
+
+   Hasta el 1 de septiembre de 2026, sin ella la prueba corría igual y avisaba
+   al terminar que dejaba la fila. Eso es pedirle a quien la corre que se
+   acuerde de limpiar a mano lo que el guion ensució solo, y no se acordó
+   nadie: quedó «prestadora-de-prueba-de-la-puerta» en la base publicada con
+   sus siete filas de configuración, y hubo que sacarla con una migración, la
+   0058. Así que ahora **sin llave no arranca**. Avisar que se va a ensuciar no
+   es lo mismo que no ensuciar. */
 let claveServicio;
 try {
   const ref = new URL(servidor).hostname.split('.')[0];
   const salida = execFileSync('npx', ['supabase', 'projects', 'api-keys',
     '--project-ref', ref, '-o', 'env'], { cwd: raiz, encoding: 'utf8', shell: true });
   claveServicio = (salida.match(/^SUPABASE_SERVICE_ROLE_KEY="?([^"\s]+)/m) || [])[1];
-} catch { /* se sigue sin ella */ }
+} catch { /* se contesta acá abajo */ }
+if (!claveServicio) {
+  console.error('Sin la llave de administración esta prueba crearía una Prestadora que');
+  console.error('después no puede borrar, y la dejaría en la base. No arranca.');
+  process.exit(1);
+}
 
 console.log('Servidor: ' + new URL(servidor).hostname);
 console.log('Puerta:   /functions/v1/alta-y-baja\n');

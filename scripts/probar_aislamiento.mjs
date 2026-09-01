@@ -370,15 +370,59 @@ const base = url.replace(/\/$/, '');
 console.log('Servidor: ' + new URL(url).hostname);
 console.log('');
 
+/* La llave con la que se borran las cuentas al terminar. Contra la base de
+   esta máquina sale de `supabase status`, que ya se leyó arriba; contra la
+   publicada se le pide al CLI la del proyecto, que es lo que hace
+   `probar_alta_y_baja.mjs` desde siempre. Se lee acá adentro y no se
+   imprime nunca.
+
+   Y si no aparece, **esta prueba no arranca**. Hasta el 1 de septiembre de
+   2026 corría igual y avisaba al final que dejaba las cuentas: eso es
+   pedirle a quien la corre que se acuerde de limpiar a mano lo que el guion
+   ensució solo, y no se acordó nadie. Quedaron tres cuentas en la base
+   publicada y hubo que sacarlas con una migración, la 0058. Crear lo que no
+   se va a poder borrar es el defecto; avisarlo no lo arregla. */
+let claveDeLimpieza = claveServicio;
+if (!claveDeLimpieza) {
+  try {
+    const proyecto = new URL(base).hostname.split('.')[0];
+    const salida = execFileSync('npx', ['supabase', 'projects', 'api-keys',
+      '--project-ref', proyecto, '-o', 'env'],
+      { cwd: raiz, encoding: 'utf8', shell: true });
+    claveDeLimpieza = (salida.match(/^SUPABASE_SERVICE_ROLE_KEY="?([^"\s]+)/m) || [])[1];
+  } catch { /* se contesta abajo */ }
+}
+if (!claveDeLimpieza) {
+  console.error('Sin la llave de administración esta prueba crearía cuentas que');
+  console.error('después no puede borrar, y las dejaría en la base. No arranca.');
+  process.exit(1);
+}
+
+/* Borrar cuentas es una función y no un tramo pegado al final porque los dos
+   cortes de más abajo —el alta que la base rechaza, y la que se crea y no
+   devuelve sesión— salían con `process.exit` sin pasar por la limpieza. Ese
+   es el camino exacto por el que quedaron las tres cuentas en la base
+   publicada: las tres se llamaban «Persona Ficticia A» y ninguna «B», que es
+   la firma de tres corridas cortadas en el mismo renglón. */
+async function borrarCuentas(lista) {
+  for (const quien of lista) {
+    if (!quien || !quien.userId) continue;
+    await fetch(base + '/auth/v1/admin/users/' + quien.userId, {
+      method: 'DELETE',
+      headers: { apikey: claveDeLimpieza, Authorization: 'Bearer ' + claveDeLimpieza }
+    });
+  }
+}
+
 /* Cuántas cuentas había antes de que esta prueba tocara nada. Al final se
    vuelve a preguntar, y tienen que ser las mismas. Contar sólo las que la
    prueba se acuerda de haber creado no prueba lo mismo: una cuenta creada por un
    camino que nadie anotó en una lista quedaría igual, y el mensaje diría que se
    limpió todo. El total lo contesta el propio servidor en `x-total-count`. */
 async function cuantasCuentas() {
-  if (!claveServicio) return null;
+  if (!claveDeLimpieza) return null;
   const res = await fetch(base + '/auth/v1/admin/users?page=1&per_page=1', {
-    headers: { apikey: claveServicio, Authorization: 'Bearer ' + claveServicio }
+    headers: { apikey: claveDeLimpieza, Authorization: 'Bearer ' + claveDeLimpieza }
   });
   const dicho = res.headers.get('x-total-count');
   return dicho === null ? null : Number(dicho);
@@ -465,6 +509,7 @@ for (const [etiqueta, prestadora] of [['A', A], ['B', B]]) {
   if (alta.estado >= 400) {
     console.error('No se pudo registrar la cuenta ficticia ' + etiqueta + ': ' +
       (alta.cuerpo.msg || alta.cuerpo.error_description || alta.estado));
+    await borrarCuentas(cuentas);
     process.exit(1);
   }
   let token = alta.cuerpo.access_token;
@@ -475,6 +520,10 @@ for (const [etiqueta, prestadora] of [['A', A], ['B', B]]) {
   if (!token) {
     console.error('La cuenta ' + etiqueta + ' se creó pero no devolvió sesión. ' +
       'Probablemente la base pide confirmar el correo.');
+    /* Ésta es la que quedó tres veces. Se creó recién y todavía no está en
+       `cuentas`, así que hay que nombrarla aparte o se va sin borrar. */
+    await borrarCuentas([...cuentas,
+      { userId: alta.cuerpo.user?.id || alta.cuerpo.id }]);
     process.exit(1);
   }
   cuentas.push({ etiqueta, email, token, prestadora, userId: alta.cuerpo.user?.id || alta.cuerpo.id });
@@ -2098,22 +2147,16 @@ console.log('Legajos de prueba borrados. Quedan visibles en el directorio: ' +
    · Y ochenta y cuatro de las ochenta y seis cuentas de la base local eran
      residuo de pruebas. Una base así deja de servir para mirarla.
 
-   Se borran sólo con `--local`, que es donde existe la clave de administración.
-   Contra el servidor alojado no hay con qué borrarlas, y eso es el pendiente 45,
-   que es también el motivo por el que esta prueba se corre siempre con `--local`. */
+   Desde el 1 de septiembre de 2026 se borran de los dos lados. La llave de
+   administración del proyecto publicado se la pide al CLI el tramo de arriba,
+   igual que hace `probar_alta_y_baja.mjs`, y sin ella la prueba ni arranca. */
 /* No se suma a `fallos`: eso diría que falló el aislamiento, y lo que falló es la
    limpieza. Se cuenta aparte y se ve en el código de salida. */
 let quedoSucia = false;
 const todasLasCuentas = [...cuentas, ...familias, ...deLaModalidad,
                          ...(coordinador ? [coordinador] : [])];
-if (contraLocal && claveServicio) {
-  for (const quien of todasLasCuentas) {
-    if (!quien.userId) continue;
-    await fetch(base + '/auth/v1/admin/users/' + quien.userId, {
-      method: 'DELETE',
-      headers: { apikey: claveServicio, Authorization: 'Bearer ' + claveServicio }
-    });
-  }
+{
+  await borrarCuentas(todasLasCuentas);
   /* Se cuenta lo que quedó, no lo que se pidió borrar: un `DELETE` que contesta
      bien y no borra nada daría el mismo mensaje de éxito. Y se cuenta **el total
      del servidor**, no la lista de arriba, para que una cuenta que la prueba creó
@@ -2129,11 +2172,6 @@ if (contraLocal && claveServicio) {
     : 'ATENCIÓN: la base tenía ' + cuentasAlEmpezar + ' cuentas y ahora tiene ' +
       cuentasAlTerminar + '. Hay que borrar a mano las que sobran.');
   if (sobran !== 0) quedoSucia = true;
-} else {
-  console.log('Las cuentas ficticias quedan: borrarlas pide la clave de administración, y');
-  console.log('contra el servidor alojado no la hay. Es el pendiente 45. Todas tienen el');
-  console.log('correo @ejemplo.invalid, un dominio que por norma no existe, así que no le');
-  console.log('llegó ni le puede llegar nada a nadie —pero una de ellas es coordinador—.');
 }
 
 // ── Los documentos que dicen cuántas comprobaciones son ─────────────────

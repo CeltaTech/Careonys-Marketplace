@@ -38,7 +38,7 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | 976 declaraciones más, pegadas al HTML | en 247 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 14 de las 18 pantallas rescatan la sesión al abrir |
 | 5 servidores de afuera, sin `package.json` ni compilación | cdn.jsdelivr.net, cdnjs.cloudflare.com, fonts.googleapis.com, fonts.gstatic.com, www.openstreetmap.org — hay que decir de qué es cada uno |
-| 27 tablas y 57 migraciones en el repositorio | 35 chequeos las miran antes de cada commit |
+| 27 tablas y 58 migraciones en el repositorio | 35 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
