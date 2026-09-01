@@ -1009,6 +1009,25 @@ const ClienteDatos = {
     return await this._supabaseRequest('POST', 'rpc/mis_alarmas', {}) || [];
   },
 
+  // El tope de horas a partir del cual una entrada sin salida se avisa
+  // (migración 0057). Es configuración del espacio de la Prestadora y **sólo
+  // lo alcanza su personal**: la política no le concede la tabla ni a la
+  // Familia ni al Asistente, que no lo necesitan —la alarma ya viene con el
+  // tope adentro—. Devuelve una sola fila, o `null` si la Prestadora todavía
+  // no tiene la suya, que no es lo mismo que dieciséis: es que nadie la
+  // configuró, y la pantalla tiene que poder decirlo.
+  async topeDeAlarmas() {
+    const filas = await this._supabaseRequest('GET', 'alarmas_prestadora',
+      null, { select: 'id,horas_jornada_abierta' });
+    return (filas && filas[0]) || null;
+  },
+
+  async guardarTopeDeAlarmas(id, horas) {
+    const filas = await this._supabaseRequest('PATCH', 'alarmas_prestadora',
+      { horas_jornada_abierta: horas }, { id: `eq.${id}` });
+    return (filas && filas[0]) || null;
+  },
+
   // --- INTEGRACIÓN REST DE SUPABASE ---
   async _supabaseRequest(method, table, data = null, queryParams = {}) {
     const urlObj = new URL(`${this.supabaseUrl}/rest/v1/${table}`);

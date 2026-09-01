@@ -92,6 +92,35 @@
           </tbody>
         </table>
       </div>
+
+      <!-- EL TOPE DE HORAS DE LA ALARMA DE JORNADA ABIERTA
+           Lo único de las alarmas que toca la Prestadora. La alarma la ven la
+           Familia y el Asistente; acá sólo se fija a partir de cuántas horas sin
+           marcar la salida se avisa, porque eso es configuración de su espacio.
+           Ni un rótulo está escrito acá adentro: los pone `rotularTope()` desde
+           el catálogo, que es lo que los hace existir también en `en` y en
+           `pt-BR`. Arranca oculto y lo destapa `cargarTope()`, que corre después
+           de comprobar el permiso: sin eso, quien no es coordinador veía el
+           bloque vacío y un botón que no hace nada. -->
+      <div class="card-dashboard mt-24 oculto" id="tope-bloque">
+        <div class="mb-16">
+          <h3 class="m-0 texto-18 color-titulo"><i class="fas fa-hourglass-half"></i>
+            <span id="tope-titulo"></span></h3>
+          <p class="m-solo-arriba-4 texto-13 color-secundario" id="tope-bajada"></p>
+        </div>
+
+        <div class="oculto p-16 redondeo-10 texto-13 interlineado-16 mb-12" id="tope-estado"></div>
+
+        <div class="form-group">
+          <label for="tope-horas" id="tope-etiqueta"></label>
+          <input type="number" id="tope-horas" class="ancho-160" min="1" max="168" step="1" />
+          <p class="texto-11 color-secundario m-solo-arriba-4" id="tope-ayuda"></p>
+        </div>
+
+        <button class="btn peso-700 texto-13" id="tope-guardar" onclick="guardarTope();">
+          <i class="fas fa-floppy-disk"></i> <span id="tope-guardar-texto"></span>
+        </button>
+      </div>
     </main>
   </div>
 
@@ -414,6 +443,131 @@
       });
     }
 
+    // ── EL TOPE DE HORAS DE LA ALARMA DE JORNADA ABIERTA ────────────────────
+    //
+    // La alarma de jornada abierta la ven la Familia y el Asistente, que son
+    // quienes cerraron el trato. La Prestadora no ve ninguna: lo único suyo es
+    // el número de horas a partir del cual se avisa, porque es configuración de
+    // su espacio. Por eso este bloque no lista nada, sólo fija un número.
+
+    // La fila de esta Prestadora en `alarmas_prestadora`. Vale `null`
+    // mientras no se trajo, y también cuando la Prestadora no tiene la suya:
+    // sin fila no hay nada que corregir, y guardar no llama a la base.
+    let topeFilaId = null;
+
+    // El cartel de estado de este bloque. Es propio y no el de la tabla: son dos
+    // cargas distintas que corren casi a la vez, y con un solo cartel la que
+    // termina segunda le borra lo que dijo la primera. Recibe la **clave** del
+    // catálogo, como el otro.
+    function estadoTope(tono, clave, huecos) {
+      const caja = document.getElementById('tope-estado');
+      if (!tono) { caja.classList.add('oculto'); return; }
+      caja.textContent = Texto.frase(clave, huecos);
+      caja.style.background = 'var(--tono-' + tono + '-fondo)';
+      caja.style.color = 'var(--tono-' + tono + '-texto)';
+      caja.classList.remove('oculto');
+    }
+
+    // Los rótulos fijos del bloque. Salen del catálogo igual que los carteles:
+    // en el marcado no hay ni una palabra escrita, así que ésta es la única
+    // forma de que el bloque exista en los tres idiomas. Las marcas de identidad
+    // —`{{producto}}` en la bajada— las resuelve `Catalogo.frase` sola.
+    function rotularTope() {
+      const poner = (id, clave) => {
+        document.getElementById(id).textContent = Catalogo.frase(clave);
+      };
+      poner('tope-titulo', 'alarmas.tope_titulo');
+      poner('tope-bajada', 'alarmas.tope_bajada');
+      poner('tope-etiqueta', 'alarmas.tope_campo');
+      poner('tope-ayuda', 'alarmas.tope_ayuda');
+      poner('tope-guardar-texto', 'alarmas.tope_guardar');
+    }
+
+    // «los cuatro estados»: cargando el cartel y el botón apagado, error en el mismo cartel, y la
+    // rama de «todavía no tiene ninguno» dicha aparte. `null` **no es dieciséis**:
+    // es que nadie lo configuró, y mientras tanto no se avisa ninguna jornada
+    // abierta. Contarlo como el valor de fábrica sería mostrar un tope que no
+    // está funcionando.
+    async function cargarTope() {
+      document.getElementById('tope-bloque').classList.remove('oculto');
+      rotularTope();
+
+      const boton = document.getElementById('tope-guardar');
+      const campo = document.getElementById('tope-horas');
+      boton.disabled = true;
+      estadoTope('info', 'alarmas.tope_cargando');
+
+      let fila;
+      try {
+        fila = await ClienteDatos.topeDeAlarmas();
+      } catch (err) {
+        console.error('Panel de la Prestadora, tope de la alarma:', err);
+        estadoTope('critico', 'alarmas.tope_error');
+        return;
+      } finally {
+        boton.disabled = false;
+      }
+
+      if (!fila) {
+        topeFilaId = null;
+        campo.value = '';
+        campo.disabled = true;
+        boton.disabled = true;
+        estadoTope('atencion', 'alarmas.tope_vacio');
+        return;
+      }
+
+      topeFilaId = fila.id;
+      campo.value = fila.horas_jornada_abierta;
+      campo.disabled = false;
+      estadoTope(null);
+    }
+
+    // «todo botón que dispara una operación se apaga»: el de guardar se apaga mientras la base contesta. Dos clics
+    // seguidos eran dos escrituras sobre la misma fila.
+    //
+    // La validación se hace acá y el pedido no sale: un tope que no es entero, o
+    // que se fue de rango, no tiene por qué viajar. La comprobación que manda es
+    // la de la tabla; ésta existe para decirlo antes y en el idioma de la
+    // pantalla.
+    async function guardarTope() {
+      const boton = document.getElementById('tope-guardar');
+      const campo = document.getElementById('tope-horas');
+      if (!topeFilaId) return;
+
+      const horas = Number(campo.value);
+      if (!Number.isInteger(horas) || horas < 1 || horas > 168) {
+        estadoTope('atencion', 'alarmas.tope_fuera_de_rango');
+        return;
+      }
+
+      boton.disabled = true;
+      estadoTope('info', 'alarmas.tope_cargando');
+
+      let fila;
+      try {
+        fila = await ClienteDatos.guardarTopeDeAlarmas(topeFilaId, horas);
+      } catch (err) {
+        console.error('Panel de la Prestadora, guardado del tope de la alarma:', err);
+        estadoTope('critico', 'alarmas.tope_error');
+        return;
+      } finally {
+        boton.disabled = false;
+      }
+
+      // La base contestó sin devolver la fila: el cambio no quedó escrito, y
+      // decir «guardado» sería mentir. Es la misma falla que el error de arriba
+      // y se dice igual.
+      if (!fila) {
+        estadoTope('critico', 'alarmas.tope_error');
+        return;
+      }
+
+      // El número que se muestra es el que quedó guardado, no el que se escribió.
+      campo.value = fila.horas_jornada_abierta;
+      estadoTope('exito', 'alarmas.tope_guardado', { horas: fila.horas_jornada_abierta });
+    }
+
     // El orden no es casual: sin sesión no hay Prestadora, y sin Prestadora la
     // consulta de legajos no tiene por qué filtrar.
     // «los cuatro estados»: el arranque es un pedido a la base como cualquier otro, y si falla
@@ -453,6 +607,10 @@
         }
 
         cargarAspirantes();
+        // El tope va detrás de la comprobación del permiso, igual que los
+        // legajos: la tabla es del espacio de la Prestadora y no la alcanza
+        // nadie más.
+        cargarTope();
       } catch (err) {
         console.error('Panel de la Prestadora, arranque:', err);
         estadoTabla('critico', 'panel.arranque_error');

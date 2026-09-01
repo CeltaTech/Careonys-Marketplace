@@ -1988,27 +1988,52 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
         'Familia ' + deLaFamiliaTope.filas.length +
         '   Asistente ' + delAsistenteTope.filas.length);
 
-      /* Un PATCH que no alcanza ninguna fila contesta 204 igual que uno que sí:
-         no alcanza con mirar el número. Se pregunta después si el valor cambió,
-         y esa pregunta la contesta quien sí lo puede leer. */
-      await escribir(familiaDelAviso, 99);
-      await escribir(asistenteUno, 98);
       if (!coordinador) {
         console.log('   (salteada) la escritura del tope por el personal de la Prestadora:');
         console.log('              hacen falta permisos que sólo están en el entorno local.');
       } else {
+        /* Cuánto dice antes de que nadie lo toque. **No se exige el valor de
+           fábrica**: esta misma prueba lo cambia dos renglones más abajo y la
+           base de esta máquina no se rehace entre corridas, así que pedir
+           dieciséis la ponía roja la segunda vez —y pasó—. Una prueba que
+           depende de haber corrido recién después de un `reset` no es una
+           prueba: es un recordatorio. Lo que se comprueba es lo que la regla
+           dice, que la Prestadora lee **una** fila y que el número es un
+           entero adentro del rango que acepta la columna. */
         const antes = await topesDe(coordinador);
-        comprobar('El personal de la Prestadora lee el tope, y sigue en el de fábrica',
-          antes.filas.length === 1 && antes.filas[0].horas_jornada_abierta === 16,
-          antes.filas.length ? 'dice ' + antes.filas[0].horas_jornada_abierta
-                             : 'no lee ninguna fila');
-        const cambio = await escribir(coordinador, 24);
+        const valorInicial = antes.filas.length === 1
+          ? antes.filas[0].horas_jornada_abierta : null;
+
+        /* Un PATCH que no alcanza ninguna fila contesta 204 igual que uno que
+           sí: no alcanza con mirar el número. Se pregunta después si el valor
+           cambió, y esa pregunta la contesta quien sí lo puede leer. */
+        await escribir(familiaDelAviso, 99);
+        await escribir(asistenteUno, 98);
+        const trasLosAjenos = await topesDe(coordinador);
+        const quedoEn = trasLosAjenos.filas.length === 1
+          ? trasLosAjenos.filas[0].horas_jornada_abierta : null;
+        comprobar('El personal de la Prestadora lee su tope, y lo que escribieron los otros no llegó',
+          antes.filas.length === 1 && Number.isInteger(valorInicial) &&
+          valorInicial >= 1 && valorInicial <= 168 &&
+          trasLosAjenos.filas.length === 1 && quedoEn === valorInicial,
+          antes.filas.length !== 1 ? 'lee ' + antes.filas.length + ' fila(s)'
+                                   : 'venía en ' + valorInicial + ', quedó en ' + quedoEn);
+
+        /* Escribir el mismo número que ya tenía no probaría nada: la fila
+           quedaría igual tanto si el PATCH entró como si lo negaron. */
+        const otro = valorInicial === 24 ? 25 : 24;
+        const cambio = await escribir(coordinador, otro);
         const despues = await topesDe(coordinador);
         comprobar('Y es el único que lo cambia',
           cambio < 400 && despues.filas.length === 1 &&
-          despues.filas[0].horas_jornada_abierta === 24,
+          despues.filas[0].horas_jornada_abierta === otro,
           'respuesta ' + cambio + ', quedó en ' +
           (despues.filas[0] ? despues.filas[0].horas_jornada_abierta : 'nada'));
+
+        /* Y se deja como estaba. La Prestadora ficticia es el banco de pruebas
+           de todo lo demás: una prueba que le cambia la configuración al pasar
+           le deja el trabajo sucio a la que venga atrás. */
+        if (Number.isInteger(valorInicial)) await escribir(coordinador, valorInicial);
       }
     }
 

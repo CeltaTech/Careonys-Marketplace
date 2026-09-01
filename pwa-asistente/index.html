@@ -363,6 +363,61 @@
         <div class="ancho-24"></div>
       </div>
 
+      <!-- LA FRANJA DE ALARMAS
+           Arriba de todo lo demás del inicio, que es donde está el fichador.
+           Sale de `mis_alarmas()` (migración 0057), la misma función que ve la
+           Familia: la base resuelve quién ve qué y devuelve en `otra_parte` el
+           nombre del otro lado —para el Asistente, la Familia del vínculo—.
+
+           Es informativa igual que el fichador: no hay «aprobar», no hay
+           «justificar», no hay total de horas y no dice que nadie haya hecho
+           algo mal —la causa puede ser un teléfono sin batería, y el software no
+           la adivina—. Dice que la marca quedó a medias, que es un hecho de la
+           propia fichada, y ofrece lo único que se puede hacer con eso:
+           preguntar.
+
+           La Prestadora no la ve en ningún caso: la jornada de cada persona es
+           de ella y de quien la contrató.
+
+           La función devuelve `clase` como clave y no como frase; el texto sale
+           del catálogo, en los tres idiomas, con las mismas nueve claves que ya
+           pide la aplicación de la Familia. -->
+      <div class="p-16" id="alarmas-franja">
+        <h2 class="m-0 texto-13 peso-700" data-frase="alarmas.titulo">Algo quedó a medias</h2>
+        <p class="texto-11 color-secundario m-0 mt-8 mb-12"
+           data-frase="alarmas.bajada">{{producto}} avisa cuando una marca quedó incompleta. No dice que alguien haya hecho algo mal: puede ser un teléfono sin batería. Quien decide qué hacer es usted.</p>
+
+        <div class="pwa-estado" id="ala-cargando" data-frase="alarmas.cargando">Revisando las marcas…</div>
+
+        <div class="pwa-estado" id="ala-error" hidden>
+          <p id="ala-error-texto"></p>
+          <button type="button" class="btn btn-primario" id="ala-reintentar"
+                  data-frase="alarmas.reintentar">Reintentar</button>
+        </div>
+
+        <div class="pwa-estado" id="ala-vacio" hidden>
+          <p data-frase="alarmas.vacio">No hay nada a medias. Todas las entradas tienen su salida.</p>
+        </div>
+
+        <div id="alarmas-lista" hidden></div>
+
+        <!-- El molde de cada alarma. Se llena con `textContent`, igual que el de
+             un aviso: el nombre lo escribió otra persona y no entra como
+             marcado. -->
+        <template id="molde-alarma">
+          <div class="fondo-superficie borde-tarjeta redondeo-16 p-16 mb-12">
+            <div class="flex alinear-centro gap-12">
+              <div class="flex-1">
+                <h5 class="m-0 texto-13 peso-700" data-parte="nombre"></h5>
+                <p class="m-0 texto-11 color-secundario" data-parte="cuando"></p>
+              </div>
+            </div>
+            <p class="texto-12 m-0 mt-8 mb-8" data-parte="motivo"></p>
+            <button type="button" class="btn btn-primario ancho-total" data-parte="ir"></button>
+          </div>
+        </template>
+      </div>
+
       <!-- ESTADO LEGAJO -->
       <div class="status-badge-container mt-16" id="status-container">
         <i class="fas fa-user-check color-info texto-20"></i>
@@ -491,14 +546,14 @@
                 data-frase-placeholder="legajo.nacionalidad_ejemplo" required /></div>
               <div class="wfield wgrid-2-full"><label data-frase="legajo.domicilio">Domicilio Completo</label><input type="text" id="w-domicilio" placeholder="Calle, Nro, Localidad"
                 data-frase-placeholder="legajo.domicilio_ejemplo" required /></div>
-              <!-- El rotulo, la ayuda y las casillas las arma js/zonas.js, igual que
+              <!-- El rótulo, la ayuda y las casillas las arma js/zonas.js, igual que
                    en el portal: la lista sale de la base y es de cada Prestadora,
-                   asi que no puede estar escrita aca. Con la Prestadora sin lista
+                   así que no puede estar escrita acá. Con la Prestadora sin lista
                    cargada, este mismo hueco muestra el campo de texto libre.
-                   Hasta el 31 de agosto de 2026 aca habia un campo de texto libre
+                   Hasta el 31 de agosto de 2026 acá había un campo de texto libre
                    escrito a mano que se guardaba en `caregivers.zone`, y esa
                    columna ya no la mira ni el directorio ni el perfil: la persona
-                   corregia su zona, veia que se guardaba, y no cambiaba nada. -->
+                   corregía su zona, veía que se guardaba, y no cambiaba nada. -->
               <div class="wfield wgrid-2-full" id="zonas"></div>
               <div class="wfield"><label data-frase="legajo.cbu">CBU o Alias Bancario</label><input type="text" id="w-cbu" placeholder="Para liquidación de haberes"
                 data-frase-placeholder="legajo.cbu_ejemplo" required /></div>
@@ -1481,14 +1536,30 @@
 
     let convMontada = false;
 
+    // La conversación que otra pantalla pidió abrir. La franja de alarmas manda
+    // acá con el vínculo de la marca que quedó a medias: preguntar es entrar a
+    // ese hilo, y no dejar a la persona buscándolo en la lista. Se olvida apenas
+    // se usó, para que volver a Mensajes no lleve siempre al mismo lado.
+    let convPedida = null;
+
+    function irAMensajes(conversacionId) {
+      convPedida = conversacionId || null;
+      navigate('conversacion');
+    }
+
     async function convCargar() {
       try {
         if (!convMontada) {
           await Conversaciones.montar('conversacion-caja', { lado: 'asistente' });
           convMontada = true;
-          return;
+        } else {
+          await Conversaciones.recargar();
         }
-        await Conversaciones.recargar();
+        if (convPedida) {
+          const pedida = convPedida;
+          convPedida = null;
+          await Conversaciones.abrirPorId(pedida);
+        }
       } catch (err) {
         // `recargar()` dibuja su propio estado de error adentro de la caja, así
         // que lo único que puede llegar hasta acá es que el contenedor no
@@ -1498,6 +1569,97 @@
     }
 
     document.getElementById('conv-volver').addEventListener('click', () => navigate('dashboard'));
+
+    // ── Las alarmas: lo que quedó a medias ─────────
+    // La franja de arriba del inicio. Sale de `mis_alarmas()` (migración 0057),
+    // la misma función que ve la Familia, y es informativa de punta a punta: no
+    // hay «aprobar», no hay «justificar», no hay ninguna cuenta de horas y no se
+    // dice que nadie haya hecho algo mal. Se dice que la marca quedó incompleta
+    // —que es un hecho de la propia fichada— y se ofrece lo único que se puede
+    // hacer con eso, que es preguntarle a la otra parte.
+    //
+    // Quién ve qué no lo decide esta pantalla: lo decide la función adentro, que
+    // sólo mira los vínculos de quien inició sesión.
+
+    // La clave que devuelve la base y la frase que se lee van emparejadas acá,
+    // enteras y no armadas con un `+`, por lo mismo que `FRASE_DEL_FICHADO`: una
+    // clave hecha a pedazos no la ve nadie desde afuera, ni para comprobar que
+    // está en los tres idiomas ni para avisar que sobra.
+    const FRASE_DE_LA_ALARMA = {
+      jornada_abierta: 'alarmas.jornada_abierta',
+      salida_sin_entrada: 'alarmas.salida_sin_entrada'
+    };
+
+    function alaMostrar(cual) {
+      for (const estado of ['cargando', 'error', 'vacio']) {
+        document.getElementById('ala-' + estado).hidden = estado !== cual;
+      }
+      document.getElementById('alarmas-lista').hidden = cual !== 'listo';
+    }
+
+    function alaTarjeta(fila) {
+      const nodo = document.getElementById('molde-alarma').content.cloneNode(true);
+      const parte = (nombre) => nodo.querySelector('[data-parte="' + nombre + '"]');
+
+      // El nombre de la otra parte puede no venir. No se rompe nada y no se
+      // inventa ninguno: el renglón queda vacío.
+      parte('nombre').textContent = fila.otra_parte || '';
+
+      // La fecha y la hora las escribe `js/texto.js` en el idioma de la
+      // pantalla; acá no se arma ningún formato a mano.
+      const fecha = Texto.fechaCorta(fila.ocurrio_el);
+      const hora = Texto.horaCorta(fila.ocurrio_el);
+      parte('cuando').textContent = [fecha, hora].filter(Boolean).join(' · ');
+
+      // Los dos huecos van siempre, aunque una de las dos frases no los tenga:
+      // la que no los usa los ignora, y así el emparejamiento de arriba queda en
+      // un solo llamado.
+      const clave = FRASE_DE_LA_ALARMA[fila.clase];
+      parte('motivo').textContent = clave
+        ? Catalogo.frase(clave, { horas: fila.horas, tope: fila.tope_horas })
+        : '';
+
+      // Preguntar es abrir la conversación de ese vínculo, y nada más. Sin
+      // conversación no hay a dónde ir: se saca el botón en vez de dejar uno que
+      // no lleva a ningún lado.
+      const ir = parte('ir');
+      if (fila.conversacion_id) {
+        ir.textContent = Catalogo.frase('alarmas.ir_a_la_conversacion');
+        ir.addEventListener('click', () => irAMensajes(fila.conversacion_id));
+      } else {
+        ir.remove();
+      }
+
+      return nodo;
+    }
+
+    async function cargarAlarmas() {
+      alaMostrar('cargando');
+      try {
+        const filas = await ClienteDatos.misAlarmas();
+        const lista = document.getElementById('alarmas-lista');
+        while (lista.firstChild) lista.removeChild(lista.firstChild);
+        // Una clase que esta pantalla no sabe nombrar no se dibuja muda: se deja
+        // afuera. Que aparezca una quiere decir que la base sabe de algo que acá
+        // todavía no tiene frase, y el aviso queda en la consola.
+        const alarmas = (filas || []).filter((fila) => {
+          if (FRASE_DE_LA_ALARMA[fila.clase]) return true;
+          console.error('Alarma de una clase que esta pantalla no conoce:', fila.clase);
+          return false;
+        });
+        if (alarmas.length === 0) { alaMostrar('vacio'); return; }
+        alarmas.forEach((fila) => lista.appendChild(alaTarjeta(fila)));
+        alaMostrar('listo');
+      } catch (err) {
+        console.error('Alarmas del Asistente:', err);
+        const aviso = Catalogo.frase('alarmas.error');
+        document.getElementById('ala-error-texto').textContent =
+          aviso + ' ' + Texto.mensajeDeError(err, aviso);
+        alaMostrar('error');
+      }
+    }
+
+    document.getElementById('ala-reintentar').addEventListener('click', cargarAlarmas);
 
     // ── Navegación Multi-Pantalla ──────────────────
     function navigate(screenId) {
@@ -1511,7 +1673,13 @@
       // la aplicación: quien nunca abre capacitaciones no le pide nada a nadie.
       // Los vínculos que puede nombrar la fichada viven en el inicio, que es
       // donde está el fichador. `vinCargar` se guarda de pedirlos dos veces.
-      if (screenId === 'dashboard') vinCargar();
+      if (screenId === 'dashboard') {
+        vinCargar();
+        // La franja de alarmas es de este mismo inicio y se pide por su lado:
+        // son dos consultas distintas, y que una falle no tiene por qué dejar
+        // sin la otra a quien mira.
+        cargarAlarmas();
+      }
       if (screenId === 'capacitaciones') capCargar();
       if (screenId === 'guias') guiCargar();
       if (screenId === 'avisos') avCargar();

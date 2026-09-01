@@ -102,7 +102,20 @@ const tablas = [...new Set([
 // La lista se deja escrita igual. Si algún día vuelve a hacer falta abrir algo,
 // el lugar donde se escribe el motivo ya existe, y el barrido sigue haciendo la
 // única pregunta que importa: ¿esto se abrió porque alguien lo decidió?
-const ABIERTAS_A_PROPOSITO = new Map([]);
+//
+// Y volvió a hacer falta. El 1 de septiembre de 2026, la primera vez que este
+// barrido se corrió desde que quedó enganchado a `probar_todo.mjs`, encontró
+// una vista abierta. Estaba abierta por decisión, no por descuido —que es
+// justo la diferencia que este guion existe para marcar—, y lo único que
+// faltaba era escribirlo acá.
+const ABIERTAS_A_PROPOSITO = new Map([
+  ['oferta_de_cursos',
+   'la oferta general de cursos, que el Desarrollador decidió el 31 de agosto ' +
+   'de 2026 que se vea sin iniciar sesión (migración 0051). La vista filtra ' +
+   'adentro `tenant_id is null and publicado`, así que no muestra ninguna fila ' +
+   'de ninguna Prestadora, y no lleva ni una columna con el contenido de un ' +
+   'curso: sólo el nombre, la descripción y la ficha']
+]);
 
 // --- La dirección y la clave publicable, de donde ya están ------------------
 const fuente = readFileSync(join(raiz, 'js', 'apiClient.js'), 'utf8');
@@ -161,6 +174,26 @@ console.log('');
 for (const [tabla, cuantas, motivo] of abiertas) {
   console.log(`   abierta a propósito  ${tabla}  — ${cuantas} fila(s)`);
   console.log(`                        ${motivo}`);
+}
+
+/* Y una excepción que ya no exime nada es una excepción que tapa. Si la tabla
+   que está escrita acá arriba dejó de devolver filas —porque se cerró, porque
+   se borró, o porque se renombró—, el renglón queda perdonando algo que no
+   existe, y el próximo que caiga con ese nombre pasa sin que nadie mire. No hay
+   ninguna prueba de afuera que lo pregunte —`probar_exenciones.mjs` sólo mira
+   los `verificar_`—, así que se lo pregunta el barrido a sí mismo, en cada
+   corrida. */
+const nombradas = new Set(abiertas.map(([tabla]) => tabla));
+const sobrantes = [...ABIERTAS_A_PROPOSITO.keys()].filter((tabla) => !nombradas.has(tabla));
+if (sobrantes.length > 0) {
+  console.log('');
+  for (const tabla of sobrantes) {
+    console.log('   SOBRA LA EXCEPCIÓN  ' + tabla + '  — ya no devuelve ninguna fila sin sesión');
+  }
+  console.log('');
+  console.log('Una excepción que no exime nada sólo tapa: el día que otra cosa se llame');
+  console.log('igual, se abre sin que nadie mire. Se saca de ABIERTAS_A_PROPOSITO.');
+  process.exit(1);
 }
 
 if (escapes.length === 0) {

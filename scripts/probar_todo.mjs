@@ -1,12 +1,13 @@
 /* ===================================================
-   TODAS LAS PRUEBAS QUE CORREN CONTRA LA BASE DE ESTA MÁQUINA
+   TODAS LAS PRUEBAS QUE NO ENTRAN EN EL GANCHO DE `COMMIT`
 
        node scripts/probar_todo.mjs
 
    `verificar_todo.mjs` junta los chequeos que leen archivos y corren sin red.
    Éste junta lo que no entra ahí: casi todo porque necesita una base levantada
    —registran cuentas ficticias, les hacen escribir y subir papeles, y preguntan
-   quién ve qué— y una porque tarda demasiado para el gancho de `commit`.
+   quién ve qué—, dos porque tardan demasiado para el gancho de `commit`, y una
+   porque le pregunta al servidor publicado.
 
    Existe por lo que pasó el 31 de agosto de 2026. La prueba de aislamiento
    sabía correr contra la base local desde que se escribió, y hacía cinco días
@@ -24,6 +25,14 @@
    si sigue verde, esa exención ya no exime nada y lo único que hace es tapar
    el resto del archivo que nombra. Las dos corren la red de chequeos muchas
    veces, que es demasiado para cada `commit`, así que viven acá.
+
+   **La que le pregunta al servidor publicado** es `barrer_aislamiento.mjs`, y
+   no hace falta ninguna credencial para correrla: usa la clave publicable que
+   cualquiera lee del navegador y no escribe nada. Pregunta por **todas** las
+   tablas que salen de las migraciones, incluidas las que se creen mañana, así
+   que es la única que se entera sola de una tabla nueva mal cerrada. Hasta el
+   1 de septiembre de 2026 no la corría nadie —era el pendiente 126—, y la
+   primera corrida encontró algo.
 
    Antes hay que levantar la base:
 
@@ -74,7 +83,7 @@
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { spawnSync, execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 
 const aca = dirname(fileURLToPath(import.meta.url));
 
@@ -83,8 +92,14 @@ const aca = dirname(fileURLToPath(import.meta.url));
    sobre una base que ya estaba torcida—; después las chicas, que son rápidas y
    dicen enseguida si la base está sana; después la de aislamiento, que es la
    larga; y al final las dos que no necesitan base y corren la red de chequeos
-   muchas veces. */
+   muchas veces.
+
+   El barrido va primero de todo, y por un motivo distinto: no necesita la base
+   de esta máquina ni ninguna cuenta, tarda unos segundos, y la pregunta que
+   hace —¿el servidor publicado le muestra alguna tabla a quien no inició
+   sesión?— no puede quedar esperando veinte minutos detrás de lo demás. */
 const PRUEBAS = [
+  'barrer_aislamiento.mjs',
   'probar_coherencia_de_la_siembra.mjs',
   'probar_el_rol_y_la_prestadora_del_perfil.mjs',
   'probar_de_quien_es_el_legajo.mjs',
@@ -96,6 +111,11 @@ const PRUEBAS = [
   'probar_perdida_de_corpus.mjs',
   'probar_exenciones.mjs'
 ];
+
+/* Las que no van contra la base de esta máquina, así que no llevan `--local`.
+   El barrido saca la dirección del servidor publicado de `js/apiClient.js`, que
+   es el mismo lugar del que la saca cada pantalla. */
+const SIN_BASE_LOCAL = new Set(['barrer_aislamiento.mjs']);
 
 /* Rojas a propósito, con el pendiente que lo explica al lado. Sacar de acá lo
    que se arregle: si una de éstas pasa, esta corrida falla y dice por qué. */
@@ -138,6 +158,44 @@ if (fantasmas.length > 0) {
     fantasmas.map(([p, n]) => '  ' + p + ' → ' + nombrar(n)).join('\n') + '\n\n' +
     'O el pendiente se cerró y la prueba tiene que pasar a contarse como las demás,\n' +
     'o el rojo viene de otra cosa y hace falta un pendiente que lo explique.\n'
+  );
+  process.exit(1);
+}
+
+/* Las que quedan afuera de este lote, cada una con su motivo. Estaban escritas
+   al final en dos `console.log`, o sea que eran texto y no una lista: nada podía
+   compararlas contra la carpeta. */
+const AFUERA_A_PROPOSITO = new Map([
+  ['probar_alta_y_baja.mjs',
+   'va contra el servidor publicado, necesita la clave de firma de la caja ' +
+   'fuerte, y su limpieza borra datos publicados (pendiente 107)'],
+  ['probar_consulta_publica.mjs',
+   'va contra el servidor publicado y hoy reporta el estado conocido del ' +
+   'pendiente 64']
+]);
+
+/* Y acá se cierra el agujero por el que se coló el barrido. Hasta el 1 de
+   septiembre de 2026 esta lista estaba escrita a mano y nada la comparaba
+   contra la carpeta: `barrer_aislamiento.mjs` existía, probábaba las tablas de
+   todas las migraciones, y no la corría ningún camino —ni el gancho de
+   `commit`, que se queda con lo que empieza por `verificar_`, ni esta lista—.
+   Se descubrió leyendo, que es exactamente lo que una herramienta no tiene que
+   depender de que alguien haga.
+
+   Ahora una prueba nueva o no corre o hace fallar esto. No alcanza con mirar
+   `probar_`: el guion que faltaba empezaba por otra cosa, y una regla que mira
+   sólo el prefijo que ya se conoce no habría visto nada. */
+const ARRANQUES_DE_PRUEBA = /^(probar_|barrer_)/;
+const enLaCarpeta = readdirSync(aca)
+  .filter((n) => n.endsWith('.mjs') && ARRANQUES_DE_PRUEBA.test(n) && n !== 'probar_todo.mjs');
+const sinCamino = enLaCarpeta
+  .filter((n) => !PRUEBAS.includes(n) && !AFUERA_A_PROPOSITO.has(n));
+if (sinCamino.length > 0) {
+  console.error(
+    '\nHay prueba(s) que no las corre nadie y que nadie declaró afuera:\n' +
+    sinCamino.map((n) => '  ' + n).join('\n') + '\n\n' +
+    'O van en `PRUEBAS`, o van en `AFUERA_A_PROPOSITO` con el motivo escrito.\n' +
+    'Una prueba que hay que acordarse de correr es una prueba que no corre.\n'
   );
   process.exit(1);
 }
@@ -188,7 +246,8 @@ const esperadas = [];
 const sorpresas = [];
 
 for (const prueba of PRUEBAS) {
-  const corrida = spawnSync(process.execPath, [join(aca, prueba), '--local'], {
+  const banderas = SIN_BASE_LOCAL.has(prueba) ? [] : ['--local'];
+  const corrida = spawnSync(process.execPath, [join(aca, prueba), ...banderas], {
     encoding: 'utf8',
     shell: false
   });
@@ -245,9 +304,11 @@ if (cuentasAlEmpezar === null || cuentasAlTerminar === null) {
 }
 
 console.log('');
-console.log('Quedaron afuera a propósito, porque van contra el servidor publicado:');
-console.log('  probar_alta_y_baja.mjs      necesita la clave de firma y borra datos publicados');
-console.log('  probar_consulta_publica.mjs reporta el estado conocido del pendiente 64');
+console.log('Quedaron afuera a propósito:');
+for (const [prueba, motivo] of AFUERA_A_PROPOSITO) {
+  console.log('  ' + prueba);
+  console.log('      ' + motivo);
+}
 
 if (sorpresas.length > 0) {
   console.error(

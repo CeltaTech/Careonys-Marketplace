@@ -206,7 +206,7 @@
         "directorio.html:288",
         "formulario-integral.html:109",
         "perfil.html:340",
-        "pwa-asistente/index.html:487",
+        "pwa-asistente/index.html:542",
         "registrar-asistente.html:302"
       ],
       "items": [
@@ -244,7 +244,7 @@
       },
       "cerrada": false,
       "usado_en": [
-        "pwa-asistente/index.html:569",
+        "pwa-asistente/index.html:624",
         "registrar-asistente.html:411"
       ],
       "items": [
@@ -273,7 +273,7 @@
         "directorio.html:330",
         "directorio.html:83",
         "perfil.html:423",
-        "pwa-asistente/index.html:551",
+        "pwa-asistente/index.html:606",
         "pwa-familia/index.html:822",
         "registrar-asistente.html:384"
       ],
@@ -483,7 +483,7 @@
       },
       "cerrada": true,
       "usado_en": [
-        "pwa-asistente/index.html:1031"
+        "pwa-asistente/index.html:1086"
       ],
       "items": [
         {
@@ -703,7 +703,7 @@
       },
       "cerrada": false,
       "usado_en": [
-        "pwa-asistente/index.html:523",
+        "pwa-asistente/index.html:578",
         "registrar-asistente.html:350"
       ],
       "items": [
@@ -750,7 +750,7 @@
         "data/catalogo-fichas.json:180",
         "formulario-integral.html:142",
         "js/catalogo.js:422",
-        "pwa-asistente/index.html:553",
+        "pwa-asistente/index.html:608",
         "registrar-asistente.html:388"
       ],
       "items": [
@@ -856,7 +856,7 @@
         "formulario-integral.html:399",
         "mockup-app.html:457",
         "perfil.html:327",
-        "pwa-asistente/index.html:514",
+        "pwa-asistente/index.html:569",
         "pwa-familia/index.html:1169",
         "pwa-familia/index.html:1315",
         "registrar-asistente.html:336"
@@ -953,7 +953,7 @@
       "cerrada": true,
       "usado_en": [
         "cursos.html:105",
-        "pwa-asistente/index.html:1033"
+        "pwa-asistente/index.html:1088"
       ],
       "items": [
         {
@@ -1048,7 +1048,7 @@
       },
       "cerrada": true,
       "usado_en": [
-        "pwa-asistente/index.html:519",
+        "pwa-asistente/index.html:574",
         "registrar-asistente.html:340"
       ],
       "items": [
@@ -1274,7 +1274,7 @@
       "usado_en": [
         "formulario-integral.html:184",
         "formulario-integral.html:404",
-        "pwa-asistente/index.html:567",
+        "pwa-asistente/index.html:622",
         "pwa-familia/index.html:797",
         "registrar-asistente.html:409"
       ],

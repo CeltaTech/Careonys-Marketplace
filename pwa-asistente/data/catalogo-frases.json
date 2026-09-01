@@ -1185,6 +1185,56 @@
       "en": "Ask about it",
       "pt-BR": "Perguntar"
     },
+    "alarmas.tope_titulo": {
+      "es-AR": "Cuándo avisar que una jornada quedó abierta",
+      "en": "When to flag a shift left open",
+      "pt-BR": "Quando avisar que um turno ficou aberto"
+    },
+    "alarmas.tope_bajada": {
+      "es-AR": "Pasadas estas horas sin que se marque la salida, {{producto}} le avisa a la Familia y al Asistente. La Prestadora fija el número y no ve ninguna alarma: la jornada de cada persona es de ella y de quien la contrató.",
+      "en": "Once this many hours pass with no clock-out, {{producto}} flags it to the Family and to the Caregiver. The Provider sets the number and sees no alerts: each person’s shift belongs to them and to whoever hired them.",
+      "pt-BR": "Passadas estas horas sem registro de saída, {{producto}} avisa a Família e o Assistente. A Prestadora define o número e não vê nenhum alerta: o turno de cada pessoa é dela e de quem a contratou."
+    },
+    "alarmas.tope_campo": {
+      "es-AR": "Horas sin marcar la salida",
+      "en": "Hours with no clock-out",
+      "pt-BR": "Horas sem registrar a saída"
+    },
+    "alarmas.tope_ayuda": {
+      "es-AR": "Entre 1 y 168, que es una semana. De fábrica son 16.",
+      "en": "Between 1 and 168, which is one week. The default is 16.",
+      "pt-BR": "Entre 1 e 168, que é uma semana. De fábrica são 16."
+    },
+    "alarmas.tope_guardar": {
+      "es-AR": "Guardar el tope",
+      "en": "Save the limit",
+      "pt-BR": "Salvar o limite"
+    },
+    "alarmas.tope_guardado": {
+      "es-AR": "Guardado. A partir de ahora se avisa pasadas {horas} horas.",
+      "en": "Saved. From now on it is flagged after {horas} hours.",
+      "pt-BR": "Salvo. A partir de agora avisa passadas {horas} horas."
+    },
+    "alarmas.tope_cargando": {
+      "es-AR": "Buscando el tope configurado…",
+      "en": "Loading the configured limit…",
+      "pt-BR": "Buscando o limite configurado…"
+    },
+    "alarmas.tope_error": {
+      "es-AR": "No se pudo traer el tope configurado.",
+      "en": "The configured limit could not be loaded.",
+      "pt-BR": "Não foi possível trazer o limite configurado."
+    },
+    "alarmas.tope_vacio": {
+      "es-AR": "Esta Prestadora todavía no tiene tope configurado, así que no se avisa ninguna jornada abierta.",
+      "en": "This Provider has no limit configured yet, so no open shift is flagged.",
+      "pt-BR": "Esta Prestadora ainda não tem limite configurado, então nenhum turno aberto é avisado."
+    },
+    "alarmas.tope_fuera_de_rango": {
+      "es-AR": "El tope tiene que ser un número entero entre 1 y 168.",
+      "en": "The limit has to be a whole number between 1 and 168.",
+      "pt-BR": "O limite precisa ser um número inteiro entre 1 e 168."
+    },
     "asistencia.filtro_todas": {
       "es-AR": "Todos los vínculos",
       "en": "All connections",

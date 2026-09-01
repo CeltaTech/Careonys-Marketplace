@@ -691,7 +691,7 @@ Es la misma línea que traza la 0041: **el producto avisa, no prescribe.**
 
 **Y la pantalla ya avisa lo mismo.** La aplicación del Asistente lo dice arriba de la lista de
 guías, antes de que se abra ninguna: «Estas guías dicen qué observar y cuándo avisar. No indican
-tratamientos.» (`pwa-asistente/index.html:744`). Así que si una corrección cruza esa línea, la
+tratamientos.» (`pwa-asistente/index.html:799`). Así que si una corrección cruza esa línea, la
 pantalla queda diciendo una cosa y la guía otra.
 
 ---
