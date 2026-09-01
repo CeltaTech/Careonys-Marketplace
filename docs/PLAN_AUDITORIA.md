@@ -223,7 +223,7 @@ de datos real y hoy no está en ningún pendiente. **Se abre pendiente aparte.**
 **Dos: el motivo de la decisión más crítica se está perdiendo, y no es culpa de que falte el
 rastro.** `panel-prestadora.html:393` y `:408` juntan la nota de la entrevista —el motivo de aprobar
 o de rechazar—, `cambiarEstadoAspirante` la manda como `notaPrestadora` (`js/apiClient.js:299`), y
-**`_mapToDatabase` la descarta**: no está en la lista de campos de `caregivers` (`js/apiClient.js:719-741`),
+**`_mapToDatabase` la descarta**: no está en la lista de campos de `caregivers` (`js/apiClient.js:945-966`),
 así que se pierde con un aviso en la consola y nada más. Comprobado el 27 de agosto de 2026 leyendo
 las dos listas. Y no hay columna donde pudiera caer: `caregivers` no tiene ninguna para eso. **Se
 abre pendiente aparte**, y en §12 queda la pregunta de si el motivo va a una columna del legajo o a
@@ -240,8 +240,8 @@ lo tiene. Se eligió a favor de la regla de privacidad, a conciencia.
 
 ## 10. Cómo se prueba, y por qué la prueba puede fallar
 
-Va adentro de `scripts/probar_aislamiento.mjs`, que es donde ya viven las 58 comprobaciones y las
-tres cuentas ficticias. En el tramo que corre con `--local`, que es el único donde se puede ascender
+Va adentro de `scripts/probar_aislamiento.mjs`, que es donde ya viven las 82 comprobaciones y las
+seis cuentas ficticias. En el tramo que corre con `--local`, que es el único donde se puede ascender
 a alguien a coordinador.
 
 1. El coordinador de la Prestadora A valida el legajo de la cuenta A.

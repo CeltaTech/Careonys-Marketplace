@@ -122,8 +122,8 @@ Cómo quedó:
   perfil (`js/apiClient.js:60`); sin sesión, el enlace elige qué directorio se muestra y nada más.
 - **Los archivos siguen la misma regla.** Ver la fila «Archivos del legajo» de arriba.
 
-Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, **cincuenta y ocho
-comprobaciones, contadas y pasadas el 31 de agosto de 2026** contra la base de esta máquina. Y
+Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, **ochenta y dos
+comprobaciones, contadas y pasadas el 1 de septiembre de 2026** contra la base de esta máquina. Y
 falsificado a propósito para verificar que se pone en rojo cuando corresponde.
 
 ### El nombre del producto salió del código
@@ -539,7 +539,7 @@ Ya no queda ninguna contraseña de mentira en pantalla. La de acceso venía prel
 dígitos para poder mostrar el producto sin tipear, y el correo que la acompañaba tampoco
 correspondía a ninguna cuenta. Los cuatro campos se vaciaron el 25 de agosto de 2026 y arrancan
 con su indicación adentro (`pwa-asistente/index.html:327` y `:331`,
-`pwa-familia/index.html:571` y `:574`). Lo que falta para cerrar el pendiente 47 es la otra mitad:
+`pwa-familia/index.html:588` y `:591`). Lo que falta para cerrar el pendiente 47 es la otra mitad:
 que exista una cuenta de Asistente ficticia con la que se pueda entrar, y eso depende del tope de
 correos del pendiente 45.
 
@@ -550,7 +550,7 @@ Comprobado el 24 de agosto de 2026 contra el proyecto real: el servidor tiene ap
 distancia costaba dos cosas que ya no cuestan:
 
 - **La columna del contacto existe.** La 0009 agregó `avisos.contact_info`, que es donde
-  `js/apiClient.js:973` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
+  `js/apiClient.js:983` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
   público de `solicitar-asistente.html` mandaba una columna que la base no tenía.
 - **Las filas de ejemplo hablan el idioma del catálogo.** La 0010 reemplazó las claves viejas de
   las cuatro filas ficticias —«enfermero» y compañía— por las que las pantallas esperan.
@@ -884,7 +884,7 @@ atiende, precio por hora y si acepta reemplazos urgentes. Son exactamente los qu
 `directorio`, la vista que sólo deja pasar a quien tiene el legajo validado por la
 Prestadora **y** además autorizó que se lo publique.
 
-- **Lo trae `traerDelDirectorio` (`js/apiClient.js:773`)**, que pide una sola fila filtrando por
+- **Lo trae `traerDelDirectorio` (`js/apiClient.js:777`)**, que pide una sola fila filtrando por
   identificador y por Prestadora. Un identificador que no tiene forma de identificador se contesta
   sin preguntarle a la base: la base devolvería un error de sintaxis, y un error en pantalla se lee
   como que el sistema se rompió, cuando lo que hay es un enlace viejo. Los hay: hasta el 25 de
@@ -1188,7 +1188,7 @@ venían mezclados con otras declaraciones salieron del atributo y son la clase `
 obligó a cambiar el interruptor de «los cuatro estados», y ahí estaba el riesgo real de todo el
 trabajo: el idioma anterior era `panel.style.display = ''`, que **con la clase puesta ya no
 muestra nada**, porque sin nada escrito en el atributo vuelve a mandar la clase. Las seis pantallas
-que lo usaban dicen ahora `classList.toggle('oculto', …)` (`acceso.html:97`), que además no le
+que lo usaban dicen ahora `classList.toggle('oculto', …)` (`acceso.html:99`), que además no le
 impone forma a ningún panel: el que se muestra recupera la que le dio el CSS. Comprobado en el
 navegador en `directorio.html` y `perfil.html`, estado por estado, y en `directorio.html` se
 ve lo que estaba en juego: la grilla de resultados vuelve a `display: grid`, no a `block`.
@@ -1569,7 +1569,7 @@ pantalla vacía.
   cargarla», que es el estado de error que faltaba.
 - **Las otras tres caen en la pantalla de acceso**, y eso ya era la verdad: sin sesión rescatada,
   lo que corresponde mostrar es el acceso. Lo que se perdía era el rastro. Ahora
-  `mockup-app.html:435` y `:909`, `pwa-asistente/index.html:823` y `pwa-familia/index.html:883`
+  `mockup-app.html:435` y `:909`, `pwa-asistente/index.html:823` y `pwa-familia/index.html:925`
   dejan el detalle técnico en la consola en lugar de tirarlo.
 - **`js/auth.js:292` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
   cargan ese archivo —no en las dieciséis, y el comentario decía catorce hasta que se contaron—, y su
@@ -1891,7 +1891,7 @@ paneles es grid ni flex, y el día que alguien agregara uno se habría aplastado
 que conmutan `display` dijeron `''` desde ese día, con el motivo escrito al lado. **Y el 26 de
 agosto de 2026 dejaron de conmutar `display` del todo**: al pasar esconder a la clase `oculto` —el
 pendiente 8—, vaciar el atributo dejó de mostrar nada, porque sin nada escrito ahí vuelve a mandar
-la clase. Las seis dicen ahora `classList.toggle('oculto', …)` (`acceso.html:97`), que no impone
+la clase. Las seis dicen ahora `classList.toggle('oculto', …)` (`acceso.html:99`), que no impone
 forma ninguna: el panel que se muestra recupera la que le dio el CSS, sea grid, flex o la que sea.
 Que sigan siendo ocho copias es parte del pendiente 13.
 
@@ -2232,7 +2232,7 @@ lea las mismas reglas, no una segunda copia de ellas.
 el pendiente 15. No era una cuestión de prolijidad. Quien escribe la llamada a mano decide solo si
 manda el token de quien inició sesión o la clave pública, y de ese renglón depende que la base
 sepa quién está preguntando. Ahora son `ClienteDatos.getMensajes()` y
-`ClienteDatos.enviarMensaje()` (`js/apiClient.js:726`), que arman el pedido una sola vez para
+`ClienteDatos.enviarMensaje()` (`js/apiClient.js:730`), que arman el pedido una sola vez para
 todos.
 
 Se ganó algo que no se buscaba: la lectura vieja miraba `res.ok` y, si venía en falso, seguía de
@@ -2891,7 +2891,7 @@ ficticia y sesión simulada: el legajo se creó con fecha de alta del **1 de ene
 `update` posterior la corrió al **1 de enero de 2010**. Las dos veces la base guardó lo que le
 mandaron.
 
-**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:889` la traduce a `fechaRegistro` y ese
+**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:893` la traduce a `fechaRegistro` y ese
 nombre no aparece en ningún otro archivo del proyecto—, así que no había consecuencia visible. Se
 arregló igual, porque la antigüedad es exactamente la clase de dato que después se usa para ordenar
 un directorio o para decidir a quién se muestra primero, y ese día el agujero pasa a ser una
@@ -4087,7 +4087,7 @@ el **pendiente 107**.
 
 **Y lo que la opción A todavía le debe a quien la sufre.** Que la persona vea, **antes** de cambiar
 un papel, que hacerlo le baja el sello. Hoy no se puede escribir: ninguna pantalla cambia
-`documents` —el mapeo existe en `js/apiClient.js:952` y no lo usa nadie— y el chequeo de frases se
+`documents` —el mapeo existe en `js/apiClient.js:956` y no lo usa nadie— y el chequeo de frases se
 pone en rojo con toda frase de catálogo que ninguna pantalla nombre. La frase entra el día que
 entre la pantalla; es el **pendiente 108**.
 
@@ -4121,7 +4121,7 @@ Cerró el pendiente 94, el 31 de agosto de 2026.
   pregunta al módulo antes de enviar, y si no hay respuesta el formulario vuelve al paso 1 y lleva
   la vista al campo (`pwa-asistente/index.html:1492`).
 - **Se guarda donde se lee**: las claves van a `zonas_asistente` y el texto libre a `zonas_texto`,
-  por `js/apiClient.js:424` y `:949`. `caregivers.zone` no la escribe más nadie, y eso abrió el
+  por `js/apiClient.js:424` y `:953`. `caregivers.zone` no la escribe más nadie, y eso abrió el
   **pendiente 109**.
 - **Y el 109 se cerró esa misma noche, por la salida que no borra datos.** Se midió
   primero: ninguna pantalla manda `zona` ni `zonaResidencia` al escribir un legajo, así
@@ -4211,10 +4211,11 @@ publicación se vio qué más contestaba el servidor.
 sin poder correr, y eso era sólo medio cierto.** Lo que no puede correr es contra el servidor
 publicado, porque ahí el alta pide confirmar el correo y la prueba nunca llega a tener sesión.
 Contra la base de esta máquina corre entera, y el propio encabezado del guion lo dice desde que se
-escribió: `scripts/probar_aislamiento.mjs:9`. El 31 de agosto de 2026 se corrió con `--local` y
-**pasaron las 58 comprobaciones**, incluidas las dos que sólo existen ahí —ascender a alguien a
-coordinador para ver si el personal lee los papeles de su Prestadora y no los de la otra—, porque
-ascender pide la clave de administración y ésa vive nada más que en el entorno local.
+escribió: `scripts/probar_aislamiento.mjs:9`. El 1 de septiembre de 2026 se corrió con `--local` y
+**pasaron las 82 comprobaciones**, incluidas las cinco que sólo existen ahí —ascender a alguien a
+coordinador para ver si el personal lee los papeles de su Prestadora y no los de la otra, y si no
+lee ninguna de las tres tablas de la modalidad—, porque ascender pide la clave de administración y ésa
+vive nada más que en el entorno local.
 
 **Conviene no confundir las dos cosas.** La corrida local prueba las migraciones de
 `supabase/migrations/`, que son los mismos archivos de los dos lados, y el guion se niega a arrancar
@@ -4246,7 +4247,7 @@ cuenta las que hizo y busca en los cuatro documentos la frase que dice cuántas 
 letras o en cifras según el documento. Un desajuste **no** dice que el aislamiento falle —eso sería
 enseñarle a la próxima persona a desconfiar del mensaje—: el veredicto del aislamiento sale
 primero y completo, y el desajuste sale después, como nota al pie, diciendo que se corrige el
-documento y no la prueba. El código del añadido está en `scripts/probar_aislamiento.mjs:1212`.
+documento y no la prueba. El código del añadido está en `scripts/probar_aislamiento.mjs:1607`.
 
 **Comprobado en los dos sentidos**, como pide la regla de la casa: con `docs/INVENTARIO.md` falseado
 a propósito la prueba sale con código 1 y nombra el archivo y la frase que buscó; con el número
@@ -4907,7 +4908,7 @@ que las otras dos, que la limpieza se la lleva.
 escribe nadie: ni una pantalla, ni un guion, ni una prueba. Lo que sí pasa es que
 `registrar-asistente.html:996-1000` sube el documento de identidad, los antecedentes penales y el
 título, y guarda **sólo los caminos** en la columna `documents` de `caregivers`
-(`registrar-asistente.html:1057`, y de ahí a la base por `js/apiClient.js:952`). O sea que hay
+(`registrar-asistente.html:1057`, y de ahí a la base por `js/apiClient.js:956`). O sea que hay
 dos formas de guardar el mismo hecho y una está muerta, como ya pasó con `messages` y las
 `conversaciones` heredadas. Y la que quedó viva es la pobre: la tabla dedicada tiene `tipo`,
 `presentado_el`, `vencimiento` y `verificado`, y el objeto de `documents` no tiene ninguno de los
@@ -4936,7 +4937,7 @@ defendía eso diciendo que los fichados ya escritos decían «Entrada» —y no 
 escrito, ni podía haberlo—. Es justo la distancia entre lo visible, que cambia con el idioma,
 y lo guardado, que se nombra por su función y no cambia.
 
-Las tres corregidas. El legajo se resuelve **una sola vez**, en `js/apiClient.js:536`, porque son
+Las tres corregidas. El legajo se resuelve **una sola vez**, en `js/apiClient.js:540`, porque son
 dos pantallas que necesitan el mismo dato; si no hay legajo lo dice y se planta, con una frase
 nueva en los tres idiomas, en vez de inventar uno. Y `event_type` guarda `entrada` y `salida`,
 que son las claves que el catálogo de frases **ya usaba** —no hace falta ninguna palabra nueva—,
@@ -5175,7 +5176,7 @@ no se entera nadie el día que ese algo cambie. Ahora
 `scripts/probar_exenciones.mjs` la tomó sola: vaciarla pone rojo al chequeo, comprobado.
 
 El `avatares` es aparte y está bien: es público **a propósito** desde la 0006, porque la foto es lo
-que el directorio muestra sin cuenta (`js/apiClient.js:794`). Ahí no hay nada que aislar hacia
+que el directorio muestra sin cuenta (`js/apiClient.js:798`). Ahí no hay nada que aislar hacia
 afuera; lo que la condición cuida es la escritura, que nadie deje una foto en la carpeta de otro.
 
 Mover el camino a `<Organización>/<cuenta>/<archivo>` no es sólo una migración: hay que mudar los
@@ -5327,7 +5328,7 @@ Todo correcto. Otra vez no había nada que arreglar; faltaba lo que impide el pr
 Y el primer error tiene dos tamaños muy distintos, que conviene no mezclar. **Equivocarse el nombre
 falla callado**: el depósito no existe, `urlFirmada()` devuelve `null` y la pantalla no muestra el
 archivo sin decir por qué. **Confundirse de depósito en la dirección pública publica un documento de
-identidad**, que es el peor error posible de este producto. `js/apiClient.js:804` arma una dirección
+identidad**, que es el peor error posible de este producto. `js/apiClient.js:808` arma una dirección
 pública a mano, con el nombre del depósito pegado adentro del texto de la dirección: cambiar ahí una
 palabra por la otra es un renglón.
 

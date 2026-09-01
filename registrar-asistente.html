@@ -1184,7 +1184,22 @@
         //    Sin sesión las escrituras salen como visitante anónimo y la base las
         //    rechaza: el legajo se perdería entero y en silencio.
         const email = document.getElementById('email').value;
-        const prestadora = ClienteDatos.currentTenant;
+
+        //    La Prestadora, antes que la cuenta. El disparador de la base
+        //    (migración 0005) la resuelve por el `tenant_slug` que viaja en el
+        //    alta; si no le llega ninguno, el perfil nace sin Prestadora y desde
+        //    ahí la RLS rechaza toda escritura de esa cuenta.
+        //
+        //    Falla cerrado a propósito: antes que dar de alta una cuenta
+        //    huérfana, no se da de alta ninguna y se dice por qué. Esta pantalla
+        //    mandaba `null` y seguía igual.
+        const prestadora = ClienteDatos.currentTenant
+          || await ClienteDatos.initTenant().catch(() => null);
+        if (!prestadora || !prestadora.slug) {
+          alert(Catalogo.frase('alta.sin_prestadora'));
+          return;
+        }
+
         let sesion = null;
         let userId = null;
 
@@ -1192,7 +1207,7 @@
           const alta = await Sesion.signup(email, clave, {
             full_name: document.getElementById('nombre').value,
             role: 'caregiver',
-            tenant_slug: prestadora ? prestadora.slug : null
+            tenant_slug: prestadora.slug
           });
           sesion = alta.session;
           userId = alta.user ? alta.user.id : null;

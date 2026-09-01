@@ -329,6 +329,16 @@
       "en": "Register as a Caregiver",
       "pt-BR": "Cadastrar-se como Assistente"
     },
+    "acceso.o_bien": {
+      "es-AR": "o",
+      "en": "or",
+      "pt-BR": "ou"
+    },
+    "acceso.darse_de_alta_familia": {
+      "es-AR": "Darse de alta como Familia",
+      "en": "Register as a Family",
+      "pt-BR": "Cadastrar-se como Família"
+    },
     "acceso.prestadora_desconocida": {
       "es-AR": "No se reconoció la Prestadora de este enlace. Se puede iniciar sesión igual.",
       "en": "The Provider in this link was not recognised. It is still possible to sign in.",
@@ -338,6 +348,89 @@
       "es-AR": "Hay que completar el correo y la contraseña.",
       "en": "The email address and the password have to be filled in.",
       "pt-BR": "É preciso preencher o e-mail e a senha."
+    },
+
+    "__a": "── El alta de la Familia (registrar-familia.html) ──",
+
+    "alta_familia.titulo": {
+      "es-AR": "Darse de alta como Familia",
+      "en": "Register as a Family",
+      "pt-BR": "Cadastrar-se como Família"
+    },
+    "alta_familia.preparando": {
+      "es-AR": "Preparando el alta…",
+      "en": "Preparing the registration…",
+      "pt-BR": "Preparando o cadastramento…"
+    },
+    "alta_familia.encabezado": {
+      "es-AR": "Darse de alta como Familia",
+      "en": "Register as a Family",
+      "pt-BR": "Cadastrar-se como Família"
+    },
+    "alta_familia.bajada": {
+      "es-AR": "Con esta cuenta se publica el aviso y se elige el Asistente. El acuerdo se cierra directamente entre la Familia y quien se elija.",
+      "en": "This account is what publishes the listing and picks the Caregiver. The agreement is closed directly between the Family and whoever is chosen.",
+      "pt-BR": "Com esta conta se publica o anúncio e se escolhe o Assistente. O acordo é fechado diretamente entre a Família e quem for escolhido."
+    },
+    "alta_familia.nombre": {
+      "es-AR": "Nombre y apellido",
+      "en": "First and last name",
+      "pt-BR": "Nome e sobrenome"
+    },
+    "alta_familia.repetir_clave": {
+      "es-AR": "Repetir la contraseña",
+      "en": "Repeat the password",
+      "pt-BR": "Repetir a senha"
+    },
+    "alta_familia.crear": {
+      "es-AR": "Crear la cuenta",
+      "en": "Create the account",
+      "pt-BR": "Criar a conta"
+    },
+    "alta_familia.creando": {
+      "es-AR": "Creando la cuenta…",
+      "en": "Creating the account…",
+      "pt-BR": "Criando a conta…"
+    },
+    "alta_familia.avisa_confirmacion": {
+      "es-AR": "Al terminar se manda un correo con un enlace. La cuenta queda habilitada recién cuando se abre ese enlace.",
+      "en": "Once this is done, an email with a link is sent. The account is only enabled when that link is opened.",
+      "pt-BR": "Ao terminar, é enviado um e-mail com um link. A conta só fica habilitada quando esse link é aberto."
+    },
+    "alta_familia.ya_tiene_cuenta": {
+      "es-AR": "¿Ya tiene cuenta?",
+      "en": "Already have an account?",
+      "pt-BR": "Já tem conta?"
+    },
+    "alta_familia.ir_al_acceso": {
+      "es-AR": "Entrar",
+      "en": "Sign in",
+      "pt-BR": "Entrar"
+    },
+    "alta_familia.faltan_datos": {
+      "es-AR": "Hay que completar el nombre y el correo.",
+      "en": "The name and the email address have to be filled in.",
+      "pt-BR": "É preciso preencher o nome e o e-mail."
+    },
+    "alta_familia.revise_el_correo": {
+      "es-AR": "La cuenta quedó creada. Se mandó un correo a {correo} con un enlace para confirmarla, y hasta que se abra ese enlace no se puede entrar. Conviene revisar también la carpeta de correo no deseado.",
+      "en": "The account has been created. An email with a link to confirm it was sent to {correo}, and it is not possible to sign in until that link is opened. It is worth checking the spam folder as well.",
+      "pt-BR": "A conta foi criada. Foi enviado um e-mail para {correo} com um link para confirmá-la, e não é possível entrar até que esse link seja aberto. Convém verificar também a pasta de spam."
+    },
+    "alta_familia.reenviar": {
+      "es-AR": "Volver a mandar el correo",
+      "en": "Send the email again",
+      "pt-BR": "Enviar o e-mail de novo"
+    },
+    "alta_familia.reenviando": {
+      "es-AR": "Mandando…",
+      "en": "Sending…",
+      "pt-BR": "Enviando…"
+    },
+    "alta_familia.volver_al_acceso": {
+      "es-AR": "Ir a la pantalla de acceso",
+      "en": "Go to the sign-in screen",
+      "pt-BR": "Ir para a tela de acesso"
     },
 
     "___": "── El campo de contraseña, que arma js/clave.js en cualquier pantalla ──",
@@ -1394,6 +1487,12 @@
       "es-AR": "No se pudo completar el alta. Revise los datos y vuelva a intentarlo.",
       "en": "The registration could not be completed. Please check the details and try again.",
       "pt-BR": "Não foi possível concluir o cadastramento. Confira os dados e tente novamente."
+    },
+
+    "alta.sin_prestadora": {
+      "es-AR": "No se pudo saber de qué Prestadora es esta alta, así que no se creó ninguna cuenta. Conviene entrar por el enlace de la Prestadora y volver a intentarlo.",
+      "en": "It was not possible to tell which Provider this registration belongs to, so no account was created. It is worth entering through the Provider’s link and trying again.",
+      "pt-BR": "Não foi possível saber de qual Prestadora é este cadastramento, então nenhuma conta foi criada. Convém entrar pelo link da Prestadora e tentar de novo."
     },
 
     "alta.correo_reenviado": {

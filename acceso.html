@@ -66,7 +66,9 @@
 
         <p class="acceso-pie">
           <span data-frase="acceso.sin_cuenta">¿Todavía no tiene cuenta?</span>
-          <a href="registrar-asistente.html" data-frase="acceso.darse_de_alta">Darse de alta como Asistente</a>
+          <a href="registrar-asistente.html" id="link-alta-asistente" data-frase="acceso.darse_de_alta">Darse de alta como Asistente</a>
+          <span data-frase="acceso.o_bien">o</span>
+          <a href="registrar-familia.html" id="link-alta-familia" data-frase="acceso.darse_de_alta_familia">Darse de alta como Familia</a>
         </p>
       </form>
 
@@ -129,6 +131,27 @@
       });
     }
 
+    // Las dos altas se hacen **contra una Prestadora**, y la de quien todavía no
+    // tiene cuenta sólo puede salir de la dirección: no hay perfil de dónde
+    // sacarla. Así que si a esta pantalla se llegó por `?t=`, el nombre corto
+    // viaja también en los dos enlaces. Sin él, la pantalla de alta abre sin
+    // Prestadora y no da de alta a nadie —falla cerrado a propósito, antes que
+    // dejar nacer una cuenta huérfana—, y la persona queda contra una puerta
+    // cerrada sin saber por qué. Por subdominio no hace falta: ése se conserva
+    // solo.
+    function sellarEnlacesDeAlta(nombreCorto) {
+      if (!nombreCorto) return;
+      ['link-alta-asistente', 'link-alta-familia'].forEach((id) => {
+        const enlace = document.getElementById(id);
+        const destino = enlace.getAttribute('href');
+        // `arrancar()` se vuelve a correr con el botón de reintentar, así que el
+        // nombre corto se agrega una sola vez y no se encadena.
+        if (destino.indexOf('?') === -1) {
+          enlace.setAttribute('href', destino + '?t=' + encodeURIComponent(nombreCorto));
+        }
+      });
+    }
+
     // A dónde va cada quien después de entrar. Si venía de una pantalla que pidió
     // sesión, vuelve a esa; si no, al lugar que le corresponde por su rol.
     function destino(perfil) {
@@ -173,6 +196,11 @@
         // quien entre va a caer en la suya de todas formas.
         await ClienteDatos.initTenant();
         mostrar('listo');
+
+        // Y el nombre corto que nombró la dirección se les cuelga a los dos
+        // enlaces del alta, por lo que está explicado arriba de esa función.
+        sellarEnlacesDeAlta(ClienteDatos.slugPedido);
+
         if (!ClienteDatos.currentTenant || !ClienteDatos.currentTenant.id) {
           avisar('aviso-prestadora', 'acceso.prestadora_desconocida');
         }

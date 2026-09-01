@@ -1549,10 +1549,29 @@
       if (boton) { boton.disabled = true; boton.textContent = Catalogo.frase('asistente.creando_cuenta'); }
 
       try {
+        // La Prestadora, antes que la cuenta. El disparador de la base
+        // (migración 0005) la resuelve por el `tenant_slug` que viaja en el
+        // alta; si no le llega ninguno, el perfil nace sin Prestadora y desde
+        // ahí la RLS rechaza toda escritura de esa cuenta: queda inservible y
+        // nadie se entera hasta que la persona intenta usarla.
+        //
+        // Falla cerrado a propósito: antes que dar de alta una cuenta huérfana,
+        // no se da de alta ninguna y se dice por qué. Es lo mismo que hace
+        // `registrar-asistente.html` para mandar el dato, con el control que a
+        // esa pantalla todavía le falta.
+        const prestadora = ClienteDatos.currentTenant
+          || await ClienteDatos.initTenant().catch(() => null);
+        if (!prestadora || !prestadora.slug) {
+          alert(Catalogo.frase('alta.sin_prestadora'));
+          return;
+        }
+
         let sesion = null;
         try {
           const alta = await Sesion.signup(email, clave, {
-            full_name: document.getElementById('w-nombre').value, role: 'caregiver'
+            full_name: document.getElementById('w-nombre').value,
+            role: 'caregiver',
+            tenant_slug: prestadora.slug
           });
           sesion = alta.session;
         } catch (authErr) {

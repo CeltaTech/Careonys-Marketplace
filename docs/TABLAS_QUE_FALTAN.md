@@ -72,51 +72,56 @@ no es ninguna de las dos cosas es **búsqueda**: buscar es el acto, y el acto no
 
 ## Las diez
 
-### 1. `postulaciones` — el Asistente se ofrece para una búsqueda
+> **Tres ya están construidas** —la 1, la 2 y la 3— por la migración
+> `0054_el_contacto_es_lo_unico_que_queda_guardado.sql`, y con dos decisiones menos que las que
+> esta página daba por abiertas. Quedan siete.
 
-**Para qué.** Es la mitad que falta de la modalidad de este producto: hoy una Familia puede publicar
-lo que necesita y **nadie puede contestarle**. Sin esta tabla el directorio muestra gente y las
-búsquedas se guardan, pero las dos puntas nunca se tocan.
+### 1. `postulaciones` — el Asistente se ofrece a un aviso — **CONSTRUIDA**
 
-| | |
-|---|---|
-| **De qué lado cae** | Propia de esta modalidad — módulo `avisos`. En prestación directa el trabajo se asigna, no se postula |
-| **De qué depende** | De `avisos` y de `caregivers`, las dos ya existentes |
-| **Qué hay que decidir antes** | Si la tarifa propuesta se guarda acá, y con qué moneda («todo importe se guarda con su moneda»). Y qué pasa cuando la búsqueda se cierra con varias postulaciones abiertas |
+La crea `supabase/migrations/0054_el_contacto_es_lo_unico_que_queda_guardado.sql`. Era la mitad
+que faltaba de la modalidad de este producto: una Familia podía publicar lo que necesitaba y **nadie
+podía contestarle**.
 
-Columnas propuestas: búsqueda, Asistente, estado, mensaje, tarifa propuesta, fecha en que se vio,
-fecha de respuesta, motivo del rechazo, fecha de creación. Una sola postulación por par de
-búsqueda y Asistente. Estados propuestos: pendiente, vista, aceptada, rechazada, cancelada.
+**Quedó más chica que la propuesta, y por una razón.** El Desarrollador decidió el 31 de agosto
+de 2026 que **el software no sabe del trato** (`CLAUDE.md` §1): no se guarda ningún contrato,
+ningún precio acordado, ninguna condición y ninguna aceptación, para que nadie pueda alegar
+relación de dependencia con la Prestadora. Eso contesta de una vez las dos preguntas que esta
+página daba por abiertas:
 
-**Falta `prestadora_id`.** Y falta la moneda de la tarifa.
+- **La tarifa propuesta no se guarda**, así que la pregunta de con qué moneda se guarda no llega
+  a plantearse.
+- **No hay estado «aceptada» ni «rechazada»**, porque aceptar es guardar el trato. Quedan dos
+  fechas —`vista_el` y `descartada_el`— y ninguna columna de estado, que además evita un
+  catálogo escrito adentro de una restricción.
+
+Y la columna de la Organización está, con el nombre que tiene en este esquema: `tenant_id`. La
+migración explica por qué no se llamó `prestadora_id`.
 
 ---
 
-### 2 y 3. `conversaciones` y `mensajes` — el chat, colgado del vínculo
+### 2 y 3. `conversaciones` y `mensajes` — el canal entre las dos partes — **CONSTRUIDAS**
 
-**Para qué.** Es la forma en que la Familia y el Asistente se comunican **antes** de contratar. Hoy
-existe un chat en una sola pantalla (`mockup-app.html`) que lee la tabla `messages` sin ningún
-filtro y sin sesión: es el pendiente 6.
+Las crea la misma migración 0054.
 
-| | |
-|---|---|
-| **De qué lado cae** | Propia de esta modalidad — módulo `contacto` |
-| **De qué depende** | De la decisión de arriba: `messages` cuelga de una búsqueda, esto cuelga del vínculo entre dos personas. **Son incompatibles** |
-| **Qué hay que decidir antes** | Cuál de los dos modelos queda. Y con qué condiciones una Familia puede escribirle a alguien que no contestó ninguna búsqueda: eso es regla comercial, congelada por `docs/ALCANCE.md` §4 |
+**Cuál de los dos modelos quedó, y no fue una preferencia.** La pregunta era si el chat cuelga de
+un aviso, como la `messages` heredada, o del vínculo entre dos personas. La contesta el modelo:
+los caminos del mercado son **dos**, y en el del directorio la Familia contacta a un perfil
+**sin que exista ningún aviso**. Un chat colgado de un aviso no sabe representar ese camino. Así
+que cuelga del vínculo, y el aviso queda como una columna que puede estar en nulo: ahí está
+guardado por cuál de los dos caminos se abrió el contacto, sin ninguna lista de valores escrita a
+mano. **`messages` queda superada** y su baja es el pendiente 139, porque borrar necesita la
+palabra del Desarrollador.
 
-`conversaciones`: Familia, Asistente, búsqueda, último mensaje y su fecha, cuántos sin leer de cada
-lado, si sigue activa. Una sola conversación por par de Familia y Asistente.
+**Quedó más chica que la propuesta**, por lo mismo que la anterior y porque el resto es acabado:
+sin tipo de mensaje, sin archivo adjunto, sin editado ni borrado, sin marca de leído y sin fecha
+del último mensaje —que se deriva—. La columna de la Organización está en las dos.
 
-`mensajes`: conversación, autor, contenido, tipo —texto, imagen, archivo, del sistema—, archivo,
-si se leyó y cuándo, si se editó, si se borró.
-
-**La condición que no estaba escrita en ningún lado** y que recordó el Desarrollador el 24 de
-agosto de 2026: **adentro del chat no se pueden filtrar datos de contacto**. Si se filtran, la
-conversación sigue por afuera y la plataforma cobra una vez y nunca más, que es exactamente la
-razón por la que el teléfono no se muestra. Ninguna de las dos tablas propuestas prevé eso: hace
-falta algo que revise el contenido antes de guardarlo.
-
-**Falta `prestadora_id`** en las dos.
+**Lo que sigue sin resolverse, y ahora tiene pendiente propio.** La condición que recordó el
+Desarrollador el 24 de agosto de 2026: **adentro del chat no se pueden filtrar datos de
+contacto**. Si se filtran, la conversación sigue por afuera y la Prestadora cobra una vez y nunca
+más. `mensajes` guarda el contenido tal como llega; hace falta algo que lo revise **del lado
+del servidor**, porque un control escrito en el navegador lo saltea cualquiera. Es el pendiente
+137.
 
 ---
 

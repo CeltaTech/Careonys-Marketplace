@@ -178,6 +178,23 @@
       box-shadow: var(--sombra-media);
     }
 
+    /* El renglón de abajo del ingreso, que lleva al alta. Es el mismo bloque
+       que la aplicación del Asistente tiene abajo de su tarjeta de ingreso: se
+       repite el aspecto y no el destino, porque cada una manda a su alta. */
+    .btn-register-link {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--texto-secundario);
+    }
+
+    .btn-register-link a {
+      color: var(--marca-prestadora-acento);
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
     /* DASHBOARD FAMILIA */
     .dashboard-header {
       background: var(--superficie);
@@ -576,6 +593,22 @@
         <button type="button" class="btn-login ancho-total" id="btn-action-login">Ingresar a {{producto}} Familia</button>
       </div>
 
+      <!-- La puerta de quien todavía no tiene cuenta. El alta vive afuera de
+           esta aplicación, en `registrar-familia.html`, que es la misma pantalla
+           a la que manda `acceso.html`: una sola alta para las dos puertas. El
+           nombre corto de la Prestadora se le agrega en el guion, porque acá se
+           llega con `?t=` tanto como por subdominio.
+
+           Los dos textos nacen en castellano y el guion los pide al catálogo,
+           que es como trabaja el resto de esta pantalla: acá el marcado todavía
+           no declara ninguna frase —lo mira el pendiente 9, que tiene la mudanza
+           entera de esta aplicación— y ponerle una sola a este renglón daría por
+           mudada una pantalla que no lo está. -->
+      <div class="btn-register-link">
+        <span id="alta-familia-pregunta">¿Todavía no tiene cuenta?</span>
+        <a href="../registrar-familia.html" id="link-alta-familia">Darse de alta como Familia</a>
+      </div>
+
       <!-- Los estados del arranque. Nace vacío y su texto lo pone el guion desde
            el catálogo: mientras se averigua si ya hay sesión dice que está
            averiguando, y si algo falla dice qué. Antes el fallo del arranque
@@ -868,6 +901,27 @@
 
       try {
         await ClienteDatos.initTenant();
+
+        // El alta abre en una pantalla de afuera de esta aplicación, y allá la
+        // Prestadora sólo puede salir de la dirección: quien se va a dar de alta
+        // todavía no tiene perfil de dónde sacarla. Si acá se llegó por `?t=`,
+        // el nombre corto viaja en el enlace; sin él, la pantalla de alta abre
+        // sin Prestadora y no da de alta a nadie —falla cerrado, antes que
+        // dejar nacer una cuenta huérfana—. Por subdominio se conserva solo.
+        const nombreCorto = ClienteDatos.slugPedido;
+        const enlaceAlta = document.getElementById('link-alta-familia');
+        const destinoAlta = enlaceAlta.getAttribute('href');
+        if (nombreCorto && destinoAlta.indexOf('?') === -1) {
+          enlaceAlta.setAttribute('href', destinoAlta + '?t=' + encodeURIComponent(nombreCorto));
+        }
+        // Y el texto de ese renglón sale del catálogo, como el de los avisos de
+        // más arriba. Si el catálogo no llegó, queda el castellano que el
+        // marcado trae adentro: un enlace sin rótulo no se entiende.
+        const preguntaAlta = Catalogo.frase('acceso.sin_cuenta');
+        const rotuloAlta = Catalogo.frase('acceso.darse_de_alta_familia');
+        if (preguntaAlta) document.getElementById('alta-familia-pregunta').textContent = preguntaAlta;
+        if (rotuloAlta) enlaceAlta.textContent = rotuloAlta;
+
         cargarRecomendados();
 
         // Restaurar sesión activa automáticamente

@@ -95,9 +95,10 @@ const PANTALLAS_QUE_SE_VAN = new Map([
   ['mockup-app',
    'Es un modelo estético: una vez que sirvió de modelo, no vale nada. Lo dijo el '
    + 'Desarrollador el 26 de agosto de 2026, y el pendiente 6 ya tiene escrito que '
-   + 'se borra —«Recién entonces se borran él y `mockup-app.html`»— apenas sus dos '
-   + 'capacidades, el chat y el alta de una Familia, estén reescritas en las PWAs. '
-   + 'Hasta entonces se lo deja como está: sus ocho puntos de carga se arreglan en '
+   + 'se borra —«Recién entonces se borran él y `mockup-app.html`»— apenas el chat, '
+   + 'que es la capacidad que todavía vive sólo acá, esté reescrito en las PWAs. El '
+   + 'alta de una Familia ya salió: la hace `registrar-familia.html` desde el 31 de '
+   + 'agosto de 2026. Hasta entonces se lo deja como está: sus puntos de carga se arreglan en '
    + 'las pantallas que lo reemplacen, no acá.']
 ]);
 

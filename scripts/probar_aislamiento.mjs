@@ -29,10 +29,16 @@
    mira listas vacías: registra cuentas ficticias, les hace escribir su legajo
    y publicar sus avisos, y recién entonces pregunta quién ve qué.
 
-   Son tres cuentas y no dos. A está en una Prestadora y B en la otra, que es
+   Son seis cuentas y no dos. A está en una Prestadora y B en la otra, que es
    lo que separa Prestadora de Prestadora. C está en la misma Prestadora que A:
    entre esas dos no hay `tenant_id` que valga, y son el único par que puede
-   mostrar si la barrera entre Familias existe.
+   mostrar si la barrera entre Familias existe. Las otras tres las pide la
+   modalidad, donde hacen falta las dos partes de un contacto **y** alguien de al
+   lado que no sea ninguna de las dos: D es un segundo Asistente en la
+   Prestadora de A, E es otra Familia de esa misma Prestadora —la que tiene que
+   ver cero—, y F es la Familia de la Prestadora B, para que la otra también
+   tenga contacto cargado de verdad. Y con `--local` hay una séptima, la que se
+   asciende a coordinador.
 
    Lo que comprueba, en orden:
 
@@ -117,6 +123,30 @@
     44. Cada Prestadora ve sus zonas, y las dos ven un número que no es cero.
     45. Ninguna ve una sola zona de la otra.
     46. Nadie carga una zona en la Prestadora de otro.
+
+   Y sobre la modalidad, que es donde la Familia y el Asistente se encuentran, y
+   donde lo único que queda guardado es el contacto (migración 0054):
+
+    47. El Asistente se postula a un aviso, y otro Asistente se postula al mismo.
+    48. Nadie se postula con el legajo de otro.
+    49. Una postulación no cruza Prestadoras.
+    50. El Asistente ve la que hizo él y ninguna del otro; la Familia del aviso
+        ve las dos.
+    51. Y otra Familia de la misma Prestadora no ve ninguna.
+    52. La Familia marca la postulación vista y descartada —no hay «aceptada»—,
+        y no puede reescribir el mensaje del Asistente: eso lo frena el permiso
+        por columna, que es cosa distinta de la política.
+    53. La Familia abre la conversación, y nadie la abre a nombre de otra.
+    54. Las dos partes la ven; otra Familia de la misma Prestadora no.
+    55. Los mensajes los escriben las dos partes, no se escriben en la
+        conversación ajena, y otra Familia no lee ninguno.
+    56. El mensaje no se edita y no se borra: no hay permiso para esos verbos.
+    57. El personal de la Prestadora no lee ninguna de las tres, y al lado se
+        mira que las dos partes sí vean las suyas: si no, «cero» no distingue
+        negado de vacío. (Sólo con --local, por lo mismo que 15 y 16.)
+    58. Las dos Prestadoras tienen contacto cargado de verdad, cada una ve el
+        suyo y ninguna ve una sola fila de la otra, ni pidiéndola por su
+        identificador.
 
    Los números de arriba son los puntos, no las comprobaciones: varias corren
    adentro de un bucle y salen más renglones que llamadas. Por eso, al final,
@@ -1125,6 +1155,365 @@ console.log('Dos Familias de la misma Prestadora');
     seCuelan.length ? seCuelan.join('   ') : 'ninguna ajena en los tres catálogos');
 }
 
+// --- 47 a 58: la modalidad, que es donde se encuentran (migración 0054) --------
+// Las tres tablas nuevas guardan **el contacto y nada del trato**, y por eso su
+// aislamiento no se parece a ninguno de los de arriba: no lo decide la
+// Prestadora ni lo decide una Familia sola, lo deciden **las dos partes**. El
+// personal de la Prestadora, que en todo el resto del esquema es quien más ve,
+// acá no lee una sola fila.
+//
+// Hacen falta tres cuentas más, y cada una está por algo que las cuatro de
+// arriba no pueden hacer:
+//
+//   D: un segundo Asistente en la Prestadora de A. Sin él no hay dos
+//      postulaciones al mismo aviso, y «el Asistente ve la suya» no se
+//      distingue de «ve todas».
+//   E: otra Familia de la MISMA Prestadora, sin legajo y sin nada en el medio.
+//      Es la que tiene que ver cero, y la única que puede mostrar que la
+//      barrera entre Familias también vale acá.
+//   F: la Familia de la Prestadora B, para que la otra Prestadora también
+//      tenga contacto cargado de verdad. Sin ella, «no ve lo de la otra» sería
+//      mirar una tabla vacía, que es justo lo que la regla de la empresa no
+//      acepta como prueba.
+const deLaModalidad = [];
+for (const [etiqueta, prestadora] of [['D', cuentas[0].prestadora],
+                                      ['E', cuentas[0].prestadora],
+                                      ['F', cuentas[1].prestadora]]) {
+  const email = `prueba.aislamiento.${etiqueta.toLowerCase()}.${sello}@ejemplo.invalid`;
+  const password = `Ficticia-${sello}-${etiqueta}`;
+  const alta = await registrar(email, password, {
+    full_name: `Persona Ficticia ${etiqueta}`,
+    tenant_slug: prestadora.slug
+  });
+  let token = alta.estado < 400 ? alta.cuerpo.access_token : null;
+  if (!token && alta.estado < 400) {
+    token = (await entrar(email, password)).cuerpo.access_token;
+  }
+  if (!token) {
+    console.error('No se pudo crear la cuenta ficticia ' + etiqueta + ', que es una de las tres');
+    console.error('que hacen falta para probar la modalidad. Sin ella esa parte no se verifica.');
+    process.exit(1);
+  }
+  deLaModalidad.push({
+    etiqueta, email, token, prestadora,
+    userId: alta.cuerpo.user?.id || alta.cuerpo.id
+  });
+}
+
+console.log('');
+console.log('La modalidad: la postulación, la conversación y los mensajes');
+{
+  const [segundoAsistente, familiaAjena, familiaDeLaOtra] = deLaModalidad;
+  const familiaDelAviso = familias[0];   // C: publicó su aviso y no tiene legajo
+  const asistenteUno    = cuentas[0];    // A: tiene legajo en la misma Prestadora
+  const asistenteDeB    = cuentas[1];    // B: el legajo de la Prestadora ajena
+
+  // El segundo Asistente carga su legajo, igual que lo cargaron A y B.
+  {
+    const r = await rest('/rest/v1/caregivers', {
+      method: 'POST',
+      headers: { Prefer: 'return=representation' },
+      body: JSON.stringify({
+        full_name: 'Legajo Ficticio ' + segundoAsistente.etiqueta,
+        user_id: segundoAsistente.userId,
+        tenant_id: segundoAsistente.prestadora.id,
+        profession: 'cuidador_domiciliario'
+      })
+    }, segundoAsistente.token);
+    segundoAsistente.legajoId = Array.isArray(r.cuerpo) && r.cuerpo[0] ? r.cuerpo[0].id : null;
+  }
+
+  // Y las dos Familias nuevas publican el suyo. El de E no lo mira nadie: está
+  // para que el intento a nombre ajeno tenga dónde apuntar sin chocar contra el
+  // índice único, que rechazaría por el motivo equivocado.
+  for (const f of [familiaAjena, familiaDeLaOtra]) {
+    const r = await rest('/rest/v1/avisos', {
+      method: 'POST',
+      headers: { Prefer: 'return=representation' },
+      body: JSON.stringify({ patient_name: 'Paciente Ficticio ' + f.etiqueta })
+    }, f.token);
+    f.avisoId = Array.isArray(r.cuerpo) && r.cuerpo[0] ? r.cuerpo[0].id : null;
+  }
+
+  const postular = (quien, aviso, extra = {}) => rest('/rest/v1/postulaciones', {
+    method: 'POST',
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify({
+      aviso_id: aviso,
+      caregiver_id: quien.legajoId,
+      mensaje: 'Me ofrezco para el puesto. Persona Ficticia ' + quien.etiqueta,
+      ...extra
+    })
+  }, quien.token);
+
+  const filasDe = async (quien, tabla, columnas) => {
+    const { cuerpo } = await rest('/rest/v1/' + tabla + '?select=' + columnas, {}, quien.token);
+    return Array.isArray(cuerpo) ? cuerpo : [];
+  };
+  const postulacionesDe = (quien) =>
+    filasDe(quien, 'postulaciones', 'id,aviso_id,caregiver_id,mensaje,tenant_id');
+  const conversacionesDe = (quien) =>
+    filasDe(quien, 'conversaciones', 'id,familia_id,caregiver_id,aviso_id,tenant_id');
+  const mensajesDe = (quien) =>
+    filasDe(quien, 'mensajes', 'id,conversacion_id,autor_id,contenido,tenant_id');
+
+  // ── La postulación ────────────────────────────────────────────────────────
+  // Los dos que siguen son el control positivo de todo lo demás: sin estas dos
+  // filas escritas, cada «no ve nada» de más abajo sería un cero de tabla vacía.
+  const suya = await postular(asistenteUno, familiaDelAviso.avisoId);
+  asistenteUno.postulacionId =
+    Array.isArray(suya.cuerpo) && suya.cuerpo[0] ? suya.cuerpo[0].id : null;
+  comprobar('El Asistente se postula al aviso de la Familia',
+    suya.estado === 201 && !!asistenteUno.postulacionId, 'respuesta ' + suya.estado);
+
+  const delOtro = await postular(segundoAsistente, familiaDelAviso.avisoId);
+  segundoAsistente.postulacionId =
+    Array.isArray(delOtro.cuerpo) && delOtro.cuerpo[0] ? delOtro.cuerpo[0].id : null;
+  comprobar('Y otro Asistente se postula al mismo aviso',
+    delOtro.estado === 201 && !!segundoAsistente.postulacionId, 'respuesta ' + delOtro.estado);
+
+  /* `caregiver_id` no tiene valor por omisión: sale del pedido, así que acá no
+     alcanza con mirar a nombre de quién quedó, como en `avisos`. Tiene
+     que ser rechazado. Y apunta al aviso de E a propósito: contra el de C, el
+     índice `una_postulacion_por_aviso` lo rechazaría igual por duplicado, y la
+     comprobación pasaría sin haber tocado la política. */
+  const conElLegajoAjeno = await rest('/rest/v1/postulaciones', {
+    method: 'POST',
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify({
+      aviso_id: familiaAjena.avisoId,
+      caregiver_id: asistenteUno.legajoId,
+      mensaje: 'Postulación escrita con el legajo de otro'
+    })
+  }, segundoAsistente.token);
+  comprobar('Nadie se postula con el legajo de otro',
+    conElLegajoAjeno.estado >= 400, 'respuesta ' + conElLegajoAjeno.estado);
+
+  // Y el aviso de la otra Prestadora es inalcanzable: lo cierra la llave
+  // compuesta (aviso_id, tenant_id) que agregó la propia 0054.
+  const cruzada = await postular(asistenteUno, familiaDeLaOtra.avisoId);
+  comprobar('Una postulación no cruza Prestadoras',
+    cruzada.estado >= 400, 'respuesta ' + cruzada.estado);
+
+  const veElAsistente = await postulacionesDe(asistenteUno);
+  comprobar('El Asistente ve la postulación que hizo él y ninguna del otro Asistente',
+    veElAsistente.length === 1 && veElAsistente[0].id === asistenteUno.postulacionId,
+    veElAsistente.length + ' filas');
+
+  const veLaFamilia = await postulacionesDe(familiaDelAviso);
+  comprobar('La Familia del aviso ve las dos postulaciones que le hicieron',
+    veLaFamilia.length === 2, veLaFamilia.length + ' filas');
+
+  const veLaAjena = await postulacionesDe(familiaAjena);
+  comprobar('Otra Familia de la misma Prestadora no ve ninguna postulación',
+    veLaAjena.length === 0 && veLaFamilia.length === 2,
+    veLaAjena.length + ' filas (la dueña del aviso ve ' + veLaFamilia.length + ')');
+
+  // La Familia marca vista y descartada, que es todo lo que le dejaron tocar:
+  // no hay «aceptada», porque aceptar sería guardar el trato.
+  const ahora = new Date().toISOString();
+  const marcar = await rest('/rest/v1/postulaciones?id=eq.' + asistenteUno.postulacionId, {
+    method: 'PATCH',
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify({ vista_el: ahora, descartada_el: ahora })
+  }, familiaDelAviso.token);
+  const marcada = Array.isArray(marcar.cuerpo) && marcar.cuerpo[0];
+  comprobar('La Familia del aviso la marca vista y descartada',
+    !!marcada && !!marcada.vista_el && !!marcada.descartada_el, 'respuesta ' + marcar.estado);
+
+  /* Y el mensaje del Asistente no lo puede reescribir. Esto no lo decide la
+     política —la fila es la misma que acaba de marcar— sino el permiso por
+     columna de la 0054 §7, que es lo único que distingue «puede tocar la fila»
+     de «puede tocar esta columna». Se mira el rechazo y además que el texto
+     siga siendo el que escribió su autor: un rechazo que igual hubiera dejado
+     la columna cambiada no probaría nada. */
+  const reescribir = await rest('/rest/v1/postulaciones?id=eq.' + asistenteUno.postulacionId, {
+    method: 'PATCH',
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify({ mensaje: 'Mensaje reescrito por quien no lo escribió' })
+  }, familiaDelAviso.token);
+  const comoQuedo = (await postulacionesDe(asistenteUno))
+    .find((p) => p.id === asistenteUno.postulacionId);
+  comprobar('Y no puede reescribir el mensaje del Asistente',
+    reescribir.estado >= 400 && !!comoQuedo &&
+    comoQuedo.mensaje === 'Me ofrezco para el puesto. Persona Ficticia ' + asistenteUno.etiqueta,
+    'respuesta ' + reescribir.estado);
+
+  // ── La conversación ───────────────────────────────────────────────────────
+  const abrir = (quien, legajo, aviso, extra = {}) => rest('/rest/v1/conversaciones', {
+    method: 'POST',
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify({ caregiver_id: legajo, aviso_id: aviso, ...extra })
+  }, quien.token);
+
+  const canal = await abrir(familiaDelAviso, asistenteUno.legajoId, familiaDelAviso.avisoId);
+  const conversacionId = Array.isArray(canal.cuerpo) && canal.cuerpo[0] ? canal.cuerpo[0].id : null;
+  familiaDelAviso.conversacionId = conversacionId;
+  comprobar('La Familia abre la conversación con el Asistente',
+    canal.estado === 201 && !!conversacionId, 'respuesta ' + canal.estado);
+
+  /* `familia_id` sí tiene valor por omisión, pero si el pedido lo trae, el
+     pedido gana: lo que lo frena es la política. Va con el legajo del segundo
+     Asistente para no chocar contra `una_conversacion_por_par`, que rechazaría
+     por duplicado y no por suplantación. */
+  const aNombreDeOtra = await abrir(familiaAjena, segundoAsistente.legajoId, null,
+    { familia_id: familiaDelAviso.userId });
+  comprobar('Nadie contacta a nombre de otra Familia',
+    aNombreDeOtra.estado >= 400, 'respuesta ' + aNombreDeOtra.estado);
+
+  const canalDeLaFamilia   = await conversacionesDe(familiaDelAviso);
+  const canalDelAsistente  = await conversacionesDe(asistenteUno);
+  comprobar('Las dos partes ven la conversación',
+    canalDeLaFamilia.length === 1 && canalDelAsistente.length === 1 &&
+    canalDeLaFamilia[0].id === conversacionId && canalDelAsistente[0].id === conversacionId,
+    'la Familia ve ' + canalDeLaFamilia.length + ', el Asistente ve ' + canalDelAsistente.length);
+
+  const canalDeLaAjena = await conversacionesDe(familiaAjena);
+  comprobar('Otra Familia de la misma Prestadora no ve la conversación',
+    canalDeLaAjena.length === 0 && canalDeLaFamilia.length === 1,
+    canalDeLaAjena.length + ' filas (las partes ven ' + canalDeLaFamilia.length + ')');
+
+  // ── Los mensajes ──────────────────────────────────────────────────────────
+  const escribir = (quien, conversacion, texto) => rest('/rest/v1/mensajes', {
+    method: 'POST',
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify({ conversacion_id: conversacion, contenido: texto })
+  }, quien.token);
+
+  const dijoLaFamilia = await escribir(familiaDelAviso, conversacionId,
+    'Buenas tardes. ¿Le interesa el puesto?');
+  const dijoElAsistente = await escribir(asistenteUno, conversacionId,
+    'Buenas tardes. Sí, me interesa.');
+  const primerMensajeId = Array.isArray(dijoLaFamilia.cuerpo) && dijoLaFamilia.cuerpo[0]
+    ? dijoLaFamilia.cuerpo[0].id : null;
+  comprobar('Cada una de las dos partes escribe su mensaje',
+    dijoLaFamilia.estado === 201 && dijoElAsistente.estado === 201 && !!primerMensajeId,
+    'respuestas ' + dijoLaFamilia.estado + ' y ' + dijoElAsistente.estado);
+
+  const enCanalAjeno = await escribir(segundoAsistente, conversacionId,
+    'Mensaje metido en una conversación que no es mía');
+  comprobar('Un mensaje no se escribe en una conversación ajena',
+    enCanalAjeno.estado >= 400, 'respuesta ' + enCanalAjeno.estado);
+
+  const leeLaFamilia  = await mensajesDe(familiaDelAviso);
+  const leeElAsistente = await mensajesDe(asistenteUno);
+  comprobar('Las dos partes leen los dos mensajes',
+    leeLaFamilia.length === 2 && leeElAsistente.length === 2,
+    'la Familia lee ' + leeLaFamilia.length + ', el Asistente lee ' + leeElAsistente.length);
+
+  const leeLaAjena = await mensajesDe(familiaAjena);
+  comprobar('Otra Familia de la misma Prestadora no lee ninguno',
+    leeLaAjena.length === 0 && leeLaFamilia.length === 2,
+    leeLaAjena.length + ' filas (las partes leen ' + leeLaFamilia.length + ')');
+
+  // Un canal donde el mensaje se puede reescribir después no sirve para lo que
+  // las dos partes lo usan. No hay política que lo permita ni permiso de tabla
+  // que lo deje pasar, y se prueban los dos verbos.
+  const editar = await rest('/rest/v1/mensajes?id=eq.' + primerMensajeId, {
+    method: 'PATCH',
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify({ contenido: 'Contenido cambiado después' })
+  }, familiaDelAviso.token);
+  comprobar('El mensaje no se edita, ni por quien lo escribió',
+    editar.estado >= 400, 'respuesta ' + editar.estado);
+
+  const borrarMensaje = await rest('/rest/v1/mensajes?id=eq.' + primerMensajeId, {
+    method: 'DELETE',
+    headers: { Prefer: 'return=representation' }
+  }, familiaDelAviso.token);
+  const siguenLosDos = await mensajesDe(familiaDelAviso);
+  comprobar('Ni se borra: los dos siguen estando',
+    borrarMensaje.estado >= 400 && siguenLosDos.length === 2,
+    'respuesta ' + borrarMensaje.estado + ', quedan ' + siguenLosDos.length);
+
+  // ── El personal de la Prestadora no lee ninguna de las tres ───────────────
+  // Es la decisión que explica la 0054: el contenido es de las dos partes, y
+  // mirarlo es meterse en el trato. Con el control positivo al lado, porque si
+  // no, «cero» no distingue negado de vacío.
+  if (!coordinador) {
+    console.log('   (salteadas) las tres del personal de la Prestadora: hacen falta permisos');
+    console.log('               de administración, que sólo están en el entorno local.');
+  } else {
+    const TRES = [
+      ['postulaciones',  postulacionesDe],
+      ['conversaciones', conversacionesDe],
+      ['mensajes',       mensajesDe]
+    ];
+    for (const [tabla, comoSeMira] of TRES) {
+      const delPersonal  = await comoSeMira(coordinador);
+      const deLaFamilia  = await comoSeMira(familiaDelAviso);
+      const delAsistente = await comoSeMira(asistenteUno);
+      comprobar('El personal de la Prestadora no lee ' + tabla + ', y las dos partes sí',
+        delPersonal.length === 0 && deLaFamilia.length > 0 && delAsistente.length > 0,
+        'personal ' + delPersonal.length + '   Familia ' + deLaFamilia.length +
+        '   Asistente ' + delAsistente.length);
+    }
+  }
+
+  // ── Y entre Prestadoras ───────────────────────────────────────────────────
+  // La Prestadora B arma su propio contacto, con su Familia y su Asistente. Con
+  // las dos cargadas, esto falla por los dos lados: si la política perdiera lo
+  // propio, una dejaría de ver lo suyo; si perdiera la Prestadora, vería lo de
+  // la otra.
+  const postulacionEnB = await postular(asistenteDeB, familiaDeLaOtra.avisoId);
+  const canalEnB = await abrir(familiaDeLaOtra, asistenteDeB.legajoId, familiaDeLaOtra.avisoId);
+  const canalEnBId = Array.isArray(canalEnB.cuerpo) && canalEnB.cuerpo[0]
+    ? canalEnB.cuerpo[0].id : null;
+  if (canalEnBId) {
+    await escribir(familiaDeLaOtra, canalEnBId, 'Buenas tardes desde la otra Prestadora.');
+    await escribir(asistenteDeB, canalEnBId, 'Buenas tardes. Quedo a disposición.');
+  }
+  const postulacionEnBId = Array.isArray(postulacionEnB.cuerpo) && postulacionEnB.cuerpo[0]
+    ? postulacionEnB.cuerpo[0].id : null;
+
+  const TABLAS = [
+    ['postulaciones',  postulacionesDe],
+    ['conversaciones', conversacionesDe],
+    ['mensajes',       mensajesDe]
+  ];
+  const enCadaLado = new Map();
+  for (const [tabla, comoSeMira] of TABLAS) {
+    enCadaLado.set(tabla, [await comoSeMira(familiaDelAviso), await comoSeMira(familiaDeLaOtra)]);
+  }
+
+  const sinNada = TABLAS.filter(([t]) => {
+    const [enA, enB] = enCadaLado.get(t);
+    return enA.length === 0 || enB.length === 0;
+  }).map(([t]) => t);
+  comprobar('Las dos Prestadoras tienen contacto cargado, y cada una ve el suyo',
+    sinNada.length === 0,
+    sinNada.length ? 'no ve nada en: ' + sinNada.join(', ')
+                   : TABLAS.map(([t]) => t.replace('el prefijo de la modalidad', '') + ': ' +
+                       enCadaLado.get(t)[0].length + ' y ' +
+                       enCadaLado.get(t)[1].length).join('   '));
+
+  /* Dos formas de preguntar, porque no prueban lo mismo: la primera mira que en
+     lo que cada una ve no haya una sola fila con la Prestadora de la otra; la
+     segunda pide la fila ajena por su identificador, que es donde un listado
+     filtrado y una política ausente dejan de contestar igual. */
+  const cruces = [];
+  for (const [tabla] of TABLAS) {
+    const [enA, enB] = enCadaLado.get(tabla);
+    const cuela = enA.filter((f) => f.tenant_id !== familiaDelAviso.prestadora.id).length +
+                  enB.filter((f) => f.tenant_id !== familiaDeLaOtra.prestadora.id).length;
+    if (cuela > 0) cruces.push(tabla + ': ' + cuela);
+  }
+  const porSuIdentificador = await Promise.all([
+    postulacionEnBId
+      ? filasDe(familiaDelAviso, 'postulaciones', 'id&id=eq.' + postulacionEnBId)
+      : null,
+    canalEnBId
+      ? filasDe(familiaDelAviso, 'conversaciones', 'id&id=eq.' + canalEnBId)
+      : null
+  ]);
+  const pedidasDeMas = porSuIdentificador.filter((f) => f === null || f.length > 0).length;
+  comprobar('Y ninguna ve una sola fila de la otra, ni pidiéndola por su identificador',
+    cruces.length === 0 && pedidasDeMas === 0,
+    cruces.length ? cruces.join('   ')
+      : pedidasDeMas ? pedidasDeMas + ' fila(s) ajena(s) alcanzables por identificador'
+      : 'ninguna ajena en las tres tablas');
+}
+
 // --- Limpieza ---------------------------------------------------------------
 console.log('');
 /* Primero los mensajes: `messages.aviso_id` borra con `set null` y no en
@@ -1133,12 +1522,17 @@ console.log('');
 for (const f of familias) {
   if (f.mensajeId) await rest('/rest/v1/messages?id=eq.' + f.mensajeId, { method: 'DELETE' }, f.token);
 }
-for (const f of [cuentas[0], familias[0]]) {
+/* Después los avisos, y con ellos se van en cascada las postulaciones. Las
+   conversaciones y los mensajes no: `conversaciones.aviso_id` borra con
+   `set null`, así que el canal sobrevive al aviso y se va recién con el legajo
+   —`la_conversacion_es_con_un_legajo_de_la_misma_prestadora` sí borra en
+   cascada—, que es lo que se borra en el bucle de abajo. */
+for (const f of [cuentas[0], familias[0], ...deLaModalidad]) {
   for (const aviso of [f.avisoId, f.avisoSuplantado]) {
     if (aviso) await rest('/rest/v1/avisos?id=eq.' + aviso, { method: 'DELETE' }, f.token);
   }
 }
-for (const c of cuentas) {
+for (const c of [...cuentas, ...deLaModalidad]) {
   if (c.legajoId) {
     await rest('/rest/v1/caregivers?id=eq.' + c.legajoId, { method: 'DELETE' }, c.token);
   }
@@ -1178,7 +1572,8 @@ console.log('Legajos de prueba borrados. Quedan visibles en el directorio: ' +
 /* No se suma a `fallos`: eso diría que falló el aislamiento, y lo que falló es la
    limpieza. Se cuenta aparte y se ve en el código de salida. */
 let quedoSucia = false;
-const todasLasCuentas = [...cuentas, ...familias, ...(coordinador ? [coordinador] : [])];
+const todasLasCuentas = [...cuentas, ...familias, ...deLaModalidad,
+                         ...(coordinador ? [coordinador] : [])];
 if (contraLocal && claveServicio) {
   for (const quien of todasLasCuentas) {
     if (!quien.userId) continue;
@@ -1213,8 +1608,8 @@ if (contraLocal && claveServicio) {
 // El 31 de agosto de 2026 tres documentos escribían tres números distintos
 // —dieciséis, cuarenta y cuarenta y nueve— y ninguno era el de la prueba.
 // Ninguna comprobación de `verificar_todo.mjs` puede agarrar eso, porque el
-// número no se puede contar leyendo el archivo: hay 51 llamadas a
-// `comprobar()` y salen 58 renglones, porque varias están adentro de un
+// número no se puede contar leyendo el archivo: hay 73 llamadas a
+// `comprobar()` y salen 82 renglones, porque varias están adentro de un
 // bucle. El único que sabe el número de verdad es el que acaba de correr,
 // así que lo revisa él.
 const CENTENAS = ['', 'diez', 'veinte', 'treinta', 'cuarenta', 'cincuenta',
@@ -1269,6 +1664,8 @@ if (fallosDeAislamiento === 0) {
   console.log('El examen lo corrige la base: la respuesta correcta nunca sale de ahí.');
   console.log('Y la separación no es sólo entre Prestadoras: dos Familias de la misma');
   console.log('Prestadora tampoco se ven los avisos, los horarios, los mensajes ni los reportes.');
+  console.log('En la modalidad el límite lo ponen las dos partes: la postulación, la conversación');
+  console.log('y los mensajes no los lee nadie más, ni el personal de la Prestadora.');
 } else {
   console.log(fallosDeAislamiento + ' comprobación(es) de aislamiento fallaron. El aislamiento NO está.');
 }

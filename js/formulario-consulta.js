@@ -205,7 +205,6 @@
   }
 
   async function guardar(form) {
-    const sesion = await Sesion.getSession().catch(() => null);
     await ClienteDatos.crearAvisoFamilia({
       paciente: valorDe(form, 'nombre'),
       // A `consultation_reason`, que es la columna que la migración 0013
@@ -213,7 +212,11 @@
       // distingue a quien busca cuidado de quien pregunta por un curso».
       motivoConsulta: valorDe(form, 'consulta') || form.getAttribute('data-motivo') || '',
       horarios: 'A coordinar',
-      family_user_id: sesion && sesion.user ? sesion.user.id : null,
+      // De quién es la consulta no se manda: `familia_id` sale del valor por
+      // omisión de la base, que es `auth.uid()` (migración 0020). Acá se
+      // mandaba `family_user_id`, que no es ninguna columna, y el pedido se
+      // caía entero. La sesión sigue haciendo falta igual —`sePuedeGuardar()`
+      // la comprueba antes—, pero para abrirla, no para decir quién es.
       // A `contact_info` (migración 0009): son datos de una persona y van
       // donde se los pueda encontrar, no mezclados con otra cosa.
       contacto: {

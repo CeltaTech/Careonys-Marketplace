@@ -502,7 +502,11 @@ const ClienteDatos = {
       // Cuándo se necesita el cuidado. Sale de `Franjas.recolectar()`, así que
       // llega como una lista de pares `{ dia, turno }` con claves de catálogo.
       franjas:       avisoData.franjas || [],
-      family_user_id: avisoData.familyUserId || avisoData.family_user_id || null,
+      // De quién es el aviso no se manda: lo pone la base sola. `familia_id`
+      // nace con valor por omisión `auth.uid()` (migración 0020), y es
+      // justamente eso lo que impide publicar un aviso a nombre de otro. Hasta
+      // hoy acá viajaba `family_user_id`, una columna que no existe en ninguna
+      // migración, así que el pedido entero se caía.
       // Migración 0013. Cada uno con sus dos nombres porque la pantalla del
       // teléfono escribe algunos en inglés y otros en castellano; este atajo
       // existe justamente para absorber esa mezcla.
@@ -962,7 +966,13 @@ const ClienteDatos = {
       llevar('estado', 'verification_status');
     } else if (table === 'avisos') {
       llevar('tenant_id', 'tenant_id');
-      llevar('family_user_id', 'family_user_id');
+      // De quién es el aviso no se traduce porque no se manda: `familia_id` la
+      // completa la base con `auth.uid()` (migración 0020). Acá había un
+      // `llevar('family_user_id', 'family_user_id')` a una columna inexistente;
+      // y como `llevar` sólo descarta `undefined`, el `null` con el que llegaba
+      // viajaba igual y la base rechazaba el aviso entero. Se saca el campo, no
+      // se le cambia el nombre: mandarlo, aunque fuera con el nombre correcto,
+      // sería dejar publicar a nombre de otro.
       llevar('paciente', 'patient_name');
       llevar('patologias', 'pathologies_required');
       llevar('horarios', 'schedule_type');
