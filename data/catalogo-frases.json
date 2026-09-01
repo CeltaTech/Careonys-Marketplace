@@ -3218,6 +3218,46 @@
       "en": "Take the assessment",
       "pt-BR": "Realizar a avaliação"
     },
+    "capacitacion.sin_evaluacion": {
+      "es-AR": "Este curso no tiene evaluación.",
+      "en": "This course has no assessment.",
+      "pt-BR": "Este curso não tem avaliação."
+    },
+    "capacitacion.aprobada": {
+      "es-AR": "Aprobada con {porcentaje}% el {fecha}.",
+      "en": "Passed with {porcentaje}% on {fecha}.",
+      "pt-BR": "Aprovada com {porcentaje}% em {fecha}."
+    },
+    "capacitacion.sin_rendir": {
+      "es-AR": "Todavía no la rindió.",
+      "en": "Not taken yet.",
+      "pt-BR": "Ainda não foi realizada."
+    },
+    "capacitacion.rendida_una": {
+      "es-AR": "Rendida una vez, sin aprobar.",
+      "en": "Taken once, not passed.",
+      "pt-BR": "Realizada uma vez, sem aprovação."
+    },
+    "capacitacion.rendida_varias": {
+      "es-AR": "Rendida {veces} veces, sin aprobar.",
+      "en": "Taken {veces} times, not passed.",
+      "pt-BR": "Realizada {veces} vezes, sem aprovação."
+    },
+    "capacitacion.queda_un_intento": {
+      "es-AR": "Queda 1 intento.",
+      "en": "1 attempt left.",
+      "pt-BR": "Resta 1 tentativa."
+    },
+    "capacitacion.quedan_intentos": {
+      "es-AR": "Quedan {quedan} intentos.",
+      "en": "{quedan} attempts left.",
+      "pt-BR": "Restam {quedan} tentativas."
+    },
+    "capacitacion.sin_intentos": {
+      "es-AR": "No quedan intentos.",
+      "en": "No attempts left.",
+      "pt-BR": "Não restam tentativas."
+    },
     "_3": "── La pantalla donde la Prestadora escribe sus propias Guías de cuidado ──",
     "panel.guia_titulo": {
       "es-AR": "Guías de cuidado — {{organizacion}}",

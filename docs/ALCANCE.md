@@ -734,7 +734,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
 - **Los dos pasos que faltaban se dibujan desde el catálogo**, no están escritos en la pantalla.
   Matrícula y estudios en el paso 2, experiencia laboral en el paso 3 y referencias en el paso 5
   salen de `data/catalogo-fichas.json` a través de `js/fichas-legajo.js`
-  (`pwa-asistente/index.html:2034`, `montarFichas`). El paso de cierre sale de
+  (`pwa-asistente/index.html:2058`, `montarFichas`). El paso de cierre sale de
   `data/catalogo-autorizaciones.json`.
 - **El paso de cierre pasó a ser un módulo.** Estaba escrito adentro de `registrar-asistente.html`,
   cuarenta renglones que traían el archivo y armaban las casillas. Ahora es `js/autorizaciones.js`,
@@ -749,7 +749,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
   que esa fila no entraba y la persona no se enteraba.
 - **Y el alta del teléfono creaba cuentas sin dueño.** `registrarAspirante` no escribía `user_id`,
   así que la persona quedaba con cuenta y con legajo, pero el legajo no era de nadie y no lo podía
-  abrir. Se agrega en `guardarLegajo` (`pwa-asistente/index.html:2099`), que es donde ya se sabe
+  abrir. Se agrega en `guardarLegajo` (`pwa-asistente/index.html:2123`), que es donde ya se sabe
   quién inició sesión.
 
 **Cómo se comprobó, el 25 de agosto de 2026.** En dos mitades, porque el servidor alojado todavía
@@ -1785,7 +1785,7 @@ pone el largo. El corto sólo aparecía leído, y en una fila de ejemplo.
 
 La `0017` lo saca: pasa las filas que decían `validado` a decir `validado_prestadora`, y el
 directorio deja de nombrar el valor muerto. En el código quedaba un solo lugar que lo leía
-—`pwa-asistente/index.html:1712`, un `||` defensivo— y también se fue. **Lo que la `0017` no hace es
+—`pwa-asistente/index.html:1736`, un `||` defensivo— y también se fue. **Lo que la `0017` no hace es
 cerrar la lista de estados con un `check`**, porque para eso hay que saber cuáles son todos, y hoy
 el código nombra cuatro sin que ningún lugar diga que ésos son todos.
 
@@ -4119,7 +4119,7 @@ Cerró el pendiente 94, el 31 de agosto de 2026.
 - **La zona sigue siendo obligatoria, y ahora lo cuida el envío.** El `required` del campo viejo
   lo hacía el navegador; una lista de casillas sin tildar no la agarra ningún navegador. Se le
   pregunta al módulo antes de enviar, y si no hay respuesta el formulario vuelve al paso 1 y lleva
-  la vista al campo (`pwa-asistente/index.html:2180`).
+  la vista al campo (`pwa-asistente/index.html:2204`).
 - **Se guarda donde se lee**: las claves van a `zonas_asistente` y el texto libre a `zonas_texto`,
   por `js/apiClient.js:424` y `:1173`. `caregivers.zone` no la escribe más nadie, y eso abrió el
   **pendiente 109**.

@@ -1041,26 +1041,50 @@
     // en esa evaluación. Sin evaluación no hay renglón, y se dice.
     function capResultado(evaluacion, intentos) {
       if (!evaluacion) {
-        return { texto: 'Este curso no tiene evaluación.', clase: 'pendiente', icono: 'fa-circle-info' };
+        return {
+          texto: Catalogo.frase('capacitacion.sin_evaluacion'),
+          clase: 'pendiente',
+          icono: 'fa-circle-info'
+        };
       }
       const mios = intentos.filter((i) => i.evaluacion_id === evaluacion.id);
       const aprobado = mios.filter((i) => i.aprobado)[0];
       if (aprobado) {
         return {
-          texto: 'Aprobada con ' + aprobado.porcentaje + '% el ' + Texto.fechaCorta(aprobado.rendido_el) + '.',
+          texto: Catalogo.frase('capacitacion.aprobada', {
+            porcentaje: aprobado.porcentaje,
+            fecha: Texto.fechaCorta(aprobado.rendido_el)
+          }),
           clase: 'aprobado',
           icono: 'fa-circle-check'
         };
       }
       if (mios.length === 0) {
-        return { texto: 'Todavía no la rindió.', clase: 'pendiente', icono: 'fa-circle-dot' };
+        return {
+          texto: Catalogo.frase('capacitacion.sin_rendir'),
+          clase: 'pendiente',
+          icono: 'fa-circle-dot'
+        };
       }
+
+      /* El singular y el plural son **frases enteras**, no una frase con una
+         letra pegada al final. Acá había tres armados a mano —« vez»/« veces»,
+         «Queda»/«Quedan», «intento»/«intentos»— y ninguno de los tres
+         sobrevive a la traducción: en inglés «once» no sale de agregarle nada
+         a «times». La clave se escribe adentro de cada llamada, para que
+         `verificar_frases.mjs` la vea. */
+      const veces = mios.length === 1
+        ? Catalogo.frase('capacitacion.rendida_una')
+        : Catalogo.frase('capacitacion.rendida_varias', { veces: mios.length });
+
       const quedan = (evaluacion.intentos_maximos || 0) - mios.length;
+      let restantes;
+      if (quedan <= 0) restantes = Catalogo.frase('capacitacion.sin_intentos');
+      else if (quedan === 1) restantes = Catalogo.frase('capacitacion.queda_un_intento');
+      else restantes = Catalogo.frase('capacitacion.quedan_intentos', { quedan: quedan });
+
       return {
-        texto: 'Rendida ' + mios.length + (mios.length === 1 ? ' vez' : ' veces') + ', sin aprobar. ' +
-          (quedan > 0
-            ? 'Queda' + (quedan === 1 ? '' : 'n') + ' ' + quedan + ' intento' + (quedan === 1 ? '' : 's') + '.'
-            : 'No quedan intentos.'),
+        texto: veces + ' ' + restantes,
         clase: 'pendiente',
         icono: 'fa-circle-exclamation'
       };
