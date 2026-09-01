@@ -565,6 +565,8 @@
       <div style="flex:1;padding:16px 0;">
         <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home ancho-20 color-secundario"></i> Inicio</a>
         <a class="drawer-menu-item" href="../directorio.html"><i class="fas fa-search ancho-20 color-secundario"></i> Buscar Asistente</a>
+        <a class="drawer-menu-item" onclick="navigate('postulaciones')"><i class="fas fa-inbox ancho-20 color-secundario"></i> <span id="menu-postulaciones"></span></a>
+        <a class="drawer-menu-item" onclick="navigate('conversacion')"><i class="fas fa-comments ancho-20 color-secundario"></i> <span id="menu-mensajes"></span></a>
         <a class="drawer-menu-item" onclick="navigate('reportes')"><i class="fas fa-book-medical ancho-20 color-secundario"></i> Reportes de cuidado</a>
         <a class="drawer-menu-item" href="../cursos.html"><i class="fas fa-graduation-cap ancho-20 color-secundario"></i> Cursos</a>
         <a class="drawer-menu-item" href="../soporte-remoto.html"><i class="fas fa-headset ancho-20 color-secundario"></i> Acompañamiento Online</a>
@@ -844,6 +846,86 @@
       </div>
     </div>
 
+    <!-- 5. VISTA: QUIÉNES SE POSTULARON -->
+    <!-- El otro extremo del aviso. La Familia publicaba y no tenía dónde ver
+         quién se había ofrecido; los dos caminos del mercado terminan en lo
+         mismo —un contacto—, y éste es el que empieza del lado del Asistente.
+
+         Acá no hay «aceptar» ni «rechazar»: hay contactar y descartar. El
+         software no guarda ningún trato, y elegir con quién hablar es decisión
+         de la Familia, no del sistema. Descartar tampoco borra nada.
+
+         El texto sale del catálogo desde el guion, como en el resto de esta
+         pantalla: el marcado no declara ninguna frase porque la mudanza entera
+         de esta aplicación es el pendiente 9, y ponerle `data-frase` a lo nuevo
+         daría por mudado lo que no lo está. -->
+    <div class="app-screen" id="screen-postulaciones">
+      <div class="app-header">
+        <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
+        <h1 id="postulaciones-titulo"></h1>
+        <div class="ancho-24"></div>
+      </div>
+
+      <div class="p-16">
+        <p class="texto-12 color-secundario m-0 mb-12" id="postulaciones-bajada"></p>
+
+        <div class="pwa-estado" id="pos-cargando"></div>
+
+        <div class="pwa-estado" id="pos-error" hidden>
+          <p id="pos-error-texto"></p>
+          <button type="button" class="btn btn-primario" id="pos-reintentar"></button>
+        </div>
+
+        <div class="pwa-estado" id="pos-vacio" hidden>
+          <p id="pos-vacio-titulo"></p>
+          <p class="pwa-estado-bajada" id="pos-vacio-bajada"></p>
+        </div>
+
+        <div id="postulaciones-lista" hidden></div>
+      </div>
+
+      <!-- El molde de la tarjeta. Se llena con `textContent`: el mensaje y el
+           nombre los escribió otra persona, así que no entran como marcado. -->
+      <template id="molde-postulacion">
+        <div class="fondo-superficie borde-tarjeta redondeo-16 p-16 mb-12">
+          <div class="flex alinear-centro gap-12">
+            <img data-parte="foto" alt="" class="pos-redondel pos-foto" />
+            <div data-parte="inicial" class="pos-redondel pos-inicial"></div>
+            <div class="flex-1">
+              <h5 class="m-0 texto-13 peso-700" data-parte="nombre"></h5>
+              <p class="m-0 texto-11 color-secundario" data-parte="tipo-y-zona"></p>
+            </div>
+            <span class="insignia-validada" data-parte="insignia"></span>
+          </div>
+          <p class="texto-12 mt-8 mb-4" data-parte="mensaje"></p>
+          <p class="texto-11 color-secundario m-0 mb-8" data-parte="recibida"></p>
+          <div class="flex gap-8">
+            <button type="button" class="btn btn-primario flex-1" data-parte="contactar"></button>
+            <button type="button" class="btn btn-sobre-oscuro flex-1" data-parte="descartar"></button>
+          </div>
+          <p class="texto-11 m-0 mt-8 color-peligro" data-parte="error" hidden></p>
+        </div>
+      </template>
+    </div>
+
+    <!-- 6. VISTA: MENSAJES -->
+    <!-- Un contenedor vacío y nada más. La lista, los cuatro estados, el hilo y
+         el formulario los arma `js/conversacion.js`, que es el mismo archivo
+         que dibuja el chat del Asistente: es la misma pantalla vista desde cada
+         lado, y por eso no se escribe dos veces. -->
+    <div class="app-screen" id="screen-conversacion">
+      <div class="app-header">
+        <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
+        <h1 id="conversacion-titulo"></h1>
+        <div class="ancho-24"></div>
+      </div>
+
+      <div class="p-16">
+        <p class="texto-12 color-secundario m-0 mb-12" id="conversacion-bajada"></p>
+        <div id="conversacion-caja"></div>
+      </div>
+    </div>
+
   </div>
 
   <!-- JS LOCAL (dentro del scope del Service Worker) -->
@@ -855,6 +937,7 @@
   <script src="js/disponibilidad.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/conversacion.js"></script>
   <script>
     // Registro del Service Worker para soporte offline
     if ('serviceWorker' in navigator) {
@@ -898,6 +981,11 @@
         console.error('Familia, texto de la pantalla:', err);
       }
       arrMostrar(Catalogo.frase('acceso.verificando'));
+      // El texto fijo de las dos pantallas nuevas y de sus destinos en el menú.
+      // Va acá, apenas llegó el catálogo y afuera del intento que sigue: si la
+      // Prestadora no se resuelve, esas pantallas tienen que quedar escritas
+      // igual, no mudas.
+      textoDeLasPantallasNuevas();
 
       try {
         await ClienteDatos.initTenant();
@@ -930,7 +1018,7 @@
           document.getElementById('menu-user-email').textContent = session.user.email;
           document.getElementById('menu-user-name').textContent =
             (session.user.user_metadata?.full_name || session.user.email.split('@')[0]).toUpperCase();
-          navigate('dashboard');
+          if (!irADondePideLaDireccion()) navigate('dashboard');
         }
         arrMostrar('');
       } catch (err) {
@@ -1004,6 +1092,227 @@
 
     document.getElementById('rec-reintentar').addEventListener('click', cargarRecomendados);
 
+    // ── El texto fijo de las pantallas nuevas ─────────────────────────────────
+    // La clave se escribe adentro de `Catalogo.frase` en cada llamada y no se le
+    // pasa al ayudante: una clave escondida adentro de una variable es una clave
+    // que ningún chequeo puede comprobar. Es la misma razón que ya está escrita
+    // arriba de `cargarReportes`.
+    function ponerTexto(id, texto) {
+      const elemento = document.getElementById(id);
+      if (elemento && texto) elemento.textContent = texto;
+    }
+
+    function textoDeLasPantallasNuevas() {
+      ponerTexto('menu-postulaciones', Catalogo.frase('nav.postulaciones'));
+      ponerTexto('menu-mensajes', Catalogo.frase('nav.mensajes'));
+      ponerTexto('postulaciones-titulo', Catalogo.frase('postulaciones.titulo'));
+      ponerTexto('postulaciones-bajada', Catalogo.frase('postulaciones.bajada'));
+      ponerTexto('pos-cargando', Catalogo.frase('postulaciones.cargando'));
+      ponerTexto('pos-reintentar', Catalogo.frase('postulaciones.reintentar'));
+      ponerTexto('pos-vacio-titulo', Catalogo.frase('postulaciones.vacio_titulo'));
+      ponerTexto('pos-vacio-bajada', Catalogo.frase('postulaciones.vacio_bajada'));
+      ponerTexto('conversacion-titulo', Catalogo.frase('conversacion.titulo'));
+      ponerTexto('conversacion-bajada', Catalogo.frase('conversacion.bajada'));
+    }
+
+    // ── Quiénes se postularon ────────────────────────────────────────────────
+    // Los cuatro estados, con el mismo molde que los Asistentes del tablero.
+    function posMostrar(cual) {
+      for (const estado of ['cargando', 'error', 'vacio']) {
+        document.getElementById('pos-' + estado).hidden = estado !== cual;
+      }
+      document.getElementById('postulaciones-lista').hidden = cual !== 'listo';
+    }
+
+    function posError(tarjeta, texto) {
+      const aviso = tarjeta.querySelector('[data-parte="error"]');
+      aviso.textContent = texto || '';
+      aviso.hidden = !texto;
+    }
+
+    // Contactar es abrir la conversación, y nada más: no hay trato que guardar.
+    // Si la postulación ya trae una abierta, se entra derecho y no se crea nada
+    // —abrirla dos veces sería contar dos contactos por lo mismo—.
+    async function posContactar(fila, boton, tarjeta) {
+      if (fila.conversacion_id) { posIrAMensajes(fila.conversacion_id); return; }
+      const rotulo = boton.textContent;
+      boton.disabled = true;
+      boton.textContent = Catalogo.frase('postulaciones.contactando');
+      posError(tarjeta, '');
+      try {
+        const conversacion = await ClienteDatos.abrirConversacion(fila.caregiver_id, fila.aviso_id);
+        fila.conversacion_id = conversacion.id;
+        posIrAMensajes(conversacion.id);
+      } catch (err) {
+        const aviso = Catalogo.frase('postulaciones.error_contactar');
+        posError(tarjeta, aviso + ' ' + Texto.mensajeDeError(err, aviso));
+      } finally {
+        boton.disabled = false;
+        boton.textContent = rotulo;
+      }
+    }
+
+    // Descartar no borra nada: escribe una fecha, y la fila queda. Por eso no
+    // lleva confirmación destructiva.
+    async function posDescartar(fila, boton, tarjeta) {
+      const rotulo = boton.textContent;
+      boton.disabled = true;
+      boton.textContent = Catalogo.frase('postulaciones.descartando');
+      posError(tarjeta, '');
+      try {
+        await ClienteDatos.descartarPostulacion(fila.id);
+        // Se vuelve a pedir la lista en vez de retocar la tarjeta: lo que se ve
+        // sale del estado real y no de lo que esta pantalla supone.
+        await cargarPostulaciones();
+      } catch (err) {
+        const aviso = Catalogo.frase('postulaciones.error_descartar');
+        posError(tarjeta, aviso + ' ' + Texto.mensajeDeError(err, aviso));
+        boton.disabled = false;
+        boton.textContent = rotulo;
+      }
+    }
+
+    function posTarjeta(fila) {
+      const nodo = document.getElementById('molde-postulacion').content.cloneNode(true);
+      const tarjeta = nodo.firstElementChild;
+      const parte = (nombre) => nodo.querySelector('[data-parte="' + nombre + '"]');
+
+      parte('nombre').textContent = fila.asistente_nombre || '';
+
+      // La profesión y la zona son claves guardadas; su texto sale del catálogo.
+      const tipo = Catalogo.etiquetaSiExiste('tipo_asistente', fila.asistente_profesion);
+      const zona = Catalogo.etiquetaSiExiste('zona', fila.asistente_zona);
+      const linea = [tipo, zona].filter(Boolean).join(' · ');
+      if (linea) parte('tipo-y-zona').textContent = linea;
+      else parte('tipo-y-zona').remove();
+
+      // Sin foto va la inicial, como en las tarjetas del tablero.
+      const foto = ClienteDatos.urlDeFotoPublica(fila.asistente_foto);
+      if (foto) {
+        parte('foto').src = foto;
+        parte('inicial').remove();
+      } else {
+        parte('inicial').textContent = (fila.asistente_nombre || '?').trim().charAt(0).toUpperCase();
+        parte('foto').remove();
+      }
+
+      // Una insignia por vez, y la de descartada gana: es lo último que pasó.
+      const insignia = parte('insignia');
+      if (fila.descartada_el) insignia.textContent = Catalogo.frase('postulaciones.descartada');
+      else if (!fila.vista_el) insignia.textContent = Catalogo.frase('postulaciones.nueva');
+      else insignia.remove();
+
+      // Lo escribió el Asistente: entra por `textContent`, nunca como marcado.
+      const mensaje = (fila.mensaje || '').trim();
+      parte('mensaje').textContent = mensaje || Catalogo.frase('postulaciones.sin_mensaje');
+
+      parte('recibida').textContent = Catalogo.frase('postulaciones.recibida', {
+        fecha: Texto.fechaCorta(fila.created_at)
+      });
+
+      const contactar = parte('contactar');
+      contactar.textContent = fila.conversacion_id
+        ? Catalogo.frase('postulaciones.abrir_conversacion')
+        : Catalogo.frase('postulaciones.contactar');
+      contactar.addEventListener('click', () => posContactar(fila, contactar, tarjeta));
+
+      const descartar = parte('descartar');
+      descartar.textContent = Catalogo.frase('postulaciones.descartar');
+      // Ya descartada no se vuelve a descartar. Se apaga y no se esconde: la
+      // postulación sigue estando y la insignia dice en qué estado quedó.
+      if (fila.descartada_el) descartar.disabled = true;
+      else descartar.addEventListener('click', () => posDescartar(fila, descartar, tarjeta));
+
+      return nodo;
+    }
+
+    // Marcarlas vistas es consecuencia de haberlas mostrado, no condición para
+    // mostrarlas: si el marcado falla, la pantalla ya está dibujada y no se cae.
+    function posMarcarVistas(filas) {
+      filas.forEach((fila) => {
+        if (fila.vista_el) return;
+        ClienteDatos.marcarPostulacionVista(fila.id).catch((err) => {
+          console.error('Marcar la postulación como vista:', err);
+        });
+      });
+    }
+
+    async function cargarPostulaciones() {
+      posMostrar('cargando');
+      try {
+        const filas = await ClienteDatos.postulacionesDeMisAvisos();
+        await Catalogo.cargar();
+        const lista = document.getElementById('postulaciones-lista');
+        while (lista.firstChild) lista.removeChild(lista.firstChild);
+        if (!filas || filas.length === 0) { posMostrar('vacio'); return; }
+        filas.forEach((fila) => lista.appendChild(posTarjeta(fila)));
+        posMostrar('listo');
+        posMarcarVistas(filas);
+      } catch (err) {
+        const aviso = Catalogo.frase('postulaciones.error');
+        document.getElementById('pos-error-texto').textContent =
+          aviso + ' ' + Texto.mensajeDeError(err, aviso);
+        posMostrar('error');
+      }
+    }
+
+    document.getElementById('pos-reintentar').addEventListener('click', cargarPostulaciones);
+
+    // ── Los mensajes ─────────────────────────────────────────────────────────
+    // La pantalla no dibuja nada: monta `js/conversacion.js` sobre su caja
+    // vacía. Se monta una sola vez y después se recarga, porque montar de nuevo
+    // vaciaría el hilo que se está leyendo.
+    let convMontada = false;
+    let convPedida = null;
+
+    function posIrAMensajes(conversacionId) {
+      convPedida = conversacionId || null;
+      navigate('conversacion');
+    }
+
+    /* La única puerta que esta aplicación abre desde afuera. `perfil.html`
+       manda acá con `#conversacion/<id>` cuando la Familia aprieta «Contactar»:
+       la conversación ya quedó abierta del otro lado y lo único que falta es
+       mostrarla. Se acepta esa forma y ninguna otra —el identificador tiene que
+       parecer un `uuid`—, porque lo que viene en la dirección lo escribe
+       cualquiera: si no la reconoce, la aplicación arranca donde arranca
+       siempre. Y el fragmento se borra apenas se usó, para que recargar la
+       página no vuelva a llevar al mismo lado para siempre.
+
+       Devuelve `true` si se hizo cargo de la navegación, para que quien la
+       llama sepa si todavía tiene que ir al tablero. */
+    const FORMA_DE_UUID =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+    function irADondePideLaDireccion() {
+      const fragmento = (window.location.hash || '').replace(/^#/, '');
+      if (!fragmento) return false;
+      const partes = fragmento.split('/');
+      if (partes[0] !== 'conversacion') return false;
+      const id = partes[1] ? decodeURIComponent(partes[1]) : '';
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      posIrAMensajes(FORMA_DE_UUID.test(id) ? id : null);
+      return true;
+    }
+
+    async function convCargar() {
+      try {
+        if (!convMontada) {
+          await Conversaciones.montar('conversacion-caja', { lado: 'familia' });
+          convMontada = true;
+        } else {
+          await Conversaciones.recargar();
+        }
+        if (convPedida) {
+          const pedida = convPedida;
+          convPedida = null;
+          await Conversaciones.abrirPorId(pedida);
+        }
+      } catch (err) {
+        console.error('Mensajes de la Familia:', err);
+      }
+    }
+
     async function cargarReportes() {
       const listEl = document.getElementById('timeline-log-list');
       // El marcado se queda acá y el texto sale del catálogo: son dos cosas
@@ -1053,6 +1362,16 @@
       if (screenId === 'reportes') {
         cargarReportes();
       }
+      if (screenId === 'postulaciones') {
+        cargarPostulaciones();
+      }
+      // El hilo abierto se refresca solo cada pocos segundos. Al salir de la
+      // pantalla se para, o el reloj sigue pidiendo contra algo que nadie mira.
+      if (screenId === 'conversacion') {
+        convCargar();
+      } else if (window.Conversaciones) {
+        Conversaciones.detener();
+      }
     }
 
     // Login real con Supabase Auth
@@ -1075,7 +1394,7 @@
         document.getElementById('menu-user-email').textContent = user.email;
         document.getElementById('menu-user-name').textContent =
           (user.user_metadata?.full_name || user.email.split('@')[0]).toUpperCase();
-        navigate('dashboard');
+        if (!irADondePideLaDireccion()) navigate('dashboard');
       } catch (err) {
         alert(Texto.mensajeDeError(err, 'iniciar sesión'));
       } finally {

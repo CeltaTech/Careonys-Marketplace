@@ -336,7 +336,14 @@
             etiquetas.appendChild(marca);
           });
 
-        const enlace = 'perfil.html?id=' + encodeURIComponent(fila.id);
+        // El nombre corto de la Prestadora viaja con el enlace. Sin él, quien
+        // llegó acá con `?t=<nombre corto>` abría el perfil sin Prestadora y la
+        // pantalla se quedaba en «esta dirección no nombró ninguna Prestadora».
+        // Por subdominio no hace falta —ése se conserva solo— y `slugPedido`
+        // queda en nulo, así que no se agrega nada.
+        const nombreCorto = window.ClienteDatos ? ClienteDatos.slugPedido : null;
+        const enlace = 'perfil.html?id=' + encodeURIComponent(fila.id) +
+          (nombreCorto ? '&t=' + encodeURIComponent(nombreCorto) : '');
         parte('ver-perfil').href = enlace;
         parte('contactar').href = enlace + '#contactar';
 

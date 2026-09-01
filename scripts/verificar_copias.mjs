@@ -2,6 +2,7 @@
    VERIFICA QUE LAS COPIAS SIGAN SIENDO COPIAS
 
        node scripts/verificar_copias.mjs
+       node scripts/verificar_copias.mjs --arreglar
 
    Once archivos de este proyecto viven repetidos en dos o tres carpetas. No es
    descuido: el service worker de cada PWA solo alcanza su propia carpeta, así
@@ -13,10 +14,17 @@
    compara byte a byte y falla si alguna se separó.
 
    Cuando hay que cambiar uno de estos archivos: se edita el de la raíz y se
-   copian los otros. El original siempre es el de arriba.
+   copian los otros. El original siempre es el de arriba, y con `--arreglar` la
+   copia la hace este guion.
+
+   `--arreglar` **no pisa una copia más nueva que su original**. Que la copia sea
+   la más nueva significa que alguien editó la copia, y ahí el cambio bueno
+   puede ser el de abajo: pisarlo lo borra sin que nadie se entere, que es
+   justo el daño que este guion viene a evitar. Esos casos los sigue informando
+   y los arregla una persona.
 =================================================== */
 
-import { readFileSync, statSync } from 'node:fs';
+import { copyFileSync, readFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve, sep } from 'node:path';
 import { seRevisaron } from './recorrido.mjs';
@@ -36,6 +44,11 @@ export const GRUPOS = [
   // que las dos aplicaciones llevan copia (migración 0015, pendiente 40).
   ['js/disponibilidad.js', 'pwa-asistente/js/disponibilidad.js',
    'pwa-familia/js/disponibilidad.js'],
+  // La conversación entre la Familia y el Asistente es la misma pantalla de los
+  // dos lados, así que la arma un solo archivo y las dos aplicaciones llevan
+  // copia (migración 0055).
+  ['js/conversacion.js', 'pwa-asistente/js/conversacion.js',
+   'pwa-familia/js/conversacion.js'],
   ['data/catalogo-disponibilidad.json', 'pwa-asistente/data/catalogo-disponibilidad.json',
    'pwa-familia/data/catalogo-disponibilidad.json'],
   // Lo mismo con las cuatro fichas del legajo y con el paso de cierre: los
@@ -104,8 +117,51 @@ export function verificarCopias(soloGrupo) {
   return { problemas, comparadas };
 }
 
+/* Copia cada original encima de las copias que se separaron, salvo las que son
+   más nuevas que su original. Devuelve qué copió y qué dejó sin tocar. */
+export function arreglarCopias() {
+  const copiadas = [];
+  const salteadas = [];
+
+  for (const [original, ...copias] of GRUPOS) {
+    const rutaOriginal = join(raiz, original.split('/').join(sep));
+    let contenido;
+    try {
+      contenido = readFileSync(rutaOriginal);
+    } catch {
+      salteadas.push('Falta el original ' + original + ': no hay de dónde copiar.');
+      continue;
+    }
+    for (const copia of copias) {
+      const rutaCopia = join(raiz, copia.split('/').join(sep));
+      let otra = null;
+      try {
+        otra = readFileSync(rutaCopia);
+      } catch { /* No existe todavía: se crea abajo. */ }
+      if (otra && otra.equals(contenido)) continue;
+      if (otra && statSync(rutaCopia).mtimeMs > statSync(rutaOriginal).mtimeMs) {
+        salteadas.push(copia + ' es MÁS NUEVA que ' + original + ': no se pisa.'
+          + ' Si el cambio bueno es el de la copia, va al original y de ahí baja.');
+        continue;
+      }
+      copyFileSync(rutaOriginal, rutaCopia);
+      copiadas.push(copia);
+    }
+  }
+  return { copiadas, salteadas };
+}
+
 // Solo imprime cuando se lo corre a mano, no cuando otro archivo lo importa.
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
+  if (process.argv.includes('--arreglar')) {
+    const { copiadas, salteadas } = arreglarCopias();
+    if (copiadas.length) console.log('Copiadas desde su original:\n  ' + copiadas.join('\n  '));
+    else if (!salteadas.length) console.log('No había ninguna copia separada de su original.');
+    if (salteadas.length) {
+      console.error('\nSin tocar:\n  ' + salteadas.join('\n  ') + '\n');
+      process.exit(1);
+    }
+  }
   const { problemas, comparadas } = verificarCopias();
   if (problemas.length) {
     console.error('\n' + problemas.join('\n\n') + '\n');

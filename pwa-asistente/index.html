@@ -306,6 +306,8 @@
         <a class="drawer-menu-item" onclick="navigate('registro')"><i class="fas fa-user-plus ancho-20 color-secundario"></i> <span data-frase="asistente.menu_legajo">Completar Legajo</span></a>
         <a class="drawer-menu-item" onclick="navigate('capacitaciones')"><i class="fas fa-graduation-cap ancho-20 color-secundario"></i> <span data-frase="capacitacion.titulo">Mis Capacitaciones</span></a>
         <a class="drawer-menu-item" onclick="navigate('guias')"><i class="fas fa-book-medical ancho-20 color-secundario"></i> <span data-frase="guia.titulo">Guías de cuidado</span></a>
+        <a class="drawer-menu-item" onclick="navigate('avisos')"><i class="fas fa-bullhorn ancho-20 color-secundario"></i> <span data-frase="nav.avisos">Avisos</span></a>
+        <a class="drawer-menu-item" onclick="navigate('conversacion')"><i class="fas fa-comments ancho-20 color-secundario"></i> <span data-frase="nav.mensajes">Mensajes</span></a>
         <div style="border-top:1px solid var(--borde-card);margin:8px 0;"></div>
         <button type="button" class="drawer-menu-item color-peligro" id="btn-logout"><i class="fas fa-sign-out-alt ancho-20 color-peligro"></i> <span data-frase="asistente.menu_cerrar_sesion">Cerrar sesión</span></button>
       </div>
@@ -421,6 +423,7 @@
         <a class="tab-item active" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span data-frase="nav.inicio">Inicio</span></a>
         <a class="tab-item" onclick="navigate('registro')"><i class="fas fa-user-plus"></i><span data-frase="asistente.tab_legajo">Mi Legajo</span></a>
         <a class="tab-item" onclick="navigate('capacitaciones')"><i class="fas fa-graduation-cap"></i><span data-frase="asistente.tab_cursos">Cursos</span></a>
+        <a class="tab-item" onclick="navigate('avisos')"><i class="fas fa-bullhorn"></i><span data-frase="nav.avisos">Avisos</span></a>
       </div>
     </div>
 
@@ -758,6 +761,126 @@
       </div>
     </div>
 
+    <!-- 6. VISTA: AVISOS ABIERTOS -->
+    <!--
+      Lo que las Familias de esta Prestadora están buscando, y el botón para
+      ofrecerse. Postularse es exactamente eso: ofrecerse. Acá no hay «aceptar»,
+      no hay precio y no hay condiciones, porque el trato lo cierran la Familia
+      y el Asistente afuera del software (`CLAUDE.md` §1). Lo único que queda
+      guardado es el contacto.
+
+      La pantalla no muestra a la Familia, y no es un olvido:
+      `avisos_abiertos()` (migración 0055) no devuelve ni el nombre del Paciente
+      ni ningún dato de contacto, justamente para que esta pantalla no pueda
+      mostrarlos aunque quisiera.
+
+      Los días y turnos son una llamada por aviso, así que se piden recién
+      cuando alguien abre ese detalle y no de entrada para todos.
+
+      El texto que escribió una persona —la descripción de un aviso— se dibuja
+      con `textContent` y nunca con `innerHTML`: lo escribió otro, y es lo
+      último a lo que se le puede dar de comer marcado.
+    -->
+    <div class="app-screen" id="screen-avisos">
+      <div class="wizard-header-bar">
+        <button type="button" class="btn-volver-cabecera" id="av-volver">
+          <i class="fas fa-arrow-left"></i></button>
+        <h2 data-frase="avisos.titulo">Avisos abiertos</h2>
+      </div>
+
+      <div class="capacitaciones-cuerpo">
+        <div class="pwa-estado" id="av-cargando" data-frase="avisos.cargando">Buscando avisos...</div>
+
+        <div class="pwa-estado" id="av-error" hidden>
+          <p id="av-error-texto"></p>
+          <button type="button" class="btn btn-primario" id="av-reintentar"
+                  data-frase="avisos.reintentar">Reintentar</button>
+        </div>
+
+        <div class="pwa-estado" id="av-vacio" hidden>
+          <p data-frase="avisos.vacio_titulo">No hay avisos abiertos</p>
+          <p class="pwa-estado-bajada" data-frase="avisos.vacio_bajada">Cuando una Familia publique lo que necesita, va a aparecer acá.</p>
+        </div>
+
+        <div id="av-listo" hidden>
+          <!-- Sin legajo no hay a qué postularse, y la base ya lo resuelve así:
+               `avisos_abiertos()` devuelve cero filas. Eso se lee igual que «no
+               hay avisos», que es otra cosa, así que se dice cuál de las dos es. -->
+          <p class="pwa-estado-bajada" id="av-sin-legajo" hidden
+             data-frase="avisos.sin_legajo">Para ver los avisos hace falta tener el legajo empezado.</p>
+
+          <p class="capacitaciones-bajada" id="av-bajada"
+             data-frase="avisos.bajada">Lo que las Familias de esta Prestadora están buscando.</p>
+
+          <div id="av-lista"></div>
+
+          <!-- El molde de una tarjeta de aviso. Las partes se marcan con
+               `data-parte` y se llenan con `textContent`, igual que el molde de
+               un curso: así ninguna descripción que alguien cargue puede llegar
+               a la pantalla como etiqueta de HTML. -->
+          <template id="molde-aviso">
+            <div class="curso-tarjeta">
+              <h3 data-parte="descripcion"></h3>
+              <p data-parte="motivo"></p>
+
+              <div class="curso-datos" data-parte="datos"></div>
+
+              <details data-parte="franjas">
+                <summary class="curso-dato mano" data-parte="franjas-rotulo"></summary>
+                <div class="curso-datos" data-parte="franjas-caja"></div>
+              </details>
+
+              <p class="curso-datos" data-parte="publicado"></p>
+
+              <!-- Cuando ya se ofreció. El botón de retirar sale sólo si se
+                   sabe con qué fila, que no la dice el aviso. -->
+              <div data-parte="postulado" hidden>
+                <p class="curso-resultado curso-resultado-aprobado" data-parte="postulado-texto"></p>
+                <button type="button" class="btn btn-sobre-oscuro" data-parte="retirar"></button>
+              </div>
+
+              <!-- Y cuando todavía no. El aviso de no escribir el teléfono va
+                   arriba del campo y no abajo: hoy nada del lado del servidor
+                   impide que alguien lo escriba igual (pendiente 137). -->
+              <div data-parte="ofrecerse">
+                <p class="conv-aviso" data-parte="aviso-contacto"></p>
+                <div class="form-group-pwa">
+                  <label data-parte="mensaje-rotulo"></label>
+                  <textarea rows="3" data-parte="mensaje"></textarea>
+                </div>
+                <button type="button" class="btn btn-primario" data-parte="postularme"></button>
+              </div>
+
+              <p class="pwa-estado-bajada" data-parte="dicho" hidden></p>
+              <p class="conv-error" data-parte="error" hidden></p>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. VISTA: MENSAJES -->
+    <!--
+      El canal entre esta persona y la Familia. La pantalla pone un contenedor
+      vacío y nada más: la lista, los cuatro estados, el hilo y el formulario de
+      escribir los arma `js/conversacion.js`, que es el mismo archivo que dibuja
+      la pantalla de la Familia. Son el mismo chat visto desde cada lado, así
+      que se escribe una vez y no dos.
+    -->
+    <div class="app-screen" id="screen-conversacion">
+      <div class="wizard-header-bar">
+        <button type="button" class="btn-volver-cabecera" id="conv-volver">
+          <i class="fas fa-arrow-left"></i></button>
+        <h2 data-frase="conversacion.titulo">Mensajes</h2>
+      </div>
+
+      <div class="capacitaciones-cuerpo">
+        <p class="capacitaciones-bajada"
+           data-frase="conversacion.bajada">El canal entre usted y la otra parte.</p>
+        <div id="conversacion-caja"></div>
+      </div>
+    </div>
+
   </div><!-- /phone-container -->
 
   <!-- JS LOCAL (dentro del scope del Service Worker) -->
@@ -772,6 +895,7 @@
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/zonas.js"></script>
+  <script src="js/conversacion.js"></script>
   <script>
     // ── Service Worker ─────────────────────────────
     if ('serviceWorker' in navigator) {
@@ -1068,6 +1192,296 @@
     document.getElementById('gui-reintentar').addEventListener('click', guiCargar);
     document.getElementById('gui-buscar').addEventListener('input', guiDibujar);
 
+    // ── Avisos abiertos y postulación ──────────────
+    // Los dos caminos del mercado terminan en un contacto, y éste es el que
+    // arranca del lado del Asistente: la Familia publicó lo que necesita y acá
+    // alguien se ofrece. Lo que se guarda es la postulación, nunca el trato.
+    //
+    // Todo lo que llega es clave de vocabulario —`sur`, `manana`,
+    // `enfermero`— y no etiqueta: quien traduce es esta pantalla, con el
+    // catálogo ya cargado. Es la misma división que usan capacitaciones y
+    // guías, y por eso acá tampoco se escribe ninguna lista de opciones.
+
+    function avMostrar(cual) {
+      for (const estado of ['cargando', 'error', 'vacio', 'listo']) {
+        document.getElementById('av-' + estado).hidden = estado !== cual;
+      }
+    }
+
+    // Con qué fila se postuló esta persona a cada aviso. `avisos_abiertos()`
+    // dice si ya se postuló, pero no con cuál, porque eso no es un dato del
+    // aviso; y sin el identificador no se puede retirar. Se cruza una vez por
+    // `aviso_id` en vez de pedir una lista por tarjeta.
+    let avMisPostulaciones = {};
+
+    // La fecha, en el idioma que la persona está leyendo. Sale de `Catalogo`,
+    // que es donde se decide el idioma de todo lo demás.
+    function avFecha(iso) {
+      if (!iso) return '';
+      const fecha = new Date(iso);
+      if (isNaN(fecha.getTime())) return '';
+      try { return fecha.toLocaleDateString(Catalogo.idioma); } catch (e) { return iso; }
+    }
+
+    // Una clave guardada, traducida a lo que se lee. Si el vocabulario no la
+    // tiene se devuelve la clave cruda: es fea, pero es el dato que el aviso
+    // sí trae, y decir «sin especificar» sobre algo especificado sería mentir.
+    function avTexto(vocabulario, clave) {
+      if (!clave) return '';
+      return Catalogo.etiquetaSiExiste(vocabulario, clave) || clave;
+    }
+
+    // Un renglón «Rótulo: valor» de la tarjeta. Un valor que no vino se dice
+    // con `avisos.sin_dato` y no se deja el hueco: un dato ausente y un dato
+    // que nadie miró se leen igual, y no son lo mismo.
+    function avDato(caja, claveDelRotulo, valor) {
+      const marca = document.createElement('span');
+      marca.className = 'curso-dato';
+      marca.textContent = Catalogo.frase(claveDelRotulo) + ': ' +
+        (valor || Catalogo.frase('avisos.sin_dato'));
+      caja.appendChild(marca);
+    }
+
+    // Una lista de claves —tareas, patologías— convertida a texto corrido.
+    function avLista(valores, traducir) {
+      if (!Array.isArray(valores)) return '';
+      return valores.map(traducir).filter((t) => t).join(', ');
+    }
+
+    // Los días y turnos de un aviso, a pedido. Son una llamada por aviso, así
+    // que pedirlos de entrada para los diez de la lista serían diez pedidos que
+    // quizá nadie mire. Se piden la primera vez que alguien abre el detalle, y
+    // si esa vez falla se deja volver a intentar cerrando y abriendo.
+    function avFranjas(detalle, caja, avisoId) {
+      let pedidas = false;
+      /* Se llama `mostrar` y no `solo` porque el chequeo de los cuatro estados
+         lee el código, no lo ejecuta: para saber si un bloque le dice algo a la
+         persona antes de esperar, busca los nombres con los que este proyecto
+         escribe en pantalla. Un ayudante bautizado de cualquier otra forma es,
+         para él, un bloque mudo. */
+      const mostrar = (texto, clase) => {
+        caja.textContent = '';
+        const marca = document.createElement('span');
+        marca.className = clase;
+        marca.textContent = texto;
+        caja.appendChild(marca);
+      };
+      detalle.addEventListener('toggle', async () => {
+        if (!detalle.open || pedidas) return;
+        pedidas = true;
+        mostrar(Catalogo.frase('avisos.cargando'), 'curso-dato');
+        try {
+          const franjas = await ClienteDatos.franjasDeAviso(avisoId);
+          if (!franjas || franjas.length === 0) {
+            mostrar(Catalogo.frase('avisos.sin_dato'), 'curso-dato');
+            return;
+          }
+          caja.textContent = '';
+          for (const franja of franjas) {
+            const marca = document.createElement('span');
+            marca.className = 'curso-dato';
+            marca.textContent = avTexto('dia_semana', franja.dia) + ' · ' +
+              avTexto('turno', franja.turno);
+            caja.appendChild(marca);
+          }
+        } catch (err) {
+          pedidas = false;
+          mostrar(Texto.mensajeDeError(err, Catalogo.frase('avisos.error')), 'conv-error');
+        }
+      });
+    }
+
+    function avTarjeta(aviso) {
+      const nodo = document.getElementById('molde-aviso').content.cloneNode(true);
+      const parte = (nombre) => nodo.querySelector('[data-parte="' + nombre + '"]');
+
+      parte('descripcion').textContent = aviso.descripcion || Catalogo.frase('avisos.sin_dato');
+
+      const motivo = avTexto('motivo_consulta', aviso.motivo_consulta);
+      if (motivo) parte('motivo').textContent = motivo;
+      else parte('motivo').remove();
+
+      const datos = parte('datos');
+      avDato(datos, 'avisos.rotulo_zona', avTexto('zona', aviso.zona));
+      avDato(datos, 'avisos.rotulo_profesion', avTexto('tipo_asistente', aviso.profesion));
+      avDato(datos, 'avisos.rotulo_frecuencia', avTexto('frecuencia', aviso.frecuencia));
+      // `horarios` es la única que no pasa por un vocabulario. La columna
+      // `schedule_type` guarda hoy cuatro formas distintas de nombrar lo mismo
+      // y todavía no tiene lista que la gobierne (pendiente 31), así que se
+      // muestra lo guardado tal cual: inventarle acá una quinta forma sería
+      // empeorarlo.
+      avDato(datos, 'avisos.rotulo_horarios', aviso.horarios || '');
+      avDato(datos, 'avisos.rotulo_genero', avTexto('genero_preferido', aviso.genero_preferido));
+      avDato(datos, 'avisos.rotulo_tareas',
+        avLista(aviso.tareas, (c) => Catalogo.etiquetaDeTarea(c)));
+      avDato(datos, 'avisos.rotulo_patologias',
+        avLista(aviso.patologias, (c) => avTexto('patologia', c)));
+
+      parte('franjas-rotulo').textContent = Catalogo.frase('avisos.rotulo_franjas');
+      avFranjas(parte('franjas'), parte('franjas-caja'), aviso.id);
+
+      parte('publicado').textContent =
+        Catalogo.frase('avisos.publicado', { fecha: avFecha(aviso.created_at) });
+
+      // ── Ofrecerse, y deshacerlo ──
+      const ofrecerse = parte('ofrecerse');
+      const postulado = parte('postulado');
+      const textoPostulado = parte('postulado-texto');
+      const botonPostular = parte('postularme');
+      const botonRetirar = parte('retirar');
+      const dicho = parte('dicho');
+      const error = parte('error');
+
+      parte('aviso-contacto').textContent = Catalogo.frase('avisos.mensaje_aviso_contacto');
+      const rotulo = parte('mensaje-rotulo');
+      const campo = parte('mensaje');
+      campo.id = 'av-mensaje-' + aviso.id;
+      rotulo.htmlFor = campo.id;
+      rotulo.textContent = Catalogo.frase('avisos.mensaje_etiqueta');
+      campo.placeholder = Catalogo.frase('avisos.mensaje_lugar');
+      botonPostular.textContent = Catalogo.frase('avisos.postularse');
+      botonRetirar.textContent = Catalogo.frase('avisos.retirar');
+
+      // Cuál de las dos mitades se ve. El botón de retirar sale sólo si se sabe
+      // con qué fila: ofrecer un botón que no puede hacer nada es peor que no
+      // ofrecerlo.
+      function verComo(yaEsta) {
+        ofrecerse.hidden = yaEsta;
+        postulado.hidden = !yaEsta;
+        textoPostulado.textContent = Catalogo.frase('avisos.ya_postulado');
+        botonRetirar.hidden = !avMisPostulaciones[aviso.id];
+      }
+      verComo(!!aviso.ya_me_postule);
+
+      botonPostular.addEventListener('click', async () => {
+        error.hidden = true;
+        dicho.hidden = true;
+        botonPostular.disabled = true;
+        botonPostular.textContent = Catalogo.frase('avisos.postulando');
+        try {
+          const fila = await ClienteDatos.postularse(aviso.id, campo.value);
+          if (fila && fila.id) avMisPostulaciones[aviso.id] = fila.id;
+          aviso.ya_me_postule = true;
+          campo.value = '';
+          verComo(true);
+          textoPostulado.textContent = Catalogo.frase('avisos.postulado_ok');
+        } catch (err) {
+          /* Sin legajo no se puede uno postular, y eso no es una falla del
+             servidor: es un paso que falta. Se dice lo que falta, y además se
+             lo separa de todo lo demás, que sí es una falla y va a la consola
+             entera mientras la pantalla recibe la versión clasificada. */
+          const faltaElLegajo = err && err.message === 'postulacion_sin_legajo';
+          if (!faltaElLegajo) console.error('Postulación a un aviso:', err);
+          error.textContent = faltaElLegajo
+            ? Catalogo.frase('avisos.sin_legajo')
+            : Texto.mensajeDeError(err, Catalogo.frase('avisos.error_postular'));
+          error.hidden = false;
+        } finally {
+          botonPostular.disabled = false;
+          botonPostular.textContent = Catalogo.frase('avisos.postularse');
+        }
+      });
+
+      botonRetirar.addEventListener('click', async () => {
+        const cual = avMisPostulaciones[aviso.id];
+        if (!cual) return;
+        error.hidden = true;
+        dicho.hidden = true;
+        botonRetirar.disabled = true;
+        botonRetirar.textContent = Catalogo.frase('avisos.retirando');
+        try {
+          await ClienteDatos.retirarPostulacion(cual);
+          delete avMisPostulaciones[aviso.id];
+          aviso.ya_me_postule = false;
+          verComo(false);
+          dicho.textContent = Catalogo.frase('avisos.retirada');
+          dicho.hidden = false;
+        } catch (err) {
+          error.textContent = Texto.mensajeDeError(err, Catalogo.frase('avisos.error_retirar'));
+          error.hidden = false;
+        } finally {
+          botonRetirar.disabled = false;
+          botonRetirar.textContent = Catalogo.frase('avisos.retirar');
+        }
+      });
+
+      return nodo;
+    }
+
+    function avDibujar(avisos) {
+      const lista = document.getElementById('av-lista');
+      while (lista.firstChild) lista.removeChild(lista.firstChild);
+      for (const aviso of avisos) lista.appendChild(avTarjeta(aviso));
+    }
+
+    async function avCargar() {
+      avMostrar('cargando');
+      const sinLegajo = document.getElementById('av-sin-legajo');
+      const bajada = document.getElementById('av-bajada');
+      const lista = document.getElementById('av-lista');
+      try {
+        // El catálogo hace falta antes de dibujar: la base guarda claves y los
+        // nombres visibles se traducen acá.
+        await Catalogo.cargar();
+
+        // Sin legajo la base devuelve cero avisos, que se lee igual que «no hay
+        // ninguno». Son dos cosas distintas y se dicen distinto.
+        const legajo = await ClienteDatos.legajoPropio();
+        sinLegajo.hidden = !!legajo;
+        bajada.hidden = !legajo;
+        lista.hidden = !legajo;
+        if (!legajo) { avMostrar('listo'); return; }
+
+        const [avisos, mias] = await Promise.all([
+          ClienteDatos.avisosAbiertos(),
+          ClienteDatos.misPostulaciones()
+        ]);
+
+        avMisPostulaciones = {};
+        for (const postulacion of mias || []) {
+          avMisPostulaciones[postulacion.aviso_id] = postulacion.id;
+        }
+
+        if (!avisos || avisos.length === 0) { avMostrar('vacio'); return; }
+        avDibujar(avisos);
+        avMostrar('listo');
+      } catch (err) {
+        document.getElementById('av-error-texto').textContent =
+          Texto.mensajeDeError(err, Catalogo.frase('avisos.error'));
+        avMostrar('error');
+      }
+    }
+
+    document.getElementById('av-volver').addEventListener('click', () => navigate('dashboard'));
+    document.getElementById('av-reintentar').addEventListener('click', avCargar);
+
+
+    // ── Mensajes ───────────────────────────────────
+    // Acá no se dibuja nada: `js/conversacion.js` arma la lista, los cuatro
+    // estados, el hilo y el formulario adentro de `conversacion-caja`. Se monta
+    // una sola vez —montar dos veces tiraría abajo el hilo abierto— y de ahí en
+    // más se le pide que vuelva a leer.
+
+    let convMontada = false;
+
+    async function convCargar() {
+      try {
+        if (!convMontada) {
+          await Conversaciones.montar('conversacion-caja', { lado: 'asistente' });
+          convMontada = true;
+          return;
+        }
+        await Conversaciones.recargar();
+      } catch (err) {
+        // `recargar()` dibuja su propio estado de error adentro de la caja, así
+        // que lo único que puede llegar hasta acá es que el contenedor no
+        // exista, que es un error de programación y no de la persona.
+        console.error('Montar la pantalla de Mensajes:', err);
+      }
+    }
+
+    document.getElementById('conv-volver').addEventListener('click', () => navigate('dashboard'));
+
     // ── Navegación Multi-Pantalla ──────────────────
     function navigate(screenId) {
       document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
@@ -1080,6 +1494,12 @@
       // la aplicación: quien nunca abre capacitaciones no le pide nada a nadie.
       if (screenId === 'capacitaciones') capCargar();
       if (screenId === 'guias') guiCargar();
+      if (screenId === 'avisos') avCargar();
+      // Mensajes tiene reloj propio: refresca el hilo abierto cada pocos
+      // segundos. Al salir de la pantalla hay que pararlo, o sigue pidiendo
+      // contra algo que ya nadie mira.
+      if (screenId === 'conversacion') convCargar();
+      else if (window.Conversaciones) Conversaciones.detener();
     }
 
     // ── Estado del Legajo ──────────────────────────

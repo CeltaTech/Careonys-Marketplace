@@ -148,6 +148,29 @@
         suyo y ninguna ve una sola fila de la otra, ni pidiéndola por su
         identificador.
 
+   Y sobre las cuatro funciones que le dan de comer a las pantallas de ese
+   encuentro (migración 0055). Son `security definer`, así que se saltean la
+   RLS a propósito: lo que las acota es lo que preguntan adentro y las columnas
+   que eligen devolver. Por eso se prueban aparte de las tablas.
+
+    59. `avisos_abiertos()` le muestra al Asistente el aviso de su Prestadora, y
+        ninguno de la otra. Devuelve `ya_me_postule` en verdadero para el aviso
+        al que se postuló. Una Familia —que no tiene legajo— recibe cero, que
+        es fallar cerrado. Y **ninguna fila trae `contact_info`, `familia_id`
+        ni el nombre del paciente**: eso no se mira con los ojos, se mira
+        preguntándole a la fila qué columnas tiene.
+    60. `franjas_de_aviso()` no devuelve la grilla de un aviso de la otra
+        Prestadora, y sí la del propio: si no, «cero» no distingue negado de
+        vacío.
+    61. `postulaciones_de_mis_avisos()` le devuelve a la Familia del aviso las
+        dos postulaciones que recibió, a otra Familia de la misma Prestadora
+        ninguna, y ningún teléfono ni correo de nadie.
+    62. `mis_conversaciones()` se la devuelve a las dos partes y a nadie más,
+        con `soy_la_familia` de cada lado y sin un solo dato de contacto.
+    63. **Sin sesión no se llama a ninguna de las cuatro.** Son direcciones web
+        desde que existen, porque PostgREST publica el esquema `public`: la
+        migración le revoca `anon`, y acá se comprueba que el revoque esté.
+
    Los números de arriba son los puntos, no las comprobaciones: varias corren
    adentro de un bucle y salen más renglones que llamadas. Por eso, al final,
    la prueba **cuenta las que hizo y revisa los documentos que dicen cuántas
@@ -1512,6 +1535,201 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
     cruces.length ? cruces.join('   ')
       : pedidasDeMas ? pedidasDeMas + ' fila(s) ajena(s) alcanzables por identificador'
       : 'ninguna ajena en las tres tablas');
+
+  // ── 59 a 63: las cuatro funciones de la migración 0055 ─────────────────
+  /* Las cuatro son `security definer`: corren con los permisos de quien las
+     escribió y **la RLS no las mira**. Lo único que las acota es lo que
+     preguntan adentro —`legajo_propio()`, `auth.uid()`, `prestadora_actual()`—
+     y las columnas que eligen devolver. Una tabla mal abierta la agarra
+     cualquiera de las pruebas de arriba; una función así, ninguna. Por eso van
+     aparte, y por eso acá se le pregunta a la fila **qué columnas tiene**, que
+     es la parte que no se ve mirando cuántas filas volvieron. */
+  const llamar = async (quien, funcion, argumentos) => {
+    const { estado, cuerpo } = await rest('/rest/v1/rpc/' + funcion, {
+      method: 'POST',
+      body: JSON.stringify(argumentos || {})
+    }, quien ? quien.token : clave);
+    return { estado, filas: Array.isArray(cuerpo) ? cuerpo : [] };
+  };
+  /* Las columnas que no pueden salir por ninguna de las cuatro. `contact_info`
+     y `familia_id` son el camino corto para saltearse a la Prestadora, y
+     `patient_name` es dato personal repartido antes de que exista ningún
+     trato. Se busca por nombre de columna y también por el valor cargado, que
+     es lo que agarra a una función que la devuelve con otro nombre. */
+  const PROHIBIDAS = ['contact_info', 'familia_id', 'patient_name', 'contacto', 'telefono', 'email'];
+  const colar = (filas, valoresQueNoVan) => {
+    const encontradas = [];
+    for (const fila of filas) {
+      for (const columna of Object.keys(fila || {})) {
+        if (PROHIBIDAS.includes(columna)) encontradas.push('columna ' + columna);
+      }
+      for (const valor of valoresQueNoVan) {
+        if (!valor) continue;
+        for (const [columna, contenido] of Object.entries(fila || {})) {
+          if (typeof contenido === 'string' && contenido.includes(valor)) {
+            encontradas.push(columna + ' trae el dato de contacto');
+          }
+        }
+      }
+    }
+    return [...new Set(encontradas)];
+  };
+
+  /* El aviso de C nace con el nombre del paciente y nada más, así que
+     preguntarle a la respuesta si trae el contacto sería mirar una columna
+     vacía: la comprobación daría verde con la función rota. Se le carga el
+     contacto de verdad —inventado, como todo acá— y recién entonces se busca
+     ese texto en cada fila que salga por las cuatro funciones. */
+  const CONTACTO_DEL_AVISO = 'contacto.ficticio.' + sello + '@ejemplo.invalid';
+  const NOMBRE_DEL_PACIENTE = 'Paciente Ficticio ' + familiaDelAviso.etiqueta;
+  {
+    const cargado = await rest('/rest/v1/avisos?id=eq.' + familiaDelAviso.avisoId, {
+      method: 'PATCH',
+      headers: { Prefer: 'return=representation' },
+      body: JSON.stringify({
+        contact_info: { nombre: 'Familia Ficticia C', email: CONTACTO_DEL_AVISO,
+                        celular: '+54 9 11 0000-0000' },
+        zone: 'zona_ficticia',
+        status: 'activa'
+      })
+    }, familiaDelAviso.token);
+    comprobar('El aviso de prueba queda con contacto cargado, para que el control pueda fallar',
+      cargado.estado === 200 && Array.isArray(cargado.cuerpo) &&
+      JSON.stringify(cargado.cuerpo[0]?.contact_info || {}).includes(CONTACTO_DEL_AVISO),
+      'respuesta ' + cargado.estado);
+  }
+
+  console.log('');
+  console.log('Las cuatro funciones que le dan de comer a las pantallas del encuentro');
+
+  // 59. Los avisos que el Asistente puede ver.
+  {
+    const delAsistente = await llamar(asistenteUno, 'avisos_abiertos');
+    const idsVistos = delAsistente.filas.map((f) => f.id);
+    comprobar('El Asistente ve el aviso de su Prestadora por avisos_abiertos()',
+      delAsistente.estado === 200 && idsVistos.includes(familiaDelAviso.avisoId),
+      'respuesta ' + delAsistente.estado + ', ' + delAsistente.filas.length + ' aviso(s)');
+
+    comprobar('Y no ve ninguno de la otra Prestadora',
+      !idsVistos.includes(familiaDeLaOtra.avisoId) && idsVistos.length > 0,
+      idsVistos.length + ' visto(s), el ajeno ' +
+        (idsVistos.includes(familiaDeLaOtra.avisoId) ? 'SE COLÓ' : 'no está'));
+
+    const suyo = delAsistente.filas.filter((f) => f.id === familiaDelAviso.avisoId)[0];
+    comprobar('La función le dice que ya se postuló a ese aviso',
+      !!suyo && suyo.ya_me_postule === true,
+      suyo ? 'ya_me_postule = ' + suyo.ya_me_postule : 'no llegó el aviso');
+
+    const filtradas = colar(delAsistente.filas, [CONTACTO_DEL_AVISO, NOMBRE_DEL_PACIENTE]);
+    comprobar('Y ninguna fila trae contacto, familia ni nombre del paciente',
+      filtradas.length === 0 && delAsistente.filas.length > 0,
+      filtradas.length ? filtradas.join('   ')
+        : 'columnas: ' + Object.keys(delAsistente.filas[0] || {}).join(','));
+
+    /* El control que hace que los tres de arriba signifiquen algo: la misma
+       llamada, hecha por quien no tiene legajo, tiene que traer cero. Si
+       trajera lo mismo, la función no está preguntando quién llama. */
+    const deLaFamilia = await llamar(familiaDelAviso, 'avisos_abiertos');
+    comprobar('Una Familia, que no tiene legajo, no recibe ningún aviso por ahí',
+      deLaFamilia.filas.length === 0 && delAsistente.filas.length > 0,
+      'la Familia ve ' + deLaFamilia.filas.length + ', el Asistente ve ' + delAsistente.filas.length);
+
+    const delOtroLado = await llamar(asistenteDeB, 'avisos_abiertos');
+    comprobar('El Asistente de la otra Prestadora ve el suyo y no el de ésta',
+      delOtroLado.filas.some((f) => f.id === familiaDeLaOtra.avisoId) &&
+      !delOtroLado.filas.some((f) => f.id === familiaDelAviso.avisoId),
+      delOtroLado.filas.length + ' aviso(s) del otro lado');
+  }
+
+  // 60. La grilla de días y turnos.
+  {
+    await rest('/rest/v1/franjas_aviso', {
+      method: 'POST',
+      body: JSON.stringify({ aviso_id: familiaDelAviso.avisoId, dia: 'lunes', turno: 'manana' })
+    }, familiaDelAviso.token);
+    await rest('/rest/v1/franjas_aviso', {
+      method: 'POST',
+      body: JSON.stringify({ aviso_id: familiaDeLaOtra.avisoId, dia: 'martes', turno: 'tarde' })
+    }, familiaDeLaOtra.token);
+
+    const propia = await llamar(asistenteUno, 'franjas_de_aviso', { p_aviso: familiaDelAviso.avisoId });
+    const ajena  = await llamar(asistenteUno, 'franjas_de_aviso', { p_aviso: familiaDeLaOtra.avisoId });
+    comprobar('El Asistente ve la grilla del aviso de su Prestadora, y no la del ajeno',
+      propia.filas.length > 0 && ajena.filas.length === 0,
+      'propia ' + propia.filas.length + ', ajena ' + ajena.filas.length);
+    comprobar('Y la grilla viaja en claves de vocabulario, no en etiquetas',
+      propia.filas.every((f) => f.dia === f.dia.toLowerCase() && !f.dia.includes(' ')),
+      propia.filas.map((f) => f.dia + '/' + f.turno).join(' '));
+  }
+
+  // 61. Las postulaciones que recibió la Familia.
+  {
+    const deLaFamilia = await llamar(familiaDelAviso, 'postulaciones_de_mis_avisos');
+    comprobar('La Familia ve por la función las dos postulaciones de su aviso',
+      deLaFamilia.estado === 200 && deLaFamilia.filas.length === 2,
+      'respuesta ' + deLaFamilia.estado + ', ' + deLaFamilia.filas.length + ' fila(s)');
+
+    const deLaAjena = await llamar(familiaAjena, 'postulaciones_de_mis_avisos');
+    comprobar('Otra Familia de la misma Prestadora no ve ninguna',
+      deLaAjena.filas.length === 0 && deLaFamilia.filas.length === 2,
+      'la ajena ve ' + deLaAjena.filas.length + ', la dueña ve ' + deLaFamilia.filas.length);
+
+    const filtradas = colar(deLaFamilia.filas, [CONTACTO_DEL_AVISO]);
+    comprobar('Y del Asistente no sale ningún dato de contacto',
+      filtradas.length === 0 && deLaFamilia.filas.length > 0,
+      filtradas.length ? filtradas.join('   ')
+        : 'columnas: ' + Object.keys(deLaFamilia.filas[0] || {}).join(','));
+
+    const delAsistente = await llamar(asistenteUno, 'postulaciones_de_mis_avisos');
+    comprobar('Y el Asistente no lee por ahí las postulaciones de nadie',
+      delAsistente.filas.length === 0, delAsistente.filas.length + ' fila(s)');
+  }
+
+  // 62. Las conversaciones, la misma función de los dos lados.
+  {
+    const deLaFamilia   = await llamar(familiaDelAviso, 'mis_conversaciones');
+    const delAsistente  = await llamar(asistenteUno, 'mis_conversaciones');
+    comprobar('Las dos partes ven la conversación por mis_conversaciones()',
+      deLaFamilia.filas.length === 1 && delAsistente.filas.length === 1 &&
+      deLaFamilia.filas[0].id === conversacionId &&
+      delAsistente.filas[0].id === conversacionId,
+      'la Familia ve ' + deLaFamilia.filas.length + ', el Asistente ve ' + delAsistente.filas.length);
+
+    comprobar('Y cada uno se reconoce de su lado',
+      deLaFamilia.filas[0]?.soy_la_familia === true &&
+      delAsistente.filas[0]?.soy_la_familia === false,
+      'Familia ' + deLaFamilia.filas[0]?.soy_la_familia +
+        ', Asistente ' + delAsistente.filas[0]?.soy_la_familia);
+
+    const deLaAjena = await llamar(familiaAjena, 'mis_conversaciones');
+    comprobar('Otra Familia de la misma Prestadora no ve ninguna conversación',
+      deLaAjena.filas.length === 0 && deLaFamilia.filas.length === 1,
+      'la ajena ve ' + deLaAjena.filas.length + ', las partes ven ' + deLaFamilia.filas.length);
+
+    const filtradas = colar([...deLaFamilia.filas, ...delAsistente.filas], [CONTACTO_DEL_AVISO]);
+    comprobar('Y la conversación no devuelve ningún dato de contacto de ninguno de los dos',
+      filtradas.length === 0 && deLaFamilia.filas.length > 0,
+      filtradas.length ? filtradas.join('   ')
+        : 'columnas: ' + Object.keys(deLaFamilia.filas[0] || {}).join(','));
+  }
+
+  // 63. Sin sesión, ninguna de las cuatro contesta.
+  {
+    const CUATRO = [
+      ['avisos_abiertos', {}],
+      ['franjas_de_aviso', { p_aviso: familiaDelAviso.avisoId }],
+      ['postulaciones_de_mis_avisos', {}],
+      ['mis_conversaciones', {}]
+    ];
+    const abiertas = [];
+    for (const [funcion, argumentos] of CUATRO) {
+      const { estado } = await llamar(null, funcion, argumentos);
+      if (estado < 400) abiertas.push(funcion + ' contestó ' + estado);
+    }
+    comprobar('Sin sesión no se llama a ninguna de las cuatro',
+      abiertas.length === 0,
+      abiertas.length ? abiertas.join('   ') : 'las cuatro niegan a anon');
+  }
 }
 
 // --- Limpieza ---------------------------------------------------------------
@@ -1621,7 +1839,18 @@ const ESPECIALES = { 11: 'once', 12: 'doce', 13: 'trece', 14: 'catorce', 15: 'qu
                      20: 'veinte', 21: 'veintiuno', 22: 'veintidós', 23: 'veintitrés',
                      24: 'veinticuatro', 25: 'veinticinco', 26: 'veintiséis',
                      27: 'veintisiete', 28: 'veintiocho', 29: 'veintinueve' };
+const CIENTOS = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos',
+                'quinientos', 'seiscientos', 'setecientos', 'ochocientos',
+                'novecientos'];
 function enLetras(n) {
+  // Las comprobaciones pasaron de noventa y nueve a cien el 1 de septiembre de
+  // 2026, y hasta ese día esto contaba sólo hasta el noventa y nueve: devolvía
+  // «undefined» y los cuatro documentos daban rojo sin estar desactualizados.
+  if (n >= 100) {
+    const c = Math.floor(n / 100), resto = n % 100;
+    const cabeza = (c === 1 && resto === 0) ? 'cien' : CIENTOS[c];
+    return resto === 0 ? cabeza : cabeza + ' ' + enLetras(resto);
+  }
   if (ESPECIALES[n]) return ESPECIALES[n];
   const d = Math.floor(n / 10), u = n % 10;
   return u === 0 ? CENTENAS[d] : CENTENAS[d] + ' y ' + UNIDADES[u];

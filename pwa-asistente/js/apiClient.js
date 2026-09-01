@@ -808,6 +808,165 @@ const ClienteDatos = {
     return `${this.supabaseUrl.replace(/\/$/, '')}/storage/v1/object/public/avatares/${camino}`;
   },
 
+  // --- EL CONTACTO: POSTULARSE, CONTACTAR Y CONVERSAR ---
+  //
+  // Los dos caminos del mercado terminan acá (CLAUDE.md §1): la Familia publica
+  // un aviso y los Asistentes se postulan, o la Familia mira el directorio y
+  // contacta. Lo que se guarda es el hecho del contacto y nunca el trato, que
+  // lo cierran las dos partes afuera del software.
+  //
+  // Ninguno de estos métodos manda quién es el que llama. `tenant_id`,
+  // `familia_id` y `autor_id` los pone la base con su valor por omisión
+  // (migración 0054), y ésa es la razón: mandarlos sería dejar postularse,
+  // contactar o escribir a nombre de otro.
+  //
+  // Los cuatro que leen van por función y no por tabla, porque la RLS decide
+  // filas y acá hace falta decidir columnas: el aviso guarda los datos de
+  // contacto de la Familia y no salen nunca (migración 0055).
+
+  // Los avisos a los que este Asistente puede postularse, con la marca de los
+  // que ya contestó. Sin legajo propio devuelve la lista vacía, no un error:
+  // no tener legajo todavía es un estado normal del alta, no una falla.
+  async avisosAbiertos() {
+    return await this._supabaseRequest('POST', 'rpc/avisos_abiertos', {});
+  },
+
+  // Cuándo se necesita el cuidado en ese aviso. Devuelve claves de vocabulario
+  // —`lunes`, `manana`—, nunca etiquetas: quien traduce es la pantalla.
+  async franjasDeAviso(avisoId) {
+    if (!avisoId) return [];
+    return await this._supabaseRequest('POST', 'rpc/franjas_de_aviso', { p_aviso: avisoId });
+  },
+
+  // El Asistente se ofrece. El mensaje es opcional y viaja recortado: un texto
+  // de espacios no es un mensaje, y guardarlo llena la lista de la Familia con
+  // filas que no dicen nada.
+  async postularse(avisoId, mensaje) {
+    if (!avisoId) throw new Error('postulacion_sin_aviso');
+    const legajo = await this.legajoPropio();
+    if (!legajo) throw new Error('postulacion_sin_legajo');
+    const limpio = (mensaje || '').trim();
+    const fila = await this._supabaseRequest('POST', 'postulaciones', {
+      aviso_id: avisoId,
+      caregiver_id: legajo,
+      mensaje: limpio || null
+    });
+    return (fila && fila[0]) || null;
+  },
+
+  // Y la retira. La política sólo deja borrar la propia, así que un
+  // identificador ajeno no borra nada en vez de borrar lo de otro.
+  async retirarPostulacion(postulacionId) {
+    if (!postulacionId) throw new Error('postulacion_sin_id');
+    await this._supabaseRequest('DELETE', 'postulaciones', null, {
+      id: `eq.${postulacionId}`
+    });
+    return true;
+  },
+
+  // Las postulaciones que este Asistente mandó, para su propia lista.
+  async misPostulaciones() {
+    const legajo = await this.legajoPropio();
+    if (!legajo) return [];
+    return await this._supabaseRequest('GET', 'postulaciones', null, {
+      select: 'id,aviso_id,mensaje,vista_el,descartada_el,created_at',
+      caregiver_id: `eq.${legajo}`,
+      order: 'created_at.desc'
+    });
+  },
+
+  // Las que recibieron los avisos de esta Familia. Sin argumento, todas.
+  async postulacionesDeMisAvisos(avisoId) {
+    return await this._supabaseRequest('POST', 'rpc/postulaciones_de_mis_avisos', {
+      p_aviso: avisoId || null
+    });
+  },
+
+  // La Familia marca que la vio, o que la descarta. Son dos fechas y no una
+  // columna de estado: no hay «aceptada», porque aceptar sería guardar el
+  // trato. Y el permiso por columna de la migración 0054 hace que este PATCH
+  // no pueda tocar el mensaje del Asistente aunque se le mande.
+  async marcarPostulacion(postulacionId, campos) {
+    if (!postulacionId) throw new Error('postulacion_sin_id');
+    const fila = await this._supabaseRequest('PATCH', 'postulaciones', campos, {
+      id: `eq.${postulacionId}`
+    });
+    return (fila && fila[0]) || null;
+  },
+
+  async marcarPostulacionVista(postulacionId) {
+    return await this.marcarPostulacion(postulacionId, { vista_el: new Date().toISOString() });
+  },
+
+  async descartarPostulacion(postulacionId) {
+    return await this.marcarPostulacion(postulacionId, { descartada_el: new Date().toISOString() });
+  },
+
+  // La conversación la abre la Familia, y es una sola por par: abrirla dos
+  // veces no abre dos contactos, porque dos contactos serían dos cobros por lo
+  // mismo. El `aviso_id` guarda por cuál de los dos caminos se llegó: con un
+  // aviso si el Asistente se postuló, en nulo si la Familia vino del
+  // directorio.
+  //
+  // Primero mira si ya existe. La base lo garantiza igual con su restricción de
+  // una por par, así que esto no es la seguridad: es que abrir la que ya está
+  // abierta tiene que devolverla, no fallar. Y si en el medio la abrió otra
+  // pestaña, el rechazo se vuelve a mirar en vez de subir a la pantalla.
+  async abrirConversacion(caregiverId, avisoId) {
+    if (!caregiverId) throw new Error('conversacion_sin_asistente');
+    const mia = (todas) => (todas || []).find(
+      (c) => c.caregiver_id === caregiverId && c.soy_la_familia);
+
+    const yaEsta = mia(await this.misConversaciones());
+    if (yaEsta) return { id: yaEsta.id, caregiver_id: caregiverId, aviso_id: yaEsta.aviso_id };
+
+    try {
+      const fila = await this._supabaseRequest('POST', 'conversaciones', {
+        caregiver_id: caregiverId,
+        aviso_id: avisoId || null
+      });
+      const nueva = (fila && fila[0]) || null;
+      if (!nueva) throw new Error('conversacion_no_creada');
+      return { id: nueva.id, caregiver_id: caregiverId, aviso_id: nueva.aviso_id };
+    } catch (err) {
+      const carrera = mia(await this.misConversaciones());
+      if (carrera) return { id: carrera.id, caregiver_id: caregiverId, aviso_id: carrera.aviso_id };
+      throw err;
+    }
+  },
+
+  // Las conversaciones de quien mira, sea la Familia o el Asistente, con el
+  // nombre de la otra parte y su último mensaje.
+  async misConversaciones() {
+    return await this._supabaseRequest('POST', 'rpc/mis_conversaciones', {});
+  },
+
+  // Los mensajes de una conversación, del más viejo al más nuevo, que es el
+  // orden en que se leen. `desde` trae sólo lo posterior a una fecha, para
+  // refrescar sin volver a bajar la conversación entera.
+  async mensajesDe(conversacionId, desde) {
+    if (!conversacionId) return [];
+    const filtro = {
+      select: 'id,autor_id,contenido,created_at',
+      conversacion_id: `eq.${conversacionId}`,
+      order: 'created_at.asc'
+    };
+    if (desde) filtro['created_at'] = `gt.${desde}`;
+    return await this._supabaseRequest('GET', 'mensajes', null, filtro);
+  },
+
+  // Y escribe uno. El autor no se manda: lo pone la base.
+  async escribirMensaje(conversacionId, contenido) {
+    if (!conversacionId) throw new Error('mensaje_sin_conversacion');
+    const limpio = (contenido || '').trim();
+    if (!limpio) throw new Error('mensaje_vacio');
+    const fila = await this._supabaseRequest('POST', 'mensajes', {
+      conversacion_id: conversacionId,
+      contenido: limpio
+    });
+    return (fila && fila[0]) || null;
+  },
+
   // --- INTEGRACIÓN REST DE SUPABASE ---
   async _supabaseRequest(method, table, data = null, queryParams = {}) {
     const urlObj = new URL(`${this.supabaseUrl}/rest/v1/${table}`);

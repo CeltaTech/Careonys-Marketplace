@@ -162,8 +162,28 @@
               por eso acá no se muestran ni su teléfono, ni su correo, ni su domicilio. Para
               escribirle hay que entrar como Familia.
             </p>
+            <!-- Qué se ofrece acá lo decide **quién mira**, y se resuelve abajo en el
+                 guion: sin sesión, un botón que lleva a entrar; con sesión de Familia,
+                 el que abre la conversación; con cualquier otro rol —y también cuando no
+                 se pudo averiguar quién mira—, ninguno: el control falla cerrado.
+
+                 Los botones nacen escondidos y el que no corresponde se saca del
+                 documento, por lo mismo que la foto y la inicial más arriba: dejarlo
+                 escondido es dejar un hueco que algún día vuelve a aparecer.
+
+                 Hasta acá el segundo camino del mercado —la Familia mira el directorio,
+                 compara perfiles y contacta— terminaba en una pantalla sin salida: el
+                 único botón llevaba a la pantalla de acceso y nada más. -->
+            <div id="perfil-contactar-aviso" class="acceso-aviso oculto" role="status">
+              <span id="perfil-contactar-aviso-texto"></span>
+              <span id="perfil-contactar-detalle"></span>
+            </div>
             <div class="profile-acciones">
-              <a class="btn btn-primario" href="acceso.html"
+              <button type="button" class="btn btn-primario oculto" id="perfil-contactar"
+                data-frase="directorio.contactar">Contactar</button>
+              <a class="btn btn-primario oculto" id="perfil-contactar-entrar" href="acceso.html"
+                data-frase="directorio.contactar">Contactar</a>
+              <a class="btn btn-primario" id="perfil-entrar-familia" href="acceso.html"
                 data-frase="perfil.entrar_familia">Entrar como Familia</a>
               <a class="btn btn-sobre-oscuro borde-color-tarjeta color-secundario" href="solicitar-asistente.html" data-frase="nav.publicar_aviso"
                >Publicar un Aviso</a>
@@ -228,6 +248,15 @@
        dice `enfermero_universitario`, y el cliente de datos para traer la fila. -->
   <script src="js/catalogo.js"></script>
   <script src="js/apiClient.js"></script>
+  <!-- La sesión. **Esta pantalla sigue siendo pública**: `auth.js` no exige entrar,
+       sólo permite saber quién mira, que es lo que decide si el botón de contactar
+       se ofrece y qué hace. `ClienteDatos` ya pregunta por `window.Sesion` cuando
+       existe (js/apiClient.js:59-60), así que con sesión la Prestadora sale del
+       perfil —el mismo dato que miran las políticas— y sin sesión sigue saliendo
+       del enlace, como hasta ahora. El SDK va antes porque `auth.js` se planta si
+       no lo encuentra. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/auth.js"></script>
   <!-- Ver `directorio.html`: de acá sale cómo se escriben las zonas. -->
   <script src="js/zonas.js"></script>
   <script src="js/main.js"></script>
@@ -404,6 +433,156 @@
             etiqueta.textContent = texto;
             contenedor.appendChild(etiqueta);
           });
+        }
+
+        // Y con el perfil dibujado se resuelve el contacto. No se espera acá:
+        // el perfil se ve igual mientras se averigua quién mira, y el botón
+        // aparece cuando se sabe. `fila.id` es el legajo del Asistente —la vista
+        // devuelve `caregivers.id`—, que es justo lo que pide la conversación.
+        prepararContacto(fila.id);
+      }
+
+      /* ---- Contactar ----
+
+         El contacto es el hecho por el que la Prestadora cobra, y es lo único que
+         el software guarda de este camino: ni precio, ni condiciones, ni
+         aceptación. Por eso acá no hay formulario de trato ni dato de contacto a
+         la vista —ni teléfono, ni correo, ni domicilio—: hay un botón que abre la
+         conversación adentro de la plataforma.
+
+         `abrirConversacion` es idempotente: si esa Familia ya tiene una abierta
+         con ese Asistente, devuelve la misma. Apretar dos veces no cuenta dos
+         contactos. */
+
+      // El rol de la Familia, escrito una sola vez. Es el mismo valor que
+      // comparan `acceso.html` y `registrar-familia.html`, y el que se guarda al
+      // dar de alta una cuenta de Familia.
+      const ROL_FAMILIA = 'familiar';
+
+      // A dónde se manda cuando el contacto sale bien: la aplicación de la
+      // Familia, con esa conversación abierta.
+      const DESTINO_CONVERSACION = 'pwa-familia/index.html#conversacion/';
+
+      // El cartel de esta sección. La clave, no el texto: así cambia con el
+      // idioma como el resto de la pantalla. El tono es el mismo par de
+      // modificadores que ya usan los avisos de `acceso.html`.
+      function avisoDeContacto(clave, tono, detalle) {
+        const caja = document.getElementById('perfil-contactar-aviso');
+        const texto = document.getElementById('perfil-contactar-aviso-texto');
+        caja.classList.remove('atencion', 'critico');
+        caja.classList.add(tono);
+        texto.setAttribute('data-frase', clave);
+        Catalogo.traducir(texto);
+        // El motivo técnico ya viene clasificado y traducido por `Texto`, así
+        // que se escribe tal cual y en un nodo aparte: si fuera al mismo, la
+        // próxima traducción de la clave lo borraría.
+        document.getElementById('perfil-contactar-detalle').textContent =
+          detalle ? (' ' + detalle) : '';
+        caja.classList.remove('oculto');
+      }
+
+      function sacar(id) {
+        const nodo = document.getElementById(id);
+        if (nodo) nodo.remove();
+      }
+
+      /* Quién mira. Devuelve `null` cuando no se pudo saber, que **no es lo
+         mismo** que «no hay sesión»: uno es que la pregunta falló y el otro que
+         la respuesta es que no. Se distinguen porque de eso depende si se ofrece
+         un botón, y ante la duda no se ofrece ninguno. */
+      async function quienMira() {
+        try {
+          if (!window.Sesion) return null;
+          const sesion = await Sesion.getSession();
+          if (!sesion) return { sesion: false, rol: null };
+          const perfil = await Sesion.perfil();
+          // Con sesión y sin perfil tampoco se sabe el rol: `Sesion.perfil()`
+          // devuelve `null` igual cuando la consulta falla. Falla cerrado.
+          if (!perfil) return null;
+          return { sesion: true, rol: perfil.role || null };
+        } catch (err) {
+          console.error('Perfil, quién mira:', err);
+          return null;
+        }
+      }
+
+      /* Los dos enlaces a la pantalla de acceso se llevan el nombre corto de la
+         Prestadora, igual que lo hace `acceso.html` con los suyos y el
+         directorio con éste. Sin eso, quien llegó con `?t=<nombre corto>` y
+         aprieta «Contactar» sin sesión cae en una pantalla que ya no sabe de qué
+         Prestadora se estaba hablando. Por subdominio no hace falta: ése se
+         conserva solo, y `slugPedido` queda en nulo. */
+      function sellarEnlacesDeAcceso() {
+        const nombreCorto = window.ClienteDatos ? ClienteDatos.slugPedido : null;
+        if (!nombreCorto) return;
+        ['perfil-contactar-entrar', 'perfil-entrar-familia'].forEach((id) => {
+          const enlace = document.getElementById(id);
+          if (!enlace) return;
+          const destino = enlace.getAttribute('href');
+          if (destino.indexOf('?') === -1) {
+            enlace.setAttribute('href', destino + '?t=' + encodeURIComponent(nombreCorto));
+          }
+        });
+      }
+
+      async function prepararContacto(idAsistente) {
+        sellarEnlacesDeAcceso();
+        const quien = await quienMira();
+
+        // Sin sesión: el botón lleva a entrar y el cartel dice por qué. No se
+        // ofrece un botón que promete abrir algo y falla al apretarlo.
+        // «Entrar como Familia» se saca: llevaba al mismo lugar, y dos botones
+        // al mismo lado es uno de más.
+        if (quien && quien.sesion === false) {
+          sacar('perfil-contactar');
+          sacar('perfil-entrar-familia');
+          document.getElementById('perfil-contactar-entrar').classList.remove('oculto');
+          avisoDeContacto('perfil.contactar_entrar', 'atencion');
+          return;
+        }
+
+        // Con sesión de Familia: el botón abre la conversación. Entrar de nuevo
+        // no tiene sentido, así que los dos enlaces a la pantalla de acceso se
+        // van.
+        if (quien && quien.rol === ROL_FAMILIA) {
+          sacar('perfil-contactar-entrar');
+          sacar('perfil-entrar-familia');
+          const boton = document.getElementById('perfil-contactar');
+          boton.classList.remove('oculto');
+          boton.addEventListener('click', () => contactar(boton, idAsistente));
+          return;
+        }
+
+        // Cualquier otro rol, un rol que esta pantalla no reconoce, o no haber
+        // podido averiguar quién mira: no se ofrece nada.
+        sacar('perfil-contactar');
+        sacar('perfil-contactar-entrar');
+        sacar('perfil-entrar-familia');
+        avisoDeContacto('perfil.contactar_solo_familia', 'atencion');
+      }
+
+      async function contactar(boton, idAsistente) {
+        // El botón se apaga mientras la operación corre: nunca dos contactos por
+        // un doble clic.
+        boton.disabled = true;
+        boton.setAttribute('data-frase', 'perfil.contactando');
+        Catalogo.traducir(boton);
+        document.getElementById('perfil-contactar-aviso').classList.add('oculto');
+        try {
+          const conversacion = await ClienteDatos.abrirConversacion(idAsistente, null);
+          if (!conversacion || !conversacion.id) throw new Error('conversacion_no_creada');
+          window.location.href = DESTINO_CONVERSACION + encodeURIComponent(conversacion.id);
+        } catch (err) {
+          // Dos renglones y son dos cosas distintas: qué no se pudo hacer, que es
+          // una frase de esta pantalla, y por qué, que lo clasifica `Texto`.
+          // `mensajeDeError` lee el catálogo sin esperarlo, así que se lo pide
+          // antes; acá ya está traído y pedirlo de nuevo no cuesta nada.
+          await Catalogo.cargarFrases();
+          avisoDeContacto('perfil.contactar_error', 'critico',
+            Texto.mensajeDeError(err, 'abrir la conversación'));
+          boton.setAttribute('data-frase', 'directorio.contactar');
+          Catalogo.traducir(boton);
+          boton.disabled = false;
         }
       }
 

@@ -13,8 +13,9 @@
         "js/zonas.js:145",
         "js/zonas.js:218",
         "mockup-app.html:458",
-        "pwa-familia/index.html:781",
-        "pwa-familia/index.html:966"
+        "pwa-familia/index.html:1054",
+        "pwa-familia/index.html:1184",
+        "pwa-familia/index.html:783"
       ],
       "items": [
         {
@@ -204,8 +205,8 @@
       "usado_en": [
         "directorio.html:288",
         "formulario-integral.html:109",
-        "perfil.html:311",
-        "pwa-asistente/index.html:467",
+        "perfil.html:340",
+        "pwa-asistente/index.html:470",
         "registrar-asistente.html:302"
       ],
       "items": [
@@ -243,7 +244,7 @@
       },
       "cerrada": false,
       "usado_en": [
-        "pwa-asistente/index.html:549",
+        "pwa-asistente/index.html:552",
         "registrar-asistente.html:411"
       ],
       "items": [
@@ -271,9 +272,9 @@
       "usado_en": [
         "directorio.html:330",
         "directorio.html:83",
-        "perfil.html:394",
-        "pwa-asistente/index.html:531",
-        "pwa-familia/index.html:819",
+        "perfil.html:423",
+        "pwa-asistente/index.html:534",
+        "pwa-familia/index.html:821",
         "registrar-asistente.html:384"
       ],
       "items": [
@@ -482,7 +483,7 @@
       },
       "cerrada": true,
       "usado_en": [
-        "pwa-asistente/index.html:890"
+        "pwa-asistente/index.html:1014"
       ],
       "items": [
         {
@@ -565,7 +566,7 @@
       "usado_en": [
         "directorio.html:302",
         "directorio.html:91",
-        "perfil.html:347"
+        "perfil.html:376"
       ],
       "items": [
         {
@@ -702,7 +703,7 @@
       },
       "cerrada": false,
       "usado_en": [
-        "pwa-asistente/index.html:503",
+        "pwa-asistente/index.html:506",
         "registrar-asistente.html:350"
       ],
       "items": [
@@ -749,7 +750,7 @@
         "data/catalogo-fichas.json:180",
         "formulario-integral.html:142",
         "js/catalogo.js:422",
-        "pwa-asistente/index.html:533",
+        "pwa-asistente/index.html:536",
         "registrar-asistente.html:388"
       ],
       "items": [
@@ -854,9 +855,10 @@
         "formulario-integral.html:354",
         "formulario-integral.html:399",
         "mockup-app.html:457",
-        "perfil.html:298",
-        "pwa-asistente/index.html:494",
-        "pwa-familia/index.html:965",
+        "perfil.html:327",
+        "pwa-asistente/index.html:497",
+        "pwa-familia/index.html:1053",
+        "pwa-familia/index.html:1183",
         "registrar-asistente.html:336"
       ],
       "items": [
@@ -951,7 +953,7 @@
       "cerrada": true,
       "usado_en": [
         "cursos.html:105",
-        "pwa-asistente/index.html:892"
+        "pwa-asistente/index.html:1016"
       ],
       "items": [
         {
@@ -1046,7 +1048,7 @@
       },
       "cerrada": true,
       "usado_en": [
-        "pwa-asistente/index.html:499",
+        "pwa-asistente/index.html:502",
         "registrar-asistente.html:340"
       ],
       "items": [
@@ -1272,8 +1274,8 @@
       "usado_en": [
         "formulario-integral.html:184",
         "formulario-integral.html:404",
-        "pwa-asistente/index.html:547",
-        "pwa-familia/index.html:794",
+        "pwa-asistente/index.html:550",
+        "pwa-familia/index.html:796",
         "registrar-asistente.html:409"
       ],
       "items": [

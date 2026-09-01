@@ -12,19 +12,14 @@
     "frase: ni se busca ni se traduce. Es la única forma de dejar títulos adentro de un",
     "JSON, que no tiene comentarios."
   ],
-
   "frases": {
-
     "_0": "── Lo que no es de ninguna pantalla en particular ──",
-
     "comun.cargando": {
       "es-AR": "Cargando…",
       "en": "Loading…",
       "pt-BR": "Carregando…"
     },
-
     "_1": "── La barra de arriba, la misma en toda pantalla pública ──",
-
     "nav.inicio": {
       "es-AR": "Inicio",
       "en": "Home",
@@ -80,9 +75,7 @@
       "en": "YouTube",
       "pt-BR": "YouTube"
     },
-
     "_2": "── El pie, el mismo en toda pantalla pública ──",
-
     "pie.lema": {
       "es-AR": "Conectamos familias con Asistentes calificados.",
       "en": "We connect families with qualified Caregivers.",
@@ -153,9 +146,7 @@
       "en": "Powered by",
       "pt-BR": "Com a tecnologia de"
     },
-
     "_": "── Los mensajes de error. Los clasifica js/texto.js y los muestra cualquier pantalla ──",
-
     "error.credenciales": {
       "es-AR": "El correo o la contraseña no coinciden.",
       "en": "The email address and password do not match.",
@@ -271,9 +262,7 @@
       "en": "One of the submitted entries is not valid. It is worth checking the form.",
       "pt-BR": "Algum dos dados enviados não é válido. Convém revisar o formulário."
     },
-
     "__": "── La pantalla de acceso ──",
-
     "acceso.titulo": {
       "es-AR": "Acceso",
       "en": "Sign in",
@@ -349,9 +338,7 @@
       "en": "The email address and the password have to be filled in.",
       "pt-BR": "É preciso preencher o e-mail e a senha."
     },
-
     "__a": "── El alta de la Familia (registrar-familia.html) ──",
-
     "alta_familia.titulo": {
       "es-AR": "Darse de alta como Familia",
       "en": "Register as a Family",
@@ -432,9 +419,7 @@
       "en": "Go to the sign-in screen",
       "pt-BR": "Ir para a tela de acesso"
     },
-
     "___": "── El campo de contraseña, que arma js/clave.js en cualquier pantalla ──",
-
     "clave.falta": {
       "es-AR": "Falta escribir la contraseña.",
       "en": "The password is missing.",
@@ -475,9 +460,7 @@
       "en": "Hide the password",
       "pt-BR": "Ocultar a senha"
     },
-
     "____": "── Pedir el enlace para recuperar la contraseña ──",
-
     "recuperar.titulo": {
       "es-AR": "Recuperar la contraseña",
       "en": "Recover the password",
@@ -528,9 +511,7 @@
       "en": "If it does not arrive within a few minutes, it is worth looking in the spam folder.",
       "pt-BR": "Se não aparecer em alguns minutos, convém olhar na caixa de spam."
     },
-
     "_____": "── Elegir una contraseña nueva, desde el enlace del correo ──",
-
     "nueva.titulo": {
       "es-AR": "Elegir una contraseña nueva",
       "en": "Choose a new password",
@@ -621,9 +602,7 @@
       "en": "Go to the access screen",
       "pt-BR": "Ir ao acesso"
     },
-
     "______": "── Rendir una evaluación ──",
-
     "examen.titulo": {
       "es-AR": "Evaluaciones",
       "en": "Assessments",
@@ -759,9 +738,7 @@
       "en": "Assessments are taken by Caregivers, and this account is not one.",
       "pt-BR": "As avaliações são feitas pelos Assistentes, e esta conta não é uma."
     },
-
     "_______": "── La Red de Asistentes ──",
-
     "directorio.descripcion": {
       "es-AR": "Encuentre al Asistente indicado para su familiar. Filtre por zona, patología y disponibilidad entre los Asistentes con legajo validado por la Prestadora.",
       "en": "Find the right Caregiver for your relative. Filter by area, condition and availability among the Caregivers whose personal file the Provider has validated.",
@@ -862,9 +839,7 @@
       "en": "Showing {cuantos} Caregivers",
       "pt-BR": "Mostrando {cuantos} Assistentes"
     },
-
     "________": "── El perfil de un Asistente. Lo que comparte con la grilla —la insignia, los reemplazos urgentes, el precio por hora— se pide con las claves «directorio.», que nombran la Red y no el archivo ──",
-
     "perfil.titulo": {
       "es-AR": "Perfil de Asistente",
       "en": "Caregiver profile",
@@ -940,685 +915,565 @@
       "en": "See more Caregivers",
       "pt-BR": "Ver mais Assistentes"
     },
-
     "_________": "── El paso de disponibilidad del legajo, que arma js/disponibilidad.js ──",
-
     "disponibilidad.vacio": {
       "es-AR": "Todavía no hay franjas horarias para elegir.",
       "en": "There are no time slots to choose from yet.",
       "pt-BR": "Ainda não há faixas de horário para escolher."
     },
-
     "__________": "── El paso de cierre del legajo, que arma js/autorizaciones.js ──",
-
     "cierre.vacio": {
       "es-AR": "Todavía no hay autorizaciones para confirmar.",
       "en": "There are no authorisations to confirm yet.",
       "pt-BR": "Ainda não há autorizações para confirmar."
     },
-
     "___________": "── Los estados de nueva-clave.html y el aviso de solicitar-asistente.html ──",
-
     "nueva.no_se_pudo_comprobar": {
       "es-AR": "No se pudo comprobar el enlace",
       "en": "The link could not be checked",
       "pt-BR": "Não foi possível verificar o link"
     },
-
     "aviso.faltan_campos": {
       "es-AR": "Hay que completar todos los campos.",
       "en": "All the fields have to be filled in.",
       "pt-BR": "É preciso preencher todos os campos."
     },
-
     "____________": "── Los estados de la aplicación de la Familia ──",
-
     "reporte.cargando": {
       "es-AR": "Cargando los reportes…",
       "en": "Loading the reports…",
       "pt-BR": "Carregando os relatórios…"
     },
-
     "familia.reportes_vacio": {
       "es-AR": "Acá todavía no se muestran reportes. Por ahora se los pide a la Prestadora.",
       "en": "No reports are shown here yet. For now, they can be requested from the Provider.",
       "pt-BR": "Ainda não são exibidos relatórios aqui. Por enquanto, é possível pedi-los à Prestadora."
     },
-
     "familia.cerrando_sesion": {
       "es-AR": "Cerrando la sesión…",
       "en": "Signing out…",
       "pt-BR": "Saindo da sessão…"
     },
-
     "familia.aviso_faltan_datos": {
       "es-AR": "Faltan el nombre del Paciente, la zona y la modalidad del servicio.",
       "en": "The Patient’s name, the area and the service arrangement are missing.",
       "pt-BR": "Faltam o nome do Paciente, a zona e a modalidade do serviço."
     },
-
     "familia.aviso_publicando": {
       "es-AR": "Publicando…",
       "en": "Publishing…",
       "pt-BR": "Publicando…"
     },
-
     "_____________": "── Los estados de la aplicación del Asistente, el fichado y el reporte ──",
-
     "asistente.legajo_sin_legajo": {
       "es-AR": "🔴 Sin legajo — falta completar el registro",
       "en": "🔴 No file yet — the registration is still to be completed",
       "pt-BR": "🔴 Sem cadastro — falta concluir o registro"
     },
-
     "asistente.legajo_tramitando": {
       "es-AR": "🟡 Incorporación en trámite — falta completar el legajo",
       "en": "🟡 Onboarding in progress — the file is still to be completed",
       "pt-BR": "🟡 Incorporação em andamento — falta concluir o cadastro"
     },
-
     "asistente.legajo_validado": {
       "es-AR": "🟢 Validado — habilitado para trabajar",
       "en": "🟢 Validated — cleared to work",
       "pt-BR": "🟢 Validado — habilitado para trabalhar"
     },
-
     "comun.confirmar_salir": {
       "es-AR": "¿Confirma que quiere cerrar la sesión? Para volver a entrar hay que escribir de nuevo el correo y la contraseña.",
       "en": "Do you confirm that you want to sign out? To come back in, the email address and the password have to be entered again.",
       "pt-BR": "Confirma que deseja encerrar a sessão? Para entrar de novo é preciso digitar outra vez o e-mail e a senha."
     },
-
     "asistente.cerrando_sesion": {
       "es-AR": "Cerrando la sesión…",
       "en": "Signing out…",
       "pt-BR": "Encerrando a sessão…"
     },
-
     "asistente.falta_terminos": {
       "es-AR": "Para terminar el alta hay que aceptar los Términos y Condiciones.",
       "en": "To finish the registration, the Terms and Conditions have to be accepted.",
       "pt-BR": "Para concluir o cadastro é preciso aceitar os Termos e Condições."
     },
-
     "asistente.creando_cuenta": {
       "es-AR": "Creando la cuenta…",
       "en": "Creating the account…",
       "pt-BR": "Criando a conta…"
     },
-
     "asistente.guardando_legajo": {
       "es-AR": "Guardando el legajo…",
       "en": "Saving the file…",
       "pt-BR": "Salvando o cadastro…"
     },
-
     "asistente.legajo_guardado_sin_archivos": {
       "es-AR": "El legajo quedó guardado, pero no se pudieron subir todos los archivos:\n\n{lista}\n\nSe pueden volver a cargar más adelante desde el legajo.",
       "en": "The file was saved, but not every document could be uploaded:\n\n{lista}\n\nThey can be uploaded again later from the file.",
       "pt-BR": "O cadastro foi salvo, mas não foi possível enviar todos os arquivos:\n\n{lista}\n\nEles podem ser enviados mais tarde a partir do cadastro."
     },
-
     "asistente.reenviando_correo": {
       "es-AR": "Mandando…",
       "en": "Sending…",
       "pt-BR": "Enviando…"
     },
-
     "asistente.correo_reenviado": {
       "es-AR": "Se mandó el correo de nuevo. Puede tardar unos minutos en llegar.",
       "en": "The message was sent again. It may take a few minutes to arrive.",
       "pt-BR": "A mensagem foi enviada de novo. Pode levar alguns minutos para chegar."
     },
-
     "fichado.sin_legajo": {
       "es-AR": "No hay legajo abierto para esta cuenta, así que no se puede fichar. Corresponde completar el registro de Asistente.",
       "en": "There is no caregiver record open for this account, so the clock-in cannot be saved. The caregiver registration needs to be completed first.",
       "pt-BR": "Não há cadastro de Assistente aberto para esta conta, então não é possível marcar o ponto. É preciso concluir o cadastro."
     },
-
     "fichado.entrada": {
       "es-AR": "Entrada",
       "en": "Clock-in",
       "pt-BR": "Entrada"
     },
-
     "fichado.salida": {
       "es-AR": "Salida",
       "en": "Clock-out",
       "pt-BR": "Saída"
     },
-
     "fichado.buscando": {
       "es-AR": "Obteniendo la localización por GPS…",
       "en": "Getting the GPS location…",
       "pt-BR": "Obtendo a localização por GPS…"
     },
-
     "fichado.sin_soporte": {
       "es-AR": "Este dispositivo no tiene localización por GPS.",
       "en": "This device has no GPS location.",
       "pt-BR": "Este dispositivo não tem localização por GPS."
     },
-
     "fichado.sin_soporte_estado": {
       "es-AR": "Sin GPS en este dispositivo",
       "en": "No GPS on this device",
       "pt-BR": "Sem GPS neste dispositivo"
     },
-
     "fichado.registrando": {
       "es-AR": "Registrando el fichado de {tipo}…",
       "en": "Recording the {tipo}…",
       "pt-BR": "Registrando o registro de {tipo}…"
     },
-
     "fichado.registrado": {
       "es-AR": "Quedó registrado el fichado de {tipo}.\n\nCoordenadas: {lat}, {lng}",
       "en": "The {tipo} was recorded.\n\nCoordinates: {lat}, {lng}",
       "pt-BR": "O registro de {tipo} foi gravado.\n\nCoordenadas: {lat}, {lng}"
     },
-
     "fichado.ultimo": {
       "es-AR": "Último registro: {tipo} ({hora})",
       "en": "Last record: {tipo} ({hora})",
       "pt-BR": "Último registro: {tipo} ({hora})"
     },
-
     "fichado.error_estado": {
       "es-AR": "No se pudo registrar el fichado",
       "en": "The record could not be saved",
       "pt-BR": "Não foi possível gravar o registro"
     },
-
     "fichado.permiso_denegado": {
       "es-AR": "Habilite los permisos de GPS para poder fichar la asistencia.",
       "en": "Please enable GPS permissions so attendance can be recorded.",
       "pt-BR": "Habilite as permissões de GPS para poder registrar a presença."
     },
-
     "fichado.permiso_denegado_estado": {
       "es-AR": "Permiso de GPS denegado",
       "en": "GPS permission denied",
       "pt-BR": "Permissão de GPS negada"
     },
-
     "reporte.falta_texto": {
       "es-AR": "Escriba un reporte o una nota del cuidado.",
       "en": "Please write a report or a care note.",
       "pt-BR": "Escreva um relatório ou uma nota do cuidado."
     },
-
     "reporte.guardando": {
       "es-AR": "Guardando…",
       "en": "Saving…",
       "pt-BR": "Salvando…"
     },
-
     "reporte.guardado": {
       "es-AR": "El reporte quedó guardado.",
       "en": "The report was saved.",
       "pt-BR": "O relatório foi salvo."
     },
-
     "______________": "── Los estados y los rótulos que escribe el guion del panel de la Prestadora ──",
-
     "panel.legajos_cargando": {
       "es-AR": "Buscando los legajos de la Prestadora…",
       "en": "Looking for the Provider’s personal files…",
       "pt-BR": "Buscando os cadastros da Prestadora…"
     },
-
     "panel.legajos_error": {
       "es-AR": "No se pudieron traer los legajos. Conviene reintentar con el botón Actualizar.",
       "en": "The personal files could not be retrieved. It is worth trying again with the Refresh button.",
       "pt-BR": "Não foi possível trazer os cadastros. Convém tentar de novo com o botão Atualizar."
     },
-
     "panel.legajos_vacio": {
       "es-AR": "Todavía no hay ningún legajo cargado en esta Prestadora.",
       "en": "No personal file has been loaded in this Provider yet.",
       "pt-BR": "Ainda não há nenhum cadastro carregado nesta Prestadora."
     },
-
     "panel.sin_permiso": {
       "es-AR": "Esta pantalla es para el personal de la Prestadora. La cuenta con la que se inició sesión no tiene ese permiso.",
       "en": "This screen is for the Provider’s staff. The account that signed in does not have that permission.",
       "pt-BR": "Esta tela é para o pessoal da Prestadora. A conta com a qual se entrou não tem essa permissão."
     },
-
     "panel.arranque_error": {
       "es-AR": "No se pudo preparar la pantalla. Conviene volver a cargarla.",
       "en": "The screen could not be prepared. It is worth loading it again.",
       "pt-BR": "Não foi possível preparar a tela. Convém carregá-la de novo."
     },
-
     "panel.abriendo": {
       "es-AR": "Abriendo…",
       "en": "Opening…",
       "pt-BR": "Abrindo…"
     },
-
     "panel.legajo_cargando": {
       "es-AR": "Abriendo el legajo para auditarlo…",
       "en": "Opening the personal file for auditing…",
       "pt-BR": "Abrindo o cadastro para auditá-lo…"
     },
-
     "panel.legajo_error": {
       "es-AR": "No se pudo abrir el legajo para auditarlo. Conviene reintentar.",
       "en": "The personal file could not be opened for auditing. It is worth trying again.",
       "pt-BR": "Não foi possível abrir o cadastro para auditá-lo. Convém tentar de novo."
     },
-
     "panel.legajo_no_esta": {
       "es-AR": "Ese legajo ya no figura en la lista. Conviene actualizarla con el botón Actualizar.",
       "en": "That personal file is no longer on the list. It is worth refreshing it with the Refresh button.",
       "pt-BR": "Esse cadastro não figura mais na lista. Convém atualizá-la com o botão Atualizar."
     },
-
     "panel.fila_telefono": {
       "es-AR": "Tel:",
       "en": "Phone:",
       "pt-BR": "Tel:"
     },
-
     "panel.documentos_cargados": {
       "es-AR": "DNI, Penales, Título",
       "en": "ID, record check, qualification",
       "pt-BR": "Identidade, antecedentes, diploma"
     },
-
     "panel.estado_en_revision": {
       "es-AR": "🟡 Tramitando su incorporación",
       "en": "🟡 Joining process under way",
       "pt-BR": "🟡 Incorporação em andamento"
     },
-
     "panel.estado_validado": {
       "es-AR": "🟢 Validado por Prestadora",
       "en": "🟢 Validated by the Provider",
       "pt-BR": "🟢 Validado pela Prestadora"
     },
-
     "panel.auditar": {
       "es-AR": "Auditar Legajo",
       "en": "Audit personal file",
       "pt-BR": "Auditar cadastro"
     },
-
     "panel.documento_pendiente": {
       "es-AR": "Pendiente",
       "en": "Pending",
       "pt-BR": "Pendente"
     },
-
     "panel.documento_sin_enlace": {
       "es-AR": "No se pudo abrir",
       "en": "Could not be opened",
       "pt-BR": "Não foi possível abrir"
     },
-
     "panel.ver_dni": {
       "es-AR": "Ver DNI",
       "en": "View identity document",
       "pt-BR": "Ver documento de identidade"
     },
-
     "panel.ver_penales": {
       "es-AR": "Ver Penales",
       "en": "View criminal record check",
       "pt-BR": "Ver antecedentes criminais"
     },
-
     "panel.ver_titulo": {
       "es-AR": "Ver Título",
       "en": "View qualification",
       "pt-BR": "Ver diploma"
     },
-
     "panel.detalle_nombre": {
       "es-AR": "Nombre completo:",
       "en": "Full name:",
       "pt-BR": "Nome completo:"
     },
-
     "panel.detalle_dni": {
       "es-AR": "DNI:",
       "en": "Identity number:",
       "pt-BR": "Documento:"
     },
-
     "panel.detalle_email": {
       "es-AR": "Correo:",
       "en": "Email address:",
       "pt-BR": "E-mail:"
     },
-
     "panel.detalle_telefono": {
       "es-AR": "Teléfono:",
       "en": "Telephone:",
       "pt-BR": "Telefone:"
     },
-
     "panel.detalle_profesion": {
       "es-AR": "Tipo de Asistente:",
       "en": "Type of Caregiver:",
       "pt-BR": "Tipo de Assistente:"
     },
-
     "panel.detalle_patologias": {
       "es-AR": "Patologías con experiencia:",
       "en": "Conditions with experience:",
       "pt-BR": "Patologias com experiência:"
     },
-
     "panel.detalle_tareas": {
       "es-AR": "Tareas declaradas:",
       "en": "Declared tasks:",
       "pt-BR": "Tarefas declaradas:"
     },
-
     "panel.detalle_documentos": {
       "es-AR": "Documentos adjuntos para verificar:",
       "en": "Attached documents to verify:",
       "pt-BR": "Documentos anexos para verificar:"
     },
-
     "panel.detalle_dni_archivo": {
       "es-AR": "DNI, frente y dorso:",
       "en": "Identity document, front and back:",
       "pt-BR": "Documento de identidade, frente e verso:"
     },
-
     "panel.detalle_penales_archivo": {
       "es-AR": "Antecedentes penales:",
       "en": "Criminal record check:",
       "pt-BR": "Antecedentes criminais:"
     },
-
     "panel.detalle_titulo_archivo": {
       "es-AR": "Título o matrícula:",
       "en": "Qualification or licence:",
       "pt-BR": "Diploma ou registro profissional:"
     },
-
     "panel.aprobar_pregunta": {
       "es-AR": "Se va a otorgar el aval «Validado por Prestadora» a este legajo.\n\nLa persona queda habilitada en el plantel activo y el aval se muestra en su perfil. Desde esta pantalla no se puede quitar.\n\n¿Confirma?",
       "en": "The “Validated by the Provider” endorsement is about to be granted to this personal file.\n\nThe person becomes available in the active roster and the endorsement is shown on their profile. It cannot be removed from this screen.\n\nPlease confirm.",
       "pt-BR": "O selo «Validado pela Prestadora» está prestes a ser concedido a este cadastro.\n\nA pessoa fica habilitada no quadro ativo e o selo aparece no seu perfil. Não é possível retirá-lo a partir desta tela.\n\nConfirma?"
     },
-
     "panel.aprobar_mientras": {
       "es-AR": "Otorgando el aval…",
       "en": "Granting the endorsement…",
       "pt-BR": "Concedendo o selo…"
     },
-
     "panel.aprobar_aviso": {
       "es-AR": "✓ Legajo auditado. Se asignó el sello «Validado por Prestadora» y quedó habilitado en el plantel activo.",
       "en": "✓ Personal file audited. The “Validated by the Provider” seal was assigned and it is now available in the active roster.",
       "pt-BR": "✓ Cadastro auditado. Foi atribuído o selo «Validado pela Prestadora» e ficou habilitado no quadro ativo."
     },
-
     "panel.aprobar_nota_por_omision": {
       "es-AR": "Aprobado por el equipo de RRHH {{organizacion}}.",
       "en": "Approved by the {{organizacion}} HR team.",
       "pt-BR": "Aprovado pela equipe de RH {{organizacion}}."
     },
-
     "panel.rechazar_pregunta": {
       "es-AR": "Se va a rechazar este legajo.\n\nQueda cerrado y la persona no aparece en el plantel activo. Desde esta pantalla no se puede volver atrás.\n\n¿Confirma?",
       "en": "This personal file is about to be rejected.\n\nIt is closed and the person does not appear in the active roster. It cannot be undone from this screen.\n\nPlease confirm.",
       "pt-BR": "Este cadastro está prestes a ser recusado.\n\nEle fica encerrado e a pessoa não aparece no quadro ativo. Não é possível voltar atrás a partir desta tela.\n\nConfirma?"
     },
-
     "panel.rechazar_mientras": {
       "es-AR": "Registrando el rechazo…",
       "en": "Recording the rejection…",
       "pt-BR": "Registrando a recusa…"
     },
-
     "panel.rechazar_aviso": {
       "es-AR": "Se registró el rechazo del legajo.",
       "en": "The rejection of the personal file was recorded.",
       "pt-BR": "A recusa do cadastro foi registrada."
     },
-
     "panel.rechazar_nota_por_omision": {
       "es-AR": "No cumple requisitos.",
       "en": "Does not meet the requirements.",
       "pt-BR": "Não cumpre os requisitos."
     },
-
     "_______________": "── Los estados del alta de un Asistente ──",
-
     "alta.zonas_etiqueta": {
       "es-AR": "Zonas de cobertura",
       "en": "Coverage areas",
       "pt-BR": "Áreas de cobertura"
     },
-
     "alta.zonas_ayuda": {
       "es-AR": "Tilde todas las que correspondan. Tildar una región entera vale por toda la región.",
       "en": "Tick every one that applies. Ticking a whole region covers the entire region.",
       "pt-BR": "Marque todas as que corresponderem. Marcar uma região inteira vale por toda a região."
     },
-
     "alta.zonas_cargando": {
       "es-AR": "Cargando las zonas de cobertura…",
       "en": "Loading the coverage areas…",
       "pt-BR": "Carregando as áreas de cobertura…"
     },
-
     "alta.zonas_libre_etiqueta": {
       "es-AR": "¿Dónde puede trabajar?",
       "en": "Where can you work?",
       "pt-BR": "Onde você pode trabalhar?"
     },
-
     "alta.zonas_libre_ayuda": {
       "es-AR": "Todavía no hay una lista de zonas para tildar. Escriba con sus palabras las localidades o los barrios donde aceptaría trabajo.",
       "en": "There is no list of areas to tick yet. Describe in your own words the towns or neighbourhoods where you would take work.",
       "pt-BR": "Ainda não há uma lista de áreas para marcar. Escreva com suas palavras as localidades ou os bairros onde aceitaria trabalho."
     },
-
     "alta.zonas_libre_marcador": {
       "es-AR": "Por ejemplo: el centro de la ciudad y las localidades vecinas",
       "en": "For example: the city centre and the neighbouring towns",
       "pt-BR": "Por exemplo: o centro da cidade e as localidades vizinhas"
     },
-
     "alta.zonas_falta": {
       "es-AR": "Indique al menos una zona de cobertura.",
       "en": "Please indicate at least one coverage area.",
       "pt-BR": "Indique pelo menos uma área de cobertura."
     },
-
     "alta.legajo_cargando": {
       "es-AR": "Preparando el formulario del legajo…",
       "en": "Preparing the personal file form…",
       "pt-BR": "Preparando o formulário do cadastro…"
     },
-
     "alta.legajo_vacio": {
       "es-AR": "El formulario del legajo se armó sin ningún Tipo de Asistente para elegir. Con la lista vacía el alta no se puede completar. Pruebe de nuevo, y si vuelve a pasar avise a la Prestadora.",
       "en": "The personal file form loaded with no Caregiver type to choose from. The registration cannot be completed with an empty list. Please try again, and if it happens again let the Provider know.",
       "pt-BR": "O formulário do cadastro foi montado sem nenhum tipo de Assistente para escolher. Com a lista vazia não é possível concluir o cadastramento. Tente de novo e, se acontecer outra vez, avise a Prestadora."
     },
-
     "alta.guardando": {
       "es-AR": "Guardando el legajo…",
       "en": "Saving the personal file…",
       "pt-BR": "Salvando o cadastro…"
     },
-
     "alta.sin_asistente": {
       "es-AR": "El alta terminó sin devolver el Asistente creado, así que el legajo quedó sin guardar. No se cargó nada a medias. Vuelva a intentarlo.",
       "en": "The registration finished without returning the Caregiver that was created, so the personal file was not saved. Nothing was half-written. Please try again.",
       "pt-BR": "O cadastramento terminou sem devolver o Assistente criado, portanto o cadastro não foi salvo. Nada ficou pela metade. Tente novamente."
     },
-
     "alta.enviando": {
       "es-AR": "Enviando el alta…",
       "en": "Submitting the registration…",
       "pt-BR": "Enviando o cadastramento…"
     },
-
     "alta.mandando": {
       "es-AR": "Mandando el correo…",
       "en": "Sending the email…",
       "pt-BR": "Enviando o e-mail…"
     },
-
     "alta.faltan_obligatorios": {
       "es-AR": "Faltan completar campos o archivos obligatorios. Están marcados en rojo.",
       "en": "Some required fields or files are still missing. They are marked in red.",
       "pt-BR": "Faltam preencher campos ou arquivos obrigatórios. Estão marcados em vermelho."
     },
-
     "alta.faltan_terminos": {
       "es-AR": "Para terminar el alta hay que aceptar los Términos y Condiciones.",
       "en": "The Terms and Conditions must be accepted to complete the registration.",
       "pt-BR": "Para concluir o cadastramento é preciso aceitar os Termos e Condições."
     },
-
     "alta.no_se_completo": {
       "es-AR": "No se pudo completar el alta. Revise los datos y vuelva a intentarlo.",
       "en": "The registration could not be completed. Please check the details and try again.",
       "pt-BR": "Não foi possível concluir o cadastramento. Confira os dados e tente novamente."
     },
-
     "alta.sin_prestadora": {
       "es-AR": "No se pudo saber de qué Prestadora es esta alta, así que no se creó ninguna cuenta. Conviene entrar por el enlace de la Prestadora y volver a intentarlo.",
       "en": "It was not possible to tell which Provider this registration belongs to, so no account was created. It is worth entering through the Provider’s link and trying again.",
       "pt-BR": "Não foi possível saber de qual Prestadora é este cadastramento, então nenhuma conta foi criada. Convém entrar pelo link da Prestadora e tentar de novo."
     },
-
     "alta.correo_reenviado": {
       "es-AR": "Se mandó el correo de confirmación de nuevo. Revise también la carpeta de correo no deseado.",
       "en": "The confirmation email has been sent again. Please check the spam folder as well.",
       "pt-BR": "O e-mail de confirmação foi enviado outra vez. Verifique também a pasta de spam."
     },
-
     "alta.archivos_no_subidos": {
       "es-AR": "El legajo quedó guardado, pero estos archivos no se pudieron subir:\n{lista}\n\nSe pueden volver a cargar más tarde desde «Mi Legajo».",
       "en": "The personal file was saved, but these files could not be uploaded:\n{lista}\n\nThey can be uploaded again later from “My file”.",
       "pt-BR": "O cadastro foi salvo, mas estes arquivos não puderam ser enviados:\n{lista}\n\nPodem ser enviados mais tarde em “Meu cadastro”."
     },
-
     "alta.archivo_foto": {
       "es-AR": "La foto de perfil",
       "en": "The profile photo",
       "pt-BR": "A foto de perfil"
     },
-
     "alta.archivo_dni": {
       "es-AR": "El documento de identidad",
       "en": "The identity document",
       "pt-BR": "O documento de identidade"
     },
-
     "alta.archivo_penales": {
       "es-AR": "El certificado de antecedentes penales",
       "en": "The criminal record certificate",
       "pt-BR": "O certificado de antecedentes criminais"
     },
-
     "alta.archivo_titulo": {
       "es-AR": "El título o certificado de estudios",
       "en": "The qualification or study certificate",
       "pt-BR": "O diploma ou certificado de estudos"
     },
-
     "alta.archivo_legajo": {
       "es-AR": "Los archivos adjuntos del legajo",
       "en": "The attachments of the personal file",
       "pt-BR": "Os anexos do cadastro"
     },
-
     "________________": "── Los formularios de consulta del portal ──",
-
     "comun.si": {
       "es-AR": "Sí",
       "en": "Yes",
       "pt-BR": "Sim"
     },
-
     "comun.no": {
       "es-AR": "No",
       "en": "No",
       "pt-BR": "Não"
     },
-
     "consulta.enviando": {
       "es-AR": "Enviando…",
       "en": "Sending…",
       "pt-BR": "Enviando…"
     },
-
     "consulta.enviada": {
       "es-AR": "Su consulta quedó registrada. Le vamos a responder a la dirección que dejó.",
       "en": "Your enquiry has been recorded. We will reply to the address you left.",
       "pt-BR": "Sua consulta foi registrada. Responderemos ao endereço que você deixou."
     },
-
     "consulta.no_se_recibe_aca": {
       "es-AR": "Esta consulta todavía no se recibe desde esta pantalla. Se puede mandar por correo, con todo lo que acaba de completar ya escrito adentro.",
       "en": "This enquiry cannot yet be received from this screen. It can be sent by email, with everything you just filled in already written out.",
       "pt-BR": "Esta consulta ainda não é recebida a partir desta tela. Pode ser enviada por e-mail, com tudo o que acabou de preencher já escrito."
     },
-
     "consulta.escribir_correo": {
       "es-AR": "Escribir el correo",
       "en": "Write the email",
       "pt-BR": "Escrever o e-mail"
     },
-
     "consulta.asunto": {
       "es-AR": "Consulta desde el sitio",
       "en": "Enquiry from the website",
       "pt-BR": "Consulta pelo site"
     },
-
     "consulta.dato_nombre": {
       "es-AR": "Nombre y apellido",
       "en": "Full name",
       "pt-BR": "Nome e sobrenome"
     },
-
     "consulta.dato_correo": {
       "es-AR": "Correo electrónico",
       "en": "Email address",
       "pt-BR": "Endereço de e-mail"
     },
-
     "consulta.dato_celular": {
       "es-AR": "Número de celular",
       "en": "Mobile number",
       "pt-BR": "Número de celular"
     },
-
     "consulta.dato_motivo": {
       "es-AR": "Motivo de la consulta",
       "en": "Reason for the enquiry",
       "pt-BR": "Motivo da consulta"
     },
-
     "consulta.dato_curso": {
       "es-AR": "Curso de interés",
       "en": "Course of interest",
       "pt-BR": "Curso de interesse"
     },
-
     "consulta.dato_novedades": {
       "es-AR": "Desea recibir novedades",
       "en": "Would like to receive news",
       "pt-BR": "Deseja receber novidades"
     },
-
     "_________________": "── La portada ──",
-
     "inicio.titulo": {
       "es-AR": "{{organizacion}} — Encuentre al Asistente que necesita",
       "en": "{{organizacion}} — Find the Caregiver you need",
@@ -2014,9 +1869,7 @@
       "en": "“{{producto}}: an application that trains Caregivers and connects them with Families.”",
       "pt-BR": "“{{producto}}: um aplicativo que capacita os Assistentes e os conecta com as Famílias.”"
     },
-
     "__________________": "── El Acompañamiento, que la pantalla soporte-remoto.html todavía nombra por su nombre viejo ──",
-
     "acompanamiento.titulo": {
       "es-AR": "Acompañamiento en línea",
       "en": "Online companion support",
@@ -2182,9 +2035,7 @@
       "en": "Thank you. A professional will be in touch shortly.",
       "pt-BR": "Obrigado! Um profissional entrará em contato em breve."
     },
-
     "___________________": "── Los cursos ──",
-
     "cursos.titulo": {
       "es-AR": "Cursos de cuidado",
       "en": "Care courses",
@@ -2320,9 +2171,7 @@
       "en": "✓ Request sent. Information about the course will arrive by email.",
       "pt-BR": "✓ Solicitação enviada. As informações do curso chegarão por e-mail."
     },
-
     "____________________": "── Pedir un Asistente ──",
-
     "solicitar.descripcion": {
       "es-AR": "Encuentre al Asistente ideal para su familiar mayor. Publique su aviso y reciba postulaciones de Asistentes calificados en su zona.",
       "en": "Find the right Caregiver for your older relative. Post your listing and receive applications from qualified Caregivers in your area.",
@@ -2714,9 +2563,7 @@
       "en": "These guides say what to watch for and when to report it. They do not prescribe treatment.",
       "pt-BR": "Estes guias dizem o que observar e quando avisar. Não indicam tratamentos."
     },
-
     "__________________________________________": "── Los marcadores de marca, que resuelve js/identidad.js con el nombre de verdad ──",
-
     "comun.producto": {
       "es-AR": "{{producto}}",
       "en": "{{producto}}",
@@ -2733,7 +2580,6 @@
       "pt-BR": "{{organizacion}}"
     },
     "___________________________________________": "── La aplicación del Asistente: el cajón, la pantalla de acceso y el tablero ──",
-
     "asistente.titulo_pagina": {
       "es-AR": "{{producto}} Asistente — Portal Móvil",
       "en": "{{producto}} Care Assistant — Mobile Portal",
@@ -2830,7 +2676,6 @@
       "pt-BR": "Capacitações"
     },
     "____________________________________________": "── El reporte de cuidado que carga el Asistente desde el teléfono ──",
-
     "reporte.titulo": {
       "es-AR": "Registrar un reporte",
       "en": "Record a report",
@@ -2882,7 +2727,6 @@
       "pt-BR": "Salvar Registro"
     },
     "_____________________________________________": "── El registro de legajo desde el teléfono, los cinco pasos ──",
-
     "legajo.titulo": {
       "es-AR": "Registro de Legajo Digital",
       "en": "Digital Personnel File Registration",
@@ -3149,7 +2993,6 @@
       "pt-BR": "✓ Cadastro funcional enviado. Ele entrou no processo de auditoria."
     },
     "______________________________________________": "── Mis Capacitaciones, en la aplicación del Asistente ──",
-
     "capacitacion.titulo": {
       "es-AR": "Mis Capacitaciones",
       "en": "My training courses",
@@ -3485,6 +3328,369 @@
       "es-AR": "La guía quedó borrada.",
       "en": "The guide was deleted.",
       "pt-BR": "O guia foi excluído."
+    },
+    "_4": "── Los avisos abiertos y la postulación, en la aplicación del Asistente ──",
+    "nav.avisos": {
+      "es-AR": "Avisos",
+      "en": "Job posts",
+      "pt-BR": "Anúncios"
+    },
+    "avisos.titulo": {
+      "es-AR": "Avisos abiertos",
+      "en": "Open job posts",
+      "pt-BR": "Anúncios abertos"
+    },
+    "avisos.bajada": {
+      "es-AR": "Lo que las Familias de esta Prestadora están buscando. Postularse es ofrecerse: el trato lo cierran las dos partes.",
+      "en": "What families at this Provider are looking for. Applying means offering yourself; the arrangement is settled between the two parties.",
+      "pt-BR": "O que as Famílias desta Prestadora estão procurando. Candidatar-se é oferecer-se: o acordo é fechado entre as duas partes."
+    },
+    "avisos.cargando": {
+      "es-AR": "Buscando avisos...",
+      "en": "Loading job posts…",
+      "pt-BR": "Buscando anúncios..."
+    },
+    "avisos.error": {
+      "es-AR": "No se pudieron traer los avisos.",
+      "en": "The job posts could not be loaded.",
+      "pt-BR": "Não foi possível carregar os anúncios."
+    },
+    "avisos.reintentar": {
+      "es-AR": "Reintentar",
+      "en": "Try again",
+      "pt-BR": "Tentar de novo"
+    },
+    "avisos.vacio_titulo": {
+      "es-AR": "No hay avisos abiertos",
+      "en": "No open job posts",
+      "pt-BR": "Não há anúncios abertos"
+    },
+    "avisos.vacio_bajada": {
+      "es-AR": "Cuando una Familia publique lo que necesita, va a aparecer acá.",
+      "en": "When a family posts what they need, it will show up here.",
+      "pt-BR": "Quando uma Família publicar o que precisa, aparecerá aqui."
+    },
+    "avisos.sin_legajo": {
+      "es-AR": "Para ver los avisos hace falta tener el legajo empezado.",
+      "en": "Seeing job posts requires a started file.",
+      "pt-BR": "Para ver os anúncios é preciso ter o cadastro iniciado."
+    },
+    "avisos.rotulo_zona": {
+      "es-AR": "Zona",
+      "en": "Area",
+      "pt-BR": "Zona"
+    },
+    "avisos.rotulo_profesion": {
+      "es-AR": "Profesión que piden",
+      "en": "Profession requested",
+      "pt-BR": "Profissão solicitada"
+    },
+    "avisos.rotulo_frecuencia": {
+      "es-AR": "Frecuencia",
+      "en": "Frequency",
+      "pt-BR": "Frequência"
+    },
+    "avisos.rotulo_horarios": {
+      "es-AR": "Horarios",
+      "en": "Hours",
+      "pt-BR": "Horários"
+    },
+    "avisos.rotulo_genero": {
+      "es-AR": "Preferencia de género",
+      "en": "Gender preference",
+      "pt-BR": "Preferência de gênero"
+    },
+    "avisos.rotulo_tareas": {
+      "es-AR": "Tareas",
+      "en": "Tasks",
+      "pt-BR": "Tarefas"
+    },
+    "avisos.rotulo_patologias": {
+      "es-AR": "Patologías",
+      "en": "Conditions",
+      "pt-BR": "Patologias"
+    },
+    "avisos.rotulo_franjas": {
+      "es-AR": "Días y turnos",
+      "en": "Days and shifts",
+      "pt-BR": "Dias e turnos"
+    },
+    "avisos.publicado": {
+      "es-AR": "Publicado el {fecha}",
+      "en": "Posted on {fecha}",
+      "pt-BR": "Publicado em {fecha}"
+    },
+    "avisos.sin_dato": {
+      "es-AR": "Sin especificar",
+      "en": "Not specified",
+      "pt-BR": "Não especificado"
+    },
+    "avisos.postularse": {
+      "es-AR": "Postularme",
+      "en": "Apply",
+      "pt-BR": "Candidatar-me"
+    },
+    "avisos.postulando": {
+      "es-AR": "Enviando la postulación...",
+      "en": "Sending your application…",
+      "pt-BR": "Enviando a candidatura..."
+    },
+    "avisos.ya_postulado": {
+      "es-AR": "Ya se postuló a este aviso",
+      "en": "You already applied to this post",
+      "pt-BR": "Você já se candidatou a este anúncio"
+    },
+    "avisos.postulado_ok": {
+      "es-AR": "La postulación quedó enviada. Si la Familia decide contactarlo, va a aparecer en Mensajes.",
+      "en": "Your application was sent. If the family decides to get in touch, it will show up under Messages.",
+      "pt-BR": "A candidatura foi enviada. Se a Família decidir entrar em contato, aparecerá em Mensagens."
+    },
+    "avisos.error_postular": {
+      "es-AR": "No se pudo enviar la postulación.",
+      "en": "The application could not be sent.",
+      "pt-BR": "Não foi possível enviar a candidatura."
+    },
+    "avisos.mensaje_etiqueta": {
+      "es-AR": "Mensaje para la Familia (opcional)",
+      "en": "Message for the family (optional)",
+      "pt-BR": "Mensagem para a Família (opcional)"
+    },
+    "avisos.mensaje_lugar": {
+      "es-AR": "Por qué le interesa este aviso y qué experiencia tiene.",
+      "en": "Why this post interests you and what experience you have.",
+      "pt-BR": "Por que este anúncio lhe interessa e que experiência você tem."
+    },
+    "avisos.mensaje_aviso_contacto": {
+      "es-AR": "No escriba acá su teléfono ni su correo: el contacto se abre desde adentro de la aplicación.",
+      "en": "Do not write your phone number or e-mail here: contact is opened from inside the app.",
+      "pt-BR": "Não escreva aqui seu telefone nem seu e-mail: o contato é aberto dentro do aplicativo."
+    },
+    "avisos.retirar": {
+      "es-AR": "Retirar la postulación",
+      "en": "Withdraw application",
+      "pt-BR": "Retirar a candidatura"
+    },
+    "avisos.retirando": {
+      "es-AR": "Retirando...",
+      "en": "Withdrawing…",
+      "pt-BR": "Retirando..."
+    },
+    "avisos.retirada": {
+      "es-AR": "La postulación quedó retirada.",
+      "en": "The application was withdrawn.",
+      "pt-BR": "A candidatura foi retirada."
+    },
+    "avisos.error_retirar": {
+      "es-AR": "No se pudo retirar la postulación.",
+      "en": "The application could not be withdrawn.",
+      "pt-BR": "Não foi possível retirar a candidatura."
+    },
+    "_5": "── Las postulaciones que recibe la Familia, en su aplicación ──",
+    "nav.postulaciones": {
+      "es-AR": "Postulaciones",
+      "en": "Applications",
+      "pt-BR": "Candidaturas"
+    },
+    "postulaciones.titulo": {
+      "es-AR": "Quiénes se postularon",
+      "en": "Who applied",
+      "pt-BR": "Quem se candidatou"
+    },
+    "postulaciones.bajada": {
+      "es-AR": "Los Asistentes que se ofrecieron a sus avisos. Elegir con quién hablar es decisión suya.",
+      "en": "The assistants who offered themselves for your job posts. Choosing whom to talk to is your decision.",
+      "pt-BR": "Os Assistentes que se ofereceram aos seus anúncios. Escolher com quem falar é decisão sua."
+    },
+    "postulaciones.cargando": {
+      "es-AR": "Buscando postulaciones...",
+      "en": "Loading applications…",
+      "pt-BR": "Buscando candidaturas..."
+    },
+    "postulaciones.error": {
+      "es-AR": "No se pudieron traer las postulaciones.",
+      "en": "The applications could not be loaded.",
+      "pt-BR": "Não foi possível carregar as candidaturas."
+    },
+    "postulaciones.reintentar": {
+      "es-AR": "Reintentar",
+      "en": "Try again",
+      "pt-BR": "Tentar de novo"
+    },
+    "postulaciones.vacio_titulo": {
+      "es-AR": "Todavía no se postuló nadie",
+      "en": "Nobody has applied yet",
+      "pt-BR": "Ainda ninguém se candidatou"
+    },
+    "postulaciones.vacio_bajada": {
+      "es-AR": "Cuando un Asistente se ofrezca a alguno de sus avisos, va a aparecer acá. También puede buscar usted en la Red de Asistentes.",
+      "en": "When an assistant applies to one of your job posts, they will show up here. You can also search the Assistant Network yourself.",
+      "pt-BR": "Quando um Assistente se candidatar a um dos seus anúncios, aparecerá aqui. Você também pode procurar na Rede de Assistentes."
+    },
+    "postulaciones.nueva": {
+      "es-AR": "Nueva",
+      "en": "New",
+      "pt-BR": "Nova"
+    },
+    "postulaciones.descartada": {
+      "es-AR": "Descartada",
+      "en": "Set aside",
+      "pt-BR": "Descartada"
+    },
+    "postulaciones.recibida": {
+      "es-AR": "Recibida el {fecha}",
+      "en": "Received on {fecha}",
+      "pt-BR": "Recebida em {fecha}"
+    },
+    "postulaciones.sin_mensaje": {
+      "es-AR": "No escribió ningún mensaje.",
+      "en": "No message was written.",
+      "pt-BR": "Não escreveu nenhuma mensagem."
+    },
+    "postulaciones.contactar": {
+      "es-AR": "Contactar",
+      "en": "Get in touch",
+      "pt-BR": "Entrar em contato"
+    },
+    "postulaciones.abrir_conversacion": {
+      "es-AR": "Ver la conversación",
+      "en": "Open the conversation",
+      "pt-BR": "Ver a conversa"
+    },
+    "postulaciones.contactando": {
+      "es-AR": "Abriendo la conversación...",
+      "en": "Opening the conversation…",
+      "pt-BR": "Abrindo a conversa..."
+    },
+    "postulaciones.error_contactar": {
+      "es-AR": "No se pudo abrir la conversación.",
+      "en": "The conversation could not be opened.",
+      "pt-BR": "Não foi possível abrir a conversa."
+    },
+    "postulaciones.descartar": {
+      "es-AR": "Descartar",
+      "en": "Set aside",
+      "pt-BR": "Descartar"
+    },
+    "postulaciones.descartando": {
+      "es-AR": "Descartando...",
+      "en": "Setting aside…",
+      "pt-BR": "Descartando..."
+    },
+    "postulaciones.error_descartar": {
+      "es-AR": "No se pudo descartar la postulación.",
+      "en": "The application could not be set aside.",
+      "pt-BR": "Não foi possível descartar a candidatura."
+    },
+    "_6": "── La conversación entre la Familia y el Asistente, la misma pantalla de los dos lados ──",
+    "nav.mensajes": {
+      "es-AR": "Mensajes",
+      "en": "Messages",
+      "pt-BR": "Mensagens"
+    },
+    "conversacion.titulo": {
+      "es-AR": "Mensajes",
+      "en": "Messages",
+      "pt-BR": "Mensagens"
+    },
+    "conversacion.bajada": {
+      "es-AR": "El canal entre usted y la otra parte. La Prestadora no lee lo que se escribe acá.",
+      "en": "The channel between you and the other party. The Provider does not read what is written here.",
+      "pt-BR": "O canal entre você e a outra parte. A Prestadora não lê o que se escreve aqui."
+    },
+    "conversacion.cargando": {
+      "es-AR": "Buscando conversaciones...",
+      "en": "Loading conversations…",
+      "pt-BR": "Buscando conversas..."
+    },
+    "conversacion.error": {
+      "es-AR": "No se pudieron traer las conversaciones.",
+      "en": "The conversations could not be loaded.",
+      "pt-BR": "Não foi possível carregar as conversas."
+    },
+    "conversacion.reintentar": {
+      "es-AR": "Reintentar",
+      "en": "Try again",
+      "pt-BR": "Tentar de novo"
+    },
+    "conversacion.vacio_titulo": {
+      "es-AR": "No hay ninguna conversación",
+      "en": "No conversations",
+      "pt-BR": "Não há nenhuma conversa"
+    },
+    "conversacion.vacio_bajada_familia": {
+      "es-AR": "Se abre una cuando usted contacta a un Asistente, desde su perfil o desde una postulación.",
+      "en": "One opens when you get in touch with an assistant, from their profile or from an application.",
+      "pt-BR": "Uma conversa é aberta quando você entra em contato com um Assistente, a partir do perfil ou de uma candidatura."
+    },
+    "conversacion.vacio_bajada_asistente": {
+      "es-AR": "Se abre una cuando una Familia decide contactarlo.",
+      "en": "One opens when a family decides to get in touch with you.",
+      "pt-BR": "Uma conversa é aberta quando uma Família decide entrar em contato."
+    },
+    "conversacion.sin_mensajes": {
+      "es-AR": "Todavía no se escribió nada.",
+      "en": "Nothing has been written yet.",
+      "pt-BR": "Ainda não foi escrito nada."
+    },
+    "conversacion.volver": {
+      "es-AR": "Volver a la lista",
+      "en": "Back to the list",
+      "pt-BR": "Voltar à lista"
+    },
+    "conversacion.escribir_lugar": {
+      "es-AR": "Escriba su mensaje",
+      "en": "Write your message",
+      "pt-BR": "Escreva sua mensagem"
+    },
+    "conversacion.enviar": {
+      "es-AR": "Enviar",
+      "en": "Send",
+      "pt-BR": "Enviar"
+    },
+    "conversacion.enviando": {
+      "es-AR": "Enviando...",
+      "en": "Sending…",
+      "pt-BR": "Enviando..."
+    },
+    "conversacion.error_enviar": {
+      "es-AR": "No se pudo enviar el mensaje.",
+      "en": "The message could not be sent.",
+      "pt-BR": "Não foi possível enviar a mensagem."
+    },
+    "conversacion.mensaje_vacio": {
+      "es-AR": "El mensaje está vacío.",
+      "en": "The message is empty.",
+      "pt-BR": "A mensagem está vazia."
+    },
+    "conversacion.aviso_contacto": {
+      "es-AR": "El teléfono y el correo no se comparten por acá. La Prestadora sostiene este canal, y sacar el trato afuera la deja fuera de lo único que cobra.",
+      "en": "Phone numbers and e-mail addresses are not shared here. The Provider maintains this channel, and taking the arrangement outside leaves them out of the one thing they charge for.",
+      "pt-BR": "Telefone e e-mail não se compartilham por aqui. A Prestadora mantém este canal, e levar o acordo para fora a deixa fora da única coisa que ela cobra."
+    },
+    "conversacion.aviso_sin_trato": {
+      "es-AR": "Lo que se acuerde es entre usted y la otra parte. La Prestadora no participa del trato y el software no lo guarda.",
+      "en": "Whatever is agreed is between you and the other party. The Provider takes no part in the arrangement and the software does not store it.",
+      "pt-BR": "O que for acordado é entre você e a outra parte. A Prestadora não participa do acordo e o software não o armazena."
+    },
+    "perfil.contactar_entrar": {
+      "es-AR": "Para contactar a este Asistente hay que entrar como Familia.",
+      "en": "Getting in touch with this assistant requires signing in as a family.",
+      "pt-BR": "Para entrar em contato com este Assistente é preciso acessar como Família."
+    },
+    "perfil.contactar_solo_familia": {
+      "es-AR": "Contactar a un Asistente es algo que hace la Familia. Con esta cuenta no se puede.",
+      "en": "Getting in touch with an assistant is something a family does. This account cannot.",
+      "pt-BR": "Entrar em contato com um Assistente é algo que a Família faz. Com esta conta não é possível."
+    },
+    "perfil.contactando": {
+      "es-AR": "Abriendo la conversación...",
+      "en": "Opening the conversation…",
+      "pt-BR": "Abrindo a conversa..."
+    },
+    "perfil.contactar_error": {
+      "es-AR": "No se pudo abrir la conversación.",
+      "en": "The conversation could not be opened.",
+      "pt-BR": "Não foi possível abrir a conversa."
     }
   }
 }

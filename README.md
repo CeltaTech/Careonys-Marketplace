@@ -26,19 +26,19 @@ dos repositorios y dos proyectos de Supabase independientes.
 Sitio estático en HTML, CSS y JavaScript plano, en proceso de migración a React + Vite para
 alinearse con el stack de Careonys.
 
-Medido el 31 de agosto de 2026 sobre el árbol de trabajo con `node scripts/medir_estado.mjs`, que es de
+Medido el 1 de septiembre de 2026 sobre el árbol de trabajo con `node scripts/medir_estado.mjs`, que es de
 donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
-| 18 pantallas HTML, 10.682 renglones | sin ruteo: cada pantalla es un archivo |
-| 12.863 renglones de JavaScript propio, en 32 archivos | 7.603 de ellos son copias byte a byte de otro archivo (pendiente 13) |
-| 4.508 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
-| 4.642 renglones de hojas de estilo, en 10 archivos | 64 tokens con nombre en `css/tokens.css`, sin framework |
+| 18 pantallas HTML, 11.607 renglones | sin ruteo: cada pantalla es un archivo |
+| 14.551 renglones de JavaScript propio, en 35 archivos | 8.727 de ellos son copias byte a byte de otro archivo (pendiente 13) |
+| 5.197 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
+| 4.744 renglones de hojas de estilo, en 10 archivos | 64 tokens con nombre en `css/tokens.css`, sin framework |
 | 976 declaraciones más, pegadas al HTML | en 247 atributos `style=` (fue el pendiente 8, cerrado) |
-| Supabase Auth funcionando | 13 de las 18 pantallas rescatan la sesión al abrir |
+| Supabase Auth funcionando | 14 de las 18 pantallas rescatan la sesión al abrir |
 | 4 servidores de afuera, sin `package.json` ni compilación | dos de tipografías y dos de bibliotecas |
-| 26 tablas y 54 migraciones en el repositorio | 35 chequeos las miran antes de cada commit |
+| 26 tablas y 55 migraciones en el repositorio | 35 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
