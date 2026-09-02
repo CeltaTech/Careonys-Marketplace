@@ -80,7 +80,8 @@ Careonys-Marketplace/
 │   ├── DISENO.md               ← equivalencias de estilo con Careonys
 │   ├── TABLAS_QUE_FALTAN.md     ← diseño de las siete tablas que todavía no existen
 │   ├── modelo_de_negocios_*.md             ← material de diseño; decisión comercial abierta
-│   └── terminos_y_condiciones_*.md         ← borradores legales sin revisión de abogado
+│   ├── terminos_y_condiciones_*.md         ← modelos que la Prestadora adopta, cambia o descarta
+│   └── politica_de_datos.md                ← modelo, con el mismo criterio; los tres sin revisión de abogado
 ├── *.html                      ← las 16 pantallas del sitio, una por archivo
 ├── css/                        ← tokens.css, styles.css, utilidades.css, mockup-app.css
 ├── js/                         ← apiClient.js, auth.js, main.js y doce más

@@ -972,7 +972,7 @@ se acuerde.
 - **Y dos respaldos que no respaldaban a nadie**: `apiClient.js` aceptaba `fichadoData.cuidadorId` y
   `entryData.cuidadorId` por si alguien los mandaba, y no los manda ninguna pantalla. Borrados de
   las tres copias.
-- **El borrador legal se llama `docs/terminos_y_condiciones_asistentes.md`** y adentro dice
+- **El modelo de términos se llama `docs/terminos_y_condiciones_asistentes.md`** y adentro dice
   Asistente y Prestadora. Su propio aviso pedía exactamente esa corrección. **Ninguna cláusula
   cambió**, y el aviso de que un abogado todavía no lo revisó sigue entero.
 
@@ -6353,6 +6353,39 @@ cierre y una tercera que decidió el diseño: que la persona del legajo no lea l
 sobre ella. El aislamiento se prueba con dos Prestadoras, y las dos comprobaciones de sostén van
 primero, porque contra una tabla que niega todo «el Asistente no ve el motivo» saldría en verde sin
 haber probado nada.
+
+
+### Una Prestadora ya carga sus propias opciones, sin pasar por una migración
+
+Cerró el pendiente 96, el 2 de septiembre de 2026.
+
+Desde la migración 0038 el catálogo tiene dos escalones —el general que trae el producto y el que
+agrega cada Prestadora—, y el segundo funcionaba desde entonces. Lo que no existía era la pantalla:
+las opciones propias de `presdemo` y de `cuidarnorte` habían entrado por la migración 0040, escritas
+a mano en un archivo `.sql`. Las Prestadoras ficticias se tratan como clientes reales, así que eso
+era una pantalla que faltaba y no una comodidad de desarrollo.
+
+- **El bloque está en `panel-prestadora.html:172`**, con la tabla y el formulario, y sirve para
+  **cualquier** vocabulario abierto: la lista de vocabularios sale de la base, no de una lista
+  escrita en la pantalla. El alta y el cambio los hace `guardarOpcion` (`panel-prestadora.html:1252`,
+  con los botones apagados mientras la operación corre) y la baja y la realta
+  `cambiarEstadoDeOpcion` (`:1327`). **No borra: desactiva**, y por eso vuelve a activar.
+- **Del lado del cliente son cinco funciones nuevas**, de `js/apiClient.js:401` a `:462`, contra
+  `vocabulario_items`. La clave de cada opción la arma `Texto.claveDesde` (`js/texto.js:192`), con el
+  largo máximo en un solo lugar (`js/texto.js:108`).
+- **No hizo falta ninguna migración.** El esquema, las ocho políticas, el disparador
+  `el_vocabulario_no_cruza_prestadoras` y la columna `activo` ya sostenían todo esto. Se comprobó
+  contra la base de esta máquina, con `presdemo` y `cuidarnorte` cargadas y en una sola transacción
+  con `rollback`, así que no quedó ningún dato: `presdemo` ve sus 3 opciones propias más las 147
+  generales y ninguna de `cuidarnorte`; el alta, el cambio, la baja y la realta funcionan; la lista
+  `cerrada` la sigue rechazando el disparador; y escribir adentro del vocabulario de otra Prestadora
+  lo bloquea la RLS.
+- **Careonys tiene esto repartido en tres pantallas y le faltan seis listas**, así que en este punto
+  el aporte va en el otro sentido — `docs/APORTES_A_CAREONYS.md`.
+
+**Lo que no se probó:** el recorrido en el navegador con una sesión abierta. La comprobación fue
+contra la base, no contra la pantalla andando, que es el mismo estado en el que está toda pantalla de
+este producto.
 
 
 ## 6. Deuda del código actual

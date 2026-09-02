@@ -24,7 +24,7 @@ graph TD
     A[Plataforma Madre Careonys] -->|1. Suscripción SaaS Multi-Tenant| B[Empresas Licenciatarias / Tenants]
     A -->|2. Comisión por Transacción| C[Marketplace Familias - Asistentes]
     A -->|3. Servicios de Valor Agregado| D[Careonys Academy & Verificaciones]
-    B -->|Prestan Servicio| C
+    B -->|Deciden quién entra y cobran su comisión| C
 ```
 
 1. **B2B (Software SaaS)**: Se comercializa la infraestructura tecnológica a empresas licenciatarias, franquicias o entidades de salud (*Tenants*) para que operen sus redes de atención.
@@ -46,7 +46,7 @@ Cobro mensual o anual recurrente (MRR/ARR) a las empresas que utilizan el softwa
 ---
 
 ### Stream 2: Comisiones por Transacción en el Marketplace (Take Rate)
-* **Comisión por Servicio Gestionado (10% a 15%)**: Se cobra una comisión sobre el valor total de las horas o jornadas contratadas y procesadas a través de la pasarela de pagos del sistema.
+* **Comisión por Servicio Gestionado (10% a 15%)**: comisión sobre el valor del servicio que acuerdan la Familia y el Asistente. **El producto no interviene en ese cobro**: no guarda el contrato, ni el precio acordado, ni las horas, y no tiene pasarela de pagos (`CLAUDE.md:43-48`). Lo único que registra es el contacto —quién contactó a quién, por cuál de los dos caminos y cuándo—, que es el hecho por el que la Prestadora cobra (`CLAUDE.md:47-48`). Sobre qué valor y por qué medio se cobra ese porcentaje es una definición comercial de CeltaTech, y no sale de este producto.
 * **Fee de Selección / Match Exitoso**: Cargo fijo por la vinculación directa entre una familia y un asistente de jornada completa.
 
 ---
