@@ -18,6 +18,31 @@ migración `0042` en su encabezado y la pantalla del Asistente
 tratamientos». La migración que cargue estas veinte tiene entonces que **reemplazar** aquellas
 cuatro, no sumarse a ellas. Eso también entra en lo que hay que convalidar.
 
+**Corregidas el 2 de septiembre de 2026, y también entra en lo que hay que convalidar.** Quince
+de estas veinte preguntas ponían a la Prestadora donde en esta modalidad no va: acordando las
+condiciones del trabajo, organizando los reemplazos, mirando la fichada y el Reporte, o
+recibiendo el aviso de lo que pasó en la jornada. Es al revés: el trato lo cierran la Familia y
+el Asistente, la Prestadora no reparte trabajo (`CLAUDE.md:30`), la fichada y el Reporte son la
+herramienta de la Familia y del Asistente, y lo que la Prestadora controla es quién entra —el
+legajo, las verificaciones y la validación del Aspirante— (`CLAUDE.md:55-59`). Enseñar el modelo
+equivocado en la evaluación de entrada es enseñarlo en el peor lugar.
+
+**El criterio con el que se corrigieron es uno solo.** El aviso operativo —horarios, ausencias,
+reemplazos y lo que pasó en la jornada— va a la Familia, que es con quien se acordó la Guardia y
+quien lee la fichada; lo que toca el legajo, las verificaciones o la validación del Aspirante le
+sigue correspondiendo a la Prestadora, porque eso sí es quién entra.
+
+**Catorce se reescribieron:** la 1, la 4, la 5, la 6, la 7 y la 10 de la primera evaluación, y
+la 1, la 3, la 5, la 6, la 7, la 8, la 9 y la 10 de la segunda. Se reescribieron **sin cambiar qué
+pregunta cada una ni en qué opción cae la respuesta correcta** —donde hizo falta se dieron vuelta
+las opciones—, así que el reparto del final sigue valiendo tal como estaba.
+
+**La restante se dejó como estaba, y es la 9 de la primera evaluación:** la sospecha de que un
+familiar maltrata al Paciente. Ahí la Familia es justamente la señalada, y no hay horario,
+ausencia, reemplazo ni jornada en juego, así que no es un aviso operativo y avisarle a la
+Prestadora no la pone a dirigir el trabajo. A quién se avisa un caso así no está resuelto en
+`CLAUDE.md:43-59`, y se señala acá para que se decida al convalidar.
+
 ---
 
 ## Las reglas que estas preguntas cumplen
@@ -59,12 +84,12 @@ valor que la columna `porcentaje_para_aprobar` trae por defecto
 
 - a) Ayudarlo a levantarse y no anotar nada, porque él mismo dijo que está bien.
 - b) Dejarlo asentado en el Reporte al terminar la jornada y esperar a que la Familia lo lea.
-- c) Avisar a la Prestadora en el momento y dejarlo asentado en el Reporte, aunque el Paciente
+- c) Avisar a la Familia en el momento y dejarlo asentado en el Reporte, aunque el Paciente
   haya pedido que no.
-- d) Consultarlo con la Familia y hacer lo que la Familia decida.
+- d) Consultarle a la Familia si conviene dejarlo asentado, y hacer lo que ella decida.
 
 **Correcta: c.** Una caída se avisa siempre y en el momento; el pedido del Paciente no suspende el
-deber de informar, y el Reporte de la jornada no reemplaza al aviso.
+deber de informar, avisar no es pedir permiso, y el Reporte de la jornada no reemplaza al aviso.
 
 ### 2. ¿Cuál de estas observaciones obliga a avisar de inmediato, y no puede quedar solamente anotada en el Reporte?
 
@@ -94,39 +119,47 @@ fichada, que es otra cosa.
 - c) Contarle solamente lo que ya se ve a simple vista.
 - d) Preguntarle al Paciente si autoriza y, si acepta, contarle.
 
-**Correcta: b.** Lo que se sabe por trabajar en esa casa no sale de la Familia y de la Prestadora,
-y no es el Asistente quien administra ese permiso.
+**Correcta: b.** Lo que se sabe por trabajar en esa casa no sale de esa casa, y no es el Asistente
+quien administra ese permiso: esas consultas las contesta la Familia.
 
 ### 5. El Asistente llega al domicilio y el teléfono no tiene señal para fichar la entrada. ¿Qué corresponde hacer?
 
-- a) Empezar la Guardia, avisar a la Prestadora por el medio que funcione y fichar en cuanto haya
+- a) Empezar la Guardia, avisar a la Familia por el medio que funcione y fichar en cuanto haya
   señal.
 - b) Esperar afuera hasta que haya señal, porque sin fichada la Guardia no queda registrada.
 - c) Pedirle a la Familia que anote por escrito la hora de llegada, y con eso alcanza.
 - d) Fichar la entrada y la salida juntas al terminar la jornada, poniendo la hora real de cada una.
 
 **Correcta: a.** La persona cuidada no espera. La fichada registra el momento en que se ficha y no
-se puede escribir hacia atrás; el hueco lo cubre el aviso a la Prestadora.
+se puede escribir hacia atrás; el hueco lo cubre el aviso a la Familia, que es con quien se
+acordó la Guardia y quien lee la fichada.
 
 ### 6. La Familia pide que se le cambie la medicación indicada porque «lo ven muy dormido». ¿Qué corresponde?
 
 - a) Hacer el cambio, porque la Familia es quien decide en su casa.
 - b) Hacer el cambio solamente si el Asistente hizo el curso de administración de medicamentos.
-- c) No modificar nada, avisar a la Prestadora y dejar asentado el pedido y lo que se observó.
+- c) No modificar nada, decirle a la Familia que un cambio así lo indica quien lo recetó, y
+  dejar asentado el pedido y lo que se observó.
 - d) Suspender lo indicado hasta que lo vea un médico.
 
 **Correcta: c.** Cambiar una indicación no está entre las cosas que decide un Asistente, y ni el
 pedido de la Familia ni haber hecho un curso lo habilitan.
 
-### 7. ¿Cuál de estas situaciones hay que avisarle a la Prestadora aunque no haya pasado nada con el Paciente?
+### 7. ¿Cuál de estas situaciones cambia lo que se acordó y hay que volver a acordarla, aunque no haya pasado nada con el Paciente?
 
 - a) Que la Familia haya corrido el horario de la merienda.
 - b) Que la Familia pida que el Asistente se quede tres horas más de las acordadas.
 - c) Que el Paciente haya estado de mal humor toda la tarde.
 - d) Que se haya terminado el detergente de la cocina.
 
-**Correcta: b.** Las condiciones del trabajo —horario, tareas, lugar— las acuerda la Prestadora y
-no se arreglan entre el Asistente y la Familia.
+**Correcta: b.** Las condiciones del trabajo —horario, tareas, lugar— las acuerdan la Familia y el
+Asistente, que son quienes cerraron el trato, y cambiarlas es volver a acordar, no una decisión
+que se toma sobre la marcha en el medio de una jornada.
+
+*Por qué cambió el enunciado:* antes preguntaba qué hay que avisarle a la Prestadora, y en esta
+modalidad la Prestadora no acuerda las condiciones ni interviene en el trato (`CLAUDE.md:30`).
+Lo que se pregunta sigue siendo lo mismo —cuál de las cuatro situaciones excede la jornada—, y la
+correcta sigue siendo la b.
 
 ### 8. En una persona que pasa la mayor parte del día en la cama, ¿qué corresponde observar y comunicar?
 
@@ -151,13 +184,14 @@ escribe en un lugar que lee justamente quien está señalado.
 
 ### 10. El Asistente se entera de que no va a poder llegar a la Guardia de mañana. ¿Qué corresponde?
 
-- a) Avisar a la Prestadora lo antes posible, para que organice el reemplazo.
-- b) Avisar a la Familia, que es la que lo está esperando.
+- a) Avisar a la Familia lo antes posible, para que tenga tiempo de resolver cómo cubre ese día.
+- b) Avisar a la Prestadora, para que le mande un reemplazo a esa Familia.
 - c) Conseguir por su cuenta a otro Asistente de confianza que lo cubra.
 - d) Avisar a la hora de entrada, cuando ya se sepa con certeza.
 
-**Correcta: a.** El reemplazo lo organiza la Prestadora y necesita tiempo. Avisar tarde, o traer a
-alguien por fuera, deja al Paciente sin nadie comprobado.
+**Correcta: a.** La Guardia se acordó con la Familia, y es ella la que necesita tiempo para
+resolver. La Prestadora no reparte trabajo ni manda reemplazos, y traer a alguien por fuera deja
+al Paciente con una persona que la Prestadora no comprobó.
 
 **Dónde quedó la correcta, pregunta por pregunta:** 1 c · 2 a · 3 d · 4 b · 5 a · 6 c · 7 b ·
 8 d · 9 c · 10 a — tres en a, dos en b, tres en c, dos en d.
@@ -181,7 +215,7 @@ alguien por fuera, deja al Paciente sin nadie comprobado.
 ### 1. Durante la Guardia la persona se desploma y no responde ni cuando se la llama ni cuando se la toca del hombro. ¿Qué es lo primero que corresponde hacer?
 
 - a) Llamar primero a la Familia para contarle lo que está pasando.
-- b) Pedir ayuda en voz alta y dar aviso al servicio de emergencias que la Prestadora dejó
+- b) Pedir ayuda en voz alta y dar aviso al servicio de emergencias que la Familia dejó
   indicado para ese domicilio.
 - c) Buscar la carpeta con los antecedentes para poder informarlos cuando llegue la ayuda.
 - d) Llevar a la persona a un lugar más cómodo antes de hacer cualquier otra cosa.
@@ -208,7 +242,7 @@ hace el Asistente, y los datos administrativos no hacen falta para que salga el 
 
 **Correcta: a.** Lo que aparece de golpe en el habla o en el movimiento de un lado del cuerpo es
 una urgencia aunque la persona esté lúcida. Las otras tres se observan, se anotan y se le avisan
-a la Prestadora, pero no son una emergencia.
+a la Familia, pero no son una emergencia.
 
 ### 4. Mientras se espera a que llegue la ayuda, ¿qué corresponde hacer con el resto de la casa?
 
@@ -223,7 +257,7 @@ minutos de la emergencia.
 ### 5. ¿Qué sigue quedando fuera de lo que un Asistente puede decidir, aun habiendo aprobado este curso?
 
 - a) Pedir ayuda antes de estar seguro de lo que está pasando.
-- b) Avisar a la Prestadora fuera del horario de su Guardia.
+- b) Avisar a la Familia fuera del horario de su Guardia.
 - c) Quedarse con la persona hasta que llegue la ayuda.
 - d) Evaluar la gravedad del cuadro y resolver, en función de eso, que no hace falta llamar a nadie.
 
@@ -234,7 +268,7 @@ la duda se pide ayuda, y eso es lo contrario de un exceso.
 
 - a) Nada: de la emergencia queda constancia en el servicio que asistió.
 - b) Qué se observó, a qué hora, a quién se le avisó y qué se hizo, en el Reporte de esa jornada,
-  además del aviso a la Prestadora que se dio en el momento.
+  además del aviso a la Familia que se dio en el momento.
 - c) Un resumen en el grupo de mensajes de la Familia, que es donde lo leen todos.
 - d) Solamente la hora en que llegó la ayuda.
 
@@ -245,16 +279,17 @@ momento y el Reporte son dos cosas distintas, y van las dos.
 
 - a) Aceptar, porque la Familia conoce los antecedentes mejor que nadie.
 - b) Aceptar y dejarlo anotado en el Reporte para que quede constancia.
-- c) Dar el aviso igual y comunicarle de inmediato a la Prestadora que la Familia se opuso.
+- c) Dar el aviso al servicio de emergencias igual, y dejar asentado en el momento que la
+  Familia se opuso.
 - d) Esperar quince minutos y, si no mejora, recién ahí llamar.
 
 **Correcta: c.** La decisión de no pedir ayuda no la puede tomar el Asistente ni delegarla en la
-Familia. La oposición se comunica y queda registrada.
+Familia. La oposición queda asentada, y queda asentada en el momento.
 
 ### 8. Al día siguiente, una compañera de la misma Prestadora que no trabaja en ese domicilio pregunta qué pasó. ¿Qué corresponde?
 
-- a) No contarle: lo que pasa en un domicilio se comunica por la vía de la Prestadora y no entre
-  compañeros.
+- a) No contarle: lo que pasa en un domicilio queda entre la Familia y quien trabaja ahí, y no se
+  comparte entre compañeros.
 - b) Contarle, porque es de la misma Prestadora y la alcanza la misma confidencialidad.
 - c) Contarle sin nombrar al Paciente.
 - d) Contarle sólo si ella también hizo el curso.
@@ -265,24 +300,25 @@ trabaja.
 ### 9. Termina la Guardia y el Asistente que tenía que relevar no llegó. ¿Qué corresponde?
 
 - a) Retirarse a horario, porque la Guardia terminó.
-- b) Dejar a la persona con un familiar y retirarse.
+- b) Dejar a la persona con un vecino y retirarse.
 - c) Esperar media hora y, si no llega, retirarse dejando anotado en el Reporte que no vino.
-- d) Avisar de inmediato a la Prestadora y no dejar sola a la persona hasta que la Prestadora
-  indique cómo sigue.
+- d) Avisar de inmediato a la Familia y no dejar sola a la persona hasta que quede resuelto cómo
+  sigue.
 
-**Correcta: d.** El relevo lo organiza la Prestadora. Hasta que resuelva, la persona no queda sin
-cuidado.
+**Correcta: d.** Cada Guardia se acordó con la Familia, así que es ella la que puede resolver el
+relevo. Hasta que se resuelva, la persona no queda sin cuidado.
 
 ### 10. Por la emergencia el Asistente se fue con la ambulancia y no fichó la salida. ¿Qué corresponde hacer después?
 
 - a) Fichar la salida al llegar a su casa, poniendo la hora en que realmente salió.
-- b) Avisarle a la Prestadora qué pasó y con qué horas, para que la Guardia quede registrada como
+- b) Avisarle a la Familia qué pasó y con qué horas, para que la Guardia quede registrada como
   fue.
 - c) Dejarlo así: la fichada no cambia lo que se trabajó.
-- d) Pedirle a la Familia que confirme por escrito el horario de salida.
+- d) Dejar la hora anotada en el Reporte de esa jornada, que para eso está.
 
 **Correcta: b.** La fichada registra el momento en que se ficha y no se escribe hacia atrás. El
-hueco lo corrige la Prestadora a partir del aviso.
+hueco lo corrige la Familia a partir del aviso, y el Reporte no lo reemplaza: ahí va lo que se
+observó y lo que se hizo, no las horas.
 
 **Dónde quedó la correcta, pregunta por pregunta:** 1 b · 2 d · 3 a · 4 c · 5 d · 6 b · 7 c ·
 8 a · 9 d · 10 b — dos en a, tres en b, dos en c, tres en d.

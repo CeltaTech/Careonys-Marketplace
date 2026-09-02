@@ -55,7 +55,7 @@
    muestra tal como lo escribió la Prestadora.
 
    POR QUÉ LA LISTA SE PIDE SIN SESIÓN
-   El formulario de reclutamiento lo completa alguien que todavía no tiene
+   El formulario de incorporación lo completa alguien que todavía no tiene
    cuenta. La tabla `zonas_cobertura` no se lee sin sesión, así que la lista
    entra por `zonas_de(p_slug)`, la misma clase de puerta que la migración 0021
    abrió para la marca y el directorio: exige el nombre corto de una Prestadora

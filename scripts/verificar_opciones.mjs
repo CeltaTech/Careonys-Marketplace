@@ -59,15 +59,14 @@ const AJENAS = ['docs', 'supabase', 'scripts'];
 /* Opciones escritas a mano que hoy se perdonan, con su motivo y su pendiente.
    La clave es la pantalla **sin extensión**; los valores, los `value` exactos.
    Una opción nueva en la misma pantalla se planta igual. */
-const ESCRITAS_A_MANO = new Map([
-  ['solicitar-asistente', {
-    valores: ['10', '14', '17'],
-    motivo: 'los tres horarios de turno del formulario de solicitud. Son la misma ' +
-      'enfermedad del pendiente 31: `avisos.schedule_type` guarda catálogo sin ' +
-      'tener catálogo, y hasta que se decida qué vocabulario la gobierna no hay tabla ' +
-      'de dónde sacarlos. Salen de acá el día que esa decisión se tome'
-  }]
-]);
+/* Hoy no hay ninguna, y va escrita en un solo renglón a propósito: una lista
+   vacía partida en varios renglónes la toma `probar_exenciones.mjs` por una
+   exención viva, la vacía y exige que el chequeo se ponga rojo, cosa que una
+   lista que ya está vacía no puede hacer. Hasta el 2 de septiembre de 2026 acá
+   se perdonaban los tres horarios de turno de `solicitar-asistente.html`: esa
+   ventana se fue junto con la promesa que sostenía, así que la exención dejó de
+   eximir nada. */
+const ESCRITAS_A_MANO = new Map([]);
 
 const OPCION = /<option\b[^>]*\bvalue\s*=\s*"([^"]*)"[^>]*>/gi;
 

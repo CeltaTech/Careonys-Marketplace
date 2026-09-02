@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{{organizacion}} Familia — PWA Portal</title>
+  <title data-frase="familia.titulo_pagina">{{organizacion}} Familia — Portal Móvil</title>
   <link rel="manifest" href="manifest.json" />
   <!-- CSS LOCAL (dentro del scope del Service Worker) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -558,42 +558,45 @@
     <!-- DRAWER SIDEBAR -->
     <div class="sidebar-drawer" id="drawer">
       <div class="drawer-header">
-        <img src="../assets/images/retrato_generico.svg" alt="Sin foto" />
-        <h4 id="menu-user-name">Familiar de Prueba</h4>
-        <p id="menu-user-email" style="margin:2px 0 0 0;font-size:11px;opacity:0.8;">familiar@ejemplo.com</p>
+        <img src="../assets/images/retrato_generico.svg" alt="Sin foto" data-frase-alt="asistente.sin_foto" />
+        <!-- Nacen vacíos: el nombre y el correo los escribe el guion con los de
+             la sesión. Antes traían un nombre y un correo inventados, que hasta
+             que la sesión llegara se leían como si fueran los de quien mira. -->
+        <h4 id="menu-user-name"></h4>
+        <p id="menu-user-email" style="margin:2px 0 0 0;font-size:11px;opacity:0.8;"></p>
       </div>
       <div style="flex:1;padding:16px 0;">
-        <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home ancho-20 color-secundario"></i> Inicio</a>
-        <a class="drawer-menu-item" href="../directorio.html"><i class="fas fa-search ancho-20 color-secundario"></i> Buscar Asistente</a>
+        <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home ancho-20 color-secundario"></i> <span data-frase="nav.inicio">Inicio</span></a>
+        <a class="drawer-menu-item" href="../directorio.html"><i class="fas fa-search ancho-20 color-secundario"></i> <span data-frase="familia.buscar_asistente">Buscar Asistente</span></a>
         <a class="drawer-menu-item" onclick="navigate('postulaciones')"><i class="fas fa-inbox ancho-20 color-secundario"></i> <span id="menu-postulaciones"></span></a>
         <a class="drawer-menu-item" onclick="navigate('conversacion')"><i class="fas fa-comments ancho-20 color-secundario"></i> <span id="menu-mensajes"></span></a>
         <a class="drawer-menu-item" onclick="navigate('asistencia')"><i class="fas fa-clock ancho-20 color-secundario"></i> <span id="menu-asistencia"></span></a>
-        <a class="drawer-menu-item" onclick="navigate('reportes')"><i class="fas fa-book-medical ancho-20 color-secundario"></i> Reportes de cuidado</a>
-        <a class="drawer-menu-item" href="../cursos.html"><i class="fas fa-graduation-cap ancho-20 color-secundario"></i> Cursos</a>
-        <a class="drawer-menu-item" href="../soporte-remoto.html"><i class="fas fa-headset ancho-20 color-secundario"></i> Acompañamiento Online</a>
+        <a class="drawer-menu-item" onclick="navigate('reportes')"><i class="fas fa-book-medical ancho-20 color-secundario"></i> <span data-frase="familia.reportes_titulo">Reportes de cuidado</span></a>
+        <a class="drawer-menu-item" href="../cursos.html"><i class="fas fa-graduation-cap ancho-20 color-secundario"></i> <span data-frase="pie.cursos">Cursos</span></a>
+        <a class="drawer-menu-item" href="../soporte-remoto.html"><i class="fas fa-headset ancho-20 color-secundario"></i> <span data-frase="acompanamiento.titulo">Acompañamiento en línea</span></a>
         <div style="border-top:1px solid var(--borde-card);margin:8px 0;"></div>
-        <button type="button" class="drawer-menu-item color-peligro" id="btn-logout"><i class="fas fa-sign-out-alt ancho-20 color-peligro"></i> Cerrar sesión</button>
+        <button type="button" class="drawer-menu-item color-peligro" id="btn-logout"><i class="fas fa-sign-out-alt ancho-20 color-peligro"></i> <span data-frase="asistente.menu_cerrar_sesion">Cerrar sesión</span></button>
       </div>
       <div class="p-16 centrar-texto texto-10 color-secundario borde-arriba">
-        Powered by <strong class="color-marca-acento">{{producto}}</strong>
+        <span data-frase="pie.sello_producto">Con la tecnología de</span> <strong class="color-marca-acento" data-frase="comun.producto">{{producto}}</strong>
       </div>
     </div>
 
     <!-- 1. VISTA: LOGIN -->
     <div class="app-screen active" id="screen-intro">
       <div class="intro-logo-container">
-        <img src="../assets/images/logotipo.png" class="tenant-logo" alt="Logo Tenant" />
-        <h2 class="tenant-name">{{organizacion}}</h2>
+        <img src="../assets/images/logotipo.png" class="tenant-logo" alt="Logo de la Prestadora" data-frase-alt="asistente.logo_prestadora" />
+        <h2 class="tenant-name" data-frase="comun.organizacion">{{organizacion}}</h2>
       </div>
 
       <div class="login-card">
         <div class="input-wrapper">
-          <input type="email" id="login-email" placeholder="Correo electrónico" required />
+          <input type="email" id="login-email" placeholder="Correo electrónico" data-frase-placeholder="acceso.correo" required />
         </div>
         <div class="input-wrapper">
-          <input type="password" id="login-pass" placeholder="Contraseña" required />
+          <input type="password" id="login-pass" placeholder="Contraseña" data-frase-placeholder="acceso.contrasena" required />
         </div>
-        <button type="button" class="btn-login ancho-total" id="btn-action-login">Ingresar a {{organizacion}} Familia</button>
+        <button type="button" class="btn-login ancho-total" id="btn-action-login" data-frase="familia.entrar">Ingresar a {{organizacion}} Familia</button>
       </div>
 
       <!-- La puerta de quien todavía no tiene cuenta. El alta vive afuera de
@@ -602,14 +605,13 @@
            nombre corto de la Prestadora se le agrega en el guion, porque acá se
            llega con `?t=` tanto como por subdominio.
 
-           Los dos textos nacen en castellano y el guion los pide al catálogo,
-           que es como trabaja el resto de esta pantalla: acá el marcado todavía
-           no declara ninguna frase —lo mira el pendiente 9, que tiene la mudanza
-           entera de esta aplicación— y ponerle una sola a este renglón daría por
-           mudada una pantalla que no lo está. -->
+           Los dos textos salen del catálogo por `data-frase`, como el resto de
+           esta pantalla. El guion vuelve a escribirlos más abajo porque ahí le
+           agrega el nombre corto de la Prestadora al enlace, y reponer el rótulo
+           después de tocarlo evita que quede a medias. -->
       <div class="btn-register-link">
-        <span id="alta-familia-pregunta">¿Todavía no tiene cuenta?</span>
-        <a href="../registrar-familia.html" id="link-alta-familia">Darse de alta como Familia</a>
+        <span id="alta-familia-pregunta" data-frase="acceso.sin_cuenta">¿Todavía no tiene cuenta?</span>
+        <a href="../registrar-familia.html" id="link-alta-familia" data-frase="acceso.darse_de_alta_familia">Darse de alta como Familia</a>
       </div>
 
       <!-- Los estados del arranque. Nace vacío y su texto lo pone el guion desde
@@ -620,7 +622,7 @@
       <p class="pwa-estado" id="arranque-aviso" hidden></p>
 
       <div style="text-align:center;margin-top:auto;font-size:10px;color:var(--texto-secundario);padding-top:20px;">
-        Powered by <strong class="color-marca-acento">{{producto}}</strong>
+        <span data-frase="pie.sello_producto">Con la tecnología de</span> <strong class="color-marca-acento" data-frase="comun.producto">{{producto}}</strong>
       </div>
     </div>
 
@@ -629,45 +631,29 @@
       <div class="dashboard-header">
         <button class="btn-back texto-20" id="btn-open-menu"><i class="fas fa-bars"></i></button>
         <div style="display:flex;align-items:center;gap:6px;">
-          <img src="../assets/images/logotipo.png" class="tenant-logo" style="height:24px;" alt="Logo" />
-          <span class="tenant-name texto-14 peso-800 color-marca">{{organizacion}}</span>
+          <img src="../assets/images/logotipo.png" class="tenant-logo" style="height:24px;" alt="Logo de la Prestadora" data-frase-alt="asistente.logo_prestadora" />
+          <span class="tenant-name texto-14 peso-800 color-marca" data-frase="comun.organizacion">{{organizacion}}</span>
         </div>
         <div><i class="fas fa-bell texto-18 color-secundario"></i></div>
-      </div>
-
-      <div class="verification-widget mt-16">
-        <i class="fas fa-exclamation-triangle"></i>
-        <div class="flex-1">
-          <h5>Complete las Verificaciones</h5>
-          <p>Email: ✓ Validado | Celular: ⌛ Pendiente</p>
-        </div>
       </div>
 
       <!-- GRID DE SERVICIOS -->
       <div class="grid-services">
         <a class="service-btn" href="../directorio.html">
           <div class="icon-box fondo-azul-oscuro"><i class="fas fa-user-search"></i></div>
-          <span>Buscar Asistente</span>
+          <span data-frase="familia.buscar_asistente">Buscar Asistente</span>
         </a>
         <a class="service-btn" href="../soporte-remoto.html">
           <div class="icon-box fondo-azul-medio"><i class="fas fa-headset"></i></div>
-          <span>Acompañante Online</span>
+          <span data-frase="acompanamiento.titulo">Acompañamiento en línea</span>
         </a>
         <div class="service-btn" onclick="navigate('reportes')">
           <div class="icon-box" style="background:var(--verde-exito);"><i class="fas fa-book-medical"></i></div>
-          <span>Reportes</span>
+          <span data-frase="familia.tab_reportes">Reportes</span>
         </div>
         <div class="service-btn" onclick="navigate('publicar')">
           <div class="icon-box" style="background:var(--naranja-alerta);"><i class="fas fa-plus-circle"></i></div>
-          <span>Nuevo Aviso</span>
-        </div>
-        <div class="service-btn" onclick="alert('Vida Activa: Estimulación Cognitiva.')">
-          <div class="icon-box fondo-azul-medio"><i class="fas fa-running"></i></div>
-          <span>Vida Activa</span>
-        </div>
-        <div class="service-btn" onclick="alert('Contactando al Gestor de Cuidados asignado...')">
-          <div class="icon-box fondo-azul-medio"><i class="fas fa-user-tie"></i></div>
-          <span>Gestor</span>
+          <span data-frase="familia.nuevo_aviso">Nuevo Aviso</span>
         </div>
       </div>
 
@@ -676,22 +662,20 @@
            detrás: son los Asistentes de la Prestadora que autorizaron
            publicarse, los mismos del directorio y en el mismo orden. -->
       <div class="section-title">
-        <span>Asistentes</span>
-        <a href="../directorio.html">Ver todos</a>
+        <span data-frase="familia.asistentes">Asistentes</span>
+        <a href="../directorio.html" data-frase="familia.ver_todos">Ver todos</a>
       </div>
 
-      <div class="pwa-estado" id="rec-cargando">Buscando Asistentes...</div>
+      <div class="pwa-estado" id="rec-cargando" data-frase="directorio.cargando">Cargando el directorio…</div>
 
       <div class="pwa-estado" id="rec-error" hidden>
         <p id="rec-error-texto"></p>
-        <button type="button" class="btn btn-primario" id="rec-reintentar">Reintentar</button>
+        <button type="button" class="btn btn-primario" id="rec-reintentar" data-frase="acceso.reintentar">Reintentar</button>
       </div>
 
       <div class="pwa-estado" id="rec-vacio" hidden>
-        <p>Todavía no hay Asistentes publicados.</p>
-        <p class="pwa-estado-bajada">Aparecen acá cuando la Prestadora valida su legajo, la
-          persona autoriza que se publique, y la Prestadora le comprueba los papeles que hacen
-          falta para entrar a una casa.</p>
+        <p data-frase="directorio.vacio">Todavía no hay Asistentes publicados en este directorio.</p>
+        <p class="pwa-estado-bajada" data-frase="directorio.vacio_bajada">Un Asistente aparece acá cuando su Prestadora validó el legajo, esa persona autorizó a publicar su perfil, y la Prestadora le comprobó los papeles que hacen falta para entrar a una casa. Las tres cosas, no una.</p>
       </div>
 
       <div class="horizontal-slider" id="recommended-caregivers-list" hidden></div>
@@ -709,14 +693,14 @@
       </template>
 
       <div style="text-align:center;padding:24px 0;font-size:10px;color:var(--texto-secundario);">
-        Powered by <strong class="color-marca-acento">{{producto}}</strong>
+        <span data-frase="pie.sello_producto">Con la tecnología de</span> <strong class="color-marca-acento" data-frase="comun.producto">{{producto}}</strong>
       </div>
 
       <div class="bottom-tab-bar">
-        <a class="tab-item active" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span>Inicio</span></a>
-        <a class="tab-item" onclick="navigate('publicar')"><i class="fas fa-plus-circle"></i><span>Publicar</span></a>
-        <a class="tab-item" href="../directorio.html"><i class="fas fa-users"></i><span>Asistentes</span></a>
-        <a class="tab-item" onclick="navigate('reportes')"><i class="fas fa-book-medical"></i><span>Reportes</span></a>
+        <a class="tab-item active" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span data-frase="nav.inicio">Inicio</span></a>
+        <a class="tab-item" onclick="navigate('publicar')"><i class="fas fa-plus-circle"></i><span data-frase="familia.tab_publicar">Publicar</span></a>
+        <a class="tab-item" href="../directorio.html"><i class="fas fa-users"></i><span data-frase="familia.asistentes">Asistentes</span></a>
+        <a class="tab-item" onclick="navigate('reportes')"><i class="fas fa-book-medical"></i><span data-frase="familia.tab_reportes">Reportes</span></a>
       </div>
     </div>
 
@@ -724,19 +708,8 @@
     <div class="app-screen pb-64" id="screen-reportes">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
-        <h1>Reportes de cuidado</h1>
+        <h1 data-frase="familia.reportes_titulo">Reportes de cuidado</h1>
         <div class="ancho-24"></div>
-      </div>
-
-      <div class="reportes-header">
-        <h3 class="m-0 texto-16">Abuela Rosa</h3>
-        <div class="reportes-paciente">
-          <img src="../assets/images/retrato_generico.svg" alt="Sin foto" />
-          <div>
-            <p style="margin:0;font-size:12px;opacity:0.9;">Diagnóstico: Alzheimer Moderado</p>
-            <p style="margin:2px 0 0 0;font-size:11px;opacity:0.7;">Familiar a cargo: Abuela Rosa</p>
-          </div>
-        </div>
       </div>
 
       <div class="timeline-log" id="timeline-log-list">
@@ -744,10 +717,10 @@
       </div>
 
       <div class="bottom-tab-bar">
-        <a class="tab-item" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span>Inicio</span></a>
-        <a class="tab-item" onclick="navigate('publicar')"><i class="fas fa-plus-circle"></i><span>Publicar</span></a>
-        <a class="tab-item" href="../directorio.html"><i class="fas fa-users"></i><span>Asistentes</span></a>
-        <a class="tab-item active" onclick="navigate('reportes')"><i class="fas fa-book-medical"></i><span>Reportes</span></a>
+        <a class="tab-item" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span data-frase="nav.inicio">Inicio</span></a>
+        <a class="tab-item" onclick="navigate('publicar')"><i class="fas fa-plus-circle"></i><span data-frase="familia.tab_publicar">Publicar</span></a>
+        <a class="tab-item" href="../directorio.html"><i class="fas fa-users"></i><span data-frase="familia.asistentes">Asistentes</span></a>
+        <a class="tab-item active" onclick="navigate('reportes')"><i class="fas fa-book-medical"></i><span data-frase="familia.tab_reportes">Reportes</span></a>
       </div>
     </div>
 
@@ -755,34 +728,34 @@
     <div class="app-screen pb-64" id="screen-publicar">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
-        <h1><i class="fas fa-plus-circle color-marca-acento"></i> Nuevo Aviso</h1>
+        <h1><i class="fas fa-plus-circle color-marca-acento"></i> <span data-frase="familia.nuevo_aviso">Nuevo Aviso</span></h1>
         <div class="ancho-24"></div>
       </div>
 
       <div class="p-16">
-        <p style="font-size:12px;color:var(--texto-secundario);margin:0 0 16px 0;">Complete los datos del cuidado que necesita y le encontramos el asistente ideal.</p>
+        <p style="font-size:12px;color:var(--texto-secundario);margin:0 0 16px 0;" data-frase="familia.aviso_bajada">Complete los datos del cuidado que necesita. Los Asistentes que quieran se postulan y usted elige.</p>
 
         <form id="form-nuevo-aviso" novalidate>
 
           <!-- Datos del Paciente -->
           <div class="fondo-superficie borde-tarjeta redondeo-16 p-16 mb-12">
             <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--marca-prestadora);">
-              <i class="fas fa-user-injured" style="margin-right:6px;"></i>Datos del Paciente
+              <i class="fas fa-user-injured" style="margin-right:6px;"></i><span data-frase="familia.aviso_datos_paciente">Datos del Paciente</span>
             </h4>
             <div class="mb-10">
-              <label class="bloque texto-11 peso-700 color-secundario mb-4">Nombre del Paciente</label>
-              <input type="text" id="pb-nombre" placeholder="Ej: Abuela Rosa" required
+              <label class="bloque texto-11 peso-700 color-secundario mb-4" data-frase="familia.aviso_nombre_paciente">Nombre del Paciente</label>
+              <input type="text" id="pb-nombre" placeholder="Por ejemplo: Abuela Rosa" data-frase-placeholder="familia.aviso_nombre_ejemplo" required
                 class="ancho-total p-9-12 redondeo-10 borde-tarjeta-15 texto-13 caja-borde fondo-superficie-hundida" />
             </div>
             <div class="grilla grilla-2 gap-10 mb-10">
               <div>
-                <label class="bloque texto-11 peso-700 color-secundario mb-4">Edad</label>
+                <label class="bloque texto-11 peso-700 color-secundario mb-4" data-frase="familia.aviso_edad">Edad</label>
                 <input type="number" id="pb-edad" placeholder="80" min="50" max="110"
                   class="ancho-total p-9-12 redondeo-10 borde-tarjeta-15 texto-13 caja-borde fondo-superficie-hundida" />
               </div>
               <div>
-                <label class="bloque texto-11 peso-700 color-secundario mb-4">Zona / Barrio</label>
-                <select id="pb-zona" required data-catalogo="zona" data-catalogo-vacio="— Seleccionar —"
+                <label class="bloque texto-11 peso-700 color-secundario mb-4" data-frase="familia.aviso_zona">Zona / Barrio</label>
+                <select id="pb-zona" required data-catalogo="zona" data-catalogo-vacio="— Seleccionar —" data-frase-data-catalogo-vacio="comun.seleccionar"
                   class="ancho-total p-9-12 redondeo-10 borde-tarjeta-15 texto-13 caja-borde fondo-superficie-hundida"></select>
               </div>
             </div>
@@ -791,11 +764,11 @@
           <!-- Tipo de Cuidado -->
           <div class="fondo-superficie borde-tarjeta redondeo-16 p-16 mb-12">
             <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--marca-prestadora);">
-              <i class="fas fa-calendar-alt" style="margin-right:6px;"></i>Tipo de Cuidado
+              <i class="fas fa-calendar-alt" style="margin-right:6px;"></i><span data-frase="familia.aviso_tipo_cuidado">Tipo de Cuidado</span>
             </h4>
-            <label class="bloque texto-11 peso-700 color-secundario mb-4">Modalidad de Servicio</label>
+            <label class="bloque texto-11 peso-700 color-secundario mb-4" data-frase="familia.aviso_modalidad">Modalidad de Servicio</label>
             <select id="pb-tipo" required
-              class="ancho-total p-9-12 redondeo-10 borde-tarjeta-15 texto-13 caja-borde fondo-superficie-hundida mb-10" data-catalogo="modalidad_contratacion" data-catalogo-vacio="— Seleccionar —"></select>
+              class="ancho-total p-9-12 redondeo-10 borde-tarjeta-15 texto-13 caja-borde fondo-superficie-hundida mb-10" data-catalogo="modalidad_contratacion" data-catalogo-vacio="— Seleccionar —" data-frase-data-catalogo-vacio="comun.seleccionar"></select>
             <!-- La grilla no se dibuja acá. Los días, los turnos y las horas que
                  cubre cada turno salen de data/catalogo-vocabularios.json; los
                  textos del paso, de data/catalogo-disponibilidad.json. Las junta
@@ -817,13 +790,13 @@
           <!-- Patologías -->
           <div class="fondo-superficie borde-tarjeta redondeo-16 p-16 mb-16">
             <h4 style="margin:0 0 12px 0;font-size:13px;font-weight:800;color:var(--marca-prestadora);">
-              <i class="fas fa-notes-medical" style="margin-right:6px;"></i>Condición del Paciente
+              <i class="fas fa-notes-medical" style="margin-right:6px;"></i><span data-frase="familia.aviso_condicion">Condición del Paciente</span>
             </h4>
-            <label class="bloque texto-11 peso-700 color-secundario mb-8">Patologías presentes (seleccione todas las que apliquen):</label>
+            <label class="bloque texto-11 peso-700 color-secundario mb-8" data-frase="familia.aviso_patologias">Patologías presentes (seleccione todas las que apliquen):</label>
             <div class="grilla grilla-2 gap-8" data-catalogo="patologia" data-catalogo-como="casillas" data-catalogo-nombre="patologia" data-catalogo-clase="catalogo-casilla"></div>
             <div class="mt-12">
-              <label class="bloque texto-11 peso-700 color-secundario mb-4">Descripción adicional (opcional)</label>
-              <textarea id="pb-descripcion" placeholder="Cuéntenos más sobre la situación del paciente..." rows="3"
+              <label class="bloque texto-11 peso-700 color-secundario mb-4" data-frase="familia.aviso_descripcion">Descripción adicional (opcional)</label>
+              <textarea id="pb-descripcion" placeholder="Cuéntenos más sobre la situación del Paciente…" data-frase-placeholder="familia.aviso_descripcion_ejemplo" rows="3"
                 class="ancho-total p-9-12 redondeo-10 borde-tarjeta-15 texto-13 caja-borde fondo-superficie-hundida"></textarea>
             </div>
           </div>
@@ -831,20 +804,20 @@
           <!-- Botón Enviar -->
           <button type="submit" id="btn-enviar-aviso"
             style="width:100%;padding:14px;border-radius:14px;background:var(--marca-prestadora-acento);color:var(--texto-sobre-color);font-weight:800;font-size:14px;border:none;cursor:pointer;box-shadow:var(--sombra-alta);">
-            <i class="fas fa-search"></i> Buscar mi Asistente Ideal
+            <i class="fas fa-bullhorn"></i> <span data-frase="familia.aviso_publicar">Publicar el aviso</span>
           </button>
           <div class="oculto" id="pb-success"
             style="background:var(--tono-exito-fondo);color:var(--verde-exito-texto);padding:14px;border-radius:12px;font-weight:700;text-align:center;font-size:13px;border:1px solid var(--tono-exito-borde);margin-top:12px;">
-            ✓ ¡El aviso quedó publicado! Nos vamos a comunicar a la brevedad con los mejores perfiles.
+            <span data-frase="familia.aviso_publicado">✓ El aviso quedó publicado. Las postulaciones que reciba se ven en esta misma aplicación.</span>
           </div>
         </form>
       </div>
 
       <div class="bottom-tab-bar">
-        <a class="tab-item" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span>Inicio</span></a>
-        <a class="tab-item active" onclick="navigate('publicar')"><i class="fas fa-plus-circle"></i><span>Publicar</span></a>
-        <a class="tab-item" href="../directorio.html"><i class="fas fa-users"></i><span>Asistentes</span></a>
-        <a class="tab-item" onclick="navigate('reportes')"><i class="fas fa-book-medical"></i><span>Reportes</span></a>
+        <a class="tab-item" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span data-frase="nav.inicio">Inicio</span></a>
+        <a class="tab-item active" onclick="navigate('publicar')"><i class="fas fa-plus-circle"></i><span data-frase="familia.tab_publicar">Publicar</span></a>
+        <a class="tab-item" href="../directorio.html"><i class="fas fa-users"></i><span data-frase="familia.asistentes">Asistentes</span></a>
+        <a class="tab-item" onclick="navigate('reportes')"><i class="fas fa-book-medical"></i><span data-frase="familia.tab_reportes">Reportes</span></a>
       </div>
     </div>
 
@@ -857,10 +830,10 @@
          software no guarda ningún trato, y elegir con quién hablar es decisión
          de la Familia, no del sistema. Descartar tampoco borra nada.
 
-         El texto sale del catálogo desde el guion, como en el resto de esta
-         pantalla: el marcado no declara ninguna frase porque la mudanza entera
-         de esta aplicación es el pendiente 9, y ponerle `data-frase` a lo nuevo
-         daría por mudado lo que no lo está. -->
+         El texto sale del catálogo desde el guion, y no por `data-frase` como
+         el marcado de las pantallas de más arriba: acá cada rótulo va sobre un
+         elemento vacío que la pantalla llena, así que declararlo dos veces
+         dejaría dos textos para una sola cosa. -->
     <div class="app-screen" id="screen-postulaciones">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
@@ -943,9 +916,9 @@
          `clock_ins` (migración 0056), que le da a la Familia las marcas de sus
          vínculos y a nadie más. El personal de la Prestadora tampoco las ve.
 
-         El texto sale del catálogo desde el guion, como en el resto de esta
-         aplicación: el marcado no declara ninguna frase porque la mudanza
-         entera es el pendiente 9. -->
+         El texto sale del catálogo desde el guion, con el mismo criterio que
+         la pantalla de las postulaciones: los rótulos van sobre elementos
+         vacíos que la pantalla llena, así que no se declaran además acá. -->
     <div class="app-screen" id="screen-asistencia">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
@@ -1087,11 +1060,11 @@
       entrar.disabled = true;
       tarjeta.setAttribute('aria-busy', 'true');
 
-      // El texto de esta pantalla se pide explícitamente: el marcado no declara
-      // ninguna frase, así que el recorrido del documento no trae nada y los
-      // avisos de acá abajo se quedarían mudos. Va con su propia red, como en
-      // `acceso.html`: un catálogo que no llega no es un servidor caído, y
-      // confundirlos escondía el formulario por una traducción que faltaba.
+      // El catálogo se pide acá explícitamente, aunque el marcado ya declare
+      // sus frases: los avisos de más abajo salen del guion y sin el archivo
+      // adentro se quedarían mudos. Va con su propia red, como en `acceso.html`:
+      // un catálogo que no llega no es un servidor caído, y confundirlos
+      // escondía el formulario por una traducción que faltaba.
       try {
         await Catalogo.cargarFrases();
       } catch (err) {
@@ -1185,8 +1158,14 @@
         parte('foto').remove();
       }
 
-      if (fila.hourly_rate) parte('precio').textContent = Texto.importe(fila.hourly_rate) + ' por hora';
-      else parte('precio').remove();
+      // «por hora» sale del catálogo, con la misma clave que usan las tarjetas
+      // del directorio: escrito acá quedaba en castellano en los tres idiomas.
+      if (fila.hourly_rate) {
+        parte('precio').textContent =
+          Texto.importe(fila.hourly_rate) + ' ' + Catalogo.frase('directorio.por_hora');
+      } else {
+        parte('precio').remove();
+      }
 
       return nodo;
     }

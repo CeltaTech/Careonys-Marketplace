@@ -42,7 +42,7 @@
 | **De quién son estos términos** | De la **Prestadora** que los adopte. CeltaTech sólo entrega el modelo |
 | **Con qué software** | Careonys, licenciado por **CeltaTech** |
 | **Jurisdicción** | República Argentina |
-| **Última actualización** | 31 de agosto de 2026 |
+| **Última actualización** | 2 de septiembre de 2026 |
 
 ---
 
@@ -51,17 +51,20 @@
 Hay cuatro partes y no hacen lo mismo. Confundirlas es el origen de casi todo malentendido, así
 que se dicen primero.
 
-**1.1. La Familia.** Es usted: quien busca cuidado, publica un Aviso, elige y sostiene el trato
-con la Prestadora. «Familia» no exige parentesco: alcanza con ser quien organiza el cuidado.
+**1.1. La Familia.** Es usted: quien busca cuidado, publica un Aviso o mira el directorio,
+compara, elige y **cierra el trato con el Asistente**. «Familia» no exige parentesco: alcanza con
+ser quien organiza el cuidado.
 
 **1.2. El Paciente.** Es la persona que recibe el cuidado. **Puede no ser usted, y casi nunca lo
 es.** Todo lo que este documento dice sobre datos del Paciente tiene esa particularidad: los
 carga una persona sobre otra, y de ahí sale la §4.
 
-**1.3. La Prestadora.** Es la empresa que presta el servicio de cuidado: la que arma su plantel,
-audita los Legajos, decide quién trabaja y responde por el servicio. **Estos términos son de
-ella.** Cuando acá se lee «su Prestadora», se habla de la empresa cuya puerta usó para entrar:
-su nombre aparece en la pantalla.
+**1.3. La Prestadora.** Es la empresa dueña del espacio donde usted busca, y lo que decide es
+**quién entra**: audita los Legajos, valida a cada Aspirante y publica su Perfil. **No reparte
+trabajo, no asigna, no supervisa y no dirige**, y no es parte del trato que usted cierre; cobra
+su comisión por haberlo puesto en contacto. **Estos términos son de ella.** Cuando acá se lee «su
+Prestadora», se habla de la empresa cuya puerta usó para entrar: su nombre aparece en la
+pantalla.
 
 **1.4. El Asistente.** Es la persona que hace el cuidado. «Asistente» es el término genérico;
 cuidador, enfermero, kinesiólogo, acompañante y los demás son **tipos** de Asistente, y cada
@@ -81,9 +84,11 @@ lo que haga con él, es de ella**.
 
 ## 2. Qué es este software y qué no es
 
-**2.1. Qué es.** Careonys es una herramienta para organizar el cuidado: publicar qué se necesita,
-ver quién está disponible, dejar registrado quién fue, cuándo entró y qué observó, y que la
-Prestadora tenga todo eso en un solo lugar.
+**2.1. Qué es.** Careonys es una herramienta para encontrar quién cuide y para llevar después ese
+cuidado: publicar qué se necesita, comparar perfiles, hablar con la persona, y una vez empezado
+dejar registrado quién fue, cuándo entró y qué observó. **Esa segunda parte es de usted y del
+Asistente**, y el software la acompaña en carácter informativo y sin tomar ninguna decisión: no
+reparte trabajo y no dirige a nadie.
 
 **2.2. Qué no es.** No es un servicio de salud, no ejerce la medicina, no diagnostica, no indica
 tratamientos y **no atiende emergencias**. Ningún dato que este software muestre reemplaza a un
@@ -102,35 +107,40 @@ alcance de lo verificado se lo tiene que decir ella.
 **2.5. Qué disponibilidad tiene.** El software se ofrece tal como está disponible. Puede haber
 interrupciones —mantenimiento, fallas de la conexión, cortes del servicio donde está alojado—, y
 este documento no fija un tiempo de respuesta ni un porcentaje de disponibilidad. Si una pantalla
-no abre, el cuidado sigue igual: se resuelve por teléfono con su Prestadora. Y ante una urgencia
+no abre, el cuidado sigue igual: se resuelve por teléfono con el Asistente. Y ante una urgencia
 rige la §2.3, que no depende de que este software esté funcionando.
 
 ---
 
 ## 3. Quién responde por el cuidado
 
-**3.1. La Prestadora responde.** La selección del Asistente, la verificación de sus antecedentes,
-la comprobación de sus títulos y matrículas, las entrevistas, la supervisión del servicio y el
-reemplazo cuando alguien falta son **de la Prestadora**, entera y exclusivamente.
+**3.1. La Prestadora responde por quién entra.** La verificación de los antecedentes del
+Asistente, la comprobación de sus títulos y matrículas, las entrevistas y la validación de su
+Legajo son **de la Prestadora**, entera y exclusivamente. **Lo que no es de ella es el trabajo**:
+a quién elige usted, en qué condiciones, qué se hace cada día y qué pasa si esa persona falta lo
+acuerdan usted y el Asistente, y ella no interviene.
 
 **3.2. CeltaTech no responde por el cuidado.** No responde por la conducta, el desempeño, los
 incumplimientos ni los daños que ocurran en el domicilio. Y no porque se haya eximido de algo que le tocaba: **no
 es parte de este trato**. Lo que CeltaTech deba por el software se lo debe a su Prestadora, en el
 acuerdo entre las dos, que no es éste. Está en la §10.
 
-**3.3. A quién reclamar.** Cualquier cosa que tenga que ver con el servicio de cuidado —lo que se
-hizo, lo que no se hizo, quién fue, cuánto se cobró— se reclama **a su Prestadora**. CeltaTech no
-media entre usted y ella, y no puede resolver un reclamo sobre un servicio que no presta.
+**3.3. A quién reclamar, que son dos lugares distintos.** Lo del cuidado en sí —lo que se hizo, lo
+que no se hizo, quién fue, cuánto se cobró— se reclama **al Asistente**, que es con quien usted
+cerró el trato. Lo de **quién entró** —un Legajo mal auditado, un Perfil que dice algo que no es,
+la comisión que ella le cobre— se reclama **a su Prestadora**. CeltaTech no media entre ustedes y
+no puede resolver un reclamo sobre un servicio que no presta.
 
 **3.4. Sobre emplear a alguien.** Este documento no le dice a usted a quién contratar ni bajo qué
 forma, y el software no lo restringe. Pero hay algo que conviene que sepa antes de decidir: en la
 República Argentina, contratar a una persona para que trabaje en un domicilio particular puede
 encuadrar en la **Ley 26.844, de Personal de Casas Particulares**, con las obligaciones de
 registración y aportes que esa ley trae, y esas obligaciones son de quien emplea. Que el trato
-haya empezado en este software no cambia eso ni lo traslada a nadie. **Si el Asistente integra el
-plantel de la Prestadora, quien emplea es ella**; si usted contrata por afuera, quien emplea es
-usted. Ante la duda, consulte a un profesional antes de acordar. El detalle del marco legal
-argentino está en `..\careonys\docs\legal\argentina.md`.
+haya empezado en este software no cambia eso ni lo traslada a nadie. **Acá el trato lo cierran
+usted y el Asistente, y su Prestadora no es parte de él: quien emplea es usted.** Ella decidió
+quién podía aparecer en la pantalla, y hasta ahí llega. Ante la duda, consulte a un profesional
+antes de acordar. El detalle del marco legal argentino está en
+`..\careonys\docs\legal\argentina.md`.
 
 **3.5. Nadie de los que aparecen acá trabaja para CeltaTech.** Ni el Asistente, ni el personal de
 su Prestadora, ni la Prestadora misma son empleados, socios ni representantes de CeltaTech.
@@ -158,10 +168,12 @@ por eso se lo pide dicho.
 nada más. **No cargue en una descripción, en una nota ni en un mensaje datos que no hagan falta**:
 todo lo que se escribe queda guardado y lo lee alguien.
 
-**4.4. Quién los ve.** Los datos del Paciente los ve el personal de su Prestadora, y el Asistente
-que efectivamente trabaja con esa persona. **No los ve otra Prestadora, no los ve otra Familia y
-no los ve un Asistente que no esté asignado.** Esa separación no depende de la pantalla: la
-sostiene la base de datos.
+**4.4. Quién los ve, y quién no.** Lo que usted escribe en un Aviso lo ve el personal de su
+Prestadora —es lo que usted publica en el espacio de ella— y lo ven los Asistentes de esa
+Prestadora que miran los avisos. **El Reporte diario no lo ve la Prestadora**: lo ven usted y el
+Asistente que lo escribió, y nadie más. **No los ve otra Prestadora, no los ve otra Familia y no
+los ve un Asistente con el que usted no haya hablado.** Esa separación no depende de la pantalla:
+la sostiene la base de datos.
 
 **4.5. Lo que un tercero podría ver.** Si el cuidado lo paga un tercero que no es usted —una obra
 social, una cobertura, un organismo—, ese tercero puede llegar a ver **cuánto se cumplió de lo
@@ -170,8 +182,9 @@ qué se escribió sobre el Paciente.**
 
 **4.6. La geolocalización del Asistente.** Cuando el Asistente ficha su entrada o su salida, el
 software guarda **la posición desde donde fichó**, que es el domicilio donde se presta el
-cuidado. Se guarda para poder demostrar que la persona estuvo, y la ve la Prestadora. No se
-guarda ningún recorrido: sólo el momento de fichar.
+cuidado. Se guarda para poder demostrar que la persona estuvo, y **la ve usted** cuando el
+Asistente ata esa jornada al vínculo con usted. **La Prestadora no la ve.** No se guarda ningún
+recorrido: sólo el momento de fichar.
 
 ---
 
@@ -190,9 +203,9 @@ opción, nunca una condición para usar el software.
 pedir qué datos suyos hay guardados, que se corrija lo que esté mal y que se borre lo que ya no
 tenga por qué estar. Se piden a su Prestadora, que es quien responde por esos datos.
 
-**5.5. Lo que queda guardado igual.** Lo que ya ocurrió no se borra: un fichaje, un Reporte, una
-Guardia cumplida. Son el registro de un servicio prestado, y se conservan por el tiempo que las
-obligaciones legales y contractuales de la Prestadora exijan.
+**5.5. Lo que queda guardado igual.** Lo que ya ocurrió no se borra: un fichaje, un Reporte, el
+contacto que quedó asentado. Son la constancia de lo que pasó, y se conservan por el tiempo que
+las obligaciones legales de su Prestadora, que es quien responde por la base, le exijan.
 
 **5.6. Dónde está el detalle.** Qué datos se guardan, para qué, por cuánto tiempo, quién los ve y
 cómo se ejercen los derechos de la §5.4 está escrito aparte, en `docs/politica_de_datos.md`. Los
@@ -208,12 +221,16 @@ comisión y no liquida honorarios. **No hay ninguna suscripción que se renueve 
 hay ninguna suscripción.
 
 **6.2. Dónde se acuerda el dinero, entonces.** Lo que cuesta el cuidado, cómo se paga y cada
-cuánto se acuerda **con su Prestadora, por fuera de este software**. Lo que ella le cobre y bajo
-qué condiciones es del contrato que usted tenga con ella, y este documento no lo fija.
+cuánto lo acuerdan **usted y el Asistente, por fuera de este software**, y **acá no queda
+guardado**: ni el precio, ni las condiciones, ni el acuerdo. Aparte de eso, su Prestadora puede
+cobrarle **su comisión por haberlo puesto en contacto**: cuánto y bajo qué condiciones sale del
+acuerdo que usted tenga con ella, se cobra también por fuera de este software, y este documento
+no lo fija.
 
 **6.3. El precio que se ve en una pantalla.** Cuando aparece un valor por hora junto a un
 Asistente, ése es **el que esa persona declaró**. No es una tarifa de la Prestadora, no es una
-tarifa de CeltaTech, y este software no lo cobra ni lo garantiza.
+tarifa de CeltaTech, y este software no lo cobra ni lo garantiza. Lo que ustedes dos acuerden
+después puede ser otro, y **acá no queda guardado en ninguna parte**.
 
 **6.4. Si mañana algo se cobra.** El día que su Prestadora ofrezca algo arancelado a través de
 este software, va a tener que decírselo antes, con su precio y sus condiciones, y usted va a
@@ -228,13 +245,14 @@ sesión**. Lo que muestran es lo que cada persona autorizó a mostrar: nombre, f
 atiende y lo que se le comprobó. No muestran documento, teléfono, correo ni domicilio.
 
 **7.2. Lo suyo no es público.** Su Aviso, sus datos y los del Paciente **no están en ese
-directorio ni en ningún lugar abierto**. Los ve el personal de su Prestadora y quien trabaje en
-ese cuidado.
+directorio ni en ningún lugar abierto**. Su Aviso lo ven el personal de su Prestadora y los
+Asistentes de ella que pueden postularse; con el resto vale lo dicho en la §4.4.
 
 **7.3. El contacto va por adentro.** El teléfono y el correo de un Asistente no se muestran, y
-tampoco se pueden pasar por los mensajes del software. No es un capricho: es lo que sostiene que
-haya alguien que responda por el servicio. Un trato que empieza acá y sigue por afuera se queda
-sin Prestadora que lo respalde, y ese riesgo pasa a ser suyo.
+tampoco se pueden pasar por los mensajes del software. No es un capricho: **el contacto es el
+hecho por el que su Prestadora cobra**, y sacarlo por afuera es saltearse eso. Lo que queda
+guardado es que ustedes dos se contactaron, por cuál de los dos caminos y cuándo; **el trato en
+sí no se guarda en ninguna parte, y es a propósito**.
 
 ---
 
@@ -303,8 +321,8 @@ razones que su contrato con ella prevea. Tiene que decirle cuál fue el motivo.
 responsabilidad de la Prestadora y bajo lo que la §5.4 le permite pedir.
 
 **9.4. Qué pasa después de una baja.** Perder la cuenta no borra lo que ya ocurrió —vale la
-§5.5— y tampoco cierra por sí solo el servicio de cuidado: son dos cosas distintas, y qué pasa con
-el servicio sale del contrato que usted tenga con su Prestadora. Si la cuenta se borra, los Avisos
+§5.5— y tampoco corta por sí solo el cuidado: son dos cosas distintas, y qué pasa con el cuidado
+sale del trato que usted tenga con el Asistente. Si la cuenta se borra, los Avisos
 que publicó no se borran con ella: **quedan sin dueño, y pasa a verlos sólo el personal de su
 Prestadora**. Y abrir una cuenta nueva con otro correo para volver a entrar después de una baja no
 corresponde: el software no lo detecta solo, y por eso se dice acá.
@@ -324,8 +342,9 @@ lo que acuerde con su Prestadora, ni por los daños que ocurran en el domicilio,
 que su Prestadora haga del software**. Su Prestadora tampoco puede trasladarle a CeltaTech una
 responsabilidad suya.
 
-**10.2. De la Prestadora.** Responde por el servicio de cuidado y por quien lo presta, en los
-términos de su contrato con usted y de la ley.
+**10.2. De la Prestadora.** Responde por **quién entra**: por haber auditado el Legajo, por lo que
+el Perfil publica y por la comisión que le cobre, en los términos de su acuerdo con usted y de la
+ley. **Por el cuidado responde el Asistente**, con quien usted cerró el trato.
 
 **10.3. Suya.** Responde por lo que carga: que sea cierto, que esté autorizado a cargarlo, y que
 sea lo necesario y no más.
@@ -351,6 +370,7 @@ que lo acepte de nuevo.
 | 31 de agosto de 2026 | Se agregaron las cláusulas que faltaban, medidas contra lo que declaran los términos publicados por otro servicio del mismo rubro en la Argentina: la disponibilidad (§2.5), que nadie de los que aparecen acá trabaja para CeltaTech (§3.5), dónde está el detalle de los datos (§5.6), la edad mínima, una cuenta por persona, los datos ciertos, la conducta prohibida y los datos de otras personas (§8.4 a §8.8), qué pasa después de una baja y cómo se pide (§9.4 y §9.5), y el punto pendiente del tribunal competente (§12). Ninguna frase se copió: cada cláusula se redactó de cero |
 | 31 de agosto de 2026 | **El documento se declara lo que es: un modelo.** El Desarrollador precisó ese día que los documentos legales de un producto de CeltaTech viven adentro de sus términos y de sus contratos con el Cliente, y que a la Prestadora CeltaTech sólo puede entregarle **un modelo, a título de sugerencia y sin ninguna responsabilidad sobre él**. El encabezado ahora lo dice en su cara —quién lo entrega, que no es asesoramiento legal, que se entrega tal como está y que adoptarlo es decisión de la Prestadora— y **admite que el producto todavía no cumple esa forma**, porque el texto no se entrega sino que se acepta. Cambian el encabezado y la ficha de arriba |
 | 31 de agosto de 2026 | **Se separaron los dos mundos**, por decisión del Desarrollador de ese día: CeltaTech licencia el software a la Prestadora y no tiene vínculo de ninguna índole con la Familia, el Asistente ni nadie que trate con una Prestadora. El documento ponía a CeltaTech adentro de la cadena de responsabilidad hacia usted —decía que «responde por que el software funcione»— y eso era falso: lo que CeltaTech deba por el software se lo debe a la Prestadora, en el acuerdo entre las dos. Cambian la §1.5, la §3.2 y la §10.1, y **se cierra el punto pendiente del tribunal** de la §12, que preguntaba cómo se repartía una responsabilidad que no se reparte |
+| 2 de septiembre de 2026 | **El documento describía otro modelo de negocio: uno donde la Prestadora presta el cuidado, dirige el trabajo y le cobra a usted.** Este software no es eso, y así está escrito en el `CLAUDE.md` del producto, sección «Qué es este producto, y quién hace qué»: la Prestadora decide **quién entra** —audita el Legajo, valida al Aspirante, publica el Perfil— y cobra su comisión por el contacto; **el trato lo cierran la Familia y el Asistente solos**, y el software no guarda ningún contrato, ningún precio acordado, ninguna condición ni ninguna aceptación. Se reescribieron trece pasajes: quién es la Familia y quién la Prestadora (§1.1 y §1.3), qué es el software (§2.1), a quién se le habla si una pantalla no abre (§2.5), por qué responde cada uno (§3.1), a quién se le reclama qué (§3.3), quién emplea (§3.4), quién ve el Reporte diario (§4.4), quién ve la posición al fichar (§4.6), qué queda guardado (§5.5), dónde se acuerda el dinero y qué no queda guardado del acuerdo (§6.2 y §6.3), lo que ve cada uno de un Aviso (§7.2), por qué el contacto va por adentro (§7.3), de qué responde la Prestadora (§10.2) y a quién se escribe (§13). **Dos cambios no son de redacción sino de lo que hace la base**: el Reporte de cuidado y la fichada dejaron de estar al alcance del personal de la Prestadora en las migraciones `0053_la_prestadora_no_mira_la_jornada.sql`, `0056_la_fichada_se_ata_al_vinculo.sql` y `0067_la_subconsulta_no_filtraba_nada.sql`, y el documento decía lo contrario. La §6.1 no cambió: este software sigue sin cobrar nada, y la comisión de la Prestadora se cobra por fuera |
 
 ---
 
@@ -370,8 +390,9 @@ ese día, y va igual a la revisión profesional que anuncia el encabezado, como 
 
 ## 13. Contacto
 
-Por cualquier cosa relativa al cuidado, a sus datos o a este documento, escriba a **su
-Prestadora**: es quien responde. Sus datos de contacto están en la pantalla por la que entró.
+Lo que sea del cuidado en sí se habla **con el Asistente**. Lo que sea de sus datos, de su cuenta,
+de quién entró o de este documento se le escribe a **su Prestadora**: sus datos de contacto están
+en la pantalla por la que entró.
 
 ---
 

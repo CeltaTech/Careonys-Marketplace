@@ -31,11 +31,11 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
-| 18 pantallas HTML, 13.252 renglones | sin ruteo: cada pantalla es un archivo |
+| 18 pantallas HTML, 13.211 renglones | sin ruteo: cada pantalla es un archivo |
 | 16.116 renglones de JavaScript propio, en 37 archivos | 9.731 de ellos son copias byte a byte de otro archivo (pendiente 13) |
-| 6.487 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
+| 6.493 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
 | 4.653 renglones de hojas de estilo, en 10 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
-| 986 declaraciones más, pegadas al HTML | en 249 atributos `style=` (fue el pendiente 8, cerrado) |
+| 951 declaraciones más, pegadas al HTML | en 242 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 14 de las 18 pantallas rescatan la sesión al abrir |
 | 5 servidores de afuera, sin `package.json` ni compilación | cdn.jsdelivr.net, cdnjs.cloudflare.com, fonts.googleapis.com, fonts.gstatic.com, www.openstreetmap.org — hay que decir de qué es cada uno |
 | 35 tablas y 67 migraciones en el repositorio | 36 chequeos las miran antes de cada commit |

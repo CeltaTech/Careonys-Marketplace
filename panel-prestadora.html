@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Pantalla de la sesión, no del directorio: no tiene nada que hacer en un buscador. -->
   <meta name="robots" content="noindex, nofollow" />
-  <title>Panel de la Prestadora — {{organizacion}}</title>
+  <title data-frase="panel.titulo">Panel de la Prestadora — {{organizacion}}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
@@ -21,12 +21,15 @@
   <header class="tenant-header">
     <div class="tenant-brand">
       <i class="fas fa-hospital-user color-azul-medio"></i>
-      <span>{{organizacion}}</span>
-      <span class="tenant-badge">Organización: {{organizacion}}</span>
+      <span data-frase="comun.organizacion">{{organizacion}}</span>
+      <span class="tenant-badge" data-frase="panel.guia_organizacion">Organización: {{organizacion}}</span>
     </div>
     <div class="texto-13">
-      <i class="fas fa-user-shield"></i> Operador: RRHH {{organizacion}} | <a href="index.html"
-        style="color:var(--texto-sobre-color);text-decoration:underline;">Volver al Portal</a>
+      <i class="fas fa-user-shield"></i>
+      <span data-frase="panel.guia_operador">Operador: RRHH {{organizacion}}</span>
+      <a href="index.html" class="ml-8"
+        style="color:var(--texto-sobre-color);text-decoration:underline;"
+        data-frase="panel.guia_volver_portal">Volver al Portal</a>
     </div>
   </header>
 
@@ -53,8 +56,10 @@
            (`docs/ALCANCE.md` §4). Las dos quedaron anotadas en
            `docs/PENDIENTES.md`. -->
       <ul class="sidebar-menu">
-        <li><a href="panel-prestadora.html" class="active"><i class="fas fa-users-cog"></i> Reclutamiento & Legajos</a></li>
-        <li><a href="guias-prestadora.html"><i class="fas fa-book-medical"></i> Guías de cuidado</a></li>
+        <li><a href="panel-prestadora.html" class="active"><i class="fas fa-users-cog"></i>
+            <span data-frase="panel.guia_menu_legajos">Incorporación y Legajos</span></a></li>
+        <li><a href="guias-prestadora.html"><i class="fas fa-book-medical"></i>
+            <span data-frase="panel.guia_menu_guias">Guías de cuidado</span></a></li>
       </ul>
     </aside>
 
@@ -89,11 +94,11 @@
       <div class="kpi-grid">
         <div class="kpi-card">
           <div class="kpi-val" id="kpi-revision">—</div>
-          <div class="kpi-label">Legajos En Revisión</div>
+          <div class="kpi-label" data-frase="panel.kpi_revision">Legajos en revisión</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-val" id="kpi-validados">—</div>
-          <div class="kpi-label">Asistentes Validados</div>
+          <div class="kpi-label" data-frase="panel.kpi_validados">Asistentes validados</div>
         </div>
       </div>
 
@@ -101,12 +106,13 @@
         <div class="flex justificar-entre alinear-centro mb-16">
           <div>
             <h3 class="m-0 texto-18 color-titulo"><i class="fas fa-clipboard-check"></i>
-              Legajos de Asistentes para Auditoría</h3>
-            <p class="m-solo-arriba-4 texto-13 color-secundario">Legajos digitales enviados desde {{producto}}
-              Marketplace para la revisión y entrevista de la prestadora.</p>
+              <span data-frase="panel.legajos_encabezado">Legajos de Asistentes para auditar</span></h3>
+            <p class="m-solo-arriba-4 texto-13 color-secundario"
+              data-frase="panel.legajos_bajada">Legajos digitales enviados desde {{producto}}
+              Marketplace para que esta Prestadora los revise y entreviste al Aspirante.</p>
           </div>
           <button class="btn btn-secundario" id="btn-actualizar-aspirantes" onclick="cargarAspirantes();" style="font-size:12px;padding:8px 16px;"><i
-              class="fas fa-sync-alt"></i> Actualizar</button>
+              class="fas fa-sync-alt"></i> <span data-frase="panel.guia_actualizar">Actualizar</span></button>
         </div>
 
         <div class="oculto" id="estado-tabla" style="padding:16px;border-radius:10px;font-size:13px;line-height:1.5;margin-bottom:12px;"></div>
@@ -114,12 +120,12 @@
         <table class="aspirantes-table">
           <thead>
             <tr>
-              <th>Aspirante / DNI</th>
-              <th>Tipo de Asistente</th>
-              <th>Zona</th>
-              <th>Documentación Cargada</th>
-              <th>Estado de Auditoría</th>
-              <th>Acción de Selección</th>
+              <th data-frase="panel.col_aspirante">Aspirante / DNI</th>
+              <th data-frase="panel.col_tipo">Tipo de Asistente</th>
+              <th data-frase="avisos.rotulo_zona">Zona</th>
+              <th data-frase="panel.col_documentacion">Documentación cargada</th>
+              <th data-frase="panel.col_auditoria">Estado de la auditoría</th>
+              <th data-frase="panel.opciones_col_acciones">Acciones</th>
             </tr>
           </thead>
           <tbody id="tabla-aspirantes-body">
@@ -227,10 +233,11 @@
     <div class="modal-box">
       <div
         style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid var(--borde-card);padding-bottom:12px;">
-        <h3 class="m-0 color-titulo"><i class="fas fa-id-card"></i> Auditoría de Legajo & Entrevista
-          de Selección</h3>
+        <h3 class="m-0 color-titulo"><i class="fas fa-id-card"></i>
+          <span data-frase="panel.modal_titulo">Auditoría del legajo y entrevista</span></h3>
         <button onclick="document.getElementById('modal-auditoria').style.display='none';"
-          class="sin-fondo sin-borde texto-20 mano">&times;</button>
+          class="sin-fondo sin-borde texto-20 mano"
+          data-frase-aria-label="panel.modal_cerrar" aria-label="Cerrar">&times;</button>
       </div>
 
       <div id="detalles-aspirante-content" class="texto-13 interlineado-16 color-principal">
@@ -263,27 +270,31 @@
 
       <div style="background:var(--superficie-hundida);padding:16px;border-radius:12px;margin:16px 0;border:1px solid var(--borde-card);">
         <h4 style="margin:0 0 8px 0;font-size:14px;color:var(--texto-titulo);"><i class="fas fa-user-check"></i>
-          Resolución de la Prestadora {{organizacion}}:</h4>
+          <span data-frase="panel.resolucion_titulo">Resolución de la Prestadora {{organizacion}}</span></h4>
         <div class="mb-12">
-          <label class="peso-700 texto-12">Notas de la Entrevista Psicotécnica y Evaluación:</label>
+          <label class="peso-700 texto-12" for="nota-entrevista"
+            data-frase="panel.resolucion_nota_etiqueta">Motivo de la resolución</label>
           <textarea id="nota-entrevista"
             class="ancho-total alto-60 p-8 texto-12 redondeo-6 borde-tarjeta mt-4"
-            placeholder="Ej: Entrevista aprobada vía videollamada. Excelente manejo en demencias. DNI y Penales verificados."></textarea>
+            data-frase-placeholder="panel.resolucion_nota_hueco"
+            placeholder="Por ejemplo: entrevista hecha por videollamada, experiencia comprobada en demencias, documento de identidad y antecedentes verificados."></textarea>
         </div>
         <div class="flex gap-12">
           <button class="btn" id="btn-aprobar-aspirante" style="background:var(--verde-exito);color:var(--texto-sobre-color);font-weight:800;font-size:13px;flex:1;"
             onclick="aprobarAspirante();">
-            <i class="fas fa-check-circle"></i> OTORGAR AVAL: "VALIDADO POR PRESTADORA"
+            <i class="fas fa-check-circle"></i>
+            <span data-frase="panel.aprobar_boton">Otorgar el aval «Validado por Prestadora»</span>
           </button>
           <button class="btn fondo-peligro color-sobre-color peso-700 texto-13" id="btn-rechazar-aspirante"
             onclick="rechazarAspirante();">
-            Rechazar
+            <span data-frase="panel.rechazar_boton">Rechazar</span>
           </button>
         </div>
       </div>
 
-      <p class="texto-11 color-secundario m-0">* Nota legal: {{producto}} provee únicamente el software SaaS. El
-        otorgamiento del aval y la selección son responsabilidad exclusiva de {{organizacion}}.</p>
+      <p class="texto-11 color-secundario m-0" data-frase="panel.nota_legal">* {{producto}} provee únicamente el
+        software. El otorgamiento del aval y la decisión sobre el legajo son responsabilidad exclusiva
+        de {{organizacion}}.</p>
     </div>
   </div>
 

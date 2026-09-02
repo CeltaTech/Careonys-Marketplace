@@ -950,9 +950,9 @@
       "pt-BR": "Carregando os relatórios…"
     },
     "familia.reportes_vacio": {
-      "es-AR": "Acá todavía no se muestran reportes. Por ahora se los pide a la Prestadora.",
-      "en": "No reports are shown here yet. For now, they can be requested from the Provider.",
-      "pt-BR": "Ainda não são exibidos relatórios aqui. Por enquanto, é possível pedi-los à Prestadora."
+      "es-AR": "Acá todavía no se muestran reportes. Por ahora se los pide directamente al Asistente.",
+      "en": "No reports are shown here yet. For now, they can be requested directly from the care assistant.",
+      "pt-BR": "Ainda não são exibidos relatórios aqui. Por enquanto, é possível pedi-los diretamente ao assistente."
     },
     "familia.cerrando_sesion": {
       "es-AR": "Cerrando la sesión…",
@@ -1432,9 +1432,9 @@
       "pt-BR": "Diploma ou registro profissional:"
     },
     "panel.aprobar_pregunta": {
-      "es-AR": "Se va a otorgar el aval «Validado por Prestadora» a este legajo.\n\nLa persona queda habilitada en el plantel activo y el aval se muestra en su perfil. Desde esta pantalla no se puede quitar.\n\n¿Confirma?",
-      "en": "The “Validated by the Provider” endorsement is about to be granted to this personal file.\n\nThe person becomes available in the active roster and the endorsement is shown on their profile. It cannot be removed from this screen.\n\nPlease confirm.",
-      "pt-BR": "O selo «Validado pela Prestadora» está prestes a ser concedido a este cadastro.\n\nA pessoa fica habilitada no quadro ativo e o selo aparece no seu perfil. Não é possível retirá-lo a partir desta tela.\n\nConfirma?"
+      "es-AR": "Se va a otorgar el aval «Validado por Prestadora» a este legajo.\n\nLa persona queda habilitada para aparecer en el directorio y el aval se muestra en su perfil. Desde esta pantalla no se puede quitar.\n\n¿Confirma?",
+      "en": "The “Validated by the Provider” endorsement is about to be granted to this personal file.\n\nThe person becomes available to appear in the directory and the endorsement is shown on their profile. It cannot be removed from this screen.\n\nPlease confirm.",
+      "pt-BR": "O selo «Validado pela Prestadora» está prestes a ser concedido a este cadastro.\n\nA pessoa fica habilitada para aparecer no diretório e o selo aparece no seu perfil. Não é possível retirá-lo a partir desta tela.\n\nConfirma?"
     },
     "panel.aprobar_mientras": {
       "es-AR": "Otorgando el aval…",
@@ -1442,14 +1442,14 @@
       "pt-BR": "Concedendo o selo…"
     },
     "panel.aprobar_aviso": {
-      "es-AR": "✓ Legajo auditado. Se asignó el sello «Validado por Prestadora» y quedó habilitado en el plantel activo.",
-      "en": "✓ Personal file audited. The “Validated by the Provider” seal was assigned and it is now available in the active roster.",
-      "pt-BR": "✓ Cadastro auditado. Foi atribuído o selo «Validado pela Prestadora» e ficou habilitado no quadro ativo."
+      "es-AR": "✓ Legajo auditado. Se asignó el sello «Validado por Prestadora» y quedó habilitado para aparecer en el directorio.",
+      "en": "✓ Personal file audited. The “Validated by the Provider” seal was assigned and it is now available to appear in the directory.",
+      "pt-BR": "✓ Cadastro auditado. Foi atribuído o selo «Validado pela Prestadora» e ficou habilitado para aparecer no diretório."
     },
     "panel.rechazar_pregunta": {
-      "es-AR": "Se va a rechazar este legajo.\n\nQueda cerrado y la persona no aparece en el plantel activo. Desde esta pantalla no se puede volver atrás.\n\n¿Confirma?",
-      "en": "This personal file is about to be rejected.\n\nIt is closed and the person does not appear in the active roster. It cannot be undone from this screen.\n\nPlease confirm.",
-      "pt-BR": "Este cadastro está prestes a ser recusado.\n\nEle fica encerrado e a pessoa não aparece no quadro ativo. Não é possível voltar atrás a partir desta tela.\n\nConfirma?"
+      "es-AR": "Se va a rechazar este legajo.\n\nQueda cerrado y la persona no aparece en el directorio. Desde esta pantalla no se puede volver atrás.\n\n¿Confirma?",
+      "en": "This personal file is about to be rejected.\n\nIt is closed and the person does not appear in the directory. It cannot be undone from this screen.\n\nPlease confirm.",
+      "pt-BR": "Este cadastro está prestes a ser recusado.\n\nEle fica encerrado e a pessoa não aparece no diretório. Não é possível voltar atrás a partir desta tela.\n\nConfirma?"
     },
     "panel.rechazar_mientras": {
       "es-AR": "Registrando el rechazo…",
@@ -2452,150 +2452,100 @@
       "en": "Our services for families",
       "pt-BR": "Nossos serviços para famílias"
     },
-    "solicitar.cobertura_eyebrow": {
-      "es-AR": "Facturación y cobertura",
-      "en": "Billing and cover",
-      "pt-BR": "Faturamento e cobertura"
+    "solicitar.durante_eyebrow": {
+      "es-AR": "Durante el servicio",
+      "en": "While the service runs",
+      "pt-BR": "Durante o serviço"
     },
-    "solicitar.cobertura_pregunta": {
-      "es-AR": "¿Cuenta con Obra Social o Prepaga?",
-      "en": "Do you have health insurance or a private health plan?",
-      "pt-BR": "Tem plano de saúde ou convênio médico?"
+    "solicitar.durante_pregunta": {
+      "es-AR": "¿Y después de elegir al Asistente?",
+      "en": "And after the Caregiver has been chosen?",
+      "pt-BR": "E depois de escolher o Assistente?"
     },
-    "solicitar.cobertura_bajada": {
-      "es-AR": "Brindamos el asesoramiento legal y los comprobantes de facturación oficial necesarios para gestionar el reintegro total o parcial del costo de cuidado ante su cobertura médica (OSDE, Swiss Medical, Galeno, PAMI, etc.).",
-      "en": "We provide the legal guidance and the official billing documents needed to claim full or partial reimbursement of the cost of care from your health cover (OSDE, Swiss Medical, Galeno, PAMI and others).",
-      "pt-BR": "Oferecemos a orientação jurídica e os comprovantes de faturamento oficial necessários para solicitar o reembolso total ou parcial do custo do cuidado ao seu plano de saúde (OSDE, Swiss Medical, Galeno, PAMI e outros)."
+    "solicitar.durante_bajada": {
+      "es-AR": "Las aplicaciones de {{producto}} acompañan el día a día en carácter informativo: no toman ninguna decisión y no intervienen en lo que la Familia y el Asistente hayan acordado.",
+      "en": "The {{producto}} apps accompany the day to day for information only: they take no decision and do not step into what the Family and the Caregiver agreed between themselves.",
+      "pt-BR": "Os aplicativos do {{producto}} acompanham o dia a dia em caráter informativo: não tomam nenhuma decisão e não interferem no que a Família e o Assistente combinaram entre si."
     },
-    "solicitar.cobertura_punto_facturacion": {
-      "es-AR": "Facturación electrónica acreditada.",
-      "en": "Accredited electronic invoicing.",
-      "pt-BR": "Faturamento eletrônico credenciado."
+    "solicitar.durante_punto_asistencia": {
+      "es-AR": "Control de asistencia: check-in y check-out de cada jornada.",
+      "en": "Attendance control: check-in and check-out for each day.",
+      "pt-BR": "Controle de presença: check-in e check-out de cada jornada."
     },
-    "solicitar.cobertura_punto_reportes": {
-      "es-AR": "Resumen de Horas y Reportes de Cuidado Firmados.",
-      "en": "Signed hours summary and care reports.",
-      "pt-BR": "Resumo de horas e relatórios de cuidado assinados."
+    "solicitar.durante_punto_comunicacion": {
+      "es-AR": "Comunicación entre la Familia y el Asistente, en un solo lugar.",
+      "en": "Communication between the Family and the Caregiver, all in one place.",
+      "pt-BR": "Comunicação entre a Família e o Assistente, num só lugar."
     },
-    "solicitar.cobertura_punto_amparos": {
-      "es-AR": "Asesoramiento para Amparos y Coberturas Especiales.",
-      "en": "Guidance on legal injunctions and special cover.",
-      "pt-BR": "Orientação para ações judiciais e coberturas especiais."
+    "solicitar.durante_punto_notificaciones": {
+      "es-AR": "Notificaciones a la Familia cuando algo no está bien.",
+      "en": "Notifications to the Family when something is not right.",
+      "pt-BR": "Notificações à Família quando algo não está bem."
     },
-    "solicitar.asesoria_titulo": {
-      "es-AR": "Solicitar Asesoría de Reintegro",
-      "en": "Request reimbursement guidance",
-      "pt-BR": "Solicitar orientação de reembolso"
+    "solicitar.trato_titulo": {
+      "es-AR": "El trato lo cierran las partes",
+      "en": "The parties close the deal themselves",
+      "pt-BR": "O acordo é fechado pelas partes"
     },
-    "solicitar.asesoria_bajada": {
-      "es-AR": "Nuestro equipo analiza su cobertura e indica la documentación requerida.",
-      "en": "Our team reviews your cover and states which documents are required.",
-      "pt-BR": "Nossa equipe analisa a sua cobertura e indica a documentação necessária."
+    "solicitar.trato_bajada": {
+      "es-AR": "El software no guarda el acuerdo, ni el precio, ni las condiciones: eso queda entre la Familia y el Asistente.",
+      "en": "The software does not store the agreement, the price or the terms: that stays between the Family and the Caregiver.",
+      "pt-BR": "O software não guarda o acordo, nem o preço, nem as condições: isso fica entre a Família e o Assistente."
     },
-    "solicitar.asesoria_boton": {
-      "es-AR": "Consultar Cobertura",
-      "en": "Ask about cover",
-      "pt-BR": "Consultar cobertura"
+    "solicitar.trato_boton": {
+      "es-AR": "Ver cómo funciona",
+      "en": "See how it works",
+      "pt-BR": "Ver como funciona"
     },
-    "solicitar.gestor_eyebrow": {
-      "es-AR": "Supervisión personalizada",
-      "en": "Personalised supervision",
-      "pt-BR": "Supervisão personalizada"
+    "solicitar.caminos_eyebrow": {
+      "es-AR": "Los dos caminos",
+      "en": "The two routes",
+      "pt-BR": "Os dois caminhos"
     },
-    "solicitar.gestor_titulo": {
-      "es-AR": "Gestor del Cuidado Asignado",
-      "en": "An assigned care manager",
-      "pt-BR": "Gestor do cuidado designado"
+    "solicitar.caminos_titulo": {
+      "es-AR": "Dos maneras de encontrar un Asistente",
+      "en": "Two ways to find a Caregiver",
+      "pt-BR": "Duas maneiras de encontrar um Assistente"
     },
-    "solicitar.gestor_bajada": {
-      "es-AR": "Un especialista gerontológico dedicado a su familia que elabora el plan de cuidado, realiza el seguimiento diario y supervisa al Asistente en el domicilio.",
-      "en": "A gerontology specialist dedicated to your Family, who draws up the care plan, follows it day by day and supervises the Caregiver at the home.",
-      "pt-BR": "Um especialista em gerontologia dedicado à sua Família, que elabora o plano de cuidado, faz o acompanhamento diário e supervisiona o Assistente no domicílio."
+    "solicitar.caminos_bajada": {
+      "es-AR": "Mire el directorio de su Prestadora, compare perfiles y contacte a quien le sirva. O publique un aviso con lo que necesita y espere a que los Asistentes se postulen.",
+      "en": "Look through the directory of your Provider, compare profiles and get in touch with whoever suits you. Or post a listing with what is needed and wait for Caregivers to apply.",
+      "pt-BR": "Veja o diretório da sua Prestadora, compare perfis e entre em contato com quem lhe servir. Ou publique um anúncio com o que precisa e espere que os Assistentes se candidatem."
     },
-    "solicitar.gestor_videollamada_gratis": {
-      "es-AR": "Videollamada de Diagnóstico Gratuita",
-      "en": "Free assessment video call",
-      "pt-BR": "Videochamada de diagnóstico gratuita"
+    "solicitar.caminos_chip_validados": {
+      "es-AR": "Perfiles validados por la Prestadora",
+      "en": "Profiles validated by the Provider",
+      "pt-BR": "Perfis validados pela Prestadora"
     },
-    "solicitar.gestor_supervision_semanal": {
-      "es-AR": "Supervisión Semanal",
-      "en": "Weekly supervision",
-      "pt-BR": "Supervisão semanal"
+    "solicitar.caminos_chip_prestadora": {
+      "es-AR": "Sólo Asistentes de su Prestadora",
+      "en": "Only Caregivers of your Provider",
+      "pt-BR": "Somente Assistentes da sua Prestadora"
     },
-    "solicitar.gestor_agendar": {
-      "es-AR": "Agendar Videollamada con un Gestor",
-      "en": "Book a video call with a care manager",
-      "pt-BR": "Agendar videochamada com um gestor"
+    "solicitar.caminos_boton": {
+      "es-AR": "Comparar perfiles en el directorio",
+      "en": "Compare profiles in the directory",
+      "pt-BR": "Comparar perfis no diretório"
     },
-    "solicitar.urgente_cobertura": {
-      "es-AR": "Cobertura 24/7",
-      "en": "24/7 cover",
-      "pt-BR": "Cobertura 24 horas"
+    "solicitar.aviso_badge": {
+      "es-AR": "El otro camino",
+      "en": "The other route",
+      "pt-BR": "O outro caminho"
     },
-    "solicitar.urgente_titulo": {
-      "es-AR": "Garantía de Reemplazo Urgente",
-      "en": "Urgent cover guarantee",
-      "pt-BR": "Garantia de substituição urgente"
+    "solicitar.aviso_titulo": {
+      "es-AR": "Publique un aviso",
+      "en": "Post a listing",
+      "pt-BR": "Publique um anúncio"
     },
-    "solicitar.urgente_bajada": {
-      "es-AR": "Si su Asistente habitual tiene un imprevisto o una enfermedad, se activa la Alerta de Reemplazo Inmediato para enviar a un profesional suplente a su domicilio en menos de 2 horas.",
-      "en": "If the regular Caregiver has an unforeseen problem or falls ill, the Immediate Cover Alert is triggered to send a stand-in professional to the home in under 2 hours.",
-      "pt-BR": "Se o Assistente habitual tiver um imprevisto ou adoecer, o Alerta de Substituição Imediata é acionado para enviar um profissional substituto ao domicílio em menos de 2 horas."
+    "solicitar.aviso_bajada": {
+      "es-AR": "Diga qué necesita, en qué zona, qué días y en qué turnos. El aviso queda publicado para los Asistentes de su Prestadora, y quienes puedan cubrirlo se postulan.",
+      "en": "State what is needed, in which area, on which days and in which shifts. The listing stays published for the Caregivers of your Provider, and those who can cover it apply.",
+      "pt-BR": "Diga do que precisa, em que zona, em que dias e em que turnos. O anúncio fica publicado para os Assistentes da sua Prestadora, e quem puder atendê-lo se candidata."
     },
-    "solicitar.urgente_boton": {
-      "es-AR": "SOLICITAR REEMPLAZO URGENTE (<2HS)",
-      "en": "REQUEST URGENT COVER (<2H)",
-      "pt-BR": "SOLICITAR SUBSTITUIÇÃO URGENTE (<2H)"
-    },
-    "solicitar.urgente_alerta": {
-      "es-AR": "✓ Alerta de Reemplazo Urgente activada. Se está avisando a los Asistentes disponibles en un radio de 5 km.",
-      "en": "✓ Urgent Cover Alert activated. Available Caregivers within a 5 km radius are being notified.",
-      "pt-BR": "✓ Alerta de Substituição Urgente ativado. Os Assistentes disponíveis num raio de 5 km estão sendo avisados."
-    },
-    "solicitar.modal_titulo": {
-      "es-AR": "Agendar Videollamada con Gestor",
-      "en": "Book a video call with a care manager",
-      "pt-BR": "Agendar videochamada com gestor"
-    },
-    "solicitar.modal_bajada": {
-      "es-AR": "Seleccione la fecha y el horario para su sesión de evaluación inicial gratuita:",
-      "en": "Choose the date and the time for your free initial assessment session:",
-      "pt-BR": "Escolha a data e o horário para a sua sessão de avaliação inicial gratuita:"
-    },
-    "solicitar.modal_fecha": {
-      "es-AR": "Fecha preferida",
-      "en": "Preferred date",
-      "pt-BR": "Data preferida"
-    },
-    "solicitar.modal_turno": {
-      "es-AR": "Turno disponible",
-      "en": "Available slot",
-      "pt-BR": "Horário disponível"
-    },
-    "solicitar.modal_turno_10": {
-      "es-AR": "10:00 hs — Turno Mañana",
-      "en": "10:00 — Morning slot",
-      "pt-BR": "10:00 — Turno da manhã"
-    },
-    "solicitar.modal_turno_1430": {
-      "es-AR": "14:30 hs — Turno Tarde",
-      "en": "14:30 — Afternoon slot",
-      "pt-BR": "14:30 — Turno da tarde"
-    },
-    "solicitar.modal_turno_17": {
-      "es-AR": "17:00 hs — Turno Tarde",
-      "en": "17:00 — Afternoon slot",
-      "pt-BR": "17:00 — Turno da tarde"
-    },
-    "solicitar.modal_confirmar": {
-      "es-AR": "CONFIRMAR CITA VIRTUAL",
-      "en": "CONFIRM VIRTUAL APPOINTMENT",
-      "pt-BR": "CONFIRMAR CONSULTA VIRTUAL"
-    },
-    "solicitar.modal_agendada": {
-      "es-AR": "✓ La videollamada quedó agendada. El enlace de conexión se envía por correo electrónico y por WhatsApp.",
-      "en": "✓ The video call has been booked. The connection link is sent by email and by WhatsApp.",
-      "pt-BR": "✓ A videochamada foi agendada. O link de conexão é enviado por e-mail e por WhatsApp."
+    "solicitar.aviso_boton": {
+      "es-AR": "PUBLICAR UN AVISO",
+      "en": "POST A LISTING",
+      "pt-BR": "PUBLICAR UM ANÚNCIO"
     },
     "solicitar.pasos_titulo_1": {
       "es-AR": "El Asistente que se necesita,",
@@ -3217,12 +3167,12 @@
       "en": "Step 5: References and confirmation",
       "pt-BR": "Etapa 5: Referências e confirmação"
     },
-    "legajo.seleccion_titulo": {
-      "es-AR": "Proceso de Selección:",
-      "en": "Selection process:",
-      "pt-BR": "Processo de seleção:"
+    "legajo.incorporacion_titulo": {
+      "es-AR": "Proceso de Incorporación de Asistentes:",
+      "en": "Care assistant onboarding process:",
+      "pt-BR": "Processo de incorporação de assistentes:"
     },
-    "legajo.seleccion_texto": {
+    "legajo.incorporacion_texto": {
       "es-AR": "La solicitud quedará en estado «En Revisión». El equipo de {{organizacion}} auditará la documentación y lo convocará a una entrevista.",
       "en": "The application will remain in «Under review» status. The {{organizacion}} team will audit the documentation and will call you in for an interview.",
       "pt-BR": "A solicitação ficará com o estado «Em revisão». A equipe de {{organizacion}} auditará a documentação e o convocará para uma entrevista."
@@ -3370,9 +3320,9 @@
       "pt-BR": "Voltar ao Portal"
     },
     "panel.guia_menu_legajos": {
-      "es-AR": "Reclutamiento y Legajos",
-      "en": "Recruitment and personnel files",
-      "pt-BR": "Recrutamento e cadastros funcionais"
+      "es-AR": "Incorporación y Legajos",
+      "en": "Onboarding and personnel files",
+      "pt-BR": "Incorporação e cadastros funcionais"
     },
     "panel.guia_menu_guias": {
       "es-AR": "Guías de cuidado",
@@ -4197,6 +4147,539 @@
       "es-AR": "La base no confirmó el cambio, así que no se guardó nada.",
       "en": "The database did not confirm the change, so nothing was saved.",
       "pt-BR": "A base não confirmou a alteração, então nada foi salvo."
+    },
+    "_8": "── La auditoría del legajo, en el panel de la Prestadora ──",
+    "panel.titulo": {
+      "es-AR": "Panel de la Prestadora — {{organizacion}}",
+      "en": "Provider panel — {{organizacion}}",
+      "pt-BR": "Painel da Prestadora — {{organizacion}}"
+    },
+    "panel.kpi_revision": {
+      "es-AR": "Legajos en revisión",
+      "en": "Personal files under review",
+      "pt-BR": "Cadastros em revisão"
+    },
+    "panel.kpi_validados": {
+      "es-AR": "Asistentes validados",
+      "en": "Validated Caregivers",
+      "pt-BR": "Assistentes validados"
+    },
+    "panel.legajos_encabezado": {
+      "es-AR": "Legajos de Asistentes para auditar",
+      "en": "Caregiver personal files to audit",
+      "pt-BR": "Cadastros de Assistentes para auditar"
+    },
+    "panel.legajos_bajada": {
+      "es-AR": "Legajos digitales enviados desde {{producto}} Marketplace para que esta Prestadora los revise y entreviste al Aspirante.",
+      "en": "Digital personal files sent from {{producto}} Marketplace so that this Provider can review them and interview the Applicant.",
+      "pt-BR": "Cadastros digitais enviados desde o {{producto}} Marketplace para que esta Prestadora os revise e entreviste o Aspirante."
+    },
+    "panel.col_aspirante": {
+      "es-AR": "Aspirante / DNI",
+      "en": "Applicant / identity number",
+      "pt-BR": "Aspirante / documento"
+    },
+    "panel.col_tipo": {
+      "es-AR": "Tipo de Asistente",
+      "en": "Type of Caregiver",
+      "pt-BR": "Tipo de Assistente"
+    },
+    "panel.col_documentacion": {
+      "es-AR": "Documentación cargada",
+      "en": "Documentation uploaded",
+      "pt-BR": "Documentação carregada"
+    },
+    "panel.col_auditoria": {
+      "es-AR": "Estado de la auditoría",
+      "en": "Audit status",
+      "pt-BR": "Estado da auditoria"
+    },
+    "panel.modal_titulo": {
+      "es-AR": "Auditoría del legajo y entrevista",
+      "en": "Personal file audit and interview",
+      "pt-BR": "Auditoria do cadastro e entrevista"
+    },
+    "panel.modal_cerrar": {
+      "es-AR": "Cerrar",
+      "en": "Close",
+      "pt-BR": "Fechar"
+    },
+    "panel.resolucion_titulo": {
+      "es-AR": "Resolución de la Prestadora {{organizacion}}",
+      "en": "Decision of the Provider {{organizacion}}",
+      "pt-BR": "Decisão da Prestadora {{organizacion}}"
+    },
+    "panel.resolucion_nota_etiqueta": {
+      "es-AR": "Motivo de la resolución",
+      "en": "Reason for the decision",
+      "pt-BR": "Motivo da decisão"
+    },
+    "panel.resolucion_nota_hueco": {
+      "es-AR": "Por ejemplo: entrevista hecha por videollamada, experiencia comprobada en demencias, documento de identidad y antecedentes verificados.",
+      "en": "For example: interview held by video call, proven experience with dementia, identity document and record check verified.",
+      "pt-BR": "Por exemplo: entrevista feita por videochamada, experiência comprovada em demências, documento de identidade e antecedentes verificados."
+    },
+    "panel.aprobar_boton": {
+      "es-AR": "Otorgar el aval «Validado por Prestadora»",
+      "en": "Grant the “Validated by the Provider” endorsement",
+      "pt-BR": "Conceder o selo «Validado pela Prestadora»"
+    },
+    "panel.rechazar_boton": {
+      "es-AR": "Rechazar",
+      "en": "Reject",
+      "pt-BR": "Recusar"
+    },
+    "panel.nota_legal": {
+      "es-AR": "* {{producto}} provee únicamente el software. El otorgamiento del aval y la decisión sobre el legajo son responsabilidad exclusiva de {{organizacion}}.",
+      "en": "* {{producto}} provides the software only. Granting the endorsement and deciding on the personal file are the sole responsibility of {{organizacion}}.",
+      "pt-BR": "* O {{producto}} fornece unicamente o software. A concessão do selo e a decisão sobre o cadastro são responsabilidade exclusiva de {{organizacion}}."
+    },
+    "_9": "── La aplicación de la Familia ──",
+    "familia.titulo_pagina": {
+      "es-AR": "{{organizacion}} Familia — Portal Móvil",
+      "en": "{{organizacion}} Family — Mobile Portal",
+      "pt-BR": "{{organizacion}} Família — Portal Móvel"
+    },
+    "familia.entrar": {
+      "es-AR": "Ingresar a {{organizacion}} Familia",
+      "en": "Sign in to {{organizacion}} Family",
+      "pt-BR": "Entrar no {{organizacion}} Família"
+    },
+    "familia.buscar_asistente": {
+      "es-AR": "Buscar Asistente",
+      "en": "Find a Care Assistant",
+      "pt-BR": "Buscar Assistente de Cuidado"
+    },
+    "familia.reportes_titulo": {
+      "es-AR": "Reportes de cuidado",
+      "en": "Care reports",
+      "pt-BR": "Relatórios de cuidado"
+    },
+    "familia.asistentes": {
+      "es-AR": "Asistentes",
+      "en": "Care Assistants",
+      "pt-BR": "Assistentes de Cuidado"
+    },
+    "familia.ver_todos": {
+      "es-AR": "Ver todos",
+      "en": "See all",
+      "pt-BR": "Ver todos"
+    },
+    "familia.tab_publicar": {
+      "es-AR": "Publicar",
+      "en": "Post",
+      "pt-BR": "Publicar"
+    },
+    "familia.tab_reportes": {
+      "es-AR": "Reportes",
+      "en": "Reports",
+      "pt-BR": "Relatórios"
+    },
+    "familia.nuevo_aviso": {
+      "es-AR": "Nuevo Aviso",
+      "en": "New Listing",
+      "pt-BR": "Novo Anúncio"
+    },
+    "familia.aviso_datos_paciente": {
+      "es-AR": "Datos del Paciente",
+      "en": "Patient details",
+      "pt-BR": "Dados do Paciente"
+    },
+    "familia.aviso_nombre_paciente": {
+      "es-AR": "Nombre del Paciente",
+      "en": "Patient's name",
+      "pt-BR": "Nome do Paciente"
+    },
+    "familia.aviso_nombre_ejemplo": {
+      "es-AR": "Por ejemplo: Abuela Rosa",
+      "en": "For example: Grandma Rosa",
+      "pt-BR": "Por exemplo: Vovó Rosa"
+    },
+    "familia.aviso_edad": {
+      "es-AR": "Edad",
+      "en": "Age",
+      "pt-BR": "Idade"
+    },
+    "familia.aviso_zona": {
+      "es-AR": "Zona / Barrio",
+      "en": "Area / Neighbourhood",
+      "pt-BR": "Zona / Bairro"
+    },
+    "familia.aviso_tipo_cuidado": {
+      "es-AR": "Tipo de Cuidado",
+      "en": "Type of care",
+      "pt-BR": "Tipo de cuidado"
+    },
+    "familia.aviso_modalidad": {
+      "es-AR": "Modalidad de Servicio",
+      "en": "Service arrangement",
+      "pt-BR": "Modalidade de serviço"
+    },
+    "familia.aviso_condicion": {
+      "es-AR": "Condición del Paciente",
+      "en": "Patient's condition",
+      "pt-BR": "Condição do Paciente"
+    },
+    "familia.aviso_patologias": {
+      "es-AR": "Patologías presentes (seleccione todas las que apliquen):",
+      "en": "Conditions present (select all that apply):",
+      "pt-BR": "Patologias presentes (selecione todas as que se apliquem):"
+    },
+    "familia.aviso_descripcion": {
+      "es-AR": "Descripción adicional (opcional)",
+      "en": "Additional description (optional)",
+      "pt-BR": "Descrição adicional (opcional)"
+    },
+    "familia.aviso_descripcion_ejemplo": {
+      "es-AR": "Cuéntenos más sobre la situación del Paciente…",
+      "en": "Tell us more about the Patient's situation…",
+      "pt-BR": "Conte-nos mais sobre a situação do Paciente…"
+    },
+    "familia.aviso_bajada": {
+      "es-AR": "Complete los datos del cuidado que necesita. Los Asistentes que quieran se postulan y usted elige.",
+      "en": "Fill in the details of the care you need. Care assistants who wish to may apply, and you choose.",
+      "pt-BR": "Preencha os dados do cuidado de que precisa. Os assistentes que quiserem se candidatam e você escolhe."
+    },
+    "familia.aviso_publicar": {
+      "es-AR": "Publicar el aviso",
+      "en": "Publish the listing",
+      "pt-BR": "Publicar o anúncio"
+    },
+    "familia.aviso_publicado": {
+      "es-AR": "✓ El aviso quedó publicado. Las postulaciones que reciba se ven en esta misma aplicación.",
+      "en": "✓ The listing has been published. Any applications received are shown in this same app.",
+      "pt-BR": "✓ O anúncio foi publicado. As candidaturas recebidas aparecem neste mesmo aplicativo."
+    },
+    "_10": "── El alta de Asistentes, la pantalla de escritorio ──",
+    "alta.titulo": {
+      "es-AR": "Registrarme como Asistente — {{organizacion}}",
+      "en": "Register as a Caregiver — {{organizacion}}",
+      "pt-BR": "Cadastrar-me como Assistente — {{organizacion}}"
+    },
+    "alta.descripcion": {
+      "es-AR": "Regístrese como Asistente en {{organizacion}}, conéctese con familias que necesitan sus servicios y desarrolle su carrera profesional.",
+      "en": "Register as a Caregiver at {{organizacion}}, connect with families that need these services and build a professional career.",
+      "pt-BR": "Cadastre-se como Assistente em {{organizacion}}, conecte-se com famílias que precisam desses serviços e desenvolva sua carreira profissional."
+    },
+    "alta.hero_bajada": {
+      "es-AR": "Regístrese en {{organizacion}}, complete su legajo con documentación verificada y conéctese con las familias que necesitan sus servicios.",
+      "en": "Register at {{organizacion}}, complete the personnel file with verified documentation and connect with the families that need these services.",
+      "pt-BR": "Cadastre-se em {{organizacion}}, complete o cadastro com documentação verificada e conecte-se com as famílias que precisam desses serviços."
+    },
+    "alta.hero_registrarme": {
+      "es-AR": "Registrarme ahora",
+      "en": "Register now",
+      "pt-BR": "Cadastrar-me agora"
+    },
+    "alta.hero_beneficios": {
+      "es-AR": "Ver beneficios",
+      "en": "See the benefits",
+      "pt-BR": "Ver os benefícios"
+    },
+    "alta.beneficios_titulo": {
+      "es-AR": "¿Por qué sumarse a {{organizacion}}?",
+      "en": "Why join {{organizacion}}?",
+      "pt-BR": "Por que entrar em {{organizacion}}?"
+    },
+    "alta.beneficio_oportunidades": {
+      "es-AR": "Más oportunidades laborales",
+      "en": "More work opportunities",
+      "pt-BR": "Mais oportunidades de trabalho"
+    },
+    "alta.beneficio_oportunidades_texto": {
+      "es-AR": "Conéctese con familias que buscan sus servicios en su zona y horarios.",
+      "en": "Connect with families looking for these services in your area and at your hours.",
+      "pt-BR": "Conecte-se com famílias que procuram esses serviços na sua área e nos seus horários."
+    },
+    "alta.beneficio_calificacion": {
+      "es-AR": "Sistema de calificación",
+      "en": "Rating system",
+      "pt-BR": "Sistema de avaliação"
+    },
+    "alta.beneficio_calificacion_texto": {
+      "es-AR": "Construya su reputación con reseñas verificadas de las familias.",
+      "en": "Build a reputation with verified reviews from families.",
+      "pt-BR": "Construa sua reputação com avaliações verificadas das famílias."
+    },
+    "alta.beneficio_aplicacion": {
+      "es-AR": "Aplicación todo en uno",
+      "en": "All-in-one application",
+      "pt-BR": "Aplicativo tudo em um"
+    },
+    "alta.beneficio_aplicacion_texto": {
+      "es-AR": "Lleve sus trabajos, sus horarios y la comunicación desde el celular.",
+      "en": "Handle jobs, schedules and communication from the mobile phone.",
+      "pt-BR": "Acompanhe os trabalhos, os horários e a comunicação pelo celular."
+    },
+    "alta.beneficio_capacitacion": {
+      "es-AR": "Capacitación continua",
+      "en": "Continuous training",
+      "pt-BR": "Capacitação contínua"
+    },
+    "alta.beneficio_capacitacion_texto": {
+      "es-AR": "Acceda a cursos y certificaciones para mejorar sus habilidades.",
+      "en": "Access courses and certifications to improve your skills.",
+      "pt-BR": "Acesse cursos e certificações para aprimorar suas habilidades."
+    },
+    "alta.beneficio_documentos": {
+      "es-AR": "Verificación de Documentos",
+      "en": "Document verification",
+      "pt-BR": "Verificação de documentos"
+    },
+    "alta.beneficio_documentos_texto": {
+      "es-AR": "Cargue su DNI y sus antecedentes para obtener las insignias de confianza (DNI validado, antecedentes penales en regla, título).",
+      "en": "Upload the identity document and the criminal record certificate to earn the trust badges (identity verified, criminal record in order, qualification).",
+      "pt-BR": "Envie o documento de identidade e os antecedentes para obter os selos de confiança (identidade validada, antecedentes em ordem, diploma)."
+    },
+    "alta.beneficio_condiciones": {
+      "es-AR": "Acuerdo de condiciones",
+      "en": "Agreement on terms",
+      "pt-BR": "Acordo de condições"
+    },
+    "alta.beneficio_condiciones_texto": {
+      "es-AR": "Negocie honorarios y condiciones directamente con cada familia.",
+      "en": "Negotiate fees and terms directly with each family.",
+      "pt-BR": "Negocie honorários e condições diretamente com cada família."
+    },
+    "alta.beneficio_flexibilidad": {
+      "es-AR": "Flexibilidad horaria",
+      "en": "Flexible hours",
+      "pt-BR": "Flexibilidade de horários"
+    },
+    "alta.beneficio_flexibilidad_texto": {
+      "es-AR": "Elija los trabajos que se adapten a su disponibilidad real.",
+      "en": "Choose the jobs that fit your real availability.",
+      "pt-BR": "Escolha os trabalhos que se ajustam à sua disponibilidade real."
+    },
+    "alta.beneficio_comunidad": {
+      "es-AR": "Comunidad de Asistentes",
+      "en": "Caregiver community",
+      "pt-BR": "Comunidade de Assistentes"
+    },
+    "alta.beneficio_comunidad_texto": {
+      "es-AR": "Conéctese con otros Asistentes y comparta experiencias.",
+      "en": "Connect with other Caregivers and share experiences.",
+      "pt-BR": "Conecte-se com outros Assistentes e compartilhe experiências."
+    },
+    "alta.pasos_titulo": {
+      "es-AR": "Consiga trabajo como Asistente en 5 pasos.",
+      "en": "Find work as a Caregiver in 5 steps.",
+      "pt-BR": "Consiga trabalho como Assistente em 5 etapas."
+    },
+    "alta.demo_nombre": {
+      "es-AR": "María Arizmendi",
+      "en": "Mary Ashfield",
+      "pt-BR": "Maria Arizmendo"
+    },
+    "alta.demo_nivel": {
+      "es-AR": "ASISTENTE BRONCE",
+      "en": "BRONZE CAREGIVER",
+      "pt-BR": "ASSISTENTE BRONZE"
+    },
+    "alta.demo_sin_calificar": {
+      "es-AR": "SIN CALIFICAR AÚN",
+      "en": "NOT RATED YET",
+      "pt-BR": "AINDA SEM AVALIAÇÃO"
+    },
+    "alta.demo_rotulo_tipo": {
+      "es-AR": "TIPO DE ASISTENTE",
+      "en": "CAREGIVER TYPE",
+      "pt-BR": "TIPO DE ASSISTENTE"
+    },
+    "alta.demo_tipo": {
+      "es-AR": "Cuidadora Domiciliaria",
+      "en": "Home Caregiver",
+      "pt-BR": "Cuidadora domiciliar"
+    },
+    "alta.paso_descargar": {
+      "es-AR": "Descargue la aplicación y regístrese",
+      "en": "Download the application and register",
+      "pt-BR": "Baixe o aplicativo e cadastre-se"
+    },
+    "alta.paso_descargar_texto": {
+      "es-AR": "Cree su cuenta como Asistente en pocos minutos desde su celular.",
+      "en": "Create the Caregiver account in a few minutes from the mobile phone.",
+      "pt-BR": "Crie a conta de Assistente em poucos minutos pelo celular."
+    },
+    "alta.paso_legajo": {
+      "es-AR": "Complete su legajo",
+      "en": "Complete the personnel file",
+      "pt-BR": "Complete o cadastro"
+    },
+    "alta.paso_legajo_texto": {
+      "es-AR": "Cargue su foto, su experiencia, las patologías que atiende, su disponibilidad horaria y la documentación.",
+      "en": "Upload the photo, the experience, the conditions cared for, the schedule availability and the documentation.",
+      "pt-BR": "Envie a foto, a experiência, as patologias atendidas, a disponibilidade de horários e a documentação."
+    },
+    "alta.paso_identidad": {
+      "es-AR": "Verifique su identidad",
+      "en": "Verify your identity",
+      "pt-BR": "Verifique sua identidade"
+    },
+    "alta.paso_identidad_texto": {
+      "es-AR": "Se verifican el DNI, los antecedentes y las certificaciones para generar confianza con las familias.",
+      "en": "The identity document, the criminal record and the certifications are checked to build trust with families.",
+      "pt-BR": "O documento de identidade, os antecedentes e as certificações são verificados para gerar confiança com as famílias."
+    },
+    "alta.paso_postularse": {
+      "es-AR": "Postúlese a avisos",
+      "en": "Apply to listings",
+      "pt-BR": "Candidate-se a anúncios"
+    },
+    "alta.paso_postularse_texto": {
+      "es-AR": "Busque y postúlese a los avisos publicados por familias en su zona y horario preferido.",
+      "en": "Search for and apply to the listings published by families in your area and preferred hours.",
+      "pt-BR": "Procure e candidate-se aos anúncios publicados por famílias na sua área e no horário preferido."
+    },
+    "alta.paso_acordar": {
+      "es-AR": "Acuerde y empiece",
+      "en": "Agree and start",
+      "pt-BR": "Combine e comece"
+    },
+    "alta.paso_acordar_texto": {
+      "es-AR": "Entreviste por chat o video, lleguen a un acuerdo y empiece a trabajar.",
+      "en": "Meet by chat or video call, reach an agreement and start working.",
+      "pt-BR": "Converse por chat ou vídeo, cheguem a um acordo e comece a trabalhar."
+    },
+    "alta.cta_registrarme": {
+      "es-AR": "REGISTRARME COMO ASISTENTE",
+      "en": "REGISTER AS A CAREGIVER",
+      "pt-BR": "CADASTRAR-ME COMO ASSISTENTE"
+    },
+    "alta.eyebrow": {
+      "es-AR": "Registro Oficial",
+      "en": "Official registration",
+      "pt-BR": "Cadastro oficial"
+    },
+    "alta.bajada_formulario": {
+      "es-AR": "Complete los pasos obligatorios del Proceso de Incorporación de Asistentes. Estos datos son los mismos que pide la aplicación del teléfono.",
+      "en": "Complete the required steps of the Caregiver onboarding process. This information is the same that the mobile application asks for.",
+      "pt-BR": "Complete as etapas obrigatórias do Processo de Incorporação de Assistentes. Estes dados são os mesmos que o aplicativo do telefone pede."
+    },
+    "alta.rotulo_formacion": {
+      "es-AR": "Formación",
+      "en": "Education",
+      "pt-BR": "Formação"
+    },
+    "alta.rotulo_documentos": {
+      "es-AR": "Documentos",
+      "en": "Documents",
+      "pt-BR": "Documentos"
+    },
+    "alta.rotulo_cierre": {
+      "es-AR": "Cierre",
+      "en": "Closing",
+      "pt-BR": "Encerramento"
+    },
+    "alta.condicion_fiscal": {
+      "es-AR": "Condición Fiscal",
+      "en": "Tax status",
+      "pt-BR": "Situação fiscal"
+    },
+    "alta.domicilio_ejemplo": {
+      "es-AR": "Ej: Av. Santa Fe 1234, Palermo, CABA",
+      "en": "E.g.: 1234 Santa Fe Ave., Palermo, Buenos Aires",
+      "pt-BR": "Ex.: Av. Santa Fe 1234, Palermo, Buenos Aires"
+    },
+    "alta.cbu_ejemplo": {
+      "es-AR": "22 dígitos de CBU o su Alias",
+      "en": "22-digit bank account key, or its alias",
+      "pt-BR": "Chave bancária de 22 algarismos, ou o apelido dela"
+    },
+    "alta.paso2_titulo": {
+      "es-AR": "Paso 2: Formación",
+      "en": "Step 2: Education",
+      "pt-BR": "Etapa 2: Formação"
+    },
+    "alta.seccion_foto": {
+      "es-AR": "Foto de perfil",
+      "en": "Profile photo",
+      "pt-BR": "Foto de perfil"
+    },
+    "alta.donde_van_los_papeles": {
+      "es-AR": "El documento de identidad, los antecedentes penales y el título se cargan en el paso 6. La matrícula, si corresponde, en el paso 5.",
+      "en": "The identity document, the criminal record certificate and the qualification are uploaded in step 6. The professional registration, where it applies, in step 5.",
+      "pt-BR": "O documento de identidade, a certidão de antecedentes criminais e o diploma são enviados na etapa 6. O registro profissional, quando couber, na etapa 5."
+    },
+    "alta.paso5_titulo": {
+      "es-AR": "Paso 5: Legajo",
+      "en": "Step 5: Personnel file",
+      "pt-BR": "Etapa 5: Cadastro"
+    },
+    "alta.paso6_titulo": {
+      "es-AR": "Paso 6: Documentación y Aval",
+      "en": "Step 6: Documentation and endorsement",
+      "pt-BR": "Etapa 6: Documentação e aval"
+    },
+    "alta.documentos_condiciones": {
+      "es-AR": "Todos los documentos se guardan cifrados. Máximo 10 MB por archivo. Formatos: JPG, PNG, PDF.",
+      "en": "Every document is stored encrypted. Maximum 10 MB per file. Formats: JPG, PNG, PDF.",
+      "pt-BR": "Todos os documentos são guardados criptografados. Máximo de 10 MB por arquivo. Formatos: JPG, PNG, PDF."
+    },
+    "alta.doc_dni": {
+      "es-AR": "DNI, frente y dorso",
+      "en": "Identity document, front and back",
+      "pt-BR": "Documento de identidade, frente e verso"
+    },
+    "alta.doc_penales": {
+      "es-AR": "Certificado de Antecedentes Penales",
+      "en": "Criminal record certificate",
+      "pt-BR": "Certidão de antecedentes criminais"
+    },
+    "alta.doc_titulo": {
+      "es-AR": "Título o Certificado de Formación",
+      "en": "Qualification or training certificate",
+      "pt-BR": "Diploma ou certificado de formação"
+    },
+    "alta.archivo_listo": {
+      "es-AR": "Archivo listo para subir",
+      "en": "File ready to upload",
+      "pt-BR": "Arquivo pronto para envio"
+    },
+    "alta.incorporacion_titulo": {
+      "es-AR": "Proceso de Incorporación de Asistentes (responsabilidad de la Prestadora):",
+      "en": "Caregiver onboarding process (the Provider’s responsibility):",
+      "pt-BR": "Processo de Incorporação de Assistentes (responsabilidade da Prestadora):"
+    },
+    "alta.incorporacion_texto": {
+      "es-AR": "La solicitud quedará en estado «En Revisión». El equipo de Incorporación de la Prestadora {{organizacion}} auditará la documentación cargada y lo convocará a una entrevista. Una vez aprobada, el perfil figura como «Validado por Prestadora» en el directorio que ven las familias.",
+      "en": "The application will remain in «Under review» status. The onboarding team at {{organizacion}} will audit the documentation that was uploaded and will call you in for an interview. Once it is approved, the profile shows as «Validated by the Provider» in the directory that families see.",
+      "pt-BR": "A solicitação ficará com o estado «Em revisão». A equipe de Incorporação da Prestadora {{organizacion}} auditará a documentação enviada e o convocará para uma entrevista. Uma vez aprovada, o perfil aparece como «Validado pela Prestadora» no diretório que as famílias veem."
+    },
+    "alta.terminos_leido": {
+      "es-AR": "He leído y acepto los",
+      "en": "I have read and accept the",
+      "pt-BR": "Li e aceito os"
+    },
+    "alta.terminos_enlace": {
+      "es-AR": "Términos, Condiciones de Uso y Políticas de Legajo para Asistentes",
+      "en": "Terms, Conditions of Use and Personnel File Policies for Caregivers",
+      "pt-BR": "Termos, Condições de Uso e Políticas de Cadastro para Assistentes"
+    },
+    "alta.terminos_aclaracion": {
+      "es-AR": "(incluye la exención de relación laboral con el software {{producto}} y la autorización de transmitir el legajo a la Prestadora).",
+      "en": "(this includes the waiver of any employment relationship with the {{producto}} software and the authorisation to pass the personnel file on to the Provider).",
+      "pt-BR": "(inclui a isenção de vínculo empregatício com o software {{producto}} e a autorização para transmitir o cadastro à Prestadora)."
+    },
+    "alta.enviado": {
+      "es-AR": "✓ ¡Registro recibido! El legajo ingresó al proceso de auditoría y entrevistas de la Prestadora.",
+      "en": "✓ Registration received. The personnel file has entered the Provider’s audit and interview process.",
+      "pt-BR": "✓ Cadastro recebido. A ficha entrou no processo de auditoria e entrevistas da Prestadora."
+    },
+    "alta.siguiente_paso": {
+      "es-AR": "Siguiente Paso",
+      "en": "Next step",
+      "pt-BR": "Próxima etapa"
+    },
+    "alta.anterior": {
+      "es-AR": "Anterior",
+      "en": "Back",
+      "pt-BR": "Voltar"
+    },
+    "pie.capacitacion": {
+      "es-AR": "Capacitación",
+      "en": "Training",
+      "pt-BR": "Capacitação"
     }
   }
 }

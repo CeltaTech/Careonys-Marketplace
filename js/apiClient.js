@@ -200,7 +200,7 @@ const ClienteDatos = {
     }
   },
 
-  // --- MÓDULO 1: RECLUTAMIENTO Y LEGAJOS (ASISTENTES) ---
+  // --- MÓDULO 1: INCORPORACIÓN DE ASISTENTES Y LEGAJOS ---
   async getAspirantes(filter = {}) {
     // Filtrar automáticamente por el tenant activo
     const activeFilter = { ...filter };
@@ -219,7 +219,7 @@ const ClienteDatos = {
   },
 
   // Las zonas de cobertura que ofrece esta Prestadora, para que el formulario
-  // de reclutamiento las muestre y la persona tilde las suyas.
+  // de incorporación las muestre y la persona tilde las suyas.
   //
   // Va por `zonas_de` y no pidiéndole filas a `zonas_cobertura`: quien completa
   // ese formulario todavía no tiene cuenta, y desde la migración 0035 esa tabla
@@ -251,7 +251,7 @@ const ClienteDatos = {
   //
   // Va por `vocabularios_de` y no leyendo `vocabularios`: la mitad de las
   // pantallas que piden el catálogo son públicas —el directorio, el formulario
-  // de reclutamiento— y quien las usa todavía no tiene cuenta. Es la misma
+  // de incorporación— y quien las usa todavía no tiene cuenta. Es la misma
   // puerta que `prestadora_por_slug` y `zonas_de`, y exige el nombre corto por
   // el mismo motivo: no existe forma de pedir las opciones de todas.
   //

@@ -220,9 +220,9 @@ propia hace la tabla más fácil de referenciar después.
 
 ---
 
-### 9. `pagos` — lo que cobra la plataforma
+### 9. `pagos` — la comisión que la Prestadora cobra por el contacto
 
-**Para qué.** Es la razón de ser comercial de todo esto.
+**Para qué.** Dejar asentado lo que la Prestadora le cobra por haber puesto en contacto a dos partes.
 
 | | |
 |---|---|
@@ -230,12 +230,12 @@ propia hace la tabla más fácil de referenciar después.
 | **De qué depende** | De que esté decidido **qué se cobra, a quién y cuándo**, que es exactamente lo que está congelado |
 | **Qué hay que decidir antes** | **Todo.** `docs/ALCANCE.md` §4 congela la lógica comercial, y esta tabla es la lógica comercial hecha columnas |
 
-Columnas propuestas: Familia, Asistente, búsqueda, monto, moneda, estado, método, dos
-identificadores del cobrador externo, comisión de la plataforma, monto del Asistente.
-
-**Es la única de las diez que sí guarda la moneda** junto al importe, como pide la «todo importe se guarda con su moneda». Le
-falta `prestadora_id`, y le sobran los dos identificadores del cobrador externo: eso ata el
-esquema a un proveedor de cobro que todavía no se eligió.
+**Hasta el 2 de septiembre de 2026 esta ficha guardaba el precio del trato**, y se contradecía con
+la ficha 1 de esta misma página, que ya lo excluye. Manda lo decidido: **el software no sabe del
+trato** (`CLAUDE.md` §1) — ni contrato, ni precio acordado, ni condiciones, ni aceptación. Lo que
+sí puede existir es **la comisión de la Prestadora por el contacto**, que es un cobro de ella y no
+el pago del cuidado. Columnas mínimas y ninguna de más: Prestadora, el contacto que se cobra,
+importe, moneda y fecha. Nada del acuerdo entre la Familia y el Asistente entra acá.
 
 ---
 

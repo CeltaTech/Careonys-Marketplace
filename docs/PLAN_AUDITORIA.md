@@ -82,7 +82,7 @@ cliente por su cuenta.
 
 **Cuatro: el navegador ni siquiera está mandando quién es.** `resolverLegajo`
 (`js/apiClient.js:546`) recibe tres cosas —el legajo, el estado nuevo y una nota— y **ninguna es
-quién lo ejecuta**. La pantalla sí lo sabe: `panel-prestadora.html:449` pide el perfil y lo usa para
+quién lo ejecuta**. La pantalla sí lo sabe: `panel-prestadora.html:1402` pide el perfil y lo usa para
 el control de rol. Pero esa variable es local al arranque de la pantalla y nunca baja hasta la
 función. Lo único de la identidad que llega al servidor es el testigo de sesión en el encabezado
 (`js/apiClient.js:742`). O sea: **el servidor puede saber quién fue; el navegador no lo está
@@ -191,12 +191,27 @@ Se elige por las seis categorías que nombra la regla, no por comodidad.
 | `profiles` | alta, modificación y baja | **Cambios de permisos o de membresía**: `role` y `tenant_id` son literalmente eso |
 | `verificaciones_asistente` | alta, modificación y baja | **Modificación crítica**: es la evidencia de cada control. La escribe el panel de la Prestadora desde el 1 de septiembre de 2026 —fue el pendiente 70—, así que el disparador nace con algo que anotar desde el primer día |
 
-**Lo que queda deliberadamente afuera de la primera tanda, y por qué:**
+**Lo que queda afuera, y la primera no es cuestión de tanda:**
 
-- **`clock_ins` y `reportes`.** Son consecuencia económica y registro clínico, así que la regla los
-  alcanza; pero son las dos tablas con tráfico de verdad —una marca por entrada y por salida, un
-  reporte por turno— y auditarlas es una decisión de volumen, no de seguridad. Van en una segunda
-  tanda, y se anota como pendiente para que no se pierda.
+- **`clock_ins` y `reportes` no entran en este rastro, ni ahora ni en una segunda tanda.** Hasta
+  el 2 de septiembre de 2026 esta página las dejaba afuera «por volumen» y las mandaba a una
+  segunda tanda. Escrito así, hoy pide deshacer algo que ya se decidió, y por eso se corrige.
+  **La Prestadora no mira la jornada:** lo dice la sección «Qué es este producto, y quién hace
+  qué» del `CLAUDE.md` de este producto —la fichada y el reporte de cuidado son la herramienta de
+  la Familia y del Asistente— y está aplicado en la base por tres migraciones.
+  `0053_la_prestadora_no_mira_la_jornada.sql` le saca las dos tablas al personal de la Prestadora
+  y escribe el motivo en su encabezado: *«Mirar a qué hora entra y sale una persona, y leer lo que
+  hizo en cada jornada, no es acompañar: es dirigir el trabajo»*.
+  `0056_la_fichada_se_ata_al_vinculo.sql` cuelga la fichada del vínculo con la Familia, que pasa a
+  ser quien la ve. Y `0067_la_subconsulta_no_filtraba_nada.sql` cierra la rendija por la que ese
+  personal seguía llegando al reporte, porque la subconsulta no filtraba lo que su comentario
+  decía.
+- **Por qué eso decide la pregunta, y no el volumen.** El rastro **lo lee el personal de la
+  Prestadora** (§8). Auditar esas dos tablas acá adentro le devolvería por la ventana lo que las
+  tres migraciones le sacaron por la puerta: qué columna se tocó, de qué fila, quién y cuándo,
+  fichada por fichada. Sería el mismo dato con otro nombre. Si algún día hay que dejar rastro de
+  esas dos tablas, va a ser en otro lado y con otros lectores, y eso es un plan distinto que
+  arranca por esa pregunta y no por ésta.
 - **La sesión de soporte.** No existe ninguna: se buscó `impersona`, `suplanta`, `actuar como`, `en
   nombre de` y `support` en los 46 archivos y no hay mecanismo de suplantación. `soporte-remoto.html`
   no es una herramienta de soporte, es una página comercial. Así que hoy esa categoría no está
@@ -213,6 +228,12 @@ Se elige por las seis categorías que nombra la regla, no por comodidad.
 - **CeltaTech entra como entra a todo lo demás**, con la llave del servidor y por función. No se le
   abre ninguna puerta nueva, y `service_role` no se toca (`0032:51-52`).
 
+**Y de quién lo lee sale qué se puede auditar acá adentro.** Si el rastro lo lee el personal de la
+Prestadora, entonces **ninguna tabla que ese personal no pueda mirar entra en este rastro**: lo que
+la RLS le niega no puede reaparecer, columna por columna, en una fila de auditoría. Es lo que deja
+afuera a `clock_ins` y a `reportes` (§7), y es el filtro con el que se mira cualquier tabla que
+alguien quiera sumar más adelante.
+
 ## 9. Lo que este plan NO cierra, dicho antes de que sorprenda
 
 **Uno: el pisado de archivos.** `Sesion.uploadFile` sube con `upsert: true` (`js/auth.js:250`) y
@@ -221,7 +242,7 @@ dejar nada**. No es un `DELETE` y ningún disparador de estas tres tablas lo ve.
 de datos real y hoy no está en ningún pendiente. **Se abre pendiente aparte.**
 
 **Dos: el motivo de la decisión más crítica se está perdiendo, y no es culpa de que falte el
-rastro.** `panel-prestadora.html:615` y `:629` juntan la nota de la entrevista —el motivo de aprobar
+rastro.** `panel-prestadora.html:866` y `:880` juntan la nota de la entrevista —el motivo de aprobar
 o de rechazar—, `resolverLegajo` la manda como `notaPrestadora` (`js/apiClient.js:519`), y
 **`_mapToDatabase` la descarta**: no está en la lista de campos de `caregivers` (`js/apiClient.js:1355-1376`),
 así que se pierde con un aviso en la consola y nada más. Comprobado el 27 de agosto de 2026 leyendo
@@ -300,5 +321,11 @@ Las dos son defendibles:
 no del legajo. Pero es una excepción a una regla que este mismo plan propone, así que no se toma
 sola.
 
-**d. Si `clock_ins` y `reportes` entran en la primera tanda** (§7). Recomendación: **no**, por
-volumen, y que queden anotados como pendiente para no perderlos.
+**d. Ya no hay nada que decidir sobre `clock_ins` y `reportes`, y por eso este punto se queda
+escrito en vez de borrarse.** Figuraba acá como una pregunta de volumen, y no lo era: el rastro lo
+lee el personal de la Prestadora (§8) y esas dos tablas son justamente las que ese personal no
+mira, por la sección «Qué es este producto, y quién hace qué» del `CLAUDE.md` de este producto y
+por las migraciones `0053_la_prestadora_no_mira_la_jornada.sql`,
+`0056_la_fichada_se_ata_al_vinculo.sql` y `0067_la_subconsulta_no_filtraba_nada.sql`. **No entran,
+no van a una segunda tanda y no queda ningún pendiente abierto por ellas** (§7). Quedan tres
+puntos para decidir: a, b y c.
