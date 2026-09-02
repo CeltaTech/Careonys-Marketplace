@@ -649,7 +649,10 @@
         "pt-BR": "Verificações do cadastro do Assistente"
       },
       "cerrada": false,
-      "usado_en": [],
+      "usado_en": [
+        "panel-prestadora.html:439",
+        "panel-prestadora.html:559"
+      ],
       "items": [
         {
           "en": "Identity document",
@@ -1224,6 +1227,50 @@
           "es-AR": "Otro",
           "pt-BR": "Outro"
         }
+      ]
+    },
+    "estado_verificacion": {
+      "titulo": {
+        "en": "State of a verification in the personal file",
+        "es-AR": "Estado de una verificación del legajo",
+        "pt-BR": "Estado de uma verificação do cadastro"
+      },
+      "cerrada": true,
+      "items": [
+        {
+          "en": "Not submitted",
+          "clave": "pendiente",
+          "es-AR": "Sin presentar",
+          "pt-BR": "Não apresentado"
+        },
+        {
+          "en": "Submitted, not checked",
+          "clave": "presentado",
+          "es-AR": "Presentado, sin comprobar",
+          "pt-BR": "Apresentado, sem comprovar"
+        },
+        {
+          "en": "Checked",
+          "clave": "verificado",
+          "es-AR": "Comprobado",
+          "pt-BR": "Comprovado"
+        },
+        {
+          "en": "Rejected",
+          "clave": "rechazado",
+          "es-AR": "Rechazado",
+          "pt-BR": "Recusado"
+        },
+        {
+          "en": "Expired",
+          "clave": "vencido",
+          "es-AR": "Vencido",
+          "pt-BR": "Vencido"
+        }
+      ],
+      "usado_en": [
+        "panel-prestadora.html:440",
+        "panel-prestadora.html:560"
       ]
     },
     "tarea_acompanamiento": {

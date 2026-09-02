@@ -13,7 +13,7 @@
 
 | Módulo | Estado |
 |---|---|
-| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:598` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs`. **El alta de Asistente exige confirmar el correo, y se queda así**: decidido por el Desarrollador el 2026-08-26 (pendiente 21 cerrado) — el alta es de dos pasos, pero nadie puede darse de alta con el correo de otra persona; `supabase/config.toml` tiene `mailer_autoconfirm: false` |
+| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:790` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs`. **El alta de Asistente exige confirmar el correo, y se queda así**: decidido por el Desarrollador el 2026-08-26 (pendiente 21 cerrado) — el alta es de dos pasos, pero nadie puede darse de alta con el correo de otra persona; `supabase/config.toml` tiene `mailer_autoconfirm: false` |
 | Directorio de Asistentes con filtros | Maquetado y navegable |
 | Perfil del Asistente | Maquetado |
 | Portal de registro de Asistentes | Maquetado, con el legajo funcionando: `registrar-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en las tablas de la migración 0004, y la disponibilidad horaria en las de la 0012 |
@@ -122,7 +122,7 @@ Cómo quedó:
   perfil (`js/apiClient.js:60`); sin sesión, el enlace elige qué directorio se muestra y nada más.
 - **Los archivos siguen la misma regla.** Ver la fila «Archivos del legajo» de arriba.
 
-Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, **ciento diecinueve
+Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, **ciento veintisiete
 comprobaciones, contadas y pasadas el 1 de septiembre de 2026** contra la base de esta máquina. Y
 falsificado a propósito para verificar que se pone en rojo cuando corresponde.
 
@@ -216,7 +216,7 @@ se metía adentro del marcado ahora pasan por `Texto.escapar`, en seis archivos:
 - **Escapar no alcanzaba ahí, y por eso se sacó el `onclick`.** Adentro de un atributo el
   navegador deshace el escapado antes de leer el contenido como código, así que un `&#39;` vuelve
   a ser una comilla y cierra la cadena igual. El identificador ahora se pasa por
-  `addEventListener` (`panel-prestadora.html:265`), que nunca vuelve a leer texto como programa.
+  `addEventListener` (`panel-prestadora.html:278`), que nunca vuelve a leer texto como programa.
 - **Un solo punto de verdad**, como pide «ningún patrón repetido sin punto único de verdad»: `js/texto.js` (77 renglones) tiene
   `Texto.escapar` y `Texto.mensajeDeError`, y lo cargan las catorce pantallas. Antes de esto el
   único archivo que cargaban todas era `js/identidad.js`; ahora son dos. La copia local de
@@ -550,7 +550,7 @@ Comprobado el 24 de agosto de 2026 contra el proyecto real: el servidor tiene ap
 distancia costaba dos cosas que ya no cuestan:
 
 - **La columna del contacto existe.** La 0009 agregó `avisos.contact_info`, que es donde
-  `js/apiClient.js:1203` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
+  `js/apiClient.js:1261` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
   público de `solicitar-asistente.html` mandaba una columna que la base no tenía.
 - **Las filas de ejemplo hablan el idioma del catálogo.** La 0010 reemplazó las claves viejas de
   las cuatro filas ficticias —«enfermero» y compañía— por las que las pantallas esperan.
@@ -884,7 +884,7 @@ atiende, precio por hora y si acepta reemplazos urgentes. Son exactamente los qu
 `directorio`, la vista que sólo deja pasar a quien tiene el legajo validado por la
 Prestadora **y** además autorizó que se lo publique.
 
-- **Lo trae `traerDelDirectorio` (`js/apiClient.js:784`)**, que pide una sola fila filtrando por
+- **Lo trae `traerDelDirectorio` (`js/apiClient.js:824`)**, que pide una sola fila filtrando por
   identificador y por Prestadora. Un identificador que no tiene forma de identificador se contesta
   sin preguntarle a la base: la base devolvería un error de sintaxis, y un error en pantalla se lee
   como que el sistema se rompió, cuando lo que hay es un enlace viejo. Los hay: hasta el 25 de
@@ -1563,7 +1563,7 @@ pantalla vacía.
 
 **El daño no era igual en las cuatro pantallas, y conviene decirlo así en vez de dejarlo parejo.**
 
-- **Una sola quedaba muda de verdad.** En `panel-prestadora.html:408`, una tabla sin legajos se ve
+- **Una sola quedaba muda de verdad.** En `panel-prestadora.html:600`, una tabla sin legajos se ve
   igual esté rota o esté bien: es idéntica a la de una Prestadora que todavía no cargó ninguno.
   Ahora el fallo escribe en la propia tabla «No se pudo preparar la pantalla. Conviene volver a
   cargarla», que es el estado de error que faltaba.
@@ -1780,7 +1780,7 @@ el servidor.
 para decir una sola cosa: `validado` y `validado_prestadora`. La `0007:8` ya había escrito qué
 significa —«Validado quiere decir "la Prestadora revisó los papeles"»—, que es exactamente lo que
 dice `validado_prestadora` con todas las letras. Los dos pasaban en todos lados, y **el corto no lo
-escribía nadie**: el único lugar que asigna un estado validado es `panel-prestadora.html:422`, y
+escribía nadie**: el único lugar que asigna un estado validado es `panel-prestadora.html:614`, y
 pone el largo. El corto sólo aparecía leído, y en una fila de ejemplo.
 
 La `0017` lo saca: pasa las filas que decían `validado` a decir `validado_prestadora`, y el
@@ -1897,9 +1897,9 @@ Que sigan siendo ocho copias es parte del pendiente 13.
 
 **«Toda operación destructiva se confirma» se midió en el mismo rato y salió todavía más
 corta.** La regla pide confirmación explícita ante cada una, y la medición encontró que en este proyecto hay exactamente una:
-rechazar un legajo (`panel-prestadora.html:384`). No hay un solo `delete` contra la base en las
+rechazar un legajo (`panel-prestadora.html:576`). No hay un solo `delete` contra la base en las
 cuarenta y cuatro pantallas y guiones —lo único que se parece son dos `delete` de JavaScript sobre
-un objeto en memoria, `js/apiClient.js:407` y `js/apiClient.js:451`, que no tocan nada guardado—, y
+un objeto en memoria, `js/apiClient.js:407` y `js/apiClient.js:491`, que no tocan nada guardado—, y
 salir de la sesión no
 destruye nada. La única que hay ya pregunta antes, y la pregunta dice qué queda después:
 «Se va a rechazar este legajo. Queda cerrado y la persona no aparece en el plantel activo.
@@ -2232,7 +2232,7 @@ lea las mismas reglas, no una segunda copia de ellas.
 el pendiente 15. No era una cuestión de prolijidad. Quien escribe la llamada a mano decide solo si
 manda el token de quien inició sesión o la clave pública, y de ese renglón depende que la base
 sepa quién está preguntando. Ahora son `ClienteDatos.getMensajes()` y
-`ClienteDatos.enviarMensaje()` (`js/apiClient.js:737`), que arman el pedido una sola vez para
+`ClienteDatos.enviarMensaje()` (`js/apiClient.js:777`), que arman el pedido una sola vez para
 todos.
 
 Se ganó algo que no se buscaba: la lectura vieja miraba `res.ok` y, si venía en falso, seguía de
@@ -2417,10 +2417,11 @@ intento entero, y salió peor de lo que decía el papel: el legajo se puede **cr
 hace falta modificarlo después; el sello se baja y se vuelve a subir cuantas veces se quiera; y
 la persona **apareció en el directorio público**, pedido sin ninguna sesión. Lo ficticio se borró
 al terminar. **La prueba puede fallar:** la misma cuenta, en la misma corrida, intentó mudar su
-legajo a la Prestadora ajena y recibió `403`. Y quedó a la vista un cruce con el pendiente 70: la
-tarjeta del intruso salió con la lista `comprobaciones` vacía, que es lo mismo que muestra hoy la
-de cualquiera, porque ninguna pantalla carga esas comprobaciones. **La única señal que habría
-distinguido un legajo revisado de uno auto-sellado hoy no distingue nada.**
+legajo a la Prestadora ajena y recibió `403`. Y quedó a la vista un cruce con el que entonces era
+el pendiente 70: la tarjeta del intruso salió con la lista `comprobaciones` vacía, que era lo mismo
+que mostraba la de cualquiera, porque ninguna pantalla cargaba esas comprobaciones. **La única
+señal que habría distinguido un legajo revisado de uno auto-sellado no distinguía nada** — hasta
+que el panel estrenó la pantalla que las marca, el 1 de septiembre de 2026.
 
 **Los dos depósitos de archivos también se midieron, y esa prueba sí se pudo hacer entera.**
 Se pidieron las dos direcciones públicas contra el servidor real: `avatares` contesta «objeto no
@@ -2789,7 +2790,7 @@ de franjas, treinta y cinco de avisos y todo el contenido de los cuatro legajos 
 nadie les mirara los valores.**
 
 Un chequeo que no mira no es un chequeo que pasa: es un chequeo que no existe. Ahora reconoce las
-dos formas (`scripts/verificar_claves.mjs:213`) y conoce cinco columnas más —modalidad y nivel de
+dos formas (`scripts/verificar_claves.mjs:219`) y conoce cinco columnas más —modalidad y nivel de
 un curso, día y turno de una franja, puesto de una experiencia—.
 
 **Se probó que puede fallar**, que es la única forma de saber que sirve. Con dos valores
@@ -2891,7 +2892,7 @@ ficticia y sesión simulada: el legajo se creó con fecha de alta del **1 de ene
 `update` posterior la corrió al **1 de enero de 2010**. Las dos veces la base guardó lo que le
 mandaron.
 
-**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:1113` la traduce a `fechaRegistro` y ese
+**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:1171` la traduce a `fechaRegistro` y ese
 nombre no aparece en ningún otro archivo del proyecto—, así que no había consecuencia visible. Se
 arregló igual, porque la antigüedad es exactamente la clase de dato que después se usa para ordenar
 un directorio o para decidir a quién se muestra primero, y ese día el agujero pasa a ser una
@@ -3282,6 +3283,65 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 - **Lo demás que falta**: la guía no llega al teléfono sin señal (pendiente 102), que es justo
   cuando más se necesita.
 
+### La Prestadora ya puede marcar cada verificación del legajo
+
+**Fue el pendiente 70, y era un agujero entero.** El directorio prometía decir qué se le comprobó a
+cada persona y no había dónde marcarlo: la tabla `verificaciones_asistente` existe desde la
+migración 0004, sus columnas de rastro desde la 0005 y la vista que las publica desde la 0026, pero
+lo único que la escribía eran las dos siembras de las Organizaciones ficticias. En una Prestadora
+de verdad, por prolija que fuera revisando papeles, la tarjeta del directorio decía siempre que no
+se le comprobó nada. **Construida el 1 de septiembre de 2026.**
+
+**Está donde va, y el orden importa.** En el legajo que abre `panel-prestadora.html`, arriba del
+cuadro donde se otorga o se rechaza el aval: primero se marca papel por papel y recién después se
+resuelve el legajo entero. Se dibuja sola al abrir el legajo y sin hacerse esperar
+(`panel-prestadora.html:386`), porque es otro pedido y tiene su propio cartel de estado
+(`panel-prestadora.html:412`). Cada papel del catálogo trae su desplegable con los cinco estados,
+y el bloque entero lo arma `dibujarVerificaciones()` (`panel-prestadora.html:427`) desde el catálogo
+de frases y desde los dos vocabularios de la base, así que existe igual en `en` y en `pt-BR`.
+Ninguna opción está escrita en la pantalla: los renglones se arman con `createElement`, que es lo
+que `scripts/verificar_opciones.mjs` pide para un desplegable que sale de la base.
+
+**Los cinco estados tienen nombre, y el nombre sale de la base.**
+`supabase/migrations/0059_los_estados_de_una_verificacion_tienen_nombre.sql` estrena el vocabulario
+cerrado `estado_verificacion` con «Sin presentar», «Presentado, sin comprobar», «Comprobado»,
+«Rechazado» y «Vencido», en los tres idiomas. «Comprobado» dice exactamente lo mismo que ya decía
+la tarjeta del directorio a la Familia, y es a propósito: dos palabras distintas para el mismo
+hecho es como se empieza a tener dos catálogos.
+
+**Quién marcó y cuándo lo escribe la base, no el pedido.**
+`supabase/migrations/0060_la_verificacion_dice_quien_la_marco.sql` pone un disparador que llena
+`verificado_por` con `auth.uid()` y `verificado_el` con la hora del servidor. La pantalla podría
+mandarlos en el pedido, y entonces cualquiera con la clave pública podría firmar con el nombre de
+un compañero una comprobación que no hizo. También vuelve las dos columnas a vacío cuando el estado
+regresa a «sin presentar» —la columna no puede seguir diciendo que alguien lo comprobó el martes si
+ya no está comprobado— y no refresca la fecha cuando el estado no cambió.
+
+**Y el cliente de datos aprendió a hacer un alta-o-modificación en un solo pedido.**
+`_supabaseUpsert()` (`js/apiClient.js:1140`) se apoya en la restricción de unicidad de
+`(legajo, tipo)` que trae la migración 0004, así que marcar el mismo papel dos veces corrige el
+renglón que ya está en vez de agregar otro. No existía en ninguna de las tres copias del archivo,
+y `marcarVerificacion()` (`js/apiClient.js:466`) es la primera que la usa.
+
+**Probado con las dos Organizaciones ficticias, y la prueba puede fallar.** Ocho comprobaciones
+nuevas en `scripts/probar_aislamiento.mjs:845`, que llevaron la corrida de 119 a 127. Se hacen
+sobre un legajo recién creado que arranca **sin ninguna comprobación cargada**, que es la condición
+que pedía el pendiente: sobre uno ya sembrado, la pantalla rota y la sana contestan lo mismo. Quedó
+comprobado que el personal de la Prestadora puede marcar; que la huella la escribe la base aunque
+el pedido traiga una inventada; que lo marcado sale en su tarjeta del directorio; que ese mismo
+personal recibe `403` sobre un legajo de la otra Prestadora y que no queda escrito nada; que el
+Asistente recibe `403` marcándose sus propios papeles; y que volver a «sin presentar» borra la
+huella y saca la comprobación de la tarjeta.
+
+**Lo que esta pantalla no hace, dicho de frente.** Marca el estado y nada más, y quedan dos huecos
+que no son el mismo. **No pone plazos**: `plazo_vence_el` tiene su índice desde la migración 0004
+(`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:237`) y sigue sin que nadie
+lo escriba, así que «Vencido» hay que ponerlo a mano y nada avisa antes — es el mismo agujero que
+el pendiente 98, con su plan escrito en `docs/PLAN_VENCIMIENTOS.md` y sin aprobar. **Y no aplica
+las dos puertas** —la del alta y la de la publicación— que `data/catalogo-verificaciones.json`
+declara papel por papel, porque ese archivo no lo lee ninguna pantalla ni ningún guion del
+producto: sólo lo nombran documentos y dos migraciones. Es el pendiente 143.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,
@@ -3294,7 +3354,6 @@ porque migrar es más barato que construir.
 | **Puntos reputacionales y rangos** (Bronce → Plata → Oro) | No existe |
 | **Reemplazo urgente por cercanía** (<2hs, <5km) | No existe. El botón está, la lógica no |
 | **Badges de verificación de 4 niveles** | Se muestran. No hay validación real detrás de ninguno |
-| **La pantalla que carga las verificaciones del legajo** | La tabla, sus columnas de rastro, sus políticas y la vista que las publica están desde las migraciones 0004, 0005 y 0026; **falta dónde apretar**, así que hoy sólo tienen comprobaciones los legajos que sembraron las migraciones 0027 y 0030. Es el pendiente 70 |
 | **Reportes de salud y signos vitales** | Maquetado sin persistencia — y ver §3 |
 | **Asesoría de reintegros de Obra Social** | Maquetado sin lógica — y ver §3 |
 
@@ -3349,7 +3408,7 @@ prestación.
 
 El mercado es de una Prestadora: sus Asistentes ofreciendo, sus Familias buscando. Muchos de un
 lado y muchos del otro, pero **todos adentro de la misma Organización**. Es lo que ya hace
-`js/apiClient.js:764`, que resuelve una Prestadora y le muestra los suyos a `directorio.html`.
+`js/apiClient.js:804`, que resuelve una Prestadora y le muestra los suyos a `directorio.html`.
 
 **Ninguna búsqueda, en ninguna modalidad, mezcla Asistentes de dos Prestadoras.** Mezclarlas sería
 abandonar el aislamiento entre Organizaciones para conseguir un desorden general. No
@@ -4087,15 +4146,15 @@ el **pendiente 107**.
 
 **Y lo que la opción A todavía le debe a quien la sufre.** Que la persona vea, **antes** de cambiar
 un papel, que hacerlo le baja el sello. Hoy no se puede escribir: ninguna pantalla cambia
-`documents` —el mapeo existe en `js/apiClient.js:1176` y no lo usa nadie— y el chequeo de frases se
+`documents` —el mapeo existe en `js/apiClient.js:1234` y no lo usa nadie— y el chequeo de frases se
 pone en rojo con toda frase de catálogo que ninguna pantalla nombre. La frase entra el día que
 entre la pantalla; es el **pendiente 108**.
 
-**Lo que sigue sin verse, que es el pendiente 70.** Cerrar estos cuatro impide que alguien se selle
-solo; **no** hace que se vea quién fue revisado y con qué. La lista `comprobaciones` de la tarjeta
-del directorio sigue vacía para todo el mundo, porque ninguna pantalla escribe
-`verificaciones_asistente`. O sea que la única señal que le permitiría a una Familia distinguir un
-legajo revisado de uno que no lo está sigue sin distinguir nada.
+**Lo que no se veía, y era el pendiente 70.** Cerrar estos cuatro impide que alguien se selle solo;
+**no** hacía que se viera quién fue revisado y con qué, porque la lista `comprobaciones` de la
+tarjeta del directorio quedaba vacía para todo el mundo: ninguna pantalla escribía
+`verificaciones_asistente`. Eso se cerró el 1 de septiembre de 2026 con la pantalla que las marca,
+y está más arriba en esta misma sección.
 
 ### La aplicación de teléfono del Asistente preguntaba una zona que ya no cambiaba nada
 
@@ -4121,7 +4180,7 @@ Cerró el pendiente 94, el 31 de agosto de 2026.
   pregunta al módulo antes de enviar, y si no hay respuesta el formulario vuelve al paso 1 y lleva
   la vista al campo (`pwa-asistente/index.html:2204`).
 - **Se guarda donde se lee**: las claves van a `zonas_asistente` y el texto libre a `zonas_texto`,
-  por `js/apiClient.js:424` y `:1173`. `caregivers.zone` no la escribe más nadie, y eso abrió el
+  por `js/apiClient.js:424` y `:1231`. `caregivers.zone` no la escribe más nadie, y eso abrió el
   **pendiente 109**.
 - **Y el 109 se cerró esa misma noche, por la salida que no borra datos.** Se midió
   primero: ninguna pantalla manda `zona` ni `zonaResidencia` al escribir un legajo, así
@@ -4212,7 +4271,7 @@ sin poder correr, y eso era sólo medio cierto.** Lo que no puede correr es cont
 publicado, porque ahí el alta pide confirmar el correo y la prueba nunca llega a tener sesión.
 Contra la base de esta máquina corre entera, y el propio encabezado del guion lo dice desde que se
 escribió: `scripts/probar_aislamiento.mjs:9`. El 1 de septiembre de 2026 se corrió con `--local` y
-**pasaron las 119 comprobaciones**, incluidas las cinco que sólo existen ahí —ascender a alguien a
+**pasaron las 127 comprobaciones**, incluidas las cinco que sólo existen ahí —ascender a alguien a
 coordinador para ver si el personal lee los papeles de su Prestadora y no los de la otra, y si no
 lee ninguna de las tres tablas de la modalidad—, porque ascender pide la clave de administración y ésa
 vive nada más que en el entorno local.
@@ -4247,7 +4306,7 @@ cuenta las que hizo y busca en los cuatro documentos la frase que dice cuántas 
 letras o en cifras según el documento. Un desajuste **no** dice que el aislamiento falle —eso sería
 enseñarle a la próxima persona a desconfiar del mensaje—: el veredicto del aislamiento sale
 primero y completo, y el desajuste sale después, como nota al pie, diciendo que se corrige el
-documento y no la prueba. El código del añadido está en `scripts/probar_aislamiento.mjs:2177`.
+documento y no la prueba. El código del añadido está en `scripts/probar_aislamiento.mjs:2271`.
 
 **Comprobado en los dos sentidos**, como pide la regla de la casa: con `docs/INVENTARIO.md` falseado
 a propósito la prueba sale con código 1 y nombra el archivo y la frase que buscó; con el número
@@ -4908,7 +4967,7 @@ que las otras dos, que la limpieza se la lleva.
 escribe nadie: ni una pantalla, ni un guion, ni una prueba. Lo que sí pasa es que
 `registrar-asistente.html:996-1000` sube el documento de identidad, los antecedentes penales y el
 título, y guarda **sólo los caminos** en la columna `documents` de `caregivers`
-(`registrar-asistente.html:1057`, y de ahí a la base por `js/apiClient.js:1176`). O sea que hay
+(`registrar-asistente.html:1057`, y de ahí a la base por `js/apiClient.js:1234`). O sea que hay
 dos formas de guardar el mismo hecho y una está muerta, como ya pasó con `messages` y las
 `conversaciones` heredadas. Y la que quedó viva es la pobre: la tabla dedicada tiene `tipo`,
 `presentado_el`, `vencimiento` y `verificado`, y el objeto de `documents` no tiene ninguno de los
@@ -4937,7 +4996,7 @@ defendía eso diciendo que los fichados ya escritos decían «Entrada» —y no 
 escrito, ni podía haberlo—. Es justo la distancia entre lo visible, que cambia con el idioma,
 y lo guardado, que se nombra por su función y no cambia.
 
-Las tres corregidas. El legajo se resuelve **una sola vez**, en `js/apiClient.js:540`, porque son
+Las tres corregidas. El legajo se resuelve **una sola vez**, en `js/apiClient.js:580`, porque son
 dos pantallas que necesitan el mismo dato; si no hay legajo lo dice y se planta, con una frase
 nueva en los tres idiomas, en vez de inventar uno. Y `event_type` guarda `entrada` y `salida`,
 que son las claves que el catálogo de frases **ya usaba** —no hace falta ninguna palabra nueva—,
@@ -5176,7 +5235,7 @@ no se entera nadie el día que ese algo cambie. Ahora
 `scripts/probar_exenciones.mjs` la tomó sola: vaciarla pone rojo al chequeo, comprobado.
 
 El `avatares` es aparte y está bien: es público **a propósito** desde la 0006, porque la foto es lo
-que el directorio muestra sin cuenta (`js/apiClient.js:805`). Ahí no hay nada que aislar hacia
+que el directorio muestra sin cuenta (`js/apiClient.js:845`). Ahí no hay nada que aislar hacia
 afuera; lo que la condición cuida es la escritura, que nadie deje una foto en la carpeta de otro.
 
 Mover el camino a `<Organización>/<cuenta>/<archivo>` no es sólo una migración: hay que mudar los
@@ -5328,7 +5387,7 @@ Todo correcto. Otra vez no había nada que arreglar; faltaba lo que impide el pr
 Y el primer error tiene dos tamaños muy distintos, que conviene no mezclar. **Equivocarse el nombre
 falla callado**: el depósito no existe, `urlFirmada()` devuelve `null` y la pantalla no muestra el
 archivo sin decir por qué. **Confundirse de depósito en la dirección pública publica un documento de
-identidad**, que es el peor error posible de este producto. `js/apiClient.js:815` arma una dirección
+identidad**, que es el peor error posible de este producto. `js/apiClient.js:855` arma una dirección
 pública a mano, con el nombre del depósito pegado adentro del texto de la dirección: cambiar ahí una
 palabra por la otra es un renglón.
 

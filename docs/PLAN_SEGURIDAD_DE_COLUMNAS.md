@@ -148,9 +148,9 @@ cerrar la tabla entera dejaría todos los rechazos en verde sin haber arreglado 
 
 ## 8. Lo que este plan no arregla, y hay que decirlo
 
-**El pendiente 70 sigue abierto y se cruza con éste.** La prueba del 66 dejó a la vista que la
-tarjeta del intruso salía con la lista de comprobaciones vacía — que es exactamente lo que sale
-hoy en la tarjeta de cualquiera, porque ninguna pantalla carga esas comprobaciones. O sea que la
-única señal que le permitiría a una Familia notar la diferencia entre un legajo revisado y uno
-auto-sellado hoy no distingue nada. Cerrar los cuatro pendientes de acá impide que alguien se
-selle solo; **no** hace que se vea quién fue revisado y con qué. Eso es el 70.
+**Lo que era el pendiente 70 se cruzaba con éste, y ya está cerrado.** La prueba del 66 dejó a la
+vista que la tarjeta del intruso salía con la lista de comprobaciones vacía — que era exactamente
+lo que salía en la tarjeta de cualquiera, porque ninguna pantalla cargaba esas comprobaciones. Esa
+mitad la cerró el panel de la Prestadora el 1 de septiembre de 2026. La otra mitad sigue siendo de
+este plan: cerrar los cuatro pendientes de acá impide que alguien se selle solo, que es cosa
+distinta de que se vea quién lo revisó y con qué.

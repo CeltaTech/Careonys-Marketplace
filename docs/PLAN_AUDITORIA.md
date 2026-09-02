@@ -67,7 +67,7 @@ sesión propia, cambia el dato y no anota nada. Un disparador se dispara igual, 
 la pantalla, de un guion o de la consola.
 
 **Dos: no hay un punto por donde pasen todas las escrituras.** Hay dos caminos y no uno. Todo lo
-REST pasa por `_supabaseRequest` (`js/apiClient.js:587`), que sí es un embudo único —las 15
+REST pasa por `_supabaseRequest` (`js/apiClient.js:1075`), que sí es un embudo único —las 15
 llamadas de datos entran por ahí—. Pero **la autenticación y los archivos no lo tocan nunca**:
 `Sesion.login` (`js/auth.js:60`), `Sesion.signup` (`js/auth.js:77`), `Sesion.cambiarClave`
 (`js/auth.js:108`) y `Sesion.uploadFile` (`js/auth.js:180`) hablan derecho con el cliente de la
@@ -189,7 +189,7 @@ Se elige por las seis categorías que nombra la regla, no por comodidad.
 |---|---|---|
 | `caregivers` | alta, modificación y baja | **Modificación crítica** —`verification_status` es lo que publica a una persona como comprobada— y **consecuencia económica** —`bank_info` es el CBU y `hourly_rate` el precio—. Y **borrado de datos**: hoy el producto no borra, pero `authenticated` tiene el permiso y las dos políticas son `for all` (`0005:169-180`), así que un pedido directo borra la fila propia |
 | `profiles` | alta, modificación y baja | **Cambios de permisos o de membresía**: `role` y `tenant_id` son literalmente eso |
-| `verificaciones_asistente` | alta, modificación y baja | **Modificación crítica**: es la evidencia de cada control. Hoy no la escribe ninguna pantalla —pendiente 70—, así que el disparador nace sin nada que anotar y va igual, para que la pantalla nazca auditada y no haya que acordarse después |
+| `verificaciones_asistente` | alta, modificación y baja | **Modificación crítica**: es la evidencia de cada control. La escribe el panel de la Prestadora desde el 1 de septiembre de 2026 —fue el pendiente 70—, así que el disparador nace con algo que anotar desde el primer día |
 
 **Lo que queda deliberadamente afuera de la primera tanda, y por qué:**
 
@@ -221,9 +221,9 @@ dejar nada**. No es un `DELETE` y ningún disparador de estas tres tablas lo ve.
 de datos real y hoy no está en ningún pendiente. **Se abre pendiente aparte.**
 
 **Dos: el motivo de la decisión más crítica se está perdiendo, y no es culpa de que falte el
-rastro.** `panel-prestadora.html:393` y `:408` juntan la nota de la entrevista —el motivo de aprobar
+rastro.** `panel-prestadora.html:615` y `:629` juntan la nota de la entrevista —el motivo de aprobar
 o de rechazar—, `cambiarEstadoAspirante` la manda como `notaPrestadora` (`js/apiClient.js:431`), y
-**`_mapToDatabase` la descarta**: no está en la lista de campos de `caregivers` (`js/apiClient.js:1104-1125`),
+**`_mapToDatabase` la descarta**: no está en la lista de campos de `caregivers` (`js/apiClient.js:1223-1244`),
 así que se pierde con un aviso en la consola y nada más. Comprobado el 27 de agosto de 2026 leyendo
 las dos listas. Y no hay columna donde pudiera caer: `caregivers` no tiene ninguna para eso. **Se
 abre pendiente aparte**, y en §12 queda la pregunta de si el motivo va a una columna del legajo o a
@@ -240,7 +240,7 @@ lo tiene. Se eligió a favor de la regla de privacidad, a conciencia.
 
 ## 10. Cómo se prueba, y por qué la prueba puede fallar
 
-Va adentro de `scripts/probar_aislamiento.mjs`, que es donde ya viven las 119 comprobaciones y las
+Va adentro de `scripts/probar_aislamiento.mjs`, que es donde ya viven las 127 comprobaciones y las
 seis cuentas ficticias. En el tramo que corre con `--local`, que es el único donde se puede ascender
 a alguien a coordinador.
 

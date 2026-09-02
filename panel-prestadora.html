@@ -139,6 +139,19 @@
         <!-- Contenido inyectado por JS -->
       </div>
 
+      <!-- LAS VERIFICACIONES DEL LEGAJO, PAPEL POR PAPEL
+           Va antes de la resolución a propósito: primero se marca cada papel y
+           recién después se otorga el aval. Ni un rótulo está escrito acá
+           adentro; el bloque entero lo dibuja `dibujarVerificaciones()` desde el
+           catálogo de frases y desde los vocabularios de la base, que es lo que
+           lo hace existir también en `en` y en `pt-BR`. -->
+      <div style="background:var(--superficie-hundida);padding:16px;border-radius:12px;margin:16px 0;border:1px solid var(--borde-card);">
+        <h4 id="verificaciones-titulo" style="margin:0 0 4px 0;font-size:14px;color:var(--texto-titulo);"></h4>
+        <p id="verificaciones-bajada" class="texto-11 color-secundario m-0 mb-12"></p>
+        <div class="oculto p-16 redondeo-10 texto-13 interlineado-16 mb-12" id="verificaciones-estado"></div>
+        <div id="verificaciones-lista"></div>
+      </div>
+
       <div style="background:var(--superficie-hundida);padding:16px;border-radius:12px;margin:16px 0;border:1px solid var(--borde-card);">
         <h4 style="margin:0 0 8px 0;font-size:14px;color:var(--texto-titulo);"><i class="fas fa-user-check"></i>
           Resolución de la Prestadora {{organizacion}}:</h4>
@@ -367,6 +380,185 @@
       estadoTabla(null);
       document.getElementById('detalles-aspirante-content').innerHTML = html;
       document.getElementById('modal-auditoria').style.display = 'flex';
+
+      // Sin `await`: las verificaciones son otro pedido y tienen su propio
+      // cartel, así que el legajo se muestra apenas está y ellas llegan solas.
+      dibujarVerificaciones(id);
+    }
+
+    // ── LAS VERIFICACIONES DEL LEGAJO ──────────────────────────────────────
+    //
+    // Es lo único que la Prestadora controla de un Asistente: **quién entra**.
+    // No reparte trabajo, no mira la fichada y no mira el reporte de cuidado
+    // (`CLAUDE.md` §1). Mira los papeles, y los marca de a uno.
+    //
+    // Hasta hoy no había dónde marcarlos: la pantalla aprobaba o rechazaba el
+    // legajo entero, y la tabla `verificaciones_asistente` —que existe desde la
+    // migración 0004, y de la que sale la lista de comprobaciones que la Familia
+    // ve en el directorio (0026)— sólo se llenaba con la siembra. O sea que en
+    // una Prestadora de verdad el directorio no habría mostrado ninguna.
+    //
+    // El bloque se dibuja acá y no en el marcado, y no es por gusto:
+    // `verificar_frases.mjs` da por convertida una pantalla en cuanto encuentra
+    // un solo `data-frase` en su marcado, y desde ahí exige que no quede ni una
+    // palabra escrita a mano en todo el archivo. Esta pantalla todavía tiene
+    // texto viejo escrito en el marcado; el día que se saque, esto puede pasar a
+    // `data-frase`. Mientras tanto un bloque dibujado sale igual en los tres
+    // idiomas sin encender esa regla a medias.
+
+    // El cartel de estado de este bloque. Es propio, como el del tope y por el
+    // mismo motivo: dos cargas que corren casi a la vez sobre un cartel único se
+    // borran entre ellas. Recibe la **clave** del catálogo, como los otros dos.
+    function estadoVerificaciones(tono, clave, huecos) {
+      const caja = document.getElementById('verificaciones-estado');
+      if (!tono) { caja.classList.add('oculto'); return; }
+      caja.textContent = Texto.frase(clave, huecos);
+      caja.style.background = 'var(--tono-' + tono + '-fondo)';
+      caja.style.color = 'var(--tono-' + tono + '-texto)';
+      caja.classList.remove('oculto');
+    }
+
+    // «los cuatro estados»: cargando y error en el cartel, la rama de «el
+    // catálogo no trajo ninguna verificación» dicha aparte, y listo.
+    //
+    // Los papeles salen del vocabulario `verificacion` y los estados del
+    // `estado_verificacion`, los dos de la base. Ninguna de las dos listas está
+    // escrita en esta pantalla: «los catálogos salen de la base».
+    async function dibujarVerificaciones(caregiverId) {
+      const lista = document.getElementById('verificaciones-lista');
+      lista.innerHTML = '';
+      document.getElementById('verificaciones-titulo').textContent =
+        Catalogo.frase('panel.verificaciones_titulo');
+      document.getElementById('verificaciones-bajada').textContent =
+        Catalogo.frase('panel.verificaciones_bajada');
+      estadoVerificaciones('info', 'panel.verificaciones_cargando');
+
+      let papeles, estados, marcadas;
+      try {
+        await Catalogo.cargar();
+        papeles = Catalogo.items('verificacion');
+        estados = Catalogo.items('estado_verificacion');
+        marcadas = await ClienteDatos.verificacionesDeAspirante(caregiverId);
+      } catch (err) {
+        console.error('Panel de la Prestadora, verificaciones del legajo:', err);
+        estadoVerificaciones('critico', 'panel.verificaciones_error');
+        return;
+      }
+
+      if (!papeles.length || !estados.length) {
+        estadoVerificaciones('atencion', 'panel.verificaciones_sin_catalogo');
+        return;
+      }
+
+      // Un papel del que la base no tiene ninguna fila vale «sin presentar»,
+      // que es el valor de fábrica de la columna. Así el legajo recién llegado
+      // se ve completo —los siete papeles, todos sin presentar— en vez de vacío.
+      const porTipo = {};
+      (marcadas || []).forEach((f) => { porTipo[f.tipo] = f; });
+
+      // Cada renglón se arma con `createElement` y no pegando texto, que es lo
+      // que `verificar_opciones.mjs` pide para un desplegable que sale de la
+      // base: un `<option>` escrito a mano guarda un valor que ningún
+      // vocabulario gobierna. De paso no queda nada que escapar, porque
+      // `textContent` no interpreta marcado.
+      papeles.forEach((papel) => {
+        const fila = porTipo[papel.clave] || {};
+        const actual = fila.estado || 'pendiente';
+
+        const renglon = document.createElement('div');
+        renglon.className = 'flex gap-12 mb-12';
+        renglon.style.alignItems = 'center';
+        renglon.style.justifyContent = 'space-between';
+
+        const rotulo = document.createElement('span');
+        rotulo.className = 'texto-12 peso-700';
+        rotulo.textContent = Catalogo.texto(papel);
+        renglon.appendChild(rotulo);
+
+        const derecha = document.createElement('span');
+        derecha.className = 'flex gap-12';
+        derecha.style.alignItems = 'center';
+
+        if (fila.verificado_el) {
+          const marca = document.createElement('span');
+          marca.className = 'texto-11 color-secundario';
+          marca.textContent = Catalogo.frase('panel.verificaciones_marcado_el', {
+            fecha: new Date(fila.verificado_el).toLocaleDateString(Catalogo.idioma)
+          });
+          derecha.appendChild(marca);
+        }
+
+        const select = document.createElement('select');
+        select.className = 'texto-12 redondeo-6 borde-tarjeta p-8';
+        select.dataset.tipo = papel.clave;
+        estados.forEach((e) => {
+          const opcion = document.createElement('option');
+          opcion.value = e.clave;
+          opcion.textContent = Catalogo.texto(e);
+          select.appendChild(opcion);
+        });
+
+        // Si la base guardó un estado que el vocabulario ya no tiene, el
+        // desplegable se queda en blanco y desde ahí cualquier vuelta atrás
+        // guarda vacío. Antes que eso, se muestra el primero de la lista.
+        select.value = actual;
+        if (!select.value) select.value = estados[0].clave;
+
+        // El aviso se ata acá y no se escribe en el marcado: así el tipo viaja
+        // adentro del elemento y no hay que armar el nombre de una función
+        // pegándole el valor, que es por donde entra lo que escribió cualquiera.
+        select.dataset.antes = select.value;
+        select.onchange = () => guardarVerificacion(caregiverId, select);
+
+        derecha.appendChild(select);
+        renglon.appendChild(derecha);
+        lista.appendChild(renglon);
+      });
+
+      estadoVerificaciones(null);
+    }
+
+    // «todo botón que dispara una operación se apaga»: acá el que dispara es el
+    // desplegable, así que el que se apaga es él.
+    //
+    // Y si la base rechaza el cambio, el desplegable vuelve al valor que tenía.
+    // Dejarlo mostrando lo que no se guardó es peor que no haberlo movido: quien
+    // marcó se va convencido de que el papel quedó comprobado.
+    async function guardarVerificacion(caregiverId, select) {
+      const tipo = select.dataset.tipo;
+      const nuevo = select.value;
+      const antes = select.dataset.antes;
+
+      select.disabled = true;
+      estadoVerificaciones('info', 'panel.verificaciones_guardando');
+
+      let fila;
+      try {
+        fila = await ClienteDatos.marcarVerificacion(caregiverId, tipo, nuevo);
+      } catch (err) {
+        console.error('Panel de la Prestadora, marca de una verificación:', err);
+        select.value = antes;
+        estadoVerificaciones('critico', 'panel.verificaciones_error_guardar');
+        return;
+      } finally {
+        select.disabled = false;
+      }
+
+      // La base contestó sin devolver la fila: el cambio no quedó escrito, y
+      // decir «guardado» sería mentir. Es la misma falla que la de arriba.
+      if (!fila) {
+        select.value = antes;
+        estadoVerificaciones('critico', 'panel.verificaciones_error_guardar');
+        return;
+      }
+
+      // Lo que se muestra es lo que quedó guardado, no lo que se eligió.
+      select.value = fila.estado;
+      select.dataset.antes = fila.estado;
+      estadoVerificaciones('exito', 'panel.verificaciones_guardado', {
+        papel: Catalogo.etiquetaSiExiste('verificacion', tipo),
+        estado: Catalogo.etiquetaSiExiste('estado_verificacion', fila.estado)
+      });
     }
 
     // Otorgar el aval y rechazar son la misma operación con distinto resultado, así

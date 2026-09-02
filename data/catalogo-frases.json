@@ -1461,6 +1461,51 @@
       "en": "Does not meet the requirements.",
       "pt-BR": "Não cumpre os requisitos."
     },
+    "panel.verificaciones_titulo": {
+      "es-AR": "Verificaciones del legajo",
+      "en": "Checks on the personal file",
+      "pt-BR": "Verificações do cadastro"
+    },
+    "panel.verificaciones_bajada": {
+      "es-AR": "Cada papel se marca por separado. Lo que quede comprobado acá es lo que la Familia ve en el directorio.",
+      "en": "Each document is marked on its own. What is checked here is what the Family sees in the directory.",
+      "pt-BR": "Cada documento é marcado separadamente. O que ficar comprovado aqui é o que a Família vê no diretório."
+    },
+    "panel.verificaciones_cargando": {
+      "es-AR": "Buscando las verificaciones…",
+      "en": "Fetching the checks…",
+      "pt-BR": "Buscando as verificações…"
+    },
+    "panel.verificaciones_error": {
+      "es-AR": "No se pudieron traer las verificaciones. Cierre el legajo y vuelva a abrirlo.",
+      "en": "The checks could not be fetched. Close the personal file and open it again.",
+      "pt-BR": "Não foi possível trazer as verificações. Feche o cadastro e abra-o novamente."
+    },
+    "panel.verificaciones_sin_catalogo": {
+      "es-AR": "El catálogo no tiene ninguna verificación configurada.",
+      "en": "The catalogue has no checks configured.",
+      "pt-BR": "O catálogo não tem nenhuma verificação configurada."
+    },
+    "panel.verificaciones_guardando": {
+      "es-AR": "Guardando la marca…",
+      "en": "Saving the mark…",
+      "pt-BR": "Salvando a marca…"
+    },
+    "panel.verificaciones_guardado": {
+      "es-AR": "«{papel}» quedó marcado como «{estado}».",
+      "en": "“{papel}” was marked as “{estado}”.",
+      "pt-BR": "«{papel}» ficou marcado como «{estado}»."
+    },
+    "panel.verificaciones_error_guardar": {
+      "es-AR": "No se pudo guardar la marca. La verificación quedó como estaba.",
+      "en": "The mark could not be saved. The check stayed as it was.",
+      "pt-BR": "Não foi possível salvar a marca. A verificação ficou como estava."
+    },
+    "panel.verificaciones_marcado_el": {
+      "es-AR": "Marcado el {fecha}",
+      "en": "Marked on {fecha}",
+      "pt-BR": "Marcado em {fecha}"
+    },
     "_______________": "── Los estados del alta de un Asistente ──",
     "alta.zonas_etiqueta": {
       "es-AR": "Zonas de cobertura",

@@ -432,6 +432,46 @@ const ClienteDatos = {
     return await this._supabasePatch('caregivers', id, { estado: nuevoEstado, notaPrestadora: notaInterna });
   },
 
+  // --- LAS VERIFICACIONES DEL LEGAJO ---
+  //
+  // Lo que la Prestadora controla es quién entra —el legajo, las verificaciones
+  // y la validación del Aspirante, `CLAUDE.md` §1—, y esto es con qué lo
+  // controla: papel por papel, con los tipos del vocabulario `verificacion` y
+  // los estados del vocabulario `estado_verificacion`.
+  //
+  // Ninguno de los dos filtra por Prestadora, y no es un olvido: la política de
+  // `verificaciones_asistente` (migración 0005) resuelve la Organización por la
+  // membresía de quien inició sesión, así que una fila de otra Prestadora no
+  // llega ni pidiéndola por su identificador. Filtrar acá además sería fingir
+  // que el aislamiento lo hace la pantalla.
+  async verificacionesDeAspirante(caregiverId) {
+    return await this._supabaseRequest('GET', 'verificaciones_asistente', null, {
+      caregiver_id: `eq.${caregiverId}`,
+      select: 'tipo,estado,plazo_vence_el,verificado_el',
+    });
+  },
+
+  // La tabla tiene una restricción de unicidad por (legajo, tipo), así que la
+  // primera marca de un papel es un alta y la segunda una modificación. Se
+  // resuelve en un solo pedido: preguntar antes si existe deja el hueco por
+  // donde dos pestañas abiertas crean dos filas y la segunda rebota.
+  //
+  // `tenant_id` se manda porque la columna es obligatoria, pero no elige nada:
+  // la política exige que sea la Prestadora de la sesión, así que mandar otra
+  // no escribe en otra Organización, rebota.
+  //
+  // Quién marcó y cuándo no se mandan a propósito: los pone la base con
+  // `auth.uid()` (migración 0060), que es lo único que el navegador no puede
+  // falsificar.
+  async marcarVerificacion(caregiverId, tipo, estado) {
+    return await this._supabaseUpsert('verificaciones_asistente', {
+      tenant_id: this.currentTenant ? this.currentTenant.id : null,
+      caregiver_id: caregiverId,
+      tipo: tipo,
+      estado: estado,
+    }, 'caregiver_id,tipo');
+  },
+
   // --- MÓDULO 2: AVISOS Y SOLICITUDES DE FAMILIAS ---
   async getAvisosFamilia() {
     const filter = {};
@@ -1029,7 +1069,10 @@ const ClienteDatos = {
   },
 
   // --- INTEGRACIÓN REST DE SUPABASE ---
-  async _supabaseRequest(method, table, data = null, queryParams = {}) {
+  // `prefer` es el único encabezado que cambia según el pedido, y por eso entra
+  // como texto suelto y no como un objeto de encabezados libres: la clave, el
+  // testigo de la sesión y el tipo de contenido no los elige quien llama.
+  async _supabaseRequest(method, table, data = null, queryParams = {}, prefer = null) {
     const urlObj = new URL(`${this.supabaseUrl}/rest/v1/${table}`);
     Object.keys(queryParams).forEach(key => urlObj.searchParams.append(key, queryParams[key]));
     
@@ -1038,7 +1081,7 @@ const ClienteDatos = {
       // Usar JWT del usuario si está disponible (activa RLS), si no usar anon key
       'Authorization': `Bearer ${this.currentAuthToken || this.supabaseKey}`,
       'Content-Type': 'application/json',
-      'Prefer': 'return=representation'
+      'Prefer': prefer ? `return=representation,${prefer}` : 'return=representation'
     };
 
     const options = {
@@ -1083,6 +1126,21 @@ const ClienteDatos = {
     const dbData = this._mapToDatabase(table, data);
     const queryParams = { id: `eq.${id}` };
     const res = await this._supabaseRequest('PATCH', table, dbData, queryParams);
+    return res[0] ? this._mapFromDatabase(table, res[0]) : null;
+  },
+
+  // Alta o modificación en un solo pedido, apoyada en una restricción de
+  // unicidad de la tabla. PostgREST lo hace con `resolution=merge-duplicates`,
+  // y sin `on_conflict` mira la clave primaria, que casi nunca es la que
+  // interesa: el choque que se quiere resolver es el de las columnas que
+  // identifican la fila para el negocio.
+  //
+  // Vive acá y no adentro de la pantalla que lo estrenó para que la segunda que
+  // lo necesite no vuelva a escribir el encabezado.
+  async _supabaseUpsert(table, data, onConflict) {
+    const dbData = this._mapToDatabase(table, data);
+    const res = await this._supabaseRequest('POST', table, dbData,
+      { on_conflict: onConflict }, 'resolution=merge-duplicates');
     return res[0] ? this._mapFromDatabase(table, res[0]) : null;
   },
 

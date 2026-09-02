@@ -60,7 +60,13 @@ const COLUMNAS = {
   nivel: 'nivel_curso',
   dia: 'dia_semana',
   turno: 'turno',
-  puesto: 'puesto_experiencia'
+  puesto: 'puesto_experiencia',
+  // Las dos de `verificaciones_asistente`. Hoy es la única tabla con esos dos
+  // nombres de columna, así que la lista sigue funcionando aunque no diga la
+  // tabla; el día que otra tabla estrene un `estado`, esta lista tiene que
+  // pasar a nombrar el par tabla-columna en vez de la columna sola.
+  tipo: 'verificacion',
+  estado: 'estado_verificacion'
 };
 
 const catalogo = JSON.parse(

@@ -842,6 +842,100 @@ if (!coordinador) {
       : 'la función no devolvió ninguna fila, así que esto no probó nada');
 }
 
+// --- Las verificaciones del legajo (migraciones 0004, 0026, 0059 y 0060) ----
+// Es lo único que la Prestadora controla de un Asistente: quién entra. Hasta
+// que existió la pantalla del panel, esta tabla sólo se llenaba con la siembra,
+// así que en una Prestadora de verdad el directorio no mostraba ninguna
+// comprobación.
+//
+// **Estas comprobaciones pueden fallar**, y ésa es la condición que pidió el
+// pendiente 70, cerrado el 1 de septiembre de 2026: el legajo de A se creó hace
+// un momento y arranca sin ninguna verificación cargada. Sobre un legajo ya
+// sembrado, la pantalla rota y la sana contestan lo mismo, y una prueba escrita
+// así no prueba nada. La primera
+// comprobación de la lista es justamente la que fija ese punto de partida.
+console.log('\nLas verificaciones del legajo');
+
+if (!coordinador) {
+  console.log('   (salteadas) las ocho de las verificaciones: marcarlas es trabajo del');
+  console.log('               personal de la Prestadora, y esa cuenta sólo existe en local.');
+} else {
+  const a = cuentas[0];
+  const b = cuentas[1];
+
+  // El mismo pedido que hace la pantalla: alta o modificación en uno solo,
+  // apoyado en la restricción de unicidad (legajo, tipo) de la migración 0004.
+  const marcar = (legajoId, tenantId, tipo, estado, token, extra = {}) =>
+    rest('/rest/v1/verificaciones_asistente?on_conflict=caregiver_id,tipo', {
+      method: 'POST',
+      headers: { Prefer: 'return=representation,resolution=merge-duplicates' },
+      body: JSON.stringify({ caregiver_id: legajoId, tenant_id: tenantId, tipo, estado, ...extra })
+    }, token);
+
+  const comprobacionesDeA = async () => {
+    const { cuerpo } = await rest('/rest/v1/rpc/perfil_del_directorio', {
+      method: 'POST',
+      body: JSON.stringify({ p_slug: a.prestadora.slug, p_id: a.legajoId })
+    });
+    return (Array.isArray(cuerpo) && cuerpo[0] && cuerpo[0].comprobaciones) || [];
+  };
+
+  const antes = await comprobacionesDeA();
+  comprobar('El legajo arranca sin ninguna comprobación en su tarjeta',
+    antes.length === 0, antes.length ? 'ya traía ' + antes.join(', ') : 'ninguna');
+
+  // Se manda a propósito una huella inventada, que es lo que haría quien
+  // quisiera dejarle a otro la firma de una comprobación que hizo él. La base
+  // la tiene que pisar con `auth.uid()` y con la hora de ahora.
+  const escrita = await marcar(a.legajoId, a.prestadora.id, 'domicilio', 'verificado',
+    coordinador.token,
+    { verificado_por: b.userId, verificado_el: '2000-01-01T00:00:00Z' });
+  const fila = Array.isArray(escrita.cuerpo) ? escrita.cuerpo[0] : null;
+  comprobar('El personal de la Prestadora puede marcar una verificación',
+    escrita.estado < 300 && fila && fila.estado === 'verificado',
+    'respuesta ' + escrita.estado);
+
+  comprobar('La huella la escribe la base y no el pedido',
+    !!fila && fila.verificado_por === coordinador.userId
+      && !!fila.verificado_el && !String(fila.verificado_el).startsWith('2000'),
+    fila ? 'quedó ' + fila.verificado_por : 'no devolvió fila');
+
+  const despues = await comprobacionesDeA();
+  comprobar('Lo marcado sale en su tarjeta del directorio',
+    despues.includes('domicilio'), despues.length ? despues.join(', ') : 'ninguna');
+
+  // El otro lado del muro: el mismo coordinador, sobre el legajo de la
+  // Prestadora ajena. Y no alcanza con mirar la respuesta: se vuelve a
+  // preguntar si quedó escrito algo, porque un rechazo silencioso y una
+  // escritura que sí entró se ven parecidos desde afuera.
+  const ajena = await marcar(b.legajoId, b.prestadora.id, 'domicilio', 'verificado',
+    coordinador.token);
+  const { cuerpo: quedoAlgo } = await rest(
+    '/rest/v1/verificaciones_asistente?caregiver_id=eq.' + b.legajoId, {}, coordinador.token);
+  comprobar('No puede marcar un legajo de la otra Prestadora',
+    ajena.estado >= 400 && (!Array.isArray(quedoAlgo) || quedoAlgo.length === 0),
+    'respuesta ' + ajena.estado);
+
+  // Y quien no es personal tampoco se marca las propias, que sería firmarse uno
+  // mismo los papeles que la Prestadora tiene que comprobar.
+  const propia = await marcar(a.legajoId, a.prestadora.id, 'referencia', 'verificado', a.token);
+  comprobar('El Asistente no se marca sus propias verificaciones',
+    propia.estado >= 400, 'respuesta ' + propia.estado);
+
+  // Volver a «sin presentar» borra la huella: la columna no puede seguir
+  // diciendo que alguien lo comprobó el martes si ya no está comprobado.
+  const vuelta = await marcar(a.legajoId, a.prestadora.id, 'domicilio', 'pendiente',
+    coordinador.token);
+  const filaVuelta = Array.isArray(vuelta.cuerpo) ? vuelta.cuerpo[0] : null;
+  comprobar('Volver a «sin presentar» borra la huella',
+    !!filaVuelta && filaVuelta.verificado_por === null && filaVuelta.verificado_el === null,
+    filaVuelta ? 'quedó ' + filaVuelta.verificado_por : 'no devolvió fila');
+
+  const alFinal = await comprobacionesDeA();
+  comprobar('Y la tarjeta deja de mostrarla',
+    !alFinal.includes('domicilio'), alFinal.length ? alFinal.join(', ') : 'ninguna');
+}
+
 // --- 21 a 27: el examen -----------------------------------------------------
 // Un examen sirve si es imposible aprobarlo sin saber la respuesta. Eso son
 // tres cosas separadas, y acá se prueban las tres: que la respuesta correcta no
