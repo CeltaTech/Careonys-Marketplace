@@ -3232,6 +3232,11 @@
       "en": "I accept the Terms and Conditions of the {{producto}} personnel file for Care Assistants.",
       "pt-BR": "Aceito os Termos e Condições do cadastro funcional para Assistentes de Cuidado de {{producto}}."
     },
+    "legajo.terminos_leer": {
+      "es-AR": "Leer el documento",
+      "en": "Read the document",
+      "pt-BR": "Ler o documento"
+    },
     "legajo.espera_titulo": {
       "es-AR": "La cuenta quedó creada. Falta un paso.",
       "en": "The account has been created. One step remains.",
@@ -4006,6 +4011,192 @@
       "es-AR": "No se pudo abrir la conversación.",
       "en": "The conversation could not be opened.",
       "pt-BR": "Não foi possível abrir a conversa."
+    },
+    "_7": "── Las opciones que la Prestadora le agrega al catálogo, en su panel ──",
+    "panel.opciones_titulo": {
+      "es-AR": "Las opciones propias del catálogo",
+      "en": "The Provider's own catalogue options",
+      "pt-BR": "As opções próprias do catálogo"
+    },
+    "panel.opciones_bajada": {
+      "es-AR": "El producto trae un catálogo general que ven todas las Prestadoras. Acá se agregan las opciones que ésta necesita y aquél no trae: quedan sólo de este lado y ninguna otra Prestadora las ve. Las listas que no aparecen no admiten opciones propias, porque después se comparan con la ley o entre Prestadoras.",
+      "en": "The product ships a general catalogue that every Provider sees. Options this Provider needs and the catalogue does not carry are added here: they stay on this side only, and no other Provider sees them. Lists that do not appear take no own options, because they are later compared against the law or across Providers.",
+      "pt-BR": "O produto traz um catálogo geral que todas as Prestadoras veem. Aqui se acrescentam as opções que esta Prestadora precisa e que aquele não traz: ficam apenas deste lado e nenhuma outra Prestadora as vê. As listas que não aparecem não admitem opções próprias, porque depois se comparam com a lei ou entre Prestadoras."
+    },
+    "panel.opciones_col_lista": {
+      "es-AR": "Lista",
+      "en": "List",
+      "pt-BR": "Lista"
+    },
+    "panel.opciones_col_opcion": {
+      "es-AR": "Opción",
+      "en": "Option",
+      "pt-BR": "Opção"
+    },
+    "panel.opciones_col_estado": {
+      "es-AR": "Estado",
+      "en": "Status",
+      "pt-BR": "Estado"
+    },
+    "panel.opciones_col_acciones": {
+      "es-AR": "Acciones",
+      "en": "Actions",
+      "pt-BR": "Ações"
+    },
+    "panel.opciones_cargando": {
+      "es-AR": "Trayendo las opciones propias...",
+      "en": "Loading the own options…",
+      "pt-BR": "Buscando as opções próprias..."
+    },
+    "panel.opciones_vacio": {
+      "es-AR": "Esta Prestadora todavía no le agregó ninguna opción al catálogo. Con el general alcanza hasta que aparezca algo que no esté en la lista.",
+      "en": "This Provider has not added any option to the catalogue yet. The general one is enough until something outside the list comes up.",
+      "pt-BR": "Esta Prestadora ainda não acrescentou nenhuma opção ao catálogo. O geral basta até aparecer algo que não esteja na lista."
+    },
+    "panel.opciones_activa": {
+      "es-AR": "Activa",
+      "en": "Active",
+      "pt-BR": "Ativa"
+    },
+    "panel.opciones_desactivada": {
+      "es-AR": "Desactivada",
+      "en": "Deactivated",
+      "pt-BR": "Desativada"
+    },
+    "panel.opciones_corregir": {
+      "es-AR": "Corregir",
+      "en": "Correct",
+      "pt-BR": "Corrigir"
+    },
+    "panel.opciones_desactivar": {
+      "es-AR": "Desactivar",
+      "en": "Deactivate",
+      "pt-BR": "Desativar"
+    },
+    "panel.opciones_reactivar": {
+      "es-AR": "Volver a activar",
+      "en": "Activate again",
+      "pt-BR": "Ativar de novo"
+    },
+    "panel.opciones_desactivar_pregunta": {
+      "es-AR": "¿Desactivar «{opcion}»? Deja de ofrecerse en las pantallas de esta Prestadora. Lo que ya se haya guardado con ella no se toca, y se la puede volver a activar cuando haga falta.",
+      "en": "Deactivate “{opcion}”? It stops being offered on this Provider's screens. Whatever was already saved with it is left untouched, and it can be activated again whenever needed.",
+      "pt-BR": "Desativar “{opcion}”? Deixa de ser oferecida nas telas desta Prestadora. O que já foi salvo com ela não se toca, e pode ser ativada de novo quando for preciso."
+    },
+    "panel.opciones_cambiando": {
+      "es-AR": "Guardando el cambio...",
+      "en": "Saving the change…",
+      "pt-BR": "Salvando a alteração..."
+    },
+    "panel.opciones_desactivada_aviso": {
+      "es-AR": "«{opcion}» quedó desactivada.",
+      "en": "“{opcion}” is now deactivated.",
+      "pt-BR": "“{opcion}” ficou desativada."
+    },
+    "panel.opciones_reactivada_aviso": {
+      "es-AR": "«{opcion}» volvió a quedar activa.",
+      "en": "“{opcion}” is active again.",
+      "pt-BR": "“{opcion}” voltou a ficar ativa."
+    },
+    "panel.opciones_form_nueva": {
+      "es-AR": "Agregar una opción",
+      "en": "Add an option",
+      "pt-BR": "Acrescentar uma opção"
+    },
+    "panel.opciones_form_correccion": {
+      "es-AR": "Corregir una opción",
+      "en": "Correct an option",
+      "pt-BR": "Corrigir uma opção"
+    },
+    "panel.opciones_campo_lista": {
+      "es-AR": "A qué lista se agrega",
+      "en": "Which list it is added to",
+      "pt-BR": "A qual lista se acrescenta"
+    },
+    "panel.opciones_elegir_lista": {
+      "es-AR": "Elija una lista...",
+      "en": "Choose a list…",
+      "pt-BR": "Escolha uma lista..."
+    },
+    "panel.opciones_campo_nombre": {
+      "es-AR": "Cómo se lee la opción",
+      "en": "How the option reads",
+      "pt-BR": "Como a opção se lê"
+    },
+    "panel.opciones_hueco_nombre": {
+      "es-AR": "Por ejemplo: Esclerosis múltiple",
+      "en": "For example: Multiple sclerosis",
+      "pt-BR": "Por exemplo: Esclerose múltipla"
+    },
+    "panel.opciones_ayuda_clave": {
+      "es-AR": "El texto se puede corregir cuando haga falta. La lista no: lo que ya se haya guardado con esta opción quedó escrito ahí, así que para cambiarla se desactiva ésta y se agrega otra.",
+      "en": "The text can be corrected whenever needed. The list cannot: whatever was already saved with this option was written there, so to change it deactivate this one and add another.",
+      "pt-BR": "O texto pode ser corrigido quando for preciso. A lista não: o que já foi salvo com esta opção ficou escrito ali, então para mudá-la desative esta e acrescente outra."
+    },
+    "panel.opciones_guardar": {
+      "es-AR": "Guardar la opción",
+      "en": "Save the option",
+      "pt-BR": "Salvar a opção"
+    },
+    "panel.opciones_guardando": {
+      "es-AR": "Guardando...",
+      "en": "Saving…",
+      "pt-BR": "Salvando..."
+    },
+    "panel.opciones_cancelar": {
+      "es-AR": "Cancelar",
+      "en": "Cancel",
+      "pt-BR": "Cancelar"
+    },
+    "panel.opciones_listas_cargando": {
+      "es-AR": "Trayendo las listas que admiten opciones propias...",
+      "en": "Loading the lists that take own options…",
+      "pt-BR": "Buscando as listas que admitem opções próprias..."
+    },
+    "panel.opciones_listas_vacio": {
+      "es-AR": "Hoy ninguna lista del catálogo admite opciones propias.",
+      "en": "No catalogue list takes own options today.",
+      "pt-BR": "Hoje nenhuma lista do catálogo admite opções próprias."
+    },
+    "panel.opciones_falta_lista": {
+      "es-AR": "Elija a qué lista se agrega la opción.",
+      "en": "Choose which list the option is added to.",
+      "pt-BR": "Escolha a qual lista a opção se acrescenta."
+    },
+    "panel.opciones_falta_nombre": {
+      "es-AR": "Escriba cómo se lee la opción.",
+      "en": "Write how the option reads.",
+      "pt-BR": "Escreva como a opção se lê."
+    },
+    "panel.opciones_nombre_sin_clave": {
+      "es-AR": "Ese texto no tiene ninguna letra ni ningún número, así que no alcanza para guardar la opción.",
+      "en": "That text has no letters and no digits, so it is not enough to save the option.",
+      "pt-BR": "Esse texto não tem nenhuma letra nem nenhum número, então não basta para salvar a opção."
+    },
+    "panel.opciones_ya_existe": {
+      "es-AR": "Esa opción ya está en esa lista. Si no aparece acá arriba, es del catálogo general o quedó desactivada.",
+      "en": "That option is already in that list. If it is not shown above, it comes from the general catalogue or it was deactivated.",
+      "pt-BR": "Essa opção já está nessa lista. Se não aparece aqui acima, é do catálogo geral ou ficou desativada."
+    },
+    "panel.opciones_guardada": {
+      "es-AR": "La opción quedó agregada, y ya se ofrece en esa lista.",
+      "en": "The option was added, and it is already offered in that list.",
+      "pt-BR": "A opção foi acrescentada, e já é oferecida nessa lista."
+    },
+    "panel.opciones_corregida": {
+      "es-AR": "La opción quedó corregida.",
+      "en": "The option was corrected.",
+      "pt-BR": "A opção foi corrigida."
+    },
+    "panel.opciones_guardada_como": {
+      "es-AR": "Se guarda como {clave}",
+      "en": "Stored as {clave}",
+      "pt-BR": "Guardada como {clave}"
+    },
+    "panel.opciones_error_guardar": {
+      "es-AR": "La base no confirmó el cambio, así que no se guardó nada.",
+      "en": "The database did not confirm the change, so nothing was saved.",
+      "pt-BR": "A base não confirmou a alteração, então nada foi salvo."
     }
   }
 }

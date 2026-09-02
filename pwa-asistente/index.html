@@ -672,8 +672,17 @@
 
             <div style="display:flex;align-items:flex-start;gap:8px;margin:12px 0;font-size:12px;color:var(--texto-principal);">
               <input type="checkbox" id="w-terminos" required style="width:18px;height:18px;margin-top:2px;flex-shrink:0;" />
-              <label for="w-terminos" class="mano"
-                     data-frase="legajo.terminos">Acepto los Términos y Condiciones de Legajo para Asistentes de {{producto}}.</label>
+              <!-- Hasta el 2 de septiembre de 2026 esta casilla hacía aceptar
+                   un documento que no mostraba en ninguna parte: pendiente 124.
+                   El enlace va aparte y no adentro de la frase porque
+                   `data-frase` escribe con `textContent` (`js/catalogo.js:841`),
+                   y sube un nivel porque `docs/` cuelga de la raíz del sitio. -->
+              <label for="w-terminos" class="mano">
+                <span data-frase="legajo.terminos">Acepto los Términos y Condiciones de Legajo para Asistentes de {{producto}}.</span>
+                <a href="../docs/terminos_y_condiciones_asistentes.md" target="_blank" rel="noopener"
+                   class="color-azul-medio peso-700" style="text-decoration:underline;"
+                   data-frase="legajo.terminos_leer">Leer el documento</a>
+              </label>
             </div>
             <div class="wnav">
               <button type="button" class="wbtn-prev" onclick="wPrev(4)"><i class="fas fa-arrow-left"></i></button>

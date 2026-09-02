@@ -143,10 +143,20 @@
     56. El mensaje no se edita y no se borra: no hay permiso para esos verbos.
     57. El personal de la Prestadora no lee ninguna de las tres, y al lado se
         mira que las dos partes sí vean las suyas: si no, «cero» no distingue
-        negado de vacío. (Sólo con --local, por lo mismo que 15 y 16.)
+        negado de vacío. (Sólo con --local, por lo mismo que 15 y 16.) Y
+        tampoco lee las dos que cuelgan del aviso en vez de la modalidad —el
+        reporte de cuidado y `messages`—, que hasta la migración 0067 sí leía:
+        las dos preguntaban por el aviso con un `exists` que no repetía de
+        quién era, y la RLS de `avisos` le devuelve a ese personal todos
+        los avisos de su Organización. La fila del reporte se carga acá con el
+        aviso puesto, porque en toda la base no había ni una: sin cargarla, la
+        comprobación habría dado verde con la política abierta.
     58. Las dos Prestadoras tienen contacto cargado de verdad, cada una ve el
         suyo y ninguna ve una sola fila de la otra, ni pidiéndola por su
-        identificador.
+        identificador. Y el contacto de la segunda se abre por el **otro**
+        camino del mercado —desde el directorio, sin aviso—, que es el que usa
+        `perfil.html:573` y que hasta el 2 de septiembre de 2026 no probaba
+        nada: las dos conversaciones colgaban de un aviso.
 
    Y sobre las cuatro funciones que le dan de comer a las pantallas de ese
    encuentro (migración 0055). Son `security definer`, así que se saltean la
@@ -1684,6 +1694,77 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
         'personal ' + delPersonal.length + '   Familia ' + deLaFamilia.length +
         '   Asistente ' + delAsistente.length);
     }
+
+    /* Y las dos que no estaban en esa lista, que son justo las que se abrieron
+       calladas. `messages` y `reportes` no cuelgan de la modalidad sino del aviso, y
+       las dos preguntaban por el aviso con un `exists` que no repetía de quién
+       era. La RLS de `avisos` no alcanza para filtrarlo: a este mismo
+       coordinador le devuelve **todos** los avisos de su Organización
+       (`0020_la_barrera_tambien_va_entre_familias.sql:77-82`), así que el
+       `exists` daba verdadero para cualquier fila y el personal leía el reporte
+       de cuidado y la conversación enteros. Lo cerró la migración 0067, y esto
+       es lo que faltaba para que se notara: las tres tablas de arriba están en
+       la lista desde el principio y estas dos no estaban en ninguna.
+
+       Las dos filas se escriben acá, con el aviso puesto, y por dos motivos.
+       El primero es el de siempre: sin el control positivo al lado, «cero» no
+       distingue negado de vacío. El segundo es más grave y es el que hacía
+       invisible el agujero: `reportes` no tenía en toda la base **ni una fila
+       con `aviso_id`** —nadie lo llena todavía, que es el pendiente 52—, así
+       que cualquier comprobación escrita sin cargar una habría dado verde con
+       la política abierta de par en par. */
+    const reporteDelAviso = await rest('/rest/v1/reportes', {
+      method: 'POST',
+      headers: { Prefer: 'return=representation' },
+      body: JSON.stringify({
+        caregiver_id: asistenteUno.legajoId,
+        aviso_id: familiaDelAviso.avisoId,
+        blood_pressure: '118/76', glycemia: '92',
+        daily_notes: 'Anotación ficticia colgada del aviso'
+      })
+    }, asistenteUno.token);
+    const reporteDelAvisoId = Array.isArray(reporteDelAviso.cuerpo) && reporteDelAviso.cuerpo[0]
+      ? reporteDelAviso.cuerpo[0].id : null;
+    const hayReporte = !!reporteDelAvisoId;
+    /* Las dos filas se piden por su identificador y no por el aviso: sobre ese
+       aviso hay filas que escribieron otros tramos de esta misma prueba, y
+       entonces «2» no distinguiría la que se acaba de escribir de las demás. */
+    const reporteLaFamilia = await rest(
+      '/rest/v1/reportes?select=id&id=eq.' + reporteDelAvisoId, {}, familiaDelAviso.token);
+    const reporteElPersonal = await rest(
+      '/rest/v1/reportes?select=id&id=eq.' + reporteDelAvisoId, {}, coordinador.token);
+    const rf = Array.isArray(reporteLaFamilia.cuerpo) ? reporteLaFamilia.cuerpo.length : -1;
+    const rp = Array.isArray(reporteElPersonal.cuerpo) ? reporteElPersonal.cuerpo.length : -1;
+    comprobar('El personal de la Prestadora no lee el reporte del aviso, y la Familia sí',
+      hayReporte && rf === 1 && rp === 0,
+      hayReporte ? ('Familia ' + rf + '   personal ' + rp)
+                 : 'no se pudo escribir el reporte con aviso (' + reporteDelAviso.estado +
+                   '), así que esto no probó nada');
+
+    const mensajeDelAviso = await rest('/rest/v1/messages', {
+      method: 'POST',
+      headers: { Prefer: 'return=representation' },
+      body: JSON.stringify({
+        content: 'Mensaje ficticio colgado del aviso',
+        aviso_id: familiaDelAviso.avisoId,
+        author_id: familiaDelAviso.userId
+      })
+    }, familiaDelAviso.token);
+    familiaDelAviso.mensajeId = Array.isArray(mensajeDelAviso.cuerpo) && mensajeDelAviso.cuerpo[0]
+      ? mensajeDelAviso.cuerpo[0].id : null;
+    const mensajeLaFamilia = await rest(
+      '/rest/v1/messages?select=id&id=eq.' + familiaDelAviso.mensajeId,
+      {}, familiaDelAviso.token);
+    const mensajeElPersonal = await rest(
+      '/rest/v1/messages?select=id&id=eq.' + familiaDelAviso.mensajeId,
+      {}, coordinador.token);
+    const mf = Array.isArray(mensajeLaFamilia.cuerpo) ? mensajeLaFamilia.cuerpo.length : -1;
+    const mp = Array.isArray(mensajeElPersonal.cuerpo) ? mensajeElPersonal.cuerpo.length : -1;
+    comprobar('El personal de la Prestadora no lee los mensajes del aviso, y la Familia sí',
+      !!familiaDelAviso.mensajeId && mf === 1 && mp === 0,
+      familiaDelAviso.mensajeId ? ('Familia ' + mf + '   personal ' + mp)
+        : 'no se pudo escribir el mensaje con aviso (' + mensajeDelAviso.estado +
+          '), así que esto no probó nada');
   }
 
   // ── Y entre Prestadoras ───────────────────────────────────────────────────
@@ -1692,9 +1773,24 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
   // propio, una dejaría de ver lo suyo; si perdiera la Prestadora, vería lo de
   // la otra.
   const postulacionEnB = await postular(asistenteDeB, familiaDeLaOtra.avisoId);
-  const canalEnB = await abrir(familiaDeLaOtra, asistenteDeB.legajoId, familiaDeLaOtra.avisoId);
+
+  /* Y este contacto se abre por el OTRO camino del mercado: sin aviso. Los dos
+     caminos son dos —la Familia publica un aviso y los Asistentes se postulan,
+     o la Familia mira el directorio, compara perfiles y contacta—, y hasta el 2
+     de septiembre de 2026 esta prueba abría las dos conversaciones colgadas de
+     un aviso, así que el camino del directorio no lo probaba nada. Es el que
+     usa `perfil.html:573`, que llama a `abrirConversacion(idAsistente, null)`.
+     Se comprueba que la fila entre y que quede **con el aviso en nulo**: si
+     alguna vez la columna pasara a exigir valor, el contacto desde el
+     directorio dejaría de poder abrirse y ninguna otra comprobación lo diría. */
+  const canalEnB = await abrir(familiaDeLaOtra, asistenteDeB.legajoId, null);
   const canalEnBId = Array.isArray(canalEnB.cuerpo) && canalEnB.cuerpo[0]
     ? canalEnB.cuerpo[0].id : null;
+  const asiQuedo = Array.isArray(canalEnB.cuerpo) && canalEnB.cuerpo[0]
+    ? canalEnB.cuerpo[0] : null;
+  comprobar('La Familia contacta desde el directorio, sin aviso, y el contacto queda',
+    canalEnB.estado === 201 && !!canalEnBId && !!asiQuedo && asiQuedo.aviso_id === null,
+    'respuesta ' + canalEnB.estado + ', aviso_id ' + (asiQuedo ? asiQuedo.aviso_id : '(sin fila)'));
   if (canalEnBId) {
     await escribir(familiaDeLaOtra, canalEnBId, 'Buenas tardes desde la otra Prestadora.');
     await escribir(asistenteDeB, canalEnBId, 'Buenas tardes. Quedo a disposición.');

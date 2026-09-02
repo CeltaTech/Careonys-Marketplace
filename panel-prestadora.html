@@ -156,6 +156,69 @@
           <i class="fas fa-floppy-disk"></i> <span id="tope-guardar-texto"></span>
         </button>
       </div>
+
+      <!-- LAS OPCIONES QUE ESTA PRESTADORA LE AGREGA AL CATÁLOGO
+           El catálogo tiene dos pisos desde la migración 0038: lo que trae el
+           producto lo ve toda Prestadora, y lo que agrega una queda de su lado.
+           El segundo piso hasta hoy sólo se llenaba con una migración —así
+           entraron las opciones de la 0040—, que es pedirle a una Prestadora
+           que espere una versión nueva del producto para poder anotar una
+           patología que no está en la lista.
+
+           Ni un rótulo está escrito acá adentro: los pone `rotularOpciones()`
+           desde el catálogo, que es lo que los hace existir también en `en` y
+           en `pt-BR`. Arranca oculto y lo destapa `cargarOpcionesPropias()`,
+           que corre detrás de la comprobación del permiso, igual que el tope. -->
+      <div class="card-dashboard mt-24 oculto" id="opciones-bloque">
+        <div class="mb-16">
+          <h3 class="m-0 texto-18 color-titulo"><i class="fas fa-list-ul"></i>
+            <span id="opciones-titulo"></span></h3>
+          <p class="m-solo-arriba-4 texto-13 color-secundario" id="opciones-bajada"></p>
+        </div>
+
+        <div class="oculto p-16 redondeo-10 texto-13 interlineado-16 mb-12" id="opciones-estado-lista"></div>
+
+        <table class="aspirantes-table">
+          <thead>
+            <tr>
+              <th id="opciones-col-lista"></th>
+              <th id="opciones-col-opcion"></th>
+              <th id="opciones-col-estado"></th>
+              <th id="opciones-col-acciones"></th>
+            </tr>
+          </thead>
+          <tbody id="tabla-opciones-body"></tbody>
+        </table>
+
+        <div class="fondo-superficie-hundida p-16 redondeo-12 borde-tarjeta mt-24">
+          <h4 class="m-0 mb-12 texto-14 color-titulo" id="opciones-form-titulo"></h4>
+
+          <div class="oculto p-16 redondeo-10 texto-13 interlineado-16 mb-12" id="opciones-estado-form"></div>
+
+          <div class="grilla-2 gap-16">
+            <div class="form-group">
+              <label for="opciones-campo-lista" id="opciones-etiqueta-lista"></label>
+              <select id="opciones-campo-lista"></select>
+            </div>
+            <div class="form-group">
+              <label for="opciones-campo-nombre" id="opciones-etiqueta-nombre"></label>
+              <input type="text" id="opciones-campo-nombre" maxlength="120" />
+              <p class="texto-11 color-secundario m-solo-arriba-4" id="opciones-clave"></p>
+            </div>
+          </div>
+
+          <p class="texto-11 color-secundario m-0 mb-16" id="opciones-ayuda"></p>
+
+          <div class="flex gap-12">
+            <button class="btn peso-700 texto-13" id="btn-guardar-opcion">
+              <i class="fas fa-floppy-disk"></i> <span id="btn-guardar-opcion-texto"></span>
+            </button>
+            <button class="btn btn-secundario texto-13" id="btn-cancelar-opcion">
+              <span id="btn-cancelar-opcion-texto"></span>
+            </button>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -244,13 +307,23 @@
     // en blanco, que se ve idéntica a no tener cartel.
     //
     // Para apagar el cartel se llama sin clave: `estadoTabla(null)`.
-    function estadoTabla(tono, clave, huecos) {
-      const caja = document.getElementById('estado-tabla');
-      if (!tono) { caja.style.display = 'none'; return; }
+    //
+    // Los seis carteles de esta pantalla se pintan igual, así que los pinta uno
+    // solo: `pintarCartel`. Estaban copiados uno por uno, y una copia es una
+    // decisión que el día que cambie va a cambiar en cinco lugares y quedar
+    // vieja en el sexto. Cada bloque conserva su función con su nombre porque
+    // cada bloque tiene su caja; lo que se comparte es cómo se pinta.
+    function pintarCartel(id, tono, clave, huecos) {
+      const caja = document.getElementById(id);
+      if (!tono) { caja.classList.add('oculto'); return; }
       caja.textContent = Texto.frase(clave, huecos);
       caja.style.background = 'var(--tono-' + tono + '-fondo)';
       caja.style.color = 'var(--tono-' + tono + '-texto)';
-      caja.style.display = 'block';
+      caja.classList.remove('oculto');
+    }
+
+    function estadoTabla(tono, clave, huecos) {
+      pintarCartel('estado-tabla', tono, clave, huecos);
     }
 
     // Los dos números de arriba, en un solo lugar. Se llaman desde las tres
@@ -474,12 +547,7 @@
     // mismo motivo: dos cargas que corren casi a la vez sobre un cartel único se
     // borran entre ellas. Recibe la **clave** del catálogo, como los otros dos.
     function estadoVerificaciones(tono, clave, huecos) {
-      const caja = document.getElementById('verificaciones-estado');
-      if (!tono) { caja.classList.add('oculto'); return; }
-      caja.textContent = Texto.frase(clave, huecos);
-      caja.style.background = 'var(--tono-' + tono + '-fondo)';
-      caja.style.color = 'var(--tono-' + tono + '-texto)';
-      caja.classList.remove('oculto');
+      pintarCartel('verificaciones-estado', tono, clave, huecos);
     }
 
     // «los cuatro estados»: cargando y error en el cartel, la rama de «el
@@ -645,12 +713,7 @@
     // mismo motivo: dos cargas que corren casi a la vez sobre un cartel único se
     // borran entre ellas. Recibe la **clave** del catálogo.
     function estadoResoluciones(tono, clave, huecos) {
-      const caja = document.getElementById('resoluciones-estado');
-      if (!tono) { caja.classList.add('oculto'); return; }
-      caja.textContent = Texto.frase(clave, huecos);
-      caja.style.background = 'var(--tono-' + tono + '-fondo)';
-      caja.style.color = 'var(--tono-' + tono + '-texto)';
-      caja.classList.remove('oculto');
+      pintarCartel('resoluciones-estado', tono, clave, huecos);
     }
 
     // El estado en el que quedó el legajo se muestra con la misma frase que usa
@@ -829,12 +892,7 @@
     // termina segunda le borra lo que dijo la primera. Recibe la **clave** del
     // catálogo, como el otro.
     function estadoTope(tono, clave, huecos) {
-      const caja = document.getElementById('tope-estado');
-      if (!tono) { caja.classList.add('oculto'); return; }
-      caja.textContent = Texto.frase(clave, huecos);
-      caja.style.background = 'var(--tono-' + tono + '-fondo)';
-      caja.style.color = 'var(--tono-' + tono + '-texto)';
-      caja.classList.remove('oculto');
+      pintarCartel('tope-estado', tono, clave, huecos);
     }
 
     // Los rótulos fijos del bloque. Salen del catálogo igual que los carteles:
@@ -937,6 +995,367 @@
       estadoTope('exito', 'alarmas.tope_guardado', { horas: fila.horas_jornada_abierta });
     }
 
+    // ── LAS OPCIONES QUE ESTA PRESTADORA LE AGREGA AL CATÁLOGO ──────────────
+    //
+    // Se lee y se escribe contra las tablas, y no contra `vocabularios_de`, que
+    // es por donde el resto de las pantallas pide el catálogo: esa función junta
+    // los dos pisos y deja afuera lo desactivado, que son justo las dos
+    // distinciones que este bloque no puede perder. El aislamiento no depende de
+    // eso: lo sostienen las ocho políticas de la migración 0038 —leer alcanza lo
+    // general y lo propio, escribir sólo lo propio— y el disparador
+    // `el_vocabulario_no_cruza_prestadoras`, que además es el que sigue
+    // rechazando una opción propia en una lista `cerrada`.
+    //
+    // Y se desactiva, no se borra. La opción vieja quedó escrita en los legajos
+    // y en los avisos que la eligieron; borrarla deja esos renglones nombrando
+    // algo que ya no existe. `activo` en falso la saca de todas las pantallas
+    // —la función del catálogo no devuelve las desactivadas— y no toca nada de
+    // lo que ya se guardó.
+
+    // Lo último que trajo la base. Sirve para corregir una fila sin volver a
+    // pedirla, y para saber en qué orden va la que se agrega.
+    let opcionesPropias = [];
+
+    // La opción que se está corrigiendo, o `null` si lo que se escribe es nueva.
+    // De acá sale la única diferencia entre el alta y el cambio: el formulario
+    // es el mismo, y tenerlo dos veces era tener dos validaciones que el día de
+    // mañana dicen cosas distintas.
+    let opcionEnCorreccion = null;
+
+    // Los dos carteles del bloque, propios como los otros y por el mismo motivo:
+    // la lista y el formulario son dos cargas que corren casi a la vez, y con un
+    // cartel único la que termina segunda le borra lo que dijo la primera.
+    function estadoOpciones(tono, clave, huecos) {
+      pintarCartel('opciones-estado-lista', tono, clave, huecos);
+    }
+
+    function estadoOpcionesForm(tono, clave, huecos) {
+      pintarCartel('opciones-estado-form', tono, clave, huecos);
+    }
+
+    // Los rótulos fijos, incluidos los encabezados de la tabla y el texto de
+    // ayuda del campo. En el marcado no hay ni una palabra escrita, así que ésta
+    // es la única forma de que el bloque exista en los tres idiomas.
+    function rotularOpciones() {
+      const poner = (id, clave) => {
+        document.getElementById(id).textContent = Catalogo.frase(clave);
+      };
+      poner('opciones-titulo', 'panel.opciones_titulo');
+      poner('opciones-bajada', 'panel.opciones_bajada');
+      poner('opciones-col-lista', 'panel.opciones_col_lista');
+      poner('opciones-col-opcion', 'panel.opciones_col_opcion');
+      poner('opciones-col-estado', 'panel.opciones_col_estado');
+      poner('opciones-col-acciones', 'panel.opciones_col_acciones');
+      poner('opciones-form-titulo', 'panel.opciones_form_nueva');
+      poner('opciones-etiqueta-lista', 'panel.opciones_campo_lista');
+      poner('opciones-etiqueta-nombre', 'panel.opciones_campo_nombre');
+      poner('opciones-ayuda', 'panel.opciones_ayuda_clave');
+      poner('btn-guardar-opcion-texto', 'panel.opciones_guardar');
+      poner('btn-cancelar-opcion-texto', 'panel.opciones_cancelar');
+      document.getElementById('opciones-campo-nombre').placeholder =
+        Catalogo.frase('panel.opciones_hueco_nombre');
+    }
+
+    // «los cuatro estados»: el cartel dice cargando antes de la primera espera,
+    // el `catch` escribe el error en la pantalla, y «todavía no agregó ninguna»
+    // se dice aparte, porque cero filas y una consulta que falló se ven iguales.
+    async function cargarOpcionesPropias() {
+      document.getElementById('opciones-bloque').classList.remove('oculto');
+      rotularOpciones();
+
+      const tbody = document.getElementById('tabla-opciones-body');
+      tbody.innerHTML = '';
+      estadoOpciones('info', 'panel.opciones_cargando');
+
+      let filas;
+      try {
+        filas = await ClienteDatos.misOpciones();
+      } catch (err) {
+        console.error('Panel de la Prestadora, opciones propias del catálogo:', err);
+        estadoOpciones('critico', Texto.claveDeError(err, 'traer las opciones propias'));
+        return;
+      }
+
+      opcionesPropias = filas || [];
+
+      if (!opcionesPropias.length) {
+        estadoOpciones('neutro', 'panel.opciones_vacio');
+        return;
+      }
+
+      estadoOpciones(null);
+      opcionesPropias.forEach((opcion) => dibujarOpcion(tbody, opcion));
+    }
+
+    // Un renglón de la tabla. Se arma con `createElement` y `textContent`: el
+    // navegador escribe el texto tal cual, así que un nombre con un signo raro
+    // se ve en vez de ejecutarse, y no queda nada que escapar.
+    function dibujarOpcion(tbody, opcion) {
+      const lista = opcion.vocabularios || {};
+      const tr = document.createElement('tr');
+
+      const celdaLista = document.createElement('td');
+      celdaLista.textContent = Catalogo.texto(lista);
+      tr.appendChild(celdaLista);
+
+      const celdaNombre = document.createElement('td');
+      const nombre = document.createElement('strong');
+      nombre.textContent = Catalogo.texto(opcion);
+      celdaNombre.appendChild(nombre);
+      tr.appendChild(celdaNombre);
+
+      const celdaEstado = document.createElement('td');
+      const pastilla = document.createElement('span');
+      pastilla.className = 'status-pill ' +
+        (opcion.activo ? 'status-validado' : 'status-revision');
+      pastilla.textContent = Catalogo.frase(
+        opcion.activo ? 'panel.opciones_activa' : 'panel.opciones_desactivada');
+      celdaEstado.appendChild(pastilla);
+      tr.appendChild(celdaEstado);
+
+      // Los botones se atan acá y no con un `onclick` escrito en el marcado:
+      // adentro de un atributo el navegador deshace el escapado antes de leerlo
+      // como código, así que ahí escapar no protegería de nada.
+      const acciones = document.createElement('td');
+
+      const corregir = document.createElement('button');
+      corregir.className = 'btn btn-secundario texto-11 p-6-12 mr-8';
+      corregir.textContent = Catalogo.frase('panel.opciones_corregir');
+      corregir.addEventListener('click', () => corregirOpcion(opcion.id));
+      acciones.appendChild(corregir);
+
+      const cambiar = document.createElement('button');
+      cambiar.className = opcion.activo
+        ? 'btn fondo-peligro color-sobre-color texto-11 p-6-12'
+        : 'btn btn-secundario texto-11 p-6-12';
+      cambiar.textContent = Catalogo.frase(
+        opcion.activo ? 'panel.opciones_desactivar' : 'panel.opciones_reactivar');
+      cambiar.addEventListener('click', () => cambiarEstadoDeOpcion(opcion.id, cambiar));
+      acciones.appendChild(cambiar);
+
+      tr.appendChild(acciones);
+      tbody.appendChild(tr);
+    }
+
+    // Las listas que admiten opciones propias. Salen de la base —`cerrada` en
+    // falso, migración 0038—, no de una lista escrita acá: las cerradas son las
+    // que después se comparan con la ley o entre Prestadoras, y el disparador
+    // rechaza igual una opción propia adentro de una de ellas. Ofrecerlas sería
+    // ofrecer un error que recién aparece al guardar.
+    //
+    // «los cuatro estados»: el desplegable se apaga antes de la primera espera,
+    // el error va al cartel del formulario, y «hoy no hay ninguna» se dice.
+    async function cargarListasAbiertas() {
+      const select = document.getElementById('opciones-campo-lista');
+      select.disabled = true;
+      estadoOpcionesForm('info', 'panel.opciones_listas_cargando');
+
+      let listas;
+      try {
+        listas = await ClienteDatos.vocabulariosAbiertos();
+      } catch (err) {
+        console.error('Panel de la Prestadora, listas que admiten opciones propias:', err);
+        estadoOpcionesForm('critico', Texto.claveDeError(err, 'traer las listas del catálogo'));
+        return;
+      }
+
+      // El catálogo general es el que manda qué listas hay: las filas propias de
+      // `vocabularios` son la vuelta de tuerca que ninguna pantalla usa todavía.
+      const generales = (listas || []).filter((lista) => !lista.tenant_id);
+
+      if (!generales.length) {
+        estadoOpcionesForm('atencion', 'panel.opciones_listas_vacio');
+        return;
+      }
+
+      estadoOpcionesForm(null);
+      select.innerHTML = '';
+      const primera = document.createElement('option');
+      primera.value = '';
+      primera.textContent = Catalogo.frase('panel.opciones_elegir_lista');
+      select.appendChild(primera);
+      generales.forEach((lista) => {
+        const opcion = document.createElement('option');
+        opcion.value = lista.id;
+        opcion.textContent = Catalogo.texto(lista);
+        select.appendChild(opcion);
+      });
+      select.disabled = false;
+    }
+
+    // La clave con la que la opción se guarda para siempre, calculada mientras
+    // se escribe el nombre. Se muestra porque es lo que no se va a poder
+    // cambiar: el texto se corrige, la clave no.
+    function mostrarClaveDeOpcion() {
+      const caja = document.getElementById('opciones-clave');
+      const clave = Texto.claveDesde(document.getElementById('opciones-campo-nombre').value);
+      caja.textContent = clave
+        ? Catalogo.frase('panel.opciones_guardada_como', { clave: clave })
+        : '';
+    }
+
+    function limpiarFormularioDeOpcion() {
+      opcionEnCorreccion = null;
+      document.getElementById('opciones-form-titulo').textContent =
+        Catalogo.frase('panel.opciones_form_nueva');
+      const lista = document.getElementById('opciones-campo-lista');
+      lista.value = '';
+      lista.disabled = false;
+      document.getElementById('opciones-campo-nombre').value = '';
+      mostrarClaveDeOpcion();
+    }
+
+    // Trae la opción a los campos. No la vuelve a pedir a la base: la fila que
+    // se va a corregir es la misma que ya está dibujada en la tabla.
+    //
+    // La lista queda apagada a propósito. Lo que ya se guardó con esta opción
+    // apunta a la fila, y la fila cuelga de su lista: moverla de lista cambiaría
+    // el significado de lo que otros ya eligieron. Para eso se desactiva ésta y
+    // se agrega otra, que es lo que dice el texto de ayuda.
+    function corregirOpcion(id) {
+      const opcion = opcionesPropias.filter((o) => o.id === id)[0];
+      if (!opcion) return;
+
+      opcionEnCorreccion = opcion.id;
+      document.getElementById('opciones-form-titulo').textContent =
+        Catalogo.frase('panel.opciones_form_correccion');
+
+      const lista = document.getElementById('opciones-campo-lista');
+      lista.value = opcion.vocabulario_id;
+      lista.disabled = true;
+
+      const campo = document.getElementById('opciones-campo-nombre');
+      campo.value = Catalogo.texto(opcion);
+      mostrarClaveDeOpcion();
+      campo.focus();
+    }
+
+    // Dónde va la opción nueva adentro de su lista. Se cuenta desde las propias
+    // y arranca en 101, que es lo que hizo la migración 0040: así lo que agrega
+    // la Prestadora queda detrás del catálogo general en vez de intercalarse.
+    const ORDEN_DE_LAS_PROPIAS = 100;
+    function ordenSiguiente(vocabularioId) {
+      return opcionesPropias
+        .filter((o) => o.vocabulario_id === vocabularioId)
+        .reduce((mayor, o) => Math.max(mayor, Number(o.orden) || 0),
+          ORDEN_DE_LAS_PROPIAS) + 1;
+    }
+
+    // Lo que carga una Prestadora queda en el idioma en que lo escribió: la
+    // regla de i18n rige el texto que escribe el producto, no el que carga el
+    // cliente. Es la misma decisión de la migración 0038, que por eso le pide
+    // los tres idiomas a la opción general y uno solo a la propia.
+    const enElIdiomaDeElla = (valor) => ({ 'es-AR': valor });
+
+    // «todo botón que dispara una operación se apaga»: dos clics seguidos eran
+    // dos opciones iguales o dos correcciones sobre la misma fila.
+    async function guardarOpcion() {
+      const boton = document.getElementById('btn-guardar-opcion');
+      const rotulo = document.getElementById('btn-guardar-opcion-texto');
+      const cancelar = document.getElementById('btn-cancelar-opcion');
+
+      const vocabularioId = document.getElementById('opciones-campo-lista').value;
+      const nombre = String(document.getElementById('opciones-campo-nombre').value || '').trim();
+      const corregia = opcionEnCorreccion;
+
+      // Lo mismo que van a exigir la tabla y el disparador, dicho antes y en el
+      // idioma de la pantalla. La base sigue siendo la que manda: esto no la
+      // reemplaza, le evita a la persona un viaje para que le contesten con el
+      // nombre de una restricción.
+      if (!vocabularioId) { estadoOpcionesForm('atencion', 'panel.opciones_falta_lista'); return; }
+      if (!nombre) { estadoOpcionesForm('atencion', 'panel.opciones_falta_nombre'); return; }
+
+      const clave = Texto.claveDesde(nombre);
+      if (!clave) { estadoOpcionesForm('atencion', 'panel.opciones_nombre_sin_clave'); return; }
+
+      boton.disabled = true;
+      cancelar.disabled = true;
+      rotulo.textContent = Catalogo.frase('panel.opciones_guardando');
+      estadoOpcionesForm('info', 'panel.opciones_guardando');
+
+      let fila;
+      try {
+        if (corregia) {
+          fila = await ClienteDatos.actualizarOpcion(corregia,
+            { i18n: enElIdiomaDeElla(nombre) });
+        } else {
+          // La clave repetida se busca antes de escribir. La unicidad la
+          // sostiene la base —el índice de la 0038 y el disparador—, pero ahí
+          // la respuesta llega como el nombre de una restricción, y eso no es
+          // un mensaje para nadie. Se miran las generales y las propias, y
+          // también las desactivadas: una desactivada sigue ocupando su clave.
+          const yaEstan = await ClienteDatos.clavesDeVocabulario(vocabularioId);
+          if ((yaEstan || []).some((o) => o.clave === clave)) {
+            estadoOpcionesForm('atencion', 'panel.opciones_ya_existe');
+            return;
+          }
+          fila = await ClienteDatos.crearOpcion({
+            vocabulario_id: vocabularioId,
+            clave: clave,
+            i18n: enElIdiomaDeElla(nombre),
+            orden: ordenSiguiente(vocabularioId)
+          });
+        }
+      } catch (err) {
+        console.error('Panel de la Prestadora, guardado de una opción propia:', err);
+        estadoOpcionesForm('critico', Texto.claveDeError(err, 'guardar la opción'));
+        return;
+      } finally {
+        boton.disabled = false;
+        cancelar.disabled = false;
+        rotulo.textContent = Catalogo.frase('panel.opciones_guardar');
+      }
+
+      // La base contestó sin devolver la fila: el cambio no quedó escrito, y
+      // decir «guardada» sería mentir.
+      if (!fila) { estadoOpcionesForm('critico', 'panel.opciones_error_guardar'); return; }
+
+      limpiarFormularioDeOpcion();
+      await cargarOpcionesPropias();
+      estadoOpcionesForm('exito',
+        corregia ? 'panel.opciones_corregida' : 'panel.opciones_guardada');
+    }
+
+    function cancelarCorreccionDeOpcion() {
+      limpiarFormularioDeOpcion();
+      estadoOpcionesForm(null);
+    }
+
+    // Desactivar es lo más parecido a borrar que tiene este bloque, así que se
+    // confirma: se dice qué va a pasar, qué no se toca y que se puede volver
+    // atrás. Volver a activar no pregunta, porque no le saca nada a nadie.
+    async function cambiarEstadoDeOpcion(id, boton) {
+      const opcion = opcionesPropias.filter((o) => o.id === id)[0];
+      if (!opcion) return;
+
+      const nombre = Catalogo.texto(opcion);
+      const apagar = !!opcion.activo;
+      if (apagar && !confirm(Texto.frase('panel.opciones_desactivar_pregunta', { opcion: nombre }))) {
+        return;
+      }
+
+      boton.disabled = true;
+      estadoOpciones('info', 'panel.opciones_cambiando');
+
+      let fila;
+      try {
+        fila = await ClienteDatos.actualizarOpcion(id, { activo: !apagar });
+      } catch (err) {
+        console.error('Panel de la Prestadora, alta o baja de una opción propia:', err);
+        boton.disabled = false;
+        estadoOpciones('critico', Texto.claveDeError(err, 'cambiar el estado de la opción'));
+        return;
+      }
+
+      if (!fila) { estadoOpciones('critico', 'panel.opciones_error_guardar'); return; }
+
+      if (opcionEnCorreccion === id) cancelarCorreccionDeOpcion();
+      await cargarOpcionesPropias();
+      estadoOpciones('exito',
+        apagar ? 'panel.opciones_desactivada_aviso' : 'panel.opciones_reactivada_aviso',
+        { opcion: nombre });
+    }
+
     // El orden no es casual: sin sesión no hay Prestadora, y sin Prestadora la
     // consulta de legajos no tiene por qué filtrar.
     // «los cuatro estados»: el arranque es un pedido a la base como cualquier otro, y si falla
@@ -980,6 +1399,17 @@
         // legajos: la tabla es del espacio de la Prestadora y no la alcanza
         // nadie más.
         cargarTope();
+
+        // Y las opciones propias del catálogo van detrás del mismo permiso:
+        // agregarle una opción a la Prestadora es escribir en su espacio.
+        document.getElementById('btn-guardar-opcion')
+          .addEventListener('click', () => guardarOpcion());
+        document.getElementById('btn-cancelar-opcion')
+          .addEventListener('click', () => cancelarCorreccionDeOpcion());
+        document.getElementById('opciones-campo-nombre')
+          .addEventListener('input', () => mostrarClaveDeOpcion());
+        cargarOpcionesPropias();
+        cargarListasAbiertas();
       } catch (err) {
         console.error('Panel de la Prestadora, arranque:', err);
         estadoTabla('critico', 'panel.arranque_error');

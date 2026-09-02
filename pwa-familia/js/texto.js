@@ -99,6 +99,14 @@ const MONEDA_POR_OMISION = 'ARS';
    que para eso trae el huso. */
 const SOLO_FECHA = /^(\d{4})-(\d{2})-(\d{2})$/;
 
+/* Hasta dónde se corta una clave calculada desde lo que escribió una persona.
+   La columna no tiene tope —es `text`—, así que esto no es un límite de la base:
+   es que una clave se lee en consultas, en registros y en avisos de error, y un
+   renglón de doscientos caracteres ahí no lo lee nadie. Cuarenta alcanzan para
+   `insuficiencia_renal_en_dialisis` y sobran. Lo que se ve en pantalla no se
+   corta: eso es el texto, y va entero. */
+const LARGO_DE_CLAVE = 40;
+
 function fechaDeValor(valor) {
   const partes = typeof valor === 'string' ? valor.match(SOLO_FECHA) : null;
   const fecha = partes
@@ -158,6 +166,37 @@ const Texto = {
     return new Intl.NumberFormat(idiomaDeForma(), {
       style: 'currency', currency: moneda, maximumFractionDigits: 0
     }).format(numero);
+  },
+
+  /**
+   * De lo que se escribe a lo que se guarda. Entra el nombre que una persona
+   * tecleó —«Esclerosis múltiple»— y sale la clave con la que esa opción va a
+   * quedar guardada para siempre —`esclerosis_multiple`—, que es exactamente la
+   * forma que ya usan las opciones cargadas por la migración 0040.
+   *
+   * Son dos capas distintas y por eso hay dos valores: **lo visible** puede
+   * corregirse el día que la Prestadora quiera escribirlo mejor, y **lo
+   * guardado** no cambia nunca, porque es lo que quedó escrito en cada legajo,
+   * en cada aviso y en cada perfil que eligió esa opción. Renombrarlo sería una
+   * migración de datos disfrazada de corrección de texto.
+   *
+   * Por eso también la clave se calcula una sola vez, al dar de alta: quien
+   * llama no la vuelve a pedir cuando corrige el texto.
+   *
+   * Se le sacan las tildes antes de tirar lo que no sirve, para que «múltiple»
+   * dé `multiple` y no `m_ltiple`. Y si de lo escrito no queda ninguna letra ni
+   * ningún número —alguien escribió sólo signos— devuelve la cadena vacía, que
+   * es la señal de que no hay clave posible: la base rechazaría la fila con un
+   * error suyo, y quien llama puede decirlo antes y en el idioma de la pantalla.
+   */
+  claveDesde(valor) {
+    return String(valor === null || valor === undefined ? '' : valor)
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .slice(0, LARGO_DE_CLAVE)
+      .replace(/_+$/g, '');
   },
 
   /** Devuelve el valor listo para entrar en HTML sin correr como HTML. */

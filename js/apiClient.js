@@ -377,6 +377,94 @@ const ClienteDatos = {
       { id: `eq.${id}` });
   },
 
+  // ── LAS OPCIONES QUE AGREGA LA PRESTADORA ──────────────────────────────
+  // `vocabulariosDePrestadora()`, más arriba, es la puerta de lectura: funde el
+  // catálogo general con lo propio, sirve sin sesión y esconde lo apagado, que
+  // es justo lo que necesita cualquier pantalla que ofrezca elegir una opción.
+  // Lo de acá abajo es el otro lado, el de quien las carga, y va contra las
+  // tablas por los mismos dos motivos que las Guías: la puerta no devuelve las
+  // opciones desactivadas —las que hay que poder volver a encender— y no
+  // distingue la general de la propia, que es exactamente la distinción que
+  // esta pantalla no puede perder.
+  //
+  // Nada de esto necesita que la pantalla se acuerde de filtrar por Prestadora.
+  // Las ocho políticas de la migración 0038 lo hacen, las de alta, cambio y
+  // baja exigen además `tenant_id is not null` —así que el catálogo general no
+  // se toca ni equivocándose—, y el disparador
+  // `el_vocabulario_no_cruza_prestadoras` rechaza colgarse del vocabulario de
+  // otra y rechaza una lista declarada cerrada.
+
+  // Las listas que admiten opciones propias. `cerrada` en falso es lo que lo
+  // declara, y no lo decide esta pantalla: viene de la base desde la migración
+  // 0038, y quien lo hace cumplir es el disparador. Ofrecer una lista cerrada
+  // sería ofrecer un error que recién aparece al guardar.
+  async vocabulariosAbiertos() {
+    return await this._supabaseRequest('GET', 'vocabularios', null, {
+      select: 'id,clave,i18n,tenant_id',
+      cerrada: 'is.false',
+      activo: 'is.true',
+      order: 'orden.asc'
+    });
+  },
+
+  // Sus opciones, sólo las suyas. El `tenant_id=not.is.null` no es la seguridad
+  // —de eso se ocupa la política— sino la pantalla: sin él entrarían también
+  // las ciento cuarenta y siete del catálogo general, que ella no cargó y no
+  // puede corregir, y la lista diría que tiene ciento cincuenta propias.
+  //
+  // Vienen también las desactivadas, que es la diferencia con la puerta: una
+  // opción apagada tiene que poder volver a encenderse desde esta misma tabla.
+  async misOpciones() {
+    return await this._supabaseRequest('GET', 'vocabulario_items', null, {
+      select: 'id,vocabulario_id,clave,i18n,orden,activo,created_at,' +
+        'vocabularios(id,clave,i18n)',
+      tenant_id: 'not.is.null',
+      order: 'created_at.desc'
+    });
+  },
+
+  // Las claves que esa lista ya tiene ocupadas: las del catálogo general y las
+  // de esta Prestadora, encendidas y apagadas. Es lo mismo que miran el índice
+  // único y el punto 4 del disparador, y se pide antes de guardar para poder
+  // decirlo en el idioma de la pantalla: si no, la base contesta con una frase
+  // suya, en castellano y hablando de tablas.
+  //
+  // Sin filtro por `activo` a propósito, que es la diferencia con
+  // `opcionesConGuia`: una clave repetida choca igual contra una opción que
+  // esta Prestadora tenía apagada, y ahí el aviso «ya existe» es el correcto
+  // —lo que corresponde es volver a encenderla, no cargarla de nuevo—.
+  async clavesDeVocabulario(vocabularioId) {
+    return await this._supabaseRequest('GET', 'vocabulario_items', null, {
+      select: 'id,clave,tenant_id,activo',
+      vocabulario_id: `eq.${vocabularioId}`
+    });
+  },
+
+  // El alta escribe el `tenant_id` desde la Prestadora que ya resolvió la
+  // sesión. Si no hay ninguna se corta acá y no se manda el pedido: sin ese
+  // valor la política lo rechazaría igual, pero con un error de la base en vez
+  // de uno que la pantalla sepa contar.
+  async crearOpcion(datos) {
+    const prestadora = this.currentTenant || await this.initTenant();
+    if (!prestadora || !prestadora.id) {
+      throw new Error('No se pudo resolver la Prestadora de esta sesión.');
+    }
+    const filas = await this._supabaseRequest('POST', 'vocabulario_items',
+      Object.assign({ tenant_id: prestadora.id }, datos));
+    return filas[0] || null;
+  },
+
+  // El cambio no toca `tenant_id`, ni `vocabulario_id`, ni `clave`. Los tres
+  // son lo guardado y lo guardado no se renombra: la clave es la que quedó
+  // escrita en cada legajo, en cada aviso y en cada perfil que eligió esa
+  // opción, así que corregirla no corrige nada, deja huérfano todo lo anterior.
+  // Lo que sí se corrige es el texto que se lee, y encenderla o apagarla.
+  async actualizarOpcion(id, datos) {
+    const filas = await this._supabaseRequest('PATCH', 'vocabulario_items', datos,
+      { id: `eq.${id}` });
+    return filas[0] || null;
+  },
+
   // Guarda el legajo del Asistente: las cuatro fichas repetibles, lo que
   // autoriza al cerrar el alta (migración 0004) y su disponibilidad horaria
   // (migración 0012). Las claves de cada fila salen de data/catalogo-fichas.json,

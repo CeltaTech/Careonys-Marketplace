@@ -14,7 +14,7 @@ aplica ningún cambio hasta que estas preguntas estén convalidadas.
 `supabase/migrations/0048_presdemo_arma_su_propio_curso.sql:68`— preguntan por posiciones,
 maniobras y frecuencias, es decir, por tratamiento. Eso choca con la línea que trazan la
 migración `0042` en su encabezado y la pantalla del Asistente
-(`pwa-asistente/index.html:804`): «Estas guías dicen qué observar y cuándo avisar. No indican
+(`pwa-asistente/index.html:813`): «Estas guías dicen qué observar y cuándo avisar. No indican
 tratamientos». La migración que cargue estas veinte tiene entonces que **reemplazar** aquellas
 cuatro, no sumarse a ellas. Eso también entra en lo que hay que convalidar.
 
