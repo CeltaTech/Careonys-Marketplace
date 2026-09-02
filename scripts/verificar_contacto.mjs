@@ -14,9 +14,15 @@
    —eso ya está anotado como pendiente— sino cortarle la conversación a un
    Asistente que dijo que cobra 3500 por hora y trabaja de 8 a 16.
 
-   Qué no mira: si el control existe del lado del servidor, que es donde tendría
-   que estar. Hoy no existe y no puede: la tabla del chat todavía no se decidió
-   (pendiente 62). Esto revisa el reconocedor, no la puerta.
+   Qué no mira: la puerta de verdad, que está del lado del servidor desde la
+   migración 0063 y la prueba `scripts/probar_la_tercera_puerta.mjs` con una
+   sesión y sin pasar por ninguna pantalla. Esto revisa el reconocedor del
+   navegador, que es el que avisa antes de mandar.
+
+   Y las dos listas de mensajes **no viven acá**: están en
+   `scripts/mensajes_de_contacto.mjs`, porque las dos mitades de la puerta se
+   prueban con las mismas. Dos listas separadas dejarían de coincidir sin que
+   nadie se enterara.
 =================================================== */
 
 import { readFileSync } from 'node:fs';
@@ -24,6 +30,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { seRevisaron } from './recorrido.mjs';
+import { NO_PASAN, PASAN } from './mensajes_de_contacto.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -34,41 +41,6 @@ const IDIOMAS = ['es-AR', 'en', 'pt-BR'];
 seRevisaron((reglas.reglas || []).length, 'una sola regla en `data/patrones-contacto.json`');
 seRevisaron(IDIOMAS.length, 'un solo idioma contra el que probar');
 
-/* Cada uno con la clave que se espera que lo reconozca: si mañana el mensaje
-   queda bloqueado por otra regla, el chequeo lo dice en vez de darlo por bueno. */
-const NO_PASAN = [
-  ['Mi celular es 11 3000-1234', 'telefono'],
-  ['llamame al 1130001234 cuando puedas', 'telefono'],
-  ['+54 9 11 3000 1234', 'telefono'],
-  ['mi numero: 11.3000.1234', 'telefono'],
-  ['anotá uno uno tres cero cero cero uno dos tres cuatro', 'telefono_en_letras'],
-  ['escribime a maria.lopez@gmail.com', 'correo'],
-  ['mi correo es marialopez arroba gmail punto com', 'correo'],
-  ['mandame un mail a maria(at)hotmail.com', 'correo'],
-  ['vivo en la calle Rivadavia 4500', 'domicilio'],
-  ['paso por Av. Corrientes 1234', 'domicilio'],
-  ['es en el pasaje San Lorenzo 88', 'domicilio'],
-  ['tocá el timbre 12', 'domicilio_por_partes'],
-  ['depto 4 del fondo', 'domicilio_por_partes']
-];
-
-/* Todo lo que un Asistente y una Familia se dicen de verdad antes de contratar.
-   Ninguno puede quedar bloqueado. */
-const PASAN = [
-  'Hola, buenas tardes. Vi su perfil en el directorio.',
-  'Tengo 45 años y trabajo hace 10 años en gerontología.',
-  'Cobro 3500 por hora, de 8 a 16 hs.',
-  'Puedo los martes y jueves, 4 horas por día.',
-  'Trabajé 3 años con una señora de 92 con Alzheimer.',
-  'El 25 de agosto puedo empezar, si le parece bien.',
-  'Tengo el curso de primeros auxilios aprobado.',
-  'Mi zona es Caballito y alrededores.',
-  'Puedo hacer 2 turnos, uno a la mañana y otro a la tarde.',
-  '¿La atención es para una persona sola o para dos?',
-  'Hice 120 horas de práctica en una residencia.',
-  'Somos 3 hermanos y nos turnamos los fines de semana.',
-  'Necesito cubrir de lunes a viernes, 6 horas.'
-];
 
 const fallas = [];
 

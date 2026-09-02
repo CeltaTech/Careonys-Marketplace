@@ -48,7 +48,8 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
-import { AL_ALCANCE_ANONIMO, VISTAS_AL_ALCANCE_ANONIMO } from './verificar_esquema.mjs';
+import { AL_ALCANCE_ANONIMO, VISTAS_AL_ALCANCE_ANONIMO,
+         TABLAS_DEL_PRODUCTO_AL_ALCANCE_ANONIMO } from './verificar_esquema.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const local = process.argv.includes('--local');
@@ -65,7 +66,14 @@ const FUNCIONES_ABIERTAS = new Set(AL_ALCANCE_ANONIMO.keys());
 // abrir una. Ese día llegó —la oferta general de cursos— y la lista se fue al
 // mismo lugar que la otra, con el motivo y con lo que la sostiene. Acá quedó
 // sólo el uso, que es como tenía que haber estado desde el principio.
-const TABLAS_ABIERTAS = new Set(VISTAS_AL_ALCANCE_ANONIMO.keys());
+// Y con las tablas del producto que se leen sin sesión porque no guardan datos
+// de nadie. Van juntas acá porque lo que esta prueba mira es lo mismo para las
+// dos —qué alcanza `anon` en la base de verdad—; lo que las distingue es qué
+// sostiene cada exención, y eso se comprueba en `verificar_esquema.mjs`.
+const TABLAS_ABIERTAS = new Set([
+  ...VISTAS_AL_ALCANCE_ANONIMO.keys(),
+  ...TABLAS_DEL_PRODUCTO_AL_ALCANCE_ANONIMO.keys()
+]);
 
 let fallos = 0;
 let inservible = false;

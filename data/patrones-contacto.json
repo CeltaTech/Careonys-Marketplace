@@ -1,15 +1,13 @@
 {
   "_que_es_esto": "Las reglas con las que el chat reconoce un dato de contacto. Están acá y no adentro del guion porque son una regla operativa, y una regla operativa no se escribe en el código. Quien las ajuste no necesita tocar ninguna pantalla.",
-  "_de_donde_sale": "docs/CATALOGO.md, «El chat es la tercera puerta». El chat existe para que la Familia y el Asistente se conozcan antes de contratar; si adentro del chat se puede pasar un teléfono, un correo o un domicilio, la conversación sigue por afuera y la plataforma cobra una vez y nunca más.",
-  "_lo_que_esto_no_es": "No es un control de seguridad. Corre en el navegador, así que quien quiera saltearlo lo saltea. Cierra el camino fácil y deja dicho que no se puede; el control de verdad va del lado del servidor, en la misma migración que cree la tabla del chat, y todavía no existe porque esa tabla tampoco.",
+  "_de_donde_sale": "La tabla patrones_de_contacto, desde la migración 0063. Este archivo es una copia generada y no se edita a mano: se rehace con node scripts/generar_patrones_contacto.mjs --escribir, y node scripts/verificar_patrones_contacto.mjs se pone rojo si se despegó. Por qué existen las reglas: docs/CATALOGO.md, «El chat es la tercera puerta» — si adentro del chat se puede pasar un teléfono, un correo o un domicilio, la conversación sigue por afuera y la plataforma cobra una vez y nunca más.",
+  "_lo_que_esto_no_es": "No es el control. El control está del lado del servidor desde la migración 0063: un disparador sobre mensajes que revisa el contenido antes de guardarlo, con estas mismas reglas y no con una segunda copia de ellas. Esto es el aviso previo del navegador, que cierra el camino fácil y le dice a quien no sabía que no se puede; quien quiera saltearlo lo saltea, y del otro lado se encuentra la puerta cerrada igual.",
   "_por_que_falla_hacia_afuera": "Ante la duda, deja pasar. Un mensaje legítimo bloqueado es peor que un teléfono que se escapa: el primero le rompe la conversación a alguien que no hizo nada, y el segundo ya está anotado como pendiente. Por eso ninguna regla se apoya en una sola palabra suelta.",
-
   "aviso": {
     "es-AR": "Este mensaje no se envió: adentro del chat no se comparten datos de contacto. La conversación se sigue acá hasta que se acuerde la contratación.",
     "en": "This message was not sent: contact details cannot be shared inside the chat. The conversation continues here until the hiring is agreed.",
     "pt-BR": "Esta mensagem não foi enviada: não se compartilham dados de contato dentro do chat. A conversa continua aqui até que a contratação seja acordada."
   },
-
   "reglas": [
     {
       "clave": "telefono",

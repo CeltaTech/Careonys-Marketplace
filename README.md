@@ -31,14 +31,14 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
-| 18 pantallas HTML, 12.629 renglones | sin ruteo: cada pantalla es un archivo |
-| 14.908 renglones de JavaScript propio, en 35 archivos | 8.965 de ellos son copias byte a byte de otro archivo (pendiente 13) |
+| 18 pantallas HTML, 12.630 renglones | sin ruteo: cada pantalla es un archivo |
+| 14.951 renglones de JavaScript propio, en 35 archivos | 8.987 de ellos son copias byte a byte de otro archivo (pendiente 13) |
 | 5.984 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
 | 4.744 renglones de hojas de estilo, en 10 archivos | 64 tokens con nombre en `css/tokens.css`, sin framework |
 | 984 declaraciones más, pegadas al HTML | en 249 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 14 de las 18 pantallas rescatan la sesión al abrir |
 | 5 servidores de afuera, sin `package.json` ni compilación | cdn.jsdelivr.net, cdnjs.cloudflare.com, fonts.googleapis.com, fonts.gstatic.com, www.openstreetmap.org — hay que decir de qué es cada uno |
-| 27 tablas y 62 migraciones en el repositorio | 35 chequeos las miran antes de cada commit |
+| 28 tablas y 63 migraciones en el repositorio | 36 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
@@ -170,6 +170,7 @@ título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de e
 | `verificar_organizacion` | Que una pantalla nombre a una Prestadora del seed, o escriba otro logotipo |
 | `verificar_opciones` | Que una lista de opciones vuelva a escribirse adentro de una pantalla, y con ella un valor que ningún vocabulario gobierna |
 | `verificar_paleta` | Que vuelva un color escrito con su número en vez de un token |
+| `verificar_patrones_contacto` | Que las reglas con las que el chat reconoce un dato de contacto se despeguen entre la tabla de la base, que es la que aplica el servidor, y `data/patrones-contacto.json`, que es lo que el navegador avisa antes de mandar; y que una regla nueva use algo que Postgres no entiende, con lo que la puerta del servidor quedaría sin aplicarla |
 | `verificar_pendientes` | Que un archivo siga diciendo en presente que un agujero está abierto después de haberse cerrado, y una roja esperada se vuelva un permiso para no mirar |
 | `verificar_red` | Que un chequeo mire cero archivos, no encuentre nada y salga en verde igual; que la extensión de las pantallas vuelva a escribirse a mano —suelta, o metida adentro de la clave de una exención— en vez de pedirse a `scripts/recorrido.mjs`; que una exención de `scripts/` se quede nombrando un archivo que ya no está —o una columna que ninguna migración declara—, y siga apagando el chequeo sobre él; que esta misma tabla se quede atrás, nombrando un chequeo que ya no existe o callando uno que sí; y que un documento mande a correr `node scripts/X` sin que `X` exista o sin que `docs/INVENTARIO.md` diga qué hace, que es lo mismo un paso afuera de la red: los chequeos entran solos en `verificar_todo.mjs` y no hace falta recordarlos, pero una herramienta que hay que acordarse de correr y que además no dice en ninguna parte qué hace es una herramienta que no corre |
 | `verificar_referencias` | Que una cita `archivo:renglón` de la documentación apunte a la nada |

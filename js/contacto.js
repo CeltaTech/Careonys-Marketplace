@@ -18,10 +18,17 @@
    No es un control de seguridad, y decirlo importa más que lo que sí es. Corre
    en el navegador: quien quiera saltearlo abre la consola y lo saltea. Cierra
    el camino fácil, le dice a quien no sabía que no se puede, y deja constancia.
-   **El control de verdad va del lado del servidor**, y va en la misma migración
-   que cree la tabla del chat. Hoy no existe porque esa tabla tampoco: `messages`
-   es de otro modelo y todavía no se decidió cuál queda (`docs/TABLAS_QUE_FALTAN.md`,
-   puntos 2 y 3). Anotado como pendiente 62.
+   **El control de verdad está del lado del servidor** desde la migración 0063:
+   un disparador sobre `mensajes` que revisa el contenido antes de
+   guardarlo y devuelve `contacto_bloqueado:<clave de la regla>`. Ahí no hay
+   consola que valga. Esto es el aviso previo, que existe para que a nadie se le
+   rechace un mensaje sin haber sabido antes que no se podía.
+
+   Y no son dos listas de reglas: **son la misma**. Las reglas viven en la tabla
+   `patrones_de_contacto` y este archivo lee una copia generada desde ella, que
+   `scripts/verificar_patrones_contacto.mjs` compara en cada `commit`. Dos listas
+   separadas coinciden el primer día y se despegan en silencio, y la que se
+   despega es siempre la que la persona ve.
 
    Y tampoco es exacto. Ningún reconocedor de texto lo es: el que aprieta de más
    le rompe la conversación a alguien que no hizo nada, y el que aprieta de menos
@@ -42,8 +49,11 @@
 
    ESTE ARCHIVO NO SE TRIPLICA
    Las copias de `js/` en cada PWA existen porque el service worker de cada una
-   sólo alcanza su propia carpeta. Ninguna de las dos PWAs tiene chat, así que
-   acá no hay nada que copiar. El día que lo tengan, se copia y se agrega a
+   sólo alcanza su propia carpeta. Las dos PWAs sí tienen chat —`js/conversacion.js`,
+   montado en las dos—, pero ese chat no usa este archivo: se apoya derecho en la
+   puerta del servidor y muestra lo que ella conteste. El único que lee esto es
+   `mockup-app.html`, que se va cuando cierre el pendiente 6. El día que una
+   pantalla de una PWA quiera avisar antes de mandar, se copia y se agrega a
    `scripts/verificar_copias.mjs`.
 =================================================== */
 

@@ -734,7 +734,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
 - **Los dos pasos que faltaban se dibujan desde el catálogo**, no están escritos en la pantalla.
   Matrícula y estudios en el paso 2, experiencia laboral en el paso 3 y referencias en el paso 5
   salen de `data/catalogo-fichas.json` a través de `js/fichas-legajo.js`
-  (`pwa-asistente/index.html:2058`, `montarFichas`). El paso de cierre sale de
+  (`pwa-asistente/index.html:2059`, `montarFichas`). El paso de cierre sale de
   `data/catalogo-autorizaciones.json`.
 - **El paso de cierre pasó a ser un módulo.** Estaba escrito adentro de `registrar-asistente.html`,
   cuarenta renglones que traían el archivo y armaban las casillas. Ahora es `js/autorizaciones.js`,
@@ -749,7 +749,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
   que esa fila no entraba y la persona no se enteraba.
 - **Y el alta del teléfono creaba cuentas sin dueño.** `registrarAspirante` no escribía `user_id`,
   así que la persona quedaba con cuenta y con legajo, pero el legajo no era de nadie y no lo podía
-  abrir. Se agrega en `guardarLegajo` (`pwa-asistente/index.html:2123`), que es donde ya se sabe
+  abrir. Se agrega en `guardarLegajo` (`pwa-asistente/index.html:2124`), que es donde ya se sabe
   quién inició sesión.
 
 **Cómo se comprobó, el 25 de agosto de 2026.** En dos mitades, porque el servidor alojado todavía
@@ -1569,7 +1569,7 @@ pantalla vacía.
   cargarla», que es el estado de error que faltaba.
 - **Las otras tres caen en la pantalla de acceso**, y eso ya era la verdad: sin sesión rescatada,
   lo que corresponde mostrar es el acceso. Lo que se perdía era el rastro. Ahora
-  `mockup-app.html:436` y `:911`, `pwa-asistente/index.html:1019` y `pwa-familia/index.html:1130`
+  `mockup-app.html:436` y `:911`, `pwa-asistente/index.html:1020` y `pwa-familia/index.html:1130`
   dejan el detalle técnico en la consola en lugar de tirarlo.
 - **`js/auth.js:292` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
   cargan ese archivo —no en las dieciséis, y el comentario decía catorce hasta que se contaron—, y su
@@ -1785,7 +1785,7 @@ pone el largo. El corto sólo aparecía leído, y en una fila de ejemplo.
 
 La `0017` lo saca: pasa las filas que decían `validado` a decir `validado_prestadora`, y el
 directorio deja de nombrar el valor muerto. En el código quedaba un solo lugar que lo leía
-—`pwa-asistente/index.html:1736`, un `||` defensivo— y también se fue. **Lo que la `0017` no hace es
+—`pwa-asistente/index.html:1737`, un `||` defensivo— y también se fue. **Lo que la `0017` no hace es
 cerrar la lista de estados con un `check`**, porque para eso hay que saber cuáles son todos, y hoy
 el código nombra cuatro sin que ningún lugar diga que ésos son todos.
 
@@ -2200,14 +2200,17 @@ desaparece se lee como un error del programa y no como una negativa.
 
 | Pieza | Dónde | Por qué |
 |---|---|---|
-| Las reglas | `data/patrones-contacto.json` | Son una regla operativa, y una regla operativa no se escribe en el código. Quien quiera ajustar qué cuenta como teléfono edita ese archivo y no toca ninguna pantalla |
-| El reconocedor | `js/contacto.js` | Un solo lugar. El día que haya chat en las PWAs, lo llaman igual |
+| Las reglas | la tabla `patrones_de_contacto`, migración 0063 | Son una regla operativa, y una regla operativa no se escribe en el código. Quien quiera ajustar qué cuenta como teléfono agrega una fila y no toca ninguna pantalla ni despliega nada |
+| La copia que ve el navegador | `data/patrones-contacto.json` | Generada desde la tabla con `node scripts/generar_patrones_contacto.mjs --escribir`. Existe porque el aviso previo tiene que poder avisar sin conexión, y `scripts/verificar_patrones_contacto.mjs` la compara contra la tabla en cada `commit` |
+| El reconocedor | `js/contacto.js` | Un solo lugar. Es el aviso previo del navegador, no el control |
 | La prueba | `scripts/verificar_contacto.mjs` | Entra sola al gancho de `pre-commit`, que busca los chequeos en la carpeta |
 | El aviso, en tres idiomas | dentro del archivo de reglas | Un mensaje de error es texto visible, y no nace en un solo idioma |
 
 **No se triplica.** Las copias de `js/` en cada PWA existen porque el trabajador de servicio de
-cada una sólo alcanza su propia carpeta. Ninguna de las dos tiene chat, así que no hay nada que
-copiar todavía.
+cada una sólo alcanza su propia carpeta. Las dos PWAs sí tienen chat —`js/conversacion.js`,
+montado en las dos—, pero ese chat no usa este archivo: se apoya derecho en la puerta del
+servidor y muestra lo que ella conteste. El único que lo lee es `mockup-app.html`, que se va
+cuando cierre el pendiente 6.
 
 **La prueba tiene dos listas, y la segunda es la que sirve.** Trece mensajes que **no pueden
 pasar** y trece que **no pueden quedar bloqueados**. Con una sola lista, un reconocedor que
@@ -2222,10 +2225,8 @@ se entera de que dejó de estar.
 
 **Y lo que hay que decir de esto es lo que no hace.** Corre en el navegador de quien escribe. Se
 saltea abriendo la consola, y quien tiene motivo para saltearlo es exactamente contra quien
-existe. **La mitad que importa va del lado del servidor y hoy no se puede escribir**: la tabla del
-chat no existe, `messages` es de otro modelo y todavía no se decidió cuál queda. Quedó como
-pendiente 62, con la condición de que el control entre en la misma migración que cree la tabla y
-lea las mismas reglas, no una segunda copia de ellas.
+existe. **La mitad que importa va del lado del servidor**, y desde el 2 de septiembre de 2026 está
+escrita: es la sección que sigue.
 
 **Y el mismo día se sacó del HTML la consulta al chat.** Leer y mandar mensajes estaba escrito con
 `fetch` a mano adentro de `mockup-app.html`, armando la dirección y los encabezados ahí mismo: era
@@ -2244,6 +2245,54 @@ mensajes.
 columnas de hoy, y sigue sin filtrar por conversación porque la tabla de hoy no tiene con qué.
 Cuál es el modelo del chat —`messages`, o `conversaciones` y `mensajes`— sigue esperando decisión
 en el §4 de este mismo documento, y mover una consulta de lugar no es elegirlo.
+
+### La tercera puerta se cerró del lado del servidor
+
+Hecho el 2 de septiembre de 2026, en la migración 0063. Cierra el pendiente 62.
+
+**Qué hace.** Un disparador sobre `mensajes` revisa el texto **antes de guardarlo**. Si
+adentro hay un dato de contacto, la fila no se escribe y la base contesta
+`contacto_bloqueado:<clave de la regla>`. No hay consola de navegador que valga: quien manda el
+pedido a mano recibe exactamente lo mismo que quien usa la pantalla.
+
+**Las reglas son las mismas, y eso no es una promesa: se comprueba.** Viven en la tabla
+`patrones_de_contacto`. El navegador las lee de `data/patrones-contacto.json`, que es una copia
+generada desde esa tabla, y `scripts/verificar_patrones_contacto.mjs` entra solo al gancho de
+`pre-commit` y pone rojo el día que las dos dejen de coincidir —regla por regla, y comparando la
+expresión al carácter, porque una barra invertida de más es exactamente la clase de diferencia
+que se busca—.
+
+**Y las dos expresiones no se escriben dos veces.** Postgres y el navegador no escriben igual el
+límite de palabra: uno lo dice `\y` y el otro `\b`, y en Postgres `\b` significa otra cosa —un
+retroceso—, así que la misma expresión copiada tal cual no falla: **reconoce de menos, en
+silencio**. La traducción la hace `patron_en_postgres`, una función, en un solo lugar y con el
+motivo escrito arriba. Lo que la tabla no acepta es una expresión que Postgres no pueda entender
+de ninguna manera —`\B`, una referencia hacia atrás, un mirador—: una restricción de la tabla la
+rechaza al escribirla, y el chequeo la rechaza antes todavía.
+
+**El rechazo se traduce, y no dice cuál regla saltó.** `js/texto.js` lo clasifica como
+`error.contacto_bloqueado` y el catálogo de frases lo dice en los tres idiomas. Decir cuál de las
+cinco reglas fue sería enseñar a esquivarla —«probá sin los puntos»—, que es lo contrario de para
+qué está la puerta.
+
+**La prueba pasa por la base y no por ninguna pantalla.**
+`scripts/probar_la_tercera_puerta.mjs` abre una sesión de verdad e intenta guardar los mismos
+veintiséis mensajes que usa el chequeo del navegador —trece que no pueden pasar y trece que no
+pueden quedar bloqueados—, tomados los dos de `scripts/mensajes_de_contacto.mjs`, que es el único
+lugar donde están escritos. Trece y trece: si mañana el disparador bloqueara todo, la mitad de
+abajo se pone roja.
+
+**La tabla se lee sin sesión, a propósito.** No guarda datos de nadie: guarda reglas del producto,
+iguales para todas las Prestadoras, y no tiene columna de Organización. Se abre para que el
+chequeo pueda comparar el archivo contra la tabla sin ninguna credencial. La exención está escrita
+en `scripts/verificar_esquema.mjs`, en `TABLAS_DEL_PRODUCTO_AL_ALCANCE_ANONIMO`, y **lo que la
+sostiene se comprueba**: si alguien le agrega la columna de Organización, o le da permiso de
+escribir, el chequeo se pone rojo.
+
+**Lo que quedó abierto y no se decidió acá.** La regla nombra teléfono, correo y domicilio. Un
+nombre de usuario de otra aplicación —«buscame en Instagram como…»— abre la misma puerta, y
+bloquearlo puede cortar conversaciones legítimas. Es decisión del Desarrollador, y la migración
+quedó escrita para que la respuesta cueste una fila y no una versión nueva.
 
 ### Las pantallas dejaron de tener el texto adentro
 
@@ -3238,7 +3287,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 - **La puerta es `guias_de(p_slug)`** (`:272`), del mismo tipo que `vocabularios_de`: la tabla no le
   concede nada a `anon` (`:254`), y lo que sale a la calle es una función que **exige el nombre
   corto**, devuelve la general más la de esa sola Prestadora, y sólo las publicadas. Está anotada
-  con su motivo en `scripts/verificar_esquema.mjs:441`, que es donde viven las funciones que llegan
+  con su motivo en `scripts/verificar_esquema.mjs:448`, que es donde viven las funciones que llegan
   al alcance anónimo a propósito.
 - **La pantalla nueva es `screen-guias`** en la aplicación del Asistente
   (`pwa-asistente/index.html:777`), con los cuatro estados y un buscador. **Es una biblioteca de
@@ -3955,7 +4004,7 @@ falta:**
 **Y las cinco formas se eligieron por una sola condición: que no tengan hoy ningún uso legítimo.**
 Se contó sobre los 224 archivos de texto del proyecto y las cinco dan cero. Lo único con forma de
 credencial que hay escrito son las tres apariciones de la clave publicable —el original y sus dos
-copias, decidido y anotado en `docs/INVENTARIO.md:383`— y cinco contraseñas de cuentas ficticias
+copias, decidido y anotado en `docs/INVENTARIO.md:385`— y cinco contraseñas de cuentas ficticias
 adentro de los guiones de prueba, que es como se entra a la base de esta máquina para probar. Por
 eso la contraseña escrita a mano **no** entra en la lista: daría cinco rojos que habría que
 perdonar de a uno, y una lista de perdones sobre credenciales es exactamente lo que esta regla no
@@ -4223,7 +4272,7 @@ Cerró el pendiente 94, el 31 de agosto de 2026.
   cambiaba ni su tarjeta del directorio ni su perfil**. El campo tampoco estaba en el catálogo:
   seguía en castellano en las tres versiones de idioma.
 - **Ahora pregunta igual que la web.** El teléfono carga `js/zonas.js`
-  (`pwa-asistente/index.html:969`), lo monta en el hueco de
+  (`pwa-asistente/index.html:970`), lo monta en el hueco de
   `pwa-asistente/index.html:557` y el módulo decide la forma: la lista con casillas cuando la
   Prestadora tiene zonas cargadas, el texto libre cuando todavía no cargó ninguna. Comprobado en
   el navegador **las dos**, contra la base de esta máquina.
@@ -4234,7 +4283,7 @@ Cerró el pendiente 94, el 31 de agosto de 2026.
 - **La zona sigue siendo obligatoria, y ahora lo cuida el envío.** El `required` del campo viejo
   lo hacía el navegador; una lista de casillas sin tildar no la agarra ningún navegador. Se le
   pregunta al módulo antes de enviar, y si no hay respuesta el formulario vuelve al paso 1 y lleva
-  la vista al campo (`pwa-asistente/index.html:2204`).
+  la vista al campo (`pwa-asistente/index.html:2205`).
 - **Se guarda donde se lee**: las claves van a `zonas_asistente` y el texto libre a `zonas_texto`,
   por `js/apiClient.js:424` y `:1231`. `caregivers.zone` no la escribe más nadie, y eso abrió el
   **pendiente 109**.

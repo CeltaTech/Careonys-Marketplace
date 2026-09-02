@@ -403,7 +403,14 @@ const carpeta = join(raiz, 'supabase', 'migrations');
    Una exención sin motivo es una excepción que nadie va a poder revisar después. */
 const SIN_ORGANIZACION = new Map([
   ['tenants',
-   'es la Organización: su propio identificador es el que las demás tablas copian']
+   'es la Organización: su propio identificador es el que las demás tablas copian'],
+  ['patrones_de_contacto',
+   'guarda las reglas de la tercera puerta, que son del producto y no de ninguna ' +
+   'Prestadora: si una pudiera aflojarlas, la puerta dejaría de estar cerrada para todos, ' +
+   'porque a cualquiera le alcanza con abrirse una conversación en esa Prestadora. No hay ' +
+   'dos Organizaciones que separar ahí adentro, y por eso mismo está además en ' +
+   'TABLAS_DEL_PRODUCTO_AL_ALCANCE_ANONIMO, que va y mira que siga sin la columna; ' +
+   'migración 0063']
 ]);
 
 /* Funciones SECURITY DEFINER que conservan a propósito el permiso del rol
@@ -469,6 +476,34 @@ export const VISTAS_AL_ALCANCE_ANONIMO = new Map([
    'Prestadora ni el nombre de ninguna. Y no publica una sola columna del contenido del ' +
    'curso: ni evaluaciones, ni preguntas, ni opciones, que se siguen pidiendo con sesión; ' +
    'migración 0051']
+]);
+
+/* Tablas de `public` que a propósito se leen sin sesión porque **no guardan
+   datos de nadie**: guardan reglas del producto, iguales para todas las
+   Prestadoras. La decimoquinta regla existe contra el listado suelto —publicar
+   filas de clientes, y de paso quiénes son los clientes—, y una tabla sin
+   columna de Organización no tiene ninguna fila de ningún cliente que publicar.
+
+   **Y no alcanza con decirlo**, igual que con las vistas: lo que sostiene esta
+   exención es que la tabla siga sin columna de Organización, así que la regla va
+   y lo mira. El día que alguien le agregue `tenant_id` —para que una Prestadora
+   pueda tener sus propias reglas, por ejemplo—, la exención deja de valer sola y
+   el chequeo se pone rojo, que es exactamente cuando hay que volver a pensarlo.
+
+   Va aparte de `VISTAS_AL_ALCANCE_ANONIMO` a propósito: lo que sostiene a una
+   vista es la condición escrita en su cuerpo, y lo que sostiene a una tabla es
+   no tener a quién aislar. Son dos cosas distintas y se comprueban distinto. */
+export const TABLAS_DEL_PRODUCTO_AL_ALCANCE_ANONIMO = new Map([
+  ['patrones_de_contacto',
+   'son las expresiones con las que se reconoce un teléfono, un correo o un domicilio ' +
+   'adentro del chat, y no son de ninguna Prestadora: la tercera puerta es del producto, ' +
+   'así que la tabla nace sin columna de Organización a propósito —si una Prestadora ' +
+   'pudiera aflojarla, la puerta dejaría de estar cerrada para todos—. No hay nada de ' +
+   'nadie ahí adentro que publicar, y lo que sí hay ya viaja igual al navegador en ' +
+   '`data/patrones-contacto.json`, que el sitio le sirve a cualquiera. Se abre sin sesión ' +
+   'para que `scripts/verificar_patrones_contacto.mjs` pueda comparar el archivo contra ' +
+   'la tabla sin ninguna credencial: sin eso la copia se despega en silencio, que es lo ' +
+   'que ese chequeo viene a evitar; migración 0063']
 ]);
 
 /* Políticas del depósito de archivos que no nombran la Organización, con el
@@ -812,14 +847,40 @@ export function columnasDeclaradas(textos) {
 
 /* De la paréntesis que abre hasta la que cierra, contando. Una definición de
    columna trae paréntesis adentro —`numeric(10,2)`, `check (…)`— y cortando por
-   la primera que cierra se pierde media tabla. */
+   la primera que cierra se pierde media tabla.
+
+   **Y no cuenta las que están adentro de un texto ni de un comentario**, que es
+   lo que rompía la cuenta en silencio. La 0063 escribe
+   `check (patron !~ '\\(\\?[=!<]')`: ese paréntesis vive adentro de una
+   expresión guardada como texto y no abre nada, pero contado como si abriera
+   dejaba la cuenta desbalanceada para siempre, así que esta función se comía el
+   resto del archivo y le atribuía a la tabla todo lo que viniera después —los
+   comentarios incluidos—. El síntoma fue que `conOrganizacion` le encontró una
+   columna `tenant_id` a una tabla que no la tiene, porque la nombraba un
+   comentario veinte renglones más abajo explicando justamente que no la lleva.
+   Una definición que se lee de más no avisa: contesta de más. */
 function entreParentesis(texto, desde) {
   const i = texto.indexOf('(', desde);
   if (i < 0) return '';
   let hondo = 0;
+  let enTexto = false;
   for (let j = i; j < texto.length; j++) {
-    if (texto[j] === '(') hondo++;
-    else if (texto[j] === ')') {
+    const c = texto[j];
+    if (enTexto) {
+      /* La comilla de adentro se escribe doblada, y con esto se resuelve sola:
+         la primera cierra el texto y la segunda lo vuelve a abrir. */
+      if (c === "'") enTexto = false;
+      continue;
+    }
+    if (c === "'") { enTexto = true; continue; }
+    if (c === '-' && texto[j + 1] === '-') {
+      const finDelRenglon = texto.indexOf('\n', j);
+      if (finDelRenglon < 0) break;
+      j = finDelRenglon;
+      continue;
+    }
+    if (c === '(') hondo++;
+    else if (c === ')') {
       hondo--;
       if (hondo === 0) return texto.slice(i + 1, j);
     }
@@ -1479,6 +1540,25 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, b
       }
       continue;
     }
+    /* Y la tabla del producto que se lee sin sesión tampoco queda perdonada por
+       estar en la lista: lo que la sostiene es no tener a quién aislar, así que
+       se le mira que siga sin columna de Organización. */
+    if (TABLAS_DEL_PRODUCTO_AL_ALCANCE_ANONIMO.has(objeto)) {
+      if (verbo !== 'select') {
+        fallas.push([renglonDe(t, indice),
+          '`' + objeto + '` está en `TABLAS_DEL_PRODUCTO_AL_ALCANCE_ANONIMO`, que ' +
+          'perdona la lectura y nada más, y este permiso le deja `' + verbo + '` a quien ' +
+          'entra sin sesión. Que una regla del producto se lea sin cuenta no es que ' +
+          'cualquiera la pueda cambiar']);
+      } else if (tienen.has(objeto)) {
+        fallas.push([renglonDe(t, indice),
+          '`' + objeto + '` se lee sin sesión a propósito porque no guarda datos de ' +
+          'nadie, y ya tiene columna de Organización: dejó de ser una tabla del producto ' +
+          'y ahora publica, sin puerta, las filas de cada Prestadora. La exención valía ' +
+          'por eso y dejó de valer']);
+      }
+      continue;
+    }
     fallas.push([renglonDe(t, indice),
       'este permiso le deja `' + verbo + '` sobre `' + objeto + '` a quien entra ' +
       'sin sesión, y ninguna migración posterior se lo saca. Una tabla o una vista ' +
@@ -2011,6 +2091,7 @@ if (ME_CORRIERON_A_MI) {
       'contra `slug` y no escribe `is null or`, que con el nulo abre todas.\n' +
       'Si un caso no puede cumplirla, va a SIN_ORGANIZACION, a SIN_MONEDA, a\n' +
       'AL_ALCANCE_ANONIMO, a VISTAS_AL_ALCANCE_ANONIMO, a\n' +
+      'TABLAS_DEL_PRODUCTO_AL_ALCANCE_ANONIMO, a\n' +
       'SIN_ORGANIZACION_EN_EL_DEPOSITO o a\n' +
       'SIN_ORGANIZACION_AL_ESCRIBIR de este mismo\n' +
       'archivo, con el motivo escrito y el pendiente que lo sigue.');
@@ -2052,7 +2133,9 @@ if (ME_CORRIERON_A_MI) {
     `alcance no le queda ninguno, contando el neto de las ${migraciones.length} ` +
     `migraciones y siguiendo los renombres (${VISTAS_AL_ALCANCE_ANONIMO.size} vista ` +
     'abierta a propósito, que sigue acotando adentro de su cuerpo lo que publica y ' +
-    'sólo deja leer, comprobado acá mismo); y las ' +
+    `sólo deja leer, y ${TABLAS_DEL_PRODUCTO_AL_ALCANCE_ANONIMO.size} tabla de reglas ` +
+    'del producto, que sigue sin columna de Organización y sólo deja leer, comprobado ' +
+    'acá mismo); y las ' +
     `${puertas} veces que una migración escribe una de las ` +
     `${AL_ALCANCE_ANONIMO.size} funciones que sí se abren sin sesión, las ${puertas} ` +
     'exigen el nombre corto de una Prestadora, lo comparan contra `slug` y no ' +

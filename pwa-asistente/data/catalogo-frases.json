@@ -217,6 +217,11 @@
       "en": "This assessment is not available at the moment.",
       "pt-BR": "Esta avaliação não está disponível no momento."
     },
+    "error.contacto_bloqueado": {
+      "es-AR": "El mensaje no se envió: acá adentro no se comparten teléfonos, correos ni domicilios. La conversación sigue por este canal hasta que se acuerde la contratación.",
+      "en": "The message was not sent: phone numbers, e-mail addresses and home addresses are not shared in here. The conversation continues through this channel until the hiring is agreed.",
+      "pt-BR": "A mensagem não foi enviada: aqui dentro não se compartilham telefones, e-mails nem endereços. A conversa continua por este canal até que a contratação seja acordada."
+    },
     "error.aviso_sin_franjas": {
       "es-AR": "El aviso quedó publicado, pero no se pudieron guardar los días y turnos en los que se necesita el cuidado. No hace falta publicarlo de nuevo.",
       "en": "The listing was published, but the days and shifts when care is needed could not be saved. There is no need to publish it again.",

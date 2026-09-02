@@ -208,11 +208,13 @@ De ahí salen dos reglas:
   sirven de nada: la conversación se sigue por afuera, y la plataforma se entera del primer
   mensaje y de ninguno más. **Quien escriba el chat tiene que resolverlo dentro del chat**, y
   no alcanza con prohibirlo en un texto que nadie lee. Es el pendiente 6.
-  **Hecho a medias el 26 de agosto de 2026.** El chat reconoce un teléfono, un correo o un
-  domicilio y no manda el mensaje (`js/contacto.js`, reglas en `data/patrones-contacto.json`).
-  Pero eso corre en el navegador de quien escribe, así que **no es un control**: lo saltea quien
-  quiera saltearlo, que es justo quien tiene motivo. La otra mitad va del lado del servidor y
-  todavía no se puede escribir, porque la tabla del chat no existe: pendiente 62.
+  **Hecho el 2 de septiembre de 2026.** Son dos mitades y están las dos. La del navegador avisa
+  antes de mandar, para que a nadie se le rechace un mensaje sin haber sabido que no se podía
+  (`js/contacto.js`). La que cuenta está del lado del servidor: un disparador sobre
+  `mensajes` revisa el texto antes de guardarlo y no lo guarda (migración 0063). Ahí no hay
+  consola de navegador que valga. Y las reglas son las mismas para las dos: viven en la tabla
+  `patrones_de_contacto`, el navegador lee una copia generada desde ella y un chequeo las compara
+  en cada `commit`. Eran los pendientes 62 y 137, cerrados.
 
 Ninguna de las dos se vuelve a proponer como casilla de un formulario. Si alguna vez hay que
 discutirlo, se discute como decisión comercial.

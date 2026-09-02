@@ -39,7 +39,7 @@ Y hay cuatro que el material heredado no previó y existen igual: `tenants`, `cl
 **Un caso que no es equivalencia sino conflicto.** El material proponía `conversaciones` +
 `mensajes`, colgadas del vínculo entre una Familia y un Asistente. Lo que hay en la base es
 `messages`, colgada de una búsqueda de cuidado. **No son la misma tabla con otro nombre**: son dos
-modelos distintos del mismo hecho, y hay que elegir uno. Está anotado en los pendientes 6 y 46.
+modelos distintos del mismo hecho, y hay que elegir uno. Está anotado en el pendiente 6; el 46 se cerró el 2 de septiembre de 2026, cuando el perfil pasó a abrir la conversación (perfil.html:573).
 
 ---
 
@@ -119,9 +119,10 @@ del último mensaje —que se deriva—. La columna de la Organización está en
 **Lo que sigue sin resolverse, y ahora tiene pendiente propio.** La condición que recordó el
 Desarrollador el 24 de agosto de 2026: **adentro del chat no se pueden filtrar datos de
 contacto**. Si se filtran, la conversación sigue por afuera y la Prestadora cobra una vez y nunca
-más. `mensajes` guarda el contenido tal como llega; hace falta algo que lo revise **del lado
-del servidor**, porque un control escrito en el navegador lo saltea cualquiera. Es el pendiente
-137.
+más. `mensajes` ya no guarda el contenido tal como llega: la migración 0063 le puso un
+disparador que lo revisa **del lado del servidor** antes de escribirlo, porque un control escrito
+en el navegador lo saltea cualquiera. Eran los pendientes 62 y 137, cerrados el 2 de septiembre
+de 2026.
 
 ---
 

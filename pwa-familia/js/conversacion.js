@@ -30,10 +30,14 @@
    No muestra ningún dato de contacto. Ni teléfono ni correo ni domicilio, de
    ninguno de los dos lados: `mis_conversaciones()` (migración 0055) no los
    devuelve, justamente para que esta pantalla no pueda mostrarlos aunque
-   quisiera. Lo que sí queda es el aviso escrito, porque **hoy nada del lado del
-   servidor impide que alguien escriba su teléfono adentro de un mensaje**. Eso
-   es el pendiente 137, y este archivo no lo tapa: avisa, que es lo que se puede
-   hacer desde el navegador.
+   quisiera. Y el aviso escrito arriba del campo no está solo: desde la migración
+   0063 un disparador sobre `mensajes` revisa el texto **antes de
+   guardarlo** y no lo guarda si adentro hay un teléfono, un correo o un
+   domicilio —eran los pendientes 62 y 137, cerrados—. Cuando eso pasa, el
+   rechazo llega acá como cualquier otro error del envío: `textoDeError` lo pasa
+   por `Texto.mensajeDeError`, que lo reconoce y devuelve
+   `error.contacto_bloqueado` en el idioma que corresponda. El texto **se queda
+   en el campo**, porque `campo.value = ''` sólo corre cuando el mensaje entró.
 
    Los mensajes se dibujan con `textContent`, nunca con `innerHTML`. El
    contenido lo escribe la otra parte, así que es lo último a lo que se le puede

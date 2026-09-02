@@ -240,6 +240,13 @@ const Texto = {
     if (dice('sin_intentos')) return 'error.sin_intentos';
     if (dice('evaluacion_vacia', 'evaluacion_inexistente')) return 'error.evaluacion_no_disponible';
 
+    // La tercera puerta, del lado del servidor (migración 0063). El
+    // disparador contesta `contacto_bloqueado:<clave de la regla>`, y la clave
+    // no se mira acá: el texto es uno solo para las cinco reglas. Decir cuál
+    // fue sería enseñar a esquivarla —«probá sin los puntos»—, que es
+    // exactamente lo contrario de para qué está la puerta.
+    if (dice('contacto_bloqueado')) return 'error.contacto_bloqueado';
+
     // Publicar un aviso son dos pedidos: el aviso y sus franjas. Si el
     // segundo falla, el primero ya está hecho, y decir «no se pudo publicar»
     // llevaría a publicarla dos veces.
