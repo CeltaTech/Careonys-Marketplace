@@ -62,20 +62,35 @@ del navegador.
 - **Barra de navegación repetida**: las ocho páginas del sitio público llevan el mismo menú
   copiado en el HTML de cada una (portada, directorio, solicitar, postulación, cursos, soporte).
   Está duplicado ocho veces.
-- **De directorio a perfil**: `perfil.html?id=N`.
+- **De directorio a perfil**: `perfil.html?id=N`. El botón «Contactar» de cada tarjeta va al
+  **mismo perfil**, con el ancla `#contactar` colgada (`directorio.html:351`); no va a ninguna
+  otra pantalla.
 - **Dentro de las tres pantallas de aplicación** (`mockup-app`, `pwa-asistente`, `pwa-familia`)
   la navegación es interna: una función `navigate(screenId)` muestra un bloque y oculta los
   demás. Es un ruteo casero de una sola página, sin dirección propia por pantalla; el botón
   "atrás" del navegador no lo acompaña.
-- **Redirecciones por código**: `main.js` manda a `formulario-integral.html` al enviar el
-  formulario de contacto; `mockup-app.html` manda a `panel-prestadora.html`,
-  `registrar-asistente.html` o `formulario-integral.html` según el rol o la elección.
-- **Páginas huérfanas**: a `mockup-app.html` sólo se llega desde el botón "Contactar" del
-  directorio. A `panel-prestadora.html` sólo se llega por redirección tras ingresar con rol
-  administrativo: ningún enlace del sitio la menciona.
-- **Las dos aplicaciones instalables están casi desconectadas** del sitio: sólo enlazan hacia
-  afuera (`../cursos.html`, `../directorio.html`, `../soporte-remoto.html`) y ninguna página del
-  sitio enlaza hacia ellas.
+- **Redirecciones por código**: quien ya tiene sesión la reparte por rol —`acceso.html:161-163`
+  al entrar, `registrar-familia.html:210-213` al darse de alta—, y va a `panel-prestadora.html`,
+  a `pwa-asistente/index.html` o a `pwa-familia/index.html`. `perfil.html:575` abre la
+  conversación recién creada en `pwa-familia/index.html#conversacion/<id>`. Y `mockup-app.html`
+  manda a `panel-prestadora.html`, a `registrar-asistente.html` o a `formulario-integral.html`
+  según el rol o la elección. **`js/main.js` ya no manda a ningún lado**: hasta el 26 de agosto
+  de 2026 llevaba a `formulario-integral.html` al enviar el formulario de contacto, y eso salió
+  con el pendiente 64.
+- **Páginas huérfanas**: a `mockup-app.html` **no se llega desde ninguna de las 17 pantallas**.
+  Se abre sólo escribiendo la dirección. Y no se le agrega enlace a propósito: el pendiente 6 la
+  tiene sentenciada —es un modelo estético, y lo único que todavía vive únicamente ahí es el
+  chat—, así que enlazarla sería mandar gente a una pantalla que se va a borrar. A
+  `panel-prestadora.html` se llega por redirección tras ingresar con rol administrativo y desde
+  la barra lateral de `guias-prestadora.html:40`; ningún enlace del **sitio público** la menciona.
+- **Las dos aplicaciones instalables enlazan hacia afuera, y el sitio también hacia ellas.**
+  `pwa-familia/index.html` tiene trece enlaces al directorio padre —`../directorio.html`,
+  `../cursos.html`, `../soporte-remoto.html`, `../registrar-familia.html`, las imágenes de
+  `../assets/` y el `../perfil.html?id=` que arma el guion—; `pwa-asistente/index.html` tiene las
+  imágenes y el `../examen.html?evaluacion=` que arma el suyo. En sentido contrario entran
+  `acceso.html`, `registrar-familia.html` y `perfil.html`, siempre por código y nunca por un
+  enlace escrito en el HTML. Ninguno de esos caminos lo alcanza el service worker de cada
+  aplicación, que sólo guarda lo que cuelga de su propia carpeta: es el pendiente 12.
 
 ---
 
@@ -95,7 +110,7 @@ PWA y los guiones de línea de comandos.
 | `js/auth.js` | 171 | Ingreso, registro, cierre de sesión, subida de archivos y suscripción en tiempo real, todo sobre el SDK de Supabase. |
 | `js/catalogo.js` | 422 | Lee los archivos de `data/` y llena con ellos las listas, las grillas y los textos declarados en las pantallas. Pone los textos con `textContent`, nunca armando marcado. |
 | `js/fichas-legajo.js` | 265 | Arma las fichas del legajo del asistente a partir de su definición en el catálogo. |
-| `js/main.js` | 284 | Comportamiento global del sitio: menú, desplazamiento suave, validación de formularios, filtros del directorio, asistente de 6 pasos y ventana simulada de videollamada. |
+| `js/main.js` | 307 | Comportamiento global del sitio: menú, desplazamiento suave, validación de formularios, filtros del directorio y asistente de 6 pasos. La ventana simulada de videollamada se borró el 2 de septiembre de 2026: no la abría ningún botón y anunciaba un cifrado que el producto no hace. |
 | `pwa-asistente/service-worker.js` | 78 | Caché para uso sin conexión de la aplicación de asistentes. Guarda también `js/texto.js`: sin él las pantallas no dibujan nada. |
 | `pwa-familia/service-worker.js` | 78 | Ídem para la de familias. |
 
@@ -103,7 +118,7 @@ Los guiones de línea de comandos.
 
 <!-- guiones: lo escribe scripts/medir_estado.mjs, no se edita a mano -->
 
-En `scripts/` hay **71 archivos `.mjs` y uno de Python**: 37 chequeos `verificar_*`, 14 pruebas `probar_*` y 20 herramientas sueltas —medidores, generadores, el módulo que comparten y el servidor de trabajo—.
+En `scripts/` hay **73 archivos `.mjs` y uno de Python**: 37 chequeos `verificar_*`, 15 pruebas `probar_*` y 21 herramientas sueltas —medidores, generadores, el módulo que comparten y el servidor de trabajo—.
 
 <!-- fin de los guiones -->
 
@@ -132,7 +147,8 @@ antes de cada `commit` `scripts/verificar_estado.mjs`.
 | `scripts/probar_consulta_publica.mjs` | Pregunta si una visita del portal, sin sesión, puede dejar su consulta en `avisos`. Es el mismo alta que hacen los cinco formularios de consulta. Trae su sostén —la misma fila, con una cuenta recién creada—, sin el cual una tabla cerrada para todos daría el mismo rojo y la prueba no distinguiría nada. Contestó **401 sin sesión y 403 con cuenta nueva** el 26 de agosto de 2026, y de ahí salió lo que hace `js/formulario-consulta.js`. Lee la dirección y la clave pública de la base local por `supabase status` adentro del guion, sin mostrarlas. |
 | `scripts/probar_coherencia_de_la_siembra.mjs` | Mira la siembra ficticia como si fuera de un cliente. Trae los datos con `supabase db dump --local --data-only` y el esquema con el mismo comando sin `--data-only`, y comprueba cuatro cosas: que ninguna fila pertenezca a una Prestadora que no existe, que ninguna apunte a una fila de **otra** Prestadora —el aislamiento visto desde los datos y no desde la sesión, porque una política perfecta sobre datos ya mezclados no separa nada— que **ninguna columna quede sin llenarse ni una vez**, y que **ninguna tabla quede sin una sola fila**. La tercera es la que importa: una columna que la siembra no llena nunca no se ve en ninguna pantalla, porque la pantalla se dibuja igual; lo que no se ve es que nada la está probando, y la consulta que la olvida y la que la trae contestan lo mismo. Es el argumento de la migración 0027 aplicado a la siembra entera. Los exentos viven en `LA_SIEMBRA_NO_PUEDE`, cada uno con el motivo por el que una migración no puede llenarlo —los dos `archivo_url`, que están en el depósito; `tenants.estado_fijado_en`; `experiencia_laboral_asistente.puesto_otro`; `tenants.referencia_celtatech`, que la 0025 dice que las ficticias nunca van a tener; `avisos.grid_schedule_7x3`, que la 0016 reemplazó por filas; y `caregivers.user_id` con `avisos.familia_id`, que apuntan a una cuenta y por eso las recorre `probar_aislamiento.mjs` y no la siembra—. **Para eximir no alcanza con que una migración no pueda: tiene que haber algo que sí la recorra**, y por eso `verificaciones_asistente.verificado_por` sigue contando aunque tampoco se pueda sembrar —a ésa no la escribe nadie—. Es el pendiente 110 y **hoy tiene que dar rojo**: el 31 de agosto de 2026 encontró catorce columnas vacías de las 225 que miró —entre ellas el `tenant_id` de cinco catálogos de dos escalones, que dejaba sin una sola fila que la ejercite a la mitad `tenant_id = prestadora_actual()` de cinco políticas de RLS—; **la migración 0048 cerró cinco el mismo día** y dos más quedaron exentas, con lo que quedan siete. **Y la cuarta comprobación es el pendiente 111**, agregado el mismo día: encontró cuatro tablas de las 29 del esquema sin una sola fila —`clock_ins`, `documentos_asistente`, `messages` y `reportes`— y **hoy quedan tres**, porque la migración 0049 sembró nueve fichadas. Esa migración salió de un tropiezo que conviene tener a la vista: apretar el botón de la aplicación del Asistente dejó filas de verdad en `clock_ins` y en `reportes`, la comprobación las contó y se puso verde, y **ninguna migración las repone**, así que la primera base armada desde cero volvía a tenerlas vacías. Verde hoy y rojo mañana sin que nadie tocara nada. Por eso lo escrito a mano se borra —`scripts/soltar_asistente_local.mjs`— y lo que queda es lo sembrado. Hace falta el segundo volcado para verlas, porque **el volcado de datos sólo nombra las tablas que tienen filas**: una tabla entera sin sembrar no aparece en ningún renglón, y sin el esquema «ninguna tabla vacía» sería verdad porque no habría ninguna a la vista. Sus exentos van aparte, en `LA_SIEMBRA_NO_PUEDE_TABLA`, con el mismo criterio de dos mitades; hoy no hay ninguna adentro. **Sólo corre contra la base de esta máquina, y con `--linked` se niega**: en la publicada una columna llena por alguien de verdad taparía justo el hueco. Antes de mirar nada se planta si el volcado vino vacío, si no entendió ni una fila, si el separador de valores no distingue lleno de vacío —uno roto pondría media base en rojo, o toda en verde— o si no están las tres Prestadoras. Lo que esta máquina tenga fuera de las migraciones se cuenta igual, y eso sólo puede **tapar** un hueco, nunca inventarlo: lo que encuentra es real, y lo que no encuentra se lee limpio recién después de un `db reset --local`. |
 | `scripts/probar_perdida_de_corpus.mjs` | Le saca el corpus a la red entera y mira quién avisa, de dos maneras. **Se lo achica:** copia el proyecto a una carpeta temporal, le renombra todos los `.js` a `.ts` y corre la red de los dos lados. Cada chequeo cae en uno de tres lugares y sólo el tercero es un problema: se plantó —notó que le faltaban archivos y lo dijo—, dijo exactamente lo mismo —no mira los `.js`—, o **dijo ✔ con otro número**, que es revisar menos archivos y contarlo como éxito. Es el pendiente 91 y **hoy tiene que dar rojo**: el 31 de agosto de 2026 dio trece plantados, cinco que no miran los `.js` y nueve ciegos. Reemplaza a una medición hecha a mano ese mismo día, que había contado ocho —se le había pasado `estilos`—. Deja afuera a `verificar_todo.mjs`, que no es un chequeo sino el que los corre, y a `verificar_guias.mjs`, que sale a la red y cambia de texto según qué conteste el servidor. **Y deja afuera, sin lista escrita a mano, al que ya sale en rojo en la copia sin tocar**: la red corre en la copia antes de renombrar nada, y ese rojo no viene del corpus sino de algo que la copia no tiene. Hasta el 31 de agosto de 2026 se los acreditaba entre los que se plantaron, y eran tres: `deriva` y `sinconexion` le preguntan al historial de `git`, y `referencias` sigue citas que salen del proyecto. Un chequeo acreditado de más es un chequeo que nadie vuelve a mirar. **Se lo saca entero:** copia sólo `scripts/` —ningún `.html`, ningún `.css`, ningún `.js`, ningún `.md`— y corre la red ahí; el que diga ✔ sin un solo archivo que revisar no está diciendo que todo esté bien sino que no miró. Es el pendiente 69, cerrado el 28 de agosto de 2026, y **hoy da verde**: 26 plantados de 27, y el único verde es el exento. Existe porque `verificar_red.mjs` comprueba esa misma guarda **leyendo** —que el chequeo *nombre* a `hayArchivos` o a `seRevisaron`—, y nombrarlas no es plantarse: un chequeo puede llamarlas para un corpus y trabajar con otro. Se comprobó escribiendo uno así: la mitad que lee lo dejó pasar y ésta lo agarró. La lista de exentos **no se escribe acá**: sale de `ARMAN_SU_PROPIO_CORPUS`, en `scripts/recorrido.mjs`, pegada a la guarda de la que exime y compartida con `verificar_red.mjs`. Se planta si la copia salió vacía, si no hubo `.js` que renombrar, si ningún chequeo mira los `.js` o si alguno ya viene fallando acá: comparar contra una base en rojo no dice nada. |
-| `scripts/probar_pisado_de_archivos.mjs` | Sube dos veces un papel ficticio al mismo camino y pregunta si el primero sigue estando. Es el pendiente 89, y **hoy tiene que dar rojo**: `Sesion.uploadFile` sube con `upsert: true` (`js/auth.js:182`) y las dos puntas arman siempre el mismo camino (`registrar-asistente.html:1012`, `js/fichas-legajo.js:307`), así que el papel anterior desaparece sin aviso —y puede ser el que la Prestadora miró para sellar el legajo—. Mide **las dos causas por separado** para no depender de cuál de las tres salidas se elija: si se prohíbe pisar, la segunda subida vuelve rechazada; si el camino pasa a llevar la fecha, la segunda cae en otro lado. Con que se corte una alcanza, y las dos se comprobaron en verde antes de dejarla. La tercera salida —que el depósito guarde versiones— no se mide desde acá y el guion lo dice. Mide además un segundo caso que no necesita subir el mismo papel dos veces: como `fichas-legajo.js` numera los archivos por posición en la lista, sacar una fila del medio y guardar pisa el papel de otra fila y deja un archivo suelto que ya no nombra nadie. |
+| `scripts/probar_pisado_de_archivos.mjs` | Sube dos veces un papel ficticio al mismo camino y pregunta si el primero sigue estando. Fue el pendiente 89, cerrado el 2 de septiembre de 2026: `Sesion.uploadFile` subía con `upsert: true` y las dos puntas armaban siempre el mismo camino, así que el papel anterior desaparecía sin aviso —y podía ser el que la Prestadora miró para sellar el legajo—. Mide **las dos causas por separado** para no depender de cuál de las tres salidas se eligiera: si se prohíbe pisar, la segunda subida vuelve rechazada; si el camino pasa a llevar algo que cambia, la segunda cae en otro lado. Se cortaron las dos, porque prohibir pisar solo habría rechazado un guardado legítimo: `js/fichas-legajo.js` numeraba los archivos por su posición en la lista, así que sacar una fila del medio y guardar pisaba el papel de otra fila. Hoy las dos puntas —`js/documentos-legajo.js` y `js/fichas-legajo.js`— arman el camino con `Sesion.uuidNuevo()`. La tercera salida —que el depósito guarde versiones— no se mide desde acá y el guion lo dice. |
+| `scripts/probar_la_resolucion_deja_su_motivo.mjs` | Resuelve un legajo ficticio con su motivo y lo vuelve a leer. Fue el pendiente 90, cerrado el 2 de septiembre de 2026 por la migración 0064: el motivo por el que se otorga el aval o se rechaza un legajo se escribía en la pantalla, viajaba hasta el cliente de datos y ahí se descartaba, porque no había ninguna columna donde pudiera caer. Mide las dos mitades de la condición de cierre —que el motivo llegue y se lea junto con la resolución que explica, y que un legajo no se pueda resolver sin dejarlo, con el legajo quedando **exactamente** como estaba cuando el intento se rechaza— y una tercera que decidió el diseño: el motivo lo escribe la Prestadora sobre una persona, y esa persona no lo lee. El aislamiento se prueba con dos Prestadoras, nunca con una. Las dos comprobaciones de sostén van primero, porque contra una tabla que niega todo «el Asistente no ve el motivo» saldría en verde sin haber probado nada. |
 | `scripts/probar_permisos_en_vivo.mjs` | Pregunta a la base, con una sesión y sin ella, qué funciones puede llamar cada quien, y falla si alguien alcanza una que no está en la lista de puertas abiertas a propósito. **No lleva la lista: la importa** de `AL_ALCANCE_ANONIMO` en `scripts/verificar_esquema.mjs`, donde cada puerta tiene escrito su motivo y la migración que la abrió. Tenía la suya, con tres, y cuando las migraciones 0035, 0038 y 0041 abrieron tres más —bien abiertas, con motivo— la prueba se puso en rojo y así se quedó cinco días, porque el rojo figuraba como esperado. Una lista repetida se despega, y la que se despega es la que nadie mira. |
 | `scripts/comparar_bases.mjs` | Compara la base publicada contra la que arman las migraciones: reconstruye una local desde cero, vuelca las dos igual y las compara fila por fila y columna por columna. Rompe si una misma fila dice cosas distintas o si falta una que las migraciones cargan; muestra aparte, para que las mire una persona, las que están publicadas y ninguna migración carga, porque un guion no puede saber si son un desvío o alguien que usó el producto. Se llama a mano: necesita red. |
 | `scripts/verificar_guiones.mjs` | Falla si algún bloque `<script>` escrito adentro de una pantalla, o algún archivo de `js/`, tiene un error de sintaxis. Existe porque el navegador, ante un error así, descarta el bloque entero y sigue: la pantalla se dibuja igual y no funciona nada, sin aviso. Encontró uno el 24 de agosto de 2026. |
@@ -154,6 +170,7 @@ antes de cada `commit` `scripts/verificar_estado.mjs`.
 | `.githooks/commit-msg` | El segundo gancho, que git corre con el mensaje ya escrito y todavía sin guardar. Llama a `scripts/verificar_glosario.mjs --mensaje`, que es el mismo chequeo mirando la única superficie que `pre-commit` no puede ver: cuando ése corre, el mensaje todavía no existe. Y es la única superficie que no se arregla después, porque un mensaje escrito es historia y la historia no se reescribe. Se prende con el mismo comando que el otro. |
 | `scripts/servidor_local.py` | El servidor para mirar las pantallas mientras se trabaja. Es `python -m http.server` con cuatro diferencias, y cada una es el motivo de que exista. **No deja guardar copias**, porque si no el navegador sigue mostrando la versión vieja de un archivo después de haberlo cambiado, sin avisar (fue el pendiente 42, cerrado). **No publica las cajas fuertes** ni `.git`: hasta el 30 de agosto de 2026 publicaba la carpeta entera, y adentro hay una. **Sabe apuntar a la base de esta máquina** con `--base-local`, cambiando la dirección en el texto que sale por la red y nunca en el archivo. **Y acepta 128 conexiones esperando** en vez de las 5 de fábrica: una pantalla pide nueve archivos a la vez y el sistema cortaba las que sobraban, que se veía como `js/auth.js` que no llegaba una recarga sí y otra no. |
 | `scripts/preparar_coordinadores_locales.mjs` | Deja dos cuentas con rol `coordinador`, una en cada Prestadora ficticia, **sólo en la base de esta máquina**: se planta si la dirección no es local. Existen porque las pantallas del panel piden ese rol y ese rol no se puede pedir al registrarse —lo filtra el disparador de la migración 0005 a propósito—, así que sin ellas lo que se comprobaba era la política y nunca la pantalla. No inventa ninguna clave: la toma de `CLAVE_PRUEBA_LOCAL` y sin esa variable no corre. |
+| `scripts/abrir_cuentas_ficticias.mjs` | Les pone clave a las seis cuentas ficticias que siembra la migración 0065, **sólo en la base de esta máquina**: se planta si la dirección no es local. Las cuentas ya existen —con perfil, Organización, legajo atado y avisos a su nombre—, pero nacen **sin clave**, porque las migraciones son las mismas de los dos lados y una clave escrita en una migración abre esas cuentas también en la base publicada. La toma de `CLAVE_PRUEBA_LOCAL` y sin esa variable no corre. No lleva la lista de cuentas escrita adentro: alcanza a las que tienen el dominio de la siembra, así que el día que una migración siembre una más, la abre sola. Termina **entrando con cada una**, porque poner la clave sin comprobar que abre es la prueba que no puede fallar: sin la fila de `auth.identities` la clave queda puesta igual y la entrada sigue fallando. |
 | `scripts/preparar_asistente_local.mjs` | Deja la cuenta `asistente.presdemo@ejemplo.com` **con un legajo de la siembra enganchado detrás**, sólo en la base de esta máquina. Hace falta porque las dos cosas que la aplicación del Asistente escribe —la fichada y el reporte— cuelgan del **legajo** y no de la cuenta, que son dos identificadores distintos: sin legajo detrás, esa pantalla no se puede mirar andando. Engancha uno que ya exista en vez de inventarlo, para mirarla con un legajo que tiene nombre, fichas y verificaciones. La clave sale de `CLAVE_PRUEBA_LOCAL` y no queda escrita en ningún lado; si falta, se planta. No le saca el legajo a nadie: si el que iba a tomar ya tiene cuenta, busca el siguiente libre. |
 | `scripts/soltar_asistente_local.mjs` | Lo contrario del anterior: borra lo que se escribió mirando la pantalla, le suelta el legajo a la cuenta y después borra la cuenta, en ese orden. **No borra el legajo**, que es de la siembra. Sí borra la fichada y el reporte escritos a mano, y ahí está lo que costó entender: parecían inofensivos y no lo son, porque le contestan «sí» a la comprobación de tablas vacías sin que ninguna migración los reponga. Los distingue **sin ninguna lista escrita a mano**: una fila cuyo identificador nombra alguna migración es de la siembra y se queda; una que no la nombra ninguna la escribió una persona y se va. Lista y no toca nada; borra sólo con `--borrar`, y sólo contra la base de esta máquina. |
 | `scripts/recorrido.mjs` | No es un guion: es lo que ningún chequeo abre —las cajas fuertes de la bóveda, las carpetas `Exclusivo <cliente>`, los archivos que anuncian una clave en el nombre, las dependencias, el estado de las herramientas—, la extensión de las pantallas y el recorrido que todos usan. Estaba copiada en cuatro archivos con cuatro contenidos distintos, y la mitad de la regla de la bóveda vivía en un quinto hasta el 31 de agosto de 2026. |
@@ -281,8 +298,10 @@ Lo que sí queda escrito a mano, y es el pendiente 65:
 - `pwa-familia/index.html` y `mockup-app.html` traen un recuadro de verificaciones —«Email: ✓
   Validado | Celular: ⌛ Pendiente»— y una ficha de paciente entera que no escribe ningún guion.
   Quien entra lee un estado que nadie consultó.
-- `panel-prestadora.html` muestra dos de sus cuatro recuadros con números fijos, que es el
-  pendiente 100.
+- `panel-prestadora.html` ya no: mostraba dos de sus cuatro recuadros con números fijos, y era el
+  pendiente 100, cerrado el 2 de septiembre de 2026. Los dos escritos a mano se sacaron —no tienen
+  versión correcta que construir, ver `docs/ALCANCE.md`— y los dos que quedan salen de la base y
+  arrancan en raya hasta que la consulta contesta.
 - `cursos.html` ya no: sus seis cursos y su desplegable salen del catálogo.
 - `soporte-remoto.html` es contenido fijo salvo su desplegable, que sale del catálogo.
 
@@ -313,11 +332,18 @@ sostiene `scripts/verificar_base.mjs`.
 | Tabla | Operaciones | Desde |
 |---|---|---|
 | `tenants` | GET (filtrado por `slug`) | `apiClient.js:52` |
-| `caregivers` | GET, POST, PATCH | `getAspirantes`, `registrarAspirante`, `cambiarEstadoAspirante` |
+| `caregivers` | GET, POST | `getAspirantes`, `registrarAspirante` |
+| `resoluciones_legajo` | GET | `resolucionesDeLegajo` |
 | `care_searches` | GET, POST | `getBusquedasFamilia`, `crearBusquedaFamilia`, `crearBusqueda` |
 | `clock_ins` | POST | `registrarFichadoGPS` |
 | `reportes` | GET (orden `created_at.desc`), POST | `getReportes`, `registrarReporte` |
 | `messages` | GET (`?order=created_at.asc&limit=50`), POST | **fuera del cliente**, directo en `mockup-app.html:701` y `mockup-app.html:736` |
+
+**Funciones** — `{supabase}/rest/v1/rpc/{función}`:
+
+| Función | Desde | Qué hace |
+|---|---|---|
+| `resolver_legajo` | `resolverLegajo` | Escribe el motivo y el estado del legajo en una sola transacción, para que un legajo no pueda quedar resuelto sin su porqué (migración 0064) |
 
 **Autenticación** — `{supabase}/auth/v1/*`, a través del SDK: `signInWithPassword`, `signUp`,
 `signOut`, `getSession`, `onAuthStateChange`.
@@ -407,18 +433,18 @@ pantallas» cuando son 17, le daba 285 renglones a cada `styles-pwa.css` cuando 
 
 | Archivo | Renglones | La enlazan |
 |---|---:|---|
-| `css/mockup-app.css` | 138 | Sólo `mockup-app.html` |
-| `css/styles.css` | 2.274 | 16 de las 18 pantallas |
-| `css/tokens.css` | 363 | 16 de las 18 pantallas |
+| `css/mockup-app.css` | 135 | Sólo `mockup-app.html` |
+| `css/styles.css` | 2.201 | 16 de las 18 pantallas |
+| `css/tokens.css` | 358 | 16 de las 18 pantallas |
 | `css/utilidades.css` | 189 | 16 de las 18 pantallas |
 | `pwa-asistente/css/styles-pwa.css` | 338 | Sólo `pwa-asistente/index.html` |
-| `pwa-asistente/css/tokens.css` | 363 | Sólo `pwa-asistente/index.html`. Copia byte a byte de `css/tokens.css` |
+| `pwa-asistente/css/tokens.css` | 358 | Sólo `pwa-asistente/index.html`. Copia byte a byte de `css/tokens.css` |
 | `pwa-asistente/css/utilidades.css` | 189 | Sólo `pwa-asistente/index.html`. Copia byte a byte de `css/utilidades.css` |
 | `pwa-familia/css/styles-pwa.css` | 338 | Sólo `pwa-familia/index.html`. Copia byte a byte de `pwa-asistente/css/styles-pwa.css` |
-| `pwa-familia/css/tokens.css` | 363 | Sólo `pwa-familia/index.html`. Copia byte a byte de `css/tokens.css` |
+| `pwa-familia/css/tokens.css` | 358 | Sólo `pwa-familia/index.html`. Copia byte a byte de `css/tokens.css` |
 | `pwa-familia/css/utilidades.css` | 189 | Sólo `pwa-familia/index.html`. Copia byte a byte de `css/utilidades.css` |
 
-En disco hay 10 archivos y 4.744 renglones, de los cuales 1.442 son copias byte a byte de otro: son las que `verificar_copias.mjs` compara.
+En disco hay 10 archivos y 4.653 renglones, de los cuales 1.432 son copias byte a byte de otro: son las que `verificar_copias.mjs` compara.
 
 Hay además 977 renglones de CSS en bloques `<style>` adentro del HTML: 533 en `pwa-familia/index.html`, 270 en `pwa-asistente/index.html`, 174 en `examen.html`. Las demás pantallas no tienen ninguno.
 
@@ -470,8 +496,9 @@ variantes (`.btn-primario`, `.btn-secundario`, `.btn-atencion`, `.btn-sobre-oscu
    adentro del HTML no usan las variables de `styles.css`; están escritos aparte.
 3. **Hay estilos sueltos escritos en los atributos del HTML** en cantidad. Aparecen en el panel
    de la prestadora (colores y tamaños escritos a mano en cada celda de la tabla), en las
-   plantillas de tarjeta del directorio, en la ventana de videollamada de `main.js` y en la
-   insignia que inyecta `_applyBranding`. Son los que no se van a poder migrar por copia.
+   plantillas de tarjeta del directorio y en la insignia que inyecta `_applyBranding`. Son los
+   que no se van a poder migrar por copia. La ventana de videollamada de `main.js` era otro de
+   ellos y ya no está: se borró el 2 de septiembre de 2026.
 
 Un detalle a resolver en la migración: `_applyBranding()` cambia `--color-primary` y
 `--color-accent`, **dos variables que no existen en `styles.css`** (que usa `--purple-dark` y

@@ -200,11 +200,6 @@
      de ninguno de los tres: el fondo ya es oscuro en los dos modos. */
   --texto-sobre-color-tenue: oklch(1 0 0 / 0.85);
   --borde-sobre-color: oklch(1 0 0 / 0.3);
-  /* Y el tercero: un ícono que es decoración y no se lee —el monigote de una
-     sala de videollamada todavía vacía—, apoyado sobre ese mismo fondo oscuro.
-     Va más apagado que el texto a propósito: si se viera igual de fuerte,
-     competiría con lo que sí hay que leer. */
-  --icono-sobre-color: oklch(1 0 0 / 0.4);
 }
 
 /* ================= MODO OSCURO =================

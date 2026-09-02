@@ -302,9 +302,16 @@ const FichasLegajo = {
         fila.archivo_url = null;
         if (!archivo) continue;
         const extension = (archivo.name.split('.').pop() || 'dat').toLowerCase();
+        // El camino lleva un identificador propio y **ya no la posición en la
+        // lista**. Numerar por posición fue el pendiente 89, cerrado el 2 de
+        // septiembre de 2026: sacar una matrícula del medio y guardar corría a
+        // todas las de abajo un lugar, así que el papel de la fila siguiente se
+        // escribía encima del de la anterior y la anterior dejaba de existir.
+        // No hacía falta ni subir dos veces el mismo papel. Quién es cada
+        // archivo lo dice la fila que guarda su camino, no el número del final.
         try {
           fila.archivo_url = await Sesion.uploadFile(
-            deposito, `${carpeta}/${clave}_${i}.${extension}`, archivo
+            deposito, `${carpeta}/${clave}_${Sesion.uuidNuevo()}.${extension}`, archivo
           );
         } catch (errArchivo) {
           console.error('Legajo, ' + clave + ' ' + i + ':', errArchivo);

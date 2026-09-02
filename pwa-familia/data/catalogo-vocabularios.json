@@ -12,7 +12,7 @@
         "formulario-integral.html:394",
         "js/zonas.js:145",
         "js/zonas.js:218",
-        "mockup-app.html:460",
+        "mockup-app.html:453",
         "pwa-familia/index.html:1172",
         "pwa-familia/index.html:1318",
         "pwa-familia/index.html:785"
@@ -244,7 +244,7 @@
       },
       "cerrada": false,
       "usado_en": [
-        "pwa-asistente/index.html:624",
+        "pwa-asistente/index.html:629",
         "registrar-asistente.html:411"
       ],
       "items": [
@@ -273,7 +273,7 @@
         "directorio.html:333",
         "directorio.html:84",
         "perfil.html:424",
-        "pwa-asistente/index.html:606",
+        "pwa-asistente/index.html:611",
         "pwa-familia/index.html:823",
         "registrar-asistente.html:384"
       ],
@@ -483,7 +483,7 @@
       },
       "cerrada": true,
       "usado_en": [
-        "pwa-asistente/index.html:1111"
+        "pwa-asistente/index.html:1117"
       ],
       "items": [
         {
@@ -650,8 +650,8 @@
       },
       "cerrada": false,
       "usado_en": [
-        "panel-prestadora.html:439",
-        "panel-prestadora.html:559"
+        "panel-prestadora.html:503",
+        "panel-prestadora.html:623"
       ],
       "items": [
         {
@@ -764,7 +764,7 @@
         "data/catalogo-fichas.json:180",
         "formulario-integral.html:142",
         "js/catalogo.js:422",
-        "pwa-asistente/index.html:608",
+        "pwa-asistente/index.html:613",
         "registrar-asistente.html:388"
       ],
       "items": [
@@ -868,7 +868,7 @@
         "formulario-integral.html:164",
         "formulario-integral.html:354",
         "formulario-integral.html:399",
-        "mockup-app.html:459",
+        "mockup-app.html:452",
         "perfil.html:328",
         "pwa-asistente/index.html:569",
         "pwa-familia/index.html:1171",
@@ -967,7 +967,7 @@
       "cerrada": true,
       "usado_en": [
         "cursos.html:105",
-        "pwa-asistente/index.html:1113"
+        "pwa-asistente/index.html:1119"
       ],
       "items": [
         {
@@ -1248,8 +1248,8 @@
       },
       "cerrada": true,
       "usado_en": [
-        "panel-prestadora.html:440",
-        "panel-prestadora.html:560"
+        "panel-prestadora.html:504",
+        "panel-prestadora.html:624"
       ],
       "items": [
         {
@@ -1332,7 +1332,7 @@
       "usado_en": [
         "formulario-integral.html:184",
         "formulario-integral.html:404",
-        "pwa-asistente/index.html:622",
+        "pwa-asistente/index.html:627",
         "pwa-familia/index.html:798",
         "registrar-asistente.html:409"
       ],

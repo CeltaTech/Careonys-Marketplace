@@ -577,10 +577,15 @@
             <p style="font-size:12px;font-weight:700;color:var(--texto-principal);margin:12px 0 6px;" data-frase="legajo.certificaciones">Cursos y Certificaciones ({{producto}} Academy):</p>
             <div class="wcheck-group" data-catalogo="certificacion" data-catalogo-como="casillas" data-catalogo-nombre="certificacion" data-catalogo-clase="catalogo-casilla"></div>
             <p style="font-size:11px;font-weight:700;color:var(--texto-secundario);margin:12px 0 6px;"><i class="fas fa-shield-alt color-peligro"></i> <span data-frase="legajo.documentacion">Documentación requerida:</span></p>
-            <div class="wfield"><label data-frase="legajo.doc_foto">📸 Foto de Perfil (tipo carnet)</label><input type="file" id="w-foto" accept="image/*" /></div>
-            <div class="wfield"><label data-frase="legajo.doc_dni">🛡️ Foto DNI (Frente y Dorso)</label><input type="file" accept="image/*,.pdf" /></div>
-            <div class="wfield"><label data-frase="legajo.doc_penales">📋 Antecedentes Penales (vigente)</label><input type="file" accept="image/*,.pdf" /></div>
-            <div class="wfield"><label data-frase="legajo.doc_titulo">📜 Título / Certificados</label><input type="file" accept="image/*,.pdf" /></div>
+            <!-- Los cuatro identificadores son los mismos que en el alta de
+                 escritorio a propósito: los lee `js/documentos-legajo.js`, que es
+                 el único lugar donde está escrito qué papel va a qué depósito.
+                 Hasta el 2 de septiembre de 2026 tres no tenían identificador y
+                 el cuarto no lo leía nadie, así que ninguno de los cuatro subía. -->
+            <div class="wfield"><label data-frase="legajo.doc_foto">📸 Foto de Perfil (tipo carnet)</label><input type="file" id="foto-perfil" accept="image/*" /></div>
+            <div class="wfield"><label data-frase="legajo.doc_dni">🛡️ Foto DNI (Frente y Dorso)</label><input type="file" id="file-dni" accept="image/*,.pdf" /></div>
+            <div class="wfield"><label data-frase="legajo.doc_penales">📋 Antecedentes Penales (vigente)</label><input type="file" id="file-penales" accept="image/*,.pdf" /></div>
+            <div class="wfield"><label data-frase="legajo.doc_titulo">📜 Título / Certificados</label><input type="file" id="file-titulo" accept="image/*,.pdf" /></div>
 
             <!-- Las fichas repetibles del legajo. Salen de data/catalogo-fichas.json
                  y las dibuja js/fichas-legajo.js, el mismo archivo que usa el
@@ -964,6 +969,7 @@
   <script src="js/catalogo.js"></script>
   <script src="js/disponibilidad.js"></script>
   <script src="js/fichas-legajo.js"></script>
+  <script src="js/documentos-legajo.js"></script>
   <script src="js/autorizaciones.js"></script>
   <script src="js/apiClient.js"></script>
   <script src="js/auth.js"></script>
@@ -2130,6 +2136,21 @@
           ? await FichasLegajo.subirArchivos(legajo, usuario.id)
           : [];
 
+        // Los cuatro papeles sueltos —foto, documento de identidad, antecedentes
+        // penales y título—, por el mismo camino que usa el alta de escritorio.
+        // Hasta el 2 de septiembre de 2026 esta pantalla los pedía y no subía
+        // ninguno: mandaba los cuatro anotados como «pendiente» y los archivos
+        // elegidos se perdían sin que nadie se enterara. Y lo que se perdía eran
+        // los dos papeles con los que se decide si esta persona puede entrar a
+        // una casa a cuidar a alguien.
+        //
+        // Va después de la sesión porque la carpeta del depósito es la cuenta:
+        // sin cuenta no hay dónde dejarlos, y el módulo devuelve los cuatro sin
+        // subir en vez de intentarlo contra una carpeta que la política rechaza.
+        const papeles = await DocumentosLegajo.subir(usuario ? usuario.id : null);
+        data.documentos = papeles.documentos;
+        noSubieron.push(...papeles.fallados);
+
         const aspirante = await ClienteDatos.registrarAspirante(data);
         if (aspirante && aspirante.id) {
           await ClienteDatos.guardarLegajoAsistente(aspirante.id, legajo);
@@ -2250,7 +2271,11 @@
           cursosCompletados: cursos
         },
         valorHora: document.getElementById('w-valor-hora').value,
-        documentos: { dni: 'pendiente', penales: 'pendiente', titulo: 'pendiente' }
+        // Los cuatro, todavía sin subir. Los reemplaza `guardarLegajo` con los
+        // caminos que devuelve el módulo, apenas hay sesión y hay carpeta donde
+        // dejarlos. La lista de cuáles son los cuatro no se escribe acá: sale
+        // del módulo, que es el mismo que la usa para subirlos.
+        documentos: DocumentosLegajo.ningunoTodavia()
       };
 
       // La cuenta, antes que el legajo, y si no se puede crear no se sigue.

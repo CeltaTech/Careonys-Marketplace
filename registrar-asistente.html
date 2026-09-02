@@ -186,8 +186,8 @@
     <a href="#registro" class="btn btn-atencion">REGISTRARME COMO ASISTENTE</a>
   </div>
 
-  <!-- REGISTRO FORM WIZARD MULTI-PASO -->
-  <section class="container" style="margin-top:-20px;margin-bottom:60px;">
+  <!-- REGISTRO FORM WIZARD MULTI-PASO — `id="registro"` es el destino de los ocho «Registrarme» del sitio (los dos de acá arriba y los seis pies de las otras pantallas): se muda con el formulario, nunca con el envoltorio -->
+  <section class="container" id="registro" style="margin-top:-20px;margin-bottom:60px;">
     <div class="wizard-container"
       style="background: var(--superficie);padding:40px;border-radius:16px;box-shadow:var(--sombra-suave);max-width:960px;margin:0 auto;">
 
@@ -621,7 +621,7 @@
       </div>
       <div class="footer-col">
         <h4>Empresa</h4>
-        <a href="#">Sobre {{producto}}</a><a href="#">Contacto</a><a href="docs/terminos_y_condiciones_familias.md"
+        <a href="#">Sobre {{producto}}</a><a href="index.html#contact">Contacto</a><a href="docs/terminos_y_condiciones_familias.md"
           target="_blank">Términos y Condiciones</a>
       </div>
     </div>
@@ -638,6 +638,7 @@
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
   <script src="js/fichas-legajo.js"></script>
+  <script src="js/documentos-legajo.js"></script>
   <script src="js/disponibilidad.js"></script>
   <script src="js/autorizaciones.js"></script>
   <script src="js/zonas.js"></script>
@@ -932,16 +933,10 @@
       });
     });
 
-    // Feedback visual al seleccionar archivos
-    ['file-dni', 'file-penales', 'file-titulo'].forEach(id => {
-      const input = document.getElementById(id);
-      if (input) {
-        input.addEventListener('change', () => {
-          const status = document.getElementById(id + '-status');
-          if (status && input.files.length > 0) status.style.display = 'block';
-        });
-      }
-    });
+    // El cartel de «archivo listo para subir» al lado de cada selector. Lo pone
+    // el mismo módulo que después los sube, para que la lista de los cuatro
+    // papeles esté escrita en un solo lado.
+    DocumentosLegajo.avisarLosElegidos();
 
     // ENVIO FINAL DEL FORMULARIO con Upload real a Supabase Storage
     const formAlta = document.getElementById('form-registro-cuidador-completo');
@@ -978,44 +973,33 @@
         ClienteDatos._resolucionEnCurso = null;
         await ClienteDatos.initTenant();
 
-        // 2. Los archivos, a su depósito
-        // Se guarda el camino, no una dirección: los papeles viven en un depósito
-        // privado y su dirección se firma recién al mostrarla. La foto va aparte,
-        // al depósito público, porque es la que muestra el directorio. La primera
-        // carpeta es siempre la cuenta: de ahí sale el permiso (migración 0006).
-        const docUrls = {
-          foto: 'pendiente',
-          dni: 'pendiente',
-          penales: 'pendiente',
-          titulo: 'pendiente'
-        };
-
-        // `nombre` es la clave del catálogo y no el nombre escrito: termina
-        // adentro del aviso de «no se pudieron subir todos los archivos», que es
-        // texto visible y se lee en los tres idiomas como cualquier otro.
-        const adjuntos = [
-          { clave: 'foto',    campo: 'foto-perfil',  deposito: 'avatares',              base: 'foto_perfil', nombre: 'alta.archivo_foto' },
-          { clave: 'dni',     campo: 'file-dni',     deposito: 'documentos-cuidadores', base: 'dni_frente',  nombre: 'alta.archivo_dni' },
-          { clave: 'penales', campo: 'file-penales', deposito: 'documentos-cuidadores', base: 'penales',     nombre: 'alta.archivo_penales' },
-          { clave: 'titulo',  campo: 'file-titulo',  deposito: 'documentos-cuidadores', base: 'titulo',      nombre: 'alta.archivo_titulo' }
-        ];
-
+        // 2. Los cuatro papeles sueltos, a su depósito. Los sube el módulo, que
+        // es el mismo que usa la aplicación del teléfono: hasta el 2 de
+        // septiembre de 2026 este bloque estaba escrito acá y allá no estaba
+        // escrito en ningún lado, así que desde el teléfono los cuatro
+        // selectores se llenaban y no subía ninguno.
+        //
         // Un archivo que no sube y no avisa es peor que uno que no se cargó: la
         // persona se va creyendo que entregó el papel. Se juntan los que fallaron
         // y se avisa una sola vez, sin frenar el resto del alta.
+        //
+        // El módulo devuelve **la lista de los que no subieron**, no una
+        // excepción, y eso ya se maneja como dato. Lo otro —que el módulo se
+        // caiga entero, que sin red es lo que pasa— sí sale por excepción, y
+        // dejarla llegar al `catch` de abajo cortaría el alta de alguien cuya
+        // cuenta ya quedó creada. Se cuenta como cuatro archivos que no subieron.
+        let docUrls = DocumentosLegajo.ningunoTodavia();
         const adjuntosFallados = [];
-        for (const adj of adjuntos) {
-          const archivo = document.getElementById(adj.campo)?.files[0];
-          if (!archivo) continue;
-          const extension = (archivo.name.split('.').pop() || 'dat').toLowerCase();
-          try {
-            docUrls[adj.clave] = await Sesion.uploadFile(
-              adj.deposito, `${userId}/${adj.base}.${extension}`, archivo
-            );
-          } catch (errArchivo) {
-            console.error('Alta de Asistente, ' + adj.clave + ':', errArchivo);
-            adjuntosFallados.push({ nombre: Texto.frase(adj.nombre), motivo: Texto.mensajeDeError(errArchivo) });
-          }
+        try {
+          const papeles = await DocumentosLegajo.subir(userId);
+          docUrls = papeles.documentos;
+          adjuntosFallados.push(...papeles.fallados);
+        } catch (errPapeles) {
+          console.error('Alta de Asistente, documentos del legajo:', errPapeles);
+          adjuntosFallados.push({
+            nombre: Texto.frase('alta.archivo_legajo'),
+            motivo: Texto.mensajeDeError(errPapeles)
+          });
         }
 
         // 3. Extraer datos del formulario

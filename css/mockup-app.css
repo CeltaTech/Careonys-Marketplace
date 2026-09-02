@@ -61,9 +61,6 @@ body {
 button:disabled { opacity:0.55; cursor:default; box-shadow:none; }
 button:disabled:hover { transform:none; box-shadow:none; opacity:0.55; }
 
-.social-btn { width:100%; padding:10px; border-radius:var(--redondeo-medio); border:1px solid var(--borde-card); background:var(--superficie); font-size:13px; font-weight:600; color:var(--texto-principal); display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; margin-top:10px; transition:all var(--transicion); }
-.social-btn:hover { background:var(--fondo-app); }
-
 #screen-signup { padding:24px; box-sizing:border-box; }
 .role-card { border:2px solid var(--borde-card); border-radius:var(--redondeo-grande); padding:20px; margin-bottom:16px; cursor:pointer; background:var(--superficie); transition:all var(--transicion); position:relative; }
 .role-card.active { border-color:var(--azul-medio); background:var(--superficie-hover); }

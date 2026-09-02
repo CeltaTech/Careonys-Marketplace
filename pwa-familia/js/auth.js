@@ -242,12 +242,52 @@ const Sesion = {
   // Un depósito que no está en la tabla no se deja pasar «por las dudas»: se
   // rechaza. Todo control de acceso falla cerrado, y un nombre de depósito que
   // esta copia no conoce es exactamente el caso que no se entendió.
+  /* Un identificador distinto en cada llamada. Es el punto único de verdad de
+     lo que hace que el camino de un archivo no se repita: lo usan el alta del
+     Asistente y las fichas del legajo, que son las dos puntas que suben papeles.
+
+     Fue el pendiente 89: los dos armaban un camino que salía siempre igual —la
+     cuenta y el tipo de papel, o la cuenta y la posición en la lista—, así que
+     guardar de nuevo **borraba el archivo anterior**, sin preguntar y sin dejar
+     rastro. Y el papel que se pisaba podía ser el que la Prestadora miró para
+     otorgar el aval.
+
+     `crypto.randomUUID` sólo existe en contexto seguro —`https` o `localhost`—;
+     abajo quedan las dos redes para el resto de los casos, en orden de qué tan
+     difícil es que dos llamadas den lo mismo. */
+  uuidNuevo() {
+    const fuente = (typeof crypto !== 'undefined') ? crypto : null;
+    if (fuente && typeof fuente.randomUUID === 'function') {
+      return fuente.randomUUID();
+    }
+    if (fuente && typeof fuente.getRandomValues === 'function') {
+      const bytes = new Uint8Array(16);
+      fuente.getRandomValues(bytes);
+      bytes[6] = (bytes[6] & 0x0f) | 0x40;
+      bytes[8] = (bytes[8] & 0x3f) | 0x80;
+      const hex = Array.from(bytes, (n) => n.toString(16).padStart(2, '0')).join('');
+      return hex.slice(0, 8) + '-' + hex.slice(8, 12) + '-' + hex.slice(12, 16)
+        + '-' + hex.slice(16, 20) + '-' + hex.slice(20);
+    }
+    return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+  },
+
+  /* Sube, y **no pisa**. Es la otra mitad del pendiente 89, cerrado el 2 de
+     septiembre de 2026 junto con la anterior: el camino ya no se repite, así
+     que dos subidas no caen nunca en el mismo lugar; y el día que por lo que
+     fuera cayeran, la segunda vuelve rechazada en vez de borrar la primera.
+     `Texto.claveDeError` ya traduce ese rechazo, que llega como «already
+     exists», con `error.duplicado`.
+
+     Prohibir pisar, solo, no alcanzaba: rechazaría un guardado legítimo —sacar
+     una matrícula del medio de la lista y volver a guardar—. Por eso van las
+     dos cosas y no una. */
   async uploadFile(bucket, path, file) {
     const motivo = _porQueNoSeSube(bucket, file);
     if (motivo) throw _rechazo(motivo);
 
     const { data, error } = await _sb.storage.from(bucket).upload(path, file, {
-      upsert: true,
+      upsert: false,
       contentType: file.type
     });
     if (error) throw new Error(error.message);

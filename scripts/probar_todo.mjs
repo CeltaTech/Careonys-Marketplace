@@ -52,12 +52,9 @@
 
    ── La que tiene que dar rojo ─────────────────────────────────────────────
 
-   Tres salen en rojo a propósito y dicen adentro por qué. Acá se cuentan como
+   Dos salen en rojo a propósito y dicen adentro por qué. Acá se cuentan como
    esperadas y no tumban la corrida:
 
-   · `probar_pisado_de_archivos.mjs` es el pendiente 89 —subir dos veces el mismo
-     papel borra el primero, y el arreglo depende de una decisión que todavía no
-     se tomó—.
    · `probar_perdida_de_corpus.mjs` es el pendiente 91 —nueve chequeos dan ✔ con
      menos archivos cuando se les saca la mitad del corpus, y la salida son tres
      políticas de exención entre las que hay que elegir—.
@@ -106,6 +103,7 @@ const PRUEBAS = [
   'probar_sello_de_la_prestadora.mjs',
   'probar_la_tercera_puerta.mjs',
   'probar_el_papel_nuevo_baja_el_sello.mjs',
+  'probar_la_resolucion_deja_su_motivo.mjs',
   'probar_permisos_en_vivo.mjs',
   'probar_pisado_de_archivos.mjs',
   'probar_aislamiento.mjs',
@@ -121,7 +119,6 @@ const SIN_BASE_LOCAL = new Set(['barrer_aislamiento.mjs']);
 /* Rojas a propósito, con el pendiente que lo explica al lado. Sacar de acá lo
    que se arregle: si una de éstas pasa, esta corrida falla y dice por qué. */
 const ROJAS_ESPERADAS = new Map([
-  ['probar_pisado_de_archivos.mjs', [89]],
   ['probar_perdida_de_corpus.mjs', [91]],
   ['probar_coherencia_de_la_siembra.mjs', [110, 111]]
 ]);

@@ -197,7 +197,7 @@ archivo queda en una carpeta que es de su cuenta y de ninguna otra, y sólo uste
 reemplaza y los borra (`supabase/migrations/0006_archivos_del_legajo.sql:52`). El personal de
 su Prestadora los **lee**, para poder auditarlos, y no los modifica
 (`supabase/migrations/0006_archivos_del_legajo.sql:78`). Y cuando hay que mostrarle uno, el
-sistema pide un enlace temporal que vence a los cinco minutos (`js/auth.js:265`), en vez de
+sistema pide un enlace temporal que vence a los cinco minutos (`js/auth.js:305`), en vez de
 una dirección fija que quede dando vueltas.
 
 **Con la fotografía es distinto, y conviene que lo sepa.** La foto del Perfil vive en un
@@ -339,7 +339,7 @@ correo de otra persona.
 
 **8.4. Edad mínima.** Para registrarse como Asistente hay que ser mayor de 18 años, y al
 aceptar estos términos usted lo declara. El sistema le pide la fecha de nacimiento al armar el
-Legajo (`registrar-asistente.html:298`) y la guarda, pero **hoy no hace por su cuenta ninguna
+Legajo (`registrar-asistente.html:305`) y la guarda, pero **hoy no hace por su cuenta ninguna
 comprobación de la edad**: la exigencia se sostiene en lo que usted declara y en el documento
 de identidad, que es la única verificación que frena el alta del Legajo
 (`data/catalogo-verificaciones.json:14-17`). Registrarse siendo menor de edad es motivo de

@@ -55,6 +55,10 @@ export const GRUPOS = [
   // pregunta el alta del Asistente y la Familia no los ve nunca.
   ['js/fichas-legajo.js', 'pwa-asistente/js/fichas-legajo.js'],
   ['data/catalogo-fichas.json', 'pwa-asistente/data/catalogo-fichas.json'],
+  // Los cuatro papeles sueltos del legajo —foto, documento de identidad,
+  // antecedentes penales y título— los suben las dos altas del Asistente, así
+  // que la aplicación del teléfono lleva copia igual que de las fichas.
+  ['js/documentos-legajo.js', 'pwa-asistente/js/documentos-legajo.js'],
   ['js/autorizaciones.js', 'pwa-asistente/js/autorizaciones.js'],
   ['js/zonas.js', 'pwa-asistente/js/zonas.js'],
   ['data/catalogo-autorizaciones.json', 'pwa-asistente/data/catalogo-autorizaciones.json'],

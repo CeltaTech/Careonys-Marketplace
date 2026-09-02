@@ -13,11 +13,11 @@
 
 | Módulo | Estado |
 |---|---|
-| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:790` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs`. **El alta de Asistente exige confirmar el correo, y se queda así**: decidido por el Desarrollador el 2026-08-26 (pendiente 21 cerrado) — el alta es de dos pasos, pero nadie puede darse de alta con el correo de otra persona; `supabase/config.toml` tiene `mailer_autoconfirm: false` |
+| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:840` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs`. **El alta de Asistente exige confirmar el correo, y se queda así**: decidido por el Desarrollador el 2026-08-26 (pendiente 21 cerrado) — el alta es de dos pasos, pero nadie puede darse de alta con el correo de otra persona; `supabase/config.toml` tiene `mailer_autoconfirm: false` |
 | Directorio de Asistentes con filtros | Maquetado y navegable |
 | Perfil del Asistente | Maquetado |
 | Portal de registro de Asistentes | Maquetado, con el legajo funcionando: `registrar-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en las tablas de la migración 0004, y la disponibilidad horaria en las de la 0012 |
-| Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:265`). Declarados en `supabase/migrations/0006_archivos_del_legajo.sql`, no a mano |
+| Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:305`). Declarados en `supabase/migrations/0006_archivos_del_legajo.sql`, no a mano |
 | Consentimiento de publicación | Funciona de punta a punta. El alta pregunta al cerrar (`data/catalogo-autorizaciones.json`, paso 7) y guarda la respuesta en `autorizaciones_asistente`; el directorio cruza contra ella y **no muestra a nadie que no haya dicho que sí** (`supabase/migrations/0007_directorio_con_consentimiento.sql`). Sin respuesta no se publica: la casilla arranca sin marcar. Y el directorio va con `noindex`, que es lo que ese mismo consentimiento promete |
 | Evaluaciones de competencias | Funcionan, y **las corrige el servidor**. `examen.html` pide sesión, lista lo que la persona puede rendir y manda las respuestas a `rendir_evaluacion()`; la columna con la respuesta correcta no tiene permiso de lectura para nadie y las opciones salen de la vista `opciones_para_responder`, que no la incluye (`supabase/migrations/0008_cursos_y_evaluaciones.sql`). El intento no se puede escribir a mano: la tabla no tiene política de escritura y los permisos están revocados. `cursos.html` ya no tiene examen propio, enlaza a esta pantalla. Falta el contenido: ver `docs/PENDIENTES.md` punto 24 |
 | Motor de fichas del legajo (`js/fichas-legajo.js`) | Funciona. Dibuja, valida y recolecta Matrícula, estudio, experiencia y referencia leyendo `data/catalogo-fichas.json` y `data/catalogo-vocabularios.json`. Ninguna de las cuatro está escrita en la pantalla |
@@ -209,14 +209,14 @@ se metía adentro del marcado ahora pasan por `Texto.escapar`, en seis archivos:
   proyecto quien lee suele ser el personal de la Prestadora, o sea justo quien tiene los permisos,
   o una familia mirando los reportes de cuidado.
 - **Los dos peores casos** no estaban donde decía el pendiente. Uno era el mensaje de chat de
-  `mockup-app.html:790`, que lo escribe una persona y lo lee otra. El otro era
+  `mockup-app.html:783`, que lo escribe una persona y lo lee otra. El otro era
   `panel-prestadora.html`, la pantalla que el pendiente daba por arreglada: tenía el renglón de la
   tabla de Asistentes entero sin escapar —nombre, documento, teléfono, profesión y zona— y el
   único `onclick` escrito en el marcado de todo el proyecto.
 - **Escapar no alcanzaba ahí, y por eso se sacó el `onclick`.** Adentro de un atributo el
   navegador deshace el escapado antes de leer el contenido como código, así que un `&#39;` vuelve
   a ser una comilla y cierra la cadena igual. El identificador ahora se pasa por
-  `addEventListener` (`panel-prestadora.html:278`), que nunca vuelve a leer texto como programa.
+  `addEventListener` (`panel-prestadora.html:329`), que nunca vuelve a leer texto como programa.
 - **Un solo punto de verdad**, como pide «ningún patrón repetido sin punto único de verdad»: `js/texto.js` (77 renglones) tiene
   `Texto.escapar` y `Texto.mensajeDeError`, y lo cargan las catorce pantallas. Antes de esto el
   único archivo que cargaban todas era `js/identidad.js`; ahora son dos. La copia local de
@@ -550,7 +550,7 @@ Comprobado el 24 de agosto de 2026 contra el proyecto real: el servidor tiene ap
 distancia costaba dos cosas que ya no cuestan:
 
 - **La columna del contacto existe.** La 0009 agregó `avisos.contact_info`, que es donde
-  `js/apiClient.js:1261` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
+  `js/apiClient.js:1296` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
   público de `solicitar-asistente.html` mandaba una columna que la base no tenía.
 - **Las filas de ejemplo hablan el idioma del catálogo.** La 0010 reemplazó las claves viejas de
   las cuatro filas ficticias —«enfermero» y compañía— por las que las pantallas esperan.
@@ -734,7 +734,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
 - **Los dos pasos que faltaban se dibujan desde el catálogo**, no están escritos en la pantalla.
   Matrícula y estudios en el paso 2, experiencia laboral en el paso 3 y referencias en el paso 5
   salen de `data/catalogo-fichas.json` a través de `js/fichas-legajo.js`
-  (`pwa-asistente/index.html:2059`, `montarFichas`). El paso de cierre sale de
+  (`pwa-asistente/index.html:2065`, `montarFichas`). El paso de cierre sale de
   `data/catalogo-autorizaciones.json`.
 - **El paso de cierre pasó a ser un módulo.** Estaba escrito adentro de `registrar-asistente.html`,
   cuarenta renglones que traían el archivo y armaban las casillas. Ahora es `js/autorizaciones.js`,
@@ -749,7 +749,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
   que esa fila no entraba y la persona no se enteraba.
 - **Y el alta del teléfono creaba cuentas sin dueño.** `registrarAspirante` no escribía `user_id`,
   así que la persona quedaba con cuenta y con legajo, pero el legajo no era de nadie y no lo podía
-  abrir. Se agrega en `guardarLegajo` (`pwa-asistente/index.html:2124`), que es donde ya se sabe
+  abrir. Se agrega en `guardarLegajo` (`pwa-asistente/index.html:2130`), que es donde ya se sabe
   quién inició sesión.
 
 **Cómo se comprobó, el 25 de agosto de 2026.** En dos mitades, porque el servidor alojado todavía
@@ -884,7 +884,7 @@ atiende, precio por hora y si acepta reemplazos urgentes. Son exactamente los qu
 `directorio`, la vista que sólo deja pasar a quien tiene el legajo validado por la
 Prestadora **y** además autorizó que se lo publique.
 
-- **Lo trae `traerDelDirectorio` (`js/apiClient.js:824`)**, que pide una sola fila filtrando por
+- **Lo trae `traerDelDirectorio` (`js/apiClient.js:859`)**, que pide una sola fila filtrando por
   identificador y por Prestadora. Un identificador que no tiene forma de identificador se contesta
   sin preguntarle a la base: la base devolvería un error de sintaxis, y un error en pantalla se lee
   como que el sistema se rompió, cuando lo que hay es un enlace viejo. Los hay: hasta el 25 de
@@ -1026,15 +1026,18 @@ automático seguía apagado.
   —cada tono de señal tenía fondo y letra pero no borde, y por eso el borde se escribía a mano—. Los
   otros cuatro le ponen nombre a recetas que estaban copiadas: la sombra de una ilustración suelta,
   el velo que oscurece el pie de una foto, el ícono decorativo sobre fondo oscuro y el velo oscuro
-  de una pastilla apoyada sobre color.
+  de una pastilla apoyada sobre color. **Hoy quedan siete**: el ícono decorativo sólo lo usaba el
+  monigote de la sala de videollamada simulada, y se fue con ella el 2 de septiembre de 2026.
 - **`scripts/verificar_paleta.mjs` es el chequeo que impide que vuelvan.** Es el octavo, y también
   entró solo: ni el corredor ni el gancho de commit se tocaron.
 - **El chequeo encontró una cuarta puerta que el barrido no había mirado.** Los colores entran por
   los atributos `style=`, por los bloques `<style>`, por los `.css` — y por el JavaScript, que pinta
   con `elemento.style.background = '#ffebee'`. Había dieciséis ahí, invisibles para cualquiera que
   buscara en las hojas de estilo.
-- **Quedan dos colores escritos a mano, con nombre y motivo**: el rojo de Google y el azul de
-  Facebook, en los botones de ingresar con esas cuentas. No son de la paleta y no cambian de noche.
+- **No queda ningún color escrito a mano, y ninguna exención.** Hasta el 2 de septiembre de 2026
+  quedaban dos, el rojo de Google y el azul de Facebook, en los botones de ingresar con esas
+  cuentas. Esos botones no hacían nada y se sacaron, así que la exención se fue con ellos: una
+  exención que ya no exime nada sigue perdonando, y lo único que perdona es el aire.
 
 **De paso se midió el contraste de cada texto**, con el navegador abierto en las dieciséis pantallas:
 719 textos, uno por uno, comparando el color de la letra contra el fondo de verdad —compuesto capa
@@ -1080,9 +1083,9 @@ tocar nada y sin esperar a que cargue ningún programa. Hasta ayer el modo oscur
 entero y no lo veía nadie: sólo se encendía escribiendo `data-tema='oscuro'` a mano en el HTML,
 cosa que ninguna pantalla hacía. Son tres cambios en `css/tokens.css` y sus dos copias:
 
-- El bloque `@media (prefers-color-scheme: dark)` (`css/tokens.css:275`), con los mismos valores
-  que `:root[data-tema='oscuro']` (`css/tokens.css:232`).
-- La guarda `:not([data-tema='claro'])` en ese bloque (`css/tokens.css:276`). Sin ella, quien
+- El bloque `@media (prefers-color-scheme: dark)` (`css/tokens.css:270`), con los mismos valores
+  que `:root[data-tema='oscuro']` (`css/tokens.css:227`).
+- La guarda `:not([data-tema='claro'])` en ese bloque (`css/tokens.css:271`). Sin ella, quien
   tiene la computadora en oscuro no podría volver a la pantalla clara ni pidiéndolo. Con ella, la
   elección de la persona le gana a la de la máquina en las dos direcciones.
 - `color-scheme` (`css/tokens.css:95`), que le avisa al navegador de qué lado está. La barra de
@@ -1563,15 +1566,15 @@ pantalla vacía.
 
 **El daño no era igual en las cuatro pantallas, y conviene decirlo así en vez de dejarlo parejo.**
 
-- **Una sola quedaba muda de verdad.** En `panel-prestadora.html:600`, una tabla sin legajos se ve
+- **Una sola quedaba muda de verdad.** En `panel-prestadora.html:650`, una tabla sin legajos se ve
   igual esté rota o esté bien: es idéntica a la de una Prestadora que todavía no cargó ninguno.
   Ahora el fallo escribe en la propia tabla «No se pudo preparar la pantalla. Conviene volver a
   cargarla», que es el estado de error que faltaba.
 - **Las otras tres caen en la pantalla de acceso**, y eso ya era la verdad: sin sesión rescatada,
   lo que corresponde mostrar es el acceso. Lo que se perdía era el rastro. Ahora
-  `mockup-app.html:436` y `:911`, `pwa-asistente/index.html:1020` y `pwa-familia/index.html:1130`
+  `mockup-app.html:429` y `:904`, `pwa-asistente/index.html:1026` y `pwa-familia/index.html:1130`
   dejan el detalle técnico en la consola en lugar de tirarlo.
-- **`js/auth.js:292` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
+- **`js/auth.js:332` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
   cargan ese archivo —no en las dieciséis, y el comentario decía catorce hasta que se contaron—, y su
   único trabajo es pasarle el permiso al cliente de datos. Si falla, el primer pedido de esa
   pantalla va a fallar también, y esa pantalla sí sabe cómo decirlo; poner un cartel acá sería
@@ -1780,12 +1783,12 @@ el servidor.
 para decir una sola cosa: `validado` y `validado_prestadora`. La `0007:8` ya había escrito qué
 significa —«Validado quiere decir "la Prestadora revisó los papeles"»—, que es exactamente lo que
 dice `validado_prestadora` con todas las letras. Los dos pasaban en todos lados, y **el corto no lo
-escribía nadie**: el único lugar que asigna un estado validado es `panel-prestadora.html:614`, y
+escribía nadie**: el único lugar que asigna un estado validado es `panel-prestadora.html:664`, y
 pone el largo. El corto sólo aparecía leído, y en una fila de ejemplo.
 
 La `0017` lo saca: pasa las filas que decían `validado` a decir `validado_prestadora`, y el
 directorio deja de nombrar el valor muerto. En el código quedaba un solo lugar que lo leía
-—`pwa-asistente/index.html:1737`, un `||` defensivo— y también se fue. **Lo que la `0017` no hace es
+—`pwa-asistente/index.html:1743`, un `||` defensivo— y también se fue. **Lo que la `0017` no hace es
 cerrar la lista de estados con un `check`**, porque para eso hay que saber cuáles son todos, y hoy
 el código nombra cuatro sin que ningún lugar diga que ésos son todos.
 
@@ -1897,9 +1900,9 @@ Que sigan siendo ocho copias es parte del pendiente 13.
 
 **«Toda operación destructiva se confirma» se midió en el mismo rato y salió todavía más
 corta.** La regla pide confirmación explícita ante cada una, y la medición encontró que en este proyecto hay exactamente una:
-rechazar un legajo (`panel-prestadora.html:576`). No hay un solo `delete` contra la base en las
+rechazar un legajo (`panel-prestadora.html:752`). No hay un solo `delete` contra la base en las
 cuarenta y cuatro pantallas y guiones —lo único que se parece son dos `delete` de JavaScript sobre
-un objeto en memoria, `js/apiClient.js:407` y `js/apiClient.js:491`, que no tocan nada guardado—, y
+un objeto en memoria, `js/apiClient.js:407` y `js/apiClient.js:526`, que no tocan nada guardado—, y
 salir de la sesión no
 destruye nada. La única que hay ya pregunta antes, y la pregunta dice qué queda después:
 «Se va a rechazar este legajo. Queda cerrado y la persona no aparece en el plantel activo.
@@ -2233,7 +2236,7 @@ escrita: es la sección que sigue.
 el pendiente 15. No era una cuestión de prolijidad. Quien escribe la llamada a mano decide solo si
 manda el token de quien inició sesión o la clave pública, y de ese renglón depende que la base
 sepa quién está preguntando. Ahora son `ClienteDatos.getMensajes()` y
-`ClienteDatos.enviarMensaje()` (`js/apiClient.js:777`), que arman el pedido una sola vez para
+`ClienteDatos.enviarMensaje()` (`js/apiClient.js:812`), que arman el pedido una sola vez para
 todos.
 
 Se ganó algo que no se buscaba: la lectura vieja miraba `res.ok` y, si venía en falso, seguía de
@@ -2941,7 +2944,7 @@ ficticia y sesión simulada: el legajo se creó con fecha de alta del **1 de ene
 `update` posterior la corrió al **1 de enero de 2010**. Las dos veces la base guardó lo que le
 mandaron.
 
-**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:1171` la traduce a `fechaRegistro` y ese
+**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:1206` la traduce a `fechaRegistro` y ese
 nombre no aparece en ningún otro archivo del proyecto—, así que no había consecuencia visible. Se
 arregló igual, porque la antigüedad es exactamente la clase de dato que después se usa para ordenar
 un directorio o para decidir a quién se muestra primero, y ese día el agujero pasa a ser una
@@ -3150,7 +3153,7 @@ que está sentenciado a borrarse; el hilo llevó a otra cosa.
 
 **Dos navegadores de pasos escuchaban el mismo botón.** `registrar-asistente.html` tiene el suyo,
 escrito adentro de la pantalla, que **valida el paso antes de dejar pasar al siguiente**
-(`registrar-asistente.html:917`). Y `js/main.js` traía otro, el del asistente por pasos de
+(`registrar-asistente.html:918`). Y `js/main.js` traía otro, el del asistente por pasos de
 `formulario-integral.html`, que se enganchaba a `.btn-next-step` en cualquier pantalla que
 cargara el archivo —y `registrar-asistente.html` lo carga— **sin validar nada**
 (`js/main.js:206`). Los dos corrían en cada clic, en ese orden, así que el segundo deshacía lo
@@ -3160,7 +3163,7 @@ que el primero acababa de decidir.
 del paso 1 vacíos, la pantalla decía «Faltan completar campos o archivos obligatorios» **y pasaba
 al paso 2 lo mismo**. Los siete pasos quedaban así: la validación existía, se ejecutaba, avisaba,
 y no servía para nada. Lo único que la salvaba era el envío final, que revalida los siete
-(`registrar-asistente.html:1145`), así que a la base nunca llegó un alta incompleta —pero quien
+(`registrar-asistente.html:1129`), así que a la base nunca llegó un alta incompleta —pero quien
 se anotaba se enteraba de lo que le faltaba recién al final, después de siete pasos.
 
 **El arreglo es pedir por la pantalla propia antes de enganchar nada.** Ese bloque de `js/main.js`
@@ -3290,7 +3293,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
   con su motivo en `scripts/verificar_esquema.mjs:448`, que es donde viven las funciones que llegan
   al alcance anónimo a propósito.
 - **La pantalla nueva es `screen-guias`** en la aplicación del Asistente
-  (`pwa-asistente/index.html:777`), con los cuatro estados y un buscador. **Es una biblioteca de
+  (`pwa-asistente/index.html:782`), con los cuatro estados y un buscador. **Es una biblioteca de
   consulta, no la guía del Paciente de hoy**, y eso es una carencia conocida: no existe todavía
   ninguna pantalla donde el Asistente vea al Paciente que va a atender, así que no hay dónde colgar
   la guía. Queda como pendiente 105.
@@ -3344,9 +3347,9 @@ se le comprobó nada. **Construida el 1 de septiembre de 2026.**
 **Está donde va, y el orden importa.** En el legajo que abre `panel-prestadora.html`, arriba del
 cuadro donde se otorga o se rechaza el aval: primero se marca papel por papel y recién después se
 resuelve el legajo entero. Se dibuja sola al abrir el legajo y sin hacerse esperar
-(`panel-prestadora.html:386`), porque es otro pedido y tiene su propio cartel de estado
-(`panel-prestadora.html:412`). Cada papel del catálogo trae su desplegable con los cinco estados,
-y el bloque entero lo arma `dibujarVerificaciones()` (`panel-prestadora.html:427`) desde el catálogo
+(`panel-prestadora.html:436`), porque es otro pedido y tiene su propio cartel de estado
+(`panel-prestadora.html:462`). Cada papel del catálogo trae su desplegable con los cinco estados,
+y el bloque entero lo arma `dibujarVerificaciones()` (`panel-prestadora.html:477`) desde el catálogo
 de frases y desde los dos vocabularios de la base, así que existe igual en `en` y en `pt-BR`.
 Ninguna opción está escrita en la pantalla: los renglones se arman con `createElement`, que es lo
 que `scripts/verificar_opciones.mjs` pide para un desplegable que sale de la base.
@@ -3367,10 +3370,10 @@ regresa a «sin presentar» —la columna no puede seguir diciendo que alguien l
 ya no está comprobado— y no refresca la fecha cuando el estado no cambió.
 
 **Y el cliente de datos aprendió a hacer un alta-o-modificación en un solo pedido.**
-`_supabaseUpsert()` (`js/apiClient.js:1140`) se apoya en la restricción de unicidad de
+`_supabaseUpsert()` (`js/apiClient.js:1175`) se apoya en la restricción de unicidad de
 `(legajo, tipo)` que trae la migración 0004, así que marcar el mismo papel dos veces corrige el
 renglón que ya está en vez de agregar otro. No existía en ninguna de las tres copias del archivo,
-y `marcarVerificacion()` (`js/apiClient.js:466`) es la primera que la usa.
+y `marcarVerificacion()` (`js/apiClient.js:501`) es la primera que la usa.
 
 **Probado con las dos Organizaciones ficticias, y la prueba puede fallar.** Ocho comprobaciones
 nuevas en `scripts/probar_aislamiento.mjs:876`, que llevaron la corrida de 119 a 127. Se hacen
@@ -3447,6 +3450,95 @@ Aspirante, mientras que la verificación la marca la Prestadora después. Cerrad
 escrita, ningún alta se podría terminar hasta que alguien abra el documento. Es el pendiente 143, y
 lo contesta el Desarrollador.
 
+### El panel de la Prestadora dejó de mostrar lo que nadie contó, y de prometer pantallas que no hay
+
+Hecho el 2 de septiembre de 2026. Era el pendiente 100, cerrado ese día. La pantalla tenía cuatro
+recuadros de números y seis entradas de menú; de los cuatro recuadros, **dos estaban escritos a
+mano** —«Presentismo GPS Hoy 100%» y «Alertas Urgentes 0»—, y de las seis entradas, **cuatro eran
+`href="#"`**. Un 100% fijo es peor que un hueco: el hueco se nota.
+
+**Los dos recuadros se sacaron y no se reemplazaron**, y el motivo no es que falte trabajo sino que
+ninguno de los dos tiene una versión correcta que construir. El presentismo es la fichada, y la
+fichada la miran la Familia y el Asistente, nunca la Prestadora (`CLAUDE.md` §1): mirar los
+horarios que cumple una persona es dirigir el trabajo, que es justo lo que esta modalidad evita.
+Las alarmas son de esos mismos dos; de ellas, lo único de la Prestadora es el tope de horas, que ya
+tiene su propio bloque en la misma pantalla. El número que sí sería suyo —cuántos contactos hubo,
+que es el hecho por el que cobra— espera a que se descongele la lógica comercial (§4). Quedan los
+dos que salen de la base, en `panel-prestadora.html:89`.
+
+**Y apareció un tercer número inventado que el pendiente no nombraba**: los dos recuadros que sí
+consulta la base arrancaban diciendo «1» cada uno, escrito en el marcado. Mientras la consulta
+viaja se veía un número que nadie contó, y las ramas de error no volvían a tocarlos, así que un
+fallo de la consulta —o quien mira sin ser coordinador— dejaba el «1» en pantalla como si fuera la
+cuenta. Ahora arrancan en raya, y quien la pone y la saca es `ponerNumeros()`
+(`panel-prestadora.html:265`), que llaman las tres ramas que pueden dejarlos a la vista: listo,
+vacío y error. **Sin cuenta va la raya y no el cero**, porque cero es un dato —«no hay ningún
+legajo en revisión»— y no sirve para decir «no se sabe».
+
+**De las cuatro entradas del menú, dos no vuelven nunca y dos quedaron anotadas.** «Entrevistas de
+Selección» no necesita pantalla propia: la entrevista ya se registra adentro de la auditoría del
+legajo, en la misma pantalla, y de ahí sale la resolución. «Presentismo GPS Vivo» es la fichada
+otra vez, y no la va a tener. «Avisos de Familias» y «Facturación & Liquidación» esperan cada una
+una decisión que no está tomada, y son el pendiente 145. El menú quedó en dos entradas
+(`panel-prestadora.html:55`), las dos con pantalla.
+
+**Y la hoja de estilos pedía cuatro columnas fijas.** Con dos recuadros quedaban apretados contra
+la izquierda y media fila vacía al lado, así que `.kpi-grid` pasó a `auto-fit`
+(`css/styles.css:1970`): reparte los que haya, y se acomoda solo el día que aparezca el tercero. Es
+la única regla del proyecto que usa esa clase, comprobado antes de tocarla.
+
+### Las cuentas con las que se entra al producto ya no se pierden, y los avisos tienen autora
+
+Hecho el 2 de septiembre de 2026. Era el pendiente 47, cerrado ese día, y resultó ser bastante más
+grande que su renglón. Lo que decía era que no había cuenta de Asistente; lo que había era **cero
+cuentas de cualquier tipo**: `auth.users` y `public.profiles` vacías, con los trece legajos, los
+veintiocho avisos y las tres Prestadoras cargados. Las cuentas se venían creando a mano por la
+pantalla de alta, y cada vez que la base se rehace desde las migraciones —que en este producto es
+lo normal— se iban todas.
+
+**De ahí colgaba un segundo agujero, que era el que rompía el producto de verdad.**
+`avisos.familia_id` apuntaba a una cuenta que no existía, así que los veintiocho avisos
+estaban sin autora. `avisos_abiertos()` no mira esa columna, de modo que el Asistente veía los
+avisos y se postulaba sin problema; pero las políticas de `postulaciones` y la función
+`postulaciones_de_mis_avisos()` piden `a.familia_id = auth.uid()`, que contra un nulo no da
+verdadero nunca. El Asistente se postulaba, veía «postulado», y **no había ninguna sesión en el
+mundo desde la que esa postulación se pudiera leer**. Sin un solo mensaje de error.
+
+Lo cierra la migración `0065_las_cuentas_ficticias_nacen_con_la_base.sql`, que siembra seis cuentas
+—Familia, Asistente y personal de la Prestadora en PresDemo y en Cuidar Norte—, ata cada Asistente
+a su legajo por `caregivers.user_id`, y pone a cada Familia como autora de los catorce avisos **de
+su propia Organización**, nunca de la otra. Cuidar Sur queda sin cuentas a propósito: estar casi
+vacía es lo que la hace útil para probar el aislamiento.
+
+**La clave no está en la migración, y ése es el punto.** La 0030 había escrito por qué no creaba
+estas cuentas: «dar de alta una cuenta desde una migración significa escribir una clave adentro del
+repositorio». El argumento sigue entero —las migraciones son las mismas de los dos lados, así que
+una clave escrita ahí abre esas cuentas también en la base publicada—, y lo que cambió es que no
+hace falta: las cuentas nacen con `encrypted_password` en nulo. Existen, tienen perfil y
+Organización, sostienen todas las referencias, y no entran. La clave la pone
+`scripts/abrir_cuentas_ficticias.mjs`, que la toma de `CLAVE_PRUEBA_LOCAL` y se planta si la
+dirección no es la de esta máquina.
+
+**Y se probó el ida y vuelta entero**, que es lo único que prueba algo acá: entrar como la Familia
+de PresDemo y ver sus catorce avisos; entrar como su Asistente, ver los avisos abiertos y
+postularse a uno; volver a entrar como la Familia y ver esa postulación. Las tres pasaron, junto
+con las dos que dicen que el aislamiento no se movió —la Familia de Cuidar Norte ve sus catorce y
+ninguno de los otros, y no ve ninguna postulación de un aviso de PresDemo— y la que dice que el
+personal de la Prestadora abre el panel con su rol. La postulación de prueba se borró después.
+
+**Y que no vuelva a pasar:** `avisos.familia_id` quedó `not null`. Nació aceptando nulos por
+dos motivos y los dos se revisaron: el histórico, que escribió la 0030, y el estructural, que era
+la llave foránea de la 0020 con `on delete set null`. Esa llave pasó a `on delete cascade`, que es
+la forma que ya tenían `conversaciones.familia_id` y `mensajes.autor_id` desde la 0054
+—borrar una cuenta de Familia ya se llevaba sus conversaciones y sus mensajes; ahora se lleva
+también sus avisos—. La migración no fuerza nada: si quedara algún aviso sin autora, avisa y deja
+la columna como estaba.
+
+**Y se sacaron dos exenciones que dejaron de eximir.** `caregivers.user_id` y
+`avisos.familia_id` estaban afuera de `probar_coherencia_de_la_siembra.mjs` porque la 0030 no
+creaba cuentas. Ahora las dos se llenan, así que la exención se borró: una exención que sobra
+vuelve verde para siempre una columna que después se puede vaciar sin que nadie se entere.
+
 ## 2. Falta construir
 
 Nada de esto se migra: **se escribe por primera vez.** Conviene tenerlo presente al estimar,
@@ -3461,6 +3553,8 @@ porque migrar es más barato que construir.
 | **Badges de verificación de 4 niveles** | Se muestran. No hay validación real detrás de ninguno |
 | **Reportes de salud y signos vitales** | Maquetado sin persistencia — y ver §3 |
 | **Asesoría de reintegros de Obra Social** | Maquetado sin lógica — y ver §3 |
+| **Videollamada de entrevista** | No existe, y ya no se anuncia adentro de la aplicación. Hasta el 2 de septiembre de 2026 `js/main.js` armaba una sala simulada que anunciaba «sala segura 8x8 Encryption» —un cifrado que el producto no hace— y que no abría ningún botón: se borró entera, con sus estilos y con el token que sólo ella usaba. Lo que sigue prometiéndola es el texto de venta de las pantallas (`index.html:202`, `solicitar-asistente.html:266`, `soporte-remoto.html:89`), y `solicitar-asistente.html:177` tiene todavía su propia ventana simulada para agendarla con un Gestor |
+| **Entrar con la cuenta de Google o de Facebook** | No existe. Hasta el 2 de septiembre de 2026 `mockup-app.html` ofrecía los dos botones y ninguno de los dos hacía nada: se sacaron. `supabase/config.toml` no tiene encendido ningún proveedor de acceso externo, y encender uno es una decisión, no una tarea |
 
 ---
 
@@ -3513,7 +3607,7 @@ prestación.
 
 El mercado es de una Prestadora: sus Asistentes ofreciendo, sus Familias buscando. Muchos de un
 lado y muchos del otro, pero **todos adentro de la misma Organización**. Es lo que ya hace
-`js/apiClient.js:804`, que resuelve una Prestadora y le muestra los suyos a `directorio.html`.
+`js/apiClient.js:839`, que resuelve una Prestadora y le muestra los suyos a `directorio.html`.
 
 **Ninguna búsqueda, en ninguna modalidad, mezcla Asistentes de dos Prestadoras.** Mezclarlas sería
 abandonar el aislamiento entre Organizaciones para conseguir un desorden general. No
@@ -4004,7 +4098,7 @@ falta:**
 **Y las cinco formas se eligieron por una sola condición: que no tengan hoy ningún uso legítimo.**
 Se contó sobre los 224 archivos de texto del proyecto y las cinco dan cero. Lo único con forma de
 credencial que hay escrito son las tres apariciones de la clave publicable —el original y sus dos
-copias, decidido y anotado en `docs/INVENTARIO.md:385`— y cinco contraseñas de cuentas ficticias
+copias, decidido y anotado en `docs/INVENTARIO.md:402`— y cinco contraseñas de cuentas ficticias
 adentro de los guiones de prueba, que es como se entra a la base de esta máquina para probar. Por
 eso la contraseña escrita a mano **no** entra en la lista: daría cinco rojos que habría que
 perdonar de a uno, y una lista de perdones sobre credenciales es exactamente lo que esta regla no
@@ -4251,7 +4345,7 @@ el **pendiente 107**.
 
 **Y lo que la opción A todavía le debe a quien la sufre.** Que la persona vea, **antes** de cambiar
 un papel, que hacerlo le baja el sello. Hoy no se puede escribir: ninguna pantalla cambia
-`documents` —el mapeo existe en `js/apiClient.js:1234` y no lo usa nadie— y el chequeo de frases se
+`documents` —el mapeo existe en `js/apiClient.js:1269` y no lo usa nadie— y el chequeo de frases se
 pone en rojo con toda frase de catálogo que ninguna pantalla nombre. La frase entra el día que
 entre la pantalla; es el **pendiente 108**.
 
@@ -4272,7 +4366,7 @@ Cerró el pendiente 94, el 31 de agosto de 2026.
   cambiaba ni su tarjeta del directorio ni su perfil**. El campo tampoco estaba en el catálogo:
   seguía en castellano en las tres versiones de idioma.
 - **Ahora pregunta igual que la web.** El teléfono carga `js/zonas.js`
-  (`pwa-asistente/index.html:970`), lo monta en el hueco de
+  (`pwa-asistente/index.html:976`), lo monta en el hueco de
   `pwa-asistente/index.html:557` y el módulo decide la forma: la lista con casillas cuando la
   Prestadora tiene zonas cargadas, el texto libre cuando todavía no cargó ninguna. Comprobado en
   el navegador **las dos**, contra la base de esta máquina.
@@ -4283,9 +4377,9 @@ Cerró el pendiente 94, el 31 de agosto de 2026.
 - **La zona sigue siendo obligatoria, y ahora lo cuida el envío.** El `required` del campo viejo
   lo hacía el navegador; una lista de casillas sin tildar no la agarra ningún navegador. Se le
   pregunta al módulo antes de enviar, y si no hay respuesta el formulario vuelve al paso 1 y lleva
-  la vista al campo (`pwa-asistente/index.html:2205`).
+  la vista al campo (`pwa-asistente/index.html:2226`).
 - **Se guarda donde se lee**: las claves van a `zonas_asistente` y el texto libre a `zonas_texto`,
-  por `js/apiClient.js:424` y `:1231`. `caregivers.zone` no la escribe más nadie, y eso abrió el
+  por `js/apiClient.js:424` y `:1266`. `caregivers.zone` no la escribe más nadie, y eso abrió el
   **pendiente 109**.
 - **Y el 109 se cerró esa misma noche, por la salida que no borra datos.** Se midió
   primero: ninguna pantalla manda `zona` ni `zonaResidencia` al escribir un legajo, así
@@ -4297,7 +4391,7 @@ Cerró el pendiente 94, el 31 de agosto de 2026.
   `supabase/migrations/0050_zone_queda_dicha_como_historica.sql:31`, porque un comentario
   de columna viaja con el esquema y ahí es donde va a mirar quien la encuentre.
 - **Arrastró las tres cosas que el pendiente anticipaba.** `js/zonas.js` entró por primera vez en
-  los grupos de copias de `scripts/verificar_copias.mjs:59`, porque hasta hoy ninguna aplicación
+  los grupos de copias de `scripts/verificar_copias.mjs:63`, porque hasta hoy ninguna aplicación
   de teléfono lo cargaba; entró en la lista de la copia sin conexión con el número de versión
   subido, o el teléfono ya instalado se quedaba sin él; y las dos frases del campo viejo salieron
   de las tres copias del catálogo, porque el chequeo de frases se pone en rojo con toda frase que
@@ -4362,7 +4456,7 @@ publicación se vio qué más contestaba el servidor.
   llegan porque `git` no las rastrea, pero la línea de comandos de Vercel no mira `.gitignore`, así
   que una publicación hecha desde esta carpeta y no desde el repositorio las habría subido.
 - **Quedan servidos a propósito los dos documentos legales**, porque los enlazan las pantallas
-  públicas (`index.html:517`, `registrar-asistente.html:539`, `formulario-integral.html:418`). Que
+  públicas (`index.html:517`, `registrar-asistente.html:546`, `formulario-integral.html:418`). Que
   se muestren estando sin revisión profesional es el pendiente 49 y no se toca desde acá.
 - **Comprobado en los dos sentidos.** Antes del despliegue el guion daba rojo en los cinco; después
   da verde, y las quince pantallas del sitio, las cuatro hojas de estilo, el catálogo, el logotipo,
@@ -5072,7 +5166,7 @@ que las otras dos, que la limpieza se la lleva.
 escribe nadie: ni una pantalla, ni un guion, ni una prueba. Lo que sí pasa es que
 `registrar-asistente.html:996-1000` sube el documento de identidad, los antecedentes penales y el
 título, y guarda **sólo los caminos** en la columna `documents` de `caregivers`
-(`registrar-asistente.html:1057`, y de ahí a la base por `js/apiClient.js:1234`). O sea que hay
+(`registrar-asistente.html:1041`, y de ahí a la base por `js/apiClient.js:1269`). O sea que hay
 dos formas de guardar el mismo hecho y una está muerta, como ya pasó con `messages` y las
 `conversaciones` heredadas. Y la que quedó viva es la pobre: la tabla dedicada tiene `tipo`,
 `presentado_el`, `vencimiento` y `verificado`, y el objeto de `documents` no tiene ninguno de los
@@ -5101,7 +5195,7 @@ defendía eso diciendo que los fichados ya escritos decían «Entrada» —y no 
 escrito, ni podía haberlo—. Es justo la distancia entre lo visible, que cambia con el idioma,
 y lo guardado, que se nombra por su función y no cambia.
 
-Las tres corregidas. El legajo se resuelve **una sola vez**, en `js/apiClient.js:580`, porque son
+Las tres corregidas. El legajo se resuelve **una sola vez**, en `js/apiClient.js:615`, porque son
 dos pantallas que necesitan el mismo dato; si no hay legajo lo dice y se planta, con una frase
 nueva en los tres idiomas, en vez de inventar uno. Y `event_type` guarda `entrada` y `salida`,
 que son las claves que el catálogo de frases **ya usaba** —no hace falta ninguna palabra nueva—,
@@ -5340,7 +5434,7 @@ no se entera nadie el día que ese algo cambie. Ahora
 `scripts/probar_exenciones.mjs` la tomó sola: vaciarla pone rojo al chequeo, comprobado.
 
 El `avatares` es aparte y está bien: es público **a propósito** desde la 0006, porque la foto es lo
-que el directorio muestra sin cuenta (`js/apiClient.js:845`). Ahí no hay nada que aislar hacia
+que el directorio muestra sin cuenta (`js/apiClient.js:880`). Ahí no hay nada que aislar hacia
 afuera; lo que la condición cuida es la escritura, que nadie deje una foto en la carpeta de otro.
 
 Mover el camino a `<Organización>/<cuenta>/<archivo>` no es sólo una migración: hay que mudar los
@@ -5492,7 +5586,7 @@ Todo correcto. Otra vez no había nada que arreglar; faltaba lo que impide el pr
 Y el primer error tiene dos tamaños muy distintos, que conviene no mezclar. **Equivocarse el nombre
 falla callado**: el depósito no existe, `urlFirmada()` devuelve `null` y la pantalla no muestra el
 archivo sin decir por qué. **Confundirse de depósito en la dirección pública publica un documento de
-identidad**, que es el peor error posible de este producto. `js/apiClient.js:855` arma una dirección
+identidad**, que es el peor error posible de este producto. `js/apiClient.js:890` arma una dirección
 pública a mano, con el nombre del depósito pegado adentro del texto de la dirección: cambiar ahí una
 palabra por la otra es un renglón.
 
@@ -6094,6 +6188,138 @@ los vocabularios.
 `descripcion_i18n`, con los tres idiomas, y dejó en pie las viejas `nombre` y `descripcion`, de
 texto suelto y en uno solo. Sacarlas sin revisar quién las escribe y quién las lee pierde contenido
 sin avisar, así que se dejaron y el trabajo quedó en la lista de pendientes.
+
+### El chequeo de direcciones miraba que el archivo estuviera, no que fuera el que el rótulo promete
+
+`scripts/verificar_rutas.mjs` lo dice de sí mismo en su encabezado, entre lo que no mira: *«Si el
+archivo al que apunta es el que corresponde. Sólo que esté»*. Es una frontera honesta y es también
+un agujero: un enlace que apunta a una pantalla que existe pero no es la que el rótulo promete pasa
+en verde, y quien lo sigue no tiene forma de darse cuenta de que lo llevaron a otro lado.
+
+El 2 de septiembre de 2026 se barrió ese agujero a mano sobre las 17 pantallas, comparando cada
+destino contra el rótulo que lo anuncia —por clave de catálogo y por texto visible— y contra las
+anclas que de verdad existen en el documento de destino. Era el pendiente 125, y **quedó cerrado**.
+
+**El ancla que nadie había escrito.** Ocho botones «Registrarme» apuntaban a `#registro` y no había
+ningún `id="registro"` en todo el proyecto: los seis pies de las otras pantallas y **los dos de la
+propia pantalla de alta**, que son justo los que tendrían que bajar al formulario. Los ocho abrían
+`registrar-asistente.html` arriba de todo, con el formulario a varias pantallas de distancia, y el
+navegador no avisa: un ancla que no existe no es un error, es un salto que no pasa nada. Hoy el
+ancla está en `registrar-asistente.html:190`, sobre la sección que envuelve el formulario, con un
+comentario arriba que dice de quién es destino para que no se mude sin el formulario.
+
+**Un rótulo con dos destinos.** «Publicar un Aviso» —`nav.publicar_aviso`, la misma clave de
+catálogo— iba a `formulario-integral.html` en catorce apariciones y a `solicitar-asistente.html` en
+tres: `perfil.html:189`, que era la que estaba anotada, y `directorio.html:65` y `:164`, que el
+barrido encontró de más. Las tres estaban en pantallas cuya **propia barra de arriba** llevaba al
+otro lado, así que el mismo botón, con el mismo texto, hacía dos cosas distintas según dónde se lo
+apretara. Las diecisiete van hoy a `formulario-integral.html`.
+
+**Y el pie, que es donde nadie mira.** El sobre de contacto faltaba en dos de los ocho pies
+—agregado en `cursos.html:207` y `soporte-remoto.html:186`—, y «Contacto» tenía destino real en una
+sola pantalla: en las otras siete decía `#`, que no es un enlace roto sino algo peor, un enlace que
+se ve igual que los que funcionan y no hace nada. Hoy cada uno cae en un formulario de consulta que
+existe: en el propio de la pantalla donde lo hay —`solicitar-asistente.html:406` y
+`soporte-remoto.html:202`— y en `index.html#contact` desde las demás.
+
+**Y una pantalla a la que no se llega desde ninguna parte.** `mockup-app.html` no la enlaza ninguna
+de las 17, mientras `docs/INVENTARIO.md` afirmaba que se llegaba desde el botón «Contactar» del
+directorio —que en realidad va al mismo perfil, con el ancla `#contactar`—. No se le agregó enlace,
+y a propósito: el pendiente 6 la tiene sentenciada, así que mandarle gente sería mandarla a una
+pantalla que se va a borrar. Lo que se corrigió fue el documento, en `docs/INVENTARIO.md:80`, junto
+con otras dos afirmaciones de esa misma sección que ya no eran ciertas: que `js/main.js` redirige al
+enviar el formulario de contacto —eso salió el 26 de agosto de 2026 con el pendiente 64— y que
+ninguna página del sitio enlaza hacia las dos aplicaciones del teléfono, cuando `acceso.html`,
+`registrar-familia.html` y `perfil.html` entran a ellas por código.
+
+**Lo que el barrido dejó abierto**, porque arreglarlo pedía decidir algo que no es de esta tarea:
+«Sobre {{producto}}» sigue apuntando a `#` en los ocho pies y no hay ninguna pantalla que cuente qué
+es el producto; y los cinco íconos del pie no tienen nombre accesible en ninguna pantalla, aunque
+las claves de catálogo para dárselo ya existen y la barra de arriba ya las usa. Los dos quedaron
+anotados como el pendiente 146.
+
+---
+
+### El papel que se sube de nuevo ya no borra al anterior
+
+Cerrado el 2 de septiembre de 2026. Era el pendiente 89, y las tres salidas que estaban sobre la
+mesa eran: que el camino del archivo lleve algo que cambie, que el depósito guarde versiones, o que
+pisar quede prohibido y reemplazar un papel sea una operación con confirmación.
+
+**Se tomaron las dos primeras mitades a la vez, y no por prolijidad.** El pendiente decía por qué:
+prohibir pisar, solo, no alcanzaba. `js/fichas-legajo.js` numeraba los archivos por su **posición**
+en la lista, así que sacar una matrícula del medio y guardar escribía el papel de la fila siguiente
+encima del de la anterior. Ahí no hay nadie subiendo dos veces el mismo papel: es un guardado
+legítimo, y la prohibición lo habría rechazado como si fuera un error de quien carga. Numerar por
+posición había que dejarlo igual.
+
+Lo que quedó escrito:
+
+- `Sesion.uploadFile` sube con `upsert: false` (`js/auth.js:290`). Una segunda subida al mismo
+  camino vuelve rechazada, y el aviso que ve la persona es `error.duplicado`, que ya estaba en el
+  catálogo y que `Texto.claveDeError` ya sabía reconocer.
+- Las dos puntas arman el camino con un identificador propio, `Sesion.uuidNuevo()`
+  (`js/auth.js:258`): los cuatro papeles sueltos en `js/documentos-legajo.js:96` y los archivos de
+  las fichas repetibles en `js/fichas-legajo.js:313`. Cada subida cae en su propio lugar, y cuál es
+  el papel vigente lo dice la fila que guarda el camino, nunca el nombre del archivo.
+
+La tercera salida —versiones en el depósito— no se tomó, y `scripts/probar_pisado_de_archivos.mjs`
+lo sigue diciendo adentro: esa no se mide desde ahí, porque la versión anterior no está en ningún
+camino que se pueda pedir.
+
+**La prueba dejó de ser una roja esperada.** Hoy da verde por las dos causas y se cuenta como las
+demás en `scripts/probar_todo.mjs`. Y cambió de fuente sin cambiar de sentido: la punta que
+antes leía en `registrar-asistente.html` la lee ahora en `js/documentos-legajo.js`, que es el punto
+único desde el que suben los cuatro papeles la pantalla de escritorio y la del teléfono.
+
+---
+
+### La resolución de un legajo dejó de perderse, y no vive en el legajo
+
+Cerrado el 2 de septiembre de 2026 por la migración 0064. Era el pendiente 90: la pantalla de la
+Prestadora pedía el motivo por el que se otorga el aval o se rechaza un legajo, el cliente de datos
+lo mandaba, y ahí se terminaba —`_mapToDatabase` lo descartaba con un aviso en la consola, porque no
+había ninguna columna donde pudiera caer—. La decisión más crítica del producto se guardaba sin el
+porqué, y la pantalla le hacía creer a quien lo escribió que había quedado.
+
+**Dónde va la nota era la decisión.** `docs/PLAN_AUDITORIA.md` §12.c recomendaba ponerla en la fila
+del rastro de auditoría, no en el legajo, porque el motivo es parte de la decisión y no de la
+persona. Ese razonamiento se mantuvo entero; lo que no estaba disponible era el lugar: **no hay
+ninguna tabla de auditoría en la base**, comprobado contra la base de esta máquina antes de
+escribir nada. El pendiente 68 sigue abierto.
+
+Así que el motivo tiene su propia tabla, `resoluciones_legajo`, y una columna en `caregivers` no
+habría servido igual: el motivo lo escribe el personal de la Prestadora **sobre** una persona, y esa
+persona no lo tiene que poder leer. La política que le deja al Asistente ser dueño de su legajo le
+deja ver su fila entera, y una columna nueva viaja adentro de esa fila el mismo día que se crea. Acá
+el aislamiento es de la tabla: la leen y la escriben el personal de esa Prestadora, y nadie más.
+
+Es historial y no un campo: un legajo puede resolverse más de una vez, y cada resolución conserva su
+motivo, su fecha y su firma. No se conceden `update` ni `delete`, y no hay política que los ampare —
+el motivo de una decisión que se puede reescribir después no explica nada—.
+
+**Las dos escrituras van juntas o no van.** Resolver es el estado del legajo más el motivo; hechas
+en dos pedidos, la segunda puede fallar y dejar el legajo resuelto sin porqué, que es el mismo
+agujero con otra forma. Las hace `public.resolver_legajo`, en una sola transacción, y **no es
+`security definer` a propósito**: corre con los permisos de quien llama, así que las dos escrituras
+las siguen gobernando las políticas de siempre.
+
+**Y quién firmó lo escribe la base**, con `auth.uid()`, igual que la huella de las verificaciones de
+la migración 0060. Lo que manda el navegador lo elige quien llama, y nada le impediría al personal
+dejarle a un compañero la firma de una decisión que tomó otro.
+
+Del lado de la pantalla: `ClienteDatos.resolverLegajo` y `ClienteDatos.resolucionesDeLegajo`
+(`js/apiClient.js`) reemplazaron a `cambiarEstadoAspirante`; `panel-prestadora.html` **no deja
+resolver sin motivo** —se fueron las dos frases de relleno que ponía cuando el campo quedaba vacío,
+`panel.aprobar_nota_por_omision` y `panel.rechazar_nota_por_omision`— y dibuja las resoluciones
+anteriores con sus cuatro estados, desde el catálogo de frases, en los tres idiomas.
+
+Lo mide `scripts/probar_la_resolucion_deja_su_motivo.mjs`, con las dos mitades de la condición de
+cierre y una tercera que decidió el diseño: que la persona del legajo no lea lo que se escribió
+sobre ella. El aislamiento se prueba con dos Prestadoras, y las dos comprobaciones de sostén van
+primero, porque contra una tabla que niega todo «el Asistente no ve el motivo» saldría en verde sin
+haber probado nada.
+
 
 ## 6. Deuda del código actual
 

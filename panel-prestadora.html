@@ -32,33 +32,68 @@
 
   <div class="admin-layout">
     <aside class="admin-sidebar">
+      <!-- EL MENÚ NOMBRA SÓLO PANTALLAS QUE EXISTEN
+           Eran seis entradas y cuatro no llevaban a ningún lado: `href="#"`. Un
+           enlace así promete una pantalla y no la abre, que se lee como que el
+           producto se rompió. Se sacaron las cuatro el 2 de septiembre de 2026,
+           y ninguna es un descuido:
+
+           «Entrevistas de Selección» no necesita pantalla propia: la entrevista
+           ya se registra acá mismo, en el campo de notas de la auditoría del
+           legajo, que es de donde sale la resolución.
+
+           «Presentismo GPS Vivo» no la va a tener nunca. La fichada es de la
+           Familia y del Asistente, y la Prestadora no la mira (`CLAUDE.md` §1):
+           mirar los horarios que cumple una persona es dirigir el trabajo, que
+           es justo lo que esta modalidad evita.
+
+           «Avisos de Familias» y «Facturación & Liquidación» esperan cada una
+           una decisión que no está tomada: qué puede ver la Prestadora de un
+           aviso, y la lógica comercial, que está congelada
+           (`docs/ALCANCE.md` §4). Las dos quedaron anotadas en
+           `docs/PENDIENTES.md`. -->
       <ul class="sidebar-menu">
         <li><a href="panel-prestadora.html" class="active"><i class="fas fa-users-cog"></i> Reclutamiento & Legajos</a></li>
         <li><a href="guias-prestadora.html"><i class="fas fa-book-medical"></i> Guías de cuidado</a></li>
-        <li><a href="#"><i class="fas fa-calendar-alt"></i> Entrevistas de Selección</a></li>
-        <li><a href="#"><i class="fas fa-map-marker-alt"></i> Presentismo GPS Vivo</a></li>
-        <li><a href="#"><i class="fas fa-search-dollar"></i> Avisos de Familias</a></li>
-        <li><a href="#"><i class="fas fa-file-invoice-dollar"></i> Facturación & Liquidación</a></li>
       </ul>
     </aside>
 
     <main class="admin-content">
+      <!-- LOS NÚMEROS SALEN DE LA BASE, Y POR ESO SON DOS
+           Eran cuatro recuadros y dos estaban escritos a mano en el marcado:
+           «Presentismo GPS Hoy 100%» y «Alertas Urgentes 0». No los tocaba
+           ningún guion, así que decían siempre lo mismo pasara lo que pasara.
+           Un 100% fijo es peor que un hueco: el hueco se nota.
+
+           Se sacaron el 2 de septiembre de 2026 y no se reemplazaron por otros
+           dos, porque ninguno de los dos tiene una versión correcta que
+           construir. El presentismo es la fichada, y la fichada la miran la
+           Familia y el Asistente, nunca la Prestadora (`CLAUDE.md` §1). Las
+           alarmas son de esos mismos dos: de ellas, lo único de la Prestadora
+           es el tope de horas, que es el bloque de más abajo.
+
+           El número que sí sería suyo es cuántos contactos hubo, que es el
+           hecho por el que cobra, y espera a que se descongele la lógica
+           comercial (`docs/ALCANCE.md` §4).
+
+           Los dos que quedan salen de `dibujarAspirantes()`, que los cuenta
+           sobre los legajos que devolvió la base, y valen cero cuando no vino
+           ninguno.
+
+           Y arrancan en raya y no en un número. Decían «1» cada uno, y ese uno
+           también era inventado: mientras la consulta viaja se ve un número que
+           nadie contó, y si la consulta falla —o si quien mira no es
+           coordinador— se queda ahí, porque las ramas de error no vuelven a
+           tocarlos. La raya no es un número y por eso no se puede leer mal;
+           quien la pone y quien la saca es `ponerNumeros()`. -->
       <div class="kpi-grid">
         <div class="kpi-card">
-          <div class="kpi-val" id="kpi-revision">1</div>
+          <div class="kpi-val" id="kpi-revision">—</div>
           <div class="kpi-label">Legajos En Revisión</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-val" id="kpi-validados">1</div>
+          <div class="kpi-val" id="kpi-validados">—</div>
           <div class="kpi-label">Asistentes Validados</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-val color-exito">100%</div>
-          <div class="kpi-label">Presentismo GPS Hoy</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-val color-azul-medio">0</div>
-          <div class="kpi-label">Alertas Urgentes</div>
         </div>
       </div>
 
@@ -152,6 +187,17 @@
         <div id="verificaciones-lista"></div>
       </div>
 
+      <!-- Las resoluciones que ya se tomaron sobre este legajo, con su motivo.
+           Vacío en el marcado por lo mismo que el bloque de arriba: lo dibuja
+           `dibujarResoluciones()` desde el catálogo de frases, y así sale en los
+           tres idiomas sin escribir una palabra acá. -->
+      <div style="background:var(--superficie-hundida);padding:16px;border-radius:12px;margin:16px 0;border:1px solid var(--borde-card);">
+        <h4 id="resoluciones-titulo" style="margin:0 0 4px 0;font-size:14px;color:var(--texto-titulo);"></h4>
+        <p id="resoluciones-bajada" class="texto-11 color-secundario m-0 mb-12"></p>
+        <div class="oculto p-16 redondeo-10 texto-13 interlineado-16 mb-12" id="resoluciones-estado"></div>
+        <div id="resoluciones-lista"></div>
+      </div>
+
       <div style="background:var(--superficie-hundida);padding:16px;border-radius:12px;margin:16px 0;border:1px solid var(--borde-card);">
         <h4 style="margin:0 0 8px 0;font-size:14px;color:var(--texto-titulo);"><i class="fas fa-user-check"></i>
           Resolución de la Prestadora {{organizacion}}:</h4>
@@ -207,6 +253,22 @@
       caja.style.display = 'block';
     }
 
+    // Los dos números de arriba, en un solo lugar. Se llaman desde las tres
+    // ramas que pueden dejarlos a la vista —listo, vacío y error—, porque el
+    // número que quedó de una carga anterior no se corrige solo: una
+    // actualización que falla dejaba en pantalla la cuenta vieja, que se lee
+    // como la de ahora.
+    //
+    // Sin cuenta va la raya y no el cero: cero es un dato —«no hay ningún
+    // legajo en revisión»— y no se puede usar para decir «no se sabe».
+    const SIN_CUENTA = '—';
+    function ponerNumeros(revision, validados) {
+      document.getElementById('kpi-revision').textContent =
+        revision === null ? SIN_CUENTA : revision;
+      document.getElementById('kpi-validados').textContent =
+        validados === null ? SIN_CUENTA : validados;
+    }
+
     // «todo botón que dispara una operación se apaga»: Actualizar se apaga mientras trae los legajos. Tres clics seguidos
     // eran tres consultas y tres dibujados de la misma tabla, pisándose entre sí.
     async function cargarAspirantes() {
@@ -229,14 +291,14 @@
       } catch (err) {
         console.error('Panel de la Prestadora, legajos:', err);
         tbody.innerHTML = '';
+        ponerNumeros(null, null);
         estadoTabla('critico', 'panel.legajos_error');
         return;
       }
 
       if (!data.length) {
         tbody.innerHTML = '';
-        document.getElementById('kpi-revision').innerText = 0;
-        document.getElementById('kpi-validados').innerText = 0;
+        ponerNumeros(0, 0);
         estadoTabla('neutro', 'panel.legajos_vacio');
         return;
       }
@@ -279,8 +341,7 @@
         tbody.appendChild(tr);
       });
 
-      document.getElementById('kpi-revision').innerText = rev;
-      document.getElementById('kpi-validados').innerText = val;
+      ponerNumeros(rev, val);
     }
 
     // «todo botón que dispara una operación se apaga»: el botón de la fila se apaga mientras se traen los papeles.
@@ -384,6 +445,9 @@
       // Sin `await`: las verificaciones son otro pedido y tienen su propio
       // cartel, así que el legajo se muestra apenas está y ellas llegan solas.
       dibujarVerificaciones(id);
+
+      // Lo mismo con las resoluciones anteriores: pedido propio, cartel propio.
+      dibujarResoluciones(id);
     }
 
     // ── LAS VERIFICACIONES DEL LEGAJO ──────────────────────────────────────
@@ -561,6 +625,104 @@
       });
     }
 
+    // ── LAS RESOLUCIONES ANTERIORES DEL LEGAJO ─────────────────────────────
+    //
+    // El motivo por el que se otorga el aval o se rechaza un legajo se escribía
+    // en el campo de abajo, viajaba hasta el cliente de datos y ahí se perdía:
+    // no había ninguna columna donde pudiera caer y se descartaba con un aviso
+    // en la consola. Era el pendiente 90, cerrado el 2 de septiembre de 2026 con
+    // la migración 0064.
+    //
+    // Vive en su propia tabla y no en el legajo, y no es un detalle de
+    // implementación: lo escribe el personal de la Prestadora **sobre** una
+    // persona, y esa persona no lo tiene que poder leer. Una columna en el
+    // legajo viaja adentro de la fila que el Asistente sí puede ver.
+    //
+    // Es historial y no un campo: un legajo puede resolverse más de una vez, y
+    // cada resolución conserva su motivo, su fecha y quién firmó.
+
+    // El cartel de estado de este bloque, propio como los otros tres y por el
+    // mismo motivo: dos cargas que corren casi a la vez sobre un cartel único se
+    // borran entre ellas. Recibe la **clave** del catálogo.
+    function estadoResoluciones(tono, clave, huecos) {
+      const caja = document.getElementById('resoluciones-estado');
+      if (!tono) { caja.classList.add('oculto'); return; }
+      caja.textContent = Texto.frase(clave, huecos);
+      caja.style.background = 'var(--tono-' + tono + '-fondo)';
+      caja.style.color = 'var(--tono-' + tono + '-texto)';
+      caja.classList.remove('oculto');
+    }
+
+    // El estado en el que quedó el legajo se muestra con la misma frase que usa
+    // la tabla de arriba, para que la misma cosa no se llame de dos maneras en
+    // la misma pantalla. Un estado que todavía no tiene frase se dice como
+    // estado desconocido en vez de quedar en blanco: un renglón sin estado se
+    // lee como si la resolución no hubiera resuelto nada.
+    const FRASE_DE_ESTADO = {
+      en_revision: 'panel.estado_en_revision',
+      validado_prestadora: 'panel.estado_validado',
+      rechazado: 'panel.estado_rechazado'
+    };
+
+    // «los cuatro estados»: cargando y error en el cartel, «todavía no se
+    // resolvió ninguna vez» dicho aparte, y listo.
+    async function dibujarResoluciones(caregiverId) {
+      const lista = document.getElementById('resoluciones-lista');
+      lista.innerHTML = '';
+      document.getElementById('resoluciones-titulo').textContent =
+        Catalogo.frase('panel.resoluciones_titulo');
+      document.getElementById('resoluciones-bajada').textContent =
+        Catalogo.frase('panel.resoluciones_bajada');
+      estadoResoluciones('info', 'panel.resoluciones_cargando');
+
+      let filas;
+      try {
+        filas = await ClienteDatos.resolucionesDeLegajo(caregiverId);
+      } catch (err) {
+        console.error('Panel de la Prestadora, resoluciones del legajo:', err);
+        estadoResoluciones('critico', 'panel.resoluciones_error');
+        return;
+      }
+
+      if (!filas || !filas.length) {
+        estadoResoluciones('neutro', 'panel.resoluciones_ninguna');
+        return;
+      }
+
+      // Cada renglón se arma con `createElement` y `textContent`: el motivo lo
+      // escribió una persona, y pegado como marcado sería marcado.
+      filas.forEach((fila) => {
+        const renglon = document.createElement('div');
+        renglon.className = 'mb-12';
+
+        const encabezado = document.createElement('div');
+        encabezado.className = 'flex gap-12 texto-12 peso-700';
+        encabezado.style.alignItems = 'center';
+        encabezado.style.justifyContent = 'space-between';
+
+        const estado = document.createElement('span');
+        estado.textContent = Catalogo.frase(
+          FRASE_DE_ESTADO[fila.estado] || 'panel.resoluciones_estado_desconocido');
+        encabezado.appendChild(estado);
+
+        const cuando = document.createElement('span');
+        cuando.className = 'texto-11 color-secundario peso-400';
+        cuando.textContent = new Date(fila.created_at)
+          .toLocaleString(Catalogo.idioma);
+        encabezado.appendChild(cuando);
+
+        const motivo = document.createElement('p');
+        motivo.className = 'texto-12 m-0 mt-4';
+        motivo.textContent = fila.motivo;
+
+        renglon.appendChild(encabezado);
+        renglon.appendChild(motivo);
+        lista.appendChild(renglon);
+      });
+
+      estadoResoluciones(null);
+    }
+
     // Otorgar el aval y rechazar son la misma operación con distinto resultado, así
     // que la pregunta, el apagado de los botones y el aviso de error viven en un
     // solo lugar («ningún patrón repetido sin punto único de verdad»).
@@ -571,8 +733,22 @@
     // —dos clics eran dos escrituras—. «los cuatro estados»: si la base rechaza el cambio, se
     // avisa; antes el error no llegaba a ninguna parte y la pantalla se cerraba
     // igual, como si hubiera salido bien.
-    async function resolverAspirante({ estado, nota, pregunta, aviso, boton, mientras }) {
+    //
+    // Y el motivo es obligatorio. Hasta el 2 de septiembre de 2026 la pantalla
+    // ponía una frase de relleno cuando el campo quedaba vacío —«Aprobado por el
+    // equipo»—, que después no explicaba nada. Ahora no se resuelve sin
+    // escribirlo, y la base lo exige otra vez por si alguien llama por afuera de
+    // esta pantalla.
+    async function resolverAspirante({ estado, motivo, pregunta, aviso, boton, mientras }) {
       if (!aspiranteSeleccionadoId) return;
+
+      if (!motivo) {
+        alert(Texto.frase('panel.resolucion_falta_motivo'));
+        const campo = document.getElementById('nota-entrevista');
+        if (campo) campo.focus();
+        return;
+      }
+
       if (!confirm(Texto.frase(pregunta))) return;
 
       // Los dos botones se nombran uno por uno en vez de recorrerse en una lista.
@@ -591,7 +767,9 @@
       if (boton) boton.textContent = Texto.frase(mientras);
 
       try {
-        await ClienteDatos.cambiarEstadoAspirante(aspiranteSeleccionadoId, estado, nota);
+        // El estado del legajo y el motivo se escriben juntos, en una sola
+        // transacción: si el motivo no entra, el legajo tampoco queda resuelto.
+        await ClienteDatos.resolverLegajo(aspiranteSeleccionadoId, estado, motivo);
       } catch (err) {
         console.error('Panel de la Prestadora, resolución del legajo:', err);
         alert(Texto.mensajeDeError(err, 'registrar la resolución del legajo'));
@@ -612,8 +790,7 @@
     async function aprobarAspirante() {
       await resolverAspirante({
         estado: 'validado_prestadora',
-        nota: document.getElementById('nota-entrevista').value.trim()
-          || Texto.frase('panel.aprobar_nota_por_omision'),
+        motivo: document.getElementById('nota-entrevista').value.trim(),
         pregunta: 'panel.aprobar_pregunta',
         aviso: 'panel.aprobar_aviso',
         boton: document.getElementById('btn-aprobar-aspirante'),
@@ -624,10 +801,10 @@
     async function rechazarAspirante() {
       await resolverAspirante({
         estado: 'rechazado',
-        // Lo que se escribió en la entrevista es el motivo del rechazo, y antes se
-        // tiraba: la nota quedaba siempre en la misma frase escrita acá.
-        nota: document.getElementById('nota-entrevista').value.trim()
-          || Texto.frase('panel.rechazar_nota_por_omision'),
+        // Lo que se escribió en la entrevista es el motivo del rechazo, y hasta
+        // el 2 de septiembre de 2026 se tiraba: la nota quedaba siempre en la
+        // misma frase escrita acá, y el porqué del rechazo no lo guardaba nadie.
+        motivo: document.getElementById('nota-entrevista').value.trim(),
         pregunta: 'panel.rechazar_pregunta',
         aviso: 'panel.rechazar_aviso',
         boton: document.getElementById('btn-rechazar-aspirante'),

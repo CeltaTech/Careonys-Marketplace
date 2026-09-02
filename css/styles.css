@@ -1751,84 +1751,6 @@ button:disabled:hover,
   color: var(--tono-critico-texto);
 }
 
-/* Modal de Videollamada */
-.video-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--velo-modal);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--transicion);
-}
-
-.video-modal-overlay.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.video-modal-card {
-  background: var(--superficie);
-  border-radius: var(--redondeo-grande);
-  width: 90%;
-  max-width: 650px;
-  padding: 24px;
-  box-shadow: var(--sombra-alta);
-}
-
-.video-screen-placeholder {
-  width: 100%;
-  height: 320px;
-  background: var(--azul-oscuro);
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: var(--texto-sobre-color);
-  margin: 16px 0;
-  position: relative;
-  overflow: hidden;
-}
-
-.video-controls {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 12px;
-}
-
-.video-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  color: var(--texto-sobre-color);
-}
-
-.video-btn.mute {
-  background: var(--relleno-neutro);
-}
-
-.video-btn.hangup {
-  background: var(--relleno-critico);
-}
-
-.video-btn.cam {
-  background: var(--azul-medio);
-}
-
 /* Insignia de validación de la Prestadora */
 .insignia-validada {
   display: inline-flex;
@@ -2040,9 +1962,14 @@ button:disabled:hover,
   margin-bottom: 24px;
 }
 
+/* La cantidad de recuadros la decide la pantalla, no esta hoja. Pedía cuatro
+   columnas fijas, y el 2 de septiembre de 2026 los recuadros pasaron a ser dos:
+   quedaban apretados contra la izquierda con media fila vacía al lado. Con
+   `auto-fit` se reparten los que haya, y vuelve a acomodarse solo el día que
+   aparezca el tercero. */
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }

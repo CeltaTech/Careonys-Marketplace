@@ -428,8 +428,43 @@ const ClienteDatos = {
     return guardado;
   },
 
-  async cambiarEstadoAspirante(id, nuevoEstado, notaInterna = '') {
-    return await this._supabasePatch('caregivers', id, { estado: nuevoEstado, notaPrestadora: notaInterna });
+  // --- RESOLVER UN LEGAJO ---
+  //
+  // Resolver son dos escrituras: el estado del legajo y el motivo por el que se
+  // resolvió. Van por una sola llamada —`resolver_legajo`, migración 0064—, que
+  // las hace adentro de la misma transacción: entra entera o no entra. Hechas
+  // en dos pedidos, el segundo puede fallar y dejar el legajo resuelto sin
+  // porqué, que era exactamente el pendiente 90, cerrado por esa migración.
+  //
+  // **El motivo no es un campo de `caregivers`, y no es un olvido.** Lo escribe
+  // el personal de la Prestadora sobre una persona, y esa persona no lo tiene
+  // que poder leer: una columna del legajo se la lleva puesta la primera
+  // política que le deje ver su propia fila. Vive en `resoluciones_legajo`, que
+  // sólo alcanza el personal de la Prestadora. Hasta la 0064 viajaba como
+  // `notaPrestadora` y `_mapToDatabase` lo descartaba con un aviso en la
+  // consola, porque no había ninguna columna donde pudiera caer.
+  //
+  // Quién firmó no se manda: lo pone la base con `auth.uid()`, que es lo único
+  // que el navegador no puede falsificar.
+  async resolverLegajo(caregiverId, nuevoEstado, motivo) {
+    return await this._supabaseRequest('POST', 'rpc/resolver_legajo', {
+      p_caregiver_id: caregiverId,
+      p_estado: nuevoEstado,
+      p_motivo: motivo,
+    });
+  },
+
+  // Las resoluciones de un legajo, la última primero. No filtra por Prestadora
+  // y no es un olvido: la política de `resoluciones_legajo` resuelve la
+  // Organización por la membresía de quien inició sesión, así que una fila de
+  // otra Prestadora no llega ni pidiéndola por su identificador. Filtrar acá
+  // sería fingir que el aislamiento lo hace la pantalla.
+  async resolucionesDeLegajo(caregiverId) {
+    return await this._supabaseRequest('GET', 'resoluciones_legajo', null, {
+      caregiver_id: `eq.${caregiverId}`,
+      select: 'estado,motivo,resuelto_por,created_at',
+      order: 'created_at.desc',
+    });
   },
 
   // --- LAS VERIFICACIONES DEL LEGAJO ---

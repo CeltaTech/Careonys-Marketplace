@@ -36,7 +36,12 @@
    - **`docs/`, `supabase/` y `assets/`**: la documentación muestra colores como
      ejemplo, y un `.svg` es un dibujo, no una pantalla.
 
-   Las dos excepciones escritas con nombre y motivo están en `AJENOS`.
+   Y no hay ninguna excepción. Hasta el 2 de septiembre de 2026 había dos, el
+   rojo de Google y el azul de Facebook, que vivían en los dos botones de entrar
+   con esas cuentas de `mockup-app.html`. Esos botones no hacían nada y se
+   sacaron —el pendiente 50, cerrado ese día—, así que la exención se fue con
+   ellos: una exención que ya no exime nada no se apaga sola, sigue perdonando,
+   y lo único que perdona es el aire.
 =================================================== */
 
 import { readFileSync } from 'node:fs';
@@ -59,14 +64,6 @@ const TOKENS = new Set([
   'pwa-familia/css/tokens.css'
 ]);
 
-/* Colores de otras empresas. No son parte de la paleta y no cambian de noche:
-   el rojo de Google es el rojo de Google también sobre fondo negro, y escribirlo
-   con un token nuestro sería decir que es nuestro. */
-const AJENOS = new Map([
-  ['#ea4335', 'es el rojo de la marca Google, en el botón de ingresar con Google'],
-  ['#1877f2', 'es el azul de la marca Facebook, en el botón de ingresar con Facebook']
-]);
-
 const COLOR = /#[0-9a-fA-F]{3,8}\b|\brgba?\([^)]*\)|\bhsla?\([^)]*\)|\boklch\([^)]*\)/g;
 
 /** Los colores que sobran en un texto, cada uno con su número de renglón. */
@@ -74,8 +71,6 @@ function coloresQueSobran(crudo, extension) {
   const limpio = sinComentarios(crudo, extension);
   const hallados = [];
   for (const acierto of limpio.matchAll(COLOR)) {
-    const color = acierto[0].toLowerCase().replace(/\s+/g, '');
-    if (AJENOS.has(color)) continue;
     const renglon = limpio.slice(0, acierto.index).split('\n').length;
     hallados.push([renglon, acierto[0]]);
   }
@@ -114,8 +109,6 @@ const NO_SOBRAN = [
   ['/* Antes era #f8fafc, escrito a mano en once lugares. */', '.css'],
   ['<!-- El fondo era #e2e8f0 y ahora sale del token. -->', EXTENSIONES_DE_PANTALLA[0]],
   ['// El aviso usaba #b71c1c cuando el color estaba a mano.', '.js'],
-  ['<button style="background:#ea4335">Ingresar con Google</button>', EXTENSIONES_DE_PANTALLA[0]],
-  ['<button style="background:#1877f2">Ingresar con Facebook</button>', EXTENSIONES_DE_PANTALLA[0]],
   ['  padding: 12px 16px;', '.css'],
   ['<a href="#formulario">Postularse</a>', EXTENSIONES_DE_PANTALLA[0]],
   ['<a href="#top">Volver arriba</a>', EXTENSIONES_DE_PANTALLA[0]]
@@ -157,5 +150,4 @@ if (fallas.length > 0) {
 }
 
 console.log(
-  `Paleta verificada: ${revisados} archivos sin colores a mano ` +
-  `(${AJENOS.size} exentos por ser marcas de otras empresas).`);
+  `Paleta verificada: ${revisados} archivos sin colores a mano, y ninguno exento.`);

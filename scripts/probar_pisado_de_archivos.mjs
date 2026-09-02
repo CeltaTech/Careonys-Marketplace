@@ -1,5 +1,5 @@
 /* ===================================================
-   SUBIR DOS VECES EL MISMO PAPEL BORRA EL PRIMERO
+   SUBIR DOS VECES EL MISMO PAPEL NO BORRA EL PRIMERO
 
        node scripts/probar_pisado_de_archivos.mjs
 
@@ -8,44 +8,44 @@
        supabase start -x edge-runtime -x vector -x supavisor -x logflare
        supabase migration up --local
 
-   QUÉ MIRA. El pendiente 89. `Sesion.uploadFile` sube con `upsert: true`
-   (`js/auth.js:182`) y las dos puntas que la llaman arman el camino del
-   archivo con datos que no cambian —la cuenta y el tipo de papel
-   (`registrar-asistente.html:1012`), o la cuenta y la posición en la lista
-   (`js/fichas-legajo.js:307`)—. Las dos cosas juntas hacen que subir de nuevo
-   un papel **borre el anterior**, sin preguntar y sin dejar rastro.
+   QUÉ MIRA. Que subir de nuevo un papel del legajo no borre el que ya estaba.
+   Fue el pendiente 89, cerrado el 2 de septiembre de 2026: `Sesion.uploadFile`
+   subía con `upsert: true` y las dos puntas que la llaman armaban el camino
+   del archivo con datos que no cambian —la cuenta y el tipo de papel, o la
+   cuenta y la posición en la lista—. Las dos cosas juntas hacían que la
+   segunda subida **borrara la primera**, sin preguntar y sin dejar rastro.
 
    POR QUÉ IMPORTA MÁS DE LO QUE PARECE. El papel que se pisa puede ser el que
    la Prestadora miró para sellar el legajo. El sello queda apoyado en un
    archivo que ya no existe, y nadie se entera: no hay `DELETE` en ningún lado
    del proyecto, así que ningún rastro que busque borrados va a ver éste.
 
-   ── Cuándo se pone en verde ───────────────────────────────────────────────
+   ── Qué tiene que seguir siendo cierto ────────────────────────────────────
 
-   El pendiente 89 tiene tres salidas y el Desarrollador todavía no eligió.
-   Esta prueba está escrita para no depender de cuál se elija: mira **las dos
-   causas por separado**, y con que se corte una alcanza.
+   La prueba mira **las dos causas por separado**, y con que una siga cortada
+   alcanza. Está escrita así porque las salidas posibles eran tres y no
+   dependía de esta prueba cuál se eligiera.
 
    · La causa A, medida contra la base: con las opciones de hoy, ¿el archivo
-     que ya estaba sobrevive a una segunda subida al mismo camino? Se pone en
-     verde si se prohíbe pisar —la segunda subida vuelve rechazada— o si el
+     que ya estaba sobrevive a una segunda subida al mismo camino? Queda
+     cortada si se prohíbe pisar —la segunda subida vuelve rechazada— o si el
      archivo viejo se sigue pudiendo bajar.
    · La causa B, leída del código: ¿el camino que arma cada punta es siempre
-     el mismo? Se pone en verde si el camino pasa a llevar algo que cambia
-     —la fecha, un identificador— y entonces la segunda subida cae en otro
-     lado y no pisa nada.
+     el mismo? Queda cortada si el camino lleva algo que cambia —la fecha, un
+     identificador— y entonces la segunda subida cae en otro lado.
 
-   La prueba entera pasa **si alguna de las dos está cortada**. Hoy no lo está
-   ninguna, y por eso da rojo: es el pendiente 89 y tiene que dar rojo hasta
-   que se arregle.
+   Se cortaron **las dos**: `uploadFile` pasó a `upsert: false` y las dos
+   puntas arman el camino con `Sesion.uuidNuevo()`. Prohibir pisar solo no
+   alcanzaba, porque numerar por posición pisaba archivos distintos entre sí
+   —sacar una ficha del medio corría a todas las de abajo— y eso la prohibición
+   lo habría rechazado como si fuera un error de quien carga.
 
    ── Lo que acá no se mide ─────────────────────────────────────────────────
 
    La tercera salida —que el depósito guarde versiones— no se mide desde acá:
    la versión anterior no está en ningún camino que se pueda pedir, hay que
-   preguntarle al depósito por su historia. Si se elige ésa, esta prueba hay
-   que reescribirla, y va a seguir dando rojo hasta que se haga. Se dice acá
-   para que el rojo no se lea como «no se arregló».
+   preguntarle al depósito por su historia. No se eligió ésa; si algún día se
+   agrega, esta prueba hay que reescribirla.
 
    No deja nada atrás: los archivos ficticios y la cuenta se borran al final.
    =================================================== */
@@ -97,8 +97,11 @@ function sostener(titulo, condicion, detalle) {
 const fuentes = {
   'js/auth.js':
     /async uploadFile\s*\([^)]*\)\s*\{[\s\S]{0,400}?upsert:\s*(true|false)/,
-  'registrar-asistente.html':
-    /await Sesion\.uploadFile\(\s*\n?\s*adj\.deposito,\s*`([^`]+)`/,
+  /* Los cuatro papeles sueltos se subían desde `registrar-asistente.html`
+     hasta el 2 de septiembre de 2026; hoy los sube `DocumentosLegajo`, que es
+     el punto único que usan la pantalla de escritorio y la del teléfono. */
+  'js/documentos-legajo.js':
+    /await Sesion\.uploadFile\(\s*\n?\s*doc\.deposito,\s*`([^`]+)`/,
   'js/fichas-legajo.js':
     /await Sesion\.uploadFile\(\s*\n?\s*deposito,\s*`([^`]+)`/
 };
@@ -115,7 +118,7 @@ console.log('La causa B: cómo se arma el camino del archivo');
 sostener('las tres puntas se encontraron en el código',
   Object.values(encontrado).every((v) => v !== null),
   Object.entries(encontrado).filter(([, v]) => v === null).map(([a]) => a).join(', ') ||
-  'auth.js, registrar-asistente.html y fichas-legajo.js');
+  'auth.js, documentos-legajo.js y fichas-legajo.js');
 
 /* Un camino deja de pisar cuando lleva adentro algo que cambia entre una
    subida y la siguiente. Se buscan las formas de decirlo que alguien podría
@@ -123,7 +126,7 @@ sostener('las tres puntas se encontraron en el código',
 const CAMBIA = /Date\.now|randomUUID|crypto|uuid|fecha|timestamp|Math\.random|sello/i;
 
 const caminos = {
-  'registrar-asistente.html': encontrado['registrar-asistente.html'],
+  'js/documentos-legajo.js': encontrado['js/documentos-legajo.js'],
   'js/fichas-legajo.js': encontrado['js/fichas-legajo.js']
 };
 
@@ -337,7 +340,8 @@ if (fallos === 0) {
   process.exit(0);
 }
 console.log(fallos + (fallos === 1 ? ' comprobación' : ' comprobaciones') + ' en rojo.');
-console.log('Es el pendiente 89: el papel anterior desaparece sin aviso, y puede ser el');
-console.log('que la Prestadora miró para sellar el legajo. Las tres salidas están');
-console.log('escritas en docs/PENDIENTES.md y hay que elegir una.');
+console.log('El papel anterior vuelve a desaparecer sin aviso, y puede ser el que la');
+console.log('Prestadora miró para sellar el legajo. Se arregló el 2 de septiembre de');
+console.log('2026 cortando las dos causas: `upsert: false` en `Sesion.uploadFile`, y el');
+console.log('camino del archivo armado con `Sesion.uuidNuevo()` en las dos puntas.');
 process.exit(1);

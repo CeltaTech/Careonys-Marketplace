@@ -31,14 +31,14 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
-| 18 pantallas HTML, 12.630 renglones | sin ruteo: cada pantalla es un archivo |
-| 14.951 renglones de JavaScript propio, en 35 archivos | 8.987 de ellos son copias byte a byte de otro archivo (pendiente 13) |
-| 5.984 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
-| 4.744 renglones de hojas de estilo, en 10 archivos | 64 tokens con nombre en `css/tokens.css`, sin framework |
-| 984 declaraciones más, pegadas al HTML | en 249 atributos `style=` (fue el pendiente 8, cerrado) |
+| 18 pantallas HTML, 12.811 renglones | sin ruteo: cada pantalla es un archivo |
+| 15.402 renglones de JavaScript propio, en 37 archivos | 9.271 de ellos son copias byte a byte de otro archivo (pendiente 13) |
+| 6.117 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
+| 4.653 renglones de hojas de estilo, en 10 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
+| 985 declaraciones más, pegadas al HTML | en 248 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 14 de las 18 pantallas rescatan la sesión al abrir |
 | 5 servidores de afuera, sin `package.json` ni compilación | cdn.jsdelivr.net, cdnjs.cloudflare.com, fonts.googleapis.com, fonts.gstatic.com, www.openstreetmap.org — hay que decir de qué es cada uno |
-| 28 tablas y 63 migraciones en el repositorio | 36 chequeos las miran antes de cada commit |
+| 29 tablas y 65 migraciones en el repositorio | 36 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
@@ -117,6 +117,34 @@ npx supabase db reset  # aplica migraciones y carga datos de prueba
 
 El seed carga **al menos dos Prestadoras con datos**, a propósito: es lo que permite comprobar el
 aislamiento. Una prueba que devuelve una lista vacía no distingue "aislado" de "todo bloqueado".
+
+### Las cuentas con las que se entra
+
+La migración 0065 siembra seis cuentas ficticias junto con el resto de los datos, así que ya no se
+pierden cuando la base se rehace. Nacen **sin clave**, y la clave la pone un guion, del único lado
+donde eso no es un agujero:
+
+```bash
+CLAVE_PRUEBA_LOCAL=<la que elija> node scripts/abrir_cuentas_ficticias.mjs
+```
+
+La clave se elige en el momento, es la misma para las seis y **no queda escrita en ningún archivo**.
+El guion corre sólo contra la base de esta máquina, y termina entrando con cada una para comprobar
+que abren de verdad.
+
+| Correo | Quién es | Prestadora |
+|---|---|---|
+| `norma.ficticia@ejemplo.invalid` | Familia — publicó los catorce avisos | PresDemo |
+| `marta.ficticia@ejemplo.invalid` | Asistente — con su legajo detrás | PresDemo |
+| `cecilia.ficticia@ejemplo.invalid` | Personal de la Prestadora — abre el panel | PresDemo |
+| `raul.ficticio@ejemplo.invalid` | Familia — publicó los catorce avisos | Cuidar Norte |
+| `silvia.ficticia@ejemplo.invalid` | Asistente — con su legajo detrás | Cuidar Norte |
+| `marcos.ficticio@ejemplo.invalid` | Personal de la Prestadora — abre el panel | Cuidar Norte |
+
+Cuidar Sur queda sin cuentas a propósito: estar casi vacía es lo que la hace útil para probar el
+aislamiento. Y el motivo de que la clave no viva en la migración es que **las migraciones son las
+mismas de los dos lados**: una clave escrita ahí abriría estas seis cuentas también en la base
+publicada, para cualquiera que lea el repositorio.
 
 Copiar `.env.example` a `.env.local` y completar los valores antes de levantar nada. Los `.env`
 nunca se suben (ver `.gitignore`).

@@ -283,49 +283,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ---- MODAL SIMULADO DE VIDEOLLAMADA DE ENTREVISTA ----
-  const videoBtns = document.querySelectorAll('a[href*="video"], .btn-video-call');
-  videoBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      
-      let overlay = document.querySelector('.video-modal-overlay');
-      if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.className = 'video-modal-overlay';
-        overlay.innerHTML = `
-          <div class="video-modal-card">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <h3 style="margin:0;font-size:18px;color:var(--texto-titulo);"><i class="fas fa-video" style="color:var(--azul-medio-texto);margin-right:8px;"></i> Entrevista por Videollamada</h3>
-              <button class="btn-close-video" style="background:none;border:none;font-size:20px;cursor:pointer;">&times;</button>
-            </div>
-            <div class="video-screen-placeholder">
-              <i class="fas fa-user-circle" style="font-size:72px;color:var(--icono-sobre-color);margin-bottom:12px;"></i>
-              <div style="font-size:16px;font-weight:700;">Conectando sala segura 8x8 Encryption...</div>
-              <div style="font-size:12px;color:var(--texto-sobre-color-tenue);margin-top:4px;">Asistente: Marisa Miranda</div>
-            </div>
-            <div class="video-controls">
-              <button class="video-btn mute" title="Silenciar Micrófono"><i class="fas fa-microphone"></i></button>
-              <button class="video-btn cam" title="Activar/Desactivar Cámara"><i class="fas fa-video"></i></button>
-              <button class="video-btn hangup btn-close-video" title="Finalizar Llamada"><i class="fas fa-phone-slash"></i></button>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(overlay);
-
-        overlay.querySelectorAll('.btn-close-video').forEach(closeBtn => {
-          closeBtn.addEventListener('click', () => {
-            overlay.classList.remove('active');
-          });
-        });
-      }
-
-      setTimeout(() => {
-        overlay.classList.add('active');
-      }, 50);
-    });
-  });
-
   // ---- Fade-in on scroll ----
   const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
   const observer = new IntersectionObserver((entries) => {
