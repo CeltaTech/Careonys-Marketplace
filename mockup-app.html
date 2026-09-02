@@ -217,8 +217,9 @@
 
       <div class="pwa-estado" id="rec-vacio" hidden>
         <p>Todavía no hay Asistentes publicados.</p>
-        <p class="pwa-estado-bajada">Aparecen acá cuando la Prestadora valida su legajo y la
-          persona autoriza que se publique.</p>
+        <p class="pwa-estado-bajada">Aparecen acá cuando la Prestadora valida su legajo, la
+          persona autoriza que se publique, y la Prestadora le comprueba los papeles que hacen
+          falta para entrar a una casa.</p>
       </div>
 
       <div class="horizontal-slider" id="recommended-caregivers-list" hidden></div>
@@ -437,9 +438,10 @@
     });
 
     // Los Asistentes que se pueden mostrar salen de `directorio`:
-    // gente con el legajo validado por la Prestadora y con la publicación
-    // autorizada. Antes salían de la tabla `caregivers`, que es el personal
-    // entero y no distingue una cosa de la otra.
+    // gente con el legajo validado por la Prestadora, con la publicación
+    // autorizada y con los papeles que frenan la publicación comprobados
+    // (migración 0061). Antes salían de la tabla `caregivers`, que es el
+    // personal entero y no distingue una cosa de la otra.
     function recMostrar(cual) {
       for (const estado of ['cargando', 'error', 'vacio']) {
         document.getElementById('rec-' + estado).hidden = estado !== cual;

@@ -740,14 +740,14 @@
     },
     "_______": "── La Red de Asistentes ──",
     "directorio.descripcion": {
-      "es-AR": "Encuentre al Asistente indicado para su familiar. Filtre por zona, patología y disponibilidad entre los Asistentes con legajo validado por la Prestadora.",
-      "en": "Find the right Caregiver for your relative. Filter by area, condition and availability among the Caregivers whose personal file the Provider has validated.",
-      "pt-BR": "Encontre o Assistente indicado para o seu familiar. Filtre por zona, patologia e disponibilidade entre os Assistentes com cadastro validado pela Prestadora."
+      "es-AR": "Encuentre al Asistente indicado para su familiar. Filtre por zona, patología y disponibilidad entre los Asistentes con legajo validado y papeles comprobados por la Prestadora.",
+      "en": "Find the right Caregiver for your relative. Filter by area, condition and availability among the Caregivers whose personal file the Provider has validated and whose documents the Provider has checked.",
+      "pt-BR": "Encontre o Assistente indicado para o seu familiar. Filtre por zona, patologia e disponibilidade entre os Assistentes com cadastro validado e documentos verificados pela Prestadora."
     },
     "directorio.bajada": {
-      "es-AR": "Encuentre al Asistente indicado para su ser querido. Los que aparecen acá tienen el legajo validado por su Prestadora y autorizaron a publicar su perfil.",
-      "en": "Find the right Caregiver for your loved one. Those listed here have had their personal file validated by their Provider and have authorised their profile to be published.",
-      "pt-BR": "Encontre o Assistente indicado para quem você ama. Os que aparecem aqui têm o cadastro validado pela sua Prestadora e autorizaram a publicação do seu perfil."
+      "es-AR": "Encuentre al Asistente indicado para su ser querido. Los que aparecen acá tienen el legajo validado por su Prestadora, le comprobaron los papeles que hacen falta, y autorizaron a publicar su perfil.",
+      "en": "Find the right Caregiver for your loved one. Those listed here have had their personal file validated by their Provider, have had the required documents checked by the Provider, and have authorised their profile to be published.",
+      "pt-BR": "Encontre o Assistente indicado para quem você ama. Os que aparecem aqui têm o cadastro validado pela sua Prestadora, tiveram os documentos exigidos verificados pela Prestadora, e autorizaram a publicação do seu perfil."
     },
     "directorio.cargando": {
       "es-AR": "Cargando el directorio…",
@@ -760,9 +760,9 @@
       "pt-BR": "Ainda não há Assistentes publicados neste diretório."
     },
     "directorio.vacio_bajada": {
-      "es-AR": "Un Asistente aparece acá cuando su Prestadora validó el legajo y esa persona autorizó a publicar su perfil. Las dos cosas, no una.",
-      "en": "A Caregiver appears here when their Provider has validated the personal file and that person has authorised their profile to be published. Both things, not one.",
-      "pt-BR": "Um Assistente aparece aqui quando a sua Prestadora validou o cadastro e essa pessoa autorizou a publicação do seu perfil. As duas coisas, não uma."
+      "es-AR": "Un Asistente aparece acá cuando su Prestadora validó el legajo, esa persona autorizó a publicar su perfil, y la Prestadora le comprobó los papeles que hacen falta para entrar a una casa. Las tres cosas, no una.",
+      "en": "A Caregiver appears here when their Provider has validated the personal file, that person has authorised their profile to be published, and the Provider has checked the documents required to enter a home. All three things, not one.",
+      "pt-BR": "Um Assistente aparece aqui quando a sua Prestadora validou o cadastro, essa pessoa autorizou a publicação do seu perfil, e a Prestadora verificou os documentos exigidos para entrar em uma casa. As três coisas, não uma."
     },
     "directorio.buscar": {
       "es-AR": "🔍 Buscar por nombre o zona…",
@@ -871,9 +871,9 @@
       "pt-BR": "Este perfil não está disponível."
     },
     "perfil.no_disponible_bajada": {
-      "es-AR": "Un Asistente se ve acá cuando su Prestadora validó el legajo y esa persona autorizó a publicar su perfil. Las dos cosas, no una. Puede que el enlace haya quedado viejo, o que quien figuraba haya dejado de publicarse.",
-      "en": "A Caregiver is shown here when their Provider has validated the personal file and that person has authorised their profile to be published. Both things, not one. The link may be out of date, or whoever appeared there may have stopped being published.",
-      "pt-BR": "Um Assistente aparece aqui quando a sua Prestadora validou o cadastro e essa pessoa autorizou a publicação do seu perfil. As duas coisas, não uma. Pode ser que o link tenha ficado velho, ou que quem figurava tenha deixado de se publicar."
+      "es-AR": "Un Asistente se ve acá cuando su Prestadora validó el legajo, esa persona autorizó a publicar su perfil, y la Prestadora le comprobó los papeles que hacen falta para entrar a una casa. Las tres cosas, no una. Puede que el enlace haya quedado viejo, o que quien figuraba haya dejado de publicarse.",
+      "en": "A Caregiver is shown here when their Provider has validated the personal file, that person has authorised their profile to be published, and the Provider has checked the documents required to enter a home. All three things, not one. The link may be out of date, or whoever appeared there may have stopped being published.",
+      "pt-BR": "Um Assistente aparece aqui quando a sua Prestadora validou o cadastro, essa pessoa autorizou a publicação do seu perfil, e a Prestadora verificou os documentos exigidos para entrar em uma casa. As três coisas, não uma. Pode ser que o link tenha ficado velho, ou que quem figurava tenha deixado de se publicar."
     },
     "perfil.donde_trabaja": {
       "es-AR": "Dónde trabaja",

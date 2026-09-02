@@ -761,16 +761,18 @@ if (!coordinador) {
     ajeno >= 400, 'respuesta ' + ajeno);
 }
 
-// --- 17 a 20: el directorio -------------------------------------------------
+// --- 17 a 22: el directorio -------------------------------------------------
 // El directorio es la única puerta que se abre sin sesión, así que acá se pregunta
-// con la clave pública y nada más. Dos condiciones tienen que cumplirse a la vez
-// para aparecer: que la Prestadora haya validado el legajo, y que la persona haya
-// dicho que sí. Se prueban por separado, porque una sola de las dos no alcanza.
+// con la clave pública y nada más. Tres condiciones tienen que cumplirse a la vez
+// para aparecer: que la Prestadora haya validado el legajo, que la persona haya
+// dicho que sí, y que estén comprobados los papeles que la puerta de publicación
+// exige (migración 0061). Se prueban por separado, porque ninguna de las tres
+// alcanza sola.
 console.log('');
 console.log('El directorio');
 
 if (!coordinador) {
-  console.log('   (salteadas) las cuatro del directorio: validar un legajo es trabajo del');
+  console.log('   (salteadas) las seis del directorio: validar un legajo es trabajo del');
   console.log('               personal de la Prestadora, y esa cuenta sólo existe en local.');
 } else {
   const a = cuentas[0];
@@ -813,8 +815,37 @@ if (!coordinador) {
     dijoQueNo === false, dijoQueNo ? 'aparece igual' : 'no aparece');
 
   await autorizar(true);
+
+  // Tercera condición, la de la migración 0061: los papeles que la puerta
+  // `publicacion` exige. Este legajo es de cuidador domiciliario, así que le
+  // tocan dos —antecedentes penales y certificado de salud— y no tiene
+  // ninguno. Las dos comprobaciones que siguen son las que hacen que esta
+  // parte pueda fallar: sin ellas, una vista con la puerta rota y una sana
+  // contestan lo mismo en cuanto la persona autoriza.
+  const sinLosPapeles = await enDirectorio();
+  comprobar('Contestó que sí, pero sin los papeles de la puerta: no aparece',
+    sinLosPapeles === false, sinLosPapeles ? 'aparece igual' : 'no aparece');
+
+  const marcarPuerta = (tipo) => rest(
+    '/rest/v1/verificaciones_asistente?on_conflict=caregiver_id,tipo', {
+      method: 'POST',
+      headers: { Prefer: 'return=representation,resolution=merge-duplicates' },
+      body: JSON.stringify({
+        caregiver_id: a.legajoId, tenant_id: a.prestadora.id,
+        tipo, estado: 'verificado'
+      })
+    }, coordinador.token);
+
+  // Uno solo no alcanza, y esto es lo que distingue «la puerta mira la lista
+  // entera» de «la puerta se conforma con encontrar algo».
+  await marcarPuerta('penales');
+  const conUnoSolo = await enDirectorio();
+  comprobar('Con un solo papel de la puerta tampoco aparece',
+    conUnoSolo === false, conUnoSolo ? 'aparece igual' : 'no aparece');
+
+  await marcarPuerta('salud');
   const dijoQueSi = await enDirectorio();
-  comprobar('Contestó que sí: recién ahí aparece en el directorio',
+  comprobar('Con los dos papeles comprobados: recién ahí aparece en el directorio',
     dijoQueSi === true, dijoQueSi ? 'aparece' : 'no aparece');
 
   // Y la puerta del otro lado: el directorio de la Prestadora ajena no lo trae.
@@ -2340,7 +2371,7 @@ console.log('');
 if (fallosDeAislamiento === 0) {
   console.log('Pasaron las ' + cuantas + ' de aislamiento. El límite lo pone la sesión: vale para las tablas,');
   console.log('para los archivos y para el directorio, que además exige que la persona haya');
-  console.log('dicho que sí.');
+  console.log('dicho que sí y que tenga comprobados los papeles para entrar a una casa.');
   console.log('El examen lo corrige la base: la respuesta correcta nunca sale de ahí.');
   console.log('Y la separación no es sólo entre Prestadoras: dos Familias de la misma');
   console.log('Prestadora tampoco se ven los avisos, los horarios, los mensajes ni los reportes.');

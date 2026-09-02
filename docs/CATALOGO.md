@@ -161,6 +161,27 @@ De las siete verificaciones del legajo, sólo el **documento de identidad** fren
 
 Vive declarado en `data/catalogo-verificaciones.json`, con su razón de ser cada una. Los plazos y vigencias los tiene que vigilar el módulo de Documentación y vencimientos (`docs/MODULOS.md`): un plazo que nadie mira no es un plazo.
 
+**Desde el 2 de septiembre de 2026 esto no es sólo una declaración: la base lo hace cumplir.** La
+migración `supabase/migrations/0061_la_puerta_de_publicacion_se_cierra.sql` le puso a cada
+verificación, en la columna `extra` de su fila de `vocabulario_items`, cuál de las dos puertas
+frena, y la vista `directorio` la lee de ahí. Tres claves, y ninguna otra:
+
+| Clave en `extra` | Qué dice | Quiénes la llevan |
+|---|---|---|
+| `puerta` | Cuál de las dos frena: `alta`, `publicacion` o `ninguna` | Las siete |
+| `condicional_a` | Que sólo frena si se cumple algo. Hoy el único valor es `tipo_asistente.requiere_matricula` | Matrícula y título |
+| `suma_al_perfil` | Que no frena nada y se muestra igual | Domicilio y referencia laboral |
+
+**Está en la base y no en el SQL de la vista a propósito**: exigir un papel más es agregarle
+`{"puerta": "publicacion"}` a una fila, no escribir una migración con la condición adentro. Es la
+misma regla de siempre —los catálogos salen de la base—, aplicada a la regla y no sólo a la lista.
+
+**Y falla cerrada por los tres lados.** Profesión que no está en el vocabulario: se pide el papel.
+`condicional_a` con un valor que la vista no conoce: se pide el papel. Verificación sin fila: no
+se comprobó. Nunca al revés.
+
+**El `alta` todavía no frena nada** —sólo la publicación—, y por qué está en el pendiente 143.
+
 ### Las dos que se propusieron y se descartaron
 
 **Decidido por el Desarrollador el 24 de agosto de 2026.** El relevamiento trajo otras dos —aparecer

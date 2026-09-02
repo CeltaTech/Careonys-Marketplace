@@ -26,19 +26,19 @@ dos repositorios y dos proyectos de Supabase independientes.
 Sitio estático en HTML, CSS y JavaScript plano, en proceso de migración a React + Vite para
 alinearse con el stack de Careonys.
 
-Medido el 1 de septiembre de 2026 sobre el árbol de trabajo con `node scripts/medir_estado.mjs`, que es de
+Medido el 2 de septiembre de 2026 sobre el árbol de trabajo con `node scripts/medir_estado.mjs`, que es de
 donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
-| 18 pantallas HTML, 12.621 renglones | sin ruteo: cada pantalla es un archivo |
+| 18 pantallas HTML, 12.629 renglones | sin ruteo: cada pantalla es un archivo |
 | 14.908 renglones de JavaScript propio, en 35 archivos | 8.965 de ellos son copias byte a byte de otro archivo (pendiente 13) |
-| 5.981 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
+| 5.984 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
 | 4.744 renglones de hojas de estilo, en 10 archivos | 64 tokens con nombre en `css/tokens.css`, sin framework |
 | 984 declaraciones más, pegadas al HTML | en 249 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 14 de las 18 pantallas rescatan la sesión al abrir |
 | 5 servidores de afuera, sin `package.json` ni compilación | cdn.jsdelivr.net, cdnjs.cloudflare.com, fonts.googleapis.com, fonts.gstatic.com, www.openstreetmap.org — hay que decir de qué es cada uno |
-| 27 tablas y 60 migraciones en el repositorio | 35 chequeos las miran antes de cada commit |
+| 27 tablas y 62 migraciones en el repositorio | 35 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.

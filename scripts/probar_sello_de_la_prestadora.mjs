@@ -190,9 +190,19 @@ comprobar('no puede ponerse el sello sobre su propio legajo',
   'respuesta ' + r2.estado + (tras ? ', quedó en ' + tras.verification_status : ''));
 
 // --- 3. Y por lo tanto no sale publicado como validado ---------------------
-// El consentimiento sí es suyo y está bien que lo ponga él: es la otra mitad
-// de la condición del directorio, y sin ella la comprobación no distingue
-// «no salió porque no tiene el sello» de «no salió porque no dio permiso».
+// El consentimiento sí es suyo y está bien que lo ponga él: sin ponerlo, la
+// comprobación no distingue «no salió porque no tiene el sello» de «no salió
+// porque no dio permiso».
+//
+// Desde la migración 0061 el directorio tiene una tercera condición —los
+// papeles de la puerta de publicación—, y a este legajo también le faltan.
+// O sea que esta comprobación ya no aísla al sello ella sola: quien aísla al
+// sello es la anterior, que le pregunta a la base en qué estado quedó el
+// legajo y puede dar rojo. Ésta queda como lo que es, la mirada desde afuera:
+// nadie sin iniciar sesión lo ve. Para que pueda fallar se le exige además
+// que el directorio traiga a alguien: contra un directorio vacío —o contra
+// una función que dejó de contestar— «no aparece» se cumple sin haber
+// mirado nada.
 await rest('/rest/v1/autorizaciones_asistente', {
   method: 'POST',
   body: JSON.stringify({ caregiver_id: legajo.id, tenant_id: P.id, perfil_publicado: true })
@@ -204,8 +214,10 @@ const { cuerpo: dir } = await rest('/rest/v1/rpc/directorio_de', {
 const aparece = Array.isArray(dir) && dir.some((x) => x.full_name === nombre);
 
 comprobar('no aparece en el directorio público como legajo validado',
-  !aparece,
-  Array.isArray(dir) ? dir.length + ' legajos en el directorio' : JSON.stringify(dir));
+  !aparece && Array.isArray(dir) && dir.length > 0,
+  !Array.isArray(dir) ? JSON.stringify(dir)
+    : dir.length === 0 ? 'el directorio vino vacío, así que esto no probó nada'
+    : dir.length + ' legajos en el directorio, y ninguno es éste');
 
 // --- 4 y 5. Que esta prueba esté en condiciones de medir algo --------------
 console.log('');
@@ -238,10 +250,15 @@ await rest('/rest/v1/autorizaciones_asistente?caregiver_id=eq.' + legajo.id,
   { method: 'DELETE' }, token);
 await rest('/rest/v1/caregivers?id=eq.' + legajo.id, { method: 'DELETE' }, token);
 
-const { cuerpo: despues } = await rest('/rest/v1/rpc/directorio_de', {
-  method: 'POST', body: JSON.stringify({ p_slug: P.slug })
-});
-const quedo = Array.isArray(despues) ? despues.some((x) => x.full_name === nombre) : true;
+/* Se le pregunta por el legajo, no por el directorio. Hasta la migración
+   0061 alcanzaba con mirar el directorio, porque un legajo mal borrado
+   aparecía ahí; desde que la puerta de publicación exige papeles que este
+   legajo nunca tuvo, el directorio contesta «no está» tanto si se borró como
+   si quedó. Preguntar por la tabla es preguntar por lo que de verdad se
+   quería saber. */
+const { cuerpo: despues } = await rest(
+  '/rest/v1/caregivers?id=eq.' + legajo.id + '&select=id', {}, token);
+const quedo = Array.isArray(despues) ? despues.length > 0 : true;
 
 /* Y la cuenta, que hasta el 31 de agosto de 2026 se quedaba. El legajo sí se
    borraba, así que del directorio no sobraba nada y la fuga no se veía desde
@@ -259,8 +276,8 @@ if (claveServicio) {
 
 console.log('');
 console.log(quedo
-  ? 'ATENCIÓN: el legajo ficticio quedó en el directorio. Hay que borrarlo a mano.'
-  : 'Limpieza: el legajo ficticio ya no está en el directorio.');
+  ? 'ATENCIÓN: el legajo ficticio quedó en la base. Hay que borrarlo a mano.'
+  : 'Limpieza: el legajo ficticio ya no está en la base.');
 console.log(cuentaBorrada
   ? 'Limpieza: la cuenta ficticia tampoco quedó.'
   : 'ATENCIÓN: la cuenta ficticia quedó en la base. Hay que borrarla a mano.');

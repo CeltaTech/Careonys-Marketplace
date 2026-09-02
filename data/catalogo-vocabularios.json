@@ -8,14 +8,14 @@
       },
       "cerrada": true,
       "usado_en": [
-        "directorio.html:77",
+        "directorio.html:78",
         "formulario-integral.html:394",
         "js/zonas.js:145",
         "js/zonas.js:218",
-        "mockup-app.html:458",
-        "pwa-familia/index.html:1170",
-        "pwa-familia/index.html:1316",
-        "pwa-familia/index.html:784"
+        "mockup-app.html:460",
+        "pwa-familia/index.html:1172",
+        "pwa-familia/index.html:1318",
+        "pwa-familia/index.html:785"
       ],
       "items": [
         {
@@ -203,9 +203,9 @@
       },
       "cerrada": true,
       "usado_en": [
-        "directorio.html:288",
+        "directorio.html:291",
         "formulario-integral.html:109",
-        "perfil.html:340",
+        "perfil.html:341",
         "pwa-asistente/index.html:542",
         "registrar-asistente.html:302"
       ],
@@ -270,11 +270,11 @@
       },
       "cerrada": false,
       "usado_en": [
-        "directorio.html:330",
-        "directorio.html:83",
-        "perfil.html:423",
+        "directorio.html:333",
+        "directorio.html:84",
+        "perfil.html:424",
         "pwa-asistente/index.html:606",
-        "pwa-familia/index.html:822",
+        "pwa-familia/index.html:823",
         "registrar-asistente.html:384"
       ],
       "items": [
@@ -564,9 +564,9 @@
       },
       "cerrada": true,
       "usado_en": [
-        "directorio.html:302",
-        "directorio.html:91",
-        "perfil.html:376"
+        "directorio.html:305",
+        "directorio.html:92",
+        "perfil.html:377"
       ],
       "items": [
         {
@@ -658,43 +658,54 @@
           "en": "Identity document",
           "clave": "dni",
           "es-AR": "Documento de identidad",
-          "pt-BR": "Documento de identidade"
+          "pt-BR": "Documento de identidade",
+          "puerta": "alta"
         },
         {
           "en": "Home address",
           "clave": "domicilio",
           "es-AR": "Domicilio",
-          "pt-BR": "Endereço"
+          "pt-BR": "Endereço",
+          "puerta": "ninguna",
+          "suma_al_perfil": true
         },
         {
           "en": "Qualification backing the profession",
           "clave": "titulo",
           "es-AR": "Título que respalda la profesión",
-          "pt-BR": "Diploma que respalda a profissão"
+          "pt-BR": "Diploma que respalda a profissão",
+          "puerta": "publicacion",
+          "condicional_a": "tipo_asistente.requiere_matricula"
         },
         {
           "en": "Valid professional licence",
           "clave": "matricula",
           "es-AR": "Matrícula vigente",
-          "pt-BR": "Registro profissional vigente"
+          "pt-BR": "Registro profissional vigente",
+          "puerta": "publicacion",
+          "condicional_a": "tipo_asistente.requiere_matricula"
         },
         {
           "en": "Criminal record certificate",
           "clave": "penales",
           "es-AR": "Certificado de antecedentes penales",
-          "pt-BR": "Certificado de antecedentes criminais"
+          "pt-BR": "Certificado de antecedentes criminais",
+          "puerta": "publicacion"
         },
         {
           "en": "Health certificate",
           "clave": "salud",
           "es-AR": "Certificado de salud",
-          "pt-BR": "Atestado de saúde"
+          "pt-BR": "Atestado de saúde",
+          "puerta": "publicacion"
         },
         {
           "en": "Verified work reference",
           "clave": "referencia",
           "es-AR": "Referencia laboral verificada",
-          "pt-BR": "Referência profissional verificada"
+          "pt-BR": "Referência profissional verificada",
+          "puerta": "ninguna",
+          "suma_al_perfil": true
         }
       ]
     },
@@ -852,16 +863,16 @@
       "cerrada": true,
       "usado_en": [
         "data/catalogo-fichas.json:107",
-        "directorio.html:263",
-        "directorio.html:80",
+        "directorio.html:266",
+        "directorio.html:81",
         "formulario-integral.html:164",
         "formulario-integral.html:354",
         "formulario-integral.html:399",
-        "mockup-app.html:457",
-        "perfil.html:327",
+        "mockup-app.html:459",
+        "perfil.html:328",
         "pwa-asistente/index.html:569",
-        "pwa-familia/index.html:1169",
-        "pwa-familia/index.html:1315",
+        "pwa-familia/index.html:1171",
+        "pwa-familia/index.html:1317",
         "registrar-asistente.html:336"
       ],
       "items": [
@@ -1236,6 +1247,10 @@
         "pt-BR": "Estado de uma verificação do cadastro"
       },
       "cerrada": true,
+      "usado_en": [
+        "panel-prestadora.html:440",
+        "panel-prestadora.html:560"
+      ],
       "items": [
         {
           "en": "Not submitted",
@@ -1267,10 +1282,6 @@
           "es-AR": "Vencido",
           "pt-BR": "Vencido"
         }
-      ],
-      "usado_en": [
-        "panel-prestadora.html:440",
-        "panel-prestadora.html:560"
       ]
     },
     "tarea_acompanamiento": {
@@ -1322,7 +1333,7 @@
         "formulario-integral.html:184",
         "formulario-integral.html:404",
         "pwa-asistente/index.html:622",
-        "pwa-familia/index.html:797",
+        "pwa-familia/index.html:798",
         "registrar-asistente.html:409"
       ],
       "items": [

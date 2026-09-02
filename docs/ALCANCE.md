@@ -122,7 +122,7 @@ Cómo quedó:
   perfil (`js/apiClient.js:60`); sin sesión, el enlace elige qué directorio se muestra y nada más.
 - **Los archivos siguen la misma regla.** Ver la fila «Archivos del legajo» de arriba.
 
-Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, **ciento veintisiete
+Probado con dos Prestadoras ficticias: `scripts/probar_aislamiento.mjs`, **ciento veintinueve
 comprobaciones, contadas y pasadas el 1 de septiembre de 2026** contra la base de esta máquina. Y
 falsificado a propósito para verificar que se pone en rojo cuando corresponde.
 
@@ -209,7 +209,7 @@ se metía adentro del marcado ahora pasan por `Texto.escapar`, en seis archivos:
   proyecto quien lee suele ser el personal de la Prestadora, o sea justo quien tiene los permisos,
   o una familia mirando los reportes de cuidado.
 - **Los dos peores casos** no estaban donde decía el pendiente. Uno era el mensaje de chat de
-  `mockup-app.html:788`, que lo escribe una persona y lo lee otra. El otro era
+  `mockup-app.html:790`, que lo escribe una persona y lo lee otra. El otro era
   `panel-prestadora.html`, la pantalla que el pendiente daba por arreglada: tenía el renglón de la
   tabla de Asistentes entero sin escapar —nombre, documento, teléfono, profesión y zona— y el
   único `onclick` escrito en el marcado de todo el proyecto.
@@ -329,7 +329,7 @@ Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2
   además que ninguna pantalla escribe hoy una clave inventada en esa columna —`registrar-asistente.html:336`
   y `formulario-integral.html:353` toman las suyas del catálogo—, y de la
   base misma no se puede afirmar nada desde acá, porque `caregivers` no se deja leer sin sesión.
-- **Los cuatro filtros salen del catálogo** (`directorio.html:77`): zona, Tipo de Asistente,
+- **Los cuatro filtros salen del catálogo** (`directorio.html:78`): zona, Tipo de Asistente,
   patología y verificación. Eran veinticinco opciones escritas a mano contra «los catálogos salen de la base»; ahora
   son cuatro `data-catalogo`. Las zonas llegan agrupadas por región, que la lista escrita a mano
   no hacía.
@@ -893,7 +893,7 @@ Prestadora **y** además autorizó que se lo publique.
   publicadas, repartidas entre las dos Prestadoras ficticias. Pidiendo desde el enlace de PresDemo
   el identificador de una persona de la otra Prestadora, la pantalla no la muestra: queda vacía. Sin
   ese filtro aparecería, que es exactamente la falla que se estaba buscando.
-- **Los cuatro estados están** (`perfil.html:71`, `:72`, `:81` y `:91`): cargando, error con
+- **Los cuatro estados están** (`perfil.html:71`, `:72`, `:81` y `:92`): cargando, error con
   «Reintentar», vacío —«Este perfil no está disponible», con el porqué y la vuelta al directorio— y
   listo. Los cuatro se probaron contra el servidor de verdad, el de error cortándole la dirección al
   cliente de datos.
@@ -910,7 +910,7 @@ uno por uno con `grep` antes de borrarlos.
 no hacía falta preguntar: el consentimiento que la persona firma ya dice que sólo las Familias
 registradas pueden comunicarse con ella, y que lo hacen por la plataforma
 (`data/catalogo-autorizaciones.json`, `perfil_publicado`). En su lugar la pantalla explica eso mismo
-(`perfil.html:160`) y ofrece las dos puertas que sí existen: entrar como Familia y publicar un aviso.
+(`perfil.html:161`) y ofrece las dos puertas que sí existen: entrar como Familia y publicar un aviso.
 Lo que falta —empezar una conversación con esa persona en particular— quedó anotado como pendiente 46.
 
 **Tres traducciones que estaban por escribirse dos veces subieron a los archivos compartidos**
@@ -1446,7 +1446,7 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
 - **La pantalla dejó de tener ocho personas escritas adentro.** `directorio.html` tenía 377
   renglones de tarjetas a mano, con nombres, puntajes, estrellas, un «98% Match» y cuatro
   insignias de verificación, ninguno de los cuales salía de ningún lado. Ahora hay un molde
-  —`<template id="molde-asistente">`, `directorio.html:126`— y el contenido llega de
+  —`<template id="molde-asistente">`, `directorio.html:128`— y el contenido llega de
   `directorio`. El archivo pasó de 534 renglones a 342.
 - **Todo lo inventado se fue con las tarjetas.** No hay sistema de puntaje, no hay estrellas y no
   hay porcentaje de coincidencia, así que no se muestran. Lo que queda es lo que el consentimiento
@@ -1569,7 +1569,7 @@ pantalla vacía.
   cargarla», que es el estado de error que faltaba.
 - **Las otras tres caen en la pantalla de acceso**, y eso ya era la verdad: sin sesión rescatada,
   lo que corresponde mostrar es el acceso. Lo que se perdía era el rastro. Ahora
-  `mockup-app.html:435` y `:909`, `pwa-asistente/index.html:1019` y `pwa-familia/index.html:1129`
+  `mockup-app.html:436` y `:911`, `pwa-asistente/index.html:1019` y `pwa-familia/index.html:1130`
   dejan el detalle técnico en la consola en lugar de tirarlo.
 - **`js/auth.js:292` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
   cargan ese archivo —no en las dieciséis, y el comentario decía catorce hasta que se contaron—, y su
@@ -2483,7 +2483,7 @@ sale de `scripts/verificar_copias.mjs`, que pasó a exportarla para no tener dos
 **La prueba de que el chequeo mira.** Se corrió **antes** de arreglar nada, y encontró las 35
 citas falsas, que es lo que pedía la condición de cierre. Después, con la lista ya calculada y el
 chequeo en verde, se metió un renglón vacío arriba del `data-catalogo="patologia"` de
-`directorio.html:83` — o sea, se corrió todo lo de abajo un renglón. El chequeo se puso rojo y
+`directorio.html:84` — o sea, se corrió todo lo de abajo un renglón. El chequeo se puso rojo y
 nombró los cinco vocabularios afectados, diciendo de cada uno el renglón viejo y el nuevo. Se
 restauró el archivo y volvió al verde. Un chequeo que no se prueba así puede estar mirando cero
 archivos y decir que sí.
@@ -3324,7 +3324,7 @@ renglón que ya está en vez de agregar otro. No existía en ninguna de las tres
 y `marcarVerificacion()` (`js/apiClient.js:466`) es la primera que la usa.
 
 **Probado con las dos Organizaciones ficticias, y la prueba puede fallar.** Ocho comprobaciones
-nuevas en `scripts/probar_aislamiento.mjs:845`, que llevaron la corrida de 119 a 127. Se hacen
+nuevas en `scripts/probar_aislamiento.mjs:876`, que llevaron la corrida de 119 a 127. Se hacen
 sobre un legajo recién creado que arranca **sin ninguna comprobación cargada**, que es la condición
 que pedía el pendiente: sobre uno ya sembrado, la pantalla rota y la sana contestan lo mismo. Quedó
 comprobado que el personal de la Prestadora puede marcar; que la huella la escribe la base aunque
@@ -3333,14 +3333,70 @@ personal recibe `403` sobre un legajo de la otra Prestadora y que no queda escri
 Asistente recibe `403` marcándose sus propios papeles; y que volver a «sin presentar» borra la
 huella y saca la comprobación de la tarjeta.
 
-**Lo que esta pantalla no hace, dicho de frente.** Marca el estado y nada más, y quedan dos huecos
-que no son el mismo. **No pone plazos**: `plazo_vence_el` tiene su índice desde la migración 0004
+**Lo que esta pantalla no hace, dicho de frente.** Marca el estado y nada más. **No pone plazos**:
+`plazo_vence_el` tiene su índice desde la migración 0004
 (`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:237`) y sigue sin que nadie
 lo escriba, así que «Vencido» hay que ponerlo a mano y nada avisa antes — es el mismo agujero que
-el pendiente 98, con su plan escrito en `docs/PLAN_VENCIMIENTOS.md` y sin aprobar. **Y no aplica
-las dos puertas** —la del alta y la de la publicación— que `data/catalogo-verificaciones.json`
-declara papel por papel, porque ese archivo no lo lee ninguna pantalla ni ningún guion del
-producto: sólo lo nombran documentos y dos migraciones. Es el pendiente 143.
+el pendiente 98, con su plan escrito en `docs/PLAN_VENCIMIENTOS.md` y sin aprobar.
+
+### La puerta de publicación se cerró, y ahora lo marcado decide
+
+**Marcar un papel dejó de ser un dato de adorno el 2 de septiembre de 2026.** Hasta ese día
+`data/catalogo-verificaciones.json` declaraba papel por papel qué frenaba cada uno —el alta, la
+publicación, o nada— y **no lo leía ninguna pantalla ni ningún guion**: un legajo llegaba al
+directorio sin un solo papel comprobado. Peor todavía, la vista ya lo prometía: el comentario de su
+propia columna, desde `supabase/migrations/0026_el_directorio_dice_que_se_comprobo.sql:105`, decía
+que esos papeles «las pasaron todos los que aparecen acá». No era cierto.
+
+**Aparecer en el directorio pide ahora tres cosas, y las tres hacen falta.** La Prestadora validó
+el legajo, la persona dijo que sí a publicarse, y **los papeles de la puerta están comprobados**:
+antecedentes penales y certificado de salud siempre, más matrícula y título si el tipo de Asistente
+los exige. Lo hace `supabase/migrations/0061_la_puerta_de_publicacion_se_cierra.sql`, que rehace la
+vista `directorio` con esa tercera condición.
+
+**La regla no está en el SQL: está en la base, como corresponde a un catálogo.** La migración le
+puso a cada verificación, en la columna `extra` de su fila de `vocabulario_items`, tres claves
+—`puerta`, `condicional_a` y `suma_al_perfil`—, y la vista las lee. Exigir un papel más el día de
+mañana es agregarle `{"puerta": "publicacion"}` a una fila, no publicar una versión nueva. El
+detalle de las tres claves está en `docs/CATALOGO.md`.
+
+**Y falla cerrada por los tres lados, que es lo que la hace confiable.** Si la profesión del legajo
+no está en el vocabulario `tipo_asistente`, se pide el papel. Si `condicional_a` trae un valor que
+la vista no conoce, se pide el papel. Si la verificación no tiene fila, no se comprobó. Nunca al
+revés: ninguna comparación con un valor vacío deja entrar a nadie.
+
+**La siembra tuvo que aprender a pasar por su propia puerta.** Con la condición puesta, el
+directorio de las tres Prestadoras ficticias pasaba de diez publicados a **cero**: ninguno de los
+trece legajos tenía el certificado de salud y los antecedentes penales los tenía uno solo. No era
+un defecto de la puerta, era que los clientes ficticios nunca habían modelado el requisito de
+entrada. Lo corrige `supabase/migrations/0062_la_siembra_pasa_por_la_puerta.sql`, y lo hace
+dejando **cada condición aislada en una persona distinta**, para que una prueba que se rompa diga
+cuál se rompió: **Ramiro Cáceres** tiene todo menos la matrícula y queda afuera por exactamente un
+papel; **Diego Ferreyra**, de la misma profesión, la tiene y publica —los dos al lado son la
+prueba—; y **Ester Villalba** tiene los cuatro papeles y sigue afuera por lo suyo de siempre, que
+no dijo que sí. Quedan nueve publicados de trece, y las tres cuentas las comprueba la propia
+migración: si alguien afloja la condición de la vista, la migración deja de correr.
+
+**Probado con las dos Organizaciones ficticias, y la prueba puede fallar.** Dos comprobaciones
+nuevas en `scripts/probar_aislamiento.mjs:826`, que llevaron la corrida de 127 a 129. Van sobre un
+legajo recién creado, y en este orden: valida la Prestadora y no aparece; dice que sí la persona y
+**tampoco** aparece; se le comprueba **un** papel de los dos y sigue sin aparecer —que es lo que
+distingue «la puerta mira la lista entera» de «la puerta se conforma con encontrar algo»—; y recién
+con los dos aparece.
+
+**Dos pruebas hermanas dejaron de medir lo que medían, y se arreglaron en el mismo movimiento.**
+`scripts/probar_sello_de_la_prestadora.mjs` comprobaba que un legajo que se autoselló no sale en el
+directorio, y desde la puerta esa comprobación pasaba **por el motivo equivocado**: no salía por
+falta de papeles. Ahora se le exige además que el directorio traiga a alguien, así que contra un
+directorio vacío —o contra una función que dejó de contestar— la comprobación se pone roja en vez
+de darse por buena. Y su limpieza final, que preguntaba por el directorio para saber si el legajo
+ficticio había quedado, pregunta por la tabla, que es lo que de verdad quería saber.
+
+**Lo que sigue abierto es la otra puerta, y es una decisión, no código.** El documento de identidad
+frena el **alta** según el catálogo, y el alta es «terminar de cargar el legajo», que hace el
+Aspirante, mientras que la verificación la marca la Prestadora después. Cerrada tal como está
+escrita, ningún alta se podría terminar hasta que alguien abra el documento. Es el pendiente 143, y
+lo contesta el Desarrollador.
 
 ## 2. Falta construir
 
@@ -4306,7 +4362,7 @@ cuenta las que hizo y busca en los cuatro documentos la frase que dice cuántas 
 letras o en cifras según el documento. Un desajuste **no** dice que el aislamiento falle —eso sería
 enseñarle a la próxima persona a desconfiar del mensaje—: el veredicto del aislamiento sale
 primero y completo, y el desajuste sale después, como nota al pie, diciendo que se corrige el
-documento y no la prueba. El código del añadido está en `scripts/probar_aislamiento.mjs:2271`.
+documento y no la prueba. El código del añadido está en `scripts/probar_aislamiento.mjs:2302`.
 
 **Comprobado en los dos sentidos**, como pide la regla de la casa: con `docs/INVENTARIO.md` falseado
 a propósito la prueba sale con código 1 y nombra el archivo y la frase que buscó; con el número

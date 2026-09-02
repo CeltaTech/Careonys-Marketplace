@@ -11,7 +11,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <title data-frase="nav.red_asistentes">Red de Asistentes</title>
   <meta name="description" data-frase-content="directorio.descripcion"
-    content="Encuentre al Asistente indicado para su familiar. Filtre por zona, patología y disponibilidad entre los Asistentes con legajo validado por la Prestadora." />
+    content="Encuentre al Asistente indicado para su familiar. Filtre por zona, patología y disponibilidad entre los Asistentes con legajo validado y papeles comprobados por la Prestadora." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
@@ -60,7 +60,8 @@
   <section class="directory-hero">
     <h1 data-frase="nav.red_asistentes">Red de Asistentes</h1>
     <p data-frase="directorio.bajada">Encuentre al Asistente indicado para su ser querido. Los que aparecen acá tienen el legajo
-      validado por su Prestadora y autorizaron a publicar su perfil.</p>
+      validado por su Prestadora, le comprobaron los papeles que hacen falta, y autorizaron a
+      publicar su perfil.</p>
     <a href="solicitar-asistente.html" class="btn btn-atencion"
       data-frase="nav.publicar_aviso">Publicar un Aviso</a>
   </section>
@@ -114,8 +115,9 @@
 
     <div class="directorio-estado oculto" id="dir-vacio">
       <p data-frase="directorio.vacio">Todavía no hay Asistentes publicados en este directorio.</p>
-      <p class="directorio-estado-bajada" data-frase="directorio.vacio_bajada">Un Asistente aparece acá cuando su Prestadora validó el legajo y esa persona autorizó a publicar
-        su perfil. Las dos cosas, no una.</p>
+      <p class="directorio-estado-bajada" data-frase="directorio.vacio_bajada">Un Asistente aparece acá cuando su Prestadora validó el legajo, esa persona autorizó a publicar
+        su perfil, y la Prestadora le comprobó los papeles que hacen falta para entrar a una casa.
+        Las tres cosas, no una.</p>
     </div>
 
     <div class="directory-grid oculto" id="directory-grid"></div>
@@ -222,8 +224,9 @@
        comentario que estaba acá explicaba por qué: en algún momento consultó, y con
        la vista de entonces cualquiera que abriera el enlace veía legajos de verdad.
 
-       Lo que cambió es qué se le pregunta a la base. `directorio` exige dos
-       cosas —la Prestadora validó el legajo y la persona autorizó a publicarlo— y no
+       Lo que cambió es qué se le pregunta a la base. `directorio` exige tres
+       cosas —la Prestadora validó el legajo, la persona autorizó a publicarlo, y la
+       Prestadora le comprobó los papeles que frenan la publicación (migración 0061)— y no
        devuelve ni un dato de contacto: ni documento, ni teléfono, ni correo, ni
        domicilio (migraciones 0007 y 0012). Y el Desarrollador decidió el 24 de agosto
        de 2026 que este directorio se ve sin iniciar sesión, con lo que el
