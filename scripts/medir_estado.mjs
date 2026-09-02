@@ -211,8 +211,8 @@ seRevisaron(migraciones.length, 'una sola migración');
 const tablas = new Set();
 for (const camino of migraciones) {
   for (const encontrado of leer(camino)
-    .matchAll(/create\s+table\s+(?:if\s+not\s+exists\s+)?([a-z0-9_.]+)/gi)) {
-    tablas.add(encontrado[1].toLowerCase().replace(/^public\./, ''));
+    .matchAll(/create\s+table\s+(?:if\s+not\s+exists\s+)?([a-z0-9_."]+)/gi)) {
+    tablas.add(encontrado[1].toLowerCase().replace(/"/g, '').replace(/^public\./, ''));
   }
 }
 

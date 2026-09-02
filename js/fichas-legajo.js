@@ -20,6 +20,12 @@ const FichasLegajo = {
   },
   contadores: {},
 
+  /* A qué depósito van los archivos de las fichas. Está escrito una sola vez:
+     lo usa `subirArchivos` para dejarlos ahí y `_inputCampo` para decirle al
+     selector qué se puede elegir, que sale de lo que ese depósito acepta y no de
+     una lista escrita a mano (fue el pendiente 118, cerrado). */
+  DEPOSITO: 'documentos-cuidadores',
+
   async cargar() {
     const [fichasRes, vocabRes] = await Promise.all([
       fetch('data/catalogo-fichas.json').then(r => r.json()),
@@ -135,7 +141,15 @@ const FichasLegajo = {
       return `<input type="checkbox" id="${id}" data-campo="${clave}" style="width:18px;height:18px;" />`;
     }
     if (campo.tipo === 'archivo') {
-      return `<input type="file" id="${id}" data-campo="${clave}" accept=".jpg,.jpeg,.png,.pdf" ${req} />`;
+      /* Qué se puede elegir no se escribe acá: se nombra el depósito y lo que
+         acepta lo contesta `Sesion`, que guarda la copia de la migración 0006.
+         Sin `Sesion` —una pantalla que no la cargue— el campo sale sin `accept`,
+         que es lo mismo que ofrecer todo, y el rechazo sigue estando antes de
+         subir. */
+      const deposito = Texto.escapar(this.DEPOSITO);
+      const acepta = window.Sesion ? window.Sesion.aceptaDelDeposito(this.DEPOSITO) : '';
+      const ofrece = acepta ? ` accept="${Texto.escapar(acepta)}"` : '';
+      return `<input type="file" id="${id}" data-campo="${clave}" data-deposito="${deposito}"${ofrece} ${req} />`;
     }
     if (campo.tipo === 'lista') {
       const opciones = this._opciones(campo.vocabulario)
@@ -288,7 +302,7 @@ const FichasLegajo = {
   // sola vez y sin frenar el resto del alta: un archivo que no sube y no avisa
   // es peor que uno que no se cargó, porque la persona se va creyendo que
   // entregó el papel.
-  async subirArchivos(legajo, carpeta, deposito = 'documentos-cuidadores') {
+  async subirArchivos(legajo, carpeta, deposito = FichasLegajo.DEPOSITO) {
     const fallados = [];
     const porClave = { matriculas: 'matricula', estudios: 'estudio' };
 

@@ -4,10 +4,16 @@
        node scripts/soltar_asistente_local.mjs             dice qué haría
        node scripts/soltar_asistente_local.mjs --borrar    lo hace
 
-   Lo contrario de `scripts/preparar_asistente_local.mjs`: borra lo que se
+   Deshace la cuenta `asistente.presdemo@ejemplo.com`, la que dejaba un guion
+   local que ya no está: la migración 0065 pasó a sembrar las seis cuentas
+   ficticias con su legajo ya atado, y ese guion salió del proyecto el 2 de
+   septiembre de 2026: fue el pendiente 147, cerrado. Esto borra lo que se
    escribió mirando la pantalla, le suelta el legajo a la cuenta ficticia y
    después borra la cuenta. En ese orden, porque la cuenta es lo que la clave
    foránea del legajo apunta.
+
+   Queda para las máquinas donde esa cuenta todavía esté. Donde no esté, lo
+   dice y no toca nada.
 
    **No borra el legajo.** El legajo es de la siembra: nació con la migración
    0030 y tiene que seguir ahí. Lo único que se agregó fue el enganche, y lo

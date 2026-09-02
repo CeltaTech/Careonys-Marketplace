@@ -17,7 +17,7 @@
 | Directorio de Asistentes con filtros | Maquetado y navegable |
 | Perfil del Asistente | Maquetado |
 | Portal de registro de Asistentes | Maquetado, con el legajo funcionando: `registrar-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en las tablas de la migración 0004, y la disponibilidad horaria en las de la 0012 |
-| Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:305`). Declarados en `supabase/migrations/0006_archivos_del_legajo.sql`, no a mano |
+| Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:358`). Declarados en `supabase/migrations/0006_archivos_del_legajo.sql`, no a mano |
 | Consentimiento de publicación | Funciona de punta a punta. El alta pregunta al cerrar (`data/catalogo-autorizaciones.json`, paso 7) y guarda la respuesta en `autorizaciones_asistente`; el directorio cruza contra ella y **no muestra a nadie que no haya dicho que sí** (`supabase/migrations/0007_directorio_con_consentimiento.sql`). Sin respuesta no se publica: la casilla arranca sin marcar. Y el directorio va con `noindex`, que es lo que ese mismo consentimiento promete |
 | Evaluaciones de competencias | Funcionan, y **las corrige el servidor**. `examen.html` pide sesión, lista lo que la persona puede rendir y manda las respuestas a `rendir_evaluacion()`; la columna con la respuesta correcta no tiene permiso de lectura para nadie y las opciones salen de la vista `opciones_para_responder`, que no la incluye (`supabase/migrations/0008_cursos_y_evaluaciones.sql`). El intento no se puede escribir a mano: la tabla no tiene política de escritura y los permisos están revocados. `cursos.html` ya no tiene examen propio, enlaza a esta pantalla. Falta el contenido: ver `docs/PENDIENTES.md` punto 24 |
 | Motor de fichas del legajo (`js/fichas-legajo.js`) | Funciona. Dibuja, valida y recolecta Matrícula, estudio, experiencia y referencia leyendo `data/catalogo-fichas.json` y `data/catalogo-vocabularios.json`. Ninguna de las cuatro está escrita en la pantalla |
@@ -550,7 +550,7 @@ Comprobado el 24 de agosto de 2026 contra el proyecto real: el servidor tiene ap
 distancia costaba dos cosas que ya no cuestan:
 
 - **La columna del contacto existe.** La 0009 agregó `avisos.contact_info`, que es donde
-  `js/apiClient.js:1296` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
+  `js/apiClient.js:1305` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
   público de `solicitar-asistente.html` mandaba una columna que la base no tenía.
 - **Las filas de ejemplo hablan el idioma del catálogo.** La 0010 reemplazó las claves viejas de
   las cuatro filas ficticias —«enfermero» y compañía— por las que las pantallas esperan.
@@ -741,7 +741,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
   y las dos pantallas consumen el mismo («ningún patrón repetido sin punto único de verdad»). Copiarlo habría sido tener el mismo paso dos
   veces, con el precio de siempre: se arregla uno y el otro queda viejo.
 - **Subir los archivos también dejó de estar en la pantalla.** `FichasLegajo.subirArchivos`
-  (`js/fichas-legajo.js:291`) es el único lugar que sabe a qué depósito van la matrícula y el
+  (`js/fichas-legajo.js:305`) es el único lugar que sabe a qué depósito van la matrícula y el
   título, y devuelve la lista de los que no subieron para que quien llama avise una sola vez.
 - **De paso arregló algo que estaba mal en el portal.** Cuando la ficha de estudio no traía archivo
   —es optativo—, la fila viajaba igual con una clave `archivo` en `null`. La columna se llama
@@ -884,7 +884,7 @@ atiende, precio por hora y si acepta reemplazos urgentes. Son exactamente los qu
 `directorio`, la vista que sólo deja pasar a quien tiene el legajo validado por la
 Prestadora **y** además autorizó que se lo publique.
 
-- **Lo trae `traerDelDirectorio` (`js/apiClient.js:859`)**, que pide una sola fila filtrando por
+- **Lo trae `traerDelDirectorio` (`js/apiClient.js:868`)**, que pide una sola fila filtrando por
   identificador y por Prestadora. Un identificador que no tiene forma de identificador se contesta
   sin preguntarle a la base: la base devolvería un error de sintaxis, y un error en pantalla se lee
   como que el sistema se rompió, cuando lo que hay es un enlace viejo. Los hay: hasta el 25 de
@@ -1183,7 +1183,7 @@ atributo, y `!important` los habría dejado sin efecto.
 **Y `.oculto` está escrito tres veces** (`css/utilidades.css:47`), porque un elemento puede
 llevar `oculto` junto con `flex` o `grilla` —se esconde y se muestra, y cuando se muestra va
 en fila—, y escondido tiene que ganar siempre. Comprobado en el navegador el mismo día sobre el
-caso real que lo pedía: el grupo de una casilla del legajo (`js/fichas-legajo.js:104`) mide
+caso real que lo pedía: el grupo de una casilla del legajo (`js/fichas-legajo.js:110`) mide
 `flex` visible, `none` con la clase puesta y `flex` de nuevo al sacársela.
 
 **Esconder dejó de ser estilo y pasó a ser estado.** Los 39 `display:none` enteros y 16 más que
@@ -1574,7 +1574,7 @@ pantalla vacía.
   lo que corresponde mostrar es el acceso. Lo que se perdía era el rastro. Ahora
   `mockup-app.html:429` y `:904`, `pwa-asistente/index.html:1026` y `pwa-familia/index.html:1130`
   dejan el detalle técnico en la consola en lugar de tirarlo.
-- **`js/auth.js:332` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
+- **`js/auth.js:385` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
   cargan ese archivo —no en las dieciséis, y el comentario decía catorce hasta que se contaron—, y su
   único trabajo es pasarle el permiso al cliente de datos. Si falla, el primer pedido de esa
   pantalla va a fallar también, y esa pantalla sí sabe cómo decirlo; poner un cartel acá sería
@@ -1902,7 +1902,7 @@ Que sigan siendo ocho copias es parte del pendiente 13.
 corta.** La regla pide confirmación explícita ante cada una, y la medición encontró que en este proyecto hay exactamente una:
 rechazar un legajo (`panel-prestadora.html:752`). No hay un solo `delete` contra la base en las
 cuarenta y cuatro pantallas y guiones —lo único que se parece son dos `delete` de JavaScript sobre
-un objeto en memoria, `js/apiClient.js:407` y `js/apiClient.js:526`, que no tocan nada guardado—, y
+un objeto en memoria, `js/apiClient.js:416` y `js/apiClient.js:535`, que no tocan nada guardado—, y
 salir de la sesión no
 destruye nada. La única que hay ya pregunta antes, y la pregunta dice qué queda después:
 «Se va a rechazar este legajo. Queda cerrado y la persona no aparece en el plantel activo.
@@ -2236,7 +2236,7 @@ escrita: es la sección que sigue.
 el pendiente 15. No era una cuestión de prolijidad. Quien escribe la llamada a mano decide solo si
 manda el token de quien inició sesión o la clave pública, y de ese renglón depende que la base
 sepa quién está preguntando. Ahora son `ClienteDatos.getMensajes()` y
-`ClienteDatos.enviarMensaje()` (`js/apiClient.js:812`), que arman el pedido una sola vez para
+`ClienteDatos.enviarMensaje()` (`js/apiClient.js:821`), que arman el pedido una sola vez para
 todos.
 
 Se ganó algo que no se buscaba: la lectura vieja miraba `res.ok` y, si venía en falso, seguía de
@@ -2336,7 +2336,7 @@ Mudarlo al catálogo no alcanzaba con ponerle un `data-frase` al sello: **el cat
 escribiendo el texto entero del elemento marcado**, y ahí adentro también vive el nombre de la
 Prestadora, que no se traduce nunca. Así que se partió en dos —el rótulo en su propio `<span>` con
 la clave `pie.sello_producto`, el nombre al lado— y el sello pide `Catalogo.traducir()` cuando ya
-está armado, porque nace después de que la pantalla se tradujo (`js/apiClient.js:160`). Es la misma
+está armado, porque nace después de que la pantalla se tradujo (`js/apiClient.js:169`). Es la misma
 regla que `despejar()` deja escrita en `scripts/texto_visible.mjs:87`: **un elemento convertido
 lleva texto y nada más**. Probado en las tres: «Con la tecnología de», «Powered by» y «Com a
 tecnologia de», con el nombre intacto al lado en las tres.
@@ -2944,7 +2944,7 @@ ficticia y sesión simulada: el legajo se creó con fecha de alta del **1 de ene
 `update` posterior la corrió al **1 de enero de 2010**. Las dos veces la base guardó lo que le
 mandaron.
 
-**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:1206` la traduce a `fechaRegistro` y ese
+**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:1215` la traduce a `fechaRegistro` y ese
 nombre no aparece en ningún otro archivo del proyecto—, así que no había consecuencia visible. Se
 arregló igual, porque la antigüedad es exactamente la clase de dato que después se usa para ordenar
 un directorio o para decidir a quién se muestra primero, y ese día el agujero pasa a ser una
@@ -3320,8 +3320,8 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
   no el texto crudo de una restricción. Borrar avisa antes qué consecuencia tiene y se puede
   cancelar (`guias-prestadora.html:539`).
 - **Se comprobó desde la pantalla, con las dos Prestadoras ficticias.** El 30 de agosto de 2026,
-  con una coordinadora en cada una (`scripts/preparar_coordinadores_locales.mjs`) y contra la base
-  de esta máquina: cada una escribió la suya, la corrigió, la publicó y la vio en la lista; ninguna
+  con una coordinadora en cada una —las preparaba entonces un guion local, y hoy las siembra la
+  migración 0065— y contra la base de esta máquina: cada una escribió la suya, la corrigió, la publicó y la vio en la lista; ninguna
   vio la de la otra; y a la ajena, pidiéndola por su identificador desde la sesión de la otra, no
   la pudo leer, ni cambiar, ni borrar. Contra la general, la coordinadora no pudo crear una, ni
   cambiar la que hay, ni borrarla; y sin sesión la pantalla manda a `acceso.html`. **La revisión
@@ -3370,10 +3370,10 @@ regresa a «sin presentar» —la columna no puede seguir diciendo que alguien l
 ya no está comprobado— y no refresca la fecha cuando el estado no cambió.
 
 **Y el cliente de datos aprendió a hacer un alta-o-modificación en un solo pedido.**
-`_supabaseUpsert()` (`js/apiClient.js:1175`) se apoya en la restricción de unicidad de
+`_supabaseUpsert()` (`js/apiClient.js:1184`) se apoya en la restricción de unicidad de
 `(legajo, tipo)` que trae la migración 0004, así que marcar el mismo papel dos veces corrige el
 renglón que ya está en vez de agregar otro. No existía en ninguna de las tres copias del archivo,
-y `marcarVerificacion()` (`js/apiClient.js:501`) es la primera que la usa.
+y `marcarVerificacion()` (`js/apiClient.js:510`) es la primera que la usa.
 
 **Probado con las dos Organizaciones ficticias, y la prueba puede fallar.** Ocho comprobaciones
 nuevas en `scripts/probar_aislamiento.mjs:876`, que llevaron la corrida de 119 a 127. Se hacen
@@ -3607,7 +3607,7 @@ prestación.
 
 El mercado es de una Prestadora: sus Asistentes ofreciendo, sus Familias buscando. Muchos de un
 lado y muchos del otro, pero **todos adentro de la misma Organización**. Es lo que ya hace
-`js/apiClient.js:839`, que resuelve una Prestadora y le muestra los suyos a `directorio.html`.
+`js/apiClient.js:848`, que resuelve una Prestadora y le muestra los suyos a `directorio.html`.
 
 **Ninguna búsqueda, en ninguna modalidad, mezcla Asistentes de dos Prestadoras.** Mezclarlas sería
 abandonar el aislamiento entre Organizaciones para conseguir un desorden general. No
@@ -4098,7 +4098,7 @@ falta:**
 **Y las cinco formas se eligieron por una sola condición: que no tengan hoy ningún uso legítimo.**
 Se contó sobre los 224 archivos de texto del proyecto y las cinco dan cero. Lo único con forma de
 credencial que hay escrito son las tres apariciones de la clave publicable —el original y sus dos
-copias, decidido y anotado en `docs/INVENTARIO.md:402`— y cinco contraseñas de cuentas ficticias
+copias, decidido y anotado en `docs/INVENTARIO.md:400`— y cinco contraseñas de cuentas ficticias
 adentro de los guiones de prueba, que es como se entra a la base de esta máquina para probar. Por
 eso la contraseña escrita a mano **no** entra en la lista: daría cinco rojos que habría que
 perdonar de a uno, y una lista de perdones sobre credenciales es exactamente lo que esta regla no
@@ -4345,7 +4345,7 @@ el **pendiente 107**.
 
 **Y lo que la opción A todavía le debe a quien la sufre.** Que la persona vea, **antes** de cambiar
 un papel, que hacerlo le baja el sello. Hoy no se puede escribir: ninguna pantalla cambia
-`documents` —el mapeo existe en `js/apiClient.js:1269` y no lo usa nadie— y el chequeo de frases se
+`documents` —el mapeo existe en `js/apiClient.js:1278` y no lo usa nadie— y el chequeo de frases se
 pone en rojo con toda frase de catálogo que ninguna pantalla nombre. La frase entra el día que
 entre la pantalla; es el **pendiente 108**.
 
@@ -4379,7 +4379,7 @@ Cerró el pendiente 94, el 31 de agosto de 2026.
   pregunta al módulo antes de enviar, y si no hay respuesta el formulario vuelve al paso 1 y lleva
   la vista al campo (`pwa-asistente/index.html:2226`).
 - **Se guarda donde se lee**: las claves van a `zonas_asistente` y el texto libre a `zonas_texto`,
-  por `js/apiClient.js:424` y `:1266`. `caregivers.zone` no la escribe más nadie, y eso abrió el
+  por `js/apiClient.js:433` y `:1275`. `caregivers.zone` no la escribe más nadie, y eso abrió el
   **pendiente 109**.
 - **Y el 109 se cerró esa misma noche, por la salida que no borra datos.** Se midió
   primero: ninguna pantalla manda `zona` ni `zonaResidencia` al escribir un legajo, así
@@ -5166,7 +5166,7 @@ que las otras dos, que la limpieza se la lleva.
 escribe nadie: ni una pantalla, ni un guion, ni una prueba. Lo que sí pasa es que
 `registrar-asistente.html:996-1000` sube el documento de identidad, los antecedentes penales y el
 título, y guarda **sólo los caminos** en la columna `documents` de `caregivers`
-(`registrar-asistente.html:1041`, y de ahí a la base por `js/apiClient.js:1269`). O sea que hay
+(`registrar-asistente.html:1041`, y de ahí a la base por `js/apiClient.js:1278`). O sea que hay
 dos formas de guardar el mismo hecho y una está muerta, como ya pasó con `messages` y las
 `conversaciones` heredadas. Y la que quedó viva es la pobre: la tabla dedicada tiene `tipo`,
 `presentado_el`, `vencimiento` y `verificado`, y el objeto de `documents` no tiene ninguno de los
@@ -5195,7 +5195,7 @@ defendía eso diciendo que los fichados ya escritos decían «Entrada» —y no 
 escrito, ni podía haberlo—. Es justo la distancia entre lo visible, que cambia con el idioma,
 y lo guardado, que se nombra por su función y no cambia.
 
-Las tres corregidas. El legajo se resuelve **una sola vez**, en `js/apiClient.js:615`, porque son
+Las tres corregidas. El legajo se resuelve **una sola vez**, en `js/apiClient.js:624`, porque son
 dos pantallas que necesitan el mismo dato; si no hay legajo lo dice y se planta, con una frase
 nueva en los tres idiomas, en vez de inventar uno. Y `event_type` guarda `entrada` y `salida`,
 que son las claves que el catálogo de frases **ya usaba** —no hace falta ninguna palabra nueva—,
@@ -5217,10 +5217,13 @@ La aplicación del Asistente sólo sabe hablarle a la base publicada —la direc
 significaba escribir en la base de verdad. `scripts/servidor_local.py --base-local` ya resolvía
 la mitad: cambia la dirección **en el texto que sale por la red y nunca en el archivo**, para que
 nadie se olvide de volverlo atrás. Faltaba una cuenta de Asistente **con legajo detrás**, que es
-exactamente el dato que el arreglo empezó a mandar, y la dejó `scripts/preparar_asistente_local.mjs`:
-toma la clave de una variable de entorno, se niega a correr contra cualquier base que no sea la de
-esta máquina, y **engancha un legajo de la siembra en vez de inventar uno**, para que la pantalla
-se mire con un legajo que tiene nombre, fichas y verificaciones y no con uno vacío hecho al paso.
+exactamente el dato que el arreglo empezó a mandar, y la dejó un guion local de entonces: tomaba
+la clave de una variable de entorno, se negaba a correr contra cualquier base que no fuera la de
+esta máquina, y **enganchaba un legajo de la siembra en vez de inventar uno**, para que la pantalla
+se mirara con un legajo que tiene nombre, fichas y verificaciones y no con uno vacío hecho al paso.
+Ese guion salió del proyecto el 2 de septiembre de 2026, cuando la migración 0065 pasó a sembrar
+las seis cuentas ficticias con su legajo ya atado: hoy el único camino es
+`scripts/abrir_cuentas_ficticias.mjs`, que es el que les pone la clave (pendiente 147).
 
 Con eso, la pantalla andando: entró, guardó un reporte de cuidado y marcó una entrada y una salida.
 Las tres filas quedaron, colgadas del **legajo** y con `presdemo` resuelto por la política, y
@@ -5315,7 +5318,7 @@ que venza». Así que el control negativo que el propio plan pide —una matríc
 medido, y dicho ahí cuál de las tres puede aportar el caso y cuáles no.
 
 Y de paso quedó comprobada la otra mitad, la que la búsqueda de la mañana había dado mal: **a
-`matriculas_asistente` sí la escribe el producto**. `js/apiClient.js:378` la nombra en el mapa de
+`matriculas_asistente` sí la escribe el producto**. `js/apiClient.js:387` la nombra en el mapa de
 las cuatro fichas repetibles del legajo, y la ficha pide la fecha como obligatoria
 (`data/catalogo-fichas.json:40`). La búsqueda que decía lo contrario había pasado a `scripts/listar.mjs` un patrón
 con alternativas escrito como lo escribe grep, con `\|`. Ahí adentro el patrón es una expresión
@@ -5434,7 +5437,7 @@ no se entera nadie el día que ese algo cambie. Ahora
 `scripts/probar_exenciones.mjs` la tomó sola: vaciarla pone rojo al chequeo, comprobado.
 
 El `avatares` es aparte y está bien: es público **a propósito** desde la 0006, porque la foto es lo
-que el directorio muestra sin cuenta (`js/apiClient.js:880`). Ahí no hay nada que aislar hacia
+que el directorio muestra sin cuenta (`js/apiClient.js:889`). Ahí no hay nada que aislar hacia
 afuera; lo que la condición cuida es la escritura, que nadie deje una foto en la carpeta de otro.
 
 Mover el camino a `<Organización>/<cuenta>/<archivo>` no es sólo una migración: hay que mudar los
@@ -5586,7 +5589,7 @@ Todo correcto. Otra vez no había nada que arreglar; faltaba lo que impide el pr
 Y el primer error tiene dos tamaños muy distintos, que conviene no mezclar. **Equivocarse el nombre
 falla callado**: el depósito no existe, `urlFirmada()` devuelve `null` y la pantalla no muestra el
 archivo sin decir por qué. **Confundirse de depósito en la dirección pública publica un documento de
-identidad**, que es el peor error posible de este producto. `js/apiClient.js:890` arma una dirección
+identidad**, que es el peor error posible de este producto. `js/apiClient.js:899` arma una dirección
 pública a mano, con el nombre del depósito pegado adentro del texto de la dirección: cambiar ahí una
 palabra por la otra es un renglón.
 
@@ -6060,11 +6063,42 @@ control de tamaño, sin preguntar el tipo del dato, sin el control de tipo de ar
 el tipo sin bajarlo a minúsculas, que rechazaría un `IMAGE/JPEG` legítimo—. Las siete dan rojo y
 nombran el caso exacto; restaurado, verde.
 
-**Lo que esto no cierra**, y queda en el pendiente 118: el `accept=` de los seis selectores de
-archivo sigue escrito a mano y sigue sin coincidir —de menos en `js/fichas-legajo.js`, que deja
-afuera el `heic` con que fotografía un iPhone; de más en los `image/*`, que dejan elegir un `gif`
-para rechazarlo después—. Ya no es un agujero, porque el control real está antes de subir. Es una
-molestia, y una mentira sobre lo que se puede elegir.
+### Y lo que se puede elegir sale del mismo lugar
+
+**El 2 de septiembre de 2026 se cerró la otra mitad del pendiente 118, que es la del `accept=`.**
+Eran nueve selectores de archivo con la lista escrita a mano, y ninguno decía lo mismo que la
+migración: de menos en `js/fichas-legajo.js`, que dejaba afuera el `heic` con que fotografía un
+iPhone —así que la foto de la credencial no se podía ni elegir—; de más en los `image/*`, que
+dejaban elegir un `gif` para rechazarlo con el archivo ya subido entero. No era un agujero,
+porque el control real está antes de subir: era una molestia, y una mentira sobre lo que se
+puede elegir.
+
+**Ahora la pantalla nombra el destino y nunca la lista.** `_loQueAcepta()` (`js/auth.js:105`)
+contesta qué acepta un depósito leyendo la misma copia que ya usaba el rechazo, y
+`_escribirLoQueSeAcepta()` (`js/auth.js:125`) se lo escribe al cargar a todo campo que lleve un
+`data-deposito`. Cuál lleva cada uno tampoco se escribe en la pantalla: los cuatro papeles del
+legajo lo sacan de `LOS_CUATRO` —que ya era el único lugar donde estaba dicho a qué depósito va
+cada papel— por `DocumentosLegajo.declararSusDepositos()` (`js/documentos-legajo.js:63`), y las
+fichas del legajo, de `FichasLegajo.DEPOSITO`. Que el destino no lo elija la pantalla importa más
+que la comodidad: si lo eligiera, una pantalla podría mandar el documento de identidad al
+depósito público.
+
+A un depósito que nadie declaró se le **saca** el `accept` en vez de dejarle uno vacío. Los dos
+abren el diálogo de par en par, pero el vacío parece una decisión tomada.
+
+**La guarda es la quinta regla de `scripts/verificar_deposito.mjs`**, y mira cuatro cosas: que
+ninguna pantalla escriba la lista —un `accept` sólo vale si su valor entero sale de una
+interpolación—; que todo campo de archivo diga a dónde va, con `data-deposito` o siendo uno de
+los papeles que declara `LOS_CUATRO`; que la pantalla que tiene esos papeles cargue el guion que
+se los declara, porque sin él nadie les escribe nada; y que las dos funciones hagan lo que dicen,
+que se ejerce y no se lee: se las saca del archivo real y se las corre contra los tipos de la
+migración y contra una pantalla de mentira.
+
+**Falsificada de seis maneras**, cada una en su renglón: la lista escrita a mano de vuelta en la
+pantalla; la ficha que deja de decir a qué depósito va; `_loQueAcepta()` contestando una lista
+propia; `_escribirLoQueSeAcepta()` inventándole algo a un depósito que nadie declaró; la pantalla
+que deja de cargar el guion que declara los papeles; y las dos funciones borradas. Las seis dan
+rojo y nombran el caso exacto; restaurado, verde.
 
 ### Dos pantallas del mismo botón, juzgadas con distinta vara
 
@@ -6255,12 +6289,12 @@ posición había que dejarlo igual.
 
 Lo que quedó escrito:
 
-- `Sesion.uploadFile` sube con `upsert: false` (`js/auth.js:290`). Una segunda subida al mismo
+- `Sesion.uploadFile` sube con `upsert: false` (`js/auth.js:343`). Una segunda subida al mismo
   camino vuelve rechazada, y el aviso que ve la persona es `error.duplicado`, que ya estaba en el
   catálogo y que `Texto.claveDeError` ya sabía reconocer.
 - Las dos puntas arman el camino con un identificador propio, `Sesion.uuidNuevo()`
-  (`js/auth.js:258`): los cuatro papeles sueltos en `js/documentos-legajo.js:96` y los archivos de
-  las fichas repetibles en `js/fichas-legajo.js:313`. Cada subida cae en su propio lugar, y cuál es
+  (`js/auth.js:311`): los cuatro papeles sueltos en `js/documentos-legajo.js:119` y los archivos de
+  las fichas repetibles en `js/fichas-legajo.js:327`. Cada subida cae en su propio lugar, y cuál es
   el papel vigente lo dice la fila que guarda el camino, nunca el nombre del archivo.
 
 La tercera salida —versiones en el depósito— no se tomó, y `scripts/probar_pisado_de_archivos.mjs`

@@ -1,15 +1,15 @@
 # Modelo de Negocios de la Empresa Prestadora / Licenciataria (Tenant)
 
 > [!WARNING]
-> **Material de diseño con una decisión sin resolver.** Revisado el 2026-08-23.
+> **Material de diseño del negocio del Cliente.** Revisado el 2026-08-23.
 >
-> Este documento pone planes, comisiones, precios y facturación **adentro del producto**. El
-> `CLAUDE.md` de Careonys decidió lo contrario: nada comercial vive del lado del producto, eso
-> pertenece al panel de CeltaTech. Son dos decisiones distintas tomadas en momentos distintos, y
-> una tiene que ceder antes de la fusión.
+> Acá está el negocio de la Prestadora: qué cobra, qué paga y qué le queda. Ese negocio es de ella
+> y no del producto —CeltaTech desarrolla y licencia software, y no presta ningún servicio de
+> cuidado—, así que ninguna de estas cifras es una regla que el software deba hacer cumplir. Los
+> números son un ejemplo armado a mano, no una medición.
 >
-> **Hasta que se decida, no se construye lógica comercial en este proyecto** — ninguna tabla de
-> precios ni de planes. Detalle en `docs/ALCANCE.md` §4.
+> **Nada de esto se construye en este proyecto**: ninguna tabla de precios, de planes ni de
+> comisiones. Detalle en `docs/ALCANCE.md` §4.
 
 Este documento detalla el esquema comercial, fuentes de ingresos, estructura de costos y márgenes de ganancia de la **Empresa Prestadora / Licenciataria** (ej. *Sendler Group / PresDemo*) que opera la plataforma sobre la infraestructura de **Careonys**.
 
@@ -38,7 +38,7 @@ graph TD
 Es la fuente principal de ingresos recurrentes de la prestadora:
 * **Precio cobrado a la Familia**: `$ 3.500 ARS / hora`
 * **Pago al Asistente / Cuidador**: `$ 2.500 ARS / hora`
-* **Margen Bruto de la Prestadora**: **`$ 1.000 ARS / hora` (28.5% de margen)**
+* **Margen Bruto de la Prestadora**: **`$ 1.000 ARS / hora` (28,57% de margen)**
 * *Ejemplo*: Con una red activa de 50 asistentes trabajando 160 hs/mes (8.000 hs totales), la prestadora genera **$ 8.000.000 ARS de Margen Bruto mensual** solo por intermediación.
 
 ### 2. Abono Mensual por Gestión Gerontológica & Garantía de Reemplazo
@@ -65,10 +65,10 @@ Cobro de una tasa inicial a los asistentes que se incorporan a su red privada po
 ## 3. Cuenta de Resultados Simulada (P&L de la Prestadora)
 
 ```
-  Ingresos Totales por Servicios y Cuotas:       $ 28.000.000 ARS
+  Ingresos por Horas de Cuidado (8.000 hs):      $ 28.000.000 ARS
 - Costo Directo (Honorarios a Asistentes):      $ 20.000.000 ARS
 -----------------------------------------------------------------
-= MARGEN BRUTO OPERATIVO:                        $  8.000.000 ARS (28.5%)
+= MARGEN BRUTO OPERATIVO:                        $  8.000.000 ARS (28,57%)
 
 - Canon Licencia SaaS a Careonys:               $    800.000 ARS (Suscripción/Fee)
 - Gastos de Marketing Local & Captación:        $  1.200.000 ARS
@@ -76,6 +76,10 @@ Cobro de una tasa inicial a los asistentes que se incorporan a su red privada po
 -----------------------------------------------------------------
 = GANANCIA NETA MENSUAL (EBITDA):                $  3.500.000 ARS (12.5% Neto)
 ```
+
+**El cuadro simula una sola de las cinco fuentes**: el margen sobre la hora de cuidado. Las otras
+cuatro —el abono mensual, la gestoría de reintegros, la teleasistencia y el arancel de red— no
+están sumadas, así que lo que da es un piso y no una estimación del negocio entero.
 
 ---
 

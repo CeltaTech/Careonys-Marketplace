@@ -20,9 +20,8 @@
       de una persona.
    2. No tiene ningún legajo colgando en `caregivers`. Las cuentas de las
       Prestadoras ficticias sí lo tienen, y por eso no entran.
-   3. No es ninguna de las coordinadoras que prepara
-      `preparar_coordinadores_locales.mjs`, que hacen falta para correr las
-      pruebas y tienen otro correo.
+   3. No es ninguna de las seis cuentas ficticias que siembra la migración
+      0065, que hacen falta para entrar al producto y no llevan ese prefijo.
 
    Las tres juntas, no cualquiera. Con la primera sola alcanzaría casi siempre,
    y «casi siempre» es justo lo que no se quiere de algo que borra.

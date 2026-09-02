@@ -197,7 +197,7 @@ archivo queda en una carpeta que es de su cuenta y de ninguna otra, y sólo uste
 reemplaza y los borra (`supabase/migrations/0006_archivos_del_legajo.sql:52`). El personal de
 su Prestadora los **lee**, para poder auditarlos, y no los modifica
 (`supabase/migrations/0006_archivos_del_legajo.sql:78`). Y cuando hay que mostrarle uno, el
-sistema pide un enlace temporal que vence a los cinco minutos (`js/auth.js:305`), en vez de
+sistema pide un enlace temporal que vence a los cinco minutos (`js/auth.js:358`), en vez de
 una dirección fija que quede dando vueltas.
 
 **Con la fotografía es distinto, y conviene que lo sepa.** La foto del Perfil vive en un

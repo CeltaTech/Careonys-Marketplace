@@ -32,13 +32,13 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | | |
 |---|---|
 | 18 pantallas HTML, 12.811 renglones | sin ruteo: cada pantalla es un archivo |
-| 15.402 renglones de JavaScript propio, en 37 archivos | 9.271 de ellos son copias byte a byte de otro archivo (pendiente 13) |
+| 15.735 renglones de JavaScript propio, en 37 archivos | 9.477 de ellos son copias byte a byte de otro archivo (pendiente 13) |
 | 6.119 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
 | 4.653 renglones de hojas de estilo, en 10 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
 | 985 declaraciones más, pegadas al HTML | en 248 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 14 de las 18 pantallas rescatan la sesión al abrir |
 | 5 servidores de afuera, sin `package.json` ni compilación | cdn.jsdelivr.net, cdnjs.cloudflare.com, fonts.googleapis.com, fonts.gstatic.com, www.openstreetmap.org — hay que decir de qué es cada uno |
-| 29 tablas y 65 migraciones en el repositorio | 36 chequeos las miran antes de cada commit |
+| 35 tablas y 65 migraciones en el repositorio | 36 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
@@ -78,21 +78,23 @@ Careonys-Marketplace/
 │   ├── INVENTARIO.md           ← anatomía del código actual
 │   ├── PENDIENTES.md           ← lo abierto, con condición de cierre
 │   ├── DISENO.md               ← equivalencias de estilo con Careonys
-│   ├── TABLAS_QUE_FALTAN.md     ← diseño de las diez tablas que aún no existen
+│   ├── TABLAS_QUE_FALTAN.md     ← diseño de las siete tablas que todavía no existen
 │   ├── modelo_de_negocios_*.md             ← material de diseño; decisión comercial abierta
 │   └── terminos_y_condiciones_*.md         ← borradores legales sin revisión de abogado
-├── *.html                      ← las 12 pantallas del sitio, una por archivo
-├── css/                        ← styles.css, mockup-app.css
-├── js/                         ← apiClient.js, auth.js, main.js
+├── *.html                      ← las 16 pantallas del sitio, una por archivo
+├── css/                        ← tokens.css, styles.css, utilidades.css, mockup-app.css
+├── js/                         ← apiClient.js, auth.js, main.js y doce más
 ├── assets/images/
-├── data/                       ← JSON locales de la demo, hoy sin uso
+├── data/                       ← los catálogos y las frases que leen las pantallas
 ├── pwa-asistente/              ← aplicación instalable para Asistentes
 ├── pwa-familia/                ← aplicación instalable para Familias
+├── scripts/                    ← los chequeos y las pruebas que corren antes de cada commit
+├── supabase/                   ← config, migraciones y funciones
 └── vercel.json
 ```
 
-**`supabase/migrations/` todavía no existe.** Se crea con la primera migración; no se anticipan
-carpetas vacías.
+**`supabase/migrations/` lleva 65 migraciones, aplicadas todas al 2 de septiembre de 2026.** Una
+migración aplicada no se edita: se corrige con otra adelante.
 
 `apiClient.js` y `auth.js` existen **tres veces** —raíz, `pwa-asistente/`, `pwa-familia/`—
 idénticos byte a byte. La duplicación desaparece en la migración, cuando haya imports reales.

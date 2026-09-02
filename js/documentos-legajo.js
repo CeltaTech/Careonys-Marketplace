@@ -49,6 +49,29 @@ const DocumentosLegajo = {
     { clave: 'titulo',  campo: 'file-titulo',  deposito: 'documentos-cuidadores', base: 'titulo',      nombre: 'alta.archivo_titulo' }
   ],
 
+  /* A qué depósito va cada uno de los cuatro, escrito en su campo de archivo.
+     De ahí sale lo que el selector deja elegir, que antes estaba escrito a mano
+     en las dos pantallas y no decía lo mismo que el depósito: fue el pendiente
+     118. El destino lo declara `LOS_CUATRO` y nadie más —la pantalla no elige a
+     qué depósito va un papel; si lo eligiera, una pantalla podría mandar el
+     documento de identidad al depósito público—, y qué acepta ese depósito lo
+     dice `Sesion`, que guarda la copia de la migración 0006.
+
+     Corre sola al cargar, acá abajo. Un campo que no esté en la pantalla se
+     saltea: las dos altas piden los mismos cuatro papeles, pero una pantalla a
+     medio dibujar no tiene por qué fallar por esto. */
+  declararSusDepositos() {
+    let declarados = 0;
+    for (const doc of this.LOS_CUATRO) {
+      const entrada = document.getElementById(doc.campo);
+      if (!entrada) continue;
+      entrada.setAttribute('data-deposito', doc.deposito);
+      declarados++;
+    }
+    if (declarados && window.Sesion) window.Sesion.escribirLoQueSeAcepta();
+    return declarados;
+  },
+
   /* El estado de partida: cuatro papeles que todavía no llegaron. Es lo que
      queda anotado cuando la persona no eligió el archivo, y también lo que
      devuelve `subir` si no hay carpeta donde dejarlos. Se arma acá y no se
@@ -125,3 +148,14 @@ const DocumentosLegajo = {
 };
 
 if (typeof window !== 'undefined') window.DocumentosLegajo = DocumentosLegajo;
+
+// Al cargar: los cuatro selectores dicen a qué depósito van, y con eso queda
+// escrito lo que dejan elegir. Las dos pantallas lo heredan sin llamar a nada.
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded',
+      () => DocumentosLegajo.declararSusDepositos());
+  } else {
+    DocumentosLegajo.declararSusDepositos();
+  }
+}

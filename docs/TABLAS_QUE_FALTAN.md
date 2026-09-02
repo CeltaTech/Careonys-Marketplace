@@ -239,7 +239,12 @@ esquema a un proveedor de cobro que todavía no se eligió.
 
 ---
 
-### 10. `reportes` — alguien denuncia algo
+### 10. `moderacion` — alguien denuncia algo
+
+**No se llama `reportes`.** Ese nombre ya está ocupado desde la migración
+`0019_el_cuaderno_se_llama_reporte.sql`: es el reporte de cuidado, la tabla que la ficha de más
+arriba cuenta entre lo ya construido. `docs/ESQUEMA.md` §4 la nombra `moderacion` desde el
+principio, y acá se escribe igual.
 
 **Para qué.** Que una persona pueda decir que un perfil, un mensaje o una conducta están mal, y que
 quede registro de quién lo revisó.

@@ -54,9 +54,13 @@ const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
    empezar, y en su idioma.
 
    El `accept=` de los campos de archivo no cuenta como control: es una
-   sugerencia para el buscador de archivos, se puede desactivar en el diálogo
-   mismo, y hoy no dice lo mismo que el depósito —`image/*` deja elegir un
-   `image/gif` que el depósito no acepta—. Es el pendiente que queda anotado. */
+   sugerencia para el buscador de archivos y se puede desactivar en el diálogo
+   mismo. Pero tampoco se escribe a mano en la pantalla, y sale de acá: escrito
+   a mano se despegó en las dos direcciones —de menos, con un `.jpg,.png,.pdf`
+   que dejaba afuera el `heic` que sale de un iPhone sin tocar nada, así que la
+   foto de la credencial no se podía ni elegir; y de más, con un `image/*` que
+   ofrecía elegir un `gif` para rechazarlo después de subirlo entero—. Fue el
+   pendiente 118, y hoy lo escribe `_loQueAcepta()`, acá abajo. */
 const DEPOSITOS = {
   'documentos-cuidadores': {
     limite: 10485760,
@@ -89,6 +93,50 @@ function _porQueNoSeSube(deposito, archivo) {
   return null;
 }
 
+/* Lo que un depósito acepta, escrito como lo espera el atributo `accept` de un
+   campo de archivo. Sale de `DEPOSITOS`, que es la copia guardada de lo que
+   declara la migración: un solo lugar donde esté dicho qué se puede subir, y
+   ningún renglón de pantalla que lo vuelva a decir por su cuenta.
+
+   Devuelve la cadena vacía para un depósito que nadie declaró, y no una lista
+   inventada: si no se sabe a dónde va el archivo, no hay nada que ofrecer.
+   Quien de verdad rechaza es `_porQueNoSeSube()`, que contesta
+   `error.archivo_deposito` en ese mismo caso. */
+function _loQueAcepta(deposito) {
+  const acepta = Object.prototype.hasOwnProperty.call(DEPOSITOS, deposito)
+    ? DEPOSITOS[deposito] : null;
+  return acepta ? acepta.tipos.join(',') : '';
+}
+
+/* Le escribe a cada campo de archivo lo que se puede elegir. Cuál es su
+   depósito lo dice el campo con `data-deposito`, y qué acepta ese depósito lo
+   dice `DEPOSITOS`: la pantalla nombra el destino, nunca la lista.
+
+   Corre sola al cargar, acá abajo, así que una pantalla nueva no tiene que
+   acordarse de llamarla. Lo que se dibuja después —una ficha del legajo que la
+   persona agrega— la llama con su pedazo de pantalla, que es para lo que recibe
+   `raiz`.
+
+   A un depósito que nadie declaró se le saca el `accept` en vez de dejarle uno
+   vacío: los dos abren el diálogo de par en par, pero el vacío parece una
+   decisión. Que ese caso no llegue a la pantalla lo sostiene la primera regla de
+   `scripts/verificar_deposito.mjs`, que se pone roja con un nombre de depósito
+   que ninguna migración declara, también escrito en un `data-deposito`. */
+function _escribirLoQueSeAcepta(raiz) {
+  const base = raiz || (typeof document !== 'undefined' ? document : null);
+  if (!base || typeof base.querySelectorAll !== 'function') return 0;
+  let escritos = 0;
+  Array.prototype.forEach.call(
+    base.querySelectorAll('input[type="file"][data-deposito]'),
+    (campo) => {
+      const acepta = _loQueAcepta(campo.getAttribute('data-deposito'));
+      if (acepta) { campo.setAttribute('accept', acepta); escritos++; }
+      else campo.removeAttribute('accept');
+    }
+  );
+  return escritos;
+}
+
 /* El error se va con la clave del catálogo puesta. Clasificar el texto crudo
    del servidor es lo que hace `Texto.claveDeError`, y acá no hace falta
    adivinar nada: quien tira el error ya sabe qué pasó. Las dos claves son las
@@ -103,6 +151,11 @@ function _rechazo(clave) {
 const Sesion = {
 
   client: _sb,
+
+  /* Lo que acepta un depósito, y lo que se lo escribe a los campos de archivo
+     que digan a cuál van. Las dos salen de `DEPOSITOS`, arriba. */
+  aceptaDelDeposito: _loQueAcepta,
+  escribirLoQueSeAcepta: _escribirLoQueSeAcepta,
 
   // ── Obtener sesión activa ──────────────────────────────
   async getSession() {
@@ -340,6 +393,17 @@ const Sesion = {
     console.error('Restauración de la sesión guardada:', err);
   }
 })();
+
+/* Al cargar: cada campo de archivo dice qué se puede elegir. No se avisa nada
+   en pantalla y no puede fallar: sin ningún campo de archivo no escribe nada, y
+   el rechazo de verdad sigue estando antes de subir. */
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => _escribirLoQueSeAcepta());
+  } else {
+    _escribirLoQueSeAcepta();
+  }
+}
 
 window.Sesion = Sesion;
 window._sb = _sb; // Expuesto para uso directo de Realtime en páginas

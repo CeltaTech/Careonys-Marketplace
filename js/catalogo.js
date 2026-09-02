@@ -778,6 +778,12 @@
       // otras dos esperas dependen de la red igual que ésta pero pueden tardar
       // más. Encadenarlas dejaría los rótulos esperando a las opciones.
       await this.traducir(base);
+      // Y la Identidad escribe siempre despues. Traducir reemplaza el nodo de
+      // texto, asi que se lleva por delante lo que Identidad habia resuelto y
+      // anotado: el resultado era un boton que decia el nombre del producto
+      // donde va el de la Prestadora, y un titulo que volvia al castellano. Es
+      // el mismo orden que ya usa la lista que se arma sola mas abajo.
+      if (window.Identidad) window.Identidad.aplicarEnDocumento(base);
       await Promise.all([this._aplicarVocabularios(base), this._aplicarOferta(base)]);
     },
 

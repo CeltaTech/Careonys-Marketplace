@@ -1,15 +1,15 @@
 # Modelo de Negocios de Careonys: Plataforma SaaS B2B2C Multi-Tenant
 
 > [!WARNING]
-> **Material de diseño con una decisión sin resolver.** Revisado el 2026-08-23.
+> **Material de diseño de lo comercial de CeltaTech.** Revisado el 2026-08-23.
 >
-> Este documento pone planes, comisiones, precios y facturación **adentro del producto**. El
-> `CLAUDE.md` de Careonys decidió lo contrario: nada comercial vive del lado del producto, eso
-> pertenece al panel de CeltaTech. Son dos decisiones distintas tomadas en momentos distintos, y
-> una tiene que ceder antes de la fusión.
+> Acá está el modelo con el que se vende el producto: planes, comisiones y servicios pagos. Eso es
+> del nivel de CeltaTech y vive en su panel, no adentro del producto: lo fija `../../CLAUDE.md`,
+> «CeltaTech no sabe qué hacen los productos por dentro». Se conserva como material de diseño, no
+> como especificación de nada.
 >
-> **Hasta que se decida, no se construye lógica comercial en este proyecto** — ninguna tabla de
-> precios ni de planes. Detalle en `docs/ALCANCE.md` §4.
+> **Nada de esto se construye en este proyecto**: ninguna tabla de precios ni de planes, y ningún
+> nombre de plan escrito en el código. Detalle en `docs/ALCANCE.md` §4.
 
 Este documento define la arquitectura estratégica de negocios, modelos de monetización, propuesta de valor y unidad económica (*Unit Economics*) para la plataforma **Careonys**.
 

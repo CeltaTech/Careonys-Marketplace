@@ -153,9 +153,9 @@
       "pt-BR": "O e-mail ou a senha não coincidem."
     },
     "error.correo_sin_confirmar": {
-      "es-AR": "La cuenta existe, pero falta confirmar el correo. El enlace está en la casilla.",
-      "en": "The account exists, but the email address is still unconfirmed. The link is in the inbox.",
-      "pt-BR": "A conta existe, mas falta confirmar o e-mail. O link está na caixa de entrada."
+      "es-AR": "Falta confirmar el correo. El enlace de confirmación está en la casilla.",
+      "en": "The email address is still unconfirmed. The confirmation link is in the inbox.",
+      "pt-BR": "Falta confirmar o e-mail. O link de confirmação está na caixa de entrada."
     },
     "error.ya_registrado": {
       "es-AR": "Ya hay una cuenta con ese correo. Se puede entrar desde la pantalla de acceso.",
@@ -2836,9 +2836,9 @@
     },
     "___________________________________________": "── La aplicación del Asistente: el cajón, la pantalla de acceso y el tablero ──",
     "asistente.titulo_pagina": {
-      "es-AR": "{{producto}} Asistente — Portal Móvil",
-      "en": "{{producto}} Care Assistant — Mobile Portal",
-      "pt-BR": "{{producto}} Assistente de Cuidado — Portal Móvel"
+      "es-AR": "{{organizacion}} Asistente — Portal Móvil",
+      "en": "{{organizacion}} Care Assistant — Mobile Portal",
+      "pt-BR": "{{organizacion}} Assistente de Cuidado — Portal Móvel"
     },
     "asistente.descripcion_pagina": {
       "es-AR": "Aplicación del Asistente de Cuidado de {{producto}}. Fichado GPS, reportes de cuidado y registro de legajo.",
@@ -2871,9 +2871,9 @@
       "pt-BR": "Portal do Assistente de Cuidado"
     },
     "asistente.entrar": {
-      "es-AR": "Ingresar a {{producto}} Asistente",
-      "en": "Sign in to {{producto}} Care Assistant",
-      "pt-BR": "Entrar no {{producto}} Assistente de Cuidado"
+      "es-AR": "Ingresar a {{organizacion}} Asistente",
+      "en": "Sign in to {{organizacion}} Care Assistant",
+      "pt-BR": "Entrar no {{organizacion}} Assistente de Cuidado"
     },
     "asistente.sin_cuenta": {
       "es-AR": "¿No tiene cuenta?",

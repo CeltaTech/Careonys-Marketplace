@@ -14,7 +14,7 @@
    referencias, y no entran. Este guion es el que las abre, del único lado
    donde eso no es un agujero: la base de esta máquina.
 
-   Qué no hace, por lo mismo que los otros dos guiones locales:
+   Qué no hace, y por qué:
 
    - **No inventa ninguna clave ni la escribe en ningún lado.** La toma de la
      variable de entorno `CLAVE_PRUEBA_LOCAL` y, si no está, se niega a
@@ -34,6 +34,13 @@
    que abre es justamente la prueba que no puede fallar: si la fila hermana de
    `auth.identities` faltara, la clave quedaría puesta igual y la entrada
    seguiría fallando.
+
+   Es el único camino, y hasta el 2 de septiembre de 2026 no lo era. Había dos
+   guiones más —uno dejaba dos coordinadoras, una por Prestadora, y el otro una
+   Asistente con un legajo enganchado detrás—, y los dos quedaron haciendo a
+   mano lo que la 0065 hace sola, con correos inventados que ya ni coincidían
+   con los de la siembra. Salieron del proyecto: fue el pendiente 147,
+   cerrado el 2 de septiembre de 2026.
 =================================================== */
 
 import { execFileSync } from 'node:child_process';
@@ -179,7 +186,9 @@ for (const c of abiertas) {
 }
 console.log('');
 console.log('La clave de las ' + abiertas.length + ' es la que se pasó por CLAVE_PRUEBA_LOCAL,');
-console.log('y no queda escrita en ningún lado.');
+console.log('y no queda escrita en ningún lado. Para mirar las pantallas contra esta base:');
+console.log('');
+console.log('    python scripts/servidor_local.py 5599 --base-local');
 
 if (fallos) {
   console.error('');

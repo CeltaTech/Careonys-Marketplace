@@ -157,6 +157,15 @@ const ClienteDatos = {
     // que no tienen ningún selector que los distinga.
     Identidad.resolverOrganizacion(tenant.name);
 
+    // Y el catalogo vuelve a pasar. Traducir reemplaza el nodo de texto, asi que
+    // cuando las frases llegan despues que la Prestadora el rotulo queda con el
+    // nombre del producto y ya no hay marcador que resolver. Volver a pasarlo
+    // deja a Identidad escribiendo ultima, que es el orden que corresponde, y
+    // las frases ya estan en memoria: no vuelve a la red.
+    if (window.Catalogo && typeof window.Catalogo.aplicarEnDocumento === 'function') {
+      window.Catalogo.aplicarEnDocumento();
+    }
+
     // La insignia del producto va solo en el pie, y solo cuando lo que se muestra
     // es una Prestadora cliente y no el producto mismo.
     if (!Identidad.esProductoPropio(tenant)) {

@@ -22,9 +22,9 @@ historial entero.
 comprobaciones que sólo valen mirando la pantalla —que el aislamiento se
 sostenga donde lo ve una persona y no sólo donde lo ve una consulta—, y esas
 piden sesión con rol de coordinador. Esas cuentas viven en la base de esta
-máquina (`scripts/preparar_coordinadores_locales.mjs`), porque en el servidor de
-verdad crear una pide confirmar un correo y ascenderla pide una clave que acá no
-se abre. El cambio se hace **sobre el texto que sale por la red y nunca sobre el
+máquina —las siembra la migración 0065 y les pone la clave
+`scripts/abrir_cuentas_ficticias.mjs`—, porque en el servidor de verdad crear una
+pide confirmar un correo y ascenderla pide una clave que acá no se abre. El cambio se hace **sobre el texto que sale por la red y nunca sobre el
 archivo**: la alternativa era cambiar la dirección a mano y acordarse de volverla
 atrás, y el día que alguien se olvida el repositorio queda apuntando a
 `localhost` y la publicación sale rota.

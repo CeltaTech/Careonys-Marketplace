@@ -36,7 +36,7 @@ no contra lo que dicen los documentos.
 
 | Dónde | Columna | Cómo está en el esquema | Qué tiene adentro hoy |
 |---|---|---|---|
-| `matriculas_asistente` | `vencimiento` | `date not null` — `supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:49` | **3 filas y las tres con fecha.** La escribe el producto: la ficha la pide obligatoria (`data/catalogo-fichas.json:40`) y la guarda `js/apiClient.js:378` |
+| `matriculas_asistente` | `vencimiento` | `date not null` — `supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:49` | **3 filas y las tres con fecha.** La escribe el producto: la ficha la pide obligatoria (`data/catalogo-fichas.json:40`) y la guarda `js/apiClient.js:387` |
 | `documentos_asistente` | `vencimiento` | `date`, puede faltar — `supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:125` | **Nada, y no porque falte sembrarla: la tabla no la escribe nadie.** Es el grupo (a) del pendiente 111 |
 | `verificaciones_asistente` | `plazo_vence_el` | `date`, sólo en los tipos que llevan plazo — `supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:144` | **14 filas y ninguna con plazo.** Es una de las siete columnas vacías del pendiente 110 |
 

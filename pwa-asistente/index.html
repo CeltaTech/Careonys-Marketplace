@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title data-frase="asistente.titulo_pagina">{{producto}} Asistente — Portal Móvil</title>
+  <title data-frase="asistente.titulo_pagina">{{organizacion}} Asistente — Portal Móvil</title>
   <meta name="description" data-frase-content="asistente.descripcion_pagina"
     content="Aplicación del Asistente de Cuidado de {{producto}}. Fichado GPS, reportes de cuidado y registro de legajo." />
   <link rel="manifest" href="manifest.json" />
@@ -334,7 +334,7 @@
                  data-frase-placeholder="acceso.contrasena" required />
         </div>
         <button type="button" class="btn-login" id="btn-action-login"
-                data-frase="asistente.entrar">Ingresar a {{producto}} Asistente</button>
+                data-frase="asistente.entrar">Ingresar a {{organizacion}} Asistente</button>
         <!-- El estado error del arranque. Antes, si algo del arranque fallaba, el
              detalle se iba a la consola y la pantalla quedaba idéntica a la de
              quien nunca inició sesión: no había forma de distinguir «no hay
@@ -582,10 +582,10 @@
                  el único lugar donde está escrito qué papel va a qué depósito.
                  Hasta el 2 de septiembre de 2026 tres no tenían identificador y
                  el cuarto no lo leía nadie, así que ninguno de los cuatro subía. -->
-            <div class="wfield"><label data-frase="legajo.doc_foto">📸 Foto de Perfil (tipo carnet)</label><input type="file" id="foto-perfil" accept="image/*" /></div>
-            <div class="wfield"><label data-frase="legajo.doc_dni">🛡️ Foto DNI (Frente y Dorso)</label><input type="file" id="file-dni" accept="image/*,.pdf" /></div>
-            <div class="wfield"><label data-frase="legajo.doc_penales">📋 Antecedentes Penales (vigente)</label><input type="file" id="file-penales" accept="image/*,.pdf" /></div>
-            <div class="wfield"><label data-frase="legajo.doc_titulo">📜 Título / Certificados</label><input type="file" id="file-titulo" accept="image/*,.pdf" /></div>
+            <div class="wfield"><label data-frase="legajo.doc_foto">📸 Foto de Perfil (tipo carnet)</label><input type="file" id="foto-perfil" /></div>
+            <div class="wfield"><label data-frase="legajo.doc_dni">🛡️ Foto DNI (Frente y Dorso)</label><input type="file" id="file-dni" /></div>
+            <div class="wfield"><label data-frase="legajo.doc_penales">📋 Antecedentes Penales (vigente)</label><input type="file" id="file-penales" /></div>
+            <div class="wfield"><label data-frase="legajo.doc_titulo">📜 Título / Certificados</label><input type="file" id="file-titulo" /></div>
 
             <!-- Las fichas repetibles del legajo. Salen de data/catalogo-fichas.json
                  y las dibuja js/fichas-legajo.js, el mismo archivo que usa el

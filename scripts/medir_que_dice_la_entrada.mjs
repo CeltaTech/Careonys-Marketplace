@@ -9,10 +9,18 @@
 
    Prueba a entrar **con una contraseña equivocada** tres veces: con una
    dirección que no tiene cuenta, con una que tiene cuenta confirmada y con una
-   que tiene cuenta sin confirmar. Si las tres respuestas son iguales, la regla
-   se cumple. Si la tercera es distinta, entonces cualquiera que escriba una
-   dirección se entera de que esa dirección tiene cuenta, que es exactamente lo
-   que la regla prohíbe.
+   que tiene cuenta sin confirmar. Y mira **las dos cosas que recibe la persona**:
+   qué dice la respuesta y cuánto tarda en llegar. La regla se cumple sólo si las
+   tres son iguales en las dos. Si alguna se distingue por cualquiera de las dos,
+   entonces cualquiera que escriba una dirección se entera de que esa dirección
+   tiene cuenta, que es exactamente lo que la regla prohíbe.
+
+   **El reloj es una respuesta más, aunque no se lea.** El servidor de cuentas
+   sólo revuelve la contraseña cuando la dirección existe, y revolverla cuesta;
+   cuando no existe contesta enseguida. Así que puede decir la misma frase letra
+   por letra y separar igual a las direcciones registradas de las demás, sin decir
+   una palabra. Medir sólo el texto es una prueba que por ese lado no puede
+   fallar, y por eso acá se miden los dos.
 
    Por qué hace falta medirlo y no leerlo. El servidor de cuentas puede revisar
    la confirmación **antes** o **después** de la contraseña, y de eso depende
@@ -281,19 +289,101 @@ if (huellas.length < 3) {
   process.exit(1);
 }
 
-const distintas = new Set(huellas.map((h) => h.huella));
-if (distintas.size === 1) {
-  console.log('Las tres respuestas son idénticas: desde la entrada no se puede averiguar');
-  console.log('si una dirección tiene cuenta. La regla se cumple.');
+/* ── La segunda respuesta: cuánto tarda ────────────────────────────────
+   Hasta acá se comparó lo que dice. Falta lo que tarda, que es la otra mitad de lo
+   que la persona recibe y no está escrito en ninguna pantalla.
+
+   Se cronometra **intercalando** las tres clases —una de cada una, y otra vuelta—
+   para que un tirón de la máquina caiga sobre las tres por igual y no se lo confunda
+   con una diferencia del servidor. La primera vuelta se descarta, porque carga además
+   con abrir la conexión.
+
+   El veredicto no mira promedios: mira si los recorridos **se solapan**. Si el intento
+   más lento de una clase sigue siendo más rápido que el más veloz de otra, entonces
+   con un solo intento y un cronómetro alcanza para saber de cuál se trata, y no hace
+   falta ninguna astucia estadística para aprovecharlo. */
+
+const VUELTAS = 12;
+
+async function cronometrarEntrada(correo) {
+  const arranque = process.hrtime.bigint();
+  const r = await intentarEntrar(correo);
+  return { ms: Number(process.hrtime.bigint() - arranque) / 1e6, huella: r.huella };
+}
+
+const medidos = casos.filter((c) => c.correo);
+const tiempos = new Map(medidos.map((c) => [c.rotulo, []]));
+
+// Una vuelta de calentamiento, que no se cuenta.
+for (const caso of medidos) await cronometrarEntrada(caso.correo);
+
+/* Si a mitad de la medición el servidor empieza a contestar otra cosa —el tope de
+   intentos seguidos, por ejemplo— los tiempos dejan de ser comparables, y peor:
+   se emparejan solos y la prueba daría verde por la razón equivocada. Así que se
+   mira que siga contestando lo mismo que contestó recién, y si no, se dice. */
+const esperadas = new Map(huellas.map((h) => [h.rotulo, h.huella]));
+
+for (let vuelta = 0; vuelta < VUELTAS; vuelta++) {
+  for (const caso of medidos) {
+    const r = await cronometrarEntrada(caso.correo);
+    if (r.huella !== esperadas.get(caso.rotulo)) {
+      negarse(
+        'A mitad de la medición el servidor empezó a contestar otra cosa, así que los',
+        'tiempos ya no son comparables y la medición no vale. Conviene esperar unos',
+        'minutos —puede ser el tope de intentos seguidos— y volver a correrla.'
+      );
+    }
+    tiempos.get(caso.rotulo).push(r.ms);
+  }
+}
+
+const mediana = (a) => [...a].sort((x, y) => x - y)[Math.floor(a.length / 2)];
+
+console.log(`Y cuánto tarda en contestar, en ${VUELTAS} vueltas intercaladas:`);
+for (const caso of medidos) {
+  const t = tiempos.get(caso.rotulo);
+  console.log(
+    `  ${caso.rotulo.padEnd(38)} ${mediana(t).toFixed(0).padStart(4)}ms de mediana, ` +
+    `entre ${Math.min(...t).toFixed(0)} y ${Math.max(...t).toFixed(0)}`
+  );
+}
+console.log('');
+
+// Dos clases quedan separadas si sus recorridos no se tocan en ningún intento.
+const separadas = [];
+for (let i = 0; i < medidos.length; i++) {
+  for (let k = i + 1; k < medidos.length; k++) {
+    const a = tiempos.get(medidos[i].rotulo);
+    const b = tiempos.get(medidos[k].rotulo);
+    if (Math.max(...a) < Math.min(...b) || Math.max(...b) < Math.min(...a)) {
+      separadas.push([medidos[i].rotulo, medidos[k].rotulo]);
+    }
+  }
+}
+
+const textoDelata = new Set(huellas.map((h) => h.huella)).size > 1;
+const relojDelata = separadas.length > 0;
+
+if (!textoDelata && !relojDelata) {
+  console.log('Las tres clases contestan lo mismo y tardan lo mismo: desde la entrada no');
+  console.log('se puede averiguar si una dirección tiene cuenta. La regla se cumple.');
   process.exit(0);
 }
 
-console.log('Las respuestas NO son todas iguales, así que la entrada deja averiguar');
-console.log('si una dirección tiene cuenta, y la regla de la empresa lo prohíbe:');
-console.log('«el error no debe permitir distinguir "esa persona no existe" de');
-console.log('"la clave está mal"».');
-console.log('');
-console.log('Y el texto que ve la persona lo dice todavía más claro: la clave');
-console.log('`error.correo_sin_confirmar` de `data/catalogo-frases.json` empieza por');
-console.log('«La cuenta existe».');
+if (textoDelata) {
+  console.log('El TEXTO delata: las tres respuestas no son todas iguales, así que alcanza');
+  console.log('con leerlas para saber si una dirección tiene cuenta.');
+  console.log('');
+}
+
+if (relojDelata) {
+  console.log('El RELOJ delata: hay clases cuyos tiempos no se solapan en ningún intento,');
+  console.log('así que con un cronómetro alcanza para distinguirlas aunque digan lo mismo');
+  console.log('letra por letra:');
+  for (const [uno, otro] of separadas) console.log(`  · «${uno}» y «${otro}»`);
+  console.log('');
+}
+
+console.log('Y la regla de la empresa lo prohíbe: «el error no debe permitir distinguir');
+console.log('"esa persona no existe" de "la clave está mal"».');
 process.exit(1);

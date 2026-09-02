@@ -1,8 +1,8 @@
 # Esquema de base de datos
 
 > **Cómo se diseña la base de este proyecto.** Cuando esto se escribió no había ninguna
-> migración; hoy hay veinte aplicadas y veinticuatro tablas, y lo de abajo sigue siendo la regla
-> con la que se escribe cada una.
+> migración; al 2 de septiembre de 2026 hay 65 aplicadas y 35 tablas, y lo de abajo sigue siendo
+> la regla con la que se escribe cada una. La cuenta la mide `node scripts/verificar_esquema.mjs`.
 >
 > La §1 desarma cinco errores de seguridad sobre veinte renglones de SQL. Está primero a propósito:
 > son sutiles, se escriben sin darse cuenta y ninguno da error al aplicarlo. Las reglas de la §2
@@ -89,8 +89,8 @@ prueba de la §3 y no leyendo el SQL.
 
 1. **Claves primarias UUID** en todas las tablas, sin excepción. Es lo que permite fusionar con
    Careonys sin remapear relaciones.
-2. **`prestadora_id` en toda tabla con datos propios de una Organización**, aunque hoy siempre
-   valga lo mismo. Incluye las que hoy no la tienen, como los reportes.
+2. **`prestadora_id` en toda tabla con datos propios de una Organización.** De las 35 de hoy sólo
+   dos no la llevan: `tenants`, que **es** la Organización, y `patrones_de_contacto`, catálogo común.
 3. **RLS activada en la misma migración que crea la tabla.** Nunca aplicada después a mano desde
    el dashboard.
 4. **Una sola política permisiva de lectura por tabla y por rol.** Si hacen falta dos condiciones,
@@ -138,9 +138,9 @@ Prestadora. Con datos ficticios sale gratis; con datos reales no se puede hacer 
 
 ## 4. Insumos para el diseño
 
-- **`docs/TABLAS_QUE_FALTAN.md`** tiene el diseño de las diez tablas que aún no existen:
-  postulaciones, chat, videollamadas, reseñas, puntos, notificaciones, favoritos, pagos,
-  moderación y configuración. Salió del plan técnico heredado, que se borró el 25 de agosto de
+- **`docs/TABLAS_QUE_FALTAN.md`** tiene el diseño de diez tablas, de las que hoy siguen sin
+  existir siete: videollamadas, reseñas, puntos, notificaciones, favoritos, pagos y moderación
+  —más `configuracion`, que no es de negocio—. Salió del plan heredado, borrado el 25 de agosto de
   2026 porque su arquitectura estaba descartada y sus otras doce tablas ya estaban construidas con
   otro nombre. Se usa como entrada, no como plan: **nada de eso está aprobado**, y cada ficha dice
   qué hay que decidir antes. Ya viene con el vocabulario del glosario y con las cinco reglas que

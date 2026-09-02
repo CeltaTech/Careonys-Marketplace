@@ -1,8 +1,8 @@
 # Sistema de diseño — equivalencias con Careonys
 
-> **Conclusión primero.** De las 32 variables de `css/styles.css`, **20 tienen equivalente
-> directo** en el sistema de diseño de Careonys, **6 se reemplazan** porque son de otra marca, y
-> **6 apuntan a huecos**: cosas que este proyecto nombra y Careonys todavía no.
+> **Conclusión primero.** De las 32 variables que `css/styles.css` tenía antes del porteo, **20
+> tienen equivalente directo** en el sistema de diseño de Careonys, **6 se reemplazan** porque son
+> de otra marca, y **6 apuntan a huecos**: cosas que este proyecto nombra y Careonys todavía no.
 >
 > Fuente del lado de Careonys: `productos/careonys/panel/src/styles/variables.css` (40 tokens, el
 > juego completo) y `productos/careonys/pwa-familias/src/styles/variables.css` (16, el subconjunto
@@ -29,7 +29,7 @@ ojo. Los `#RRGGBB` de este proyecto no se convierten a mano: se reemplazan por e
 |---|---|---|---|
 | `--text-dark` | `#1e1e1e` | `--texto-principal` | |
 | `--text-mid` | `#444444` | `--texto-secundario` | |
-| `--text-light` | `#777777` | `--texto-secundario` | Careonys tiene dos niveles de gris, no cuatro |
+| `--text-light` | `#777777` | `--texto-secundario` | Careonys tiene dos grises de texto; el quinto de acá no colapsa: es hueco |
 | `--text-muted` | `#64748b` | `--texto-secundario` | Ídem |
 | `--bg-white` | `#ffffff` | `--superficie` | Solo donde sea una tarjeta o un modal |
 | `--bg-light` | `#f0f0f0` | `--superficie-hover` | |
@@ -79,11 +79,11 @@ Cambiar una variable no cambia un `.png`: se reemplazan de a una.
 
 ## 4. Lo que este proyecto tiene y Careonys no
 
-Nueve cosas existen acá y no del otro lado: cuatro medidas de redondeo, una duración de animación,
-un tercer nivel de gris para texto, el anillo del foco de teclado y las dos piezas que acompañan a
-`--texto-sobre-color` —el renglón secundario y el borde de lo que se apoya sobre fondo oscuro—.
-Están en la sección propia del marketplace de `css/tokens.css`. Si algún día Careonys las necesita,
-se agregan allá y esta sección desaparece.
+Los **seis huecos** de la conclusión son las cuatro medidas de redondeo, la duración de la
+animación y el tercer nivel de gris para texto —`--text-subtle` allá, `--texto-tenue` acá—: el más
+tenue de los cinco grises que había, y por eso el único que no colapsó en `--texto-secundario`.
+Viven en la sección propia del marketplace de `css/tokens.css`, que hoy tiene 27 tokens: esos seis
+y lo agregado después. Si algún día Careonys los nombra, se agregan allá y esta sección desaparece.
 
 ---
 

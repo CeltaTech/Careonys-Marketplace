@@ -63,7 +63,7 @@ Trae cuatro cosas que no son el guardado en sí, y que son la parte que cuesta e
 | Las ocho políticas: todos leen el general y lo propio, cada una escribe sólo lo suyo | mismo archivo, `:308` a `:345` |
 | Los dos disparadores que impiden cruzar Prestadoras y pisar el catálogo general | mismo archivo, `:210` y `:275` |
 | La puerta anónima `vocabularios_de(p_slug)` | mismo archivo, `:375` |
-| Cómo lo pide el navegador | `js/apiClient.js:238` |
+| Cómo lo pide el navegador | `js/apiClient.js:247` |
 | El archivo JSON, que pasó a ser copia generada y sin conexión | `scripts/generar_vocabularios.mjs` |
 | La comprobación de que la copia no se despegó | `scripts/verificar_catalogo.mjs` |
 
