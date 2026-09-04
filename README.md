@@ -26,7 +26,7 @@ dos repositorios y dos proyectos de Supabase independientes.
 Sitio estático en HTML, CSS y JavaScript plano, en proceso de migración a React + Vite para
 alinearse con el stack de Careonys.
 
-Medido el 2 de septiembre de 2026 sobre el árbol de trabajo con `node scripts/medir_estado.mjs`, que es de
+Medido el 4 de septiembre de 2026 sobre el árbol de trabajo con `node scripts/medir_estado.mjs`, que es de
 donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
@@ -38,7 +38,7 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | 951 declaraciones más, pegadas al HTML | en 242 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 14 de las 18 pantallas rescatan la sesión al abrir |
 | 5 servidores de afuera, sin `package.json` ni compilación | cdn.jsdelivr.net, cdnjs.cloudflare.com, fonts.googleapis.com, fonts.gstatic.com, www.openstreetmap.org — hay que decir de qué es cada uno |
-| 35 tablas y 67 migraciones en el repositorio | 36 chequeos las miran antes de cada commit |
+| 35 tablas y 69 migraciones en el repositorio | 36 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.

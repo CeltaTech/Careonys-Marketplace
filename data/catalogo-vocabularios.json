@@ -389,8 +389,8 @@
         {
           "en": "Cancer patient",
           "clave": "oncologico",
-          "es-AR": "Paciente oncológico",
-          "pt-BR": "Paciente oncológico"
+          "es-AR": "Pacientes oncológicos",
+          "pt-BR": "Pacientes oncológicos"
         }
       ]
     },
@@ -722,10 +722,10 @@
       ],
       "items": [
         {
-          "en": "General course for home care Caregivers",
+          "en": "Course in gerontology for home care",
           "clave": "curso_gerontologico",
-          "es-AR": "Curso general de asistente de cuidado domiciliario",
-          "pt-BR": "Curso geral de assistente de cuidado domiciliar"
+          "es-AR": "Curso de gerontología para cuidado domiciliario",
+          "pt-BR": "Curso de gerontologia para cuidado domiciliar"
         },
         {
           "en": "Specialisation in cognitive impairment and Alzheimer's",
@@ -1180,7 +1180,7 @@
         {
           "en": "Senior Caregiver (Silver)",
           "clave": "plata",
-          "es-AR": "Asistente senior (Plata)",
+          "es-AR": "Asistente con experiencia (Plata)",
           "pt-BR": "Assistente sênior (Prata)"
         },
         {
