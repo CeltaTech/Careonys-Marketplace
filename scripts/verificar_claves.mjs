@@ -61,12 +61,13 @@ const COLUMNAS = {
   dia: 'dia_semana',
   turno: 'turno',
   puesto: 'puesto_experiencia',
-  // Las dos de `verificaciones_asistente`. Hoy es la única tabla con esos dos
-  // nombres de columna, así que la lista sigue funcionando aunque no diga la
-  // tabla; el día que otra tabla estrene un `estado`, esta lista tiene que
-  // pasar a nombrar el par tabla-columna en vez de la columna sola.
-  tipo: 'verificacion',
-  estado: 'estado_verificacion'
+  // `tipo` y `estado` se nombran por tabla y no por columna sola: la 0072
+  // estrenó un segundo `estado` —en `oferta_comercial`— que ningún
+  // vocabulario gobierna, porque «publicado»/«proximamente» son el ciclo de
+  // vida del ítem, no una verificación. El día que otra tabla necesite
+  // gobernar el suyo, se agrega acá con el mismo par tabla.columna.
+  'verificaciones_asistente.tipo': 'verificacion',
+  'verificaciones_asistente.estado': 'estado_verificacion'
 };
 
 const catalogo = JSON.parse(
@@ -245,17 +246,16 @@ function revisarSql(sql) {
   const renglon = (i) => limpio.slice(0, i).split('\n').length;
 
   /** Empareja cada tupla con su lista de columnas y anota lo que no es clave. */
-  const revisarTuplas = (columnas, tuplas, arranque) => {
+  const revisarTuplas = (tabla, columnas, tuplas, arranque) => {
     const interesan = columnas
-      .map((c, i) => [i, c])
-      .filter(([, c]) => Object.prototype.hasOwnProperty.call(COLUMNAS, c));
+      .map((c, i) => [i, c, COLUMNAS[`${tabla}.${c}`] || COLUMNAS[c]])
+      .filter(([, , vocabulario]) => vocabulario !== undefined);
     if (interesan.length === 0) return;
 
     for (const tupla of tuplas) {
       const valores = partirAlRas(tupla);
       if (valores.length !== columnas.length) continue;
-      for (const [i, columna] of interesan) {
-        const vocabulario = COLUMNAS[columna];
+      for (const [i, columna, vocabulario] of interesan) {
         const validas = clavesDe(vocabulario);
         for (const texto of textosDe(valores[i])) {
           if (validas.has(texto)) continue;
@@ -275,6 +275,7 @@ function revisarSql(sql) {
   while ((cabecera = INSERT.exec(limpio)) !== null) {
     const arranque = cabecera.index + cabecera[0].length;
     revisarTuplas(
+      cabecera[1],
       cabecera[2].split(',').map((c) => c.trim().replace(/"/g, '')),
       tuplasDesde(limpio, arranque),
       arranque
@@ -282,9 +283,11 @@ function revisarSql(sql) {
   }
 
   /* Y la otra forma de sembrar, la que junta una lista de valores contra una
-     tabla para sacar de ahí la Prestadora. */
+     tabla para sacar de ahí la Prestadora. Acá no hay una sola tabla destino
+     inequívoca —es un `join`—, así que sólo se juzgan las columnas que la
+     lista de arriba gobierna por nombre solo, nunca las que piden tabla. */
   for (const bloque of bloquesDeValores(limpio)) {
-    revisarTuplas(bloque.columnas, bloque.tuplas, bloque.arranque);
+    revisarTuplas(null, bloque.columnas, bloque.tuplas, bloque.arranque);
   }
 
   return reparos;

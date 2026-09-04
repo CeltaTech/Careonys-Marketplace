@@ -255,16 +255,20 @@
   }
 
   // La oferta llega de dos lugares, y eso no es una etapa a medias: es el
-  // estado real de cada mitad. Los cursos ya tienen tabla —migración 0008— y
-  // desde la 0051 su oferta general se ve sin sesión, así que salen de la base.
-  // Los servicios y las evaluaciones todavía no tienen tabla —pendiente 7—, y
-  // hasta que la tengan el archivo es su único lugar.
+  // estado real de cada mitad. Los cursos ya tienen tabla —migración 0008,
+  // vista desde la 0051— y los nueve ítems de `data-oferta="servicios"`
+  // —Busco Asistente, Cursos, Monitoreo, etc.— tienen la suya desde la 0072
+  // (tabla `oferta_comercial`, vista `oferta_comercial_publica`). El archivo
+  // sigue siendo el respaldo: si la base no está al alcance, lo que trae él
+  // es lo que se ve.
   async function _traerOferta() {
     const respuesta = await fetch(ARCHIVO('catalogo-oferta'), { cache: 'no-cache' });
     if (!respuesta.ok) throw new Error('La oferta respondió ' + respuesta.status);
     const datos = await respuesta.json();
     const cursos = await _traerCursosDeLaBase();
     if (cursos) datos.cursos = cursos;
+    const servicios = await _traerOfertaComercialDeLaBase();
+    if (servicios) datos.servicios = servicios;
     return datos;
   }
 
@@ -280,6 +284,23 @@
       const cursos = await cliente.ofertaDeCursos();
       if (!Array.isArray(cursos) || cursos.length === 0) return null;
       return cursos;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Igual que `_traerCursosDeLaBase()`, para la vista `oferta_comercial_publica`.
+  // La clave que se sobreescribe (`servicios`) es la que ya lee
+  // `data-oferta="servicios"` en las pantallas; adentro de la base la tabla se
+  // llama `oferta_comercial` para no chocar con «Servicio» del glosario
+  // compartido, que es prestación directa y esto no lo es.
+  async function _traerOfertaComercialDeLaBase() {
+    const cliente = window.ClienteDatos;
+    if (!cliente || typeof cliente.ofertaComercial !== 'function') return null;
+    try {
+      const servicios = await cliente.ofertaComercial();
+      if (!Array.isArray(servicios) || servicios.length === 0) return null;
+      return servicios;
     } catch (e) {
       return null;
     }

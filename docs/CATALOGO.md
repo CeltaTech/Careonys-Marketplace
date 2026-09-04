@@ -7,7 +7,7 @@ otro lado:
 | Archivo | Qué guarda |
 |---|---|
 | `data/catalogo-vocabularios.json` | 22 listas de opciones, 134 opciones en total |
-| `data/catalogo-oferta.json` | 9 servicios, 6 cursos y la evaluación con sus 2 preguntas |
+| `data/catalogo-oferta.json` | 9 servicios y 6 cursos |
 | `data/catalogo-autorizaciones.json` | Lo que el Asistente autoriza al cerrar el alta |
 | `data/catalogo-disponibilidad.json` | La grilla de días y turnos, y la pregunta de los reemplazos urgentes |
 | `data/catalogo-fichas.json` | 4 fichas repetibles: matrícula, estudio, experiencia y referencia |
@@ -256,9 +256,12 @@ agrega de a uno. Son cuatro, no tres: la Matrícula es la que faltaba y la que b
 **Cuáles verificaciones bloquean el alta y cuáles son opcionales** es una decisión de negocio, no
 un dato de catálogo. Está sin tomar.
 
-## Lo que falta
+## Lo que ya no falta
 
-Está en `docs/PENDIENTES.md`, pendiente 7. En resumen: estos dos archivos son la semilla, no el
-destino. El destino son las tablas de Careonys, porque este proyecto es una modalidad suya y no un
-producto aparte: ver `docs/ALCANCE.md` §3. Antes de escribirlas hay que ver cuánto de este
-catálogo ya existe allá —`tipos_asistente` y `zonas_cobertura` seguro, y hay tabla de tareas—.
+Fue el pendiente 7, cerrado el 4 de septiembre de 2026: los dos archivos dejaron de ser la
+verdad y pasaron a ser la semilla y el respaldo sin conexión. Los 25 vocabularios viven en
+`vocabularios`/`vocabulario_items` (migración 0038), los 6 cursos se publican por la vista
+`oferta_de_cursos` (migración 0051) y los 9 servicios por `oferta_comercial`/
+`oferta_comercial_publica` (migración 0072). Si además conviene llevarlos a las tablas propias
+de Careonys —porque este proyecto es una modalidad suya y no un producto aparte, ver
+`docs/ALCANCE.md` §3— es una pregunta distinta, de la fusión, y no bloquea nada de acá.

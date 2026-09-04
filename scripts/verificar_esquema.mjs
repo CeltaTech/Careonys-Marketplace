@@ -475,7 +475,14 @@ export const VISTAS_AL_ALCANCE_ANONIMO = new Map([
    '—`tenant_id is null`— y a las publicadas, así que no sale por ahí ni un curso de una ' +
    'Prestadora ni el nombre de ninguna. Y no publica una sola columna del contenido del ' +
    'curso: ni evaluaciones, ni preguntas, ni opciones, que se siguen pidiendo con sesión; ' +
-   'migración 0051']
+   'migración 0051'],
+  ['oferta_comercial_publica',
+   'la oferta comercial de la portada —Busco Asistente, Cursos, Monitoreo y el resto de ' +
+   '`data-oferta="servicios"`— la dibujan `index.html` y `solicitar-asistente.html`, dos ' +
+   'pantallas que se ven sin cuenta, así que la vista se abre sin sesión o esas pantallas ' +
+   'no tienen qué mostrar. No es un listado suelto: su cuerpo la acota a la oferta general ' +
+   'del producto —`tenant_id is null`— y a las activas, así que no sale por ahí ni un ' +
+   'ítem propio de una Prestadora ni el nombre de ninguna; migración 0072']
 ]);
 
 /* Tablas de `public` que a propósito se leen sin sesión porque **no guardan

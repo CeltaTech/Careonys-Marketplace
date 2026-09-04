@@ -240,10 +240,11 @@
        La tabla `cursos` le sigue sin conceder nada a `anon`, y lo que se estudia, sus
        evaluaciones y sus preguntas no salen por ahí. Por eso esta pantalla ahora sí carga
        el cliente de datos; el de sesión sigue sin hacer falta, porque la vista se lee sin
-       iniciar sesión. Del archivo `data/catalogo-oferta.json` siguen saliendo los
-       servicios y las evaluaciones, que todavía no tienen tabla —pendiente 7—, y de ahí
-       salen también los cursos cuando la base no está al alcance: sin conexión, o contra
-       una base donde la 0051 todavía no corrió. -->
+       iniciar sesión. La oferta comercial —Busco Asistente, Cursos, Monitoreo y el resto—
+       se cerró del mismo modo el 4 de septiembre de 2026: la migración 0072 abrió la vista
+       `oferta_comercial_publica`, y fue el pendiente 7. `data/catalogo-oferta.json` sigue
+       existiendo sólo como respaldo cuando la base no está al alcance: sin conexión, o
+       contra una base donde esas migraciones todavía no corrieron. -->
   <script src="js/apiClient.js"></script>
   <script src="js/main.js"></script>
   <script src="js/formulario-consulta.js"></script>

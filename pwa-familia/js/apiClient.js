@@ -781,6 +781,18 @@ const ClienteDatos = {
     });
   },
 
+  // La oferta comercial de la portada —Busco Asistente, Cursos, Monitoreo y
+  // el resto de `data-oferta="servicios"`—, la que se ve sin iniciar sesión.
+  // Mismo criterio que `ofertaDeCursos()`: va contra la vista
+  // `oferta_comercial_publica` (migración 0072) y no contra la tabla, que no
+  // le concede nada a `anon`.
+  async ofertaComercial() {
+    return await this._supabaseRequest('GET', 'oferta_comercial_publica', null, {
+      select: '*',
+      order: 'orden.asc'
+    });
+  },
+
   // La oferta de cursos de quien inició sesión: la general de CeltaTech más la
   // de su Prestadora, nunca la de otra. Eso no lo decide este renglón sino la
   // política de la tabla (migración 0008), que es donde tiene que decidirse.
