@@ -3376,7 +3376,7 @@ renglón que ya está en vez de agregar otro. No existía en ninguna de las tres
 y `marcarVerificacion()` (`js/apiClient.js:598`) es la primera que la usa.
 
 **Probado con las dos Organizaciones ficticias, y la prueba puede fallar.** Ocho comprobaciones
-nuevas en `scripts/probar_aislamiento.mjs:879`, que llevaron la corrida de 119 a 127. Se hacen
+nuevas en `scripts/probar_aislamiento.mjs:920`, que llevaron la corrida de 119 a 127. Se hacen
 sobre un legajo recién creado que arranca **sin ninguna comprobación cargada**, que es la condición
 que pedía el pendiente: sobre uno ya sembrado, la pantalla rota y la sana contestan lo mismo. Quedó
 comprobado que el personal de la Prestadora puede marcar; que la huella la escribe la base aunque
@@ -3430,7 +3430,7 @@ no dijo que sí. Quedan nueve publicados de trece, y las tres cuentas las compru
 migración: si alguien afloja la condición de la vista, la migración deja de correr.
 
 **Probado con las dos Organizaciones ficticias, y la prueba puede fallar.** Dos comprobaciones
-nuevas en `scripts/probar_aislamiento.mjs:829`, que llevaron la corrida de 127 a 129. Van sobre un
+nuevas en `scripts/probar_aislamiento.mjs:870`, que llevaron la corrida de 127 a 129. Van sobre un
 legajo recién creado, y en este orden: valida la Prestadora y no aparece; dice que sí la persona y
 **tampoco** aparece; se le comprueba **un** papel de los dos y sigue sin aparecer —que es lo que
 distingue «la puerta mira la lista entera» de «la puerta se conforma con encontrar algo»—; y recién

@@ -523,7 +523,22 @@ for (const [etiqueta, prestadora] of [['A', A], ['B', B]]) {
     process.exit(1);
   }
   let token = alta.cuerpo.access_token;
-  if (!token) {
+  const userIdCuenta = alta.cuerpo.user?.id || alta.cuerpo.id;
+  // Desde que se recreó el contenedor de cuentas del entorno local (fue el
+  // pendiente 123, cerrado), el alta local ya no confirma sola: hay que
+  // confirmarla a propósito, con la llave de servicio, y recién ahí pedir la sesión.
+  if (!token && claveServicio && userIdCuenta) {
+    await fetch(base + '/auth/v1/admin/users/' + userIdCuenta, {
+      method: 'PUT',
+      headers: {
+        apikey: claveServicio, Authorization: 'Bearer ' + claveServicio,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email_confirm: true })
+    });
+    const sesion = await entrar(email, password);
+    token = sesion.cuerpo.access_token;
+  } else if (!token) {
     const sesion = await entrar(email, password);
     token = sesion.cuerpo.access_token;
   }
@@ -554,7 +569,22 @@ for (const etiqueta of ['C']) {
     role: 'coordinador'
   });
   let token = alta.estado < 400 ? alta.cuerpo.access_token : null;
-  if (!token && alta.estado < 400) {
+  const userIdFamilia = alta.cuerpo.user?.id || alta.cuerpo.id;
+  // Desde que se recreó el contenedor de cuentas del entorno local (fue el
+  // pendiente 123, cerrado), el alta local ya no confirma sola: hay que
+  // confirmarla a propósito, con la llave de servicio, y recién ahí pedir la sesión.
+  if (!token && alta.estado < 400 && claveServicio && userIdFamilia) {
+    await fetch(base + '/auth/v1/admin/users/' + userIdFamilia, {
+      method: 'PUT',
+      headers: {
+        apikey: claveServicio, Authorization: 'Bearer ' + claveServicio,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email_confirm: true })
+    });
+    const sesion = await entrar(email, password);
+    token = sesion.cuerpo.access_token;
+  } else if (!token && alta.estado < 400) {
     const sesion = await entrar(email, password);
     token = sesion.cuerpo.access_token;
   }
@@ -740,6 +770,17 @@ if (claveServicio) {
     full_name: 'Coordinadora Ficticia', tenant_slug: cuentas[0].prestadora.slug
   });
   const userId = alta.cuerpo.user?.id || alta.cuerpo.id;
+  // El re-inicio de sesión de abajo pide usuario y contraseña, y eso exige la
+  // cuenta confirmada desde que se recreó el contenedor de cuentas del entorno
+  // local (fue el pendiente 123, cerrado): el alta local ya no la confirma sola.
+  await fetch(base + '/auth/v1/admin/users/' + userId, {
+    method: 'PUT',
+    headers: {
+      apikey: claveServicio, Authorization: 'Bearer ' + claveServicio,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ email_confirm: true })
+  });
   const ascenso = await fetch(base + '/rest/v1/profiles?id=eq.' + userId, {
     method: 'PATCH',
     headers: {
@@ -1432,7 +1473,21 @@ for (const [etiqueta, prestadora] of [['D', cuentas[0].prestadora],
     tenant_slug: prestadora.slug
   });
   let token = alta.estado < 400 ? alta.cuerpo.access_token : null;
-  if (!token && alta.estado < 400) {
+  const userIdModalidad = alta.cuerpo.user?.id || alta.cuerpo.id;
+  // Desde que se recreó el contenedor de cuentas del entorno local (fue el
+  // pendiente 123, cerrado), el alta local ya no confirma sola: hay que
+  // confirmarla a propósito, con la llave de servicio, y recién ahí pedir la sesión.
+  if (!token && alta.estado < 400 && claveServicio && userIdModalidad) {
+    await fetch(base + '/auth/v1/admin/users/' + userIdModalidad, {
+      method: 'PUT',
+      headers: {
+        apikey: claveServicio, Authorization: 'Bearer ' + claveServicio,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email_confirm: true })
+    });
+    token = (await entrar(email, password)).cuerpo.access_token;
+  } else if (!token && alta.estado < 400) {
     token = (await entrar(email, password)).cuerpo.access_token;
   }
   if (!token) {

@@ -136,8 +136,27 @@ async function cuenta(etiqueta) {
     })
   }).then((r) => r.json());
 
-  const token = alta.access_token;
+  let token = alta.access_token;
   const userId = alta.user ? alta.user.id : alta.id;
+  // Desde que se recreó el contenedor de cuentas del entorno local (fue el
+  // pendiente 123, cerrado), el alta local ya no confirma sola: hay que
+  // confirmarla a propósito, con la llave de servicio, y recién ahí pedir la sesión.
+  if (!token && userId) {
+    await fetch(base + '/auth/v1/admin/users/' + userId, {
+      method: 'PUT',
+      headers: {
+        apikey: claveServicio, Authorization: 'Bearer ' + claveServicio,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email_confirm: true })
+    });
+    const sesion = await fetch(base + '/auth/v1/token?grant_type=password', {
+      method: 'POST',
+      headers: { apikey: clave, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    }).then((r) => r.json());
+    token = sesion.access_token;
+  }
   return token ? { etiqueta, nombre, token, userId } : null;
 }
 
@@ -185,6 +204,18 @@ const altaCoord = await fetch(base + '/auth/v1/signup', {
 }).then((r) => r.json());
 
 const coordId = altaCoord.user ? altaCoord.user.id : altaCoord.id;
+
+// El re-inicio de sesión de abajo pide usuario y contraseña, y eso exige la
+// cuenta confirmada desde que se recreó el contenedor de cuentas del entorno
+// local (fue el pendiente 123, cerrado): el alta local ya no la confirma sola.
+await fetch(base + '/auth/v1/admin/users/' + coordId, {
+  method: 'PUT',
+  headers: {
+    apikey: claveServicio, Authorization: 'Bearer ' + claveServicio,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ email_confirm: true })
+});
 
 const ascenso = await fetch(base + '/rest/v1/profiles?id=eq.' + coordId, {
   method: 'PATCH',

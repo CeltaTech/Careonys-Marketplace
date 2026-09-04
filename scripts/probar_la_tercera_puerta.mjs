@@ -106,16 +106,38 @@ async function rest(camino, opciones = {}, token = clave) {
 
 async function crearCuenta(rol, slug, nombre) {
   const sello = Date.now() + '-' + Math.floor(Math.random() * 100000);
+  const email = `prueba.puerta.${sello}@ejemplo.invalid`;
+  const password = `Ficticia-${sello}-puerta`;
   const alta = await fetch(base + '/auth/v1/signup', {
     method: 'POST',
     headers: { apikey: clave, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      email: `prueba.puerta.${sello}@ejemplo.invalid`,
-      password: `Ficticia-${sello}-puerta`,
+      email, password,
       data: { full_name: nombre, tenant_slug: slug, role: rol }
     })
   }).then((r) => r.json());
-  return { token: alta.access_token, userId: alta.user?.id || alta.id, nombre };
+  let token = alta.access_token;
+  const userId = alta.user?.id || alta.id;
+  // Desde que se recreó el contenedor de cuentas del entorno local (fue el
+  // pendiente 123, cerrado), el alta local ya no confirma sola: hay que
+  // confirmarla a propósito, con la llave de servicio, y recién ahí pedir la sesión.
+  if (!token && userId) {
+    await fetch(base + '/auth/v1/admin/users/' + userId, {
+      method: 'PUT',
+      headers: {
+        apikey: claveServicio, Authorization: 'Bearer ' + claveServicio,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email_confirm: true })
+    });
+    const sesion = await fetch(base + '/auth/v1/token?grant_type=password', {
+      method: 'POST',
+      headers: { apikey: clave, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    }).then((r) => r.json());
+    token = sesion.access_token;
+  }
+  return { token, userId, nombre };
 }
 
 const creadas = [];

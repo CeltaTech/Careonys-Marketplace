@@ -167,25 +167,16 @@ function dejarlaSinConfirmar(correo) {
    cualquiera que se registra: si se creara con la llave de servicio nacería
    confirmada seguro.
 
-   **Y nace confirmada**, aunque `supabase/config.toml:253` pida
-   `enable_confirmations = true`. La causa quedó medida el 31 de agosto de 2026, y no
-   es la que decía antes este comentario: el servidor de autenticación de esta
-   máquina **se creó el 2026-08-24** y el archivo de configuración cambió el
-   2026-08-25, y las variables de un contenedor quedan fijadas **cuando se lo crea**,
-   no cuando se lo enciende. Por eso bajar y volver a levantar la base no alcanzó
-   —eso lo enciende de nuevo, no lo crea de nuevo— y `/auth/v1/settings` del servidor
-   de esta máquina sigue contestando `mailer_autoconfirm: true`.
+   **Nace sin confirmar**, que es lo que corresponde: `supabase/config.toml:253` pide
+   `enable_confirmations = true` y, desde que se recreó el contenedor de cuentas de
+   esta máquina (fue el pendiente 123, cerrado el 4 de septiembre de 2026),
+   `/auth/v1/settings` contesta `mailer_autoconfirm: false`, igual que el servidor
+   publicado.
 
-   Recrearlo pondría de acuerdo a los dos, pero apagaría la confirmación automática
-   para todas las demás pruebas, que hoy se apoyan en ella para entrar con las
-   cuentas que crean. Ese trabajo es aparte y está anotado como pendiente 123; el 21,
-   que se cerró el 24 de agosto de 2026, es el que dejó el archivo diciendo la verdad
-   del servidor publicado.
-
-   Así que el guion hace lo único que no le mueve el piso a nadie más: **le saca la
-   confirmación a la cuenta que acaba de crear**, escribiendo en la base de esta
-   máquina. No es un simulacro —el servidor decide qué contestar mirando esa misma
-   columna—, la cuenta es inventada, y la barre después
+   El guion igual conserva el resguardo de abajo, por si alguna vez la cuenta
+   apareciera confirmada de todos modos: **le saca la confirmación**, escribiendo en
+   la base de esta máquina. No es un simulacro —el servidor decide qué contestar
+   mirando esa misma columna—, la cuenta es inventada, y la barre después
    `scripts/limpiar_cuentas_de_prueba.mjs`. Si ni así queda sin confirmar, el guion lo
    dice y no lo esconde: dar por buena la tercera clase con una cuenta confirmada
    haría que las tres respuestas dieran iguales **por casualidad**, y esa es la peor

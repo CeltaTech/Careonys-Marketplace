@@ -124,8 +124,27 @@ const alta = await fetch(base + '/auth/v1/signup', {
   })
 }).then((r) => r.json());
 
-const token = alta.access_token;
+let token = alta.access_token;
 const userId = alta.user?.id || alta.id;
+// Desde que se recreó el contenedor de cuentas del entorno local (fue el
+// pendiente 123, cerrado), el alta local ya no confirma sola: hay que
+// confirmarla a propósito, con la llave de servicio, y recién ahí pedir la sesión.
+if (!token && claveServicio && userId) {
+  await fetch(base + '/auth/v1/admin/users/' + userId, {
+    method: 'PUT',
+    headers: {
+      apikey: claveServicio, Authorization: 'Bearer ' + claveServicio,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ email_confirm: true })
+  });
+  const sesion = await fetch(base + '/auth/v1/token?grant_type=password', {
+    method: 'POST',
+    headers: { apikey: clave, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  }).then((r) => r.json());
+  token = sesion.access_token;
+}
 if (!token) {
   console.error('La cuenta ficticia se creó pero no devolvió sesión.');
   console.error('Contra el servidor remoto pasa: ahí el alta pide confirmar el correo.');
