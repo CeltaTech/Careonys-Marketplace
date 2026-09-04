@@ -109,7 +109,17 @@ const Identidad = {
     // la anotación queda apuntando a un nodo que ya no está en la pantalla, y el
     // título se resuelve una sola vez. Por eso el título va aparte, y el paseo
     // por el texto lo saltea.
-    const tituloOriginal = base === document ? document.title : null;
+    //
+    // El servidor entrega el `<title>` y la `<meta name="description">` ya
+    // resueltos al nombre del producto, para que un buscador que no ejecuta
+    // guiones no indexe el marcador crudo (pendiente 79). El texto con el
+    // marcador sigue disponible en `data-organizacion-original`, así que esta
+    // función lo encuentra igual aunque en la pantalla ya no quede ningún
+    // `{{organizacion}}` para buscar.
+    const tituloEl = base === document ? document.querySelector('title') : null;
+    const tituloOriginal = tituloEl
+      ? (tituloEl.getAttribute('data-organizacion-original') || document.title)
+      : null;
 
     const paseo = document.createTreeWalker(base, NodeFilter.SHOW_TEXT, null);
     const pendientes = [];
@@ -127,7 +137,11 @@ const Identidad = {
 
     base.querySelectorAll('*').forEach((el) => {
       ATRIBUTOS.forEach((attr) => {
-        const valor = el.getAttribute && el.getAttribute(attr);
+        // La descripción también se sirve resuelta, con el mismo respaldo: si
+        // el elemento guarda `data-organizacion-original`, ahí está el
+        // marcador, aunque el `content` que se ve ya lo haya perdido.
+        const propio = attr === 'content' && el.getAttribute && el.getAttribute('data-organizacion-original');
+        const valor = propio || (el.getAttribute && el.getAttribute(attr));
         if (!valor || valor.indexOf('{{') === -1) return;
         if (valor.indexOf(VARIABLE) !== -1) {
           anotados.push({ nodo: el, atributo: attr, original: valor });

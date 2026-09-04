@@ -19,7 +19,11 @@
 
    Qué mira además del nombre:
    - que las tres copias de `js/identidad.js` sean iguales byte a byte;
-   - que los dos `manifest.json` estén al día con la identidad.
+   - que los dos `manifest.json` estén al día con la identidad;
+   - que el `<title>` y la `<meta name="description">` que traen
+     `data-organizacion-original` —el marcador resuelto a mano para que un
+     buscador lo indexe sin ejecutar guiones, pendiente 79— sigan diciendo lo
+     mismo que resuelve `js/identidad.js` hoy.
 =================================================== */
 
 import { readFileSync } from 'node:fs';
@@ -72,14 +76,22 @@ function sinComentarios(texto, extension) {
   return t;
 }
 
+const { lineasGeneradas, revisarTitulosResueltos } = await import('./generar_titulos_resueltos.mjs');
+
 const hallazgos = [];
 for (const ruta of hayArchivos(raiz, EXTENSIONES, AJENAS)) {
   const rel = relative(raiz, ruta);
   if (ARCHIVOS_EXENTOS.has(rel) || GENERADOS.has(rel)) continue;
   if (rel.toLowerCase().endsWith('.md')) continue;
   const extension = rel.slice(rel.lastIndexOf('.'));
-  const limpio = sinComentarios(readFileSync(ruta, 'utf8'), extension);
+  const texto = readFileSync(ruta, 'utf8');
+  const limpio = sinComentarios(texto, extension);
+  // El <title> y la <meta name="description"> que trae `data-organizacion-original`
+  // no son la marca escrita a mano: los genera `generar_titulos_resueltos.mjs`
+  // a partir de ese atributo, y ese archivo se comprueba aparte, más abajo.
+  const generadas = esPantalla(rel) ? lineasGeneradas(texto) : new Set();
   limpio.split('\n').forEach((renglon, i) => {
+    if (generadas.has(i + 1)) return;
     for (const termino of PROHIBIDO) {
       if (renglon.toLowerCase().includes(termino.toLowerCase())) {
         hallazgos.push(rel.split(sep).join('/') + ':' + (i + 1) + '  ' + renglon.trim().slice(0, 100));
@@ -110,6 +122,15 @@ if (desactualizados.length) {
   problemas.push(
     'Estos manifiestos no coinciden con la identidad:\n  ' + desactualizados.join('\n  ') + '\n' +
     'Se ponen al día con: node scripts/generar_manifiestos.mjs'
+  );
+}
+
+const titulosDesactualizados = revisarTitulosResueltos(false);
+if (titulosDesactualizados.length) {
+  problemas.push(
+    'Estos títulos o descripciones no coinciden con la identidad:\n  ' +
+    titulosDesactualizados.join('\n  ') + '\n' +
+    'Se ponen al día con: node scripts/generar_titulos_resueltos.mjs'
   );
 }
 

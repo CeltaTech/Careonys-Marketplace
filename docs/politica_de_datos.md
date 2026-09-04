@@ -146,10 +146,10 @@ mirar a qué hora entra y sale una persona es dirigir el trabajo.
 
 **4.4. Qué se dice antes de marcar.** La pantalla pregunta, antes de tomar la posición, **para
 quién es esa jornada**, y aclara ahí mismo que la Familia elegida va a ver la marca
-—`pwa-asistente/index.html:447-453`—. La respuesta que viene puesta es **no decirlo**
-—`pwa-asistente/index.html:449`—, y con ésa la marca no sale del propio Asistente. Terminada la
+—`pwa-asistente/index.html:449-455`—. La respuesta que viene puesta es **no decirlo**
+—`pwa-asistente/index.html:451`—, y con ésa la marca no sale del propio Asistente. Terminada la
 marca, el aviso de confirmación muestra las coordenadas que quedaron guardadas
-—`pwa-asistente/index.html:1895-1898`—. Aparte de eso está el pedido de permiso que hace el
+—`pwa-asistente/index.html:1897-1900`—. Aparte de eso está el pedido de permiso que hace el
 navegador por su cuenta.
 
 ---
@@ -186,7 +186,7 @@ la §4.3, y la propia tabla lo deja escrito
 
 **5.6. Pero hoy la Familia todavía no lo ve, aunque la regla ya esté escrita.** La pantalla donde el
 Asistente guarda el reporte no anota de qué Aviso es
-—`pwa-asistente/index.html:1937-1938`—, así que ninguna fila cumple la condición y la pantalla de
+—`pwa-asistente/index.html:1939-1940`—, así que ninguna fila cumple la condición y la pantalla de
 la Familia aparece vacía. Se dice acá porque un hueco declarado es mejor que un hueco tapado.
 
 ---
@@ -443,7 +443,7 @@ lo acepte de nuevo.
 | 31 de agosto de 2026 | Primera redacción. Se escribió de cero, midiendo cada afirmación contra el código y contra las migraciones. Se declararon por primera vez la geolocalización al fichar, los datos de salud del Reporte diario, los datos de terceros, qué expone exactamente el directorio público, que el software no usa cookies ni rastreadores, que no hay registro de auditoría y que la baja no borra nada. Quedan marcados como huecos el organismo de control, el reparto de responsabilidad con CeltaTech, los tribunales, los plazos de conservación y el procedimiento de supresión |
 | 31 de agosto de 2026 | **El documento se declara lo que es: un modelo.** El Desarrollador precisó ese día que los documentos legales de un producto de CeltaTech viven adentro de sus términos y de sus contratos con el Cliente, y que a la Prestadora CeltaTech sólo puede entregarle **un modelo, a título de sugerencia y sin ninguna responsabilidad sobre él**. El encabezado ahora lo dice en su cara —quién lo entrega, que no es asesoramiento legal, que se entrega tal como está y que adoptarlo es decisión de la Prestadora— y **admite que el producto todavía no cumple esa forma**, porque el texto no se entrega sino que se acepta. Cambian el encabezado y la ficha de arriba |
 | 31 de agosto de 2026 | **Se separaron los dos mundos**, por decisión del Desarrollador de ese día: CeltaTech licencia el software a la Prestadora y no tiene vínculo de ninguna índole con la Familia, el Paciente, el Asistente ni nadie que trate con una Prestadora, y **la Prestadora no le traslada a CeltaTech ninguna responsabilidad por el uso que hace del software**. Cambia la §2.2, y el hueco de la §2.4 se achica: el reparto queda contestado y sigue abierta sólo la nomenclatura ante el organismo de control |
-| 2 de septiembre de 2026 | **La Prestadora dejó de mirar la jornada, y este documento lo dice.** Tres migraciones cambiaron quién ve qué, y el texto describía el mundo anterior. La fichada dejó de estar al alcance del personal de la Prestadora (`supabase/migrations/0053_la_prestadora_no_mira_la_jornada.sql:78`) y pasó a verla, además del Asistente, la Familia del vínculo que él marque (`supabase/migrations/0056_la_fichada_se_ata_al_vinculo.sql:98-106`); el Reporte diario dejó de estar a su alcance por la misma razón (`supabase/migrations/0053_la_prestadora_no_mira_la_jornada.sql:51`); y la lectura del reporte colgado de un Aviso y la tabla de mensajes se cerraron del todo, porque la condición no filtraba lo que su comentario decía (`supabase/migrations/0067_la_subconsulta_no_filtraba_nada.sql:50-55` y `:67-68`). Cambian la §4.3, la §5.5 y la §8.4. Se agrega la §5.6, que declara que la Familia todavía no ve el reporte en la pantalla aunque la regla ya esté escrita. Y se reescribe la §4.4 y sale su hueco de la §14: la pantalla del fichado pregunta ahora, antes de tomar la posición, para quién es la jornada, y aclara quién va a ver la marca (`pwa-asistente/index.html:447-453`) |
+| 2 de septiembre de 2026 | **La Prestadora dejó de mirar la jornada, y este documento lo dice.** Tres migraciones cambiaron quién ve qué, y el texto describía el mundo anterior. La fichada dejó de estar al alcance del personal de la Prestadora (`supabase/migrations/0053_la_prestadora_no_mira_la_jornada.sql:78`) y pasó a verla, además del Asistente, la Familia del vínculo que él marque (`supabase/migrations/0056_la_fichada_se_ata_al_vinculo.sql:98-106`); el Reporte diario dejó de estar a su alcance por la misma razón (`supabase/migrations/0053_la_prestadora_no_mira_la_jornada.sql:51`); y la lectura del reporte colgado de un Aviso y la tabla de mensajes se cerraron del todo, porque la condición no filtraba lo que su comentario decía (`supabase/migrations/0067_la_subconsulta_no_filtraba_nada.sql:50-55` y `:67-68`). Cambian la §4.3, la §5.5 y la §8.4. Se agrega la §5.6, que declara que la Familia todavía no ve el reporte en la pantalla aunque la regla ya esté escrita. Y se reescribe la §4.4 y sale su hueco de la §14: la pantalla del fichado pregunta ahora, antes de tomar la posición, para quién es la jornada, y aclara quién va a ver la marca (`pwa-asistente/index.html:449-455`) |
 
 ---
 

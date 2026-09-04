@@ -118,7 +118,7 @@ Los guiones de línea de comandos.
 
 <!-- guiones: lo escribe scripts/medir_estado.mjs, no se edita a mano -->
 
-En `scripts/` hay **71 archivos `.mjs` y uno de Python**: 37 chequeos `verificar_*`, 15 pruebas `probar_*` y 19 herramientas sueltas —medidores, generadores, el módulo que comparten y el servidor de trabajo—.
+En `scripts/` hay **72 archivos `.mjs` y uno de Python**: 37 chequeos `verificar_*`, 15 pruebas `probar_*` y 20 herramientas sueltas —medidores, generadores, el módulo que comparten y el servidor de trabajo—.
 
 <!-- fin de los guiones -->
 
@@ -136,6 +136,7 @@ antes de cada `commit` `scripts/verificar_estado.mjs`.
 | Archivo | Qué hace |
 |---|---|
 | `scripts/generar_manifiestos.mjs` | Escribe los dos `manifest.json` desde la identidad. Hacen falta generados porque el navegador los lee como archivo, sin pasar por ninguna página: ahí no hay JavaScript que resuelva un marcador. |
+| `scripts/generar_titulos_resueltos.mjs` | Escribe, en cada `<title>` y `<meta name="description">` que trae `data-organizacion-original`, el texto ya resuelto con la identidad. Hace falta generado porque un buscador no ejecuta guiones, así que lo que el servidor entrega antes de que corra ninguno tiene que llevar ya el nombre y no el marcador crudo (pendiente 79, cerrado). |
 | `scripts/verificar_copias.mjs` | Compara byte a byte los ocho archivos que viven repetidos en dos o tres carpetas y falla si alguno se separó. Cuando encuentra una diferencia dice cuál de los dos es más nuevo, para no pisar el cambio bueno. |
 | `scripts/revisar_base.mjs` | Sonda de solo lectura: pregunta qué tablas puede enumerar y leer alguien **sin sesión**, y si alguna le muestra dos Prestadoras distintas. Se corre en el momento en que la base vuelva a responder, antes de cargar el primer dato. No escribe ni borra nada, y se niega a correr contra una base que no sea la de este proyecto. |
 | `scripts/verificar_estado.mjs` | Que **los cuatro bloques medidos** sean los que salen de medir los archivos, y no unos escritos a mano que quedaron viejos: la tabla de números del README, el reparto de estilos por pantalla de `docs/PENDIENTES.md`, las hojas de estilo del §5.1 de este archivo y la cuenta de guiones que abre esta misma lista, los tres últimos entre marcas. Compara contra `scripts/medir_estado.mjs`, sin la fecha —cambia todos los días—, y también se pone en rojo si alguien saca las marcas. Se arregla con `node scripts/medir_estado.mjs --escribir`. |
