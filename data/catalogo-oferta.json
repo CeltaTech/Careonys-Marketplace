@@ -30,17 +30,17 @@
     },
     {
       "clave": "cursos",
-      "es-AR": "Cursos para familias",
+      "es-AR": "Cursos de cuidado",
       "descripcion": {
-        "es-AR": "Formación para familiares de personas mayores y para cualquiera de su entorno que quiera entender el momento vital y cuidar del otro y de sí mismo.",
-        "en": "Training for relatives of older people, and for anyone close to them, who wants to understand this stage of life and to care for another person and for themselves.",
-        "pt-BR": "Formação para familiares de pessoas idosas e para qualquer pessoa do seu convívio que queira entender este momento da vida e cuidar do outro e de si mesmo."
+        "es-AR": "Cursos sobre el cuidado de personas mayores, con herramientas para entender el momento vital y para cuidar adecuadamente a quien lo necesita.",
+        "en": "Courses on the care of older people, with tools to understand this stage of life and to care properly for whoever needs it.",
+        "pt-BR": "Cursos sobre o cuidado de pessoas idosas, com ferramentas para entender este momento da vida e para cuidar adequadamente de quem precisa."
       },
       "estado": "publicado",
       "imagen": "assets/images/cursos_familias.png",
       "enlace": "cursos.html",
-      "en": "Courses for families",
-      "pt-BR": "Cursos para famílias"
+      "en": "Care courses",
+      "pt-BR": "Cursos de cuidado"
     },
     {
       "clave": "monitoreo",
@@ -61,9 +61,9 @@
       "clave": "asistente_virtual",
       "es-AR": "Asistente virtual",
       "descripcion": {
-        "es-AR": "Respuestas a las dudas de quien acompaña a un familiar.",
-        "en": "Answers to the questions of whoever is accompanying a relative.",
-        "pt-BR": "Respostas às dúvidas de quem acompanha um familiar."
+        "es-AR": "Respuestas a las dudas de quien cuida o acompaña a alguien.",
+        "en": "Answers to the questions of whoever cares for or accompanies someone.",
+        "pt-BR": "Respostas às dúvidas de quem cuida ou acompanha alguém."
       },
       "estado": "publicado",
       "imagen": "assets/images/asistente_telefono.png",
