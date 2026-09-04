@@ -298,9 +298,15 @@ function literales(t) {
    - **Lo que se compara.** Una cadena al lado de un `===` es un valor guardado
      —`'validado_prestadora'`, `'es-AR'`—, y traducirla rompe la comparación.
      Es el mismo criterio que `sinValoresGuardados()` aplica al `value` de un
-     casillero en `texto_visible.mjs`. */
+     casillero en `texto_visible.mjs`.
+   - **Lo que envuelve al catálogo con otro nombre.** `avTexto('dia_semana', clave)`
+     en `pwa-asistente/index.html` es un ayudante propio que adentro llama a
+     `Catalogo.etiquetaSiExiste(vocabulario, clave)`: su primer argumento es el
+     mismo nombre de vocabulario, no texto. Sin esta entrada el guion contaba
+     «dia_semana» y «turno» como frases sueltas por pasar dentro de un
+     `.textContent =`, cuando en realidad ya viajan por el catálogo. */
 const sinNombres = (t) => t
-  .replace(/((?:frase|etiquetaSiExiste|etiqueta|getAttribute|setAttribute)\s*\(\s*)(?:'[^']*'|"[^"]*"|`[^`]*`)/g, (todo, antes) => antes)
+  .replace(/((?:frase|etiquetaSiExiste|etiqueta|avTexto|getAttribute|setAttribute)\s*\(\s*)(?:'[^']*'|"[^"]*"|`[^`]*`)/g, (todo, antes) => antes)
   .replace(/(\[\s*)(?:'[^']*'|"[^"]*"|`[^`]*`)(\s*\])/g, (todo, a, b) => a + b)
   .replace(/(?:'[^']*'|"[^"]*"|`[^`]*`)(\s*[!=]==?\s*)|(\s*[!=]==?\s*)(?:'[^']*'|"[^"]*"|`[^`]*`)/g,
     (todo, a, b) => a || b);
