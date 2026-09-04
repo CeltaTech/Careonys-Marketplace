@@ -149,7 +149,7 @@ quién es esa jornada**, y aclara ahí mismo que la Familia elegida va a ver la 
 —`pwa-asistente/index.html:447-453`—. La respuesta que viene puesta es **no decirlo**
 —`pwa-asistente/index.html:449`—, y con ésa la marca no sale del propio Asistente. Terminada la
 marca, el aviso de confirmación muestra las coordenadas que quedaron guardadas
-—`pwa-asistente/index.html:1892-1895`—. Aparte de eso está el pedido de permiso que hace el
+—`pwa-asistente/index.html:1895-1898`—. Aparte de eso está el pedido de permiso que hace el
 navegador por su cuenta.
 
 ---
@@ -186,7 +186,7 @@ la §4.3, y la propia tabla lo deja escrito
 
 **5.6. Pero hoy la Familia todavía no lo ve, aunque la regla ya esté escrita.** La pantalla donde el
 Asistente guarda el reporte no anota de qué Aviso es
-—`pwa-asistente/index.html:1934-1935`—, así que ninguna fila cumple la condición y la pantalla de
+—`pwa-asistente/index.html:1937-1938`—, así que ninguna fila cumple la condición y la pantalla de
 la Familia aparece vacía. Se dice acá porque un hueco declarado es mejor que un hueco tapado.
 
 ---

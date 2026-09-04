@@ -791,7 +791,7 @@ const ClienteDatos = {
   // llegue al navegador sería mejor todavía, y eso es una migración.
   async getCursos() {
     return await this._supabaseRequest('GET', 'cursos', null, {
-      select: 'id,clave,nombre,descripcion,horas,nivel,modalidad,otorga_certificado,orden',
+      select: 'id,clave,nombre_i18n,descripcion_i18n,horas,nivel,modalidad,otorga_certificado,orden',
       publicado: 'eq.true',
       order: 'orden.asc'
     });

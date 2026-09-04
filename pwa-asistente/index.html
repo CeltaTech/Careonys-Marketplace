@@ -1111,9 +1111,12 @@
       const parte = (nombre) => nodo.querySelector('[data-parte="' + nombre + '"]');
       const resultado = capResultado(evaluacion, intentos);
 
-      parte('nombre').textContent = curso.nombre || '';
+      const nombre = Catalogo.textoDe(curso.nombre_i18n);
+      const descripcion = Catalogo.textoDe(curso.descripcion_i18n);
 
-      if (curso.descripcion) parte('descripcion').textContent = curso.descripcion;
+      parte('nombre').textContent = nombre;
+
+      if (descripcion) parte('descripcion').textContent = descripcion;
       else parte('descripcion').remove();
 
       // Las horas y el certificado son de este renglón; el nivel y la modalidad
