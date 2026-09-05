@@ -85,7 +85,9 @@ const NO_ES_DEL_PROYECTO = new Set([
   'node_modules', '.git', '.vercel', '.temp', '.branches',
   // Copias enteras del proyecto que deja el CLI de Claude Code.
   '.claude',
-  // Código apartado a propósito: ya no se edita, así que avisar no sirve.
+  // La cuarentena: lo que se sospecha inútil y todavía no se borra, apartado a
+  // propósito. Ya no se edita, así que avisar no sirve. Vive en `/fuera de uso/`
+  // —ver `.gitignore`—, y el nombre frena en cualquier nivel por si aparece otra.
   'fuera de uso'
 ]);
 

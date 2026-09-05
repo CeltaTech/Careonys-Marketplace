@@ -23,8 +23,15 @@ Thumbs.db
 # Estado local de la CLI de Vercel. Es de la máquina de quien desarrolla, no del proyecto.
 .vercel
 
-# Material descartado que no se borra todavía.
-assets/images/fuera de uso/
+# La cuarentena. Es una sola, cuelga de la raíz y adentro cada archivo conserva la ruta
+# que tenía, así que se sabe de dónde salió y volver a ponerlo es moverlo de vuelta.
+# Ahí va todo lo que se sospecha inútil para el proyecto —de cualquier tipo, no sólo
+# imágenes—, y ahí se queda hasta que el proyecto esté terminado y se pueda afirmar que
+# no hace falta. Decidido por el Desarrollador el 5 de septiembre de 2026: antes de
+# borrar nada hay que estar seguro, y mientras tanto no molesta.
+# El nombre no es nuevo: es el que ya usaba `assets/images/fuera de uso/`, que se mudó
+# entera acá adentro. Y `scripts/recorrido.mjs:89` hace que ningún chequeo la abra.
+/fuera de uso/
 
 # Carpetas de trabajo de quien desarrolla: material en curso, no documentación del
 # proyecto. `scripts/verificar_referencias.mjs` tampoco les revisa las citas, por el

@@ -26,6 +26,11 @@ CLAUDE.md
 !docs/terminos_y_condiciones_familias.md
 !docs/politica_de_datos.md
 
+# La cuarentena: lo que se sospecha inútil y espera a que el proyecto termine para
+# saber si se borra. Git ya no la guarda —ver `.gitignore`—, pero el `vercel` de la
+# línea de comandos no mira `.gitignore`, y son megabytes de imágenes descartadas.
+fuera de uso/
+
 # Lo de la línea de comandos y de la máquina, que nunca fue del sitio.
 .githooks/
 .claude/
