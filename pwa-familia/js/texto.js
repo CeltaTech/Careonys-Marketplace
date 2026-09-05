@@ -286,6 +286,13 @@ const Texto = {
     // exactamente lo contrario de para qué está la puerta.
     if (dice('contacto_bloqueado')) return 'error.contacto_bloqueado';
 
+    // La puerta del alta (migración 0073). El disparador contesta
+    // `alta_sin_papel:<clave>`, y la clave tampoco se mira acá: hoy es
+    // siempre «dni», pero el mensaje no depende de cuál sea para no tener
+    // que tocar este archivo el día que el catálogo agregue otro papel con
+    // esta misma puerta.
+    if (dice('alta_sin_papel')) return 'error.alta_sin_papel';
+
     // Publicar un aviso son dos pedidos: el aviso y sus franjas. Si el
     // segundo falla, el primero ya está hecho, y decir «no se pudo publicar»
     // llevaría a publicarla dos veces.

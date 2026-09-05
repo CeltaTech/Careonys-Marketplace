@@ -187,7 +187,8 @@ async function conLegajo(etiqueta) {
     headers: { Prefer: 'return=representation' },
     body: JSON.stringify({
       full_name: quien.nombre, user_id: quien.userId, tenant_id: P.id,
-      profession: 'cuidador_domiciliario'
+      profession: 'cuidador_domiciliario',
+      documents: { dni: 'frente-inventado-v1' }
     })
   }, quien.token);
   const legajo = Array.isArray(cuerpo) ? cuerpo[0] : null;

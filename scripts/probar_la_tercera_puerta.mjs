@@ -181,7 +181,8 @@ const { cuerpo: legajoCuerpo } = await rest('/rest/v1/caregivers', {
     full_name: asistente.nombre,
     user_id: asistente.userId,
     tenant_id: P.id,
-    profession: 'cuidador_domiciliario'
+    profession: 'cuidador_domiciliario',
+    documents: { dni: 'frente-inventado-v1' }
   })
 }, asistente.token);
 const legajo = Array.isArray(legajoCuerpo) ? legajoCuerpo[0] : null;

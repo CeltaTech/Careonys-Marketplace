@@ -656,7 +656,8 @@ for (const c of cuentas) {
       full_name: 'Legajo Intruso',
       user_id: c.userId,
       tenant_id: otro,
-      profession: 'cuidador_domiciliario'
+      profession: 'cuidador_domiciliario',
+      documents: { dni: 'frente-inventado-v1' }
     })
   }, c.token);
   comprobar('A: no puede crear un legajo en la Prestadora ajena',
@@ -674,7 +675,8 @@ for (const c of cuentas) {
       full_name: 'Legajo Ficticio ' + c.etiqueta,
       user_id: c.userId,
       tenant_id: c.prestadora.id,
-      profession: 'cuidador_domiciliario'
+      profession: 'cuidador_domiciliario',
+      documents: { dni: 'frente-inventado-v1' }
     })
   }, c.token);
   comprobar(`${c.etiqueta}: puede crear su propio legajo`,
@@ -1518,7 +1520,8 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
         full_name: 'Legajo Ficticio ' + segundoAsistente.etiqueta,
         user_id: segundoAsistente.userId,
         tenant_id: segundoAsistente.prestadora.id,
-        profession: 'cuidador_domiciliario'
+        profession: 'cuidador_domiciliario',
+        documents: { dni: 'frente-inventado-v1' }
       })
     }, segundoAsistente.token);
     segundoAsistente.legajoId = Array.isArray(r.cuerpo) && r.cuerpo[0] ? r.cuerpo[0].id : null;

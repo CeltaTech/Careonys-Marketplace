@@ -217,6 +217,11 @@
       "en": "This assessment is not available at the moment.",
       "pt-BR": "Esta avaliação não está disponível no momento."
     },
+    "error.alta_sin_papel": {
+      "es-AR": "Falta subir uno de los documentos obligatorios del legajo. Conviene revisar que estén todos antes de guardar.",
+      "en": "One of the required legajo documents is missing. Check that they are all there before saving.",
+      "pt-BR": "Falta enviar um dos documentos obrigatórios do dossiê. Convém conferir se todos estão presentes antes de salvar."
+    },
     "error.contacto_bloqueado": {
       "es-AR": "El mensaje no se envió: acá adentro no se comparten teléfonos, correos ni domicilios. La conversación sigue por este canal hasta que se acuerde la contratación.",
       "en": "The message was not sent: phone numbers, e-mail addresses and home addresses are not shared in here. The conversation continues through this channel until the hiring is agreed.",

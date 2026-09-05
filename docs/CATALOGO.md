@@ -180,7 +180,8 @@ misma regla de siempre —los catálogos salen de la base—, aplicada a la regl
 `condicional_a` con un valor que la vista no conoce: se pide el papel. Verificación sin fila: no
 se comprobó. Nunca al revés.
 
-**El `alta` todavía no frena nada** —sólo la publicación—, y por qué está en el pendiente 143.
+**El `alta` frena por `dni` desde el 4 de septiembre de 2026** —fue el pendiente 143, cerrado ese
+día por `supabase/migrations/0073_la_puerta_del_alta_se_cierra.sql`—, además de la publicación.
 
 ### Las dos que se propusieron y se descartaron
 

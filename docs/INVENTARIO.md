@@ -118,7 +118,7 @@ Los guiones de línea de comandos.
 
 <!-- guiones: lo escribe scripts/medir_estado.mjs, no se edita a mano -->
 
-En `scripts/` hay **72 archivos `.mjs` y uno de Python**: 37 chequeos `verificar_*`, 15 pruebas `probar_*` y 20 herramientas sueltas —medidores, generadores, el módulo que comparten y el servidor de trabajo—.
+En `scripts/` hay **73 archivos `.mjs` y uno de Python**: 37 chequeos `verificar_*`, 16 pruebas `probar_*` y 20 herramientas sueltas —medidores, generadores, el módulo que comparten y el servidor de trabajo—.
 
 <!-- fin de los guiones -->
 

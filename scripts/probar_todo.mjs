@@ -101,6 +101,7 @@ const PRUEBAS = [
   'probar_el_rol_y_la_prestadora_del_perfil.mjs',
   'probar_de_quien_es_el_legajo.mjs',
   'probar_sello_de_la_prestadora.mjs',
+  'probar_la_puerta_del_alta.mjs',
   'probar_la_tercera_puerta.mjs',
   'probar_el_papel_nuevo_baja_el_sello.mjs',
   'probar_la_resolucion_deja_su_motivo.mjs',

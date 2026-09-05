@@ -3376,7 +3376,7 @@ renglón que ya está en vez de agregar otro. No existía en ninguna de las tres
 y `marcarVerificacion()` (`js/apiClient.js:598`) es la primera que la usa.
 
 **Probado con las dos Organizaciones ficticias, y la prueba puede fallar.** Ocho comprobaciones
-nuevas en `scripts/probar_aislamiento.mjs:920`, que llevaron la corrida de 119 a 127. Se hacen
+nuevas en `scripts/probar_aislamiento.mjs:922`, que llevaron la corrida de 119 a 127. Se hacen
 sobre un legajo recién creado que arranca **sin ninguna comprobación cargada**, que es la condición
 que pedía el pendiente: sobre uno ya sembrado, la pantalla rota y la sana contestan lo mismo. Quedó
 comprobado que el personal de la Prestadora puede marcar; que la huella la escribe la base aunque
@@ -3430,7 +3430,7 @@ no dijo que sí. Quedan nueve publicados de trece, y las tres cuentas las compru
 migración: si alguien afloja la condición de la vista, la migración deja de correr.
 
 **Probado con las dos Organizaciones ficticias, y la prueba puede fallar.** Dos comprobaciones
-nuevas en `scripts/probar_aislamiento.mjs:870`, que llevaron la corrida de 127 a 129. Van sobre un
+nuevas en `scripts/probar_aislamiento.mjs:872`, que llevaron la corrida de 127 a 129. Van sobre un
 legajo recién creado, y en este orden: valida la Prestadora y no aparece; dice que sí la persona y
 **tampoco** aparece; se le comprueba **un** papel de los dos y sigue sin aparecer —que es lo que
 distingue «la puerta mira la lista entera» de «la puerta se conforma con encontrar algo»—; y recién
@@ -3444,11 +3444,38 @@ directorio vacío —o contra una función que dejó de contestar— la comproba
 de darse por buena. Y su limpieza final, que preguntaba por el directorio para saber si el legajo
 ficticio había quedado, pregunta por la tabla, que es lo que de verdad quería saber.
 
-**Lo que sigue abierto es la otra puerta, y es una decisión, no código.** El documento de identidad
-frena el **alta** según el catálogo, y el alta es «terminar de cargar el legajo», que hace el
-Aspirante, mientras que la verificación la marca la Prestadora después. Cerrada tal como está
-escrita, ningún alta se podría terminar hasta que alguien abra el documento. Es el pendiente 143, y
-lo contesta el Desarrollador.
+### La puerta del alta se cerró, y no espera el juicio de la Prestadora
+
+**El documento de identidad frena el alta desde el 4 de septiembre de 2026.** Hasta ese día
+`data/catalogo-verificaciones.json` ya lo declaraba —«sin saber quién es la persona, nada de lo
+demás significa nada»—, pero cerrarla tal como estaba escrita se mordía la cola: el alta es
+«terminar de cargar el legajo», que hace el Aspirante, mientras que la verificación `dni` la marca
+la Prestadora, que recién mira el legajo después. Era el pendiente 143.
+
+**El Desarrollador contestó que no hace falta el juicio de la Prestadora para cerrar esta puerta.**
+Alcanza con que el software compruebe, solo, lo rutinario —que el papel llegó—, y dejarle a la
+Prestadora lo que sí es suyo —confirmar que la persona es quien dice ser, y todo lo demás que sea
+análisis subjetivo— para la validación, más adelante y junto con las otras seis verificaciones,
+antes de la puerta `publicacion`. Hasta que ese juicio llega, el legajo es de un **Aspirante**; con
+el ok de la Prestadora pasa a integrar el directorio de **Asistentes**. Ninguna de las dos cosas es
+una columna nueva: `verification_status` ya nace en `en_revision` desde la migración 0047, y ahí es
+exactamente donde queda un Aspirante hasta que la Prestadora lo pasa a `validado_prestadora`.
+
+**La cierra `supabase/migrations/0073_la_puerta_del_alta_se_cierra.sql`, del mismo lado que la
+0061 cerró la de publicación.** Un disparador `before insert` en `caregivers` lee `extra.puerta` de
+`vocabulario_items` —hoy sólo `dni` la tiene en `alta`— y exige que `caregivers.documents` traiga
+esa clave con un valor que no sea vacío ni `pendiente`. No mira si el Prestadora ya lo aprobó —eso
+sigue siendo la validación— ni si venció —eso sigue siendo el pendiente 98, con su plan aparte—:
+sólo si llegó. El día que se agregue otro papel con esta puerta es una fila del vocabulario, no una
+migración nueva.
+
+**Probado con las dos Organizaciones ficticias, y la prueba puede fallar.**
+`scripts/probar_la_puerta_del_alta.mjs` comprueba que un alta sin `dni` se rechaza con el motivo
+`alta_sin_papel:dni`, que un alta con `dni` puesto se completa aunque falte un papel de la puerta
+`publicacion`, que el legajo que pasó la puerta se puede seguir editando, y que la misma regla rige
+en las dos Prestadoras ficticias. El mensaje que ve la persona sale del catálogo de frases —
+`error.alta_sin_papel`, en los tres idiomas— y lo clasifica `Texto.claveDeError`, igual que
+`contacto_bloqueado` desde la migración 0063.
 
 ### El panel de la Prestadora dejó de mostrar lo que nadie contó, y de prometer pantallas que no hay
 

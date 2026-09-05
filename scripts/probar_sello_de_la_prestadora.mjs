@@ -162,7 +162,8 @@ const r1 = await rest('/rest/v1/caregivers', {
     user_id: userId,
     tenant_id: P.id,
     profession: 'cuidador_domiciliario',
-    verification_status: 'validado_prestadora'
+    verification_status: 'validado_prestadora',
+    documents: { dni: 'frente-inventado-v1' }
   })
 }, token);
 
@@ -176,7 +177,8 @@ if (!legajo) {
     headers: { Prefer: 'return=representation' },
     body: JSON.stringify({
       full_name: nombre, user_id: userId, tenant_id: P.id,
-      profession: 'cuidador_domiciliario'
+      profession: 'cuidador_domiciliario',
+      documents: { dni: 'frente-inventado-v1' }
     })
   }, token);
   legajo = Array.isArray(limpio.cuerpo) ? limpio.cuerpo[0] : null;
