@@ -345,7 +345,9 @@ sostiene `scripts/verificar_base.mjs`.
 | `resolver_legajo` | `resolverLegajo` | Escribe el motivo y el estado del legajo en una sola transacción, para que un legajo no pueda quedar resuelto sin su porqué (migración 0064) |
 
 **Autenticación** — `{supabase}/auth/v1/*`, a través del SDK: `signInWithPassword`, `signUp`,
-`signOut`, `getSession`, `onAuthStateChange`.
+`signOut` y `getSession`. `onAuthStateChange` **no**: está envuelto en `js/auth.js:276` y no lo
+llama ninguna pantalla, así que el producto no escucha cuando la sesión se cae sola — la pregunta
+a demanda. Este renglón lo daba por usado hasta el 4 de septiembre de 2026 (pendiente 128).
 
 **Archivos** — `{supabase}/storage/v1/*`, a través del SDK. Dos depósitos: `documentos-cuidadores`
 y `avatares`. Se usa en `registrar-asistente.html:873-891` para subir documento de identidad,
