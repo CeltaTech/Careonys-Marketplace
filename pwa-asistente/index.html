@@ -1278,9 +1278,10 @@
       guiMostrar('cargando');
       try {
         // El catálogo hace falta para el nombre visible de cada patología: la
-        // base guarda la clave y el nombre se traduce acá.
+        // base guarda la clave y el nombre se traduce acá. `cargarGuias()` es
+        // quien decide entre la base y el archivo sin conexión (pendiente 102).
         const [guias] = await Promise.all([
-          ClienteDatos.guiasDePrestadora(),
+          Catalogo.cargarGuias(),
           Catalogo.cargar()
         ]);
 

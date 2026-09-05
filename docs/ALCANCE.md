@@ -293,7 +293,7 @@ Cerró el pendiente 27, el 24 de agosto de 2026.
   —`movilidad_reducida`, `traslados`, `curaciones`, `estimulacion_cognitiva`—. Ninguno daba error
   en ninguna parte.
 - **El daño no está en la base, está en la pantalla.** Las columnas son texto libre y aceptan
-  cualquier cosa. `js/catalogo.js:419` traduce la clave guardada a su etiqueta y, cuando no la
+  cualquier cosa. `js/catalogo.js:464` traduce la clave guardada a su etiqueta y, cuando no la
   encuentra, muestra la clave cruda: la ficha decía «enfermero» en minúscula y con guión bajo. Y
   el filtro por Tipo de Asistente busca por la clave que ofrece el catálogo, así que esa fila no
   aparecía nunca.
@@ -550,7 +550,7 @@ Comprobado el 24 de agosto de 2026 contra el proyecto real: el servidor tiene ap
 distancia costaba dos cosas que ya no cuestan:
 
 - **La columna del contacto existe.** La 0009 agregó `avisos.contact_info`, que es donde
-  `js/apiClient.js:1405` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
+  `js/apiClient.js:1407` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
   público de `solicitar-asistente.html` mandaba una columna que la base no tenía.
 - **Las filas de ejemplo hablan el idioma del catálogo.** La 0010 reemplazó las claves viejas de
   las cuatro filas ficticias —«enfermero» y compañía— por las que las pantallas esperan.
@@ -734,7 +734,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
 - **Los dos pasos que faltaban se dibujan desde el catálogo**, no están escritos en la pantalla.
   Matrícula y estudios en el paso 2, experiencia laboral en el paso 3 y referencias en el paso 5
   salen de `data/catalogo-fichas.json` a través de `js/fichas-legajo.js`
-  (`pwa-asistente/index.html:2079`, `montarFichas`). El paso de cierre sale de
+  (`pwa-asistente/index.html:2080`, `montarFichas`). El paso de cierre sale de
   `data/catalogo-autorizaciones.json`.
 - **El paso de cierre pasó a ser un módulo.** Estaba escrito adentro de `registrar-asistente.html`,
   cuarenta renglones que traían el archivo y armaban las casillas. Ahora es `js/autorizaciones.js`,
@@ -749,7 +749,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
   que esa fila no entraba y la persona no se enteraba.
 - **Y el alta del teléfono creaba cuentas sin dueño.** `registrarAspirante` no escribía `user_id`,
   así que la persona quedaba con cuenta y con legajo, pero el legajo no era de nadie y no lo podía
-  abrir. Se agrega en `guardarLegajo` (`pwa-asistente/index.html:2144`), que es donde ya se sabe
+  abrir. Se agrega en `guardarLegajo` (`pwa-asistente/index.html:2145`), que es donde ya se sabe
   quién inició sesión.
 
 **Cómo se comprobó, el 25 de agosto de 2026.** En dos mitades, porque el servidor alojado todavía
@@ -884,7 +884,7 @@ atiende, precio por hora y si acepta reemplazos urgentes. Son exactamente los qu
 `directorio`, la vista que sólo deja pasar a quien tiene el legajo validado por la
 Prestadora **y** además autorizó que se lo publique.
 
-- **Lo trae `traerDelDirectorio` (`js/apiClient.js:968`)**, que pide una sola fila filtrando por
+- **Lo trae `traerDelDirectorio` (`js/apiClient.js:970`)**, que pide una sola fila filtrando por
   identificador y por Prestadora. Un identificador que no tiene forma de identificador se contesta
   sin preguntarle a la base: la base devolvería un error de sintaxis, y un error en pantalla se lee
   como que el sistema se rompió, cuando lo que hay es un enlace viejo. Los hay: hasta el 25 de
@@ -915,8 +915,8 @@ Lo que falta —empezar una conversación con esa persona en particular— qued�
 
 **Tres traducciones que estaban por escribirse dos veces subieron a los archivos compartidos**
 («ningún patrón repetido sin punto único de verdad»): el precio en pesos es `Texto.importe` (`js/texto.js:160`), la etiqueta de una lista es
-`Catalogo.etiquetaSiExiste` (`js/catalogo.js:429`), y la de una tarea —que puede estar en cualquiera
-de tres listas— es `Catalogo.etiquetaDeTarea` (`js/catalogo.js:442`). Vivían adentro de
+`Catalogo.etiquetaSiExiste` (`js/catalogo.js:474`), y la de una tarea —que puede estar en cualquiera
+de tres listas— es `Catalogo.etiquetaDeTarea` (`js/catalogo.js:487`). Vivían adentro de
 `directorio.html`; ahora las dos pantallas las piden al mismo lugar.
 
 
@@ -1458,14 +1458,14 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
   la Prestadora», que es la condición que la vista ya exige para devolver la fila, y la de
   reemplazos urgentes, que sale de `disponibilidad_asistente`.
 - **El filtro por Prestadora vive en el cliente de datos y no es optativo**
-  (`js/apiClient.js:804`). El resto del archivo filtra «si hay Prestadora resuelta», y eso no sirve
+  (`js/apiClient.js:806`). El resto del archivo filtra «si hay Prestadora resuelta», y eso no sirve
   para una pantalla que se ve sin cuenta: sin sesión, la que no filtra devuelve las dos mezcladas.
   Acá, si no hay Prestadora, no se pide nada.
 - **Y si la dirección nombra una Prestadora que no existe, tampoco se muestra otra.** Comprobado
   en el navegador antes de tocar nada: `directorio.html?t=prestadora-que-no-existe` mostraba los
   cuatro Asistentes de PresDemo, porque el respaldo devuelve la primera Prestadora de la base. El
   respaldo sirve para una dirección que no nombra ninguna, no para una que nombra mal. Ahora se
-  distingue un caso del otro (`js/apiClient.js:856`) y el segundo avisa. **Y desde la
+  distingue un caso del otro (`js/apiClient.js:858`) y el segundo avisa. **Y desde la
   migración 0021 el respaldo ya no existe**: mostrar la primera Prestadora de la base era
   leer la lista de clientes de CeltaTech, y esa lista no la ve nadie. Quien entra sin
   enlace ahora ve que le falta el enlace.
@@ -1788,7 +1788,7 @@ pone el largo. El corto sólo aparecía leído, y en una fila de ejemplo.
 
 La `0017` lo saca: pasa las filas que decían `validado` a decir `validado_prestadora`, y el
 directorio deja de nombrar el valor muerto. En el código quedaba un solo lugar que lo leía
-—`pwa-asistente/index.html:1757`, un `||` defensivo— y también se fue. **Lo que la `0017` no hace es
+—`pwa-asistente/index.html:1758`, un `||` defensivo— y también se fue. **Lo que la `0017` no hace es
 cerrar la lista de estados con un `check`**, porque para eso hay que saber cuáles son todos, y hoy
 el código nombra cuatro sin que ningún lugar diga que ésos son todos.
 
@@ -1902,7 +1902,7 @@ Que sigan siendo ocho copias es parte del pendiente 13.
 corta.** La regla pide confirmación explícita ante cada una, y la medición encontró que en este proyecto hay exactamente una:
 rechazar un legajo (`panel-prestadora.html:827`). No hay un solo `delete` contra la base en las
 cuarenta y cuatro pantallas y guiones —lo único que se parece son dos `delete` de JavaScript sobre
-un objeto en memoria, `js/apiClient.js:504` y `js/apiClient.js:623`, que no tocan nada guardado—, y
+un objeto en memoria, `js/apiClient.js:506` y `js/apiClient.js:625`, que no tocan nada guardado—, y
 salir de la sesión no
 destruye nada. La única que hay ya pregunta antes, y la pregunta dice qué queda después:
 «Se va a rechazar este legajo. Queda cerrado y la persona no aparece en el directorio.
@@ -2236,7 +2236,7 @@ escrita: es la sección que sigue.
 el pendiente 15. No era una cuestión de prolijidad. Quien escribe la llamada a mano decide solo si
 manda el token de quien inició sesión o la clave pública, y de ese renglón depende que la base
 sepa quién está preguntando. Ahora son `ClienteDatos.getMensajes()` y
-`ClienteDatos.enviarMensaje()` (`js/apiClient.js:921`), que arman el pedido una sola vez para
+`ClienteDatos.enviarMensaje()` (`js/apiClient.js:923`), que arman el pedido una sola vez para
 todos.
 
 Se ganó algo que no se buscaba: la lectura vieja miraba `res.ok` y, si venía en falso, seguía de
@@ -2521,7 +2521,7 @@ en el marcado; `data-campo="algo@X"`, que es lo mismo dicho desde la declaració
 los suyos; `"filas"` y `"columnas"` en `data/catalogo-disponibilidad.json`, de donde la grilla saca
 los días y los turnos; `Catalogo.items('X')` y `Catalogo.etiquetaSiExiste('X', …)`, que son las dos
 puertas del catálogo que reciben el nombre; y la lista que recorre `etiquetaDeTarea` en
-`js/catalogo.js:443`, que busca una tarea en tres vocabularios seguidos.
+`js/catalogo.js:488`, que busca una tarea en tres vocabularios seguidos.
 
 **Y lo que no cuenta importa igual que lo que cuenta.** Que el nombre aparezca entre comillas no
 alcanza: `genero`, `zona`, `frecuencia` y `patologia` son además nombres de columna de la base.
@@ -2944,7 +2944,7 @@ ficticia y sesión simulada: el legajo se creó con fecha de alta del **1 de ene
 `update` posterior la corrió al **1 de enero de 2010**. Las dos veces la base guardó lo que le
 mandaron.
 
-**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:1315` la traduce a `fechaRegistro` y ese
+**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:1317` la traduce a `fechaRegistro` y ese
 nombre no aparece en ningún otro archivo del proyecto—, así que no había consecuencia visible. Se
 arregló igual, porque la antigüedad es exactamente la clase de dato que después se usa para ordenar
 un directorio o para decidir a quién se muestra primero, y ese día el agujero pasa a ser una
@@ -3066,7 +3066,7 @@ clonaba el molde, lo rellenaba con los datos del ítem y llamaba a `Identidad`, 
 `Catalogo.traducir()`. Como lo que está adentro de un `<template>` no está en el documento, la
 traducción de arranque tampoco lo alcanza: las copias llegaban siempre con el castellano de
 respaldo. Eran las 21 frases de las tarjetas de curso de `cursos.html` y el cartel «Próximamente»
-de `index.html`. Se agregó la llamada (`js/catalogo.js:574`) y se comprobó en el navegador, que
+de `index.html`. Se agregó la llamada (`js/catalogo.js:619`) y se comprobó en el navegador, que
 es donde esto se ve: `cursos.html?idioma=en` dice hoy «8 hours / Certificate / ENROL», e
 `index.html?idioma=pt-BR` dice «Em breve».
 
@@ -3097,7 +3097,7 @@ seis tarjetas de curso en castellano. Eso es lo que pasaba el 26 de agosto de 20
 `cursos.html?idioma=en`, y el chequeo de frases lo daba por bueno, porque lo que hay adentro de
 las tarjetas no lo escribe la pantalla: sale de `data/catalogo-oferta.json` y de
 `data/catalogo-vocabularios.json`. El mecanismo ya lo soportaba —`Catalogo.textoDe()`
-(`js/catalogo.js:403`) elige el idioma de cualquier texto que traiga sus tres idiomas colgando—;
+(`js/catalogo.js:448`) elige el idioma de cualquier texto que traiga sus tres idiomas colgando—;
 lo que faltaba era el texto.
 
 **Quedaron 218 textos en los tres idiomas**: los 24 títulos de vocabulario, sus 142 ítems, las 10
@@ -3332,8 +3332,18 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
   desde que `supabase/migrations/0045_cada_prestadora_ficticia_con_su_propia_guia.sql` carga la
   guía propia de dos Prestadoras ficticias. Antes de eso, la prueba de la pantalla vivía sólo en
   datos cargados a mano y se perdía con la base.
-- **Lo demás que falta**: la guía no llega al teléfono sin señal (pendiente 102), que es justo
-  cuando más se necesita.
+- **La guía general ya llega al teléfono sin señal, desde el 4 de septiembre de 2026.**
+  `scripts/generar_guias.mjs` arma `data/catalogo-guias.json` con el mismo mecanismo que el
+  catálogo de vocabularios: llama a `guias_de(null)` y guarda lo que devuelve. El archivo se
+  copia byte a byte a los dos programas para teléfono, y `scripts/verificar_guias_offline.mjs`
+  comprueba que las copias coincidan entre sí y con la base. `Catalogo.cargarGuias()`
+  (`js/catalogo.js`) intenta primero la base —general más la propia, si hay conexión— y si falla
+  cae al archivo, que sólo trae la general; `pwa-asistente/index.html` la usa en `guiCargar()`.
+  Que el archivo tenga hoy cero guías es un estado válido, no una falla: las 19 generales están
+  cargadas como borrador sin publicar, a la espera del pendiente 104, y se suman solas al
+  publicarse.
+- **Lo demás que falta**: la guía **propia** de cada Prestadora no llega al teléfono sin señal
+  (pendiente 102, la mitad que sigue abierta), que es justo cuando más se necesita.
 
 ### La Prestadora ya puede marcar cada verificación del legajo
 
@@ -3370,10 +3380,10 @@ regresa a «sin presentar» —la columna no puede seguir diciendo que alguien l
 ya no está comprobado— y no refresca la fecha cuando el estado no cambió.
 
 **Y el cliente de datos aprendió a hacer un alta-o-modificación en un solo pedido.**
-`_supabaseUpsert()` (`js/apiClient.js:1284`) se apoya en la restricción de unicidad de
+`_supabaseUpsert()` (`js/apiClient.js:1286`) se apoya en la restricción de unicidad de
 `(legajo, tipo)` que trae la migración 0004, así que marcar el mismo papel dos veces corrige el
 renglón que ya está en vez de agregar otro. No existía en ninguna de las tres copias del archivo,
-y `marcarVerificacion()` (`js/apiClient.js:598`) es la primera que la usa.
+y `marcarVerificacion()` (`js/apiClient.js:600`) es la primera que la usa.
 
 **Probado con las dos Organizaciones ficticias, y la prueba puede fallar.** Ocho comprobaciones
 nuevas en `scripts/probar_aislamiento.mjs:922`, que llevaron la corrida de 119 a 127. Se hacen
@@ -3634,7 +3644,7 @@ prestación.
 
 El mercado es de una Prestadora: sus Asistentes ofreciendo, sus Familias buscando. Muchos de un
 lado y muchos del otro, pero **todos adentro de la misma Organización**. Es lo que ya hace
-`js/apiClient.js:948`, que resuelve una Prestadora y le muestra los suyos a `directorio.html`.
+`js/apiClient.js:950`, que resuelve una Prestadora y le muestra los suyos a `directorio.html`.
 
 **Ninguna búsqueda, en ninguna modalidad, mezcla Asistentes de dos Prestadoras.** Mezclarlas sería
 abandonar el aislamiento entre Organizaciones para conseguir un desorden general. No
@@ -4372,7 +4382,7 @@ el **pendiente 107**.
 
 **Y lo que la opción A todavía le debe a quien la sufre.** Que la persona vea, **antes** de cambiar
 un papel, que hacerlo le baja el sello. Hoy no se puede escribir: ninguna pantalla cambia
-`documents` —el mapeo existe en `js/apiClient.js:1378` y no lo usa nadie— y el chequeo de frases se
+`documents` —el mapeo existe en `js/apiClient.js:1380` y no lo usa nadie— y el chequeo de frases se
 pone en rojo con toda frase de catálogo que ninguna pantalla nombre. La frase entra el día que
 entre la pantalla; es el **pendiente 108**.
 
@@ -4404,9 +4414,9 @@ Cerró el pendiente 94, el 31 de agosto de 2026.
 - **La zona sigue siendo obligatoria, y ahora lo cuida el envío.** El `required` del campo viejo
   lo hacía el navegador; una lista de casillas sin tildar no la agarra ningún navegador. Se le
   pregunta al módulo antes de enviar, y si no hay respuesta el formulario vuelve al paso 1 y lleva
-  la vista al campo (`pwa-asistente/index.html:2240`).
+  la vista al campo (`pwa-asistente/index.html:2241`).
 - **Se guarda donde se lee**: las claves van a `zonas_asistente` y el texto libre a `zonas_texto`,
-  por `js/apiClient.js:521` y `:1358`. `caregivers.zone` no la escribe más nadie, y eso abrió el
+  por `js/apiClient.js:523` y `:1360`. `caregivers.zone` no la escribe más nadie, y eso abrió el
   **pendiente 109**.
 - **Y el 109 se cerró esa misma noche, por la salida que no borra datos.** Se midió
   primero: ninguna pantalla manda `zona` ni `zonaResidencia` al escribir un legajo, así
@@ -5193,7 +5203,7 @@ que las otras dos, que la limpieza se la lleva.
 escribe nadie: ni una pantalla, ni un guion, ni una prueba. Lo que sí pasa es que
 `registrar-asistente.html:996-1000` sube el documento de identidad, los antecedentes penales y el
 título, y guarda **sólo los caminos** en la columna `documents` de `caregivers`
-(`registrar-asistente.html:1043`, y de ahí a la base por `js/apiClient.js:1378`). O sea que hay
+(`registrar-asistente.html:1043`, y de ahí a la base por `js/apiClient.js:1380`). O sea que hay
 dos formas de guardar el mismo hecho y una está muerta, como ya pasó con `messages` y las
 `conversaciones` heredadas. Y la que quedó viva es la pobre: la tabla dedicada tiene `tipo`,
 `presentado_el`, `vencimiento` y `verificado`, y el objeto de `documents` no tiene ninguno de los
@@ -5222,7 +5232,7 @@ defendía eso diciendo que los fichados ya escritos decían «Entrada» —y no 
 escrito, ni podía haberlo—. Es justo la distancia entre lo visible, que cambia con el idioma,
 y lo guardado, que se nombra por su función y no cambia.
 
-Las tres corregidas. El legajo se resuelve **una sola vez**, en `js/apiClient.js:712`, porque son
+Las tres corregidas. El legajo se resuelve **una sola vez**, en `js/apiClient.js:714`, porque son
 dos pantallas que necesitan el mismo dato; si no hay legajo lo dice y se planta, con una frase
 nueva en los tres idiomas, en vez de inventar uno. Y `event_type` guarda `entrada` y `salida`,
 que son las claves que el catálogo de frases **ya usaba** —no hace falta ninguna palabra nueva—,
@@ -5345,7 +5355,7 @@ que venza». Así que el control negativo que el propio plan pide —una matríc
 medido, y dicho ahí cuál de las tres puede aportar el caso y cuáles no.
 
 Y de paso quedó comprobada la otra mitad, la que la búsqueda de la mañana había dado mal: **a
-`matriculas_asistente` sí la escribe el producto**. `js/apiClient.js:475` la nombra en el mapa de
+`matriculas_asistente` sí la escribe el producto**. `js/apiClient.js:477` la nombra en el mapa de
 las cuatro fichas repetibles del legajo, y la ficha pide la fecha como obligatoria
 (`data/catalogo-fichas.json:40`). La búsqueda que decía lo contrario había pasado a `scripts/listar.mjs` un patrón
 con alternativas escrito como lo escribe grep, con `\|`. Ahí adentro el patrón es una expresión
@@ -5464,7 +5474,7 @@ no se entera nadie el día que ese algo cambie. Ahora
 `scripts/probar_exenciones.mjs` la tomó sola: vaciarla pone rojo al chequeo, comprobado.
 
 El `avatares` es aparte y está bien: es público **a propósito** desde la 0006, porque la foto es lo
-que el directorio muestra sin cuenta (`js/apiClient.js:989`). Ahí no hay nada que aislar hacia
+que el directorio muestra sin cuenta (`js/apiClient.js:991`). Ahí no hay nada que aislar hacia
 afuera; lo que la condición cuida es la escritura, que nadie deje una foto en la carpeta de otro.
 
 Mover el camino a `<Organización>/<cuenta>/<archivo>` no es sólo una migración: hay que mudar los
@@ -5620,7 +5630,7 @@ Todo correcto. Otra vez no había nada que arreglar; faltaba lo que impide el pr
 Y el primer error tiene dos tamaños muy distintos, que conviene no mezclar. **Equivocarse el nombre
 falla callado**: el depósito no existe, `urlFirmada()` devuelve `null` y la pantalla no muestra el
 archivo sin decir por qué. **Confundirse de depósito en la dirección pública publica un documento de
-identidad**, que es el peor error posible de este producto. `js/apiClient.js:999` arma una dirección
+identidad**, que es el peor error posible de este producto. `js/apiClient.js:1001` arma una dirección
 pública a mano, con el nombre del depósito pegado adentro del texto de la dirección: cambiar ahí una
 palabra por la otra es un renglón.
 
@@ -6401,7 +6411,7 @@ era una pantalla que faltaba y no una comodidad de desarrollo.
   escrita en la pantalla. El alta y el cambio los hace `guardarOpcion` (`panel-prestadora.html:1264`,
   con los botones apagados mientras la operación corre) y la baja y la realta
   `cambiarEstadoDeOpcion` (`:1327`). **No borra: desactiva**, y por eso vuelve a activar.
-- **Del lado del cliente son cinco funciones nuevas**, de `js/apiClient.js:401` a `:462`, contra
+- **Del lado del cliente son cinco funciones nuevas**, de `js/apiClient.js:403` a `:464`, contra
   `vocabulario_items`. La clave de cada opción la arma `Texto.claveDesde` (`js/texto.js:192`), con el
   largo máximo en un solo lugar (`js/texto.js:108`).
 - **No hizo falta ninguna migración.** El esquema, las ocho políticas, el disparador

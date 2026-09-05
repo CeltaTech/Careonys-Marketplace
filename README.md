@@ -31,14 +31,14 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
-| 18 pantallas HTML, 13.226 renglones | sin ruteo: cada pantalla es un archivo |
-| 16.278 renglones de JavaScript propio, en 37 archivos | 9.839 de ellos son copias byte a byte de otro archivo (pendiente 13) |
-| 6.496 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
+| 18 pantallas HTML, 13.227 renglones | sin ruteo: cada pantalla es un archivo |
+| 16.420 renglones de JavaScript propio, en 37 archivos | 9.933 de ellos son copias byte a byte de otro archivo (pendiente 13) |
+| 6.497 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
 | 4.653 renglones de hojas de estilo, en 10 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
 | 951 declaraciones más, pegadas al HTML | en 242 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 14 de las 18 pantallas rescatan la sesión al abrir |
 | 5 servidores de afuera, sin `package.json` ni compilación | cdn.jsdelivr.net, cdnjs.cloudflare.com, fonts.googleapis.com, fonts.gstatic.com, www.openstreetmap.org — hay que decir de qué es cada uno |
-| 36 tablas y 73 migraciones en el repositorio | 36 chequeos las miran antes de cada commit |
+| 36 tablas y 73 migraciones en el repositorio | 37 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
@@ -195,6 +195,7 @@ título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de e
 | `verificar_frases` | Que quede texto visible escrito a mano en una pantalla ya convertida a los tres idiomas —en el marcado si tiene `data-frase`, y en el guión si el guión ya pide frases, que son dos conversiones distintas y no siempre van juntas |
 | `verificar_glosario` | Que una palabra que el glosario sacó siga escrita en algún lado: **en la documentación, en un comentario o en un mensaje de commit**, que son las superficies que la regla nombra y que el chequeo del vocabulario deja afuera a propósito, porque ése mira sólo el texto que ve una persona |
 | `verificar_guias` | Que una Guía de cuidado se vea sin estar publicada, o que se cruce entre dos Prestadoras |
+| `verificar_guias_offline` | Que el archivo de guías sin conexión se despegue de lo que dice la base, o de sus copias |
 | `verificar_guiones` | Que el JavaScript de una pantalla quede sin poder leerse |
 | `verificar_identidad` | Que la marca vuelva a estar escrita a mano |
 | `verificar_migraciones` | Que una migración que ya entró al historial se mueva de lugar, que es lo único que no se puede ver leyendo los archivos de hoy —uno editado ayer se ve igual que uno que nunca se tocó—, así que le pregunta al historial: editada, borrada, renumerada, o una nueva con un número que el árbol ya había pasado. Las cuatro rompen lo mismo, que la base se pueda reconstruir corriendo los archivos en orden desde cero. **Y mira también lo que todavía no es un commit**, porque corriendo en el gancho de antes del commit, mirar sólo el historial avisaría un commit tarde, con la migración ya movida y publicada |

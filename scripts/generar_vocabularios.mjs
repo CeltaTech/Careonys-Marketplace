@@ -48,8 +48,9 @@ export const COPIAS = [
 ];
 
 /** La dirección y la clave salen del código, para pedirle a la misma base que
- *  usan las pantallas y no a otra. */
-function laBase() {
+ *  usan las pantallas y no a otra. Se exporta: `generar_guias.mjs` la reusa en
+ *  vez de leer `js/apiClient.js` por su cuenta. */
+export function laBase() {
   const fuente = readFileSync(aRuta('js/apiClient.js'), 'utf8');
   const url = (fuente.match(/supabaseUrl:\s*'([^']+)'/) || [])[1];
   const clave = (fuente.match(/supabaseKey:\s*'([^']+)'/) || [])[1];
@@ -109,11 +110,11 @@ export function armar(deLaBase, delArchivo) {
  *  escribieron. Sin esto, todo el catálogo aparece distinto y ninguna diferencia
  *  de verdad se distingue del ruido. **El orden de los `items` sí se respeta**:
  *  ahí el orden es dato, es en el que la persona ve las opciones. */
-function igual(a, b) {
+export function igual(a, b) {
   return JSON.stringify(ordenado(a)) === JSON.stringify(ordenado(b));
 }
 
-function ordenado(valor) {
+export function ordenado(valor) {
   if (Array.isArray(valor)) return valor.map(ordenado);   // el orden del arreglo se conserva
   if (valor && typeof valor === 'object') {
     const salida = {};

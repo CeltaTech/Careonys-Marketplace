@@ -158,6 +158,8 @@
   let oferta = null;    // Servicios y cursos.
   let promesaFrases = null;
   let frases = null;    // El texto visible de las pantallas.
+  let promesaGuias = null;
+  let guias = null;     // Las guías de cuidado, una vez traídas.
 
   // ── CUANDO UNA FRASE NO ESTÁ ───────────────────────────────────────
   // Falta una frase y hay que arreglarlo, así que se avisa. Pero el aviso dice
@@ -314,6 +316,40 @@
     return datos.frases;
   }
 
+  // ── LAS GUÍAS DE CUIDADO ─────────────────────────────────────────────
+  // Mismo orden que los vocabularios —primero la base, el archivo sólo cuando
+  // no contesta— y mismo archivo generado (`scripts/generar_guias.mjs`,
+  // migración 0041). Con una diferencia a propósito: acá **un objeto vacío no
+  // es una falla de la base**, es la guía general esperando que el
+  // Desarrollador revise cada una antes de publicarla (pendiente 104). Tratar
+  // ese vacío como si la base no hubiera contestado escondería el archivo sin
+  // conexión aun con la base arriba y respondiendo bien.
+  async function _traerGuias() {
+    const desdeLaBase = await _traerGuiasDeLaBase();
+    if (desdeLaBase) return desdeLaBase;
+    return await _traerGuiasDelArchivo();
+  }
+
+  async function _traerGuiasDeLaBase() {
+    const cliente = window.ClienteDatos;
+    if (!cliente || typeof cliente.guiasDePrestadora !== 'function') return null;
+    try {
+      const guias = await cliente.guiasDePrestadora();
+      if (!guias || typeof guias !== 'object') return null;
+      return guias;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async function _traerGuiasDelArchivo() {
+    const respuesta = await fetch(ARCHIVO('catalogo-guias'), { cache: 'no-cache' });
+    if (!respuesta.ok) throw new Error('Las guías respondieron ' + respuesta.status);
+    const datos = await respuesta.json();
+    if (!datos || !datos.guias) throw new Error('El catálogo no tiene guías');
+    return datos.guias;
+  }
+
   const Catalogo = {
 
     idioma: idiomaDelEntorno(),
@@ -347,6 +383,15 @@
         promesaFrases = _traerFrases().then((f) => { frases = f; return f; });
       }
       return promesaFrases;
+    },
+
+    // Las guías de cuidado, general más la propia de la Prestadora si hay
+    // conexión; sólo la general si no la hay (pendiente 102).
+    cargarGuias() {
+      if (!promesaGuias) {
+        promesaGuias = _traerGuias().then((g) => { guias = g; return g; });
+      }
+      return promesaGuias;
     },
 
     // El texto de una clave, ya listo para mostrar. Los huecos se escriben

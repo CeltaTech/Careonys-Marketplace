@@ -287,10 +287,12 @@ const ClienteDatos = {
   // antes de dejar publicarla. Un borrador que se ve es una indicación que
   // nadie firmó.
   //
-  // Y no hay copia en `data/`, al revés del catálogo: el archivo del catálogo
-  // viaja a todos los teléfonos, y lo que escribió una Prestadora no puede
-  // repartirse a cualquiera. Que su gente igual la necesita en una casa sin
-  // señal es cierto, y está anotado sin resolver (pendiente 102).
+  // **La guía general sí tiene copia en `data/catalogo-guias.json`**, generada
+  // por `scripts/generar_guias.mjs` igual que el catálogo de vocabularios:
+  // viaja a todos los teléfonos porque es la misma para cualquiera. La que
+  // escribió una Prestadora no puede repartirse así, y ahí sigue sin resolver
+  // si además se guarda en el teléfono al iniciar sesión, o si sin señal se ve
+  // sólo la general (pendiente 102, la mitad que queda abierta).
   async guiasDePrestadora() {
     const prestadora = this.currentTenant || await this.initTenant();
     const slug = prestadora ? prestadora.slug : null;
