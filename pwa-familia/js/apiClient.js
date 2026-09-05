@@ -1201,6 +1201,33 @@ const ClienteDatos = {
     return (filas && filas[0]) || null;
   },
 
+  // Con qué moneda trabaja esta Prestadora (migración 0074). Es lo que le da
+  // unidad a todo importe suyo: el valor por hora de un legajo se guarda con la
+  // moneda que la Prestadora tenía puesta el día que se escribió, y no se vuelve
+  // a leer de acá —si mañana pasa de peso a dólar, los valores ya escritos no
+  // se multiplican por mil—. Así que esto sólo decide con qué nace el próximo.
+  //
+  // Se pide a la base y no se lee de `currentTenant`, que es la foto que se
+  // trajo al arrancar la página: después de guardar hay que poder mostrar lo que
+  // quedó, no lo que había.
+  async monedaDeLaPrestadora() {
+    const prestadora = await this.initTenant();
+    if (!prestadora || !prestadora.id) return null;
+    const filas = await this._supabaseRequest('GET', 'tenants', null,
+      { id: `eq.${prestadora.id}`, select: 'id,moneda' });
+    return (filas && filas[0]) || null;
+  },
+
+  // Sólo el personal de la Prestadora puede escribirla, y sólo esta columna: la
+  // política de la 0074 se llama «La Prestadora configura lo suyo» y el permiso
+  // es por columna, así que un pedido que además tocara el nombre o el logotipo
+  // lo rechaza la base, no la pantalla.
+  async guardarMonedaDeLaPrestadora(id, moneda) {
+    const filas = await this._supabaseRequest('PATCH', 'tenants',
+      { moneda }, { id: `eq.${id}`, select: 'id,moneda' });
+    return (filas && filas[0]) || null;
+  },
+
   // --- INTEGRACIÓN REST DE SUPABASE ---
   // `prefer` es el único encabezado que cambia según el pedido, y por eso entra
   // como texto suelto y no como un objeto de encabezados libres: la clave, el
@@ -1297,6 +1324,11 @@ const ClienteDatos = {
         genero: row.gender || '',
         nacionalidad: row.nationality || '',
         valorHora: row.hourly_rate || '',
+        // La unidad del número de arriba (migración 0074). Viaja al lado y no
+        // se deduce de la Prestadora que mira: el importe se guardó con la suya
+        // y así se muestra. No se traduce de vuelta en `_mapToDatabase` a
+        // propósito: la escribe el disparador de la base, no la pantalla.
+        monedaValorHora: row.moneda_valor_hora || '',
         estado: row.verification_status,
         fechaRegistro: row.created_at ? row.created_at.split('T')[0] : ''
       };

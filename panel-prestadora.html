@@ -164,6 +164,37 @@
         </button>
       </div>
 
+      <!-- CON QUÉ MONEDA TRABAJA ESTA PRESTADORA
+           «Todo importe se guarda con su moneda», y hasta la migración 0074 el
+           único importe del esquema —el valor por hora de un legajo— era un
+           número suelto. Ahora la moneda la elige cada Prestadora, y es acá.
+           La lista sale del vocabulario `moneda` y no está escrita en el
+           marcado: es la misma regla que rige toda lista de opciones. Los
+           rótulos los pone `rotularMoneda()` desde el catálogo, así que este
+           bloque tampoco tiene una palabra adentro. Arranca oculto y lo
+           destapa `cargarMoneda()`, detrás de la misma comprobación de permiso
+           que el tope. Va antes del bloque de opciones propias porque el texto
+           de ayuda manda ahí abajo a quien necesite una moneda que falte. -->
+      <div class="card-dashboard mt-24 oculto" id="moneda-bloque">
+        <div class="mb-16">
+          <h3 class="m-0 texto-18 color-titulo"><i class="fas fa-coins"></i>
+            <span id="moneda-titulo"></span></h3>
+          <p class="m-solo-arriba-4 texto-13 color-secundario" id="moneda-bajada"></p>
+        </div>
+
+        <div class="oculto p-16 redondeo-10 texto-13 interlineado-16 mb-12" id="moneda-estado"></div>
+
+        <div class="form-group">
+          <label for="moneda-elegida" id="moneda-etiqueta"></label>
+          <select id="moneda-elegida" class="ancho-160" data-catalogo="moneda"></select>
+          <p class="texto-11 color-secundario m-solo-arriba-4" id="moneda-ayuda"></p>
+        </div>
+
+        <button class="btn peso-700 texto-13" id="moneda-guardar" onclick="guardarMoneda();">
+          <i class="fas fa-floppy-disk"></i> <span id="moneda-guardar-texto"></span>
+        </button>
+      </div>
+
       <!-- LAS OPCIONES QUE ESTA PRESTADORA LE AGREGA AL CATÁLOGO
            El catálogo tiene dos pisos desde la migración 0038: lo que trae el
            producto lo ve toda Prestadora, y lo que agrega una queda de su lado.
@@ -1007,6 +1038,135 @@
       estadoTope('exito', 'alarmas.tope_guardado', { horas: fila.horas_jornada_abierta });
     }
 
+    // ── CON QUÉ MONEDA TRABAJA ESTA PRESTADORA ──────────────────────────────
+    //
+    // «Todo importe se guarda con su moneda». Hasta la migración 0074 el único
+    // importe del esquema era un número a secas y la moneda vivía escrita
+    // adentro de `js/texto.js`, igual para todo el mundo. El Desarrollador
+    // decidió el 5 de septiembre de 2026 que la elige cada Prestadora según sus
+    // preferencias, y éste es el lugar donde la elige.
+    //
+    // Lo que se guarda acá es con qué nacen los importes de ahí en adelante: al
+    // escribir un valor por hora, la base le copia esta moneda al legajo y no
+    // vuelve a mirar esta pantalla nunca más. Por eso cambiarla no le mueve el
+    // precio a nadie —si esta Prestadora pasara de peso a dólar, un valor ya
+    // cargado no se multiplicaría por mil—, y por eso el mismo importe se
+    // muestra siempre con la moneda con la que se escribió.
+
+    // La fila de esta Prestadora en `tenants`. Vale `null` mientras no se trajo,
+    // y también cuando no se pudo resolver de quién es el panel: sin fila no hay
+    // nada que corregir, y guardar no llama a la base.
+    let monedaPrestadoraId = null;
+
+    // El cartel de este bloque es propio, por lo mismo que el del tope: son
+    // cargas distintas que corren casi a la vez, y con un solo cartel la que
+    // termina segunda le borra lo que dijo la primera.
+    function estadoMoneda(tono, clave, huecos) {
+      pintarCartel('moneda-estado', tono, clave, huecos);
+    }
+
+    // Los rótulos fijos, del catálogo: en el marcado no hay ni una palabra, así
+    // que ésta es la única forma de que el bloque exista en los tres idiomas.
+    function rotularMoneda() {
+      const poner = (id, clave) => {
+        document.getElementById(id).textContent = Catalogo.frase(clave);
+      };
+      poner('moneda-titulo', 'panel.moneda_titulo');
+      poner('moneda-bajada', 'panel.moneda_bajada');
+      poner('moneda-etiqueta', 'panel.moneda_campo');
+      poner('moneda-ayuda', 'panel.moneda_ayuda');
+      poner('moneda-guardar-texto', 'panel.moneda_guardar');
+    }
+
+    // «los cuatro estados»: cargando con el cartel y el botón apagado, error en
+    // el mismo cartel, la rama de «no se supo de quién es este panel» dicha
+    // aparte, y listo con la moneda que la base tiene guardada.
+    async function cargarMoneda() {
+      const bloque = document.getElementById('moneda-bloque');
+      bloque.classList.remove('oculto');
+      rotularMoneda();
+
+      const boton = document.getElementById('moneda-guardar');
+      const campo = document.getElementById('moneda-elegida');
+      boton.disabled = true;
+      estadoMoneda('info', 'panel.moneda_cargando');
+
+      let fila;
+      try {
+        fila = await ClienteDatos.monedaDeLaPrestadora();
+      } catch (err) {
+        console.error('Panel de la Prestadora, moneda:', err);
+        estadoMoneda('critico', 'panel.moneda_error');
+        return;
+      } finally {
+        boton.disabled = false;
+      }
+
+      if (!fila) {
+        monedaPrestadoraId = null;
+        campo.disabled = true;
+        boton.disabled = true;
+        estadoMoneda('atencion', 'panel.moneda_vacio');
+        return;
+      }
+
+      monedaPrestadoraId = fila.id;
+      // La lista de monedas la llena el catálogo desde el vocabulario, no este
+      // guion. Cuál queda elegida se dice con el atributo y no con `value`
+      // porque `js/catalogo.js` resuelve los desplegables por su cuenta al
+      // cargar la página: escribiendo el atributo, la moneda guardada gana
+      // termine primero la resolución de allá o la de acá.
+      campo.setAttribute('data-catalogo-valor', fila.moneda || '');
+      await Catalogo.aplicarEnDocumento(bloque);
+      campo.disabled = false;
+      estadoMoneda(null);
+    }
+
+    // «todo botón que dispara una operación se apaga»: dos clics seguidos eran
+    // dos escrituras sobre la misma fila.
+    async function guardarMoneda() {
+      const boton = document.getElementById('moneda-guardar');
+      const campo = document.getElementById('moneda-elegida');
+      if (!monedaPrestadoraId) return;
+
+      // Lo único que se puede validar acá es que haya algo elegido: las opciones
+      // son las del vocabulario, y qué códigos valen lo dice la base con la
+      // comprobación que le puso la 0074 a la columna.
+      const moneda = campo.value;
+      if (!moneda) {
+        estadoMoneda('atencion', 'panel.moneda_sin_elegir');
+        return;
+      }
+
+      boton.disabled = true;
+      estadoMoneda('info', 'panel.moneda_cargando');
+
+      let fila;
+      try {
+        fila = await ClienteDatos.guardarMonedaDeLaPrestadora(monedaPrestadoraId, moneda);
+      } catch (err) {
+        console.error('Panel de la Prestadora, guardado de la moneda:', err);
+        estadoMoneda('critico', 'panel.moneda_error');
+        return;
+      } finally {
+        boton.disabled = false;
+      }
+
+      // La base contestó sin devolver la fila: el cambio no quedó escrito, y
+      // decir «guardado» sería mentir.
+      if (!fila) {
+        estadoMoneda('critico', 'panel.moneda_error');
+        return;
+      }
+
+      // La que se muestra es la que quedó guardada, no la que se eligió. Y se
+      // nombra como la nombra el vocabulario —«Peso argentino», no «ARS»—,
+      // salvo que el vocabulario no la tenga.
+      campo.value = fila.moneda;
+      const nombre = Catalogo.etiquetaSiExiste('moneda', fila.moneda) || fila.moneda;
+      estadoMoneda('exito', 'panel.moneda_guardado', { moneda: nombre });
+    }
+
     // ── LAS OPCIONES QUE ESTA PRESTADORA LE AGREGA AL CATÁLOGO ──────────────
     //
     // Se lee y se escribe contra las tablas, y no contra `vocabularios_de`, que
@@ -1411,6 +1571,9 @@
         // legajos: la tabla es del espacio de la Prestadora y no la alcanza
         // nadie más.
         cargarTope();
+        // Y la moneda, por lo mismo: configurar el espacio de la Prestadora es
+        // escribir en él, y la política de la 0074 sólo se lo deja a su personal.
+        cargarMoneda();
 
         // Y las opciones propias del catálogo van detrás del mismo permiso:
         // agregarle una opción a la Prestadora es escribir en su espacio.

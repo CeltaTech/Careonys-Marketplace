@@ -328,9 +328,11 @@
    Las cuentas de cuántas tablas y cuántas funciones hay no se escriben acá: las
    dice el renglón verde al terminar, que sale de contar los archivos. Un número
    escrito a mano en un encabezado queda viejo el día que se agrega una
-   migración, y nadie vuelve a leerlo. La regla de la moneda tiene hoy un
-   incumplimiento, anotado abajo con su motivo y su pendiente: el chequeo no lo
-   tapa, lo deja a la vista y evita que entre uno nuevo.
+   migración, y nadie vuelve a leerlo. La regla de la moneda no tiene hoy ningún
+   incumplimiento: tenía uno —`caregivers.hourly_rate`, el único importe del
+   esquema, guardado como número a secas— y la 0074 se lo dio, así que `SIN_MONEDA`
+   quedó vacía. La lista sigue declarada para que el día que aparezca un caso que
+   de verdad no pueda cumplirla, el motivo se escriba ahí y quede a la vista.
 
    Qué NO mira, dicho de frente:
    - No sabe si la migración se aplicó. Un archivo acá describe lo que se quiso
@@ -553,12 +555,16 @@ const SIN_ORGANIZACION_AL_ESCRIBIR = new Map([
        'cree: se comprueba acá mismo.' }]
 ]);
 
-/* Importes que hoy se guardan sin moneda, con su motivo y su pendiente. */
-const SIN_MONEDA = new Map([
-  ['caregivers.hourly_rate',
-   'único importe del esquema; agregarle la moneda toca una columna ya escrita, ' +
-   'así que lo decide el Desarrollador; pendiente 51']
-]);
+/* Importes que hoy se guardan sin moneda, con su motivo y su pendiente.
+
+   Está vacía, y eso es una novedad del 5 de septiembre de 2026: tenía uno solo,
+   `caregivers.hourly_rate`, que era el único importe de todo el esquema y era un
+   número a secas. La 0074 le dio su columna —`moneda_valor_hora`, que se llena
+   sola con la moneda que eligió la Prestadora— y con eso la regla dejó de tener
+   excepciones. La lista queda declarada porque el día que aparezca un importe
+   que de verdad no pueda traer la suya, el lugar donde se escribe el motivo es
+   éste y no un comentario suelto. */
+const SIN_MONEDA = new Map([]);
 
 const TABLA = /create\s+table\s+(?:if\s+not\s+exists\s+)?"?public"?\."?([a-z_]+)"?\s*\(/gi;
 const FUNCION = /create\s+(?:or\s+replace\s+)?function\s+(?:public\.)?([a-z_]+)\s*\(/gi;
@@ -570,6 +576,14 @@ const CLAVE_APARTE =
   /alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?"?public"?\."?([a-z_]+)"?[^;]*add\s+constraint[^;]*primary\s+key\s*\(\s*"?([a-z_]+)"?/gi;
 const AGREGA_ORGANIZACION =
   /alter\s+table\s+(?:if\s+exists\s+)?"?public"?\."?([a-z_]+)"?[^;]*add\s+column[^;]*\b(?:prestadora_id|tenant_id)\b/gi;
+/* Y lo mismo para la moneda. Hasta el 5 de septiembre de 2026 la cuarta regla
+   miraba nada más que el cuerpo del `create table`, así que una columna de
+   moneda que llegara después —que es la única forma de dársela a una tabla que
+   ya existe, como hizo la 0074 con `caregivers`— era invisible y el importe
+   seguía figurando como suelto. El mensaje de error ya decía que la moneda
+   «puede llegar después»; el código no lo cumplía. */
+const AGREGA_MONEDA =
+  /alter\s+table\s+(?:if\s+exists\s+)?"?public"?\."?([a-z_]+)"?[^;]*add\s+column[^;]*\b\w*(?:moneda|currency)\w*\b/gi;
 /* Para la sexta. Un `insert` que sale de recorrer `tenants`, el `create trigger`
    colgado de esa misma tabla, y el `rename to` que le cambia el nombre a una
    tabla en el medio —la 0022 renombró justo una de las dos que siembra la 0018,
@@ -747,6 +761,20 @@ export function conOrganizacion(textos) {
       }
     }
     for (const m of t.matchAll(AGREGA_ORGANIZACION)) salida.add(m[1].toLowerCase());
+  }
+  return salida;
+}
+
+/** Las tablas que en algún lado tienen una columna de moneda, la traigan de
+ *  nacimiento o se la dé un `alter table` posterior. */
+export function conMoneda(textos) {
+  const salida = new Set();
+  for (const texto of textos) {
+    const t = texto.replace(/\r\n/g, '\n');
+    for (const m of t.matchAll(TABLA)) {
+      if (MONEDA.test(entreParentesis(t, m.index))) salida.add(m[1].toLowerCase());
+    }
+    for (const m of t.matchAll(AGREGA_MONEDA)) salida.add(m[1].toLowerCase());
   }
   return salida;
 }
@@ -1214,7 +1242,7 @@ export function cuerposDeVista(textos) {
  * migración. Sin esos datos se mira sólo este texto.
  */
 export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, bajas,
-                                     alcance, vistas) {
+                                     alcance, vistas, monedas) {
   const t = texto.replace(/\r\n/g, '\n');
   const bajo = t.toLowerCase();
   const tienen = conColumna || conOrganizacion([t]);
@@ -1226,6 +1254,9 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, b
   /* Y sin los cuerpos de todas, los de este solo texto: es lo que hace falta
      para las pruebas de más abajo, donde cada caso es una migración sola. */
   const cuerpos = vistas || cuerposDeVista([t]);
+  /* Y lo mismo con la moneda, por el mismo motivo que la columna de
+     Organización: la 0074 se la da a `caregivers`, que nace en la 0001. */
+  const conSuMoneda = monedas || conMoneda([t]);
   const fallas = [];
 
   for (const m of t.matchAll(TABLA)) {
@@ -1258,7 +1289,7 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, b
     }
 
     /* 4. La moneda del importe. */
-    const tieneMoneda = MONEDA.test(columnas);
+    const tieneMoneda = MONEDA.test(columnas) || conSuMoneda.has(tabla);
     const primera = renglonDe(t, t.indexOf('(', m.index));
     columnas.split('\n').forEach((linea, i) => {
       const l = linea.trim().replace(/,$/, '');
@@ -1816,6 +1847,10 @@ const BIEN = [
   ['la columna de la Organización que llega en un `alter table` posterior',
    'create table if not exists public.visitas (\n  id uuid primary key\n);\n' +
    'alter table public.visitas add column if not exists tenant_id uuid;\n' + RLS],
+  ['la moneda que llega en un `alter table` posterior, como en la 0074',
+   'create table if not exists public.visitas (\n  id uuid primary key,\n' +
+   '  prestadora_id uuid not null,\n  precio_hora numeric not null\n);\n' +
+   'alter table public.visitas add column if not exists moneda_precio_hora text;\n' + RLS],
   ['una columna numérica que no es un importe',
    'create table if not exists public.visitas (\n  id uuid primary key,\n' +
    '  prestadora_id uuid not null,\n  latitude double precision\n);\n' + RLS],
@@ -1961,6 +1996,11 @@ if (ME_CORRIERON_A_MI) {
      declararla en otro. Se buscan todas antes de juzgar ninguna. */
   const primarias = clavesPrimarias(textos);
 
+  /* Y lo mismo con la moneda: `caregivers` nace en la 0001 y recibe la suya en
+     la 0074. Juzgando archivo por archivo, la 0001 saldría en rojo para siempre
+     por algo que ya está resuelto. */
+  const monedas = conMoneda(textos);
+
   /* Y lo mismo con el disparador: la siembra está en la 0018 y el disparador que
      la sigue, en la 0046. Juzgando archivo por archivo, la 0018 saldría en rojo
      para siempre por algo que ya está arreglado. */
@@ -2049,7 +2089,7 @@ if (ME_CORRIERON_A_MI) {
     }
     for (const [renglon, motivo] of
       fallasDeUnaMigracion(texto, tienenColumna, primarias, sigue, nombre, bajas,
-                           alcance, vistas)) {
+                           alcance, vistas, monedas)) {
       fallas.push(`supabase/migrations/${nombre}:${renglon}  ${motivo}`);
     }
   }
@@ -2111,7 +2151,8 @@ if (ME_CORRIERON_A_MI) {
     `columna de Organización y clave primaria \`uuid\`, y ${funciones} funciones ` +
     `SECURITY DEFINER, ${AL_ALCANCE_ANONIMO.size} de ellas al alcance anónimo a ` +
     'propósito y las demás fuera de él ' +
-    `(${SIN_ORGANIZACION.size} tabla y ${SIN_MONEDA.size} importe exentos, con su motivo). ` +
+    `(${SIN_ORGANIZACION.size} tabla y ${SIN_MONEDA.size} ` +
+    `${SIN_MONEDA.size === 1 ? 'importe' : 'importes'} exentos, con su motivo). ` +
     `Las ${siembras} siembras que recorren las Prestadoras dejan además un disparador ` +
     'sobre `tenants`, así que la que nazca mañana nace igual que las de hoy. ' +
     `Y de las ${politicas} políticas del depósito de archivos, ${conOrg} ` +

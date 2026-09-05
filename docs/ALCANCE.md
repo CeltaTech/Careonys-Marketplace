@@ -13,7 +13,7 @@
 
 | Módulo | Estado |
 |---|---|
-| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:910` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs`. **El alta de Asistente exige confirmar el correo, y se queda así**: decidido por el Desarrollador el 2026-08-26 (pendiente 21 cerrado) — el alta es de dos pasos, pero nadie puede darse de alta con el correo de otra persona; `supabase/config.toml` tiene `mailer_autoconfirm: false` |
+| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:941` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs`. **El alta de Asistente exige confirmar el correo, y se queda así**: decidido por el Desarrollador el 2026-08-26 (pendiente 21 cerrado) — el alta es de dos pasos, pero nadie puede darse de alta con el correo de otra persona; `supabase/config.toml` tiene `mailer_autoconfirm: false` |
 | Directorio de Asistentes con filtros | Maquetado y navegable |
 | Perfil del Asistente | Maquetado |
 | Portal de registro de Asistentes | Maquetado, con el legajo funcionando: `registrar-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en las tablas de la migración 0004, y la disponibilidad horaria en las de la 0012 |
@@ -209,14 +209,14 @@ se metía adentro del marcado ahora pasan por `Texto.escapar`, en seis archivos:
   proyecto quien lee suele ser el personal de la Prestadora, o sea justo quien tiene los permisos,
   o una familia mirando los reportes de cuidado.
 - **Los dos peores casos** no estaban donde decía el pendiente. Uno era el mensaje de chat de
-  `mockup-app.html:783`, que lo escribe una persona y lo lee otra. El otro era
+  `mockup-app.html:786`, que lo escribe una persona y lo lee otra. El otro era
   `panel-prestadora.html`, la pantalla que el pendiente daba por arreglada: tenía el renglón de la
   tabla de Asistentes entero sin escapar —nombre, documento, teléfono, profesión y zona— y el
   único `onclick` escrito en el marcado de todo el proyecto.
 - **Escapar no alcanzaba ahí, y por eso se sacó el `onclick`.** Adentro de un atributo el
   navegador deshace el escapado antes de leer el contenido como código, así que un `&#39;` vuelve
   a ser una comilla y cierra la cadena igual. El identificador ahora se pasa por
-  `addEventListener` (`panel-prestadora.html:414`), que nunca vuelve a leer texto como programa.
+  `addEventListener` (`panel-prestadora.html:445`), que nunca vuelve a leer texto como programa.
 - **Un solo punto de verdad**, como pide «ningún patrón repetido sin punto único de verdad»: `js/texto.js` (77 renglones) tiene
   `Texto.escapar` y `Texto.mensajeDeError`, y lo cargan las catorce pantallas. Antes de esto el
   único archivo que cargaban todas era `js/identidad.js`; ahora son dos. La copia local de
@@ -550,7 +550,7 @@ Comprobado el 24 de agosto de 2026 contra el proyecto real: el servidor tiene ap
 distancia costaba dos cosas que ya no cuestan:
 
 - **La columna del contacto existe.** La 0009 agregó `avisos.contact_info`, que es donde
-  `js/apiClient.js:1391` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
+  `js/apiClient.js:1423` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
   público de `solicitar-asistente.html` mandaba una columna que la base no tenía.
 - **Las filas de ejemplo hablan el idioma del catálogo.** La 0010 reemplazó las claves viejas de
   las cuatro filas ficticias —«enfermero» y compañía— por las que las pantallas esperan.
@@ -1566,13 +1566,13 @@ pantalla vacía.
 
 **El daño no era igual en las cuatro pantallas, y conviene decirlo así en vez de dejarlo parejo.**
 
-- **Una sola quedaba muda de verdad.** En `panel-prestadora.html:1427`, una tabla sin legajos se ve
+- **Una sola quedaba muda de verdad.** En `panel-prestadora.html:1590`, una tabla sin legajos se ve
   igual esté rota o esté bien: es idéntica a la de una Prestadora que todavía no cargó ninguno.
   Ahora el fallo escribe en la propia tabla «No se pudo preparar la pantalla. Conviene volver a
   cargarla», que es el estado de error que faltaba.
 - **Las otras tres caen en la pantalla de acceso**, y eso ya era la verdad: sin sesión rescatada,
   lo que corresponde mostrar es el acceso. Lo que se perdía era el rastro. Ahora
-  `mockup-app.html:429` y `:904`, `pwa-asistente/index.html:1037` y `pwa-familia/index.html:1104`
+  `mockup-app.html:429` y `:907`, `pwa-asistente/index.html:1037` y `pwa-familia/index.html:1104`
   dejan el detalle técnico en la consola en lugar de tirarlo.
 - **`js/auth.js:385` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
   cargan ese archivo —no en las dieciséis, y el comentario decía catorce hasta que se contaron—, y su
@@ -1647,11 +1647,17 @@ taparse.
   claves correlativas chocan en el número 1, y hay que reasignarlas todas junto con cada
   referencia que las apunta. Con UUID no chocan. Hasta el 25 de agosto de 2026 esta mitad no la
   miraba nadie, aunque la de al lado sí.
-- **Todo importe se guarda con su moneda** (§5.11). Acá está el único incumplimiento:
-  `caregivers.hourly_rate` (`supabase/migrations/0001_esquema_inicial.sql:102`) es un `numeric` a
-  secas, y no hay columna de moneda en ninguna de las 22 tablas. Es el único importe del esquema.
-  Agregarle la moneda toca una columna que ya tiene datos escritos, así que lo decide el
-  Desarrollador: es el pendiente 51.
+- **Todo importe se guarda con su moneda** (§5.11). Fue el único incumplimiento del esquema y se
+  cerró el 5 de septiembre de 2026. `caregivers.hourly_rate`
+  (`supabase/migrations/0001_esquema_inicial.sql:102`) era un `numeric` a secas —el único importe
+  del esquema— y la moneda vivía escrita adentro de `js/texto.js`, igual para todo el mundo. El
+  Desarrollador decidió que la elige cada Prestadora, y la migración 0074 la puso donde va: el
+  vocabulario `moneda`, la columna `tenants.moneda` que la Prestadora configura desde su panel, y
+  `caregivers.moneda_valor_hora`, que un disparador completa sola con la de su Prestadora y que la
+  tabla exige cada vez que hay un valor por hora. **La moneda se copia al legajo en vez de
+  leerse de `tenants` cada vez**, por lo mismo que los cálculos económicos van «a la escala vigente
+  a la fecha del hecho»: una Prestadora que pasara de peso a dólar le multiplicaría por mil el
+  precio a todo el mundo. El chequeo se quedó sin ninguna exención de importes.
 
 **Una medición equivocada se corrigió antes de escribirla como verdad, y conviene dejarla contada.**
 La primera versión del chequeo buscaba la columna de la Organización sólo adentro del `create
@@ -1783,7 +1789,7 @@ el servidor.
 para decir una sola cosa: `validado` y `validado_prestadora`. La `0007:8` ya había escrito qué
 significa —«Validado quiere decir "la Prestadora revisó los papeles"»—, que es exactamente lo que
 dice `validado_prestadora` con todas las letras. Los dos pasaban en todos lados, y **el corto no lo
-escribía nadie**: el único lugar que asigna un estado validado es `panel-prestadora.html:739`, y
+escribía nadie**: el único lugar que asigna un estado validado es `panel-prestadora.html:770`, y
 pone el largo. El corto sólo aparecía leído, y en una fila de ejemplo.
 
 La `0017` lo saca: pasa las filas que decían `validado` a decir `validado_prestadora`, y el
@@ -1900,7 +1906,7 @@ Que sigan siendo ocho copias es parte del pendiente 13.
 
 **«Toda operación destructiva se confirma» se midió en el mismo rato y salió todavía más
 corta.** La regla pide confirmación explícita ante cada una, y la medición encontró que en este proyecto hay exactamente una:
-rechazar un legajo (`panel-prestadora.html:827`). No hay un solo `delete` contra la base en las
+rechazar un legajo (`panel-prestadora.html:858`). No hay un solo `delete` contra la base en las
 cuarenta y cuatro pantallas y guiones —lo único que se parece son dos `delete` de JavaScript sobre
 un objeto en memoria, `js/apiClient.js:506` y `js/apiClient.js:617`, que no tocan nada guardado—, y
 salir de la sesión no
@@ -2944,7 +2950,7 @@ ficticia y sesión simulada: el legajo se creó con fecha de alta del **1 de ene
 `update` posterior la corrió al **1 de enero de 2010**. Las dos veces la base guardó lo que le
 mandaron.
 
-**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:1301` la traduce a `fechaRegistro` y ese
+**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:1333` la traduce a `fechaRegistro` y ese
 nombre no aparece en ningún otro archivo del proyecto—, así que no había consecuencia visible. Se
 arregló igual, porque la antigüedad es exactamente la clase de dato que después se usa para ordenar
 un directorio o para decidir a quién se muestra primero, y ese día el agujero pasa a ser una
@@ -3290,7 +3296,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 - **La puerta es `guias_de(p_slug)`** (`:272`), del mismo tipo que `vocabularios_de`: la tabla no le
   concede nada a `anon` (`:254`), y lo que sale a la calle es una función que **exige el nombre
   corto**, devuelve la general más la de esa sola Prestadora, y sólo las publicadas. Está anotada
-  con su motivo en `scripts/verificar_esquema.mjs:448`, que es donde viven las funciones que llegan
+  con su motivo en `scripts/verificar_esquema.mjs:450`, que es donde viven las funciones que llegan
   al alcance anónimo a propósito.
 - **La pantalla nueva es `screen-guias`** en la aplicación del Asistente
   (`pwa-asistente/index.html:793`), con los cuatro estados y un buscador. **Es una biblioteca de
@@ -3357,9 +3363,9 @@ se le comprobó nada. **Construida el 1 de septiembre de 2026.**
 **Está donde va, y el orden importa.** En el legajo que abre `panel-prestadora.html`, arriba del
 cuadro donde se otorga o se rechaza el aval: primero se marca papel por papel y recién después se
 resuelve el legajo entero. Se dibuja sola al abrir el legajo y sin hacerse esperar
-(`panel-prestadora.html:521`), porque es otro pedido y tiene su propio cartel de estado
-(`panel-prestadora.html:547`). Cada papel del catálogo trae su desplegable con los cinco estados,
-y el bloque entero lo arma `dibujarVerificaciones()` (`panel-prestadora.html:477`) desde el catálogo
+(`panel-prestadora.html:552`), porque es otro pedido y tiene su propio cartel de estado
+(`panel-prestadora.html:578`). Cada papel del catálogo trae su desplegable con los cinco estados,
+y el bloque entero lo arma `dibujarVerificaciones()` (`panel-prestadora.html:602`) desde el catálogo
 de frases y desde los dos vocabularios de la base, así que existe igual en `en` y en `pt-BR`.
 Ninguna opción está escrita en la pantalla: los renglones se arman con `createElement`, que es lo
 que `scripts/verificar_opciones.mjs` pide para un desplegable que sale de la base.
@@ -3380,7 +3386,7 @@ regresa a «sin presentar» —la columna no puede seguir diciendo que alguien l
 ya no está comprobado— y no refresca la fecha cuando el estado no cambió.
 
 **Y el cliente de datos aprendió a hacer un alta-o-modificación en un solo pedido.**
-`_supabaseUpsert()` (`js/apiClient.js:1270`) se apoya en la restricción de unicidad de
+`_supabaseUpsert()` (`js/apiClient.js:1297`) se apoya en la restricción de unicidad de
 `(legajo, tipo)` que trae la migración 0004, así que marcar el mismo papel dos veces corrige el
 renglón que ya está en vez de agregar otro. No existía en ninguna de las tres copias del archivo,
 y `marcarVerificacion()` (`js/apiClient.js:600`) es la primera que la usa.
@@ -3508,7 +3514,7 @@ consulta la base arrancaban diciendo «1» cada uno, escrito en el marcado. Mien
 viaja se veía un número que nadie contó, y las ramas de error no volvían a tocarlos, así que un
 fallo de la consulta —o quien mira sin ser coordinador— dejaba el «1» en pantalla como si fuera la
 cuenta. Ahora arrancan en raya, y quien la pone y la saca es `ponerNumeros()`
-(`panel-prestadora.html:350`), que llaman las tres ramas que pueden dejarlos a la vista: listo,
+(`panel-prestadora.html:381`), que llaman las tres ramas que pueden dejarlos a la vista: listo,
 vacío y error. **Sin cuenta va la raya y no el cero**, porque cero es un dato —«no hay ningún
 legajo en revisión»— y no sirve para decir «no se sabe».
 
@@ -4135,7 +4141,7 @@ falta:**
 **Y las cinco formas se eligieron por una sola condición: que no tengan hoy ningún uso legítimo.**
 Se contó sobre los 224 archivos de texto del proyecto y las cinco dan cero. Lo único con forma de
 credencial que hay escrito son las tres apariciones de la clave publicable —el original y sus dos
-copias, decidido y anotado en `docs/INVENTARIO.md:403`— y cinco contraseñas de cuentas ficticias
+copias, decidido y anotado en `docs/INVENTARIO.md:404`— y cinco contraseñas de cuentas ficticias
 adentro de los guiones de prueba, que es como se entra a la base de esta máquina para probar. Por
 eso la contraseña escrita a mano **no** entra en la lista: daría cinco rojos que habría que
 perdonar de a uno, y una lista de perdones sobre credenciales es exactamente lo que esta regla no
@@ -4382,7 +4388,7 @@ el **pendiente 107**.
 
 **Y lo que la opción A todavía le debe a quien la sufre.** Que la persona vea, **antes** de cambiar
 un papel, que hacerlo le baja el sello. Hoy no se puede escribir: ninguna pantalla cambia
-`documents` —el mapeo existe en `js/apiClient.js:1364` y no lo usa nadie— y el chequeo de frases se
+`documents` —el mapeo existe en `js/apiClient.js:1396` y no lo usa nadie— y el chequeo de frases se
 pone en rojo con toda frase de catálogo que ninguna pantalla nombre. La frase entra el día que
 entre la pantalla; es el **pendiente 108**.
 
@@ -4416,7 +4422,7 @@ Cerró el pendiente 94, el 31 de agosto de 2026.
   pregunta al módulo antes de enviar, y si no hay respuesta el formulario vuelve al paso 1 y lleva
   la vista al campo (`pwa-asistente/index.html:2241`).
 - **Se guarda donde se lee**: las claves van a `zonas_asistente` y el texto libre a `zonas_texto`,
-  por `js/apiClient.js:523` y `:1344`. `caregivers.zone` no la escribe más nadie, y eso abrió el
+  por `js/apiClient.js:523` y `:1376`. `caregivers.zone` no la escribe más nadie, y eso abrió el
   **pendiente 109**.
 - **Y el 109 se cerró esa misma noche, por la salida que no borra datos.** Se midió
   primero: ninguna pantalla manda `zona` ni `zonaResidencia` al escribir un legajo, así
@@ -5203,7 +5209,7 @@ que las otras dos, que la limpieza se la lleva.
 escribe nadie: ni una pantalla, ni un guion, ni una prueba. Lo que sí pasa es que
 `registrar-asistente.html:996-1000` sube el documento de identidad, los antecedentes penales y el
 título, y guarda **sólo los caminos** en la columna `documents` de `caregivers`
-(`registrar-asistente.html:1043`, y de ahí a la base por `js/apiClient.js:1364`). O sea que hay
+(`registrar-asistente.html:1043`, y de ahí a la base por `js/apiClient.js:1396`). O sea que hay
 dos formas de guardar el mismo hecho y una está muerta, como ya pasó con `messages` y las
 `conversaciones` heredadas. Y la que quedó viva es la pobre: la tabla dedicada tiene `tipo`,
 `presentado_el`, `vencimiento` y `verificado`, y el objeto de `documents` no tiene ninguno de los
@@ -6042,10 +6048,12 @@ para siempre, porque un mensaje de commit no se arregla después. La corrección
 siguiente.
 
 Lo cierto es que la regla ya estaba vigilada, y desde antes: es la **cuarta** de
-`verificar_esquema.mjs`, tiene su banco de pruebas y tiene hoy un incumplimiento conocido, anotado
-ahí mismo con su motivo y su pendiente. La columna es `caregivers.hourly_rate`
-(`supabase/migrations/0001_esquema_inicial.sql:102`), guarda un importe y su tabla no tiene columna
-de moneda. El chequeo no lo tapa: lo deja a la vista y evita que entre uno nuevo.
+`verificar_esquema.mjs`, tiene su banco de pruebas y tenía entonces un incumplimiento conocido,
+anotado ahí mismo con su motivo y su pendiente. La columna era `caregivers.hourly_rate`
+(`supabase/migrations/0001_esquema_inicial.sql:102`), que guardaba un importe y cuya tabla no tenía
+columna de moneda. El chequeo no lo tapaba: lo dejaba a la vista y evitaba que entrara uno nuevo,
+que es lo que se le pide a una exención mientras dura. Duró hasta el 5 de septiembre de 2026, en
+que la migración 0074 le dio su columna y la lista de importes exentos quedó vacía.
 
 **Por qué la medición dio otra cosa, que es lo que vale la pena guardar.** La búsqueda pedía el
 nombre de la columna pegado a su tipo, y en la 0001 el nombre va entre comillas —`"hourly_rate"
@@ -6406,14 +6414,14 @@ las opciones propias de `presdemo` y de `cuidarnorte` habían entrado por la mig
 a mano en un archivo `.sql`. Las Prestadoras ficticias se tratan como clientes reales, así que eso
 era una pantalla que faltaba y no una comodidad de desarrollo.
 
-- **El bloque está en `panel-prestadora.html:179`**, con la tabla y el formulario, y sirve para
+- **El bloque está en `panel-prestadora.html:210`**, con la tabla y el formulario, y sirve para
   **cualquier** vocabulario abierto: la lista de vocabularios sale de la base, no de una lista
-  escrita en la pantalla. El alta y el cambio los hace `guardarOpcion` (`panel-prestadora.html:1264`,
+  escrita en la pantalla. El alta y el cambio los hace `guardarOpcion` (`panel-prestadora.html:1424`,
   con los botones apagados mientras la operación corre) y la baja y la realta
   `cambiarEstadoDeOpcion` (`:1327`). **No borra: desactiva**, y por eso vuelve a activar.
 - **Del lado del cliente son cinco funciones nuevas**, de `js/apiClient.js:403` a `:464`, contra
-  `vocabulario_items`. La clave de cada opción la arma `Texto.claveDesde` (`js/texto.js:192`), con el
-  largo máximo en un solo lugar (`js/texto.js:108`).
+  `vocabulario_items`. La clave de cada opción la arma `Texto.claveDesde` (`js/texto.js:204`), con el
+  largo máximo en un solo lugar (`js/texto.js:114`).
 - **No hizo falta ninguna migración.** El esquema, las ocho políticas, el disparador
   `el_vocabulario_no_cruza_prestadoras` y la columna `activo` ya sostenían todo esto. Se comprobó
   contra la base de esta máquina, con `presdemo` y `cuidarnorte` cargadas y en una sola transacción

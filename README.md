@@ -31,14 +31,14 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
-| 18 pantallas HTML, 13.227 renglones | sin ruteo: cada pantalla es un archivo |
-| 16.351 renglones de JavaScript propio, en 37 archivos | 9.887 de ellos son copias byte a byte de otro archivo (pendiente 13) |
-| 6.497 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
+| 18 pantallas HTML, 13.398 renglones | sin ruteo: cada pantalla es un archivo |
+| 16.483 renglones de JavaScript propio, en 37 archivos | 9.975 de ellos son copias byte a byte de otro archivo (pendiente 13) |
+| 6.637 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
 | 4.653 renglones de hojas de estilo, en 10 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
 | 951 declaraciones más, pegadas al HTML | en 242 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 14 de las 18 pantallas rescatan la sesión al abrir |
 | 5 servidores de afuera, sin `package.json` ni compilación | cdn.jsdelivr.net, cdnjs.cloudflare.com, fonts.googleapis.com, fonts.gstatic.com, www.openstreetmap.org — hay que decir de qué es cada uno |
-| 36 tablas y 73 migraciones en el repositorio | 37 chequeos las miran antes de cada commit |
+| 36 tablas y 74 migraciones en el repositorio | 37 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.

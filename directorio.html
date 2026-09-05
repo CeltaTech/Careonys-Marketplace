@@ -320,7 +320,9 @@
 
         if (fila.hourly_rate) {
           const precio = parte('precio');
-          precio.textContent = Texto.importe(fila.hourly_rate) + ' ';
+          // La moneda va al lado del número desde la migración 0074: es la que
+          // el legajo tiene guardada, no la de quien mira.
+          precio.textContent = Texto.importe(fila.hourly_rate, fila.moneda_valor_hora) + ' ';
           const unidad = document.createElement('span');
           unidad.className = 'card-precio-unidad';
           unidad.setAttribute('data-frase', 'directorio.por_hora');

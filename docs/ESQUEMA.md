@@ -111,7 +111,9 @@ prueba de la §3 y no leyendo el SQL.
    Supabase y no hay forma de reconstruirlo.
 10. **Los nombres salen del glosario.** `caregivers` es Asistente, `tenants` es Prestadora,
     `especialidades` es Tipo de Asistente. Y una vez creado, un nombre no se renombra.
-11. **Todo importe con su moneda al lado.** `hourly_rate` guarda un número sin decir de qué país.
+11. **Todo importe con su moneda al lado.** `hourly_rate` viaja con `moneda_valor_hora`, que nace
+    con la moneda que la Prestadora tiene configurada (`tenants.moneda`) y no cambia después: el
+    importe se muestra siempre con la moneda con la que se escribió (migración 0074).
 
 ---
 

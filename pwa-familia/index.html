@@ -1163,7 +1163,8 @@
       // del directorio: escrito acá quedaba en castellano en los tres idiomas.
       if (fila.hourly_rate) {
         parte('precio').textContent =
-          Texto.importe(fila.hourly_rate) + ' ' + Catalogo.frase('directorio.por_hora');
+          Texto.importe(fila.hourly_rate, fila.moneda_valor_hora) + ' ' +
+          Catalogo.frase('directorio.por_hora');
       } else {
         parte('precio').remove();
       }

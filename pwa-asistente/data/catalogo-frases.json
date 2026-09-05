@@ -4239,6 +4239,56 @@
       "en": "* {{producto}} provides the software only. Granting the endorsement and deciding on the personal file are the sole responsibility of {{organizacion}}.",
       "pt-BR": "* O {{producto}} fornece unicamente o software. A concessão do selo e a decisão sobre o cadastro são responsabilidade exclusiva de {{organizacion}}."
     },
+    "panel.moneda_titulo": {
+      "es-AR": "Con qué moneda trabaja esta Prestadora",
+      "en": "The currency this Provider works in",
+      "pt-BR": "Com que moeda esta Prestadora trabalha"
+    },
+    "panel.moneda_bajada": {
+      "es-AR": "Todo importe se guarda con su moneda, y ésta es la que se le pone a los que se carguen de acá en adelante: el valor por hora de cada legajo nuevo nace con ella. Los que ya están guardados no cambian —se quedan con la moneda que tenían el día que se escribieron—, así que cambiarla acá no le mueve el precio a nadie.",
+      "en": "Every amount is stored with its currency, and this is the one given to the amounts entered from now on: each new caregiver record’s hourly rate is born with it. Amounts already stored do not change —they keep the currency they had the day they were written—, so changing it here moves nobody’s price.",
+      "pt-BR": "Todo valor é guardado com sua moeda, e esta é a que recebem os que forem carregados daqui em diante: o valor por hora de cada cadastro novo nasce com ela. Os que já estão guardados não mudam —ficam com a moeda que tinham no dia em que foram escritos—, então mudá-la aqui não altera o preço de ninguém."
+    },
+    "panel.moneda_campo": {
+      "es-AR": "Moneda",
+      "en": "Currency",
+      "pt-BR": "Moeda"
+    },
+    "panel.moneda_ayuda": {
+      "es-AR": "Si falta la que usa esta Prestadora, se agrega en «Las opciones propias del catálogo», acá abajo.",
+      "en": "If the one this Provider uses is missing, add it under “The Provider’s own catalogue options”, below.",
+      "pt-BR": "Se faltar a que esta Prestadora usa, acrescente-a em «As opções próprias do catálogo», aqui abaixo."
+    },
+    "panel.moneda_guardar": {
+      "es-AR": "Guardar la moneda",
+      "en": "Save the currency",
+      "pt-BR": "Salvar a moeda"
+    },
+    "panel.moneda_cargando": {
+      "es-AR": "Buscando la moneda configurada…",
+      "en": "Loading the configured currency…",
+      "pt-BR": "Buscando a moeda configurada…"
+    },
+    "panel.moneda_guardado": {
+      "es-AR": "Guardado. Los importes que se carguen de ahora en adelante se guardan en {moneda}.",
+      "en": "Saved. Amounts entered from now on are stored in {moneda}.",
+      "pt-BR": "Salvo. Os valores carregados de agora em diante são guardados em {moneda}."
+    },
+    "panel.moneda_error": {
+      "es-AR": "No se pudo traer la moneda configurada.",
+      "en": "The configured currency could not be loaded.",
+      "pt-BR": "Não foi possível trazer a moeda configurada."
+    },
+    "panel.moneda_vacio": {
+      "es-AR": "No se pudo resolver de qué Prestadora es este panel, así que no hay moneda que mostrar.",
+      "en": "It was not possible to tell which Provider this panel belongs to, so there is no currency to show.",
+      "pt-BR": "Não foi possível resolver de qual Prestadora é este painel, então não há moeda para mostrar."
+    },
+    "panel.moneda_sin_elegir": {
+      "es-AR": "Hay que elegir una moneda de la lista.",
+      "en": "A currency has to be picked from the list.",
+      "pt-BR": "É preciso escolher uma moeda da lista."
+    },
     "_9": "── La aplicación de la Familia ──",
     "familia.titulo_pagina": {
       "es-AR": "{{organizacion}} Familia — Portal Móvil",

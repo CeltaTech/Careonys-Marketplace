@@ -72,11 +72,17 @@ function idiomaDeForma() {
 
 /* Con qué moneda se muestra un importe que no trae la suya.
 
-   Ningún importe guardado la trae todavía: `caregivers.hourly_rate` es un
-   número a secas, y darle una columna toca datos ya escritos, así que lo decide
-   el Desarrollador. Hasta entonces la moneda sale de acá y de ningún otro lado,
-   y `importe()` la recibe como parámetro para que el día que el dato la tenga
-   alcance con pasársela.
+   Desde la migración 0074 los importes guardados sí traen la suya:
+   `caregivers.hourly_rate` viaja con `caregivers.moneda_valor_hora`, que nace
+   con la moneda de la Prestadora y se queda quieta después. Así que este valor
+   dejó de ser la fuente y pasó a ser el último recurso: lo usa lo que todavía
+   no tiene un importe atrás —una maqueta, un número suelto— y lo usaría una
+   fila vieja a la que le faltara la columna, que hoy no hay ninguna.
+
+   Y no se lee de la Prestadora que está mirando, que sería lo cómodo y está
+   mal: un importe se muestra con la moneda con la que se escribió. Si una
+   Prestadora pasa de peso a dólar, los valores por hora ya cargados no cambian
+   de número ni de unidad.
 
    No es el signo `$` escrito a mano, que era lo que había antes: es el código
    de la moneda, y cómo se escribe en cada idioma lo decide `Intl`. En castellano
@@ -152,13 +158,19 @@ const Texto = {
   /**
    * Un importe con su moneda, escrito como lo escribe el idioma de la pantalla:
    * 3500 → «$ 3.500» en castellano de acá, «ARS 3,500» en inglés. La moneda
-   * entra por parámetro; mientras ningún importe guardado traiga la suya sale de
-   * `MONEDA_POR_OMISION`, acá arriba. Sin el número —o con algo que no lo sea—
-   * devuelve la cadena vacía, para que la pantalla pueda decidir no mostrar nada
-   * en vez de mostrar «$NaN».
+   * entra por parámetro y es la que el importe trae guardada al lado; cuando no
+   * viene ninguna —o viene vacía, que es lo mismo— cae en `MONEDA_POR_OMISION`,
+   * acá arriba. Sin el número —o con algo que no lo sea— devuelve la cadena
+   * vacía, para que la pantalla pueda decidir no mostrar nada en vez de mostrar
+   * «$NaN».
    */
-  importe(valor, moneda = MONEDA_POR_OMISION) {
+  importe(valor, moneda) {
     if (valor === null || valor === undefined || valor === '') return '';
+    // `moneda || …` y no un valor por omisión del parámetro: de la base la
+    // columna llega como cadena vacía cuando no hay nada, y una cadena vacía no
+    // es `undefined`, así que el valor por omisión no la agarraba e `Intl`
+    // reventaba con «Invalid currency code».
+    moneda = moneda || MONEDA_POR_OMISION;
     const numero = Number(valor);
     if (!isFinite(numero)) return '';
     // Sin decimales, que es como se venían mostrando estos precios: `Intl` les

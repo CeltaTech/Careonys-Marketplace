@@ -464,7 +464,10 @@
         parte('foto').remove();
       }
 
-      if (fila.hourly_rate) parte('precio').textContent = Texto.importe(fila.hourly_rate) + ' por hora';
+      if (fila.hourly_rate) {
+        parte('precio').textContent =
+          Texto.importe(fila.hourly_rate, fila.moneda_valor_hora) + ' por hora';
+      }
       else parte('precio').remove();
 
       return nodo;

@@ -108,7 +108,7 @@ migraciones, no supuesto:
   `configuracion/Asistentes.jsx:105` y `:155` (con su ruta en
   `backend/src/routes/panelConfiguracion.js:596`) y `ElCuidado.jsx:273`. **Ninguna para patologías,
   certificaciones, cursos, géneros, niveles educativos ni modalidades.** Este producto ya tiene la suya, y es una sola
-  para todas las listas: `panel-prestadora.html:179`, contra `vocabulario_items`. Careonys las tiene
+  para todas las listas: `panel-prestadora.html:210`, contra `vocabulario_items`. Careonys las tiene
   repartidas en tres pantallas y le faltan seis listas; acá el bloque es uno y sirve para
   cualquier vocabulario abierto, así que **el aporte va en este sentido**.
 
