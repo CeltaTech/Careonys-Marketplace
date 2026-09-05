@@ -607,14 +607,6 @@ const ClienteDatos = {
   },
 
   // --- MÓDULO 2: AVISOS Y SOLICITUDES DE FAMILIAS ---
-  async getAvisosFamilia() {
-    const filter = {};
-    if (this.currentTenant) {
-      filter.tenant_id = this.currentTenant.id;
-    }
-    return await this._supabaseGet('avisos', filter);
-  },
-
   // Las franjas —cuándo se necesita el cuidado— no son una columna de
   // `avisos`: son filas de `franjas_aviso`, una por casillero
   // marcado (migración 0016). Por eso se apartan antes de mandar el aviso y
@@ -659,11 +651,6 @@ const ClienteDatos = {
     });
     if (filas.length === 0) return [];
     return await this._supabaseRequest('POST', 'franjas_aviso', filas);
-  },
-
-  async getFranjasDeAviso(avisoId) {
-    return await this._supabaseRequest('GET', 'franjas_aviso', null,
-      { aviso_id: `eq.${avisoId}` });
   },
 
   // Alias con campos camelCase — usado por pwa-familia/index.html (screen-publicar)
@@ -1252,9 +1239,6 @@ const ClienteDatos = {
     if (filter.id) {
       queryParams.id = `eq.${filter.id}`;
     }
-    if (filter.estado) {
-      queryParams.verification_status = `eq.${filter.estado}`;
-    }
     if (filter.tenant_id) {
       queryParams.tenant_id = `eq.${filter.tenant_id}`;
     }
@@ -1325,7 +1309,7 @@ const ClienteDatos = {
         contacto: row.contact_info || null,
         horarios: row.schedule_type,
         // La grilla de días y turnos no está más acá: cada casillero es una
-        // fila de `franjas_aviso` y se pide con `getFranjasDeAviso`. La
+        // fila de `franjas_aviso` y se pide con `franjasDeAviso()`. La
         // columna `grid_schedule_7x3` sigue existiendo con lo que le quedó
         // guardado, pero ninguna pantalla le escribe ni la lee (migración 0016).
         estado: row.status,

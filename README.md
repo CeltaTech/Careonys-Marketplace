@@ -26,13 +26,13 @@ dos repositorios y dos proyectos de Supabase independientes.
 Sitio estático en HTML, CSS y JavaScript plano, en proceso de migración a React + Vite para
 alinearse con el stack de Careonys.
 
-Medido el 4 de septiembre de 2026 sobre el árbol de trabajo con `node scripts/medir_estado.mjs`, que es de
+Medido el 5 de septiembre de 2026 sobre el árbol de trabajo con `node scripts/medir_estado.mjs`, que es de
 donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
 | 18 pantallas HTML, 13.227 renglones | sin ruteo: cada pantalla es un archivo |
-| 16.420 renglones de JavaScript propio, en 37 archivos | 9.933 de ellos son copias byte a byte de otro archivo (pendiente 13) |
+| 16.351 renglones de JavaScript propio, en 37 archivos | 9.887 de ellos son copias byte a byte de otro archivo (pendiente 13) |
 | 6.497 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
 | 4.653 renglones de hojas de estilo, en 10 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
 | 951 declaraciones más, pegadas al HTML | en 242 atributos `style=` (fue el pendiente 8, cerrado) |

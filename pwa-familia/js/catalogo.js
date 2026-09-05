@@ -458,19 +458,12 @@
       return vocabulario.items || [];
     },
 
-    // Traduce un valor guardado a su texto. Sirve para mostrar lo que se leyó
-    // de la base: en la fila está `monotributo_social` y la persona tiene que
-    // leer «Monotributo social».
-    async etiqueta(clave, valor) {
-      await this.cargar();
-      const item = this.items(clave).filter((i) => i.clave === valor)[0];
-      return item ? this.texto(item) : (valor || '');
-    },
-
-    // La misma traducción para cuando ya no se puede esperar —se está dibujando
-    // una tarjeta— y además sin quejarse si la clave no está en ese vocabulario:
-    // devuelve la cadena vacía. Eso último es lo que necesita quien busca la
-    // misma clave en varias listas, que es el caso de abajo.
+    // Traduce un valor guardado a su texto, sin quejarse si la clave no está en
+    // ese vocabulario: devuelve la cadena vacía. Sirve para mostrar lo que se
+    // leyó de la base —en la fila está `monotributo_social` y la persona tiene
+    // que leer «Monotributo social»—, y no hace esperar a quien está dibujando
+    // una tarjeta. Devolver vacío es lo que necesita quien busca la misma clave
+    // en varias listas, que es el caso de abajo.
     etiquetaSiExiste(vocabulario, clave) {
       if (!catalogo || !catalogo[vocabulario] || !clave) return '';
       const item = (catalogo[vocabulario].items || []).filter((i) => i.clave === clave)[0];
