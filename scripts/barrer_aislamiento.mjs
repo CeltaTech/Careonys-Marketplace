@@ -39,7 +39,8 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { conOrganizacion } from './verificar_esquema.mjs';
+import { conOrganizacion,
+         VISTAS_AL_ALCANCE_ANONIMO } from './verificar_esquema.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -108,14 +109,18 @@ const tablas = [...new Set([
 // una vista abierta. Estaba abierta por decisión, no por descuido —que es
 // justo la diferencia que este guion existe para marcar—, y lo único que
 // faltaba era escribirlo acá.
-const ABIERTAS_A_PROPOSITO = new Map([
-  ['oferta_de_cursos',
-   'la oferta general de cursos, que el Desarrollador decidió el 31 de agosto ' +
-   'de 2026 que se vea sin iniciar sesión (migración 0051). La vista filtra ' +
-   'adentro `tenant_id is null and publicado`, así que no muestra ninguna fila ' +
-   'de ninguna Prestadora, y no lleva ni una columna con el contenido de un ' +
-   'curso: sólo el nombre, la descripción y la ficha']
-]);
+//
+// **Y no se escribe acá: la lista se importa.** Hasta el 8 de septiembre de
+// 2026 este archivo tenía su propia copia con `oferta_de_cursos` adentro, que
+// decía palabra por palabra lo mismo que `VISTAS_AL_ALCANCE_ANONIMO` de
+// `scripts/verificar_esquema.mjs`. Una lista repetida se despega, y ésta se
+// despegó: la migración 0072 abrió `oferta_comercial_publica` con su motivo
+// escrito allá, y el día que llegó a la base publicada este barrido la denunció
+// como escape. Es exactamente lo que ya le había pasado a
+// `probar_permisos_en_vivo.mjs`, que por eso importa la suya. Acá se hace lo
+// mismo, y con eso el motivo vive en un solo lugar: donde está escrito de qué
+// migración salió y qué acota su cuerpo.
+const ABIERTAS_A_PROPOSITO = VISTAS_AL_ALCANCE_ANONIMO;
 
 // --- La dirección y la clave publicable, de donde ya están ------------------
 const fuente = readFileSync(join(raiz, 'js', 'apiClient.js'), 'utf8');
