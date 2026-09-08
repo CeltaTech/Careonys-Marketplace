@@ -94,7 +94,7 @@ Careonys-Marketplace/
 └── vercel.json
 ```
 
-**`supabase/migrations/` lleva 67 migraciones, aplicadas todas al 2 de septiembre de 2026.** Una
+**`supabase/migrations/` lleva 74 migraciones, aplicadas todas al 8 de septiembre de 2026.** Una
 migración aplicada no se edita: se corrige con otra adelante.
 
 `apiClient.js` y `auth.js` existen **tres veces** —raíz, `pwa-asistente/`, `pwa-familia/`—
