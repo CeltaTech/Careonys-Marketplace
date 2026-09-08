@@ -38,7 +38,7 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | 951 declaraciones más, pegadas al HTML | en 242 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 14 de las 18 pantallas rescatan la sesión al abrir |
 | 5 servidores de afuera, sin `package.json` ni compilación | cdn.jsdelivr.net, cdnjs.cloudflare.com, fonts.googleapis.com, fonts.gstatic.com, www.openstreetmap.org — hay que decir de qué es cada uno |
-| 36 tablas y 74 migraciones en el repositorio | 37 chequeos las miran antes de cada commit |
+| 36 tablas y 3 migraciones en el repositorio | 37 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
@@ -94,7 +94,7 @@ Careonys-Marketplace/
 └── vercel.json
 ```
 
-**`supabase/migrations/` lleva 74 migraciones, aplicadas todas al 8 de septiembre de 2026.** Una
+**`supabase/migrations/` lleva 3 migraciones, aplicadas todas al 8 de septiembre de 2026.** Una
 migración aplicada no se edita: se corrige con otra adelante.
 
 `apiClient.js` y `auth.js` existen **tres veces** —raíz, `pwa-asistente/`, `pwa-familia/`—

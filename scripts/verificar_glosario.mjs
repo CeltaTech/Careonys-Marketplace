@@ -144,9 +144,6 @@ function palabraQueSobra(texto) {
    la palabra siga estando ahí: una exención que ya no hace falta es una puerta
    abierta con la llave puesta, no un permiso vigente. */
 const EXENTOS = new Map([
-  ['supabase/migrations',
-   'una migración aplicada no se edita jamás: se corrige con otra adelante, y ' +
-   'un comentario no justifica una migración nueva'],
   ['docs/modelo_de_negocios_careonys.md',
    'documento de negocio heredado, escrito antes del glosario de la empresa'],
   ['docs/modelo_de_negocios_prestadora.md',

@@ -10,8 +10,8 @@ eso se escribe la migración que las carga. **Nada de esto está en la base toda
 aplica ningún cambio hasta que estas preguntas estén convalidadas.
 
 **Una advertencia sobre lo que ya está cargado.** Las cuatro preguntas sembradas hoy —dos en
-`supabase/migrations/0008_cursos_y_evaluaciones.sql:373` y dos en
-`supabase/migrations/0048_presdemo_arma_su_propio_curso.sql:68`— preguntan por posiciones,
+`supabase/migrations/0002_siembra_ficticia.sql:593` y dos en
+`supabase/migrations/0002_siembra_ficticia.sql:593`— preguntan por posiciones,
 maniobras y frecuencias, es decir, por tratamiento. Eso choca con la línea que trazan la
 migración `0042` en su encabezado y la pantalla del Asistente
 (`pwa-asistente/index.html:815`): «Estas guías dicen qué observar y cuándo avisar. No indican
@@ -59,10 +59,10 @@ Prestadora no la pone a dirigir el trabajo. A quién se avisa un caso así no es
 | Opciones equivocadas | Creíbles. Una pregunta con tres opciones absurdas se acierta sin saber nada |
 
 Hoy las dos evaluaciones piden **100 %** para aprobar
-(`supabase/migrations/0008_cursos_y_evaluaciones.sql:370` y `supabase/migrations/0048_presdemo_arma_su_propio_curso.sql:60`). Con dos
+(`supabase/migrations/0002_siembra_ficticia.sql:279-281` y `supabase/migrations/0002_siembra_ficticia.sql:282`). Con dos
 preguntas eso tenía sentido; con diez, el 70 % es lo que pide el pendiente 24 y es además el
 valor que la columna `porcentaje_para_aprobar` trae por defecto
-(`supabase/migrations/0008_cursos_y_evaluaciones.sql:89`).
+(`supabase/migrations/0001_base_del_esquema.sql:2590`).
 
 ---
 
@@ -71,7 +71,7 @@ valor que la columna `porcentaje_para_aprobar` trae por defecto
 - **Clave:** `gerontologico_primeros_auxilios`
 - **De quién:** de la oferta general de CeltaTech, `tenant_id` nulo. La ven todas las Prestadoras.
 - **De qué curso cuelga:** de ninguno. Es una prueba de competencias general, y por eso su
-  `curso_id` está vacío a propósito (`supabase/migrations/0008_cursos_y_evaluaciones.sql:84`). Los seis cursos de la
+  `curso_id` está vacío a propósito (`supabase/migrations/0001_base_del_esquema.sql:4139`). Los seis cursos de la
   oferta general que están cargados desde `data/catalogo-oferta.json` —Introducción al cuidado
   de la persona mayor, Alzheimer y otras demencias, El bienestar de quien cuida, Administración de
   medicamentos y control de salud en el hogar, Comunicación empática con la persona cuidada y
@@ -204,7 +204,7 @@ al Paciente con una persona que la Prestadora no comprobó.
 - **De quién:** de PresDemo, con `tenant_id` cargado. Ninguna otra Prestadora la ve.
 - **De qué curso cuelga:** del curso propio de PresDemo «RCP avanzada», de 10 horas, avanzado y
   **presencial**, que se cursa en la sede y se rinde al terminar
-  (`supabase/migrations/0048_presdemo_arma_su_propio_curso.sql:45`).
+  (`supabase/migrations/0002_siembra_ficticia.sql:282`).
 - **Intentos:** 2 hoy.
 - **Qué se rinde acá, y qué no.** La maniobra es presencial y la evalúa el instructor mirando
   hacerla; no se puede acreditar eligiendo una opción de una lista, y ninguna de estas diez

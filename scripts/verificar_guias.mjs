@@ -134,11 +134,14 @@ if (!laDeLaPuerta) {
   problemas.push('Ninguna migración crea la puerta `guias_de`.');
 } else {
   mirados += 2;
-  if (!/revoke[^;]*guias_de\s*\(\s*text\s*\)[^;]*from[^;]*public/is.test(laDeLaPuerta.texto)) {
+  if (!/revoke[^;]*guias_de\s*\([^)]*\btext\b[^)]*\)[^;]*from[^;]*public/is.test(laDeLaPuerta.texto)) {
     problemas.push(`\`${laDeLaPuerta.nombre}\` no le revoca \`public\` a \`guias_de\`. ` +
       'Una función que saltea la protección por fila queda al alcance de cualquiera si no se revoca.');
   }
-  if (!/grant execute on function[^;]*guias_de\s*\(\s*text\s*\)[^;]*to[^;]*anon/is.test(laDeLaPuerta.texto)) {
+  /* `grant execute` y `grant all` conceden lo mismo sobre una función, y el
+     argumento puede venir con su nombre delante del tipo —`p_slug text`—,
+     que es como lo escribe un volcado. Las dos formas dicen lo mismo. */
+  if (!/grant\s+(?:execute|all)\s+on\s+function[^;]*guias_de\s*\([^)]*\btext\b[^)]*\)[^;]*to[^;]*anon/is.test(laDeLaPuerta.texto)) {
     problemas.push(`\`${laDeLaPuerta.nombre}\` no le concede \`guias_de\` a \`anon\`, y las pantallas que la ` +
       'necesitan pueden estar mostrándose sin sesión.');
   }

@@ -51,23 +51,31 @@
    texto de atrás del número no es una reordenación y no se juzga: la 0007 pasó
    de `vidriera` a `directorio` sin moverse de lugar.
 
-   ---- Por qué el límite es una fecha, y por qué no es un perdón ----
+   ---- Dónde empieza a mirar, y por qué no es un perdón ----
 
-   Medido antes de escribir nada, el 31 de agosto de 2026: **doce
-   incumplimientos, y los doce del 24 y el 25 de agosto de 2026**. Diez
-   ediciones, una baja —la 0011 vieja— y una renumeración —la 0015 de las
-   franjas pasó a ser la 0016 para meterle una nueva 0015 adelante—. Desde el 26
-   no hay ninguno.
+   El 8 de septiembre de 2026 las setenta y cuatro migraciones se juntaron en
+   dos archivos que arman exactamente la misma base, comprobado contra ella con
+   cincuenta huellas —estructura, políticas, funciones, índices, disparadores,
+   permisos, restricciones, vistas, depósitos y el contenido de las treinta y
+   seis tablas—. Eso es, visto desde acá, setenta y cuatro bajas y dos altas con
+   números que el árbol ya había pasado: las cuatro maneras a la vez.
 
-   El límite podría parecer una lista de perdones con otra forma, y no lo es, por
-   un motivo que se muerde la cola: **la única manera de poner en verde a esos
-   doce sería editar las migraciones o reescribir el historial, y las dos cosas
-   son justamente lo que esta regla prohíbe.** No es que se los perdone: es que
-   ya no se pueden arreglar, y quien intente arreglarlos rompe la regla otra vez.
-   Por eso el límite es un renglón y no una lista de doce.
+   **Ese commit es el punto de partida, y todo lo anterior queda del otro lado.**
+   No es un perdón, por un motivo que se muerde la cola: la única manera de
+   poner en verde lo de antes sería editar las migraciones o reescribir el
+   historial, y las dos cosas son justamente lo que esta regla prohíbe. Ya no se
+   pueden arreglar, y quien lo intente rompe la regla otra vez.
 
-   Se cuentan igual y se muestran con `--detalle`, para que el número no
-   desaparezca.
+   **Se lo reconoce por su forma, no por una fecha ni por un hash.** Por la
+   fecha no, porque perdonaría todo lo que se haga ese mismo día. Por el hash
+   tampoco, porque este chequeo corre en el gancho de antes de cada commit y ahí
+   el commit todavía no tiene hash. Se lo reconoce porque es el commit que da de
+   alta los dos archivos del aplastamiento, cosa que pasa una sola vez: después
+   ya existen, y traerlos de nuevo sería editarlos, que es otra cosa y da rojo.
+
+   Lo de antes se cuenta igual y se muestra con `--detalle`, para que el número
+   no desaparezca. Eran doce incumplimientos, todos del 24 y el 25 de agosto de
+   2026: diez ediciones, una baja y una renumeración.
 
    ---- Qué NO mira ----
 
@@ -97,9 +105,10 @@ const detalle = process.argv.includes('--detalle');
 const CARPETA = 'supabase/migrations';
 const SEPARADOR = String.fromCharCode(1);   /* lo que %x01 deja entre commits */
 
-/* El día que las migraciones se dejaron quietas. Lo de antes está en el
+/* El aplastamiento: el commit que juntó las setenta y cuatro migraciones en
+   estos dos archivos. Es el punto de partida, y lo de antes está en el
    historial y no se puede arreglar sin romper la misma regla que lo juzga. */
-const SE_DEJARON_QUIETAS = '2026-08-25';
+const EL_APLASTAMIENTO = ['0001_base_del_esquema.sql', '0002_siembra_ficticia.sql'];
 
 /** El número de aplicación de una migración: los cuatro dígitos del principio. */
 const numeroDe = (ruta) => (ruta.split('/').pop() || '').slice(0, 4);
@@ -191,7 +200,14 @@ if (porEntrar.length) {
   });
 }
 
-for (const commit of commits) {
+/* Dónde está el aplastamiento en la fila. Se lo busca por su forma —el commit
+   que da de alta los dos archivos—, que es lo único que existe tanto en el
+   historial como en lo que todavía no es un commit. */
+const dondeAplastó = commits.findIndex((c) => EL_APLASTAMIENTO.every((nombre) =>
+  c.cambios.some(([estado, ruta]) => estado === 'A' && nombreDe(ruta) === nombre)));
+
+for (const [orden, commit] of commits.entries()) {
+  const deAntesDelAplastamiento = dondeAplastó >= 0 && orden <= dondeAplastó;
   const tope = (commit.ahora ? enHead : antesDe(commit.hash))
     .filter((r) => !commit.cambios.some(([, a]) => a === r))
     .map(numeroDe).sort().pop() || '';
@@ -212,7 +228,7 @@ for (const commit of commits) {
     if (!que) continue;
 
     const donde = commit.hash.slice(0, 7) + '  ' + commit.fecha;
-    (commit.fecha > SE_DEJARON_QUIETAS ? fallas : deAntes)
+    (deAntesDelAplastamiento ? deAntes : fallas)
       .push(donde + '  ' + que + ' — ' + commit.titulo);
   }
 }
@@ -237,8 +253,8 @@ if (fallas.length) {
 }
 
 if (detalle && deAntes.length) {
-  console.log('Del 24 y el 25 de agosto de 2026, cuando la base todavía se rehacía ' +
-    'desde cero:\n');
+  console.log('De antes del aplastamiento, cuando las migraciones eran setenta y ' +
+    'cuatro y la base todavía se rehacía desde cero:\n');
   for (const f of deAntes) console.log('  · ' + f);
   console.log('');
 }
@@ -248,6 +264,6 @@ console.log('Migraciones verificadas: las ' + enHead.length + ' se quedaron ' +
   'que tocan `' + CARPETA + '/` y en lo que está por entrar — ninguna editada, '
   + 'borrada ni renumerada, y ninguna ' +
   'nueva con un número que el árbol ya había pasado (' + deAntes.length + ' de antes ' +
-  'del ' + SE_DEJARON_QUIETAS + ', que ya no se pueden arreglar sin romper la misma ' +
+  'del aplastamiento, que ya no se pueden arreglar sin romper la misma ' +
   'regla: --detalle).');
 process.exit(0);

@@ -36,9 +36,9 @@ no contra lo que dicen los documentos.
 
 | Dónde | Columna | Cómo está en el esquema | Qué tiene adentro hoy |
 |---|---|---|---|
-| `matriculas_asistente` | `vencimiento` | `date not null` — `supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:49` | **3 filas y las tres con fecha.** La escribe el producto: la ficha la pide obligatoria (`data/catalogo-fichas.json:40`) y la guarda `js/apiClient.js:387` |
-| `documentos_asistente` | `vencimiento` | `date`, puede faltar — `supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:125` | **Nada, y no porque falte sembrarla: la tabla no la escribe nadie.** Es el grupo (a) del pendiente 111 |
-| `verificaciones_asistente` | `plazo_vence_el` | `date`, sólo en los tipos que llevan plazo — `supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:144` | **14 filas y ninguna con plazo.** Es una de las siete columnas vacías del pendiente 110 |
+| `matriculas_asistente` | `vencimiento` | `date not null` — `supabase/migrations/0001_base_del_esquema.sql:2541` | **3 filas y las tres con fecha.** La escribe el producto: la ficha la pide obligatoria (`data/catalogo-fichas.json:40`) y la guarda `js/apiClient.js:387` |
+| `documentos_asistente` | `vencimiento` | `date`, puede faltar — `supabase/migrations/0001_base_del_esquema.sql:2541` | **Nada, y no porque falte sembrarla: la tabla no la escribe nadie.** Es el grupo (a) del pendiente 111 |
+| `verificaciones_asistente` | `plazo_vence_el` | `date`, sólo en los tipos que llevan plazo — `supabase/migrations/0001_base_del_esquema.sql:573` | **14 filas y ninguna con plazo.** Es una de las siete columnas vacías del pendiente 110 |
 
 Medido contra la base de esta máquina el 31 de agosto de 2026, tabla por tabla, y no contra las
 migraciones. **Está cargada justo la que sostiene la promesa** —la de la Matrícula, que es la
@@ -64,11 +64,11 @@ resto del pendiente 110.
 Tres señales, todas de la misma migración:
 
 - **`verificaciones_asistente.estado` ya acepta `vencido`**
-  (`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:143`), y **nadie lo
+  (`supabase/migrations/0001_base_del_esquema.sql:577`), y **nadie lo
   escribe nunca**. Es un valor legal que ninguna fila tiene.
 - **Hay un índice construido para una consulta que nadie escribió**: `idx_verificaciones_plazo`,
   sobre `plazo_vence_el` y sólo donde no es nulo
-  (`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:237`). Un índice es una
+  (`supabase/migrations/0001_base_del_esquema.sql:3791-3793`). Un índice es una
   apuesta a que alguien va a preguntar por esa columna. Nadie preguntó nunca.
 - **El catálogo marca el campo**: la fecha de la Matrícula lleva `"vigencia": true`
   (`data/catalogo-fichas.json:43`), que es la manera de decir «esta fecha vence». **Ningún guion
@@ -95,9 +95,9 @@ con hoy, ninguna avisa.
 Y conviene copiarlo, porque ya resolvió los dos errores que este trabajo va a encontrar:
 
 - **La forma**: una fila por Prestadora, con `tenant_id` único
-  (`supabase/migrations/0018_cada_prestadora_pondera_su_puntaje.sql:38`).
+  (`supabase/migrations/0001_base_del_esquema.sql:2411-2413`).
 - **El valor de fábrica se siembra con un disparador sobre `tenants`**, no adentro de la puerta de
-  alta (`supabase/migrations/0046_toda_prestadora_nace_con_su_configuracion.sql:85`), porque hay
+  alta (`supabase/migrations/0001_base_del_esquema.sql:1479-1481`), porque hay
   dos caminos por los que nace una Prestadora y el que había fallado era el otro.
 - **Y el motivo por el que hay valor de fábrica**, escrito en la 0018 y que vale igual acá: *una
   tabla vacía no dice «se avisa con treinta días», dice «todavía nadie configuró esto»*.
@@ -106,7 +106,7 @@ Y conviene copiarlo, porque ya resolvió los dos errores que este trabajo va a e
 
 El directorio tiene hoy dos condiciones, y las dos hacen falta: el legajo validado por la
 Prestadora y el perfil publicado por la persona
-(`supabase/migrations/0037_quien_cubre_una_region_entera_aparece_por_sus_municipios.sql:119` y
+(`supabase/migrations/0001_base_del_esquema.sql:793` y
 `:120`). **Ahí es donde «inhabilita» se vuelve algo y no una frase.**
 
 ---

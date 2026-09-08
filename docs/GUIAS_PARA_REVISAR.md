@@ -17,7 +17,7 @@ las guías se publican, y **ésas son las válidas hasta que el proyecto se conc
 la revisión también los va a necesitar, pero este archivo es para leer, no para auditar traducciones.
 
 **Por qué la firma no la puso la migración.** Para publicar, la 0041 exige quién revisó la guía y
-cuándo (`la_publicada_dice_quien_la_reviso`, `supabase/migrations/0041_las_guias_de_cuidado.sql:145`). Esa firma la pone
+cuándo (`la_publicada_dice_quien_la_reviso`, `supabase/migrations/0001_base_del_esquema.sql:2686`). Esa firma la pone
 una persona que se hace responsable de lo que ahí dice; escribirla en una migración sería inventar
 una revisión que no ocurrió.
 

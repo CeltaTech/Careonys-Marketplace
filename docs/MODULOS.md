@@ -111,7 +111,7 @@ las cinco etapas de Careonys, cuatro ya tienen quién las guarde de este lado:
 | Postulación | el momento en que nace el legajo |
 | Verificación de identidad | la verificación `dni` |
 | Antecedentes penales | la verificación `penales` |
-| Capacitación | un intento aprobado (`supabase/migrations/0008_cursos_y_evaluaciones.sql:151`) |
+| Capacitación | un intento aprobado (`supabase/migrations/0001_base_del_esquema.sql:551`) |
 | **Entrevista** | **nadie** |
 
 Cómo queda:

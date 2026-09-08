@@ -19,7 +19,7 @@
 **La baja de CeltaTech no borra: cambia el estado.** La puerta traduce el aviso de la suscripción a
 uno de tres valores —`activo`, `suspendido`, `cancelado`
 (`supabase/functions/alta-y-baja/index.ts:102`, y la restricción que los admite en
-`supabase/migrations/0023_la_puerta_por_donde_celtatech_da_de_alta_y_de_baja.sql:52`)—. **No hay un
+`supabase/migrations/0001_base_del_esquema.sql:3072`)—. **No hay un
 solo `DELETE` en esa función**, comprobado buscándolo.
 
 Y el estado protege de verdad. Medido por el camino que usan las pantallas, que es la función
@@ -32,7 +32,7 @@ Y el estado protege de verdad. Medido por el camino que usan las pantallas, que 
 | `cancelado` | **0** |
 
 Lo hace la condición `and t.status = 'activo'` de
-`supabase/migrations/0021_el_directorio_es_de_una_sola_prestadora.sql:142`. Y la vista cruda
+`supabase/migrations/0001_base_del_esquema.sql:867`. Y la vista cruda
 `directorio`, que no filtra por Prestadora, **no la alcanza nadie desde afuera**:
 `has_table_privilege` da falso para `anon` y para `authenticated`. **No hay agujero acá. El
 producto se porta bien.**
@@ -72,10 +72,8 @@ se vayan con ella tiene sentido y no hay nada que decidir acá.
 
 ### Las dos que quedan sin dueño (`set null`)
 
-`caregivers` (`supabase/migrations/0001_esquema_inicial.sql:227`) y `avisos`, que en el
-esquema inicial se llamaba `care_searches`
-(`supabase/migrations/0001_esquema_inicial.sql:222`, renombrada en
-`supabase/migrations/0015_los_avisos_se_llaman_avisos.sql:43`). Las dos admiten `tenant_id` nulo,
+`caregivers` y `avisos`, que en el esquema inicial se llamaba `care_searches`
+(`supabase/migrations/0001_base_del_esquema.sql:4051` y `:3987`). Las dos admiten `tenant_id` nulo,
 así que al borrarse la Prestadora **el legajo de la persona y el aviso sobreviven**, sin
 Prestadora. **Ninguna migración explica por qué**, y las dos vienen de un volcado anterior a las
 migraciones.

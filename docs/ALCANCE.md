@@ -112,7 +112,7 @@ es una sugerencia, porque un filtro que viaja en el pedido lo cambia quien llama
 Cómo quedó:
 
 - **Registrarse ya no decide nada.** El disparador de `auth.users` crea la fila de `profiles`
-  (`supabase/migrations/0005_acceso_por_sesion.sql:93`) y valida la Prestadora contra `tenants`, pero **el rol no sale
+  (`supabase/migrations/0001_base_del_esquema.sql:327-329`) y valida la Prestadora contra `tenants`, pero **el rol no sale
   de los metadatos**: quien se registra solo queda siempre con un rol sin acceso a los datos de la
   Prestadora. Pedir ser coordinador de otra Prestadora no sirve de nada.
 - **Pertenecer y poder ver son dos cosas distintas.** `public.es_personal_de_prestadora()` es el
@@ -728,7 +728,7 @@ Cierra el pendiente 36, el 25 de agosto de 2026.
 
 Quien se registraba desde el teléfono quedaba dado de alta sin legajo y sin poder aparecer nunca en
 el directorio: el directorio exige una fila en `autorizaciones_asistente` con un `join` y no con un
-`left join` (`supabase/migrations/0012_autorizaciones_y_disponibilidad.sql:186`), y esa pantalla no
+`left join` (`supabase/migrations/0001_base_del_esquema.sql:791`), y esa pantalla no
 tenía el paso que la crea. Ahora manda lo mismo que el portal.
 
 - **Los dos pasos que faltaban se dibujan desde el catálogo**, no están escritos en la pantalla.
@@ -745,7 +745,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
   título, y devuelve la lista de los que no subieron para que quien llama avise una sola vez.
 - **De paso arregló algo que estaba mal en el portal.** Cuando la ficha de estudio no traía archivo
   —es optativo—, la fila viajaba igual con una clave `archivo` en `null`. La columna se llama
-  `archivo_url` (`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:68`), así
+  `archivo_url` (`supabase/migrations/0001_base_del_esquema.sql:2539`), así
   que esa fila no entraba y la persona no se enteraba.
 - **Y el alta del teléfono creaba cuentas sin dueño.** `registrarAspirante` no escribía `user_id`,
   así que la persona quedaba con cuenta y con legajo, pero el legajo no era de nadie y no lo podía
@@ -1649,7 +1649,7 @@ taparse.
   miraba nadie, aunque la de al lado sí.
 - **Todo importe se guarda con su moneda** (§5.11). Fue el único incumplimiento del esquema y se
   cerró el 5 de septiembre de 2026. `caregivers.hourly_rate`
-  (`supabase/migrations/0001_esquema_inicial.sql:102`) era un `numeric` a secas —el único importe
+  (`supabase/migrations/0001_base_del_esquema.sql:482`) era un `numeric` a secas —el único importe
   del esquema— y la moneda vivía escrita adentro de `js/texto.js`, igual para todo el mundo. El
   Desarrollador decidió que la elige cada Prestadora, y la migración 0074 la puso donde va: el
   vocabulario `moneda`, la columna `tenants.moneda` que la Prestadora configura desde su panel, y
@@ -2721,7 +2721,7 @@ no tenía ninguna clave foránea hacia `auth.users`, así que una fila ahí no p
 cuenta detrás. **Eso es falso.** El 26 de agosto de 2026, probando otra cosa contra la base local,
 un `insert` en `profiles` con un identificador inventado lo rechazó `profiles_id_fkey`, que existe
 desde la primera migración, apunta a `auth.users(id)` y borra en cascada
-(`supabase/migrations/0001_esquema_inicial.sql:252`). O sea que cada uno de los cinco perfiles
+(`supabase/migrations/0001_base_del_esquema.sql:4331`). O sea que cada uno de los cinco perfiles
 tuvo su cuenta de acceso: sin ella la fila no podía existir.
 
 Lo que sigue en pie es lo otro: tres de los cinco tienen identificador escrito a mano —unos, dos y
@@ -2848,7 +2848,7 @@ de franjas, treinta y cinco de avisos y todo el contenido de los cuatro legajos 
 nadie les mirara los valores.**
 
 Un chequeo que no mira no es un chequeo que pasa: es un chequeo que no existe. Ahora reconoce las
-dos formas (`scripts/verificar_claves.mjs:220`) y conoce cinco columnas más —modalidad y nivel de
+dos formas (`scripts/verificar_claves.mjs:228`) y conoce cinco columnas más —modalidad y nivel de
 un curso, día y turno de una franja, puesto de una experiencia—.
 
 **Se probó que puede fallar**, que es la única forma de saber que sirve. Con dos valores
@@ -2891,7 +2891,7 @@ eso no se arregla tocando políticas.
 **Y la 0032 sacó de más, cosa que se descubrió al día siguiente y se corrigió con la migración
 0033.** El renglón `revoke all on table public.profiles from anon, authenticated` se llevó puesto
 también un permiso **por columna** que la migración 0005 había escrito a propósito, `update
-(full_name)` (`supabase/migrations/0005_acceso_por_sesion.sql:160`). En Postgres, `REVOKE ALL ON
+(full_name)` (`supabase/migrations/0001_base_del_esquema.sql:5862-5864`). En Postgres, `REVOKE ALL ON
 TABLE` no distingue el permiso sobre la tabla entera del permiso sobre una columna: borra los dos.
 `supabase/migrations/0033_vuelve_el_permiso_por_columna_del_perfil.sql` lo repone, y nada más.
 Ninguna pantalla lo usa hoy —ningún archivo de `js/` escribe `profiles`—, así que no hubo síntoma
@@ -2996,8 +2996,8 @@ alta que hace esa pantalla:
 
 - **sin sesión —que es como llega cualquiera al portal— contesta 401, «permission denied»**:
   `anon` no tiene permiso sobre la tabla;
-- **con una cuenta recién creada contesta 403**, porque la política «Busquedas de la Prestadora»
-  exige `tenant_id = prestadora_actual()` (`supabase/migrations/0002_aislamiento_por_prestadora.sql:87`)
+- **con una cuenta recién creada contesta 403**, porque la política «Avisos de la Prestadora»
+  exige `tenant_id = prestadora_actual()` (`supabase/migrations/0001_base_del_esquema.sql:4482`)
   y una cuenta nueva no tiene Prestadora.
 
 La prueba trae su comprobación de sostén —la misma fila con una sesión válida entra—, sin la cual
@@ -3267,7 +3267,7 @@ producto en fuente de indicación clínica, y entonces alguien tiene que respond
 Asistente lo siga y salga mal. Avisar no es prescribir, y la pantalla lo dice arriba de todo en vez
 de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No indican tratamientos.»*
 
-- **La tabla es `guias_cuidado`** (`supabase/migrations/0041_las_guias_de_cuidado.sql:109`), y cada
+- **La tabla es `guias_cuidado`** (`supabase/migrations/0001_base_del_esquema.sql:1279`), y cada
   guía cuelga de una opción del catálogo —hoy de una patología—, no de un texto suelto. Cuatro
   columnas de contenido: `descripcion`, `que_esperar`, `senales_de_alarma` y `en_emergencia`. Las
   dos primeras son texto, las dos últimas son listas, porque una señal se mira de a una y un paso
@@ -3403,7 +3403,7 @@ huella y saca la comprobación de la tarjeta.
 
 **Lo que esta pantalla no hace, dicho de frente.** Marca el estado y nada más. **No pone plazos**:
 `plazo_vence_el` tiene su índice desde la migración 0004
-(`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql:237`) y sigue sin que nadie
+(`supabase/migrations/0001_base_del_esquema.sql:3791-3793`) y sigue sin que nadie
 lo escriba, así que «Vencido» hay que ponerlo a mano y nada avisa antes — es el mismo agujero que
 el pendiente 98, con su plan escrito en `docs/PLAN_VENCIMIENTOS.md` y sin aprobar.
 
@@ -3413,7 +3413,7 @@ el pendiente 98, con su plan escrito en `docs/PLAN_VENCIMIENTOS.md` y sin aproba
 `data/catalogo-verificaciones.json` declaraba papel por papel qué frenaba cada uno —el alta, la
 publicación, o nada— y **no lo leía ninguna pantalla ni ningún guion**: un legajo llegaba al
 directorio sin un solo papel comprobado. Peor todavía, la vista ya lo prometía: el comentario de su
-propia columna, desde `supabase/migrations/0026_el_directorio_dice_que_se_comprobo.sql:105`, decía
+propia columna, desde `supabase/migrations/0001_base_del_esquema.sql:822-824`, decía
 que esos papeles «las pasaron todos los que aparecen acá». No era cierto.
 
 **Aparecer en el directorio pide ahora tres cosas, y las tres hacen falta.** La Prestadora validó

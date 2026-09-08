@@ -90,13 +90,15 @@
       ninguna pantalla usa y que PostgREST no sabe pedir. Los verbos se escriben
       uno por uno.
 
-      **La regla empieza en la 0032 y no antes.** La 0001 es el volcado que dejó
-      la instalación, con veintiún `GRANT ALL` que son justamente lo que la 0032
-      vino a sacar; una migración aplicada no se edita, así que ponerle rojo a la
-      historia sólo enseñaría a apagar el chequeo. El límite no es una exención:
-      es la migración que cerró la puerta, y desde ella la regla rige entera.
-      `service_role` queda afuera porque es la llave del servidor y tiene que
-      poder todo, tal como lo dejó dicho la 0032.
+      **La regla rige desde la primera migración, porque no hay ninguna
+      anterior.** Cuando eran setenta y cuatro, el límite era la 0032: antes de
+      ella estaba el volcado que dejó la instalación, con veintiún `GRANT ALL`
+      que ella vino a sacar, y una migración aplicada no se edita, así que
+      ponerle rojo a la historia sólo enseñaba a apagar el chequeo. El
+      aplastamiento no dejó ese camino escrito: la 0001 es el estado al que
+      llevaba, con los permisos ya al mínimo, y del otro lado del límite no
+      queda ningún archivo. `service_role` sigue afuera porque es la llave del
+      servidor y tiene que poder todo.
   10. **Toda migración que cambia el esquema termina con
       `NOTIFY pgrst, 'reload schema';`** (regla de la empresa «todo cambio de
       esquema termina con `NOTIFY pgrst, 'reload schema';`. Sin eso PostgREST
@@ -113,20 +115,16 @@
       ponerlo, y encima parece puesto.
 
       Sembrar filas no es cambiar el esquema, y por eso un `insert` solo no
-      pide aviso: PostgREST no guarda filas. Ocho migraciones avisan sin
-      cambiar nada —la 0027, la 0028, la 0030, la 0031, la 0039, la 0040, la
-      0042 y la 0045— y eso no molesta a nadie: recargar de más no rompe.
-      Lo que rompe es no recargar.
+      pide aviso: PostgREST no guarda filas. Avisar de más no molesta a nadie
+      —recargar dos veces no rompe—; lo que rompe es no recargar, y por eso la
+      siembra avisa igual al terminar.
 
-      **La regla empieza en la 0025 y no antes**, por el mismo motivo que la
-      novena empieza en la 0032. Veintiuna de las veinticuatro primeras
-      cambian el esquema y ninguna avisa; están aplicadas hace tiempo y una
-      migración aplicada no se edita jamás, así que ponerles rojo sólo
-      enseñaría a apagar el chequeo. El límite no es una exención de
-      veintiuna filas: es el renglón donde la regla empezó a cumplirse, y
-      desde ahí rige entera, con las quince que cambian el esquema en verde.
-      Y no se puede esquivar sin querer, porque una migración nueva siempre
-      lleva un número más alto.
+      **Y ésta también rige desde la primera, por lo mismo que la novena.** El
+      límite era la 0025: veintiuna de las veinticuatro anteriores cambiaban el
+      esquema sin avisar, y estaban aplicadas hace tiempo. El aplastamiento no
+      dejó ninguna de las dos cosas. Quedaron dos archivos, los dos terminan con
+      el aviso, y el límite se corrió a donde empiezan las migraciones, que es
+      lo mismo que decir que ya no hay ninguno.
 
       **Esta regla tampoco tiene lista de exenciones**, por lo mismo que la
       octava: hoy no hay ningún caso, y una lista vacía no la puede probar
@@ -244,11 +242,13 @@
       esos drops apuntando a nada, y la undécima y la duodécima la dan por viva
       cuando ya no lo está.
 
-      Rige **desde la 0023**. Los renombres que hay son todos del mismo
-      acomodamiento del glosario, cerrado entre el 24 y el 25 de agosto de 2026
-      y terminado en la 0022, cuyo encabezado dice por qué salía barato: «la
-      base todavía no tiene datos reales». Es una fecha, no una lista de
-      perdones, y del otro lado no hay ninguno.
+      Rige **desde la primera migración**, igual que la novena y la décima. El
+      límite era la 0023, porque los renombres que había eran todos del mismo
+      acomodamiento del glosario —cerrado entre el 24 y el 25 de agosto de 2026,
+      cuando la base todavía no tenía datos— y estaban escritos de la 0015 a la
+      0022. El aplastamiento dejó el resultado de ese acomodamiento y no el
+      camino: hoy no queda ni un solo renombre escrito, así que el límite no
+      perdona nada y está donde empiezan las migraciones.
 
   14. **La migración entra entera o no entra** (regla de la empresa «toda
       migración corre entera o no corre, sin dejar la base a mitad de camino»).
@@ -590,17 +590,21 @@ const AGREGA_MONEDA =
    y sin esto la sexta regla buscaría un nombre que ya no existe—. */
 const INSERTA = /insert\s+into\s+(?:"?public"?\.)?"?([a-z_]+)"?/gi;
 const POLITICA_DEPOSITO = /create\s+policy\s+"([^"]+)"\s+on\s+storage\.objects/gi;
-/* La migración que revocó los permisos por omisión. Desde ella rige la novena
-   regla; antes está el volcado de la instalación, que es lo que ella vino a
-   sacar y que ya no se puede editar. */
-const LA_PUERTA_SE_CERRO = '0032';
+/* Desde dónde rige la novena regla. Cuando las migraciones eran setenta y
+   cuatro, esto era la 0032: antes de ella estaba el volcado de la instalación,
+   con los `grant all` que ella vino a sacar, y juzgarlo con una regla posterior
+   era juzgar un archivo que ya no se podía arreglar. Aplastadas las setenta y
+   cuatro en dos, no hay ningún archivo anterior a la regla: la 0001 es el
+   estado final, con los permisos ya al mínimo, así que la regla empieza donde
+   empiezan las migraciones. */
+const LA_PUERTA_SE_CERRO = '0001';
 /* Un cambio de esquema es lo que PostgREST guarda en su copia: qué tablas, qué
    columnas, qué funciones hay y quién puede tocarlas. Los `insert` quedan
    afuera a propósito —sembrar filas no cambia nada de eso—. */
 const CAMBIA_EL_ESQUEMA =
   /^[ \t]*(?:create|alter|drop)\s+(?:or\s+replace\s+)?(?:table|function|policy|type|index|view|trigger|schema|sequence|extension|domain|publication|materialized)\b|^[ \t]*(?:grant|revoke)\b|^[ \t]*comment\s+on\b/im;
 const AVISA_A_POSTGREST = /^\s*notify\s+pgrst\s*,\s*'reload schema'\s*;\s*$/i;
-const EL_AVISO_EMPIEZA = '0025';
+const EL_AVISO_EMPIEZA = '0001';
 const GRANT_DE_TABLA =
   /grant\s+([a-z][a-z0-9_,\s()]*?)\s+on\s+(?:table\s+)?"?public"?\."?([a-z_]+)"?\s+to\s+([a-z_,\s"]+)/gi;
 const ABRE_DE_MAS = /\ball\b|\btruncate\b/i;
@@ -620,14 +624,13 @@ const RENOMBRA_LO_GUARDADO = [
   ['una función', /alter\s+function\s+[\s\S]{0,80}?\brename\s+to\s+/gi],
   ['una política', /alter\s+policy\s+[\s\S]{0,80}?\brename\s+to\s+/gi],
 ];
-/* Los renombres que hay son todos del mismo acomodamiento del glosario
-   —«bandera», `care_searches`, `logbook_entries`, `peso`—, que el Desarrollador
-   cerró entre el 24 y el 25 de agosto de 2026 y que termina en la 0022. El
-   encabezado de esa migración dice incluso por qué salía barato: «sale barato
-   porque la base todavía no tiene datos reales». Desde la siguiente rige la
-   regla. **No es una lista de perdones: es una fecha**, y del otro lado no hay
-   ninguno. */
-const NO_SE_RENOMBRA_DESDE = '0023';
+/* Los renombres del acomodamiento del glosario —«bandera», `care_searches`,
+   `logbook_entries`, `peso`— vivían en las migraciones 0015 a 0022, que el
+   Desarrollador cerró entre el 24 y el 25 de agosto de 2026 y que ya no
+   existen: el aplastamiento las dejó en el estado al que llevaban, sin el
+   camino. Como no queda ningún archivo anterior a la regla, la regla empieza
+   donde empiezan las migraciones. */
+const NO_SE_RENOMBRA_DESDE = '0001';
 /* Para la decimocuarta. Dos maneras distintas de romper la misma regla —«toda
    migración corre entera o no corre»— con consecuencias distintas, así que van
    separadas y avisan cosas distintas.
@@ -1881,18 +1884,12 @@ const BIEN = [
    BARRIDO + SIEMBRA_LLAMADA],
   ['la siembra acotada a una Prestadora, que no es un barrido',
    "insert into public.visitas (tenant_id)\nselect id from public.tenants where slug = 'presdemo';\n"],
-  ['la siembra de una tabla que después se renombró',
-   'insert into public.pesos (tenant_id)\nselect id from public.tenants;\n' +
-   'alter table public.pesos rename to visitas;\n' + SIEMBRA_DIRECTA,
-   '0022_prueba.sql'],
   ['el `begin` con el que abre una función plpgsql, que no corta ninguna transacción',
    'create function public.mirar() returns boolean language plpgsql security definer as $$\n' +
    'begin\n  return true;\nend;\n$$;\n' +
    'revoke all on function public.mirar() from public, anon;\n'],
   ['la palabra `commit` contada adentro de un comentario',
    '-- commit;\nselect 1;\n'],
-  ['el mismo renombre pero en el acomodamiento del glosario, que ya está escrito',
-   'alter table public.visitas rename to jornadas;\n', '0015_prueba.sql'],
   ['un comentario que cuenta un renombre viejo, que es prosa y no una sentencia',
    '-- alter table public.visitas rename to jornadas;\nselect 1;\n',
    '0050_prueba.sql'],
@@ -1907,8 +1904,6 @@ const BIEN = [
   ['el aviso nombrado adentro de un comentario, que no es un cambio de esquema',
    "-- alter table public.visitas add column nota text;\nselect 1;\n",
    '0050_prueba.sql'],
-  ['la migración vieja que cambia el esquema sin avisar: ya está aplicada y no se edita',
-   CREA + RLS, '0006_prueba.sql'],
   ['la misma política nombrando la Organización también en el `with check`',
    'create policy "Lo mío" on public.cosas for all to authenticated\n' +
    '  using      (tenant_id = public.prestadora_actual())\n' +
@@ -2153,8 +2148,12 @@ if (ME_CORRIERON_A_MI) {
     'propósito y las demás fuera de él ' +
     `(${SIN_ORGANIZACION.size} tabla y ${SIN_MONEDA.size} ` +
     `${SIN_MONEDA.size === 1 ? 'importe' : 'importes'} exentos, con su motivo). ` +
-    `Las ${siembras} siembras que recorren las Prestadoras dejan además un disparador ` +
-    'sobre `tenants`, así que la que nazca mañana nace igual que las de hoy. ' +
+    (siembras === 0
+      ? 'Ninguna siembra recorre hoy todas las Prestadoras, así que no hay ninguna ' +
+        'que le quede vieja a la que nazca mañana. '
+      : `Las ${siembras} siembras que recorren las Prestadoras dejan además un ` +
+        'disparador sobre `tenants`, así que la que nazca mañana nace igual que ' +
+        'las de hoy. ') +
     `Y de las ${politicas} políticas del depósito de archivos, ${conOrg} ` +
     `${conOrg === 1 ? 'nombra' : 'nombran'} la Organización y ` +
     `${SIN_ORGANIZACION_EN_EL_DEPOSITO.size} están exentas con el motivo y con qué ` +
@@ -2162,8 +2161,9 @@ if (ME_CORRIERON_A_MI) {
     'de un valor que venga en el pedido: sale de la membresía. Y de los ' +
     `${permisos} permisos de tabla escritos desde la ${LA_PUERTA_SE_CERRO}, ninguno ` +
     'concede `all` ni `truncate` a quien inicia sesión. ' +
-    `Y las ${avisos} migraciones desde la ${EL_AVISO_EMPIEZA} que cambian el esquema ` +
-    "terminan con `NOTIFY pgrst, 'reload schema';`. " +
+    `Y ${avisos === 1 ? 'la migración' : `las ${avisos} migraciones`} desde la ` +
+    `${EL_AVISO_EMPIEZA} que ${avisos === 1 ? 'cambia' : 'cambian'} el esquema ` +
+    `${avisos === 1 ? 'termina' : 'terminan'} con \`NOTIFY pgrst, 'reload schema';\`. ` +
     `Y de las ${escrituras} políticas que siguen en pie y dejan escribir, todas ` +
     'nombran la Organización en la condición que gobierna la fila que queda escrita ' +
     `(${SIN_ORGANIZACION_AL_ESCRIBIR.size} exenta, con su motivo y con el permiso por ` +
@@ -2172,8 +2172,10 @@ if (ME_CORRIERON_A_MI) {
     `de la Organización, las ${resoluciones} se la piden a \`public.${LA_RESUELVE}()\`: ` +
     'ninguna rehace la cuenta por su lado, y ninguna otra función la deduce. ' +
     `Y las ${quietas} migraciones desde la ${NO_SE_RENOMBRA_DESDE} no le cambian ` +
-    `el nombre a nada de lo ya guardado: los ${renombres} renombres que hay son ` +
-    'todos del acomodamiento del glosario, que cerró en la 0022. ' +
+    'el nombre a nada de lo ya guardado: ' +
+    (renombres === 0
+      ? 'no queda ni un renombre escrito. '
+      : `los ${renombres} que hay son todos del acomodamiento del glosario. `) +
     `Y las ${enteras} entran enteras o no entran: ninguna corta la transacción ` +
     'que la envuelve, ni trae nada que no pueda correr adentro de una. ' +
     'Y quien llega sin sesión entra por la puerta de una Prestadora o no entra: ' +

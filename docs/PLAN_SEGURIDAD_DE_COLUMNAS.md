@@ -45,7 +45,7 @@ es el permiso; es la política.
 
 Para el 82 sí alcanzaría —nadie, en ningún rol, tiene que poder escribirse el propio `role`—, y de
 hecho es lo único que hoy lo sostiene: `grant update (full_name) on public.profiles to
-authenticated`, en `supabase/migrations/0005_acceso_por_sesion.sql:160`. El problema del 82 no es
+authenticated`, en `supabase/migrations/0001_base_del_esquema.sql:5862-5864`. El problema del 82 no es
 que el mecanismo falle: es que **la protección no vive donde se la lee**. Quien lea la política ve
 «cada quien escribe su propia fila» y ningún límite de columnas; el límite está seis renglones
 abajo. Ya se cayó una vez sin que nadie lo notara —la migración 0032 se lo llevó puesto y la 0033

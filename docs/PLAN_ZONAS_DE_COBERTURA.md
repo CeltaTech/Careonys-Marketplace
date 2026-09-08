@@ -51,11 +51,10 @@ colgado de su región». **Lo que falta no es la lista: es la pantalla y el guar
 que muestra los veinte ítems planos —regiones y barrios mezclados en el mismo nivel—, así que ese
 día alguien podía elegir «Zona Norte» o «Palermo» y no había forma de decir las dos.
 
-**La base guarda una sola, y como texto suelto.** `caregivers.zone` es una columna `text`
-(`supabase/migrations/0001_esquema_inicial.sql:87`). La leen la vista del directorio
-(`supabase/migrations/0002_aislamiento_por_prestadora.sql:141`) y la del directorio con
-consentimiento (`supabase/migrations/0007_directorio_con_consentimiento.sql:52`) —las tres citas
-son a migraciones, que no se editan nunca y por eso siguen valiendo—, y del lado del navegador la
+**La base guarda una sola, y como texto suelto.** `caregivers.zone` es una columna `text` que
+lee la vista del directorio (`supabase/migrations/0001_base_del_esquema.sql:467` y `:747`) —las dos
+citas son al archivo que arma la base entera, así que dicen el estado de hoy—, y del lado del
+navegador la
 escribe el formulario de reclutamiento y la traduce `js/apiClient.js`. Ese mapeo **sigue en pie
 hoy, y ya ninguna pantalla manda el dato**: es el pendiente 109.
 

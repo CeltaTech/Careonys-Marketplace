@@ -196,13 +196,21 @@ function textosDe(valor) {
   const fin = finDeCadena(v, 0);
   const crudo = v.slice(1, fin).replace(/''/g, "'");
   const resto = v.slice(fin + 1).trim().toLowerCase();
-  if (resto.startsWith('::jsonb') || resto.startsWith('::json')) {
+  const arreglo = () => {
     try {
       const dato = JSON.parse(crudo);
       return Array.isArray(dato) ? dato.filter((x) => typeof x === 'string') : [];
     } catch { return []; }
-  }
+  };
+  if (resto.startsWith('::jsonb') || resto.startsWith('::json')) return arreglo();
   if (resto.length > 0) return [];            // ::uuid, ::date y demás no son catálogo
+  /* Sin `::jsonb` a la vista. Un volcado no lo escribe, porque el `insert` ya
+     nombra la columna y la columna ya dice de qué tipo es; el valor sigue
+     siendo el mismo arreglo. Si el texto tiene forma de arreglo se lo lee como
+     tal, y si no se lo lee como un valor suelto, que es lo de siempre. Sin esto
+     una lista entera pasaría por una sola clave inventada y ninguna de las de
+     adentro se miraría. */
+  if (crudo.startsWith('[')) return arreglo();
   return [crudo];
 }
 
