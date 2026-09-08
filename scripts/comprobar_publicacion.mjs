@@ -132,7 +132,20 @@ const NO_SE_PUBLICA = [
   'supabase/migrations/0001_base_del_esquema.sql',
 ];
 
+/* Y antes de creerle al 404 hay que saber que el archivo existe acá. Un archivo
+   borrado del repositorio contesta 404 aunque el sitio estuviera publicando
+   todo, así que el renglón se pondría verde por ausencia y no por estar
+   cerrado. Pasó el 8 de septiembre de 2026: la lista nombraba
+   `0001_esquema_inicial.sql`, que había dejado de existir al aplastarse las 74
+   migraciones en tres, y esa comprobación llevaba desde entonces sin poder
+   fallar. Se avisa en rojo para que la lista se corrija, no para que se
+   ignore. */
 for (const ruta of NO_SE_PUBLICA) {
+  if (!existsSync(join(raiz, ruta))) {
+    decir(false, `Cerrado: ${ruta} no existe en el repositorio, así que su 404 ` +
+      'no prueba nada — hay que nombrar acá un archivo que sí esté');
+    continue;
+  }
   const r = await fetch(`${sitio}/${ruta}`, { redirect: 'manual' });
   decir(r.status === 404, `Cerrado: ${ruta} contesta ${r.status}` +
     (r.status === 404 ? '' : ' y tendría que contestar 404 — está publicado'));
