@@ -236,6 +236,38 @@
         }
       ]
     },
+    "moneda": {
+      "titulo": {
+        "en": "Currency the Provider works in",
+        "es-AR": "Moneda con la que trabaja la Prestadora",
+        "pt-BR": "Moeda com que a Prestadora trabalha"
+      },
+      "cerrada": false,
+      "items": [
+        {
+          "en": "Argentine peso",
+          "clave": "ARS",
+          "es-AR": "Peso argentino",
+          "pt-BR": "Peso argentino"
+        },
+        {
+          "en": "US dollar",
+          "clave": "USD",
+          "es-AR": "Dólar estadounidense",
+          "pt-BR": "Dólar americano"
+        },
+        {
+          "en": "Brazilian real",
+          "clave": "BRL",
+          "es-AR": "Real brasileño",
+          "pt-BR": "Real brasileiro"
+        }
+      ],
+      "usado_en": [
+        "panel-prestadora.html:1166",
+        "panel-prestadora.html:189"
+      ]
+    },
     "retiro": {
       "titulo": {
         "en": "Living out or living in at the home",

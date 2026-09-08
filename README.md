@@ -26,7 +26,7 @@ dos repositorios y dos proyectos de Supabase independientes.
 Sitio estático en HTML, CSS y JavaScript plano, en proceso de migración a React + Vite para
 alinearse con el stack de Careonys.
 
-Medido el 5 de septiembre de 2026 sobre el árbol de trabajo con `node scripts/medir_estado.mjs`, que es de
+Medido el 8 de septiembre de 2026 sobre el árbol de trabajo con `node scripts/medir_estado.mjs`, que es de
 donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
