@@ -129,7 +129,7 @@ const NO_SE_PUBLICA = [
   'docs/PENDIENTES.md',
   'docs/ALCANCE.md',
   'scripts/verificar_todo.mjs',
-  'supabase/migrations/0001_esquema_inicial.sql',
+  'supabase/migrations/0001_base_del_esquema.sql',
 ];
 
 for (const ruta of NO_SE_PUBLICA) {
