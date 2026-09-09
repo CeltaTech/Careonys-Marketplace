@@ -5,7 +5,8 @@
 
    Una Guía de cuidado es lo que el Asistente lee al entrar a un domicilio: qué
    es la patología, qué se ve en la casa, qué señales obligan a avisar y cómo
-   actuar en una emergencia. Vive en `guias_cuidado` desde la migración 0041 y
+   actuar en una emergencia. Vive en `guias_cuidado` —que hoy nace en
+   `supabase/migrations/0001_base_del_esquema.sql:2658`— y
    sale por `guias_de`, que es una puerta: exige el nombre corto de una
    Prestadora y devuelve el catálogo general más lo que agregó esa Prestadora,
    donde **lo suyo reemplaza a lo general**.
@@ -72,8 +73,8 @@ const IDIOMAS = ['es-AR', 'en', 'pt-BR'];
 const PARTES = ['descripcion', 'que_esperar', 'senales_de_alarma', 'en_emergencia'];
 
 /* Los nombres cortos de las dos Prestadoras inventadas. Están escritos acá por
-   el mismo motivo que en `probar_aislamiento.mjs:311`: desde la migración 0021
-   no existe forma de pedir la lista de Prestadoras sin sesión, que es
+   el mismo motivo que en `scripts/probar_aislamiento.mjs:489`: no existe forma de
+   pedir la lista de Prestadoras sin sesión, que es
    justamente la propiedad que se quiere conservar. Son datos de prueba, no
    configuración del producto. */
 const NOMBRES_CORTOS = ['presdemo', 'cuidarnorte'];
@@ -95,7 +96,7 @@ if (!laQueCrea) {
 } else {
   mirados++;
 
-  /* Las cuatro garantías que la 0041 dejó escritas. Se buscan por lo que hacen
+  /* Las cuatro garantías que la tabla trae escritas. Se buscan por lo que hacen
      y no por el número de migración, para que sigan valiendo si alguna vez se
      rehace la tabla en otro archivo. */
   const garantias = [
@@ -147,6 +148,77 @@ if (!laDeLaPuerta) {
   }
 }
 
+/* Ninguna guía lleva un número de emergencia, de ningún país.
+
+   La regla eran dos prohibiciones dichas juntas —ningún tratamiento y ningún
+   número de emergencia— y una sola sobrevivió: la primera estaba además escrita
+   en el comentario de la tabla, y la segunda vivía nada más que en el
+   encabezado de la migración que cargó las diecinueve guías, así que se fue con
+   el aplastamiento. Volvió al comentario de la tabla y al de la columna donde
+   se escribe cómo actuar, y esto es lo que la hace algo más que una buena
+   intención.
+
+   El motivo: **el número cambia por país**, y escribirlo adentro de una guía lo
+   convierte en dato del producto en vez de dato de la Prestadora, que es la que
+   sabe dónde opera. Además una guía que dice «llame al 107» es incorrecta para
+   quien la lee en otro lado, y no lo parece.
+
+   Se mira el texto de las guías donde vive escrito —las migraciones que las
+   cargan y la copia sin conexión que viaja al teléfono— por dos caminos
+   distintos, porque uno solo deja pasar la mitad:
+
+     1. Un verbo de llamar cerca de dos a cuatro cifras sueltas: «llame al 107»,
+        «call 911», «ligue para o 192». Atrapa cualquier país, incluidos los que
+        esta lista no conoce.
+     2. Los números de emergencia más usados, sueltos, aunque no haya verbo
+        cerca. Atrapa la lista pelada al final de un paso.
+
+   Y no se juzga cualquier cifra: «espere 10 minutos» o «cada 2 horas» son
+   contenido legítimo y por eso la primera forma exige el verbo y la segunda una
+   lista cerrada. */
+const LLAMAR = /(llam\w*|marc\w*|disc\w*|telefon\w*|comunic\w*|call\w*|dial\w*|phone|ligu\w*|liga\w*)\W{1,12}(?:al?|ao?|to|the|o|a)?\W{0,6}\b(\d{2,4})\b/giu;
+const NUMEROS_DE_EMERGENCIA = ['911', '112', '107', '106', '105', '100', '128', '131', '132', '133',
+  '135', '137', '192', '190', '193', '999', '998', '995', '000', '110', '119', '120', '122', '123'];
+const SUELTO = new RegExp('(?<![\\d.,:/-])(' + NUMEROS_DE_EMERGENCIA.join('|') + ')(?![\\d.,:/%-])', 'g');
+
+/* Un identificador no es texto de guía, y está lleno de cifras: el `135` de un
+   `6c135de2-…` no es el número de bomberos de nadie. Se sacan antes de mirar,
+   porque si no los tres primeros hallazgos son todos falsos —lo fueron—. */
+const UUID = /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi;
+
+/** Los textos de guía que están escritos en el repositorio, con su origen.
+ *  De la migración se toman sólo los textos por idioma —lo que va entre llaves—
+ *  y no la fila entera, que además lleva identificadores y fechas. */
+function textosDeGuia() {
+  const fuentes = [];
+  for (const m of migraciones) {
+    for (const fila of m.texto.matchAll(/insert\s+into\s+public\.guias_cuidado\b[^;]*;/gis)) {
+      const soloTexto = [...fila[0].matchAll(/'(\{[\s\S]*?\})'/g)].map((j) => j[1]).join('\n');
+      fuentes.push({ donde: m.nombre, texto: soloTexto });
+    }
+  }
+  for (const copia of ['data/catalogo-guias.json',
+    'pwa-asistente/data/catalogo-guias.json', 'pwa-familia/data/catalogo-guias.json']) {
+    try { fuentes.push({ donde: copia, texto: readFileSync(aRuta(copia), 'utf8') }); }
+    catch { /* que falte una copia lo dice el chequeo de la copia sin conexión */ }
+  }
+  return fuentes;
+}
+
+for (const { donde, texto: crudo } of textosDeGuia()) {
+  mirados++;
+  const texto = crudo.replace(UUID, ' ');
+  const hallados = new Set();
+  for (const m of texto.matchAll(LLAMAR)) hallados.add(m[0].replace(/\s+/g, ' ').trim());
+  for (const m of texto.matchAll(SUELTO)) hallados.add(m[1]);
+  if (hallados.size) {
+    problemas.push(`En \`${donde}\` una guía escribe un número de emergencia: ` +
+      [...hallados].slice(0, 4).map((h) => `«${h}»`).join(', ') + '. ' +
+      'Las guías dicen qué hacer, nunca a qué número llamar: el número cambia por país, ' +
+      'así que es dato de la Prestadora y no del producto.');
+  }
+}
+
 // ── B. Lo que sólo se comprueba con la base delante ────────────────────────
 
 /* Se le pregunta a las dos bases, y no es lo mismo lo que prueba cada una: la
@@ -186,8 +258,11 @@ function laDeVerdad() {
  *
  * Tres finales posibles, y son tres cosas distintas:
  *   `muda`     — no contestó. Nada quedó probado, y hay que decirlo.
- *   `sin_0041` — contestó, pero la puerta no está: la migración no llegó ahí.
- *                No es un defecto del código; es una base atrasada.
+ *   `sin_puerta` — contestó, pero `guias_de` no está ahí: esa base no tiene
+ *                  aplicada la migración que la crea. No es un defecto del
+ *                  código; es una base atrasada. Se nombra por lo que pasa y no
+ *                  por el número de la migración: el número se murió una vez, con
+ *                  el aplastamiento de las setenta y cuatro, y lo que pasa no.
  *   `probada`  — contestó, y lo que se probó está adentro de `problemas`.
  */
 async function interrogar(base) {
@@ -210,7 +285,7 @@ async function interrogar(base) {
   } catch (e) {
     return { final: 'muda', porque: e.message, problemas, mirados };
   }
-  if (general.estado === 404) return { final: 'sin_0041', problemas, mirados };
+  if (general.estado === 404) return { final: 'sin_puerta', problemas, mirados };
   if (!general.ok) return { final: 'muda', porque: 'contestó ' + general.estado, problemas, mirados };
 
   mirados++;
@@ -288,9 +363,9 @@ async function interrogar(base) {
   //     ya registrado lo convierte en ruido, y un gancho que molesta se apaga.
   //
   //     Cuenta **publicadas**, porque la puerta no devuelve otra cosa, y se
-  //     dice con esa palabra a propósito: desde la 0042 las 19 guías generales
-  //     están escritas y ninguna está publicada, así que un número en cero ya
-  //     no significa lo mismo que antes. Lo que falta ahora es la firma de
+  //     dice con esa palabra a propósito: las 19 guías generales están escritas y
+  //     ninguna está publicada, así que un número en cero no significa que falte
+  //     el texto. Lo que falta es la firma de
   //     quien las revisó, no el texto.
   const cat = await rpc('vocabularios_de', { p_slug: null });
   if (cat.ok) {
@@ -311,12 +386,12 @@ for (const base of bases) {
   mirados += r.mirados;
   if (r.final === 'muda') {
     dichos.push(`SIN COMPROBAR contra ${base.nombre} (${r.porque}): la puerta, el cierre de la tabla y el aislamiento quedaron sin probar ahí`);
-  } else if (r.final === 'sin_0041') {
-    dichos.push(`${base.nombre} contesta pero no tiene \`guias_de\`: la migración 0041 todavía no está aplicada ahí, así que ahí no se probó nada`);
+  } else if (r.final === 'sin_puerta') {
+    dichos.push(`${base.nombre} contesta pero no tiene \`guias_de\`: esa base no tiene aplicada la migración que crea la puerta, así que ahí no se probó nada`);
   } else {
     let dicho = `${base.nombre}: la puerta contesta y la tabla no`;
     if (r.cobertura) dicho += `, ${r.cobertura.con} de ${r.cobertura.total} patologías con guía general publicada (pendiente 104)`;
-    if (r.sinAislamiento) dicho += `; el aislamiento NO se probó ahí: ${r.sinAislamiento}. Las carga la migración 0045, así que o no está aplicada ahí o alguien borró esas guías`;
+    if (r.sinAislamiento) dicho += `; el aislamiento NO se probó ahí: ${r.sinAislamiento}. Las carga la siembra, así que o esa base no la tiene aplicada o alguien borró esas guías`;
     dichos.push(dicho);
   }
 }
