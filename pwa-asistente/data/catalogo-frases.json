@@ -1106,9 +1106,9 @@
       "pt-BR": "{cuantas} registros estão guardados no telefone, aguardando conexão para serem enviados."
     },
     "fichado.permiso_denegado": {
-      "es-AR": "No quedó registrado el fichado de {tipo}: el teléfono tiene la ubicación deshabilitada, y sin ubicación la fichada no se puede registrar. Habilite la ubicación y vuelva a apretar el botón.",
-      "en": "The {tipo} was not recorded: location is turned off on the phone, and without a location the record cannot be made. Please turn location on and press the button again.",
-      "pt-BR": "O registro de {tipo} não foi feito: o telefone está com a localização desabilitada, e sem localização não é possível registrar. Habilite a localização e aperte o botão de novo."
+      "es-AR": "No quedó registrada la {tipo}: el teléfono tiene la ubicación deshabilitada. Habilítela y fiche de nuevo.",
+      "en": "The {tipo} was not recorded: location is turned off on the phone. Turn it on and record again.",
+      "pt-BR": "O registro de {tipo} não foi feito: o telefone está com a localização desabilitada. Habilite-a e registre de novo."
     },
     "fichado.permiso_denegado_estado": {
       "es-AR": "No se fichó: falta habilitar la ubicación",
@@ -1116,9 +1116,9 @@
       "pt-BR": "Não registrado: falta habilitar a localização"
     },
     "fichado.sin_ubicacion": {
-      "es-AR": "No quedó registrado el fichado de {tipo}: la ubicación está habilitada, pero el teléfono no consiguió ubicarse. Pasa bajo techo, en sótanos o con poca señal de GPS. Salga un momento a un lugar más abierto y vuelva a apretar el botón.",
-      "en": "The {tipo} was not recorded: location is turned on, but the phone could not determine where it is. This happens indoors, in basements or with a weak GPS signal. Please step somewhere more open for a moment and press the button again.",
-      "pt-BR": "O registro de {tipo} não foi feito: a localização está habilitada, mas o telefone não conseguiu se localizar. Isso acontece em ambientes fechados, em porões ou com sinal de GPS fraco. Vá por um momento a um lugar mais aberto e aperte o botão de novo."
+      "es-AR": "No quedó registrada la {tipo}: el teléfono no consiguió ubicarse. Salga a un lugar más abierto y fiche de nuevo.",
+      "en": "The {tipo} was not recorded: the phone could not determine its location. Step somewhere more open and record again.",
+      "pt-BR": "O registro de {tipo} não foi feito: o telefone não conseguiu se localizar. Vá a um lugar mais aberto e registre de novo."
     },
     "fichado.sin_ubicacion_estado": {
       "es-AR": "No se fichó: el teléfono no consiguió ubicarse",
