@@ -218,7 +218,7 @@ tres reglas juntas:
   el teléfono, y para nada más.
 - **Nunca sale al Perfil.** Una referencia no se muestra en su Perfil, no la ve ninguna
   Familia y no sale al directorio público, ni entera ni en parte
-  (`supabase/migrations/0001_base_del_esquema.sql:3027`).
+  (`supabase/migrations/0001_base_del_esquema.sql:3073`).
 
 Cargue solamente referencias de personas que le dieron el visto bueno, y no escriba de ellas
 nada que no haga falta para llamarlas.

@@ -78,7 +78,7 @@ no es ninguna de las dos cosas es **búsqueda**: buscar es el acto, y el acto no
 
 ### 1. `postulaciones` — el Asistente se ofrece a un aviso — **CONSTRUIDA**
 
-Está declarada en `supabase/migrations/0001_base_del_esquema.sql:2376`. Era la mitad
+Está declarada en `supabase/migrations/0001_base_del_esquema.sql:2966`. Era la mitad
 que faltaba: una Familia podía publicar lo que necesitaba y **nadie
 podía contestarle**.
 

@@ -19,7 +19,7 @@
 | Perfil del Asistente | Maquetado |
 | Portal de registro de Asistentes | Maquetado, con el legajo funcionando: `registrar-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en sus tablas —`matriculas_asistente`, `estudios_asistente`, `experiencia_laboral_asistente`, `referencias_asistente` y `autorizaciones_asistente`—, y la disponibilidad horaria en `disponibilidad_asistente` y `franjas_asistente` |
 | Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:358`). Los dos depósitos se declaran en una migración y no a mano (`supabase/migrations/0001_base_del_esquema.sql:6038-6039`), con sus políticas al lado |
-| Consentimiento de publicación | Funciona de punta a punta. El alta pregunta al cerrar (`data/catalogo-autorizaciones.json`, paso 7) y guarda la respuesta en `autorizaciones_asistente`; el directorio cruza contra ella y **no muestra a nadie que no haya dicho que sí**: la vista `directorio` exige `a.perfil_publicado` (`supabase/migrations/0001_base_del_esquema.sql:791-793`). Sin respuesta no se publica: la casilla arranca sin marcar. Y el directorio va con `noindex`, que es lo que ese mismo consentimiento promete |
+| Consentimiento de publicación | Funciona de punta a punta. El alta pregunta al cerrar (`data/catalogo-autorizaciones.json`, paso 7) y guarda la respuesta en `autorizaciones_asistente`; el directorio cruza contra ella y **no muestra a nadie que no haya dicho que sí**: la vista `directorio` exige `a.perfil_publicado` (`supabase/migrations/0001_base_del_esquema.sql:797-799`). Sin respuesta no se publica: la casilla arranca sin marcar. Y el directorio va con `noindex`, que es lo que ese mismo consentimiento promete |
 | Evaluaciones de competencias | Funcionan, y **las corrige el servidor**. `examen.html` pide sesión, lista lo que la persona puede rendir y manda las respuestas a `rendir_evaluacion()`; la columna con la respuesta correcta no tiene permiso de lectura para nadie y las opciones salen de la vista `opciones_para_responder`, que no la incluye (`supabase/migrations/0001_base_del_esquema.sql:2868`). El intento no se puede escribir a mano: la tabla no tiene política de escritura y los permisos están revocados. `cursos.html` ya no tiene examen propio, enlaza a esta pantalla. Falta el contenido: ver `docs/PENDIENTES.md` punto 24 |
 | Motor de fichas del legajo (`js/fichas-legajo.js`) | Funciona. Dibuja, valida y recolecta Matrícula, estudio, experiencia y referencia leyendo `data/catalogo-fichas.json` y `data/catalogo-vocabularios.json`. Ninguna de las cuatro está escrita en la pantalla |
 | Formulario integral de datos del Paciente | Maquetado, paso a paso |
@@ -258,7 +258,7 @@ quedado abierta.
   existe y el contacto tiene su lugar propio: `avisos.contact_info` es un `jsonb` con nombre,
   correo y teléfono (`supabase/migrations/0001_base_del_esquema.sql:2192`), y su comentario avisa
   que son datos de una persona real y que se vacían antes de producción
-  (`supabase/migrations/0001_base_del_esquema.sql:2185`). El pendiente decía que ninguna pantalla
+  (`supabase/migrations/0001_base_del_esquema.sql:2215`). El pendiente decía que ninguna pantalla
   mandaba contacto; sí lo mandaba, y era la pantalla pública.
 - **Un solo clasificador de errores, no dos.** Al cerrar el pendiente 22 quedaron conviviendo
   `Sesion.mensajeDeError` en `js/auth.js` y `Texto.mensajeDeError` en `js/texto.js`: la misma
@@ -1850,10 +1850,10 @@ buscar y no deja nada guardado; lo que queda guardado es el aviso que publica la
 
 | Antes | Ahora | Qué pasó |
 |---|---|---|
-| `care_searches` | `avisos` | Un renombre de verdad, porque la tabla ya existía con datos adentro: se mudaron con ella la clave, la restricción, el índice y la política (`supabase/migrations/0001_base_del_esquema.sql:2153`) |
+| `care_searches` | `avisos` | Un renombre de verdad, porque la tabla ya existía con datos adentro: se mudaron con ella la clave, la restricción, el índice y la política (`supabase/migrations/0001_base_del_esquema.sql:2183`) |
 | `reportes.search_id` y `messages.search_id` | `aviso_id` | El mismo renombre, con sus dos restricciones |
 | `caregivers_publicos` | `directorio` | El mismo renombre. El nombre no es nuevo: es el del módulo, decidido el 24 de agosto en `docs/MODULOS.md:58` |
-| `franjas_busqueda` | `franjas_aviso` | No hubo renombre: `franjas_busqueda` no llegó a existir nunca en ninguna base. La tabla nació ya con el nombre nuevo (`supabase/migrations/0001_base_del_esquema.sql:2283`) |
+| `franjas_busqueda` | `franjas_aviso` | No hubo renombre: `franjas_busqueda` no llegó a existir nunca en ninguna base. La tabla nació ya con el nombre nuevo (`supabase/migrations/0001_base_del_esquema.sql:2555`) |
 | `franjas_busqueda.search_id` | `franjas_aviso.aviso_id` | Ídem |
 | `grilla_busqueda`, `paso_de_franjas_busqueda` | `grilla_aviso`, `paso_de_franjas_aviso` | Claves del catálogo `data/catalogo-disponibilidad.json` y sus dos copias |
 | `getBusquedasFamilia`, `crearBusquedaFamilia`, `crearBusqueda`, `guardarFranjasDeBusqueda`, `getFranjasDeBusqueda` | `getAvisosFamilia`, `crearAvisoFamilia`, `crearAviso`, `guardarFranjasDeAviso`, `getFranjasDeAviso` | `js/apiClient.js` y sus dos copias, más quien las llama. El 5 de septiembre de 2026 se borraron dos de esos nombres nuevos, `getAvisosFamilia` y `getFranjasDeAviso`: ninguna pantalla llegó a llamarlas y el camino vivo es `avisos_abiertos()` y `franjasDeAviso()` (pendiente 128) |
@@ -2069,7 +2069,7 @@ modificaba y borraba los avisos de las demás, y leía la presión, la glucemia 
 todos los Pacientes de la Prestadora**. Lo mismo un Asistente con sesión. Hoy las cinco políticas
 nombran además a la persona, y la base lo confirma: la de `avisos` exige `familia_id =
 auth.uid()` salvo para el personal de la Prestadora
-(`supabase/migrations/0001_base_del_esquema.sql:4482`).
+(`supabase/migrations/0001_base_del_esquema.sql:4557`).
 
 **Faltaba una pieza antes de poder escribir la regla: el aviso no sabía de quién era.**
 `avisos` no tenía ninguna columna que lo atara a quien lo publicó, así que no había con qué
@@ -3048,7 +3048,7 @@ alta que hace esa pantalla:
 - **sin sesión —que es como llega cualquiera al portal— contesta 401, «permission denied»**:
   `anon` no tiene permiso sobre la tabla;
 - **con una cuenta recién creada contesta 403**, porque la política «Avisos de la Prestadora»
-  exige `tenant_id = prestadora_actual()` (`supabase/migrations/0001_base_del_esquema.sql:4482`)
+  exige `tenant_id = prestadora_actual()` (`supabase/migrations/0001_base_del_esquema.sql:4557`)
   y una cuenta nueva no tiene Prestadora.
 
 La prueba trae su comprobación de sostén —la misma fila con una sesión válida entra—, sin la cual
@@ -3116,7 +3116,7 @@ muertas porque ningún guion las escuchaba.
 
 **Y lo único propio que le quedaba —el asistente de seis pasos— publicaba un Aviso defectuoso.**
 No preguntaba zona, y el comentario de la columna `avisos.zone`
-(`supabase/migrations/0001_base_del_esquema.sql:2192`) dice que ahí nunca va texto libre porque el
+(`supabase/migrations/0001_base_del_esquema.sql:2222`) dice que ahí nunca va texto libre porque el
 directorio filtra por esa columna; no preguntaba patologías, que las mandaba como
 lista vacía escrita a mano; mandaba `horarios` fijo en `'flexible'`; y preguntaba modalidad
 (`w-modality`) y urgencia (`w-urgent`) sin mandarlas a ninguna parte. Un aviso publicado así no

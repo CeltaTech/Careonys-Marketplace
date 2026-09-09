@@ -104,13 +104,13 @@ papeles presentados y referencias son tablas aparte, una fila por cada cosa carg
 —`supabase/migrations/0001_base_del_esquema.sql:2185`—, sus patologías —`:160`—, la zona, la
 modalidad, los días y los turnos, y cómo volver a comunicarse con quien publicó, que se guarda en
 `supabase/migrations/0001_base_del_esquema.sql:2192` y que la propia migración describe como
-«nombre, correo y teléfono» en `supabase/migrations/0001_base_del_esquema.sql:2183-2185`.
+«nombre, correo y teléfono» en `supabase/migrations/0001_base_del_esquema.sql:2213-2215`.
 
 **3.4. Hay un campo de texto libre, y conviene saberlo antes de escribir en él.** El Aviso tiene
 una descripción donde la Familia cuenta la situación con sus palabras
 —`supabase/migrations/0001_base_del_esquema.sql:157`—. La propia migración lo dice sin
 adornos: es «la única que puede traer datos de una persona sin que nadie los haya pedido»
-(`supabase/migrations/0001_base_del_esquema.sql:2197-2199`). **Conviene contar lo necesario y no
+(`supabase/migrations/0001_base_del_esquema.sql:2227-2229`). **Conviene contar lo necesario y no
 más.**
 
 **3.5. Datos de otras personas, que ni la Familia ni el Asistente son.** Son dos casos y los dos
@@ -120,7 +120,7 @@ relación de una persona que no está presente
 —`supabase/migrations/0001_base_del_esquema.sql:3060-3062`—. En los dos
 casos, quien los carga tiene que estar autorizado a hacerlo. Las referencias no salen nunca al
 directorio, y así está escrito en la propia tabla:
-`supabase/migrations/0001_base_del_esquema.sql:3027`.
+`supabase/migrations/0001_base_del_esquema.sql:3073`.
 
 ---
 

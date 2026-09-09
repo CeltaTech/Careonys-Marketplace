@@ -98,8 +98,11 @@ const PROHIBIDAS = [
     porque: 'aprobada por el Desarrollador el 2026-08-29, y vale igual para el ' +
             'texto y para los identificadores',
     /* Los seis mensajes que la usan son todos del 26 de agosto de 2026, tres
-       días antes de que la palabra se decidiera. `ec0da18` es el último. */
-    desde: 'ec0da18'
+       días antes de que la palabra se decidiera. `d0f52fd` es el último. Ese
+       número cambió el 9 de septiembre de 2026, cuando se reescribió el
+       historial entero: reescribir cambia el número de todos los commits, así
+       que un número escrito acá a mano hay que volver a buscarlo. */
+    desde: 'd0f52fd'
   },
   {
     formas: 'licenciataria|licenciatarias',
