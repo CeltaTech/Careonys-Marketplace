@@ -52,6 +52,17 @@ ofrece sus programas para llevar el servicio, **en carácter informativo y sin t
 decisión**. Facilita el control de asistencia y la comunicación entre las partes, **no interviene
 en la gestión**, y **avisa a la Familia** cuando detecta que algo no está bien.
 
+**Y lo que se puede ajustar lo configura la Familia.** Precisado por el Desarrollador el 9 de
+septiembre de 2026: acá nadie media entre las partes, así que lo único que le queda al producto
+es mejorar lo que ofrece y afinar cómo se hace, **y una parte de eso se afina según lo que la
+Familia configure, dentro de lo que sea configurable**. De ahí salen dos consecuencias que no
+son opinables: **lo configurable se declara**, y una pantalla no puede inventarle a la Familia
+una decisión que no se le ofreció; y **lo que el producto detecta lo muestra y no lo resuelve**
+—ante dos versiones de un mismo hecho enseña las dos a la Familia, no elige ninguna y no las
+pone a las partes una frente a la otra, que ya sería mediar—. Se dice **la Familia** y no «el
+Cliente»: en el vocabulario de la empresa el Cliente es con quien hay contrato, que acá es la
+Prestadora.
+
 **De ahí sale quién mira cada cosa, y no es opinable.** La fichada y el reporte de cuidado son de
 la Familia y del Asistente: son la herramienta que usan ellos. **La Prestadora no los mira**, ni
 uno ni otro, porque mirar los horarios que cumple una persona y lo que hizo en cada jornada es

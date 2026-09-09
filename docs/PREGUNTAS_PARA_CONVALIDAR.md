@@ -25,7 +25,7 @@ condiciones del trabajo, organizando los reemplazos, mirando la fichada y el Rep
 recibiendo el aviso de lo que pasó en la jornada. Es al revés: el trato lo cierran la Familia y
 el Asistente, la Prestadora no reparte trabajo (`CLAUDE.md:30`), la fichada y el Reporte son la
 herramienta de la Familia y del Asistente, y lo que la Prestadora controla es quién entra —el
-legajo, las verificaciones y la validación del Aspirante— (`CLAUDE.md:55-59`). Enseñar el modelo
+legajo, las verificaciones y la validación del Aspirante— (`CLAUDE.md:66-70`). Enseñar el modelo
 equivocado en la evaluación de entrada es enseñarlo en el peor lugar.
 
 **El criterio con el que se corrigieron es uno solo.** El aviso operativo —horarios, ausencias,
@@ -42,7 +42,7 @@ las opciones—, así que el reparto del final sigue valiendo tal como estaba.
 familiar maltrata al Paciente. Ahí la Familia es justamente la señalada, y no hay horario,
 ausencia, reemplazo ni jornada en juego, así que no es un aviso operativo y avisarle a la
 Prestadora no la pone a dirigir el trabajo. A quién se avisa un caso así no está resuelto en
-`CLAUDE.md:43-59`, y se señala acá para que se decida al convalidar.
+`CLAUDE.md:43-70`, y se señala acá para que se decida al convalidar.
 
 ---
 
