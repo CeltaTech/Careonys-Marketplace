@@ -98,7 +98,9 @@ modalidad vive en un solo renglón, en `docs/GLOSARIO.md`, **y cambiarlo tiene q
 de treinta segundos**. Lo ordenó el Desarrollador al empezar este producto. La línea de comandos
 lo incumplió: eligió una palabra por su cuenta, la escribió como prefijo en más de cuatrocientos
 lugares y la anotó en este archivo como decisión de él. El 9 de septiembre de 2026 él la retiró
-del producto entero, y sacarla costó una tarea completa.
+del producto entero, y sacarla costó una tarea completa. **El nombre lo puso después él**: *«el
+producto hasta que yo diga lo contrario se llama marketplace y no de otra manera»*. Es nombre
+comercial, vive en ese único renglón del glosario, y ninguna tabla, columna ni clave lo lleva.
 
 **Y una etiqueta de versión no lleva ningún nombre adentro.** Lo ordenó el Desarrollador: «en las
 etiquetas no tiene porque estar el nombre de ninguna modalidad ni nombre del producto ni nada, ya

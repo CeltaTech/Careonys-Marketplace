@@ -9,7 +9,7 @@
 
 | Término propuesto | Qué es | Estado |
 |---|---|---|
-| **La modalidad de este producto** — todavía sin nombre | La modalidad de trabajo en la que el Cliente Contratante busca entre los Asistentes de su Prestadora, compara, elige y contrata, en vez de recibir una asignación. Ejemplo: una Familia entra, filtra por zona y por patología, mira tres perfiles y pide contratar a uno. No es el Vínculo: el Vínculo es la relación de un Asistente con su Prestadora, y existe igual con cualquier modalidad | **Sin nombre.** El que estuvo escrito acá lo eligió la línea de comandos, no el Desarrollador, y él lo retiró el 9 de septiembre de 2026 |
+| **Marketplace** | La modalidad de trabajo en la que el Cliente Contratante busca entre los Asistentes de su Prestadora, compara, elige y contrata, en vez de recibir una asignación. Ejemplo: una Familia entra, filtra por zona y por patología, mira tres perfiles y pide contratar a uno. No es el Vínculo: el Vínculo es la relación de un Asistente con su Prestadora, y existe igual con cualquier modalidad | **Nombrado por el Desarrollador**, que ordenó: «el producto hasta que yo diga lo contrario se llama marketplace y no de otra manera». Es nombre comercial y no nombra nada de lo guardado |
 | **Legajo** — identificador: `legajo` | Todo lo que la Prestadora guarda de un Asistente: sus datos, sus estudios, sus papeles, su experiencia y las verificaciones que le fue haciendo. Es el currículum con los respaldos adjuntos, y es lo que la Prestadora mira para decidir si esa persona puede trabajar. La persona lo completa una vez y después lo mantiene al día. Nadie de afuera lo ve entero, y hay partes que no salen nunca | **Aprobado** por el Desarrollador el 24 de agosto de 2026 |
 | **Perfil** | Lo que se muestra de un Asistente a quien lo está buscando: su nombre, su foto, su género, su zona, qué atiende, su precio por hora y qué se le comprobó —el género y las comprobaciones se sumaron el 26 de agosto de 2026—. Sale del legajo pero no es el legajo: es la parte elegida para mostrar, y el Asistente decide si se publica o no. Es el mismo sentido que tiene la palabra en cualquier red social: el perfil es lo que se ve, y también dónde se elige qué se ve | **Aprobado** por el Desarrollador el 24 de agosto de 2026 |
 | **Aviso** — identificador: `aviso` | Lo que una Familia publica cuando necesita un Asistente: qué necesita, en qué zona, qué días y en qué turnos. Queda publicado para que los Asistentes lo vean. **Es una cosa guardada, no algo que alguien hace**: el aviso sigue existiendo aunque nadie lo mire. Ejemplo: una Familia publica que necesita acompañamiento los martes y jueves a la mañana en Caballito. No es la Búsqueda: la Búsqueda es la acción, el aviso es lo que queda. Cuando lo que se quiere decir es que el sistema le informa algo a alguien —que llegó el Asistente, que alguien se postuló—, la palabra es **notificación**, nunca aviso | **Aprobado** por el Desarrollador el 25 de agosto de 2026, cuando ordenó «renombra todo lo que haya que renombrar, no puede ser que tengamos distintos nombres para la misma cosa» |
@@ -27,6 +27,10 @@ la había aprobado el Desarrollador. No la había aprobado. El 9 de septiembre d
 *«La sacas de todos lados, no quiero ver que uses esa palabre en ningun sitio, titulo codigo,
 etiqueta o lo que sea»*. Salió de más de cuatrocientos lugares. Las tablas quedaron con el nombre
 de lo que guardan y sin prefijo ninguno.
+
+**Y el nombre lo puso él, que es a quien le corresponde**: *«el producto hasta que yo diga lo
+contrario se llama marketplace y no de otra manera»*. Vive en el renglón de arriba y en ningún
+otro lado, así que cambiarlo sigue siendo un trámite de treinta segundos.
 
 **El legajo y el perfil no son la misma cosa, y confundirlos ya hizo daño.** El legajo es lo que la
 persona entrega y la Prestadora audita; el perfil es la cara visible de una parte de eso, la que el
