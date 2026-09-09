@@ -135,7 +135,7 @@
       return {
         pasa: false,
         motivos: [{ clave: 'reglas_no_disponibles', motivo: '' }],
-        aviso: 'No se pudo revisar el mensaje antes de enviarlo, así que no se envió. Conviene reintentar en un momento.'
+        aviso: Catalogo.frase('conversacion.reglas_no_disponibles')
       };
     }
     return revisarCon(reglas, texto, idioma);

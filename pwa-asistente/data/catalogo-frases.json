@@ -3982,6 +3982,11 @@
       "en": "Whatever is agreed is between you and the other party. The Provider takes no part in the arrangement and the software does not store it.",
       "pt-BR": "O que for acordado é entre você e a outra parte. A Prestadora não participa do acordo e o software não o armazena."
     },
+    "conversacion.reglas_no_disponibles": {
+      "es-AR": "No se pudo revisar el mensaje antes de enviarlo, así que no se envió. Conviene reintentar en un momento.",
+      "en": "The message could not be checked before sending, so it was not sent. It is worth trying again in a moment.",
+      "pt-BR": "Não foi possível revisar a mensagem antes de enviá-la, então ela não foi enviada. Convém tentar de novo em um momento."
+    },
     "perfil.contactar_entrar": {
       "es-AR": "Para contactar a este Asistente hay que entrar como Familia.",
       "en": "Getting in touch with this assistant requires signing in as a family.",
