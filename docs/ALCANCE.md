@@ -663,8 +663,8 @@ descartaba sin decir nada. Era el pendiente 23, y estaba abierto desde que la pa
 - **Dos tablas nuevas, y las dos son módulo compartido** (`CLAUDE.md`, «los módulos»):
   `disponibilidad_asistente` guarda lo general —hoy, si acepta reemplazos urgentes— y
   `franjas_asistente` guarda una fila por casillero marcado. Ninguna de las dos sabe qué es un
-  directorio ni una postulación: son verdad sobre un Asistente aunque el trabajo llegue por
-  prestación directa.
+  directorio ni una postulación: son verdad sobre un Asistente independientemente de cómo llegó
+  el trabajo.
 - **La grilla se dibuja desde el catálogo**, no está escrita en las pantallas. `js/disponibilidad.js`
   la arma con los vocabularios `dia_semana` y `turno`, y por eso lo que se guarda son las claves
   —`lunes`, `manana`— y no las etiquetas que se ven. Agregar un turno de madrugada hoy es una fila
@@ -3857,9 +3857,10 @@ Careonys guarda el valor `marketplace` en tres lugares —`prestadora_modalidade
 `asistentes.canales` y `guardias.canal_modalidad`—. **Ahí adentro no significa mercado.**
 
 Lo que separa esos valores es **bajo qué régimen trabaja el Asistente**, y el código lo dice con
-todas las letras: *"en prestación directa la Prestadora dirige el trabajo; en marketplace el
-Asistente elige qué toma y mantiene su independencia operativa"*
-(`supabase/migrations/20260820190000_el_canal_del_asistente_se_elige_y_se_respeta.sql:11`). Es la
+todas las letras en el comentario de
+`supabase/migrations/20260820190000_el_canal_del_asistente_se_elige_y_se_respeta.sql:11`: de un
+lado la Prestadora dirige el trabajo, y del otro el Asistente elige qué toma y mantiene su
+independencia operativa. Es la
 distinción entre relación de dependencia y trabajo autónomo, con consecuencias legales reales: las
 siete advertencias del artículo 23 de la LCT cargadas en `advertencias_legales` cuelgan de ahí, y
 los textos de consentimiento tienen dos versiones separadas por `modalidad`, cuyos valores son

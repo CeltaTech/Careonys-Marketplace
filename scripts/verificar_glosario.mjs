@@ -149,8 +149,6 @@ function palabraQueSobra(texto) {
 const EXENTOS = new Map([
   ['docs/modelo_de_negocios_careonys.md',
    'documento de negocio heredado, escrito antes del glosario de la empresa'],
-  ['docs/modelo_de_negocios_prestadora.md',
-   'documento de negocio heredado, escrito antes del glosario de la empresa'],
   ['supabase/config.toml',
    'nombra tres entornos de Supabase que existen en la máquina del ' +
    'Desarrollador; cómo se llama un entorno no lo decide este repositorio'],

@@ -277,7 +277,7 @@
   // La clave que se sobreescribe (`servicios`) es la que ya lee
   // `data-oferta="servicios"` en las pantallas; adentro de la base la tabla se
   // llama `oferta_comercial` para no chocar con «Servicio» del glosario
-  // compartido, que es prestación directa y esto no lo es.
+  // compartido, que nombra otra cosa.
   async function _traerOfertaComercialDeLaBase() {
     const cliente = window.ClienteDatos;
     if (!cliente || typeof cliente.ofertaComercial !== 'function') return null;

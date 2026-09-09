@@ -33,8 +33,9 @@ publica el esquema `auth`. Es una astilla de una de las seis categorías y nada 
 El pendiente decía: *«hay que decidir dónde vive el rastro»*. **No hace falta decidir nada nuevo:
 las dos reglas que contestan ya están escritas.**
 
-La primera es la pregunta que reparte los módulos (`docs/MODULOS.md`): *¿esto seguiría teniendo
-sentido en prestación directa?* Quién validó un legajo y cuándo es verdad sobre esa persona y esa
+La primera es la pregunta que reparte los módulos (`docs/MODULOS.md`): *¿esto seguiría siendo
+verdad independientemente de cómo llegó el trabajo?* Quién validó un legajo y cuándo es verdad
+sobre esa persona y esa
 Prestadora **haya elegido la Familia en un directorio o le hayan asignado el trabajo**. La
 respuesta es sí, y por lo tanto el rastro es **compartido**. Cae del mismo lado que «Organización y
 aislamiento», que ya está en el reparto con estas palabras: *«Nunca puede vivir de un solo lado»*

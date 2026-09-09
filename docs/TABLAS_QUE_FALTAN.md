@@ -156,7 +156,7 @@ se cambia de servicio, dos columnas de esta tabla quedan sin sentido.
 | | |
 |---|---|
 | **De qué lado cae** | **Compartida**, corregido el 25 de agosto de 2026 —antes decía que era de esta modalidad—. La calificación es evidencia sobre la persona y la acompaña a donde trabaje: quien recibió el cuidado puede opinar lo haya elegido o se lo hayan asignado. Lo que se queda de este lado es cuánto pesa y en qué orden ordena, módulo `orden`, no la reseña |
-| **De qué depende** | De que exista un trabajo terminado, que hoy no existe de ningún lado. **Y no puede colgar del aviso**: el aviso es de esta modalidad, y una tabla compartida que apunta a un objeto de un solo lado arrastra el lado entero con ella —es el mismo defecto que `logbook_entries.aviso_id` y `messages.aviso_id`, anotado en el pendiente 52—. Tiene que colgar del trabajo hecho, que en esta modalidad llega por un aviso y en prestación directa por una asignación |
+| **De qué depende** | De que exista un trabajo terminado, que hoy no existe de ningún lado. **Y no puede colgar del aviso**: el aviso es de esta modalidad, y una tabla compartida que apunta a un objeto de un solo lado arrastra el lado entero con ella —es el mismo defecto que `logbook_entries.aviso_id` y `messages.aviso_id`, anotado en el pendiente 52—. Tiene que colgar del trabajo hecho, que en esta modalidad llega por un aviso y en las otras por una asignación |
 | **Qué hay que decidir antes** | **Es lógica comercial y está congelada** por `docs/ALCANCE.md` §4. Además: quién puede calificar, si el Asistente puede responder, y quién puede esconder una reseña |
 
 Columnas propuestas: Asistente, quién califica, el trabajo terminado que se califica, calificación
@@ -193,7 +193,7 @@ alguien vuelva a entrar a mirar.
 
 | | |
 |---|---|
-| **De qué lado cae** | **Compartida.** Una notificación le sirve igual a la prestación directa: que el Asistente sepa que le asignaron una guardia es el mismo problema |
+| **De qué lado cae** | **Compartida.** Una notificación sirve igual independientemente de cómo llegó el trabajo: que el Asistente sepa que le asignaron una guardia es el mismo problema |
 | **De qué depende** | De nada nuevo. Es de las dos que se podrían escribir hoy |
 | **Qué hay que decidir antes** | Por dónde sale cada una —correo, WhatsApp, notificación al celular—, que es lo que en este producto se llama **canal** (`docs/GLOSARIO.md`). La tabla propuesta guarda la notificación pero no el canal |
 

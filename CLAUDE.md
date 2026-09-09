@@ -68,10 +68,8 @@ uno ni otro, porque mirar los horarios que cumple una persona y lo que hizo en c
 dirigir el trabajo, que es justo lo que esta modalidad evita. Lo que la Prestadora sí controla es
 **quién entra**: el legajo, las verificaciones y la validación del Aspirante.
 
-**Lo que este producto no es.** No es prestación directa: ahí la Prestadora dirige el trabajo, le
-cobra a la Familia, le paga al Asistente y se queda con el margen. Es otro modelo, y no es éste.
-`docs/modelo_de_negocios_prestadora.md` lo describe así y **arranca con una advertencia de que
-tiene una decisión sin resolver**: no se toma de ahí el modelo vigente. **Si cualquier documento
+**Y el precio del cuidado, las condiciones y el pago los acuerdan la Familia y el Asistente entre
+ellos.** Lo único que la Prestadora cobra es su comisión por el contacto. **Si cualquier documento
 dice que la Prestadora asigna trabajo, gana esta sección.**
 
 ## 2. Este producto es exploratorio, y qué permite
@@ -174,8 +172,8 @@ llegó el trabajo** se construye como módulo compartido. Lo que sólo existe po
 y elige se queda de este lado de la línea. **El reparto está en `docs/MODULOS.md` y se consulta
 antes de escribir una tabla**, no después.
 
-- La pregunta que decide cada caso: *¿esto seguiría teniendo sentido en prestación directa?* Si
-  sí, es compartido.
+- La pregunta que decide cada caso: *¿esto seguiría siendo verdad independientemente de cómo llegó
+  el trabajo?* Si sí, es compartido.
 - **Ninguna palabra propia de esta modalidad aparece en un módulo compartido** —directorio, aviso,
   postulación, contacto, puntaje, destacado—. Si aparece una, se filtró, y con ella se filtra el
   trabajo de sacarla más tarde.
