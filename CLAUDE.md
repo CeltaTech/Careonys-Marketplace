@@ -121,7 +121,7 @@ la primera pantalla**, no al final.
 Fijado por el Desarrollador el 9 de septiembre de 2026. Cuando una capacidad funciona bien y lo
 único que le pasó es que se retiró la pantalla que la pedía, **sale del producto** —código que no
 llama nadie hace creer que alguna pantalla lo usa— **y sube al estante de la empresa,
-`..\..\Codigos utiles\`**, en una carpeta propia, con las piezas tal como estaban y un documento
+`..\..\Codigos-utiles\`**, en una carpeta propia, con las piezas tal como estaban y un documento
 que diga qué es, cómo funciona, de qué depende y cómo se vuelve a poner. **Sube porque el código
 es de CeltaTech y tiene que estar disponible para cualquier producto**, éste y los que vengan:
 guardado adentro de un producto tendría dueño, y el dueño decidiría por los demás. Ese estante no
