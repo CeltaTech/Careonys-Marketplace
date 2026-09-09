@@ -71,11 +71,11 @@ Trae cuatro cosas que no son el guardado en sí, y que son la parte que cuesta e
 
 | Qué | Dónde |
 |---|---|
-| Las dos tablas, con sus `check` y sus comentarios | `supabase/migrations/0001_base_del_esquema.sql:592` y `:647` |
-| Los tres idiomas obligatorios, y el agujero declarado | `supabase/migrations/0001_base_del_esquema.sql:657`, `:605` y `:598` |
-| Las ocho políticas: todos leen el general y lo propio, cada una escribe sólo lo suyo | `supabase/migrations/0001_base_del_esquema.sql:4713` a `:4734` y `:4906` a `:4927` |
-| Los dos disparadores que impiden cruzar Prestadoras y pisar el catálogo general | `supabase/migrations/0001_base_del_esquema.sql:3933` y `:3940`, con sus funciones en `:1098` y `:1156` |
-| La puerta anónima `vocabularios_de(p_slug)` | `supabase/migrations/0001_base_del_esquema.sql:2045` |
+| Las dos tablas, con sus `check` y sus comentarios | `supabase/migrations/0001_base_del_esquema.sql:598` y `:653` |
+| Los tres idiomas obligatorios, y el agujero declarado | `supabase/migrations/0001_base_del_esquema.sql:663`, `:611` y `:604` |
+| Las ocho políticas: todos leen el general y lo propio, cada una escribe sólo lo suyo | `supabase/migrations/0001_base_del_esquema.sql:4788` a `:4809` y `:4981` a `:5002` |
+| Los dos disparadores que impiden cruzar Prestadoras y pisar el catálogo general | `supabase/migrations/0001_base_del_esquema.sql:4008` y `:4015`, con sus funciones en `:1104` y `:1162` |
+| La puerta anónima `vocabularios_de(p_slug)` | `supabase/migrations/0001_base_del_esquema.sql:2075` |
 | Cómo lo pide el navegador | `js/apiClient.js:247` |
 | El archivo JSON, que pasó a ser copia generada y sin conexión | `scripts/generar_vocabularios.mjs` |
 | La comprobación de que la copia no se despegó | `scripts/verificar_catalogo.mjs` |

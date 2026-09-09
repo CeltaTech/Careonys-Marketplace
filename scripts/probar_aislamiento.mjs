@@ -33,7 +33,7 @@
    lo que separa Prestadora de Prestadora. C está en la misma Prestadora que A:
    entre esas dos no hay `tenant_id` que valga, y son el único par que puede
    mostrar si la barrera entre Familias existe. Las otras tres las pide la
-   modalidad, donde hacen falta las dos partes de un contacto **y** alguien de al
+   el encuentro, donde hacen falta las dos partes de un contacto **y** alguien de al
    lado que no sea ninguna de las dos: D es un segundo Asistente en la
    Prestadora de A, E es otra Familia de esa misma Prestadora —la que tiene que
    ver cero—, y F es la Familia de la Prestadora B, para que la otra también
@@ -125,7 +125,7 @@
     45. Ninguna ve una sola zona de la otra.
     46. Nadie carga una zona en la Prestadora de otro.
 
-   Y sobre la modalidad, que es donde la Familia y el Asistente se encuentran, y
+   Y sobre las tablas donde la Familia y el Asistente se encuentran, y
    donde lo único que queda guardado es el contacto:
 
     47. El Asistente se postula a un aviso, y otro Asistente se postula al mismo.
@@ -145,7 +145,7 @@
     57. El personal de la Prestadora no lee ninguna de las tres, y al lado se
         mira que las dos partes sí vean las suyas: si no, «cero» no distingue
         negado de vacío. (Sólo con --local, por lo mismo que 15 y 16.) Y
-        tampoco lee las dos que cuelgan del aviso en vez de la modalidad —el
+        tampoco lee las dos que cuelgan del aviso —el
         reporte de cuidado y `messages`—, que antes sí leía:
         las dos preguntaban por el aviso con un `exists` que no repetía de
         quién era, y la RLS de `avisos` le devuelve a ese personal todos
@@ -1449,7 +1449,7 @@ console.log('Dos Familias de la misma Prestadora');
     seCuelan.length ? seCuelan.join('   ') : 'ninguna ajena en los tres catálogos');
 }
 
-// --- 47 a 58: la modalidad, que es donde se encuentran -------------------------
+// --- 47 a 58: donde la Familia y el Asistente se encuentran ----------------
 // Las tres tablas nuevas guardan **el contacto y nada del trato**, y por eso su
 // aislamiento no se parece a ninguno de los de arriba: no lo decide la
 // Prestadora ni lo decide una Familia sola, lo deciden **las dos partes**. El
@@ -1469,7 +1469,7 @@ console.log('Dos Familias de la misma Prestadora');
 //      tenga contacto cargado de verdad. Sin ella, «no ve lo de la otra» sería
 //      mirar una tabla vacía, que es justo lo que la regla de la empresa no
 //      acepta como prueba.
-const deLaModalidad = [];
+const delEncuentro = [];
 for (const [etiqueta, prestadora] of [['D', cuentas[0].prestadora],
                                       ['E', cuentas[0].prestadora],
                                       ['F', cuentas[1].prestadora]]) {
@@ -1480,12 +1480,12 @@ for (const [etiqueta, prestadora] of [['D', cuentas[0].prestadora],
     tenant_slug: prestadora.slug
   });
   let token = alta.estado < 400 ? alta.cuerpo.access_token : null;
-  const userIdModalidad = alta.cuerpo.user?.id || alta.cuerpo.id;
+  const userIdEncuentro = alta.cuerpo.user?.id || alta.cuerpo.id;
   // Desde que se recreó el contenedor de cuentas del entorno local (fue el
   // pendiente 123, cerrado), el alta local ya no confirma sola: hay que
   // confirmarla a propósito, con la llave de servicio, y recién ahí pedir la sesión.
-  if (!token && alta.estado < 400 && claveServicio && userIdModalidad) {
-    await fetch(base + '/auth/v1/admin/users/' + userIdModalidad, {
+  if (!token && alta.estado < 400 && claveServicio && userIdEncuentro) {
+    await fetch(base + '/auth/v1/admin/users/' + userIdEncuentro, {
       method: 'PUT',
       headers: {
         apikey: claveServicio, Authorization: 'Bearer ' + claveServicio,
@@ -1499,19 +1499,19 @@ for (const [etiqueta, prestadora] of [['D', cuentas[0].prestadora],
   }
   if (!token) {
     console.error('No se pudo crear la cuenta ficticia ' + etiqueta + ', que es una de las tres');
-    console.error('que hacen falta para probar la modalidad. Sin ella esa parte no se verifica.');
+    console.error('que hacen falta para esa parte. Sin ella esa parte no se verifica.');
     process.exit(1);
   }
-  deLaModalidad.push({
+  delEncuentro.push({
     etiqueta, email, token, prestadora,
     userId: alta.cuerpo.user?.id || alta.cuerpo.id
   });
 }
 
 console.log('');
-console.log('La modalidad: la postulación, la conversación y los mensajes');
+console.log('Donde se encuentran: la postulación, la conversación y los mensajes');
 {
-  const [segundoAsistente, familiaAjena, familiaDeLaOtra] = deLaModalidad;
+  const [segundoAsistente, familiaAjena, familiaDeLaOtra] = delEncuentro;
   const familiaDelAviso = familias[0];   // C: publicó su aviso y no tiene legajo
   const asistenteUno    = cuentas[0];    // A: tiene legajo en la misma Prestadora
   const asistenteDeB    = cuentas[1];    // B: el legajo de la Prestadora ajena
@@ -1737,7 +1737,7 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
     'respuesta ' + borrarMensaje.estado + ', quedan ' + siguenLosDos.length);
 
   // ── El personal de la Prestadora no lee ninguna de las tres ───────────────
-  // Es la decisión que explica la modalidad: el contenido es de las dos partes, y
+  // Es la decisión de fondo: el contenido es de las dos partes, y
   // mirarlo es meterse en el trato. Con el control positivo al lado, porque si
   // no, «cero» no distingue negado de vacío.
   if (!coordinador) {
@@ -1760,7 +1760,7 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
     }
 
     /* Y las dos que no estaban en esa lista, que son justo las que se abrieron
-       calladas. `messages` y `reportes` no cuelgan de la modalidad sino del aviso, y
+       calladas. `messages` y `reportes` no cuelgan de la conversación sino del aviso, y
        las dos preguntaban por el aviso con un `exists` que no repetía de quién
        era. La RLS de `avisos` no alcanza para filtrarlo: a este mismo
        coordinador le devuelve **todos** los avisos de su Organización
@@ -1879,7 +1879,7 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
   comprobar('Las dos Prestadoras tienen contacto cargado, y cada una ve el suyo',
     sinNada.length === 0,
     sinNada.length ? 'no ve nada en: ' + sinNada.join(', ')
-                   : TABLAS.map(([t]) => t.replace('el prefijo de la modalidad', '') + ': ' +
+                   : TABLAS.map(([t]) => t.replace('', '') + ': ' +
                        enCadaLado.get(t)[0].length + ' y ' +
                        enCadaLado.get(t)[1].length).join('   '));
 
@@ -2400,12 +2400,12 @@ for (const f of familias) {
    `set null`, así que el canal sobrevive al aviso y se va recién con el legajo
    —`la_conversacion_es_con_un_legajo_de_la_misma_prestadora` sí borra en
    cascada—, que es lo que se borra en el bucle de abajo. */
-for (const f of [cuentas[0], familias[0], ...deLaModalidad]) {
+for (const f of [cuentas[0], familias[0], ...delEncuentro]) {
   for (const aviso of [f.avisoId, f.avisoSuplantado]) {
     if (aviso) await rest('/rest/v1/avisos?id=eq.' + aviso, { method: 'DELETE' }, f.token);
   }
 }
-for (const c of [...cuentas, ...deLaModalidad]) {
+for (const c of [...cuentas, ...delEncuentro]) {
   if (c.legajoId) {
     await rest('/rest/v1/caregivers?id=eq.' + c.legajoId, { method: 'DELETE' }, c.token);
   }
@@ -2445,7 +2445,7 @@ console.log('Legajos de prueba borrados. Quedan visibles en el directorio: ' +
 /* No se suma a `fallos`: eso diría que falló el aislamiento, y lo que falló es la
    limpieza. Se cuenta aparte y se ve en el código de salida. */
 let quedoSucia = false;
-const todasLasCuentas = [...cuentas, ...familias, ...deLaModalidad,
+const todasLasCuentas = [...cuentas, ...familias, ...delEncuentro,
                          ...(coordinador ? [coordinador] : [])];
 {
   await borrarCuentas(todasLasCuentas);
@@ -2542,7 +2542,7 @@ if (fallosDeAislamiento === 0) {
   console.log('El examen lo corrige la base: la respuesta correcta nunca sale de ahí.');
   console.log('Y la separación no es sólo entre Prestadoras: dos Familias de la misma');
   console.log('Prestadora tampoco se ven los avisos, los horarios, los mensajes ni los reportes.');
-  console.log('En la modalidad el límite lo ponen las dos partes: la postulación, la conversación');
+  console.log('Acá el límite lo ponen las dos partes: la postulación, la conversación');
   console.log('y los mensajes no los lee nadie más, ni el personal de la Prestadora.');
 } else {
   console.log(fallosDeAislamiento + ' comprobación(es) de aislamiento fallaron. El aislamiento NO está.');

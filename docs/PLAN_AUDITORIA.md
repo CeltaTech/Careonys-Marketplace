@@ -46,12 +46,10 @@ construyendo acá con el reparto de `docs/MODULOS.md`»*.
 
 **Entonces se construye acá, con tres condiciones que salen de esa misma regla:**
 
-1. **Sin el prefijo de la modalidad.** Ese prefijo marca lo propio de esta modalidad, y es lo que permite
-   encontrar de una búsqueda lo que no cruza. Ponérselo al rastro sería mentir sobre a quién sirve.
-2. **Sin una sola palabra de esta modalidad adentro**: ni directorio, ni aviso, ni postulación, ni
+1. **Sin una sola palabra de esta modalidad adentro**: ni directorio, ni aviso, ni postulación, ni
    contacto, ni puntaje, ni destacado. La tabla nombra tablas y columnas, que ya se llaman como se
-   llaman; no nombra conceptos de la modalidad.
-3. **Se agrega la fila al reparto de `docs/MODULOS.md`**, en la tabla de lo compartido, para que el
+   llaman; no nombra conceptos de esta modalidad.
+2. **Se agrega la fila al reparto de `docs/MODULOS.md`**, en la tabla de lo compartido, para que el
    día de la fusión esté anotado y no haya que descubrirlo.
 
 ## 3. Quién escribe el rastro: la base, no el navegador
@@ -114,8 +112,8 @@ clave foránea, borrar un perfil fallaría por culpa del rastro, o —peor, si a
 
 **`hecho_por` es nulo cuando la acción no la hizo una persona con sesión**, que hoy pasa en dos
 casos legítimos: el alta de una Prestadora, que ejecuta CeltaTech con la llave del servidor
-(`supabase/migrations/0001_base_del_esquema.sql:72`), y el disparador que crea el perfil al
-registrarse (`supabase/migrations/0001_base_del_esquema.sql:329`). Nulo ahí significa «la
+(`supabase/migrations/0001_base_del_esquema.sql:78`), y el disparador que crea el perfil al
+registrarse (`supabase/migrations/0001_base_del_esquema.sql:335`). Nulo ahí significa «la
 base», no «no se sabe», y el comentario de la columna lo dice.
 
 ## 5. Qué se guarda del cambio, que es donde dos reglas de la empresa chocan
@@ -151,9 +149,9 @@ sin punto único de verdad» aplicada al lugar donde más tienta copiarla.
 Va **`after insert or update or delete`**, no `before`. El motivo: `after` anota lo que realmente
 quedó, y encima corre después de los disparadores `before` que ya están puestos sobre
 `caregivers` y `profiles` —`el_legajo_no_se_sella_solo`
-(`supabase/migrations/0001_base_del_esquema.sql:3863`) y
+(`supabase/migrations/0001_base_del_esquema.sql:3931`) y
 `el_rol_y_la_prestadora_no_se_escriben_solos`
-(`supabase/migrations/0001_base_del_esquema.sql:3877`), contados en `docs/ALCANCE.md`, sección
+(`supabase/migrations/0001_base_del_esquema.sql:3945`), contados en `docs/ALCANCE.md`, sección
 «Las cuatro columnas que ninguna política miraba»—, así que el rastro no va a registrar como
 sucedidos los intentos que aquéllos rechazan. Los dos se apilan; no chocan.
 
@@ -166,21 +164,21 @@ disparó el cambio.
 El patrón no hay que inventarlo, ya está dos veces en el proyecto:
 
 - **La tabla que no se escribe desde afuera:** `intentos_evaluacion`. Una sola política, y de
-  lectura (`supabase/migrations/0001_base_del_esquema.sql:4574`), **y además** un solo permiso de
-  tabla, también de lectura (`supabase/migrations/0001_base_del_esquema.sql:5293`): sobre la tabla
+  lectura (`supabase/migrations/0001_base_del_esquema.sql:4649`), **y además** un solo permiso de
+  tabla, también de lectura (`supabase/migrations/0001_base_del_esquema.sql:5368`): sobre la tabla
   que decide si alguien está capacitado para cuidar a una persona, una traba sola es poca. La
   única puerta es una función. El porqué estaba escrito en la migración que la creó, y hoy no está
   en ningún lado: al aplanarse el esquema quedó el efecto y se perdió el motivo.
 - **El disparador que protege una columna:** `la_fecha_de_alta_del_legajo`, sobre `caregivers`
-  (`supabase/migrations/0001_base_del_esquema.sql:3898`), con su función
-  `la_fecha_de_alta_la_pone_la_base` (`supabase/migrations/0001_base_del_esquema.sql:1379`) y su
-  `revoke all … from public, anon` (`supabase/migrations/0001_base_del_esquema.sql:5465`), que es
+  (`supabase/migrations/0001_base_del_esquema.sql:3966`), con su función
+  `la_fecha_de_alta_la_pone_la_base` (`supabase/migrations/0001_base_del_esquema.sql:1385`) y su
+  `revoke all … from public, anon` (`supabase/migrations/0001_base_del_esquema.sql:5540`), que es
   la forma de recordar que revocarle a `PUBLIC` no alcanza para sacárselo a `anon`. A esa función
   no la llama ninguna política, así que no le queda `authenticated`.
 
 De ahí sale la forma exacta que va a tener la migración, incluida una advertencia que conviene
 tener presente: **hoy todo permiso hay que concederlo explícitamente**, porque los privilegios
-por omisión están revocados (`supabase/migrations/0001_base_del_esquema.sql:56-57`); sin `grant`
+por omisión están revocados (`supabase/migrations/0001_base_del_esquema.sql:63-64`); sin `grant`
 la pantalla recibe `42501 permission denied` con sesión válida y eso no se arregla tocando
 políticas.
 
@@ -195,7 +193,7 @@ Se elige por las seis categorías que nombra la regla, no por comodidad.
 
 | Tabla | Cuándo | Qué categoría de la regla cubre |
 |---|---|---|
-| `caregivers` | alta, modificación y baja | **Modificación crítica** —`verification_status` es lo que publica a una persona como comprobada— y **consecuencia económica** —`bank_info` es el CBU y `hourly_rate` el precio—. Y **borrado de datos**: hoy el producto no borra, pero `authenticated` tiene el permiso y las dos políticas alcanzan a todos los verbos (`supabase/migrations/0001_base_del_esquema.sql:4690` y `:4815`), así que un pedido directo borra la fila propia |
+| `caregivers` | alta, modificación y baja | **Modificación crítica** —`verification_status` es lo que publica a una persona como comprobada— y **consecuencia económica** —`bank_info` es el CBU y `hourly_rate` el precio—. Y **borrado de datos**: hoy el producto no borra, pero `authenticated` tiene el permiso y las dos políticas alcanzan a todos los verbos (`supabase/migrations/0001_base_del_esquema.sql:4765` y `:4890`), así que un pedido directo borra la fila propia |
 | `profiles` | alta, modificación y baja | **Cambios de permisos o de membresía**: `role` y `tenant_id` son literalmente eso |
 | `verificaciones_asistente` | alta, modificación y baja | **Modificación crítica**: es la evidencia de cada control. La escribe el panel de la Prestadora desde el 1 de septiembre de 2026 —fue el pendiente 70—, así que el disparador nace con algo que anotar desde el primer día |
 
@@ -208,12 +206,12 @@ Se elige por las seis categorías que nombra la regla, no por comodidad.
   qué» del `CLAUDE.md` de este producto —la fichada y el reporte de cuidado son la herramienta de
   la Familia y del Asistente— y está aplicado en la base. Ninguna política de `clock_ins` ni de
   `reportes` alcanza al personal de la Prestadora: la fichada la ve quien la marca
-  (`supabase/migrations/0001_base_del_esquema.sql:4517`) y la Familia del vínculo marcado
+  (`supabase/migrations/0001_base_del_esquema.sql:4592`) y la Familia del vínculo marcado
   (`:4526`); el reporte lo escribe el Asistente que cuidó (`:4769`) y lo lee la Familia de ese
   aviso (`:4776`), con la condición del aviso repetida adentro de la subconsulta a propósito,
   porque la RLS de `avisos` no alcanza para filtrarla. El motivo quedó escrito en el
   comentario de cada una de las dos tablas
-  (`supabase/migrations/0001_base_del_esquema.sql:2448` y `:3051`): mirar a qué hora entra y sale
+  (`supabase/migrations/0001_base_del_esquema.sql:2448` y `:3097`): mirar a qué hora entra y sale
   una persona, y leer lo que hizo en cada jornada, es dirigir el trabajo, y en esta modalidad la
   Prestadora no lo hace.
 - **Por qué eso decide la pregunta, y no el volumen.** El rastro **lo lee el personal de la
@@ -234,11 +232,11 @@ Se elige por las seis categorías que nombra la regla, no por comodidad.
 - **`select` para `authenticated`, con política de `es_personal_de_prestadora()` y su propia
   Organización.** Un Asistente no lee el rastro de su Prestadora; el personal sí, y sólo el de la
   suya. Es la misma forma que ya tiene `verificaciones_asistente`
-  (`supabase/migrations/0001_base_del_esquema.sql:4885` y `:4899`).
+  (`supabase/migrations/0001_base_del_esquema.sql:4960` y `:4974`).
 - **Nada para `anon`.** `revoke all on table public.auditoria from anon`.
 - **CeltaTech entra como entra a todo lo demás**, con la llave del servidor y por función. No se le
   abre ninguna puerta nueva, y `service_role` no se toca: las revocaciones por omisión nombran
-  sólo a `anon` y a `authenticated` (`supabase/migrations/0001_base_del_esquema.sql:56-57`).
+  sólo a `anon` y a `authenticated` (`supabase/migrations/0001_base_del_esquema.sql:63-64`).
 
 **Y de quién lo lee sale qué se puede auditar acá adentro.** Si el rastro lo lee el personal de la
 Prestadora, entonces **ninguna tabla que ese personal no pueda mirar entra en este rastro**: lo que
@@ -330,6 +328,6 @@ escrito en vez de borrarse.** Figuraba acá como una pregunta de volumen, y no l
 lee el personal de la Prestadora (§8) y esas dos tablas son justamente las que ese personal no
 mira, por la sección «Qué es este producto, y quién hace qué» del `CLAUDE.md` de este producto y
 por las políticas de `clock_ins` y de `reportes`, que no alcanzan a ese personal
-(`supabase/migrations/0001_base_del_esquema.sql:4517`, `:4526`, `:4769` y `:4776`). **No entran,
+(`supabase/migrations/0001_base_del_esquema.sql:4592`, `:4601`, `:4844` y `:4851`). **No entran,
 no van a una segunda tanda y no queda ningún pendiente abierto por ellas** (§7). Quedan tres
 puntos para decidir: a, b y c.

@@ -36,9 +36,9 @@ no contra lo que dicen los documentos.
 
 | Dónde | Columna | Cómo está en el esquema | Qué tiene adentro hoy |
 |---|---|---|---|
-| `matriculas_asistente` | `vencimiento` | `date not null` — `supabase/migrations/0001_base_del_esquema.sql:2541` | **3 filas y las tres con fecha.** La escribe el producto: la ficha la pide obligatoria (`data/catalogo-fichas.json:40`) y la guarda `js/apiClient.js:387` |
-| `documentos_asistente` | `vencimiento` | `date`, puede faltar — `supabase/migrations/0001_base_del_esquema.sql:2541` | **Nada, y no porque falte sembrarla: la tabla no la escribe nadie.** Es el grupo (a) del pendiente 111 |
-| `verificaciones_asistente` | `plazo_vence_el` | `date`, sólo en los tipos que llevan plazo — `supabase/migrations/0001_base_del_esquema.sql:573` | **14 filas y ninguna con plazo.** Es una de las siete columnas vacías del pendiente 110 |
+| `matriculas_asistente` | `vencimiento` | `date not null` — `supabase/migrations/0001_base_del_esquema.sql:2438` | **3 filas y las tres con fecha.** La escribe el producto: la ficha la pide obligatoria (`data/catalogo-fichas.json:40`) y la guarda `js/apiClient.js:387` |
+| `documentos_asistente` | `vencimiento` | `date`, puede faltar — `supabase/migrations/0001_base_del_esquema.sql:2438` | **Nada, y no porque falte sembrarla: la tabla no la escribe nadie.** Es el grupo (a) del pendiente 111 |
+| `verificaciones_asistente` | `plazo_vence_el` | `date`, sólo en los tipos que llevan plazo — `supabase/migrations/0001_base_del_esquema.sql:579` | **14 filas y ninguna con plazo.** Es una de las siete columnas vacías del pendiente 110 |
 
 Medido contra la base de esta máquina el 31 de agosto de 2026, tabla por tabla, y no contra las
 migraciones. **Está cargada justo la que sostiene la promesa** —la de la Matrícula, que es la
@@ -64,11 +64,11 @@ resto del pendiente 110.
 Tres señales, todas de la misma migración:
 
 - **`verificaciones_asistente.estado` ya acepta `vencido`**
-  (`supabase/migrations/0001_base_del_esquema.sql:577`), y **nadie lo
+  (`supabase/migrations/0001_base_del_esquema.sql:583`), y **nadie lo
   escribe nunca**. Es un valor legal que ninguna fila tiene.
 - **Hay un índice construido para una consulta que nadie escribió**: `idx_verificaciones_plazo`,
   sobre `plazo_vence_el` y sólo donde no es nulo
-  (`supabase/migrations/0001_base_del_esquema.sql:3791-3793`). Un índice es una
+  (`supabase/migrations/0001_base_del_esquema.sql:3859-3861`). Un índice es una
   apuesta a que alguien va a preguntar por esa columna. Nadie preguntó nunca.
 - **El catálogo marca el campo**: la fecha de la Matrícula lleva `"vigencia": true`
   (`data/catalogo-fichas.json:43`), que es la manera de decir «esta fecha vence». **Ningún guion
@@ -95,11 +95,11 @@ con hoy, ninguna avisa.
 Y conviene copiarlo, porque ya resolvió los dos errores que este trabajo va a encontrar:
 
 - **La forma**: una fila por Prestadora, con `tenant_id` único
-  (`supabase/migrations/0001_base_del_esquema.sql:2411-2413`).
+  (`supabase/migrations/0001_base_del_esquema.sql:3035-3037`).
 - **El valor de fábrica se siembra con un disparador sobre `tenants`**, no adentro de la puerta de
-  alta (`supabase/migrations/0001_base_del_esquema.sql:1479-1481`), porque hay
+  alta (`supabase/migrations/0001_base_del_esquema.sql:1509-1511`), porque hay
   dos caminos por los que nace una Prestadora y el que había fallado era el otro.
-- **Y el motivo por el que hay valor de fábrica**, escrito hoy en `docs/ALCANCE.md:1970` y que
+- **Y el motivo por el que hay valor de fábrica**, escrito hoy en `docs/ALCANCE.md:1969` y que
   vale igual acá: *una tabla vacía no dice «se avisa con treinta días», dice «todavía nadie
   configuró esto»*.
 
@@ -107,7 +107,7 @@ Y conviene copiarlo, porque ya resolvió los dos errores que este trabajo va a e
 
 El directorio tiene hoy dos condiciones, y las dos hacen falta: el legajo validado por la
 Prestadora y el perfil publicado por la persona
-(`supabase/migrations/0001_base_del_esquema.sql:793` y
+(`supabase/migrations/0001_base_del_esquema.sql:799` y
 `:120`). **Ahí es donde «inhabilita» se vuelve algo y no una frase.**
 
 ---
@@ -230,7 +230,7 @@ Son tres, y ninguna se inventa.
 
 **«Aviso» está tomado**: en este producto un Aviso es lo que una Familia publica cuando necesita un
 Asistente (`docs/GLOSARIO.md:15`). Llamar Aviso también al mensaje que dice «su matrícula vence en
-treinta días» pisa la palabra que sostiene la mitad de la modalidad.
+treinta días» pisa la palabra que sostiene la mitad del producto.
 
 No se propone ninguna acá, porque la regla es que **una palabra de negocio nueva se propone y no se
 usa antes de estar aprobada**, y ésta va a quedar escrita en nombres de tablas y de columnas, que

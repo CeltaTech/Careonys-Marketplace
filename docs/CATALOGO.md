@@ -21,12 +21,12 @@ en uno solo «para traducir después».
 `catalogo-autorizaciones.json` se llamaba `catalogo-banderas.json` hasta el 24 de agosto de
 2026. La palabra la había puesto la línea de comandos traduciendo *flag*, y el Desarrollador la
 sacó: «una bandera es una tela que identifica un país o un ejército, pero nunca es una casilla».
-La tabla se llama `autorizaciones_asistente` (`supabase/migrations/0001_base_del_esquema.sql:440`).
+La tabla se llama `autorizaciones_asistente` (`supabase/migrations/0001_base_del_esquema.sql:446`).
 
 Antes estaban escritas a mano adentro del HTML, repetidas pantalla por pantalla. La mayoría
 de las pantallas todavía no las lee: eso pasa al portar cada una.
 
-**Los cursos y la evaluación dejaron de vivir solo en el archivo.** Desde el 24 de agosto de 2026 están además en la base, en las tablas `cursos`, `evaluaciones`, `preguntas_evaluacion` y `opciones_pregunta` (`supabase/migrations/0001_base_del_esquema.sql:2462`, `:2584`, `:2976` y `:2885`), sembradas desde `data/catalogo-oferta.json`. Tenían que estarlo: un examen que se corrige del lado del servidor necesita la respuesta correcta guardada donde el navegador no llegue. El archivo sigue siendo de dónde salió el contenido; la base es de dónde lo lee el producto. Las tablas admiten además cursos propios de una Prestadora: `tenant_id` vacío es la oferta general de CeltaTech, `tenant_id` cargado es la de esa Prestadora.
+**Los cursos y la evaluación dejaron de vivir solo en el archivo.** Desde el 24 de agosto de 2026 están además en la base, en las tablas `cursos`, `evaluaciones`, `preguntas_evaluacion` y `opciones_pregunta` (`supabase/migrations/0001_base_del_esquema.sql:2359`, `:2481`, `:3003` y `:2846`), sembradas desde `data/catalogo-oferta.json`. Tenían que estarlo: un examen que se corrige del lado del servidor necesita la respuesta correcta guardada donde el navegador no llegue. El archivo sigue siendo de dónde salió el contenido; la base es de dónde lo lee el producto. Las tablas admiten además cursos propios de una Prestadora: `tenant_id` vacío es la oferta general de CeltaTech, `tenant_id` cargado es la de esa Prestadora.
 
 **La primera que sí las lee es `registrar-asistente.html`, desde el 24 de agosto de 2026.**
 Su paso 5 dibuja las cuatro fichas repetibles desde `data/catalogo-fichas.json` con el motor
@@ -40,7 +40,7 @@ profesional que exija Matrícula hoy no toca una sola línea de código.
 agosto de 2026 de las diez tarjetas que `formulario-integral.html` tenía escritas adentro: cada
 una traía su ícono y su explicación de una línea, y desde entonces las trae el catálogo. Esa
 pantalla era una hoja de muestra y el 9 de septiembre de 2026 salió de uso —hoy vive en
-`fuera de uso/formulario-integral.html`, y por qué está contado en `docs/ALCANCE.md:3097`—, así
+`fuera de uso/formulario-integral.html`, y por qué está contado en `docs/ALCANCE.md:3096`—, así
 que los dos campos ya no los dibuja ninguna pantalla; quedan en el catálogo, que es donde tenían
 que estar, para la pantalla que vuelva a pedir tarjetas. Un ítem sin esos
 campos se dibuja igual —con su etiqueta y un ícono neutro—, así que no hay que inventarle una
@@ -133,7 +133,7 @@ de nuestras pantallas.
 Tres cosas aparecieron en el relevamiento, hacen falta, y **no entran en `catalogo-vocabularios.json`**:
 no son opciones para elegir, son campos del legajo. **Están declaradas en sus archivos propios, y
 desde el 24 de agosto de 2026 además tienen tabla real**, empezando por `matriculas_asistente`
-(`supabase/migrations/0001_base_del_esquema.sql:2748`): matrículas, estudios,
+(`supabase/migrations/0001_base_del_esquema.sql:2680`): matrículas, estudios,
 experiencia laboral, referencias, documentos con vencimiento, verificaciones y el consentimiento
 de publicación. Lo que sigue explica qué son y por qué se decidieron así; el JSON sigue
 siendo la fuente del texto en los tres idiomas, la tabla guarda los datos.
@@ -151,12 +151,12 @@ de lista. Hoy hay una sola:
 Antes había una segunda, «disponible para reemplazos urgentes». **El Desarrollador decidió el 24
 de agosto de 2026 que eso no es una autorización sino una disponibilidad**, y se mudó al paso de
 disponibilidad horaria: hoy vive en `data/catalogo-disponibilidad.json` y se guarda en la tabla
-`disponibilidad_asistente` (`supabase/migrations/0001_base_del_esquema.sql:522`). No es lo mismo permitir algo que estar disponible
+`disponibilidad_asistente` (`supabase/migrations/0001_base_del_esquema.sql:528`). No es lo mismo permitir algo que estar disponible
 para algo.
 
 ### Qué verificación bloquea qué (pendiente 20, resuelto el 24 de agosto de 2026)
 
-De las siete verificaciones del legajo, sólo el **documento de identidad** frena el **alta**: sin saber quién es la persona, nada de lo demás significa nada. Las demás frenan recién la **publicación** —aparecer en la modalidad y poder ser contratado—, y no todas de la misma manera:
+De las siete verificaciones del legajo, sólo el **documento de identidad** frena el **alta**: sin saber quién es la persona, nada de lo demás significa nada. Las demás frenan recién la **publicación** —aparecer en el directorio y poder ser contratado—, y no todas de la misma manera:
 
 - **Antecedentes penales**: obligatorio para publicar, con **15 días de plazo** desde el alta para presentarlo. Si el plazo pasa sin presentarlo, **el legajo se bloquea**, no sólo la publicación. Vigencia de 6 meses, criterio de la Prestadora y no un plazo de ley.
 - **Certificado de salud**: obligatorio para publicar. Anotado como libreta sanitaria (vigencia anual), **a confirmar con el Desarrollador** —puede ser también o en cambio un apto médico.
@@ -168,7 +168,7 @@ Vive declarado en `data/catalogo-verificaciones.json`, con su razón de ser cada
 **Desde el 2 de septiembre de 2026 esto no es sólo una declaración: la base lo hace cumplir.** Cada
 verificación lleva en la columna `extra` de su fila de `vocabulario_items` cuál de las dos puertas
 frena, y la vista `directorio` la lee de ahí
-(`supabase/migrations/0001_base_del_esquema.sql:742`, y la condición en `:798`). Tres claves, y
+(`supabase/migrations/0001_base_del_esquema.sql:748`, y la condición en `:804`). Tres claves, y
 ninguna otra:
 
 | Clave en `extra` | Qué dice | Quiénes la llevan |
@@ -188,7 +188,7 @@ se comprobó. Nunca al revés.
 **El `alta` frena por `dni` desde el 4 de septiembre de 2026** —fue el pendiente 143, cerrado ese
 día—, además de la publicación. Lo hace cumplir el disparador
 `el_legajo_no_completa_el_alta_sin_sus_papeles`
-(`supabase/migrations/0001_base_del_esquema.sql:884`).
+(`supabase/migrations/0001_base_del_esquema.sql:890`).
 
 ### Las dos que se propusieron y se descartaron
 
@@ -220,7 +220,7 @@ De ahí salen dos reglas:
   antes de mandar, para que a nadie se le rechace un mensaje sin haber sabido que no se podía
   (`js/contacto.js`). La que cuenta está del lado del servidor: un disparador sobre
   `mensajes` revisa el texto antes de guardarlo y no lo guarda
-  (`supabase/migrations/0001_base_del_esquema.sql:3870`). Ahí no hay
+  (`supabase/migrations/0001_base_del_esquema.sql:3938`). Ahí no hay
   consola de navegador que valga. Y las reglas son las mismas para las dos: viven en la tabla
   `patrones_de_contacto`, el navegador lee una copia generada desde ella y un chequeo las compara
   en cada `commit`. Eran los pendientes 62 y 137, cerrados.
@@ -269,10 +269,10 @@ un dato de catálogo. Está sin tomar.
 
 Fue el pendiente 7, cerrado el 4 de septiembre de 2026: los dos archivos dejaron de ser la
 verdad y pasaron a ser la semilla y el respaldo sin conexión. Los 25 vocabularios viven en
-`vocabularios`/`vocabulario_items` (`supabase/migrations/0001_base_del_esquema.sql:647` y `:592`),
+`vocabularios`/`vocabulario_items` (`supabase/migrations/0001_base_del_esquema.sql:653` y `:598`),
 los 6 cursos se publican por la vista `oferta_de_cursos`
-(`supabase/migrations/0001_base_del_esquema.sql:2857`) y los 9 servicios por `oferta_comercial`/
-`oferta_comercial_publica` (`supabase/migrations/0001_base_del_esquema.sql:2793` y `:2831`). Si
+(`supabase/migrations/0001_base_del_esquema.sql:2818`) y los 9 servicios por `oferta_comercial`/
+`oferta_comercial_publica` (`supabase/migrations/0001_base_del_esquema.sql:2754` y `:2792`). Si
 además conviene llevarlos a las tablas propias
 de Careonys —porque este proyecto es una modalidad suya y no un producto aparte, ver
 `docs/ALCANCE.md` §3— es una pregunta distinta, de la fusión, y no bloquea nada de acá.

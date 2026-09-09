@@ -14,7 +14,7 @@ de la evaluación general en `supabase/migrations/0002_siembra_ficticia.sql:592`
 de una Prestadora en `:594` y `:595`— preguntan por posiciones, maniobras y frecuencias, es decir,
 por tratamiento. Eso choca con la línea que trazan el comentario de la tabla de guías —«No guarda
 tratamientos, a proposito: el producto avisa, no prescribe»,
-`supabase/migrations/0001_base_del_esquema.sql:2699`— y la pantalla del Asistente
+`supabase/migrations/0001_base_del_esquema.sql:2631`— y la pantalla del Asistente
 (`pwa-asistente/index.html:822`): «Estas guías dicen qué observar y cuándo avisar. No indican
 tratamientos». La migración que cargue estas veinte tiene entonces que **reemplazar** aquellas
 cuatro, no sumarse a ellas. Eso también entra en lo que hay que convalidar.
@@ -23,9 +23,9 @@ cuatro, no sumarse a ellas. Eso también entra en lo que hay que convalidar.
 de estas veinte preguntas ponían a la Prestadora donde en esta modalidad no va: acordando las
 condiciones del trabajo, organizando los reemplazos, mirando la fichada y el Reporte, o
 recibiendo el aviso de lo que pasó en la jornada. Es al revés: el trato lo cierran la Familia y
-el Asistente, la Prestadora no reparte trabajo (`CLAUDE.md:30`), la fichada y el Reporte son la
+el Asistente, la Prestadora no reparte trabajo (`CLAUDE.md:29`), la fichada y el Reporte son la
 herramienta de la Familia y del Asistente, y lo que la Prestadora controla es quién entra —el
-legajo, las verificaciones y la validación del Aspirante— (`CLAUDE.md:66-70`). Enseñar el modelo
+legajo, las verificaciones y la validación del Aspirante— (`CLAUDE.md:65-69`). Enseñar el modelo
 equivocado en la evaluación de entrada es enseñarlo en el peor lugar.
 
 **El criterio con el que se corrigieron es uno solo.** El aviso operativo —horarios, ausencias,
@@ -42,7 +42,7 @@ las opciones—, así que el reparto del final sigue valiendo tal como estaba.
 familiar maltrata al Paciente. Ahí la Familia es justamente la señalada, y no hay horario,
 ausencia, reemplazo ni jornada en juego, así que no es un aviso operativo y avisarle a la
 Prestadora no la pone a dirigir el trabajo. A quién se avisa un caso así no está resuelto en
-`CLAUDE.md:43-70`, y se señala acá para que se decida al convalidar.
+`CLAUDE.md:42-69`, y se señala acá para que se decida al convalidar.
 
 ---
 
@@ -63,7 +63,7 @@ Hoy las dos evaluaciones piden **100 %** para aprobar
 (`supabase/migrations/0002_siembra_ficticia.sql:279-281` y `supabase/migrations/0002_siembra_ficticia.sql:282`). Con dos
 preguntas eso tenía sentido; con diez, el 70 % es lo que pide el pendiente 24 y es además el
 valor que la columna `porcentaje_para_aprobar` trae por defecto
-(`supabase/migrations/0001_base_del_esquema.sql:2590`).
+(`supabase/migrations/0001_base_del_esquema.sql:2487`).
 
 ---
 
@@ -72,7 +72,7 @@ valor que la columna `porcentaje_para_aprobar` trae por defecto
 - **Clave:** `gerontologico_primeros_auxilios`
 - **De quién:** de la oferta general de CeltaTech, `tenant_id` nulo. La ven todas las Prestadoras.
 - **De qué curso cuelga:** de ninguno. Es una prueba de competencias general, y por eso su
-  `curso_id` está vacío a propósito (`supabase/migrations/0001_base_del_esquema.sql:4139`). Los seis cursos de la
+  `curso_id` está vacío a propósito (`supabase/migrations/0001_base_del_esquema.sql:4166`). Los seis cursos de la
   oferta general que están cargados desde `data/catalogo-oferta.json` —Introducción al cuidado
   de la persona mayor, Alzheimer y otras demencias, El bienestar de quien cuida, Administración de
   medicamentos y control de salud en el hogar, Comunicación empática con la persona cuidada y
@@ -158,7 +158,7 @@ Asistente, que son quienes cerraron el trato, y cambiarlas es volver a acordar, 
 que se toma sobre la marcha en el medio de una jornada.
 
 *Por qué cambió el enunciado:* antes preguntaba qué hay que avisarle a la Prestadora, y en esta
-modalidad la Prestadora no acuerda las condiciones ni interviene en el trato (`CLAUDE.md:30`).
+modalidad la Prestadora no acuerda las condiciones ni interviene en el trato (`CLAUDE.md:29`).
 Lo que se pregunta sigue siendo lo mismo —cuál de las cuatro situaciones excede la jornada—, y la
 correcta sigue siendo la b.
 

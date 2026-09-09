@@ -57,11 +57,11 @@ respuesta es sí, es compartido. Si es no, se queda de este lado.
 
 ### Propio de esta modalidad — se queda de este lado
 
-Esta modalidad se llama **modalidad de este producto**, y su identificador es `modalidad` (decidido el 24
-de agosto de 2026, `docs/GLOSARIO.md` §3). Los módulos de este lado se nombran con ese prefijo:
-`directorio`, `filtros`, `avisos`, `orden`, `visibilidad` y
-`contacto`. El prefijo no es decoración: es lo que hace que la prueba de más abajo se pueda
-correr con una búsqueda de texto.
+Los módulos de este lado son seis: **directorio**, **filtros**, **avisos**, **orden**,
+**visibilidad** y **contacto**. Se llaman por lo que hacen y ninguno lleva prefijo. **El nombre de
+la modalidad no entra en el nombre de nada**, para que cambiarlo sea un trámite de treinta
+segundos; el reparto de qué cae de cada lado lo dice el cuadro de acá abajo, que es el único lugar
+donde está escrito.
 
 | Módulo | Qué hace | Por qué no cruza |
 |---|---|---|
@@ -87,7 +87,7 @@ y en prestación directa ordenar Asistentes por puntaje no significa nada.
 Prestadora pondera desde su panel cuánto suma cada comprobación, y que puede apagar el
 puntaje entero si no quiere calificar a nadie. Lo que nosotros elegimos es sólo el valor
 de fábrica —las cinco valiendo 20, que es 100 repartido en partes iguales—, y eso vive en
-`ponderacion_comprobacion` y `puntaje_prestadora`, con el prefijo de la modalidad justamente porque cae de este lado.
+`ponderacion_comprobacion` y `puntaje_prestadora`, que caen de este lado.
 **La calificación misma, en cambio, es compartida**, y la pregunta que decide lo contesta sola: una Familia que recibe una asignación puede opinar igual de quien vino a cuidar. Hasta el 25 de agosto de 2026 `docs/TABLAS_QUE_FALTAN.md` la ponía de este lado, que era exactamente la filtración que esta línea existe para evitar.
 
 **El catálogo es compartido pero no todas sus listas se usan en las dos.** `retiro`,
@@ -111,7 +111,7 @@ las cinco etapas de Careonys, cuatro ya tienen quién las guarde de este lado:
 | Postulación | el momento en que nace el legajo |
 | Verificación de identidad | la verificación `dni` |
 | Antecedentes penales | la verificación `penales` |
-| Capacitación | un intento aprobado (`supabase/migrations/0001_base_del_esquema.sql:551`) |
+| Capacitación | un intento aprobado (`supabase/migrations/0001_base_del_esquema.sql:557`) |
 | **Entrevista** | **nadie** |
 
 Cómo queda:
@@ -130,7 +130,7 @@ Cómo queda:
    copias del mismo dato terminan siempre diciendo cosas distintas — que es exactamente lo que
    pasó con `validado` y `validado_prestadora`: dos nombres para el mismo estado, y el corto no lo
    escribía nadie. Hoy queda uno solo, `validado_prestadora`, que es el que mira el directorio
-   (`supabase/migrations/0001_base_del_esquema.sql:793`).
+   (`supabase/migrations/0001_base_del_esquema.sql:799`).
 
 **La prueba de que la decisión es buena:** borra la duplicación en vez de repartirla. Dejar una
 tabla de cada lado con nombres distintos también habría terminado el conflicto de nombres, y la
@@ -148,9 +148,8 @@ No con una revisión de código: con una pregunta que se puede contestar.
 funcionando entera. Si falta algo, ese algo estaba del lado equivocado.
 
 **Prueba al revés, que es la que más se olvida:** buscar en lo compartido cualquier palabra que
-sólo signifique algo acá —`modalidad`, directorio, aviso, postulación, contacto, puntaje, destacado—.
-Si aparece una, se filtró. Con el prefijo de la modalidad puesto, buscar esa palabra en lo compartido
-alcanza para detectar la mayoría de las filtraciones sin leer una línea.
+sólo signifique algo acá —directorio, aviso, postulación, contacto, puntaje, destacado—.
+Si aparece una, se filtró.
 
 ## Lo que esta línea no resuelve
 
@@ -158,6 +157,6 @@ alcanza para detectar la mayoría de las filtraciones sin leer una línea.
   decide acá. Se decide con la fusión, y hasta entonces la línea es conceptual: sirve para no
   escribir una tabla del lado equivocado, que es lo caro. **El Legajo del Asistente, la Documentación
   y vencimientos, y la Verificación ya tienen tabla propia** —`caregivers`, `documentos_asistente` y
-  `verificaciones_asistente`, en `supabase/migrations/0001_base_del_esquema.sql:460`, `:2534` y
+  `verificaciones_asistente`, en `supabase/migrations/0001_base_del_esquema.sql:466`, `:2431` y
   `:567`—, escritas del lado compartido igual: sin ninguna columna que sepa qué es un directorio.
 - **Nada de esto autoriza a construir lógica comercial.** Sigue frenado por `docs/ALCANCE.md` §4.

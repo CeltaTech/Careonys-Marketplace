@@ -145,7 +145,7 @@ Tres cosas quedaron afuera de la cuenta, y no por descuido:
   `i18n_pendiente` y con el motivo escrito al lado
   (`supabase/migrations/0002_siembra_ficticia.sql:416`). Y no depende de que alguien se acuerde: la
   base lo exige por esquema, con `i18n_completo()`
-  (`supabase/migrations/0001_base_del_esquema.sql:372`) adentro de la restricción de cada tabla que
+  (`supabase/migrations/0001_base_del_esquema.sql:378`) adentro de la restricción de cada tabla que
   guarda texto visible.
 - **Las fechas.** `Texto.fechaCorta()` (`js/texto.js:132`) es el único lugar del proyecto donde se
   le da forma a una fecha. El idioma le entra por ahí y no hay que buscarlo pantalla por pantalla.

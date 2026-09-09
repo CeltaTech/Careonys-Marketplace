@@ -82,7 +82,7 @@ const CODIGO_QUE_SE_ABRE = [
   'recuperar-clave.html',
   'js/clave.js',
   'scripts/verificar_claves.mjs',
-  'supabase/migrations/0003_dos_claves_de_catalogo_fuera_del_vocabulario.sql'
+  'supabase/migrations/0002_siembra_ficticia.sql'
 ];
 
 // Y las formas que todavía no existen en el proyecto pero podrían aparecer mañana.

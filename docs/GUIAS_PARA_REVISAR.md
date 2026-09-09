@@ -6,13 +6,13 @@ puerta `guias_de` sólo entrega las publicadas, así que hoy ninguna de estas ll
 del Asistente.
 
 **Dónde vive el texto, y con qué forma.** Las 19 guías generales son 19 filas de la tabla
-`guias_cuidado`, cargadas por `supabase/migrations/0002_siembra_ficticia.sql:527` a `:545`. **Cada
+`guias_cuidado`, cargadas por `supabase/migrations/0002_siembra_ficticia.sql:527` a `:520`. **Cada
 guía es una fila y una fila es un renglón del archivo**, así que ahí adentro no hay un renglón por
 bloque: los cuatro bloques de esta lectura son las cuatro columnas de esa misma fila —`descripcion`
 es «Qué es», `que_esperar` es «Qué esperar en el domicilio», `senales_de_alarma` es «Señales de
 alarma» y `en_emergencia` es «Qué hacer en una emergencia»—, y cada una guarda los tres idiomas
 adentro. La tabla, con sus columnas y sus comentarios, está declarada en
-`supabase/migrations/0001_base_del_esquema.sql:2658`. **Por eso cada guía de acá abajo termina con
+`supabase/migrations/0001_base_del_esquema.sql:2590`. **Por eso cada guía de acá abajo termina con
 su clave y su renglón, y nada más**: son las dos cosas que hacen falta para encontrar la fila.
 
 **De qué día es.** 31 de agosto de 2026. Refleja el texto de las guías tal como está cargado hoy.
@@ -25,7 +25,7 @@ publican, y **ésas son las válidas hasta que el proyecto se concluya**.
 revisión también los va a necesitar, pero este archivo es para leer, no para auditar traducciones.
 
 **Por qué la firma no la puso la siembra.** Para publicar, la tabla exige quién revisó la guía y
-cuándo (`la_publicada_dice_quien_la_reviso`, `supabase/migrations/0001_base_del_esquema.sql:2686`). Esa firma la pone
+cuándo (`la_publicada_dice_quien_la_reviso`, `supabase/migrations/0001_base_del_esquema.sql:2618`). Esa firma la pone
 una persona que se hace responsable de lo que ahí dice; escribirla en una migración sería inventar
 una revisión que no ocurrió. Por eso las 19 filas tienen `publicada` en falso y `revisada_por` y
 `revisada_el` vacíos.
@@ -121,7 +121,7 @@ Suele notarse que cuesta encontrar palabras comunes, que se pierde el hilo de un
 5. Avisar a la Prestadora y a la Familia.
 6. Dejar registrado el episodio completo antes de terminar el turno.
 
-> **De dónde sale.** Clave `deterioro_cognitivo`, en `supabase/migrations/0002_siembra_ficticia.sql:545`.
+> **De dónde sale.** Clave `deterioro_cognitivo`, en `supabase/migrations/0002_siembra_ficticia.sql:520`.
 
 ---
 
@@ -154,7 +154,7 @@ En el domicilio se ve que iniciar un movimiento cuesta: levantarse de la silla, 
 5. Llamar al servicio de emergencias y seguir la indicación de quien atienda.
 6. Avisar a la Prestadora y a la Familia, y dejar el episodio registrado.
 
-> **De dónde sale.** Clave `parkinson`, en `supabase/migrations/0002_siembra_ficticia.sql:536`.
+> **De dónde sale.** Clave `parkinson`, en `supabase/migrations/0002_siembra_ficticia.sql:511`.
 
 ---
 
@@ -284,7 +284,7 @@ En el domicilio suele haber horarios establecidos de comidas y de tratamiento, i
 4. Anotar la hora en que empezó el malestar y qué se observó, junto con cualquier control ya indicado que se haya registrado.
 5. Avisar a la Prestadora y a la Familia, y dejar registrado qué pasó y qué indicación se recibió.
 
-> **De dónde sale.** Clave `diabetes`, en `supabase/migrations/0002_siembra_ficticia.sql:531`.
+> **De dónde sale.** Clave `diabetes`, en `supabase/migrations/0002_siembra_ficticia.sql:506`.
 
 ---
 
@@ -449,7 +449,7 @@ En el domicilio se nota que el Paciente organiza el día alrededor de la respira
 5. Quedarse al lado, sin dejarla sola, hablando poco y con calma, y observando cómo respira y cómo responde.
 6. Avisar a la Prestadora y a la Familia, y dejar registrado qué pasó, a qué hora y qué se hizo.
 
-> **De dónde sale.** Clave `epoc`, en `supabase/migrations/0002_siembra_ficticia.sql:528`.
+> **De dónde sale.** Clave `epoc`, en `supabase/migrations/0002_siembra_ficticia.sql:503`.
 
 ---
 
@@ -515,7 +515,7 @@ En el domicilio suele haber cansancio al caminar distancias cortas, al subir esc
 5. Anotar la hora en que empezó, qué se observó y qué se hizo.
 6. Avisar a la Prestadora y a la Familia, y dejar registrado el episodio.
 
-> **De dónde sale.** Clave `obesidad`, en `supabase/migrations/0002_siembra_ficticia.sql:532`.
+> **De dónde sale.** Clave `obesidad`, en `supabase/migrations/0002_siembra_ficticia.sql:507`.
 
 ---
 
@@ -581,7 +581,7 @@ En el domicilio se ve una rutina propia para vestirse, higienizarse y desplazars
 5. Anotar la hora, qué se observó en la zona de apoyo y cómo ocurrió el episodio.
 6. Avisar a la Prestadora y a la Familia, y dejar registrado qué pasó.
 
-> **De dónde sale.** Clave `amputaciones`, en `supabase/migrations/0002_siembra_ficticia.sql:541`.
+> **De dónde sale.** Clave `amputaciones`, en `supabase/migrations/0002_siembra_ficticia.sql:516`.
 
 ---
 
@@ -647,7 +647,7 @@ En el domicilio suele haber un equipo de cuidados paliativos a cargo, con indica
 5. Avisar a la Prestadora y a la Familia.
 6. Dejar registrado qué pasó, a qué hora y a quién se avisó.
 
-> **De dónde sale.** Clave `paliativos`, en `supabase/migrations/0002_siembra_ficticia.sql:540`.
+> **De dónde sale.** Clave `paliativos`, en `supabase/migrations/0002_siembra_ficticia.sql:515`.
 
 ---
 
@@ -697,7 +697,7 @@ Valen para cualquier corrección que se le haga a estas guías y para cualquier 
 
 **Dónde está escrita cada una hoy.** La primera la dice la tabla en su propio comentario —«No
 guarda tratamientos, a proposito: el producto avisa, no prescribe»,
-`supabase/migrations/0001_base_del_esquema.sql:2699`—, así que quien abra el esquema la encuentra
+`supabase/migrations/0001_base_del_esquema.sql:2631`—, así que quien abra el esquema la encuentra
 sin salir de ahí. **La segunda no está escrita en ninguna parte del código**: vivía en el
 encabezado de la migración que cargaba las guías, y ese encabezado desapareció cuando las
 migraciones se juntaron en tres archivos. Hoy este documento es el único lugar donde queda

@@ -56,11 +56,12 @@
    ---- Dónde empieza a mirar, y por qué no es un perdón ----
 
    El 8 de septiembre de 2026 las setenta y cuatro migraciones se juntaron en
-   tres archivos que arman exactamente la misma base, comprobado contra ella con
-   cincuenta huellas —estructura, políticas, funciones, índices, disparadores,
-   permisos, restricciones, vistas, depósitos y el contenido de las treinta y
-   seis tablas—. Eso es, visto desde acá, setenta y cuatro bajas y tres altas con
-   números que el árbol ya había pasado: las cuatro maneras a la vez.
+   tres archivos que arman exactamente la misma base. El 9, por orden del
+   Desarrollador, esos tres y los seis que habían venido detrás se juntaron en
+   dos, comprobados contra la base construida de las dos maneras: dos mil ciento
+   cuarenta y seis renglones de estructura y treinta y seis de contenido, iguales
+   uno por uno. Eso es, visto desde acá, siete bajas y dos ediciones de archivos
+   que ya estaban en el historial: varias de las cuatro maneras a la vez.
 
    **Ese commit es el punto de partida, y todo lo anterior queda del otro lado.**
    No es un perdón, por un motivo que se muerde la cola: la única manera de
@@ -71,15 +72,22 @@
    **Se lo reconoce por su forma, no por una fecha ni por un hash.** Por la
    fecha no, porque perdonaría todo lo que se haga ese mismo día. Por el hash
    tampoco, porque este chequeo corre en el gancho de antes de cada commit y ahí
-   el commit todavía no tiene hash. Se lo reconoce porque es el commit que da de
-   alta los tres archivos del aplastamiento, cosa que pasa una sola vez: después
-   ya existen, y traerlos de nuevo sería editarlos, que es otra cosa y da rojo.
+   el commit todavía no tiene hash. La forma son tres cosas juntas, y ninguna
+   sola alcanza: **deja la carpeta con exactamente los archivos del
+   aplastamiento y ninguno más**, **escribe los dos** y **se lleva por delante
+   alguna otra migración**. Un commit corriente no tiene ninguna de las tres:
+   agrega una migración y deja la carpeta con una más.
+
+   **Y se toma el último que tenga esa forma, no el primero.** Un aplastamiento
+   no es un hecho único: ya hubo dos. Si mañana hay otro, el corte se corre solo
+   hasta ahí y el anterior queda del otro lado, que es donde corresponde —lo de
+   atrás ya no se puede arreglar, y lo de adelante sí—.
 
    Lo de antes se cuenta igual y se muestra con `--detalle`, para que el número
    no desaparezca. Del 24 y el 25 de agosto de 2026 son doce: diez ediciones, una
-   baja y una renumeración. A ésos se les suman las setenta y cuatro bajas del
-   aplastamiento mismo, que caen de este lado del corte por el mismo motivo, así
-   que el número que se muestra es más grande que aquellos doce y no quiere decir
+   baja y una renumeración. A ésos se les suman las bajas de los dos
+   aplastamientos, que caen de este lado del corte por el mismo motivo, así que
+   el número que se muestra es más grande que aquellos doce y no quiere decir
    que se haya roto nada nuevo.
 
    ---- Qué NO mira ----
@@ -99,6 +107,7 @@
 =================================================== */
 
 import { execFileSync } from 'node:child_process';
+import { readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -110,11 +119,23 @@ const detalle = process.argv.includes('--detalle');
 const CARPETA = 'supabase/migrations';
 const SEPARADOR = String.fromCharCode(1);   /* lo que %x01 deja entre commits */
 
-/* El aplastamiento: el commit que juntó las setenta y cuatro migraciones en
-   estos tres archivos. Es el punto de partida, y lo de antes está en el
-   historial y no se puede arreglar sin romper la misma regla que lo juzga. */
-const EL_APLASTAMIENTO = ['0001_base_del_esquema.sql', '0002_siembra_ficticia.sql',
-  '0003_dos_claves_de_catalogo_fuera_del_vocabulario.sql'];
+/* El aplastamiento: el commit que dejó la base entera en estos dos archivos.
+   Es el punto de partida, y lo de antes está en el historial y no se puede
+   arreglar sin romper la misma regla que lo juzga. */
+const EL_APLASTAMIENTO = ['0001_base_del_esquema.sql', '0002_siembra_ficticia.sql'];
+
+/** ¿Este commit es un aplastamiento? Las tres cosas a la vez, y ninguna sola
+    alcanza: deja la carpeta con exactamente los archivos de arriba y ninguno
+    más, escribe los dos, y se lleva por delante alguna otra migración. */
+function esElAplastamiento(commit, quedan) {
+  if (quedan.length !== EL_APLASTAMIENTO.length) return false;
+  if (!EL_APLASTAMIENTO.every((n) => quedan.includes(n))) return false;
+  const escribe = (n) => commit.cambios.some(([estado, ruta]) =>
+    (estado === 'A' || estado === 'M') && nombreDe(ruta) === n);
+  if (!EL_APLASTAMIENTO.every(escribe)) return false;
+  return commit.cambios.some(([estado, ruta]) =>
+    estado === 'D' && !EL_APLASTAMIENTO.includes(nombreDe(ruta)));
+}
 
 /** El número de aplicación de una migración: los cuatro dígitos del principio. */
 const numeroDe = (ruta) => (ruta.split('/').pop() || '').slice(0, 4);
@@ -188,6 +209,16 @@ function antesDe(hash) {
 const enHead = git('ls-tree', '-r', '--name-only', 'HEAD', '--', CARPETA)
   .split('\n').filter((l) => l.endsWith('.sql'));
 
+/** Los nombres de las migraciones que quedaron después de este commit. Para lo
+    que todavía no es un commit, lo que hay hoy en la carpeta. */
+function quedanDespuesDe(commit) {
+  if (commit.ahora) {
+    return readdirSync(join(raiz, CARPETA)).filter((n) => n.endsWith('.sql'));
+  }
+  return git('ls-tree', '-r', '--name-only', commit.hash, '--', CARPETA)
+    .split('\n').filter((l) => l.endsWith('.sql')).map(nombreDe);
+}
+
 /* ---- Las cuatro maneras ------------------------------------------------ */
 
 const fallas = [];
@@ -206,11 +237,15 @@ if (porEntrar.length) {
   });
 }
 
-/* Dónde está el aplastamiento en la fila. Se lo busca por su forma —el commit
-   que da de alta los dos archivos—, que es lo único que existe tanto en el
-   historial como en lo que todavía no es un commit. */
-const dondeAplastó = commits.findIndex((c) => EL_APLASTAMIENTO.every((nombre) =>
-  c.cambios.some(([estado, ruta]) => estado === 'A' && nombreDe(ruta) === nombre)));
+/* Dónde está el aplastamiento en la fila. Se lo busca por su forma, que es lo
+   único que existe tanto en el historial como en lo que todavía no es un
+   commit. Y se toma **el último** que la tenga: si mañana se vuelve a aplastar,
+   el corte se corre solo hasta ahí y el aplastamiento anterior queda del otro
+   lado, que es donde corresponde. */
+let dondeAplastó = -1;
+for (const [orden, commit] of commits.entries()) {
+  if (esElAplastamiento(commit, quedanDespuesDe(commit))) dondeAplastó = orden;
+}
 
 for (const [orden, commit] of commits.entries()) {
   const deAntesDelAplastamiento = dondeAplastó >= 0 && orden <= dondeAplastó;

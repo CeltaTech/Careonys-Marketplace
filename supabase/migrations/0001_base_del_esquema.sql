@@ -1,16 +1,23 @@
 --
 -- 0001 — LA BASE DEL ESQUEMA
 --
--- Este archivo y el 0002 reemplazan a las 74 migraciones que iban de la 0001 a
--- la 0074, y arman exactamente la misma base. No es una reescritura: es el
--- volcado de la base que esas 74 construían, comprobado contra ella con once
--- huellas de estructura y treinta y seis de contenido, una por tabla.
+-- Este archivo y el 0002 son la base entera: el esquema acá, el contenido
+-- allá. No hay ningún otro archivo, y no es un resumen de otros: es el
+-- volcado de la base real, tomado el 9 de septiembre de 2026 después de
+-- reconstruirla desde cero.
 --
--- Por qué se aplastaron. Las 74 no eran 74 decisiones: eran una decisión y
--- setenta y tres correcciones de sí misma, y volver a pasar por cada tropiezo
--- para llegar al mismo lugar no le sirve a nadie que construya la base de
--- ahora en adelante. El relato de cómo se llegó acá vive en el historial del
--- repositorio, que lo guarda entero y no ocupa lugar en el escritorio.
+-- Por qué son dos y no diez. Lo ordenó el Desarrollador el 9 de septiembre de
+-- 2026: los archivos de construcción viejos no servían para construir nada,
+-- servían para que alguien volviera a leer cada tropiezo y lo repitiera. El
+-- relato de cómo se llegó acá vive en el historial del repositorio. Acá vive
+-- el estado, que es lo único que hace falta para levantar la base.
+--
+-- Y lo que era una regla y no un tropiezo no se fue con ellos. Cada vez que
+-- se aplastaron archivos se perdió alguna: la primera vez, que las Guías de
+-- cuidado no llevan números de emergencia; la segunda, las cuentas ficticias
+-- enteras. Por eso ahora **toda regla vive en el comentario de la tabla o en
+-- la documentación, nunca en el encabezado de un archivo de construcción**,
+-- que es lo único que un volcado se lleva puesto.
 --
 -- Qué trae que un volcado de `public` no traería. Al final están las tres
 -- políticas del depósito de archivos, que viven en `storage`; los dos
@@ -47,15 +54,14 @@ CREATE SCHEMA IF NOT EXISTS public;
 --
 -- Toda base de Supabase nace concediéndoles a `anon` y a `authenticated` los
 -- permisos por omisión de cada tabla y cada secuencia que se cree en `public`,
--- y entre ellos están TRUNCATE, REFERENCES y TRIGGER. Las 74 migraciones se los
--- sacaban. El volcado no lo reproduce solo, porque `pg_dump` escribe lo que hay
--- y no lo que falta, así que sin esto la base reconstruida le dejaría a quien no
--- inició sesión el permiso de vaciar cualquier tabla. Va antes de crear nada,
--- para que ninguna llegue a heredarlo.
+-- y entre ellos están TRUNCATE, REFERENCES y TRIGGER. Este producto se los
+-- saca. El volcado no lo reproduce solo, porque `pg_dump` escribe lo que hay
+-- y no lo que falta, así que sin esto la base reconstruida le dejaría a quien
+-- no inició sesión el permiso de vaciar cualquier tabla. Va antes de crear
+-- nada, para que ninguna llegue a heredarlo.
 --
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public REVOKE ALL ON TABLES FROM anon, authenticated;
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public REVOKE ALL ON SEQUENCES FROM anon, authenticated;
-
 
 
 --
@@ -134,7 +140,7 @@ $$;
 -- Name: FUNCTION alta_de_prestadora(p_referencia text, p_nombre text, p_slug text, p_descripcion text); Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON FUNCTION public.alta_de_prestadora(p_referencia text, p_nombre text, p_slug text, p_descripcion text) IS 'Da de alta una Prestadora a pedido de CeltaTech, o devuelve la que ya existe con esa referencia (0025). La reconoce sólo por `p_referencia`; el nombre corto es la dirección web y nada más. Se llama únicamente desde la función de borde `alta-y-baja`.';
+COMMENT ON FUNCTION public.alta_de_prestadora(p_referencia text, p_nombre text, p_slug text, p_descripcion text) IS 'Da de alta una Prestadora a pedido de CeltaTech, o devuelve la que ya existe con esa referencia. La reconoce sólo por `p_referencia`; el nombre corto es la dirección web y nada más. Se llama únicamente desde la función de borde `alta-y-baja`.';
 
 
 --
@@ -319,7 +325,7 @@ $$;
 -- Name: FUNCTION corregir_prestadora(p_referencia text, p_nombre text); Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON FUNCTION public.corregir_prestadora(p_referencia text, p_nombre text) IS 'Recibe de CeltaTech la corrección de la razón social de una Prestadora (0025). Corrige el nombre visible y nada más: el nombre corto es la dirección web y no se toca, y la descripción la escribe la Prestadora. Se llama únicamente desde la función de borde `alta-y-baja`.';
+COMMENT ON FUNCTION public.corregir_prestadora(p_referencia text, p_nombre text) IS 'Recibe de CeltaTech la corrección de la razón social de una Prestadora. Corrige el nombre visible y nada más: el nombre corto es la dirección web y no se toca, y la descripción la escribe la Prestadora. Se llama únicamente desde la función de borde `alta-y-baja`.';
 
 
 --
@@ -450,7 +456,7 @@ CREATE TABLE public.autorizaciones_asistente (
 -- Name: TABLE autorizaciones_asistente; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON TABLE public.autorizaciones_asistente IS 'Lo que el Asistente autoriza al cerrar el alta. perfil_publicado en false es lo que impide que directorio muestre a alguien que no dio permiso — pendiente 2. Se llamaba banderas_asistente hasta la migración 0012.';
+COMMENT ON TABLE public.autorizaciones_asistente IS 'Lo que el Asistente autoriza al cerrar el alta. perfil_publicado en false es lo que impide que directorio muestre a alguien que no dio permiso — pendiente 2. Se llamaba banderas_asistente antes del acomodamiento del glosario.';
 
 
 --
@@ -491,7 +497,7 @@ CREATE TABLE public.caregivers (
 -- Name: COLUMN caregivers.zone; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN public.caregivers.zone IS 'Histórica y de sólo lectura desde el 2026-08-31 (migración 0050, pendiente 109). Guarda la zona de los legajos anteriores a la migración 0035, cuando la zona todavía era un texto suelto. Ninguna pantalla la escribe y el traductor de js/apiClient.js ya no la llena. La zona viva de un legajo está en zonas_asistente, y el texto para mostrar en caregivers.zonas_texto. No se borró porque los datos que tiene son de personas cargadas antes de esa migración y tres lectores se apoyan en ella para mostrarlos.';
+COMMENT ON COLUMN public.caregivers.zone IS 'Histórica y de sólo lectura desde el 2026-08-31 (pendiente 109). Guarda la zona de los legajos anteriores al día en que la zona dejó de ser un texto suelto. Ninguna pantalla la escribe y el traductor de js/apiClient.js ya no la llena. La zona viva de un legajo está en zonas_asistente, y el texto para mostrar en caregivers.zonas_texto. No se borró porque los datos que tiene son de personas cargadas antes de ese cambio y tres lectores se apoyan en ella para mostrarlos.';
 
 
 --
@@ -512,7 +518,7 @@ COMMENT ON COLUMN public.caregivers.zonas_texto IS 'Donde puede trabajar, escrit
 -- Name: COLUMN caregivers.moneda_valor_hora; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN public.caregivers.moneda_valor_hora IS 'En qué moneda está escrito `hourly_rate`, en código ISO 4217. No se lee de `tenants` cada vez a propósito: el día que la Prestadora cambie de moneda, lo ya cargado sigue estando en la vieja hasta que cada persona lo vuelva a escribir (0074). La llena sola el disparador `el_valor_hora_nace_con_su_moneda`.';
+COMMENT ON COLUMN public.caregivers.moneda_valor_hora IS 'En qué moneda está escrito `hourly_rate`, en código ISO 4217. No se lee de `tenants` cada vez a propósito: el día que la Prestadora cambie de moneda, lo ya cargado sigue estando en la vieja hasta que cada persona lo vuelva a escribir. La llena sola el disparador `el_valor_hora_nace_con_su_moneda`.';
 
 
 --
@@ -814,14 +820,14 @@ CREATE VIEW public.directorio AS
 -- Name: VIEW directorio; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON VIEW public.directorio IS 'Directorio de Asistentes. Tres condiciones, y las tres hacen falta: la Prestadora validó el legajo (verification_status = validado_prestadora); la persona marcó perfil_publicado; y el legajo tiene comprobado cada papel que el vocabulario `verificacion` marca con puerta `publicacion` —los condicionales sólo cuando el tipo de Asistente los exige—. Esa tercera es de la 0061: hasta entonces la vista prometía en este mismo comentario que los papeles de la puerta los habían pasado todos, y no los miraba nadie. Nunca agregar acá una columna con datos personales: ni documento, ni teléfono, ni correo, ni domicilio, ni los caminos del depósito privado. El Desarrollador decidió el 24 de agosto de 2026 que este directorio se ve sin iniciar sesión, así que todo lo que se agregue acá queda a la vista de cualquiera. gender y comprobaciones están acá por decisión suya del 26 de agosto de 2026 (pendiente 43), y el consentimiento de publicación las nombra a las dos: una columna que el consentimiento no nombre no puede salir por acá.';
+COMMENT ON VIEW public.directorio IS 'Directorio de Asistentes. Tres condiciones, y las tres hacen falta: la Prestadora validó el legajo (verification_status = validado_prestadora); la persona marcó perfil_publicado; y el legajo tiene comprobado cada papel que el vocabulario `verificacion` marca con puerta `publicacion` —los condicionales sólo cuando el tipo de Asistente los exige—. Esa tercera llegó tarde: hasta que se escribió, la vista prometía en este mismo comentario que los papeles de la puerta los habían pasado todos, y no los miraba nadie. Nunca agregar acá una columna con datos personales: ni documento, ni teléfono, ni correo, ni domicilio, ni los caminos del depósito privado. El Desarrollador decidió el 24 de agosto de 2026 que este directorio se ve sin iniciar sesión, así que todo lo que se agregue acá queda a la vista de cualquiera. gender y comprobaciones están acá por decisión suya del 26 de agosto de 2026 (pendiente 43), y el consentimiento de publicación las nombra a las dos: una columna que el consentimiento no nombre no puede salir por acá.';
 
 
 --
 -- Name: COLUMN directorio.comprobaciones; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN public.directorio.comprobaciones IS 'Qué se le comprobó a este legajo, de las cinco de ponderacion_comprobacion. Sin fechas y sin números, y sin las de la puerta —documento, antecedentes penales y salud—, que desde la 0061 las pasaron de verdad todos los que aparecen acá. Lista vacía cuando no se le comprobó ninguna de las cinco: eso no es un error, es que todavía no se le comprobó ninguna.';
+COMMENT ON COLUMN public.directorio.comprobaciones IS 'Qué se le comprobó a este legajo, de las cinco de ponderacion_comprobacion. Sin fechas y sin números, y sin las de la puerta —documento, antecedentes penales y salud—, que las pasaron de verdad todos los que aparecen acá. Lista vacía cuando no se le comprobó ninguna de las cinco: eso no es un error, es que todavía no se le comprobó ninguna.';
 
 
 --
@@ -849,7 +855,7 @@ COMMENT ON COLUMN public.directorio.zonas_claves IS 'Hasta dónde llega lo que e
 -- Name: COLUMN directorio.moneda_valor_hora; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN public.directorio.moneda_valor_hora IS 'En qué moneda está el `hourly_rate` de esta fila. Sale del legajo y no de la Prestadora, así que un valor cargado antes de que ella cambiara de moneda sigue diciendo la vieja, que es la verdadera (0074). No es dato personal: es la unidad del número que ya se publicaba al lado.';
+COMMENT ON COLUMN public.directorio.moneda_valor_hora IS 'En qué moneda está el `hourly_rate` de esta fila. Sale del legajo y no de la Prestadora, así que un valor cargado antes de que ella cambiara de moneda sigue diciendo la vieja, que es la verdadera. No es dato personal: es la unidad del número que ya se publicaba al lado.';
 
 
 --
@@ -1043,7 +1049,7 @@ $$;
 -- Name: FUNCTION el_rol_y_la_prestadora_no_se_escriben_solos(); Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON FUNCTION public.el_rol_y_la_prestadora_no_se_escriben_solos() IS 'Sobre `profiles`: desde una sesión, `role` y `tenant_id` no cambian. De esas dos columnas salen `es_personal_de_prestadora()` y `prestadora_actual()`, o sea las políticas de todas las tablas. Cierra el pendiente 82, y no reemplaza al permiso por columna de la 0005: se suma.';
+COMMENT ON FUNCTION public.el_rol_y_la_prestadora_no_se_escriben_solos() IS 'Sobre `profiles`: desde una sesión, `role` y `tenant_id` no cambian. De esas dos columnas salen `es_personal_de_prestadora()` y `prestadora_actual()`, o sea las políticas de todas las tablas. Cierra el pendiente 82, y no reemplaza al permiso por columna: se suma.';
 
 
 --
@@ -1088,7 +1094,7 @@ $$;
 -- Name: FUNCTION el_valor_hora_nace_con_su_moneda(); Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON FUNCTION public.el_valor_hora_nace_con_su_moneda() IS 'Le pone al valor por hora la moneda de su Prestadora cuando quien escribe no la trajo, y la borra cuando se borra el importe. Existe para que la regla «todo importe con su moneda» no dependa de que cada pantalla se acuerde (0074).';
+COMMENT ON FUNCTION public.el_valor_hora_nace_con_su_moneda() IS 'Le pone al valor por hora la moneda de su Prestadora cuando quien escribe no la trajo, y la borra cuando se borra el importe. Existe para que la regla «todo importe con su moneda» no dependa de que cada pantalla se acuerde.';
 
 
 --
@@ -1231,7 +1237,7 @@ $$;
 -- Name: FUNCTION fijar_estado_de_prestadora(p_id uuid, p_estado text, p_emitido_en timestamp with time zone); Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON FUNCTION public.fijar_estado_de_prestadora(p_id uuid, p_estado text, p_emitido_en timestamp with time zone) IS 'Deja a una Prestadora activa, suspendida o cancelada por orden de CeltaTech. Descarta lo que se emitió antes de lo último aplicado, así que un aviso repetido o llegado tarde no pisa nada. Sólo la llama la función de borde `alta-y-baja` (0023).';
+COMMENT ON FUNCTION public.fijar_estado_de_prestadora(p_id uuid, p_estado text, p_emitido_en timestamp with time zone) IS 'Deja a una Prestadora activa, suspendida o cancelada por orden de CeltaTech. Descarta lo que se emitió antes de lo último aplicado, así que un aviso repetido o llegado tarde no pisa nada. Sólo la llama la función de borde `alta-y-baja`.';
 
 
 --
@@ -1395,6 +1401,30 @@ $$;
 --
 
 COMMENT ON FUNCTION public.la_fecha_de_alta_la_pone_la_base() IS 'La fecha de alta de un legajo la pone la base y no se puede escribir desde afuera. La política del legajo propio es `for all` y no nombra columnas, así que sin esto la persona se elige su propia antigüedad.';
+
+
+--
+-- Name: la_fichada_se_escribe_derecho(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.la_fichada_se_escribe_derecho() RETURNS trigger
+    LANGUAGE plpgsql
+    SET search_path TO ''
+    AS $$
+begin
+  if new.event_type is not null then
+    new.event_type := lower(btrim(new.event_type));
+  end if;
+  return new;
+end
+$$;
+
+
+--
+-- Name: FUNCTION la_fichada_se_escribe_derecho(); Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON FUNCTION public.la_fichada_se_escribe_derecho() IS 'Le saca los espacios y le pasa a minúscula el tipo de fichada antes de guardarlo. Existe para que una pantalla que escriba «Entrada» con mayúscula no le haga perder la fichada al Asistente que la marcó: se corrige sola y entra (migración 0008).';
 
 
 --
@@ -1613,14 +1643,14 @@ CREATE FUNCTION public.mis_alarmas() RETURNS TABLE(clase text, fichada_id uuid, 
     select f.id,
            f.conversacion_id,
            f.event_type,
-           f.created_at,
+           f.marcada_en,
            cv.familia_id = auth.uid() as soy_la_familia,
            c.full_name                as nombre_del_asistente,
            pf.full_name               as nombre_de_la_familia,
            lead(f.event_type) over (partition by f.conversacion_id
-                                        order by f.created_at) as sigue,
+                                        order by f.marcada_en) as sigue,
            lag(f.event_type)  over (partition by f.conversacion_id
-                                        order by f.created_at) as venia
+                                        order by f.marcada_en) as venia
       from public.clock_ins f
       join public.conversaciones cv on cv.id = f.conversacion_id
       join public.caregivers c            on c.id  = cv.caregiver_id
@@ -1635,13 +1665,13 @@ CREATE FUNCTION public.mis_alarmas() RETURNS TABLE(clase text, fichada_id uuid, 
          m.conversacion_id,
          case when m.soy_la_familia then m.nombre_del_asistente
               else m.nombre_de_la_familia end,
-         m.created_at,
-         (extract(epoch from (now() - m.created_at)) / 3600)::integer,
+         m.marcada_en,
+         (extract(epoch from (now() - m.marcada_en)) / 3600)::integer,
          t.horas
     from mias m cross join tope t
    where m.event_type = 'entrada'
      and (m.sigue is null or m.sigue <> 'salida')
-     and m.created_at < now() - make_interval(hours => t.horas)
+     and m.marcada_en < now() - make_interval(hours => t.horas)
 
   union all
 
@@ -1650,8 +1680,8 @@ CREATE FUNCTION public.mis_alarmas() RETURNS TABLE(clase text, fichada_id uuid, 
          m.conversacion_id,
          case when m.soy_la_familia then m.nombre_del_asistente
               else m.nombre_de_la_familia end,
-         m.created_at,
-         (extract(epoch from (now() - m.created_at)) / 3600)::integer,
+         m.marcada_en,
+         (extract(epoch from (now() - m.marcada_en)) / 3600)::integer,
          t.horas
     from mias m cross join tope t
    where m.event_type = 'salida'
@@ -1665,7 +1695,7 @@ $$;
 -- Name: FUNCTION mis_alarmas(); Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON FUNCTION public.mis_alarmas() IS 'Lo que la aplicación detecta que quedó incompleto en las fichadas de los vínculos de quien inició sesión: una entrada que nunca cerró, o una salida sin entrada delante. No opina sobre la persona ni sobre el trato, que el software no conoce: dice que la marca quedó a medias. Devuelve una clave, no un texto: la frase sale del catálogo.';
+COMMENT ON FUNCTION public.mis_alarmas() IS 'Las dos alarmas de jornada que ve cada parte de un vínculo, ordenadas y medidas por la hora en que se marcó la fichada y no por la hora en que llegó a la base (migración 0009).';
 
 
 --
@@ -1739,7 +1769,7 @@ $$;
 -- Name: FUNCTION nombre_corto_de(p_nombre text); Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON FUNCTION public.nombre_corto_de(p_nombre text) IS 'Convierte un nombre en el nombre corto que va en la dirección: minúsculas, sin tildes y con guiones. Es determinista a propósito —el mismo nombre da siempre el mismo resultado—, que es lo que hace que repetir un alta no duplique la Prestadora (0023).';
+COMMENT ON FUNCTION public.nombre_corto_de(p_nombre text) IS 'Convierte un nombre en el nombre corto que va en la dirección: minúsculas, sin tildes y con guiones. Es determinista a propósito —el mismo nombre da siempre el mismo resultado—, que es lo que hace que repetir un alta no duplique la Prestadora.';
 
 
 --
@@ -2175,7 +2205,7 @@ CREATE TABLE public.avisos (
 -- Name: TABLE avisos; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON TABLE public.avisos IS 'Lo que una Familia publica cuando necesita cuidado: qué hace falta, para quién, dónde y cuándo. Se llamaba care_searches hasta el 25 de agosto de 2026, y el nombre estaba mal: una búsqueda es el acto de buscar y no queda guardada; lo que queda guardado es el aviso. El prefijo de la modalidad dice que esta tabla existe sólo en la modalidad de este producto: en prestación directa el trabajo se asigna y nadie publica nada.';
+COMMENT ON TABLE public.avisos IS 'Lo que una Familia publica cuando necesita cuidado: qué hace falta, para quién, dónde y cuándo. Se llamaba care_searches hasta el 25 de agosto de 2026, y el nombre estaba mal: una búsqueda es el acto de buscar y no queda guardada; lo que queda guardado es el aviso. Esta tabla existe sólo en esta modalidad: en prestación directa el trabajo se asigna y nadie publica nada.';
 
 
 --
@@ -2203,7 +2233,7 @@ COMMENT ON COLUMN public.avisos.description IS 'Lo que la Familia cuenta con sus
 -- Name: COLUMN avisos.consultation_reason; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN public.avisos.consultation_reason IS 'Para qué escribe quien escribe. Clave del vocabulario `motivo_consulta`. Hasta la 0013 se guardaba adentro de `pathologies_required`, que es la columna de las patologías; el rescate de más abajo lo mueve a su lugar.';
+COMMENT ON COLUMN public.avisos.consultation_reason IS 'Para qué escribe quien escribe. Clave del vocabulario `motivo_consulta`. Antes se guardaba adentro de `pathologies_required`, que es la columna de las patologías, y ya está movido a su lugar.';
 
 
 --
@@ -2238,7 +2268,53 @@ COMMENT ON COLUMN public.avisos.frequency IS 'Si el cuidado es algo que se repit
 -- Name: COLUMN avisos.familia_id; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN public.avisos.familia_id IS 'Quién publicó el aviso. Sale del valor por omisión y nunca del pedido, igual que tenant_id: es lo que hace que nadie pueda publicar a nombre de otro. Los avisos anteriores a la 0020 lo tienen vacío, así que sólo los ve el personal de la Prestadora.';
+COMMENT ON COLUMN public.avisos.familia_id IS 'Quién publicó el aviso. Sale del valor por omisión y nunca del pedido, igual que tenant_id: es lo que hace que nadie pueda publicar a nombre de otro. Los avisos más viejos lo tienen vacío, así que sólo los ve el personal de la Prestadora.';
+
+
+--
+-- Name: clock_ins; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.clock_ins (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    caregiver_id uuid,
+    latitude double precision,
+    longitude double precision,
+    event_type text,
+    created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
+    tenant_id uuid DEFAULT public.prestadora_actual(),
+    conversacion_id uuid,
+    marcada_en timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
+    CONSTRAINT la_fichada_es_entrada_o_salida CHECK (((event_type IS NULL) OR (event_type = ANY (ARRAY['entrada'::text, 'salida'::text]))))
+);
+
+
+--
+-- Name: TABLE clock_ins; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TABLE public.clock_ins IS 'La fichada de entrada y salida del Asistente, con su ubicación. La marca él, y la ve él y la Familia del vínculo que haya marcado. El personal de la Prestadora no la ve: mirar la jornada es dirigir el trabajo, y en esta modalidad no lo hace.';
+
+
+--
+-- Name: COLUMN clock_ins.conversacion_id; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN public.clock_ins.conversacion_id IS 'El vínculo con la Familia para la que fue esta jornada, o vacío si el Asistente no lo dijo. Apunta a la conversación, que es el único lugar donde consta que esas dos partes se encontraron: no guarda ningún trato ni ninguna condición.';
+
+
+--
+-- Name: COLUMN clock_ins.marcada_en; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN public.clock_ins.marcada_en IS 'Cuándo apretó el botón la persona, según su teléfono. Es la hora del hecho, y es la que se muestra y la que ordena. `created_at` guarda aparte cuándo llegó a la base, que con la fichada guardada sin señal ya no es la misma (migración 0009).';
+
+
+--
+-- Name: CONSTRAINT la_fichada_es_entrada_o_salida ON clock_ins; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON CONSTRAINT la_fichada_es_entrada_o_salida ON public.clock_ins IS 'El tipo de fichada se guarda en minúscula, que es como lo comparan las alarmas de la Familia. Existe porque «mockup-app.html» escribía «Entrada» y «Salida»: la alarma de jornada abierta no saltaba y la salida siguiente disparaba una «salida_sin_entrada» falsa (migración 0007).';
 
 
 --
@@ -2274,185 +2350,6 @@ COMMENT ON COLUMN public.conversaciones.familia_id IS 'Quién abrió el contacto
 --
 
 COMMENT ON COLUMN public.conversaciones.aviso_id IS 'El aviso por el que se abrió, o nulo si la Familia llegó por el directorio. Ahí está guardado cuál de los dos caminos fue, sin una lista de valores escrita a mano.';
-
-
---
--- Name: franjas_aviso; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.franjas_aviso (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    tenant_id uuid DEFAULT public.prestadora_actual() NOT NULL,
-    aviso_id uuid NOT NULL,
-    dia text NOT NULL,
-    turno text NOT NULL,
-    created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
-);
-
-
---
--- Name: TABLE franjas_aviso; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON TABLE public.franjas_aviso IS 'Cuándo se necesita el cuidado. Una fila por casillero marcado de la grilla de días por turnos que pregunta la Familia. Es la tabla espejo de franjas_asistente (migración 0012): misma forma, mismos vocabularios, para que cruzar la necesidad de una Familia con la disponibilidad de un Asistente sea una consulta y no un recorrido. dia y turno guardan claves de dia_semana y turno, nunca la etiqueta. Lleva el prefijo de la modalidad porque cuelga del aviso, y el aviso sólo existe en esta modalidad.';
-
-
---
--- Name: COLUMN franjas_aviso.dia; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.franjas_aviso.dia IS 'Clave del vocabulario dia_semana: lunes, martes, miercoles… Nunca «Lunes».';
-
-
---
--- Name: COLUMN franjas_aviso.turno; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.franjas_aviso.turno IS 'Clave del vocabulario turno: manana, tarde, noche. Sin eñe, porque una clave con eñe se rompe en direcciones web y en nombres de columna.';
-
-
---
--- Name: mensajes; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.mensajes (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    tenant_id uuid DEFAULT public.prestadora_actual() NOT NULL,
-    conversacion_id uuid NOT NULL,
-    autor_id uuid DEFAULT auth.uid() NOT NULL,
-    contenido text NOT NULL,
-    created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
-    CONSTRAINT el_mensaje_no_esta_vacio CHECK ((length(btrim(contenido)) > 0))
-);
-
-
---
--- Name: TABLE mensajes; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON TABLE public.mensajes IS 'Lo que se dicen las dos partes. No se edita y no se borra: un canal donde el mensaje se puede reescribir después no sirve para lo que las dos partes lo usan. El personal de la Prestadora no lo lee.';
-
-
---
--- Name: COLUMN mensajes.autor_id; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.mensajes.autor_id IS 'Quién lo escribió. Sale del valor por omisión y nunca del pedido.';
-
-
---
--- Name: ponderacion_comprobacion; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.ponderacion_comprobacion (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    tenant_id uuid NOT NULL,
-    comprobacion text NOT NULL,
-    ponderacion numeric(5,2) DEFAULT 20 NOT NULL,
-    created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
-    CONSTRAINT peso_comprobacion_comprobacion_check CHECK ((comprobacion = ANY (ARRAY['domicilio'::text, 'referencia'::text, 'matricula'::text, 'titulo'::text, 'curso_aprobado'::text]))),
-    CONSTRAINT peso_comprobacion_peso_check CHECK ((ponderacion >= (0)::numeric))
-);
-
-
---
--- Name: TABLE ponderacion_comprobacion; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON TABLE public.ponderacion_comprobacion IS 'Cuánto cuenta cada comprobación en el puntaje del legajo, por Prestadora. Las de una misma Prestadora suman 100 y la base no acepta otra cosa: es un reparto, no una lista de valores sueltos. Arranca en 20 las cinco, que es el reparto en partes iguales; eso es el valor de fábrica y no la regla. Sólo entra acá lo comprobado por alguien; lo que la persona declara y nadie miró se muestra en el perfil y no suma.';
-
-
---
--- Name: COLUMN ponderacion_comprobacion.ponderacion; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.ponderacion_comprobacion.ponderacion IS 'Cuánto de los 100 se lleva esta comprobación. Cero quiere decir «esta no me importa», y ese cero se lo tiene que quedar otra comprobación para que el total siga dando 100. Para no calificar en absoluto está puntaje_prestadora.califica, que es otra cosa.';
-
-
---
--- Name: postulaciones; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.postulaciones (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    tenant_id uuid DEFAULT public.prestadora_actual() NOT NULL,
-    aviso_id uuid NOT NULL,
-    caregiver_id uuid NOT NULL,
-    mensaje text,
-    vista_el timestamp with time zone,
-    descartada_el timestamp with time zone,
-    created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
-);
-
-
---
--- Name: TABLE postulaciones; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON TABLE public.postulaciones IS 'Un Asistente se ofrece a un aviso. Guarda el hecho del contacto y nada del trato: sin tarifa propuesta, sin condiciones y sin aceptación, porque el trato lo cierran la Familia y el Asistente afuera del software (CLAUDE.md §1, migración 0054).';
-
-
---
--- Name: COLUMN postulaciones.mensaje; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.postulaciones.mensaje IS 'Lo que el Asistente escribe al ofrecerse. Lo lee la Familia del aviso, y nadie más: el personal de la Prestadora no lo ve.';
-
-
---
--- Name: COLUMN postulaciones.vista_el; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.postulaciones.vista_el IS 'Cuándo la Familia la vio. Junto con descartada_el reemplaza a una columna de estado: no hay «aceptada», porque aceptar sería guardar el trato.';
-
-
---
--- Name: puntaje_prestadora; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.puntaje_prestadora (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    tenant_id uuid NOT NULL,
-    califica boolean DEFAULT true NOT NULL,
-    created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
-);
-
-
---
--- Name: TABLE puntaje_prestadora; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON TABLE public.puntaje_prestadora IS 'Una fila por Prestadora. califica en false esconde el número del legajo en todas sus pantallas; el escudo de legajo validado sigue viéndose, porque ése es la puerta de la modalidad y no es opcional.';
-
-
---
--- Name: clock_ins; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.clock_ins (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    caregiver_id uuid,
-    latitude double precision,
-    longitude double precision,
-    event_type text,
-    created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
-    tenant_id uuid DEFAULT public.prestadora_actual(),
-    conversacion_id uuid
-);
-
-
---
--- Name: TABLE clock_ins; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON TABLE public.clock_ins IS 'La fichada de entrada y salida del Asistente, con su ubicación. La marca él, y la ve él y la Familia del vínculo que haya marcado (migración 0056). El personal de la Prestadora no la ve: mirar la jornada es dirigir el trabajo, y en esta modalidad no lo hace (migración 0053).';
-
-
---
--- Name: COLUMN clock_ins.conversacion_id; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN public.clock_ins.conversacion_id IS 'El vínculo con la Familia para la que fue esta jornada, o vacío si el Asistente no lo dijo. Apunta a la conversación, que es el único lugar donde consta que esas dos partes se encontraron: no guarda ningún trato ni ninguna condición (migración 0056).';
 
 
 --
@@ -2652,6 +2549,41 @@ COMMENT ON TABLE public.franjas_asistente IS 'Módulo compartido: Disponibilidad
 
 
 --
+-- Name: franjas_aviso; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.franjas_aviso (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    tenant_id uuid DEFAULT public.prestadora_actual() NOT NULL,
+    aviso_id uuid NOT NULL,
+    dia text NOT NULL,
+    turno text NOT NULL,
+    created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
+);
+
+
+--
+-- Name: TABLE franjas_aviso; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TABLE public.franjas_aviso IS 'Cuándo se necesita el cuidado. Una fila por casillero marcado de la grilla de días por turnos que pregunta la Familia. Es la tabla espejo de franjas_asistente: misma forma, mismos vocabularios, para que cruzar la necesidad de una Familia con la disponibilidad de un Asistente sea una consulta y no un recorrido. dia y turno guardan claves de dia_semana y turno, nunca la etiqueta. Lleva  porque cuelga del aviso, y el aviso sólo existe en esta modalidad.';
+
+
+--
+-- Name: COLUMN franjas_aviso.dia; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN public.franjas_aviso.dia IS 'Clave del vocabulario dia_semana: lunes, martes, miercoles… Nunca «Lunes».';
+
+
+--
+-- Name: COLUMN franjas_aviso.turno; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN public.franjas_aviso.turno IS 'Clave del vocabulario turno: manana, tarde, noche. Sin eñe, porque una clave con eñe se rompe en direcciones web y en nombres de columna.';
+
+
+--
 -- Name: guias_cuidado; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2696,7 +2628,7 @@ END)
 -- Name: TABLE guias_cuidado; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON TABLE public.guias_cuidado IS 'Lo que el Asistente necesita saber sobre una opcion del catalogo: que es, que esperar, que mirar y como actuar en una emergencia. No guarda tratamientos, a proposito: el producto avisa, no prescribe. Cuelga de vocabulario_items, asi que sirve igual para patologias, discapacidades y tareas de cuidado.';
+COMMENT ON TABLE public.guias_cuidado IS 'Lo que el Asistente necesita saber sobre una opción del catálogo: qué es, qué esperar, qué mirar y cómo actuar en una emergencia. No guarda tratamientos —ni medicamentos, ni dosis, ni maniobras clínicas— ni números de emergencia de ningún país, y las dos cosas son a propósito: el producto avisa, no prescribe, y el número que hay que marcar cambia por país, así que es dato de la Prestadora y no del producto. Cuelga de vocabulario_items, así que sirve igual para patologías, discapacidades y tareas de cuidado.';
 
 
 --
@@ -2717,7 +2649,7 @@ COMMENT ON COLUMN public.guias_cuidado.senales_de_alarma IS 'Que mirar y que obl
 -- Name: COLUMN guias_cuidado.en_emergencia; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN public.guias_cuidado.en_emergencia IS 'Como actuar, en pasos y en el orden en que se hacen. Lista por idioma; el orden del arreglo es dato.';
+COMMENT ON COLUMN public.guias_cuidado.en_emergencia IS 'Cómo actuar, en pasos y en el orden en que se hacen. Lista por idioma; el orden del arreglo es dato. Los pasos dicen qué hacer, nunca a qué número llamar: el número de emergencia cambia por país y escribirlo acá lo convertiría en dato del producto.';
 
 
 --
@@ -2766,6 +2698,35 @@ COMMENT ON TABLE public.matriculas_asistente IS 'Ficha repetible: un Asistente p
 
 
 --
+-- Name: mensajes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.mensajes (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    tenant_id uuid DEFAULT public.prestadora_actual() NOT NULL,
+    conversacion_id uuid NOT NULL,
+    autor_id uuid DEFAULT auth.uid() NOT NULL,
+    contenido text NOT NULL,
+    created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
+    CONSTRAINT el_mensaje_no_esta_vacio CHECK ((length(btrim(contenido)) > 0))
+);
+
+
+--
+-- Name: TABLE mensajes; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TABLE public.mensajes IS 'Lo que se dicen las dos partes. No se edita y no se borra: un canal donde el mensaje se puede reescribir después no sirve para lo que las dos partes lo usan. El personal de la Prestadora no lo lee.';
+
+
+--
+-- Name: COLUMN mensajes.autor_id; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN public.mensajes.autor_id IS 'Quién lo escribió. Sale del valor por omisión y nunca del pedido.';
+
+
+--
 -- Name: messages; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2783,7 +2744,7 @@ CREATE TABLE public.messages (
 -- Name: TABLE messages; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON TABLE public.messages IS 'Mensajes colgados de un aviso. Los ve quien los escribió y la Familia que publicó ese aviso; el personal de la Prestadora no, porque la comunicación entre la Familia y el Asistente es la herramienta de ellos y no de ella (migración 0067). Hoy la tabla está vacía y sólo la llama la maqueta: la conversación de verdad vive en mensajes desde la migración 0063. Su destino se decide en el pendiente 139.';
+COMMENT ON TABLE public.messages IS 'Mensajes colgados de un aviso. Los ve quien los escribió y la Familia que publicó ese aviso; el personal de la Prestadora no, porque la comunicación entre la Familia y el Asistente es la herramienta de ellos y no de ella. Hoy la tabla está vacía y sólo la llama la maqueta: la conversación de verdad vive en mensajes. Su destino se decide en el pendiente 139.';
 
 
 --
@@ -2970,6 +2931,72 @@ COMMENT ON COLUMN public.patrones_de_contacto.activo IS 'Apagar una regla es de 
 
 
 --
+-- Name: ponderacion_comprobacion; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ponderacion_comprobacion (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    tenant_id uuid NOT NULL,
+    comprobacion text NOT NULL,
+    ponderacion numeric(5,2) DEFAULT 20 NOT NULL,
+    created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
+    CONSTRAINT peso_comprobacion_comprobacion_check CHECK ((comprobacion = ANY (ARRAY['domicilio'::text, 'referencia'::text, 'matricula'::text, 'titulo'::text, 'curso_aprobado'::text]))),
+    CONSTRAINT peso_comprobacion_peso_check CHECK ((ponderacion >= (0)::numeric))
+);
+
+
+--
+-- Name: TABLE ponderacion_comprobacion; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TABLE public.ponderacion_comprobacion IS 'Cuánto cuenta cada comprobación en el puntaje del legajo, por Prestadora. Las de una misma Prestadora suman 100 y la base no acepta otra cosa: es un reparto, no una lista de valores sueltos. Arranca en 20 las cinco, que es el reparto en partes iguales; eso es el valor de fábrica y no la regla. Sólo entra acá lo comprobado por alguien; lo que la persona declara y nadie miró se muestra en el perfil y no suma.';
+
+
+--
+-- Name: COLUMN ponderacion_comprobacion.ponderacion; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN public.ponderacion_comprobacion.ponderacion IS 'Cuánto de los 100 se lleva esta comprobación. Cero quiere decir «esta no me importa», y ese cero se lo tiene que quedar otra comprobación para que el total siga dando 100. Para no calificar en absoluto está puntaje_prestadora.califica, que es otra cosa.';
+
+
+--
+-- Name: postulaciones; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.postulaciones (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    tenant_id uuid DEFAULT public.prestadora_actual() NOT NULL,
+    aviso_id uuid NOT NULL,
+    caregiver_id uuid NOT NULL,
+    mensaje text,
+    vista_el timestamp with time zone,
+    descartada_el timestamp with time zone,
+    created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+
+--
+-- Name: TABLE postulaciones; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TABLE public.postulaciones IS 'Un Asistente se ofrece a un aviso. Guarda el hecho del contacto y nada del trato: sin tarifa propuesta, sin condiciones y sin aceptación, porque el trato lo cierran la Familia y el Asistente afuera del software (CLAUDE.md §1).';
+
+
+--
+-- Name: COLUMN postulaciones.mensaje; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN public.postulaciones.mensaje IS 'Lo que el Asistente escribe al ofrecerse. Lo lee la Familia del aviso, y nadie más: el personal de la Prestadora no lo ve.';
+
+
+--
+-- Name: COLUMN postulaciones.vista_el; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN public.postulaciones.vista_el IS 'Cuándo la Familia la vio. Junto con descartada_el reemplaza a una columna de estado: no hay «aceptada», porque aceptar sería guardar el trato.';
+
+
+--
 -- Name: preguntas_evaluacion; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3001,6 +3028,25 @@ CREATE TABLE public.profiles (
     role text DEFAULT 'familiar'::text NOT NULL,
     created_at timestamp with time zone DEFAULT now()
 );
+
+
+--
+-- Name: puntaje_prestadora; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.puntaje_prestadora (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    tenant_id uuid NOT NULL,
+    califica boolean DEFAULT true NOT NULL,
+    created_at timestamp with time zone DEFAULT timezone('utc'::text, now())
+);
+
+
+--
+-- Name: TABLE puntaje_prestadora; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TABLE public.puntaje_prestadora IS 'Una fila por Prestadora. califica en false esconde el número del legajo en todas sus pantallas; el escudo de legajo validado sigue viéndose, porque ése es la puerta del directorio y no es opcional.';
 
 
 --
@@ -3048,7 +3094,7 @@ CREATE TABLE public.reportes (
 -- Name: TABLE reportes; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON TABLE public.reportes IS 'El reporte de cuidado. Lo escribe el Asistente que cuidó y lo lee la Familia de ese aviso. El personal de la Prestadora no lo ve: en la modalidad de este producto la Prestadora no dirige el trabajo (migración 0053). La condición del aviso se repite adentro de la subconsulta a propósito: la RLS de avisos no alcanza para filtrarla, porque a ese personal le devuelve todos los avisos de la Organización (migración 0067).';
+COMMENT ON TABLE public.reportes IS 'El reporte de cuidado. Lo escribe el Asistente que cuidó y lo lee la Familia de ese aviso. El personal de la Prestadora no lo ve: en esta modalidad la Prestadora no dirige el trabajo. La condición del aviso se repite adentro de la subconsulta a propósito: la RLS de avisos no alcanza para filtrarla, porque a ese personal le devuelve todos los avisos de la Organización.';
 
 
 --
@@ -3077,44 +3123,28 @@ CREATE TABLE public.tenants (
 -- Name: COLUMN tenants.status; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN public.tenants.status IS 'En qué situación está la Prestadora frente a quien le vendió el software. activo, suspendido o cancelado, y nada más (0023). Quién lo escribe es CeltaTech, a través de la función de borde `alta-y-baja`; adentro del producto sólo lo leen las tres funciones públicas de la 0021, que exigen `activo`.';
+COMMENT ON COLUMN public.tenants.status IS 'En qué situación está la Prestadora frente a quien le vendió el software. activo, suspendido o cancelado, y nada más. Quién lo escribe es CeltaTech, a través de la función de borde `alta-y-baja`; adentro del producto sólo lo leen las tres funciones públicas, que exigen `activo`.';
 
 
 --
 -- Name: COLUMN tenants.estado_fijado_en; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN public.tenants.estado_fijado_en IS 'Cuándo se emitió la orden que dejó `status` como está. No es cuándo se aplicó: es la fecha que trae el aviso de CeltaTech. Sirve para una sola cosa, y es descartar lo repetido y lo atrasado (0023).';
+COMMENT ON COLUMN public.tenants.estado_fijado_en IS 'Cuándo se emitió la orden que dejó `status` como está. No es cuándo se aplicó: es la fecha que trae el aviso de CeltaTech. Sirve para una sola cosa, y es descartar lo repetido y lo atrasado.';
 
 
 --
 -- Name: COLUMN tenants.referencia_celtatech; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN public.tenants.referencia_celtatech IS 'Con qué nombre conoce CeltaTech a esta Prestadora. Texto opaco: se guarda tal cual llega y no se interpreta nunca (0025). Es lo único por lo que el alta y las correcciones la reconocen. Nulo en las Prestadoras ficticias, que no vienen de ningún contrato.';
+COMMENT ON COLUMN public.tenants.referencia_celtatech IS 'Con qué nombre conoce CeltaTech a esta Prestadora. Texto opaco: se guarda tal cual llega y no se interpreta nunca. Es lo único por lo que el alta y las correcciones la reconocen. Nulo en las Prestadoras ficticias, que no vienen de ningún contrato.';
 
 
 --
 -- Name: COLUMN tenants.moneda; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN public.tenants.moneda IS 'Con qué moneda trabaja esta Prestadora, en código ISO 4217 y en mayúsculas. La elige ella desde su panel; de fábrica es ARS, que es lo que la pantalla ya venía mostrando sin decirlo. Las opciones salen del vocabulario `moneda`, que es abierto: la Prestadora que necesite otra se la agrega (0074).';
-
-
---
--- Name: autorizaciones_asistente autorizaciones_asistente_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.autorizaciones_asistente
-    ADD CONSTRAINT autorizaciones_asistente_pkey PRIMARY KEY (caregiver_id);
-
-
---
--- Name: avisos aviso_unico_por_prestadora; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.avisos
-    ADD CONSTRAINT aviso_unico_por_prestadora UNIQUE (id, tenant_id);
+COMMENT ON COLUMN public.tenants.moneda IS 'Con qué moneda trabaja esta Prestadora, en código ISO 4217 y en mayúsculas. La elige ella desde su panel; de fábrica es ARS, que es lo que la pantalla ya venía mostrando sin decirlo. Las opciones salen del vocabulario `moneda`, que es abierto: la Prestadora que necesite otra se la agrega.';
 
 
 --
@@ -3134,83 +3164,27 @@ ALTER TABLE ONLY public.alarmas_prestadora
 
 
 --
+-- Name: autorizaciones_asistente autorizaciones_asistente_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.autorizaciones_asistente
+    ADD CONSTRAINT autorizaciones_asistente_pkey PRIMARY KEY (caregiver_id);
+
+
+--
+-- Name: avisos aviso_unico_por_prestadora; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.avisos
+    ADD CONSTRAINT aviso_unico_por_prestadora UNIQUE (id, tenant_id);
+
+
+--
 -- Name: avisos avisos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.avisos
     ADD CONSTRAINT avisos_pkey PRIMARY KEY (id);
-
-
---
--- Name: conversaciones conversaciones_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.conversaciones
-    ADD CONSTRAINT conversaciones_pkey PRIMARY KEY (id);
-
-
---
--- Name: franjas_aviso franjas_aviso_aviso_id_dia_turno_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.franjas_aviso
-    ADD CONSTRAINT franjas_aviso_aviso_id_dia_turno_key UNIQUE (aviso_id, dia, turno);
-
-
---
--- Name: franjas_aviso franjas_aviso_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.franjas_aviso
-    ADD CONSTRAINT franjas_aviso_pkey PRIMARY KEY (id);
-
-
---
--- Name: mensajes mensajes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.mensajes
-    ADD CONSTRAINT mensajes_pkey PRIMARY KEY (id);
-
-
---
--- Name: ponderacion_comprobacion peso_comprobacion_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.ponderacion_comprobacion
-    ADD CONSTRAINT peso_comprobacion_pkey PRIMARY KEY (id);
-
-
---
--- Name: ponderacion_comprobacion peso_comprobacion_tenant_id_comprobacion_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.ponderacion_comprobacion
-    ADD CONSTRAINT peso_comprobacion_tenant_id_comprobacion_key UNIQUE (tenant_id, comprobacion);
-
-
---
--- Name: postulaciones postulaciones_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.postulaciones
-    ADD CONSTRAINT postulaciones_pkey PRIMARY KEY (id);
-
-
---
--- Name: puntaje_prestadora puntaje_prestadora_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.puntaje_prestadora
-    ADD CONSTRAINT puntaje_prestadora_pkey PRIMARY KEY (id);
-
-
---
--- Name: puntaje_prestadora puntaje_prestadora_tenant_id_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.puntaje_prestadora
-    ADD CONSTRAINT puntaje_prestadora_tenant_id_key UNIQUE (tenant_id);
 
 
 --
@@ -3243,6 +3217,14 @@ ALTER TABLE ONLY public.clock_ins
 
 ALTER TABLE ONLY public.conversaciones
     ADD CONSTRAINT conversacion_unica_por_prestadora UNIQUE (id, tenant_id);
+
+
+--
+-- Name: conversaciones conversaciones_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.conversaciones
+    ADD CONSTRAINT conversaciones_pkey PRIMARY KEY (id);
 
 
 --
@@ -3310,6 +3292,22 @@ ALTER TABLE ONLY public.franjas_asistente
 
 
 --
+-- Name: franjas_aviso franjas_aviso_aviso_id_dia_turno_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.franjas_aviso
+    ADD CONSTRAINT franjas_aviso_aviso_id_dia_turno_key UNIQUE (aviso_id, dia, turno);
+
+
+--
+-- Name: franjas_aviso franjas_aviso_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.franjas_aviso
+    ADD CONSTRAINT franjas_aviso_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: guias_cuidado guias_cuidado_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3326,6 +3324,21 @@ ALTER TABLE ONLY public.intentos_evaluacion
 
 
 --
+-- Name: clock_ins la_fichada_tiene_tipo; Type: CHECK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE public.clock_ins
+    ADD CONSTRAINT la_fichada_tiene_tipo CHECK ((event_type IS NOT NULL)) NOT VALID;
+
+
+--
+-- Name: CONSTRAINT la_fichada_tiene_tipo ON clock_ins; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON CONSTRAINT la_fichada_tiene_tipo ON public.clock_ins IS 'Una fichada sin tipo no la ve ninguna de las dos alarmas de la Familia, igual que una mal escrita. Entra «not valid» porque la columna nació aceptando el vacío y desde el repositorio no se puede saber si la base publicada tiene filas así: rige para toda fila nueva, y lo viejo se cierra con un «validate constraint» el día que se compruebe que no queda ninguna (migración 0007).';
+
+
+--
 -- Name: caregivers legajo_unico_por_prestadora; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3339,6 +3352,14 @@ ALTER TABLE ONLY public.caregivers
 
 ALTER TABLE ONLY public.matriculas_asistente
     ADD CONSTRAINT matriculas_asistente_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: mensajes mensajes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.mensajes
+    ADD CONSTRAINT mensajes_pkey PRIMARY KEY (id);
 
 
 --
@@ -3382,6 +3403,30 @@ ALTER TABLE ONLY public.patrones_de_contacto
 
 
 --
+-- Name: ponderacion_comprobacion peso_comprobacion_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ponderacion_comprobacion
+    ADD CONSTRAINT peso_comprobacion_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ponderacion_comprobacion peso_comprobacion_tenant_id_comprobacion_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ponderacion_comprobacion
+    ADD CONSTRAINT peso_comprobacion_tenant_id_comprobacion_key UNIQUE (tenant_id, comprobacion);
+
+
+--
+-- Name: postulaciones postulaciones_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.postulaciones
+    ADD CONSTRAINT postulaciones_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: preguntas_evaluacion preguntas_evaluacion_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3395,6 +3440,22 @@ ALTER TABLE ONLY public.preguntas_evaluacion
 
 ALTER TABLE ONLY public.profiles
     ADD CONSTRAINT profiles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: puntaje_prestadora puntaje_prestadora_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.puntaje_prestadora
+    ADD CONSTRAINT puntaje_prestadora_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: puntaje_prestadora puntaje_prestadora_tenant_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.puntaje_prestadora
+    ADD CONSTRAINT puntaje_prestadora_tenant_id_key UNIQUE (tenant_id);
 
 
 --
@@ -3549,6 +3610,13 @@ CREATE INDEX clock_ins_conversacion_idx ON public.clock_ins USING btree (convers
 
 
 --
+-- Name: clock_ins_conversacion_marcada_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX clock_ins_conversacion_marcada_idx ON public.clock_ins USING btree (conversacion_id, marcada_en DESC);
+
+
+--
 -- Name: idx_avisos_familia; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3563,27 +3631,6 @@ CREATE INDEX idx_avisos_zona ON public.avisos USING btree (tenant_id, zone);
 
 
 --
--- Name: idx_franjas_aviso_aviso; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_franjas_aviso_aviso ON public.franjas_aviso USING btree (aviso_id);
-
-
---
--- Name: idx_franjas_aviso_dia_turno; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_franjas_aviso_dia_turno ON public.franjas_aviso USING btree (dia, turno);
-
-
---
--- Name: idx_ponderacion_comprobacion_tenant; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_ponderacion_comprobacion_tenant ON public.ponderacion_comprobacion USING btree (tenant_id);
-
-
---
 -- Name: idx_caregivers_user_unico; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3594,7 +3641,7 @@ CREATE UNIQUE INDEX idx_caregivers_user_unico ON public.caregivers USING btree (
 -- Name: INDEX idx_caregivers_user_unico; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON INDEX public.idx_caregivers_user_unico IS 'Una cuenta, un legajo. ATENCIÓN: de este índice depende además el aislamiento entre Prestadoras del depósito de archivos. El camino del depósito empieza por la cuenta y no por la Organización, así que la política «Documentos del legajo, para la Prestadora» (migración 0006) llega a la carpeta por el legajo: si una cuenta llegara a tener legajo en dos Prestadoras, las dos verían la carpeta entera. Antes de sacarlo hay que mover el camino a <Organización>/<cuenta>/, reescribir las tres políticas del depósito contra public.prestadora_actual() y mudar los archivos ya subidos. Está anotado en el pendiente 115.';
+COMMENT ON INDEX public.idx_caregivers_user_unico IS 'Una cuenta, un legajo. ATENCIÓN: de este índice depende además el aislamiento entre Prestadoras del depósito de archivos. El camino del depósito empieza por la cuenta y no por la Organización, así que la política «Documentos del legajo, para la Prestadora» llega a la carpeta por el legajo: si una cuenta llegara a tener legajo en dos Prestadoras, las dos verían la carpeta entera. Antes de sacarlo hay que mover el camino a <Organización>/<cuenta>/, reescribir las tres políticas del depósito contra public.prestadora_actual() y mudar los archivos ya subidos. Está anotado en el pendiente 115.';
 
 
 --
@@ -3644,6 +3691,20 @@ CREATE UNIQUE INDEX idx_evaluaciones_clave ON public.evaluaciones USING btree (C
 --
 
 CREATE INDEX idx_experiencia_caregiver ON public.experiencia_laboral_asistente USING btree (caregiver_id);
+
+
+--
+-- Name: idx_franjas_aviso_aviso; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_franjas_aviso_aviso ON public.franjas_aviso USING btree (aviso_id);
+
+
+--
+-- Name: idx_franjas_aviso_dia_turno; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_franjas_aviso_dia_turno ON public.franjas_aviso USING btree (dia, turno);
 
 
 --
@@ -3749,6 +3810,13 @@ CREATE UNIQUE INDEX idx_oferta_comercial_clave ON public.oferta_comercial USING 
 --
 
 CREATE INDEX idx_opciones_pregunta ON public.opciones_pregunta USING btree (pregunta_id);
+
+
+--
+-- Name: idx_ponderacion_comprobacion_tenant; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_ponderacion_comprobacion_tenant ON public.ponderacion_comprobacion USING btree (tenant_id);
 
 
 --
@@ -3899,6 +3967,13 @@ CREATE TRIGGER la_fecha_de_alta_del_legajo BEFORE INSERT OR UPDATE ON public.car
 
 
 --
+-- Name: clock_ins la_fichada_se_escribe_derecho; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER la_fichada_se_escribe_derecho BEFORE INSERT OR UPDATE OF event_type ON public.clock_ins FOR EACH ROW EXECUTE FUNCTION public.la_fichada_se_escribe_derecho();
+
+
+--
 -- Name: ponderacion_comprobacion la_ponderacion_suma_cien; Type: TRIGGER; Schema: public; Owner: -
 --
 
@@ -3948,6 +4023,14 @@ CREATE TRIGGER zonas_cobertura_dos_escalones BEFORE INSERT OR UPDATE ON public.z
 
 
 --
+-- Name: alarmas_prestadora alarmas_prestadora_tenant_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.alarmas_prestadora
+    ADD CONSTRAINT alarmas_prestadora_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES public.tenants(id) ON DELETE CASCADE;
+
+
+--
 -- Name: autorizaciones_asistente autorizaciones_asistente_caregiver_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3964,14 +4047,6 @@ ALTER TABLE ONLY public.autorizaciones_asistente
 
 
 --
--- Name: alarmas_prestadora alarmas_prestadora_tenant_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.alarmas_prestadora
-    ADD CONSTRAINT alarmas_prestadora_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES public.tenants(id) ON DELETE CASCADE;
-
-
---
 -- Name: avisos avisos_familia_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3985,62 +4060,6 @@ ALTER TABLE ONLY public.avisos
 
 ALTER TABLE ONLY public.avisos
     ADD CONSTRAINT avisos_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES public.tenants(id) ON DELETE SET NULL;
-
-
---
--- Name: conversaciones conversaciones_familia_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.conversaciones
-    ADD CONSTRAINT conversaciones_familia_id_fkey FOREIGN KEY (familia_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
-
---
--- Name: franjas_aviso franjas_aviso_aviso_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.franjas_aviso
-    ADD CONSTRAINT franjas_aviso_aviso_id_fkey FOREIGN KEY (aviso_id) REFERENCES public.avisos(id) ON DELETE CASCADE;
-
-
---
--- Name: franjas_aviso franjas_aviso_tenant_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.franjas_aviso
-    ADD CONSTRAINT franjas_aviso_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
-
-
---
--- Name: mensajes mensajes_autor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.mensajes
-    ADD CONSTRAINT mensajes_autor_id_fkey FOREIGN KEY (autor_id) REFERENCES auth.users(id) ON DELETE CASCADE;
-
-
---
--- Name: mensajes mensajes_conversacion_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.mensajes
-    ADD CONSTRAINT mensajes_conversacion_id_fkey FOREIGN KEY (conversacion_id) REFERENCES public.conversaciones(id) ON DELETE CASCADE;
-
-
---
--- Name: ponderacion_comprobacion peso_comprobacion_tenant_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.ponderacion_comprobacion
-    ADD CONSTRAINT peso_comprobacion_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
-
-
---
--- Name: puntaje_prestadora puntaje_prestadora_tenant_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.puntaje_prestadora
-    ADD CONSTRAINT puntaje_prestadora_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
 
 
 --
@@ -4065,6 +4084,14 @@ ALTER TABLE ONLY public.caregivers
 
 ALTER TABLE ONLY public.clock_ins
     ADD CONSTRAINT clock_ins_caregiver_id_fkey FOREIGN KEY (caregiver_id) REFERENCES public.caregivers(id) ON DELETE CASCADE;
+
+
+--
+-- Name: conversaciones conversaciones_familia_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.conversaciones
+    ADD CONSTRAINT conversaciones_familia_id_fkey FOREIGN KEY (familia_id) REFERENCES auth.users(id) ON DELETE CASCADE;
 
 
 --
@@ -4180,6 +4207,22 @@ ALTER TABLE ONLY public.franjas_asistente
 
 
 --
+-- Name: franjas_aviso franjas_aviso_aviso_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.franjas_aviso
+    ADD CONSTRAINT franjas_aviso_aviso_id_fkey FOREIGN KEY (aviso_id) REFERENCES public.avisos(id) ON DELETE CASCADE;
+
+
+--
+-- Name: franjas_aviso franjas_aviso_tenant_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.franjas_aviso
+    ADD CONSTRAINT franjas_aviso_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
 -- Name: guias_cuidado guias_cuidado_tenant_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4276,6 +4319,22 @@ ALTER TABLE ONLY public.matriculas_asistente
 
 
 --
+-- Name: mensajes mensajes_autor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.mensajes
+    ADD CONSTRAINT mensajes_autor_id_fkey FOREIGN KEY (autor_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: mensajes mensajes_conversacion_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.mensajes
+    ADD CONSTRAINT mensajes_conversacion_id_fkey FOREIGN KEY (conversacion_id) REFERENCES public.conversaciones(id) ON DELETE CASCADE;
+
+
+--
 -- Name: messages messages_aviso_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4308,6 +4367,14 @@ ALTER TABLE ONLY public.opciones_pregunta
 
 
 --
+-- Name: ponderacion_comprobacion peso_comprobacion_tenant_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.ponderacion_comprobacion
+    ADD CONSTRAINT peso_comprobacion_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
+
+
+--
 -- Name: preguntas_evaluacion preguntas_evaluacion_evaluacion_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4337,6 +4404,14 @@ ALTER TABLE ONLY public.profiles
 
 ALTER TABLE ONLY public.profiles
     ADD CONSTRAINT profiles_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES public.tenants(id) ON DELETE CASCADE;
+
+
+--
+-- Name: puntaje_prestadora puntaje_prestadora_tenant_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.puntaje_prestadora
+    ADD CONSTRAINT puntaje_prestadora_tenant_id_fkey FOREIGN KEY (tenant_id) REFERENCES public.tenants(id);
 
 
 --
@@ -4942,58 +5017,22 @@ CREATE POLICY "Zonas del Asistente de la Prestadora" ON public.zonas_asistente T
 
 
 --
--- Name: autorizaciones_asistente; Type: ROW SECURITY; Schema: public; Owner: -
---
-
-ALTER TABLE public.autorizaciones_asistente ENABLE ROW LEVEL SECURITY;
-
---
 -- Name: alarmas_prestadora; Type: ROW SECURITY; Schema: public; Owner: -
 --
 
 ALTER TABLE public.alarmas_prestadora ENABLE ROW LEVEL SECURITY;
 
 --
+-- Name: autorizaciones_asistente; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public.autorizaciones_asistente ENABLE ROW LEVEL SECURITY;
+
+--
 -- Name: avisos; Type: ROW SECURITY; Schema: public; Owner: -
 --
 
 ALTER TABLE public.avisos ENABLE ROW LEVEL SECURITY;
-
---
--- Name: conversaciones; Type: ROW SECURITY; Schema: public; Owner: -
---
-
-ALTER TABLE public.conversaciones ENABLE ROW LEVEL SECURITY;
-
---
--- Name: franjas_aviso; Type: ROW SECURITY; Schema: public; Owner: -
---
-
-ALTER TABLE public.franjas_aviso ENABLE ROW LEVEL SECURITY;
-
---
--- Name: mensajes; Type: ROW SECURITY; Schema: public; Owner: -
---
-
-ALTER TABLE public.mensajes ENABLE ROW LEVEL SECURITY;
-
---
--- Name: ponderacion_comprobacion; Type: ROW SECURITY; Schema: public; Owner: -
---
-
-ALTER TABLE public.ponderacion_comprobacion ENABLE ROW LEVEL SECURITY;
-
---
--- Name: postulaciones; Type: ROW SECURITY; Schema: public; Owner: -
---
-
-ALTER TABLE public.postulaciones ENABLE ROW LEVEL SECURITY;
-
---
--- Name: puntaje_prestadora; Type: ROW SECURITY; Schema: public; Owner: -
---
-
-ALTER TABLE public.puntaje_prestadora ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: caregivers; Type: ROW SECURITY; Schema: public; Owner: -
@@ -5006,6 +5045,12 @@ ALTER TABLE public.caregivers ENABLE ROW LEVEL SECURITY;
 --
 
 ALTER TABLE public.clock_ins ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: conversaciones; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public.conversaciones ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: cursos; Type: ROW SECURITY; Schema: public; Owner: -
@@ -5050,6 +5095,12 @@ ALTER TABLE public.experiencia_laboral_asistente ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.franjas_asistente ENABLE ROW LEVEL SECURITY;
 
 --
+-- Name: franjas_aviso; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public.franjas_aviso ENABLE ROW LEVEL SECURITY;
+
+--
 -- Name: guias_cuidado; Type: ROW SECURITY; Schema: public; Owner: -
 --
 
@@ -5066,6 +5117,12 @@ ALTER TABLE public.intentos_evaluacion ENABLE ROW LEVEL SECURITY;
 --
 
 ALTER TABLE public.matriculas_asistente ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: mensajes; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public.mensajes ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: messages; Type: ROW SECURITY; Schema: public; Owner: -
@@ -5092,6 +5149,18 @@ ALTER TABLE public.opciones_pregunta ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.patrones_de_contacto ENABLE ROW LEVEL SECURITY;
 
 --
+-- Name: ponderacion_comprobacion; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public.ponderacion_comprobacion ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: postulaciones; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public.postulaciones ENABLE ROW LEVEL SECURITY;
+
+--
 -- Name: preguntas_evaluacion; Type: ROW SECURITY; Schema: public; Owner: -
 --
 
@@ -5102,6 +5171,12 @@ ALTER TABLE public.preguntas_evaluacion ENABLE ROW LEVEL SECURITY;
 --
 
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: puntaje_prestadora; Type: ROW SECURITY; Schema: public; Owner: -
+--
+
+ALTER TABLE public.puntaje_prestadora ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: referencias_asistente; Type: ROW SECURITY; Schema: public; Owner: -
@@ -5344,7 +5419,7 @@ GRANT ALL ON TABLE public.directorio TO service_role;
 -- Name: FUNCTION directorio_de(p_slug text); Type: ACL; Schema: public; Owner: -
 --
 
-REVOKE ALL ON FUNCTION public.directorio_de(p_slug text) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.directorio_de(p_slug text) FROM PUBLIC;
 GRANT ALL ON FUNCTION public.directorio_de(p_slug text) TO anon;
 GRANT ALL ON FUNCTION public.directorio_de(p_slug text) TO authenticated;
 GRANT ALL ON FUNCTION public.directorio_de(p_slug text) TO service_role;
@@ -5434,7 +5509,7 @@ GRANT ALL ON FUNCTION public.franjas_de_aviso(p_aviso uuid) TO authenticated;
 -- Name: FUNCTION guias_de(p_slug text); Type: ACL; Schema: public; Owner: -
 --
 
-REVOKE ALL ON FUNCTION public.guias_de(p_slug text) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.guias_de(p_slug text) FROM PUBLIC;
 GRANT ALL ON FUNCTION public.guias_de(p_slug text) TO service_role;
 GRANT ALL ON FUNCTION public.guias_de(p_slug text) TO anon;
 GRANT ALL ON FUNCTION public.guias_de(p_slug text) TO authenticated;
@@ -5464,6 +5539,14 @@ GRANT ALL ON FUNCTION public.i18n_lista_minima(p_texto jsonb) TO authenticated;
 
 REVOKE ALL ON FUNCTION public.la_fecha_de_alta_la_pone_la_base() FROM PUBLIC, anon;
 GRANT ALL ON FUNCTION public.la_fecha_de_alta_la_pone_la_base() TO service_role;
+
+
+--
+-- Name: FUNCTION la_fichada_se_escribe_derecho(); Type: ACL; Schema: public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION public.la_fichada_se_escribe_derecho() FROM PUBLIC, anon;
+GRANT ALL ON FUNCTION public.la_fichada_se_escribe_derecho() TO service_role;
 
 
 --
@@ -5563,7 +5646,7 @@ GRANT ALL ON FUNCTION public.patron_en_postgres(p_patron text) TO authenticated;
 -- Name: FUNCTION perfil_del_directorio(p_slug text, p_id uuid); Type: ACL; Schema: public; Owner: -
 --
 
-REVOKE ALL ON FUNCTION public.perfil_del_directorio(p_slug text, p_id uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.perfil_del_directorio(p_slug text, p_id uuid) FROM PUBLIC;
 GRANT ALL ON FUNCTION public.perfil_del_directorio(p_slug text, p_id uuid) TO anon;
 GRANT ALL ON FUNCTION public.perfil_del_directorio(p_slug text, p_id uuid) TO authenticated;
 GRANT ALL ON FUNCTION public.perfil_del_directorio(p_slug text, p_id uuid) TO service_role;
@@ -5582,7 +5665,7 @@ GRANT ALL ON FUNCTION public.postulaciones_de_mis_avisos(p_aviso uuid) TO authen
 -- Name: FUNCTION prestadora_por_slug(p_slug text); Type: ACL; Schema: public; Owner: -
 --
 
-REVOKE ALL ON FUNCTION public.prestadora_por_slug(p_slug text) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.prestadora_por_slug(p_slug text) FROM PUBLIC;
 GRANT ALL ON FUNCTION public.prestadora_por_slug(p_slug text) TO anon;
 GRANT ALL ON FUNCTION public.prestadora_por_slug(p_slug text) TO authenticated;
 GRANT ALL ON FUNCTION public.prestadora_por_slug(p_slug text) TO service_role;
@@ -5618,7 +5701,7 @@ GRANT ALL ON FUNCTION public.resolver_legajo(p_caregiver_id uuid, p_estado text,
 -- Name: FUNCTION vocabularios_de(p_slug text); Type: ACL; Schema: public; Owner: -
 --
 
-REVOKE ALL ON FUNCTION public.vocabularios_de(p_slug text) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.vocabularios_de(p_slug text) FROM PUBLIC;
 GRANT ALL ON FUNCTION public.vocabularios_de(p_slug text) TO service_role;
 GRANT ALL ON FUNCTION public.vocabularios_de(p_slug text) TO anon;
 GRANT ALL ON FUNCTION public.vocabularios_de(p_slug text) TO authenticated;
@@ -5628,7 +5711,7 @@ GRANT ALL ON FUNCTION public.vocabularios_de(p_slug text) TO authenticated;
 -- Name: FUNCTION zonas_de(p_slug text); Type: ACL; Schema: public; Owner: -
 --
 
-REVOKE ALL ON FUNCTION public.zonas_de(p_slug text) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.zonas_de(p_slug text) FROM PUBLIC;
 GRANT ALL ON FUNCTION public.zonas_de(p_slug text) TO service_role;
 GRANT ALL ON FUNCTION public.zonas_de(p_slug text) TO anon;
 GRANT ALL ON FUNCTION public.zonas_de(p_slug text) TO authenticated;
@@ -5651,73 +5734,19 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.avisos TO authenticated;
 
 
 --
--- Name: TABLE conversaciones; Type: ACL; Schema: public; Owner: -
---
-
-GRANT ALL ON TABLE public.conversaciones TO service_role;
-GRANT SELECT,INSERT ON TABLE public.conversaciones TO authenticated;
-
-
---
--- Name: TABLE franjas_aviso; Type: ACL; Schema: public; Owner: -
---
-
-GRANT ALL ON TABLE public.franjas_aviso TO service_role;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.franjas_aviso TO authenticated;
-
-
---
--- Name: TABLE mensajes; Type: ACL; Schema: public; Owner: -
---
-
-GRANT ALL ON TABLE public.mensajes TO service_role;
-GRANT SELECT,INSERT ON TABLE public.mensajes TO authenticated;
-
-
---
--- Name: TABLE ponderacion_comprobacion; Type: ACL; Schema: public; Owner: -
---
-
-GRANT ALL ON TABLE public.ponderacion_comprobacion TO service_role;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.ponderacion_comprobacion TO authenticated;
-
-
---
--- Name: TABLE postulaciones; Type: ACL; Schema: public; Owner: -
---
-
-GRANT ALL ON TABLE public.postulaciones TO service_role;
-GRANT SELECT,INSERT,DELETE ON TABLE public.postulaciones TO authenticated;
-
-
---
--- Name: COLUMN postulaciones.vista_el; Type: ACL; Schema: public; Owner: -
---
-
-GRANT UPDATE(vista_el) ON TABLE public.postulaciones TO authenticated;
-
-
---
--- Name: COLUMN postulaciones.descartada_el; Type: ACL; Schema: public; Owner: -
---
-
-GRANT UPDATE(descartada_el) ON TABLE public.postulaciones TO authenticated;
-
-
---
--- Name: TABLE puntaje_prestadora; Type: ACL; Schema: public; Owner: -
---
-
-GRANT ALL ON TABLE public.puntaje_prestadora TO service_role;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.puntaje_prestadora TO authenticated;
-
-
---
 -- Name: TABLE clock_ins; Type: ACL; Schema: public; Owner: -
 --
 
 GRANT ALL ON TABLE public.clock_ins TO service_role;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.clock_ins TO authenticated;
+
+
+--
+-- Name: TABLE conversaciones; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.conversaciones TO service_role;
+GRANT SELECT,INSERT ON TABLE public.conversaciones TO authenticated;
 
 
 --
@@ -5769,6 +5798,14 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.franjas_asistente TO authentic
 
 
 --
+-- Name: TABLE franjas_aviso; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.franjas_aviso TO service_role;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.franjas_aviso TO authenticated;
+
+
+--
 -- Name: TABLE guias_cuidado; Type: ACL; Schema: public; Owner: -
 --
 
@@ -5782,6 +5819,14 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.guias_cuidado TO authenticated
 
 GRANT ALL ON TABLE public.matriculas_asistente TO service_role;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.matriculas_asistente TO authenticated;
+
+
+--
+-- Name: TABLE mensajes; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.mensajes TO service_role;
+GRANT SELECT,INSERT ON TABLE public.mensajes TO authenticated;
 
 
 --
@@ -5842,6 +5887,36 @@ GRANT SELECT ON TABLE public.patrones_de_contacto TO authenticated;
 
 
 --
+-- Name: TABLE ponderacion_comprobacion; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.ponderacion_comprobacion TO service_role;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.ponderacion_comprobacion TO authenticated;
+
+
+--
+-- Name: TABLE postulaciones; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.postulaciones TO service_role;
+GRANT SELECT,INSERT,DELETE ON TABLE public.postulaciones TO authenticated;
+
+
+--
+-- Name: COLUMN postulaciones.vista_el; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT UPDATE(vista_el) ON TABLE public.postulaciones TO authenticated;
+
+
+--
+-- Name: COLUMN postulaciones.descartada_el; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT UPDATE(descartada_el) ON TABLE public.postulaciones TO authenticated;
+
+
+--
 -- Name: TABLE preguntas_evaluacion; Type: ACL; Schema: public; Owner: -
 --
 
@@ -5862,6 +5937,14 @@ GRANT SELECT ON TABLE public.profiles TO authenticated;
 --
 
 GRANT UPDATE(full_name) ON TABLE public.profiles TO authenticated;
+
+
+--
+-- Name: TABLE puntaje_prestadora; Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON TABLE public.puntaje_prestadora TO service_role;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.puntaje_prestadora TO authenticated;
 
 
 --

@@ -14,18 +14,18 @@
 
 | Módulo | Estado |
 |---|---|
-| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:941` llama a `Sesion.requireAuth()` y además comprueba el rol. Las políticas de `profiles` y de `caregivers` ponen el límite en la base, del lado que no se puede falsificar (`supabase/migrations/0001_base_del_esquema.sql:4878` y `:4815`). Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs`. **El alta de Asistente exige confirmar el correo, y se queda así**: decidido por el Desarrollador el 2026-08-26 (pendiente 21 cerrado) — el alta es de dos pasos, pero nadie puede darse de alta con el correo de otra persona; `supabase/config.toml` tiene `mailer_autoconfirm: false` |
+| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:941` llama a `Sesion.requireAuth()` y además comprueba el rol. Las políticas de `profiles` y de `caregivers` ponen el límite en la base, del lado que no se puede falsificar (`supabase/migrations/0001_base_del_esquema.sql:4953` y `:4890`). Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs`. **El alta de Asistente exige confirmar el correo, y se queda así**: decidido por el Desarrollador el 2026-08-26 (pendiente 21 cerrado) — el alta es de dos pasos, pero nadie puede darse de alta con el correo de otra persona; `supabase/config.toml` tiene `mailer_autoconfirm: false` |
 | Directorio de Asistentes con filtros | Maquetado y navegable |
 | Perfil del Asistente | Maquetado |
 | Portal de registro de Asistentes | Maquetado, con el legajo funcionando: `registrar-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en sus tablas —`matriculas_asistente`, `estudios_asistente`, `experiencia_laboral_asistente`, `referencias_asistente` y `autorizaciones_asistente`—, y la disponibilidad horaria en `disponibilidad_asistente` y `franjas_asistente` |
-| Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:358`). Los dos depósitos se declaran en una migración y no a mano (`supabase/migrations/0001_base_del_esquema.sql:5955-5956`), con sus políticas al lado |
+| Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:358`). Los dos depósitos se declaran en una migración y no a mano (`supabase/migrations/0001_base_del_esquema.sql:6038-6039`), con sus políticas al lado |
 | Consentimiento de publicación | Funciona de punta a punta. El alta pregunta al cerrar (`data/catalogo-autorizaciones.json`, paso 7) y guarda la respuesta en `autorizaciones_asistente`; el directorio cruza contra ella y **no muestra a nadie que no haya dicho que sí**: la vista `directorio` exige `a.perfil_publicado` (`supabase/migrations/0001_base_del_esquema.sql:791-793`). Sin respuesta no se publica: la casilla arranca sin marcar. Y el directorio va con `noindex`, que es lo que ese mismo consentimiento promete |
-| Evaluaciones de competencias | Funcionan, y **las corrige el servidor**. `examen.html` pide sesión, lista lo que la persona puede rendir y manda las respuestas a `rendir_evaluacion()`; la columna con la respuesta correcta no tiene permiso de lectura para nadie y las opciones salen de la vista `opciones_para_responder`, que no la incluye (`supabase/migrations/0001_base_del_esquema.sql:2907`). El intento no se puede escribir a mano: la tabla no tiene política de escritura y los permisos están revocados. `cursos.html` ya no tiene examen propio, enlaza a esta pantalla. Falta el contenido: ver `docs/PENDIENTES.md` punto 24 |
+| Evaluaciones de competencias | Funcionan, y **las corrige el servidor**. `examen.html` pide sesión, lista lo que la persona puede rendir y manda las respuestas a `rendir_evaluacion()`; la columna con la respuesta correcta no tiene permiso de lectura para nadie y las opciones salen de la vista `opciones_para_responder`, que no la incluye (`supabase/migrations/0001_base_del_esquema.sql:2868`). El intento no se puede escribir a mano: la tabla no tiene política de escritura y los permisos están revocados. `cursos.html` ya no tiene examen propio, enlaza a esta pantalla. Falta el contenido: ver `docs/PENDIENTES.md` punto 24 |
 | Motor de fichas del legajo (`js/fichas-legajo.js`) | Funciona. Dibuja, valida y recolecta Matrícula, estudio, experiencia y referencia leyendo `data/catalogo-fichas.json` y `data/catalogo-vocabularios.json`. Ninguna de las cuatro está escrita en la pantalla |
 | Formulario integral de datos del Paciente | Maquetado, paso a paso |
 | Cliente de datos (`js/apiClient.js`) | Funciona en modo local y modo Supabase |
 | Identidad del producto (`js/identidad.js`) | Funciona y está verificada. Ver abajo |
-| Alta y baja de una Prestadora desde CeltaTech | Funciona, y **es lo único que este producto recibe de afuera**. La función de borde `supabase/functions/alta-y-baja/index.ts` verifica la firma del pedido y llama a las tres funciones que le dan el alta, le corrigen el nombre y le fijan el estado: `alta_de_prestadora()`, `corregir_prestadora()` y `fijar_estado_de_prestadora()` (`supabase/migrations/0001_base_del_esquema.sql:72`, `:289` y `:1196`). Probada contra el servidor desplegado: `scripts/probar_alta_y_baja.mjs`, doce comprobaciones |
+| Alta y baja de una Prestadora desde CeltaTech | Funciona, y **es lo único que este producto recibe de afuera**. La función de borde `supabase/functions/alta-y-baja/index.ts` verifica la firma del pedido y llama a las tres funciones que le dan el alta, le corrigen el nombre y le fijan el estado: `alta_de_prestadora()`, `corregir_prestadora()` y `fijar_estado_de_prestadora()` (`supabase/migrations/0001_base_del_esquema.sql:78`, `:295` y `:1202`). Probada contra el servidor desplegado: `scripts/probar_alta_y_baja.mjs`, doce comprobaciones |
 
 **Maquetado** significa que la pantalla existe y se navega, no que la lógica detrás esté escrita.
 
@@ -113,7 +113,7 @@ es una sugerencia, porque un filtro que viaja en el pedido lo cambia quien llama
 Cómo quedó:
 
 - **Registrarse ya no decide nada.** El disparador de `auth.users` crea la fila de `profiles`
-  (`supabase/migrations/0001_base_del_esquema.sql:327-329`) y valida la Prestadora contra `tenants`, pero **el rol no sale
+  (`supabase/migrations/0001_base_del_esquema.sql:333-335`) y valida la Prestadora contra `tenants`, pero **el rol no sale
   de los metadatos**: quien se registra solo queda siempre con un rol sin acceso a los datos de la
   Prestadora. Pedir ser coordinador de otra Prestadora no sirve de nada.
 - **Pertenecer y poder ver son dos cosas distintas.** `public.es_personal_de_prestadora()` es el
@@ -256,7 +256,7 @@ quedado abierta.
   `pathologies_required`, la columna de las patologías, con un comentario que los llamaba
   «metadata extra» — que es como se llama a un dato cuando no se le hizo lugar. Hoy la columna
   existe y el contacto tiene su lugar propio: `avisos.contact_info` es un `jsonb` con nombre,
-  correo y teléfono (`supabase/migrations/0001_base_del_esquema.sql:2162`), y su comentario avisa
+  correo y teléfono (`supabase/migrations/0001_base_del_esquema.sql:2192`), y su comentario avisa
   que son datos de una persona real y que se vacían antes de producción
   (`supabase/migrations/0001_base_del_esquema.sql:2185`). El pendiente decía que ninguna pantalla
   mandaba contacto; sí lo mandaba, y era la pantalla pública.
@@ -548,14 +548,14 @@ con su indicación adentro (`pwa-asistente/index.html:331` y `:335`,
 que exista una cuenta de Asistente ficticia con la que se pueda entrar, y eso depende del tope de
 correos del pendiente 45.
 
-### Las tres migraciones que hay son las tres que corren
+### Los dos archivos que hay son los dos que corren
 
-`supabase/migrations/` tiene hoy tres archivos —`0001_base_del_esquema.sql`, que trae la
-estructura entera; `0002_siembra_ficticia.sql`, que trae los datos inventados; y
-`0003_dos_claves_de_catalogo_fuera_del_vocabulario.sql`—, y son exactamente las tres que la base
-de esta máquina declara aplicadas. Que el número de archivos coincida con el número de migraciones
-corridas no es una comodidad de la cuenta: es la única forma de que una base reconstruida desde
-cero dé lo mismo que la que está andando, y es lo primero que se mira cuando algo no coincide.
+`supabase/migrations/` tiene hoy dos archivos —`0001_base_del_esquema.sql`, que trae la
+estructura entera, y `0002_siembra_ficticia.sql`, que trae los datos inventados y las cuentas con
+las que se entra a mirarlos—, y son exactamente los dos que la base de esta máquina declara
+aplicados. Que el número de archivos coincida con el número de migraciones corridas no es una
+comodidad de la cuenta: es la única forma de que una base reconstruida desde cero dé lo mismo que
+la que está andando, y es lo primero que se mira cuando algo no coincide.
 
 Se comprueba y no se supone, porque el estado real manda sobre el documentado (la regla de la
 empresa «el estado real está por encima del documentado»): un archivo en `supabase/migrations/`
@@ -679,7 +679,7 @@ descartaba sin decir nada. Era el pendiente 23, y estaba abierto desde que la pa
   identifica un país o un ejército, pero nunca es una casilla». La tabla es
   `autorizaciones_asistente`, el catálogo es `data/catalogo-autorizaciones.json`, y donde la
   palabra nombraba un interruptor de código —`useSupabase`— dice interruptor. Donde todavía se lee
-  es en `patrones_de_contacto.banderas` (`supabase/migrations/0001_base_del_esquema.sql:2932`), que
+  es en `patrones_de_contacto.banderas` (`supabase/migrations/0001_base_del_esquema.sql:2893`), que
   no guarda ninguna casilla marcada sino las letras `g` e `i` con que se lee una expresión regular
   y que `js/contacto.js:112` le pasa a `RegExp`. Es otra cosa con el mismo nombre, y queda anotado
   acá para que quien lo encuentre no crea que es un resto del renombre.
@@ -741,7 +741,7 @@ Cierra el pendiente 36, el 25 de agosto de 2026.
 
 Quien se registraba desde el teléfono quedaba dado de alta sin legajo y sin poder aparecer nunca en
 el directorio: el directorio exige una fila en `autorizaciones_asistente` con un `join` y no con un
-`left join` (`supabase/migrations/0001_base_del_esquema.sql:791`), y esa pantalla no
+`left join` (`supabase/migrations/0001_base_del_esquema.sql:797`), y esa pantalla no
 tenía el paso que la crea. Ahora manda lo mismo que el portal.
 
 - **Los dos pasos que faltaban se dibujan desde el catálogo**, no están escritos en la pantalla.
@@ -1258,7 +1258,7 @@ favoritos, pagos, moderación y configuración.
 
 **Dónde quedó.** En `docs/TABLAS_QUE_FALTAN.md`, una ficha por tabla: para qué sirve, qué columnas
 proponía el material heredado, de qué depende, **qué hay que decidir antes de escribirla**, y de
-qué lado del reparto de `docs/MODULOS.md` cae cada una —ocho son propias de la modalidad de
+qué lado del reparto de `docs/MODULOS.md` cae cada una —ocho son propias de esta modalidad
 contrataciones y dos son compartidas—. También se transcribió entero el sistema de puntos y
 niveles que proponía, porque es una decisión de producto pensada y perderla costaría volver a
 pensarla; queda anotado que **no está aprobada** y que `docs/ALCANCE.md` §4 la tiene congelada.
@@ -1372,7 +1372,7 @@ aplicación, y lee de la base.
 - **El cliente de datos aprendió a pedir los cursos.** `getCursos()` en `js/apiClient.js` era lo que
   faltaba: ya sabía pedir las evaluaciones y los intentos de quien inició sesión, pero ninguna
   pantalla leía la tabla `cursos`
-  (`supabase/migrations/0001_base_del_esquema.sql:2462`). Filtra `publicado=eq.true` y ordena por
+  (`supabase/migrations/0001_base_del_esquema.sql:2359`). Filtra `publicado=eq.true` y ordena por
   `orden`. Ese filtro está en el pedido y no en la política de la tabla porque la
   política de `cursos` no mira `publicado` —la de `evaluaciones` sí—; que el curso sin publicar no
   llegue a la pantalla es lo que corresponde, que no llegue al navegador sería mejor, y eso es una
@@ -1682,11 +1682,11 @@ taparse.
   junto con cada referencia que las apunta. Con UUID no chocan.
 - **Todo importe se guarda con su moneda** (§5.11). Fue el único incumplimiento del esquema y se
   cerró el 5 de septiembre de 2026. `caregivers.hourly_rate`
-  (`supabase/migrations/0001_base_del_esquema.sql:482`) era un `numeric` a secas —el único importe
+  (`supabase/migrations/0001_base_del_esquema.sql:488`) era un `numeric` a secas —el único importe
   del esquema— y la moneda vivía escrita adentro de `js/texto.js`, igual para todo el mundo. El
   Desarrollador decidió que la elige cada Prestadora, y hoy está donde va: el vocabulario `moneda`,
   la columna `tenants.moneda` que la Prestadora configura desde su panel, y
-  `caregivers.moneda_valor_hora` (`supabase/migrations/0001_base_del_esquema.sql:485`), que el
+  `caregivers.moneda_valor_hora` (`supabase/migrations/0001_base_del_esquema.sql:491`), que el
   disparador `el_valor_hora_nace_con_su_moneda` (`:1053`) completa sola con la de su Prestadora y
   que la tabla exige cada vez que hay un valor por hora (`:486`). **La moneda se copia al legajo
   en vez de leerse de `tenants` cada vez**, por lo mismo que los cálculos económicos van «a la
@@ -1709,8 +1709,8 @@ la lista de exenciones vacía: aparecen los dos casos conocidos, cada uno en su 
 
 **El reparto de módulos se queda sin chequeo automático, y conviene dejar escrito por qué**, porque parecía
 la candidata más fácil: es la única que trae su propia lista de palabras. `docs/MODULOS.md`, «Cómo se comprueba que la línea está bien puesta»,
-manda «buscar en lo compartido cualquier palabra que sólo signifique algo acá —`modalidad`,
-directorio, aviso, postulación, contacto, puntaje, destacado—». Se midió el 25 de agosto de 2026 y
+manda «buscar en lo compartido cualquier palabra que sólo signifique algo acá —directorio,
+aviso, postulación, contacto, puntaje, destacado—». Se midió el 25 de agosto de 2026 y
 la medición dice que no.
 
 - **Sobre el texto crudo de las migraciones compartidas: once apariciones, once falsas.** Todas
@@ -1726,17 +1726,18 @@ la medición dice que no.
   siete la toca. Y la columna compartida que más cerca pasa de la línea,
   `autorizaciones_asistente.perfil_publicado`, no usa ninguna de las siete.
 - **Y la que decide: el único incumplimiento real que había ese día era invisible para esa
-  prueba.** Las dos tablas de esta modalidad no llevaban el prefijo de la modalidad que
-  `docs/GLOSARIO.md:20` aprobó para tablas el 24 de agosto, y ni `care_searches` ni
-  `franjas_busqueda` —así se llamaban— contenían ninguna de las siete palabras. La prueba
-  pasaba limpia con el problema adentro.
+  prueba.** Las dos tablas de esta modalidad se llamaban `care_searches` y `franjas_busqueda`, y
+  ninguna de las dos contenía ninguna de las siete palabras. La prueba pasaba limpia con el
+  problema adentro.
 
-**Lo que falta no es el chequeo, es el prefijo.** La propia página lo dice en
-`docs/MODULOS.md:63`: el prefijo «es lo que hace que la prueba de más abajo se pueda correr con
-una búsqueda de texto». Puesto el prefijo, la regla se vuelve mecánica —nada que no se llame
-`algo` puede nombrar una palabra de esta modalidad— y el chequeo se escribe en una tarde.
-Sin el prefijo, cualquier chequeo tendría que saber de qué lado está cada tabla, y ese reparto
-tabla por tabla no está escrito en ningún lado: `docs/MODULOS.md` reparte módulos.
+**Lo que falta es el reparto escrito tabla por tabla.** Un chequeo que quiera correr solo tiene
+que saber de qué lado está cada tabla, y eso no se deduce del nombre: se lee de una lista. La
+lista vive en `docs/PENDIENTES.md`, en el reparto de tabla por tabla, y es el único lugar donde
+está escrito. `docs/MODULOS.md` reparte módulos, que es otra cosa.
+
+**Y no se arregla poniéndole el nombre de la modalidad a las tablas.** Se probó, y salió mal: ese
+nombre quedó escrito en más de cuatrocientos lugares, y el 9 de septiembre de 2026 hubo que
+sacarlo de todos. Lo que se guarda se llama por lo que hace.
 
 Quedó anotado como **pendiente 52** y el Desarrollador lo decidió ese mismo día: se renombran
 las dos. Cómo quedó está en la sección de acá abajo.
@@ -1842,10 +1843,8 @@ opciones a la vista: se renombran las dos, no una sola. El motivo que dio es el 
 discusión —*no puede ser que tengamos distintos nombres para la misma cosa*—, y vale más que el
 trabajo de arreglarlo.
 
-**Eran dos problemas encimados.** El primero, el prefijo: `docs/GLOSARIO.md:20` había aprobado el
-24 de agosto que lo que sólo existe en esta modalidad lo lleve en el nombre, y no lo llevaba
-ninguna tabla. El segundo, la palabra: `care_searches` no guardaba búsquedas. Una búsqueda es el
-acto de buscar y no deja nada guardado; lo que queda guardado es el aviso que publica la Familia.
+**El problema era la palabra:** `care_searches` no guardaba búsquedas. Una búsqueda es el acto de
+buscar y no deja nada guardado; lo que queda guardado es el aviso que publica la Familia.
 
 **Cómo quedó.**
 
@@ -1950,7 +1949,7 @@ reparto no somos nosotros sino **cada Prestadora**, cuyo criterio puede legítim
 nuestro —y que puede, además, no querer calificar a nadie.
 
 Así que los pesos iguales dejaron de ser la regla y pasaron a ser **el valor de fábrica**, y para
-eso hay dos tablas, no una (`supabase/migrations/0001_base_del_esquema.sql:2413` y `:2347`):
+eso hay dos tablas, no una (`supabase/migrations/0001_base_del_esquema.sql:2413` y `:2937`):
 
 | Tabla | Qué guarda |
 |---|---|
@@ -1958,7 +1957,7 @@ eso hay dos tablas, no una (`supabase/migrations/0001_base_del_esquema.sql:2413`
 | `ponderacion_comprobacion` | Una fila por Prestadora y comprobación, con `ponderacion`. Arranca en 20 las cinco, que es 100 repartido en partes iguales |
 
 **Apagar el puntaje no apaga el escudo.** Son cosas distintas: el escudo dice que el legajo está
-validado, y eso es la puerta de la modalidad —no se entra sin eso—. El número dice cuánto acreditó
+validado, y eso es la puerta del directorio —no se entra sin eso—. El número dice cuánto acreditó
 alguien de más. Se puede no querer lo segundo sin dejar de necesitar lo primero.
 
 **Y una ponderación en cero no es lo mismo que apagar el puntaje.** Cero quiere decir «esta
@@ -2058,8 +2057,8 @@ llamábamos «el tenant» es sólo la del medio:
 
 | Barrera | Con qué se sostiene | Cómo estaba |
 |---|---|---|
-| Prestadora ↔ Prestadora | `tenant_id = prestadora_actual()` (`supabase/migrations/0001_base_del_esquema.sql:417`) | entera |
-| Asistente ↔ Asistente | `legajo_propio()` (`supabase/migrations/0001_base_del_esquema.sql:1584`); la carpeta propia en el depósito de archivos (`:5950`) | entera |
+| Prestadora ↔ Prestadora | `tenant_id = prestadora_actual()` (`supabase/migrations/0001_base_del_esquema.sql:423`) | entera |
+| Asistente ↔ Asistente | `legajo_propio()` (`supabase/migrations/0001_base_del_esquema.sql:1614`); la carpeta propia en el depósito de archivos (`:6033`) | entera |
 | Familia ↔ Familia | nada | **no existía** |
 
 Las dos primeras separan cosas que están en tablas distintas o en carpetas distintas. La
@@ -2171,7 +2170,7 @@ que mezcla dos empresas dejó de existir, en vez de depender de que nadie se olv
 
 **El rol anónimo no alcanza ni una tabla ni una vista que tenga datos de una Prestadora.** Lo
 único que lee de este esquema son tres objetos abiertos a propósito, y ninguno de los tres los
-tiene: las vistas `oferta_comercial_publica` (`supabase/migrations/0001_base_del_esquema.sql:2831`)
+tiene: las vistas `oferta_comercial_publica` (`supabase/migrations/0001_base_del_esquema.sql:2792`)
 y `oferta_de_cursos` (`:2857`), que su propio cuerpo acota a la oferta general del producto
 —`tenant_id is null`—, de modo que no sale por ahí ni un ítem de una Prestadora ni el nombre de
 ninguna; y la tabla `patrones_de_contacto` (`:2928`), que son las reglas del producto sobre qué
@@ -2200,7 +2199,7 @@ había tomado ese mismo día: se muestra el género, el directorio puede decir q
 legajo, y por eso vuelve el filtro que se había sacado el 24.
 
 **Qué sale y qué no.** La vista `directorio` ganó una columna, `comprobaciones`
-(`supabase/migrations/0001_base_del_esquema.sql:770`), con hasta cinco claves:
+(`supabase/migrations/0001_base_del_esquema.sql:776`), con hasta cinco claves:
 domicilio, referencia, matrícula, título y curso aprobado. Las cinco ya estaban restringidas en la
 base, así que no hubo que inventar ninguna palabra.
 
@@ -2250,7 +2249,7 @@ desaparece se lee como un error del programa y no como una negativa.
 
 | Pieza | Dónde | Por qué |
 |---|---|---|
-| Las reglas | la tabla `patrones_de_contacto` (`supabase/migrations/0001_base_del_esquema.sql:2928`) | Son una regla operativa, y una regla operativa no se escribe en el código. Quien quiera ajustar qué cuenta como teléfono agrega una fila y no toca ninguna pantalla ni despliega nada |
+| Las reglas | la tabla `patrones_de_contacto` (`supabase/migrations/0001_base_del_esquema.sql:2889`) | Son una regla operativa, y una regla operativa no se escribe en el código. Quien quiera ajustar qué cuenta como teléfono agrega una fila y no toca ninguna pantalla ni despliega nada |
 | La copia que ve el navegador | `data/patrones-contacto.json` | Generada desde la tabla con `node scripts/generar_patrones_contacto.mjs --escribir`. Existe porque el aviso previo tiene que poder avisar sin conexión, y `scripts/verificar_patrones_contacto.mjs` la compara contra la tabla en cada `commit` |
 | El reconocedor | `js/contacto.js` | Un solo lugar. Es el aviso previo del navegador, no el control |
 | La prueba | `scripts/verificar_contacto.mjs` | Entra sola al gancho de `pre-commit`, que busca los chequeos en la carpeta |
@@ -2532,7 +2531,7 @@ encontrado», o sea que el depósito está ahí y es público; `documentos-cuida
 otro**: si el privado se hubiera quedado público —que es lo que pasa cuando alguien lo crea a mano
 desde el tablero—, habría contestado igual que el primero. En el esquema de depósitos, en vivo,
 están las tres políticas que el esquema declara
-(`supabase/migrations/0001_base_del_esquema.sql:5949-5953`), y ninguna más. La que le deja al
+(`supabase/migrations/0001_base_del_esquema.sql:6032-6036`), y ninguna más. La que le deja al
 personal de la Prestadora mirar los papeles de su gente compara la Organización con un `join`
 contra el legajo, así que el aislamiento no depende del camino del archivo.
 
@@ -2766,7 +2765,7 @@ no tenía ninguna clave foránea hacia `auth.users`, así que una fila ahí no p
 cuenta detrás. **Eso es falso.** El 26 de agosto de 2026, probando otra cosa contra la base local,
 un `insert` en `profiles` con un identificador inventado lo rechazó `profiles_id_fkey`, que existe
 desde la primera migración, apunta a `auth.users(id)` y borra en cascada
-(`supabase/migrations/0001_base_del_esquema.sql:4331`). O sea que cada uno de los cinco perfiles
+(`supabase/migrations/0001_base_del_esquema.sql:4398`). O sea que cada uno de los cinco perfiles
 tuvo su cuenta de acceso: sin ella la fila no podía existir.
 
 Lo que sigue en pie es lo otro: tres de los cinco tienen identificador escrito a mano —unos, dos y
@@ -2778,7 +2777,7 @@ el Desarrollador ya había dicho lo que decide: son datos inventados y se van.
 
 **Con una salvedad que hoy hace falta decir, porque si no este párrafo choca con lo que se lee más
 abajo.** La siembra ficticia escribe los seis perfiles con las claves foráneas apagadas
-(`supabase/migrations/0002_siembra_ficticia.sql:32`), que es lo que hace cualquier volcado de datos
+(`supabase/migrations/0002_siembra_ficticia.sql:43`), que es lo que hace cualquier volcado de datos
 para no depender del orden en que se cargan las tablas, y la de `profiles` no dispara. Así que una
 fila de `profiles` prueba que hubo una cuenta de acceso cuando la escribió una sesión, y no prueba
 nada cuando la escribió la siembra: hoy hay seis perfiles sembrados y `auth.users` está vacía, que
@@ -2933,7 +2932,7 @@ donde la política dice `for all`; sólo consulta donde dice `for select`—, y 
 `REFERENCES` y `TRIGGER` no los tiene ningún rol, porque ninguna pantalla los usa y PostgREST no
 sabe pedirlos. A `anon` le quedan tres consultas y nada más, sobre lo único que se publica sin
 sesión. Y el permiso por omisión, que era el que reponía todo esto solo con cada tabla nueva, se
-revoca antes de que exista una sola tabla (`supabase/migrations/0001_base_del_esquema.sql:56-57`),
+revoca antes de que exista una sola tabla (`supabase/migrations/0001_base_del_esquema.sql:63-64`),
 con el motivo escrito al lado: `pg_dump` escribe lo que hay y no lo que falta, así que una base
 reconstruida desde el volcado, sin ese renglón, volvería a nacer abierta.
 
@@ -2948,7 +2947,7 @@ puesto también un permiso **por columna** escrito a propósito, `update (full_n
 `REVOKE ALL ON TABLE` no distingue el permiso sobre la tabla entera del permiso sobre una columna,
 borra los dos. El permiso volvió, y es el que la base tiene hoy: `profiles` le da a
 `authenticated` la consulta de la tabla y la escritura de una sola columna
-(`supabase/migrations/0001_base_del_esquema.sql:5862-5864`). Ninguna pantalla lo usa —`js/auth.js:244`
+(`supabase/migrations/0001_base_del_esquema.sql:5937-5939`). Ninguna pantalla lo usa —`js/auth.js:244`
 sólo lee `profiles`, no le escribe—, así que mientras faltó no hubo síntoma visible; lo que se
 había roto no era una función, era una defensa.
 
@@ -3007,7 +3006,7 @@ un directorio o para decidir a quién se muestra primero, y ese día el agujero 
 ventaja que alguien se dio a sí mismo.
 
 **Lo arregla un disparador `before insert or update`**, `la_fecha_de_alta_del_legajo`
-(`supabase/migrations/0001_base_del_esquema.sql:3898`): al dar de alta la fecha es la de ese
+(`supabase/migrations/0001_base_del_esquema.sql:3966`): al dar de alta la fecha es la de ese
 momento y se ignora lo que venga de afuera; al modificar, queda como estaba. Vale para todo el
 mundo, incluido el servidor.
 
@@ -3381,7 +3380,7 @@ producto en fuente de indicación clínica, y entonces alguien tiene que respond
 Asistente lo siga y salga mal. Avisar no es prescribir, y la pantalla lo dice arriba de todo en vez
 de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No indican tratamientos.»*
 
-- **La tabla es `guias_cuidado`** (`supabase/migrations/0001_base_del_esquema.sql:1279`), y cada
+- **La tabla es `guias_cuidado`** (`supabase/migrations/0001_base_del_esquema.sql:1285`), y cada
   guía cuelga de una opción del catálogo —hoy de una patología—, no de un texto suelto. Cuatro
   columnas de contenido: `descripcion`, `que_esperar`, `senales_de_alarma` y `en_emergencia`. Las
   dos primeras son texto, las dos últimas son listas, porque una señal se mira de a una y un paso
@@ -3447,7 +3446,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
   la sesión de la otra, no la pudo leer, ni cambiar, ni borrar. Contra la general, la coordinadora
   no pudo crear una, ni cambiar la que hay, ni borrarla; y sin sesión la pantalla manda a
   `acceso.html`. **La revisión se guarda como fecha y no como instante** —`revisada_el` es `date`
-  (`supabase/migrations/0001_base_del_esquema.sql:2668`)—: guardada como instante, un día
+  (`supabase/migrations/0001_base_del_esquema.sql:2600`)—: guardada como instante, un día
   declarado acá se mostraba como el anterior.
 - **Y el aislamiento de la puerta se compara en cualquier base**, incluida la publicada, porque la
   guía propia de cada una de las dos Prestadoras ficticias viene sembrada. Antes de eso, la prueba
@@ -3469,7 +3468,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 
 **Fue el pendiente 70, y era un agujero entero.** El directorio prometía decir qué se le comprobó a
 cada persona y no había dónde marcarlo: la tabla `verificaciones_asistente`
-(`supabase/migrations/0001_base_del_esquema.sql:567`) está con sus columnas de rastro
+(`supabase/migrations/0001_base_del_esquema.sql:573`) está con sus columnas de rastro
 —`verificado_por` y `verificado_el`— y la vista que las publica es `directorio` (`:742`), pero
 lo único que la escribía eran las dos siembras de las Organizaciones ficticias. En una Prestadora
 de verdad, por prolija que fuera revisando papeles, la tarjeta del directorio decía siempre que no
@@ -3493,7 +3492,7 @@ ya decía la tarjeta del directorio a la Familia, y es a propósito: dos palabra
 mismo hecho es como se empieza a tener dos catálogos.
 
 **Quién marcó y cuándo lo escribe la base, no el pedido.** Un disparador,
-`la_verificacion_dice_quien_la_marco` (`supabase/migrations/0001_base_del_esquema.sql:3926`), llena
+`la_verificacion_dice_quien_la_marco` (`supabase/migrations/0001_base_del_esquema.sql:4001`), llena
 `verificado_por` con `auth.uid()` y `verificado_el` con la hora del servidor. La pantalla podría
 mandarlos en el pedido, y entonces cualquiera con la clave pública podría firmar con el nombre de
 un compañero una comprobación que no hizo. También vuelve las dos columnas a vacío cuando el estado
@@ -3502,7 +3501,7 @@ ya no está comprobado— y no refresca la fecha cuando el estado no cambió.
 
 **Y el cliente de datos aprendió a hacer un alta-o-modificación en un solo pedido.**
 `_supabaseUpsert()` (`js/apiClient.js:1324`) se apoya en la restricción de unicidad de
-`(legajo, tipo)` del esquema (`supabase/migrations/0001_base_del_esquema.sql:3493`), así que
+`(legajo, tipo)` del esquema (`supabase/migrations/0001_base_del_esquema.sql:3554`), así que
 marcar el mismo papel dos veces corrige el renglón que ya está en vez de agregar otro. No existía
 en ninguna de las tres copias del archivo,
 y `marcarVerificacion()` (`js/apiClient.js:600`) es la primera que la usa.
@@ -3519,7 +3518,7 @@ huella y saca la comprobación de la tarjeta.
 
 **Lo que esta pantalla no hace, dicho de frente.** Marca el estado y nada más. **No pone plazos**:
 `plazo_vence_el` tiene su índice
-(`supabase/migrations/0001_base_del_esquema.sql:3791-3793`) y sigue sin que nadie
+(`supabase/migrations/0001_base_del_esquema.sql:3859-3861`) y sigue sin que nadie
 lo escriba, así que «Vencido» hay que ponerlo a mano y nada avisa antes — es el mismo agujero que
 el pendiente 98, con su plan escrito en `docs/PLAN_VENCIMIENTOS.md` y sin aprobar.
 
@@ -3529,14 +3528,14 @@ el pendiente 98, con su plan escrito en `docs/PLAN_VENCIMIENTOS.md` y sin aproba
 `data/catalogo-verificaciones.json` declaraba papel por papel qué frenaba cada uno —el alta, la
 publicación, o nada— y **no lo leía ninguna pantalla ni ningún guion**: un legajo llegaba al
 directorio sin un solo papel comprobado. Peor todavía, la vista ya lo prometía: el comentario de su
-propia columna, desde `supabase/migrations/0001_base_del_esquema.sql:822-824`, decía
+propia columna, desde `supabase/migrations/0001_base_del_esquema.sql:828-830`, decía
 que esos papeles «las pasaron todos los que aparecen acá». No era cierto.
 
 **Aparecer en el directorio pide ahora tres cosas, y las tres hacen falta.** La Prestadora validó
 el legajo, la persona dijo que sí a publicarse, y **los papeles de la puerta están comprobados**:
 antecedentes penales y certificado de salud siempre, más matrícula y título si el tipo de Asistente
 los exige. La condición está adentro de la vista `directorio`
-(`supabase/migrations/0001_base_del_esquema.sql:742`), que es donde el directorio se arma.
+(`supabase/migrations/0001_base_del_esquema.sql:748`), que es donde el directorio se arma.
 
 **La regla no está en el SQL: está en la base, como corresponde a un catálogo.** Cada verificación
 lleva, en la columna `extra` de su fila de `vocabulario_items`, tres claves
@@ -3594,11 +3593,11 @@ análisis subjetivo— para la validación, más adelante y junto con las otras 
 antes de la puerta `publicacion`. Hasta que ese juicio llega, el legajo es de un **Aspirante**; con
 el ok de la Prestadora pasa a integrar el directorio de **Asistentes**. Ninguna de las dos cosas es
 una columna nueva: `verification_status` ya nace en `en_revision`
-(`supabase/migrations/0001_base_del_esquema.sql:471`), y ahí es exactamente donde queda un
+(`supabase/migrations/0001_base_del_esquema.sql:477`), y ahí es exactamente donde queda un
 Aspirante hasta que la Prestadora lo pasa a `validado_prestadora`.
 
 **La cierra el disparador `el_legajo_no_completa_el_alta_sin_sus_papeles`
-(`supabase/migrations/0001_base_del_esquema.sql:3856`), del mismo lado de la base que la puerta de
+(`supabase/migrations/0001_base_del_esquema.sql:3924`), del mismo lado de la base que la puerta de
 publicación.** Es un `before insert` en `caregivers`: lee `extra.puerta` de `vocabulario_items`
 —hoy sólo `dni` la tiene en `alta`— y exige que `caregivers.documents` traiga
 esa clave con un valor que no sea vacío ni `pendiente`. No mira si el Prestadora ya lo aprobó —eso
@@ -3663,9 +3662,9 @@ pueda leer**. Sin un solo mensaje de error.
 
 **Contra eso la columna quedó cerrada en el esquema, y es lo que hoy lo sostiene.**
 `avisos.familia_id` es `not null` y su valor por omisión es `auth.uid()`
-(`supabase/migrations/0001_base_del_esquema.sql:2170`), así que un aviso sin autora no se puede
+(`supabase/migrations/0001_base_del_esquema.sql:2200`), así que un aviso sin autora no se puede
 guardar. La llave foránea va con `on delete cascade`
-(`supabase/migrations/0001_base_del_esquema.sql:3979`), la misma forma que tienen
+(`supabase/migrations/0001_base_del_esquema.sql:4054`), la misma forma que tienen
 `conversaciones.familia_id` y `mensajes.autor_id`: borrar una cuenta de Familia se
 lleva sus conversaciones, sus mensajes y también sus avisos. Los doce avisos sembrados tienen su
 autora, y cada Familia lo es sólo de los seis de su propia Organización, nunca de los de la otra.
@@ -3705,9 +3704,9 @@ exactamente lo que acaba de pasar del otro lado, con las cuentas.
 **Eran cuatro pendientes y era un solo defecto cuatro veces:** la política decide por fila, y lo
 que importaba era qué columna se toca. Las dos políticas de `caregivers` son `for all` y no
 nombran ninguna columna —«Su propio legajo»
-(`supabase/migrations/0001_base_del_esquema.sql:4815`) y «Legajos de la Prestadora, para su
-personal» (`supabase/migrations/0001_base_del_esquema.sql:4690`)—, y la de `profiles` dice «cada
-quien escribe su propia fila» (`supabase/migrations/0001_base_del_esquema.sql:4871`). Las tres
+(`supabase/migrations/0001_base_del_esquema.sql:4890`) y «Legajos de la Prestadora, para su
+personal» (`supabase/migrations/0001_base_del_esquema.sql:4765`)—, y la de `profiles` dice «cada
+quien escribe su propia fila» (`supabase/migrations/0001_base_del_esquema.sql:4946`). Las tres
 contestan bien la pregunta que se les hace —«¿esta fila es suya?»— y ninguna contesta la que hacía
 falta. Cuando la respuesta es sí, quien pide escribe la fila **entera**, incluidas las columnas
 donde vive el veredicto de otro:
@@ -3734,19 +3733,19 @@ disco —el aplastamiento dejó el estado al que llevaba, no el camino—, así 
 resultado:
 
 - Sobre `caregivers`, `before insert or update`
-  (`supabase/migrations/0001_base_del_esquema.sql:3863`, función en `:929`): en el alta el sello
+  (`supabase/migrations/0001_base_del_esquema.sql:3931`, función en `:935`): en el alta el sello
   **no se toma del pedido**, lo pone el disparador; en la modificación, si cambia y quien pide no
   es personal, se rechaza. El `user_id` no cambia después del alta, para nadie. Y el papel nuevo
   baja el sello, que es la opción A.
 - Sobre `profiles`, `before update`
-  (`supabase/migrations/0001_base_del_esquema.sql:3877`, función en `:1022`): `role` y
+  (`supabase/migrations/0001_base_del_esquema.sql:3945`, función en `:1028`): `role` y
   `tenant_id` no cambian desde una sesión. **Acá no hay excepción para el personal, y es a
   propósito:** la política de `profiles` no le deja a nadie alcanzar el perfil de otra persona, así
   que lo único que un permiso al personal habilitaría es ascenderse a sí mismo y mudarse solo de
   Prestadora, que es justo el agujero.
 
 Lo que cada uno hace está además escrito en la base, en su propio comentario
-(`supabase/migrations/0001_base_del_esquema.sql:984` y `:1046`), así que aparece al mirar la
+(`supabase/migrations/0001_base_del_esquema.sql:990` y `:1052`), así que aparece al mirar la
 función y no hay que venir hasta acá.
 
 **Y sin sesión el disparador no interviene.** Cuando `auth.uid()` es nulo no hay a quién exigirle
@@ -3756,7 +3755,7 @@ un legajo ya validado lo habría escrito sin sello y sin decirlo.
 
 **El permiso por columna del 82 se conservó, no se reemplazó.**
 `grant update (full_name) on public.profiles to authenticated`
-(`supabase/migrations/0001_base_del_esquema.sql:5864`) sigue siendo la primera puerta; el
+(`supabase/migrations/0001_base_del_esquema.sql:5939`) sigue siendo la primera puerta; el
 disparador es la segunda, que es la que se lee donde se la busca. El 82 nunca fue un agujero
 abierto sino una trampa armada: la protección no vivía donde se la lee, y ya se había perdido una
 vez sin que nadie se enterara —una migración se la llevó puesta y la siguiente tuvo que
@@ -3898,11 +3897,12 @@ De acá salen dos cosas prácticas:
 
 ### Consecuencias
 
-1. **Acá no se usa la palabra `marketplace` en ningún identificador.** No porque el significado
-   esté tomado, sino porque el valor guardado ya la usa y colisionaría. **El término técnico se
-   eligió el 24 de agosto de 2026: la modalidad se llama modalidad de este producto y su
-   identificador es `modalidad`** (`docs/GLOSARIO.md` §3 y §4). El nombre comercial «Careonys
-   Marketplace» no cambia: es decisión de marca y no entra al código.
+1. **Acá no se usa la palabra `marketplace` en ningún identificador.** Lo ordenó el Desarrollador,
+   y además el valor guardado ya la usa y colisionaría. **Y la modalidad no nombra nada de lo
+   guardado**: cada tabla y cada módulo se llaman por lo que hacen, y el nombre de la modalidad
+   vive en un solo renglón del glosario del producto, para que cambiarlo sea un trámite de treinta
+   segundos. El nombre comercial «Careonys Marketplace» no cambia: es decisión de marca y no entra
+   al código.
 2. **`docs/GLOSARIO.md` §1 tiene la definición equivocada.** Dice que en marketplace *"el Asistente
    elige cuáles toma"*, que es la parte que vale para las dos. Es un término heredado: se corrige
    en el glosario de Careonys, no acá.
@@ -3929,8 +3929,7 @@ nuevo:
 2026), que traza la línea de corte también para lo que no existe todavía de ningún lado.
 
 Lo propio de esta modalidad es lo que la distingue: que el cliente **busca y elige** en vez de
-recibir una asignación. Eso es el directorio, el perfil, el filtro y la solicitud. Sus
-módulos llevan el prefijo de la modalidad.
+recibir una asignación. Eso es el directorio, el perfil, el filtro y la solicitud.
 
 ### La comparación va en los dos sentidos
 

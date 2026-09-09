@@ -95,7 +95,7 @@ dependencia, un contrato autónomo, o la que corresponda según la ley y según 
 pacten. **Este documento no la define y no la reemplaza**: lo que rija su Vínculo está en el
 acuerdo que celebre con su Prestadora, no acá.
 
-**3.3. Su autonomía en la modalidad de este producto.** Cuando el trabajo llega por esta vía
+**3.3. Su autonomía.** Cuando el trabajo llega por esta vía
 —usted mira los Avisos publicados y decide cuáles le sirven— el software le garantiza tres
 cosas, y no las condiciona a nada:
 
@@ -129,9 +129,9 @@ hagan, digan, recomienden o indiquen**, adentro o afuera del sistema.
 liquida honorarios y no emite comprobantes: no tiene con qué. No hay ninguna pasarela de
 pagos, no se guarda ninguna tarjeta, y ni siquiera se guarda la identificación fiscal de la
 Prestadora, porque acá no se factura: la tabla de Prestadoras no tiene ninguna columna fiscal
-(`supabase/migrations/0001_base_del_esquema.sql:3058-3072`). Lo único que el
+(`supabase/migrations/0001_base_del_esquema.sql:3104-3118`). Lo único que el
 sistema guarda sobre su dinero son los datos bancarios que usted carga para que le paguen
-(`supabase/migrations/0001_base_del_esquema.sql:476`): son un dato más del Legajo, no una
+(`supabase/migrations/0001_base_del_esquema.sql:482`): son un dato más del Legajo, no una
 autorización a debitarle nada. El precio por hora que aparece en su Perfil es el que usted
 declaró, no una tarifa que fije el software. Cuánto cobra, cómo y cuándo se lo pagan se
 acuerda con su Prestadora o con quien lo contrate, y se paga por fuera de este sistema.
@@ -183,7 +183,7 @@ por otra vía.
 no contestar nunca vale por un sí. Mientras esté apagada, o mientras su Prestadora no haya
 validado su Legajo, usted no aparece en ninguna parte: el directorio muestra solamente a quien
 tiene las dos cosas, el Legajo validado y el Perfil publicado
-(`supabase/migrations/0001_base_del_esquema.sql:793`).
+(`supabase/migrations/0001_base_del_esquema.sql:799`).
 Publicado, el Perfil **se ve sin iniciar sesión**, porque una Familia mira antes de
 registrarse; la pantalla del directorio les pide a los buscadores que no lo indexen
 (`directorio.html:11`). Lo que se muestra ahí es lo dicho en la §4.4, y nunca su documento, su
@@ -192,23 +192,23 @@ teléfono, su correo ni su domicilio, marque lo que marque
 
 **4.9. Los archivos que sube, y dónde quedan.** Los papeles del Legajo —documento,
 certificado de antecedentes, títulos, matrícula— van a un depósito **privado**, que no le
-contesta a nadie desde afuera (`supabase/migrations/0001_base_del_esquema.sql:5951`). Cada
+contesta a nadie desde afuera (`supabase/migrations/0001_base_del_esquema.sql:6034`). Cada
 archivo queda en una carpeta que es de su cuenta y de ninguna otra, y sólo usted los sube, los
-reemplaza y los borra (`supabase/migrations/0001_base_del_esquema.sql:5950`). El personal de
+reemplaza y los borra (`supabase/migrations/0001_base_del_esquema.sql:6033`). El personal de
 su Prestadora los **lee**, para poder auditarlos, y no los modifica
-(`supabase/migrations/0001_base_del_esquema.sql:5951`). Y cuando hay que mostrarle uno, el
+(`supabase/migrations/0001_base_del_esquema.sql:6034`). Y cuando hay que mostrarle uno, el
 sistema pide un enlace temporal que vence a los cinco minutos (`js/auth.js:358`), en vez de
 una dirección fija que quede dando vueltas.
 
 **Con la fotografía es distinto, y conviene que lo sepa.** La foto del Perfil vive en un
-depósito **público** (`supabase/migrations/0001_base_del_esquema.sql:5949`), porque el
+depósito **público** (`supabase/migrations/0001_base_del_esquema.sql:6032`), porque el
 directorio se ve sin iniciar sesión y las fotos tienen que poder cargarse ahí. Quien conozca
 su dirección exacta puede abrirla sin tener cuenta. Si eso no le sirve, no suba fotografía.
 
 **4.10. Las referencias que carga son datos de otra persona.** Cuando carga una referencia
 laboral, lo que queda guardado no es suyo: es el nombre, el teléfono, la relación y el
 comentario de un tercero que no está usando el sistema y que no aceptó nada
-(`supabase/migrations/0001_base_del_esquema.sql:3010-3019`). Por eso van
+(`supabase/migrations/0001_base_del_esquema.sql:3056-3065`). Por eso van
 tres reglas juntas:
 
 - **Avísele a esa persona antes de cargarla.** El sistema se lo recuerda en la misma pantalla,
@@ -225,7 +225,7 @@ nada que no haga falta para llamarlas.
 
 **4.11. La posición desde donde ficha.** Cuando marca el check-in y el check-out, el sistema
 le pide al navegador dónde está y guarda esa posición junto con la marca
-(`supabase/migrations/0001_base_del_esquema.sql:2430-2436`). Se guarda **solamente en ese
+(`supabase/migrations/0001_base_del_esquema.sql:2276-2282`). Se guarda **solamente en ese
 instante**: no hay seguimiento continuo, no se registra su recorrido y no se mira dónde está
 entre una marca y la otra. El permiso lo da usted en el navegador y lo puede negar; si lo
 niega, no se guarda nada, ni la posición ni la marca. Para qué sirve: para dejar constancia de
@@ -300,12 +300,12 @@ derecho a leerlo. No se comparte por fuera del sistema.
 
 **6.4. Los papeles y el dinero de otra persona.** Lo que el sistema le pide es **suyo**: su
 documento, sus certificados y, si los carga, sus datos bancarios para cobrar
-(`supabase/migrations/0001_base_del_esquema.sql:476`). No cargue, no muestre y no difunda el
+(`supabase/migrations/0001_base_del_esquema.sql:482`). No cargue, no muestre y no difunda el
 documento de identidad, la clave, la cuenta bancaria ni el medio de cobro de ninguna otra
 persona —ni del Paciente, ni de su familia, ni de un compañero de trabajo—, ni adentro del
 sistema ni fuera de él. El directorio público no expone datos de esa clase de nadie, y así
 está construido: la vista no trae ni un documento ni una cuenta
-(`supabase/migrations/0001_base_del_esquema.sql:743-753`).
+(`supabase/migrations/0001_base_del_esquema.sql:749-759`).
 
 ## 7. Cursos y evaluaciones
 
@@ -348,7 +348,7 @@ baja.
 
 **8.5. Una cuenta por persona.** Una persona tiene una sola cuenta, y esa cuenta tiene un solo
 Legajo: la base no admite que una misma cuenta quede dueña de dos
-(`supabase/migrations/0001_base_del_esquema.sql:3590`). No abra cuentas con el nombre, el
+(`supabase/migrations/0001_base_del_esquema.sql:3637`). No abra cuentas con el nombre, el
 correo o el documento de otra persona, ni cuentas de más para usted mismo.
 
 **8.6. Datos reales y al día.** Lo que carga tiene que ser verdadero, suyo y estar vigente
@@ -356,7 +356,7 @@ correo o el documento de otra persona, ni cuentas de más para usted mismo.
 correo son por donde su Prestadora lo ubica: si cambian, actualícelos. Y tenga presente que
 **cambiar un papel del Legajo devuelve el sello de validación a «en revisión»** hasta que su
 Prestadora lo mire otra vez
-(`supabase/migrations/0001_base_del_esquema.sql:965-972`). No es una
+(`supabase/migrations/0001_base_del_esquema.sql:971-978`). No es una
 sanción: el sello habla de los papeles que están cargados hoy, así que cuando cambia uno,
 vuelve a revisarse.
 
@@ -374,7 +374,7 @@ cosas distintas y cada una sigue su camino.
 
 **9.4. Qué pasa cuando se da de baja un Legajo.** Su Perfil deja de aparecer en el directorio
 en ese mismo momento, porque ahí sólo se muestra el Legajo validado
-(`supabase/migrations/0001_base_del_esquema.sql:793`).
+(`supabase/migrations/0001_base_del_esquema.sql:799`).
 Lo que ya ocurrió **no se borra**: las Guardias cumplidas, las marcas de check-in y de
 check-out y los reportes quedan donde están, porque son la constancia del trabajo hecho y de
 lo que se le deba. Su Legajo y sus archivos quedan bajo la guarda de su Prestadora por el

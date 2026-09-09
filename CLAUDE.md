@@ -17,9 +17,8 @@
 > perder este modelo de vista fue el error que más tiempo costó: la línea de comandos lo fue a
 > buscar a documentos de diseño viejos en vez de tenerlo presente.
 
-**Careonys Marketplace es la modalidad de este producto**: un mercado de cuidado domiciliario que
-vive **adentro de una Prestadora**. Muchos que ofrecen y muchos que buscan, todos de la misma
-Organización.
+**Careonys Marketplace es un mercado de cuidado domiciliario que vive adentro de una
+Prestadora.** Muchos que ofrecen y muchos que buscan, todos de la misma Organización.
 
 | Actor | Qué hace |
 |---|---|
@@ -91,9 +90,17 @@ El glosario es el de los dos productos y **no se copia acá**. Lo único propio 
 productos se fusionen, esa lista es la que se revisa para decidir cuáles suben.
 
 **La palabra `marketplace` no se usa en ningún identificador de este proyecto** — ni sola ni como
-parte de una palabra compuesta. El valor ya está guardado en tres tablas de Careonys nombrando
-otra cosa. **El término técnico es `modalidad`** y el nombre visible «modalidad de este producto»;
-«Careonys Marketplace» sigue siendo el nombre comercial. Decidido el 2026-08-24.
+parte de una palabra compuesta. Lo ordenó el Desarrollador: «Marketplace» es un nombre provisorio
+que va a cambiar, y además ese valor ya está guardado en tres tablas de Careonys nombrando otra
+cosa. Como nombre comercial sigue en pie.
+
+**Y el nombre de la modalidad tampoco nombra nada de lo guardado.** Ninguna tabla, columna, clave
+de traducción ni nombre de módulo lo lleva: cada cosa se llama por lo que hace. El nombre de la
+modalidad vive en un solo renglón, en `docs/GLOSARIO.md`, **y cambiarlo tiene que ser un trámite
+de treinta segundos**. Lo ordenó el Desarrollador al empezar este producto. La línea de comandos
+lo incumplió: eligió una palabra por su cuenta, la escribió como prefijo en más de cuatrocientos
+lugares y la anotó en este archivo como decisión de él. El 9 de septiembre de 2026 él la retiró
+del producto entero, y sacarla costó una tarea completa.
 
 ## 4. Lo propio de este producto en el desarrollo
 
@@ -116,6 +123,19 @@ avisa.
 la primera pantalla**, no al final.
 
 **La lógica comercial sigue frenada** por `docs/ALCANCE.md` §4. Construirla se consulta antes.
+
+**Cuando la diferencia es de escritura, el sistema corrige; no rechaza. Y el contenido no se
+inventa nunca.** Fijado por el Desarrollador el 9 de septiembre de 2026, a partir del fichado.
+Rechazar un dato por una mayúscula, un espacio de más o un acento le traslada a quien trabaja el
+costo de un error que cometió el programa: el Asistente ficha parado en la puerta de una casa,
+apurado, con el teléfono en una mano, y si eso falla no lo reintenta —deja de usarlo, y
+abandonado no protege a nadie—. Así que la base acomoda la forma antes de guardar, en vez de
+devolver un error. **Y ahí termina.** Un dato que llega raro pero es contenido —una hora, un
+importe, un texto— se guarda tal cual llegó, aunque salte a la vista que está mal: acomodarlo es
+inventar algo que nadie vivió y después mostrárselo a la Familia como si fuera cierto. Corregir
+la forma es ayudar; inventar el contenido es mentir. Cuando las dos horas de un hecho pueden no
+coincidir —cuándo pasó y cuándo se supo—, se guardan las dos y la diferencia queda a la vista de
+quien mire.
 
 **El código que sirve y ya no lo usa nadie se guarda, no se tira, y no se guarda acá adentro.**
 Fijado por el Desarrollador el 9 de septiembre de 2026. Cuando una capacidad funciona bien y lo

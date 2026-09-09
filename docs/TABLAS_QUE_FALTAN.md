@@ -57,7 +57,7 @@ Antes de escribir cualquiera de las diez, y sin excepción:
 4. **Todo importe se guarda con su moneda** (la regla de la empresa del mismo nombre). `pagos` lo cumple;
    `postulaciones.tarifa_propuesta` **no**, y es un número suelto.
 5. **Ninguna palabra propia de esta modalidad entra en un módulo compartido**
-   (la regla de la empresa «ninguna palabra propia de un producto entra en un módulo»). De las diez, ocho son propias de la modalidad de este producto y sólo dos
+   (la regla de la empresa «ninguna palabra propia de un producto entra en un módulo»). De las diez, ocho son propias de esta modalidad y sólo dos
    son compartidas. La columna «De qué lado cae» de cada ficha lo dice.
 
 **La colisión de vocabulario que había acá se decidió.** El material heredado llamaba `avisos`
@@ -79,7 +79,7 @@ no es ninguna de las dos cosas es **búsqueda**: buscar es el acto, y el acto no
 ### 1. `postulaciones` — el Asistente se ofrece a un aviso — **CONSTRUIDA**
 
 Está declarada en `supabase/migrations/0001_base_del_esquema.sql:2376`. Era la mitad
-que faltaba de la modalidad de este producto: una Familia podía publicar lo que necesitaba y **nadie
+que faltaba: una Familia podía publicar lo que necesitaba y **nadie
 podía contestarle**.
 
 **Quedó más chica que la propuesta, y por una razón.** El Desarrollador decidió el 31 de agosto
@@ -103,7 +103,7 @@ juntaron en tres archivos: hoy no queda escrito en ninguna parte del esquema.
 
 ### 2 y 3. `conversaciones` y `mensajes` — el canal entre las dos partes — **CONSTRUIDAS**
 
-Están declaradas en `supabase/migrations/0001_base_del_esquema.sql:2248` y `:2318`, en la misma
+Están declaradas en `supabase/migrations/0001_base_del_esquema.sql:2248` y `:2704`, en la misma
 tanda que la anterior.
 
 **Cuál de los dos modelos quedó, y no fue una preferencia.** La pregunta era si el chat cuelga de
@@ -123,7 +123,7 @@ del último mensaje —que se deriva—. La columna de la Organización está en
 Desarrollador el 24 de agosto de 2026: **adentro del chat no se pueden filtrar datos de
 contacto**. Si se filtran, la conversación sigue por afuera y la Prestadora cobra una vez y nunca
 más. `mensajes` ya no guarda el contenido tal como llega: el disparador
-`el_mensaje_no_lleva_datos_de_contacto` (`supabase/migrations/0001_base_del_esquema.sql:3870`) lo
+`el_mensaje_no_lleva_datos_de_contacto` (`supabase/migrations/0001_base_del_esquema.sql:3938`) lo
 revisa **del lado del servidor** antes de escribirlo, porque un control escrito
 en el navegador lo saltea cualquiera. Eran los pendientes 62 y 137, cerrados el 2 de septiembre
 de 2026.
@@ -246,7 +246,7 @@ importe, moneda y fecha. Nada del acuerdo entre la Familia y el Asistente entra 
 ### 10. `moderacion` — alguien denuncia algo
 
 **No se llama `reportes`.** Ese nombre ya está ocupado: `reportes`
-(`supabase/migrations/0001_base_del_esquema.sql:3034`) es el reporte de cuidado, la tabla que la
+(`supabase/migrations/0001_base_del_esquema.sql:3080`) es el reporte de cuidado, la tabla que la
 ficha de más arriba cuenta entre lo ya construido. `docs/ESQUEMA.md` §4 la nombra `moderacion` desde el
 principio, y acá se escribe igual.
 

@@ -239,14 +239,20 @@ for (const cita of citas) {
   if (viejo === null || viejo === undefined) { cuenta.sinBase += cita.renglones.length; continue; }
   const antes = viejo.split('\n');
   const ahora = hoy(cita.ruta);
+  cita.antes = antes;
+  cita.ahora = ahora;
+  cita.destinos = new Map();
   for (const n of cita.renglones) {
     const r = aDondeFue(antes, ahora, n);
     if (r.estado === 'sin base') { cuenta.sinBase++; continue; }
     cuenta.miradas++;
-    if (r.estado === 'igual') cuenta.iguales++;
+    if (r.estado === 'igual') { cuenta.iguales++; cita.destinos.set(n, n); }
     else if (r.estado === 'ambigua') cuenta.ambiguas++;
     else if (r.estado === 'perdida') { cuenta.perdidas++; perdidas.push({ ...cita, n, ...r }); }
-    else { cuenta.corridas++; corridas.push({ ...cita, n, ...r }); }
+    else {
+      cuenta.corridas++; corridas.push({ ...cita, n, ...r });
+      cita.destinos.set(n, r.renglon); cita.corrida = true;
+    }
   }
 }
 
@@ -258,14 +264,59 @@ if (cuenta.miradas === 0) {
 
 /* ---- Arreglar ---------------------------------------------------------- */
 
+/** ¿El tramo viejo `desde`-`hasta` está hoy, palabra por palabra, en `a`-`b`? */
+function elTramoEsEseMismo(cita, desde, hasta, a, b) {
+  if (a < 1 || b - a !== hasta - desde || b > cita.ahora.length) return false;
+  for (let i = 0; i <= hasta - desde; i++) {
+    if ((cita.antes[desde - 1 + i] || '').trim() !== (cita.ahora[a - 1 + i] || '').trim()) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/** El sufijo nuevo de una cita corrida, o `null` si no se puede saber.
+    Un tramo se corrige entero, y la punta de abajo no puede quedar arriba de la
+    de arriba: eso querría decir que lo citado se partió en dos, y ahí ya no hay
+    un tramo que corregir sino un texto que alguien tiene que volver a mirar.
+
+    Y cuando de un tramo se pudo seguir una sola punta —la otra era un renglón
+    en blanco, o un texto que se repite y no se sabe cuál de los dos es—, **no
+    se adivina la otra: se propone y se comprueba.** Se corre el tramo entero lo
+    mismo que se corrió la punta conocida y se compara renglón por renglón
+    contra el texto de antes; sólo si son el mismo texto se escribe. Si no, la
+    cita queda para la mano, que es lo correcto: quiere decir que lo citado no
+    se movió entero. */
+function sufijoNuevo(cita) {
+  const desde = cita.renglones[0];
+  const hasta = cita.renglones[cita.renglones.length - 1];
+  const a = cita.destinos.get(desde);
+  const b = cita.destinos.get(hasta);
+  if (desde === hasta) return a === undefined ? null : ':' + a;
+
+  if (a !== undefined && b !== undefined) return b < a ? null : ':' + a + '-' + b;
+
+  const largo = hasta - desde;
+  if (a !== undefined && elTramoEsEseMismo(cita, desde, hasta, a, a + largo)) {
+    return ':' + a + '-' + (a + largo);
+  }
+  if (b !== undefined && elTramoEsEseMismo(cita, desde, hasta, b - largo, b)) {
+    return ':' + (b - largo) + '-' + b;
+  }
+  return null;
+}
+
 if (arreglar && corridas.length > 0) {
   const aMano = [];
   const porDocumento = new Map();
-  for (const c of corridas) {
-    if (!/^:\d+$/.test(c.sufijo)) { aMano.push(c); continue; }
-    if (!porDocumento.has(c.doc)) porDocumento.set(c.doc, []);
-    porDocumento.get(c.doc).push(c);
+  for (const cita of citas) {
+    if (!cita.corrida) continue;
+    cita.nuevo = sufijoNuevo(cita);
+    if (cita.nuevo === null || cita.nuevo === cita.sufijo) { aMano.push(cita); continue; }
+    if (!porDocumento.has(cita.doc)) porDocumento.set(cita.doc, []);
+    porDocumento.get(cita.doc).push(cita);
   }
+  let corregidas = 0;
   for (const [doc, cambios] of porDocumento) {
     const lineas = readFileSync(join(raiz, doc), 'utf8').split('\n');
     cambios.sort((a, b) => b.linea - a.linea || b.columna - a.columna);
@@ -273,17 +324,18 @@ if (arreglar && corridas.length > 0) {
       const linea = lineas[c.linea - 1];
       /* La forma corta se corrige corta: escribirle el archivo la alargaría
          sin motivo, y el archivo es el mismo que el de la cita de al lado. */
-      const nueva = '`' + (c.heredada ? '' : c.ruta) + ':' + c.renglon + '`';
+      const nueva = '`' + (c.heredada ? '' : c.ruta) + c.nuevo + '`';
       lineas[c.linea - 1] =
         linea.slice(0, c.columna) + nueva + linea.slice(c.columna + c.entera.length);
     }
     writeFileSync(join(raiz, doc), lineas.join('\n'));
     console.log('  corregidas ' + cambios.length + ' en ' + doc);
+    corregidas += cambios.length;
   }
   console.log('');
-  console.log('Se corrigieron ' + (corridas.length - aMano.length) + ' citas.');
+  console.log('Se corrigieron ' + corregidas + ' citas.');
   if (aMano.length > 0) {
-    console.log('Quedan ' + aMano.length + ' que son tramos y se corrigen a mano:');
+    console.log('Quedan ' + aMano.length + ' que se corrigen a mano:');
     for (const c of aMano) console.log('  - ' + c.doc + ':' + c.linea + '  ' + c.entera);
   }
   process.exit(0);

@@ -19,7 +19,7 @@
 **La baja de CeltaTech no borra: cambia el estado.** La puerta traduce el aviso de la suscripción a
 uno de tres valores —`activo`, `suspendido`, `cancelado`
 (`supabase/functions/alta-y-baja/index.ts:102`, y la restricción que los admite en
-`supabase/migrations/0001_base_del_esquema.sql:3072`)—. **No hay un
+`supabase/migrations/0001_base_del_esquema.sql:3118`)—. **No hay un
 solo `DELETE` en esa función**, comprobado buscándolo.
 
 Y el estado protege de verdad. Medido por el camino que usan las pantallas, que es la función
@@ -43,7 +43,7 @@ Era **la limpieza de la propia prueba**. `scripts/probar_alta_y_baja.mjs` crea u
 ficticia y al final la borra con la llave de administración para no dejar basura en la base
 publicada. Ese borrado es el que chocaba, porque toda Prestadora nace configurada —lo hace el
 disparador `la_prestadora_nace_configurada` sobre `tenants`
-(`supabase/migrations/0001_base_del_esquema.sql:3912`, y su función en `:1476`)—, y esas seis
+(`supabase/migrations/0001_base_del_esquema.sql:3987`, y su función en `:1506`)—, y esas seis
 filas de configuración de puntaje apuntan a `tenants` sin cascada.
 
 **Ya está arreglado**, y sin tocar el producto: la limpieza ahora borra en orden —primero lo que
@@ -74,7 +74,7 @@ se vayan con ella tiene sentido y no hay nada que decidir acá.
 ### Las dos que quedan sin dueño (`set null`)
 
 `caregivers` y `avisos`, que en el esquema inicial se llamaba `care_searches`
-(`supabase/migrations/0001_base_del_esquema.sql:4051` y `:3987`). Las dos admiten `tenant_id` nulo,
+(`supabase/migrations/0001_base_del_esquema.sql:4070` y `:3987`). Las dos admiten `tenant_id` nulo,
 así que al borrarse la Prestadora **el legajo de la persona y el aviso sobreviven**, sin
 Prestadora. **Ninguna migración explica por qué**, y las dos vienen de un volcado anterior a las
 migraciones.
@@ -116,7 +116,7 @@ Se probó el estado final, limpiando a mano todo lo que hoy trabaría. El result
 
 Ese sello es `verification_status = 'validado_prestadora'`. Con `tenant_id` nulo **casi nadie puede
 bajarlo**: la propia persona no —se lo rechaza el disparador `el_legajo_no_se_sella_solo`
-(`supabase/migrations/0001_base_del_esquema.sql:3863`)—; el personal de cualquier
+(`supabase/migrations/0001_base_del_esquema.sql:3931`)—; el personal de cualquier
 Prestadora tampoco —su política pide `tenant_id = prestadora_actual()`, y contra un nulo eso nunca
 da verdadero—; **sólo CeltaTech por la puerta de administración**, donde `auth.uid()` es nulo y el
 disparador se aparta.
@@ -176,7 +176,7 @@ Suponiendo la **B**, que es la recomendada. Todo en una migración:
    dice que todo control falla cerrado y una comparación con nulo no es falsa, es nula.
 3. **Un disparador sobre `caregivers`**: cuando `tenant_id` pasa a nulo, `verification_status`
    vuelve a `en_revision`. Va en la misma familia que `el_legajo_no_se_sella_solo`
-   (`supabase/migrations/0001_base_del_esquema.sql:3863`), y por el mismo motivo: la política
+   (`supabase/migrations/0001_base_del_esquema.sql:3931`), y por el mismo motivo: la política
    recibe la fila, no el cambio.
 4. **El bloque que se planta si la migración no logró lo que dice.** Ya se escribió así antes; en
    el esquema aplanado de hoy no queda rastro de ninguno, porque son comprobaciones que corren al
