@@ -117,23 +117,27 @@ la primera pantalla**, no al final.
 
 **La lógica comercial sigue frenada** por `docs/ALCANCE.md` §4. Construirla se consulta antes.
 
-**El código que sirve y ya no lo usa nadie se guarda, no se tira.** Fijado por el Desarrollador
-el 9 de septiembre de 2026. Cuando una capacidad funciona bien y lo único que le pasó es que se
-retiró la pantalla que la pedía, sale del producto —código que no llama nadie hace creer que
-alguna pantalla lo usa— **y se guarda en `fuera de uso/`, en una carpeta propia, con las piezas
-tal como estaban y un documento que diga qué es, cómo funciona, de qué depende y cómo se vuelve
-a poner**. Y ahí **se le deja de hacer trazabilidad**: esa carpeta no la abre ningún chequeo
-(`scripts/recorrido.mjs:89`), no entra al repositorio (`.gitignore:34`) y no se la cita desde la
-documentación viva. No choca con «no hay depósito de documentos viejos»: aquella regla habla de
-documentos que ya cumplieron su función, y ésta de código que sigue funcionando y que hoy no
+**El código que sirve y ya no lo usa nadie se guarda, no se tira, y no se guarda acá adentro.**
+Fijado por el Desarrollador el 9 de septiembre de 2026. Cuando una capacidad funciona bien y lo
+único que le pasó es que se retiró la pantalla que la pedía, **sale del producto** —código que no
+llama nadie hace creer que alguna pantalla lo usa— **y sube al estante de la empresa,
+`..\..\Codigos utiles\`**, en una carpeta propia, con las piezas tal como estaban y un documento
+que diga qué es, cómo funciona, de qué depende y cómo se vuelve a poner. **Sube porque el código
+es de CeltaTech y tiene que estar disponible para cualquier producto**, éste y los que vengan:
+guardado adentro de un producto tendría dueño, y el dueño decidiría por los demás. Ese estante no
+es `..\..\Modulos\`, que es para lo que corre y se llama por API; ahí va lo que está parado y no
+lo usa nadie, y la diferencia entera está escrita en su `LEEME.md`. **El renglón en el índice del
+estante se escribe en el mismo momento en que se guarda la pieza**, y **ese índice se consulta
+antes de escribir de cero cualquier pieza que suene estándar** —es una parada más de «antes de
+agregar algo que ya podría existir, buscarlo primero»—. La primera que subió es la grilla de
+tarjetas del catálogo. No choca con «no hay depósito de documentos viejos»: aquella regla habla
+de documentos que ya cumplieron su función, y ésta de código que sigue funcionando y que hoy no
 tiene quién lo llame.
 
-**Y esa carpeta tiene un índice, que sí se mantiene: `fuera de uso/INDICE.md`.** Precisado por el
-Desarrollador el mismo día. Sin índice, guardar sería esconder: como ahí adentro no se hace
-trazabilidad, el índice es la única puerta. **Se le escribe el renglón a la pieza en el mismo
-momento en que se la guarda**, y **se lo consulta antes de escribir de cero cualquier pieza que
-suene estándar** —es una parada más de «antes de agregar algo que ya podría existir, buscarlo
-primero»—. El primero que se guardó así es la grilla de tarjetas del catálogo.
+**Y `fuera de uso/` no es eso: es la cuarentena.** Ahí va lo que se sospecha inútil y todavía no
+se borra, y ahí **no se hace trazabilidad**: no la abre ningún chequeo (`scripts/recorrido.mjs:89`)
+y no entra al repositorio (`.gitignore:34`). Lo que se sabe que sirve no se guarda ahí, porque ahí
+quedaría en una sola máquina y a la vista de un solo producto.
 
 ### Módulos, desde el esquema
 

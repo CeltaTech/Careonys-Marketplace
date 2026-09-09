@@ -31,11 +31,9 @@ Thumbs.db
 # borrar nada hay que estar seguro, y mientras tanto no molesta.
 # El nombre no es nuevo: es el que ya usaba `assets/images/fuera de uso/`, que se mudó
 # entera acá adentro. Y `scripts/recorrido.mjs:89` hace que ningún chequeo la abra.
-# Desde el 9 de septiembre de 2026 tiene además una segunda función, que el Desarrollador
-# fijó ese día: acá se guarda también el código que funciona bien y que se quedó sin ninguna
-# pantalla que lo llame, cada uno en su carpeta y con el documento que explica qué es y cómo
-# funciona. Eso no es cuarentena: no se sospecha inútil, se sabe que sirve y que hoy no lo usa
-# nadie. La regla entera está en `CLAUDE.md` §4.
+# Acá va sólo lo que se sospecha inútil. El código que se sabe que sirve y que se quedó sin
+# ninguna pantalla que lo llame no va acá: sube al estante de códigos útiles de la empresa,
+# afuera de todos los productos, porque acá quedaría en una sola máquina. Está en `CLAUDE.md` §4.
 /fuera de uso/
 
 # Carpetas de trabajo de quien desarrolla: material en curso, no documentación del
