@@ -543,7 +543,7 @@
       "cerrada": false,
       "usado_en": [
         "data/catalogo-fichas.json:180",
-        "js/catalogo.js:481"
+        "js/catalogo.js:463"
       ],
       "items": [
         {
@@ -790,7 +790,7 @@
       "cerrada": false,
       "usado_en": [
         "data/catalogo-fichas.json:180",
-        "js/catalogo.js:481",
+        "js/catalogo.js:463",
         "pwa-asistente/index.html:622",
         "registrar-asistente.html:388"
       ],
@@ -1312,7 +1312,7 @@
       "cerrada": false,
       "usado_en": [
         "data/catalogo-fichas.json:180",
-        "js/catalogo.js:481"
+        "js/catalogo.js:463"
       ],
       "items": [
         {

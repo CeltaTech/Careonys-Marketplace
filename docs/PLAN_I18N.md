@@ -103,7 +103,7 @@ alrededor.
 - **Nombres de ida, no texto de vuelta.** La clave que se le pide al catálogo
   —`Catalogo.frase('catalogo.cargando')`—, el nombre de un atributo dentro de un `getAttribute`,
   el de un campo entre corchetes. La clave además puede vivir en la tabla de arranque de
-  `js/catalogo.js:115` en lugar del archivo de frases, así que compararla contra el archivo daba
+  `js/catalogo.js:109` en lugar del archivo de frases, así que compararla contra el archivo daba
   faltantes que no existen.
 - **Valores guardados.** Una cadena al lado de un `===` viaja al servidor y traducirla rompe la
   comparación. Es el mismo criterio que `sinValoresGuardados()` (`scripts/texto_visible.mjs:42`)

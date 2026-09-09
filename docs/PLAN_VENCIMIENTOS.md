@@ -99,7 +99,7 @@ Y conviene copiarlo, porque ya resolvió los dos errores que este trabajo va a e
 - **El valor de fábrica se siembra con un disparador sobre `tenants`**, no adentro de la puerta de
   alta (`supabase/migrations/0001_base_del_esquema.sql:1479-1481`), porque hay
   dos caminos por los que nace una Prestadora y el que había fallado era el otro.
-- **Y el motivo por el que hay valor de fábrica**, escrito hoy en `docs/ALCANCE.md:1960` y que
+- **Y el motivo por el que hay valor de fábrica**, escrito hoy en `docs/ALCANCE.md:1967` y que
   vale igual acá: *una tabla vacía no dice «se avisa con treinta días», dice «todavía nadie
   configuró esto»*.
 

@@ -295,7 +295,7 @@ Cerró el pendiente 27, el 24 de agosto de 2026.
   —`movilidad_reducida`, `traslados`, `curaciones`, `estimulacion_cognitiva`—. Ninguno daba error
   en ninguna parte.
 - **El daño no está en la base, está en la pantalla.** Las columnas son texto libre y aceptan
-  cualquier cosa. `js/catalogo.js:551` traduce la clave guardada a su etiqueta y, cuando no la
+  cualquier cosa. `js/catalogo.js:533` traduce la clave guardada a su etiqueta y, cuando no la
   encuentra, muestra la clave cruda: la ficha decía «enfermero» en minúscula y con guión bajo. Y
   el filtro por Tipo de Asistente busca por la clave que ofrece el catálogo, así que esa fila no
   aparecía nunca.
@@ -608,6 +608,13 @@ podía.
 o una grilla de tarjetas que todavía no llegó se veía igual que uno que vino vacío, que es
 justamente la falla que el catálogo existe para no tener («los cuatro estados»).
 
+**Y el 9 de septiembre de 2026 el modo de dibujo se fue detrás de la hoja de muestra.** Retirada
+la única pantalla que declaraba `tarjetas` y `tarjetas-una`, quedaron sin usar el método que las
+dibujaba, la regla de estilo de la grilla y las dos constantes del ícono. Se sacaron, porque
+código que no llama nadie hace creer que alguna pantalla lo usa. Lo de arriba sigue valiendo
+igual —el contenido de una lista sale del catálogo y no del HTML—, y el día que una pantalla
+quiera de nuevo una grilla de tarjetas, cómo se dibujaba está en el historial del repositorio.
+
 ### Lo que una Familia pide ya tiene dónde guardarse
 
 Tres pantallas le preguntan cosas a una Familia y `avisos` tenía siete columnas. Lo que
@@ -917,8 +924,8 @@ Lo que falta —empezar una conversación con esa persona en particular— qued�
 
 **Tres traducciones que estaban por escribirse dos veces subieron a los archivos compartidos**
 («ningún patrón repetido sin punto único de verdad»): el precio en pesos es `Texto.importe` (`js/texto.js:167`), la etiqueta de una lista es
-`Catalogo.etiquetaSiExiste` (`js/catalogo.js:467`), y la de una tarea —que puede estar en cualquiera
-de tres listas— es `Catalogo.etiquetaDeTarea` (`js/catalogo.js:480`). Vivían adentro de
+`Catalogo.etiquetaSiExiste` (`js/catalogo.js:449`), y la de una tarea —que puede estar en cualquiera
+de tres listas— es `Catalogo.etiquetaDeTarea` (`js/catalogo.js:462`). Vivían adentro de
 `directorio.html`; ahora las dos pantallas las piden al mismo lugar.
 
 
@@ -2562,7 +2569,7 @@ en el marcado; `data-campo="algo@X"`, que es lo mismo dicho desde la declaració
 los suyos; `"filas"` y `"columnas"` en `data/catalogo-disponibilidad.json`, de donde la grilla saca
 los días y los turnos; `Catalogo.items('X')` y `Catalogo.etiquetaSiExiste('X', …)`, que son las dos
 puertas del catálogo que reciben el nombre; y la lista que recorre `etiquetaDeTarea` en
-`js/catalogo.js:481`, que busca una tarea en tres vocabularios seguidos.
+`js/catalogo.js:463`, que busca una tarea en tres vocabularios seguidos.
 
 **Y lo que no cuenta importa igual que lo que cuenta.** Que el nombre aparezca entre comillas no
 alcanza: `genero`, `zona`, `frecuencia` y `patologia` son además nombres de columna de la base.
@@ -3171,7 +3178,7 @@ clonaba el molde, lo rellenaba con los datos del ítem y llamaba a `Identidad`, 
 `Catalogo.traducir()`. Como lo que está adentro de un `<template>` no está en el documento, la
 traducción de arranque tampoco lo alcanza: las copias llegaban siempre con el castellano de
 respaldo. Eran las 21 frases de las tarjetas de curso de `cursos.html` y el cartel «Próximamente»
-de `index.html`. Se agregó la llamada (`js/catalogo.js:612`) y se comprobó en el navegador, que
+de `index.html`. Se agregó la llamada (`js/catalogo.js:594`) y se comprobó en el navegador, que
 es donde esto se ve: `cursos.html?idioma=en` dice hoy «8 hours / Certificate / ENROL», e
 `index.html?idioma=pt-BR` dice «Em breve».
 
@@ -3202,7 +3209,7 @@ seis tarjetas de curso en castellano. Eso es lo que pasaba el 26 de agosto de 20
 `cursos.html?idioma=en`, y el chequeo de frases lo daba por bueno, porque lo que hay adentro de
 las tarjetas no lo escribe la pantalla: sale de `data/catalogo-oferta.json` y de
 `data/catalogo-vocabularios.json`. El mecanismo ya lo soportaba —`Catalogo.textoDe()`
-(`js/catalogo.js:448`) elige el idioma de cualquier texto que traiga sus tres idiomas colgando—;
+(`js/catalogo.js:430`) elige el idioma de cualquier texto que traiga sus tres idiomas colgando—;
 lo que faltaba era el texto.
 
 **Quedaron 218 textos en los tres idiomas**: los 24 títulos de vocabulario, sus 142 ítems, las 10
@@ -3330,7 +3337,7 @@ salía bien, y todo lo de después salía mal.
 `Catalogo.textoDe(Catalogo.items('zona')[0])` devolvía «Ciudad de Buenos Aires» en vez de «City of
 Buenos Aires».
 
-**La regla que rompía ya estaba escrita**, en `js/catalogo.js:40`: «El idioma es uno solo para las
+**La regla que rompía ya estaba escrita**, en `js/catalogo.js:34`: «El idioma es uno solo para las
 tres cosas —opciones, oferta y frases— y se decide en `idiomaDelEntorno()`. Tenerlo en un solo
 lugar es lo que evita la pantalla mitad en un idioma y mitad en otro.» Por eso el arreglo no
 necesitó decidir nada: es la regla «ningún patrón repetido sin punto único de verdad» aplicada.
@@ -3638,7 +3645,7 @@ una decisión que no está tomada, y son el pendiente 145. El menú quedó en do
 
 **Y la hoja de estilos pedía cuatro columnas fijas.** Con dos recuadros quedaban apretados contra
 la izquierda y media fila vacía al lado, así que `.kpi-grid` pasó a `auto-fit`
-(`css/styles.css:1970`): reparte los que haya, y se acomoda solo el día que aparezca el tercero. Es
+(`css/styles.css:1889`): reparte los que haya, y se acomoda solo el día que aparezca el tercero. Es
 la única regla del proyecto que usa esa clase, comprobado antes de tocarla.
 
 ### Los avisos tienen autora, y las cuentas con las que se entra hoy faltan

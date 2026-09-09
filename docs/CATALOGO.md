@@ -40,7 +40,7 @@ profesional que exija Matrícula hoy no toca una sola línea de código.
 agosto de 2026 de las diez tarjetas que `formulario-integral.html` tenía escritas adentro: cada
 una traía su ícono y su explicación de una línea, y desde entonces las trae el catálogo. Esa
 pantalla era una hoja de muestra y el 9 de septiembre de 2026 salió de uso —hoy vive en
-`fuera de uso/formulario-integral.html`, y por qué está contado en `docs/ALCANCE.md:3087`—, así
+`fuera de uso/formulario-integral.html`, y por qué está contado en `docs/ALCANCE.md:3094`—, así
 que los dos campos ya no los dibuja ninguna pantalla; quedan en el catálogo, que es donde tenían
 que estar, para la pantalla que vuelva a pedir tarjetas. Un ítem sin esos
 campos se dibuja igual —con su etiqueta y un ícono neutro—, así que no hay que inventarle una
