@@ -1080,6 +1080,31 @@
       "en": "The record could not be saved",
       "pt-BR": "Não foi possível gravar o registro"
     },
+    "fichado.sin_senal": {
+      "es-AR": "Quedó registrado el fichado de {tipo} a las {hora}. En este momento no hay señal, así que queda guardado en el teléfono y se envía solo cuando vuelva la conexión.",
+      "en": "The {tipo} was recorded at {hora}. There is no signal right now, so it is saved on the phone and will be sent on its own when the connection returns.",
+      "pt-BR": "O registro de {tipo} foi gravado às {hora}. Neste momento não há sinal, então ele fica guardado no telefone e é enviado sozinho quando a conexão voltar."
+    },
+    "fichado.sin_senal_estado": {
+      "es-AR": "Guardado en el teléfono, se envía solo",
+      "en": "Saved on the phone, will be sent on its own",
+      "pt-BR": "Guardado no telefone, é enviado sozinho"
+    },
+    "fichado.guardada_igual": {
+      "es-AR": "Quedó registrado el fichado de {tipo} a las {hora} y está guardado en el teléfono. Todavía no se pudo enviar ({detalle}), y se vuelve a intentar solo.",
+      "en": "The {tipo} was recorded at {hora} and is saved on the phone. It could not be sent yet ({detalle}), and it will be retried on its own.",
+      "pt-BR": "O registro de {tipo} foi gravado às {hora} e está guardado no telefone. Ainda não foi possível enviá-lo ({detalle}), e será tentado de novo sozinho."
+    },
+    "fichado.pendiente_una": {
+      "es-AR": "Queda 1 fichado guardado en el teléfono, esperando conexión para enviarse.",
+      "en": "1 record is saved on the phone, waiting for a connection to be sent.",
+      "pt-BR": "1 registro está guardado no telefone, aguardando conexão para ser enviado."
+    },
+    "fichado.pendientes_varias": {
+      "es-AR": "Quedan {cuantas} fichados guardados en el teléfono, esperando conexión para enviarse.",
+      "en": "{cuantas} records are saved on the phone, waiting for a connection to be sent.",
+      "pt-BR": "{cuantas} registros estão guardados no telefone, aguardando conexão para serem enviados."
+    },
     "fichado.permiso_denegado": {
       "es-AR": "Habilite los permisos de GPS para poder fichar la asistencia.",
       "en": "Please enable GPS permissions so attendance can be recorded.",

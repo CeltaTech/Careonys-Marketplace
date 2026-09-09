@@ -2198,11 +2198,18 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
   console.log('');
   console.log('La alarma: avisa, y no decide');
   {
-    /* Las cuatro marcas que siguen se cargan con la fecha puesta a mano, y es
+    /* Las cuatro marcas que siguen se cargan con la hora puesta a mano, y es
        la única forma de que esta prueba pueda fallar: la alarma de la jornada
        abierta recién existe pasado el tope de horas, y una fichada marcada
-       ahora nunca lo pasa. `created_at` tiene valor por omisión pero se puede
+       ahora nunca lo pasa. `marcada_en` tiene valor por omisión pero se puede
        escribir, y la política no mira esa columna.
+
+       Se escribe `marcada_en` y **no** `created_at`, y eso hace además de
+       control: las cuatro llegan a la base ahora mismo y dicen haberse marcado
+       hace días, que es exactamente lo que pasa con una fichada que estuvo
+       esperando señal adentro del teléfono. Si la alarma volviera a mirar la
+       hora de llegada, las cuatro serían de recién, ninguna pasaría el tope y
+       esta prueba se pondría roja.
 
        Quedan, en orden, sobre el mismo vínculo y con la de «ahora» que ya dejó
        el bloque anterior:
@@ -2227,7 +2234,7 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
           longitude: -58.3816,
           event_type: tipo,
           conversacion_id: familiaDelAviso.conversacionId,
-          created_at: haceHoras(horas)
+          marcada_en: haceHoras(horas)
         })
       }, asistenteUno.token);
       return estado;

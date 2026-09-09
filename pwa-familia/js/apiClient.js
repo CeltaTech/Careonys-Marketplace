@@ -714,6 +714,24 @@ const ClienteDatos = {
   // Asistente y nadie más, que es lo único que se podía hacer hasta la
   // migración 0056. No se manda la clave cuando no hay vínculo, para no
   // escribir un nulo donde la columna ya tiene su valor por omisión.
+  // `id` y `marcadaEn` son lo que hace que una fichada guardada en el teléfono
+  // sin señal se pueda mandar después sin mentir y sin duplicarse
+  // (`js/cola-fichadas.js`):
+  //
+  //   - `marcadaEn` es cuándo apretó el botón la persona. Sin ella, la base
+  //     anota la hora en que llegó, que puede ser diez horas más tarde, y la
+  //     Familia ve una jornada que no existió (migración 0009).
+  //
+  //   - `id` viene puesto de antemano para poder reintentar. El pedido lleva
+  //     `ignore-duplicates`, así que un segundo intento de una fichada que ya
+  //     había llegado —porque se perdió la respuesta, no el pedido— choca
+  //     contra la primera y **no escribe nada**, en vez de dejar dos marcas de
+  //     la misma hora. En ese caso la base contesta una lista vacía, y eso no
+  //     es un error: es «ésta ya estaba».
+  //
+  // Las dos son opcionales, porque las pantallas que fichan en el momento no
+  // las necesitan: sin ellas la base pone la hora de llegada y su propio
+  // identificador, que es exactamente lo que hacía antes.
   async registrarFichadoGPS(fichadoData) {
     const fila = {
       caregiver_id: fichadoData.caregiverId,
@@ -721,8 +739,11 @@ const ClienteDatos = {
       longitude: fichadoData.longitude || fichadoData.lng,
       event_type: fichadoData.tipoEvent || fichadoData.event_type || fichadoData.estado
     };
+    if (fichadoData.id) fila.id = fichadoData.id;
+    if (fichadoData.marcadaEn) fila.marcada_en = fichadoData.marcadaEn;
     if (fichadoData.conversacionId) fila.conversacion_id = fichadoData.conversacionId;
-    return await this._supabaseRequest('POST', 'clock_ins', fila);
+    return await this._supabaseRequest('POST', 'clock_ins', fila,
+      { on_conflict: 'id' }, 'resolution=ignore-duplicates');
   },
 
   async registrarReporte(entryData) {
@@ -1157,14 +1178,20 @@ const ClienteDatos = {
   //
   // `conversacionId` acota a un vínculo; sin él vienen todos. `desde` es una
   // fecha en formato ISO y trae sólo lo posterior.
+  //
+  // Se ordena y se filtra por la hora en que se marcó la fichada, no por la
+  // hora en que llegó a la base: desde que una fichada puede quedar esperando
+  // en el teléfono sin señal, las dos dejaron de ser la misma, y la que importa
+  // es cuándo pasó (migración 0009). La hora de llegada viene igual, que es lo
+  // único que permite reconocer una fichada demorada.
   async fichadasDelVinculo(conversacionId, desde) {
     const filtro = {
-      select: 'id,caregiver_id,conversacion_id,event_type,latitude,longitude,created_at',
-      order: 'created_at.desc',
+      select: 'id,caregiver_id,conversacion_id,event_type,latitude,longitude,marcada_en,created_at',
+      order: 'marcada_en.desc',
       limit: '200'
     };
     if (conversacionId) filtro['conversacion_id'] = `eq.${conversacionId}`;
-    if (desde) filtro['created_at'] = `gte.${desde}`;
+    if (desde) filtro['marcada_en'] = `gte.${desde}`;
     return await this._supabaseRequest('GET', 'clock_ins', null, filtro);
   },
 

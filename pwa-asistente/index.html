@@ -460,6 +460,13 @@
           <button class="btn-gps fondo-peligro" id="btn-gps-out"
                   data-frase="asistente.marcar_salida">Marcar Salida</button>
         </div>
+        <!-- LAS QUE TODAVÍA NO SALIERON DEL TELÉFONO
+             Aparece sólo cuando hay alguna esperando, y no es un error: la
+             fichada está guardada y se manda sola. Está acá porque «lo que la
+             persona ya hizo no se pierde nunca en silencio» incluye poder
+             verlo: sin este renglón, el Asistente no tendría cómo saber que
+             tres marcas siguen adentro del teléfono. -->
+        <p class="m-solo-arriba-4 texto-11 color-secundario" id="gps-pendientes" hidden></p>
       </div>
 
       <!-- FORMULARIO DE REPORTES -->
@@ -983,6 +990,7 @@
   <script src="js/documentos-legajo.js"></script>
   <script src="js/autorizaciones.js"></script>
   <script src="js/apiClient.js"></script>
+  <script src="js/cola-fichadas.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/zonas.js"></script>
   <script src="js/conversacion.js"></script>
@@ -1033,6 +1041,15 @@
           navigate('dashboard');
           cargarEstadoLegajo(session.user.id);
         }
+
+        // Las fichadas que quedaron esperando en el teléfono de la vez pasada.
+        // Se engancha siempre, haya sesión o no: sin sesión no hay legajo con
+        // el que mandarlas y la cola se queda quieta sola, pero los avisos de
+        // «volvió la señal» y «volviste a la aplicación» tienen que estar
+        // puestos desde el arranque igual. Después de entrar se vuelve a
+        // intentar, que es el caso de quien abre la aplicación sin sesión.
+        ColaFichadas.alCambiar(mostrarFichadasPendientes);
+        ColaFichadas.arrancar();
       } catch (err) {
         console.error('Arranque de la aplicación del Asistente:', err);
         avisoArranque.textContent = Texto.mensajeDeError(err, 'arrancar el portal del Asistente');
@@ -1867,6 +1884,22 @@
     // está en los tres idiomas, ni para avisar que sobra—.
     const FRASE_DEL_FICHADO = { entrada: 'fichado.entrada', salida: 'fichado.salida' };
 
+    // Cuántas fichadas siguen adentro del teléfono. Se dice sólo cuando hay
+    // alguna: un renglón que diga «cero pendientes» todo el día es ruido, y el
+    // día que diga «una» nadie lo va a ver porque dejó de mirarlo. No es un
+    // aviso de error y no lleva ningún botón de reintentar: se reintenta solo,
+    // y ofrecer un botón sugeriría que sin apretarlo no va a salir.
+    function mostrarFichadasPendientes(cuantas) {
+      const renglon = document.getElementById('gps-pendientes');
+      if (!renglon) return;
+      renglon.hidden = !cuantas;
+      if (cuantas) {
+        renglon.textContent = cuantas === 1
+          ? Catalogo.frase('fichado.pendiente_una')
+          : Catalogo.frase('fichado.pendientes_varias', { cuantas });
+      }
+    }
+
     async function ficharGPS(tipo) {
       const statusEl = document.getElementById('gps-status');
       const nombreTipo = Catalogo.frase(FRASE_DEL_FICHADO[tipo]);
@@ -1885,6 +1918,10 @@
       navigator.geolocation.getCurrentPosition(async (position) => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
+        // La hora del acto, tomada acá y no cuando la fichada llegue a la base:
+        // entre las dos puede haber horas si el teléfono está sin señal
+        // (migración 0009).
+        const marcadaEn = new Date();
         statusEl.textContent = Catalogo.frase('fichado.registrando', { tipo: nombreTipo });
         try {
           // El legajo, no la cuenta. Y si no hay legajo no se inventa ninguno:
@@ -1892,14 +1929,43 @@
           // para que lo rechace la base.
           const caregiverId = await ClienteDatos.legajoPropio();
           if (!caregiverId) throw new Error(Catalogo.frase('fichado.sin_legajo'));
-          await ClienteDatos.registrarFichadoGPS({
-            caregiverId, lat, lng, event_type: tipo, conversacionId
-          });
+
+          // PRIMERO AL TELÉFONO, DESPUÉS A LA BASE. Éste es el cambio que
+          // importa de toda la pantalla: hasta acá, una fichada que no se podía
+          // mandar se perdía entera. Ahora queda guardada antes de intentar
+          // nada, así que lo peor que puede pasar es que salga más tarde.
+          const fichada = {
+            id: ColaFichadas.nuevoId(),
+            caregiverId, lat, lng,
+            event_type: tipo,
+            conversacionId,
+            marcadaEn: marcadaEn.toISOString()
+          };
+          await ColaFichadas.guardar(fichada);
+
           const norte = lat.toFixed(5);
           const este = lng.toFixed(5);
-          const hora = Texto.horaCorta(new Date());
-          alert(Catalogo.frase('fichado.registrado', { tipo: nombreTipo, lat: norte, lng: este }));
-          statusEl.textContent = Catalogo.frase('fichado.ultimo', { tipo: nombreTipo, hora });
+          const hora = Texto.horaCorta(marcadaEn);
+          try {
+            await ClienteDatos.registrarFichadoGPS(fichada);
+            await ColaFichadas.quitar(fichada.id);
+            alert(Catalogo.frase('fichado.registrado', { tipo: nombreTipo, lat: norte, lng: este }));
+            statusEl.textContent = Catalogo.frase('fichado.ultimo', { tipo: nombreTipo, hora });
+          } catch (errEnvio) {
+            // No salió ahora, y no se perdió. Los dos casos se dicen distinto
+            // porque son distintos: sin señal se manda solo y no hay nada que
+            // hacer; con la base contestando que no, la fichada igual quedó
+            // guardada, pero conviene que la persona sepa que algo pasó.
+            if (ColaFichadas.esFaltaDeSenal(errEnvio)) {
+              alert(Catalogo.frase('fichado.sin_senal', { tipo: nombreTipo, hora }));
+              statusEl.textContent = Catalogo.frase('fichado.sin_senal_estado', { tipo: nombreTipo, hora });
+            } else {
+              alert(Catalogo.frase('fichado.guardada_igual', {
+                tipo: nombreTipo, hora, detalle: Texto.mensajeDeError(errEnvio, 'registrar el fichado')
+              }));
+              statusEl.textContent = Catalogo.frase('fichado.sin_senal_estado', { tipo: nombreTipo, hora });
+            }
+          }
         } catch (err) {
           alert(Texto.mensajeDeError(err, 'registrar el fichado'));
           statusEl.textContent = Catalogo.frase('fichado.error_estado');
@@ -1972,6 +2038,9 @@
           (user.user_metadata?.full_name || user.email.split('@')[0]).toUpperCase();
         navigate('dashboard');
         cargarEstadoLegajo(user.id);
+        // Recién ahora hay legajo con el que mandar lo que estuviera esperando
+        // desde antes de entrar.
+        ColaFichadas.sincronizar();
       } catch (err) {
         alert(Texto.mensajeDeError(err, 'iniciar sesión'));
       } finally {

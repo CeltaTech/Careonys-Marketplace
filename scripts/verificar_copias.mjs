@@ -51,6 +51,11 @@ export const GRUPOS = [
    'pwa-familia/js/conversacion.js'],
   ['data/catalogo-disponibilidad.json', 'pwa-asistente/data/catalogo-disponibilidad.json',
    'pwa-familia/data/catalogo-disponibilidad.json'],
+  // La cola de fichadas es del Asistente y de nadie más: la Familia no ficha.
+  // Y ésta es la copia que más importa que exista, porque el archivo está
+  // escrito justamente para el rato en que no hay conexión, que es cuando el
+  // service worker sólo alcanza su propia carpeta.
+  ['js/cola-fichadas.js', 'pwa-asistente/js/cola-fichadas.js'],
   // Lo mismo con las cuatro fichas del legajo y con el paso de cierre: los
   // pregunta el alta del Asistente y la Familia no los ve nunca.
   ['js/fichas-legajo.js', 'pwa-asistente/js/fichas-legajo.js'],

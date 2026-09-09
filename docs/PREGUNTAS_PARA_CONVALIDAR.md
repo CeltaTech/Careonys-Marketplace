@@ -15,7 +15,7 @@ de una Prestadora en `:594` y `:595`— preguntan por posiciones, maniobras y fr
 por tratamiento. Eso choca con la línea que trazan el comentario de la tabla de guías —«No guarda
 tratamientos, a proposito: el producto avisa, no prescribe»,
 `supabase/migrations/0001_base_del_esquema.sql:2699`— y la pantalla del Asistente
-(`pwa-asistente/index.html:815`): «Estas guías dicen qué observar y cuándo avisar. No indican
+(`pwa-asistente/index.html:822`): «Estas guías dicen qué observar y cuándo avisar. No indican
 tratamientos». La migración que cargue estas veinte tiene entonces que **reemplazar** aquellas
 cuatro, no sumarse a ellas. Eso también entra en lo que hay que convalidar.
 

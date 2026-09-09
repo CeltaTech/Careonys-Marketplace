@@ -1485,8 +1485,14 @@
 
       // La fecha y la hora las escribe `js/texto.js` en el idioma de la
       // pantalla; acá no se arma ningún formato a mano.
-      const fecha = Texto.fechaCorta(marca.created_at);
-      const hora = Texto.horaCorta(marca.created_at);
+      //
+      // Y es la hora en que el Asistente marcó, no la hora en que la marca
+      // llegó a la base. Desde que una fichada puede quedar esperando en el
+      // teléfono sin señal, las dos dejaron de ser la misma, y mostrar la
+      // segunda le diría a la Familia que alguien entró a las seis de la tarde
+      // cuando en realidad entró a las ocho de la mañana (migración 0009).
+      const fecha = Texto.fechaCorta(marca.marcada_en);
+      const hora = Texto.horaCorta(marca.marcada_en);
       parte('cuando').textContent = [fecha, hora].filter(Boolean).join(' · ');
 
       // La ubicación es opcional: el Asistente puede haber marcado sin permiso
