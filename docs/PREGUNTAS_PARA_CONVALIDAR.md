@@ -9,11 +9,12 @@ cambiar —un enunciado, una opción, cuál es la correcta, o una pregunta enter
 eso se escribe la migración que las carga. **Nada de esto está en la base todavía**, y no se
 aplica ningún cambio hasta que estas preguntas estén convalidadas.
 
-**Una advertencia sobre lo que ya está cargado.** Las cuatro preguntas sembradas hoy —dos en
-`supabase/migrations/0002_siembra_ficticia.sql:593` y dos en
-`supabase/migrations/0002_siembra_ficticia.sql:593`— preguntan por posiciones,
-maniobras y frecuencias, es decir, por tratamiento. Eso choca con la línea que trazan la
-migración `0042` en su encabezado y la pantalla del Asistente
+**Una advertencia sobre lo que ya está cargado.** Las cuatro preguntas sembradas hoy —las dos
+de la evaluación general en `supabase/migrations/0002_siembra_ficticia.sql:592` y `:593`, y las dos
+de una Prestadora en `:594` y `:595`— preguntan por posiciones, maniobras y frecuencias, es decir,
+por tratamiento. Eso choca con la línea que trazan el comentario de la tabla de guías —«No guarda
+tratamientos, a proposito: el producto avisa, no prescribe»,
+`supabase/migrations/0001_base_del_esquema.sql:2699`— y la pantalla del Asistente
 (`pwa-asistente/index.html:815`): «Estas guías dicen qué observar y cuándo avisar. No indican
 tratamientos». La migración que cargue estas veinte tiene entonces que **reemplazar** aquellas
 cuatro, no sumarse a ellas. Eso también entra en lo que hay que convalidar.

@@ -5,13 +5,13 @@
 > el propio pendiente **68**: «va con plan y aprobación antes de código».
 >
 > Escrito el 27 de agosto de 2026. Cierra el pendiente **68** de `docs/PENDIENTES.md`. Cuando se
-> escribió, además destrababa la opción C del pendiente **75**
-> (`docs/PLAN_SEGURIDAD_DE_COLUMNAS.md` §5), que entonces no se podía elegir porque no había dónde
-> asentar nada. Esa decisión ya se tomó y no fue la C: el Desarrollador eligió la **A** —cambiar un
-> papel devuelve el sello a «sin revisar»—, y así quedó aplicado. El pendiente **75** está cerrado;
-> aquel plan sigue en pie como el relato de lo que se proponía, y lo que efectivamente quedó hecho
-> se cuenta en `docs/ALCANCE.md`, sección «Las cuatro columnas que ninguna política miraba». Ni
-> este plan espera nada de aquél, ni aquél de éste.
+> escribió, además destrababa una de las tres salidas que se barajaban para el pendiente **75**
+> —permitir que se cambie un papel de un legajo ya sellado y dejarlo asentado para que la
+> Prestadora lo revise—, que entonces no se podía elegir porque no había dónde asentar nada. Esa
+> decisión ya se tomó y no fue ésa: el Desarrollador eligió que cambiar un papel devuelva el
+> sello a «sin revisar», y así quedó aplicado. El pendiente **75** está cerrado, y lo que quedó
+> hecho se cuenta en `docs/ALCANCE.md`, sección «Las cuatro columnas que ninguna política
+> miraba». Este plan no espera nada de aquello, ni aquello de éste.
 
 ## 1. Qué falta, en una línea
 
@@ -21,8 +21,8 @@
 Y no es sólo esa columna. La regla de la empresa —`celtatech\CLAUDE.md`, «Seguridad, privacidad y
 auditoría»— pide *«reconstruir quién, cuándo, sobre qué y qué cambió»* y enumera seis clases de
 acción. **El producto no registra ninguna.** Comprobado el 26 de agosto de 2026 contra la base en
-vivo y confirmado el 27 recorriendo las 34 migraciones: ninguna de las 22 tablas es un registro de
-auditoría y ninguna migración crea uno.
+vivo y vuelto a comprobar el 8 de septiembre de 2026 sobre las migraciones de hoy: ninguna de las
+36 tablas es un registro de auditoría y ninguna migración crea uno.
 
 Lo único que existe es `auth.audit_log_entries`, que trae la plataforma: registra entradas, altas y
 cambios de clave, es de `supabase_auth_admin`, y **el producto no la alcanza** porque PostgREST no
@@ -67,7 +67,7 @@ sesión propia, cambia el dato y no anota nada. Un disparador se dispara igual, 
 la pantalla, de un guion o de la consola.
 
 **Dos: no hay un punto por donde pasen todas las escrituras.** Hay dos caminos y no uno. Todo lo
-REST pasa por `_supabaseRequest` (`js/apiClient.js:1163`), que sí es un embudo único —las 15
+REST pasa por `_supabaseRequest` (`js/apiClient.js:1164`), que sí es un embudo único —las 15
 llamadas de datos entran por ahí—. Pero **la autenticación y los archivos no lo tocan nunca**:
 `Sesion.login` (`js/auth.js:173`), `Sesion.signup` (`js/auth.js:190`), `Sesion.cambiarClave`
 (`js/auth.js:221`) y `Sesion.uploadFile` (`js/auth.js:338`) hablan derecho con el cliente de la
@@ -77,15 +77,15 @@ administrativa, el cambio de rol y de Organización, y el cambio de credencial.
 **Tres: y aunque hubiera un punto, hoy hay tres copias de él.** `js/apiClient.js` y `js/auth.js`
 están triplicados **byte a byte** en `pwa-asistente/js/` y `pwa-familia/js/` —es el pendiente 13—,
 así que cada gancho habría que escribirlo tres veces o unificar los archivos primero. Y `window._sb`
-está expuesto en global (`js/auth.js:237`): cualquier pantalla puede saltearse `Sesion` y llamar al
+está expuesto en global (`js/auth.js:409`): cualquier pantalla puede saltearse `Sesion` y llamar al
 cliente por su cuenta.
 
 **Cuatro: el navegador ni siquiera está mandando quién es.** `resolverLegajo`
-(`js/apiClient.js:546`) recibe tres cosas —el legajo, el estado nuevo y una nota— y **ninguna es
+(`js/apiClient.js:548`) recibe tres cosas —el legajo, el estado nuevo y una nota— y **ninguna es
 quién lo ejecuta**. La pantalla sí lo sabe: `panel-prestadora.html:1563` pide el perfil y lo usa para
 el control de rol. Pero esa variable es local al arranque de la pantalla y nunca baja hasta la
 función. Lo único de la identidad que llega al servidor es el testigo de sesión en el encabezado
-(`js/apiClient.js:742`). O sea: **el servidor puede saber quién fue; el navegador no lo está
+(`js/apiClient.js:731`). O sea: **el servidor puede saber quién fue; el navegador no lo está
 diciendo.** El lugar donde el dato existe con seguridad es la base.
 
 ## 4. La forma de la tabla
@@ -114,7 +114,8 @@ clave foránea, borrar un perfil fallaría por culpa del rastro, o —peor, si a
 
 **`hecho_por` es nulo cuando la acción no la hizo una persona con sesión**, que hoy pasa en dos
 casos legítimos: el alta de una Prestadora, que ejecuta CeltaTech con la llave del servidor
-(`0023:230`), y el disparador que crea el perfil al registrarse (`0005:93`). Nulo ahí significa «la
+(`supabase/migrations/0001_base_del_esquema.sql:72`), y el disparador que crea el perfil al
+registrarse (`supabase/migrations/0001_base_del_esquema.sql:329`). Nulo ahí significa «la
 base», no «no se sabe», y el comentario de la columna lo dice.
 
 ## 5. Qué se guarda del cambio, que es donde dos reglas de la empresa chocan
@@ -148,12 +149,13 @@ descuido en vez de una decisión.
 sin punto único de verdad» aplicada al lugar donde más tienta copiarla.
 
 Va **`after insert or update or delete`**, no `before`. El motivo: `after` anota lo que realmente
-quedó, y encima corre después de los disparadores `before` que propuso
-`docs/PLAN_SEGURIDAD_DE_COLUMNAS.md` §3 y que ya están puestos sobre `caregivers` y `profiles`
-—`el_legajo_no_se_sella_solo` y `el_rol_y_la_prestadora_no_se_escriben_solos`, tal como quedaron
-contados en `docs/ALCANCE.md`, sección «Las cuatro columnas que ninguna política miraba»—, así que
-el rastro no va a registrar como sucedidos los intentos que aquéllos rechazan. Los dos se apilan;
-no chocan.
+quedó, y encima corre después de los disparadores `before` que ya están puestos sobre
+`caregivers` y `profiles` —`el_legajo_no_se_sella_solo`
+(`supabase/migrations/0001_base_del_esquema.sql:3863`) y
+`el_rol_y_la_prestadora_no_se_escriben_solos`
+(`supabase/migrations/0001_base_del_esquema.sql:3877`), contados en `docs/ALCANCE.md`, sección
+«Las cuatro columnas que ninguna política miraba»—, así que el rastro no va a registrar como
+sucedidos los intentos que aquéllos rechazan. Los dos se apilan; no chocan.
 
 **Nadie recibe permiso de alta sobre `auditoria`. Ni `authenticated`, ni `anon`.** El pendiente
 pedía que el rol auditado pudiera insertar y no modificar ni borrar; esto es más fuerte y por el
@@ -163,18 +165,24 @@ disparó el cambio.
 
 El patrón no hay que inventarlo, ya está dos veces en el proyecto:
 
-- **La tabla que no se escribe desde afuera:** `intentos_evaluacion`. Sin política de alta, de
-  modificación ni de baja, sólo una de lectura, **y además** los verbos revocados a nivel de tabla
-  (`0008:197-209`, con el porqué escrito ahí mismo: sobre la tabla que decide si alguien está
-  capacitado para cuidar a una persona, una traba sola es poca). La única puerta es una función.
-- **El disparador que protege una columna:** `la_fecha_de_alta_del_legajo` (`0034:41-70`), con su
-  `revoke all … from public, anon, authenticated` y su explicación de por qué revocarle a `PUBLIC`
-  no alcanza para sacárselo a `anon`.
+- **La tabla que no se escribe desde afuera:** `intentos_evaluacion`. Una sola política, y de
+  lectura (`supabase/migrations/0001_base_del_esquema.sql:4574`), **y además** un solo permiso de
+  tabla, también de lectura (`supabase/migrations/0001_base_del_esquema.sql:5293`): sobre la tabla
+  que decide si alguien está capacitado para cuidar a una persona, una traba sola es poca. La
+  única puerta es una función. El porqué estaba escrito en la migración que la creó, y hoy no está
+  en ningún lado: al aplanarse el esquema quedó el efecto y se perdió el motivo.
+- **El disparador que protege una columna:** `la_fecha_de_alta_del_legajo`, sobre `caregivers`
+  (`supabase/migrations/0001_base_del_esquema.sql:3898`), con su función
+  `la_fecha_de_alta_la_pone_la_base` (`supabase/migrations/0001_base_del_esquema.sql:1379`) y su
+  `revoke all … from public, anon` (`supabase/migrations/0001_base_del_esquema.sql:5465`), que es
+  la forma de recordar que revocarle a `PUBLIC` no alcanza para sacárselo a `anon`. A esa función
+  no la llama ninguna política, así que no le queda `authenticated`.
 
-De ahí sale la forma exacta que va a tener la migración, incluida la advertencia que dejó la 0032:
-**hoy todo permiso hay que concederlo explícitamente**, porque los privilegios por omisión están
-revocados (`0032:64-74`); sin `grant` la pantalla recibe `42501 permission denied` con sesión
-válida y eso no se arregla tocando políticas.
+De ahí sale la forma exacta que va a tener la migración, incluida una advertencia que conviene
+tener presente: **hoy todo permiso hay que concederlo explícitamente**, porque los privilegios
+por omisión están revocados (`supabase/migrations/0001_base_del_esquema.sql:56-57`); sin `grant`
+la pantalla recibe `42501 permission denied` con sesión válida y eso no se arregla tocando
+políticas.
 
 **Una propiedad que conviene decir de frente:** si la función del rastro falla, la escritura
 original se deshace con ella. Eso es fallar cerrado —sin rastro no hay cambio— y es lo que
@@ -187,7 +195,7 @@ Se elige por las seis categorías que nombra la regla, no por comodidad.
 
 | Tabla | Cuándo | Qué categoría de la regla cubre |
 |---|---|---|
-| `caregivers` | alta, modificación y baja | **Modificación crítica** —`verification_status` es lo que publica a una persona como comprobada— y **consecuencia económica** —`bank_info` es el CBU y `hourly_rate` el precio—. Y **borrado de datos**: hoy el producto no borra, pero `authenticated` tiene el permiso y las dos políticas son `for all` (`0005:169-180`), así que un pedido directo borra la fila propia |
+| `caregivers` | alta, modificación y baja | **Modificación crítica** —`verification_status` es lo que publica a una persona como comprobada— y **consecuencia económica** —`bank_info` es el CBU y `hourly_rate` el precio—. Y **borrado de datos**: hoy el producto no borra, pero `authenticated` tiene el permiso y las dos políticas alcanzan a todos los verbos (`supabase/migrations/0001_base_del_esquema.sql:4690` y `:4815`), así que un pedido directo borra la fila propia |
 | `profiles` | alta, modificación y baja | **Cambios de permisos o de membresía**: `role` y `tenant_id` son literalmente eso |
 | `verificaciones_asistente` | alta, modificación y baja | **Modificación crítica**: es la evidencia de cada control. La escribe el panel de la Prestadora desde el 1 de septiembre de 2026 —fue el pendiente 70—, así que el disparador nace con algo que anotar desde el primer día |
 
@@ -198,20 +206,22 @@ Se elige por las seis categorías que nombra la regla, no por comodidad.
   segunda tanda. Escrito así, hoy pide deshacer algo que ya se decidió, y por eso se corrige.
   **La Prestadora no mira la jornada:** lo dice la sección «Qué es este producto, y quién hace
   qué» del `CLAUDE.md` de este producto —la fichada y el reporte de cuidado son la herramienta de
-  la Familia y del Asistente— y está aplicado en la base por tres migraciones.
-  `0053_la_prestadora_no_mira_la_jornada.sql` le saca las dos tablas al personal de la Prestadora
-  y escribe el motivo en su encabezado: *«Mirar a qué hora entra y sale una persona, y leer lo que
-  hizo en cada jornada, no es acompañar: es dirigir el trabajo»*.
-  `0056_la_fichada_se_ata_al_vinculo.sql` cuelga la fichada del vínculo con la Familia, que pasa a
-  ser quien la ve. Y `0067_la_subconsulta_no_filtraba_nada.sql` cierra la rendija por la que ese
-  personal seguía llegando al reporte, porque la subconsulta no filtraba lo que su comentario
-  decía.
+  la Familia y del Asistente— y está aplicado en la base. Ninguna política de `clock_ins` ni de
+  `reportes` alcanza al personal de la Prestadora: la fichada la ve quien la marca
+  (`supabase/migrations/0001_base_del_esquema.sql:4517`) y la Familia del vínculo marcado
+  (`:4526`); el reporte lo escribe el Asistente que cuidó (`:4769`) y lo lee la Familia de ese
+  aviso (`:4776`), con la condición del aviso repetida adentro de la subconsulta a propósito,
+  porque la RLS de `avisos` no alcanza para filtrarla. El motivo quedó escrito en el
+  comentario de cada una de las dos tablas
+  (`supabase/migrations/0001_base_del_esquema.sql:2448` y `:3051`): mirar a qué hora entra y sale
+  una persona, y leer lo que hizo en cada jornada, es dirigir el trabajo, y en esta modalidad la
+  Prestadora no lo hace.
 - **Por qué eso decide la pregunta, y no el volumen.** El rastro **lo lee el personal de la
-  Prestadora** (§8). Auditar esas dos tablas acá adentro le devolvería por la ventana lo que las
-  tres migraciones le sacaron por la puerta: qué columna se tocó, de qué fila, quién y cuándo,
-  fichada por fichada. Sería el mismo dato con otro nombre. Si algún día hay que dejar rastro de
-  esas dos tablas, va a ser en otro lado y con otros lectores, y eso es un plan distinto que
-  arranca por esa pregunta y no por ésta.
+  Prestadora** (§8). Auditar esas dos tablas acá adentro le devolvería por la ventana lo que la
+  RLS le saca por la puerta: qué columna se tocó, de qué fila, quién y cuándo, fichada por
+  fichada. Sería el mismo dato con otro nombre. Si algún día hay que dejar rastro de esas dos
+  tablas, va a ser en otro lado y con otros lectores, y eso es un plan distinto que arranca por
+  esa pregunta y no por ésta.
 - **La sesión de soporte.** No existe ninguna: se buscó `impersona`, `suplanta`, `actuar como`, `en
   nombre de` y `support` en los 46 archivos y no hay mecanismo de suplantación. `soporte-remoto.html`
   no es una herramienta de soporte, es una página comercial. Así que hoy esa categoría no está
@@ -223,10 +233,12 @@ Se elige por las seis categorías que nombra la regla, no por comodidad.
 
 - **`select` para `authenticated`, con política de `es_personal_de_prestadora()` y su propia
   Organización.** Un Asistente no lee el rastro de su Prestadora; el personal sí, y sólo el de la
-  suya. Es la misma forma que ya tiene `verificaciones_asistente` (`0005:224-236`).
+  suya. Es la misma forma que ya tiene `verificaciones_asistente`
+  (`supabase/migrations/0001_base_del_esquema.sql:4885` y `:4899`).
 - **Nada para `anon`.** `revoke all on table public.auditoria from anon`.
 - **CeltaTech entra como entra a todo lo demás**, con la llave del servidor y por función. No se le
-  abre ninguna puerta nueva, y `service_role` no se toca (`0032:51-52`).
+  abre ninguna puerta nueva, y `service_role` no se toca: las revocaciones por omisión nombran
+  sólo a `anon` y a `authenticated` (`supabase/migrations/0001_base_del_esquema.sql:56-57`).
 
 **Y de quién lo lee sale qué se puede auditar acá adentro.** Si el rastro lo lee el personal de la
 Prestadora, entonces **ninguna tabla que ese personal no pueda mirar entra en este rastro**: lo que
@@ -242,9 +254,9 @@ dejar nada**. No es un `DELETE` y ningún disparador de estas tres tablas lo ve.
 de datos real y hoy no está en ningún pendiente. **Se abre pendiente aparte.**
 
 **Dos: el motivo de la decisión más crítica se está perdiendo, y no es culpa de que falte el
-rastro.** `panel-prestadora.html:866` y `:880` juntan la nota de la entrevista —el motivo de aprobar
-o de rechazar—, `resolverLegajo` la manda como `notaPrestadora` (`js/apiClient.js:519`), y
-**`_mapToDatabase` la descarta**: no está en la lista de campos de `caregivers` (`js/apiClient.js:1355-1376`),
+rastro.** `panel-prestadora.html:898` y `:912` juntan la nota de la entrevista —el motivo de aprobar
+o de rechazar—, `resolverLegajo` la manda como `notaPrestadora` (`js/apiClient.js:521`), y
+**`_mapToDatabase` la descarta**: no está en la lista de campos de `caregivers` (`js/apiClient.js:1385-1406`),
 así que se pierde con un aviso en la consola y nada más. Comprobado el 27 de agosto de 2026 leyendo
 las dos listas. Y no hay columna donde pudiera caer: `caregivers` no tiene ninguna para eso. **Se
 abre pendiente aparte**, y en §12 queda la pregunta de si el motivo va a una columna del legajo o a
@@ -281,7 +293,7 @@ devuelve una lista vacía no distingue 'aislado' de 'todo bloqueado'»*.
 
 ## 11. El orden
 
-1. **Migración `0035`** —la próxima libre; la última en disco es `0034`—: la tabla, su RLS, sus
+1. **Migración `0005`** —la próxima libre; la última en disco es `0004`—: la tabla, su RLS, sus
    permisos, la función del disparador con su `revoke`, los tres disparadores, y el
    `notify pgrst, 'reload schema';` de último renglón.
 2. **La prueba** en `scripts/probar_aislamiento.mjs`, y correrla **con el disparador sacado** antes
@@ -289,14 +301,6 @@ devuelve una lista vacía no distingue 'aislado' de 'todo bloqueado'»*.
 3. **`docs/MODULOS.md`**: la fila nueva en la tabla de lo compartido.
 4. **`docs/ESQUEMA.md`** y **`docs/ALCANCE.md`** al día, y el pendiente 68 cerrado con lo que
    quedó afuera anotado como pendientes nuevos (§9).
-
-**Sobre el orden con `docs/PLAN_SEGURIDAD_DE_COLUMNAS.md`:** la pregunta ya está contestada por
-los hechos. Los dos planes eran independientes y podían aplicarse en cualquier orden, y aquél se
-ejecutó entero primero: sus disparadores ya están puestos, y lo que quedó hecho se cuenta en
-`docs/ALCANCE.md`, sección «Las cuatro columnas que ninguna política miraba». Se apilan bien
-porque aquéllos son disparadores `before` que rechazan y éste es un `after` que anota, de modo que
-este rastro va a nacer anotando solamente cambios legítimos —que era el mejor de los dos órdenes
-posibles, y es el que tocó—.
 
 ## 12. Lo único que hace falta decidir, y es del Desarrollador
 
@@ -325,7 +329,7 @@ sola.
 escrito en vez de borrarse.** Figuraba acá como una pregunta de volumen, y no lo era: el rastro lo
 lee el personal de la Prestadora (§8) y esas dos tablas son justamente las que ese personal no
 mira, por la sección «Qué es este producto, y quién hace qué» del `CLAUDE.md` de este producto y
-por las migraciones `0053_la_prestadora_no_mira_la_jornada.sql`,
-`0056_la_fichada_se_ata_al_vinculo.sql` y `0067_la_subconsulta_no_filtraba_nada.sql`. **No entran,
+por las políticas de `clock_ins` y de `reportes`, que no alcanzan a ese personal
+(`supabase/migrations/0001_base_del_esquema.sql:4517`, `:4526`, `:4769` y `:4776`). **No entran,
 no van a una segunda tanda y no queda ningún pendiente abierto por ellas** (§7). Quedan tres
 puntos para decidir: a, b y c.

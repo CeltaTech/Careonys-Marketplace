@@ -2,7 +2,8 @@
 
 > **Este archivo es la referencia única sobre el estado del producto.** Si otro documento dice que
 > algo está terminado y acá figura como no construido, gana este. Verificado contra el código el
-> 2026-08-24. El inventario que lo respalda es `docs/INVENTARIO.md`, del 23.
+> 2026-08-24. La cuenta de lo que hay —pantallas, renglones, archivos— la mide sola
+> `scripts/medir_estado.mjs` y sale publicada en `README.md`, que por eso no queda vieja.
 >
 > Acá va solo **qué existe**. Lo que queda abierto vive en `docs/PENDIENTES.md`, con su condición
 > de cierre. Ninguna afirmación entra sin archivo y renglón.
@@ -13,24 +14,24 @@
 
 | Módulo | Estado |
 |---|---|
-| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:941` llama a `Sesion.requireAuth()` y además comprueba el rol. Las migraciones 0005 y 0006 ponen el límite en la base, del lado que no se puede falsificar. Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs`. **El alta de Asistente exige confirmar el correo, y se queda así**: decidido por el Desarrollador el 2026-08-26 (pendiente 21 cerrado) — el alta es de dos pasos, pero nadie puede darse de alta con el correo de otra persona; `supabase/config.toml` tiene `mailer_autoconfirm: false` |
+| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `acceso.html` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `panel-prestadora.html:941` llama a `Sesion.requireAuth()` y además comprueba el rol. Las políticas de `profiles` y de `caregivers` ponen el límite en la base, del lado que no se puede falsificar (`supabase/migrations/0001_base_del_esquema.sql:4878` y `:4815`). Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs`. **El alta de Asistente exige confirmar el correo, y se queda así**: decidido por el Desarrollador el 2026-08-26 (pendiente 21 cerrado) — el alta es de dos pasos, pero nadie puede darse de alta con el correo de otra persona; `supabase/config.toml` tiene `mailer_autoconfirm: false` |
 | Directorio de Asistentes con filtros | Maquetado y navegable |
 | Perfil del Asistente | Maquetado |
-| Portal de registro de Asistentes | Maquetado, con el legajo funcionando: `registrar-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en las tablas de la migración 0004, y la disponibilidad horaria en las de la 0012 |
-| Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:358`). Declarados en `supabase/migrations/0006_archivos_del_legajo.sql`, no a mano |
-| Consentimiento de publicación | Funciona de punta a punta. El alta pregunta al cerrar (`data/catalogo-autorizaciones.json`, paso 7) y guarda la respuesta en `autorizaciones_asistente`; el directorio cruza contra ella y **no muestra a nadie que no haya dicho que sí** (`supabase/migrations/0007_directorio_con_consentimiento.sql`). Sin respuesta no se publica: la casilla arranca sin marcar. Y el directorio va con `noindex`, que es lo que ese mismo consentimiento promete |
-| Evaluaciones de competencias | Funcionan, y **las corrige el servidor**. `examen.html` pide sesión, lista lo que la persona puede rendir y manda las respuestas a `rendir_evaluacion()`; la columna con la respuesta correcta no tiene permiso de lectura para nadie y las opciones salen de la vista `opciones_para_responder`, que no la incluye (`supabase/migrations/0008_cursos_y_evaluaciones.sql`). El intento no se puede escribir a mano: la tabla no tiene política de escritura y los permisos están revocados. `cursos.html` ya no tiene examen propio, enlaza a esta pantalla. Falta el contenido: ver `docs/PENDIENTES.md` punto 24 |
+| Portal de registro de Asistentes | Maquetado, con el legajo funcionando: `registrar-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en sus tablas —`matriculas_asistente`, `estudios_asistente`, `experiencia_laboral_asistente`, `referencias_asistente` y `autorizaciones_asistente`—, y la disponibilidad horaria en `disponibilidad_asistente` y `franjas_asistente` |
+| Archivos del legajo | Funcionan. La foto va al depósito público `avatares` y los papeles al privado `documentos-cuidadores`, cada uno en la carpeta de su cuenta; en la base queda el camino, y la dirección se firma al mostrarla (`js/auth.js:358`). Los dos depósitos se declaran en una migración y no a mano (`supabase/migrations/0001_base_del_esquema.sql:5955-5956`), con sus políticas al lado |
+| Consentimiento de publicación | Funciona de punta a punta. El alta pregunta al cerrar (`data/catalogo-autorizaciones.json`, paso 7) y guarda la respuesta en `autorizaciones_asistente`; el directorio cruza contra ella y **no muestra a nadie que no haya dicho que sí**: la vista `directorio` exige `a.perfil_publicado` (`supabase/migrations/0001_base_del_esquema.sql:791-793`). Sin respuesta no se publica: la casilla arranca sin marcar. Y el directorio va con `noindex`, que es lo que ese mismo consentimiento promete |
+| Evaluaciones de competencias | Funcionan, y **las corrige el servidor**. `examen.html` pide sesión, lista lo que la persona puede rendir y manda las respuestas a `rendir_evaluacion()`; la columna con la respuesta correcta no tiene permiso de lectura para nadie y las opciones salen de la vista `opciones_para_responder`, que no la incluye (`supabase/migrations/0001_base_del_esquema.sql:2907`). El intento no se puede escribir a mano: la tabla no tiene política de escritura y los permisos están revocados. `cursos.html` ya no tiene examen propio, enlaza a esta pantalla. Falta el contenido: ver `docs/PENDIENTES.md` punto 24 |
 | Motor de fichas del legajo (`js/fichas-legajo.js`) | Funciona. Dibuja, valida y recolecta Matrícula, estudio, experiencia y referencia leyendo `data/catalogo-fichas.json` y `data/catalogo-vocabularios.json`. Ninguna de las cuatro está escrita en la pantalla |
 | Formulario integral de datos del Paciente | Maquetado, paso a paso |
 | Cliente de datos (`js/apiClient.js`) | Funciona en modo local y modo Supabase |
 | Identidad del producto (`js/identidad.js`) | Funciona y está verificada. Ver abajo |
-| Alta y baja de una Prestadora desde CeltaTech | Funciona, y **es lo único que este producto recibe de afuera**. La función de borde `supabase/functions/alta-y-baja/index.ts` verifica la firma del pedido y llama a las dos funciones de la migración 0023. Probada contra el servidor desplegado: `scripts/probar_alta_y_baja.mjs`, doce comprobaciones |
+| Alta y baja de una Prestadora desde CeltaTech | Funciona, y **es lo único que este producto recibe de afuera**. La función de borde `supabase/functions/alta-y-baja/index.ts` verifica la firma del pedido y llama a las tres funciones que le dan el alta, le corrigen el nombre y le fijan el estado: `alta_de_prestadora()`, `corregir_prestadora()` y `fijar_estado_de_prestadora()` (`supabase/migrations/0001_base_del_esquema.sql:72`, `:289` y `:1196`). Probada contra el servidor desplegado: `scripts/probar_alta_y_baja.mjs`, doce comprobaciones |
 
 **Maquetado** significa que la pantalla existe y se navega, no que la lógica detrás esté escrita.
 
 ### La única puerta que este producto le abre a CeltaTech
 
-**Construida el 25 de agosto de 2026**, con las migraciones 0023 y 0024 y la función de borde
+**Construida el 25 de agosto de 2026**, del lado de la base y con la función de borde
 `alta-y-baja`. Antes de eso, dar de alta una Prestadora era abrir la consola de la base y escribir
 un `insert` a mano — no había otra forma, porque `tenants` tiene políticas de lectura y ninguna de
 escritura, y eso está bien: una política de escritura dejaría que cualquiera con una cuenta creara
@@ -96,7 +97,7 @@ fecha, una Prestadora quedaría cancelada por un mensaje que ya no era verdad.
 
 #### Suspender no hace hoy nada nuevo
 
-`status` ya hacía algo desde la 0021: las tres funciones públicas exigen `activo`, así que una
+`status` ya hace algo por su cuenta: las funciones públicas exigen `activo`, así que una
 Prestadora suspendida se queda sin puerta de calle —nadie ve su marca ni su directorio sin
 sesión— mientras su personal, que sí tiene cuenta, sigue trabajando igual. **La puerta deja eso
 exactamente como estaba.** Qué más se le corta a quien no paga cuando hay gente cuidando a una
@@ -105,7 +106,7 @@ persona es una pregunta abierta del Desarrollador, anotada en
 
 ### El límite entre Prestadoras lo pone la sesión
 
-**Cerrado el 24 de agosto de 2026**, con las migraciones 0005 y 0006. Antes, la Prestadora salía
+**Cerrado el 24 de agosto de 2026**, con las políticas que están hoy. Antes, la Prestadora salía
 de la barra de direcciones y viajaba como un filtro más en cada consulta: eso no es aislamiento,
 es una sugerencia, porque un filtro que viaja en el pedido lo cambia quien llama.
 
@@ -253,11 +254,12 @@ quedado abierta.
 - **El contacto de una Familia tiene su propia columna.** `solicitar-asistente.html` pide nombre,
   correo y celular a quien busca un Asistente, y `js/apiClient.js` los mandaba adentro de
   `pathologies_required`, la columna de las patologías, con un comentario que los llamaba
-  «metadata extra» — que es como se llama a un dato cuando no se le hizo lugar. La migración
-  `0009_contacto_de_la_busqueda.sql` crea `contact_info` y rescata las filas que hubieran quedado
-  mal escritas. **Está escrita y todavía no aplicada** (pendiente 30): hasta que corra, esa
-  pantalla guarda en una columna que la base no tiene. El pendiente decía que ninguna pantalla mandaba contacto; sí lo mandaba, y era la
-  pantalla pública.
+  «metadata extra» — que es como se llama a un dato cuando no se le hizo lugar. Hoy la columna
+  existe y el contacto tiene su lugar propio: `avisos.contact_info` es un `jsonb` con nombre,
+  correo y teléfono (`supabase/migrations/0001_base_del_esquema.sql:2162`), y su comentario avisa
+  que son datos de una persona real y que se vacían antes de producción
+  (`supabase/migrations/0001_base_del_esquema.sql:2185`). El pendiente decía que ninguna pantalla
+  mandaba contacto; sí lo mandaba, y era la pantalla pública.
 - **Un solo clasificador de errores, no dos.** Al cerrar el pendiente 22 quedaron conviviendo
   `Sesion.mensajeDeError` en `js/auth.js` y `Texto.mensajeDeError` en `js/texto.js`: la misma
   decisión en dos lugares, que es justo lo que prohíbe «ningún patrón repetido sin punto único de verdad». Se unificaron en `js/texto.js`,
@@ -293,15 +295,17 @@ Cerró el pendiente 27, el 24 de agosto de 2026.
   —`movilidad_reducida`, `traslados`, `curaciones`, `estimulacion_cognitiva`—. Ninguno daba error
   en ninguna parte.
 - **El daño no está en la base, está en la pantalla.** Las columnas son texto libre y aceptan
-  cualquier cosa. `js/catalogo.js:464` traduce la clave guardada a su etiqueta y, cuando no la
+  cualquier cosa. `js/catalogo.js:551` traduce la clave guardada a su etiqueta y, cuando no la
   encuentra, muestra la clave cruda: la ficha decía «enfermero» en minúscula y con guión bajo. Y
   el filtro por Tipo de Asistente busca por la clave que ofrece el catálogo, así que esa fila no
   aparecía nunca.
-- **Se arregló por los dos caminos.** `0003_dos_prestadoras_ficticias.sql` quedó corregida, para
-  que una base creada desde cero nazca bien, y `0010_claves_de_catalogo_en_la_siembra.sql`
-  actualiza las cuatro filas de la base que ya está andando. La 0010 va por identificador y no
-  buscando la clave vieja, para que las dos bases queden con exactamente los mismos valores.
-  **Está escrita y todavía no aplicada**, igual que la 0009 (pendiente 30).
+- **Se arregló por los dos caminos, y quedó arreglado.** La siembra ficticia escribe hoy las claves
+  del catálogo y no las de nadie —`supabase/migrations/0002_siembra_ficticia.sql` pone
+  `enfermero_universitario`, `solo_acompanamiento` y compañía—, y las filas que estaban cargadas se
+  corrigieron una por una y por identificador, no buscando la clave vieja, para que una base creada
+  desde cero y una que ya venía andando queden con exactamente los mismos valores. La base lo
+  confirma: las cinco profesiones distintas que hay cargadas son todas claves del vocabulario
+  `tipo_asistente`, sin ninguna forma suelta.
 - **El chequeo lo sostiene.** `scripts/verificar_claves.mjs` empareja la lista de columnas de cada
   `insert` con la de valores y exige que lo que caiga en una columna de catálogo sea una clave de
   su vocabulario. Entiende el texto suelto y el arreglo `'["higiene"]'::jsonb`, y no se confunde
@@ -391,7 +395,7 @@ esperando una decisión suya.
   a volver a aparecer sola. La línea de comandos había propuesto dejarla ahí porque una migración
   aplicada es el registro de lo que corrió; el registro de verdad es el historial de Git, que sí
   guarda cada versión y no se puede reescribir por accidente. Cambiaron **sólo comentarios**, más
-  el nombre de una política, que la migración 0011 ya había renombrado en el servidor.
+  el nombre de una política, que ya estaba renombrada en el servidor.
 
 ### El perfil y el legajo se separaron, y con eso se fue otra palabra inventada
 
@@ -415,7 +419,7 @@ esperando una decisión suya.
   querido», sin ninguna de las dos palabras.
 - **«Perfil público» perdió el adjetivo**, por lo mismo que lo perdió el directorio y por una razón
   más: lo que no se muestra no está en un perfil privado, está en el legajo. Salió de `docs/ALCANCE.md`,
-  `docs/GLOSARIO.md`, `docs/MODULOS.md`, `data/catalogo-fichas.json` y un comentario de la migración 0004.
+  `docs/GLOSARIO.md`, `docs/MODULOS.md`, `data/catalogo-fichas.json` y un comentario de la base.
 - **Lo que sigue llamándose perfil y no se toca:** la ficha de la cuenta —`profiles` en la base,
   `Sesion.perfil()` en el código—, que es una tercera cosa: quién inició sesión, con qué rol y de qué
   Prestadora. Está guardada así desde el principio. No aparece en texto visible, así que la confusión
@@ -543,29 +547,25 @@ con su indicación adentro (`pwa-asistente/index.html:331` y `:335`,
 que exista una cuenta de Asistente ficticia con la que se pueda entrar, y eso depende del tope de
 correos del pendiente 45.
 
-### Las trece migraciones ya corren en el servidor
+### Las tres migraciones que hay son las tres que corren
 
-Comprobado el 24 de agosto de 2026 contra el proyecto real: el servidor tiene aplicadas 0001 a
-0013, las mismas trece que hay en `supabase/migrations/`. Antes tenía hasta la 0008, y esa
-distancia costaba dos cosas que ya no cuestan:
+`supabase/migrations/` tiene hoy tres archivos —`0001_base_del_esquema.sql`, que trae la
+estructura entera; `0002_siembra_ficticia.sql`, que trae los datos inventados; y
+`0003_dos_claves_de_catalogo_fuera_del_vocabulario.sql`—, y son exactamente las tres que la base
+de esta máquina declara aplicadas. Que el número de archivos coincida con el número de migraciones
+corridas no es una comodidad de la cuenta: es la única forma de que una base reconstruida desde
+cero dé lo mismo que la que está andando, y es lo primero que se mira cuando algo no coincide.
 
-- **La columna del contacto existe.** La 0009 agregó `avisos.contact_info`, que es donde
-  `js/apiClient.js:1423` escribe el contacto de una búsqueda. Mientras no estaba, el formulario
-  público de `solicitar-asistente.html` mandaba una columna que la base no tenía.
-- **Las filas de ejemplo hablan el idioma del catálogo.** La 0010 reemplazó las claves viejas de
-  las cuatro filas ficticias —«enfermero» y compañía— por las que las pantallas esperan.
-- **La 0011 armó el directorio**, que es lo que hoy se ve sin sesión.
-- **La 0012 le dio lugar a la disponibilidad** y cambió el nombre de una tabla, abajo.
-- **La 0013 le dio lugar a lo que pide una Familia**, que es lo que sigue.
-
-Queda dicho porque el estado real manda sobre el documentado (la regla de la empresa «el estado real está por encima del documentado»): un archivo en
-`supabase/migrations/` describe lo que se quiso aplicar, no lo que corre. Esto último se preguntó.
-Para la 0012 se preguntó dos veces, porque la primera vez el programa dijo que había terminado y
-la migración había fallado a la mitad: se le pidió a la base, tabla por tabla, que dijera qué
-tiene. `banderas_asistente` contesta que no existe; `autorizaciones_asistente`,
+Se comprueba y no se supone, porque el estado real manda sobre el documentado (la regla de la
+empresa «el estado real está por encima del documentado»): un archivo en `supabase/migrations/`
+describe lo que se quiso aplicar, no lo que corre, y las dos cosas se separaron más de una vez. El
+caso peor fue una migración que el programa dio por terminada y que había fallado a la mitad, así
+que el listado de archivos decía que estaba y la base no la tenía entera. Lo que lo destapó fue
+preguntarle a la base, tabla por tabla, qué tiene, y ése sigue siendo el procedimiento:
+`banderas_asistente` contesta que no existe; `autorizaciones_asistente`,
 `disponibilidad_asistente` y `franjas_asistente` contestan que existen y que a un visitante sin
-sesión no le muestran nada; y `directorio` devuelve la columna `reemplazos_urgentes` y
-ya no devuelve `disponible_urgencias`.
+sesión no le muestran nada; y `directorio` devuelve la columna `reemplazos_urgentes` y ya no
+devuelve `disponible_urgencias`.
 
 ### Las últimas listas escritas a mano se fueron de las pantallas
 
@@ -608,15 +608,15 @@ justamente la falla que el catálogo existe para no tener («los cuatro estados�
 ### Lo que una Familia pide ya tiene dónde guardarse
 
 Tres pantallas le preguntan cosas a una Familia y `avisos` tenía siete columnas. Lo que
-sobraba no daba error: se perdía en silencio un paso antes de la base. La 0013 le dio una columna
+sobraba no daba error: se perdía en silencio un paso antes de la base. Una migración posterior le dio una columna
 a cada cosa —`zone`, `description`, `consultation_reason`, `tasks_required`,
 `profession_required`, `preferred_gender` y `frequency`— y las tres pantallas ya las usan.
 Comprobado en el navegador, pantalla por pantalla, mirando la fila que sale hacia la base.
 
 - **El motivo de la consulta salió de adentro de las patologías.** `solicitar-asistente.html`
   mandaba «quiero hacer un curso» en la columna donde van las patologías del paciente, que es la
-  misma falla que la 0009 arregló con el teléfono. Ahora va a `consultation_reason`, y la
-  migración además rescata las filas que ya se hubieran escrito así.
+  misma falla que ya se había arreglado con el teléfono. Ahora va a `consultation_reason`, y las
+  filas que se hubieran escrito así quedaron rescatadas.
 - **La zona se elige de una lista.** En el teléfono se escribía a mano —«Ej: Palermo»—, así que
   dos personas del mismo barrio podían escribirlo de dos maneras y ningún filtro juntarlas. Ahora
   sale del vocabulario `zona`, que tiene dos escalones: la región entera o el barrio suelto.
@@ -661,14 +661,15 @@ descartaba sin decir nada. Era el pendiente 23, y estaba abierto desde que la pa
 - **La pantalla del teléfono ahora guarda.** No llamaba nunca a `guardarLegajoAsistente`: quien se
   registraba desde el teléfono llenaba la grilla y no quedaba nada. Con el pendiente 36 cerrado
   manda además las cuatro fichas y el consentimiento.
-- **«Bandera» se fue del proyecto.** La palabra la había puesto la línea de comandos traduciendo
+- **«Bandera» se fue de donde nombraba una casilla.** La palabra la había puesto la línea de comandos traduciendo
   *flag*, y el Desarrollador la sacó el 24 de agosto de 2026: «una bandera es una tela que
   identifica un país o un ejército, pero nunca es una casilla». La tabla es
   `autorizaciones_asistente`, el catálogo es `data/catalogo-autorizaciones.json`, y donde la
-  palabra nombraba un interruptor de código —`useSupabase`— dice interruptor. Sólo queda en el
-  nombre del archivo `0004_legajo_matricula_verificaciones_banderas.sql`, a propósito: el programa
-  de Supabase reconoce cada migración por su número **y su nombre**, y renombrar una que ya corrió
-  obliga a repararla a mano en el servidor.
+  palabra nombraba un interruptor de código —`useSupabase`— dice interruptor. Donde todavía se lee
+  es en `patrones_de_contacto.banderas` (`supabase/migrations/0001_base_del_esquema.sql:2932`), que
+  no guarda ninguna casilla marcada sino las letras `g` e `i` con que se lee una expresión regular
+  y que `js/contacto.js:112` le pasa a `RegExp`. Es otra cosa con el mismo nombre, y queda anotado
+  acá para que quien lo encuentre no crea que es un resto del renombre.
 - **Y «disponible para reemplazos urgentes» dejó de ser una autorización.** El Desarrollador
   decidió el mismo día que eso no es algo que se permita sino algo que se está: se mudó al paso de
   disponibilidad. Con eso cerró también el pendiente 26.
@@ -689,7 +690,7 @@ hacer está hecha; la otra mitad es del Desarrollador y está al final.
   bloque del catálogo tiene que leer, y `data/catalogo-disponibilidad.json` declara dos: la del
   Asistente dice «¿Cuándo puede trabajar?» y marca «Disponible»; la de la búsqueda dice «¿Cuándo se
   necesita el cuidado?» y marca «Se necesita». El mismo casillero, dos preguntas distintas.
-- **Se guarda como lo guarda un Asistente: una fila por casillero.** La migración 0015 crea
+- **Se guarda como lo guarda un Asistente: una fila por casillero.** La tabla es
   `franjas_aviso`, espejo exacto de `franjas_asistente` —clave de `dia_semana`, clave de
   `turno`, una sola por par, aislamiento por Prestadora, y `anon` sin ningún permiso—. El día que
   alguien quiera cruzar lo que un Asistente puede dar con lo que una Familia necesita, de los dos
@@ -712,15 +713,12 @@ hacer está hecha; la otra mitad es del Desarrollador y está al final.
   la búsqueda y no la del Asistente. La del Asistente sigue diciendo «Disponible» y conserva su
   pregunta de reemplazos urgentes.
 
-**Lo que falta y es del Desarrollador.** Son dos cosas, y la segunda toca datos guardados, que por
-regla no las mueve la línea de comandos:
-
-1. **Aplicar la migración `supabase/migrations/0016_franjas_de_un_aviso.sql`** pegándola en el
-   panel de Supabase, en SQL Editor. Hasta que corra, publicar una búsqueda guarda la búsqueda pero
-   no sus días y turnos, y la pantalla lo dice.
-2. **Vaciar y sacar `avisos.grid_schedule_7x3`.** Ya no la escribe ni la lee nadie, pero la
-   columna existe y tiene adentro las dos formas viejas. La línea es
-   `alter table public.avisos drop column grid_schedule_7x3;`
+**Lo que quedó abierto, y es una sola cosa.** La tabla existe y las franjas se guardan: la base
+tiene `franjas_aviso` con su clave, su unicidad por `(aviso_id, dia, turno)` y su columna de
+Organización. Lo que sigue en pie es que **`avisos.grid_schedule_7x3` no se fue**: ninguna
+pantalla la escribe ni la lee, pero la columna está y tiene adentro las dos formas viejas. Sacarla
+toca datos guardados, así que no la mueve la línea de comandos por su cuenta; es el pendiente 40, y
+la línea que la saca es `alter table public.avisos drop column grid_schedule_7x3;`
 
 ### El alta del teléfono guarda el legajo entero, y no sólo la disponibilidad
 
@@ -794,43 +792,42 @@ describe, y esta vez salió a la luz en las tres formas de una vez.
 
 - **No compilaba.** Dos `const retoque` en el mismo alcance: Node ni siquiera llegaba a abrir una
   conexión. Renombrada la segunda a `retoquePonderacion`.
-- **La base local estaba diez migraciones atrás**, en la 0014, mientras el servidor alojado ya
-  tenía las 24. Lo primero que devolvió la prueba fueron ocho fallos de «no encuentro la tabla»
-  que no eran agujeros de aislamiento: eran tablas que en esa base no existían.
-- **Y arrancaba pidiendo la lista de Prestadoras**, que la migración 0021 quitó a propósito. Con
-  las migraciones al día, la prueba se cortaba en el primer renglón: «hacen falta dos
-  Prestadoras, hay 0». Ahora las pide de a una por su nombre corto, con
-  `prestadora_por_slug`, que es la única puerta que quedó.
+- **La base local estaba diez migraciones atrás** de lo que el servidor alojado ya tenía. Lo
+  primero que devolvió la prueba fueron ocho fallos de «no encuentro la tabla» que no eran
+  agujeros de aislamiento: eran tablas que en esa base no existían.
+- **Y arrancaba pidiendo la lista de Prestadoras**, que se quitó a propósito. Con la base al día,
+  la prueba se cortaba en el primer renglón: «hacen falta dos Prestadoras, hay 0». Ahora las pide
+  de a una por su nombre corto, con `prestadora_por_slug`, que es la única puerta que quedó.
 
 **El fallo que importó es el del directorio, y lo destapó la única comprobación positiva que
-tenía.** La prueba leía `directorio` derecho, y la 0021 le sacó el permiso a todo el mundo:
+tenía.** La prueba leía `directorio` derecho, y ese permiso ya no lo tenía nadie:
 las dos comprobaciones que esperan **no** ver a nadie seguían diciendo «bien», porque no veía a
 nadie nunca. La tercera —la que exige que la persona **sí** aparezca después de autorizar— es la
 que se puso en rojo. Sin ella, tres comprobaciones rotas habrían seguido pasando por años. Hoy el
 directorio se pide por `directorio_de(<nombre corto>)` y el perfil por
 `perfil_del_directorio(<nombre corto>, <id>)`.
 
-**Y se le agregó la comprobación que faltaba desde la 0021:** que el legajo publicado de una
-Prestadora **no** aparezca en el directorio de la otra. Es la razón de ser de esa migración, y
-hasta hoy nada la verificaba.
+**Y se le agregó la comprobación que faltaba:** que el legajo publicado de una Prestadora **no**
+aparezca en el directorio de la otra. Es la razón de ser de esa puerta, y hasta ese día nada la
+verificaba.
 
 **Resultado: 49 comprobaciones, todas en verde**, contra las 24 migraciones. Cubren el perfil que
 crea el registro, el legajo, los archivos de los dos depósitos, el directorio de cada Prestadora,
 el examen, y la barrera entre dos Familias de una misma Prestadora —avisos, horarios, mensajes,
 reportes y ponderaciones—.
 
-**Y volvió a correr ese mismo día contra las 27, con el mismo resultado: 49 de 49.** Pero para
-que diera eso hubo que aplicarle a la base local dos migraciones que le faltaban, y ahí está lo
-que conviene anotar. `supabase migration list --local` mostraba la 0026 y la 0027 con el archivo
-presente y el renglón de la base vacío, mientras que `--linked` las tenía completas: **la base
-local se había vuelto a atrasar el mismo día en que se la había puesto al día**, lo cual dice que
-no es un descuido sino la forma normal de las cosas. `supabase migration up --local` las aplicó
-enteras las dos, que de paso es una comprobación de que corren o no corren, sin dejar la base a
-mitad de camino.
+**Y volvió a correr ese mismo día contra el esquema entero, con el mismo resultado: 49 de 49.**
+Pero para que diera eso hubo que aplicarle a la base local dos migraciones que le faltaban, y ahí
+está lo que conviene anotar. `supabase migration list --local` mostraba las dos últimas con el
+archivo presente y el renglón de la base vacío, mientras que `--linked` las tenía completas: **la
+base local se había vuelto a atrasar el mismo día en que se la había puesto al día**, lo cual dice
+que no es un descuido sino la forma normal de las cosas. `supabase migration up --local` las
+aplicó enteras las dos, que de paso es una comprobación de que corren o no corren, sin dejar la
+base a mitad de camino.
 
 **Lo que importa no es el atraso sino que la prueba no lo nota.** El 49 de 49 es el mismo número
-que habría dado sin aplicar ninguna de las dos: la 0026 sólo reemplaza la vista y la 0027 sólo
-inserta filas, ninguna crea tabla ni columna, y la prueba no nombra en sus 828 renglones ni a
+que habría dado sin aplicar ninguna de las dos: una sólo reemplazaba la vista y la otra sólo
+insertaba filas, ninguna creaba tabla ni columna, y la prueba no nombra en sus 828 renglones ni a
 `verificaciones_asistente` ni a la lista `comprobaciones`. Cuando la base estaba diez
 migraciones atrás la prueba se rompió a los gritos, pero fue porque aquellas migraciones
 **creaban tablas**. Una que sólo aprieta una política o sólo siembra datos la deja probando la
@@ -914,7 +911,7 @@ registradas pueden comunicarse con ella, y que lo hacen por la plataforma
 Lo que falta —empezar una conversación con esa persona en particular— quedó anotado como pendiente 46.
 
 **Tres traducciones que estaban por escribirse dos veces subieron a los archivos compartidos**
-(«ningún patrón repetido sin punto único de verdad»): el precio en pesos es `Texto.importe` (`js/texto.js:160`), la etiqueta de una lista es
+(«ningún patrón repetido sin punto único de verdad»): el precio en pesos es `Texto.importe` (`js/texto.js:167`), la etiqueta de una lista es
 `Catalogo.etiquetaSiExiste` (`js/catalogo.js:467`), y la de una tarea —que puede estar en cualquiera
 de tres listas— es `Catalogo.etiquetaDeTarea` (`js/catalogo.js:480`). Vivían adentro de
 `directorio.html`; ahora las dos pantallas las piden al mismo lugar.
@@ -1302,15 +1299,28 @@ etiqueta que cierra, el fin de un comentario o un renglón en blanco no son una 
 de una que se corrió. Se registra solo en `scripts/verificar_todo.mjs` y en el gancho de
 `git commit`, sin tocar ninguno de los dos.
 
-**Los documentos exentos, y por qué.** Un documento que es **una foto fechada** cita el
-código de ese día a propósito, y corregirle los renglones sería falsear lo que decía.
-`docs/INVENTARIO.md` lo dice en su propio renglón 7, y `docs/PLAN_ACCESO.md` es un plan escrito
-antes de tocar código, cuyas citas muestran los problemas que había ese día. Los dos están en la
-lista `FOTOS` del chequeo, cada uno con su motivo escrito al lado —una exención sin motivo es una
-excepción que nadie va a poder revisar después—. Empezaron siendo cuatro: el plan técnico heredado
-se borró el mismo día, y el plan de la Prestadora, el 26 de agosto de 2026, al ejecutarse. **Una
-exención se borra junto con el archivo que eximía**, si no queda señalando a un documento que ya
-no está.
+**Los documentos exentos, y por qué.** Hoy ninguno lo está por ser una foto fechada, y la lista que
+guardaba a ésos ya no está en `scripts/citas.mjs`. Existió para los documentos que citan el código
+de un día a propósito —a ésos corregirles los renglones sería falsear lo que decían—, y se fue
+vaciando sola porque **una exención se borra junto con el archivo que eximía**: si no, queda
+señalando a un documento que ya no está. Vacía no eximía a nadie, así que se borró también ella,
+que es lo que se hace con cualquier cosa que ya cumplió su función: no hay depósito de listas
+viejas, y una lista vacía que sigue escrita invita a volver a llenarla.
+
+Las dos que quedan no perdonan una cita vieja sino una que el guion no tiene cómo abrir. `AJENOS`
+tiene la migración
+`supabase/migrations/20260820190000_el_canal_del_asistente_se_elige_y_se_respeta.sql`, que es de
+Careonys y vive en su propio repositorio: la cita queda porque de ahí sale una frase que se
+transcribe, y el archivo no está acá para comprobarla. `DE_OTRO_REPOSITORIO` tiene
+`docs/APORTES_A_CAREONYS.md`, que compara lo que hay acá con lo que hay allá, y se le perdonan
+**sólo** sus citas a archivos de Careonys: las que hace a este repositorio se comprueban igual que
+las de cualquier otro documento, porque son justamente las que se despegan solas cuando alguien
+mueve un renglón. Eximir el documento entero convertiría el permiso en un agujero.
+
+Aparte de ésas hay una lista más, `AJENAS`, que no exime a ningún documento: nombra las carpetas de
+trabajo de quien desarrolla, que no son documentación del proyecto y por eso no se recorren. Y cada
+exención lleva su motivo escrito al lado, porque una exención sin motivo es una excepción que nadie
+va a poder revisar después.
 
 **Lo que el chequeo no puede ver, dicho de frente.** Una cita que se corrió a otro renglón **con
 contenido** pasa igual: el guion no sabe de qué habla la frase. Se probó exigir que un
@@ -1344,8 +1354,9 @@ aplicación, y lee de la base.
 
 - **El cliente de datos aprendió a pedir los cursos.** `getCursos()` en `js/apiClient.js` era lo que
   faltaba: ya sabía pedir las evaluaciones y los intentos de quien inició sesión, pero ninguna
-  pantalla leía la tabla `cursos`, que existe desde la migración 0008. Filtra `publicado=eq.true` y
-  ordena por `orden`. Ese filtro está en el pedido y no en la política de la tabla porque la
+  pantalla leía la tabla `cursos`
+  (`supabase/migrations/0001_base_del_esquema.sql:2462`). Filtra `publicado=eq.true` y ordena por
+  `orden`. Ese filtro está en el pedido y no en la política de la tabla porque la
   política de `cursos` no mira `publicado` —la de `evaluaciones` sí—; que el curso sin publicar no
   llegue a la pantalla es lo que corresponde, que no llegue al navegador sería mejor, y eso es una
   migración.
@@ -1465,22 +1476,22 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
   en el navegador antes de tocar nada: `directorio.html?t=prestadora-que-no-existe` mostraba los
   cuatro Asistentes de PresDemo, porque el respaldo devuelve la primera Prestadora de la base. El
   respaldo sirve para una dirección que no nombra ninguna, no para una que nombra mal. Ahora se
-  distingue un caso del otro (`js/apiClient.js:845`) y el segundo avisa. **Y desde la
-  migración 0021 el respaldo ya no existe**: mostrar la primera Prestadora de la base era
-  leer la lista de clientes de CeltaTech, y esa lista no la ve nadie. Quien entra sin
-  enlace ahora ve que le falta el enlace.
+  distingue un caso del otro (`js/apiClient.js:845`) y el segundo avisa. **Y el respaldo ya no
+  existe**: mostrar la primera Prestadora de la base era leer la lista de clientes de CeltaTech, y
+  esa lista no la ve nadie. Quien entra sin enlace ahora ve que le falta el enlace.
 - **La base tenía el directorio vacío y nadie se enteraba.** `directorio` devolvía **cero
-  filas**, y no por un problema de permisos: los legajos inventados de la migración 0003 están
-  validados, pero nadie había contestado la autorización de publicación, que la vista exige. Con
-  ocho tarjetas dibujadas encima, eso no se veía. La migración 0014 pone cinco legajos inventados
-  más y contesta las autorizaciones, y **deja una validada y sin publicar a propósito** —Ester
-  Villalba Ficticia— para que la condición del consentimiento se pueda comprobar: si apareciera,
-  la vista no estaría mirándola.
-- **Comprobado en el navegador, con las dos Prestadoras.** PresDemo muestra cuatro y Cuidar Norte
-  muestra tres; nunca siete, que es el total. Los tres filtros y la búsqueda libre funcionan sobre
-  las tarjetas recién traídas —la búsqueda «ruben» encuentra a Rubén Ocampo Ficticio—, y los
-  cuatro estados se probaron uno por uno, incluido el botón de reintentar. La
-  respuesta de la base no trae documento, teléfono, correo ni domicilio.
+  filas**, y no por un problema de permisos: los legajos inventados estaban validados, pero nadie
+  había contestado la autorización de publicación, que la vista exige. Con ocho tarjetas dibujadas
+  encima, eso no se veía. La siembra de hoy la contesta, y **deja dos legajos validados y sin
+  publicar a propósito** —Ester Villalba Ficticia y Ramiro Cáceres Ficticio, los dos de PresDemo—
+  para que la condición del consentimiento se pueda comprobar: si aparecieran, la vista no estaría
+  mirándola. Son dos de los once validados, y por eso el directorio publica nueve.
+- **Comprobado en el navegador, con las dos Prestadoras grandes.** Cada una muestra las suyas y
+  ninguna de la otra: hoy la vista devuelve tres filas para PresDemo, cinco para Cuidar Norte y
+  una para Cuidar Sur, y no hay sesión desde la que se vean las nueve juntas. Los tres filtros y
+  la búsqueda libre funcionan sobre las tarjetas recién traídas —la búsqueda «ruben» encuentra a
+  Rubén Ocampo Ficticio—, y los cuatro estados se probaron uno por uno, incluido el botón de
+  reintentar. La respuesta de la base no trae documento, teléfono, correo ni domicilio.
 - **Se sacó el filtro «Verificación»**, que la pantalla ofrecía y nada podía contestar: lo que se
   controló de un legajo vive en `verificaciones_asistente`, que no es pública. Es el pendiente 43.
 - **`perfil.html` quedó a mitad de camino y por eso se lo frenó.** Sus datos estaban escritos a
@@ -1626,46 +1637,51 @@ incumpliera. Ahora las mira `scripts/verificar_esquema.mjs` antes de cada commit
 limpias y la quinta tiene un solo incumplimiento**, que quedó anotado como pendiente 51 en vez de
 taparse.
 
-- **Toda tabla enciende su RLS en la misma migración que la crea** (§4). Las 22 lo hacen.
+- **Toda tabla enciende su RLS en la misma migración que la crea** (§4). Las 36 lo hacen.
   Encenderla después, a mano desde el panel de Supabase, deja una ventana abierta entre las dos
   cosas y deja el repositorio diciendo algo que no es.
-- **Toda función que se saltea la RLS le revoca el permiso a `PUBLIC` y a `anon`** (§4). Las cinco
-  lo hacen: `prestadora_actual`, `crear_perfil_al_registrarse`, `es_personal_de_prestadora`,
-  `legajo_propio` y `rendir_evaluacion`. Una función `SECURITY DEFINER` del esquema `public` es
-  además una dirección web, porque PostgREST publica ese esquema. El chequeo **no** mira
+- **Toda función que se saltea la RLS le revoca el permiso a `PUBLIC` y a `anon`** (§4). Hay 28
+  funciones `SECURITY DEFINER` y 22 lo hacen; las 6 que quedan al alcance de quien no inició
+  sesión están ahí a propósito, y son las seis que atienden la puerta pública de una Prestadora
+  —`directorio_de`, `guias_de`, `perfil_del_directorio`, `prestadora_por_slug`,
+  `vocabularios_de` y `zonas_de`—: las seis exigen el nombre corto de la Prestadora, lo comparan
+  contra `slug` y no dejan que el nulo las abra todas. Una función `SECURITY DEFINER` del esquema
+  `public` es además una dirección web, porque PostgREST publica ese esquema, y por eso la lista de
+  las que sí se abren se comprueba de a una en vez de contarse. El chequeo **no** mira
   `authenticated` a propósito: ahí los dos casos son legítimos, porque la que consumen las
   políticas tiene que conservarlo —sin él la aplicación no puede leer sus propias tablas— y la que
   dispara un `trigger` no lo necesita.
-- **Toda tabla tiene la columna de la Organización** (§5.10). Las 22 la tienen. `tenants` está
-  exenta con el motivo escrito: es la Organización, y su propio identificador es el que las demás
-  copian.
-- **Toda tabla tiene clave primaria `uuid`** (§5.10). Las 22 la tienen, y se comprobó el 25 de
-  agosto de 2026 recorriendo las quince migraciones: quince la declaran al lado de la columna y
-  siete —las de la 0001— en un `alter table … add constraint … primary key` que está más abajo
-  en el mismo archivo, así que el chequeo busca en las tres formas y no en una. Es la otra mitad
-  de la regla de la columna de Organización, y es por lo mismo: dos bases que se fusionan con
-  claves correlativas chocan en el número 1, y hay que reasignarlas todas junto con cada
-  referencia que las apunta. Con UUID no chocan. Hasta el 25 de agosto de 2026 esta mitad no la
-  miraba nadie, aunque la de al lado sí.
+- **Toda tabla tiene la columna de la Organización** (§5.10). La tienen 34 de las 36, y las dos que
+  faltan están exentas con el motivo escrito. `tenants`, porque es la Organización: su propio
+  identificador es el que las demás copian. Y `patrones_de_contacto`, porque son las reglas del
+  producto —qué cuenta como un teléfono, un correo o un domicilio adentro del chat— y no el dato de
+  nadie: valen igual para todas las Prestadoras, y sólo se dejan leer.
+- **Toda tabla tiene clave primaria `uuid`** (§5.10). Las 36 la tienen. Hoy las 36 están escritas
+  de la misma forma, en un `alter table … add constraint … primary key` que va más abajo en el
+  mismo archivo, porque así las escribe un volcado; el chequeo igual busca en las tres formas y no
+  en una, y eso no sobra: la forma corta, al lado de la columna, vuelve apenas alguien escriba una
+  tabla a mano. Es la otra mitad de la regla de la columna de Organización, y es por lo mismo: dos
+  bases que se fusionan con claves correlativas chocan en el número 1, y hay que reasignarlas todas
+  junto con cada referencia que las apunta. Con UUID no chocan.
 - **Todo importe se guarda con su moneda** (§5.11). Fue el único incumplimiento del esquema y se
   cerró el 5 de septiembre de 2026. `caregivers.hourly_rate`
   (`supabase/migrations/0001_base_del_esquema.sql:482`) era un `numeric` a secas —el único importe
   del esquema— y la moneda vivía escrita adentro de `js/texto.js`, igual para todo el mundo. El
-  Desarrollador decidió que la elige cada Prestadora, y la migración 0074 la puso donde va: el
-  vocabulario `moneda`, la columna `tenants.moneda` que la Prestadora configura desde su panel, y
-  `caregivers.moneda_valor_hora`, que un disparador completa sola con la de su Prestadora y que la
-  tabla exige cada vez que hay un valor por hora. **La moneda se copia al legajo en vez de
-  leerse de `tenants` cada vez**, por lo mismo que los cálculos económicos van «a la escala vigente
-  a la fecha del hecho»: una Prestadora que pasara de peso a dólar le multiplicaría por mil el
-  precio a todo el mundo. El chequeo se quedó sin ninguna exención de importes.
+  Desarrollador decidió que la elige cada Prestadora, y hoy está donde va: el vocabulario `moneda`,
+  la columna `tenants.moneda` que la Prestadora configura desde su panel, y
+  `caregivers.moneda_valor_hora` (`supabase/migrations/0001_base_del_esquema.sql:485`), que el
+  disparador `el_valor_hora_nace_con_su_moneda` (`:1053`) completa sola con la de su Prestadora y
+  que la tabla exige cada vez que hay un valor por hora (`:486`). **La moneda se copia al legajo
+  en vez de leerse de `tenants` cada vez**, por lo mismo que los cálculos económicos van «a la
+  escala vigente a la fecha del hecho»: una Prestadora que pasara de peso a dólar le multiplicaría
+  por mil el precio a todo el mundo. El chequeo se quedó sin ninguna exención de importes.
 
-**Una medición equivocada se corrigió antes de escribirla como verdad, y conviene dejarla contada.**
-La primera versión del chequeo buscaba la columna de la Organización sólo adentro del `create
-table`, y avisó de tres tablas —`clock_ins`, `reportes` y `messages`— que en realidad la
-tienen: se la agrega la migración 0002 en los renglones 52 a 54. Lo que delató el error fue que las
-políticas de esas mismas tres tablas usan `tenant_id`, o sea que la columna existe. La regla pide la
-columna, no el momento; el momento lo pide sólo la RLS, y por un motivo distinto. El chequeo hoy lee
-las quince migraciones juntas antes de juzgar ninguna.
+**El chequeo mira el neto y no cada archivo por separado, y eso no es un detalle de programación.**
+La regla pide la columna, no el momento en que apareció: una tabla que nace sin ella y la recibe dos
+migraciones después la tiene igual, y darla por incumplida sería medir la historia en vez del
+estado. El momento sí lo pide la RLS, que es la regla de al lado, y por un motivo distinto —entre
+crear la tabla y encenderla queda una ventana abierta—. Así que el chequeo lee las tres migraciones
+juntas antes de juzgar ninguna, y las juzga por lo que dejan puesto al final.
 
 Se mira a sí mismo con diecisiete casos, siete que tiene que encontrar y diez que tiene que dejar pasar
 —entre ellos `numeric(10,2)`, que con un recorte ingenuo por el primer paréntesis que cierra parte
@@ -1712,7 +1728,7 @@ las dos. Cómo quedó está en la sección de acá abajo.
 
 El `README.md` abría con siete filas de números —pantallas, renglones, dependencias, tablas—
 que eran del arranque del proyecto y que nadie había vuelto a medir. Decía «6 tablas en
-Supabase, **sin migraciones en el repositorio**» cuando hay veintidós tablas y dieciséis
+Supabase, **sin migraciones en el repositorio**» cuando ese día había veintidós tablas y dieciséis
 migraciones. Se midió todo de nuevo el 25 de agosto de 2026, contra el árbol de trabajo:
 
 | Decía | Dice |
@@ -1778,25 +1794,26 @@ frases nuevas, seis que tiene que encontrar y cinco que tiene que dejar pasar.
 
 ### El renombre se aplicó contra el servidor, y de paso murió un estado que nadie escribía
 
-Las migraciones `0015` y `0016` estaban escritas y sin aplicar, y mientras tanto el código pedía
+El renombre estaba escrito en dos migraciones y sin aplicar, y mientras tanto el código pedía
 tablas que en el servidor todavía se llamaban como antes. **Se aplicaron el 25 de agosto de 2026
 con `supabase db push`**, contra la base de este proyecto —`pfbvpncavvlgmmvqkgbo`, la misma que
 nombra `js/apiClient.js:8`—, y no contra la de Careonys, que está en producción y no se toca desde
-acá. Quedan las diecisiete migraciones del repositorio aplicadas, sin diferencia entre lo local y
+acá. Con eso desapareció la diferencia entre lo que corría en esta máquina y lo que corría en
 el servidor.
 
 **Y aplicarlas destapó un valor muerto.** `caregivers.verification_status` aceptaba dos palabras
-para decir una sola cosa: `validado` y `validado_prestadora`. La `0007:8` ya había escrito qué
-significa —«Validado quiere decir "la Prestadora revisó los papeles"»—, que es exactamente lo que
+para decir una sola cosa: `validado` y `validado_prestadora`. Lo que significa ya estaba escrito
+cuando se creó la columna —«Validado quiere decir "la Prestadora revisó los papeles"»—, y es lo que
 dice `validado_prestadora` con todas las letras. Los dos pasaban en todos lados, y **el corto no lo
 escribía nadie**: el único lugar que asigna un estado validado es `panel-prestadora.html:770`, y
 pone el largo. El corto sólo aparecía leído, y en una fila de ejemplo.
 
-La `0017` lo saca: pasa las filas que decían `validado` a decir `validado_prestadora`, y el
-directorio deja de nombrar el valor muerto. En el código quedaba un solo lugar que lo leía
-—`pwa-asistente/index.html:1758`, un `||` defensivo— y también se fue. **Lo que la `0017` no hace es
-cerrar la lista de estados con un `check`**, porque para eso hay que saber cuáles son todos, y hoy
-el código nombra cuatro sin que ningún lugar diga que ésos son todos.
+La corrección lo saca: pasó las filas que decían `validado` a decir `validado_prestadora`, y el
+directorio dejó de nombrar el valor muerto. En el código quedaba un solo lugar que lo leía
+—`pwa-asistente/index.html:1758`, un `||` defensivo— y también se fue. Hoy la base tiene once
+legajos en `validado_prestadora`, dos en `en_revision` y ninguno con la palabra corta. **Lo que eso
+no hace es cerrar la lista de estados con un `check`**, porque para eso hay que saber cuáles son
+todos, y hoy el código nombra cuatro sin que ningún lugar diga que ésos son todos.
 
 Esto cierra la mitad del pendiente 53. La otra mitad no la puede cerrar la línea de comandos: falta
 **el nombre del segundo nivel de Asistente**, y un nombre no se inventa.
@@ -1817,29 +1834,19 @@ acto de buscar y no deja nada guardado; lo que queda guardado es el aviso que pu
 
 | Antes | Ahora | Qué pasó |
 |---|---|---|
-| `care_searches` | `avisos` | `supabase/migrations/0015_los_avisos_se_llaman_avisos.sql`, con su clave, su restricción, su índice y su política |
-| `reportes.search_id` y `messages.search_id` | `aviso_id` | La misma migración, con sus dos restricciones |
-| `caregivers_publicos` | `directorio` | La misma migración. El nombre no es nuevo: es el del módulo, decidido el 24 de agosto en `docs/MODULOS.md:58` |
-| `franjas_busqueda` | `franjas_aviso` | No hubo renombre: la migración que la crea no estaba aplicada, así que se reescribió y se renumeró a `supabase/migrations/0016_franjas_de_un_aviso.sql`. Esa tabla nunca llegó a existir |
+| `care_searches` | `avisos` | Un renombre de verdad, porque la tabla ya existía con datos adentro: se mudaron con ella la clave, la restricción, el índice y la política (`supabase/migrations/0001_base_del_esquema.sql:2153`) |
+| `reportes.search_id` y `messages.search_id` | `aviso_id` | El mismo renombre, con sus dos restricciones |
+| `caregivers_publicos` | `directorio` | El mismo renombre. El nombre no es nuevo: es el del módulo, decidido el 24 de agosto en `docs/MODULOS.md:58` |
+| `franjas_busqueda` | `franjas_aviso` | No hubo renombre: `franjas_busqueda` no llegó a existir nunca en ninguna base. La tabla nació ya con el nombre nuevo (`supabase/migrations/0001_base_del_esquema.sql:2283`) |
 | `franjas_busqueda.search_id` | `franjas_aviso.aviso_id` | Ídem |
 | `grilla_busqueda`, `paso_de_franjas_busqueda` | `grilla_aviso`, `paso_de_franjas_aviso` | Claves del catálogo `data/catalogo-disponibilidad.json` y sus dos copias |
 | `getBusquedasFamilia`, `crearBusquedaFamilia`, `crearBusqueda`, `guardarFranjasDeBusqueda`, `getFranjasDeBusqueda` | `getAvisosFamilia`, `crearAvisoFamilia`, `crearAviso`, `guardarFranjasDeAviso`, `getFranjasDeAviso` | `js/apiClient.js` y sus dos copias, más quien las llama. El 5 de septiembre de 2026 se borraron dos de esos nombres nuevos, `getAvisosFamilia` y `getFranjasDeAviso`: ninguna pantalla llegó a llamarlas y el camino vivo es `avisos_abiertos()` y `franjasDeAviso()` (pendiente 128) |
 | `busqueda_sin_franjas` | `aviso_sin_franjas` | El error y su texto en `js/texto.js` |
 
-**Lo que la renumeración evitó.** La migración de las franjas era la 0015 y pasó a ser la 0016,
-porque tiene que correr después del renombre: cuelga de `avisos`. Como no se había pegado
-todavía en el panel de Supabase, se pudo reescribir en vez de agregarle un renombre encima. Es la
-diferencia entre las dos tablas: `care_searches` ya existía en el servidor y necesitó una
-migración de verdad; `franjas_busqueda` no existió nunca.
-
 **Lo que este renombre dejó a la vista y no arregló.** `reportes` y `messages` son tablas
 compartidas y siguen apuntando a un objeto que sólo existe en esta modalidad. Antes la columna se
 llamaba `search_id` y no se notaba; ahora se llama `aviso_id` y se nota. Es un problema de
 reparto, no de nombres, y sigue anotado en el pendiente 52.
-
-**Las dos migraciones están escritas y ninguna aplicada.** El Desarrollador tiene que pegarlas en
-el panel de Supabase, en orden: primero la 0015, después la 0016. Hasta que lo haga, el código
-nombra tablas que en el servidor todavía se llaman como antes.
 
 ### Los cuatro estados se midieron dos veces, y la segunda dijo lo contrario que la primera
 
@@ -1925,8 +1932,8 @@ bien y el dueño estaba mal.** El Desarrollador corrigió que el que tiene que p
 reparto no somos nosotros sino **cada Prestadora**, cuyo criterio puede legítimamente no ser el
 nuestro —y que puede, además, no querer calificar a nadie.
 
-Así que los pesos iguales dejaron de ser la regla y pasaron a ser **el valor de fábrica**. La
-migración `0018_cada_prestadora_pondera_su_puntaje.sql` agrega dos tablas:
+Así que los pesos iguales dejaron de ser la regla y pasaron a ser **el valor de fábrica**, y para
+eso hay dos tablas, no una (`supabase/migrations/0001_base_del_esquema.sql:2413` y `:2347`):
 
 | Tabla | Qué guarda |
 |---|---|
@@ -1945,15 +1952,19 @@ justamente para que el valor de fábrica sea visible y no un supuesto escondido 
 
 **La palabra `peso` no sobrevivió al primer lector.** El Desarrollador leyó «el formulario de
 pesos en el panel de la Prestadora» y preguntó si se estaba hablando de dinero. Esa es toda la
-prueba que hacía falta: acá el peso es la moneda antes que cualquier otra cosa. La migración
-`0022_la_ponderacion_no_es_plata_y_suma_cien.sql` renombró la tabla y la columna a
-`ponderacion`, que es la palabra que ya significa cuánto cuenta cada cosa dentro de un total.
-Sale barato porque la base todavía no tiene datos reales; dentro de un año no salía.
+prueba que hacía falta: acá el peso es la moneda antes que cualquier otra cosa. Así que la tabla
+se llama `ponderacion_comprobacion` y la columna, `ponderacion`, que es la palabra que ya
+significa cuánto cuenta cada cosa dentro de un total. Se renombró el mismo día que se leyó mal.
+Sale barato porque la base todavía no tiene datos reales; dentro de un año no salía. **La palabra
+sí quedó en los nombres de las restricciones**, que nadie escribe ni lee: la clave primaria, la
+unicidad, la clave foránea y las dos comprobaciones siguen llamándose `peso_comprobacion_…`,
+porque renombrarlas no cambia ningún dato. Queda dicho para que quien lo vea en el esquema sepa
+que es la misma tabla y no otra.
 
 **Y con el sí vino una regla que cambia la tabla más que el nombre:** «lo que sí es importante
 es que la suma de todos los ítems valorados dé 100%, así que si se agrega alguno la prestadora
 tendrá que reacomodar las ponderaciones de cada ítem para que el total de todas ellas dé el
-100%». Hasta la 0018 cada comprobación valía lo suyo y era independiente: subirle a una no le
+100%». Antes cada comprobación valía lo suyo y era independiente: subirle a una no le
 bajaba a ninguna, y el total era cinco, o seis, o lo que diera. Ahora **el total es una cantidad
 fija que se reparte**, y subirle a una obliga a bajarle a otra.
 
@@ -2002,7 +2013,7 @@ Se cambió en los tres lados a la vez, que es la única forma de que no vuelva:
 
 | Dónde | Qué |
 |---|---|
-| La base | `logbook_entries` pasó a `reportes`, con sus tres restricciones y su política (`0019`) |
+| La base | `logbook_entries` pasó a `reportes`, con sus tres restricciones y su política |
 | El código | `registrarBitacoraDiaria` → `registrarReporte`, `getBitacoraDiaria` → `getReportes`, `cargarBitacora` → `cargarReportes`, y los identificadores de pantalla y de estilo que decían `cuaderno` |
 | Lo que se lee | 98 apariciones en 20 archivos, entre menús, títulos, mensajes y comentarios |
 
@@ -2030,8 +2041,8 @@ llamábamos «el tenant» es sólo la del medio:
 
 | Barrera | Con qué se sostiene | Cómo estaba |
 |---|---|---|
-| Prestadora ↔ Prestadora | `tenant_id = prestadora_actual()`, desde la 0002 | entera |
-| Asistente ↔ Asistente | `legajo_propio()` desde la 0005 y la 0012; la carpeta propia en el depósito, desde la 0006 | entera |
+| Prestadora ↔ Prestadora | `tenant_id = prestadora_actual()` (`supabase/migrations/0001_base_del_esquema.sql:417`) | entera |
+| Asistente ↔ Asistente | `legajo_propio()` (`supabase/migrations/0001_base_del_esquema.sql:1584`); la carpeta propia en el depósito de archivos (`:5950`) | entera |
 | Familia ↔ Familia | nada | **no existía** |
 
 Las dos primeras separan cosas que están en tablas distintas o en carpetas distintas. La
@@ -2039,19 +2050,21 @@ tercera es más difícil justamente porque **las dos Familias están adentro de 
 Prestadora**: ahí el `tenant_id` de las dos vale lo mismo, así que no separa nada. Cinco tablas
 se conformaban con él, y eso quería decir que **una Familia, con sólo iniciar sesión, leía,
 modificaba y borraba los avisos de las demás, y leía la presión, la glucemia y la medicación de
-todos los Pacientes de la Prestadora**. Lo mismo un Asistente con sesión. La migración
-`supabase/migrations/0020_la_barrera_tambien_va_entre_familias.sql` lo cierra, y está aplicada.
+todos los Pacientes de la Prestadora**. Lo mismo un Asistente con sesión. Hoy las cinco políticas
+nombran además a la persona, y la base lo confirma: la de `avisos` exige `familia_id =
+auth.uid()` salvo para el personal de la Prestadora
+(`supabase/migrations/0001_base_del_esquema.sql:4482`).
 
 **Faltaba una pieza antes de poder escribir la regla: el aviso no sabía de quién era.**
-`avisos` no tenía ninguna columna que lo atara a quien lo publicó, así que no había con
-qué comparar. Ahora tiene `familia_id`, y el valor **sale del valor por omisión y nunca del
-pedido** —igual que `tenant_id` desde la 0002—, que es lo que hace que nadie pueda publicar un
-aviso a nombre de otra persona. Los horarios y la conversación no deciden nada por su cuenta:
-cuelgan del aviso, y si el aviso no se ve, el `exists` de la política no encuentra nada y ellos
-tampoco se ven.
+`avisos` no tenía ninguna columna que lo atara a quien lo publicó, así que no había con qué
+comparar. Ahora tiene `familia_id`, y el valor **sale del valor por omisión y nunca del pedido**
+—igual que `tenant_id`, que también nace de `prestadora_actual()`—, que es lo que hace que nadie
+pueda publicar un aviso a nombre de otra persona. Los horarios y la conversación no deciden nada
+por su cuenta: cuelgan del aviso, y si el aviso no se ve, el `exists` de la política no encuentra
+nada y ellos tampoco se ven.
 
 **Y había un agujero recién hecho, propio, que se cerró en la misma pasada.** Las dos tablas de
-la 0018 —cuánto pondera cada Prestadora su puntaje— tenían políticas que sólo miraban el
+la ponderación —cuánto pondera cada Prestadora su puntaje— tenían políticas que sólo miraban el
 `tenant_id`, así que cualquier sesión de esa Prestadora podía cambiar los pesos del puntaje. No
 lo usaba nada todavía. Se cerró antes de que lo usara algo.
 
@@ -2077,7 +2090,7 @@ mostrar si la barrera existe. Comprueban que cada Familia publica su aviso y sal
 sin haberlo mandado, que mandarlo a nombre de otra no sirve, que ninguna ve, modifica ni borra
 el aviso de la otra, ni sus horarios, ni su conversación, ni ningún reporte, y que los pesos del
 puntaje no se leen ni se cambian desde una sesión que no es del personal. Esa última no mira una
-tabla vacía: **las filas existen porque las siembra la propia 0018**, así que ver cero ahí es la
+tabla vacía: **las filas existen porque las siembra `supabase/migrations/0002_siembra_ficticia.sql:183`**, así que ver cero ahí es la
 política y no la falta de datos. **Las doce quedaron escritas y no corridas**: el guion completo
 necesita `--local` con `supabase start`, porque el registro por correo del servidor remoto pide
 confirmar la casilla y ahí la prueba nunca llega a tener sesión. Está dicho en la cabecera del
@@ -2139,11 +2152,19 @@ es una función con un argumento obligatorio —el nombre corto, el que ya viaja
 subdominio—: sin ese dato no devuelve nada, y con él devuelve una sola Prestadora. La respuesta
 que mezcla dos empresas dejó de existir, en vez de depender de que nadie se olvide.
 
-Después de la migración 0021 el rol anónimo **no lee ninguna tabla ni vista de este esquema**.
-Tiene tres puertas y las tres le piden nombrar una Prestadora: `prestadora_por_slug`,
-`directorio_de` y `perfil_del_directorio`. El barrido lo confirma contra el servidor real: 27
-tablas y vistas, 23 que ni dejan preguntar, 4 que contestan sin devolver nada, **0 que devuelvan
-filas**. Y su lista de excepciones quedó vacía, que es la primera vez.
+**El rol anónimo no alcanza ni una tabla ni una vista que tenga datos de una Prestadora.** Lo
+único que lee de este esquema son tres objetos abiertos a propósito, y ninguno de los tres los
+tiene: las vistas `oferta_comercial_publica` (`supabase/migrations/0001_base_del_esquema.sql:2831`)
+y `oferta_de_cursos` (`:2857`), que su propio cuerpo acota a la oferta general del producto
+—`tenant_id is null`—, de modo que no sale por ahí ni un ítem de una Prestadora ni el nombre de
+ninguna; y la tabla `patrones_de_contacto` (`:2928`), que son las reglas del producto sobre qué
+cuenta como un dato de contacto y valen igual para todas. Los tres sólo dejan leer. Lo que sí
+devuelve datos de una Prestadora son seis funciones, y las seis le piden nombrarla:
+`prestadora_por_slug`, `directorio_de`, `perfil_del_directorio`, `guias_de`, `vocabularios_de` y
+`zonas_de`. El barrido lo confirma contra el servidor real: 39 tablas y vistas con datos de una
+Prestadora, 37 que ni dejan preguntar, **0 que contesten sin devolver nada** —que sería el caso
+ambiguo, el que puede ser la política o puede ser una tabla vacía— y 2 que devuelven filas, que son
+las dos vistas declaradas arriba, con su motivo escrito y comprobado de a una.
 
 **Lo que dejó de funcionar a propósito.** Entrar sin nombrar ninguna Prestadora ya no muestra
 nada. Antes se mostraba la primera que devolviera la base; eso *era* leer la lista, así que se fue
@@ -2162,9 +2183,9 @@ había tomado ese mismo día: se muestra el género, el directorio puede decir q
 legajo, y por eso vuelve el filtro que se había sacado el 24.
 
 **Qué sale y qué no.** La vista `directorio` ganó una columna, `comprobaciones`
-(`supabase/migrations/0026_el_directorio_dice_que_se_comprobo.sql`), con hasta cinco claves:
+(`supabase/migrations/0001_base_del_esquema.sql:770`), con hasta cinco claves:
 domicilio, referencia, matrícula, título y curso aprobado. Las cinco ya estaban restringidas en la
-base desde la migración 0018, así que no hubo que inventar ninguna palabra.
+base, así que no hubo que inventar ninguna palabra.
 
 | Qué se decidió no publicar | Por qué |
 |---|---|
@@ -2175,15 +2196,18 @@ base desde la migración 0018, así que no hubo que inventar ninguna palabra.
 
 **Un papel presentado no es un papel comprobado.** La columna cuenta sólo las verificaciones en
 estado `verificado`; el curso no viene de ahí sino de un intento aprobado, porque lo corrigió la
-base (migración 0008) y nunca fue un papel que alguien entregó.
+base al corregir la evaluación, y nunca fue un papel que alguien entregó.
 
 **La primera prueba no probaba nada, y se rehízo.** Con la columna ya aplicada contra el servidor
-real, las siete personas publicadas devolvían lista vacía: la siembra no tenía ni una comprobación
-cargada, así que una consulta rota y una correcta contestaban lo mismo. La migración 0027 cargó
-comprobaciones repartidas a propósito —alguien con una matrícula sólo presentada, alguien con los
-antecedentes penales comprobados de verdad—, y recién entonces la prueba pudo fallar. Con ella:
-Ramiro devuelve una sola comprobación y no dos, Nadia devuelve tres y no cuatro, y el filtro por
-matrícula devuelve cero.
+real, las personas publicadas devolvían lista vacía: la siembra no tenía ni una comprobación
+cargada, así que una consulta rota y una correcta contestaban lo mismo. La siembra reparte hoy las
+comprobaciones a propósito —alguien con una matrícula sólo presentada, alguien con los
+antecedentes penales comprobados de verdad—, y recién entonces la prueba pudo fallar. Es lo que se
+ve en la base: Nadia Britos Ficticia tiene los seis papeles comprobados y su tarjeta publica
+cuatro, porque los antecedentes penales y el certificado de salud no salen; Verónica Aguirre
+Ficticia está publicada y su lista sale vacía, porque lo único que tiene comprobado es justamente
+esos dos; y la matrícula que Ramiro Cáceres Ficticio presentó y nadie comprobó no aparece en
+ninguna lista.
 
 **El consentimiento dice lo mismo, en los tres idiomas.** `data/catalogo-autorizaciones.json`
 nombra ahora el género y qué se comprobó, aclara que del domicilio sólo se dice que se comprobó y
@@ -2209,7 +2233,7 @@ desaparece se lee como un error del programa y no como una negativa.
 
 | Pieza | Dónde | Por qué |
 |---|---|---|
-| Las reglas | la tabla `patrones_de_contacto`, migración 0063 | Son una regla operativa, y una regla operativa no se escribe en el código. Quien quiera ajustar qué cuenta como teléfono agrega una fila y no toca ninguna pantalla ni despliega nada |
+| Las reglas | la tabla `patrones_de_contacto` (`supabase/migrations/0001_base_del_esquema.sql:2928`) | Son una regla operativa, y una regla operativa no se escribe en el código. Quien quiera ajustar qué cuenta como teléfono agrega una fila y no toca ninguna pantalla ni despliega nada |
 | La copia que ve el navegador | `data/patrones-contacto.json` | Generada desde la tabla con `node scripts/generar_patrones_contacto.mjs --escribir`. Existe porque el aviso previo tiene que poder avisar sin conexión, y `scripts/verificar_patrones_contacto.mjs` la compara contra la tabla en cada `commit` |
 | El reconocedor | `js/contacto.js` | Un solo lugar. Es el aviso previo del navegador, no el control |
 | La prueba | `scripts/verificar_contacto.mjs` | Entra sola al gancho de `pre-commit`, que busca los chequeos en la carpeta |
@@ -2257,7 +2281,7 @@ en el §4 de este mismo documento, y mover una consulta de lugar no es elegirlo.
 
 ### La tercera puerta se cerró del lado del servidor
 
-Hecho el 2 de septiembre de 2026, en la migración 0063. Cierra el pendiente 62.
+Hecho el 2 de septiembre de 2026. Cierra el pendiente 62.
 
 **Qué hace.** Un disparador sobre `mensajes` revisa el texto **antes de guardarlo**. Si
 adentro hay un dato de contacto, la fila no se escribe y la base contesta
@@ -2433,34 +2457,37 @@ migraciones. Eso es historial de intención: dice qué se quiso, no qué quedó.
 esquema real del servidor con `supabase db dump --linked --schema public` —que no pide contraseña
 porque la línea de comandos ya está enlazada— y se revisó contra él. **Y esa medición dejó de ser
 de una sola vez:** quedó escrita como `scripts/probar_permisos_en_vivo.mjs`, que la repite cuando se
-la llame, contra la base enlazada o contra la local con `--local`. Hoy da cuatro comprobaciones
-en rojo —que son el pendiente 67— y una en verde, que es la que las contiene: las 34 políticas
-piden sesión. Se corre a mano y no entra en los veintiún chequeos del `commit`, porque necesita
-hablar con la base. **Aparecieron dos agujeros,
-que quedaron como pendientes 66 y 67, y siete cosas que están bien.** Se anotan las siete para que
-nadie las vuelva a investigar:
+la llame, contra la base enlazada o contra la local con `--local`. Hoy da sus cinco comprobaciones
+en verde, más las dos que están puestas para que la prueba pueda fallar. Se corre a mano y no
+entra en los treinta y siete chequeos del `commit`, porque necesita hablar con la base.
+**Aparecieron dos agujeros, que quedaron como pendientes 66 y 67 —los dos cerrados desde
+entonces—, y siete cosas que están bien.** Se anotan las siete para que nadie las vuelva a
+investigar:
 
-- **Las 24 tablas tienen la RLS encendida.** Ninguna quedó afuera, y se comparó tabla por tabla
+- **Las 36 tablas tienen la RLS encendida.** Ninguna quedó afuera, y se comparó tabla por tabla
   contra la lista de las que la encienden, no por muestreo.
-- **Ninguna política se alcanza sin sesión.** Las 34 son `to authenticated`. O sea que un visitante
-  sin cuenta no llega a ninguna tabla, y todo lo público del producto pasa por otra puerta.
-- **Esa otra puerta son tres funciones, y son exactamente las tres previstas**: `directorio_de`,
-  `perfil_del_directorio` y `prestadora_por_slug`. De las once funciones que se saltean la RLS, las
-  otras ocho están fuera del alcance anónimo. Son once y no trece: el chequeo del esquema informa
-  trece porque cuenta declaraciones en las migraciones, y `crear_perfil_al_registrarse` y
-  `alta_de_prestadora` están declaradas más de una vez. La cuarta que figura concedida a `anon` es
-  `la_ponderacion_suma_cien`, que devuelve `trigger`: Postgres se niega a llamarla de otro modo que
-  como disparador, así que el permiso sobra pero no abre nada.
+- **Ninguna política le abre a quien no inició sesión una tabla con datos de una Prestadora.** De
+  las 64 que hay, 63 son `to authenticated` a secas. La que falta nombra además a `anon`, y es la
+  de `patrones_de_contacto`: deja leer las reglas del producto sobre qué cuenta como un dato de
+  contacto, que valen igual para todas y no son de ninguna. O sea que un visitante sin cuenta no
+  llega a ninguna tabla de una Prestadora, y todo lo público del producto pasa por otra puerta.
+- **Esa otra puerta son seis funciones, y son exactamente las seis previstas**: `directorio_de`,
+  `perfil_del_directorio`, `prestadora_por_slug`, `guias_de`, `vocabularios_de` y `zonas_de`. De
+  las 28 funciones que se saltean la RLS, las otras 22 están fuera del alcance anónimo, y las seis
+  que quedan exigen el nombre corto de una Prestadora antes de contestar nada. Sin sesión se
+  alcanzan dos funciones más, que no se saltean la RLS y no abren nada:
+  `el_legajo_no_completa_el_alta_sin_sus_papeles` y `el_mensaje_no_lleva_datos_de_contacto`
+  devuelven `trigger`, y Postgres se niega a llamarlas de otro modo que como disparador.
 - **`opciones_pregunta` tiene la RLS encendida y ni una política**, que es la forma correcta de
   sellar una tabla: no la lee nadie con sesión, y la respuesta correcta sale únicamente por la
   vista `opciones_para_responder`, que no la trae. La vista lleva escrito al lado que esa columna
   no se agrega nunca.
 - **La vista del directorio no la puede consultar nadie de forma directa.** Ni `anon` ni
-  `authenticated` tienen consulta sobre `directorio`: la migración 0021 se la revocó a los
+  `authenticated` tienen consulta sobre `directorio`: el esquema se la revoca a los
   dos, y en vivo sigue revocada. Importa porque la vista no es `security_invoker`, así que corre con
   los permisos de quien la creó y se saltearía el aislamiento entre Prestadoras; lo que la contiene
   es que sólo la leen las tres funciones, y las tres piden el nombre corto de una Prestadora.
-- **La vista `caregivers_publicos` ya no existe.** La borraron las migraciones 0007 y 0012. Quedan
+- **La vista `caregivers_publicos` ya no existe.** No queda en el esquema. Quedan
   dos comentarios de tabla que todavía la nombran —en `autorizaciones_asistente` y en
   `referencias_asistente`—, que es documentación vieja adentro de la base y no un permiso abierto.
 - **El camino de las verificaciones está protegido de punta a punta.** Lo que el directorio publica
@@ -2469,7 +2496,7 @@ nadie las vuelva a investigar:
   del pendiente 66 no está en la evidencia sino en el veredicto que la resume.
 
 **Y el del 66 se ejecutó esa misma noche, contra la base local y con una cuenta inventada.**
-Hasta ahí salía de leer el texto de las políticas; con las 27 migraciones aplicadas se hizo el
+Hasta ahí salía de leer el texto de las políticas; con la base entera aplicada se hizo el
 intento entero, y salió peor de lo que decía el papel: el legajo se puede **crear ya sellado**
 —el `POST` con `verification_status` adentro contesta `201` y el valor queda—, o sea que ni
 hace falta modificarlo después; el sello se baja y se vuelve a subir cuantas veces se quiera; y
@@ -2487,9 +2514,10 @@ encontrado», o sea que el depósito está ahí y es público; `documentos-cuida
 «depósito no encontrado», o sea que por la puerta pública no existe. **Cada uno es el control del
 otro**: si el privado se hubiera quedado público —que es lo que pasa cuando alguien lo crea a mano
 desde el tablero—, habría contestado igual que el primero. En el esquema de depósitos, en vivo,
-están las tres políticas que declaró la migración 0006, y ninguna más. La que le deja al personal
-de la Prestadora mirar los papeles de su gente compara la Organización con un `join` contra el
-legajo, así que el aislamiento no depende del camino del archivo.
+están las tres políticas que el esquema declara
+(`supabase/migrations/0001_base_del_esquema.sql:5949-5953`), y ninguna más. La que le deja al
+personal de la Prestadora mirar los papeles de su gente compara la Organización con un `join`
+contra el legajo, así que el aislamiento no depende del camino del archivo.
 
 **Y de ahí sale algo que este producto no puede contestar solo**: la regla de la empresa dice que
 los archivos no se sirven nunca con dirección pública y que la ruta empieza por la Organización, y
@@ -2590,7 +2618,7 @@ buscando tres clases de CSS; eso es la misma decisión en dos lugares, y el marc
 distinga—. Quedó una sola forma de escribir el nombre. El logotipo sigue cambiándose por selector,
 porque es una imagen y no un texto, pero su respaldo pasó a ser el del producto.
 
-**De paso apareció un error de etiqueta:** `panel-prestadora.html:25` decía «Organización» y
+**De paso apareció un error de etiqueta:** `panel-prestadora.html:26` decía «Organización» y
 mostraba el nombre **del producto** en el lugar donde va el de la Organización.
 
 **El chequeo que lo sostiene.** `scripts/verificar_organizacion.mjs` es el dieciocho, y mira dos
@@ -2611,8 +2639,8 @@ archivo y renglón. Se deshizo, y volvió el verde.
 chequeo estático lo hubiera visto: el título de la pantalla no se volvía a resolver.
 `document.title = x` **reemplaza el nodo de texto** de `<title>`, así que el nodo anotado en la
 primera vuelta quedaba huérfano y escribirle no hacía nada. Se arregló guardando el título antes
-de tocar nada y salteando `<title>` en el paseo de textos (`js/identidad.js:112` y
-`js/identidad.js:128`). Con eso, en el navegador: título, pie, descripción para los buscadores y
+de tocar nada y salteando `<title>` en el paseo de textos (`js/identidad.js:120` y
+`js/identidad.js:129`). Con eso, en el navegador: título, pie, descripción para los buscadores y
 texto de la imagen pasan de «Careonys» a la Prestadora y vuelven.
 
 **Probado de punta a punta contra la base publicada**, con las dos Prestadoras de ejemplo:
@@ -2621,17 +2649,17 @@ color, y las dos pantallas se ven distintas entre sí y distintas del producto. 
 tres pantallas que no cargan el cliente de datos, se ve el producto, que es lo correcto.
 
 En el camino se aclararon dos cosas que parecían defectos y no lo son. La base contesta `42501
-permission denied` a quien le pida filas de `tenants` sin sesión, **y eso está bien**: desde la
-migración 0021 la lista de Prestadoras no la ve nadie, porque es la lista de clientes de CeltaTech.
+permission denied` a quien le pida filas de `tenants` sin sesión, **y eso está bien**: la lista
+de Prestadoras no la ve nadie, porque es la lista de clientes de CeltaTech.
 La pantalla no la pide: llama a `prestadora_por_slug`, que exige el nombre corto y devuelve una
 sola Prestadora con sus colores y su logotipo (`js/apiClient.js:97`). Y la portada no cambia de
 marca porque no carga el cliente de datos —tampoco `cursos.html` ni `soporte-remoto.html`—, así que
 en esas tres el marcador se queda en el nombre del producto y no hay nada que resolver.
 
-**Y apareció algo que no se estaba buscando: la base publicada no es la que arman las
-migraciones.** PresDemo se llama ahí «PresDemo — Servicios de Cuidado» y tiene cargado su logotipo;
-la migración que la crea la carga con el nombre «PresDemo» y sin logotipo, y ninguna migración
-escribe ninguna de las dos cosas. O sea que se pusieron a mano contra la base. Reconstruirla desde
+**Y apareció algo que no se estaba buscando: la base publicada no era la que armaban las
+migraciones.** PresDemo se llamaba ahí «PresDemo — Servicios de Cuidado» y tenía cargado su
+logotipo; la migración que la creaba la cargaba con el nombre «PresDemo» y sin logotipo, y ninguna
+escribía ninguna de las dos cosas. O sea que se pusieron a mano contra la base. Reconstruirla desde
 cero daba una base distinta de la que está publicada. **Conviene decir de dónde salió**: se llegó
 ahí por haber dado por cierto lo que decían las migraciones en vez de preguntarle a la base, que
 es exactamente lo que la regla «el estado real está por encima del documentado» viene a evitar. El
@@ -2664,9 +2692,9 @@ columna por columna.
 **De ahí salieron tres clases de diferencia, y sólo una era un desvío.**
 
 1. **La fila de la Prestadora de ejemplo.** Nombre, descripción y logotipo escritos a mano contra
-   la base. Es el desvío, y ahora lo escribe
-   `supabase/migrations/0029_la_prestadora_de_ejemplo_dice_lo_mismo_en_las_dos_bases.sql`, **sin
-   condición**. La migración anterior escribía el logotipo sólo `where logo_url is null`, y contra
+   la base. Es el desvío, y ahora esa fila la escribe la siembra ficticia
+   (`supabase/migrations/0002_siembra_ficticia.sql:58`), **sin condición**. La versión anterior
+   escribía el logotipo sólo `where logo_url is null`, y contra
    la base publicada eso no hizo nada, porque el valor ya estaba puesto: una migración que no corre
    justo donde hace falta no arregla nada. Entre los dos textos ganó el de la base publicada, que
    es el que ya se había demostrado funcionando, con una corrección: su descripción decía
@@ -2674,7 +2702,7 @@ columna por columna.
 2. **Los identificadores y las fechas.** Cada base genera los suyos. No es un desvío y no hay nada
    que escribir.
 3. **Once filas que están publicadas y ninguna migración carga.** Cinco son perfiles, y están
-   bien: cuelgan de una cuenta de acceso, las crea el disparador de la migración 0005 al
+   bien: cuelgan de una cuenta de acceso, las crea el disparador `crear_perfil_al_registrarse` al
    registrarse alguien, y una base recién construida no tiene cuentas. Las otras seis son legajos
    cargados a mano probando pantallas, tres de ellos la misma persona inventada repetida y uno con
    todos sus datos vacíos. Se ven en el directorio de la demostración. Borrarlos es pisar datos,
@@ -2697,7 +2725,7 @@ escribir. Ahora lee las altas y los cambios de nombre
 nuevo la pone en rojo y nombra la migración que lo escribe.
 
 De paso viajaron dos comentarios de tabla que seguían nombrando `caregivers_publicos`, una vista
-que se llama `directorio` desde la migración 0015. No eran un desvío —estaban igual en las
+que hoy se llama `directorio`. No eran un desvío —estaban igual en las
 dos bases, porque salen de las migraciones—, era texto que ya no describía lo que hay.
 
 
@@ -2716,7 +2744,7 @@ vacíos, y un correo con el nombre anterior del producto adentro.
 
 **De paso se corrigió una afirmación que este documento traía mal, y después hubo que corregir la
 corrección.** El pendiente decía que los cinco perfiles «estaban bien», porque los crea al
-registrarse alguien el disparador de la migración 0005. Contra eso se escribió acá que `profiles`
+registrarse alguien el disparador que crea el perfil. Contra eso se escribió acá que `profiles`
 no tenía ninguna clave foránea hacia `auth.users`, así que una fila ahí no probaba que hubiera una
 cuenta detrás. **Eso es falso.** El 26 de agosto de 2026, probando otra cosa contra la base local,
 un `insert` en `profiles` con un identificador inventado lo rechazó `profiles_id_fkey`, que existe
@@ -2731,13 +2759,21 @@ mano**, porque una fila de `profiles` con ese identificador exige una de `auth.u
 mismo. Lo que no resuelve es si las otras dos nacieron de un registro de verdad; y da igual, porque
 el Desarrollador ya había dicho lo que decide: son datos inventados y se van.
 
-Las borra `supabase/migrations/0031_se_van_las_sobras_de_la_base_publicada.sql`, que **nombra una
-por una las once** en su encabezado, para que quede el rastro de qué había cuando ya no se pueda
-mirar. Doce tablas apuntan a un legajo, así que primero se va lo que cuelga y recién después el
-legajo. El borrado va por identificador y no por una condición del tipo «lo que no cargó ninguna
-migración»: una condición así se lleva puesto también lo que cargue alguien mañana usando el
-producto. En la base local la migración no hace nada, porque ninguno de esos once identificadores
-existe en una base recién construida — que es exactamente de lo que se trata.
+**Con una salvedad que hoy hace falta decir, porque si no este párrafo choca con lo que se lee más
+abajo.** La siembra ficticia escribe los seis perfiles con las claves foráneas apagadas
+(`supabase/migrations/0002_siembra_ficticia.sql:32`), que es lo que hace cualquier volcado de datos
+para no depender del orden en que se cargan las tablas, y la de `profiles` no dispara. Así que una
+fila de `profiles` prueba que hubo una cuenta de acceso cuando la escribió una sesión, y no prueba
+nada cuando la escribió la siembra: hoy hay seis perfiles sembrados y `auth.users` está vacía, que
+es el agujero que se cuenta entero más abajo.
+
+Las once se borraron, y cómo se borraron importa más que el hecho. **Quedaron nombradas una por
+una** antes de tocarlas, para que hubiera rastro de qué había cuando ya no se pudiera mirar. Doce
+tablas apuntan a un legajo, así que primero se fue lo que colgaba y recién después el legajo. Y el
+borrado fue por identificador y no por una condición del tipo «lo que no cargó ninguna siembra»:
+una condición así se lleva puesto también lo que cargue alguien mañana usando el producto. Contra
+una base recién construida no hay nada que borrar, porque ninguno de esos once identificadores
+existe ahí — que es exactamente de lo que se trata.
 
 **Comprobado corriendo la comparación después:** ya no lista ninguna fila de más. Lo único que
 sigue difiriendo son las fechas que cada base se pone al construirse, que el guion cuenta y dice
@@ -2792,9 +2828,8 @@ vacío siempre, y eso no distingue «no hay coincidencias» de «la consulta est
 
 Lo pidió el Desarrollador el 26 de agosto de 2026: cinco o seis Familias y cinco o seis
 Asistentes en cada Prestadora ficticia, porque es mejor para probar y para mostrarle el producto
-a un cliente. Lo escribe
-`supabase/migrations/0030_cada_prestadora_ficticia_con_sus_familias_y_sus_asistentes.sql`, y así
-quedaron las dos:
+a un cliente. Lo escribe la siembra ficticia (`supabase/migrations/0002_siembra_ficticia.sql`), y
+así quedan las dos:
 
 | | Asistentes | Validados | En el directorio | Familias |
 |---|---|---|---|---|
@@ -2823,8 +2858,8 @@ franja la consulta devuelve esas dos filas y ninguna otra.
    existe porque publicó un aviso, y lo que se sabe de ella es el contacto que dejó ahí. La
    columna que la ataría a una cuenta apunta a `auth.users`, y crear cuentas desde una migración
    significa escribir una contraseña adentro del repositorio, que es exactamente lo que prohíbe
-   la regla de credenciales de la empresa. Los avisos quedan sin cuenta, que es el caso que la
-   migración 0020 ya había previsto: son los que ve el personal de la Prestadora.
+   la regla de credenciales de la empresa. Los avisos quedan sin cuenta, y las políticas de
+   `avisos` ya tenían previsto ese caso: son los que ve el personal de la Prestadora.
 2. **Los avisos nuevos no dicen `schedule_type`.** Esa columna no tiene vocabulario —es el
    pendiente 31— y hoy cada lugar que la escribe usa una forma distinta. Escribir una quinta
    forma empeora el problema en vez de arreglarlo, así que el horario va donde sí tiene
@@ -2839,25 +2874,25 @@ las referencias «Referencia Inventada».
 
 ### El chequeo de claves no veía la mitad de las migraciones nuevas
 
-Al escribir la 0030 apareció que `scripts/verificar_claves.mjs` —el que comprueba que ninguna
+Al ampliar la siembra apareció que `scripts/verificar_claves.mjs` —el que comprueba que ninguna
 migración escriba un valor que no esté en el catálogo de vocabularios— estaba mirando una sola
 de las dos formas de cargar filas. Reconocía `insert into tabla (columnas) values (…)`, y no
-reconocía la otra, la que usan la 0027 y la 0030: `insert … select … from una lista de valores`,
-donde las columnas no se declaran junto a la tabla sino después de la lista. **Veintisiete filas
-de franjas, treinta y cinco de avisos y todo el contenido de los cuatro legajos pasaban sin que
-nadie les mirara los valores.**
+reconocía la otra, `insert … select … from una lista de valores`, donde las columnas no se
+declaran junto a la tabla sino después de la lista. **Veintisiete filas de franjas, treinta y
+cinco de avisos y todo el contenido de los cuatro legajos pasaban sin que nadie les mirara los
+valores.**
 
 Un chequeo que no mira no es un chequeo que pasa: es un chequeo que no existe. Ahora reconoce las
 dos formas (`scripts/verificar_claves.mjs:228`) y conoce cinco columnas más —modalidad y nivel de
 un curso, día y turno de una franja, puesto de una experiencia—.
 
 **Se probó que puede fallar**, que es la única forma de saber que sirve. Con dos valores
-cambiados a mano adentro de la 0030 —un turno que no existe y una profesión que no está en el
+cambiados a mano adentro de la siembra —un turno que no existe y una profesión que no está en el
 catálogo—, el chequeo denunció los dos, con su renglón, y cortó. Restaurados, vuelve a decir que
-las treinta migraciones están limpias. Además quedaron cuatro casos nuevos en su autoprueba, dos
-que tienen que romper y dos que tienen que pasar; uno de esos dos últimos es una lista de valores
-**sin** nombres de columna, que el chequeo tiene que dejar pasar en vez de adivinar a qué columna
-corresponde cada uno.
+las migraciones del repositorio están limpias. Además quedaron cuatro casos nuevos en su
+autoprueba, dos que tienen que romper y dos que tienen que pasar; uno de esos dos últimos es una
+lista de valores **sin** nombres de columna, que el chequeo tiene que dejar pasar en vez de
+adivinar a qué columna corresponde cada uno.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
@@ -2868,34 +2903,37 @@ le concede *todo* a `anon` y a `authenticated` sobre cada tabla, secuencia y fun
 `public`, así que cada tabla nacía abierta sin que ninguna migración lo pidiera.
 
 **Lo que eso abría no era teórico, y se midió.** Con una cuenta ficticia de coordinador de
-PresDemo, contra la base local, con las 31 migraciones aplicadas: esa cuenta **veía 6 avisos** —los
+PresDemo, contra la base local, con el esquema entero aplicado: esa cuenta **veía 6 avisos** —los
 de su Prestadora, que es lo que la política le deja ver— y con un solo `truncate` **dejó la tabla
 en 0**, borrando también los 6 de Cuidar Norte. La RLS no lo detuvo porque no puede: filtra filas,
 y vaciar la tabla no es filtrar filas. `TRUNCATE` no mira ninguna política. El pendiente decía que
 el permiso «está de más igual» aunque no hubiera daño; había daño, y alcanzaba a la Organización
 ajena.
 
-Lo arregla `supabase/migrations/0032_los_permisos_de_tabla_al_minimo.sql`, que **no concede nada
-nuevo: sólo saca.** Cada tabla queda con exactamente los verbos que sus propias políticas ya
-permiten —alta, baja, modificación y consulta donde la política dice `for all`; sólo consulta
-donde dice `for select`— y se van `TRUNCATE`, `REFERENCES` y `TRIGGER`, que ninguna pantalla usa y
-que PostgREST no sabe pedir. Se van también los cinco permisos que tenía `anon` sin usarlos, la
-función de disparador que había quedado al alcance anónimo, y los seis renglones de permiso por
-omisión, que son los que hacían que esto se repusiera solo con cada tabla nueva.
+Hoy está al mínimo, y el arreglo **no concedió nada nuevo: sólo sacó.** Cada tabla tiene
+exactamente los verbos que sus propias políticas ya permiten —alta, baja, modificación y consulta
+donde la política dice `for all`; sólo consulta donde dice `for select`—, y `TRUNCATE`,
+`REFERENCES` y `TRIGGER` no los tiene ningún rol, porque ninguna pantalla los usa y PostgREST no
+sabe pedirlos. A `anon` le quedan tres consultas y nada más, sobre lo único que se publica sin
+sesión. Y el permiso por omisión, que era el que reponía todo esto solo con cada tabla nueva, se
+revoca antes de que exista una sola tabla (`supabase/migrations/0001_base_del_esquema.sql:56-57`),
+con el motivo escrito al lado: `pg_dump` escribe lo que hay y no lo que falta, así que una base
+reconstruida desde el volcado, sin ese renglón, volvería a nacer abierta.
 
 **Consecuencia que hay que saber, porque cambia cómo se escribe una migración de acá en más:**
 toda migración que cree una tabla, una vista o una función tiene que conceder sus permisos
 explícitamente. Si no, la pantalla va a recibir `42501 permission denied` con una sesión válida, y
 eso no se arregla tocando políticas.
 
-**Y la 0032 sacó de más, cosa que se descubrió al día siguiente y se corrigió con la migración
-0033.** El renglón `revoke all on table public.profiles from anon, authenticated` se llevó puesto
-también un permiso **por columna** que la migración 0005 había escrito a propósito, `update
-(full_name)` (`supabase/migrations/0001_base_del_esquema.sql:5862-5864`). En Postgres, `REVOKE ALL ON
-TABLE` no distingue el permiso sobre la tabla entera del permiso sobre una columna: borra los dos.
-`supabase/migrations/0033_vuelve_el_permiso_por_columna_del_perfil.sql` lo repone, y nada más.
-Ninguna pantalla lo usa hoy —ningún archivo de `js/` escribe `profiles`—, así que no hubo síntoma
-visible; lo que se había roto no era una función, era una defensa.
+**Y ese barrido se llevó de más un permiso que hacía falta, cosa que conviene saber porque vuelve
+a pasar sola.** El renglón `revoke all on table public.profiles from anon, authenticated` se llevó
+puesto también un permiso **por columna** escrito a propósito, `update (full_name)`: en Postgres,
+`REVOKE ALL ON TABLE` no distingue el permiso sobre la tabla entera del permiso sobre una columna,
+borra los dos. El permiso volvió, y es el que la base tiene hoy: `profiles` le da a
+`authenticated` la consulta de la tabla y la escritura de una sola columna
+(`supabase/migrations/0001_base_del_esquema.sql:5862-5864`). Ninguna pantalla lo usa —`js/auth.js:244`
+sólo lee `profiles`, no le escribe—, así que mientras faltó no hubo síntoma visible; lo que se
+había roto no era una función, era una defensa.
 
 **Por qué ese permiso es la defensa, y no una comodidad.** `profiles` tiene la política «Su propio
 perfil, de escritura», que dice `id = auth.uid()` y **no nombra ninguna columna**. La tabla guarda
@@ -2909,20 +2947,14 @@ escribirle el nombre a otra persona toca cero filas.
 **Queda como pendiente 82, que no es una alarma sino una trampa armada.** La protección no vive
 donde se la busca: quien lea la política va a leer «cada quien escribe su propia fila» y no va a
 ver ningún límite de columnas, porque no lo hay — está seis renglones más abajo, en un `grant`. La
-0032 es la prueba de que se pisa sin querer. Y el mensaje de Postgres sugiere literalmente el
+barrido es la prueba de que se pisa sin querer. Y el mensaje de Postgres sugiere literalmente el
 arreglo equivocado: `HINT: Grant the required privileges to the current role with: GRANT UPDATE ON
 public.profiles TO authenticated`, que es justo la línea que abre el agujero.
-
-**Y una afirmación de la 0032 quedó mal escrita.** Su encabezado dice que `profiles` «no tiene el
-permiso de tabla que la haría funcionar» y que la política de escritura es letra muerta. Era falso
-al escribirse: el permiso existía, acotado a `full_name`, desde 0005. Lo volvió cierto la propia
-0032, al revocarlo. Una migración aplicada no se edita, así que aquel párrafo queda como está y la
-corrección vive acá y en el encabezado de la 0033.
 
 **Cómo se comprobó, en tres capas, porque el volcado del esquema solo no alcanza.** Una:
 `scripts/probar_permisos_en_vivo.mjs` da las cinco en verde contra las dos bases, sin que se
 tocara la prueba, y sus dos comprobaciones de sostén siguen en pie —el volcado trae tablas y
-políticas, y las tres puertas del directorio siguen al alcance anónimo—. Dos: con una cuenta
+políticas, y las seis puertas públicas siguen al alcance anónimo—. Dos: con una cuenta
 ficticia y sesión simulada contra la base local se leyeron las tablas, se llamaron las funciones
 del directorio, y se dio de alta, se modificó y se dio de baja un aviso, todo `1` fila; el
 `truncate` que antes vaciaba la tabla ahora contesta `permission denied`; y el disparador de las
@@ -2930,9 +2962,10 @@ ponderaciones **sigue rechazando** aunque su función ya no se pueda llamar desd
 porque el permiso de llamada se verifica al crear el disparador y no cada vez que se dispara.
 Tres: `scripts/probar_aislamiento.mjs --local` pasó entero con los permisos recortados —registro
 real, sesiones reales, archivos, examen, avisos y reportes—, que es la única capa que prueba que
-no se rompió nada de lo que la aplicación hace de verdad; se volvió a correr después de la 0033,
-sobre la base local reconstruida desde cero con las 33 migraciones en orden. Y cuatro, que apareció
-después: la prueba por columna sobre `profiles`, la que encontró lo que la 0032 había sacado de
+no se rompió nada de lo que la aplicación hace de verdad; se volvió a correr después de reponer el
+permiso, sobre la base local reconstruida desde cero con todas las migraciones en orden. Y cuatro,
+que apareció después: la prueba por columna sobre `profiles`, la que encontró lo que el barrido
+había sacado de
 más. Las tres primeras capas la habían dejado pasar —ninguna escribe `profiles`—, que es
 exactamente el motivo por el que el pendiente 82 pide una prueba en el repositorio y no a mano.
 
@@ -2956,28 +2989,30 @@ arregló igual, porque la antigüedad es exactamente la clase de dato que despu�
 un directorio o para decidir a quién se muestra primero, y ese día el agujero pasa a ser una
 ventaja que alguien se dio a sí mismo.
 
-**Lo arregla `supabase/migrations/0034_la_fecha_de_alta_del_legajo_la_pone_la_base.sql`** con un
-disparador `before insert or update`: al dar de alta la fecha es la de ese momento y se ignora lo
-que venga de afuera; al modificar, queda como estaba. Vale para todo el mundo, incluido el
-servidor.
+**Lo arregla un disparador `before insert or update`**, `la_fecha_de_alta_del_legajo`
+(`supabase/migrations/0001_base_del_esquema.sql:3898`): al dar de alta la fecha es la de ese
+momento y se ignora lo que venga de afuera; al modificar, queda como estaba. Vale para todo el
+mundo, incluido el servidor.
 
 **Por qué un disparador y no un permiso por columna**, que era la otra herramienta disponible. Acá
 las dos servían —a diferencia del veredicto de la Prestadora del pendiente 66, donde el permiso por
 columna no sirve porque el personal y el Asistente son el mismo rol de base—. Se eligió el
 disparador por dos razones. Una: el límite queda escrito en la tabla, donde lo lee quien lee el
 esquema, y no en un `grant` a treinta renglones de distancia. Dos: un permiso por columna se pierde
-sin que nadie se entere, y eso no es una hipótesis — la migración 0032 se llevó puesto el `update
-(full_name)` de `profiles` con un `revoke all on table`, y hubo que reponerlo con la 0033.
+sin que nadie se entere, y eso no es una hipótesis — es lo que pasó dos secciones más arriba, cuando
+un `revoke all on table` se llevó puesto el `update (full_name)` de `profiles` y hubo que reponerlo.
 
 **Cómo se comprobó, y por qué la prueba podía fallar.** Es el mismo guion corrido dos veces, antes
 y después de la migración: la primera vez guardó 2015 y después 2010; la segunda ignoró las dos y
 puso la hora real. Y trae su comprobación de sostén —que la persona sí pueda corregirse el
 teléfono—, sin la cual cerrar la tabla entera habría dado el mismo verde sin arreglar nada.
 
-**Ninguna migración escribe esa fecha**, así que el disparador no le cambia nada a los datos
-ficticios: se verificó sobre las tres que dan de alta legajos —`0003`, `0014` y `0030`—, y ninguna
-la nombra. Si algún día hace falta traer legajos de otro sistema conservando sus fechas, esa
-migración apaga el disparador mientras carga y lo vuelve a encender, y así queda dicho que la
+**La siembra ficticia sí nombra esa fecha**, y no es una excepción sino una consecuencia de que
+sea un volcado: `pg_dump` escribe todas las columnas de cada fila, `created_at` incluida. El
+disparador se la ignora igual, así que las fechas de alta que quedan cargadas son las del momento
+en que se sembró y no las que dice el archivo — que hoy coinciden sólo porque el volcado se tomó
+después de sembrar. Si algún día hace falta traer legajos de otro sistema conservando sus fechas,
+esa migración apaga el disparador mientras carga y lo vuelve a encender, y así queda dicho que la
 excepción fue a propósito.
 
 ### Los cinco formularios del portal dejaron de decir que mandaron algo, y de paso se supo que nadie puede mandarlo
@@ -3013,7 +3048,7 @@ cosa y la dice como es: si hay sesión **y** se resolvió una Prestadora guarda 
 el único caso en el que el guardado puede funcionar y el que va a andar solo el día que se abra la
 puerta; y si no, muestra el correo del producto con la consulta ya redactada adentro y deja que la
 persona la mande. **Nada dice «enviado» hasta que algo se envió.** El motivo va a
-`consultation_reason`, que la migración 0013 creó justamente para distinguir a quien busca cuidado
+`consultation_reason`, que existe justamente para distinguir a quien busca cuidado
 de quien pregunta por un curso, y la dirección sale de `js/identidad.js`, que es el único punto de
 verdad de la marca.
 
@@ -3257,7 +3292,7 @@ regla 6, y sólo para `Intl`—.
 
 ### La Guía de cuidado: qué mirar y cómo actuar, sin decir qué tratamiento dar
 
-Migración 0041, el 29 de agosto de 2026. Nace de una pregunta del Desarrollador —qué necesita
+El 29 de agosto de 2026. Nace de una pregunta del Desarrollador —qué necesita
 saber un Asistente antes de entrar a una casa— y de tres decisiones suyas: el alcance es
 **descripción, señales de alarma y cómo actuar ante una emergencia**; la escriben **dos**, el
 producto lo general y cada Prestadora lo suyo; y la palabra aprobada es **«Guía de cuidado»**.
@@ -3272,7 +3307,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
   columnas de contenido: `descripcion`, `que_esperar`, `senales_de_alarma` y `en_emergencia`. Las
   dos primeras son texto, las dos últimas son listas, porque una señal se mira de a una y un paso
   de emergencia se sigue en orden.
-- **Los dos escalones son el mismo patrón que ya usa el catálogo desde la 0038**: `tenant_id` en
+- **Los dos escalones son el mismo patrón que ya usa el catálogo**: `tenant_id` en
   nulo es lo que trae el producto, `tenant_id` cargado es lo que agregó esa Prestadora. **Y acá lo
   propio reemplaza a lo general**, no se suma —al revés que las opciones del catálogo, que se
   suman—. El reemplazo lo resuelve la base con un `distinct on` que ordena por «tiene dueño
@@ -3280,7 +3315,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
   aplicación de la Familia y en el sitio, y tres decisiones iguales escritas en tres lados son tres
   oportunidades de que una quede vieja.
 - **Los tres idiomas para lo que escribe el producto, el suyo para lo que escribe la clienta**
-  (`:130`). Es la misma decisión de la 0035 con las zonas y de la 0038 con las opciones: la regla
+  (`:130`). Es la misma decisión que con las zonas y con las opciones del catálogo: la regla
   de i18n rige el texto del producto, no el que carga el cliente. Las listas tienen su par de
   funciones propias —`i18n_lista_completa` e `i18n_lista_minima` (`:49`, `:73`)—, porque las que ya
   existían miran una cadena y una lista no lo es.
@@ -3296,7 +3331,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 - **La puerta es `guias_de(p_slug)`** (`:272`), del mismo tipo que `vocabularios_de`: la tabla no le
   concede nada a `anon` (`:254`), y lo que sale a la calle es una función que **exige el nombre
   corto**, devuelve la general más la de esa sola Prestadora, y sólo las publicadas. Está anotada
-  con su motivo en `scripts/verificar_esquema.mjs:450`, que es donde viven las funciones que llegan
+  con su motivo en `scripts/verificar_esquema.mjs:465`, que es donde viven las funciones que llegan
   al alcance anónimo a propósito.
 - **La pantalla nueva es `screen-guias`** en la aplicación del Asistente
   (`pwa-asistente/index.html:793`), con los cuatro estados y un buscador. **Es una biblioteca de
@@ -3310,14 +3345,15 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
   Prestadora no aparezca texto de otra. **Cuando no puede probar el aislamiento lo dice en voz alta
   en el renglón final**, porque con cero guías cargadas la comparación da «no se cruzó» exactamente
   igual que si estuviera bien.
-- **Las diecinueve guías generales están escritas y ninguna está publicada.** La migración
-  `supabase/migrations/0042_las_diecinueve_guias_generales.sql` cargó las 19 patologías del catálogo
-  con sus cuatro partes en los tres idiomas, **como borrador**. La base no deja publicar una guía
-  sin que quede escrito quién la revisó y cuándo, y esa firma no la puede poner una migración: es
-  una persona haciéndose responsable de lo que ahí dice, no un dato. Así que la puerta —que sólo
-  devuelve publicadas— todavía no entrega ninguna, y la pantalla del Asistente muestra el estado
-  «todavía no hay guías». **Eso es lo correcto y no es el final**: falta la revisión profesional
-  (pendiente 104).
+- **Las diecinueve guías generales están escritas y ninguna está publicada.** La siembra ficticia
+  las trae, una por cada patología del catálogo, con sus cuatro partes en los tres idiomas y
+  **como borrador** (`supabase/migrations/0002_siembra_ficticia.sql:527`), y la base lo confirma:
+  diecinueve guías generales sin publicar, y dos de Prestadora publicadas. La base no deja
+  publicar una guía sin que quede escrito quién la revisó y cuándo, y esa firma no la puede poner
+  una migración: es una persona haciéndose responsable de lo que ahí dice, no un dato. Así que la
+  puerta —que sólo devuelve publicadas— todavía no entrega ninguna, y la pantalla del Asistente
+  muestra el estado «todavía no hay guías». **Eso es lo correcto y no es el final**: falta la
+  revisión profesional (pendiente 104).
 - **La Prestadora escribe la suya desde `guias-prestadora.html`**, que es una pantalla del panel y
   pide rol `coordinador`. Elige la lista y la opción del catálogo, escribe las cuatro partes,
   guarda como borrador, corrige, publica firmando quién la revisó y cuándo, y borra. La pantalla
@@ -3326,18 +3362,17 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
   no el texto crudo de una restricción. Borrar avisa antes qué consecuencia tiene y se puede
   cancelar (`guias-prestadora.html:540`).
 - **Se comprobó desde la pantalla, con las dos Prestadoras ficticias.** El 30 de agosto de 2026,
-  con una coordinadora en cada una —las preparaba entonces un guion local, y hoy las siembra la
-  migración 0065— y contra la base de esta máquina: cada una escribió la suya, la corrigió, la publicó y la vio en la lista; ninguna
-  vio la de la otra; y a la ajena, pidiéndola por su identificador desde la sesión de la otra, no
-  la pudo leer, ni cambiar, ni borrar. Contra la general, la coordinadora no pudo crear una, ni
-  cambiar la que hay, ni borrarla; y sin sesión la pantalla manda a `acceso.html`. **La revisión
-  se guarda como fecha y no como instante** desde
-  `supabase/migrations/0044_la_fecha_de_revision_es_una_fecha.sql`: guardada como instante, un día
+  con una coordinadora en cada una —las preparaba entonces un guion local, y hoy nacen con la
+  base— y contra la base de esta máquina: cada una escribió la suya, la corrigió, la publicó y la
+  vio en la lista; ninguna vio la de la otra; y a la ajena, pidiéndola por su identificador desde
+  la sesión de la otra, no la pudo leer, ni cambiar, ni borrar. Contra la general, la coordinadora
+  no pudo crear una, ni cambiar la que hay, ni borrarla; y sin sesión la pantalla manda a
+  `acceso.html`. **La revisión se guarda como fecha y no como instante** —`revisada_el` es `date`
+  (`supabase/migrations/0001_base_del_esquema.sql:2668`)—: guardada como instante, un día
   declarado acá se mostraba como el anterior.
-- **Y el aislamiento de la puerta se compara ahora en cualquier base**, incluida la publicada,
-  desde que `supabase/migrations/0045_cada_prestadora_ficticia_con_su_propia_guia.sql` carga la
-  guía propia de dos Prestadoras ficticias. Antes de eso, la prueba de la pantalla vivía sólo en
-  datos cargados a mano y se perdía con la base.
+- **Y el aislamiento de la puerta se compara en cualquier base**, incluida la publicada, porque la
+  guía propia de cada una de las dos Prestadoras ficticias viene sembrada. Antes de eso, la prueba
+  de la pantalla vivía sólo en datos cargados a mano y se perdía con la base.
 - **La guía general ya llega al teléfono sin señal, desde el 4 de septiembre de 2026.**
   `scripts/generar_guias.mjs` arma `data/catalogo-guias.json` con el mismo mecanismo que el
   catálogo de vocabularios: llama a `guias_de(null)` y guarda lo que devuelve. El archivo se
@@ -3354,8 +3389,9 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 ### La Prestadora ya puede marcar cada verificación del legajo
 
 **Fue el pendiente 70, y era un agujero entero.** El directorio prometía decir qué se le comprobó a
-cada persona y no había dónde marcarlo: la tabla `verificaciones_asistente` existe desde la
-migración 0004, sus columnas de rastro desde la 0005 y la vista que las publica desde la 0026, pero
+cada persona y no había dónde marcarlo: la tabla `verificaciones_asistente`
+(`supabase/migrations/0001_base_del_esquema.sql:567`) está con sus columnas de rastro
+—`verificado_por` y `verificado_el`— y la vista que las publica es `directorio` (`:742`), pero
 lo único que la escribía eran las dos siembras de las Organizaciones ficticias. En una Prestadora
 de verdad, por prolija que fuera revisando papeles, la tarjeta del directorio decía siempre que no
 se le comprobó nada. **Construida el 1 de septiembre de 2026.**
@@ -3370,15 +3406,15 @@ de frases y desde los dos vocabularios de la base, así que existe igual en `en`
 Ninguna opción está escrita en la pantalla: los renglones se arman con `createElement`, que es lo
 que `scripts/verificar_opciones.mjs` pide para un desplegable que sale de la base.
 
-**Los cinco estados tienen nombre, y el nombre sale de la base.**
-`supabase/migrations/0059_los_estados_de_una_verificacion_tienen_nombre.sql` estrena el vocabulario
-cerrado `estado_verificacion` con «Sin presentar», «Presentado, sin comprobar», «Comprobado»,
-«Rechazado» y «Vencido», en los tres idiomas. «Comprobado» dice exactamente lo mismo que ya decía
-la tarjeta del directorio a la Familia, y es a propósito: dos palabras distintas para el mismo
-hecho es como se empieza a tener dos catálogos.
+**Los cinco estados tienen nombre, y el nombre sale de la base.** El vocabulario cerrado
+`estado_verificacion` tiene cargadas sus cinco claves —«Sin presentar», «Presentado, sin
+comprobar», «Comprobado», «Rechazado» y «Vencido»—, en los tres idiomas
+(`supabase/migrations/0002_siembra_ficticia.sql:358`). «Comprobado» dice exactamente lo mismo que
+ya decía la tarjeta del directorio a la Familia, y es a propósito: dos palabras distintas para el
+mismo hecho es como se empieza a tener dos catálogos.
 
-**Quién marcó y cuándo lo escribe la base, no el pedido.**
-`supabase/migrations/0060_la_verificacion_dice_quien_la_marco.sql` pone un disparador que llena
+**Quién marcó y cuándo lo escribe la base, no el pedido.** Un disparador,
+`la_verificacion_dice_quien_la_marco` (`supabase/migrations/0001_base_del_esquema.sql:3926`), llena
 `verificado_por` con `auth.uid()` y `verificado_el` con la hora del servidor. La pantalla podría
 mandarlos en el pedido, y entonces cualquiera con la clave pública podría firmar con el nombre de
 un compañero una comprobación que no hizo. También vuelve las dos columnas a vacío cuando el estado
@@ -3387,12 +3423,13 @@ ya no está comprobado— y no refresca la fecha cuando el estado no cambió.
 
 **Y el cliente de datos aprendió a hacer un alta-o-modificación en un solo pedido.**
 `_supabaseUpsert()` (`js/apiClient.js:1297`) se apoya en la restricción de unicidad de
-`(legajo, tipo)` que trae la migración 0004, así que marcar el mismo papel dos veces corrige el
-renglón que ya está en vez de agregar otro. No existía en ninguna de las tres copias del archivo,
+`(legajo, tipo)` del esquema (`supabase/migrations/0001_base_del_esquema.sql:3493`), así que
+marcar el mismo papel dos veces corrige el renglón que ya está en vez de agregar otro. No existía
+en ninguna de las tres copias del archivo,
 y `marcarVerificacion()` (`js/apiClient.js:600`) es la primera que la usa.
 
 **Probado con las dos Organizaciones ficticias, y la prueba puede fallar.** Ocho comprobaciones
-nuevas en `scripts/probar_aislamiento.mjs:922`, que llevaron la corrida de 119 a 127. Se hacen
+nuevas en `scripts/probar_aislamiento.mjs:924`, que llevaron la corrida de 119 a 127. Se hacen
 sobre un legajo recién creado que arranca **sin ninguna comprobación cargada**, que es la condición
 que pedía el pendiente: sobre uno ya sembrado, la pantalla rota y la sana contestan lo mismo. Quedó
 comprobado que el personal de la Prestadora puede marcar; que la huella la escribe la base aunque
@@ -3402,7 +3439,7 @@ Asistente recibe `403` marcándose sus propios papeles; y que volver a «sin pre
 huella y saca la comprobación de la tarjeta.
 
 **Lo que esta pantalla no hace, dicho de frente.** Marca el estado y nada más. **No pone plazos**:
-`plazo_vence_el` tiene su índice desde la migración 0004
+`plazo_vence_el` tiene su índice
 (`supabase/migrations/0001_base_del_esquema.sql:3791-3793`) y sigue sin que nadie
 lo escriba, así que «Vencido» hay que ponerlo a mano y nada avisa antes — es el mismo agujero que
 el pendiente 98, con su plan escrito en `docs/PLAN_VENCIMIENTOS.md` y sin aprobar.
@@ -3419,11 +3456,11 @@ que esos papeles «las pasaron todos los que aparecen acá». No era cierto.
 **Aparecer en el directorio pide ahora tres cosas, y las tres hacen falta.** La Prestadora validó
 el legajo, la persona dijo que sí a publicarse, y **los papeles de la puerta están comprobados**:
 antecedentes penales y certificado de salud siempre, más matrícula y título si el tipo de Asistente
-los exige. Lo hace `supabase/migrations/0061_la_puerta_de_publicacion_se_cierra.sql`, que rehace la
-vista `directorio` con esa tercera condición.
+los exige. La condición está adentro de la vista `directorio`
+(`supabase/migrations/0001_base_del_esquema.sql:742`), que es donde el directorio se arma.
 
-**La regla no está en el SQL: está en la base, como corresponde a un catálogo.** La migración le
-puso a cada verificación, en la columna `extra` de su fila de `vocabulario_items`, tres claves
+**La regla no está en el SQL: está en la base, como corresponde a un catálogo.** Cada verificación
+lleva, en la columna `extra` de su fila de `vocabulario_items`, tres claves
 —`puerta`, `condicional_a` y `suma_al_perfil`—, y la vista las lee. Exigir un papel más el día de
 mañana es agregarle `{"puerta": "publicacion"}` a una fila, no publicar una versión nueva. El
 detalle de las tres claves está en `docs/CATALOGO.md`.
@@ -3437,13 +3474,16 @@ revés: ninguna comparación con un valor vacío deja entrar a nadie.
 directorio de las tres Prestadoras ficticias pasaba de diez publicados a **cero**: ninguno de los
 trece legajos tenía el certificado de salud y los antecedentes penales los tenía uno solo. No era
 un defecto de la puerta, era que los clientes ficticios nunca habían modelado el requisito de
-entrada. Lo corrige `supabase/migrations/0062_la_siembra_pasa_por_la_puerta.sql`, y lo hace
-dejando **cada condición aislada en una persona distinta**, para que una prueba que se rompa diga
-cuál se rompió: **Ramiro Cáceres** tiene todo menos la matrícula y queda afuera por exactamente un
-papel; **Diego Ferreyra**, de la misma profesión, la tiene y publica —los dos al lado son la
-prueba—; y **Ester Villalba** tiene los cuatro papeles y sigue afuera por lo suyo de siempre, que
-no dijo que sí. Quedan nueve publicados de trece, y las tres cuentas las comprueba la propia
-migración: si alguien afloja la condición de la vista, la migración deja de correr.
+entrada. La siembra los modela hoy, y lo hace dejando **cada condición aislada en una persona
+distinta**, para que una prueba que se rompa diga cuál se rompió: **Ramiro Cáceres** tiene todo
+menos la matrícula y queda afuera por exactamente un papel; **Diego Ferreyra**, de la misma
+profesión, la tiene y publica —los dos al lado son la prueba—; y **Ester Villalba** tiene los
+cuatro papeles y sigue afuera por lo suyo de siempre, que no dijo que sí. La base lo confirma:
+`directorio` devuelve nueve de trece legajos. **Lo que ya no queda de ese arreglo es la
+comprobación que lo sostenía**: vivía adentro de la migración —si alguien aflojaba la condición de
+la vista, la migración dejaba de correr— y no sobrevivió a la unificación, porque la siembra de
+hoy es un volcado de datos y un volcado no lleva comprobaciones. Quien la sostiene ahora es
+`scripts/probar_aislamiento.mjs`, que no corre en cada `commit`.
 
 **Probado con las dos Organizaciones ficticias, y la prueba puede fallar.** Dos comprobaciones
 nuevas en `scripts/probar_aislamiento.mjs:872`, que llevaron la corrida de 127 a 129. Van sobre un
@@ -3474,12 +3514,14 @@ Prestadora lo que sí es suyo —confirmar que la persona es quien dice ser, y t
 análisis subjetivo— para la validación, más adelante y junto con las otras seis verificaciones,
 antes de la puerta `publicacion`. Hasta que ese juicio llega, el legajo es de un **Aspirante**; con
 el ok de la Prestadora pasa a integrar el directorio de **Asistentes**. Ninguna de las dos cosas es
-una columna nueva: `verification_status` ya nace en `en_revision` desde la migración 0047, y ahí es
-exactamente donde queda un Aspirante hasta que la Prestadora lo pasa a `validado_prestadora`.
+una columna nueva: `verification_status` ya nace en `en_revision`
+(`supabase/migrations/0001_base_del_esquema.sql:471`), y ahí es exactamente donde queda un
+Aspirante hasta que la Prestadora lo pasa a `validado_prestadora`.
 
-**La cierra `supabase/migrations/0073_la_puerta_del_alta_se_cierra.sql`, del mismo lado que la
-0061 cerró la de publicación.** Un disparador `before insert` en `caregivers` lee `extra.puerta` de
-`vocabulario_items` —hoy sólo `dni` la tiene en `alta`— y exige que `caregivers.documents` traiga
+**La cierra el disparador `el_legajo_no_completa_el_alta_sin_sus_papeles`
+(`supabase/migrations/0001_base_del_esquema.sql:3856`), del mismo lado de la base que la puerta de
+publicación.** Es un `before insert` en `caregivers`: lee `extra.puerta` de `vocabulario_items`
+—hoy sólo `dni` la tiene en `alta`— y exige que `caregivers.documents` traiga
 esa clave con un valor que no sea vacío ni `pendiente`. No mira si el Prestadora ya lo aprobó —eso
 sigue siendo la validación— ni si venció —eso sigue siendo el pendiente 98, con su plan aparte—:
 sólo si llegó. El día que se agregue otro papel con esta puerta es una fila del vocabulario, no una
@@ -3491,7 +3533,7 @@ migración nueva.
 `publicacion`, que el legajo que pasó la puerta se puede seguir editando, y que la misma regla rige
 en las dos Prestadoras ficticias. El mensaje que ve la persona sale del catálogo de frases —
 `error.alta_sin_papel`, en los tres idiomas— y lo clasifica `Texto.claveDeError`, igual que
-`contacto_bloqueado` desde la migración 0063.
+`contacto_bloqueado`.
 
 ### El panel de la Prestadora dejó de mostrar lo que nadie contó, y de prometer pantallas que no hay
 
@@ -3530,57 +3572,168 @@ la izquierda y media fila vacía al lado, así que `.kpi-grid` pasó a `auto-fit
 (`css/styles.css:1970`): reparte los que haya, y se acomoda solo el día que aparezca el tercero. Es
 la única regla del proyecto que usa esa clase, comprobado antes de tocarla.
 
-### Las cuentas con las que se entra al producto ya no se pierden, y los avisos tienen autora
+### Los avisos tienen autora, y las cuentas con las que se entra hoy faltan
 
-Hecho el 2 de septiembre de 2026. Era el pendiente 47, cerrado ese día, y resultó ser bastante más
-grande que su renglón. Lo que decía era que no había cuenta de Asistente; lo que había era **cero
-cuentas de cualquier tipo**: `auth.users` y `public.profiles` vacías, con los trece legajos, los
-veintiocho avisos y las tres Prestadoras cargados. Las cuentas se venían creando a mano por la
-pantalla de alta, y cada vez que la base se rehace desde las migraciones —que en este producto es
-lo normal— se iban todas.
+**El agujero que importa es el de la autora, y conviene entenderlo antes que el otro.**
+`avisos.familia_id` dice quién publicó el aviso. Cuando esa columna no señala a nadie,
+`avisos_abiertos()` no se entera —no la mira—, así que el Asistente ve los avisos y se postula sin
+problema; pero las políticas de `postulaciones` y la función `postulaciones_de_mis_avisos()`
+piden `a.familia_id = auth.uid()`, que contra un nulo no da verdadero nunca. El Asistente se
+postula, ve «postulado», y **no hay ninguna sesión en el mundo desde la que esa postulación se
+pueda leer**. Sin un solo mensaje de error.
 
-**De ahí colgaba un segundo agujero, que era el que rompía el producto de verdad.**
-`avisos.familia_id` apuntaba a una cuenta que no existía, así que los veintiocho avisos
-estaban sin autora. `avisos_abiertos()` no mira esa columna, de modo que el Asistente veía los
-avisos y se postulaba sin problema; pero las políticas de `postulaciones` y la función
-`postulaciones_de_mis_avisos()` piden `a.familia_id = auth.uid()`, que contra un nulo no da
-verdadero nunca. El Asistente se postulaba, veía «postulado», y **no había ninguna sesión en el
-mundo desde la que esa postulación se pudiera leer**. Sin un solo mensaje de error.
+**Contra eso la columna quedó cerrada en el esquema, y es lo que hoy lo sostiene.**
+`avisos.familia_id` es `not null` y su valor por omisión es `auth.uid()`
+(`supabase/migrations/0001_base_del_esquema.sql:2170`), así que un aviso sin autora no se puede
+guardar. La llave foránea va con `on delete cascade`
+(`supabase/migrations/0001_base_del_esquema.sql:3979`), la misma forma que tienen
+`conversaciones.familia_id` y `mensajes.autor_id`: borrar una cuenta de Familia se
+lleva sus conversaciones, sus mensajes y también sus avisos. Los doce avisos sembrados tienen su
+autora, y cada Familia lo es sólo de los seis de su propia Organización, nunca de los de la otra.
 
-Lo cierra la migración `0065_las_cuentas_ficticias_nacen_con_la_base.sql`, que siembra seis cuentas
-—Familia, Asistente y personal de la Prestadora en PresDemo y en Cuidar Norte—, ata cada Asistente
-a su legajo por `caregivers.user_id`, y pone a cada Familia como autora de los catorce avisos **de
-su propia Organización**, nunca de la otra. Cuidar Sur queda sin cuentas a propósito: estar casi
-vacía es lo que la hace útil para probar el aislamiento.
+**Lo que hoy falta son las cuentas, y falta de verdad.** La base reconstruida trae los seis
+perfiles ficticios —Familia, Asistente y personal de la Prestadora en PresDemo y en Cuidar Norte
+(`supabase/migrations/0002_siembra_ficticia.sql:631`)— y **ninguna cuenta de acceso detrás**:
+`auth.users` queda vacía, porque ninguna migración escribe una sola fila ahí. Cuidar Sur está sin
+cuentas a propósito —estar casi vacía es lo que la hace útil para probar el aislamiento—, pero las
+otras dos quedaron sin ellas sin que nadie lo decidiera. La consecuencia práctica es que **al
+producto no se entra con datos ficticios**: no hay a quién abrirle la puerta, y
+`scripts/abrir_cuentas_ficticias.mjs`, que es el guion que les pone la clave, no encuentra ninguna
+cuenta a la que ponérsela. Y el ida y vuelta que es lo único que prueba algo acá —entrar como la
+Familia y ver sus avisos, entrar como su Asistente y postularse, volver como la Familia y ver esa
+postulación— hoy no se puede correr.
 
-**La clave no está en la migración, y ése es el punto.** La 0030 había escrito por qué no creaba
-estas cuentas: «dar de alta una cuenta desde una migración significa escribir una clave adentro del
-repositorio». El argumento sigue entero —las migraciones son las mismas de los dos lados, así que
-una clave escrita ahí abre esas cuentas también en la base publicada—, y lo que cambió es que no
-hace falta: las cuentas nacen con `encrypted_password` en nulo. Existen, tienen perfil y
-Organización, sostienen todas las referencias, y no entran. La clave la pone
-`scripts/abrir_cuentas_ficticias.mjs`, que la toma de `CLAVE_PRUEBA_LOCAL` y se planta si la
-dirección no es la de esta máquina.
+**Por qué la clave no puede ir adentro de una migración**, que es lo que hace que esto no se
+arregle escribiendo un renglón. Las migraciones son las mismas de los dos lados, así que una clave
+escrita ahí abre esas cuentas también en la base publicada, para cualquiera que lea el repositorio.
+La forma que funciona es sembrar las cuentas con `encrypted_password` en nulo —existen, tienen
+perfil y Organización, sostienen todas las referencias, y no entran— y ponerles la clave desde
+afuera, con `scripts/abrir_cuentas_ficticias.mjs`, que la toma de `CLAVE_PRUEBA_LOCAL` y se planta
+si la dirección no es la de esta máquina. Eso sigue siendo lo correcto; lo que falta es la mitad
+sembrada.
 
-**Y se probó el ida y vuelta entero**, que es lo único que prueba algo acá: entrar como la Familia
-de PresDemo y ver sus catorce avisos; entrar como su Asistente, ver los avisos abiertos y
-postularse a uno; volver a entrar como la Familia y ver esa postulación. Las tres pasaron, junto
-con las dos que dicen que el aislamiento no se movió —la Familia de Cuidar Norte ve sus catorce y
-ninguno de los otros, y no ve ninguna postulación de un aviso de PresDemo— y la que dice que el
-personal de la Prestadora abre el panel con su rol. La postulación de prueba se borró después.
+**Y las dos columnas que apuntan a una cuenta ya no están eximidas** de
+`probar_coherencia_de_la_siembra.mjs`. `avisos.familia_id` se llena en los doce avisos;
+`caregivers.user_id`, en los dos legajos que tienen Asistente con perfil, y queda vacío en los
+otros once. Sacar la exención fue parte del trabajo y se deja sacada: una exención que sobra vuelve
+verde para siempre una columna que después se puede vaciar sin que nadie se entere, que es
+exactamente lo que acaba de pasar del otro lado, con las cuentas.
 
-**Y que no vuelva a pasar:** `avisos.familia_id` quedó `not null`. Nació aceptando nulos por
-dos motivos y los dos se revisaron: el histórico, que escribió la 0030, y el estructural, que era
-la llave foránea de la 0020 con `on delete set null`. Esa llave pasó a `on delete cascade`, que es
-la forma que ya tenían `conversaciones.familia_id` y `mensajes.autor_id` desde la 0054
-—borrar una cuenta de Familia ya se llevaba sus conversaciones y sus mensajes; ahora se lleva
-también sus avisos—. La migración no fuerza nada: si quedara algún aviso sin autora, avisa y deja
-la columna como estaba.
+### Las cuatro columnas que ninguna política miraba
 
-**Y se sacaron dos exenciones que dejaron de eximir.** `caregivers.user_id` y
-`avisos.familia_id` estaban afuera de `probar_coherencia_de_la_siembra.mjs` porque la 0030 no
-creaba cuentas. Ahora las dos se llenan, así que la exención se borró: una exención que sobra
-vuelve verde para siempre una columna que después se puede vaciar sin que nadie se entere.
+*(31 de agosto de 2026 — cerró los pendientes 66, 74, 75 y 82)*
+
+**Eran cuatro pendientes y era un solo defecto cuatro veces:** la política decide por fila, y lo
+que importaba era qué columna se toca. Las dos políticas de `caregivers` son `for all` y no
+nombran ninguna columna —«Su propio legajo»
+(`supabase/migrations/0001_base_del_esquema.sql:4815`) y «Legajos de la Prestadora, para su
+personal» (`supabase/migrations/0001_base_del_esquema.sql:4690`)—, y la de `profiles` dice «cada
+quien escribe su propia fila» (`supabase/migrations/0001_base_del_esquema.sql:4871`). Las tres
+contestan bien la pregunta que se les hace —«¿esta fila es suya?»— y ninguna contesta la que hacía
+falta. Cuando la respuesta es sí, quien pide escribe la fila **entera**, incluidas las columnas
+donde vive el veredicto de otro:
+
+- **66** — un Asistente se ponía solo `verification_status`, que es el sello que dice que la
+  Prestadora le revisó los papeles, y con eso entraba al directorio público como validado.
+- **74** — el personal de una Prestadora se pasaba a su nombre, o al de un tercero, el `user_id`
+  de un legajo ajeno.
+- **82** — `role` y `tenant_id` de `profiles`, que es de donde salen `es_personal_de_prestadora()`
+  y `prestadora_actual()`, o sea las expresiones sobre las que se apoyan las políticas de todas
+  las tablas.
+- **75** — con el sello puesto, cambiar `documents` dejaba el sello hablando de papeles que ya no
+  estaban.
+
+**Por qué un disparador y no un permiso por columna.** Porque el permiso es por rol, y acá los dos
+lados son el mismo rol: el personal de la Prestadora y el Asistente entran los dos como
+`authenticated`. Quitarle a ese rol la escritura de `verification_status` se la quitaría también a
+quien tiene que ponerlo. Lo que los distingue no es el permiso, es la política, y **una política
+recibe la fila, no el cambio**. Un disparador `before` es lo único que ve el valor viejo y el
+nuevo a la vez.
+
+**Cómo quedó.** Dos disparadores, uno por tabla. Los escribió una migración que hoy no está en
+disco —el aplastamiento dejó el estado al que llevaba, no el camino—, así que lo que se lee es el
+resultado:
+
+- Sobre `caregivers`, `before insert or update`
+  (`supabase/migrations/0001_base_del_esquema.sql:3863`, función en `:929`): en el alta el sello
+  **no se toma del pedido**, lo pone el disparador; en la modificación, si cambia y quien pide no
+  es personal, se rechaza. El `user_id` no cambia después del alta, para nadie. Y el papel nuevo
+  baja el sello, que es la opción A.
+- Sobre `profiles`, `before update`
+  (`supabase/migrations/0001_base_del_esquema.sql:3877`, función en `:1022`): `role` y
+  `tenant_id` no cambian desde una sesión. **Acá no hay excepción para el personal, y es a
+  propósito:** la política de `profiles` no le deja a nadie alcanzar el perfil de otra persona, así
+  que lo único que un permiso al personal habilitaría es ascenderse a sí mismo y mudarse solo de
+  Prestadora, que es justo el agujero.
+
+Lo que cada uno hace está además escrito en la base, en su propio comentario
+(`supabase/migrations/0001_base_del_esquema.sql:984` y `:1046`), así que aparece al mirar la
+función y no hay que venir hasta acá.
+
+**Y sin sesión el disparador no interviene.** Cuando `auth.uid()` es nulo no hay a quién exigirle
+nada: es la base hablando consigo misma —una migración, una siembra— o la puerta de administración
+de CeltaTech, que ya la cuida quien tiene esa clave. Sin esa salvedad, toda migración que sembrara
+un legajo ya validado lo habría escrito sin sello y sin decirlo.
+
+**El permiso por columna del 82 se conservó, no se reemplazó.**
+`grant update (full_name) on public.profiles to authenticated`
+(`supabase/migrations/0001_base_del_esquema.sql:5864`) sigue siendo la primera puerta; el
+disparador es la segunda, que es la que se lee donde se la busca. El 82 nunca fue un agujero
+abierto sino una trampa armada: la protección no vivía donde se la lee, y ya se había perdido una
+vez sin que nadie se enterara —una migración se la llevó puesta y la siguiente tuvo que
+reponerla—. Por eso el chequeo del esquema no se cree esa exención: va y mira que el permiso siga
+nombrando sus columnas, y se planta si alguna migración futura vuelve a conceder `update` sobre
+`profiles` sin nombrarlas (`scripts/verificar_esquema.mjs:1472`).
+
+**Sobre el pendiente 75, el Desarrollador eligió la opción A: el papel nuevo baja el sello.** Había
+tres defendibles —bajarlo, prohibir el cambio mientras el sello esté puesto, o permitirlo y
+anotarlo para que la Prestadora lo revise después— y la elegida es la que hace que el sello
+signifique siempre lo mismo: **habla de los papeles que están hoy**. La tercera era la única que
+dejaba el sello mintiendo, porque mientras nadie revisara, el directorio seguía diciendo
+«validado» sobre un papel que nadie miró. El costo de la A —volver a revisar tras un cambio de
+papel— cae sobre la Prestadora, que es quien firma, y no sobre la Familia, que es quien no tiene
+cómo saber.
+
+**Con una excepción, y también a propósito: cuando el papel lo cambia el personal, el sello no se
+mueve.** Es quien firma, y está viendo lo que sube en el mismo acto; bajárselo a sí misma
+obligaría a la Prestadora a sellar dos veces cada corrección, que es burocracia inventada por el
+sistema.
+
+**Las cuatro pruebas viven en el repositorio y no se corrieron a mano:**
+`scripts/probar_sello_de_la_prestadora.mjs` (66), `scripts/probar_de_quien_es_el_legajo.mjs` (74),
+`scripts/probar_el_rol_y_la_prestadora_del_perfil.mjs` (82) y
+`scripts/probar_el_papel_nuevo_baja_el_sello.mjs` (75). Dos arrancaron en rojo a propósito y las
+cuatro dan verde sin que se las haya tocado. **Y cada una lleva su comprobación de sostén, que es
+lo que la hace poder fallar**: sin eso, cerrar la tabla entera dejaría todos los rechazos en verde
+sin haber arreglado nada. Que la persona pueda corregirse el teléfono y el nombre; que la
+coordinadora pueda editar un legajo de su Prestadora y no alcance el de la ajena; que cambiar un
+papel de un legajo **sin** sellar salga bien y no mueva nada.
+
+**Las dos que no arrancaron en rojo, dichas como fueron y no como convenía.** La del 82 arrancó
+entera en verde, porque el permiso por columna la sostenía: ahí no había agujero que cerrar sino
+una protección escrita donde nadie la lee. Que puede fallar se comprobó aparte, poniendo a mano
+`grant update on public.profiles to authenticated` en la base de esta máquina: dos comprobaciones
+se pusieron en rojo, y el permiso se dejó exactamente como estaba. Y de las tres del 74, la tercera
+—que la persona regale su propio legajo— ya estaba tapada por el `with check` de «Su propio
+legajo». La del 75 se escribió después del arreglo, así que también se comprobó bajándole el
+disparador a la base local: la comprobación del sello se puso en rojo y el disparador se repuso.
+
+**Un rojo arrastrado se lee igual que un rojo propio**, y eso costó una corrida. La prueba del 74
+empezó midiendo sus tres comprobaciones sobre un mismo legajo, y la segunda leyó lo que había
+dejado la primera. Ahora cada comprobación estrena el suyo. Y los destinos de los traspasos son
+cuentas **sin** legajo, porque `user_id` tiene índice único —`idx_caregivers_user_unico`—, así que
+apuntar a alguien que ya tiene el suyo devuelve un conflicto: rechazado por chocar contra un índice
+no es lo mismo que rechazado por no tener derecho.
+
+**Las cuatro pruebas limpian lo que crearon**, incluidas las cuentas. Una cuenta ficticia ascendida
+a coordinador es basura con permisos, y justo aparece en la corrida en la que uno está mirando otra
+cosa.
+
+**Y lo que la opción A todavía le debe a quien la sufre.** Que la persona vea, **antes** de cambiar
+un papel, que hacerlo le baja el sello. Hoy no se puede escribir: ninguna pantalla cambia
+`documents` —el mapeo existe en `js/apiClient.js:1396` y no lo usa nadie— y el chequeo de frases se
+pone en rojo con toda frase de catálogo que ninguna pantalla nombre. La frase entra el día que
+entre la pantalla; es el **pendiente 108**.
 
 ## 2. Falta construir
 

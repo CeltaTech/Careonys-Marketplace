@@ -1,25 +1,34 @@
 # Las 19 Guías de cuidado generales, para revisar
 
 **Qué es esto.** Las 19 Guías de cuidado que el producto trae de fábrica, una por cada patología
-del catálogo general, puestas en castellano y en orden de lectura. Están escritas en la migración
-`supabase/migrations/0042_las_diecinueve_guias_generales.sql`, que las carga como **borrador**: la
+del catálogo general, puestas en castellano y en orden de lectura. Se cargan como **borrador**: la
 puerta `guias_de` sólo entrega las publicadas, así que hoy ninguna de estas llega a la aplicación
 del Asistente.
 
-**De qué día es.** 31 de agosto de 2026. Refleja la migración 0042 tal como está escrita hoy.
+**Dónde vive el texto, y con qué forma.** Las 19 guías generales son 19 filas de la tabla
+`guias_cuidado`, cargadas por `supabase/migrations/0002_siembra_ficticia.sql:527` a `:545`. **Cada
+guía es una fila y una fila es un renglón del archivo**, así que ahí adentro no hay un renglón por
+bloque: los cuatro bloques de esta lectura son las cuatro columnas de esa misma fila —`descripcion`
+es «Qué es», `que_esperar` es «Qué esperar en el domicilio», `senales_de_alarma` es «Señales de
+alarma» y `en_emergencia` es «Qué hacer en una emergencia»—, y cada una guarda los tres idiomas
+adentro. La tabla, con sus columnas y sus comentarios, está declarada en
+`supabase/migrations/0001_base_del_esquema.sql:2658`. **Por eso cada guía de acá abajo termina con
+su clave y su renglón, y nada más**: son las dos cosas que hacen falta para encontrar la fila.
+
+**De qué día es.** 31 de agosto de 2026. Refleja el texto de las guías tal como está cargado hoy.
 
 **Qué se espera de quien lo lee.** Leer cada guía entera y marcar lo que quiera corregir —sobre
-este mismo archivo, o donde le resulte más cómodo—. Cada guía termina con el renglón de la
-migración de donde salió cada bloque, para ir directo a corregirlo. Con esa primera revisión hecha,
-las guías se publican, y **ésas son las válidas hasta que el proyecto se concluya**.
+este mismo archivo, o donde le resulte más cómodo—. Con esa primera revisión hecha, las guías se
+publican, y **ésas son las válidas hasta que el proyecto se concluya**.
 
-**Qué no está acá, a propósito.** El inglés y el portugués. La migración tiene los tres idiomas y
-la revisión también los va a necesitar, pero este archivo es para leer, no para auditar traducciones.
+**Qué no está acá, a propósito.** El inglés y el portugués. La base tiene los tres idiomas y la
+revisión también los va a necesitar, pero este archivo es para leer, no para auditar traducciones.
 
-**Por qué la firma no la puso la migración.** Para publicar, la 0041 exige quién revisó la guía y
+**Por qué la firma no la puso la siembra.** Para publicar, la tabla exige quién revisó la guía y
 cuándo (`la_publicada_dice_quien_la_reviso`, `supabase/migrations/0001_base_del_esquema.sql:2686`). Esa firma la pone
 una persona que se hace responsable de lo que ahí dice; escribirla en una migración sería inventar
-una revisión que no ocurrió.
+una revisión que no ocurrió. Por eso las 19 filas tienen `publicada` en falso y `revisada_por` y
+`revisada_el` vacíos.
 
 **Cada Prestadora puede reemplazar la suya.** Estas son las generales. La Prestadora que quiera
 decir otra cosa carga la suya para esa patología y la suya gana.
@@ -79,7 +88,7 @@ En el domicilio suele verse que se repiten las mismas preguntas muchas veces en 
 5. Avisar a la Prestadora y a la Familia apenas la situación lo permita.
 6. Dejar registrado qué se observó, qué se hizo y a quién se avisó.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `alzheimer`, renglón 121. Qué es: 123. Qué esperar: 128. Señales de alarma: 133. Qué hacer en una emergencia: 162.
+> **De dónde sale.** Clave `alzheimer`, en `supabase/migrations/0002_siembra_ficticia.sql:533`.
 
 ---
 
@@ -112,7 +121,7 @@ Suele notarse que cuesta encontrar palabras comunes, que se pierde el hilo de un
 5. Avisar a la Prestadora y a la Familia.
 6. Dejar registrado el episodio completo antes de terminar el turno.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `deterioro_cognitivo`, renglón 523. Qué es: 525. Qué esperar: 530. Señales de alarma: 535. Qué hacer en una emergencia: 564.
+> **De dónde sale.** Clave `deterioro_cognitivo`, en `supabase/migrations/0002_siembra_ficticia.sql:545`.
 
 ---
 
@@ -145,7 +154,7 @@ En el domicilio se ve que iniciar un movimiento cuesta: levantarse de la silla, 
 5. Llamar al servicio de emergencias y seguir la indicación de quien atienda.
 6. Avisar a la Prestadora y a la Familia, y dejar el episodio registrado.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `parkinson`, renglón 1053. Qué es: 1055. Qué esperar: 1060. Señales de alarma: 1065. Qué hacer en una emergencia: 1094.
+> **De dónde sale.** Clave `parkinson`, en `supabase/migrations/0002_siembra_ficticia.sql:536`.
 
 ---
 
@@ -178,7 +187,7 @@ En el domicilio suele encontrarse un lado del cuerpo más débil o más torpe, c
 5. Despejar el ambiente y abrir el paso para que la ayuda llegue sin demora.
 6. Avisar a la Prestadora y a la Familia, y dejar registrado todo lo observado.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `acv`, renglón 54. Qué es: 56. Qué esperar: 61. Señales de alarma: 66. Qué hacer en una emergencia: 95.
+> **De dónde sale.** Clave `acv`, en `supabase/migrations/0002_siembra_ficticia.sql:527`.
 
 ---
 
@@ -210,7 +219,7 @@ En el domicilio suele encontrarse un Paciente que hace su vida habitual y que ti
 5. Acompañar hasta que recupere el conocimiento por completo, sin dejarla sola.
 6. Avisar a la Prestadora y a la Familia, y dejar registrado qué pasó, a qué hora y cuánto duró.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `epilepsia`, renglón 654. Qué es: 656. Qué esperar: 661. Señales de alarma: 666. Qué hacer en una emergencia: 692.
+> **De dónde sale.** Clave `epilepsia`, en `supabase/migrations/0002_siembra_ficticia.sql:535`.
 
 ---
 
@@ -243,7 +252,7 @@ En el domicilio suele haber un tratamiento ya indicado por un profesional, con c
 5. Acompañar sin dejar sola a la persona, salvo que la propia seguridad esté en riesgo; en ese caso, ir a un lugar seguro y pedir ayuda.
 6. Avisar a la Prestadora y a la Familia, y dejar registrado qué pasó y a qué hora.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `psiquiatricas`, renglón 1187. Qué es: 1189. Qué esperar: 1194. Señales de alarma: 1199. Qué hacer en una emergencia: 1228.
+> **De dónde sale.** Clave `psiquiatricas`, en `supabase/migrations/0002_siembra_ficticia.sql:543`.
 
 ---
 
@@ -275,7 +284,7 @@ En el domicilio suele haber horarios establecidos de comidas y de tratamiento, i
 4. Anotar la hora en que empezó el malestar y qué se observó, junto con cualquier control ya indicado que se haya registrado.
 5. Avisar a la Prestadora y a la Familia, y dejar registrado qué pasó y qué indicación se recibió.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `diabetes`, renglón 590. Qué es: 592. Qué esperar: 597. Señales de alarma: 602. Qué hacer en una emergencia: 631.
+> **De dónde sale.** Clave `diabetes`, en `supabase/migrations/0002_siembra_ficticia.sql:531`.
 
 ---
 
@@ -308,7 +317,7 @@ En el domicilio suele encontrarse un tratamiento ya indicado por un profesional,
 5. Acompañar sin dejar sola a la persona, observando si responde y cómo respira; registrar el control de presión sólo si ya estaba indicado.
 6. Avisar a la Prestadora y a la Familia, y dejar registrado qué pasó y qué indicación se recibió.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `hipertension`, renglón 785. Qué es: 787. Qué esperar: 792. Señales de alarma: 797. Qué hacer en una emergencia: 826.
+> **De dónde sale.** Clave `hipertension`, en `supabase/migrations/0002_siembra_ficticia.sql:542`.
 
 ---
 
@@ -341,7 +350,7 @@ En el domicilio suelen verse moretones que aparecen sin que nadie recuerde un go
 5. Avisar a la Prestadora y a la Familia, e informar que se trata de una persona anticoagulada.
 6. Dejar registrado qué pasó, a qué hora, qué se observó y qué se hizo.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `anticoagulados`, renglón 255. Qué es: 257. Qué esperar: 262. Señales de alarma: 267. Qué hacer en una emergencia: 296.
+> **De dónde sale.** Clave `anticoagulados`, en `supabase/migrations/0002_siembra_ficticia.sql:544`.
 
 ---
 
@@ -374,7 +383,7 @@ En la convivencia diaria suele escucharse al Paciente decir que siente el coraz�
 5. Avisar a la Prestadora y a la Familia, y tener a mano la documentación del Paciente y la de su dispositivo si lo tiene.
 6. Dejar registrado qué se observó, a qué hora, cuánto duró y qué se hizo.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `arritmias`, renglón 322. Qué es: 324. Qué esperar: 329. Señales de alarma: 334. Qué hacer en una emergencia: 363.
+> **De dónde sale.** Clave `arritmias`, en `supabase/migrations/0002_siembra_ficticia.sql:534`.
 
 ---
 
@@ -407,7 +416,7 @@ En el domicilio se observa que el Paciente mide su esfuerzo: camina despacio, se
 5. Avisar a la Prestadora y a la Familia, y preparar la documentación del Paciente para quien llegue a asistir.
 6. Dejar registrado a qué hora empezó, dónde se ubicaba el dolor, cuánto duró y qué se hizo.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `coronarias`, renglón 456. Qué es: 458. Qué esperar: 463. Señales de alarma: 468. Qué hacer en una emergencia: 497.
+> **De dónde sale.** Clave `coronarias`, en `supabase/migrations/0002_siembra_ficticia.sql:538`.
 
 ---
 
@@ -440,7 +449,7 @@ En el domicilio se nota que el Paciente organiza el día alrededor de la respira
 5. Quedarse al lado, sin dejarla sola, hablando poco y con calma, y observando cómo respira y cómo responde.
 6. Avisar a la Prestadora y a la Familia, y dejar registrado qué pasó, a qué hora y qué se hizo.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `epoc`, renglón 718. Qué es: 720. Qué esperar: 725. Señales de alarma: 730. Qué hacer en una emergencia: 759.
+> **De dónde sale.** Clave `epoc`, en `supabase/migrations/0002_siembra_ficticia.sql:528`.
 
 ---
 
@@ -473,7 +482,7 @@ En el domicilio suele haber un antecedente conocido: ya pasó antes, y la Famili
 5. Avisar a la Prestadora y a la Familia apenas la situación esté contenida.
 6. Dejar registrado qué pasó, qué se hizo y quién intervino.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `sincope`, renglón 1254. Qué es: 1256. Qué esperar: 1261. Señales de alarma: 1266. Qué hacer en una emergencia: 1295.
+> **De dónde sale.** Clave `sincope`, en `supabase/migrations/0002_siembra_ficticia.sql:530`.
 
 ---
 
@@ -506,7 +515,7 @@ En el domicilio suele haber cansancio al caminar distancias cortas, al subir esc
 5. Anotar la hora en que empezó, qué se observó y qué se hizo.
 6. Avisar a la Prestadora y a la Familia, y dejar registrado el episodio.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `obesidad`, renglón 852. Qué es: 854. Qué esperar: 859. Señales de alarma: 864. Qué hacer en una emergencia: 893.
+> **De dónde sale.** Clave `obesidad`, en `supabase/migrations/0002_siembra_ficticia.sql:532`.
 
 ---
 
@@ -539,7 +548,7 @@ La casa está armada como un mapa: cada objeto tiene un lugar exacto, y ese luga
 5. Despejar el paso y avisar en voz alta cada objeto que se haya corrido, para devolverlo después a su lugar.
 6. Avisar a la Prestadora y a la Familia, anotar la hora y dejar registrado qué pasó.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `ceguera`, renglón 389. Qué es: 391. Qué esperar: 396. Señales de alarma: 401. Qué hacer en una emergencia: 430.
+> **De dónde sale.** Clave `ceguera`, en `supabase/migrations/0002_siembra_ficticia.sql:529`.
 
 ---
 
@@ -572,7 +581,7 @@ En el domicilio se ve una rutina propia para vestirse, higienizarse y desplazars
 5. Anotar la hora, qué se observó en la zona de apoyo y cómo ocurrió el episodio.
 6. Avisar a la Prestadora y a la Familia, y dejar registrado qué pasó.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `amputaciones`, renglón 188. Qué es: 190. Qué esperar: 195. Señales de alarma: 200. Qué hacer en una emergencia: 229.
+> **De dónde sale.** Clave `amputaciones`, en `supabase/migrations/0002_siembra_ficticia.sql:541`.
 
 ---
 
@@ -605,7 +614,7 @@ En el domicilio se encuentra una cama que es el centro de la jornada, y buena pa
 5. Avisar a la Prestadora y a la Familia apenas la situación esté contenida.
 6. Dejar registrado qué se observó, a qué hora y qué se hizo.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `postrados`, renglón 1120. Qué es: 1122. Qué esperar: 1127. Señales de alarma: 1132. Qué hacer en una emergencia: 1161.
+> **De dónde sale.** Clave `postrados`, en `supabase/migrations/0002_siembra_ficticia.sql:537`.
 
 ---
 
@@ -638,7 +647,7 @@ En el domicilio suele haber un equipo de cuidados paliativos a cargo, con indica
 5. Avisar a la Prestadora y a la Familia.
 6. Dejar registrado qué pasó, a qué hora y a quién se avisó.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `paliativos`, renglón 986. Qué es: 988. Qué esperar: 993. Señales de alarma: 998. Qué hacer en una emergencia: 1027.
+> **De dónde sale.** Clave `paliativos`, en `supabase/migrations/0002_siembra_ficticia.sql:540`.
 
 ---
 
@@ -671,14 +680,13 @@ En el domicilio se nota que los días no son todos iguales: después de cada cic
 5. Buscar y respetar lo que el equipo tratante dejó indicado por escrito en el domicilio.
 6. Avisar a la Prestadora y a la Familia, y dejar registrado qué pasó.
 
-> **De dónde sale.** `0042_las_diecinueve_guias_generales.sql`, clave `oncologico`, renglón 919. Qué es: 921. Qué esperar: 926. Señales de alarma: 931. Qué hacer en una emergencia: 960.
+> **De dónde sale.** Clave `oncologico`, en `supabase/migrations/0002_siembra_ficticia.sql:539`.
 
 ---
 
-## Las dos prohibiciones que la migración se puso a sí misma
+## Las dos prohibiciones que estas guías se pusieron a sí mismas
 
-Están escritas en el encabezado de la 0042, renglones 19 a 30, y valen para cualquier corrección
-que se le haga a estas guías y para cualquier guía nueva:
+Valen para cualquier corrección que se le haga a estas guías y para cualquier guía nueva:
 
 1. **Ningún tratamiento.** Ni medicamentos, ni dosis, ni maniobras clínicas. La guía dice qué es la
    patología, qué se ve en el domicilio, qué señales obligan a avisar y cómo actuar en una
@@ -687,7 +695,13 @@ que se le haga a estas guías y para cualquier guía nueva:
    guía lo convierte en dato del producto en vez de dato de la Prestadora. Por eso todas dicen
    «el servicio de emergencias» y ninguna dice un número.
 
-Es la misma línea que traza la 0041: **el producto avisa, no prescribe.**
+**Dónde está escrita cada una hoy.** La primera la dice la tabla en su propio comentario —«No
+guarda tratamientos, a proposito: el producto avisa, no prescribe»,
+`supabase/migrations/0001_base_del_esquema.sql:2699`—, así que quien abra el esquema la encuentra
+sin salir de ahí. **La segunda no está escrita en ninguna parte del código**: vivía en el
+encabezado de la migración que cargaba las guías, y ese encabezado desapareció cuando las
+migraciones se juntaron en tres archivos. Hoy este documento es el único lugar donde queda
+anotada, y conviene decidir dónde vuelve a vivir antes de publicar las guías.
 
 **Y la pantalla ya avisa lo mismo.** La aplicación del Asistente lo dice arriba de la lista de
 guías, antes de que se abra ninguna: «Estas guías dicen qué observar y cuándo avisar. No indican
@@ -701,37 +715,47 @@ pantalla queda diciendo una cosa y la guía otra.
 Nada de esto se cambió: es una lista de lugares donde el texto roza el borde de las dos
 prohibiciones, o donde la redacción quedó floja. La decisión es del Desarrollador.
 
+Cada punto nombra la guía por el número que tiene en el índice de arriba y el bloque donde está la
+frase. Con eso alcanza para encontrarla: la frase se cita entera, así que se busca en esa guía y
+aparece.
+
 **Números de emergencia:** no hay ninguno. Las diecinueve guías dicen «el servicio de emergencias»
 y ninguna escribe un número, ni de Argentina ni de ningún otro país. Tampoco aparece ningún
 medicamento por su nombre, ninguna dosis y ninguna vía de administración.
 
 **Lo que sí roza el borde de «ninguna maniobra clínica»:**
 
-1. **Pacientes anticoagulados, renglón 298.** «Si hay una herida que sangra, presionar sobre ella
+1. **Pacientes anticoagulados (guía 9), «Qué hacer en una emergencia».** «Si hay una herida que
+   sangra, presionar sobre ella
    con un paño limpio, de forma sostenida y sin levantarlo para mirar.» Es la única instrucción de
    todas las guías que le pide al Asistente **actuar sobre el cuerpo del Paciente**, y no sólo
    acompañar, observar o avisar. Puede ser primeros auxilios y no tratamiento, pero conviene que la
    distinción quede decidida y escrita, porque es la que va a decidir todos los casos siguientes.
-2. **Epilepsia o convulsiones, renglón 694.** «Apartar los objetos duros o filosos que estén cerca y
+2. **Epilepsia o convulsiones (guía 5), «Qué hacer en una emergencia».** «Apartar los objetos duros
+   o filosos que estén cerca y
    proteger la cabeza con algo blando.» Apartar objetos es despejar el ambiente; poner algo bajo la
    cabeza es tocar al Paciente. Cae del mismo lado de la línea que el punto anterior y se decide
    junto con él.
-3. **Pacientes postrados, renglón 1162.** «Aliviar la presión sobre la zona afectada y no frotarla
+3. **Pacientes postrados (guía 17), «Qué hacer en una emergencia».** «Aliviar la presión sobre la
+   zona afectada y no frotarla
    ni aplicarle nada.» La segunda mitad es una prohibición y no ofrece dudas; la primera mitad es
    mover al Paciente por un motivo de cuidado de la piel.
-4. **Cuatro guías indican una postura, y cada una con distinta mano.** EPOC (renglón 761) nombra
+4. **Cuatro guías indican una postura, y cada una con distinta mano.** Las cuatro frases están en
+   «Qué hacer en una emergencia». EPOC (guía 12) nombra
    la postura con precisión: «habitualmente sentada e inclinada hacia adelante». Hipertensión
-   (renglón 829) también la nombra: «en reposo, semisentada y con ropa holgada». Enfermedades
-   coronarias (renglón 499) y Arritmias (renglón 365) no nombran ninguna y dejan que la elija el
+   (guía 8) también la nombra: «en reposo, semisentada y con ropa holgada». Enfermedades
+   coronarias (guía 11) y Arritmias (guía 10) no nombran ninguna y dejan que la elija el
    Paciente: «donde le resulte más cómodo respirar», «sin forzar ninguna posición». Las cuatro
    aclaran que no se fuerza, así que ninguna es indefendible; lo que conviene decidir es si el
    producto puede nombrar una postura o sólo puede pedir que se respete la que el Paciente elija.
    Sea cual sea el criterio, las cuatro deberían decir lo mismo.
-5. **EPOC, renglones 725 y 762.** El Asistente «verifica que el equipo esté encendido y funcionando
+5. **EPOC (guía 12), «Qué esperar en el domicilio» y «Qué hacer en una emergencia».** El Asistente
+   «verifica que el equipo esté encendido y funcionando
    como fue indicado». Es equipamiento de oxígeno, es decir un tratamiento en curso. El texto
    aclara dos veces «sin modificar ningún ajuste», que es lo que lo salva; vale confirmar que
    verificar sin tocar es lo que se quiere pedir.
-6. **Diabetes, renglón 597, e Hipertensión, renglón 792.** Las dos hablan de controles «ya
+6. **Diabetes (guía 7) e Hipertensión (guía 8), las dos en «Qué esperar en el domicilio».** Las dos
+   hablan de controles «ya
    indicados» que el Asistente toma, registra e informa «sin tomar ninguna decisión a partir de
    ese número». Hipertensión dice cuál es el control —«un control de presión»—; Diabetes no lo
    nombra y dice sólo «controles ya indicados». Tomar una medición es un acto clínico aunque no se
@@ -740,16 +764,16 @@ medicamento por su nombre, ninguna dosis y ninguna vía de administración.
 
 **Lo que quedó flojo en la redacción, sin relación con las prohibiciones:**
 
-7. **Pacientes anticoagulados, renglón 257.** «Un Paciente anticoagulado recibe un tratamiento
+7. **Pacientes anticoagulados (guía 9), «Qué es».** «Un Paciente anticoagulado recibe un tratamiento
    indicado por su médico para que la sangre coagule más despacio.» Es la única descripción que
    define la patología **por el tratamiento** en vez de por la condición. No nombra ningún
    medicamento, así que no cruza la prohibición, pero se sale del molde de las otras dieciocho.
-8. **Amputaciones, renglón 190.** «Una amputación es la ausencia de una parte del cuerpo, de
+8. **Amputaciones (guía 16), «Qué es».** «Una amputación es la ausencia de una parte del cuerpo, de
    nacimiento o por una cirugía posterior.» Una amputación es siempre la pérdida de algo que
    estuvo; lo que falta desde el nacimiento es otra cosa y tiene otro nombre. La guía acierta en
    cubrir los dos casos, pero la definición los mete a los dos bajo una palabra que sólo alcanza a
    uno.
-9. **Diabetes, renglones 590 a 653.** Es la única guía con **cinco** pasos en «Qué hacer en una
+9. **Diabetes (guía 7), la guía entera.** Es la única guía con **cinco** pasos en «Qué hacer en una
    emergencia»; las otras dieciocho tienen seis. Epilepsia es la única con **seis** señales de
    alarma; las otras dieciocho tienen siete. No hay ninguna restricción que exija un número fijo,
    así que puede ser deliberado, pero conviene mirarlo antes de publicar.

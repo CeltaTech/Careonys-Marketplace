@@ -128,7 +128,9 @@ Cómo queda:
 3. **Esa tabla guarda sólo la entrevista.** Las otras cuatro etapas las lee de donde ya están. Si
    guardara las cinco tendría una segunda copia de un estado que también vive en otro lado, y dos
    copias del mismo dato terminan siempre diciendo cosas distintas — que es exactamente lo que
-   pasó con `validado` y `validado_prestadora` (`supabase/migrations/0017_un_solo_nombre_para_validado.sql`).
+   pasó con `validado` y `validado_prestadora`: dos nombres para el mismo estado, y el corto no lo
+   escribía nadie. Hoy queda uno solo, `validado_prestadora`, que es el que mira el directorio
+   (`supabase/migrations/0001_base_del_esquema.sql:793`).
 
 **La prueba de que la decisión es buena:** borra la duplicación en vez de repartirla. Dejar una
 tabla de cada lado con nombres distintos también habría terminado el conflicto de nombres, y la
@@ -155,7 +157,7 @@ alcanza para detectar la mayoría de las filtraciones sin leer una línea.
 - **Dónde viven físicamente los módulos compartidos** —repositorio propio, carpeta, paquete— no se
   decide acá. Se decide con la fusión, y hasta entonces la línea es conceptual: sirve para no
   escribir una tabla del lado equivocado, que es lo caro. **El Legajo del Asistente, la Documentación
-  y vencimientos, y la Verificación ya tienen tabla propia** (`supabase/migrations/0004`,
-  24 de agosto de 2026), escrita del lado compartido igual: sin ninguna columna que sepa qué
-  es un directorio.
+  y vencimientos, y la Verificación ya tienen tabla propia** —`caregivers`, `documentos_asistente` y
+  `verificaciones_asistente`, en `supabase/migrations/0001_base_del_esquema.sql:460`, `:2534` y
+  `:567`—, escritas del lado compartido igual: sin ninguna columna que sepa qué es un directorio.
 - **Nada de esto autoriza a construir lógica comercial.** Sigue frenado por `docs/ALCANCE.md` §4.

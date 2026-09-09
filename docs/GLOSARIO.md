@@ -55,23 +55,10 @@ ofrecerse uno mismo para algo, y es una palabra de uso corriente que sirve en cu
 uno se postula a una Prestadora igual que se postula a un aviso. Lo que cambia no es el verbo sino
 a qué se ofrece la persona.
 
-**De ahí que ninguna de las dos necesite entrada en este glosario, y que el problema fuera otro.**
-La pantalla que carga el legajo se llamaba `postulacion-asistente.html` y decía «Postularme como
-Asistente», pero lo que hace es guardar datos: la palabra estaba equivocada, no ambigua. El 25 de
-agosto de 2026 pasó a llamarse `registrar-asistente.html` y a decir «Registrarme como Asistente»,
-y con ella cambiaron las 86 referencias al archivo, los 29 enlaces que la nombraban, los ocho
-textos de las pantallas y las cinco menciones de los documentos que usaban «postulación» para
-hablar de cargar datos. **Donde la palabra ya estaba bien puesta no se tocó**: en `index.html` y
-en `solicitar-asistente.html`, los Asistentes se postulan a un aviso, que es exactamente
-ofrecerse para algo; y en `docs/MODULOS.md` y
-`docs/ALCANCE.md` la palabra aparece dentro de la lista de términos de esta modalidad que el
-`CLAUDE.md` de este producto prohíbe en un módulo compartido, donde nombra la postulación a un aviso.
-
-**Dos documentos conservan la palabra vieja y así se quedan.** `docs/INVENTARIO.md` y
-`docs/PLAN_ACCESO.md` son fotos fechadas —del 22 y del 24 de agosto de 2026—, y en esos días la
-pantalla de verdad se llamaba así. Corregirles el relato sería falsear lo que decían. Es el
-mismo motivo por el que `scripts/verificar_referencias.mjs` no les revisa los renglones citados,
-escrito en `scripts/citas.mjs:31`. **Sí se les cambió el nombre del archivo**,
-que no es relato sino un puntero: una foto que remite a un archivo inexistente no le sirve a
-nadie. El relato quedó intacto, así que ahí adentro «postulación» sigue nombrando lo que en esos
-días se llamaba así.
+**De ahí que ninguna de las dos necesite entrada en este glosario, y dónde va cada una.** La
+pantalla que carga el legajo es `registrar-asistente.html` y dice «Registrarme como Asistente»,
+porque lo que hace es guardar datos. «Postularse» queda para lo que de verdad es ofrecerse: en
+`index.html` y en `solicitar-asistente.html` los Asistentes se postulan a un aviso. Y en
+`docs/MODULOS.md` y `docs/ALCANCE.md` la palabra aparece dentro de la lista de términos de esta
+modalidad que el `CLAUDE.md` de este producto prohíbe en un módulo compartido, donde nombra
+justamente la postulación a un aviso.

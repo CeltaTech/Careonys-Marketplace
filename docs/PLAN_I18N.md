@@ -1,13 +1,16 @@
 # Plan: los tres idiomas
 
-> **El mecanismo está construido y funcionando; el trabajo de mudar las frases recién empieza.**
-> Al 26 de agosto de 2026: **10 de 46 archivos convertidos** y **461 frases** en los tres idiomas.
-> Lo que falta son las otras 36 pantallas —seis de ellas trabadas por una decisión del
-> Desarrollador, contadas en el pendiente 9— y **el contenido de los datos**, que es la mitad que
-> este plan no miraba: `data/catalogo-oferta.json` y `data/catalogo-vocabularios.json` están sólo
-> en castellano, así que una pantalla traducida todavía muestra sus tarjetas y sus listas de
-> opciones en un solo idioma. Queda además la única decisión abierta del Desarrollador —quién
-> traduce—, que es la número 2 de la sección 5.
+> **El mecanismo está construido y funcionando, y mudar las frases está casi terminado.**
+> Medido el 8 de septiembre de 2026: **16 de 55 archivos convertidos** y **937 frases** en los tres
+> idiomas. **Lo que falta son dos pantallas**, `formulario-integral.html` y `mockup-app.html`, que
+> son las únicas dos de las dieciocho sin un solo `data-frase`, y tienen adentro **182 frases
+> distintas**. **La mitad de los datos ya no falta, y se miró antes de decirlo:**
+> `data/catalogo-oferta.json` tiene sus 15 fichas en los tres idiomas y
+> `data/catalogo-vocabularios.json` sus 26 listas con 150 opciones, 149 de ellas en los tres
+> idiomas; la única que sigue sólo en castellano es `guardia_12`, y es a propósito, marcada
+> `i18n_pendiente` y con el motivo escrito al lado
+> (`supabase/migrations/0002_siembra_ficticia.sql:416`). Queda además la única decisión abierta del
+> Desarrollador —quién traduce—, que es la número 2 de la sección 5.
 >
 > Corresponde al pendiente 9. Cuando esté todo convertido, este archivo se borra.
 
@@ -15,16 +18,16 @@
 
 ## 1. En una línea
 
-Hay **751 frases distintas** escritas a mano adentro de las pantallas, en un solo idioma. La regla
-pide `es-AR`, `en` y `pt-BR` desde el primer día. No es un trabajo de traducir: es un trabajo de
-**sacar las frases de donde están** y dejar en su lugar una llamada al catálogo. Traducir viene
-después y es lo barato.
+Quedan **182 frases distintas** escritas a mano adentro de las pantallas, en un solo idioma —eran
+751 el día que se escribió este plan—. La regla pide `es-AR`, `en` y `pt-BR` desde el primer día. No
+es un trabajo de traducir: es un trabajo de **sacar las frases de donde están** y dejar en su lugar
+una llamada al catálogo. Traducir viene después y es lo barato.
 
 ---
 
 ## 2. Inventario
 
-Medido el 26 de agosto de 2026 con `scripts/inventario_textos.mjs`, que se vuelve a correr cuando
+Medido el 8 de septiembre de 2026 con `scripts/inventario_textos.mjs`, que se vuelve a correr cuando
 haga falta. **No es un chequeo**: no falla nunca y no entra en `verificar_todo.mjs`.
 
 ```bash
@@ -33,61 +36,43 @@ node scripts/inventario_textos.mjs
 
 | | |
 |---|---:|
-| Apariciones de texto visible | 1.256 |
-| Archivos donde aparecen | 31 |
-| **Frases distintas, que es lo que hay que traducir** | **751** |
-| Apariciones que repiten una frase ya contada | 505 |
-| De esas frases, las que pasan las 12 palabras (párrafos, no rótulos) | 91 |
+| Apariciones de texto visible | 234 |
+| Archivos donde aparecen | 2 |
+| **Frases distintas, que es lo que hay que traducir** | **182** |
+| Apariciones que repiten una frase ya contada | 52 |
+| De esas frases, las que pasan las 12 palabras (párrafos, no rótulos) | 13 |
 
 ### 2.1 Por tipo
 
 | Tipo | Cuántas |
 |---|---:|
-| Texto suelto entre etiquetas | 973 |
-| Texto armado desde un guion | 145 |
-| `alt` de una imagen | 45 |
-| `placeholder` de un campo | 40 |
-| `aria-label` | 28 |
-| Rótulo de un botón (`value`) | 14 |
-| `meta name="description"` | 9 |
-| `title` | 2 |
+| Texto suelto entre etiquetas | 190 |
+| Texto armado desde un guion | 20 |
+| `placeholder` de un campo | 15 |
+| `alt` de una imagen | 8 |
+| `meta name="description"` | 1 |
 
-Los tres últimos grupos son chicos pero **no son opcionales**: `alt` y `aria-label` son lo que oye
-quien no ve la pantalla, y `meta description` es lo que muestra el buscador. Una traducción que se
-olvida de ellos deja a esas personas en el idioma equivocado.
+Los dos últimos grupos son chicos pero **no son opcionales**: el `alt` es lo que oye quien no ve la
+pantalla, y la `meta description` es lo que muestra el buscador. Una traducción que se olvida de
+ellos deja a esas personas en el idioma equivocado. De `aria-label`, de `title` y del rótulo de un
+botón ya no queda ninguno: esos tres grupos están enteros en el catálogo.
 
 ### 2.2 Por archivo
 
 | Archivo | Apariciones |
 |---|---:|
-| `registrar-asistente.html` | 162 |
-| `pwa-asistente/index.html` | 148 |
-| `index.html` | 141 |
-| `formulario-integral.html` | 125 |
-| `mockup-app.html` | 120 |
-| `solicitar-asistente.html` | 105 |
-| `pwa-familia/index.html` | 84 |
-| `soporte-remoto.html` | 65 |
-| `cursos.html` | 60 |
-| `perfil.html` | 55 |
-| `directorio.html` | 51 |
-| `panel-prestadora.html` | 33 |
-| `examen.html` | 29 |
-| `nueva-clave.html` | 18 |
-| `recuperar-clave.html` | 15 |
-| `js/main.js` | 14 |
-| `acceso.html` | 11 |
-| `js/clave.js` y sus dos copias | 3 cada una |
-| Otros nueve guiones | 1 cada uno |
+| `formulario-integral.html` | 119 |
+| `mockup-app.html` | 115 |
 
-**Seis archivos concentran 801 de las 1.256**, o sea el 64 %. Ese es el orden en que conviene
-tomarlos.
+Y no hay tercero: **esos dos archivos son las 234 apariciones enteras**. Los demás que figuraban acá
+el 26 de agosto de 2026 ya no tienen ni una frase escrita a mano, `js/main.js` incluido.
 
-### 2.2.1 La cuenta estaba inflada, y se midió cuánto
+### 2.2.1 Por qué el inventario cuenta lo que cuenta
 
-**Al 27 de agosto de 2026 lo que falta son 414 frases distintas, no 479.** La diferencia no es
-trabajo hecho: es que el inventario contaba de más. De los 122 textos que decía sacar de los
-guiones, **30 eran texto y 92 no**.
+**Esto es historia, y queda porque explica el guion que da los números de arriba.** El 27 de agosto
+de 2026 el inventario contaba de más: decía que faltaban 479 frases distintas y faltaban 414. La
+diferencia no era trabajo hecho, era ruido. De los 122 textos que decía sacar de los guiones, **30
+eran texto y 92 no**.
 
 | | Antes | Corregido |
 |---|---:|---:|
@@ -128,35 +113,43 @@ escribe cuatro frases de cuatro maneras distintas —`textContent`, `innerHTML` 
 y no aparecen las dos. Y las categorías que no toca este arreglo quedaron **idénticas**: 588
 apariciones antes y 588 después, así que lo que cambió es lo que tenía que cambiar y nada más.
 
-**Los siete archivos que quedan son exactamente los seis trabados más `js/main.js`.** No es
-casualidad: es lo que decía la lista de trabas, ahora sin ruido encima.
+**Los siete archivos que quedaban ese día eran exactamente los seis trabados más `js/main.js`.** No
+era casualidad: era lo que decía la lista de trabas, ya sin ruido encima. De aquellos siete hoy
+quedan dos, y `js/main.js` no es ninguno de los dos.
 
 ### 2.3 Lo que ya estaba resuelto sin que nadie se lo propusiera
 
 Tres cosas quedaron afuera de la cuenta, y no por descuido:
 
-- **Las opciones de los catálogos.** Las 133 de `data/catalogo-vocabularios.json` más las fichas
-  de los demás `data/catalogo-*.json` no están escritas en ninguna pantalla: la pantalla pide la
-  clave y el catálogo devuelve el texto. **Ahí el idioma entra por un solo lugar.** Hoy esos
-  archivos tienen una sola columna, `es-AR`; agregarle dos columnas es agregar dos columnas.
-- **Las fechas.** `Texto.fechaCorta()` (`js/texto.js:60`) es el único lugar del proyecto donde se
+- **Las opciones de los catálogos.** Las 150 de `data/catalogo-vocabularios.json` —repartidas en 26
+  listas— más las 15 fichas de `data/catalogo-oferta.json` y las de los demás
+  `data/catalogo-*.json` no están escritas en ninguna pantalla: la pantalla pide la clave y el
+  catálogo devuelve el texto. **Ahí el idioma entra por un solo lugar**, y por eso ya está hecho: al
+  8 de septiembre de 2026 esos archivos tienen las tres columnas y **149 de las 150 opciones están
+  en los tres idiomas**. La que falta es `guardia_12`, sin `en` ni `pt-BR` a propósito, marcada
+  `i18n_pendiente` y con el motivo escrito al lado
+  (`supabase/migrations/0002_siembra_ficticia.sql:416`). Y no depende de que alguien se acuerde: la
+  base lo exige por esquema, con `i18n_completo()`
+  (`supabase/migrations/0001_base_del_esquema.sql:372`) adentro de la restricción de cada tabla que
+  guarda texto visible.
+- **Las fechas.** `Texto.fechaCorta()` (`js/texto.js:132`) es el único lugar del proyecto donde se
   le da forma a una fecha. El idioma le entra por ahí y no hay que buscarlo pantalla por pantalla.
 - **El aviso del chat.** `data/patrones-contacto.json` nació el 26 de agosto de 2026 con los tres
   idiomas adentro, porque para entonces la regla ya estaba escrita.
 
 Los tres son el mismo argumento a favor de hacerlo ahora: **lo que ya sale de un catálogo no
-costó nada**. Lo que cuesta son las 751 que no.
+costó nada**. Lo que cuesta son las 182 que no.
 
 ---
 
 ## 3. Lo que está construido
 
-Las cuatro piezas de abajo existen y corren. Lo que sigue abierto es mudar las frases de las 44
+Las cuatro piezas de abajo existen y corren. Lo que sigue abierto es mudar las frases de las dos
 pantallas que faltan.
 
 ### 3.1 El catálogo de frases
 
-`data/catalogo-frases.json`, hermano de los seis que ya existían y leído por el mismo
+`data/catalogo-frases.json`, hermano de los otros siete `data/catalogo-*.json` y leído por el mismo
 `js/catalogo.js`:
 
 ```json
@@ -213,7 +206,7 @@ ver la contraseña (`js/clave.js:147`) y los avisos de `acceso.html`. La ventaja
 con el cartel en pantalla, el cartel no se entera.
 
 **Por qué así y no con un armador de proyectos:** este producto no tiene herramienta de armado, y
-esperar a tenerla es esperar a la migración a React. El atributo funciona hoy, en las catorce
+esperar a tenerla es esperar a la migración a React. El atributo funciona hoy, en las dieciséis
 pantallas y en las dos aplicaciones del teléfono, sin instalar nada. Y cuando llegue React, las
 claves ya están puestas: se cambia quién las lee, no dónde están.
 
@@ -224,7 +217,7 @@ claves ya están puestas: se cambia quién las lee, no dónde están.
 navegador. `es-419` y `pt-PT` caen en `es-AR` y `pt-BR` por la raíz, no por una lista escrita a
 mano. `Catalogo.cambiarIdioma()` cambia la pantalla entera sin recargarla y guarda la elección.
 
-**El selector visible todavía no se puso, y es a propósito**: dónde va en el encabezado de catorce
+**El selector visible todavía no se puso, y es a propósito**: dónde va en el encabezado de dieciséis
 pantallas es una decisión de diseño, y ésas se consultan. Es la primera mitad de la decisión 1 de
 la sección 5, que ya está tomada; falta la segunda.
 
@@ -238,6 +231,12 @@ Entra solo en `verificar_todo.mjs`, que busca sus hermanos por el nombre.
 3. Ninguna clave del catálogo quedó sin usar.
 4. Ninguna pantalla ya convertida volvió a tener texto escrito a mano.
 5. Ninguna de las cinco frases de arranque está además en el catálogo.
+6. Ninguna fecha, hora o importe lleva el idioma escrito adentro.
+7. Ningún módulo se guarda el idioma, ni se lo pisa al catálogo.
+
+Son siete y no cinco: las dos últimas se sumaron después de escrito este plan, y valen para todo
+archivo, esté convertido o no. Al 8 de septiembre de 2026 el chequeo pasa con 937 frases en los tres
+idiomas y 16 de 55 archivos convertidos.
 
 El punto 4 es el que sostiene todo lo demás: sin él, la pantalla siguiente vuelve a nacer en un
 solo idioma y nadie se entera hasta que un cliente la abre. Ve las claves puestas desde el código
@@ -261,14 +260,18 @@ Por lo que ya se midió, y de a una pantalla por vez:
    cambiar de idioma en el medio, que era lo que pasaba si se convertía sólo el acceso.
 4. **`examen.html`**, por el mismo motivo que las dos anteriores: es chica y es casi toda rótulo.
    ✔ Hecha. Aportó lo que ninguna otra había pedido todavía —**el singular y el plural**—, y con
-   eso la regla que vale para las 41 que faltan: **son dos frases distintas y no una armada con
+   eso la regla que vale para las dos que faltan: **son dos frases distintas y no una armada con
    pedazos**. «Rendida 3 veces» no se arma pegando «Rendida», el número y «veces»: cada idioma
    arma su oración y elige su plural, así que hay `examen.rendida_una` y `examen.rendida_varias`,
    y el número entra en un hueco. Son ocho pares así en esta sola pantalla.
-5. **Las seis pantallas grandes**, que son el 64 %.
-6. **Las nueve chicas.**
-7. **Los `alt`, los `aria-label` y las `meta`**, todos juntos al final, que son 84 y se hacen de
-   una pasada.
+5. **Las seis pantallas grandes**, que eran el 64 %. ✔ Cuatro hechas —`registrar-asistente.html`,
+   `pwa-asistente/index.html`, `index.html` y `solicitar-asistente.html`—. Las otras dos,
+   `formulario-integral.html` y `mockup-app.html`, son todo lo que le queda por delante a este
+   plan.
+6. **Las nueve chicas.** ✔ Hechas.
+7. **Los `alt`, los `aria-label` y las `meta`**, todos juntos al final. ✔ Casi: de `aria-label` y
+   de `title` no queda ninguno, y quedan 8 `alt` y 1 `meta description`, los nueve adentro de las
+   dos pantallas del punto 5.
 
 ---
 
@@ -276,7 +279,10 @@ Por lo que ya se midió, y de a una pantalla por vez:
 
 - **Quién traduce.** Es la decisión 2 de abajo, la única que sigue abierta.
 - **Los nombres comerciales.** La regla de la empresa los exceptúa: un plan que se llama de una
-  manera se llama igual en los tres idiomas. Hay que marcarlos para que el chequeo no los pida.
+  manera se llama igual en los tres idiomas. ✔ Ya están marcados: son las 10 claves de
+  `IGUALES_EN_TODOS` (`scripts/verificar_frases.mjs:80`) —las cuatro redes sociales, los tres
+  medios que cita la portada, el nombre comercial de los cursos y los dos marcadores de marca—, y
+  el chequeo no les pide traducción.
 - **«PresDemo».** Ya no está. Aparecía 19 veces en la cuenta y **no era texto para traducir**: era
   el nombre de la Prestadora de ejemplo escrito a mano. El 26 de agosto de 2026 pasó a ser el
   marcador `{{organizacion}}`, que se resuelve al cargar, así que esas 19 salieron de la cuenta sin
@@ -291,13 +297,17 @@ Por lo que ya se midió, y de a una pantalla por vez:
 1. **Cómo se elige el idioma.** ✔ Tomada como se recomendaba: el navegador como valor de arranque
    y un selector visible que lo pise. Lo primero está construido (3.3). **El selector visible falta
    y no se pone solo**: dónde va en el encabezado es diseño, y eso se consulta.
-2. **Quién traduce las 751.** ⏳ **Abierta.** Una máquina y después alguien que revise, o alguien
-   desde el principio. Es una decisión de plata y de calidad, y **también es un caso de «evaluar qué
-   tareas conviene dejarle a una IA»**: los 660 rótulos cortos los hace bien una máquina, los 91
-   párrafos son texto de venta y de aviso legal, y ahí la máquina no alcanza. Las 71 que ya están
-   las tradujo la línea de comandos, y son todas rótulos y avisos cortos: **mientras esto siga
-   abierto, se convierten pantallas de rótulo y no pantallas de párrafo**, para no dejar traducido
-   por una máquina justo lo que la decisión iba a mandar a una persona.
+2. **Quién traduce.** ⏳ **Abierta.** Una máquina y después alguien que revise, o alguien desde el
+   principio. Es una decisión de plata y de calidad, y **también es un caso de «evaluar qué tareas
+   conviene dejarle a una IA»**: de las 182 que faltan, los 169 rótulos cortos los hace bien una
+   máquina, los 13 párrafos son texto de venta y de aviso legal, y ahí la máquina no alcanza.
+   **Y el resguardo que este renglón traía escrito ya no se sostiene**, así que conviene decirlo con
+   el número medido: decía «mientras esto siga abierto, se convierten pantallas de rótulo y no
+   pantallas de párrafo», y las pantallas de párrafo se convirtieron igual. De las 937 frases que
+   hoy están en los tres idiomas **150 pasan las 12 palabras**, y las tradujo la línea de comandos:
+   la portada, la de solicitar Asistente, el panel de la Prestadora y el alta del legajo son las que
+   más ponen. O sea que esta decisión ya no mira sólo hacia adelante —quién traduce lo que falta—
+   sino también hacia atrás: **quién revisa esas 150**.
 3. **Si se hace antes de React o adentro.** ✔ Tomada: antes, como se recomendaba, por lo que decía
    el propio pendiente —cada pantalla nueva lo encarece, y la migración va a agregar pantallas.
 4. **Qué pasa con `pt-BR` y el trato.** ✔ Resuelta, y hacía falta el mismo día: «publicá-lo», que
@@ -307,7 +317,7 @@ Por lo que ya se midió, y de a una pantalla por vez:
    `verificar_trato.mjs` y `verificar_vocabulario.mjs`, y **se reconoce por la clave, no por las
    palabras**. Los chequeos que valen para los tres idiomas siguen viendo todo.
 5. **Si el catálogo de frases es un archivo o una tabla.** ✔ Tomada como se recomendaba: archivo
-   por ahora, y viaja junto con los otros seis cuando se haga el pendiente 7. El único lugar que
+   por ahora, y viaja junto con los otros siete cuando se haga el pendiente 7. El único lugar que
    sabe de dónde sale es `_traer()` en `js/catalogo.js`.
 
 ### 5.1 Lo que conviene que el Desarrollador confirme
@@ -345,10 +355,11 @@ agosto de 2026 con la barra y el pie de `directorio.html`, que las repiten ocho 
   la persona y para entonces el catálogo ya llegó. **La regla que queda:** lo que se abre solo pide
   `Catalogo.traducir(elemento)`, que sí espera; `frase()` es para lo que se dibuja a pedido. Los
   tres avisos de la sesión están escritos así, y el respaldo genérico se pone después, sólo si
-  quedó vacío. Los 16 chequeos no lo veían: apareció mirando la consola del navegador.
+  quedó vacío. Los chequeos de entonces no lo veían: apareció mirando la consola del navegador.
 - **La frase partida en pedazos.** Hoy hay texto armado con `+` desde los guiones —«Quedan 3
   intentos»—. Traducido pedazo por pedazo sale mal en cualquier idioma que ordene distinto. Esas
-  145 apariciones se convierten en frases con huecos, no en pedazos sueltos.
+  apariciones se convierten en frases con huecos, no en pedazos sueltos. Al 8 de septiembre de 2026
+  quedan 20, todas adentro de las dos pantallas que faltan.
 - **El archivo que no llega.** Si el catálogo no se puede traer, lo que se ve es el castellano que
   la pantalla trae adentro, y `lang` se deja como está: declarar inglés sobre texto castellano hace
   que un lector de pantalla lo pronuncie mal. Se comprobó escondiendo el archivo, y ahí aparecieron

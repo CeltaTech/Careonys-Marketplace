@@ -45,7 +45,7 @@ CREATE POLICY "Tenant Logbook Read" ON logbook_entries
 ```
 
 El comentario dice "dentro del tenant". El código dice **todos**. La tabla —que entonces se
-llamaba `logbook_entries` y desde la 0019 se llama `reportes`— guarda presión
+llamaba `logbook_entries` y hoy se llama `reportes`— guarda presión
 arterial, glucemia y medicación administrada: datos clínicos de Pacientes, abiertos a quien
 pregunte.
 
@@ -113,7 +113,7 @@ prueba de la §3 y no leyendo el SQL.
     `especialidades` es Tipo de Asistente. Y una vez creado, un nombre no se renombra.
 11. **Todo importe con su moneda al lado.** `hourly_rate` viaja con `moneda_valor_hora`, que nace
     con la moneda que la Prestadora tiene configurada (`tenants.moneda`) y no cambia después: el
-    importe se muestra siempre con la moneda con la que se escribió (migración 0074).
+    importe se muestra siempre con la moneda con la que se escribió.
 
 ---
 
@@ -147,7 +147,6 @@ Prestadora. Con datos ficticios sale gratis; con datos reales no se puede hacer 
   otro nombre. Se usa como entrada, no como plan: **nada de eso está aprobado**, y cada ficha dice
   qué hay que decidir antes. Ya viene con el vocabulario del glosario y con las cinco reglas que
   ninguna de esas tablas puede saltearse —empezando por `prestadora_id`, que ninguna tenía.
-- **`docs/INVENTARIO.md` §3** lista lo que el código realmente consulta hoy.
 - **El esquema de Careonys** es la referencia de vocabulario para todo concepto que exista allá.
 
 **No se escribe una sola tabla hasta resolver las decisiones abiertas** de `docs/PENDIENTES.md`:

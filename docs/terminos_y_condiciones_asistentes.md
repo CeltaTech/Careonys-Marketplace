@@ -340,7 +340,7 @@ correo de otra persona.
 
 **8.4. Edad mínima.** Para registrarse como Asistente hay que ser mayor de 18 años, y al
 aceptar estos términos usted lo declara. El sistema le pide la fecha de nacimiento al armar el
-Legajo (`registrar-asistente.html:305`) y la guarda, pero **hoy no hace por su cuenta ninguna
+Legajo (`registrar-asistente.html:301`) y la guarda, pero **hoy no hace por su cuenta ninguna
 comprobación de la edad**: la exigencia se sostiene en lo que usted declara y en el documento
 de identidad, que es la única verificación que frena el alta del Legajo
 (`data/catalogo-verificaciones.json:14-17`). Registrarse siendo menor de edad es motivo de

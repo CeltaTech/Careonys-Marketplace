@@ -28,6 +28,19 @@ Uno por sección, y siempre las cuatro cosas:
 Y si algo de esto no se pudo comprobar, se escribe que no se comprobó. Un aporte mal medido le
 hace perder el tiempo a quien lo apruebe.
 
+**Cómo se distinguen las citas, que acá conviven las de dos repositorios.** Toda cita a un archivo
+de Careonys lleva adelante el prefijo `careonys/` —`careonys/panel/src/lib/tipoDeAsistente.js:31`—,
+que es el nombre de la carpeta hermana donde vive ese producto. Una cita **sin prefijo**
+—`js/apiClient.js:247`, `panel-prestadora.html:210`— es de este repositorio, se abre desde su raíz
+y la comprueba `scripts/verificar_referencias.mjs` como la de cualquier otro documento. Cuando la
+frase nombra un archivo de Careonys **por su nombre solo**, sin ruta, es porque una cita anterior
+de la misma sección ya lo presentó con la ruta entera.
+
+Esto no es prolijidad: sin el prefijo las dos clases de cita se ven iguales, y una cita local
+que se despegó de su renglón se confunde con una ajena que el chequeo no puede abrir porque el
+archivo no está en este árbol. **El prefijo es lo único que las separa, así que no se omite
+nunca.**
+
 ---
 
 ## 1. Dos tablas para todas las listas de opciones
@@ -58,11 +71,11 @@ Trae cuatro cosas que no son el guardado en sí, y que son la parte que cuesta e
 
 | Qué | Dónde |
 |---|---|
-| Las dos tablas, con sus `check` y sus comentarios | `supabase/migrations/0038_los_vocabularios_viven_en_la_base.sql:105` y `:146` |
-| Los tres idiomas obligatorios, y el agujero declarado | mismo archivo, `:118`, `:179` y `:152` |
-| Las ocho políticas: todos leen el general y lo propio, cada una escribe sólo lo suyo | mismo archivo, `:308` a `:345` |
-| Los dos disparadores que impiden cruzar Prestadoras y pisar el catálogo general | mismo archivo, `:210` y `:275` |
-| La puerta anónima `vocabularios_de(p_slug)` | mismo archivo, `:375` |
+| Las dos tablas, con sus `check` y sus comentarios | `supabase/migrations/0001_base_del_esquema.sql:592` y `:647` |
+| Los tres idiomas obligatorios, y el agujero declarado | `supabase/migrations/0001_base_del_esquema.sql:657`, `:605` y `:598` |
+| Las ocho políticas: todos leen el general y lo propio, cada una escribe sólo lo suyo | `supabase/migrations/0001_base_del_esquema.sql:4713` a `:4734` y `:4906` a `:4927` |
+| Los dos disparadores que impiden cruzar Prestadoras y pisar el catálogo general | `supabase/migrations/0001_base_del_esquema.sql:3933` y `:3940`, con sus funciones en `:1098` y `:1156` |
+| La puerta anónima `vocabularios_de(p_slug)` | `supabase/migrations/0001_base_del_esquema.sql:2045` |
 | Cómo lo pide el navegador | `js/apiClient.js:247` |
 | El archivo JSON, que pasó a ser copia generada y sin conexión | `scripts/generar_vocabularios.mjs` |
 | La comprobación de que la copia no se despegó | `scripts/verificar_catalogo.mjs` |
@@ -71,42 +84,48 @@ Trae cuatro cosas que no son el guardado en sí, y que son la parte que cuesta e
 migraciones, no supuesto:
 
 - **Tablas de catálogo tiene, pero pocas y sueltas**: `tipos_asistente`
-  (`supabase/migrations/20260819160000_foto_de_la_base.sql:1840`), `tareas_tipo_asistente`
+  (`careonys/supabase/migrations/20260819160000_foto_de_la_base.sql:1840`), `tareas_tipo_asistente`
   (`:2908`), `tipos_documento_asistente` (`:2962`), `motivos_aviso_previo_guardia` (`:2353`),
   `escalas_legales` (`:1736`), `advertencias_legales` (`:1051`), `catalogo_modulos` (`:1308`),
   `conceptos_liquidacion`, `monedas_por_pais` y `textos_consentimiento` (`:2938`). Cada una con su
   esquema propio.
 - **Y hay listas que no tienen tabla ninguna.** Las patologías del Paciente son **texto libre
   separado por comas**: se escriben en un campo y se parten con `split(',')` en
-  `panel/src/pages/familias/EditarPacienteModal.jsx:16` y `:33`. **No existe tabla de cursos** —lo
-  comprobado es que ningún `.sql` crea una—; `certificados` (`:1321`) guarda fechas, no la lista de
-  qué se puede certificar. Género, nivel educativo y complejidad del Paciente tampoco existen como
-  catálogo: la complejidad es un `check ('I','II','III')` (`:2433`) y la condición fiscal otro
-  `check`, con su constante espejo en `panel/src/lib/conceptosLiquidacion.js:30`.
+  `careonys/panel/src/pages/familias/EditarPacienteModal.jsx:16` y `:33`. **No existe tabla de
+  cursos** —lo comprobado es que ningún `.sql` crea una—; `certificados` (`:1321`) guarda fechas, no
+  la lista de qué se puede certificar. Género, nivel educativo y complejidad del Paciente tampoco
+  existen como catálogo: la complejidad es un `check ('I','II','III')` (`:2433`) y la condición
+  fiscal otro `check`, con su constante espejo en
+  `careonys/panel/src/lib/conceptosLiquidacion.js:30`.
 - **Otras listas viven adentro de un componente**: `EditarPacienteModal.jsx:57-61`,
-  `AusenciasCoberturaTab.jsx:14`, `MatriculasTab.jsx:51`, `ElCuidado.jsx:28`,
-  `panel/src/lib/modalidades.js:41-47`, y `backend/src/utils/catalogoVisibilidad.js:41` con su
-  gemelo `catalogoAvisos.js:43` —varias duplicadas entre el frente y el fondo.
+  `careonys/panel/src/pages/asistentes/AusenciasCoberturaTab.jsx:14`, `MatriculasTab.jsx:51` en esa
+  misma carpeta, `careonys/panel/src/pages/configuracion/ElCuidado.jsx:28`,
+  `careonys/panel/src/lib/modalidades.js:41-47`, y
+  `careonys/backend/src/utils/catalogoVisibilidad.js:41` con su gemelo
+  `careonys/backend/src/utils/catalogoAvisos.js:43`
+  —varias duplicadas entre el frente y el fondo.
 - **Los dos escalones ya existen allá y están bien hechos, pero sólo sobre dos tablas.**
   `tipos_asistente.prestadora_id` es nulable (`:1842`) y el `check`
   `tipos_asistente_nombre_segun_nivel` (`:1852`) obliga a que el nivel general lleve `clave` y el
   de la Prestadora lleve `nombre`; lo mismo hace `tareas_tipo_asistente_texto_segun_nivel`
   (`:2920`). La lectura combinada está escrita una sola vez, en
-  `backend/src/utils/tareasDelTipo.js:23` y `:38`. **La idea de este aporte no es nueva para
+  `careonys/backend/src/utils/tareasDelTipo.js:23` y `:38`. **La idea de este aporte no es nueva para
   Careonys: lo nuevo es dejar de repetirla tabla por tabla.**
 - **La traducción es el punto donde más se separan.** Allá conviven tres estrategias y ninguna es
   traducir en la base: el nivel general se traduce en código por clave
-  (`panel/src/lib/tipoDeAsistente.js:31`, con las entradas en
-  `panel/src/i18n/translations.js:729-732`, `:2575` y `:4414`, y el ayudante
-  `panel/src/i18n/valores.js:5`); el nivel de la Prestadora se deja sin traducir a propósito
-  (`panel/src/lib/tipoDeAsistente.js:9-10`, que es la misma decisión que tomó este producto); y
+  (`careonys/panel/src/lib/tipoDeAsistente.js:31`, con las entradas en
+  `careonys/panel/src/i18n/translations.js:729-732`, `:2575` y `:4414`, y el ayudante
+  `careonys/panel/src/i18n/valores.js:5`); el nivel de la Prestadora se deja sin traducir a
+  propósito (`careonys/panel/src/lib/tipoDeAsistente.js:9-10`, que es la misma decisión que tomó
+  este producto); y
   sólo `textos_consentimiento` traduce en la base, con una columna `idioma` (`:2953`). **Y hay un
   agujero:** las tareas generales (`tareas_tipo_asistente.clave`) no tienen dónde traducirse —no
   existe ninguna clave `tarea_*` en `translations.js`— así que
-  `panel/src/pages/configuracion/TiposAsistenteTab.jsx:362` imprime la clave cruda en pantalla.
+  `careonys/panel/src/pages/configuracion/TiposAsistenteTab.jsx:362` imprime la clave cruda en
+  pantalla.
 - **Pantallas donde una Prestadora carga lo suyo hay tres**: `TiposAsistenteTab.jsx:406`,
-  `configuracion/Asistentes.jsx:105` y `:155` (con su ruta en
-  `backend/src/routes/panelConfiguracion.js:596`) y `ElCuidado.jsx:273`. **Ninguna para patologías,
+  `careonys/panel/src/pages/configuracion/Asistentes.jsx:105` y `:155` (con su ruta en
+  `careonys/backend/src/routes/panelConfiguracion.js:596`) y `ElCuidado.jsx:273`. **Ninguna para patologías,
   certificaciones, cursos, géneros, niveles educativos ni modalidades.** Este producto ya tiene la suya, y es una sola
   para todas las listas: `panel-prestadora.html:210`, contra `vocabulario_items`. Careonys las tiene
   repartidas en tres pantallas y le faltan seis listas; acá el bloque es uno y sirve para
@@ -115,9 +134,9 @@ migraciones, no supuesto:
 **Qué habría que tocar allá.** Es lo que se pone adelante para aprobar de a un punto, no un plan
 en curso:
 
-1. **Crear las dos tablas genéricas con sus políticas y sus disparadores.** Es la migración 0038
-   entera, cambiando `tenant_id` por `prestadora_id` y `tenants` por `prestadoras`. Nada se rompe
-   con este paso solo: son tablas nuevas.
+1. **Crear las dos tablas genéricas con sus políticas y sus disparadores.** Es todo lo que se
+   nombra en el cuadro de arriba, copiado tal cual, cambiando `tenant_id` por `prestadora_id` y
+   `tenants` por `prestadoras`. Nada se rompe con este paso solo: son tablas nuevas.
 2. **Traer primero las listas que hoy no tienen ninguna tabla** —patologías, certificaciones,
    cursos, género, nivel educativo, modalidades—. Es donde el aporte se nota y donde no hay nada
    que migrar, porque hoy son texto libre o constantes en un componente. **Si esto no se hace, lo

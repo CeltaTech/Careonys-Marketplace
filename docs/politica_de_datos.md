@@ -97,8 +97,8 @@ por día y turno. La columna de cada uno está declarada en
 correo en `:85`, el domicilio en `:95` y los datos bancarios en `:96`.
 
 **3.2. Y además, el legajo se completa con fichas.** Matrícula, estudios, experiencia laboral,
-papeles presentados y referencias son tablas aparte, una fila por cada cosa cargada, creadas en
-`supabase/migrations/0004_legajo_matricula_verificaciones_banderas.sql`.
+papeles presentados y referencias son tablas aparte, una fila por cada cosa cargada:
+`supabase/migrations/0001_base_del_esquema.sql:2748`, `:2558`, `:2610`, `:2534` y `:3010`.
 
 **3.3. De la Familia y del Paciente, cuando se publica un Aviso.** El nombre del Paciente
 —`supabase/migrations/0001_base_del_esquema.sql:2155`—, sus patologías —`:154`—, la zona, la

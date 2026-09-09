@@ -29,7 +29,7 @@ Y el catálogo de verificaciones lo tenía anotado desde el principio, con estas
 
 ## 2. Inventario: qué hay hecho, qué no, y qué está a medio hacer
 
-Esto es lo que se comprobó contra el código y contra las 47 migraciones el 31 de agosto de 2026,
+Esto es lo que se comprobó contra el código y contra las migraciones el 31 de agosto de 2026,
 no contra lo que dicen los documentos.
 
 ### 2.1. Las columnas están, las tres. Cargada hay una sola
@@ -84,7 +84,7 @@ con hoy, ninguna avisa.
 ### 2.4. No hay con qué correr una tarea a hora fija
 
 - **No hay `pg_cron`**, ni `pg_net`, ni ninguna llamada a un servicio de afuera desde la base:
-  buscado en las 47 migraciones y en `supabase/`.
+  buscado en las migraciones y en `supabase/`.
 - **Hay una sola función de borde**, `supabase/functions/alta-y-baja`, y es la puerta por donde
   CeltaTech da de alta y de baja una Prestadora. No hay ninguna programada.
 - **El correo depende del pendiente 45**: hoy el proyecto alojado manda con el servicio de fábrica,
@@ -99,8 +99,9 @@ Y conviene copiarlo, porque ya resolvió los dos errores que este trabajo va a e
 - **El valor de fábrica se siembra con un disparador sobre `tenants`**, no adentro de la puerta de
   alta (`supabase/migrations/0001_base_del_esquema.sql:1479-1481`), porque hay
   dos caminos por los que nace una Prestadora y el que había fallado era el otro.
-- **Y el motivo por el que hay valor de fábrica**, escrito en la 0018 y que vale igual acá: *una
-  tabla vacía no dice «se avisa con treinta días», dice «todavía nadie configuró esto»*.
+- **Y el motivo por el que hay valor de fábrica**, escrito hoy en `docs/ALCANCE.md:1953` y que
+  vale igual acá: *una tabla vacía no dice «se avisa con treinta días», dice «todavía nadie
+  configuró esto»*.
 
 ### 2.6. Dónde está la puerta que habría que cerrar
 
@@ -139,8 +140,9 @@ columna parece estar pidiendo. **Eso es guardar el resultado de una cuenta que c
 las noches.** Si el trabajo que la escribe no corre un día —porque falló, porque nadie lo
 programó, porque la base estuvo caída—, las filas quedan diciendo que están vigentes. Y lo peor:
 **quedan diciéndolo con la misma cara** que las que sí lo están. Es el mismo error que ya costó
-caro en este producto: dos copias del mismo dato terminan siempre diciendo cosas distintas
-(`supabase/migrations/0017_un_solo_nombre_para_validado.sql`).
+caro en este producto: dos copias del mismo dato terminan siempre diciendo cosas distintas —pasó
+con los dos nombres que tenía un mismo estado del legajo, contado en `docs/ALCANCE.md`, sección
+«El renombre se aplicó contra el servidor, y de paso murió un estado que nadie escribía»—.
 
 Entonces se parte en dos cosas que se parecen y no son la misma:
 

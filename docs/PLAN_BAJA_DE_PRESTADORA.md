@@ -10,9 +10,9 @@
 > 2026**, no se dedujo de las migraciones. Cuando algo no se pudo medir, lo dice.
 >
 > **Este documento nació diciendo algo que no era cierto, y se corrigió el mismo día.** Decía que
-> «desde la migración 0046 ninguna Prestadora se puede borrar» y que eso era un defecto del
-> producto. No lo es: la baja de CeltaTech nunca borró nada. La sección 1 cuenta qué pasa de
-> verdad, y la 2 por qué el error era fácil de cometer y qué deja de enseñanza.
+> ninguna Prestadora se podía borrar desde que toda Prestadora nace con su configuración, y que
+> eso era un defecto del producto. No lo es: la baja de CeltaTech nunca borró nada. La sección 1
+> cuenta qué pasa de verdad, y la 2 por qué el error era fácil de cometer y qué deja de enseñanza.
 
 ## 1. Qué pasa de verdad
 
@@ -41,12 +41,13 @@ producto se porta bien.**
 
 Era **la limpieza de la propia prueba**. `scripts/probar_alta_y_baja.mjs` crea una Prestadora
 ficticia y al final la borra con la llave de administración para no dejar basura en la base
-publicada. Ese borrado es el que chocaba, porque desde la migración
-`0046_toda_prestadora_nace_con_su_configuracion.sql` toda Prestadora nace con seis filas de
-configuración de puntaje que apuntan a `tenants` sin cascada.
+publicada. Ese borrado es el que chocaba, porque toda Prestadora nace configurada —lo hace el
+disparador `la_prestadora_nace_configurada` sobre `tenants`
+(`supabase/migrations/0001_base_del_esquema.sql:3912`, y su función en `:1476`)—, y esas seis
+filas de configuración de puntaje apuntan a `tenants` sin cascada.
 
 **Ya está arreglado**, y sin tocar el producto: la limpieza ahora borra en orden —primero lo que
-cuelga, después la Prestadora— en `scripts/probar_alta_y_baja.mjs:196` a `:204`. Comprobado contra
+cuelga, después la Prestadora— en `scripts/probar_alta_y_baja.mjs:209` a `:217`. Comprobado contra
 la base de esta máquina en un bloque que se deshace solo: el borrado derecho choca, el borrado en
 orden sale bien.
 
@@ -114,7 +115,8 @@ Se probó el estado final, limpiando a mano todo lo que hoy trabaría. El result
 - **Y conservó el sello de una Prestadora que ya no existe.**
 
 Ese sello es `verification_status = 'validado_prestadora'`. Con `tenant_id` nulo **casi nadie puede
-bajarlo**: la propia persona no —la migración 0047 se lo rechaza—; el personal de cualquier
+bajarlo**: la propia persona no —se lo rechaza el disparador `el_legajo_no_se_sella_solo`
+(`supabase/migrations/0001_base_del_esquema.sql:3863`)—; el personal de cualquier
 Prestadora tampoco —su política pide `tenant_id = prestadora_actual()`, y contra un nulo eso nunca
 da verdadero—; **sólo CeltaTech por la puerta de administración**, donde `auth.uid()` es nulo y el
 disparador se aparta.
@@ -166,16 +168,19 @@ Suponiendo la **B**, que es la recomendada. Todo en una migración:
 
 1. **Las tres tablas que describen a la Prestadora o a su aviso pasan a `on delete cascade`**:
    `puntaje_prestadora`, `ponderacion_comprobacion` y `franjas_aviso`. Lo que
-   nace con la Prestadora se va con ella, que es el sentido de la 0046.
+   nace con la Prestadora se va con ella, que es el sentido de que nazca configurada.
 2. **Las diez tablas de la persona no se tocan en su clave hacia `caregivers`**, y su `tenant_id`
    pasa a acompañar al legajo: si el legajo queda sin Prestadora, sus papeles también. Eso
    significa hacer la columna anulable y ponerle `on delete set null`. **Hay que revisar política
    por política que ninguna decida con una comparación contra nulo**, porque la regla de la casa
    dice que todo control falla cerrado y una comparación con nulo no es falsa, es nula.
 3. **Un disparador sobre `caregivers`**: cuando `tenant_id` pasa a nulo, `verification_status`
-   vuelve a `en_revision`. Va en la misma familia que `el_legajo_no_se_sella_solo` de la 0047, y
-   por el mismo motivo: la política recibe la fila, no el cambio.
-4. **El bloque que se planta si la migración no logró lo que dice**, como el de la 0047.
+   vuelve a `en_revision`. Va en la misma familia que `el_legajo_no_se_sella_solo`
+   (`supabase/migrations/0001_base_del_esquema.sql:3863`), y por el mismo motivo: la política
+   recibe la fila, no el cambio.
+4. **El bloque que se planta si la migración no logró lo que dice.** Ya se escribió así antes; en
+   el esquema aplanado de hoy no queda rastro de ninguno, porque son comprobaciones que corren al
+   aplicar la migración y no dejan nada en la base.
 5. `notify pgrst, 'reload schema';`
 
 ## 8. Cómo se prueba, y cómo puede fallar
