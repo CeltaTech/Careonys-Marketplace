@@ -210,7 +210,7 @@ se metía adentro del marcado ahora pasan por `Texto.escapar`, en seis archivos:
   proyecto quien lee suele ser el personal de la Prestadora, o sea justo quien tiene los permisos,
   o una familia mirando los reportes de cuidado.
 - **Los dos peores casos** no estaban donde decía el pendiente. Uno era el mensaje de chat de
-  `mockup-app.html:834`, que lo escribe una persona y lo lee otra. El otro era
+  `mockup-app.html:835`, que lo escribe una persona y lo lee otra. El otro era
   `panel-prestadora.html`, la pantalla que el pendiente daba por arreglada: tenía el renglón de la
   tabla de Asistentes entero sin escapar —nombre, documento, teléfono, profesión y zona— y el
   único `onclick` escrito en el marcado de todo el proyecto.
@@ -1600,7 +1600,7 @@ pantalla vacía.
   cargarla», que es el estado de error que faltaba.
 - **Las otras tres caen en la pantalla de acceso**, y eso ya era la verdad: sin sesión rescatada,
   lo que corresponde mostrar es el acceso. Lo que se perdía era el rastro. Ahora
-  `mockup-app.html:447` y `:955`, `pwa-asistente/index.html:1054` y `pwa-familia/index.html:1104`
+  `mockup-app.html:448` y `:956`, `pwa-asistente/index.html:1054` y `pwa-familia/index.html:1104`
   dejan el detalle técnico en la consola en lugar de tirarlo.
 - **`js/auth.js:385` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
   cargan ese archivo —no en las dieciséis, y el comentario decía catorce hasta que se contaron—, y su
@@ -3128,7 +3128,7 @@ aparecía en ningún filtro del directorio.
 hoja se siga abriendo sola desde la cuarentena, y las originales quedaron donde estaban.
 
 **Lo que la reemplaza.** Los 21 enlaces «Publicar un Aviso» de ocho pantallas del portal y de la
-maqueta —y el reenvío de `mockup-app.html:777`— apuntan ahora a `registrar-familia.html`, que a
+maqueta —y el reenvío de `mockup-app.html:778`— apuntan ahora a `registrar-familia.html`, que a
 quien ya tiene sesión lo manda derecho adonde le toca (`registrar-familia.html:206-212`); a una
 Familia, a `pwa-familia/index.html`, donde `#form-nuevo-aviso`
 (`pwa-familia/index.html:739`) sí publica de verdad: pregunta nombre del Paciente, edad, zona,

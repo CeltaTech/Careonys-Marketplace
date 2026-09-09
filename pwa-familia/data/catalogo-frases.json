@@ -2926,6 +2926,11 @@
       "en": "Record a report",
       "pt-BR": "Registrar um relatório"
     },
+    "reporte.cerrar": {
+      "es-AR": "Cerrar",
+      "en": "Close",
+      "pt-BR": "Fechar"
+    },
     "reporte.presion": {
       "es-AR": "Presión Arterial (P.A.)",
       "en": "Blood Pressure (BP)",

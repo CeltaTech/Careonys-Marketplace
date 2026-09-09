@@ -394,8 +394,9 @@
         <h4
           style="margin:0 0 16px 0; color:var(--marca-prestadora); font-size:16px; font-weight:800; display:flex; justify-content:space-between; align-items:center;">
           <span data-frase="reporte.titulo">Registrar un reporte</span>
-          <button onclick="document.getElementById('modal-reporte').style.display='none'"
-            class="sin-fondo sin-borde texto-20 mano">&times;</button>
+          <button type="button" onclick="document.getElementById('modal-reporte').style.display='none'"
+            data-frase-aria-label="reporte.cerrar" aria-label="Cerrar"
+            class="sin-fondo sin-borde texto-20 mano"><span aria-hidden="true">&times;</span></button>
         </h4>
         <div class="form-group mb-12"><label class="texto-11 peso-700" data-frase="reporte.presion">Presión Arterial (P.A.)</label><input type="text" id="bit-presion" placeholder="Ej: 120/80"
             data-frase-placeholder="reporte.presion_ejemplo"
