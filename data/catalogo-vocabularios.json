@@ -9,10 +9,9 @@
       "cerrada": true,
       "usado_en": [
         "directorio.html:78",
-        "formulario-integral.html:395",
         "js/zonas.js:145",
         "js/zonas.js:218",
-        "mockup-app.html:453",
+        "mockup-app.html:471",
         "pwa-familia/index.html:1146",
         "pwa-familia/index.html:1299",
         "pwa-familia/index.html:759"
@@ -204,7 +203,6 @@
       "cerrada": true,
       "usado_en": [
         "directorio.html:291",
-        "formulario-integral.html:110",
         "perfil.html:341",
         "pwa-asistente/index.html:544",
         "registrar-asistente.html:305"
@@ -489,9 +487,7 @@
         "pt-BR": "Frequência do serviço"
       },
       "cerrada": true,
-      "usado_en": [
-        "formulario-integral.html:189"
-      ],
+      "usado_en": [],
       "items": [
         {
           "en": "Recurring (fixed days each week)",
@@ -794,7 +790,6 @@
       "cerrada": false,
       "usado_en": [
         "data/catalogo-fichas.json:180",
-        "formulario-integral.html:143",
         "js/catalogo.js:481",
         "pwa-asistente/index.html:615",
         "registrar-asistente.html:388"
@@ -897,10 +892,7 @@
         "data/catalogo-fichas.json:107",
         "directorio.html:266",
         "directorio.html:81",
-        "formulario-integral.html:165",
-        "formulario-integral.html:355",
-        "formulario-integral.html:400",
-        "mockup-app.html:452",
+        "mockup-app.html:470",
         "perfil.html:328",
         "pwa-asistente/index.html:571",
         "pwa-familia/index.html:1145",
@@ -1030,7 +1022,6 @@
       },
       "cerrada": true,
       "usado_en": [
-        "formulario-integral.html:309",
         "index.html:283",
         "solicitar-asistente.html:321",
         "soporte-remoto.html:155"
@@ -1168,9 +1159,7 @@
         "pt-BR": "Gênero de Assistente que a Família prefere"
       },
       "cerrada": true,
-      "usado_en": [
-        "formulario-integral.html:116"
-      ],
+      "usado_en": [],
       "items": [
         {
           "en": "No preference",
@@ -1199,9 +1188,7 @@
         "pt-BR": "Nível do Assistente no catálogo"
       },
       "cerrada": true,
-      "usado_en": [
-        "formulario-integral.html:410"
-      ],
+      "usado_en": [],
       "items": [
         {
           "en": "Verified Caregiver (Bronze)",
@@ -1362,8 +1349,6 @@
       },
       "cerrada": true,
       "usado_en": [
-        "formulario-integral.html:185",
-        "formulario-integral.html:405",
         "pwa-asistente/index.html:629",
         "pwa-familia/index.html:772",
         "registrar-asistente.html:408"

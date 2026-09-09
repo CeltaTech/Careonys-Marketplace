@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title data-organizacion-original="{{organizacion}} — Portal Móvil">Careonys — Portal Móvil</title>
+  <title data-frase="maqueta.titulo_pagina"
+    data-organizacion-original="{{organizacion}} — Portal Móvil">Careonys — Portal Móvil</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" />
@@ -25,58 +26,64 @@
     <!-- DRAWER SIDEBAR -->
     <div class="sidebar-drawer" id="drawer">
       <div class="drawer-header">
-        <img src="assets/images/retrato_generico.svg" alt="Sin foto" />
-        <h4 id="menu-user-name">Familiar de Prueba</h4>
-        <p id="menu-user-email">familiar@ejemplo.com</p>
+        <img src="assets/images/retrato_generico.svg" alt="Sin foto" data-frase-alt="asistente.sin_foto" />
+        <!-- Nacen vacíos: el nombre y el correo los escribe el guion con los de
+             la sesión. Antes traían un nombre y un correo inventados, que hasta
+             que la sesión llegara se leían como si fueran los de quien mira. -->
+        <h4 id="menu-user-name"></h4>
+        <p id="menu-user-email"></p>
       </div>
       <div class="drawer-menu">
-        <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home"></i> Inicio</a>
-        <a class="drawer-menu-item" href="directorio.html"><i class="fas fa-search"></i> Buscar Asistente</a>
-        <a class="drawer-menu-item" onclick="navigate('reportes')"><i class="fas fa-book-medical"></i> Reportes de
-          cuidado</a>
-        <a class="drawer-menu-item" href="cursos.html"><i class="fas fa-graduation-cap"></i> Cursos</a>
-        <a class="drawer-menu-item" href="soporte-remoto.html"><i class="fas fa-headset"></i> Acompañamiento Online</a>
+        <a class="drawer-menu-item" onclick="navigate('dashboard')"><i class="fas fa-home"></i> <span data-frase="nav.inicio">Inicio</span></a>
+        <a class="drawer-menu-item" href="directorio.html"><i class="fas fa-search"></i> <span data-frase="familia.buscar_asistente">Buscar Asistente</span></a>
+        <a class="drawer-menu-item" onclick="navigate('reportes')"><i class="fas fa-book-medical"></i> <span data-frase="familia.reportes_titulo">Reportes de cuidado</span></a>
+        <a class="drawer-menu-item" href="cursos.html"><i class="fas fa-graduation-cap"></i> <span data-frase="pie.cursos">Cursos</span></a>
+        <a class="drawer-menu-item" href="soporte-remoto.html"><i class="fas fa-headset"></i> <span data-frase="acompanamiento.titulo">Acompañamiento en línea</span></a>
         <div style="border-top:1px solid var(--borde-card);margin:8px 0;"></div>
         <button type="button" class="drawer-menu-item color-peligro" id="btn-logout"><i class="fas fa-sign-out-alt color-peligro"
-           ></i> Cerrar sesión</button>
+           ></i> <span data-frase="asistente.menu_cerrar_sesion">Cerrar sesión</span></button>
       </div>
       <div class="p-16 centrar-texto texto-10 color-secundario borde-arriba">
-        Powered by <strong class="color-marca-acento">{{producto}}</strong>
+        <span data-frase="pie.sello_producto">Con la tecnología de</span> <strong class="color-marca-acento" data-frase="comun.producto">{{producto}}</strong>
       </div>
     </div>
 
     <!-- 1. VISTA: INTRO / LOGIN -->
     <div class="app-screen active" id="screen-intro">
       <div class="intro-logo-container">
-        <img src="assets/images/logotipo.png" class="tenant-logo" alt="Logo Tenant" />
-        <h2 class="tenant-name">{{organizacion}}</h2>
+        <img src="assets/images/logotipo.png" class="tenant-logo" alt="Logo de la Prestadora"
+          data-frase-alt="asistente.logo_prestadora" />
+        <h2 class="tenant-name" data-frase="comun.organizacion">{{organizacion}}</h2>
       </div>
 
       <div class="login-card">
         <div class="input-wrapper">
-          <input type="email" id="login-email" placeholder="Correo electrónico" required />
+          <input type="email" id="login-email" placeholder="Correo electrónico"
+            data-frase-placeholder="acceso.correo" required />
         </div>
         <div class="input-wrapper">
           <i class="fas fa-lock"></i>
-          <input type="password" id="login-pass" placeholder="Contraseña" required />
+          <input type="password" id="login-pass" placeholder="Contraseña"
+            data-frase-placeholder="acceso.contrasena" required />
           <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility()"></i>
         </div>
 
         <div style="text-align:right;margin-bottom:16px;">
-          <a href="#" style="font-size:11px;color:var(--texto-secundario);text-decoration:none;font-weight:700;">¿Olvidó su
-            contraseña?</a>
+          <a href="#" style="font-size:11px;color:var(--texto-secundario);text-decoration:none;font-weight:700;"
+            data-frase="acceso.olvide">¿Olvidó la contraseña?</a>
         </div>
 
-        <button type="button" class="btn-login" id="btn-action-login">Ingresar</button>
+        <button type="button" class="btn-login" id="btn-action-login" data-frase="acceso.entrar">Entrar</button>
 
         <div style="text-align:center;margin-top:20px;font-size:12px;color:var(--texto-secundario);">
-          ¿No tiene cuenta? <a href="#" id="link-go-signup"
-            style="color:var(--marca-prestadora-acento);font-weight:700;text-decoration:none;">Registrarse</a>
+          <span data-frase="asistente.sin_cuenta">¿No tiene cuenta?</span> <a href="#" id="link-go-signup"
+            style="color:var(--marca-prestadora-acento);font-weight:700;text-decoration:none;"
+            data-frase="maqueta.registrarse">Registrarse</a>
         </div>
       </div>
 
       <div style="text-align:center;margin-top:auto;font-size:10px;color:var(--texto-secundario);padding-top:20px;">
-        Powered by <strong class="color-marca-acento">{{producto}}</strong>
+        <span data-frase="pie.sello_producto">Con la tecnología de</span> <strong class="color-marca-acento" data-frase="comun.producto">{{producto}}</strong>
       </div>
     </div>
 
@@ -84,32 +91,32 @@
     <div class="app-screen" id="screen-signup">
       <div class="app-header">
         <button class="btn-back" id="btn-signup-back"><i class="fas fa-arrow-left"></i></button>
-        <h1>Registrarse</h1>
+        <h1 data-frase="maqueta.registrarse">Registrarse</h1>
         <div class="ancho-24"></div>
       </div>
 
       <div style="padding:20px 0;text-align:center;">
-        <h3 style="font-size:18px;font-weight:800;color:var(--marca-prestadora);margin:0 0 6px 0;">¿Cómo
-          desea
-          ingresar?</h3>
-        <p class="texto-12 color-secundario m-0">Seleccione su tipo de cuenta para comenzar</p>
+        <h3 style="font-size:18px;font-weight:800;color:var(--marca-prestadora);margin:0 0 6px 0;"
+          data-frase="maqueta.como_ingresar">¿Cómo desea ingresar?</h3>
+        <p class="texto-12 color-secundario m-0" data-frase="maqueta.elija_cuenta">Seleccione su tipo de cuenta para comenzar</p>
       </div>
 
       <div class="role-card" data-role="familiar">
-        <h4><i class="fas fa-users color-marca-acento"></i> Como familiar</h4>
-        <p>Soy una persona que busca un Asistente calificado para asistir a un familiar o ser querido mayor.</p>
+        <h4><i class="fas fa-users color-marca-acento"></i> <span data-frase="maqueta.rol_familiar">Como familiar</span></h4>
+        <p data-frase="maqueta.rol_familiar_texto">Busco un Asistente calificado para asistir a un familiar o ser querido mayor.</p>
         <div class="circle-select"></div>
       </div>
 
       <div class="role-card" data-role="asistente">
-        <h4><i class="fas fa-user-md color-marca"></i> Como Asistente</h4>
-        <p>Soy un profesional que busca registrarse para trabajar brindando servicios de cuidado domiciliario.</p>
+        <h4><i class="fas fa-user-md color-marca"></i> <span data-frase="maqueta.rol_asistente">Como Asistente</span></h4>
+        <p data-frase="maqueta.rol_asistente_texto">Busco registrarme para trabajar brindando servicios de cuidado domiciliario.</p>
         <div class="circle-select"></div>
       </div>
 
       <div style="margin-top:auto;padding-bottom:20px;">
         <button type="button" class="btn-login oculto" id="btn-signup-confirm"
-          style="background:var(--marca-prestadora);box-shadow:none;">Confirmar Selección</button>
+          style="background:var(--marca-prestadora);box-shadow:none;"
+          data-frase="maqueta.confirmar_rol">Confirmar la selección</button>
       </div>
     </div>
 
@@ -120,9 +127,10 @@
       <div class="dashboard-header">
         <button class="btn-back texto-20" id="btn-open-menu"><i class="fas fa-bars"></i></button>
         <div style="display:flex;align-items:center;gap:6px;">
-          <img src="assets/images/logotipo.png" class="tenant-logo" style="height:24px;" alt="Logo" />
+          <img src="assets/images/logotipo.png" class="tenant-logo" style="height:24px;" alt="Logo de la Prestadora"
+            data-frase-alt="asistente.logo_prestadora" />
           <span class="tenant-name texto-14 peso-800 color-marca"
-           >{{organizacion}}</span>
+            data-frase="comun.organizacion">{{organizacion}}</span>
         </div>
         <div class="relativo mano">
           <i class="fas fa-bell texto-18 color-secundario"></i>
@@ -135,8 +143,8 @@
       <div class="verification-widget mt-16">
         <i class="fas fa-exclamation-triangle"></i>
         <div class="flex-1">
-          <h5>Complete las Verificaciones</h5>
-          <p>Email: ✓ Validado | Celular: ⌛ Pendiente</p>
+          <h5 data-frase="maqueta.verificaciones_titulo">Complete las verificaciones</h5>
+          <p data-frase="maqueta.verificaciones_estado">Correo: ✓ validado | Celular: ⌛ pendiente</p>
         </div>
         <i class="fas fa-chevron-right" style="font-size:12px;color:var(--tono-atencion-texto);"></i>
       </div>
@@ -147,15 +155,15 @@
         <div class="flex alinear-centro gap-12">
           <i class="fas fa-map-marker-alt color-info texto-20"></i>
           <div>
-            <h5 class="m-0 texto-13 peso-700 color-info">Fichaje de Asistencia (GPS)</h5>
-            <p id="gps-status" class="m-solo-arriba-2 texto-11 color-info">Marcar clock-in / clock-out</p>
+            <h5 class="m-0 texto-13 peso-700 color-info" data-frase="asistente.fichador">Fichador GPS Laboral</h5>
+            <p id="gps-status" class="m-solo-arriba-2 texto-11 color-info" data-frase="asistente.fichador_bajada">Presione para marcar entrada o salida en el domicilio.</p>
           </div>
         </div>
         <div style="display:flex; gap:6px;">
           <button id="btn-gps-in"
-            style="background:var(--azul-medio); color:var(--texto-sobre-color); border:none; padding:6px 10px; border-radius:8px; font-size:10px; font-weight:700; cursor:pointer;">Entrada</button>
+            style="background:var(--azul-medio); color:var(--texto-sobre-color); border:none; padding:6px 10px; border-radius:8px; font-size:10px; font-weight:700; cursor:pointer;" data-frase="fichado.entrada">Entrada</button>
           <button id="btn-gps-out"
-            style="background:var(--rojo-peligro); color:var(--texto-sobre-color); border:none; padding:6px 10px; border-radius:8px; font-size:10px; font-weight:700; cursor:pointer;">Salida</button>
+            style="background:var(--rojo-peligro); color:var(--texto-sobre-color); border:none; padding:6px 10px; border-radius:8px; font-size:10px; font-weight:700; cursor:pointer;" data-frase="fichado.salida">Salida</button>
         </div>
       </div>
 
@@ -163,31 +171,31 @@
       <div class="grid-services">
         <a class="service-btn" href="directorio.html">
           <div class="icon-box fondo-azul-oscuro"><i class="fas fa-user-search"></i></div>
-          <span>Buscar Asistente</span>
+          <span data-frase="familia.buscar_asistente">Buscar Asistente</span>
         </a>
         <a class="service-btn" href="soporte-remoto.html">
           <div class="icon-box fondo-azul-medio"><i class="fas fa-headset"></i></div>
-          <span>Acompañante Online</span>
+          <span data-frase="acompanamiento.titulo">Acompañamiento en línea</span>
         </a>
         <div class="service-btn" onclick="navigate('reportes')">
           <div class="icon-box" style="background:var(--verde-exito);"><i class="fas fa-book-medical"></i></div>
-          <span>Reportes</span>
+          <span data-frase="familia.tab_reportes">Reportes</span>
         </div>
         <a class="service-btn" href="cursos.html">
           <div class="icon-box" style="background:var(--naranja-alerta);"><i class="fas fa-graduation-cap"></i></div>
-          <span>Cursos</span>
+          <span data-frase="pie.cursos">Cursos</span>
         </a>
-        <div class="service-btn" onclick="alert('Módulo de Estimulación Cognitiva y Actividades en desarrollo.')">
+        <div class="service-btn" onclick="alert(Catalogo.frase('maqueta.vida_activa_en_obra'))">
           <div class="icon-box fondo-azul-medio"><i class="fas fa-running"></i></div>
-          <span>Vida Activa</span>
+          <span data-frase="maqueta.servicio_vida_activa">Vida Activa</span>
         </div>
-        <div class="service-btn" onclick="alert('Contactando con el Gestor de Cuidados asignado...')">
+        <div class="service-btn" onclick="alert(Catalogo.frase('maqueta.gestor_contactando'))">
           <div class="icon-box fondo-azul-medio"><i class="fas fa-user-tie"></i></div>
-          <span>Gestor</span>
+          <span data-frase="maqueta.servicio_gestor">Gestor</span>
         </div>
-        <div class="service-btn" onclick="alert('Accediendo al catálogo de Alquiler de Camas y Sillas de ruedas...')">
+        <div class="service-btn" onclick="alert(Catalogo.frase('maqueta.productos_catalogo'))">
           <div class="icon-box fondo-azul-medio"><i class="fas fa-shopping-cart"></i></div>
-          <span>Productos</span>
+          <span data-frase="maqueta.servicio_productos">Productos</span>
         </div>
       </div>
 
@@ -197,22 +205,20 @@
            un porcentaje de afinidad que no calculaba nadie. Ahora salen de
            `directorio`, la misma vista que el directorio. -->
       <div class="section-title">
-        <span>Asistentes</span>
-        <a href="directorio.html">Ver todos</a>
+        <span data-frase="familia.asistentes">Asistentes</span>
+        <a href="directorio.html" data-frase="familia.ver_todos">Ver todos</a>
       </div>
 
-      <div class="pwa-estado" id="rec-cargando">Buscando Asistentes...</div>
+      <div class="pwa-estado" id="rec-cargando" data-frase="directorio.cargando">Cargando el directorio…</div>
 
       <div class="pwa-estado" id="rec-error" hidden>
         <p id="rec-error-texto"></p>
-        <button type="button" class="btn btn-primario" id="rec-reintentar">Reintentar</button>
+        <button type="button" class="btn btn-primario" id="rec-reintentar" data-frase="acceso.reintentar">Reintentar</button>
       </div>
 
       <div class="pwa-estado" id="rec-vacio" hidden>
-        <p>Todavía no hay Asistentes publicados.</p>
-        <p class="pwa-estado-bajada">Aparecen acá cuando la Prestadora valida su legajo, la
-          persona autoriza que se publique, y la Prestadora le comprueba los papeles que hacen
-          falta para entrar a una casa.</p>
+        <p data-frase="directorio.vacio">Todavía no hay Asistentes publicados en este directorio.</p>
+        <p class="pwa-estado-bajada" data-frase="directorio.vacio_bajada">Un Asistente aparece acá cuando su Prestadora validó el legajo, esa persona autorizó a publicar su perfil, y la Prestadora le comprobó los papeles que hacen falta para entrar a una casa. Las tres cosas, no una.</p>
       </div>
 
       <div class="horizontal-slider" id="recommended-caregivers-list" hidden></div>
@@ -229,53 +235,55 @@
 
       <!-- CURSOS RECOMENDADOS -->
       <div class="section-title">
-        <span>Nuestros cursos</span>
-        <a href="cursos.html">Explorar</a>
+        <span data-frase="maqueta.cursos_titulo">Nuestros cursos</span>
+        <a href="cursos.html" data-frase="maqueta.cursos_explorar">Explorar</a>
       </div>
 
       <div class="horizontal-slider">
         <a href="cursos.html" class="caregiver-card" style="width:160px;min-width:160px;text-align:left;">
-          <h6 class="m-0 texto-11 color-marca-acento mayusculas">Gratuito</h6>
-          <h5 style="margin:4px 0 0 0;font-size:12px;white-space:normal;height:32px;overflow:hidden;">Introducción al
-            Cuidado de Alzheimer</h5>
-          <span class="texto-9 color-secundario peso-700"><i class="far fa-clock"></i> 4 hs. estimadas</span>
+          <h6 class="m-0 texto-11 color-marca-acento mayusculas" data-frase="maqueta.curso_gratuito">Gratuito</h6>
+          <h5 style="margin:4px 0 0 0;font-size:12px;white-space:normal;height:32px;overflow:hidden;"
+            data-frase="maqueta.curso_alzheimer">Introducción al cuidado en Alzheimer</h5>
+          <span class="texto-9 color-secundario peso-700"><i class="far fa-clock"></i> <span
+              data-frase="maqueta.curso_horas" data-huecos='{"cuantas":4}'>4 hs. estimadas</span></span>
         </a>
         <a href="cursos.html" class="caregiver-card" style="width:160px;min-width:160px;text-align:left;">
-          <h6 class="m-0 texto-11 color-marca-acento mayusculas">Academy</h6>
-          <h5 style="margin:4px 0 0 0;font-size:12px;white-space:normal;height:32px;overflow:hidden;">RCP y Primeros
-            Auxilios Domiciliarios</h5>
-          <span class="texto-9 color-secundario peso-700"><i class="far fa-clock"></i> 8 hs. estimadas</span>
+          <h6 class="m-0 texto-11 color-marca-acento mayusculas" data-frase="cursos.academia">{{producto}} Academy</h6>
+          <h5 style="margin:4px 0 0 0;font-size:12px;white-space:normal;height:32px;overflow:hidden;"
+            data-frase="maqueta.curso_rcp">RCP y primeros auxilios domiciliarios</h5>
+          <span class="texto-9 color-secundario peso-700"><i class="far fa-clock"></i> <span
+              data-frase="maqueta.curso_horas" data-huecos='{"cuantas":8}'>8 hs. estimadas</span></span>
         </a>
       </div>
 
       <!-- FOOTER DISCRETO -->
       <div style="text-align:center;padding:24px 0;font-size:10px;color:var(--texto-secundario);">
-        Powered by <strong class="color-marca-acento">{{producto}}</strong>
+        <span data-frase="pie.sello_producto">Con la tecnología de</span> <strong class="color-marca-acento" data-frase="comun.producto">{{producto}}</strong>
       </div>
 
       <!-- BARRA DE TABS INFERIOR -->
       <div class="bottom-tab-bar">
         <a class="tab-item active" onclick="navigate('dashboard')">
           <i class="fas fa-home"></i>
-          <span>Inicio</span>
+          <span data-frase="nav.inicio">Inicio</span>
         </a>
-        <a class="tab-item" href="formulario-integral.html">
+        <a class="tab-item" href="registrar-familia.html">
           <i class="fas fa-plus-circle"></i>
-          <span>Publicar</span>
+          <span data-frase="familia.tab_publicar">Publicar</span>
         </a>
         <a class="tab-item" href="directorio.html">
           <i class="fas fa-users"></i>
-          <span>Asistentes</span>
+          <span data-frase="familia.asistentes">Asistentes</span>
         </a>
         <a class="tab-item" onclick="navigate('chat')" id="tab-chat">
           <i class="fas fa-comments"></i>
-          <span>Chat</span>
+          <span data-frase="nav.mensajes">Mensajes</span>
           <span class="oculto" id="chat-badge"
             style="position:absolute;top:-2px;right:18px;background:var(--rojo-peligro);width:8px;height:8px;border-radius:50%;"></span>
         </a>
         <a class="tab-item" onclick="navigate('reportes')">
           <i class="fas fa-book-medical"></i>
-          <span>Reportes</span>
+          <span data-frase="familia.tab_reportes">Reportes</span>
         </a>
       </div>
 
@@ -285,7 +293,7 @@
     <div class="app-screen oculto" id="screen-chat" style="padding-bottom:64px;flex-direction:column;">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
-        <h1><i class="fas fa-comments color-marca-acento"></i> Chat con Asistente</h1>
+        <h1><i class="fas fa-comments color-marca-acento"></i> <span data-frase="maqueta.chat_titulo">Chat con el Asistente</span></h1>
         <div class="ancho-24"></div>
       </div>
 
@@ -295,16 +303,16 @@
         <img src="assets/images/perfil_maria.png" onerror="this.onerror=null;this.src='assets/images/retrato_generico.svg'" alt=""
           style="width:40px;height:40px;border-radius:50%;object-fit:cover;" />
         <div>
-          <p id="chat-contact-name" class="m-0 texto-13 peso-800 color-titulo">Asistente activa</p>
-          <p id="chat-contact-status" class="m-0 texto-11 color-exito">⚫ Online</p>
+          <p id="chat-contact-name" class="m-0 texto-13 peso-800 color-titulo" data-frase="maqueta.chat_contacto">Asistente en servicio</p>
+          <p id="chat-contact-status" class="m-0 texto-11 color-exito" data-frase="maqueta.chat_en_linea">⚫ En línea</p>
         </div>
       </div>
 
       <!-- Área de mensajes -->
       <div id="chat-messages-area"
         style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--fondo-app);">
-        <div style="text-align:center;font-size:11px;color:var(--texto-secundario);padding:8px 0;">— Inicio de la conversación —
-        </div>
+        <div style="text-align:center;font-size:11px;color:var(--texto-secundario);padding:8px 0;"
+          data-frase="maqueta.chat_inicio">— Inicio de la conversación —</div>
       </div>
 
       <!-- Por qué no salió el mensaje. Vive fuera del área de mensajes a propósito:
@@ -314,7 +322,8 @@
       <!-- Input de mensaje -->
       <div
         style="padding:10px 12px;background: var(--superficie);border-top:1px solid var(--borde-card);display:flex;align-items:center;gap:8px;">
-        <input type="text" id="chat-input" placeholder="Escriba un mensaje..."
+        <input type="text" id="chat-input" placeholder="Escriba su mensaje"
+          data-frase-placeholder="conversacion.escribir_lugar"
           style="flex:1;padding:9px 14px;border-radius:20px;border:1.5px solid var(--borde-card);font-size:13px;outline:none;" />
         <button id="chat-send-btn"
           style="background:var(--marca-prestadora);color:var(--texto-sobre-color);border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i
@@ -323,11 +332,11 @@
 
       <!-- BARRA DE TABS INFERIOR -->
       <div class="bottom-tab-bar">
-        <a class="tab-item" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span>Inicio</span></a>
-        <a class="tab-item" href="formulario-integral.html"><i class="fas fa-plus-circle"></i><span>Publicar</span></a>
-        <a class="tab-item" href="directorio.html"><i class="fas fa-users"></i><span>Asistentes</span></a>
-        <a class="tab-item active" onclick="navigate('chat')"><i class="fas fa-comments"></i><span>Chat</span></a>
-        <a class="tab-item" onclick="navigate('reportes')"><i class="fas fa-book-medical"></i><span>Reportes</span></a>
+        <a class="tab-item" onclick="navigate('dashboard')"><i class="fas fa-home"></i><span data-frase="nav.inicio">Inicio</span></a>
+        <a class="tab-item" href="registrar-familia.html"><i class="fas fa-plus-circle"></i><span data-frase="familia.tab_publicar">Publicar</span></a>
+        <a class="tab-item" href="directorio.html"><i class="fas fa-users"></i><span data-frase="familia.asistentes">Asistentes</span></a>
+        <a class="tab-item active" onclick="navigate('chat')"><i class="fas fa-comments"></i><span data-frase="nav.mensajes">Mensajes</span></a>
+        <a class="tab-item" onclick="navigate('reportes')"><i class="fas fa-book-medical"></i><span data-frase="familia.tab_reportes">Reportes</span></a>
       </div>
     </div>
 
@@ -335,18 +344,18 @@
     <div class="app-screen pb-64" id="screen-reportes">
       <div class="app-header">
         <button class="btn-back" onclick="navigate('dashboard')"><i class="fas fa-arrow-left"></i></button>
-        <h1>Reportes de cuidado</h1>
+        <h1 data-frase="familia.reportes_titulo">Reportes de cuidado</h1>
         <button class="btn-back" onclick="document.getElementById('modal-reporte').style.display='flex'"><i
             class="fas fa-plus"></i></button>
       </div>
 
       <div class="reportes-header">
-        <h3 class="m-0 texto-16">Abuela Rosa</h3>
+        <h3 class="m-0 texto-16" data-frase="maqueta.demo_paciente">Abuela Rosa</h3>
         <div class="reportes-paciente">
-          <img src="assets/images/retrato_generico.svg" alt="Sin foto" />
+          <img src="assets/images/retrato_generico.svg" alt="Sin foto" data-frase-alt="asistente.sin_foto" />
           <div>
-            <p style="margin:0;font-size:12px;opacity:0.9;">Diagnóstico: Alzheimer Moderado</p>
-            <p style="margin:2px 0 0 0;font-size:11px;opacity:0.7;">Asistente: María Gómez</p>
+            <p style="margin:0;font-size:12px;opacity:0.9;" data-frase="maqueta.demo_diagnostico">Diagnóstico: Alzheimer moderado</p>
+            <p style="margin:2px 0 0 0;font-size:11px;opacity:0.7;" data-frase="maqueta.demo_asistente">Asistente: María Gómez</p>
           </div>
         </div>
       </div>
@@ -360,19 +369,19 @@
       <div class="bottom-tab-bar">
         <a class="tab-item" onclick="navigate('dashboard')">
           <i class="fas fa-home"></i>
-          <span>Inicio</span>
+          <span data-frase="nav.inicio">Inicio</span>
         </a>
-        <a class="tab-item" href="formulario-integral.html">
+        <a class="tab-item" href="registrar-familia.html">
           <i class="fas fa-plus-circle"></i>
-          <span>Publicar</span>
+          <span data-frase="familia.tab_publicar">Publicar</span>
         </a>
         <a class="tab-item" href="directorio.html">
           <i class="fas fa-users"></i>
-          <span>Asistentes</span>
+          <span data-frase="familia.asistentes">Asistentes</span>
         </a>
         <a class="tab-item active" onclick="navigate('reportes')">
           <i class="fas fa-book-medical"></i>
-          <span>Reportes</span>
+          <span data-frase="familia.tab_reportes">Reportes</span>
         </a>
       </div>
     </div>
@@ -384,28 +393,28 @@
         style="background: var(--superficie); width:90%; max-width:360px; padding:20px; border-radius:20px; box-shadow:var(--sombra-media); box-sizing:border-box;">
         <h4
           style="margin:0 0 16px 0; color:var(--marca-prestadora); font-size:16px; font-weight:800; display:flex; justify-content:space-between; align-items:center;">
-          <span>Nueva Novedad</span>
+          <span data-frase="reporte.titulo">Registrar un reporte</span>
           <button onclick="document.getElementById('modal-reporte').style.display='none'"
             class="sin-fondo sin-borde texto-20 mano">&times;</button>
         </h4>
-        <div class="form-group mb-12"><label class="texto-11 peso-700">Presión
-            Arterial</label><input type="text" id="bit-presion" placeholder="Ej: 120/80"
+        <div class="form-group mb-12"><label class="texto-11 peso-700" data-frase="reporte.presion">Presión Arterial (P.A.)</label><input type="text" id="bit-presion" placeholder="Ej: 120/80"
+            data-frase-placeholder="reporte.presion_ejemplo"
             class="ancho-total p-8 redondeo-8 borde-tarjeta texto-12 caja-borde" />
         </div>
         <div class="form-group mb-12"><label
-            class="texto-11 peso-700">Glucemia</label><input type="text" id="bit-glucemia"
-            placeholder="Ej: 95 mg/dl"
+            class="texto-11 peso-700" data-frase="reporte.glucemia">Glucemia</label><input type="text" id="bit-glucemia"
+            placeholder="Ej: 95 mg/dl" data-frase-placeholder="reporte.glucemia_ejemplo"
             class="ancho-total p-8 redondeo-8 borde-tarjeta texto-12 caja-borde" />
         </div>
-        <div class="form-group mb-12"><label class="texto-11 peso-700">Medicamentos
-            Suministrados</label><input type="text" id="bit-medicamentos" placeholder="Ej: Donepecilo 10mg"
+        <div class="form-group mb-12"><label class="texto-11 peso-700" data-frase="reporte.medicamentos">Medicamentos Administrados</label><input type="text" id="bit-medicamentos" placeholder="Ej: qué se administró y a qué hora"
+            data-frase-placeholder="reporte.medicamentos_ejemplo"
             class="ancho-total p-8 redondeo-8 borde-tarjeta texto-12 caja-borde" />
         </div>
-        <div class="form-group mb-16"><label class="texto-11 peso-700">Notas
-            Diarias / Novedades</label><textarea id="bit-notas" placeholder="¿Cómo pasó el día el paciente?"
+        <div class="form-group mb-16"><label class="texto-11 peso-700" data-frase="reporte.notas">Notas Diarias / Reporte del Servicio</label><textarea id="bit-notas" placeholder="Escriba el estado del Paciente, alimentación, novedades…"
+            data-frase-placeholder="reporte.notas_ejemplo"
             class="ancho-total p-8 redondeo-8 borde-tarjeta texto-12 caja-borde alto-60"
             required></textarea></div>
-        <button id="btn-guardar-reporte" class="btn-login ancho-total">Guardar Novedad</button>
+        <button id="btn-guardar-reporte" class="btn-login ancho-total" data-frase="reporte.guardar">Guardar Novedad</button>
       </div>
     </div>
 
@@ -422,6 +431,15 @@
   <script>
     // INICIALIZACIÓN DE BRANDING DINÁMICO DESDE SUPABASE
     document.addEventListener('DOMContentLoaded', async () => {
+      // El catálogo se pide acá aunque el marcado ya declare sus frases: los
+      // carteles que arma el guion —las tarjetas, los reportes, los avisos del
+      // fichado— salen del archivo y sin él se quedarían mudos. Va con su
+      // propia red: un catálogo que no llega no es un servidor caído.
+      try {
+        await Catalogo.cargarFrases();
+      } catch (err) {
+        console.error('Texto de la pantalla:', err);
+      }
       try {
         await ClienteDatos.initTenant();
         cargarRecomendados();
@@ -466,7 +484,8 @@
 
       if (fila.hourly_rate) {
         parte('precio').textContent =
-          Texto.importe(fila.hourly_rate, fila.moneda_valor_hora) + ' por hora';
+          Texto.importe(fila.hourly_rate, fila.moneda_valor_hora) + ' ' +
+          Catalogo.frase('directorio.por_hora');
       }
       else parte('precio').remove();
 
@@ -508,14 +527,17 @@
     // CARGAR LOS REPORTES DESDE SUPABASE
     async function cargarReportes() {
       const listEl = document.getElementById('timeline-log-list');
-      listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">Cargando los reportes...</p>';
+      const cartel = (texto) => '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">'
+        + Texto.escapar(texto) + '</p>';
+
+      listEl.innerHTML = cartel(Catalogo.frase('reporte.cargando'));
 
       try {
         const logs = await ClienteDatos.getReportes();
         listEl.innerHTML = '';
 
         if (!logs || logs.length === 0) {
-          listEl.innerHTML = '<p style="text-align:center;font-size:12px;color:var(--texto-secundario);padding:20px;">Todavía no hay reportes de hoy.</p>';
+          listEl.innerHTML = cartel(Catalogo.frase('familia.reportes_vacio'));
           return;
         }
 
@@ -527,16 +549,25 @@
           if (log.blood_pressure) iconClass = 'fa-heartbeat';
           else if (log.glycemia) iconClass = 'fa-stethoscope';
 
-          const timeStr = log.created_at ? Texto.horaCorta(log.created_at) + ' hs' : 'Recién';
+          const timeStr = log.created_at
+            ? Texto.horaCorta(log.created_at)
+            : Catalogo.frase('reporte.recien');
+          const titulo = log.blood_pressure
+            ? Catalogo.frase('reporte.tipo_signos')
+            : Catalogo.frase('reporte.tipo_nota');
+          const presion  = Catalogo.frase('reporte.presion');
+          const glucemia = Catalogo.frase('reporte.glucemia');
+          const remedios = Catalogo.frase('reporte.medicamentos');
+          const sinDato  = Catalogo.frase('reporte.sin_dato');
 
           item.innerHTML = `
             <div class="log-dot"><i class="fas ${iconClass}" style="font-size:8px;color:var(--marca-prestadora-acento);"></i></div>
             <div class="log-content">
-              <span class="time">${timeStr}</span>
-              <h5>${log.blood_pressure ? 'Control de Signos Vitales' : 'Nota de Cuidado'}</h5>
+              <span class="time">${Texto.escapar(timeStr)}</span>
+              <h5>${Texto.escapar(titulo)}</h5>
               <p>${Texto.escapar(log.daily_notes)}</p>
-              ${log.blood_pressure ? `<p style="margin-top:4px;font-size:11px;color:var(--azul-medio-texto);">🩺 P.A.: ${Texto.escapar(log.blood_pressure)} | Glucemia: ${Texto.escapar(log.glycemia || 'N/A')}</p>` : ''}
-              ${log.medications_administered ? `<p style="margin-top:2px;font-size:10px;color:var(--verde-exito-texto);">💊 Medicamento: ${Texto.escapar(log.medications_administered)}</p>` : ''}
+              ${log.blood_pressure ? `<p style="margin-top:4px;font-size:11px;color:var(--azul-medio-texto);">🩺 ${Texto.escapar(presion)}: ${Texto.escapar(log.blood_pressure)} | ${Texto.escapar(glucemia)}: ${Texto.escapar(log.glycemia || sinDato)}</p>` : ''}
+              ${log.medications_administered ? `<p style="margin-top:2px;font-size:10px;color:var(--verde-exito-texto);">💊 ${Texto.escapar(remedios)}: ${Texto.escapar(log.medications_administered)}</p>` : ''}
             </div>
           `;
           listEl.appendChild(item);
@@ -559,7 +590,7 @@
       const notas = document.getElementById('bit-notas').value;
 
       if (!notas.trim()) {
-        alert('Por favor, describa la novedad o reporte del cuidado.');
+        alert(Catalogo.frase('reporte.falta_texto'));
         return;
       }
 
@@ -574,11 +605,11 @@
 
       const original = boton.textContent;
       boton.disabled = true;
-      boton.textContent = 'Guardando...';
+      boton.textContent = Catalogo.frase('reporte.guardando');
 
       try {
         await ClienteDatos.registrarReporte(data);
-        alert('El reporte quedó guardado.');
+        alert(Catalogo.frase('reporte.guardado'));
         document.getElementById('modal-reporte').style.display = 'none';
 
         // Limpiar formulario
@@ -608,13 +639,25 @@
       });
     }
 
+    // Lo guardado y lo visible son dos capas distintas: `event_type` guarda
+    // `entrada` y `salida` en minúscula, que es como las compara la vista de
+    // alarmas (`0001_base_del_esquema.sql:1642` y `:1657`), y el nombre que se
+    // lee en pantalla sale del catálogo. Hasta el 9 de septiembre de 2026 esta
+    // pantalla escribía `Entrada` y `Salida`, y con eso la alarma de jornada
+    // abierta no saltaba nunca y la salida siguiente disparaba una
+    // `salida_sin_entrada` falsa. Hoy lo impide la base: migración 0007.
+    // El par se escribe literal, valor guardado contra clave de frase, para
+    // que los chequeos vean los dos.
+    const FRASE_DEL_FICHADO = { entrada: 'fichado.entrada', salida: 'fichado.salida' };
+
     async function ficharGPS(tipo) {
       const statusEl = document.getElementById('gps-status');
-      statusEl.textContent = 'Obteniendo localización GPS...';
+      const nombreTipo = Catalogo.frase(FRASE_DEL_FICHADO[tipo]);
+      statusEl.textContent = Catalogo.frase('fichado.buscando');
 
       if (!navigator.geolocation) {
-        alert('El navegador no soporta geolocalización.');
-        statusEl.textContent = 'GPS no soportado';
+        alert(Catalogo.frase('fichado.sin_soporte'));
+        statusEl.textContent = Catalogo.frase('fichado.sin_soporte_estado');
         return;
       }
 
@@ -623,7 +666,7 @@
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
 
-        statusEl.textContent = `Enviando fichado (${tipo})...`;
+        statusEl.textContent = Catalogo.frase('fichado.registrando', { tipo: nombreTipo });
 
         try {
           await ClienteDatos.registrarFichadoGPS({
@@ -632,31 +675,36 @@
             lng: lng,
             event_type: tipo
           });
-          alert(`¡Fichado de ${tipo} registrado con éxito!\nCoordenadas: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
-          statusEl.textContent = `Último fichado: ${tipo} (${Texto.horaCorta(new Date())})`;
+          alert(Catalogo.frase('fichado.registrado', {
+            tipo: nombreTipo, lat: lat.toFixed(5), lng: lng.toFixed(5)
+          }));
+          statusEl.textContent = Catalogo.frase('fichado.ultimo', {
+            tipo: nombreTipo, hora: Texto.horaCorta(new Date())
+          });
         } catch (err) {
           alert(Texto.mensajeDeError(err, 'registrar el fichado'));
-          statusEl.textContent = 'Error en fichado';
+          statusEl.textContent = Catalogo.frase('fichado.error_estado');
         } finally {
           fichadoEnCurso(false);
         }
       }, (err) => {
-        alert('No se pudo acceder a la ubicación. Por favor, habilite los permisos de GPS.');
-        statusEl.textContent = 'Permiso GPS denegado';
+        alert(Catalogo.frase('fichado.permiso_denegado'));
+        statusEl.textContent = Catalogo.frase('fichado.permiso_denegado_estado');
         fichadoEnCurso(false);
       });
     }
 
-    document.getElementById('btn-gps-in').addEventListener('click', () => ficharGPS('Entrada'));
-    document.getElementById('btn-gps-out').addEventListener('click', () => ficharGPS('Salida'));
+    document.getElementById('btn-gps-in').addEventListener('click', () => ficharGPS('entrada'));
+    document.getElementById('btn-gps-out').addEventListener('click', () => ficharGPS('salida'));
 
     // LOGIN REAL — Supabase Auth con routing por rol
     document.getElementById('btn-action-login').addEventListener('click', async () => {
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-pass').value;
       const btn = document.getElementById('btn-action-login');
-      if (!email || !password) { alert('Complete email y contraseña.'); return; }
-      btn.textContent = 'Ingresando...';
+      if (!email || !password) { alert(Catalogo.frase('acceso.faltan_datos')); return; }
+      const rotuloEntrar = btn.textContent;
+      btn.textContent = Catalogo.frase('acceso.entrando');
       btn.disabled = true;
       try {
         const user = await Sesion.login(email, password);
@@ -680,7 +728,7 @@
       } catch (err) {
         alert(Texto.mensajeDeError(err, 'iniciar sesión'));
       } finally {
-        btn.textContent = 'Ingresar';
+        btn.textContent = rotuloEntrar;
         btn.disabled = false;
       }
     });
@@ -726,7 +774,7 @@
       if (selectedRole === 'asistente') {
         window.location.href = 'registrar-asistente.html';
       } else {
-        window.location.href = 'formulario-integral.html';
+        window.location.href = 'registrar-familia.html';
       }
     });
 
@@ -757,11 +805,11 @@
     // pudo cerrar, se dice —antes el error no llegaba a ninguna parte y la persona
     // se quedaba mirando el menú, creyendo que había salido—.
     document.getElementById('btn-logout').addEventListener('click', async () => {
-      if (!confirm('¿Confirma que quiere cerrar la sesión? Para volver a entrar hay que escribir de nuevo el correo y la contraseña.')) return;
+      if (!confirm(Catalogo.frase('comun.confirmar_salir'))) return;
       const boton = document.getElementById('btn-logout');
       const original = boton.innerHTML;
       boton.disabled = true;
-      boton.textContent = 'Cerrando la sesión...';
+      boton.textContent = Catalogo.frase('familia.cerrando_sesion');
       try {
         await Sesion.logout();
         navigate('intro');
@@ -798,7 +846,7 @@
       if (!caja) return;
       caja.style.opacity = '0.6';
       const nota = document.createElement('div');
-      nota.textContent = 'No se pudo enviar. Conviene volver a intentarlo.';
+      nota.textContent = Catalogo.frase('conversacion.error_enviar');
       nota.style.cssText = 'font-size:10px;color:var(--rojo-peligro-texto);text-align:right;margin-top:4px;';
       caja.appendChild(nota);
     }

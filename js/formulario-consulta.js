@@ -43,9 +43,10 @@
    escribió, ninguna de las cuatro pantallas estaba convertida al
    i18n, así que lo único traducido era lo que escribe acá. **El 26 de
    agosto de 2026 se convirtieron las cuatro** —`index.html`, `cursos.html`,
-   `soporte-remoto.html` y `solicitar-asistente.html`—, y la quinta,
-   `formulario-integral.html`, sigue sin convertir porque está sentenciada a
-   borrarse (pendiente 64). Lo de acá no cambia: los carteles del envío los
+   `soporte-remoto.html` y `solicitar-asistente.html`—, y la quinta que
+   había, `formulario-integral.html`, era una hoja de muestra que ya cumplió su
+   función y el 9 de septiembre de 2026 se guardó en `fuera de uso/`, así que
+   hoy son cuatro. Lo de acá no cambia: los carteles del envío los
    escribe este guion y los sigue pidiendo al catálogo.
    =================================================== */
 
@@ -54,16 +55,16 @@
 
   /* El texto se pide por `Texto.frase`, que es `Catalogo.frase` con red
      abajo: si el catálogo no llegó, contesta lo genérico en vez de dejar un
-     cartel en blanco. Las cinco pantallas cargan `js/catalogo.js`, pero
-     `Catalogo.traducir()` se va temprano en la que no está convertida —hoy
-     sólo `formulario-integral.html`—, y ahí el catálogo no se carga solo. Se
-     lo pide de una, que además no cuesta nada en las que sí lo cargaron. */
+     cartel en blanco. Las cuatro pantallas cargan `js/catalogo.js` y
+     todas están convertidas, así que el catálogo se carga solo. El texto se
+     pide igual de una: no cuesta nada, y deja la red puesta para la pantalla
+     que mañana llegue sin convertir. */
   const frase = (clave) => (window.Texto ? Texto.frase(clave) : '');
 
   /* Los campos se buscan por su nombre —`nombre`, `email`, `celular`,
-     `consulta`— y también con el prefijo de la pantalla adelante:
-     `formulario-integral.html` junta tres formularios en una página, así que
-     ahí los ids son `familia-nombre`, `familia-email` y así. Es la misma
+     `consulta`— y también con el prefijo de la pantalla adelante,
+     como `familia-nombre` o `familia-email`. Pasa cuando una misma página junta
+     más de un formulario y los ids tienen que distinguirse. Es la misma
      pregunta y el mismo dato; sólo cambia cómo se llama el campo. */
   function campoDe(form, id) {
     return form.querySelector('#' + id) || form.querySelector('[id$="-' + id + '"]');

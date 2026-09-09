@@ -1424,9 +1424,9 @@
       avDato(datos, 'avisos.rotulo_profesion', avTexto('tipo_asistente', aviso.profesion));
       avDato(datos, 'avisos.rotulo_frecuencia', avTexto('frecuencia', aviso.frecuencia));
       // `horarios` es la única que no pasa por un vocabulario. La columna
-      // `schedule_type` guarda hoy cuatro formas distintas de nombrar lo mismo
+      // `schedule_type` guarda hoy tres formas distintas de nombrar lo mismo
       // y todavía no tiene lista que la gobierne (pendiente 31), así que se
-      // muestra lo guardado tal cual: inventarle acá una quinta forma sería
+      // muestra lo guardado tal cual: inventarle acá una cuarta forma sería
       // empeorarlo.
       avDato(datos, 'avisos.rotulo_horarios', aviso.horarios || '');
       avDato(datos, 'avisos.rotulo_genero', avTexto('genero_preferido', aviso.genero_preferido));

@@ -210,7 +210,7 @@ se metía adentro del marcado ahora pasan por `Texto.escapar`, en seis archivos:
   proyecto quien lee suele ser el personal de la Prestadora, o sea justo quien tiene los permisos,
   o una familia mirando los reportes de cuidado.
 - **Los dos peores casos** no estaban donde decía el pendiente. Uno era el mensaje de chat de
-  `mockup-app.html:786`, que lo escribe una persona y lo lee otra. El otro era
+  `mockup-app.html:834`, que lo escribe una persona y lo lee otra. El otro era
   `panel-prestadora.html`, la pantalla que el pendiente daba por arreglada: tenía el renglón de la
   tabla de Asistentes entero sin escapar —nombre, documento, teléfono, profesión y zona— y el
   único `onclick` escrito en el marcado de todo el proyecto.
@@ -330,8 +330,9 @@ Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2
 - **El pendiente decía que el problema estaba en la base y estaba en la pantalla.** Nombraba
   `caregivers.profession` y las claves `domiciliaria`, `enfermera`, `auxiliar` y `at`. Esas
   palabras no eran filas: eran los `<option>` y los `data-` de `directorio.html`. Se verificó
-  además que ninguna pantalla escribe hoy una clave inventada en esa columna —`registrar-asistente.html:340`
-  y `formulario-integral.html:354` toman las suyas del catálogo—, y de la
+  además que ninguna pantalla escribe hoy una clave inventada en esa columna —ese día lo tomaban
+  del catálogo `registrar-asistente.html:340` y `fuera de uso/formulario-integral.html:354`; desde el 9 de
+  septiembre de 2026 la segunda salió de uso y queda sólo la primera—, y de la
   base misma no se puede afirmar nada desde acá, porque `caregivers` no se deja leer sin sesión.
 - **Los cuatro filtros salen del catálogo** (`directorio.html:78`): zona, Tipo de Asistente,
   patología y verificación. Eran veinticinco opciones escritas a mano contra «los catálogos salen de la base»; ahora
@@ -570,7 +571,9 @@ devuelve `disponible_urgencias`.
 ### Las últimas listas escritas a mano se fueron de las pantallas
 
 Quedaban dos, y eran las más visibles: las diez tarjetas del asistente de seis pasos de
-`formulario-integral.html`. Cada una traía su ícono, su título y su explicación escritos adentro
+`formulario-integral.html` —la hoja de muestra que el 9 de septiembre de 2026 salió de uso, así
+que hoy esas dos grillas viven en `fuera de uso/formulario-integral.html:143` y no las dibuja
+ninguna pantalla del portal—. Cada una traía su ícono, su título y su explicación escritos adentro
 del HTML —setenta y dos renglones—, que es exactamente lo que prohíbe «los catálogos salen de la base». Agregar una
 tarea de cuidado era editar una pantalla. Ahora las dos grillas se declaran en dos renglones y el
 contenido sale del catálogo:
@@ -684,8 +687,10 @@ hacer está hecha; la otra mitad es del Desarrollador y está al final.
   preguntaba las dos cosas**: `pwa-familia/index.html` pedía turnos sin decir de qué día y
   `formulario-integral.html` pedía días sin decir de qué turno. Con media pregunta no había forma
   de escribir un casillero, así que una mandaba `{ turnos: [...] }` y la otra no mandaba nada.
-- **Las dos pantallas preguntan ahora la misma grilla de veintiún casilleros**, la misma que usa el
-  Asistente desde el pendiente 23. No es una grilla nueva: `js/disponibilidad.js` ya sabía armarla
+- **Las dos pantallas pasaron a preguntar la misma grilla de veintiún casilleros**, la misma que
+  usa el Asistente desde el pendiente 23. Desde el 9 de septiembre de 2026 la pregunta la hace una
+  sola: `formulario-integral.html` salió de uso, y del lado de la Familia queda
+  `pwa-familia/index.html:1803`. No es una grilla nueva: `js/disponibilidad.js` ya sabía armarla
   desde el catálogo, y lo único que le faltaba era poder servir a los dos lados. Ahora recibe qué
   bloque del catálogo tiene que leer, y `data/catalogo-disponibilidad.json` declara dos: la del
   Asistente dice «¿Cuándo puede trabajar?» y marca «Disponible»; la de la búsqueda dice «¿Cuándo se
@@ -1055,10 +1060,12 @@ demás se arregló, y se arregló **cambiando qué token usa cada regla, no el t
 
 **Lo que falta y es del Desarrollador**
 
-1. **Letra blanca sobre `--azul-medio` llega a 3.21:1 y hace falta 4.5:1.** Pasa en cinco lugares:
-   el redondel del paso activo del formulario (`formulario-integral.html` y
-   `registrar-asistente.html`), la banda con el nombre adentro del teléfono dibujado
-   (`index.html` y `registrar-asistente.html`) y el botón de ingresar de `mockup-app.html`. **El
+1. **Letra blanca sobre `--azul-medio` llega a 3.21:1 y hace falta 4.5:1.** Se contaron cinco
+   lugares, y desde el 9 de septiembre de 2026 quedan **cuatro** en el portal: el redondel del paso
+   activo del formulario (`registrar-asistente.html`; el quinto era
+   `formulario-integral.html`, que salió de uso), la banda con el nombre adentro del teléfono
+   dibujado (`index.html` y `registrar-asistente.html`) y el botón de ingresar de
+   `mockup-app.html`. **El
    arreglo cambia cómo se ve**: o el fondo pasa a `--azul-oscuro` —y entonces el paso activo se
    confunde con el paso ya hecho, que ya usa ese color— o la letra pasa a oscura. Es una decisión de
    diseño, así que se deja como está hasta que diga cuál.
@@ -1583,7 +1590,7 @@ pantalla vacía.
   cargarla», que es el estado de error que faltaba.
 - **Las otras tres caen en la pantalla de acceso**, y eso ya era la verdad: sin sesión rescatada,
   lo que corresponde mostrar es el acceso. Lo que se perdía era el rastro. Ahora
-  `mockup-app.html:429` y `:907`, `pwa-asistente/index.html:1037` y `pwa-familia/index.html:1104`
+  `mockup-app.html:447` y `:955`, `pwa-asistente/index.html:1037` y `pwa-familia/index.html:1104`
   dejan el detalle técnico en la consola en lugar de tirarlo.
 - **`js/auth.js:385` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
   cargan ese archivo —no en las dieciséis, y el comentario decía catorce hasta que se contaron—, y su
@@ -3072,18 +3079,75 @@ igual a cinco.
 
 **Lo que no se hizo, y por qué.** El consentimiento de novedades lo siguen preguntando los cinco y
 no lo recibe ninguna tabla: hoy viaja adentro del correo, que es mejor que perderse, pero no es
-guardarlo. Y `formulario-integral.html` no se borró aunque el Desarrollador la dio por sentenciada:
-adentro tiene lo único que publica un aviso de verdad —el paso a paso, por `js/main.js:213`—, y ese
-paso a paso choca con exactamente la misma pared. Las dos cosas están en el pendiente 64.
+guardarlo. Y `formulario-integral.html` no se borró ese día: adentro tenía lo único que publicaba
+un aviso de verdad —el paso a paso—, y ese paso a paso chocaba con exactamente la misma pared. Las
+dos cosas quedaron en el pendiente 64. **El 9 de septiembre de 2026 la pantalla salió de uso**, y
+lo que sigue explica por qué; el consentimiento de novedades sigue sin tabla.
+
+### La hoja de muestra salió de uso, porque ya había cumplido su función
+
+El 9 de septiembre de 2026 `formulario-integral.html` se apartó a la cuarentena: hoy vive en
+`fuera de uso/formulario-integral.html`, la carpeta que `.gitignore:34` declara fuera del
+repositorio y que `scripts/recorrido.mjs:91` deja afuera de todos los chequeos.
+
+**No se saca una pantalla porque moleste, y ésta no era una pantalla.** Nació el 5 de agosto de
+2026 como **hoja de muestra**: su título decía «Formularios Oficiales de la App» y venía con un
+documento propio que la explicaba en esos términos —se hizo para replicar de manera idéntica la
+maquetación, la hoja de estilos, los componentes y las imágenes de los formularios de la
+aplicación real, con una sección de previsualización en vivo apuntando a un servidor local—. Eso
+es un banco de pruebas visual, no una parte del portal.
+
+**Que la función ya estaba cumplida se comprueba con cuatro hechos, no con una impresión.** El
+documento que la explicaba se borró el 19 de agosto de 2026 (commit `3f00b2c`). La pantalla cuyo
+formulario replicaba en segundo lugar ya no existe con ese nombre: `postulacion-asistente.html`
+pasó a `registrar-asistente.html` el 25 de agosto (commit `f0fcf4b`). La previsualización suelta
+la reemplazó el recorrido de punta a punta del 2 de septiembre (commit `5f104ac`). Y los tres
+formularios que replicaba están vivos cada uno en su pantalla propia, con dos de las tres copias
+muertas porque ningún guion las escuchaba.
+
+**Y lo único propio que le quedaba —el asistente de seis pasos— publicaba un Aviso defectuoso.**
+No preguntaba zona, y el comentario de la columna `avisos.zone`
+(`supabase/migrations/0001_base_del_esquema.sql:2192`) dice que ahí nunca va texto libre porque el
+directorio filtra por esa columna; no preguntaba patologías, que las mandaba como
+lista vacía escrita a mano; mandaba `horarios` fijo en `'flexible'`; y preguntaba modalidad
+(`w-modality`) y urgencia (`w-urgent`) sin mandarlas a ninguna parte. Un aviso publicado así no
+aparecía en ningún filtro del directorio.
+
+**Las hojas de estilo se copiaron, no se movieron.** `css/tokens.css`, `css/styles.css` y
+`css/utilidades.css` no eran suyas, así que se dejó una copia en `fuera de uso/css/` para que la
+hoja se siga abriendo sola desde la cuarentena, y las originales quedaron donde estaban.
+
+**Lo que la reemplaza.** Los 21 enlaces «Publicar un Aviso» de ocho pantallas del portal y de la
+maqueta —y el reenvío de `mockup-app.html:777`— apuntan ahora a `registrar-familia.html`, que a
+quien ya tiene sesión lo manda derecho adonde le toca (`registrar-familia.html:206-212`); a una
+Familia, a `pwa-familia/index.html`, donde `#form-nuevo-aviso`
+(`pwa-familia/index.html:739`) sí publica de verdad: pregunta nombre del Paciente, edad, zona,
+modalidad, franjas, patologías y descripción.
+
+**Lo que no se resolvió y queda para el Desarrollador.** De lo que el asistente preguntaba,
+`pwa-familia` no pregunta cinco cosas: tareas, Tipo de Asistente, género preferido, urgencia y
+frecuencia. Cuatro tienen columna esperándolas en `avisos` —`tasks_required`,
+`profession_required`, `preferred_gender` y `frequency`—; **urgencia y modalidad no tienen columna
+en ninguna tabla**, igual que el consentimiento de novedades. Sigue abierto además el punto uno
+del pendiente 64 —ese consentimiento— y el punto dos, si `avisos` se abre a quien no inició
+sesión.
 
 ### Cuatro pantallas se convirtieron a la vez, y hacerlo a la vez mostró tres defectos del mecanismo
 
 El 26 de agosto de 2026, con los carteles falsos ya cerrados, se convirtieron al i18n
 `index.html`, `cursos.html`, `soporte-remoto.html` y `solicitar-asistente.html`: **205 frases
 nuevas**, que dejan el catálogo en 460 y el chequeo en «10 de 46 archivos ya convertidos». La
-quinta, `formulario-integral.html`, se dejó como está: está sentenciada a borrarse en el
-pendiente 64, y traducir a tres idiomas 119 frases de una pantalla que se va es trabajo tirado.
-Lo que falta bajó de 665 frases distintas a 479.
+quinta, `formulario-integral.html`, se dejó como estaba: eran 119 frases de una hoja de muestra
+que el pendiente 64 ya daba por saliente, y traducirlas a tres idiomas era trabajo tirado. Lo que
+falta bajó ese día de 665 frases distintas a 479.
+
+**Esa apuesta se cobró el 9 de septiembre de 2026**, cuando la hoja salió del portal a la
+cuarentena y sus 119 frases se fueron con ella: nunca hubo que traducirlas. Corrido ese mismo día,
+`scripts/inventario_textos.mjs` no encuentra ya **ninguna** frase por convertir —«0 apariciones en
+0 archivos»—, así que no queda ninguna pantalla sin convertir. La cuenta de este guion mide el
+texto que todavía está escrito adentro de una pantalla; que dé cero no quiere decir que el
+catálogo esté completo en los tres idiomas, que es lo que mide `scripts/verificar_frases.mjs` y se
+comprueba aparte.
 
 **Se hicieron las cuatro a la vez a propósito, y eso fue lo que encontró los tres defectos.** Las
 cuatro traen el mismo formulario de consulta, así que lo que en una habría parecido un caso raro
@@ -3189,16 +3253,15 @@ textos escritos distinto de sus vecinos sin motivo (86).
 ### El alta de un Asistente avisaba que faltaban campos y avanzaba igual
 
 Apareció el 26 de agosto de 2026 tirando de un hilo distinto: por qué `js/main.js` guarda un
-título escrito a mano cuando el campo viene vacío. El título resultó ser de `formulario-integral.html`,
-que está sentenciado a borrarse; el hilo llevó a otra cosa.
+título escrito a mano cuando el campo viene vacío. El título resultó ser de `formulario-integral.html`
+—la hoja de muestra que el 9 de septiembre de 2026 salió de uso—; el hilo llevó a otra cosa.
 
 **Dos navegadores de pasos escuchaban el mismo botón.** `registrar-asistente.html` tiene el suyo,
 escrito adentro de la pantalla, que **valida el paso antes de dejar pasar al siguiente**
 (`registrar-asistente.html:920`). Y `js/main.js` traía otro, el del asistente por pasos de
 `formulario-integral.html`, que se enganchaba a `.btn-next-step` en cualquier pantalla que
-cargara el archivo —y `registrar-asistente.html` lo carga— **sin validar nada**
-(`js/main.js:206`). Los dos corrían en cada clic, en ese orden, así que el segundo deshacía lo
-que el primero acababa de decidir.
+cargara el archivo —y `registrar-asistente.html` lo carga— **sin validar nada**. Los dos corrían
+en cada clic, en ese orden, así que el segundo deshacía lo que el primero acababa de decidir.
 
 **El resultado se comprobó en el navegador, no se dedujo.** Con los catorce campos obligatorios
 del paso 1 vacíos, la pantalla decía «Faltan completar campos o archivos obligatorios» **y pasaba
@@ -3207,12 +3270,18 @@ y no servía para nada. Lo único que la salvaba era el envío final, que revali
 (`registrar-asistente.html:1131`), así que a la base nunca llegó un alta incompleta —pero quien
 se anotaba se enteraba de lo que le faltaba recién al final, después de siete pasos.
 
-**El arreglo es pedir por la pantalla propia antes de enganchar nada.** Ese bloque de `js/main.js`
-lee `w-title`, `summary-title` y `summary-desc`, que existen sólo en `formulario-integral.html`,
-así que ahora se engancha únicamente si ese formulario está (`js/main.js:172`). Comprobado en el
-navegador de las dos maneras, que es lo que hace que la prueba pueda fallar: con el paso 1 vacío
-avisa y **no** avanza; con el paso 1 completo avanza y no avisa. Y `formulario-integral.html`
-sigue funcionando igual, resumen del paso 6 incluido.
+**El arreglo de ese día fue pedir por la pantalla propia antes de enganchar nada.** Ese bloque de
+`js/main.js` leía `w-title`, `summary-title` y `summary-desc`, que existían sólo en
+`formulario-integral.html`, así que pasó a engancharse únicamente si ese formulario estaba.
+Comprobado en el navegador de las dos maneras, que es lo que hace que la prueba pueda fallar: con
+el paso 1 vacío avisa y **no** avanza; con el paso 1 completo avanza y no avisa. Y
+`formulario-integral.html` seguía funcionando igual, resumen del paso 6 incluido.
+
+**El 9 de septiembre de 2026 el bloque se fue del todo**, porque la hoja de muestra que lo
+despertaba salió de uso y `wizard-care-search-form` no existe en ninguna otra pantalla: en su
+lugar `js/main.js:157` deja escrito qué había ahí y adónde se mudó el que publica un aviso de
+verdad. La precaución del 26 de agosto no se borró por sobrar: se cumplió, y dejó el bloque
+apagado desde el día en que la pantalla se apartó.
 
 **Se midió si pasaba en otro lado y no pasa.** De los doce selectores a los que `js/main.js` le
 engancha un manejador, sólo `.btn-next-step` y `.btn-prev-step` aparecen en más de una pantalla,

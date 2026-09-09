@@ -4735,6 +4735,157 @@
       "es-AR": "Capacitación",
       "en": "Training",
       "pt-BR": "Capacitação"
+    },
+    "_11": "── La maqueta de la aplicación del teléfono (mockup-app.html) ──",
+    "maqueta.titulo_pagina": {
+      "es-AR": "{{organizacion}} — Portal Móvil",
+      "en": "{{organizacion}} — Mobile Portal",
+      "pt-BR": "{{organizacion}} — Portal Móvel"
+    },
+    "maqueta.registrarse": {
+      "es-AR": "Registrarse",
+      "en": "Sign up",
+      "pt-BR": "Cadastrar-se"
+    },
+    "maqueta.como_ingresar": {
+      "es-AR": "¿Cómo desea ingresar?",
+      "en": "How would you like to sign in?",
+      "pt-BR": "Como deseja entrar?"
+    },
+    "maqueta.elija_cuenta": {
+      "es-AR": "Seleccione su tipo de cuenta para comenzar",
+      "en": "Select the type of account to get started",
+      "pt-BR": "Selecione o tipo de conta para começar"
+    },
+    "maqueta.rol_familiar": {
+      "es-AR": "Como familiar",
+      "en": "As a family member",
+      "pt-BR": "Como familiar"
+    },
+    "maqueta.rol_familiar_texto": {
+      "es-AR": "Busco un Asistente calificado para asistir a un familiar o ser querido mayor.",
+      "en": "I am looking for a qualified Caregiver to assist an older relative or loved one.",
+      "pt-BR": "Procuro um Assistente qualificado para cuidar de um familiar ou ente querido idoso."
+    },
+    "maqueta.rol_asistente": {
+      "es-AR": "Como Asistente",
+      "en": "As a Caregiver",
+      "pt-BR": "Como Assistente"
+    },
+    "maqueta.rol_asistente_texto": {
+      "es-AR": "Busco registrarme para trabajar brindando servicios de cuidado domiciliario.",
+      "en": "I want to register to work providing home care services.",
+      "pt-BR": "Quero me cadastrar para trabalhar prestando serviços de cuidado domiciliar."
+    },
+    "maqueta.confirmar_rol": {
+      "es-AR": "Confirmar la selección",
+      "en": "Confirm the selection",
+      "pt-BR": "Confirmar a seleção"
+    },
+    "maqueta.verificaciones_titulo": {
+      "es-AR": "Complete las verificaciones",
+      "en": "Complete the verifications",
+      "pt-BR": "Complete as verificações"
+    },
+    "maqueta.verificaciones_estado": {
+      "es-AR": "Correo: ✓ validado | Celular: ⌛ pendiente",
+      "en": "Email: ✓ verified | Mobile: ⌛ pending",
+      "pt-BR": "E-mail: ✓ validado | Celular: ⌛ pendente"
+    },
+    "maqueta.servicio_vida_activa": {
+      "es-AR": "Vida Activa",
+      "en": "Active Living",
+      "pt-BR": "Vida Ativa"
+    },
+    "maqueta.servicio_gestor": {
+      "es-AR": "Gestor",
+      "en": "Care Manager",
+      "pt-BR": "Gestor"
+    },
+    "maqueta.servicio_productos": {
+      "es-AR": "Productos",
+      "en": "Products",
+      "pt-BR": "Produtos"
+    },
+    "maqueta.vida_activa_en_obra": {
+      "es-AR": "El módulo de estimulación cognitiva y actividades está en desarrollo.",
+      "en": "The cognitive stimulation and activities module is under development.",
+      "pt-BR": "O módulo de estimulação cognitiva e atividades está em desenvolvimento."
+    },
+    "maqueta.gestor_contactando": {
+      "es-AR": "Contactando con el Gestor de Cuidados asignado…",
+      "en": "Contacting the assigned Care Manager…",
+      "pt-BR": "Entrando em contato com o Gestor de Cuidados designado…"
+    },
+    "maqueta.productos_catalogo": {
+      "es-AR": "Accediendo al catálogo de alquiler de camas y sillas de ruedas…",
+      "en": "Opening the bed and wheelchair rental catalogue…",
+      "pt-BR": "Abrindo o catálogo de aluguel de camas e cadeiras de rodas…"
+    },
+    "maqueta.cursos_titulo": {
+      "es-AR": "Nuestros cursos",
+      "en": "Our courses",
+      "pt-BR": "Nossos cursos"
+    },
+    "maqueta.cursos_explorar": {
+      "es-AR": "Explorar",
+      "en": "Browse",
+      "pt-BR": "Explorar"
+    },
+    "maqueta.curso_gratuito": {
+      "es-AR": "Gratuito",
+      "en": "Free",
+      "pt-BR": "Gratuito"
+    },
+    "maqueta.curso_alzheimer": {
+      "es-AR": "Introducción al cuidado en Alzheimer",
+      "en": "Introduction to Alzheimer's care",
+      "pt-BR": "Introdução ao cuidado em Alzheimer"
+    },
+    "maqueta.curso_rcp": {
+      "es-AR": "RCP y primeros auxilios domiciliarios",
+      "en": "CPR and first aid at home",
+      "pt-BR": "RCP e primeiros socorros domiciliares"
+    },
+    "maqueta.curso_horas": {
+      "es-AR": "{cuantas} hs. estimadas",
+      "en": "{cuantas} hrs. estimated",
+      "pt-BR": "{cuantas} h estimadas"
+    },
+    "maqueta.chat_titulo": {
+      "es-AR": "Chat con el Asistente",
+      "en": "Chat with the Caregiver",
+      "pt-BR": "Conversa com o Assistente"
+    },
+    "maqueta.chat_contacto": {
+      "es-AR": "Asistente en servicio",
+      "en": "Caregiver on duty",
+      "pt-BR": "Assistente em serviço"
+    },
+    "maqueta.chat_en_linea": {
+      "es-AR": "⚫ En línea",
+      "en": "⚫ Online",
+      "pt-BR": "⚫ On-line"
+    },
+    "maqueta.chat_inicio": {
+      "es-AR": "— Inicio de la conversación —",
+      "en": "— Start of the conversation —",
+      "pt-BR": "— Início da conversa —"
+    },
+    "maqueta.demo_paciente": {
+      "es-AR": "Abuela Rosa",
+      "en": "Grandma Rosa",
+      "pt-BR": "Vovó Rosa"
+    },
+    "maqueta.demo_diagnostico": {
+      "es-AR": "Diagnóstico: Alzheimer moderado",
+      "en": "Diagnosis: moderate Alzheimer's",
+      "pt-BR": "Diagnóstico: Alzheimer moderado"
+    },
+    "maqueta.demo_asistente": {
+      "es-AR": "Asistente: María Gómez",
+      "en": "Caregiver: María Gómez",
+      "pt-BR": "Assistente: María Gómez"
     }
   }
 }

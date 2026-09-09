@@ -99,7 +99,7 @@ Y conviene copiarlo, porque ya resolvió los dos errores que este trabajo va a e
 - **El valor de fábrica se siembra con un disparador sobre `tenants`**, no adentro de la puerta de
   alta (`supabase/migrations/0001_base_del_esquema.sql:1479-1481`), porque hay
   dos caminos por los que nace una Prestadora y el que había fallado era el otro.
-- **Y el motivo por el que hay valor de fábrica**, escrito hoy en `docs/ALCANCE.md:1953` y que
+- **Y el motivo por el que hay valor de fábrica**, escrito hoy en `docs/ALCANCE.md:1960` y que
   vale igual acá: *una tabla vacía no dice «se avisa con treinta días», dice «todavía nadie
   configuró esto»*.
 
@@ -305,4 +305,4 @@ Se dice para que nadie cuente los cinco pasos y crea que están todos:
 - **No borra ni pisa ningún dato.** Los cuatro primeros pasos agregan una función, una tabla de
   configuración con su valor de fábrica, una condición en una vista y una pantalla.
 - **No decide el certificado de salud.** Sigue anotado como libreta sanitaria y sigue a confirmar,
-  desde el 24 de agosto de 2026 (`docs/CATALOGO.md:158`).
+  desde el 24 de agosto de 2026 (`docs/CATALOGO.md:162`).

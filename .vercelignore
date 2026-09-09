@@ -18,8 +18,11 @@ supabase/
 CLAUDE.md
 
 # Salvo los tres documentos legales, que sí los enlazan las pantallas públicas
-# (`index.html:517`, `registrar-asistente.html:539`, `formulario-integral.html:418`,
-# y «Privacidad» en `index.html`, `directorio.html` y `solicitar-asistente.html`).
+# («Términos» en `index.html:519`, `cursos.html:225`, `directorio.html:201`,
+# `perfil.html:237`, `solicitar-asistente.html:376` y `soporte-remoto.html:204`;
+# `registrar-asistente.html:535` y `:625`; `pwa-asistente/index.html:684`; y
+# «Privacidad» en `index.html:520`, `directorio.html:202` y
+# `solicitar-asistente.html:377`).
 # Que se muestren estando sin revisión profesional es otro asunto, y es el
 # pendiente 49; acá sólo se respeta lo que hoy la pantalla necesita.
 !docs/terminos_y_condiciones_asistentes.md

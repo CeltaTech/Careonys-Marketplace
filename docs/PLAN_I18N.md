@@ -1,10 +1,14 @@
 # Plan: los tres idiomas
 
-> **El mecanismo está construido y funcionando, y mudar las frases está casi terminado.**
-> Medido el 8 de septiembre de 2026: **16 de 55 archivos convertidos** y **937 frases** en los tres
-> idiomas. **Lo que falta son dos pantallas**, `formulario-integral.html` y `mockup-app.html`, que
-> son las únicas dos de las dieciocho sin un solo `data-frase`, y tienen adentro **182 frases
-> distintas**. **La mitad de los datos ya no falta, y se miró antes de decirlo:**
+> **El mecanismo está construido y funcionando, y mudar las frases está terminado.**
+> Medido el 9 de septiembre de 2026 con `node scripts/inventario_textos.mjs`: **0 apariciones de
+> texto escrito a mano en 0 archivos**, y **967 frases** en los tres idiomas repartidas en **17 de
+> 54 archivos convertidos**. Las dos pantallas que faltaban se cerraron ese día por caminos
+> distintos: `mockup-app.html` se convirtió, y `formulario-integral.html` —que era una hoja de
+> muestra y ya había cumplido su función— salió de uso y se apartó a `fuera de uso/`, que ningún
+> chequeo abre (`scripts/recorrido.mjs:91`); el porqué está en `docs/ALCANCE.md`. Sus 119 frases
+> se fueron con ella sin traducirse, y no se tiró nada: la pantalla sigue entera adentro de la
+> cuarentena. **La mitad de los datos ya no falta, y se miró antes de decirlo:**
 > `data/catalogo-oferta.json` tiene sus 15 fichas en los tres idiomas y
 > `data/catalogo-vocabularios.json` sus 26 listas con 150 opciones, 149 de ellas en los tres
 > idiomas; la única que sigue sólo en castellano es `guardia_12`, y es a propósito, marcada
@@ -12,16 +16,20 @@
 > (`supabase/migrations/0002_siembra_ficticia.sql:416`). Queda además la única decisión abierta del
 > Desarrollador —quién traduce—, que es la número 2 de la sección 5.
 >
-> Corresponde al pendiente 9. Cuando esté todo convertido, este archivo se borra.
+> Corresponde al pendiente 9. Cuando esté todo convertido, este archivo se borra. **La conversión
+> ya está toda hecha, así que lo único que lo sostiene en pie es la sección 5**: el selector de
+> idioma visible, que es una decisión de diseño, y quién revisa las 967 frases traducidas por la
+> línea de comandos. Contestadas esas dos, el archivo se borra.
 
 ---
 
 ## 1. En una línea
 
-Quedan **182 frases distintas** escritas a mano adentro de las pantallas, en un solo idioma —eran
-751 el día que se escribió este plan—. La regla pide `es-AR`, `en` y `pt-BR` desde el primer día. No
-es un trabajo de traducir: es un trabajo de **sacar las frases de donde están** y dejar en su lugar
-una llamada al catálogo. Traducir viene después y es lo barato.
+**No queda ninguna frase escrita a mano adentro de una pantalla** —eran 751 el día que se escribió
+este plan y 182 el 8 de septiembre de 2026—. La regla pide `es-AR`, `en` y `pt-BR` desde el primer
+día. No era un trabajo de traducir: era un trabajo de **sacar las frases de donde estaban** y dejar
+en su lugar una llamada al catálogo. Eso terminó el 9 de septiembre de 2026. Traducir viene después
+y es lo barato, y es lo único que este plan todavía mira.
 
 ---
 
@@ -36,11 +44,15 @@ node scripts/inventario_textos.mjs
 
 | | |
 |---|---:|
-| Apariciones de texto visible | 234 |
-| Archivos donde aparecen | 2 |
-| **Frases distintas, que es lo que hay que traducir** | **182** |
-| Apariciones que repiten una frase ya contada | 52 |
-| De esas frases, las que pasan las 12 palabras (párrafos, no rótulos) | 13 |
+| Apariciones de texto visible | 0 |
+| Archivos donde aparecen | 0 |
+| **Frases distintas, que es lo que hay que traducir** | **0** |
+| Apariciones que repiten una frase ya contada | 0 |
+| De esas frases, las que pasan las 12 palabras (párrafos, no rótulos) | 0 |
+
+La medición del 8 de septiembre de 2026, que es contra la que se cerró el trabajo, daba 234
+apariciones en 2 archivos y 182 frases distintas. Las tablas que siguen son ésa, y quedan porque
+explican de dónde salió lo que hoy está en el catálogo.
 
 ### 2.1 Por tipo
 
@@ -64,8 +76,11 @@ botón ya no queda ninguno: esos tres grupos están enteros en el catálogo.
 | `formulario-integral.html` | 119 |
 | `mockup-app.html` | 115 |
 
-Y no hay tercero: **esos dos archivos son las 234 apariciones enteras**. Los demás que figuraban acá
-el 26 de agosto de 2026 ya no tienen ni una frase escrita a mano, `js/main.js` incluido.
+No había tercero: **esos dos archivos eran las 234 apariciones enteras**. Las 115 de
+`mockup-app.html` están hoy en el catálogo; las 119 de `formulario-integral.html` se fueron con la
+pantalla, que salió de uso el 9 de septiembre de 2026 y está en `fuera de uso/`. Los demás que
+figuraban acá el 26 de agosto de 2026 ya no tenían ni una frase escrita a mano, `js/main.js`
+incluido.
 
 ### 2.2.1 Por qué el inventario cuenta lo que cuenta
 
@@ -137,8 +152,9 @@ Tres cosas quedaron afuera de la cuenta, y no por descuido:
 - **El aviso del chat.** `data/patrones-contacto.json` nació el 26 de agosto de 2026 con los tres
   idiomas adentro, porque para entonces la regla ya estaba escrita.
 
-Los tres son el mismo argumento a favor de hacerlo ahora: **lo que ya sale de un catálogo no
-costó nada**. Lo que cuesta son las 182 que no.
+Los tres son el mismo argumento a favor de haberlo hecho entonces: **lo que ya salía de un catálogo
+no costó nada**. Lo que costó fueron las 182 que no, y se terminaron de pagar el 9 de septiembre de
+2026.
 
 ---
 
@@ -264,14 +280,14 @@ Por lo que ya se midió, y de a una pantalla por vez:
    pedazos**. «Rendida 3 veces» no se arma pegando «Rendida», el número y «veces»: cada idioma
    arma su oración y elige su plural, así que hay `examen.rendida_una` y `examen.rendida_varias`,
    y el número entra en un hueco. Son ocho pares así en esta sola pantalla.
-5. **Las seis pantallas grandes**, que eran el 64 %. ✔ Cuatro hechas —`registrar-asistente.html`,
-   `pwa-asistente/index.html`, `index.html` y `solicitar-asistente.html`—. Las otras dos,
-   `formulario-integral.html` y `mockup-app.html`, son todo lo que le queda por delante a este
-   plan.
+5. **Las seis pantallas grandes**, que eran el 64 %. ✔ Hechas. Cuatro se convirtieron entre el 26 de
+   agosto y el 2 de septiembre de 2026 —`registrar-asistente.html`, `pwa-asistente/index.html`,
+   `index.html` y `solicitar-asistente.html`—, `mockup-app.html` el 9 de septiembre, y la sexta,
+   `formulario-integral.html`, se cerró ese mismo día por la otra salida: salió de uso.
 6. **Las nueve chicas.** ✔ Hechas.
-7. **Los `alt`, los `aria-label` y las `meta`**, todos juntos al final. ✔ Casi: de `aria-label` y
-   de `title` no queda ninguno, y quedan 8 `alt` y 1 `meta description`, los nueve adentro de las
-   dos pantallas del punto 5.
+7. **Los `alt`, los `aria-label` y las `meta`**, todos juntos al final. ✔ Hechos: no queda ninguno
+   escrito a mano. Los 8 `alt` y la `meta description` que quedaban el 8 de septiembre de 2026
+   estaban en las dos pantallas del punto 5, y se cerraron con ellas.
 
 ---
 
@@ -299,12 +315,12 @@ Por lo que ya se midió, y de a una pantalla por vez:
    y no se pone solo**: dónde va en el encabezado es diseño, y eso se consulta.
 2. **Quién traduce.** ⏳ **Abierta.** Una máquina y después alguien que revise, o alguien desde el
    principio. Es una decisión de plata y de calidad, y **también es un caso de «evaluar qué tareas
-   conviene dejarle a una IA»**: de las 182 que faltan, los 169 rótulos cortos los hace bien una
-   máquina, los 13 párrafos son texto de venta y de aviso legal, y ahí la máquina no alcanza.
+   conviene dejarle a una IA»**. Ya no mira hacia adelante: no falta ninguna frase por convertir
+   desde el 9 de septiembre de 2026.
    **Y el resguardo que este renglón traía escrito ya no se sostiene**, así que conviene decirlo con
    el número medido: decía «mientras esto siga abierto, se convierten pantallas de rótulo y no
    pantallas de párrafo», y las pantallas de párrafo se convirtieron igual. De las 937 frases que
-   hoy están en los tres idiomas **150 pasan las 12 palabras**, y las tradujo la línea de comandos:
+   hoy están en los tres idiomas **150 pasaban las 12 palabras**, y las tradujo la línea de comandos:
    la portada, la de solicitar Asistente, el panel de la Prestadora y el alta del legajo son las que
    más ponen. O sea que esta decisión ya no mira sólo hacia adelante —quién traduce lo que falta—
    sino también hacia atrás: **quién revisa esas 150**.

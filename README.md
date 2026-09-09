@@ -31,14 +31,14 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
-| 18 pantallas HTML, 13.398 renglones | sin ruteo: cada pantalla es un archivo |
-| 16.483 renglones de JavaScript propio, en 37 archivos | 9.975 de ellos son copias byte a byte de otro archivo (pendiente 13) |
-| 6.637 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
+| 17 pantallas HTML, 12.956 renglones | sin ruteo: cada pantalla es un archivo |
+| 16.371 renglones de JavaScript propio, en 37 archivos | 9.975 de ellos son copias byte a byte de otro archivo (pendiente 13) |
+| 6.676 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
 | 4.653 renglones de hojas de estilo, en 10 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
-| 951 declaraciones más, pegadas al HTML | en 242 atributos `style=` (fue el pendiente 8, cerrado) |
-| Supabase Auth funcionando | 14 de las 18 pantallas rescatan la sesión al abrir |
+| 880 declaraciones más, pegadas al HTML | en 221 atributos `style=` (fue el pendiente 8, cerrado) |
+| Supabase Auth funcionando | 13 de las 17 pantallas rescatan la sesión al abrir |
 | 5 servidores de afuera, sin `package.json` ni compilación | cdn.jsdelivr.net, cdnjs.cloudflare.com, fonts.googleapis.com, fonts.gstatic.com, www.openstreetmap.org — hay que decir de qué es cada uno |
-| 36 tablas y 6 migraciones en el repositorio | 38 chequeos las miran antes de cada commit |
+| 36 tablas y 7 migraciones en el repositorio | 38 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
@@ -62,9 +62,9 @@ sumaba 4.638 donde la tabla de arriba, que sí sale de medir, decía 4.642—.
 | Archivo | Renglones | La enlazan |
 |---|---:|---|
 | `css/mockup-app.css` | 135 | Sólo `mockup-app.html` |
-| `css/styles.css` | 2.201 | 16 de las 18 pantallas |
-| `css/tokens.css` | 358 | 16 de las 18 pantallas |
-| `css/utilidades.css` | 189 | 16 de las 18 pantallas |
+| `css/styles.css` | 2.201 | 15 de las 17 pantallas |
+| `css/tokens.css` | 358 | 15 de las 17 pantallas |
+| `css/utilidades.css` | 189 | 15 de las 17 pantallas |
 | `pwa-asistente/css/styles-pwa.css` | 338 | Sólo `pwa-asistente/index.html` |
 | `pwa-asistente/css/tokens.css` | 358 | Sólo `pwa-asistente/index.html`. Copia byte a byte de `css/tokens.css` |
 | `pwa-asistente/css/utilidades.css` | 189 | Sólo `pwa-asistente/index.html`. Copia byte a byte de `css/utilidades.css` |
