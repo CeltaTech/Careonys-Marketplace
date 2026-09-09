@@ -611,9 +611,12 @@ justamente la falla que el catálogo existe para no tener («los cuatro estados�
 **Y el 9 de septiembre de 2026 el modo de dibujo se fue detrás de la hoja de muestra.** Retirada
 la única pantalla que declaraba `tarjetas` y `tarjetas-una`, quedaron sin usar el método que las
 dibujaba, la regla de estilo de la grilla y las dos constantes del ícono. Se sacaron, porque
-código que no llama nadie hace creer que alguna pantalla lo usa. Lo de arriba sigue valiendo
-igual —el contenido de una lista sale del catálogo y no del HTML—, y el día que una pantalla
-quiera de nuevo una grilla de tarjetas, cómo se dibujaba está en el historial del repositorio.
+código que no llama nadie hace creer que alguna pantalla lo usa. Pero no se tiraron: código que
+sirve no se tira. Las tres piezas quedaron guardadas tal como estaban, con un documento que dice
+qué son, cómo funcionan, de qué dependen y cómo se vuelven a poner, en la carpeta de lo que está
+fuera de uso —que no entra al repositorio y que no abre ningún chequeo—, y el original entero
+sigue además en el historial. Lo de arriba sigue valiendo igual: el contenido de una lista sale
+del catálogo y no del HTML.
 
 ### Lo que una Familia pide ya tiene dónde guardarse
 
