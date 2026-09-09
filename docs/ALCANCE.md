@@ -724,9 +724,9 @@ hacer está hecha; la otra mitad es del Desarrollador y está al final.
 - **Comprobado en el navegador, en las tres pantallas.** Los veintiún casilleros se dibujan como
   grilla en las tres; el título, la bajada y la ayuda salen del catálogo y son distintos según de
   qué lado se pregunte; marcar martes a la tarde y sábado a la noche devuelve exactamente esos dos
-  pares; y quien navega con el teclado escucha «Martes, Tarde, Se necesita», que es la pregunta de
-  la búsqueda y no la del Asistente. La del Asistente sigue diciendo «Disponible» y conserva su
-  pregunta de reemplazos urgentes.
+  pares; y al recorrer la grilla con el teclado, el programa que lee la pantalla en voz alta dice
+  «Martes, Tarde, Se necesita», que es la pregunta de la búsqueda y no la del Asistente. La del
+  Asistente sigue diciendo «Disponible» y conserva su pregunta de reemplazos urgentes.
 
 **Lo que quedó abierto, y es una sola cosa.** La tabla existe y las franjas se guardan: la base
 tiene `franjas_aviso` con su clave, su unicidad por `(aviso_id, dia, turno)` y su columna de
