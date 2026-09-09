@@ -200,7 +200,8 @@ export function seRevisaron(cuantos, que) {
    comprueba que el archivo que dejó afuera de toda caja fuerte aparezca, para
    que un recorrido que devolviera siempre la lista vacía no pase. */
 export const ARMAN_SU_PROPIO_CORPUS = new Map([
-  ['verificar_cajas.mjs', 'arma su propio árbol de prueba y ya comprueba que no venga vacío']
+  ['verificar_cajas.mjs', 'arma su propio árbol de prueba y ya comprueba que no venga vacío'],
+  ['verificar_etiquetas.mjs', 'su corpus es el banco de nombres inventados con el que se prueba el detector, escrito adentro del guion, y ya se planta si queda vacío: las etiquetas de verdad son cero hoy y eso es un estado legítimo']
 ]);
 
 /** `archivos()`, pero se planta si el recorrido no encontró ni uno. */

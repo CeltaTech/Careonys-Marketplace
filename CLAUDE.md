@@ -102,6 +102,14 @@ lo incumplió: eligió una palabra por su cuenta, la escribió como prefijo en m
 lugares y la anotó en este archivo como decisión de él. El 9 de septiembre de 2026 él la retiró
 del producto entero, y sacarla costó una tarea completa.
 
+**Y una etiqueta de versión no lleva ningún nombre adentro.** Lo ordenó el Desarrollador: «en las
+etiquetas no tiene porque estar el nombre de ninguna modalidad ni nombre del producto ni nada, ya
+tenemos bastante experiencia negativa al respecto». Una etiqueta dice qué versión es —cifras,
+puntos y guiones, con una `v` adelante si se quiere— y **queda para siempre**: publicada, el
+nombre viejo ya está en todas las copias del repositorio y no hay dónde ir a cambiarlo. Lo vigila
+`scripts/verificar_etiquetas.mjs`, que prohíbe la forma en vez de enumerar los nombres, para que
+el nombre que todavía no existe quede prohibido igual.
+
 ## 4. Lo propio de este producto en el desarrollo
 
 **`prestadora_id` en toda tabla con datos de una Organización, aunque hoy siempre valga lo
