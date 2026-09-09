@@ -31,9 +31,9 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
-| 17 pantallas HTML, 13.031 renglones | sin ruteo: cada pantalla es un archivo |
+| 17 pantallas HTML, 13.045 renglones | sin ruteo: cada pantalla es un archivo |
 | 16.915 renglones de JavaScript propio, en 39 archivos | 10.260 de ellos son copias byte a byte de otro archivo (pendiente 13) |
-| 6.743 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
+| 6.757 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
 | 4.653 renglones de hojas de estilo, en 10 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
 | 880 declaraciones más, pegadas al HTML | en 221 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 13 de las 17 pantallas rescatan la sesión al abrir |

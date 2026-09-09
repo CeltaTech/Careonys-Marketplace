@@ -186,7 +186,7 @@ la §4.3, y la propia tabla lo deja escrito
 
 **5.6. Pero hoy la Familia todavía no lo ve, aunque la regla ya esté escrita.** La pantalla donde el
 Asistente guarda el reporte no anota de qué Aviso es
-—`pwa-asistente/index.html:2006-2007`—, así que ninguna fila cumple la condición y la pantalla de
+—`pwa-asistente/index.html:2015-2016`—, así que ninguna fila cumple la condición y la pantalla de
 la Familia aparece vacía. Se dice acá porque un hueco declarado es mejor que un hueco tapado.
 
 ---

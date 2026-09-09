@@ -1972,9 +1972,23 @@
         } finally {
           fichadoEnCurso(false);
         }
-      }, () => {
-        alert(Catalogo.frase('fichado.permiso_denegado'));
-        statusEl.textContent = Catalogo.frase('fichado.permiso_denegado_estado');
+      }, (fallo) => {
+        // El teléfono deja de dar la ubicación por tres motivos distintos, y
+        // decirlos igual acusa a quien no hizo nada: hasta acá los tres avisaban
+        // «permiso denegado», así que a quien lo había dado y estaba en un
+        // sótano se le decía que no lo había dado, y a quien de verdad no lo dio
+        // no se lo podía distinguir de ella. Sólo el primero es una decisión de
+        // la persona. Los otros dos le pasan al teléfono y no hay nada que
+        // reprocharle: no consigue ubicarse, o tarda tanto que se corta.
+        // Y el aviso nombra la marca que no quedó: «no se pudo fichar» a secas
+        // deja a la persona sin saber si perdió la entrada o la salida, que es
+        // justo lo que necesita saber para volver a apretar el botón que va.
+        const loNego = fallo && fallo.code === fallo.PERMISSION_DENIED;
+        alert(Catalogo.frase(
+          loNego ? 'fichado.permiso_denegado' : 'fichado.sin_ubicacion',
+          { tipo: nombreTipo }));
+        statusEl.textContent = Catalogo.frase(
+          loNego ? 'fichado.permiso_denegado_estado' : 'fichado.sin_ubicacion_estado');
         fichadoEnCurso(false);
       });
     }
