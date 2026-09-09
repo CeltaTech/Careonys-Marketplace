@@ -3,7 +3,7 @@
 
        CLAVE_PRUEBA_LOCAL=... node scripts/abrir_cuentas_ficticias.mjs
 
-   Por qué existe. La migración 0065 dejó las cuentas ficticias sembradas
+   Por qué existe. Las cuentas ficticias quedaron sembradas
    junto con el resto de los datos: perfil, Organización, legajo atado y
    avisos a nombre de su Familia. Lo único que no dejó es la clave, y no por
    olvido: las migraciones son las mismas de los dos lados, así que una clave
@@ -38,7 +38,7 @@
    Es el único camino, y hasta el 2 de septiembre de 2026 no lo era. Había dos
    guiones más —uno dejaba dos coordinadoras, una por Prestadora, y el otro una
    Asistente con un legajo enganchado detrás—, y los dos quedaron haciendo a
-   mano lo que la 0065 hace sola, con correos inventados que ya ni coincidían
+   mano lo que la siembra hace sola, con correos inventados que ya ni coincidían
    con los de la siembra. Salieron del proyecto: fue el pendiente 147,
    cerrado el 2 de septiembre de 2026.
 =================================================== */

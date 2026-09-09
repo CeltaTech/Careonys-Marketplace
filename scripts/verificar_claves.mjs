@@ -61,8 +61,9 @@ const COLUMNAS = {
   dia: 'dia_semana',
   turno: 'turno',
   puesto: 'puesto_experiencia',
-  // `tipo` y `estado` se nombran por tabla y no por columna sola: la 0072
-  // estrenó un segundo `estado` —en `oferta_comercial`— que ningún
+  // `tipo` y `estado` se nombran por tabla y no por columna sola: hay un
+  // segundo `estado`, el de `oferta_comercial`
+  // (`supabase/migrations/0001_base_del_esquema.sql:2799`), que ningún
   // vocabulario gobierna, porque «publicado»/«proximamente» son el ciclo de
   // vida del ítem, no una verificación. El día que otra tabla necesite
   // gobernar el suyo, se agrega acá con el mismo par tabla.columna.
@@ -220,11 +221,10 @@ const INSERT = /insert\s+into\s+(?:public\.)?"?(\w+)"?\s*\(([^)]*)\)\s*values/gi
  *
  *  Es la otra forma de sembrar que usan estas migraciones: en vez de escribir
  *  la fila entera se junta una lista de valores contra `caregivers` o contra
- *  `avisos`, y de ahí sale la Prestadora sin escribirla a mano. La
- *  estrenó la 0027 y la 0030 la usa para las franjas, para las comprobaciones y
- *  para la experiencia laboral. Sin esto, **todo lo que se siembre de esa forma
- *  no lo mira nadie**, que es justamente el agujero por el que la 0003 metió
- *  ocho claves inventadas sin que sonara nada. */
+ *  `avisos`, y de ahí sale la Prestadora sin escribirla a mano. Sin
+ *  esto, **todo lo que se siembre de esa forma no lo mira nadie**, que es
+ *  justamente el agujero por el que se colaron ocho claves inventadas sin que
+ *  sonara nada. */
 function bloquesDeValores(sql) {
   const bloques = [];
   const VALUES = /\(\s*values(?![a-z_])/gi;

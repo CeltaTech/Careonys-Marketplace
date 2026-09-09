@@ -14,8 +14,10 @@
    —eso ya está anotado como pendiente— sino cortarle la conversación a un
    Asistente que dijo que cobra 3500 por hora y trabaja de 8 a 16.
 
-   Qué no mira: la puerta de verdad, que está del lado del servidor desde la
-   migración 0063 y la prueba `scripts/probar_la_tercera_puerta.mjs` con una
+   Qué no mira: la puerta de verdad, que está del lado del servidor —el
+   disparador `el_mensaje_no_lleva_datos_de_contacto`,
+   `supabase/migrations/0001_base_del_esquema.sql:3870`— y la prueba
+   `scripts/probar_la_tercera_puerta.mjs` con una
    sesión y sin pasar por ninguna pantalla. Esto revisa el reconocedor del
    navegador, que es el que avisa antes de mandar.
 

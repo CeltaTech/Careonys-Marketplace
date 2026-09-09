@@ -4,7 +4,7 @@
        node scripts/verificar_guias_offline.mjs
 
    Mismo trato que `verificar_catalogo.mjs`, para `data/catalogo-guias.json`
-   (migración 0041, guion `generar_guias.mjs`).
+   (guion `generar_guias.mjs`).
 
    Mira dos cosas, y son distintas a propósito:
 
@@ -17,7 +17,7 @@
         no contesta, esto queda sin hacer, y el último renglón lo dice.
 
    **Un catálogo vacío no es una falla acá.** A diferencia de los vocabularios,
-   la migración 0042 cargó las guías generales sin publicar (pendiente 104), así
+   la siembra carga las guías generales sin publicar (pendiente 104), así
    que hoy `guias_de(null)` contesta `{}` legítimamente. Por eso este chequeo no
    exige que haya guías: exige que las que haya tengan la forma correcta, y usa
    la lista de copias —que nunca está vacía— para cumplir con la guarda de

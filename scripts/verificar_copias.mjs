@@ -41,12 +41,12 @@ export const GRUPOS = [
   ['js/catalogo.js', 'pwa-asistente/js/catalogo.js', 'pwa-familia/js/catalogo.js'],
   // Los dos lados de la misma grilla de días por turnos: el Asistente dice
   // cuándo puede trabajar y la Familia dice cuándo se necesita el cuidado, así
-  // que las dos aplicaciones llevan copia (migración 0015, pendiente 40).
+  // que las dos aplicaciones llevan copia (pendiente 40).
   ['js/disponibilidad.js', 'pwa-asistente/js/disponibilidad.js',
    'pwa-familia/js/disponibilidad.js'],
   // La conversación entre la Familia y el Asistente es la misma pantalla de los
   // dos lados, así que la arma un solo archivo y las dos aplicaciones llevan
-  // copia (migración 0055).
+  // copia.
   ['js/conversacion.js', 'pwa-asistente/js/conversacion.js',
    'pwa-familia/js/conversacion.js'],
   ['data/catalogo-disponibilidad.json', 'pwa-asistente/data/catalogo-disponibilidad.json',

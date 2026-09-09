@@ -61,8 +61,8 @@ if (!url || !clave) {
 
 /* Sin la llave de administración esta prueba crearía dos cuentas que después no
    puede borrar. Es el defecto que dejó tres cuentas en la base publicada y
-   obligó a la migración 0058: crear lo que no se va a poder limpiar. No
-   arranca. */
+   obligó a sacarlas con una migración: crear lo que no se va a poder
+   limpiar. No arranca. */
 if (!claveServicio) {
   console.error('Sin la llave de administración esta prueba dejaría cuentas ficticias');
   console.error('que no puede borrar. No arranca.');
@@ -151,13 +151,13 @@ async function limpiar() {
   }
 }
 
-// --- La Prestadora ficticia de la migración 0003 ---------------------------
+// --- La Prestadora ficticia de la siembra ---------------------------------
 const { cuerpo: prestadoras } = await rest('/rest/v1/rpc/prestadora_por_slug', {
   method: 'POST', body: JSON.stringify({ p_slug: 'presdemo' })
 });
 const P = Array.isArray(prestadoras) && prestadoras.length === 1 ? prestadoras[0] : null;
 if (!P) {
-  console.error('Hace falta la Prestadora ficticia «presdemo» de la migración 0003.');
+  console.error('Hace falta la Prestadora ficticia «presdemo» de la siembra.');
   process.exit(1);
 }
 
@@ -278,8 +278,9 @@ sostener('quedaron guardados los que tenían que quedar',
     : 'la base no devolvió la lista');
 
 /* Y que la puerta esté puesta donde se cree que está. Sin esto, una base a la
-   que le falte la migración 0063 pasaría las dos comprobaciones de arriba el
-   día que alguien le saque las cinco reglas: sin reglas no se bloquea nada,
+   que le falte la tabla `patrones_de_contacto` pasaría las dos comprobaciones
+   de arriba el día que alguien le saque las cinco reglas: sin reglas no se
+   bloquea nada,
    pero tampoco se rompe nada. */
 const { cuerpo: reglas } = await rest('/rest/v1/patrones_de_contacto?select=clave&activo=is.true');
 sostener('la base tiene las reglas encendidas',
@@ -287,8 +288,9 @@ sostener('la base tiene las reglas encendidas',
   Array.isArray(reglas) ? reglas.length + ' reglas' : 'la tabla no contestó');
 
 // --- Limpieza --------------------------------------------------------------
-/* Los mensajes y la conversación no se pueden borrar con la sesión: la
-   migración 0054 no le dio `delete` a nadie sobre esas dos tablas, a propósito
+/* Los mensajes y la conversación no se pueden borrar con la sesión: el permiso
+   de `conversaciones` y `mensajes` no incluye `delete` para nadie
+   (`supabase/migrations/0001_base_del_esquema.sql:5658` y `:5674`), a propósito
    —un canal donde el mensaje se puede borrar después no sirve para lo que las
    dos partes lo usan—. Así que se van con la llave de administración, que es
    la misma con la que se borran las cuentas. */
@@ -320,7 +322,7 @@ if (inservible) {
 }
 if (fallos > 0) {
   console.error(fallos + ' comprobación(es) en rojo: la tercera puerta no está cerrada del lado del servidor.');
-  console.error('Las reglas viven en la tabla `patrones_de_contacto` (migración 0063).');
+  console.error('Las reglas viven en la tabla `patrones_de_contacto`.');
   process.exit(1);
 }
 console.log('La tercera puerta está cerrada: '

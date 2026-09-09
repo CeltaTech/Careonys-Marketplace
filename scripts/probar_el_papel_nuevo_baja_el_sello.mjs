@@ -10,17 +10,20 @@
        supabase start -x edge-runtime -x vector -x supavisor -x logflare
        supabase migration up --local
 
-   QUÉ MIRA. Lo que fue el pendiente 75 —cerrado el 31 de agosto de 2026 por la
-   migración 0047—, y la opción A que eligió el Desarrollador: **el
-   sello siempre habla de los papeles que están hoy.** Sin esto, una persona
-   con el legajo ya sellado cambia `documents` y el sello queda diciendo que
-   la Prestadora revisó unos papeles que ya no están. La Familia no tiene cómo
-   notarlo: ve «validado» y nada más.
+   QUÉ MIRA. Lo que fue el pendiente 75 —cerrado el 31 de agosto de 2026 con
+   el disparador `el_legajo_no_se_sella_solo`—, y la opción A que eligió el
+   Desarrollador: **el sello siempre habla de los papeles que están hoy.**
+   Sin esto, una persona con el legajo ya sellado cambia `documents` y el
+   sello queda diciendo que la Prestadora revisó unos papeles que ya no
+   están. La Familia no tiene cómo notarlo: ve «validado» y nada más.
 
-   Las otras dos opciones que había sobre la mesa —prohibir el cambio con el
-   sello puesto, o permitirlo y anotarlo para que la Prestadora lo revise
-   después— están escritas con sus contras en
-   `docs/PLAN_SEGURIDAD_DE_COLUMNAS.md`, punto 5. La elegida es la A.
+   Las otras dos opciones que había sobre la mesa tenían cada una su contra.
+   Prohibir el cambio con el sello puesto no deja ninguna ventana en la que el
+   directorio muestre algo falso, pero obliga a pedirle a la Prestadora hasta
+   para reemplazar un papel vencido. Permitirlo y anotarlo no frena a nadie y
+   deja rastro, pero mientras nadie revise el directorio sigue diciendo
+   «validado» sobre un papel que nadie miró: es la única de las tres que deja
+   el sello mintiendo. La elegida es la A, y se eligió sabiendo esto.
 
    Y EL PERSONAL ES LA EXCEPCIÓN, A PROPÓSITO. Cuando el papel lo cambia
    quien firma el sello, el sello no se mueve: está viendo lo que sube en el
@@ -108,10 +111,10 @@ async function prestadora(slug) {
   return Array.isArray(cuerpo) && cuerpo.length === 1 ? cuerpo[0] : null;
 }
 
-// --- La Prestadora ficticia de la migración 0003 ---------------------------
+// --- La Prestadora ficticia de la siembra ----------------------------------
 const P = await prestadora('presdemo');
 if (!P) {
-  console.error('Hace falta la Prestadora ficticia `presdemo` de la migración 0003.');
+  console.error('Hace falta la Prestadora ficticia `presdemo` de la siembra ficticia.');
   console.error('Con las migraciones aplicadas está; si no, la base está atrasada.');
   process.exit(1);
 }
@@ -358,7 +361,7 @@ if (fallos === 0) {
   process.exit(0);
 }
 console.log(fallos + (fallos === 1 ? ' comprobación' : ' comprobaciones') + ' en rojo.');
-console.log('Esto pasa desde el 31 de agosto de 2026, cuando la migración 0047 cerró el');
+console.log('Esto pasa desde el 31 de agosto de 2026, cuando se cerró el');
 console.log('pendiente 75. Si da rojo, el legajo volvió a decir «validado» sobre papeles');
 console.log('que la Prestadora no miró, y la Familia no tiene cómo notarlo.');
 process.exit(1);

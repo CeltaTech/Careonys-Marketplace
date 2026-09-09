@@ -22,7 +22,9 @@
    esa columna, así que se la escribía él. Se escribió antes que el arreglo,
    a propósito, para que el día que el arreglo existiera se supiera que
    funcionó por algo más que por mirarlo. Ese día fue el 31 de agosto de 2026,
-   con la migración 0047. **Si vuelve a dar rojo, algo se rompió.**
+   y hoy lo frena `el_legajo_no_se_sella_solo()`
+   (`supabase/migrations/0001_base_del_esquema.sql:961-965`).
+   **Si vuelve a dar rojo, algo se rompió.**
 
    POR QUÉ PUEDE FALLAR. Las tres comprobaciones del sello podrían dar
    «bien» por un motivo tonto —que la cuenta no tenga sesión, que la
@@ -100,11 +102,11 @@ async function prestadora(slug) {
   return Array.isArray(cuerpo) && cuerpo.length === 1 ? cuerpo[0] : null;
 }
 
-// --- Las dos Prestadoras ficticias de la migración 0003 ---------------------
+// --- Las dos Prestadoras ficticias de la siembra ----------------------------
 const P = await prestadora('presdemo');
 const AJENA = await prestadora('cuidarnorte');
 if (!P || !AJENA) {
-  console.error('Hacen falta las dos Prestadoras ficticias de la migración 0003.');
+  console.error('Hacen falta las dos Prestadoras ficticias de la siembra.');
   console.error('Con las migraciones aplicadas están; si no, la base está atrasada.');
   process.exit(1);
 }
@@ -215,8 +217,9 @@ comprobar('no puede ponerse el sello sobre su propio legajo',
 // comprobación no distingue «no salió porque no tiene el sello» de «no salió
 // porque no dio permiso».
 //
-// Desde la migración 0061 el directorio tiene una tercera condición —los
-// papeles de la puerta de publicación—, y a este legajo también le faltan.
+// El directorio tiene una tercera condición —los papeles de la puerta de
+// publicación, `supabase/migrations/0001_base_del_esquema.sql:817`—, y a este
+// legajo también le faltan.
 // O sea que esta comprobación ya no aísla al sello ella sola: quien aísla al
 // sello es la anterior, que le pregunta a la base en qué estado quedó el
 // legajo y puede dar rojo. Ésta queda como lo que es, la mirada desde afuera:
@@ -271,9 +274,9 @@ await rest('/rest/v1/autorizaciones_asistente?caregiver_id=eq.' + legajo.id,
   { method: 'DELETE' }, token);
 await rest('/rest/v1/caregivers?id=eq.' + legajo.id, { method: 'DELETE' }, token);
 
-/* Se le pregunta por el legajo, no por el directorio. Hasta la migración
-   0061 alcanzaba con mirar el directorio, porque un legajo mal borrado
-   aparecía ahí; desde que la puerta de publicación exige papeles que este
+/* Se le pregunta por el legajo, no por el directorio. Antes alcanzaba con
+   mirar el directorio, porque un legajo mal borrado aparecía ahí; desde que
+   la puerta de publicación exige papeles que este
    legajo nunca tuvo, el directorio contesta «no está» tanto si se borró como
    si quedó. Preguntar por la tabla es preguntar por lo que de verdad se
    quería saber. */
@@ -316,7 +319,7 @@ if (fallos === 0) {
   process.exit(0);
 }
 console.log(fallos + (fallos === 1 ? ' comprobación' : ' comprobaciones') + ' en rojo.');
-console.log('Esta prueba pasa desde el 31 de agosto de 2026, cuando la migración 0047 cerró');
+console.log('Esta prueba pasa desde el 31 de agosto de 2026, cuando se cerró');
 console.log('el pendiente 66. Si da rojo, un Asistente volvió a poder ponerse solo el sello');
 console.log('que dice que la Prestadora lo revisó, y con eso entra al directorio público.');
 process.exit(1);

@@ -19,8 +19,10 @@
    ponerse a su nombre el legajo de otra persona: sus matrículas, sus estudios,
    sus papeles.
 
-   Era el pendiente 74, de la misma familia que el 66, y lo cerró la migración
-   0047 con un disparador: una política decide por fila, y acá lo que importa es
+   Era el pendiente 74, de la misma familia que el 66, y lo cerró el disparador
+   `el_legajo_no_se_sella_solo`
+   (`supabase/migrations/0001_base_del_esquema.sql:3863`): una política
+   decide por fila, y acá lo que importa es
    qué columna se toca. **ESTA PRUEBA FALLABA A PROPÓSITO Y HOY PASA. Si vuelve
    a dar rojo, el dueño de un legajo volvió a poder cambiarse.**
 
@@ -108,11 +110,11 @@ async function prestadora(slug) {
   return Array.isArray(cuerpo) && cuerpo.length === 1 ? cuerpo[0] : null;
 }
 
-// --- Las dos Prestadoras ficticias de la migración 0003 ---------------------
+// --- Las dos Prestadoras ficticias de la siembra ---------------------------
 const P = await prestadora('presdemo');
 const AJENA = await prestadora('cuidarnorte');
 if (!P || !AJENA) {
-  console.error('Hacen falta las dos Prestadoras ficticias de la migración 0003.');
+  console.error('Hacen falta las dos Prestadoras ficticias de la siembra.');
   console.error('Con las migraciones aplicadas están; si no, la base está atrasada.');
   process.exit(1);
 }
@@ -367,7 +369,7 @@ if (fallos === 0) {
   process.exit(0);
 }
 console.log(fallos + (fallos === 1 ? ' comprobación' : ' comprobaciones') + ' en rojo.');
-console.log('Esta prueba pasa desde el 31 de agosto de 2026, cuando la migración 0047 cerró');
+console.log('Esta prueba pasa desde el 31 de agosto de 2026, cuando se cerró');
 console.log('el pendiente 74. Si da rojo, un coordinador volvió a quedarse con el legajo');
 console.log('entero de otra persona: sus matrículas, sus estudios, sus papeles.');
 process.exit(1);

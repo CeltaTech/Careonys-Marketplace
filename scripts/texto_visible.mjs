@@ -123,8 +123,8 @@ export const sinEntidades = (html) => html.replace(/&(?:#\d+|#x[0-9a-f]+|[a-z][a
  * Devuelve pares `[renglón, texto]` del texto visible que guarda una migración.
  *
  * Una migración es código, pero además **carga texto que después se lee en la
- * pantalla**: las etiquetas de los 24 vocabularios entran en la base escritas
- * en `0039`, y las 19 Guías de cuidado en `0042`. Ese texto se escapaba de los
+ * pantalla**: las etiquetas de los vocabularios y el texto de las Guías de
+ * cuidado entran en la base escritos en la siembra. Ese texto se escapaba de los
  * chequeos que miran cómo está escrito el castellano, porque `supabase/` estaba
  * en la lista de carpetas que no abrían: una guía podía tutear al Asistente y
  * nadie se enteraba hasta verla en el teléfono.

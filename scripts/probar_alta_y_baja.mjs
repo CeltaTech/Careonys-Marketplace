@@ -67,8 +67,8 @@ if (!secreto) {
    al terminar que dejaba la fila. Eso es pedirle a quien la corre que se
    acuerde de limpiar a mano lo que el guion ensució solo, y no se acordó
    nadie: quedó «prestadora-de-prueba-de-la-puerta» en la base publicada con
-   sus siete filas de configuración, y hubo que sacarla con una migración, la
-   0058. Así que ahora **sin llave no arranca**. Avisar que se va a ensuciar no
+   sus siete filas de configuración, y hubo que sacarla con una migración.
+   Así que ahora **sin llave no arranca**. Avisar que se va a ensuciar no
    es lo mismo que no ensuciar. */
 let claveServicio;
 try {
@@ -200,8 +200,9 @@ r = await golpear('/cualquier-otra-cosa', aviso('suscripcion.activada', despues)
 comprobar(12, 'Un camino que no existe contesta 404', r.estado === 404, `contestó ${r.estado}`);
 
 // ── Limpieza ───────────────────────────────────────────────────────────────
-/* Se borra en orden, y el orden importa: desde la migración 0046 toda
-   Prestadora nace con seis filas de configuración de puntaje que apuntan a
+/* Se borra en orden, y el orden importa: toda Prestadora nace con seis filas
+   de configuración de puntaje —`configuracion_de_fabrica_del_puntaje()`,
+   `supabase/migrations/0001_base_del_esquema.sql:203`— que apuntan a
    `tenants` sin cascada, así que borrar la Prestadora derecho choca contra la
    clave ajena y devuelve 409. No es un defecto del producto —la baja de
    CeltaTech no borra nada, marca `cancelado`— sino de esta limpieza, que sí

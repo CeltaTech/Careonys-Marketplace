@@ -4,8 +4,9 @@
        node scripts/generar_patrones_contacto.mjs             ← compara y avisa
        node scripts/generar_patrones_contacto.mjs --escribir  ← rehace el archivo
 
-   Desde la migración 0063 las reglas con las que se reconoce un dato de
-   contacto viven en la tabla `patrones_de_contacto`, porque ahí es donde las
+   Las reglas con las que se reconoce un dato de contacto viven en la tabla
+   `patrones_de_contacto` (`supabase/migrations/0001_base_del_esquema.sql:2928`),
+   porque ahí es donde las
    necesita la puerta de verdad: el disparador que revisa el mensaje **antes de
    guardarlo**, del lado del servidor, donde nadie lo puede saltear.
 

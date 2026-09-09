@@ -24,13 +24,15 @@
    renglones más abajo, `grant update (full_name) on public.profiles to
    authenticated`. Un solo `grant update on public.profiles to authenticated`
    en cualquier migración futura abre las dos puertas, y ya pasó una vez: la
-   migración 0032 se lo llevó puesto sin querer y la 0033 lo repuso. El
+   migración se lo llevó puesto sin querer y la siguiente lo repuso. El
    mensaje de error de Postgres, además, **sugiere literalmente el arreglo
    equivocado**: «Grant the required privileges … GRANT UPDATE ON
    public.profiles TO authenticated», que es la línea que abre el agujero.
 
-   Desde el 31 de agosto de 2026 hay además un disparador: la migración 0047
-   cerró el pendiente 82 y rechaza el cambio de `role` y de `tenant_id` diga lo
+   Desde el 31 de agosto de 2026 hay además un disparador,
+   `el_rol_y_la_prestadora_no_se_escriben_solos`
+   (`supabase/migrations/0001_base_del_esquema.sql:3877`), que cerró
+   el pendiente 82 y rechaza el cambio de `role` y de `tenant_id` diga lo
    que diga el permiso. **Las dos redes valen, porque cuidan de cosas
    distintas**: el disparador, de quien intenta el cambio; esta prueba, del día
    que alguien vuelva a escribir ese `grant` creyendo que con eso alcanza.
@@ -112,11 +114,11 @@ async function prestadora(slug) {
   return Array.isArray(cuerpo) && cuerpo.length === 1 ? cuerpo[0] : null;
 }
 
-// --- Las dos Prestadoras ficticias de la migración 0003 ---------------------
+// --- Las dos Prestadoras ficticias de la siembra ---------------------------
 const P = await prestadora('presdemo');
 const AJENA = await prestadora('cuidarnorte');
 if (!P || !AJENA) {
-  console.error('Hacen falta las dos Prestadoras ficticias de la migración 0003.');
+  console.error('Hacen falta las dos Prestadoras ficticias de la siembra.');
   console.error('Con las migraciones aplicadas están; si no, la base está atrasada.');
   process.exit(1);
 }
@@ -191,9 +193,11 @@ if (!antes) {
   process.exit(1);
 }
 
-// El rol pedido en el alta ya tiene que haber sido ignorado: la migración 0005
-// lo dice —«el rol nunca sale de los metadatos sin filtrar»— y es la puerta de
-// al lado de la que mide esta prueba.
+// El rol pedido en el alta ya tiene que haber sido ignorado: lo dice el
+// comentario de `crear_perfil_al_registrarse()`
+// (`supabase/migrations/0001_base_del_esquema.sql:365`),
+// «el rol nunca sale de los metadatos sin filtrar», y es la puerta de al lado
+// de la que mide esta prueba.
 console.log('El rol y la Prestadora del perfil');
 
 comprobar('el rol pedido en el alta no se toma del pedido',
@@ -278,7 +282,7 @@ if (fallos === 0) {
   process.exit(0);
 }
 console.log(fallos + (fallos === 1 ? ' comprobación' : ' comprobaciones') + ' en rojo.');
-console.log('Esto lo cerró la migración 0047 el 31 de agosto de 2026: era el pendiente 82.');
+console.log('Esto quedó cerrado el 31 de agosto de 2026: era el pendiente 82.');
 console.log('Si da rojo, alguien con sesión se asciende o se muda de Organización, y de');
 console.log('`tenant_id` cuelgan las políticas de todas las tablas.');
 process.exit(1);

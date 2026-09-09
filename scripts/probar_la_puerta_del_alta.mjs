@@ -11,21 +11,22 @@
        supabase migration up --local
 
    QUÉ MIRA. El catálogo dice, desde el 24 de agosto de 2026, que el
-   documento de identidad «frena el alta». Hasta la migración 0073 nada lo
-   comprobaba: `registrar-asistente.html` y la aplicación del teléfono
+   documento de identidad «frena el alta». Hasta el 4 de septiembre de 2026
+   nada lo comprobaba: `registrar-asistente.html` y la aplicación del teléfono
    grababan el legajo aunque faltara. Esta prueba comprueba que ahora sí se
    frena, y que se frena por lo que tiene que frenarse —que el papel no
    llegó— y no por cualquier otra cosa: un legajo al que le falta un papel
    de otra puerta (los antecedentes penales, que frenan la `publicacion` y
-   no el `alta`, desde la misma migración 0061) tiene que poder darse de
-   alta igual.
+   no el `alta` —`supabase/migrations/0001_base_del_esquema.sql:817`—) tiene
+   que poder darse de alta igual.
 
    ESTA PRUEBA FALLABA A PROPÓSITO, Y HOY PASA. Fue el pendiente 143: la
-   pregunta llevaba desde la migración 0061 sin contestar, porque cerrar la
-   puerta esperando el juicio de la Prestadora era un candado que no se
-   podía abrir —ver el comentario de esa migración—. El Desarrollador
-   contestó el 4 de septiembre de 2026 que alcanza con que el software
-   compruebe, solo, que el papel llegó, y la migración 0073 lo escribió.
+   pregunta llevaba mucho sin contestar, porque cerrar la puerta esperando
+   el juicio de la Prestadora era un candado que no se podía abrir. El
+   Desarrollador contestó el 4 de septiembre de 2026 que alcanza con que el
+   software compruebe, solo, que el papel llegó, y hoy lo escribe
+   `el_legajo_no_completa_el_alta_sin_sus_papeles()`
+   (`supabase/migrations/0001_base_del_esquema.sql:883`).
    **Si vuelve a dar rojo, algo se rompió.**
 
    POR QUÉ PUEDE FALLAR. Que el alta rechace un legajo sin el documento de
@@ -36,8 +37,8 @@
    se pueda corregir después (el teléfono). Si esas no salen como se
    espera, la prueba avisa que no sirve y no que el producto esté sano.
 
-   Corre contra las dos Prestadoras ficticias de la migración 0003: la
-   regla vive en el vocabulario global, no en el código, así que tiene que
+   Corre contra las dos Prestadoras ficticias de la siembra: la regla vive
+   en el vocabulario global, no en el código, así que tiene que
    valer para las dos por igual.
 
    No deja nada atrás: borra los legajos y las cuentas ficticias que haya
@@ -152,11 +153,11 @@ async function borrarCuenta(userId) {
   return r.ok;
 }
 
-// --- Las dos Prestadoras ficticias de la migración 0003 ---------------------
+// --- Las dos Prestadoras ficticias de la siembra ----------------------------
 const P = await prestadora('presdemo');
 const AJENA = await prestadora('cuidarnorte');
 if (!P || !AJENA) {
-  console.error('Hacen falta las dos Prestadoras ficticias de la migración 0003.');
+  console.error('Hacen falta las dos Prestadoras ficticias de la siembra.');
   console.error('Con las migraciones aplicadas están; si no, la base está atrasada.');
   process.exit(1);
 }
@@ -200,8 +201,8 @@ const r2 = await rest('/rest/v1/caregivers', {
     user_id: c1.userId,
     tenant_id: P.id,
     profession: 'cuidador_domiciliario',
-    // Sin antecedentes penales: esa puerta es la de publicación (migración
-    // 0061), no la del alta, y no tendría que frenar acá.
+    // Sin antecedentes penales: esa puerta es la de publicación, no la del
+    // alta, y no tendría que frenar acá.
     documents: { dni: 'documentos-cuidadores/ficticio-dni.pdf', penales: 'pendiente' }
   })
 }, c1.token);
@@ -277,7 +278,7 @@ if (fallos === 0) {
   process.exit(0);
 }
 console.log(fallos + (fallos === 1 ? ' comprobación' : ' comprobaciones') + ' en rojo.');
-console.log('Esta prueba pasa desde el 4 de septiembre de 2026, cuando la migración 0073 cerró');
+console.log('Esta prueba pasa desde el 4 de septiembre de 2026, cuando se cerró');
 console.log('el pendiente 143. Si da rojo, un Aspirante volvió a poder terminar el alta sin');
 console.log('subir el documento de identidad.');
 process.exit(1);

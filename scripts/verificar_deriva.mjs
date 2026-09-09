@@ -58,14 +58,15 @@
    También se cuentan, sin rojo, los textos repetidos y las citas cuyo renglón
    todavía no se guardó en ningún commit.
 
-   ---- Lo que no revisa, y por qué ----
+   ---- A qué documentos mira ----
 
-   - Las **fotos fechadas** de `scripts/citas.mjs`, por el motivo que ya está
-     escrito ahí: citan el código de un día a propósito.
-   - Los **planes** —`docs/PLAN_*.md`—, por lo mismo. Un plan se escribe antes de
-     tocar el código y cita el código de ese momento; correrle los números sería
-     falsear lo que decía el día que se decidió. Cuando un plan se ejecuta, lo
-     que queda vigente se cuenta en el documento vivo, que sí se revisa.
+   A todos los de `docs/`, sin ninguna excepción. Hubo dos y las dos se cayeron
+   el 8 de septiembre de 2026, al borrarse los documentos que las justificaban:
+   las **fotos fechadas**, que ya no existen, y los **planes**, eximidos por
+   citar el código del día en que se escribieron. De los planes que quedan
+   ninguno es una foto: son propuestas todavía sin ejecutar, y sus citas apuntan
+   al código de hoy, que es justo lo que esta comprobación cuida. Un plan que se
+   ejecuta se borra, y lo que quede vigente se muda al documento que sí vive.
 
    ---- La prueba de que puede fallar ----
 
@@ -82,7 +83,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
 import { hayArchivos } from './recorrido.mjs';
-import { citasDe, renglonesDe, FOTOS, AJENOS, AJENAS } from './citas.mjs';
+import { citasDe, renglonesDe, AJENOS, AJENAS } from './citas.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const arreglar = process.argv.includes('--arreglar');
@@ -193,13 +194,8 @@ function traerTodos(claves) {
 
 /* ---- Los documentos ---------------------------------------------------- */
 
-const ES_PLAN = /^docs\/PLAN_[^/]*\.md$/;
-
-const todos = hayArchivos(join(raiz, 'docs'), ['.md'], AJENAS)
+const documentos = hayArchivos(join(raiz, 'docs'), ['.md'], AJENAS)
   .map((a) => relative(raiz, a).split(sep).join('/'));
-
-const documentos = todos.filter((d) => !FOTOS.has(d) && !ES_PLAN.test(d));
-const eximidos = todos.length - documentos.length;
 
 /* Primera vuelta: juntar todas las citas y qué versión hace falta de cada una. */
 const citas = [];
@@ -327,5 +323,5 @@ console.log('Citas verificadas contra el historial: ' +
     ? ', y ' + cuenta.perdidas + ' no se pudieron resolver, que no es lo mismo que mal' +
       (detalle ? '' : ' (--detalle)')
     : '') +
-  ' (' + eximidos + ' documentos exentos por ser una foto o un plan).');
+  ' en los ' + documentos.length + ' documentos de docs/, sin ninguno exento.');
 process.exit(0);

@@ -7,7 +7,7 @@
 
        node scripts/probar_permisos_en_vivo.mjs --local
 
-   POR QUÉ EXISTE. Los dieciséis chequeos que corren antes de cada
+   POR QUÉ EXISTE. Los chequeos que corren antes de cada
    `commit` leen los archivos de `supabase/migrations/`, y eso es
    historial de intención: dice qué se quiso, no qué quedó. Un permiso que
    la base tiene y que ninguna migración pidió les resulta invisible. Esta
@@ -21,12 +21,12 @@
    base iba acumulando permisos que nadie escribió. Se escribió antes que el
    arreglo para que el día que el arreglo existiera se supiera que funcionó
    por algo más que por mirarlo. **El arreglo llegó el 26 de agosto de 2026**
-   —migraciones 0032 y 0033— y esta prueba se puso en verde ese día.
+   y esta prueba se puso en verde ese día.
 
    Y ENTONCES SE VOLVIÓ A PONER EN ROJO, SIN QUE NADA SE ROMPIERA. Tenía
    escrita adentro su propia lista de funciones abiertas sin sesión: las tres
-   del directorio. Después las migraciones 0035, 0038 y 0041 abrieron tres
-   puertas más —las zonas, los vocabularios y las guías—, cada una con su
+   del directorio. Después se abrieron tres puertas más —las zonas, los
+   vocabularios y las guías—, cada una con su
    motivo escrito y comprobado, y esta prueba las vio como un hallazgo. Como
    el rojo ya era «esperado», nadie lo miró: quedó anotada contra un pendiente
    que hacía días estaba cerrado. **La lista ya no está acá**: se importa de
@@ -56,7 +56,7 @@ const local = process.argv.includes('--local');
 
 // --- Lo que está abierto a propósito ---------------------------------------
 // No se escribe acá: se importa de `verificar_esquema.mjs`, que la tiene con
-// el motivo de cada una y la migración que la abrió. Cualquier función al
+// el motivo de cada una. Cualquier función al
 // alcance de `anon` que no esté en esa lista es un hallazgo, y para dejar de
 // serlo hay que escribirle el motivo allá.
 const FUNCIONES_ABIERTAS = new Set(AL_ALCANCE_ANONIMO.keys());

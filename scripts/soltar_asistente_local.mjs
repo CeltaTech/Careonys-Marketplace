@@ -5,7 +5,7 @@
        node scripts/soltar_asistente_local.mjs --borrar    lo hace
 
    Deshace la cuenta `asistente.presdemo@ejemplo.com`, la que dejaba un guion
-   local que ya no está: la migración 0065 pasó a sembrar las seis cuentas
+   local que ya no está: la siembra pasó a traer las seis cuentas
    ficticias con su legajo ya atado, y ese guion salió del proyecto el 2 de
    septiembre de 2026: fue el pendiente 147, cerrado. Esto borra lo que se
    escribió mirando la pantalla, le suelta el legajo a la cuenta ficticia y
@@ -15,8 +15,8 @@
    Queda para las máquinas donde esa cuenta todavía esté. Donde no esté, lo
    dice y no toca nada.
 
-   **No borra el legajo.** El legajo es de la siembra: nació con la migración
-   0030 y tiene que seguir ahí. Lo único que se agregó fue el enganche, y lo
+   **No borra el legajo.** El legajo es de la siembra y tiene que seguir ahí.
+   Lo único que se agregó fue el enganche, y lo
    único que se saca es el enganche.
 
    **Sí borra la fichada y el reporte que se escribieron apretando el botón**,
@@ -27,8 +27,9 @@
    la primera base armada desde cero vuelve a tener la tabla vacía. La
    comprobación sale verde hoy y roja mañana sin que nadie haya tocado nada,
    y un verde intermitente se lee como «anda» las veces que anda. Eso es
-   justo lo que la migración 0049 vino a arreglar sembrando fichadas de
-   verdad; dejar además las escritas a mano volvería a tapar el hueco que
+   justo lo que se arregló sembrando fichadas de verdad
+   (`supabase/migrations/0002_siembra_ficticia.sql:219`); dejar además
+   las escritas a mano volvería a tapar el hueco que
    quede.
 
    **Cómo distingue una de otra**, sin listas escritas a mano que se

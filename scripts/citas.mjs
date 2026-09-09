@@ -6,9 +6,9 @@
    `verificar_referencias.mjs` pregunta si la cita apunta **a algo**;
    `verificar_deriva.mjs` pregunta si apunta **a lo que dice**. Son preguntas
    distintas y hacen falta las dos, pero la forma de una cita y la lista de
-   documentos eximidos tienen que ser una sola: el día que se agregue una foto
-   fechada, se agrega acá y los dos chequeos la respetan. Escrita dos veces, el
-   segundo se entera tarde.
+   documentos eximidos tienen que ser una sola: el día que se exima a uno, se
+   exime acá y los dos chequeos lo respetan. Escrita dos veces, el segundo se
+   entera tarde.
 
    Vive aparte y no adentro de uno de los dos porque un chequeo, al importarlo,
    correría entero.
@@ -55,16 +55,6 @@ export function renglonesDe(sufijo) {
   return [...new Set(sufijo.match(/\d+/g).map(Number))];
 }
 
-/* Documentos que son una foto de un día y no el estado de hoy. Sus citas
-   apuntan al código de esa fecha: están bien como están. */
-export const FOTOS = new Map([
-  ['docs/INVENTARIO.md',
-   'lo dice en su renglón 7: es una foto del 22 de agosto de 2026, no el estado de hoy'],
-  ['docs/PLAN_ACCESO.md',
-   'es el inventario y el plan previos a tocar código del 24 de agosto de 2026, y sus citas ' +
-   'muestran los cinco problemas que había ese día — todos arreglados desde entonces']
-]);
-
 /* Archivos que no viven en este repositorio y por eso no se pueden abrir. */
 export const AJENOS = new Map([
   ['supabase/migrations/20260820190000_el_canal_del_asistente_se_elige_y_se_respeta.sql',
@@ -82,6 +72,15 @@ export const DE_OTRO_REPOSITORIO = new Map([
   ['docs/APORTES_A_CAREONYS.md',
    'compara lo que hay acá con lo que hay en Careonys, que tiene su propio repositorio']
 ]);
+
+/* Y por dónde empieza una ruta de afuera. Sin esto, el permiso de arriba
+   perdonaba **cualquier** archivo que no estuviera, incluido uno de este
+   repositorio que alguien acabara de borrar: al documento le alcanzaba con
+   decir «hablo de otro repositorio» para que se le callara todo. Ahora se le
+   calla sólo lo que empieza por una de estas carpetas, que son las de los
+   repositorios hermanos. La barra final va a propósito: sin ella,
+   `careonys_viejo/` entraría igual. */
+export const PREFIJOS_DE_AFUERA = ['careonys/', 'celtatech/'];
 
 /* Carpetas de trabajo de quien desarrolla: no son documentación del proyecto. */
 export const AJENAS = ['Nueva carpeta'];

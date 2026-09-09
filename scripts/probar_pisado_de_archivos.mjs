@@ -219,7 +219,8 @@ if (!token || !uid) {
   process.exit(1);
 }
 
-/* Los depósitos aceptan sólo imágenes y PDF (migración 0006), así que los
+/* Los depósitos aceptan sólo imágenes y PDF
+   (`supabase/migrations/0001_base_del_esquema.sql:5955` y `:5956`), así que los
    papeles inventados se declaran PDF. Adentro llevan un texto distinto cada
    uno: es lo que después permite saber cuál de los dos quedó. */
 const papel = (que) => new TextEncoder().encode('%PDF-1.4\n% ' + que + ' ' + sello + '\n');

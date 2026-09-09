@@ -4,8 +4,9 @@
        node scripts/generar_guias.mjs             ← compara y avisa
        node scripts/generar_guias.mjs --escribir  ← rehace el archivo
 
-   Mismo trato que `generar_vocabularios.mjs`, para las guías de cuidado de la
-   migración 0041: la verdad es la base, `data/catalogo-guias.json` es una
+   Mismo trato que `generar_vocabularios.mjs`, para las guías de cuidado
+   (`supabase/migrations/0001_base_del_esquema.sql:2658`): la verdad es
+   la base, `data/catalogo-guias.json` es una
    copia para que el teléfono del Asistente las tenga sin conexión.
 
    Qué trae y qué no
@@ -17,7 +18,7 @@
    entrada por la propia si la Prestadora escribió una (pendiente 102).
 
    **Un catálogo vacío no es un error.** Es la diferencia con los vocabularios:
-   la migración 0042 cargó las guías generales sin publicar, a la espera de que
+   la siembra carga las guías generales sin publicar, a la espera de que
    el Desarrollador revise cada una (pendiente 104). Hasta que eso cierre,
    `guias_de(null)` contesta `{}` legítimamente, y este guion tiene que
    escribir ese vacío tal cual, no tratarlo como una base que no contestó.

@@ -30,13 +30,13 @@
    acá igual que la del README.
 
    La tercera apareció el mismo día, tirando del mismo hilo: la tabla del CSS
-   de `docs/INVENTARIO.md` tenía seis números equivocados, y el peor no era un
+   tenía seis números equivocados, y el peor no era un
    renglonaje sino la columna de quién usa cada hoja —decía «las 10 páginas de
    la raíz» y «las 16 pantallas» cuando son 15 y 17—, que es justo la que nadie
    revisa cuando agrega una pantalla.
 
    Y el cuarto no es una tabla sino una frase: la que abre la lista de guiones
-   de `docs/INVENTARIO.md`, que decía «51 archivos `.mjs`» y «doce herramientas
+   del README, que decía «51 archivos `.mjs`» y «doce herramientas
    sueltas» con «Contado el 31 de agosto de 2026» al lado, el mismo día en que ya
    eran 52 y trece —`scripts/listar.mjs` se agregó unas horas después de contar—.
    **Una fecha avisa de que el número pudo cambiar, no de que cambió.**
@@ -170,7 +170,7 @@ compararEntreMarcas(
    iba a revisar: se agrega una pantalla y la tabla no se entera. Ahora sale de
    leer los `<link href>` del marcado. */
 compararEntreMarcas(
-  ['docs', 'INVENTARIO.md'], ABRE_HOJAS, CIERRA_HOJAS, renglonesHojasTabla,
+  ['README.md'], ABRE_HOJAS, CIERRA_HOJAS, renglonesHojasTabla,
   'la tabla de las hojas de estilo', '| `'
 );
 
@@ -178,7 +178,7 @@ compararEntreMarcas(
    menos de un día: decía «51 archivos `.mjs`» y «doce herramientas sueltas»,
    con la fecha de ese mismo día escrita al lado, cuando ya eran 52 y trece. */
 compararEntreMarcas(
-  ['docs', 'INVENTARIO.md'], ABRE_GUIONES, CIERRA_GUIONES, renglonesFraseGuiones,
+  ['README.md'], ABRE_GUIONES, CIERRA_GUIONES, renglonesFraseGuiones,
   'la cuenta de los guiones', 'En `scripts/`'
 );
 
@@ -194,6 +194,6 @@ if (problemas.length) {
 console.log(
   `Estado real verificado: los ${medidos.length} renglones de la tabla del README, las ` +
   `${renglonesReparto.length} pantallas del reparto de docs/PENDIENTES.md y las ` +
-  `${renglonesHojasTabla.length} hojas de estilo de docs/INVENTARIO.md, y la cuenta de ` +
+  `${renglonesHojasTabla.length} hojas de estilo del README, y la cuenta de ` +
   'los guiones que abre su lista, salen de medir los archivos.'
 );

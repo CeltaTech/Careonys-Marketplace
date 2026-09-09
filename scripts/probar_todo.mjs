@@ -60,7 +60,7 @@
      políticas de exención entre las que hay que elegir—.
    · `probar_coherencia_de_la_siembra.mjs` son los pendientes 110 y 111 —siete
      columnas que la siembra no llena ni una vez, y cuatro tablas enteras sin
-     una sola fila. De las columnas eran catorce: la 0048 cerró cinco y dos
+     una sola fila. De las columnas eran catorce: cinco se cerraron y dos
      quedaron exentas. Una prueba puede traer más de un pendiente, y por eso
      la lista de abajo guarda una lista de números y no un número—.
 

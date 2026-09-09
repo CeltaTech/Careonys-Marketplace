@@ -8,9 +8,9 @@
    columna que la siembra no llena nunca no se nota mirando ninguna pantalla,
    porque la pantalla se dibuja igual: lo que no se ve es que **nada la está
    probando**. La consulta que la olvida y la consulta que la trae contestan lo
-   mismo. Es el mismo argumento que escribió la migración 0027 para cargar
-   comprobaciones en los legajos —«una consulta rota y una consulta correcta
-   contra una tabla vacía contestan exactamente lo mismo»— aplicado a la
+   mismo. Es el mismo argumento por el que se cargaron comprobaciones en los
+   legajos —«una consulta rota y una consulta correcta contra una tabla
+   vacía contestan exactamente lo mismo»— aplicado a la
    siembra entera y no a una tabla.
 
    QUÉ MIRA
@@ -70,13 +70,15 @@ const LA_SIEMBRA_NO_PUEDE = new Map([
   ['experiencia_laboral_asistente.puesto_otro',
    'sólo se llena cuando el puesto elegido es «otro», que no es el caso de ninguno'],
   ['tenants.referencia_celtatech',
-   'la 0025 lo dice: a las ficticias no las dio de alta CeltaTech y nunca van a tener una'],
+   'a las ficticias no las dio de alta CeltaTech y nunca van a tener una'],
   ['avisos.grid_schedule_7x3',
-   'la 0016 la reemplazó por filas y ya no se escribe; queda para no perder lo viejo'],
+   'la reemplazaron las filas de `franjas_aviso` y ya no se escribe; queda para no perder lo viejo'],
   /* Acá estaban `caregivers.user_id` y `avisos.familia_id`, eximidas
-     porque apuntaban a `auth.users` y la 0030 no creaba cuentas. La 0065 las
-     creó —sin clave, que es lo que hacía imposible sembrarlas— y las dos
-     columnas quedaron llenas, así que la exención se sacó. Sacarla es parte
+     porque apuntan a `auth.users` y una siembra no puede crear cuentas. Hoy
+     la siembra las llena igual, porque carga con los disparadores y las
+     claves foráneas apagados
+     (`supabase/migrations/0002_siembra_ficticia.sql:32`), así que la exención
+     se sacó. Sacarla es parte
      del trabajo: una exención que sobra vuelve verde para siempre una columna
      que después se puede vaciar sin que nadie se entere. */
   /* Y `verificaciones_asistente.verificado_por` **no** se exime, aunque una
@@ -99,7 +101,7 @@ const LA_SIEMBRA_NO_PUEDE = new Map([
    Vale el mismo criterio de dos mitades que arriba, y las dos hacen falta:
    que una migración no la pueda llenar **y** que algo sí la recorra. Hoy no
    hay ninguna adentro, y las que quedan vacías son el pendiente 111 —eran
-   cuatro; la migración 0049 sembró las fichadas y quedan tres—. */
+   cuatro; la siembra ya carga las fichadas y quedan tres—. */
 const LA_SIEMBRA_NO_PUEDE_TABLA = new Map([]);
 
 let fallos = 0;

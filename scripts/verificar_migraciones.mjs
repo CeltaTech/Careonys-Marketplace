@@ -28,18 +28,19 @@
    - **Renumerarla.** Cambiarle los cuatro dígitos del principio la mueve de
      lugar en el orden de aplicación.
    - **Meter una nueva con un número que ya pasó.** Es la misma reordenación
-     vista del otro lado: quien ya llegó a la 0016 nunca va a correr una 0015
-     que apareció después.
+     vista del otro lado: quien ya corrió hasta el número más alto que había
+     nunca va a correr una anterior que apareció después.
 
    **El tope contra el que se mide un alta no cuenta los archivos que ese mismo
    commit está moviendo**, y sin eso el mismo hecho se cuenta dos veces. Es lo
-   que le pasó a la primera medición, que dijo catorce donde hay doce: la 0011
-   nueva entró en el commit que borra la 0011 vieja —mismo número, no se mueve
-   nada, y la baja ya está contada—, y la 0015 nueva entró en el commit que
-   renumera la 0015 anterior, que es justamente el hueco que le hace lugar y que
-   también está contado. Un hecho, un renglón. En cualquier otra forma el tope
-   sigue apretando igual: si el commit borra la 0035 y trae una 0030, el tope
-   baja a 0034 y la 0030 sigue dando rojo.
+   que le pasó a la primera medición, que dijo catorce donde hay doce: en dos
+   commits el archivo que entraba traía el número del que ese mismo commit
+   estaba borrando o renumerando —mismo número, no se mueve nada, y el hueco que
+   le hace lugar ya está contado como baja o como renumeración—, así que el alta
+   lo contaba de nuevo. Un hecho, un renglón. En cualquier otra forma el tope
+   sigue apretando igual: si un commit borra la migración más alta y trae una
+   con un número anterior, el tope baja al que quede y la nueva sigue dando
+   rojo.
 
    Las cuatro se miran sobre los commits que tocan `supabase/migrations/`, y de
    cada uno se mira qué le hizo a qué archivo. **Y también sobre lo que todavía
@@ -48,16 +49,17 @@
    el aviso llegaría un commit tarde —con la migración movida y publicada—, así
    que lo que está cambiado contra `HEAD`, preparado o no, se juzga igual que un
    commit más, con la fecha de hoy. Un renombre que sólo cambia el
-   texto de atrás del número no es una reordenación y no se juzga: la 0007 pasó
-   de `vidriera` a `directorio` sin moverse de lugar.
+   texto de atrás del número no es una reordenación y no se juzga: cambiarle el
+   nombre que va detrás —de `vidriera` a `directorio`, por ejemplo— no la mueve
+   de lugar.
 
    ---- Dónde empieza a mirar, y por qué no es un perdón ----
 
    El 8 de septiembre de 2026 las setenta y cuatro migraciones se juntaron en
-   dos archivos que arman exactamente la misma base, comprobado contra ella con
+   tres archivos que arman exactamente la misma base, comprobado contra ella con
    cincuenta huellas —estructura, políticas, funciones, índices, disparadores,
    permisos, restricciones, vistas, depósitos y el contenido de las treinta y
-   seis tablas—. Eso es, visto desde acá, setenta y cuatro bajas y dos altas con
+   seis tablas—. Eso es, visto desde acá, setenta y cuatro bajas y tres altas con
    números que el árbol ya había pasado: las cuatro maneras a la vez.
 
    **Ese commit es el punto de partida, y todo lo anterior queda del otro lado.**
@@ -70,12 +72,15 @@
    fecha no, porque perdonaría todo lo que se haga ese mismo día. Por el hash
    tampoco, porque este chequeo corre en el gancho de antes de cada commit y ahí
    el commit todavía no tiene hash. Se lo reconoce porque es el commit que da de
-   alta los dos archivos del aplastamiento, cosa que pasa una sola vez: después
+   alta los tres archivos del aplastamiento, cosa que pasa una sola vez: después
    ya existen, y traerlos de nuevo sería editarlos, que es otra cosa y da rojo.
 
    Lo de antes se cuenta igual y se muestra con `--detalle`, para que el número
-   no desaparezca. Eran doce incumplimientos, todos del 24 y el 25 de agosto de
-   2026: diez ediciones, una baja y una renumeración.
+   no desaparezca. Del 24 y el 25 de agosto de 2026 son doce: diez ediciones, una
+   baja y una renumeración. A ésos se les suman las setenta y cuatro bajas del
+   aplastamiento mismo, que caen de este lado del corte por el mismo motivo, así
+   que el número que se muestra es más grande que aquellos doce y no quiere decir
+   que se haya roto nada nuevo.
 
    ---- Qué NO mira ----
 
@@ -106,9 +111,10 @@ const CARPETA = 'supabase/migrations';
 const SEPARADOR = String.fromCharCode(1);   /* lo que %x01 deja entre commits */
 
 /* El aplastamiento: el commit que juntó las setenta y cuatro migraciones en
-   estos dos archivos. Es el punto de partida, y lo de antes está en el
+   estos tres archivos. Es el punto de partida, y lo de antes está en el
    historial y no se puede arreglar sin romper la misma regla que lo juzga. */
-const EL_APLASTAMIENTO = ['0001_base_del_esquema.sql', '0002_siembra_ficticia.sql'];
+const EL_APLASTAMIENTO = ['0001_base_del_esquema.sql', '0002_siembra_ficticia.sql',
+  '0003_dos_claves_de_catalogo_fuera_del_vocabulario.sql'];
 
 /** El número de aplicación de una migración: los cuatro dígitos del principio. */
 const numeroDe = (ruta) => (ruta.split('/').pop() || '').slice(0, 4);

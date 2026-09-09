@@ -118,7 +118,7 @@ const tokens = new Set(
    Las de afuera —Font Awesome— no entran: la lista es de las hojas propias,
    que son las que se cuentan arriba.
 
-   Se mide porque estaba escrito a mano en `docs/INVENTARIO.md` y era falso: el
+   Se mide porque estaba escrito a mano y era falso: el
    31 de agosto de 2026 esa tabla decía que `css/styles.css` la usaban «las 10
    páginas de la raíz» cuando son 15, que `tokens.css` y `utilidades.css` las
    usaban «las 16 pantallas» cuando son 17, y le daba 285 renglones a cada
@@ -279,7 +279,7 @@ const tablaReparto =
   'HTML:\n' +
   conBloque.map((c) => `${enEspanol(c.bloque)} en \`${c.archivo}\``).join(', ') + '.\n';
 
-/* ── LA TABLA DE LAS HOJAS, PARA docs/INVENTARIO.md ──────────────────────
+/* ── LA TABLA DE LAS HOJAS, PARA README.md ───────────────────────────
    Qué hoja hay, cuánto mide y quién la enlaza. La columna de la derecha decía
    a mano cuántas pantallas eran, y era la parte que más envejeció: se agrega
    una pantalla y nadie vuelve a esa tabla. Ahora sale del marcado. */
@@ -309,7 +309,7 @@ const tablaHojas =
    que están escritos en el README. La fecha no se exporta a propósito: cambia
    todos los días y compararla pondría el chequeo en rojo cada mañana. */
 /* ── Y LOS GUIONES DE `scripts/` ───────────────────────────────────
-   `docs/INVENTARIO.md` abre la lista de guiones con una frase de tres números,
+   `README.md` abre la lista de guiones con una frase de tres números,
    y esa frase envejeció en menos de un día: decía «51 archivos `.mjs`» y
    «doce herramientas sueltas» con la fecha «Contada el 31 de agosto de 2026»
    escrita al lado, del mismo día en que ya eran 52 y trece, porque
@@ -440,14 +440,14 @@ escribirEntreMarcas(
    son 17, y le daba dos renglones de menos a cada `styles-pwa.css`. Seis
    números equivocados en una tabla que nadie miraba. */
 escribirEntreMarcas(
-  ['docs', 'INVENTARIO.md'], ABRE_HOJAS, CIERRA_HOJAS, tablaHojas,
+  ['README.md'], ABRE_HOJAS, CIERRA_HOJAS, tablaHojas,
   'La tabla de las hojas de estilo'
 );
 
 /* Y la frase de los guiones, del mismo archivo, que envejeció en menos de un
    día. */
 escribirEntreMarcas(
-  ['docs', 'INVENTARIO.md'], ABRE_GUIONES, CIERRA_GUIONES, parrafoGuiones.trimEnd(),
+  ['README.md'], ABRE_GUIONES, CIERRA_GUIONES, parrafoGuiones.trimEnd(),
   'La frase de los guiones'
 );
 }

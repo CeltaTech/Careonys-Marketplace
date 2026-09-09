@@ -3,8 +3,9 @@
 
        node scripts/verificar_patrones_contacto.mjs
 
-   Desde la migración 0063 las reglas con las que se reconoce un dato de contacto
-   viven en la tabla `patrones_de_contacto`, y `data/patrones-contacto.json` es
+   Las reglas con las que se reconoce un dato de contacto viven en la tabla
+   `patrones_de_contacto` (`supabase/migrations/0001_base_del_esquema.sql:2928`),
+   y `data/patrones-contacto.json` es
    una copia generada, que existe sólo porque el reconocedor del navegador tiene
    que poder avisar sin conexión.
 
@@ -17,7 +18,7 @@
    Mira dos cosas, y son distintas a propósito:
 
      1. **Lo que se puede comprobar siempre**, con base o sin ella: que cada
-        regla tenga la forma que exige la migración 0063 —clave, expresión que
+        regla tenga la forma que exige la tabla —clave, expresión que
         compila, banderas conocidas, motivo en los tres idiomas—, que ninguna use
         algo que Postgres no entiende, y que el aviso esté en los tres idiomas.
         Estas comprobaciones fallan de verdad, y fallan sin conexión.
@@ -39,7 +40,8 @@ import { seRevisaron } from './recorrido.mjs';
 const IDIOMAS = ['es-AR', 'en', 'pt-BR'];
 
 /* Lo que Postgres no sabe traducir. Es la misma lista que la restricción
-   `el_patron_lo_entienden_los_dos_lados` de la migración 0063, y está acá para
+   `el_patron_lo_entienden_los_dos_lados`
+   (`supabase/migrations/0001_base_del_esquema.sql:2939`), y está acá para
    que el problema se vea al escribir la regla y no al aplicar la migración:
    `\B`, las referencias hacia atrás `\1`..`\9` y los cuatro miradores
    `(?=`, `(?!`, `(?<=`, `(?<!`. */

@@ -42,18 +42,19 @@
       y no lo está. Queda afuera `verificar_todo.mjs`, que no es un chequeo
       sino el que los corre.
    6. Que si un documento manda a correr `node scripts/X`, `X` exista y
-      `docs/INVENTARIO.md` diga qué hace. Es la quinta un paso afuera de la red:
+      la lista de guiones del `README.md` diga qué hace. Es la quinta un paso
+      afuera de la red:
       aquélla mira los chequeos, que entran solos en `verificar_todo.mjs`; ésta
       mira las herramientas que **hay que acordarse de correr**, y de ésas
       dice el `CLAUDE.md` del producto que una que hay que acordarse de correr
       es una que no corre. Medido el 31 de agosto de 2026: de los doce
       guiones que la documentación manda a correr, **dos no figuraban en
-      ninguna parte del inventario** —`comprobar_publicacion.mjs`, que es la
+      ninguna parte de la lista** —`comprobar_publicacion.mjs`, que es la
       única herramienta que certifica una publicación, y
       `probar_alta_y_baja.mjs`, que prueba la puerta de alta y baja contra el
       servidor—, y un tercero, `medir_estado.mjs`, de donde salen todos los
       números que la documentación no escribe a mano, sólo se nombraba de paso
-      adentro del párrafo de otro. La lista del inventario **es una selección a
+      adentro del párrafo de otro. Esa lista **es una selección a
       propósito** —lo dice ahí mismo: «los demás no hace falta recordarlos»—, así
       que la regla no le pide que estén todos: le pide que esté el que un
       documento te manda a correr, que es el único caso en que no saber qué
@@ -78,7 +79,7 @@
    5. Contra una tabla del README de mentira, para que el lector de la tabla no
       confunda una fila con un nombre citado al pasar en un párrafo.
    6. Contra un documento de mentira que manda a correr tres guiones y nombra
-      un cuarto sin mandarlo, y contra una lista de inventario de mentira. Los
+      un cuarto sin mandarlo, y contra una lista de guiones de mentira. Los
       dos lectores tienen que separar **la orden de correr** de la simple
       mención, y **la fila** del nombre citado en un párrafo: son las dos formas
       en que esta regla se pondría roja sin motivo, y un rojo sin motivo en un
@@ -184,8 +185,18 @@ export function clavesConLaExtension(texto) {
 
    Se miran sólo las claves que traen extensión o barra: las otras nombran una
    tabla, una columna, una función o un color, y ahí no hay archivo que
-   encontrar. */
+   encontrar.
+
+   Y antes de mirarla se le saca el renglón, porque acá se cita
+   `archivo.sql:160` y `archivo.mjs:12-20`. Sin sacárselo, esa clave no termina
+   en extensión, no tenía «pinta de archivo» y se salteaba **entera**: este
+   chequeo dijo ✔ durante días sobre una exención que nombraba
+   `0005_acceso_por_sesion.sql:160`, una migración que el aplastamiento se
+   llevó. Encontrado el 8 de septiembre de 2026, y es la forma exacta de la
+   enfermedad que este archivo persigue: la regla estaba escrita, el resumen la
+   anunciaba, y no miraba. */
 const CON_PINTA_DE_ARCHIVO = /(\/|\.(mjs|js|html|css|md|sql|json|webmanifest))$/;
+const SIN_RENGLON = (clave) => clave.replace(/(?::\d+)+(?:-\d+)?$/, '');
 const MAPA_CON_NOMBRE = /const ([A-Z][A-Z0-9_]*) = new Map\(\[\r?\n([\s\S]*?)^\]\);/gm;
 
 /* Y hay una exención cuyas claves **no tienen que estar**: `AJENOS`, en
@@ -203,8 +214,9 @@ export function exencionesQueMienten(archivo, texto, existe) {
   for (const mapa of sinComentarios(texto).matchAll(MAPA_CON_NOMBRE)) {
     const deAfuera = NOMBRAN_LO_DE_AFUERA.has(archivo + ' ' + mapa[1]);
     for (const clave of mapa[2].matchAll(CLAVE)) {
-      if (!CON_PINTA_DE_ARCHIVO.test(clave[1])) continue;
-      const esta = existe(clave[1]);
+      const ruta = SIN_RENGLON(clave[1]);
+      if (!CON_PINTA_DE_ARCHIVO.test(ruta)) continue;
+      const esta = existe(ruta);
       if (!deAfuera && !esta) {
         mentiras.push({ lista: mapa[1], clave: clave[1], porque: 'ese archivo no est\u00e1' });
       }
@@ -240,7 +252,7 @@ export function clavesSinSuColumna(texto, columnas) {
   const perdidas = [];
   for (const mapa of sinComentarios(texto).matchAll(MAPA_CON_NOMBRE)) {
     for (const clave of mapa[2].matchAll(CLAVE)) {
-      if (CON_PINTA_DE_ARCHIVO.test(clave[1])) continue;
+      if (CON_PINTA_DE_ARCHIVO.test(SIN_RENGLON(clave[1]))) continue;
       if (!CON_PINTA_DE_COLUMNA.test(clave[1])) continue;
       const [tabla, columna] = clave[1].split('.');
       const suyas = columnas.get(tabla);
@@ -272,7 +284,7 @@ function enLaTablaDelReadme(texto) {
 }
 
 
-/* ── Y QUE EL INVENTARIO DIGA QUÉ HACE LO QUE TE MANDAN A CORRER ────────
+/* ── Y QUE EL README DIGA QUÉ HACE LO QUE TE MANDAN A CORRER ───────────
    La quinta mira los chequeos, que no hace falta recordar: `verificar_todo.mjs`
    los busca en la carpeta y el próximo entra solo. Ésta mira las otras, las
    que **hay que acordarse de correr**, y son las que se pierden.
@@ -289,10 +301,10 @@ function mandadosACorrer(texto) {
   );
 }
 
-/* Y las filas de la lista de guiones del inventario. Fila, no mención: tiene
-   que empezar el renglón, igual que en la tabla del README, porque el inventario
-   nombra guiones adentro de la descripción de otros todo el tiempo. */
-function enLaListaDelInventario(texto) {
+/* Y las filas de la lista de guiones del README. Fila, no mención: tiene
+   que empezar el renglón, igual que en la tabla de los chequeos, porque esa
+   lista nombra guiones adentro de la descripción de otros todo el tiempo. */
+function enLaListaDeGuiones(texto) {
   return new Set(
     Array.from(texto.matchAll(/^\| `(scripts\/[a-zA-Z_]+\.\.?(?:mjs|py))` \|/gm))
       .map((a) => a[1])
@@ -428,6 +440,16 @@ if (mienten('probar_x.mjs', conMapa('AFUERA', 'verificar_todo.mjs')).length > 0)
 if (mienten('verificar_esquema.mjs', conMapa('SIN_ORGANIZACION', 'tenants')).length > 0) {
   fallas.push('Se quejó de una clave que no nombra ningún archivo.');
 }
+/* Y con el renglón pegado, que es como se cita en este proyecto. Sin estas dos
+   líneas, el día que alguien escriba mal `SIN_RENGLON` el agujero se reabre y el
+   chequeo vuelve a decir ✔ sin mirar. */
+if (mienten('probar_x.mjs', conMapa('AFUERA', 'verificar_que_no_existe.mjs:160')).length === 0) {
+  fallas.push('Dio por buena una exención que nombra, con el renglón pegado, un archivo que no existe.');
+}
+if (mienten('probar_x.mjs', conMapa('AFUERA', 'verificar_todo.mjs:12-20')).length > 0) {
+  fallas.push('Se quejó de una exención con el renglón pegado cuyo archivo está donde dice.');
+}
+
 /* Y la que va al revés, en los dos sentidos. */
 if (mienten('citas.mjs', conMapa('AJENOS', 'supabase/migrations/0999_de_careonys.sql')).length > 0) {
   fallas.push('Se quejó de una exención que nombra a propósito un archivo de afuera.');
@@ -505,12 +527,12 @@ const LISTA_DE_MENTIRA = [
   'Acá se nombra a `scripts/arreglar_de_mentira.mjs` en el medio de un renglón.'
 ].join('\n');
 
-const conFila = enLaListaDelInventario(LISTA_DE_MENTIRA);
+const conFila = enLaListaDeGuiones(LISTA_DE_MENTIRA);
 if (conFila.size !== 2) {
-  fallas.push('El lector del inventario leyó ' + conFila.size + ' filas y tenía que leer 2.');
+  fallas.push('El lector de la lista leyó ' + conFila.size + ' filas y tenía que leer 2.');
 }
 if (conFila.has('scripts/arreglar_de_mentira.mjs')) {
-  fallas.push('Tomó por fila del inventario a un guion nombrado en un párrafo.');
+  fallas.push('Tomó por fila de la lista a un guion nombrado en un párrafo.');
 }
 
 
@@ -613,7 +635,7 @@ for (const nombre of [...enElReadme].filter((n) => !enLaCarpeta.has(n))) {
   );
 }
 
-/* Y los documentos contra el inventario. El corpus son todos los `.md` del
+/* Y los documentos contra la lista de guiones. El corpus son todos los `.md` del
    proyecto, con el recorrido que ya excluye las cajas fuertes. */
 const documentos = archivos(join(aca, '..'), ['.md']);
 seRevisaron(documentos.length, 'ningún documento en el que buscar `node scripts/X`');
@@ -627,9 +649,9 @@ for (const doc of documentos) {
 }
 seRevisaron(ordenados.size, 'ningún guion que la documentación mande a correr');
 
-const conSuFila = enLaListaDelInventario(
-  readFileSync(join(aca, '..', 'docs', 'INVENTARIO.md'), 'utf8'));
-seRevisaron(conSuFila.size, 'ninguna fila en la lista de guiones del inventario');
+const conSuFila = enLaListaDeGuiones(
+  readFileSync(join(aca, '..', 'README.md'), 'utf8'));
+seRevisaron(conSuFila.size, 'ninguna fila en la lista de guiones del README');
 
 for (const [guion, donde] of ordenados) {
   if (!existsSync(join(aca, '..', guion))) {
@@ -641,7 +663,8 @@ for (const [guion, donde] of ordenados) {
   }
   if (!conSuFila.has(guion)) {
     fallas.push(
-      `\`${donde}\` manda a correr \`${guion}\` y \`docs/INVENTARIO.md\` no lo nombra.` +
+      `\`${donde}\` manda a correr \`${guion}\` y la lista de
+      guiones del \`README.md\` no lo nombra.` +
       '\n      Una herramienta que hay que acordarse de correr y que además no dice en\n' +
       '      ninguna parte qué hace es una herramienta que no corre.');
   }
@@ -696,7 +719,7 @@ if (fallas.length > 0) {
     'se renombró, se corrige la clave; si se fue, se borra el renglón. Lo mismo\n' +
     'vale para la que nombra una columna: sale de las migraciones, no de la base.\n' +
     'Y el guion que un documento manda a correr se agrega a la lista de guiones\n' +
-    'de `docs/INVENTARIO.md`, con una fila que empiece el renglón. Esa lista es una\n' +
+    'del `README.md`, con una fila que empiece el renglón. Esa lista es una\n' +
     'selección a propósito y no tiene que estar entera; tiene que estar el que\n' +
     'alguien va a ir a correr sin saber qué hace.'
   );
@@ -712,5 +735,5 @@ console.log(
   `columna que no declara ninguna de las ${migraciones.length} migraciones. Y de los ` +
   `${ordenados.size} guiones que los ${documentos.length} documentos mandan a correr, los ` +
   `${ordenados.size} existen y los ${ordenados.size} tienen su fila entre las ` +
-  `${conSuFila.size} de la lista de \`docs/INVENTARIO.md\`.`
+  `${conSuFila.size} de la lista de guiones del \`README.md\`.`
 );

@@ -41,6 +41,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { conOrganizacion,
          VISTAS_AL_ALCANCE_ANONIMO } from './verificar_esquema.mjs';
+import { seRevisaron } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -85,24 +86,47 @@ for (const t of textos) {
 // Sin este renglón el barrido se saltea justo la tabla que sí se lee sin sesión.
 const SU_ID_ES_LA_PRESTADORA = ['tenants'];
 
+// Lo que sale de leer las migraciones se guarda aparte de la lista final, y no
+// es un rodeo: es lo único que este guion puede perder sin enterarse. La lista
+// final suma además `SU_ID_ES_LA_PRESTADORA`, que está escrito acá a mano, así
+// que nunca queda vacía por más que la lectura no haya encontrado nada. Contar
+// sobre la lista final sería contar el renglón escrito a mano: un número que da
+// uno aunque no se haya leído una sola migración.
+const conColumna = [...new Set([...conOrganizacion(textos)].map(nombreDeHoy))];
+
+/* Y acá se para si no quedó nada que preguntar. La lista de tablas no está
+   escrita a mano: sale de leer las migraciones, así que una carpeta vacía, un
+   cambio en la forma de declarar la columna de la Prestadora o una expresión que
+   dejó de enganchar dan **cero tablas**. Con cero tablas el bucle de abajo casi no
+   hace pedidos y el barrido termina anunciando que no se escapó nada, que es
+   justamente lo que este guion existe para no decir: verde por no haber mirado.
+   La única red que había era el bloque de «SOBRA LA EXCEPCIÓN» del final, y esa
+   red depende de que `VISTAS_AL_ALCANCE_ANONIMO` tenga entradas: el día que quede
+   vacía —que es un estado normal y ya pasó— el barrido se pondría verde sin haber
+   preguntado una sola vez. */
+seRevisaron(archivos.length, 'una sola migración `.sql` de la que sacar las tablas');
+seRevisaron(conColumna.length, 'una sola tabla con columna de Prestadora en las migraciones');
+seRevisaron(vistas.size, 'una sola vista de `public` en las migraciones');
+
 const tablas = [...new Set([
-  ...[...conOrganizacion(textos)].map(nombreDeHoy),
+  ...conColumna,
   ...SU_ID_ES_LA_PRESTADORA,
   ...vistas
 ])].sort();
 
 // --- Lo que sí se lee sin sesión, a propósito y con motivo escrito ----------
-// **Hoy está vacía, y eso es la noticia.** Tenía dos entradas hasta la migración
-// 0021: `tenants`, que devolvía la lista de Prestadoras activas, y
-// `directorio`, que devolvía los legajos publicados de todas mezclados.
-// El Desarrollador cerró las dos el 25 de agosto de 2026 —no hay lista de
-// Prestadoras para nadie, y cada Prestadora tiene su propio directorio—, así
-// que ahora el rol anónimo no lee ninguna tabla ni vista de este esquema: entra
-// por tres funciones y las tres le exigen nombrar una Prestadora.
+// **Hoy tiene dos entradas, y las dos están ahí porque alguien las decidió.** Son
+// la oferta general de cursos y la oferta comercial de la portada: las dos las
+// dibujan pantallas que se ven sin cuenta, las dos acotan adentro de su propio
+// cuerpo lo que publican —el catálogo general del producto y nada de ninguna
+// Prestadora— y ninguna de las dos deja escribir. Fuera de ellas, el rol anónimo
+// no lee ninguna tabla ni vista de este esquema: entra por funciones, y todas le
+// exigen nombrar una Prestadora.
 //
-// La lista se deja escrita igual. Si algún día vuelve a hacer falta abrir algo,
-// el lugar donde se escribe el motivo ya existe, y el barrido sigue haciendo la
-// única pregunta que importa: ¿esto se abrió porque alguien lo decidió?
+// Hubo un tiempo en que esta lista estuvo vacía y se dejó escrita igual, que es lo
+// que hizo que el día que volvió a hacer falta abrir algo el lugar donde escribir
+// el motivo ya existiera. El barrido sigue haciendo la única pregunta que importa,
+// que no es «¿esto está abierto?» sino «¿esto se abrió porque alguien lo decidió?».
 //
 // Y volvió a hacer falta. El 1 de septiembre de 2026, la primera vez que este
 // barrido se corrió desde que quedó enganchado a `probar_todo.mjs`, encontró
@@ -114,12 +138,12 @@ const tablas = [...new Set([
 // 2026 este archivo tenía su propia copia con `oferta_de_cursos` adentro, que
 // decía palabra por palabra lo mismo que `VISTAS_AL_ALCANCE_ANONIMO` de
 // `scripts/verificar_esquema.mjs`. Una lista repetida se despega, y ésta se
-// despegó: la migración 0072 abrió `oferta_comercial_publica` con su motivo
-// escrito allá, y el día que llegó a la base publicada este barrido la denunció
-// como escape. Es exactamente lo que ya le había pasado a
-// `probar_permisos_en_vivo.mjs`, que por eso importa la suya. Acá se hace lo
-// mismo, y con eso el motivo vive en un solo lugar: donde está escrito de qué
-// migración salió y qué acota su cuerpo.
+// despegó: `oferta_comercial_publica` se abrió con su motivo escrito allá, y el
+// día que llegó a la base publicada este barrido la denunció como escape. Es
+// exactamente lo que ya le había pasado a `probar_permisos_en_vivo.mjs`, que por
+// eso importa la suya. Acá se hace lo mismo, y con eso el motivo vive en un solo
+// lugar: donde está escrito en qué renglón vive el cuerpo de la vista y qué es lo
+// que ese cuerpo acota.
 const ABIERTAS_A_PROPOSITO = VISTAS_AL_ALCANCE_ANONIMO;
 
 // --- La dirección y la clave publicable, de donde ya están ------------------

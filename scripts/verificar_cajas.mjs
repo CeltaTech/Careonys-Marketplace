@@ -22,7 +22,8 @@
    Y se prueban de las dos puntas, porque cerrar de más también es una falla:
    `nueva-clave.html` es la pantalla donde alguien cambia su contraseña, no un
    lugar donde haya una guardada, y tomarla por caja fuerte sacaría del recorrido
-   a seis archivos de código de verdad sin que nadie se entere.
+   a los siete archivos de código que hoy nombran la palabra «clave», sin que nadie
+   se entere.
 
    CÓMO SE PRUEBA, Y POR QUÉ ASÍ
    No se mira el proyecto: se arma un árbol de mentira en la carpeta temporal del
@@ -37,10 +38,13 @@
    pasaría.
 =================================================== */
 
-import { mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdirSync, writeFileSync, rmSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, basename } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { join, basename, dirname } from 'node:path';
 import { archivos, nuncaSeAbre } from './recorrido.mjs';
+
+const proyecto = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 // Las formas en que una misma caja fuerte puede aparecer escrita. Ninguna de
 // éstas existe en el proyecto: son las que podrían aparecer mañana.
@@ -63,12 +67,29 @@ const ARCHIVOS_CERRADOS = [
 ];
 
 // Y la otra punta: código del proyecto que nombra la palabra sin guardar nada.
-// Los seis primeros existen hoy; si alguno de éstos se cerrara, el recorrido
-// perdería archivos de verdad y este chequeo tiene que agarrarlo.
+// Si alguno de éstos se cerrara, el recorrido perdería archivos de verdad y este
+// chequeo tiene que agarrarlo.
+//
+// **Van con su ruta, y se comprueba que la ruta exista.** `nuncaSeAbre()` contesta
+// por el nombre y no por el disco, así que un nombre inventado pasa esta prueba
+// igual que uno de verdad, y una lista de nombres inventados sería una prueba que
+// no puede fallar. Ya pasó: hasta que las setenta y cuatro migraciones se
+// aplastaron en tres, acá figuraba `0010_claves_de_catalogo_en_la_siembra.sql`,
+// que dejó de existir sin que nada se pusiera rojo, y durante días este chequeo
+// dijo que cuidaba un archivo que no estaba.
 const CODIGO_QUE_SE_ABRE = [
-  'nueva-clave.html', 'recuperar-clave.html', 'clave.js', 'verificar_claves.mjs',
-  '0010_claves_de_catalogo_en_la_siembra.sql', 'clave.jsx', 'claves.json'
+  'nueva-clave.html',
+  'recuperar-clave.html',
+  'js/clave.js',
+  'scripts/verificar_claves.mjs',
+  'supabase/migrations/0003_dos_claves_de_catalogo_fuera_del_vocabulario.sql'
 ];
+
+// Y las formas que todavía no existen en el proyecto pero podrían aparecer mañana.
+// Van aparte justamente porque de éstas no se puede pedir que estén en el disco: si
+// se mezclaran con las de arriba, la comprobación de existencia habría que aflojarla
+// para todas, y volveríamos a no tener ninguna.
+const CODIGO_QUE_SE_ABRIRIA = ['clave.jsx', 'claves.json'];
 
 // Y las que sí se abren, para que la comparación no sea de una sola punta. Si
 // alguna de éstas quedara afuera, el chequeo tendría que fallar igual: una regla
@@ -122,9 +143,21 @@ try {
       fallas.push('«' + nombre + '» anuncia una clave en el nombre y se abrió igual');
     }
   }
-  for (const nombre of CODIGO_QUE_SE_ABRE) {
+  /* La ruta se comprueba antes que el nombre. Un renglón de esta lista que ya no
+     apunta a ningún archivo no denuncia nada y no avisa de que dejó de denunciar:
+     es la mitad del chequeo que se apaga sola. */
+  for (const ruta of CODIGO_QUE_SE_ABRE) {
+    if (!existsSync(join(proyecto, ruta))) {
+      fallas.push('«' + ruta + '» ya no existe: este renglón dice cuidar un archivo ' +
+        'que no está, y una prueba sobre un nombre inventado pasa siempre');
+    }
+    if (nuncaSeAbre(basename(ruta))) {
+      fallas.push('«' + ruta + '» es código del proyecto y se lo tomó por caja fuerte');
+    }
+  }
+  for (const nombre of CODIGO_QUE_SE_ABRIRIA) {
     if (nuncaSeAbre(nombre)) {
-      fallas.push('«' + nombre + '» es código del proyecto y se lo tomó por caja fuerte');
+      fallas.push('«' + nombre + '» sería código del proyecto y se lo tomó por caja fuerte');
     }
   }
 } finally {
@@ -141,6 +174,8 @@ if (fallas.length) {
 console.log(
   'Cajas fuertes verificadas: ' + CERRADAS.length + ' formas de nombrar una carpeta y ' +
   ARCHIVOS_CERRADOS.length + ' de nombrar un archivo, todas cerradas; y ' +
-  (ABIERTAS.length + CODIGO_QUE_SE_ABRE.length) + ' nombres parecidos que sí se recorren, ' +
+  (ABIERTAS.length + CODIGO_QUE_SE_ABRE.length + CODIGO_QUE_SE_ABRIRIA.length) +
+  ' nombres parecidos que sí se recorren (' + CODIGO_QUE_SE_ABRE.length +
+  ' de ellos, archivos que están de verdad en el disco), ' +
   'para que la regla no cierre de más.'
 );

@@ -40,10 +40,12 @@
       disparador sobre `tenants`**, para las que vengan mañana. Un
       `insert … select … from public.tenants` sin acotar corre una sola vez, sobre
       las que había ese día, y toda Prestadora nacida después arranca sin eso. Ya
-      pasó: la 0018 sembró de fábrica el puntaje, y `cuidarsur`, nacida en la 0035,
-      tenía cero (pendiente 97, cerrado por la 0046). El disparador no tiene que
-      estar en la misma migración que la siembra —el arreglo llega después, como
-      llegó acá—, pero tiene que estar en alguna.
+      pasó: una siembra dejó de fábrica el puntaje de las Prestadoras que había
+      ese día, y una nacida después arrancó con cero (pendiente 97, ya cerrado).
+      El disparador no tiene que estar en la misma migración que la siembra —el
+      arreglo puede llegar después, como llegó acá—, pero tiene que estar en
+      alguna: hoy lo atiende `la_prestadora_nace_configurada`
+      (`supabase/migrations/0001_base_del_esquema.sql:1476`).
    7. **Toda política sobre `storage.objects` nombra la Organización en su
       condición** (regla de la empresa «los archivos se guardan privados por
       defecto… la ruta empieza por la Organización, y la política lo exige»).
@@ -66,11 +68,11 @@
       es. `auth.jwt()` entra en la lista aunque el token venga firmado: adentro
       viaja `user_metadata`, que en Supabase lo escribe la propia cuenta.
       Resolverla por membresía es lo que hace `public.prestadora_actual()`
-      (`supabase/migrations/0002_aislamiento_por_prestadora.sql:34`), que va a
-      buscar el `tenant_id` a `profiles` por `auth.uid()`. Su comentario ya
-      decía «sale de su membresía, nunca del pedido»
-      (`supabase/migrations/0002_aislamiento_por_prestadora.sql:48`); esta regla
-      es lo que hace que eso siga siendo cierto.
+      (`supabase/migrations/0001_base_del_esquema.sql:417`), que va a buscar el
+      `tenant_id` a `profiles` por `auth.uid()`. Su propio comentario lo dice con
+      todas las letras —«sale de su membresía, nunca del pedido»,
+      `supabase/migrations/0001_base_del_esquema.sql:429`—, y esta regla es lo
+      que hace que eso siga siendo cierto.
 
       **Esta regla no tiene lista de exenciones, y es a propósito.** Hoy no hay
       un solo caso en las migraciones, así que la lista nacería vacía, y una
@@ -80,21 +82,25 @@
       día que aparezca un caso legítimo se crea la lista **con ese caso adentro**,
       y ahí sí la prueba la alcanza.
    9. **Ningún permiso de tabla le da `all` ni `truncate` a `anon` ni a
-      `authenticated`** (regla de la empresa «mínimo privilegio siempre»). Es
-      el agujero que encontró y cerró la 0032, escrito ahí con todas las
-      letras: «`TRUNCATE`, que no mira ninguna política. La RLS filtra filas;
-      vaciar la tabla no es filtrar filas. Cualquiera con sesión iniciada podía
-      vaciar cualquiera de las diecisiete tablas. Es el agujero de verdad»
-      (`supabase/migrations/0032_los_permisos_de_tabla_al_minimo.sql:16`). Un
-      `grant all` sobre una tabla concede además `REFERENCES` y `TRIGGER`, que
-      ninguna pantalla usa y que PostgREST no sabe pedir. Los verbos se escriben
-      uno por uno.
+      `authenticated`** (regla de la empresa «mínimo privilegio siempre»). El
+      agujero es `truncate`, que no mira ninguna política: la RLS filtra filas y
+      vaciar la tabla no es filtrar filas, así que cualquiera con sesión iniciada
+      podría vaciar cualquiera de las tablas sin que ninguna política lo frenara.
+      Y no hace falta que nadie lo escriba para que aparezca, porque la
+      instalación lo regala sola: «Toda base de Supabase nace concediéndoles a
+      `anon` y a `authenticated` los permisos por omisión de cada tabla y cada
+      secuencia que se cree en `public`, y entre ellos están TRUNCATE, REFERENCES
+      y TRIGGER» (`supabase/migrations/0001_base_del_esquema.sql:48`), que es por
+      lo que esa migración arranca sacándoselos con `ALTER DEFAULT PRIVILEGES`
+      antes de crear nada. Un `grant all` escrito a mano se los devuelve todos de
+      una vez, `REFERENCES` y `TRIGGER` incluidos, que ninguna pantalla usa y que
+      PostgREST no sabe pedir. Los verbos se escriben uno por uno.
 
       **La regla rige desde la primera migración, porque no hay ninguna
-      anterior.** Cuando eran setenta y cuatro, el límite era la 0032: antes de
-      ella estaba el volcado que dejó la instalación, con veintiún `GRANT ALL`
-      que ella vino a sacar, y una migración aplicada no se edita, así que
-      ponerle rojo a la historia sólo enseñaba a apagar el chequeo. El
+      anterior.** Cuando eran setenta y cuatro había un límite: antes de él
+      estaba el volcado que dejó la instalación, con veintiún `GRANT ALL` que
+      una migración posterior vino a sacar, y una migración aplicada no se edita,
+      así que ponerle rojo a la historia sólo enseñaba a apagar el chequeo. El
       aplastamiento no dejó ese camino escrito: la 0001 es el estado al que
       llevaba, con los permisos ya al mínimo, y del otro lado del límite no
       queda ningún archivo. `service_role` sigue afuera porque es la llave del
@@ -119,12 +125,12 @@
       —recargar dos veces no rompe—; lo que rompe es no recargar, y por eso la
       siembra avisa igual al terminar.
 
-      **Y ésta también rige desde la primera, por lo mismo que la novena.** El
-      límite era la 0025: veintiuna de las veinticuatro anteriores cambiaban el
-      esquema sin avisar, y estaban aplicadas hace tiempo. El aplastamiento no
-      dejó ninguna de las dos cosas. Quedaron dos archivos, los dos terminan con
-      el aviso, y el límite se corrió a donde empiezan las migraciones, que es
-      lo mismo que decir que ya no hay ninguno.
+      **Y ésta también rige desde la primera, por lo mismo que la novena.**
+      Hubo un límite, y antes de él veintiuna migraciones cambiaban el esquema
+      sin avisar, aplicadas hace tiempo. El aplastamiento no dejó ninguna de las
+      dos cosas: las migraciones que cambian el esquema terminan con el aviso, la
+      que sólo carga filas no lo necesita, y el límite se corrió a donde empiezan
+      las migraciones, que es lo mismo que decir que ya no hay ninguno.
 
       **Esta regla tampoco tiene lista de exenciones**, por lo mismo que la
       octava: hoy no hay ningún caso, y una lista vacía no la puede probar
@@ -145,31 +151,40 @@
 
       Cuando el `with check` no está escrito, Postgres usa el `using` para las
       dos cosas, así que la regla mira el `using`: no escribirlo no es un
-      agujero, escribirlo más flojo sí. Hoy hay dos políticas así y las dos
-      quedan en verde por el `using` que heredan.
+      agujero, escribirlo más flojo sí. Hoy no queda ninguna política de
+      escritura sin `with check` propio, y la regla se deja igual para el día que
+      aparezca una.
 
       **Un `with check` más angosto que su `using` es legítimo y no se juzga.**
-      Dos de la 0020 lo son a propósito: se puede *leer* un mensaje del aviso en
-      el que uno participa y no se puede *escribirlo* como si fuera de otro. Por
-      eso la regla no compara las dos condiciones —eso daría rojo en las dos—,
-      sino que le pide a la que gobierna la fila nueva una sola cosa: que nombre
-      la Organización. Las dos de la 0020 la nombran en las dos.
+      «Mensajes de las dos partes» (`supabase/migrations/0001_base_del_esquema.sql:4697`)
+      lo es a propósito: se puede *leer* un mensaje del aviso en el que uno
+      participa y no se puede *escribirlo* como si fuera de otro. Por eso la
+      regla no compara las dos condiciones —eso daría rojo en las dos—, sino que
+      le pide a la que gobierna la fila nueva una sola cosa: que nombre la
+      Organización, y ésa la nombra en las dos.
 
       **Las políticas dadas de baja no se juzgan, y eso no es un límite
-      escrito.** Siete de la 0001 escriben `with check (true)`, que es el
-      agujero entero; las siete las da de baja la 0002 por su nombre. En vez de
-      una migración de corte como la novena y la décima, la regla mira si
-      alguna migración posterior la borra, y a la que sigue en pie la juzga
-      aunque sea de la 0001. Es más angosto que un límite: si alguien vuelve a
-      crear mañana una de esas siete con el mismo nombre, esta vez se juzga.
+      escrito.** Cuando las migraciones eran setenta y cuatro, siete de la
+      primera escribían `with check (true)` —el agujero entero— y una posterior
+      las daba de baja por su nombre. El aplastamiento dejó el estado al que
+      llevaba ese camino y no el camino, así que hoy no queda ni una política
+      escrita así ni un solo `drop policy`: esta lista sale vacía y no perdona
+      nada, que es la situación más estricta y no la más floja. La regla se deja
+      igual porque lo que la sostiene no era aquel caso: en vez de una migración
+      de corte como la novena y la décima, mira si alguna migración posterior la
+      borra, y a la que sigue en pie la juzga sea de donde sea. Es más angosto
+      que un límite, y el día que alguien dé de baja una política y otro la
+      vuelva a crear con el mismo nombre, la nueva se juzga.
 
-      **Las que crea un bucle también se juzgan.** La 0005 y la 0012 escriben
-      cuatro políticas adentro de un `execute format`, una por cada tabla de un
-      arreglo. El texto del `create policy` está ahí, entero, y lo único que
-      falta es el nombre de la tabla, que llega como `%I`; la regla lo lee
-      igual y, cuando alguna de ésas falla, lo dice así en vez de inventar un
-      nombre de tabla. Lo que no vería es un `create policy` armado a pedazos
-      desde variables, y hoy no hay ninguno.
+      **Las que crea un bucle también se juzgan.** Cuando una migración escribe
+      un `create policy` adentro de un `execute format`, una por cada tabla de un
+      arreglo, el texto de la política está ahí entero y lo único que falta es el
+      nombre de la tabla, que llega como `%I`; la regla lo lee igual y, cuando
+      alguna de ésas falla, lo dice así en vez de inventar un nombre de tabla.
+      **Hoy no queda ninguna escrita así** —el aplastamiento dejó cada política
+      escrita entera—, y la capacidad se deja porque el bucle vuelve el día que
+      haya varias tablas iguales. Lo que no vería es un `create policy` armado a
+      pedazos desde variables, y hoy tampoco hay ninguno.
 
       Las del depósito de archivos son de la séptima y no se juzgan dos veces:
       ahí no hay columna de Organización y se miden con otra vara.
@@ -182,9 +197,9 @@
       su política: es el **permiso por columna**, `grant update (full_name)` y
       nada más. Y como eso es lo único que la sostiene, el chequeo va y lo mira:
       un permiso de escritura sobre esa tabla que no nombre sus columnas da rojo.
-      No es una precaución teórica —la 0032 sacó ese permiso sin querer y la
-      0033 tuvo que devolverlo—, y era lo único de todo el archivo que no
-      miraba nadie.
+      No es una precaución teórica —ya pasó que una migración sacara ese permiso
+      sin querer y la siguiente tuviera que devolverlo—, y era lo único de todo
+      el archivo que no miraba nadie.
 
   12. **La Organización se resuelve en un solo lugar** (regla de la empresa
       «cuando la plataforma no deja compartir código, el punto único de verdad
@@ -242,13 +257,13 @@
       esos drops apuntando a nada, y la undécima y la duodécima la dan por viva
       cuando ya no lo está.
 
-      Rige **desde la primera migración**, igual que la novena y la décima. El
-      límite era la 0023, porque los renombres que había eran todos del mismo
-      acomodamiento del glosario —cerrado entre el 24 y el 25 de agosto de 2026,
-      cuando la base todavía no tenía datos— y estaban escritos de la 0015 a la
-      0022. El aplastamiento dejó el resultado de ese acomodamiento y no el
-      camino: hoy no queda ni un solo renombre escrito, así que el límite no
-      perdona nada y está donde empiezan las migraciones.
+      Rige **desde la primera migración**, igual que la novena y la décima.
+      Hubo un límite, porque los renombres que había eran todos del mismo
+      acomodamiento del glosario, cerrado entre el 24 y el 25 de agosto de 2026,
+      cuando la base todavía no tenía datos. El aplastamiento dejó el resultado
+      de ese acomodamiento y no el camino: hoy no queda ni un solo renombre
+      escrito, así que el límite no perdona nada y está donde empiezan las
+      migraciones.
 
   14. **La migración entra entera o no entra** (regla de la empresa «toda
       migración corre entera o no corre, sin dejar la base a mitad de camino»).
@@ -277,27 +292,33 @@
 
       **15 a. A `anon` no le queda ningún permiso neto sobre una tabla ni una
       vista de `public`.** «Neto» es la palabra que importa, y es lo que hace que
-      esta mitad no se pueda juzgar archivo por archivo: la 0002, la 0007, la
-      0012 y la 0017 le conceden `select` a `anon` sobre la misma vista y las
-      cuatro están bien, porque la 0021 se lo revocó —y la 0032 otra vez—. Mirando
-      una sola migración, esas cuatro saldrían en rojo para siempre por algo que
-      ya no está. Así que `alcanceAnonimo()` corre todas en orden y se queda con lo
+      esta mitad no se pueda juzgar archivo por archivo: varias migraciones le
+      pueden conceder `select` a `anon` sobre la misma vista y estar todas bien,
+      porque una posterior se lo revoca. Mirando una sola, esas concesiones
+      saldrían en rojo para siempre por algo que ya no está. Así que
+      `alcanceAnonimo()` corre todas en orden y se queda con lo
       que sobrevive, siguiendo los renombres y los `drop`; la falla se informa en
       el renglón **donde se concedió** el permiso, que es donde hay que ir a
       sacarlo. Y `PUBLIC` cuenta como sin sesión, porque `anon` hereda de él.
 
-      El seguimiento del renombre no es prolijidad. Sin él este mismo cálculo
-      decía que `caregivers_publicos` seguía abierta desde la 0012, cuando la 0015
-      la había renombrado a `directorio` y los dos `revoke` estaban escritos
-      con el nombre nuevo. Un renombre no es un `revoke`: el permiso viaja con el
-      objeto, no con el nombre. La base publicada lo dice de frente y hay que
-      saber leerlo: contesta `PGRST205` —«no existe»— al nombre viejo y `42501`
-      —«sin permiso»— al nuevo, que son dos hechos distintos.
+      El seguimiento del renombre no es prolijidad. Cuando las migraciones eran
+      setenta y cuatro, sin él este mismo cálculo daba por abierta una vista que
+      para entonces ya se llamaba de otra manera y cuyos dos `revoke` estaban
+      escritos con el nombre nuevo. Hoy no queda ni un renombre escrito en las
+      tres, así que el seguimiento no cambia ninguna cuenta y se deja igual: un
+      renombre no es un `revoke` —el permiso viaja con el objeto, no con el
+      nombre—, y el día que alguien escriba uno, este cálculo tiene que seguirlo o
+      va a contestar que algo está cerrado cuando sigue abierto. La base publicada
+      lo dice de frente y hay que saber leerlo: contesta `PGRST205` —«no existe»—
+      al nombre viejo y `42501` —«sin permiso»— al nuevo, que son dos hechos
+      distintos.
 
       **Y la vista que se abre a propósito se nombra, y lo que la sostiene se
-      comprueba.** `VISTAS_AL_ALCANCE_ANONIMO` es esa lista, y hoy tiene una sola
-      entrada: la oferta general de cursos, que el Desarrollador decidió publicar
-      el 31 de agosto de 2026. Una vista abierta a `anon` es una dirección web sin
+      comprueba.** `VISTAS_AL_ALCANCE_ANONIMO` es esa lista, y hoy tiene dos
+      entradas: la oferta general de cursos, que el Desarrollador decidió publicar
+      el 31 de agosto de 2026, y la oferta comercial de la portada, que dibujan dos
+      pantallas que se ven sin cuenta. Cada una lleva al lado su motivo y el
+      renglón donde vive su cuerpo. Una vista abierta a `anon` es una dirección web sin
       puerta, así que lo único que la separa de ser un listado suelto es la
       condición que lleva escrita adentro —y ésa no vive en ninguna política: vive
       en el cuerpo de la vista—. Por eso acá no alcanza con escribir el motivo,
@@ -330,9 +351,11 @@
    escrito a mano en un encabezado queda viejo el día que se agrega una
    migración, y nadie vuelve a leerlo. La regla de la moneda no tiene hoy ningún
    incumplimiento: tenía uno —`caregivers.hourly_rate`, el único importe del
-   esquema, guardado como número a secas— y la 0074 se lo dio, así que `SIN_MONEDA`
-   quedó vacía. La lista sigue declarada para que el día que aparezca un caso que
-   de verdad no pueda cumplirla, el motivo se escriba ahí y quede a la vista.
+   esquema, guardado como número a secas— y hoy `moneda_valor_hora` está
+   declarada al lado (`supabase/migrations/0001_base_del_esquema.sql:485`), así que
+   `SIN_MONEDA` quedó vacía. La lista sigue declarada para que el día que
+   aparezca un caso que de verdad no pueda cumplirla, el motivo se escriba ahí y
+   quede a la vista.
 
    Qué NO mira, dicho de frente:
    - No sabe si la migración se aplicó. Un archivo acá describe lo que se quiso
@@ -345,8 +368,8 @@
      salga bien. Una política que llame a `prestadora_actual()` y después la
      ignore pasa igual.
    - De la novena mira lo que **abre de más**, no lo que abre de menos. Que una
-     tabla nueva se olvide de conceder sus permisos no se avisa: desde la 0032
-     nace sin ninguno, así que falla cerrada —`42501` en la pantalla— y ésa es la
+     tabla nueva se olvide de conceder sus permisos no se avisa: nace sin
+     ninguno, así que falla cerrada —`42501` en la pantalla— y ésa es la
      dirección segura. Además hay casos legítimos, como una tabla que sólo tocan
      funciones `security definer`. Lo que no tiene caso legítimo es `truncate`,
      que se salta la RLS entera.
@@ -412,7 +435,7 @@ const SIN_ORGANIZACION = new Map([
    'porque a cualquiera le alcanza con abrirse una conversación en esa Prestadora. No hay ' +
    'dos Organizaciones que separar ahí adentro, y por eso mismo está además en ' +
    'TABLAS_DEL_PRODUCTO_AL_ALCANCE_ANONIMO, que va y mira que siga sin la columna; ' +
-   'migración 0063']
+   '`supabase/migrations/0001_base_del_esquema.sql:2928`']
 ]);
 
 /* Funciones SECURITY DEFINER que conservan a propósito el permiso del rol
@@ -421,39 +444,42 @@ const SIN_ORGANIZACION = new Map([
    la tiene que encontrar.
 
    **Y es la única lista.** `scripts/probar_permisos_en_vivo.mjs` la importa de
-   acá en vez de tener la suya: tenía una copia con tres, y cuando las
-   migraciones 0035, 0038 y 0041 abrieron tres puertas más —con su motivo
-   escrito, acá— aquella prueba se puso en rojo y así se quedó. Una lista
-   repetida se despega, y la que se despega es siempre la que nadie mira. */
+   acá en vez de tener la suya: tenía una copia con tres, y cuando se abrieron
+   tres puertas más —con su motivo escrito, acá— aquella prueba se puso en rojo y
+   así se quedó. Una lista repetida se despega, y la que se despega es siempre la
+   que nadie mira. */
 export const AL_ALCANCE_ANONIMO = new Map([
   ['prestadora_por_slug',
    'la pantalla de ingreso tiene que saber qué nombre y qué colores mostrar antes de que ' +
    'exista ninguna sesión; devuelve una sola Prestadora, la que nombra el argumento, y ' +
-   'sólo sus columnas de marca; migración 0021'],
+   'sólo sus columnas de marca; `supabase/migrations/0001_base_del_esquema.sql:1834`'],
   ['directorio_de',
    'el directorio se ve sin cuenta por decisión del 24 de agosto de 2026, así que la ' +
    'puerta se abre sin sesión o no hay directorio; no devuelve ni una columna que la ' +
    'vista `directorio` no publicara ya, y esa vista no tiene datos de contacto; ' +
-   'migración 0021'],
+   '`supabase/migrations/0001_base_del_esquema.sql:859`'],
   ['perfil_del_directorio',
-   'la misma puerta, para una sola persona; migración 0021'],
+   'la misma puerta, para una sola persona; ' +
+   '`supabase/migrations/0001_base_del_esquema.sql:1768`'],
   ['zonas_de',
    'quien completa el formulario de reclutamiento todavía no tiene cuenta y necesita ver ' +
    'la lista de zonas para tildar las suyas; exige el nombre corto, así que devuelve las de ' +
    'una sola Prestadora, y sólo el nombre y el orden de cada zona, que es lo mismo que ya ' +
-   'muestra el formulario; migración 0035'],
+   'muestra el formulario; `supabase/migrations/0001_base_del_esquema.sql:2101`'],
   ['vocabularios_de',
    'las listas de opciones las piden pantallas que se ven sin cuenta —el directorio y el ' +
    'formulario de reclutamiento—, así que la puerta se abre sin sesión o esas pantallas ' +
    'quedan sin opciones; exige el nombre corto, devuelve el catálogo general del producto ' +
    'más lo que agregó esa sola Prestadora, y ninguna de las dos cosas es dato de una ' +
-   'persona: son las opciones que la pantalla iba a mostrar igual; migración 0038'],
+   'persona: son las opciones que la pantalla iba a mostrar igual; ' +
+   '`supabase/migrations/0001_base_del_esquema.sql:2045`'],
   ['guias_de',
    'la guía la lee el Asistente en el domicilio, donde la aplicación puede estar mostrando ' +
    'la pantalla antes de resolver la sesión, así que cuelga de la misma puerta que el ' +
    'catálogo del que depende; exige el nombre corto, devuelve la guía general del producto ' +
    'más la que escribió esa sola Prestadora, y sólo las publicadas; ninguna es dato de una ' +
-   'persona: son textos sobre una patología, nunca sobre un Paciente; migración 0041']
+   'persona: son textos sobre una patología, nunca sobre un Paciente; ' +
+   '`supabase/migrations/0001_base_del_esquema.sql:1266`']
 ]);
 
 /* Vistas de `public` que a propósito se ven sin sesión, con el motivo **y con
@@ -477,14 +503,15 @@ export const VISTAS_AL_ALCANCE_ANONIMO = new Map([
    '—`tenant_id is null`— y a las publicadas, así que no sale por ahí ni un curso de una ' +
    'Prestadora ni el nombre de ninguna. Y no publica una sola columna del contenido del ' +
    'curso: ni evaluaciones, ni preguntas, ni opciones, que se siguen pidiendo con sesión; ' +
-   'migración 0051'],
+   '`supabase/migrations/0001_base_del_esquema.sql:2857`'],
   ['oferta_comercial_publica',
    'la oferta comercial de la portada —Busco Asistente, Cursos, Monitoreo y el resto de ' +
    '`data-oferta="servicios"`— la dibujan `index.html` y `solicitar-asistente.html`, dos ' +
    'pantallas que se ven sin cuenta, así que la vista se abre sin sesión o esas pantallas ' +
    'no tienen qué mostrar. No es un listado suelto: su cuerpo la acota a la oferta general ' +
    'del producto —`tenant_id is null`— y a las activas, así que no sale por ahí ni un ' +
-   'ítem propio de una Prestadora ni el nombre de ninguna; migración 0072']
+   'ítem propio de una Prestadora ni el nombre de ninguna; ' +
+   '`supabase/migrations/0001_base_del_esquema.sql:2831`']
 ]);
 
 /* Tablas de `public` que a propósito se leen sin sesión porque **no guardan
@@ -512,7 +539,8 @@ export const TABLAS_DEL_PRODUCTO_AL_ALCANCE_ANONIMO = new Map([
    '`data/patrones-contacto.json`, que el sitio le sirve a cualquiera. Se abre sin sesión ' +
    'para que `scripts/verificar_patrones_contacto.mjs` pueda comparar el archivo contra ' +
    'la tabla sin ninguna credencial: sin eso la copia se despega en silencio, que es lo ' +
-   'que ese chequeo viene a evitar; migración 0063']
+   'que ese chequeo viene a evitar; ' +
+   '`supabase/migrations/0001_base_del_esquema.sql:2928`']
 ]);
 
 /* Políticas del depósito de archivos que no nombran la Organización, con el
@@ -525,13 +553,15 @@ const SIN_ORGANIZACION_EN_EL_DEPOSITO = new Map([
    'la condición compara la primera carpeta del camino contra `auth.uid()`, así que ' +
    'cada cuenta llega a la suya y a ninguna otra; no hay dos Organizaciones adentro de ' +
    'esa condición que separar. Lo que las separa está en otro lado: **una cuenta tiene ' +
-   'un solo legajo**, por el índice único `idx_caregivers_user_unico` de la migración ' +
-   '0005. La política que deja mirar al personal de la Prestadora llega a la carpeta ' +
+   'un solo legajo**, por el índice único `idx_caregivers_user_unico` ' +
+   '(`supabase/migrations/0001_base_del_esquema.sql:3590`). ' +
+   'La política que deja mirar al personal de la Prestadora llega a la carpeta ' +
    'por ese legajo, y si una misma cuenta llegara a tener legajo en dos Prestadoras, ' +
    'las dos verían la carpeta entera, con los papeles que la persona subió para la otra'],
   ['Avatar propio',
    'la misma condición y el mismo apoyo, sobre el depósito `avatares`, que además es ' +
-   'público a propósito desde la 0006: la foto es lo que el directorio muestra sin ' +
+   'público a propósito (`supabase/migrations/0001_base_del_esquema.sql:5955`): ' +
+   'la foto es lo que el directorio muestra sin ' +
    'cuenta, así que ahí no hay nada que aislar hacia afuera. Lo que la condición cuida ' +
    'es la escritura: que nadie deje una foto en la carpeta de otro']
 ]);
@@ -550,17 +580,17 @@ const SIN_ORGANIZACION_AL_ESCRIBIR = new Map([
        'así que una política suya que la preguntara se estaría preguntando a sí ' +
        'misma. Lo que impide mudarse de Prestadora, o hacerse `coordinador`, es el ' +
        'permiso por columna: `grant update (full_name)` y nada más ' +
-       '(0005_acceso_por_sesion.sql:160, que la 0032 sacó sin querer y la ' +
-       '0033_vuelve_el_permiso_por_columna_del_perfil.sql:36 devolvió). Eso no se ' +
-       'cree: se comprueba acá mismo.' }]
+       '(`supabase/migrations/0001_base_del_esquema.sql:5864`). Eso no se cree: ' +
+       'se comprueba acá mismo.' }]
 ]);
 
 /* Importes que hoy se guardan sin moneda, con su motivo y su pendiente.
 
    Está vacía, y eso es una novedad del 5 de septiembre de 2026: tenía uno solo,
    `caregivers.hourly_rate`, que era el único importe de todo el esquema y era un
-   número a secas. La 0074 le dio su columna —`moneda_valor_hora`, que se llena
-   sola con la moneda que eligió la Prestadora— y con eso la regla dejó de tener
+   número a secas. Hoy tiene su columna al lado —`moneda_valor_hora`
+   (`supabase/migrations/0001_base_del_esquema.sql:485`), que se llena sola con la
+   moneda que eligió la Prestadora— y con eso la regla dejó de tener
    excepciones. La lista queda declarada porque el día que aparezca un importe
    que de verdad no pueda traer la suya, el lugar donde se escribe el motivo es
    éste y no un comentario suelto. */
@@ -579,24 +609,26 @@ const AGREGA_ORGANIZACION =
 /* Y lo mismo para la moneda. Hasta el 5 de septiembre de 2026 la cuarta regla
    miraba nada más que el cuerpo del `create table`, así que una columna de
    moneda que llegara después —que es la única forma de dársela a una tabla que
-   ya existe, como hizo la 0074 con `caregivers`— era invisible y el importe
-   seguía figurando como suelto. El mensaje de error ya decía que la moneda
-   «puede llegar después»; el código no lo cumplía. */
+   ya existe— era invisible y el importe seguía figurando como suelto. El mensaje
+   de error ya decía que la moneda «puede llegar después»; el código no lo
+   cumplía. Hoy ninguna migración la agrega así, porque `moneda_valor_hora` se
+   declara junto a su importe, y el caso vive en las pruebas de más abajo. */
 const AGREGA_MONEDA =
   /alter\s+table\s+(?:if\s+exists\s+)?"?public"?\."?([a-z_]+)"?[^;]*add\s+column[^;]*\b\w*(?:moneda|currency)\w*\b/gi;
 /* Para la sexta. Un `insert` que sale de recorrer `tenants`, el `create trigger`
    colgado de esa misma tabla, y el `rename to` que le cambia el nombre a una
-   tabla en el medio —la 0022 renombró justo una de las dos que siembra la 0018,
-   y sin esto la sexta regla buscaría un nombre que ya no existe—. */
+   tabla en el medio —ya pasó que un renombre posterior le cambiara el nombre a
+   una tabla que una siembra anterior llenaba, y sin esto la sexta regla buscaría
+   un nombre que ya no existe—. */
 const INSERTA = /insert\s+into\s+(?:"?public"?\.)?"?([a-z_]+)"?/gi;
 const POLITICA_DEPOSITO = /create\s+policy\s+"([^"]+)"\s+on\s+storage\.objects/gi;
 /* Desde dónde rige la novena regla. Cuando las migraciones eran setenta y
-   cuatro, esto era la 0032: antes de ella estaba el volcado de la instalación,
-   con los `grant all` que ella vino a sacar, y juzgarlo con una regla posterior
-   era juzgar un archivo que ya no se podía arreglar. Aplastadas las setenta y
-   cuatro en dos, no hay ningún archivo anterior a la regla: la 0001 es el
-   estado final, con los permisos ya al mínimo, así que la regla empieza donde
-   empiezan las migraciones. */
+   cuatro, el límite estaba más adelante: antes de él estaba el volcado de la
+   instalación, con los `grant all` que una migración posterior vino a sacar, y
+   juzgarlo con una regla posterior era juzgar un archivo que ya no se podía
+   arreglar. Aplastadas las setenta y cuatro, no hay ningún archivo anterior a la
+   regla: la 0001 es el estado final, con los permisos ya al mínimo, así que la
+   regla empieza donde empiezan las migraciones. */
 const LA_PUERTA_SE_CERRO = '0001';
 /* Un cambio de esquema es lo que PostgREST guarda en su copia: qué tablas, qué
    columnas, qué funciones hay y quién puede tocarlas. Los `insert` quedan
@@ -625,10 +657,9 @@ const RENOMBRA_LO_GUARDADO = [
   ['una política', /alter\s+policy\s+[\s\S]{0,80}?\brename\s+to\s+/gi],
 ];
 /* Los renombres del acomodamiento del glosario —«bandera», `care_searches`,
-   `logbook_entries`, `peso`— vivían en las migraciones 0015 a 0022, que el
-   Desarrollador cerró entre el 24 y el 25 de agosto de 2026 y que ya no
-   existen: el aplastamiento las dejó en el estado al que llevaban, sin el
-   camino. Como no queda ningún archivo anterior a la regla, la regla empieza
+   `logbook_entries`, `peso`— vivían en migraciones que el Desarrollador cerró
+   entre el 24 y el 25 de agosto de 2026 y que ya no existen: el aplastamiento
+   las dejó en el estado al que llevaban, sin el camino. Como no queda ningún archivo anterior a la regla, la regla empieza
    donde empiezan las migraciones. */
 const NO_SE_RENOMBRA_DESDE = '0001';
 /* Para la decimocuarta. Dos maneras distintas de romper la misma regla —«toda
@@ -674,9 +705,10 @@ const NO_ENTRA_EN_UNA_TRANSACCION = [
 ];
 /* Para la undécima. Una política de `public`, su baja, y los dos verbos que
    no dejan ninguna fila escrita. El `%I` del final es el nombre de tabla que
-   deja escrito un `execute format`: la 0005 y la 0012 crean cuatro políticas
-   así, una por cada tabla de un arreglo, y sin esa alternativa el nombre de
-   la tabla se leía como `public`. */
+   deja escrito un `execute format`: una migración que cree varias políticas
+   iguales adentro de un bucle, una por cada tabla de un arreglo, las escribe
+   así, y sin esa alternativa el nombre de la tabla se leía como `public`. Hoy no
+   queda ninguna escrita así, y la alternativa se deja para el día que vuelva. */
 const POLITICA_DE_TABLA =
   /create\s+policy\s+"([^"]+)"\s+on\s+(?:"?([a-z_]+)"?\s*\.\s*)?(%I|"?[a-z_]+"?)/gi;
 const BAJA_DE_POLITICA = /drop\s+policy\s+(?:if\s+exists\s+)?"([^"]+)"/gi;
@@ -700,14 +732,14 @@ const ESCRIBE = /\b(?:insert|update|delete)\b/i;
 /* Para la decimoquinta. Un permiso sobre una tabla o una vista de `public`,
    concedido o revocado, con el objeto y los roles. Es `GRANT_DE_TABLA` abierto a
    los dos verbos, porque esta regla no mira lo que dice una migracion sino el
-   **neto** de todas: un `grant` de la 0002 revocado en la 0021 no es un agujero,
-   y uno de la 0012 que nadie revoco lo es aunque su migracion se vea prolija. */
+   **neto** de todas: un `grant` que una migracion posterior revoca no es un
+   agujero, y uno que nadie revoco lo es aunque su migracion se vea prolija. */
 const PERMISO_DE_TABLA =
   /\b(grant|revoke)\s+([a-z][a-z0-9_,\s()]*?)\s+on\s+(?:table\s+)?"?public"?\."?([a-z_]+)"?\s+(?:to|from)\s+([a-z_,\s"]+)/gi;
 /* Un `drop` de tabla o de vista: el objeto se va y con el se van sus permisos,
    asi que lo que hubiera concedido antes deja de contar. Aca las vistas se
-   borran y se vuelven a crear seguido —`caregivers_publicos` tres veces— y sin
-   esto el neto arrastraria permisos de un objeto que ya no es el mismo. */
+   borran y se vuelven a crear seguido, y sin esto el neto arrastraria permisos
+   de un objeto que ya no es el mismo. */
 const BORRA_EL_OBJETO =
   /drop\s+(?:table|(?:materialized\s+)?view)\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_]+)"?/gi;
 /* Quien entra sin sesion. `PUBLIC` entra porque `anon` hereda de el: conceder a
@@ -737,9 +769,9 @@ const DISPARADOR =
   /create\s+(?:or\s+replace\s+)?trigger\s+"?[a-z_]+"?[^;]*\bon\s+(?:"?public"?\.)?"?tenants"?[^;]*\bexecute\s+(?:function|procedure)\s+(?:"?public"?\.)?"?([a-z_]+)"?/gi;
 /* Sigue el nombre de una tabla **y el de una vista**. Las vistas entraron el
    31 de agosto de 2026, y no por prolijidad: sin ellas este seguimiento decia
-   que `caregivers_publicos` seguia existiendo con `select` para `anon` desde la
-   0012, cuando la 0015 la habia renombrado a `directorio` y la 0021 le
-   habia revocado ese permiso con el nombre nuevo. La base publicada contesta
+   que una vista seguia existiendo con `select` para `anon` con su nombre viejo,
+   cuando una migracion posterior la habia renombrado y otra le habia revocado
+   ese permiso con el nombre nuevo. La base publicada contesta
    `PGRST205` —«no existe»— al nombre viejo y `42501` —«sin permiso»— al nuevo, que
    son dos hechos distintos y hay que poder distinguirlos. */
 const RENOMBRA =
@@ -842,10 +874,11 @@ export function clavesPrimarias(textos) {
  * y una segunda copia de esta lectura se despega de ésta el primer día.
  *
  * **Se sacan los comentarios de renglones enteros antes de mirar**, y no es
- * cautela de más: la 0016 escribió `alter table public.avisos drop column
- * grid_schedule_7x3;` adentro de un comentario, justamente para explicar lo que
- * esa migración **no** hacía. Leído sin sacarlos, el esquema pierde una columna
- * que está.
+ * cautela de más: una migración escribió `alter table public.avisos drop
+ * column grid_schedule_7x3;` adentro de un comentario, justamente para explicar
+ * lo que esa migración **no** hacía. Leído sin sacarlos, el esquema pierde una
+ * columna que está: `grid_schedule_7x3` sigue declarada, en
+ * `supabase/migrations/0001_base_del_esquema.sql:2158`.
  */
 export function columnasDeclaradas(textos) {
   const columnas = new Map();
@@ -888,7 +921,8 @@ export function columnasDeclaradas(textos) {
    la primera que cierra se pierde media tabla.
 
    **Y no cuenta las que están adentro de un texto ni de un comentario**, que es
-   lo que rompía la cuenta en silencio. La 0063 escribe
+   lo que rompía la cuenta en silencio. `patrones_de_contacto`
+   (`supabase/migrations/0001_base_del_esquema.sql:2939`) escribe
    `check (patron !~ '\\(\\?[=!<]')`: ese paréntesis vive adentro de una
    expresión guardada como texto y no abre nada, pero contado como si abriera
    dejaba la cuenta desbalanceada para siempre, así que esta función se comía el
@@ -1090,15 +1124,17 @@ export function limitesDeclarados(textos) {
 /**
  * Lo que ya se sigue solo: las tablas donde escribe algún disparador colgado de
  * `tenants`, y el nombre de hoy de cada tabla que en el camino se renombró. Lo
- * segundo hace falta de verdad: la 0022 le cambió el nombre justo a una de las
- * dos tablas que siembra la 0018, y sin esto la sexta regla buscaría un nombre
- * que ya no existe y avisaría de una tabla que sí está cubierta.
+ * segundo hace falta de verdad: ya pasó que un renombre posterior le cambiara
+ * el nombre justo a una de las dos tablas que llenaba una siembra anterior, y
+ * sin esto la sexta regla buscaría un nombre que ya no existe y avisaría de una
+ * tabla que sí está cubierta.
  *
  * Se sigue **un solo salto** de llamadas: la función que el disparador ejecuta,
- * y las que ésa nombra. Con eso alcanza para la 0046, donde el disparador no
- * siembra él mismo sino que llama a la que sabe cuál es la configuración de
- * fábrica —que es como tiene que ser, porque esa misma función la usa también el
- * arreglo de las Prestadoras que ya habían nacido sin ella—.
+ * y las que ésa nombra. Con eso alcanza para `la_prestadora_nace_configurada`
+ * (`supabase/migrations/0001_base_del_esquema.sql:1476`), donde el disparador no
+ * siembra él mismo sino que llama a las que saben cuál es la configuración de
+ * fábrica —que es como tiene que ser, porque esas mismas funciones las usa
+ * también el arreglo de las Prestadoras que ya habían nacido sin ella—.
  */
 export function siembraQueSeSigueSola(textos) {
   const nombreActual = new Map();
@@ -1143,12 +1179,13 @@ export function siembraQueSeSigueSola(textos) {
  * es donde hay que ir a sacarla.
  *
  * **Ninguna migracion sola contesta esta pregunta**, y por eso no se juzga
- * archivo por archivo. La 0002, la 0007 y la 0012 le conceden `select` a `anon`
- * sobre la misma vista y las tres estan bien: la 0021 se lo revoco. Y al reves,
- * un `grant` que nadie revoco es un agujero aunque su migracion se vea prolija.
+ * archivo por archivo. Tres migraciones pueden concederle `select` a `anon`
+ * sobre la misma vista y estar las tres bien, si una posterior se lo revoco. Y al
+ * reves, un `grant` que nadie revoco es un agujero aunque su migracion se vea
+ * prolija.
  *
- * Sigue los renombres —`caregivers_publicos` es `directorio` desde la 0015— y
- * los `drop`: un objeto que se borra se lleva sus permisos, y aca las vistas se
+ * Sigue los renombres —el permiso viaja con el objeto, no con el nombre— y los
+ * `drop`: un objeto que se borra se lleva sus permisos, y aca las vistas se
  * borran y se vuelven a crear seguido.
  */
 export function alcanceAnonimo(textos, migraciones) {
@@ -1156,8 +1193,8 @@ export function alcanceAnonimo(textos, migraciones) {
     x.replace(/\r\n/g, '\n').split('\n')
       .map((l) => (/^\s*--/.test(l) ? ' '.repeat(l.length) : l)).join('\n'));
 
-  /* Primero todos los renombres juntos: un permiso concedido en la 0012 con el
-     nombre viejo se revoca en la 0021 con el nuevo, y hay que verlos iguales. */
+  /* Primero todos los renombres juntos: un permiso concedido con el nombre
+     viejo se revoca despues con el nuevo, y hay que verlos iguales. */
   const renombres = new Map();
   for (const t of limpios) {
     for (const m of t.matchAll(RENOMBRA)) {
@@ -1433,9 +1470,10 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, b
   }
 
   /* 11 bis. Lo que sostiene a una exenta se comprueba, no se cree. La de arriba
-     dice que la sostiene el permiso por columna: acá se mira que lo siga siendo.
-     Desde la 0032 por lo mismo que la novena —antes está el volcado que ella vino
-     a sacar—, y la 0032 es justo la que sacó ese permiso sin querer. */
+     dice que la sostiene el permiso por columna: acá se mira que lo siga siendo
+     (`supabase/migrations/0001_base_del_esquema.sql:5864`). Rige desde donde
+     empiezan las migraciones, por lo mismo que la novena, y no es un caso
+     inventado: ya pasó que una migración sacara ese permiso sin querer. */
   if (!nombre || nombre.slice(0, 4) >= LA_PUERTA_SE_CERRO) {
     const sostenidas = [...SIN_ORGANIZACION_AL_ESCRIBIR.values()].map((v) => v.tabla);
     for (const m of sinComentarios.matchAll(GRANT_DE_TABLA)) {
@@ -1667,7 +1705,7 @@ const CREA = 'create table if not exists public.visitas (\n' +
 
 /* Para la sexta. La siembra que recorre todas las Prestadoras, el disparador que
    la atiende de ahí en más, y el mismo disparador llamando a otra función, que es
-   como está escrita la 0046. */
+   como está escrita `la_prestadora_nace_configurada`. */
 const AVISO = "\nnotify pgrst, 'reload schema';\n";
 const BARRIDO = 'insert into public.visitas (tenant_id)\n' +
   'select id from public.tenants\non conflict do nothing;\n';
@@ -1850,7 +1888,7 @@ const BIEN = [
   ['la columna de la Organización que llega en un `alter table` posterior',
    'create table if not exists public.visitas (\n  id uuid primary key\n);\n' +
    'alter table public.visitas add column if not exists tenant_id uuid;\n' + RLS],
-  ['la moneda que llega en un `alter table` posterior, como en la 0074',
+  ['la moneda que llega en un `alter table` posterior',
    'create table if not exists public.visitas (\n  id uuid primary key,\n' +
    '  prestadora_id uuid not null,\n  precio_hora numeric not null\n);\n' +
    'alter table public.visitas add column if not exists moneda_precio_hora text;\n' + RLS],
@@ -1880,7 +1918,7 @@ const BIEN = [
    '  cantidad numeric(10,2),\n  prestadora_id uuid not null\n);\n' + RLS],
   ['la siembra que además deja el disparador que la sigue',
    BARRIDO + SIEMBRA_DIRECTA],
-  ['la misma, con el disparador llamando a otra función, como la 0046',
+  ['la misma, con el disparador llamando a otra función, como `la_prestadora_nace_configurada`',
    BARRIDO + SIEMBRA_LLAMADA],
   ['la siembra acotada a una Prestadora, que no es un barrido',
    "insert into public.visitas (tenant_id)\nselect id from public.tenants where slug = 'presdemo';\n"],
@@ -1911,7 +1949,7 @@ const BIEN = [
   ['una de escritura sin `with check`, que Postgres copia del `using`',
    'create policy "Lo mío" on public.cosas for all to authenticated\n' +
    '  using (tenant_id = public.prestadora_actual());\n'],
-  ['un `with check` más angosto que su `using`, como las dos de la 0020',
+  ['un `with check` más angosto que su `using`, como «Mensajes de las dos partes»',
    'create policy "Lo mío" on public.cosas for all to authenticated\n' +
    '  using      (tenant_id = public.prestadora_actual())\n' +
    '  with check (tenant_id = public.prestadora_actual() and user_id = auth.uid());\n'],
@@ -1919,7 +1957,7 @@ const BIEN = [
    'create policy "Vieja" on public.cosas for all to authenticated\n' +
    '  with check (true);\n' +
    'drop policy if exists "Vieja" on public.cosas;\n'],
-  ['la baja escrita antes del alta, como en el bucle de la 0012',
+  ['la baja escrita antes del alta, como en un bucle con `execute format`',
    'drop policy if exists "Lo mío" on public.%I;\n' +
    'create policy "Lo mío" on public.%I for all to authenticated\n' +
    '  with check (tenant_id = public.prestadora_actual());\n'],
@@ -1975,7 +2013,6 @@ if (ME_CORRIERON_A_MI) {
   let resoluciones = 0;
   let quietas = 0;
   let enteras = 0;
-  let renombres = 0;
   let puertas = 0;
   const migraciones = readdirSync(carpeta).filter((n) => n.endsWith('.sql')).sort();
   seRevisaron(migraciones.length, 'una sola migración `.sql` para revisar');
@@ -1986,31 +2023,36 @@ if (ME_CORRIERON_A_MI) {
      por archivo se avisaría de tres que están bien. */
   const tienenColumna = conOrganizacion(textos);
 
-  /* Lo mismo con la clave primaria: las siete tablas de la 0001 la declaran en un
-     `alter table` que está más abajo en el mismo archivo, y otra migración podría
-     declararla en otro. Se buscan todas antes de juzgar ninguna. */
+  /* Lo mismo con la clave primaria: una tabla la puede declarar en un `alter
+     table` que está más abajo en el mismo archivo, o en otra migración entera.
+     Se buscan todas antes de juzgar ninguna. */
   const primarias = clavesPrimarias(textos);
 
-  /* Y lo mismo con la moneda: `caregivers` nace en la 0001 y recibe la suya en
-     la 0074. Juzgando archivo por archivo, la 0001 saldría en rojo para siempre
-     por algo que ya está resuelto. */
+  /* Y lo mismo con la moneda: la columna que la guarda le puede llegar a la
+     tabla más tarde que la del importe. Hoy las tres migraciones caben en un
+     escritorio y esto no cambia ninguna cuenta; se sigue leyendo todo junto para
+     que el día que la moneda llegue en una migración posterior, la que creó la
+     tabla no salga en rojo para siempre por algo que ya está resuelto. */
   const monedas = conMoneda(textos);
 
-  /* Y lo mismo con el disparador: la siembra está en la 0018 y el disparador que
-     la sigue, en la 0046. Juzgando archivo por archivo, la 0018 saldría en rojo
-     para siempre por algo que ya está arreglado. */
+  /* Y lo mismo con el disparador que sigue a una siembra: puede estar escrito en
+     una migración más nueva que la que siembra. Juzgando archivo por archivo, la
+     que siembra saldría en rojo para siempre por algo que ya está arreglado más
+     adelante. */
   const sigue = siembraQueSeSigueSola(textos);
 
-  /* Y lo mismo con las bajas: las siete políticas de la 0001 que escriben
-     `with check (true)` las borra la 0002, y juzgando archivo por archivo la
-     0001 saldría en rojo para siempre por algo que ya no está en la base. */
+  /* Y lo mismo con las bajas: una política se crea en una migración y se borra en
+     otra, y a la borrada no hay que juzgarla. Hoy no hay ni un solo `drop policy`
+     escrito en las tres, así que esta lista sale vacía y no perdona nada —que es
+     la situación más estricta y no la más floja—; existe para el día que vuelva a
+     haber uno. */
   const bajas = politicasDadasDeBaja(textos, migraciones);
 
   /* Y lo mismo, más todavía, con lo que le queda al que entra sin sesión: eso no
-     lo contesta ninguna migración sola. La 0002, la 0007, la 0012 y la 0017 le
-     conceden `select` a `anon` sobre la misma vista y las cuatro están bien,
-     porque la 0021 se lo revocó; juzgando archivo por archivo las cuatro sale ían
-     en rojo para siempre por algo que ya no está. */
+     lo contesta ninguna migración sola. Un `grant select` a `anon` escrito en una
+     y revocado en otra está bien, y juzgando archivo por archivo la que lo
+     concedió saldría en rojo para siempre por algo que ya no está. Por eso acá se
+     corre el neto de todas, en orden. */
   const alcance = alcanceAnonimo(textos, migraciones);
   /* Y los cuerpos de las vistas, por lo mismo: la condición que sostiene a una
      vista exenta puede haberse escrito en otra migración que la del permiso que
@@ -2042,9 +2084,9 @@ if (ME_CORRIERON_A_MI) {
       resoluciones += [...cuerpo.matchAll(COMPARA_ORGANIZACION)].length;
     }
     if (nombre.slice(0, 4) >= LA_PUERTA_SE_CERRO) {
-      /* Sin los renglones comentados, igual que la regla: la 0047 cita un
-         `grant` adentro de un comentario para explicarlo, y contar eso sería
-         contar prosa. */
+      /* Sin los renglones comentados, igual que la regla: una migración puede
+         citar un `grant` adentro de un comentario para explicar por qué lo saca,
+         y contar eso sería contar prosa. */
       const limpio = texto.split('\n')
         .map((l) => (/^\s*--/.test(l) ? '' : l)).join('\n');
       for (const m of limpio.matchAll(GRANT_DE_TABLA)) {
@@ -2052,18 +2094,15 @@ if (ME_CORRIERON_A_MI) {
       }
     }
     enteras++;
-    /* Y la cuenta de la decimotercera, del mismo lugar que la regla: cuántas
-       se juzgaron de este lado del límite, y cuántos renombres quedaron del
-       otro, que son los que este archivo va a seguir arrastrando. */
-    if (nombre.slice(0, 4) >= NO_SE_RENOMBRA_DESDE) {
-      quietas++;
-    } else {
-      const sinProsa = texto.split('\n')
-        .map((l) => (/^\s*--/.test(l) ? '' : l)).join('\n');
-      for (const [, expresion] of RENOMBRA_LO_GUARDADO) {
-        renombres += [...sinProsa.matchAll(expresion)].length;
-      }
-    }
+    /* Y la cuenta de la decimotercera, del mismo lugar que la regla. Hasta el
+       aplastamiento esto tenía dos ramas: las migraciones juzgadas de este lado
+       del límite, y los renombres que quedaban del otro y que este archivo iba a
+       seguir arrastrando. Con el límite en la primera migración no queda ningún
+       archivo del otro lado, así que la segunda rama no se podía pisar nunca y
+       salía igual a decir un número en el renglón verde: un cero que no era una
+       comprobación superada sino una rama muerta. Se sacó. Acá se cuenta lo que
+       se juzga, y lo que la regla encuentre lo denuncia la regla. */
+    if (nombre.slice(0, 4) >= NO_SE_RENOMBRA_DESDE) quietas++;
     /* Cada vez que una migración escribe una de las funciones que se abren sin
        sesión. Se cuentan las veces y no las funciones distintas a propósito:
        una función reescrita más adelante vuelve a pasar por la regla, que es
@@ -2172,20 +2211,30 @@ if (ME_CORRIERON_A_MI) {
     `de la Organización, las ${resoluciones} se la piden a \`public.${LA_RESUELVE}()\`: ` +
     'ninguna rehace la cuenta por su lado, y ninguna otra función la deduce. ' +
     `Y las ${quietas} migraciones desde la ${NO_SE_RENOMBRA_DESDE} no le cambian ` +
-    'el nombre a nada de lo ya guardado: ' +
-    (renombres === 0
-      ? 'no queda ni un renombre escrito. '
-      : `los ${renombres} que hay son todos del acomodamiento del glosario. `) +
+    'el nombre a nada de lo ya guardado: no queda ni un renombre escrito. ' +
     `Y las ${enteras} entran enteras o no entran: ninguna corta la transacción ` +
     'que la envuelve, ni trae nada que no pueda correr adentro de una. ' +
     'Y quien llega sin sesión entra por la puerta de una Prestadora o no entra: ' +
-    `de los ${alcance.cerrados} objetos de \`public\` que alguna vez estuvieron a su ` +
-    `alcance no le queda ninguno, contando el neto de las ${migraciones.length} ` +
-    `migraciones y siguiendo los renombres (${VISTAS_AL_ALCANCE_ANONIMO.size} vista ` +
-    'abierta a propósito, que sigue acotando adentro de su cuerpo lo que publica y ' +
-    `sólo deja leer, y ${TABLAS_DEL_PRODUCTO_AL_ALCANCE_ANONIMO.size} tabla de reglas ` +
-    'del producto, que sigue sin columna de Organización y sólo deja leer, comprobado ' +
-    'acá mismo); y las ' +
+    `del neto de las ${migraciones.length} migraciones, siguiendo los renombres, no ` +
+    'le queda a `anon` ni un objeto de `public` fuera de los declarados acá ' +
+    `(${VISTAS_AL_ALCANCE_ANONIMO.size} vistas abiertas a propósito, que siguen ` +
+    'acotando adentro de su cuerpo lo que publican y sólo dejan leer, y ' +
+    `${TABLAS_DEL_PRODUCTO_AL_ALCANCE_ANONIMO.size} tabla de reglas del producto, ` +
+    'que sigue sin columna de Organización y sólo deja leer, comprobado acá ' +
+    'mismo). ' +
+    /* El número de los que estuvieron abiertos y se cerraron es el único que
+       puede bajar solo si alguien saca un `revoke`. Hoy da cero, y un cero no
+       prueba nada —también da cero un esquema que nunca concedió nada—, así que
+       cuando da cero se dice qué es lo que sí sostiene la frase. */
+    (alcance.cerrados === 0
+      ? 'Ninguno llegó a estar abierto y después cerrarse, así que acá no hay ' +
+        'ningún número que baje solo: lo que sostiene esta frase es la lista de ' +
+        'los que sí están abiertos, comprobados de a uno. '
+      : (alcance.cerrados === 1
+          ? 'Y del que alguna vez estuvo a su alcance no le queda nada. '
+          : `Y de los ${alcance.cerrados} que alguna vez estuvieron a su ` +
+            'alcance no le queda ninguno. ')) +
+    'Y las ' +
     `${puertas} veces que una migración escribe una de las ` +
     `${AL_ALCANCE_ANONIMO.size} funciones que sí se abren sin sesión, las ${puertas} ` +
     'exigen el nombre corto de una Prestadora, lo comparan contra `slug` y no ' +

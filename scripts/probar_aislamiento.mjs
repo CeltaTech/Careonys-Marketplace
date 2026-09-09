@@ -54,7 +54,7 @@
      8. Sin legajo propio, no puede crear uno en la Prestadora ajena.
      9. No ve el legajo de la otra Prestadora.
 
-   Y sobre los archivos (migración 0006), que son la otra mitad del legajo:
+   Y sobre los archivos, que son la otra mitad del legajo:
 
     10. Cada cuenta puede subir a su propia carpeta, en los dos depósitos.
     11. No puede subir a la carpeta de otra cuenta.
@@ -66,24 +66,25 @@
         administración para ascender a alguien a coordinador, y la clave que los
         da existe únicamente en el entorno local.)
 
-   Y sobre el directorio (migración 0007), que es lo único que se ve sin sesión:
+   Y sobre el directorio, que es lo único que se ve sin sesión:
 
     17. Un legajo validado, pero sin contestar el cierre del alta, no se muestra.
     18. Con la autorización en «no», tampoco.
     19. Con la autorización en «sí», recién ahí aparece.
     20. Y el directorio de la OTRA Prestadora no lo muestra. Es la razón de ser
-        de la migración 0021, y hasta el 26 de agosto de 2026 no lo probaba nada.
+        de `directorio_de()` —`supabase/migrations/0001_base_del_esquema.sql:876`—,
+        y hasta el 26 de agosto de 2026 no lo probaba nada.
     21. El directorio no devuelve ningún dato personal ni ningún camino del
         depósito privado. (17 a 21 también necesitan --local, por lo mismo:
         validar un legajo es trabajo del personal de la Prestadora.)
 
    El directorio se pide siempre por la puerta de UNA Prestadora
    —`directorio_de(<nombre corto>)`, `perfil_del_directorio(<nombre corto>,
-   <id>)`—, porque la migración 0021 le quitó el permiso a `directorio`
-   para todo el mundo. Leerla derecho devuelve vacío siempre, y una prueba
-   escrita así no puede fallar.
+   <id>)`—, porque `directorio` no está concedida a nadie
+   —`supabase/migrations/0001_base_del_esquema.sql:876`—. Leerla derecho
+   devuelve vacío siempre, y una prueba escrita así no puede fallar.
 
-   Y sobre el examen (migración 0008), que es lo que acredita que alguien sabe
+   Y sobre el examen, que es lo que acredita que alguien sabe
    cuidar:
 
     22. La respuesta correcta no se puede leer con sesión iniciada.
@@ -94,7 +95,7 @@
     27. Cada quien ve sus intentos y ninguno de otra persona.
     28. Cuando se acaban los intentos, no deja rendir otra vez.
 
-   Y sobre la barrera entre Familias de una misma Prestadora (migración 0020),
+   Y sobre la barrera entre Familias de una misma Prestadora,
    que es la que faltaba entera:
 
     29. Cada Familia publica su aviso.
@@ -113,19 +114,19 @@
         de agosto de 2026 —por eso `clock_ins` no tenía una sola fila en toda la
         base; fue el pendiente 112, cerrado ese mismo día—.
     41. Y sin legajo propio y sin ser personal no se lee ninguna fichada.
-    42. No lee cómo pondera su puntaje la Prestadora (migración 0018), aunque
-        esas filas existan: las siembra la propia migración, así que ver cero
-        ahí es la política y no una tabla vacía.
+    42. No lee cómo pondera su puntaje la Prestadora, aunque esas filas
+        existan: las carga la siembra, así que ver cero ahí es la política
+        y no una tabla vacía.
     43. Ni las puede cambiar.
 
-   Y sobre las zonas de cobertura, que son de cada Prestadora (migración 0035):
+   Y sobre las zonas de cobertura, que son de cada Prestadora:
 
     44. Cada Prestadora ve sus zonas, y las dos ven un número que no es cero.
     45. Ninguna ve una sola zona de la otra.
     46. Nadie carga una zona en la Prestadora de otro.
 
    Y sobre la modalidad, que es donde la Familia y el Asistente se encuentran, y
-   donde lo único que queda guardado es el contacto (migración 0054):
+   donde lo único que queda guardado es el contacto:
 
     47. El Asistente se postula a un aviso, y otro Asistente se postula al mismo.
     48. Nadie se postula con el legajo de otro.
@@ -145,7 +146,7 @@
         mira que las dos partes sí vean las suyas: si no, «cero» no distingue
         negado de vacío. (Sólo con --local, por lo mismo que 15 y 16.) Y
         tampoco lee las dos que cuelgan del aviso en vez de la modalidad —el
-        reporte de cuidado y `messages`—, que hasta la migración 0067 sí leía:
+        reporte de cuidado y `messages`—, que antes sí leía:
         las dos preguntaban por el aviso con un `exists` que no repetía de
         quién era, y la RLS de `avisos` le devuelve a ese personal todos
         los avisos de su Organización. La fila del reporte se carga acá con el
@@ -159,7 +160,7 @@
         nada: las dos conversaciones colgaban de un aviso.
 
    Y sobre las cuatro funciones que le dan de comer a las pantallas de ese
-   encuentro (migración 0055). Son `security definer`, así que se saltean la
+   encuentro. Son `security definer`, así que se saltean la
    RLS a propósito: lo que las acota es lo que preguntan adentro y las columnas
    que eligen devolver. Por eso se prueban aparte de las tablas.
 
@@ -181,7 +182,7 @@
         desde que existen, porque PostgREST publica el esquema `public`: la
         migración le revoca `anon`, y acá se comprueba que el revoque esté.
 
-   Y sobre la fichada atada al vínculo (migración 0056), que es la mitad
+   Y sobre la fichada atada al vínculo, que es la mitad
    operativa: el software muestra lo que se marcó y no decide nada.
 
     64. El Asistente marca una fichada diciendo para qué vínculo es, y la
@@ -189,8 +190,8 @@
     65. Otra Familia de la misma Prestadora no la ve, y al lado se mira que la
         Familia del vínculo sí: si no, «cero» no distingue negado de vacío.
     66. Una fichada **sin** vínculo no la ve ninguna Familia, y el Asistente
-        que la marcó sí. Es la que se podía marcar antes de la 0056, y no se
-        le abre a nadie por haberla dejado sin marcar.
+        que la marcó sí. Es la que se podía marcar antes de que existiera el
+        vínculo, y no se le abre a nadie por haberla dejado sin marcar.
     67. El Asistente no puede colgar una fichada de una conversación ajena. Si
         pudiera, le haría aparecer a una Familia una jornada que no es de su
         Asistente, que es justo el aviso equivocado que esta mitad promete no
@@ -199,7 +200,7 @@
         suelta, y al lado se mira que las dos partes sí vean la suya. (Sólo
         con --local, por lo mismo que 15 y 16.)
 
-   Y sobre la alarma que sale de esas fichadas (migración 0057), que es lo
+   Y sobre la alarma que sale de esas fichadas, que es lo
    único que el producto promete avisar y no decidir.
 
     69. Con cinco marcas cargadas a propósito —una jornada que cerró, una
@@ -390,7 +391,7 @@ console.log('');
    2026 corría igual y avisaba al final que dejaba las cuentas: eso es
    pedirle a quien la corre que se acuerde de limpiar a mano lo que el guion
    ensució solo, y no se acordó nadie. Quedaron tres cuentas en la base
-   publicada y hubo que sacarlas con una migración, la 0058. Crear lo que no
+   publicada y hubo que sacarlas con una migración. Crear lo que no
    se va a poder borrar es el defecto; avisarlo no lo arregla. */
 let claveDeLimpieza = claveServicio;
 if (!claveDeLimpieza) {
@@ -482,10 +483,11 @@ async function entrar(email, password) {
 }
 
 // --- Las dos Prestadoras ----------------------------------------------------
-// Se piden por su nombre corto, de a una. No se listan: la migracion 0021 quito
-// la lista a proposito —no existe ninguna respuesta que devuelva mas de una
-// Prestadora—, y una prueba no es motivo para reabrirla. Los dos nombres cortos
-// los crea la migracion 0003 y no cambian.
+// Se piden por su nombre corto, de a una. No se listan: la lista se quito a
+// proposito —no existe ninguna respuesta que devuelva mas de una Prestadora—,
+// y una prueba no es motivo para reabrirla. Los dos nombres cortos los crea
+// la siembra (`supabase/migrations/0002_siembra_ficticia.sql:58-59`) y no
+// cambian.
 const NOMBRES_CORTOS = ['presdemo', 'cuidarnorte'];
 const prestadoras = [];
 for (const slug of NOMBRES_CORTOS) {
@@ -496,7 +498,7 @@ for (const slug of NOMBRES_CORTOS) {
   if (Array.isArray(cuerpo) && cuerpo.length === 1) prestadoras.push(cuerpo[0]);
 }
 if (prestadoras.length < 2) {
-  console.error('Hacen falta las dos Prestadoras ficticias de la migracion 0003 (' +
+  console.error('Hacen falta las dos Prestadoras ficticias de la siembra (' +
     NOMBRES_CORTOS.join(', ') + '). Se resolvieron: ' + prestadoras.length);
   process.exit(1);
 }
@@ -704,7 +706,7 @@ console.log('El intento que tiene que fracasar');
 }
 
 // --- 10 a 16: los archivos --------------------------------------------------
-// Los papeles del legajo viven en dos depósitos (migración 0006), y el permiso
+// Los papeles del legajo viven en dos depósitos, y el permiso
 // sale de la primera carpeta del camino: tiene que ser la cuenta dueña. Acá se
 // escribe primero y se pregunta después, igual que con las tablas.
 console.log('');
@@ -818,8 +820,9 @@ if (!coordinador) {
 // El directorio es la única puerta que se abre sin sesión, así que acá se pregunta
 // con la clave pública y nada más. Tres condiciones tienen que cumplirse a la vez
 // para aparecer: que la Prestadora haya validado el legajo, que la persona haya
-// dicho que sí, y que estén comprobados los papeles que la puerta de publicación
-// exige (migración 0061). Se prueban por separado, porque ninguna de las tres
+// dicho que sí, y que estén comprobados los papeles que la puerta de
+// publicación exige (`supabase/migrations/0001_base_del_esquema.sql:817`).
+// Se prueban por separado, porque ninguna de las tres
 // alcanza sola.
 console.log('');
 console.log('El directorio');
@@ -836,10 +839,9 @@ if (!coordinador) {
     body: JSON.stringify({ verification_status: 'validado_prestadora' })
   }, coordinador.token);
 
-  // El directorio se pide por la puerta de UNA Prestadora, que desde la migracion
-  // 0021 es la unica que existe: `directorio` no esta concedida a nadie, asi
-  // que leerla directo devuelve vacio siempre y una prueba escrita asi no puede
-  // fallar.
+  // El directorio se pide por la puerta de UNA Prestadora, que es la unica que
+  // existe: `directorio` no esta concedida a nadie, asi que leerla directo
+  // devuelve vacio siempre y una prueba escrita asi no puede fallar.
   const enDirectorioDe = async slug => {
     const { cuerpo } = await rest('/rest/v1/rpc/directorio_de', {
       method: 'POST',
@@ -869,7 +871,7 @@ if (!coordinador) {
 
   await autorizar(true);
 
-  // Tercera condición, la de la migración 0061: los papeles que la puerta
+  // Tercera condición: los papeles que la puerta
   // `publicacion` exige. Este legajo es de cuidador domiciliario, así que le
   // tocan dos —antecedentes penales y certificado de salud— y no tiene
   // ninguno. Las dos comprobaciones que siguen son las que hacen que esta
@@ -902,7 +904,7 @@ if (!coordinador) {
     dijoQueSi === true, dijoQueSi ? 'aparece' : 'no aparece');
 
   // Y la puerta del otro lado: el directorio de la Prestadora ajena no lo trae.
-  // Es la razon de ser de la migracion 0021, y sin esta comprobacion las tres de
+  // Es la razon de ser de `directorio_de()`, y sin esta comprobacion las tres de
   // arriba pasarian igual con el directorio mezclando las dos empresas.
   const enElAjeno = await enDirectorioDe(B.slug);
   comprobar('Y el directorio de la otra Prestadora no lo muestra',
@@ -926,7 +928,7 @@ if (!coordinador) {
       : 'la función no devolvió ninguna fila, así que esto no probó nada');
 }
 
-// --- Las verificaciones del legajo (migraciones 0004, 0026, 0059 y 0060) ----
+// --- Las verificaciones del legajo ------------------------------------------
 // Es lo único que la Prestadora controla de un Asistente: quién entra. Hasta
 // que existió la pantalla del panel, esta tabla sólo se llenaba con la siembra,
 // así que en una Prestadora de verdad el directorio no mostraba ninguna
@@ -948,7 +950,8 @@ if (!coordinador) {
   const b = cuentas[1];
 
   // El mismo pedido que hace la pantalla: alta o modificación en uno solo,
-  // apoyado en la restricción de unicidad (legajo, tipo) de la migración 0004.
+  // apoyado en la restricción de unicidad (legajo, tipo) de la tabla
+  // (`supabase/migrations/0001_base_del_esquema.sql:3493`).
   const marcar = (legajoId, tenantId, tipo, estado, token, extra = {}) =>
     rest('/rest/v1/verificaciones_asistente?on_conflict=caregiver_id,tipo', {
       method: 'POST',
@@ -1027,8 +1030,10 @@ if (!coordinador) {
 // pueda escribir a mano.
 //
 // Las claves de las respuestas buenas —`fowler`, `trendelenburg`— están puestas
-// acá a mano, sacadas de la migración 0008. No hay otra forma: si la prueba
-// pudiera averiguarlas preguntándole a la base, el examen ya estaría roto.
+// acá a mano, sacadas de la siembra
+// (`supabase/migrations/0002_siembra_ficticia.sql:602-605`). No hay otra
+// forma: si la prueba pudiera averiguarlas preguntándole a la base, el
+// examen ya estaría roto.
 console.log('');
 console.log('El examen');
 
@@ -1126,8 +1131,8 @@ if (!evaluacion || !Array.isArray(preguntas) || preguntas.length !== 2) {
 // --- 29 a 43: la barrera entre Familias -------------------------------------
 // Las cuentas A y B están en Prestadoras distintas, así que entre ellas alcanza
 // con el `tenant_id` y no prueban nada nuevo. A y C están en la MISMA
-// Prestadora: son el único par que puede mostrar si la barrera de la migración
-// 0020 existe o si el muro tenía una sola pared.
+// Prestadora: son el único par que puede mostrar si la barrera entre Familias
+// existe o si el muro tenía una sola pared.
 console.log('');
 console.log('Dos Familias de la misma Prestadora');
 {
@@ -1221,8 +1226,8 @@ console.log('Dos Familias de la misma Prestadora');
 
   /* El `author_id` va escrito y el resultado se mira, y las dos cosas son la
      misma corrección. Hasta el 31 de agosto de 2026 esta carga salía sin
-     `author_id` —la columna no tiene valor por omisión— y la política de la
-     0020 la rechazaba, porque pide ser personal de la Prestadora o ser quien
+     `author_id` —la columna no tiene valor por omisión— y la política de
+     `messages` la rechazaba, porque pide ser personal de la Prestadora o quien
      escribe. Así que **no había ningún mensaje**, y la comprobación de abajo
      veía cero filas y daba bien: pasaba igual con el aislamiento roto. Es lo
      mismo que el reporte de más abajo ya tenía resuelto, y por eso se copia
@@ -1271,8 +1276,8 @@ console.log('Dos Familias de la misma Prestadora');
               : 'no se pudo escribir el reporte de prueba, así que esto no probó nada');
 
   /* La fichada es la otra cosa que escribe el teléfono del Asistente, y su
-     política —la de la 0002, rehecha por la 0020— no la había recorrido nunca
-     nadie: `clock_ins` estaba sin una sola fila en toda la base (pendiente
+     política no la había recorrido nunca nadie: `clock_ins` estaba sin una
+     sola fila en toda la base (pendiente
      111). Se recorre igual que el reporte, y con la misma forma: se escribe
      primero y se pregunta después, con el control positivo puesto.
 
@@ -1320,9 +1325,9 @@ console.log('Dos Familias de la misma Prestadora');
                                        : JSON.stringify(fichadasAjenas))
       : 'no se pudo escribir la fichada de prueba, así que esto no probó nada');
 
-  // Y cómo pondera la Prestadora su puntaje (migraciones 0018 y 0022) es de su personal.
-  // Las filas existen —las siembra la propia migración—, así que ver cero acá
-  // es la política y no una tabla vacía.
+  // Y cómo pondera la Prestadora su puntaje es de su personal. Las filas
+  // existen —las carga la siembra—, así que ver cero acá es la política y no
+  // una tabla vacía.
   const { cuerpo: ponderacionesVisibles } = await rest(
     '/rest/v1/ponderacion_comprobacion?select=id,comprobacion,ponderacion', {}, otraFamilia.token);
   comprobar('Las ponderaciones del puntaje no se leen desde una sesión que no es del personal',
@@ -1340,9 +1345,9 @@ console.log('Dos Familias de la misma Prestadora');
     'tocó ' + (Array.isArray(retoquePonderacion.cuerpo) ? retoquePonderacion.cuerpo.length : '?') + ' filas');
 }
 
-// --- Las zonas de cobertura son de cada Prestadora (migración 0035) ---------
-// Las dos Prestadoras tienen listas distintas cargadas por la propia migración,
-// y por eso esta prueba puede fallar: cada una tiene que ver un número que no
+// --- Las zonas de cobertura son de cada Prestadora --------------------------
+// Las dos Prestadoras tienen listas distintas cargadas por la siembra, y por
+// eso esta prueba puede fallar: cada una tiene que ver un número que no
 // es cero y que no es el de la otra. Ver cero no probaría nada.
 {
   const zonasPorCuenta = [];
@@ -1378,12 +1383,12 @@ console.log('Dos Familias de la misma Prestadora');
 }
 
 
-// --- Los catálogos de dos escalones (migraciones 0008 y 0048) --------------
+// --- Los catálogos de dos escalones ----------------------------------------
 // `cursos`, `evaluaciones` y `preguntas_evaluacion` guardan dos cosas en la
 // misma tabla: con `tenant_id` nulo, la oferta general de CeltaTech, que ven
 // todas; con `tenant_id` cargado, lo que armó una Prestadora, que no ve
-// ninguna otra. Hasta la 0048 la siembra cargaba sólo lo general, así que la
-// mitad `tenant_id = prestadora_actual()` de esas políticas no tenía una sola
+// ninguna otra. Antes la siembra cargaba sólo lo general, así que la mitad
+// `tenant_id = prestadora_actual()` de esas políticas no tenía una sola
 // fila que la ejercitara, y acá no se podía mirar: sin dato propio, la
 // política correcta y la que se olvidó el escalón propio contestan lo mismo.
 //
@@ -1392,8 +1397,8 @@ console.log('Dos Familias de la misma Prestadora');
 // política perdiera la mitad propia, la dueña dejaría de ver lo suyo; si
 // perdiera la condición de Prestadora, la otra lo vería.
 //
-// No se prueba acá que nadie escriba en estos catálogos: la 0008 le quita el
-// permiso de escritura a `authenticated` sobre la tabla entera, así que un
+// No se prueba acá que nadie escriba en estos catálogos: a `authenticated`
+// sólo le concedieron lectura sobre la tabla entera, así que un
 // intento de carga cruzada daría error igual con el aislamiento roto. Sería
 // una prueba que no puede fallar.
 {
@@ -1444,7 +1449,7 @@ console.log('Dos Familias de la misma Prestadora');
     seCuelan.length ? seCuelan.join('   ') : 'ninguna ajena en los tres catálogos');
 }
 
-// --- 47 a 58: la modalidad, que es donde se encuentran (migración 0054) --------
+// --- 47 a 58: la modalidad, que es donde se encuentran -------------------------
 // Las tres tablas nuevas guardan **el contacto y nada del trato**, y por eso su
 // aislamiento no se parece a ninguno de los de arriba: no lo decide la
 // Prestadora ni lo decide una Familia sola, lo deciden **las dos partes**. El
@@ -1594,7 +1599,7 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
     conElLegajoAjeno.estado >= 400, 'respuesta ' + conElLegajoAjeno.estado);
 
   // Y el aviso de la otra Prestadora es inalcanzable: lo cierra la llave
-  // compuesta (aviso_id, tenant_id) que agregó la propia 0054.
+  // compuesta (aviso_id, tenant_id) que tiene la tabla.
   const cruzada = await postular(asistenteUno, familiaDeLaOtra.avisoId);
   comprobar('Una postulación no cruza Prestadoras',
     cruzada.estado >= 400, 'respuesta ' + cruzada.estado);
@@ -1627,7 +1632,8 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
 
   /* Y el mensaje del Asistente no lo puede reescribir. Esto no lo decide la
      política —la fila es la misma que acaba de marcar— sino el permiso por
-     columna de la 0054 §7, que es lo único que distingue «puede tocar la fila»
+     columna (`supabase/migrations/0001_base_del_esquema.sql:5690-5704`), que
+     es lo único que distingue «puede tocar la fila»
      de «puede tocar esta columna». Se mira el rechazo y además que el texto
      siga siendo el que escribió su autor: un rechazo que igual hubiera dejado
      la columna cambiada no probaría nada. */
@@ -1731,7 +1737,7 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
     'respuesta ' + borrarMensaje.estado + ', quedan ' + siguenLosDos.length);
 
   // ── El personal de la Prestadora no lee ninguna de las tres ───────────────
-  // Es la decisión que explica la 0054: el contenido es de las dos partes, y
+  // Es la decisión que explica la modalidad: el contenido es de las dos partes, y
   // mirarlo es meterse en el trato. Con el control positivo al lado, porque si
   // no, «cero» no distingue negado de vacío.
   if (!coordinador) {
@@ -1758,10 +1764,10 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
        las dos preguntaban por el aviso con un `exists` que no repetía de quién
        era. La RLS de `avisos` no alcanza para filtrarlo: a este mismo
        coordinador le devuelve **todos** los avisos de su Organización
-       (`0020_la_barrera_tambien_va_entre_familias.sql:77-82`), así que el
+       (`0001_base_del_esquema.sql:4482`), así que el
        `exists` daba verdadero para cualquier fila y el personal leía el reporte
-       de cuidado y la conversación enteros. Lo cerró la migración 0067, y esto
-       es lo que faltaba para que se notara: las tres tablas de arriba están en
+       de cuidado y la conversación enteros. Ya está cerrado, y esto es lo que
+       faltaba para que se notara: las tres tablas de arriba están en
        la lista desde el principio y estas dos no estaban en ninguna.
 
        Las dos filas se escriben acá, con el aviso puesto, y por dos motivos.
@@ -1903,7 +1909,7 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
       : pedidasDeMas ? pedidasDeMas + ' fila(s) ajena(s) alcanzables por identificador'
       : 'ninguna ajena en las tres tablas');
 
-  // ── 59 a 63: las cuatro funciones de la migración 0055 ─────────────────
+  // ── 59 a 63: las cuatro funciones del encuentro ────────────────────────
   /* Las cuatro son `security definer`: corren con los permisos de quien las
      escribió y **la RLS no las mira**. Lo único que las acota es lo que
      preguntan adentro —`legajo_propio()`, `auth.uid()`, `prestadora_actual()`—
@@ -2098,7 +2104,7 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
       abiertas.length ? abiertas.join('   ') : 'las cuatro niegan a anon');
   }
 
-  // ── 64 a 68: la fichada atada al vínculo, migración 0056 ─────────────
+  // ── 64 a 68: la fichada atada al vínculo ─────────────────────────────
   console.log('');
   console.log('La mitad operativa: la fichada que la Familia sí ve');
   {
@@ -2188,7 +2194,7 @@ console.log('La modalidad: la postulación, la conversación y los mensajes');
     }
   }
 
-  // ── 69 a 75: la alarma que sale de esas fichadas, migración 0057 ──────
+  // ── 69 a 75: la alarma que sale de esas fichadas ──────────────────────
   console.log('');
   console.log('La alarma: avisa, y no decide');
   {
@@ -2493,7 +2499,7 @@ function enLetras(n) {
 }
 
 const CLAMAN = [
-  ['docs/INVENTARIO.md',    'Las {letras} comprobaciones de que una Prestadora'],
+  ['README.md',             'Las {letras} comprobaciones de que una Prestadora'],
   ['docs/ALCANCE.md',       '**{letras} comprobaciones, contadas y pasadas'],
   ['docs/PLAN_AUDITORIA.md', 'ya viven las {n} comprobaciones'],
   ['docs/PENDIENTES.md',    'pasó sus {n} comprobaciones']

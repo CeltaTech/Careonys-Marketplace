@@ -11,12 +11,12 @@
    El 31 de agosto de 2026 se descubrió que `scripts/probar_permisos_en_vivo.mjs`
    estaba en rojo desde hacía cinco días y nadie lo había mirado, porque su
    encabezado decía que el rojo era el pendiente 67 y el pendiente 67 se había
-   cerrado el 26 de agosto de 2026 con la migración 0032. El rojo venía en
+   cerrado el 26 de agosto de 2026. El rojo venía en
    realidad de otra cosa. **Una roja esperada contra un número que no existe es
    un permiso permanente para no mirar.**
    Ese mismo día aparecieron cuatro citas más del mismo tipo adentro de la propia
-   lista de pendientes: el 68 reclamaba como agujero abierto lo que la migración
-   0047 había tapado el 31 de agosto de 2026.
+   lista de pendientes: el 68 reclamaba como agujero abierto lo que ya se
+   había tapado el 31 de agosto de 2026.
 
    QUÉ CUENTA COMO ARREGLADO
    No hace falta borrar la cita: casi siempre conviene dejarla, porque explica de
@@ -34,8 +34,6 @@
      reescribir cada vez que se cierra algo. Medido el 31 de agosto de 2026:
      `ALCANCE.md` tiene 122 citas, 66 apuntando a pendientes cerrados y 46 de
      ellas sin palabra de cierre. Ninguna es un error.
-   · `docs/claude_history.md` y todo lo que lleve `historial` en el nombre, por lo
-     mismo: es historial y no se corrige, se agrega.
    · Los archivos de `supabase/migrations/`, que **una vez aplicados no se editan
      jamás** —regla de la empresa—, así que su texto es historia por definición.
 
@@ -106,8 +104,6 @@ const NARRAN_UN_MOMENTO = (rel) => {
   return (
     r === 'docs/ALCANCE.md' ||
     r.startsWith('docs/PLAN_') ||
-    r.includes('historial') ||
-    r.includes('claude_history') ||
     r.startsWith('supabase/migrations/')
   );
 };

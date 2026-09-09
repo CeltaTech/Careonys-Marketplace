@@ -108,7 +108,8 @@ const REGISTROS_PERDONADOS = new Map([
   ['index', {
     valores: ['fila.clase'],
     motivo: 'es la clase de una alarma —`jornada_abierta` o `salida_sin_entrada`—, ' +
-      'que es una clave del vocabulario que escribe la propia migración 0057 y no ' +
+      'que es un valor fijo que escribe la propia `mis_alarmas()` ' +
+      '(`supabase/migrations/0001_base_del_esquema.sql:1633` y `:1648`) y no ' +
       'un dato de ninguna persona. Se imprime cuando la base manda una clase que ' +
       'la pantalla todavía no sabe nombrar, y sin verla el aviso no sirve para ' +
       'agregarle la frase que le falta'

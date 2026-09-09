@@ -50,9 +50,10 @@
 
    ---- Qué documentos mira ----
 
-   Los que describen el presente. Los que son **una foto fechada** están en
-   `FOTOS` con su motivo: un plan escrito antes de tocar código cita el código de
-   ese día a propósito, y corregirle los renglones sería falsear lo que decía.
+   Todos los de `docs/`, sin excepción. Al que habla de otro repositorio se le
+   perdona una sola cosa —que un archivo **de afuera** no esté acá—, y para eso
+   la ruta tiene que empezar por una carpeta declarada en `PREFIJOS_DE_AFUERA`.
+   Un archivo de este repositorio que no está le sigue fallando igual.
 =================================================== */
 
 import { readFileSync, existsSync } from 'node:fs';
@@ -62,19 +63,20 @@ import { dirname, join, relative, sep } from 'node:path';
 import { hayArchivos } from './recorrido.mjs';
 import {
   citasDe, SIN_CONTENIDO, renglonesDe,
-  FOTOS, AJENOS, DE_OTRO_REPOSITORIO, AJENAS
+  AJENOS, DE_OTRO_REPOSITORIO, PREFIJOS_DE_AFUERA, AJENAS
 } from './citas.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 /** Los problemas de las citas de un documento, cada uno con su renglón. */
-export function citasRotas(texto, leer, existe) {
+export function citasRotas(texto, leer, existe, esDeAfuera = () => false) {
   const problemas = [];
   const lineas = texto.split('\n');
   for (let i = 0; i < lineas.length; i++) {
     for (const { entera, ruta, sufijo } of citasDe(lineas[i])) {
       if (AJENOS.has(ruta)) continue;
       if (!existe(ruta)) {
+        if (esDeAfuera(ruta)) continue;
         problemas.push([i + 1, entera, 'ese archivo no existe.']);
         continue;
       }
@@ -128,6 +130,28 @@ if (noDetecta.length || sePasa.length) {
   process.exit(1);
 }
 
+/* Y que el perdón de lo de afuera perdone sólo lo de afuera. Sin estas dos
+   líneas, el día que alguien lo escriba mal el chequeo seguiría diciendo ✔. */
+const afueraFalso = (r) => r.startsWith('afuera/');
+if (citasRotas('Ver `afuera/x.js:1`.', leerFalso, existeFalso, afueraFalso).length !== 0 ||
+    citasRotas('Ver `z.js:1`.', leerFalso, existeFalso, afueraFalso).length !== 1) {
+  console.error(
+    'El perdón de los archivos de otro repositorio está roto: o no perdona lo de\n' +
+    'afuera, o perdona también lo de acá. No se revisó nada.');
+  process.exit(1);
+}
+
+/* Un prefijo vacío perdonaría todo, y uno sin barra final perdonaría de más. */
+if (PREFIJOS_DE_AFUERA.length === 0 ||
+    PREFIJOS_DE_AFUERA.some((p) => p.length < 2 || !p.endsWith('/'))) {
+  console.error(
+    'PREFIJOS_DE_AFUERA de `scripts/citas.mjs` tiene que traer al menos una carpeta,\n' +
+    'y cada una termina en barra. Vacía o sin barra, el perdón deja de ser acotado y\n' +
+    'vuelve a tapar cualquier archivo que falte.');
+  process.exit(1);
+}
+const esDeAfuera = (ruta) => PREFIJOS_DE_AFUERA.some((p) => ruta.startsWith(p));
+
 const leer = (ruta) => readFileSync(join(raiz, ruta.split('/').join(sep)), 'utf8');
 const existe = (ruta) => existsSync(join(raiz, ruta.split('/').join(sep)));
 
@@ -137,16 +161,15 @@ let citas = 0;
 
 for (const camino of hayArchivos(join(raiz, 'docs'), ['.md'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
-  if (FOTOS.has(nombre)) continue;
   revisados++;
   const texto = readFileSync(camino, 'utf8');
   for (const linea of texto.split(String.fromCharCode(10))) citas += citasDe(linea).length;
-  // Al documento que habla de otro repositorio se le calla una sola cosa: que el
-  // archivo no esté acá. Un renglón equivocado de un archivo que sí está le
-  // sigue fallando igual.
-  const deOtro = DE_OTRO_REPOSITORIO.has(nombre);
-  for (const [renglon, cita, motivo] of citasRotas(texto, leer, existe)) {
-    if (deOtro && /ese archivo no existe/.test(motivo)) continue;
+  // Al documento que habla de otro repositorio se le calla una sola cosa: que
+  // un archivo **de afuera** no esté acá. Un renglón equivocado de un archivo
+  // que sí está le sigue fallando igual, y un archivo de este repositorio que
+  // ya no está, también.
+  const perdona = DE_OTRO_REPOSITORIO.has(nombre) ? esDeAfuera : () => false;
+  for (const [renglon, cita, motivo] of citasRotas(texto, leer, existe, perdona)) {
     fallas.push(`${nombre}:${renglon}  ${cita}\n  ${motivo}`);
   }
 }
@@ -158,11 +181,12 @@ if (fallas.length > 0) {
   console.error(
     `${fallas.length} ${plural}. Una cita con renglón vale mientras el renglón siga ahí:\n` +
     'se busca a qué apuntaba y se corrige el número, o se saca el número si ya no hace falta.\n' +
-    'Si el documento es una foto de un día y sus citas apuntan al código de esa fecha a\n' +
-    'propósito, va a FOTOS de `scripts/citas.mjs`, con el motivo escrito.');
+    'Si el archivo vive en otro repositorio, su carpeta va a PREFIJOS_DE_AFUERA de\n' +
+    '`scripts/citas.mjs`, y el documento que lo cita, a DE_OTRO_REPOSITORIO.');
   process.exit(1);
 }
 
 console.log(
   `Citas verificadas: ${citas} con renglón en ${revisados} documentos, todas apuntando a algo ` +
-  `(${FOTOS.size} exentos por ser una foto fechada, ${DE_OTRO_REPOSITORIO.size} por hablar de otro repositorio).`);
+  `(a ${DE_OTRO_REPOSITORIO.size} que hablan de otro repositorio se les perdona lo que ` +
+  `viva en ${PREFIJOS_DE_AFUERA.join(' o ')}).`);

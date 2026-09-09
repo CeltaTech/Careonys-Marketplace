@@ -3,7 +3,8 @@
 
        node scripts/verificar_catalogo.mjs
 
-   Desde la migración 0038 los vocabularios viven en tablas y
+   Los vocabularios viven en tablas —`vocabularios` y `vocabulario_items`,
+   `supabase/migrations/0001_base_del_esquema.sql:647` y `:592`— y
    `data/catalogo-vocabularios.json` es una copia generada, que existe sólo
    porque los dos programas para el teléfono la necesitan sin conexión. Una
    copia que nadie compara vuelve a ser una segunda verdad en cuanto alguien
@@ -13,7 +14,7 @@
    Mira dos cosas, y son distintas a propósito:
 
      1. **Lo que se puede comprobar siempre**, con base o sin ella: que el
-        archivo tenga la forma que exige la migración 0038 —clave no vacía,
+        archivo tenga la forma que exige la base —clave no vacía,
         título en los tres idiomas, opciones sin repetir, cada opción con su
         clave y su castellano— y que las tres copias digan lo mismo. Estas
         comprobaciones fallan de verdad, y fallan sin conexión.

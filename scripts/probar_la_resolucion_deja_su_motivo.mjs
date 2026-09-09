@@ -10,8 +10,10 @@
        supabase start -x edge-runtime -x vector -x supavisor -x logflare
        supabase migration up --local
 
-   QUÉ MIRA. Lo que fue el pendiente 90, cerrado el 2 de septiembre de 2026 por
-   la migración 0064. La pantalla de la Prestadora pedía el motivo por el que se
+   QUÉ MIRA. Lo que fue el pendiente 90, cerrado el 2 de septiembre de 2026 con
+   `resolver_legajo()` y la tabla `resoluciones_legajo`
+   (`supabase/migrations/0001_base_del_esquema.sql:1999` y `:1954`).
+   La pantalla de la Prestadora pedía el motivo por el que se
    otorga el aval o se rechaza un legajo, el cliente de datos lo mandaba, y ahí
    se terminaba: no había ninguna columna donde pudiera caer y se descartaba con
    un aviso en la consola. La decisión más crítica del producto —la que publica
@@ -382,7 +384,7 @@ if (fallos === 0) {
   process.exit(0);
 }
 console.log(fallos + (fallos === 1 ? ' comprobación' : ' comprobaciones') + ' en rojo.');
-console.log('Esto pasa desde el 2 de septiembre de 2026, cuando la migración 0064 cerró');
+console.log('Esto pasa desde el 2 de septiembre de 2026, cuando se cerró');
 console.log('el pendiente 90. Si da rojo, la decisión que publica a una persona en el');
 console.log('directorio —o la que le cierra la puerta— volvió a guardarse sin el porqué,');
 console.log('o el porqué quedó al alcance de alguien que no lo tiene que leer.');
