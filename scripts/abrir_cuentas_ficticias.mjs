@@ -3,12 +3,12 @@
 
        CLAVE_PRUEBA_LOCAL=... node scripts/abrir_cuentas_ficticias.mjs
 
-   Por qué existe. Las cuentas ficticias quedaron sembradas
-   junto con el resto de los datos: perfil, Organización, legajo atado y
-   avisos a nombre de su Familia. Lo único que no dejó es la clave, y no por
-   olvido: las migraciones son las mismas de los dos lados, así que una clave
-   escrita adentro de una migración abre esas cuentas también en la base
-   publicada, para cualquiera que lea el repositorio.
+   Por qué existe. Las cuentas ficticias las dejan las migraciones, con todo lo
+   que va colgado de ellas: perfil, Organización, legajo atado y avisos a
+   nombre de su Familia. Lo único que no dejan es la clave, y no por olvido:
+   las migraciones son las mismas de los dos lados, así que una clave escrita
+   adentro de una migración abre esas cuentas también en la base publicada,
+   para cualquiera que lea el repositorio.
 
    Entonces las cuentas nacen sin clave. Existen, sostienen todas las
    referencias, y no entran. Este guion es el que las abre, del único lado
