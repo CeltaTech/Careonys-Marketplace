@@ -14,8 +14,8 @@
       "patron": "(?:\\d[ .()\\-]{0,2}){7,}",
       "banderas": "g",
       "motivo": {
-        "es-AR": "Parece un número de teléfono.",
         "en": "This looks like a phone number.",
+        "es-AR": "Parece un número de teléfono.",
         "pt-BR": "Parece um número de telefone."
       }
     },
@@ -24,8 +24,8 @@
       "patron": "(?:\\b(?:cero|uno|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve)\\b[ ,.\\-]*){7,}",
       "banderas": "gi",
       "motivo": {
-        "es-AR": "Parece un número de teléfono escrito con palabras.",
         "en": "This looks like a phone number spelled out in words.",
+        "es-AR": "Parece un número de teléfono escrito con palabras.",
         "pt-BR": "Parece um número de telefone escrito por extenso."
       }
     },
@@ -34,8 +34,8 @@
       "patron": "[A-Za-z0-9._%+-]+ ?(?:@|\\( ?at ?\\)|\\[ ?at ?\\]|\\barroba\\b) ?[A-Za-z0-9-]+ ?(?:\\.|\\bpunto\\b|\\bponto\\b) ?[A-Za-z]{2,}",
       "banderas": "gi",
       "motivo": {
-        "es-AR": "Parece una dirección de correo.",
         "en": "This looks like an email address.",
+        "es-AR": "Parece una dirección de correo.",
         "pt-BR": "Parece um endereço de e-mail."
       }
     },
@@ -44,8 +44,8 @@
       "patron": "\\b(?:calle|avenida|av|avda|pasaje|psje|diagonal)\\b\\.? ?[A-Za-zÀ-ÿ' ]{0,24}?\\d{1,5}\\b",
       "banderas": "gi",
       "motivo": {
-        "es-AR": "Parece un domicilio.",
         "en": "This looks like a street address.",
+        "es-AR": "Parece un domicilio.",
         "pt-BR": "Parece um endereço residencial."
       }
     },
@@ -54,9 +54,49 @@
       "patron": "\\b(?:piso|depto|dpto|departamento|timbre|altura)\\b\\.? ?\\d{1,5}\\b",
       "banderas": "gi",
       "motivo": {
-        "es-AR": "Parece parte de un domicilio.",
         "en": "This looks like part of a street address.",
+        "es-AR": "Parece parte de un domicilio.",
         "pt-BR": "Parece parte de um endereço residencial."
+      }
+    },
+    {
+      "clave": "usuario_de_otra_aplicacion",
+      "patron": "@[A-Za-z0-9._]{3,30}",
+      "banderas": "gi",
+      "motivo": {
+        "en": "This looks like a username on another application.",
+        "es-AR": "Parece un nombre de usuario de otra aplicación.",
+        "pt-BR": "Parece um nome de usuário de outro aplicativo."
+      }
+    },
+    {
+      "clave": "enlace",
+      "patron": "(?:https?://|www\\.)[^\\s]{2,}|\\b[A-Za-z0-9-]{2,}\\.(?:com|net|org|ar|br|me|io|app|link|ly|gl)\\b",
+      "banderas": "gi",
+      "motivo": {
+        "en": "This looks like a link to another site.",
+        "es-AR": "Parece un enlace a otro sitio.",
+        "pt-BR": "Parece um link para outro site."
+      }
+    },
+    {
+      "clave": "usuario_en_otra_aplicacion",
+      "patron": "\\b(?:mi|el|su|tu)\\s+(?:instagram|insta|ig|telegram|telegran|whatsapp|whatsap|wasap|wsp|wpp|messenger|facebook|face|tiktok|snapchat|skype|signal|discord|linkedin|zoom|meet)\\b\\s*(?:es|:)?\\s*[A-Za-z0-9._@-]{3,}",
+      "banderas": "gi",
+      "motivo": {
+        "en": "This looks like a username on another application.",
+        "es-AR": "Parece un nombre de usuario de otra aplicación.",
+        "pt-BR": "Parece um nome de usuário de outro aplicativo."
+      }
+    },
+    {
+      "clave": "invitacion_a_otra_aplicacion",
+      "patron": "\\b(?:busc.me|agreg.me|escrib.me|contact.me|habl.me|mand.me|llam.me|segu.me|pas.me)\\b[^\\n]{0,40}\\b(?:instagram|insta|ig|telegram|telegran|whatsapp|whatsap|wasap|wsp|wpp|messenger|facebook|face|tiktok|snapchat|skype|signal|discord|linkedin|zoom|meet)\\b|\\b(?:instagram|insta|ig|telegram|telegran|whatsapp|whatsap|wasap|wsp|wpp|messenger|facebook|face|tiktok|snapchat|skype|signal|discord|linkedin|zoom|meet)\\b[^\\n]{0,40}\\b(?:busc.me|agreg.me|escrib.me|contact.me|habl.me|mand.me|llam.me|segu.me|pas.me)\\b",
+      "banderas": "gi",
+      "motivo": {
+        "en": "This looks like an invitation to continue the conversation on another application.",
+        "es-AR": "Parece una invitación a seguir la conversación en otra aplicación.",
+        "pt-BR": "Parece um convite para continuar a conversa em outro aplicativo."
       }
     }
   ]

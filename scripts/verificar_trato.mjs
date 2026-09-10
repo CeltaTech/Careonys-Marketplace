@@ -102,10 +102,20 @@ for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js', '.jso
   if (nombre.endsWith('manifest.json') || nombre.endsWith('sw.js')) continue;
   revisados++;
   const crudo = readFileSync(camino, 'utf8');
+  const renglones = crudo.split(/\r?\n/);
   const vistos = new Set();
   for (const [renglon, texto] of nombre.endsWith('.sql')
     ? visibleDeMigracion(crudo)
     : visible(soloCastellano(crudo), esPantalla(nombre))) {
+    /* Lo único exento, y por un motivo que no es un permiso sino una diferencia
+       de naturaleza: los renglones `patron` de las reglas del chat no son texto
+       que el producto le diga a nadie, son la descripción de **lo que escribe
+       otro**. La regla que reconoce «tu instagram es maria» tiene que llevar la
+       palabra adentro para poder reconocerla, y sacársela abriría justo el
+       agujero que la regla viene a tapar. El `motivo` de esas mismas reglas, que
+       sí se muestra en pantalla, se revisa como cualquier otro texto. */
+    if (/^\s*"patron"\s*:/.test(renglones[renglon - 1] ?? '')) continue;
+
     PATRON.lastIndex = 0;
     const acierto = PATRON.exec(texto);
     if (acierto && !vistos.has(renglon + acierto[1])) {
