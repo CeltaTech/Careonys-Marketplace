@@ -163,9 +163,9 @@
       "pt-BR": "Já existe uma conta com esse e-mail. É possível entrar pela tela de acesso."
     },
     "error.correo_rechazado": {
-      "es-AR": "El servidor no acepta esa dirección de correo. Conviene revisar que esté bien escrita, o usar otra.",
-      "en": "The server does not accept that email address. It is worth checking the spelling, or using another one.",
-      "pt-BR": "O servidor não aceita esse endereço de e-mail. Convém verificar se está escrito corretamente, ou usar outro."
+      "es-AR": "Esa dirección de correo no se acepta. Use otra.",
+      "en": "That e-mail address is not accepted. Please use another one.",
+      "pt-BR": "Esse endereço de e-mail não é aceito. Use outro."
     },
     "error.demasiados_intentos": {
       "es-AR": "Hubo demasiados intentos seguidos. Conviene esperar unos minutos.",
@@ -183,9 +183,9 @@
       "pt-BR": "A senha nova precisa ser diferente da anterior."
     },
     "error.clave_debil": {
-      "es-AR": "La contraseña no cumple con lo que pide el servidor. Conviene elegir una más larga.",
-      "en": "The password does not meet what the server requires. It is worth choosing a longer one.",
-      "pt-BR": "A senha não atende ao que o servidor exige. Convém escolher uma mais longa."
+      "es-AR": "Esa contraseña no se acepta. Elija una más larga.",
+      "en": "That password is not accepted. Please choose a longer one.",
+      "pt-BR": "Essa senha não é aceita. Escolha uma mais longa."
     },
     "error.archivo_pesado": {
       "es-AR": "El archivo pesa demasiado. El límite es 10 MB para documentos y 5 MB para la foto.",
@@ -198,9 +198,9 @@
       "pt-BR": "Esse tipo de arquivo não é aceito. São admitidas imagens (JPG, PNG, WEBP) e PDF."
     },
     "error.archivo_deposito": {
-      "es-AR": "No se pudo guardar el archivo. Se avisó y se está revisando; conviene intentarlo más tarde.",
-      "en": "The file could not be stored. It has been reported and is being looked into; it is worth trying again later.",
-      "pt-BR": "Não foi possível guardar o arquivo. Já foi avisado e está em análise; é melhor tentar mais tarde."
+      "es-AR": "No se pudo guardar el archivo. Inténtelo nuevamente más tarde.",
+      "en": "The file could not be saved. Please try again later.",
+      "pt-BR": "Não foi possível salvar o arquivo. Tente novamente mais tarde."
     },
     "error.sin_legajo": {
       "es-AR": "Para rendir hace falta tener el legajo cargado. Se completa desde «Mi Legajo».",
@@ -218,29 +218,29 @@
       "pt-BR": "Esta avaliação não está disponível no momento."
     },
     "error.alta_sin_papel": {
-      "es-AR": "Falta subir uno de los documentos obligatorios del legajo. Conviene revisar que estén todos antes de guardar.",
-      "en": "One of the required legajo documents is missing. Check that they are all there before saving.",
-      "pt-BR": "Falta enviar um dos documentos obrigatórios do dossiê. Convém conferir se todos estão presentes antes de salvar."
+      "es-AR": "Falta subir un documento obligatorio del legajo.",
+      "en": "A required legajo document is missing.",
+      "pt-BR": "Falta enviar um documento obrigatório do dossiê."
     },
     "error.contacto_bloqueado": {
-      "es-AR": "El mensaje no se envió: acá adentro no se comparten teléfonos, correos ni domicilios. La conversación sigue por este canal hasta que se acuerde la contratación.",
-      "en": "The message was not sent: phone numbers, e-mail addresses and home addresses are not shared in here. The conversation continues through this channel until the hiring is agreed.",
-      "pt-BR": "A mensagem não foi enviada: aqui dentro não se compartilham telefones, e-mails nem endereços. A conversa continua por este canal até que a contratação seja acordada."
+      "es-AR": "El mensaje no se envió. Por acá no se comparten datos de contacto.",
+      "en": "Message not sent. Contact details are not shared here.",
+      "pt-BR": "A mensagem não foi enviada. Aqui não se compartilham dados de contato."
     },
     "error.aviso_sin_franjas": {
-      "es-AR": "El aviso quedó publicado, pero no se pudieron guardar los días y turnos en los que se necesita el cuidado. No hace falta publicarlo de nuevo.",
-      "en": "The listing was published, but the days and shifts when care is needed could not be saved. There is no need to publish it again.",
-      "pt-BR": "O anúncio foi publicado, mas não foi possível salvar os dias e turnos em que o cuidado é necessário. Não é preciso publicá-lo de novo."
+      "es-AR": "El aviso se publicó sin los días y turnos. No lo publique de nuevo.",
+      "en": "The listing was published without days and shifts. Do not publish it again.",
+      "pt-BR": "O anúncio foi publicado sem os dias e turnos. Não o publique de novo."
     },
     "error.sin_prestadora": {
-      "es-AR": "No se pudo saber de qué Prestadora es este directorio, así que no se muestra ninguno. Conviene entrar por el enlace de la Prestadora.",
-      "en": "It was not possible to tell which Provider this directory belongs to, so none is shown. It is worth entering through the Provider’s link.",
-      "pt-BR": "Não foi possível saber de qual Prestadora é este diretório, então nenhum é exibido. Convém entrar pelo link da Prestadora."
+      "es-AR": "No se pudo mostrar el directorio. Vuelva a ingresar e inténtelo nuevamente.",
+      "en": "The directory could not be shown. Please enter again and try once more.",
+      "pt-BR": "Não foi possível exibir o diretório. Entre novamente e tente outra vez."
     },
     "error.prestadora_desconocida": {
-      "es-AR": "No se encontró ninguna Prestadora con ese nombre en la dirección, así que no hay directorio para mostrar. Conviene revisar el enlace.",
-      "en": "No Provider with that name was found in the address, so there is no directory to show. It is worth checking the link.",
-      "pt-BR": "Não foi encontrada nenhuma Prestadora com esse nome no endereço, então não há diretório para exibir. Convém verificar o link."
+      "es-AR": "No se encontró el directorio solicitado. Vuelva a ingresar e inténtelo nuevamente.",
+      "en": "The requested directory was not found. Please enter again and try once more.",
+      "pt-BR": "O diretório solicitado não foi encontrado. Entre novamente e tente outra vez."
     },
     "error.sin_conexion": {
       "es-AR": "No hay conexión con el servidor. Conviene reintentar en un momento.",
