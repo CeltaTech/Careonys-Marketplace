@@ -39,6 +39,35 @@ Marketplace está en inglés —la persona Asistente, el nombre completo, la fic
 cuentas—. En esos casos no hay «lo mejor de cada uno» que discutir: el nombre castellano gana
 porque la regla ya lo dice.
 
+## Otra que tampoco se decide: la parte publica del producto no es la pagina que lo vende
+
+Lo fijo el Desarrollador el 2026-09-10, corrigiendo una propuesta de que el Marketplace
+construyera «el sitio publico de los dos»: *«lo comercial es de celtatech y tiene distintas
+paginas para distintos productos, aunque el marketplace se comercializa por separado y debe
+mostrarse por separado comercialmente tambien es un modulo que debe mostrarse como parte de los
+pack de careonis que comercializa celtatech»*.
+
+Entonces la linea es esta, y no se cruza en ningun tema de este documento:
+
+| Sirve para | Es de | Ejemplo |
+|---|---|---|
+| **Usar** el producto | El producto | La pantalla donde una Familia busca un Asistente |
+| **Comprar** el producto | CeltaTech | La pagina que explica los paquetes y lo que cuestan |
+
+**Comprobado acá mismo:** ninguna de las 15 pantallas publicas de este producto vende nada. La de
+entrada le habla a la Familia que va a usarlo —«Encuentre al Asistente que necesita»— y no hay
+ninguna pantalla de precios ni de paquetes. Asi que **de este lado no hay nada que sacar**, y
+tampoco hay ningun sitio promocional que construir: ese trabajo es de CeltaTech y ya tiene su
+lugar en `../../docs/SUGERENCIAS_DESDE_EL_MARKETPLACE.md`.
+
+**Y lo que si hay que anotarle a CeltaTech**, que es suyo y no se construye acá: el Marketplace se
+muestra **dos veces** —solo, porque se vende solo, y adentro de los paquetes de Careonys, porque
+tambien se vende como parte de ellos, y puede ser el mas basico y economico de todos—.
+
+**Del lado del producto eso no cuesta nada**, y es exactamente lo que manda `celtatech/CLAUDE.md`
+§2: el producto declara que sabe hacer, CeltaTech arma los paquetes, y el producto nunca restringe
+por razones comerciales.
+
 ---
 
 ## 1. La persona Asistente
