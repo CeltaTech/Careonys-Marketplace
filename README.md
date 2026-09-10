@@ -38,7 +38,7 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | 880 declaraciones más, pegadas al HTML | en 221 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 13 de las 17 pantallas rescatan la sesión al abrir |
 | 5 servidores de afuera, sin `package.json` ni compilación | cdn.jsdelivr.net, cdnjs.cloudflare.com, fonts.googleapis.com, fonts.gstatic.com, www.openstreetmap.org — hay que decir de qué es cada uno |
-| 36 tablas y 5 migraciones en el repositorio | 39 chequeos las miran antes de cada commit |
+| 36 tablas y 5 migraciones en el repositorio | 40 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.
@@ -233,6 +233,7 @@ título decía trece cuando ya eran veinticuatro, y la tabla nombraba trece de e
 | `verificar_guiones` | Que el JavaScript de una pantalla quede sin poder leerse |
 | `verificar_identidad` | Que la marca vuelva a estar escrita a mano |
 | `verificar_migraciones` | Que una migración que ya entró al historial se mueva de lugar, que es lo único que no se puede ver leyendo los archivos de hoy —uno editado ayer se ve igual que uno que nunca se tocó—, así que le pregunta al historial: editada, borrada, renumerada, o una nueva con un número que el árbol ya había pasado. Las cuatro rompen lo mismo, que la base se pueda reconstruir corriendo los archivos en orden desde cero. **Y mira también lo que todavía no es un commit**, porque corriendo en el gancho de antes del commit, mirar sólo el historial avisaría un commit tarde, con la migración ya movida y publicada |
+| `verificar_motivos` | Que lo que se le dice a quien no pudo fichar deje de salir de la lista aprobada: **no lee, corre** —le hace fallar el envío con errores crudos inventados y mira qué frase entrega la cola—, y exige tres cosas: que siempre salga una de las frases aprobadas, que ninguna palabra del servidor —la tabla, la columna, la restricción— aparezca en la frase en ninguno de los tres idiomas, y que ninguna frase del catálogo haya quedado muerta sin que ningún error la produzca |
 | `verificar_organizacion` | Que una pantalla nombre a una Prestadora del seed, o escriba otro logotipo |
 | `verificar_opciones` | Que una lista de opciones vuelva a escribirse adentro de una pantalla, y con ella un valor que ningún vocabulario gobierna |
 | `verificar_paleta` | Que vuelva un color escrito con su número en vez de un token |
@@ -270,7 +271,7 @@ los ganchos están en el repositorio y no los llama nadie. Para saltearlos en un
 
 <!-- guiones: lo escribe scripts/medir_estado.mjs, no se edita a mano -->
 
-En `scripts/` hay **77 archivos `.mjs` y uno de Python**: 40 chequeos `verificar_*`, 16 pruebas `probar_*` y 21 herramientas sueltas —medidores, generadores, el módulo que comparten y el servidor de trabajo—.
+En `scripts/` hay **78 archivos `.mjs` y uno de Python**: 41 chequeos `verificar_*`, 16 pruebas `probar_*` y 21 herramientas sueltas —medidores, generadores, el módulo que comparten y el servidor de trabajo—.
 
 <!-- fin de los guiones -->
 
