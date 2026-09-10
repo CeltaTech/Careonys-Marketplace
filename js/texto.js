@@ -315,6 +315,16 @@ const Texto = {
     // Prestadora que no es la suya.
     if (dice('sin_prestadora')) return 'error.sin_prestadora';
 
+    // Lo mismo, pero en el alta (migración 0006). Ahí el disparador contesta
+    // `prestadora_desconocida:alta` cuando el enlace no resuelve una Prestadora
+    // activa, y va **antes** que el caso de abajo a propósito: la frase de aquél
+    // habla del directorio, y acá no hay ningún directorio que mostrar sino una
+    // cuenta que no se creó. Se reusa la frase que la pantalla del alta ya
+    // escribe cuando no sabe de qué Prestadora es, en vez de escribir otra
+    // igual: dice exactamente eso, y no distingue «no existe» de «está
+    // suspendida», que es lo que no hay que contar.
+    if (dice('prestadora_desconocida:alta')) return 'alta.sin_prestadora';
+
     // La dirección nombró una Prestadora que no existe. Se dice que no se
     // encontró y no se muestra otra.
     if (dice('prestadora_desconocida')) return 'error.prestadora_desconocida';
