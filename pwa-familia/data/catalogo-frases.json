@@ -233,14 +233,14 @@
       "pt-BR": "O anúncio foi publicado sem os dias e turnos. Não o publique de novo."
     },
     "error.sin_prestadora": {
-      "es-AR": "No se pudo mostrar el directorio. Vuelva a ingresar e inténtelo nuevamente.",
-      "en": "The directory could not be shown. Please enter again and try once more.",
-      "pt-BR": "Não foi possível exibir o diretório. Entre novamente e tente outra vez."
+      "es-AR": "No se pudo mostrar la lista de Asistentes. Vuelva a ingresar e inténtelo nuevamente.",
+      "en": "The list of Assistants could not be shown. Please enter again and try once more.",
+      "pt-BR": "Não foi possível exibir a lista de Assistentes. Entre novamente e tente outra vez."
     },
     "error.prestadora_desconocida": {
-      "es-AR": "No se encontró el directorio solicitado. Vuelva a ingresar e inténtelo nuevamente.",
-      "en": "The requested directory was not found. Please enter again and try once more.",
-      "pt-BR": "O diretório solicitado não foi encontrado. Entre novamente e tente outra vez."
+      "es-AR": "No se pudo mostrar la lista de Asistentes. Vuelva a ingresar e inténtelo nuevamente.",
+      "en": "The list of Assistants could not be shown. Please enter again and try once more.",
+      "pt-BR": "Não foi possível exibir a lista de Assistentes. Entre novamente e tente outra vez."
     },
     "error.sin_conexion": {
       "es-AR": "No hay conexión con el servidor. Conviene reintentar en un momento.",
