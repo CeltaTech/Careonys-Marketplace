@@ -1105,6 +1105,41 @@
       "en": "{cuantas} records are saved on the phone, waiting for a connection to be sent.",
       "pt-BR": "{cuantas} registros estão guardados no telefone, aguardando conexão para serem enviados."
     },
+    "fichado.rechazado_una": {
+      "es-AR": "Queda 1 fichado guardado en el teléfono y todavía no se pudo enviar. {motivo} Se vuelve a intentar solo.",
+      "en": "1 record is saved on the phone and could not be sent yet. {motivo} It will be retried on its own.",
+      "pt-BR": "1 registro está guardado no telefone e ainda não pôde ser enviado. {motivo} Será tentado de novo sozinho."
+    },
+    "fichado.rechazado_varias": {
+      "es-AR": "Quedan {cuantas} fichados guardados en el teléfono y el más viejo todavía no se pudo enviar. {motivo} Se vuelve a intentar solo.",
+      "en": "{cuantas} records are saved on the phone and the oldest one could not be sent yet. {motivo} It will be retried on its own.",
+      "pt-BR": "{cuantas} registros estão guardados no telefone e o mais antigo ainda não pôde ser enviado. {motivo} Será tentado de novo sozinho."
+    },
+    "fichado.rechazado_trabado_una": {
+      "es-AR": "Queda 1 fichado guardado en el teléfono y no se pudo enviar. {motivo} Se dejó de intentar, y el fichado no se perdió: sigue guardado acá.",
+      "en": "1 record is saved on the phone and could not be sent. {motivo} Retrying has stopped, and the record was not lost: it is still saved here.",
+      "pt-BR": "1 registro está guardado no telefone e não pôde ser enviado. {motivo} As tentativas pararam, e o registro não se perdeu: continua guardado aqui."
+    },
+    "fichado.rechazado_trabado_varias": {
+      "es-AR": "Quedan {cuantas} fichados guardados en el teléfono y el más viejo no se pudo enviar. {motivo} Se dejó de intentar, y no se perdió ninguno: siguen guardados acá.",
+      "en": "{cuantas} records are saved on the phone and the oldest one could not be sent. {motivo} Retrying has stopped, and none were lost: they are still saved here.",
+      "pt-BR": "{cuantas} registros estão guardados no telefone e o mais antigo não pôde ser enviado. {motivo} As tentativas pararam, e nenhum se perdeu: continuam guardados aqui."
+    },
+    "fichado.motivo_sesion": {
+      "es-AR": "La sesión venció o no tiene permiso para fichar. Conviene salir y volver a ingresar.",
+      "en": "The session expired or does not have permission to record. It is best to sign out and sign in again.",
+      "pt-BR": "A sessão expirou ou não tem permissão para registrar o ponto. Convém sair e entrar de novo."
+    },
+    "fichado.motivo_rechazada": {
+      "es-AR": "El sistema no aceptó esa marca.",
+      "en": "The system did not accept that record.",
+      "pt-BR": "O sistema não aceitou esse registro."
+    },
+    "fichado.motivo_desconocido": {
+      "es-AR": "El sistema no dijo por qué.",
+      "en": "The system did not say why.",
+      "pt-BR": "O sistema não disse por quê."
+    },
     "fichado.permiso_denegado": {
       "es-AR": "No quedó registrada la {tipo}: el teléfono tiene la ubicación deshabilitada. Habilítela y fiche de nuevo.",
       "en": "The {tipo} was not recorded: location is turned off on the phone. Turn it on and record again.",

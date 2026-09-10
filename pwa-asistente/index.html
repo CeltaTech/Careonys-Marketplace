@@ -1884,20 +1884,50 @@
     // está en los tres idiomas, ni para avisar que sobra—.
     const FRASE_DEL_FICHADO = { entrada: 'fichado.entrada', salida: 'fichado.salida' };
 
-    // Cuántas fichadas siguen adentro del teléfono. Se dice sólo cuando hay
-    // alguna: un renglón que diga «cero pendientes» todo el día es ruido, y el
-    // día que diga «una» nadie lo va a ver porque dejó de mirarlo. No es un
-    // aviso de error y no lleva ningún botón de reintentar: se reintenta solo,
-    // y ofrecer un botón sugeriría que sin apretarlo no va a salir.
-    function mostrarFichadasPendientes(cuantas) {
+    // Cuántas fichadas siguen adentro del teléfono, y —si el sistema rechazó
+    // alguna— por qué. Se dice sólo cuando hay alguna: un renglón que diga
+    // «cero pendientes» todo el día es ruido, y el día que diga «una» nadie lo
+    // va a ver porque dejó de mirarlo. No lleva ningún botón de reintentar: se
+    // reintenta solo, y ofrecer un botón sugeriría que sin apretarlo no va a
+    // salir.
+    //
+    // Son tres situaciones distintas y se dicen distinto, porque a la persona
+    // le importan cosas distintas en cada una:
+    //
+    //   1. Esperando conexión. No pasó nada malo y no hay nada que hacer.
+    //   2. El sistema no la aceptó y se sigue intentando. Puede salir sola —una
+    //      sesión vencida vuelve al minuto siguiente— así que se dice el motivo
+    //      y se dice que se reintenta.
+    //   3. El sistema no la aceptó y se dejó de intentar. Acá hace falta que
+    //      alguien haga algo, y lo primero es que la persona sepa qué pasó.
+    //
+    // **El motivo sale de la lista cerrada de motivos aprobados** y nunca del
+    // texto que devolvió el servidor: lo ordenó el Desarrollador —«los mensajes
+    // seran sacados de entre una lista de posibles y aprobados, no podemos
+    // decir todo»— y coincide con la regla de la empresa de que el texto crudo
+    // de la base, que nombra tablas y columnas, no se le muestra a nadie.
+    //
+    // En los tres casos el renglón dice cuántas quedan guardadas, porque lo que
+    // la persona necesita saber antes que nada es que **lo que hizo no se
+    // perdió**.
+    function mostrarFichadasPendientes(cuantas, motivo, trabada) {
       const renglon = document.getElementById('gps-pendientes');
       if (!renglon) return;
       renglon.hidden = !cuantas;
-      if (cuantas) {
+      if (!cuantas) return;
+      if (!motivo) {
         renglon.textContent = cuantas === 1
           ? Catalogo.frase('fichado.pendiente_una')
           : Catalogo.frase('fichado.pendientes_varias', { cuantas });
+        return;
       }
+      // `Texto.frase` y no `Catalogo.frase`: si la clave no se resuelve, cae en
+      // el motivo genérico en vez de dejar el renglón a medio escribir.
+      const porque = Texto.frase(motivo);
+      const clave = trabada
+        ? (cuantas === 1 ? 'fichado.rechazado_trabado_una' : 'fichado.rechazado_trabado_varias')
+        : (cuantas === 1 ? 'fichado.rechazado_una' : 'fichado.rechazado_varias');
+      renglon.textContent = Catalogo.frase(clave, { cuantas, motivo: porque });
     }
 
     async function ficharGPS(tipo) {
