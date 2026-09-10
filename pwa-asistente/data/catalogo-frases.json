@@ -1698,9 +1698,9 @@
       "pt-BR": "Não foi possível concluir o cadastramento. Confira os dados e tente novamente."
     },
     "alta.sin_prestadora": {
-      "es-AR": "No se pudo saber de qué Prestadora es esta alta, así que no se creó ninguna cuenta. Conviene entrar por el enlace de la Prestadora y volver a intentarlo.",
-      "en": "It was not possible to tell which Provider this registration belongs to, so no account was created. It is worth entering through the Provider’s link and trying again.",
-      "pt-BR": "Não foi possível saber de qual Prestadora é este cadastramento, então nenhuma conta foi criada. Convém entrar pelo link da Prestadora e tentar de novo."
+      "es-AR": "Registro fallido. Vuelva a ingresar e inténtelo nuevamente.",
+      "en": "Registration failed. Please enter again and try once more.",
+      "pt-BR": "Cadastro falhou. Entre novamente e tente outra vez."
     },
     "alta.correo_reenviado": {
       "es-AR": "Se mandó el correo de confirmación de nuevo. Revise también la carpeta de correo no deseado.",
