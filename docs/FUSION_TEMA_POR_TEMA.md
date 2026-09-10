@@ -353,10 +353,169 @@ este documento como si fuera decisión tomada.
 
 ---
 
+## 15. El reparto de lo que no choca
+
+**Qué es esto.** Los catorce temas de arriba son los que los dos lados resolvieron por separado y
+hay que juntar. Éstos son los otros trece: los que tiene uno solo de los dos, y que por eso no
+hay que juntar sino repartir. Dos de los trece los tienen los dos, y aparecen igual acá,
+porque lo que hay que repartir no es la cosa sino la mitad que a cada lado le falta.
+Cada uno termina en uno de cuatro destinos: **viaja** —se lleva a la
+base de Careonys—, **se queda acá** —porque es justamente lo que este producto sigue siendo—,
+**se retira**, porque no lo usa nadie, o **va y viene**, que le pasa a uno solo: cada lado resolvió
+la mitad que al otro le falta.
+
+Nada de esto se ejecuta desde acá. Lo que viaja queda escrito con su detalle en el documento de
+aportes, para aprobarlo de a uno el día de la mudanza.
+
+### Lo que sólo tiene este producto, y va para allá
+
+**Los cursos y el examen.** Un catálogo de cursos, evaluaciones con sus preguntas, y un examen que
+**lo corrige la base, no la pantalla**: quien rinde nunca recibe cuál era la respuesta correcta, y
+el tope de intentos tampoco se controla en el teléfono. Careonys no tiene nada de esto: allá
+«capacitación» es una casilla que alguien marca en el proceso de incorporación. Lo que se lleva es
+el mecanismo; **las preguntas no**, porque hoy hay cuatro y con eso se aprueba adivinando más de la
+mitad de las veces.
+
+**Las guías de cuidado.** Un texto de cuidado atado a una patología, con partes fijas —qué es, qué
+esperar, señales de alarma, qué hacer en una emergencia—, con la general del producto y la propia
+de cada Prestadora, y sin que se pueda publicar ninguna sin decir quién la revisó. Careonys no
+tiene ninguna, pero sí tiene dónde engancharlas y una regla ya resuelta que manda sobre esto: allá
+la patología de un Paciente se muestra solamente en la pantalla de una guardia, así que la guía
+tampoco puede aparecer antes. Lo que se lleva es el mecanismo; **los textos no**, porque las 19
+están escritas y ninguna está firmada.
+
+**La disponibilidad horaria como grilla.** Acá el Asistente marca casillas de día y turno, y cada
+casilla es un dato con forma. Allá son cuatro palabras sueltas —mañana, tarde, noche, fines de
+semana— sin día de la semana, así que «los martes a la tarde» no se puede decir. **Pero hay que
+decir el hecho incómodo: hoy no la lee nadie, de ninguno de los dos lados.** Acá se escribe y no
+se muestra en ninguna pantalla; allá la ficha del Asistente tiene el dato y no lo abre ningún
+programa. Acá no la lee nadie porque acá nadie reparte trabajo, y allá el reparto de guardias es
+justamente lo que la necesitaría. **Si del otro lado tampoco aparece quién la lea, no viaja**:
+mudar algo que sólo se escribe es mudar el problema de lugar.
+
+### Lo que sólo tiene este producto, y se queda acá
+
+**El directorio donde una Familia busca.** Es el corazón de lo que este producto sigue siendo
+después de la mudanza. Se mira sin haber entrado, muestra sólo a quien tiene el legajo validado y
+el perfil publicado y todos sus papeles al día, y no mezcla nunca Asistentes de dos Prestadoras.
+No viaja porque allá no hay a quién ofrecérselo: en prestación directa la Prestadora asigna, no se
+elige.
+
+**Las pantallas que se miran sin entrar.** Quince pantallas, y detrás de ellas una puerta muy
+angosta hacia la base: seis funciones y tres listas, y ninguna sirve nada si no se le dice de qué
+Prestadora se está hablando. Se quedan, y se rehacen acá con la tecnología nueva. Las que sí se
+apagan son las del panel y las de los dos programas de teléfono, cuya función pasa a las
+aplicaciones que Careonys ya tiene.
+
+### Lo que sólo tiene Careonys, y este producto recibe al llegar
+
+**El registro de quién hizo qué.** Ya está dicho en el tema 13 y se repite acá porque es el que
+más pesa: existe, está bien hecho, y **anota solamente lo que hace CeltaTech cuando entra a dar
+soporte**. Lo que hace la gente de una Prestadora sobre sus propios datos no queda anotado en
+ningún lado, porque el servidor entra a la base con una llave que se saltea las reglas de la base
+y el anotador nunca se dispara. Este producto no tiene nada de auditoría, así que lo recibe entero
+—y recibe el agujero con él—.
+
+**La entrada de soporte de CeltaTech.** Una Prestadora por vez, cartel a la vista, aviso extra
+antes de cualquier cosa destructiva, corte por inactividad y tope absoluto. Está terminada y
+cerrada por los dos lados: la base y el servidor se ponen de acuerdo sobre a qué Prestadora se
+está mirando. Este producto no tiene nada equivalente. Un detalle que hay que saber: la sesión
+vencida se cierra **cuando alguien vuelve a golpear la puerta**, no sola.
+
+**Los cobros y la facturación.** Son dos circuitos separados. El de prestación directa está
+terminado y es sólido: la plata que entra se anota entrada por entrada, el estado de una factura
+no se marca a mano sino que sale de lo cobrado, y lo que se debe es una resta y no una columna que
+alguien mantiene. Lo que le falta es que la factura la genere el servidor y no un botón de la
+pantalla, y que haya algo que la dispare todos los meses. El circuito del mercado, en cambio,
+**está a medias en un punto que importa: nadie da de alta una suscripción.** El producto sabe
+leerlas y actualizarlas, y no sabe crearlas.
+
+**Las pasarelas de pago.** Seis medios escritos contra las interfaces reales de cada proveedor, una
+verificación de firma compartida para el aviso que devuelven, y la credencial de cada Prestadora
+guardada donde corresponde: en la caja de secretos de la base, no en una columna. **Y la otra
+mitad no existe:** nada llama a esos seis para dar de alta un cobro, y el aviso que llega de vuelta
+busca una fila que hoy no crea nadie. Se recibe la mitad hecha, que es la difícil, y hay que
+escribir la otra.
+
+**Los consentimientos.** El andamiaje está completo y es mejor que lo que cualquiera escribiría de
+apuro: los textos versionados por país e idioma, y **la fotocopia de lo que la persona leyó
+guardada junto a su decisión**, para que cambiar el texto después no cambie lo que ella aceptó.
+Retirar no borra: pone la fecha. Pero **el contenido está vacío**: todos los textos cargados son de
+relleno y lo dicen en su propio cuerpo, hay una sola clase de consentimiento —el de seguimiento de
+ubicación— y las advertencias del mercado, cargadas hace pocos días, todavía no tienen pantalla que
+las muestre.
+
+**La Familia como entidad, y no como cuenta.** Es el que más trabajo trae, y no por lo que agrega
+sino por lo que cambia. Allá la Familia tiene ficha propia, y colgando de ella el Paciente, los
+servicios, las facturas, la medicación y un **círculo de personas** con permisos finos, respaldado
+por un documento firmado con constancia. Acá la Familia **es** la cuenta: cada regla de la base
+compara contra quién inició sesión, y punto. Al mudarse, todas esas comparaciones dejan de
+preguntar «¿sos vos?» y pasan a preguntar «¿de qué Familia sos?», **que es una respuesta distinta
+para los miembros del círculo**. Ninguna de esas reglas se puede convertir sin mirarla: no es un
+cambio de nombre, es un cambio de pregunta.
+
+### Los dos que están de los dos lados, y que igual hay que repartir
+
+**Los tres idiomas.** Los dos productos están en castellano, inglés y portugués, y allá el trabajo
+hecho es enorme: más de ocho mil renglones de texto traducido. La diferencia no es cuánto hay
+escrito, es **quién obliga**. Acá la exigencia está adentro de la base: un texto del producto al
+que le falte un idioma **no se puede guardar**, y son doce reglas las que lo piden. Allá no hay
+nada que lo pida: la base sabe que los idiomas son tres en un solo lugar, y es para decir de cuál
+de los tres es cada texto legal, no para exigir que estén los tres. Lo que viaja es la exigencia.
+
+Y de paso aparecieron dos cosas que allá se arreglan solas, sin esperar ninguna mudanza, y que
+hoy dejan afuera a todo el que no habla castellano: **el idioma no se le pregunta nunca al
+teléfono** —quien entra por primera vez con el teléfono en portugués ve la aplicación en
+castellano—, y **en los dos programas de teléfono no hay dónde cambiarlo**. Sólo el panel tiene
+selector, y muestra el código en vez del nombre del idioma. Es la aplicación traducida que nadie
+puede ver traducida.
+
+**La red de comprobaciones automáticas: éste es el que va y viene.** Acá hay treinta y nueve
+comprobaciones que corren **antes de cada cambio guardado**, en menos de un segundo, y si alguna
+se pone roja el cambio no se guarda. La lista no está escrita en ningún lado: el corredor mira la
+carpeta y toma lo que encuentra, así que una comprobación nueva entra sola. Y hay dos pruebas que
+**se miran a la red a sí misma**: le sacan a cada comprobación el material que revisa y exigen que
+se ponga roja. Una comprobación que pasa con la carpeta vacía no estaba revisando nada.
+
+**Pero acá falta justo lo que allá está hecho, y es grave: nada de eso corre en un servidor.**
+Toda la red depende de que en esa máquina alguien haya corrido un comando una vez. En una máquina
+donde no se corrió, las treinta y nueve comprobaciones no existen y nadie se entera. Allá, en
+cambio, tres comprobaciones corren solas en cada subida, y la publicación no se da por buena hasta
+que la versión nueva está contestando.
+
+**Y allá falta lo de acá, exactamente al revés: no corre nada antes de guardar un cambio**, y las
+cuarenta y cuatro pruebas que tienen escritas —casi diez mil renglones— **no las llama nadie
+automáticamente**. Ninguna de ellas mira los dos programas de teléfono, que además no tienen con
+qué correrlas. Cada mitad tapa el agujero de la otra.
+
+### Lo que este reparto deja sobre la mesa
+
+- **Cuatro cosas no esperan a la mudanza, y conviene hacerlas antes.** Que allá le pregunten el
+  idioma al teléfono; que los dos programas de teléfono tengan dónde cambiarlo; que allá se
+  disparen sus comprobaciones antes de guardar el cambio y no media hora después; y que las
+  cuarenta y cuatro pruebas que ya tienen escritas las corra alguien solo. Ninguna de las cuatro
+  depende de que los productos se junten.
+- **La disponibilidad horaria espera saber si allá alguien la lee.** Es la única de las trece cuyo
+  destino todavía no está: viaja si el reparto de guardias la usa, se retira si no.
+- **La Familia deja de ser la cuenta**, y eso hay que revisarlo regla por regla, no de una vez.
+- **Lo que se recibe no está todo terminado**, y conviene saberlo antes y no después: falta quién
+  cree una suscripción, falta quién dé de alta un cobro en la pasarela, faltan los textos legales
+  de verdad, y falta que quede anotado lo que hace la gente de una Prestadora.
+
+---
+
 ## Lo que este documento todavía no mira
 
-Falta el reparto de lo que no está acá porque no choca: lo que sólo tiene Careonys —el registro
-de auditoría, la sesión de soporte, los cobros, las pasarelas de pago, los consentimientos, las
-Familias como entidad— y lo que sólo tiene el Marketplace —los cursos y evaluaciones, las guías de
-cuidado, la disponibilidad horaria, el directorio público, el sitio público, los tres idiomas y la
-red de comprobaciones—. Eso vive en `docs/APORTES_A_CAREONYS.md` y se lee junto con esto.
+El reparto de lo que no choca ya no falta: es el tema 15. Lo que queda abierto es corto, y es
+esto:
+
+- **Los cuatro nombres del tema 14 esperan un sí.** Hasta entonces no se escribe ninguno en
+  ningún lado.
+- **La disponibilidad horaria espera saber si allá alguien la lee.** Es lo único de los trece del
+  reparto cuyo destino todavía no está.
+- **Cómo se declara la pertenencia a una Prestadora al crearse la cuenta.** Es el agujero que
+  apareció en el tema 13, no se arregla solo y la respuesta no es técnica: hay tres caminos y los
+  tres son decisión del Desarrollador.
+- **Y el detalle de cada cosa que viaja** —qué habría que tocar allá, y qué se rompe si no se
+  toca— **no está en este documento**: está escrito aparte, uno por uno, para aprobarlo de a uno
+  el día de la mudanza. Se lee junto con éste.

@@ -305,3 +305,151 @@ apariciones son las de la postulación.
    preguntó.
 4. **Si allá tampoco hay quién la lea, no viaja.** Mudar una tabla que sólo se escribe es mudar el
    problema de lugar.
+
+---
+
+## 5. Los tres idiomas los exige la base, y no solamente la pantalla
+
+Anotado al cerrar el reparto de lo que no choca, en la segunda pasada de la fusión.
+
+**Qué es.** La regla de la empresa pide `es-AR`, `en` y `pt-BR` desde el primer día. Acá esa regla
+no vive en la buena voluntad de quien escribe una pantalla: **está adentro de la base, como una
+restricción**, y un texto al que le falte un idioma no se puede guardar.
+
+- Cuatro funciones son el punto único de verdad, dos para un texto y dos para una lista de textos:
+  `i18n_completo` (`supabase/migrations/0001_base_del_esquema.sql:378`), `i18n_minimo` (`:402`),
+  `i18n_lista_completa` (`:1329`) e `i18n_lista_minima` (`:1359`).
+- **Doce restricciones las usan**, y todas dicen lo mismo con dos escalones: si el texto es del
+  producto, tienen que estar los tres idiomas; si es de una Prestadora, alcanza con el suyo. Se ve
+  entera en `:2374`, y las otras once están en `:611`, `:663`, `:2379`, `:2384`, `:2603`, `:2608`,
+  `:2613`, `:2619`, `:2768`, `:2773` y `:2898`.
+- El idioma de la pantalla se decide **en un solo lugar** (`js/catalogo.js:82`), y en este orden:
+  lo que diga la dirección, después lo que la persona haya elegido antes, y **después lo que
+  declara el navegador** (`js/catalogo.js:91`). Con equivalencias: quien tiene el navegador en
+  `pt-PT` o en `es-419` cae en el idioma de su familia y no en el de omisión (`js/catalogo.js:69`).
+- Las frases sueltas salen de un catálogo de datos y no del código: 1022 frases, cada una con sus
+  tres idiomas, en `data/catalogo-frases.json`. Los mensajes de error son frases como cualquier
+  otra, así que también se traducen.
+- Y hay un chequeo que lo vigila: `scripts/verificar_frases.mjs`, que busca texto escrito a mano
+  adentro de una pantalla y traducciones a medias.
+
+**Qué tiene Careonys hoy.** Los tres idiomas están, y el trabajo hecho es enorme —más de ocho mil
+renglones de traducciones—, pero **todo el peso está del lado de la pantalla y nada del lado de la
+base**:
+
+- Son **tres archivos separados y escritos a mano**, uno por aplicación, sin librería:
+  `careonys/panel/src/i18n/translations.js` (6052 renglones),
+  `careonys/pwa-asistentes/src/i18n/translations.js` (1089) y
+  `careonys/pwa-familias/src/i18n/translations.js` (983).
+- **El idioma sale solamente de lo que la persona eligió antes, y nunca del navegador**
+  (`careonys/panel/src/i18n/LocaleContext.jsx:8`). Quien entra por primera vez con el teléfono en
+  portugués ve la aplicación en castellano.
+- **Y cada aplicación guarda esa elección en su propio lugar**, así que elegir el idioma en una no
+  cambia el de las otras: son tres llaves distintas, una por aplicación
+  (`careonys/pwa-asistentes/src/i18n/LocaleContext.jsx:8`,
+  `careonys/pwa-familias/src/i18n/LocaleContext.jsx:8`).
+- **Sólo el panel tiene dónde elegirlo**
+  (`careonys/panel/src/components/layout/SelectoresPreferencias.jsx:28`), y muestra el código
+  crudo en vez del nombre del idioma (`:31`). **En los dos programas de teléfono no hay ningún
+  selector**, así que quien los usa se queda en castellano y no tiene manera de cambiarlo.
+- **La base no exige nada.** Sabe que los idiomas son tres en un solo lugar, y es para decir de
+  cuál de los tres es cada texto de consentimiento, no para pedir que estén los tres
+  (`careonys/supabase/migrations/20260819160000_foto_de_la_base.sql:2953`). Las advertencias
+  legales, sin ir más lejos, guardan **un solo texto**, y la migración que las carga lo dice en su
+  propio cuerpo
+  (`careonys/supabase/migrations/20260910140000_las_cinco_advertencias_de_marketplace_se_cargan_y_sus_funciones_se_pueden_encender.sql:30`).
+
+**Qué habría que tocar allá.**
+
+1. **Lo primero es lo más barato y lo que más se nota: leer el idioma del navegador la primera
+   vez, y poner un selector en los dos programas de teléfono.** Son dos cambios chicos, no
+   dependen de la mudanza, y hoy dejan a todo el que no habla castellano mirando una aplicación
+   que sí está traducida.
+2. **Las cuatro funciones y las doce restricciones viajan tal cual.** No dependen de nada propio
+   de esta modalidad: miran un texto y dicen si tiene los idiomas. Puestas allá, el texto a medio
+   traducir deja de poder guardarse, que es la diferencia entera entre una regla y una intención.
+3. **Y ahí aparece el trabajo de verdad:** allá el texto visible vive en archivos de código y no
+   en la base, así que la restricción sólo alcanza a lo que la base guarda —consentimientos,
+   advertencias, catálogos—. Para el resto, el equivalente de la restricción es un chequeo
+   automático, y allá ya hay dos corriendo en cada subida. Eso se trata en el aporte 6.
+4. **Los dos escalones —el producto en tres idiomas, la Prestadora en el suyo— hay que llevarlos
+   enteros**, porque sin ellos la regla es impracticable: nadie va a exigirle a una Prestadora que
+   escriba en portugués una opción de su propio catálogo.
+5. **Lo que no viaja es el contenido**, como en los aportes anteriores: las 1022 frases de acá son
+   de las pantallas de acá.
+
+**Lo que no se comprobó.** Cuántas de las traducciones de allá están realmente escritas en los
+tres idiomas y cuántas repiten el castellano. Se contaron los archivos y los renglones; no se
+leyó frase por frase.
+
+---
+
+## 6. La red de chequeos que corre sola antes de cada cambio
+
+Anotado al cerrar el reparto de lo que no choca, en la segunda pasada de la fusión.
+
+**Y éste es el único de los aportes que va y viene**, así que se escribe entero en los dos
+sentidos. Cada lado resolvió la mitad que el otro no tiene.
+
+**Qué es lo de acá.** Treinta y nueve chequeos que corren **antes de cada cambio guardado**, y si
+alguno se pone rojo el cambio no se guarda. Tardan menos de un segundo todos juntos.
+
+- La lista **no está escrita en ningún lado**: el corredor mira la carpeta y toma todo lo que
+  encuentra (`scripts/verificar_todo.mjs:36`). Un chequeo nuevo entra solo, sin que nadie se
+  acuerde de anotarlo, y un renglón con la cuenta escrito a mano queda viejo el día que se agrega
+  uno.
+- El gancho que los dispara **vive adentro del repositorio** y no en la carpeta oculta que no se
+  sube (`.githooks/pre-commit`). Se enciende con un comando, una sola vez por máquina
+  (`.githooks/pre-commit:12`).
+- **Dos pruebas se miran a la red de chequeos a sí misma**, que es lo que la separa de una red
+  decorativa: una le saca el material que revisan y exige que se pongan rojos
+  (`scripts/probar_perdida_de_corpus.mjs`), y la otra les vacía de a una las excepciones y exige
+  lo mismo (`scripts/probar_exenciones.mjs`). Un chequeo que pasa con la carpeta vacía no estaba
+  revisando nada.
+- Y la comprobación de que la publicación salió bien **arranca por un control negativo**: le pide
+  al sitio una dirección inventada y, si no contesta que no existe, se corta ahí y no informa nada
+  (`scripts/comprobar_publicacion.mjs:109`). Sin eso, un servidor que contesta cualquier cosa a
+  cualquier pedido da todo verde.
+
+**Qué tiene Careonys hoy, y qué tiene que acá no hay.**
+
+- **Tiene lo que acá falta entero: chequeos que corren solos en cada subida, en un servidor y no
+  en la máquina de alguien.** Son tres: la identidad del producto
+  (`careonys/.github/workflows/verificar-identidad.yml:28`), los textos huérfanos y a medio
+  traducir (`careonys/.github/workflows/verificar-textos.yml:41`) y el texto escrito a mano o que
+  tutea (`careonys/.github/workflows/verificar-textos.yml:68`).
+- Y su publicación **comprueba que la versión nueva esté contestando**, no que la subida haya
+  terminado (`careonys/.github/workflows/deploy-backend.yml:50`). Es exactamente el mismo problema
+  que resuelve la comprobación de acá, resuelto por el otro lado.
+- **Y le falta lo que acá sobra: nada corre antes de guardar un cambio.** No hay ningún gancho
+  puesto —los que trae la herramienta de fábrica están todos apagados— ni nada que los encienda.
+- **Y las pruebas que tiene, que son muchas, no las corre nadie automáticamente.** Cuarenta y
+  cuatro archivos, casi diez mil renglones, y ninguno de los tres flujos que corren en cada subida
+  los llama. Están escritas, y esperan que alguien se acuerde.
+- **Y no están donde más falta hacen:** las cuarenta y cuatro viven en el motor y en el panel. Los
+  dos programas de teléfono tienen **cero**, y además no tienen con qué correrlas: su archivo de
+  arranque no declara ninguna orden de prueba, a diferencia del motor y del panel.
+
+**Qué habría que tocar, de los dos lados.**
+
+1. **Los treinta y nueve chequeos no viajan como están, y hay que decirlo sin vueltas.** Están
+   escritos contra pantallas de un solo archivo, sin herramienta de armado; allá las pantallas se
+   arman con una y el texto vive adentro del código. Lo que viaja es **la forma**: la lista que se
+   descubre sola, el gancho guardado en el repositorio, y sobre todo las dos pruebas que revisan a
+   los revisores. Cuáles de los treinta y nueve sobreviven se decide uno por uno el día de la
+   mudanza, y varios ya tienen su equivalente allá.
+2. **Lo primero que hay que llevar allá es el gancho, no los chequeos.** Con los tres chequeos que
+   ya tienen corriendo en la subida, ponerlos también antes de guardar el cambio adelanta el rojo
+   de media hora a un segundo, y no hay nada nuevo que escribir.
+3. **Y lo primero que hay que traer para acá es que los chequeos corran en un servidor.** Hoy toda
+   la red de acá depende de que en esa máquina alguien haya corrido un comando una vez. En una
+   máquina donde no se corrió, los treinta y nueve chequeos no existen y nadie se entera.
+4. **Las dos pruebas que se miran a los revisores son el aporte que más rinde**, porque no
+   dependen de la tecnología: le sacan el material a un chequeo y exigen que se ponga rojo. Se
+   pueden escribir allá contra sus tres chequeos sin esperar ninguna mudanza.
+5. **Y las cuarenta y cuatro pruebas de allá hay que engancharlas a la subida antes de agregar una
+   sola más.** Una prueba que hay que acordarse de correr es una prueba que no corre, y hoy son
+   diez mil renglones que no protegen nada.
+
+**Lo que no se comprobó.** Si las cuarenta y cuatro pruebas de allá pasan hoy. Se contaron y se
+miró quién las llama; no se corrieron.

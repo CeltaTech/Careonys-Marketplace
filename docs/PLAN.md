@@ -51,12 +51,23 @@ reglas viajan o hay que escribirlas de nuevo. Además quedaron anotados los dos 
 miembro— y lo que hay que informarle a Careonys —que no guarda registro de lo que hace la gente de
 una Prestadora, y un control de superadmin que se abre en vez de cerrarse—.
 
-**2.2 — ← acá estamos.** El reparto de lo que **no choca**: lo que sólo tiene uno de los dos lados
-y hay que decidir si viaja, se queda o se retira.
+**2.2 — El reparto de lo que no choca. ✅ Cerrada.** Los trece temas que tiene uno solo de los
+dos lados quedaron medidos y con destino escrito: **tres viajan** —los cursos y el examen que
+corrige la base, las guías de cuidado y la exigencia de que el texto esté en los tres
+idiomas—, **dos se quedan acá** —el directorio donde una Familia busca y las pantallas que se
+miran sin entrar—, **seis se reciben al llegar** —el registro de quién hizo qué, la entrada de
+soporte, los cobros, las pasarelas de pago, los consentimientos y la Familia como entidad—,
+**uno va y viene** —la red de comprobaciones: acá corre antes de cada cambio y no corre en
+ningún servidor, y allá es exactamente al revés—, y **uno espera**: la disponibilidad horaria
+viaja sólo si del otro lado aparece quién la lea, porque hoy no la lee nadie de ninguno de los
+dos lados. Y aparecieron cuatro arreglos que **no esperan a la mudanza**, todos del lado de
+Careonys: preguntarle el idioma al teléfono, poner
+dónde cambiarlo en los dos programas de teléfono, disparar sus comprobaciones antes de guardar
+el cambio, y correr las cuarenta y cuatro pruebas que ya tienen escritas y no llama nadie.
 
-**2.3** — Ponerle nombre nuevo a las **tres trampas** —las postulaciones, la fichada y el chat—,
-que se llaman igual de los dos lados y son cosas distintas. **Los cuatro nombres están propuestos
-y esperan que usted diga que sí**, junto a los tres temas, en `docs/FUSION_TEMA_POR_TEMA.md`.
+**2.3 — ← acá estamos.** Ponerle nombre nuevo a las **tres trampas** —las postulaciones, la
+fichada y el chat—, que se llaman igual de los dos lados y son cosas distintas. **Los cuatro
+nombres están propuestos y esperan que usted diga que sí**, junto a los tres temas, en `docs/FUSION_TEMA_POR_TEMA.md`.
 Ninguno se escribe en ningún lado hasta entonces.
 
 ---
