@@ -453,3 +453,47 @@ alguno se pone rojo el cambio no se guarda. Tardan menos de un segundo todos jun
 
 **Lo que no se comprobó.** Si las cuarenta y cuatro pruebas de allá pasan hoy. Se contaron y se
 miró quién las llama; no se corrieron.
+
+---
+
+## 7. Todos los mensajes del sistema, juntos y editables desde afuera
+
+Anotado por decisión del Desarrollador, y **es lo único de esta lista que todavía no está
+construido en ninguno de los dos productos**: acá se anota la decisión, no un aporte terminado.
+
+**Qué es.** Todo mensaje que el producto le muestra a alguien —el error, el aviso, la
+confirmación, el cartel de una pantalla vacía, el que sea— vive en **una tabla**, y esa tabla se
+edita desde **OctoCMS**, que se vincula por API. Quien los edita los ve **todos juntos y a la
+vista**, sin tener que bucear por el producto para encontrar dónde está escrita cada frase.
+
+Dos cosas que la decisión ya fija:
+
+- **Quien edita es el Desarrollador.** Y si él lo decide, también la Prestadora, para sus propios
+  mensajes. Esa segunda puerta es una decisión suya, no algo que el producto abra solo.
+- **Los mensajes de todo tipo entran**, no sólo los de error. La razón es la misma que hace falta
+  el cambio: hoy hay que saber en qué archivo está cada frase para poder tocarla.
+
+**Dónde está acá.** A mitad de camino, y esa mitad es el aporte de verdad. Las frases ya salen de
+un catálogo de datos y no del código —`data/catalogo-frases.json`, en los tres idiomas—, y hay
+chequeos que impiden volver atrás: `scripts/verificar_frases.mjs` busca texto escrito a mano
+adentro de una pantalla, y `scripts/verificar_motivos.mjs` exige que lo que se le muestra a quien
+no pudo fichar salga de una lista cerrada. Lo que falta es que ese catálogo **sea una tabla y no
+un archivo**, y que tenga quién lo edite. Es el mismo salto que la sección 1 ya dio con las listas
+de opciones, aplicado al texto.
+
+**Qué tiene Careonys hoy.** Menos camino recorrido: sus textos son **tres archivos separados y
+escritos a mano**, uno por aplicación, según lo comprobado en la sección 5. Ahí no hay ni catálogo
+de datos ni chequeo que impida escribir una frase suelta adentro de una pantalla.
+
+**Qué habría que tocar.** Una tabla de mensajes con la misma forma de dos escalones que ya usan
+los vocabularios —lo del producto y lo de cada Prestadora—, la vinculación por API con OctoCMS, y
+que las dos aplicaciones de teléfono sigan teniendo su copia para funcionar sin conexión, que hoy
+la tienen porque el catálogo es un archivo que viaja con ellas. Eso último es lo que se rompe si
+no se toca: una tabla que sólo se lee estando conectado deja sin texto al teléfono que está sin
+señal.
+
+**Cuándo.** **Segunda etapa, después de la fusión**, por decisión del Desarrollador. No se empieza
+antes.
+
+**Lo que no se comprobó.** Qué sabe hacer OctoCMS hoy y qué le faltaría para servir esta tabla. No
+se abrió ese producto.
