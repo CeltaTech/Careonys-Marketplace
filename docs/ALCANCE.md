@@ -3128,7 +3128,7 @@ hoja se siga abriendo sola desde la cuarentena, y las originales quedaron donde 
 
 **Lo que la reemplaza.** Los 21 enlaces «Publicar un Aviso» de ocho pantallas del portal y de la
 maqueta —y el reenvío de `mockup-app.html:778`— apuntan ahora a `registrar-familia.html`, que a
-quien ya tiene sesión lo manda derecho adonde le toca (`registrar-familia.html:250-254`); a una
+quien ya tiene sesión lo manda derecho adonde le toca (`registrar-familia.html:251-255`); a una
 Familia, a `pwa-familia/index.html`, donde `#form-nuevo-aviso`
 (`pwa-familia/index.html:739`) sí publica de verdad: pregunta nombre del Paciente, edad, zona,
 modalidad, franjas, patologías y descripción.
