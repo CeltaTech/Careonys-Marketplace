@@ -69,14 +69,14 @@ la pantalla, de un guion o de la consola.
 REST pasa por `_supabaseRequest` (`js/apiClient.js:1191`), que sí es un embudo único —las 15
 llamadas de datos entran por ahí—. Pero **la autenticación y los archivos no lo tocan nunca**:
 `Sesion.login` (`js/auth.js:173`), `Sesion.signup` (`js/auth.js:190`), `Sesion.cambiarClave`
-(`js/auth.js:221`) y `Sesion.uploadFile` (`js/auth.js:338`) hablan derecho con el cliente de la
+(`js/auth.js:221`) y `Sesion.uploadFile` (`js/auth.js:362`) hablan derecho con el cliente de la
 plataforma. Y ahí están, justamente, tres de las seis categorías que la regla nombra: la entrada
 administrativa, el cambio de rol y de Organización, y el cambio de credencial.
 
 **Tres: y aunque hubiera un punto, hoy hay tres copias de él.** `js/apiClient.js` y `js/auth.js`
 están triplicados **byte a byte** en `pwa-asistente/js/` y `pwa-familia/js/` —es el pendiente 13—,
 así que cada gancho habría que escribirlo tres veces o unificar los archivos primero. Y `window._sb`
-está expuesto en global (`js/auth.js:409`): cualquier pantalla puede saltearse `Sesion` y llamar al
+está expuesto en global (`js/auth.js:433`): cualquier pantalla puede saltearse `Sesion` y llamar al
 cliente por su cuenta.
 
 **Cuatro: el navegador ni siquiera está mandando quién es.** `resolverLegajo`

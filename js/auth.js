@@ -235,20 +235,44 @@ const Sesion = {
 
   // ── El perfil de quien inició sesión ───────────────────
   // Punto único de verdad para el rol y la Prestadora del lado del navegador:
-  // salen de `profiles`, que es lo mismo que miran las políticas de la base.
+  // sale de `profiles`, que es lo mismo que miran las políticas de la base.
   // Nunca de la barra de direcciones.
+  //
+  // Se lo pide a la base con `mi_perfil()` y no leyendo la tabla, porque una
+  // misma cuenta puede estar dada de alta en varias Prestadoras y tener una
+  // ficha en cada una. Cuál corresponde depende de dónde está parada la
+  // sesión, y eso lo contesta la base: si el navegador lo resolviera por su
+  // lado sería la segunda copia de la misma decisión, y la copia no aprende lo
+  // que aprenda el original. Contesta una fila o ninguna.
   async perfil() {
     const session = await this.getSession();
     if (!session) return null;
-    const { data, error } = await _sb
-      .from('profiles')
-      .select('id, tenant_id, role, full_name')
-      .eq('id', session.user.id)
-      .maybeSingle();
+    const { data, error } = await _sb.rpc('mi_perfil');
     if (error) {
       console.error('Perfil de la sesión:', error.message);
       return null;
     }
+    return Array.isArray(data) ? (data[0] || null) : (data || null);
+  },
+
+  // ── Sumarse a otra Prestadora con la cuenta que ya se tiene ──
+  // El camino de quien entra por el enlace de una segunda Prestadora y ya
+  // tiene cuenta. Volver a darse de alta no sirve: un correo que ya existe no
+  // crea una cuenta nueva nunca, así que la persona quedaría esperando un
+  // correo que no llega. Acá inicia sesión y pide la ficha, que es lo único
+  // que le falta.
+  //
+  // Quién puede pedirla no lo decide esta pantalla: la base sólo abre ficha en
+  // una Prestadora que exista y esté activa, y el papel que acepta es el de
+  // Familia o el de Asistente. Si ya tenía ficha ahí, no se duplica ni se le
+  // pisa el papel que tenga. Deja la sesión parada en esa Prestadora.
+  async sumarseAPrestadora(nombreCorto, papel, nombre) {
+    const { data, error } = await _sb.rpc('registrarse_en_prestadora', {
+      p_nombre_corto: nombreCorto,
+      p_papel: papel,
+      p_nombre: nombre || null
+    });
+    if (error) throw new Error(error.message);
     return data;
   },
 

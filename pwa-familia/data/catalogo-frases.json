@@ -429,6 +429,21 @@
       "en": "Go to the sign-in screen",
       "pt-BR": "Ir para a tela de acesso"
     },
+    "alta_familia.sumarse_encabezado": {
+      "es-AR": "Entrar con una cuenta que ya existe",
+      "en": "Sign in with an account that already exists",
+      "pt-BR": "Entrar com uma conta que já existe"
+    },
+    "alta_familia.sumarse_bajada": {
+      "es-AR": "La misma cuenta queda dada de alta también en esta Prestadora.",
+      "en": "The same account is also registered with this Provider.",
+      "pt-BR": "A mesma conta fica cadastrada também nesta Prestadora."
+    },
+    "alta_familia.volver_al_alta": {
+      "es-AR": "Volver",
+      "en": "Back",
+      "pt-BR": "Voltar"
+    },
     "___": "── El campo de contraseña, que arma js/clave.js en cualquier pantalla ──",
     "clave.falta": {
       "es-AR": "Falta escribir la contraseña.",

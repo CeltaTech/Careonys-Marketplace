@@ -201,6 +201,15 @@ async function avisosQueVe(token) {
   return Array.isArray(cuerpo) ? cuerpo : [];
 }
 
+/* La ficha que la pantalla pide al arrancar. Es una sola función y devuelve
+   una sola fila: la de la Prestadora donde la sesión está parada. Antes de la
+   migración 0008 la pantalla pedía «la» ficha de la cuenta y, con dos, recibía
+   dos y se caía. */
+async function miPerfil(token) {
+  const { cuerpo } = await rest('/rest/v1/rpc/mi_perfil', { method: 'POST' }, token);
+  return Array.isArray(cuerpo) ? cuerpo : [];
+}
+
 // --- Las dos Prestadoras ficticias de la siembra ----------------------------
 const UNA = await prestadora('presdemo');
 const OTRA = await prestadora('cuidarnorte');
@@ -263,6 +272,11 @@ sostener('parada en la segunda, ve el aviso que publicó ahí',
 comprobar('y no ve el que publicó en la primera',
   !desdeOtra.some((a) => a.id === (filaUna || {}).id));
 
+const perfilOtra = await miPerfil(persona.token);
+comprobar('y la ficha que le entrega la base es una sola, la de la segunda',
+  perfilOtra.length === 1 && perfilOtra[0].tenant_id === OTRA.id,
+  perfilOtra.length + (perfilOtra.length === 1 ? ' ficha' : ' fichas'));
+
 // --- 4. Vuelve a pararse en la primera y pasa lo simétrico -----------------
 const vuelta = await pararse(persona.token, UNA.slug);
 comprobar('vuelve a pararse en la primera',
@@ -275,6 +289,11 @@ sostener('parada en la primera, ve el aviso que publicó ahí',
   desdeUna.length + (desdeUna.length === 1 ? ' aviso a la vista' : ' avisos a la vista'));
 comprobar('y no ve el que publicó en la segunda',
   !desdeUna.some((a) => a.id === (filaOtra || {}).id));
+
+const perfilUna = await miPerfil(persona.token);
+comprobar('y la ficha que le entrega la base vuelve a ser una sola, la de la primera',
+  perfilUna.length === 1 && perfilUna[0].tenant_id === UNA.id,
+  perfilUna.length + (perfilUna.length === 1 ? ' ficha' : ' fichas'));
 
 // --- 5. Donde no tiene ficha no se para, ni pidiéndolo por su nombre -------
 const ajena = await cuentaFicticia(UNA, 'familiar', 'b');

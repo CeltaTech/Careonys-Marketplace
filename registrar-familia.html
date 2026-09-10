@@ -85,10 +85,42 @@
           se abre ese enlace.
         </p>
 
-        <p class="acceso-pie">
-          <span data-frase="alta_familia.ya_tiene_cuenta">¿Ya tiene cuenta?</span>
-          <a href="acceso.html" data-frase="alta_familia.ir_al_acceso">Entrar</a>
+        <!-- Quien ya tiene cuenta no se da de alta de nuevo: entra con la que tiene y
+             queda dada de alta también en esta Prestadora. No es un enlace a la pantalla
+             de acceso porque ahí se perdería cuál es esta Prestadora, y la persona
+             volvería a entrar a la suya de siempre sin enterarse de que no se sumó. -->
+        <p class="acceso-pie" data-frase="alta_familia.ya_tiene_cuenta">¿Ya tiene cuenta?</p>
+        <button type="button" class="btn btn-secundario ancho-total" id="btn-sumarse"
+          data-frase="alta_familia.ir_al_acceso">Entrar</button>
+      </form>
+
+      <!-- Estado: la cuenta ya existe y se suma a esta Prestadora -->
+      <form id="estado-sumarse" class="oculto" novalidate>
+        <h1 class="texto-18 peso-700 mb-8 color-titulo" data-frase="alta_familia.sumarse_encabezado">
+          Entrar con una cuenta que ya existe
+        </h1>
+        <p class="texto-13 color-secundario mb-16" data-frase="alta_familia.sumarse_bajada">
+          La misma cuenta queda dada de alta también en esta Prestadora.
         </p>
+
+        <div id="aviso-error-sumarse" class="acceso-aviso critico oculto"></div>
+
+        <div class="form-group">
+          <label for="sumarse-email" data-frase="acceso.correo">Correo electrónico</label>
+          <input type="email" id="sumarse-email" autocomplete="email" required />
+        </div>
+
+        <div class="form-group">
+          <label for="sumarse-clave" data-frase="acceso.contrasena">Contraseña</label>
+          <input type="password" id="sumarse-clave" autocomplete="current-password" required />
+        </div>
+
+        <button type="submit" class="btn btn-primario ancho-total mt-8" id="btn-entrar-y-sumarse">
+          <span id="texto-btn-entrar-y-sumarse" data-frase="acceso.entrar">Entrar</span>
+        </button>
+
+        <button type="button" class="btn btn-secundario ancho-total mt-8" id="btn-volver-al-alta"
+          data-frase="alta_familia.volver_al_alta">Volver</button>
       </form>
 
       <!-- Estado: la cuenta quedó creada y falta abrir el enlace del correo -->
@@ -130,7 +162,8 @@
       cargando: document.getElementById('estado-cargando'),
       error: document.getElementById('estado-error'),
       listo: document.getElementById('estado-listo'),
-      confirmar: document.getElementById('estado-confirmar')
+      confirmar: document.getElementById('estado-confirmar'),
+      sumarse: document.getElementById('estado-sumarse')
     };
 
     function mostrar(cual) {
@@ -177,6 +210,18 @@
       Catalogo.traducir(texto);
     }
 
+    // A dónde va quien ya tiene sesión, por el papel que tiene en la Prestadora
+    // donde está parada. Es la misma tabla de destinos que `acceso.html`, y la
+    // usan las dos puertas de esta pantalla: la de quien llega con la sesión ya
+    // abierta y la de quien acaba de entrar con una cuenta que ya existía.
+    function aDondeVa(perfil) {
+      const rol = perfil ? perfil.role : null;
+      if (rol === 'coordinador') return 'panel-prestadora.html';
+      if (rol === 'caregiver') return 'pwa-asistente/index.html';
+      if (rol === 'familiar') return 'pwa-familia/index.html';
+      return 'index.html';
+    }
+
     // La Prestadora de esta alta. Se resuelve una sola vez al arrancar y se
     // vuelve a mirar antes de crear la cuenta, porque entre una cosa y la otra
     // pasa todo el tiempo que la persona tarda en llenar el formulario.
@@ -205,12 +250,7 @@
         // Quien ya tiene sesión no se da de alta de nuevo: va adonde le toca.
         const sesion = await Sesion.getSession();
         if (sesion) {
-          const perfil = await Sesion.perfil();
-          const rol = perfil ? perfil.role : null;
-          if (rol === 'coordinador') window.location.href = 'panel-prestadora.html';
-          else if (rol === 'caregiver') window.location.href = 'pwa-asistente/index.html';
-          else if (rol === 'familiar') window.location.href = 'pwa-familia/index.html';
-          else window.location.href = 'index.html';
+          window.location.href = aDondeVa(await Sesion.perfil());
           return;
         }
 
@@ -333,6 +373,71 @@
       } finally {
         boton.disabled = false;
         rotular('texto-btn-reenviar', 'alta_familia.reenviar');
+      }
+    });
+
+    // ── La cuenta que ya existe ────────────────────────────────────────────
+    // Un correo que ya tiene cuenta no crea otra: el servidor contesta que el
+    // alta salió bien y no manda ningún correo, a propósito, para que nadie
+    // pueda averiguar desde afuera quién está registrado. Por eso el alta de
+    // arriba no puede distinguir un caso del otro, y por eso ésta es una puerta
+    // aparte y la abre la persona, que es la única que sabe si ya tiene cuenta.
+    document.getElementById('btn-sumarse').addEventListener('click', () => {
+      avisar('aviso-error-sumarse', '');
+      mostrar('sumarse');
+    });
+
+    document.getElementById('btn-volver-al-alta').addEventListener('click', () => {
+      mostrar('listo');
+    });
+
+    document.getElementById('estado-sumarse').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      avisar('aviso-error-sumarse', '');
+
+      const email = document.getElementById('sumarse-email').value.trim();
+      const clave = document.getElementById('sumarse-clave').value;
+
+      if (!email || !clave) {
+        avisar('aviso-error-sumarse', 'acceso.faltan_datos');
+        return;
+      }
+
+      const boton = document.getElementById('btn-entrar-y-sumarse');
+      boton.disabled = true;
+      rotular('texto-btn-entrar-y-sumarse', 'acceso.entrando');
+
+      try {
+        // La Prestadora, antes que nada: sin ella no hay a qué sumarse.
+        if (!prestadora || !prestadora.slug) {
+          prestadora = await ClienteDatos.initTenant();
+        }
+        if (!prestadora || !prestadora.slug) {
+          avisar('aviso-error-sumarse', 'alta.sin_prestadora');
+          return;
+        }
+
+        await Sesion.login(email, clave);
+
+        // El nombre no se vuelve a pedir: sale de la ficha que la persona ya
+        // tiene. Escribirlo de nuevo sería pedirle dos veces lo mismo y dejar
+        // dos nombres distintos para la misma persona.
+        const anterior = await Sesion.perfil();
+        await Sesion.sumarseAPrestadora(
+          prestadora.slug, 'familiar', anterior ? anterior.full_name : null);
+
+        // Y el destino sale de la ficha nueva, no de la vieja: puede tener otro
+        // papel en esta Prestadora que en la que venía.
+        window.location.href = aDondeVa(await Sesion.perfil());
+      } catch (err) {
+        // El detalle técnico lo registra `claveDeError` y no sale de la consola;
+        // a la pantalla va la frase que corresponde a esa clase de falla. Una
+        // contraseña equivocada dice lo mismo que un correo que no existe: eso
+        // lo decide el catálogo y no esta pantalla.
+        avisar('aviso-error-sumarse', Texto.claveDeError(err, 'Alta de Familia, sumarse con la cuenta que ya existe:'));
+      } finally {
+        boton.disabled = false;
+        rotular('texto-btn-entrar-y-sumarse', 'acceso.entrar');
       }
     });
 
