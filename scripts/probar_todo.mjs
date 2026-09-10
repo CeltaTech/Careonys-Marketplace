@@ -107,6 +107,8 @@ const PRUEBAS = [
   'probar_la_resolucion_deja_su_motivo.mjs',
   'probar_permisos_en_vivo.mjs',
   'probar_pisado_de_archivos.mjs',
+  'probar_la_misma_cuenta_en_dos_prestadoras.mjs',
+  'probar_el_muro_entre_prestadoras.mjs',
   'probar_aislamiento.mjs',
   'probar_perdida_de_corpus.mjs',
   'probar_exenciones.mjs'
