@@ -90,7 +90,7 @@ todo preparado y escrito.
 
 ## Etapa 5 — Los problemas abiertos
 
-Quedan **65**. Varios se cierran solos al mudarse, y no hay que construirlos: que la Prestadora no
+Quedan **66**. Varios se cierran solos al mudarse, y no hay que construirlos: que la Prestadora no
 tenga dónde configurar nada, el aviso de vencimiento de matrícula, el reporte colgado de donde no
 va, y el registro de auditoría. El resto se ordena y se cierra de a uno.
 
