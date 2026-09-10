@@ -204,14 +204,98 @@ cuidada y el contacto de la Familia se guardan como texto pegado, y hay que sepa
 
 ---
 
+## 13. Cómo protege cada lado lo que guarda
+
+**Es la segunda pasada, y es la que faltaba.** Los doce temas de arriba comparan lo que cada lado
+guarda. Acá se compara **quién puede leer y escribir cada cosa**, que es lo que decide si una tabla
+mejor diseñada es de verdad la mejor de las dos.
+
+### La diferencia de fondo, que es una sola y explica todo lo demás
+
+**El Marketplace no tiene servidor propio: sus pantallas le hablan derecho a la base.** Por eso
+toda su protección está adentro de la base, y ahí está bien puesta —todas sus tablas la tienen, y
+todas resuelven a qué Prestadora pertenece quien consulta por el mismo camino: la sesión abierta,
+nunca un valor que venga en el pedido—.
+
+**Careonys sí tiene servidor, y su servidor entra a la base con la llave de servicio**, que se
+saltea todas las reglas de la base por diseño. Careonys también tiene la protección escrita adentro
+de la base —más tablas, muchas más reglas, y de mejor calidad—, pero **por el camino que usan sus
+pantallas todos los días esas reglas no se evalúan**: quien decide es el servidor.
+
+**De ahí sale la decisión que esta pasada existe para poner sobre la mesa.** Cuando el Marketplace
+se mude, sus pantallas tienen que elegir uno de los dos caminos:
+
+- **Siguen hablándole derecho a la base.** Entonces las reglas del Marketplace viajan con las
+  tablas y hay que revisarlas contra las de Careonys, tabla por tabla, donde las dos existan.
+- **Pasan a hablar con el servidor de Careonys.** Entonces esas reglas no protegen nada por ese
+  camino y **toda la protección hay que volver a escribirla del lado del servidor**.
+
+No es lo mismo y no se decide sobre la marcha: es la diferencia entre revisar lo que ya está
+escrito y escribirlo de nuevo. **Mientras esa elección no esté hecha, no se mueve un dato.**
+
+### Lo que hay que arreglar de este lado antes de mudarse
+
+Son dos, y las dos las comprobó la línea de comandos contra el esquema real:
+
+**Uno. La pertenencia a una Prestadora se declara sola al crearse la cuenta.** Quien se registra
+manda a qué Prestadora dice pertenecer, y la base le cree: no hay invitación, no hay lista de
+autorizados y ni siquiera se comprueba que esa Prestadora esté activa. El nombre corto de cada
+Prestadora es público —está a la vista en la dirección de la pantalla—, así que cambiarlo antes de
+registrarse mete a cualquiera adentro de la Prestadora que elija. **El rol sí está bien cerrado**:
+nadie puede darse a sí mismo el rol de coordinador, y un disparador impide cambiarse el rol o la
+Prestadora después. Lo que falta es el control del valor inicial.
+
+**Dos. Cinco piezas de la configuración de la Prestadora las puede cambiar y borrar cualquier
+miembro**, no sólo el coordinador: las zonas de cobertura, las zonas de cada Asistente, las guías
+de cuidado y los dos catálogos propios. El control de que sea coordinador existe, pero vive
+solamente en la pantalla; la base no lo pide. **Y las zonas de cada Asistente no separan leer de
+escribir**, así que además cualquier miembro ve dónde trabaja cada uno.
+
+Fuera de eso el Marketplace está sólido, y hay que decirlo con la misma claridad: todas sus tablas
+protegidas, todas las reglas pasando por el mismo punto único, y todo lo que se probó falla
+cerrado. Lo que queda abierto ya estaba anotado: no hay registro de auditoría, el depósito de fotos
+de perfil es público y las direcciones de los archivos empiezan por la cuenta en vez de por la
+Prestadora.
+
+### Lo que Careonys tiene que saber, y que se le informa desde acá
+
+**Careonys no guarda registro de lo que hace la gente de una Prestadora.** Tiene el registro de
+auditoría construido, y bien construido, pero **sólo escribe cuando hay una sesión de soporte de
+CeltaTech abierta**; y como su servidor entra con la llave de servicio, fuera de esa sesión el
+disparador nunca llega a activarse. Hoy «quién le cambió la medicación a este Paciente», «quién
+borró esta guardia» y «quién tocó este precio» **no tienen respuesta**. No es una falla: es un
+alcance que quedó corto. La sesión de soporte está bien hecha; el registro de la operación de todos
+los días no existe.
+
+**Y hay un control que se abre en vez de cerrarse.** La comprobación de si alguien es superadmin
+exige segundo factor, pero si no logra leer la configuración que dice si el segundo factor es
+obligatorio, **contesta que sí, que es superadmin**. El servidor decide lo contrario ante la misma
+duda. Es el único lugar donde los dos no coinciden.
+
+**Menor pero real:** el servidor acepta pedidos de cualquier origen y no tiene tope de intentos; la
+constancia del aviso legal la escribe el navegador y nada del lado del servidor la exige; y el
+depósito de marcas de las Prestadoras es público a propósito.
+
+**Y la decisión de a qué Prestadora pertenece cada consulta está copiada, no centralizada.** Existe
+una única pieza que la resuelve, y la usan cinco de sus treinta y cuatro grupos de rutas; las otras
+veinte la escriben a mano, casi cien veces, sin la red que esa pieza tiene de cortar cuando no hay
+Prestadora.
+
+Careonys, del otro lado, es claramente más fuerte donde importa: todas sus tablas protegidas, más
+del cuádruple de reglas, la Prestadora siempre resuelta desde la sesión validada y nunca desde el
+pedido, las direcciones de archivos firmadas y con vencimiento corto, los roles limitados por el
+esquema y respondidos por un único punto, y casi todo fallando cerrado con el motivo escrito al
+lado.
+
+**Ninguna de las dos revisiones tocó una base en vivo.** Las dos se hicieron leyendo. Confirmarlo
+contra datos cargados es la prueba de aislamiento con dos Prestadoras, que es lo que queda para la
+última etapa.
+
+---
+
 ## Lo que este documento todavía no mira
 
-**Se comparó lo que cada lado guarda, no cómo lo protege.** Falta la segunda pasada: las políticas
-de acceso, los disparadores y los permisos de cada tabla de las dos bases. Hasta que esa pasada no
-esté hecha, **ninguna conclusión de acá alcanza para mover un dato**, porque una tabla mejor
-diseñada y peor protegida no es la mejor de las dos.
-
-Y falta el reparto de lo que no está acá porque no choca: lo que sólo tiene Careonys —el registro
+Falta el reparto de lo que no está acá porque no choca: lo que sólo tiene Careonys —el registro
 de auditoría, la sesión de soporte, los cobros, las pasarelas de pago, los consentimientos, las
 Familias como entidad— y lo que sólo tiene el Marketplace —los cursos y evaluaciones, las guías de
 cuidado, la disponibilidad horaria, el directorio público, el sitio público, los tres idiomas y la

@@ -41,12 +41,18 @@ en los tres idiomas.
 
 ## Etapa 2 — Terminar la comparación antes de mover un solo dato
 
-**2.1 — ← acá estamos.** La segunda pasada: **cómo protege cada lado lo que guarda** —quién puede
-leer y escribir cada cosa—. La primera pasada comparó qué guarda cada uno; una tabla mejor
-diseñada y peor protegida no es la mejor de las dos.
+**2.1 — Cómo protege cada lado lo que guarda. ✅ Cerrada.** Hecho: la segunda pasada quedó escrita
+junto a la primera. Lo que sale de ella y manda sobre el resto: **el Marketplace protege adentro de
+la base porque no tiene servidor; Careonys protege por el servidor, porque su servidor entra a la
+base con una llave que se saltea las reglas de la base.** Así que la mudanza tiene que **elegir por
+cuál de los dos caminos van a hablar las pantallas del Marketplace**, y esa elección decide si sus
+reglas viajan o hay que escribirlas de nuevo. Además quedaron anotados los dos agujeros propios
+—cualquiera entra a la Prestadora que elija, y cinco piezas de la configuración las borra cualquier
+miembro— y lo que hay que informarle a Careonys —que no guarda registro de lo que hace la gente de
+una Prestadora, y un control de superadmin que se abre en vez de cerrarse—.
 
-**2.2** — El reparto de lo que **no choca**: lo que sólo tiene uno de los dos lados y hay que
-decidir si viaja, se queda o se retira.
+**2.2 — ← acá estamos.** El reparto de lo que **no choca**: lo que sólo tiene uno de los dos lados
+y hay que decidir si viaja, se queda o se retira.
 
 **2.3** — Ponerle nombre nuevo a las **tres trampas** —las postulaciones, la fichada y el chat—,
 que se llaman igual de los dos lados y son cosas distintas.
