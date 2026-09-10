@@ -55,7 +55,9 @@ una Prestadora, y un control de superadmin que se abre en vez de cerrarse—.
 y hay que decidir si viaja, se queda o se retira.
 
 **2.3** — Ponerle nombre nuevo a las **tres trampas** —las postulaciones, la fichada y el chat—,
-que se llaman igual de los dos lados y son cosas distintas.
+que se llaman igual de los dos lados y son cosas distintas. **Los cuatro nombres están propuestos
+y esperan que usted diga que sí**, junto a los tres temas, en `docs/FUSION_TEMA_POR_TEMA.md`.
+Ninguno se escribe en ningún lado hasta entonces.
 
 ---
 

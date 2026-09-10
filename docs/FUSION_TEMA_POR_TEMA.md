@@ -293,6 +293,66 @@ contra datos cargados es la prueba de aislamiento con dos Prestadoras, que es lo
 
 ---
 
+## 14. Las tres trampas, y los nombres que se proponen — **ESPERA DECISIÓN**
+
+**Qué es una trampa acá.** Una cosa de cada lado que se llama igual que la del otro y no es la
+misma. Son tres, están en los temas 7, 9 y 10, y **ninguna se puede mudar mientras las dos se
+llamen igual**: el día que las dos tablas se junten en la misma base, el nombre repetido decide
+solo, y decide mal.
+
+**Esto es una propuesta, no una decisión.** El vocabulario lo aprueba el Desarrollador, y ninguna
+palabra nueva se escribe antes de que la apruebe. Cada nombre propuesto pasó las cinco preguntas
+de la regla de la empresa: no existe ya una palabra aprobada para eso, es palabra del negocio y no
+de la tecnología, está en castellano, y la entiende alguien que no conoce el tema.
+
+### Trampa 1 — las postulaciones
+
+| Qué es | Cómo se llama hoy | Nombre propuesto |
+|---|---|---|
+| Alguien de afuera que pide entrar a la Prestadora y todavía no existe en el sistema | postulación, en Careonys | **postulación** (se queda como está) |
+| Un Asistente que ya existe y se ofrece para un pedido concreto de una Familia | postulación, en el Marketplace | **ofrecimiento** |
+
+**Por qué así y no al revés.** *Postular* es literalmente pedir para uno mismo, y eso es lo que
+hace quien golpea la puerta de la Prestadora: pide entrar. *Ofrecer* es poner algo delante de
+alguien, y eso es lo que hace el Asistente que ya está adentro: le pone su trabajo delante a una
+Familia que publicó lo que necesita. Además el que se queda quieto es el de Careonys, que es el que
+tiene datos guardados desde hace más tiempo.
+
+### Trampa 2 — la fichada
+
+| Qué es | Cómo se llama hoy | Nombre propuesto |
+|---|---|---|
+| Marcar que se entra y que se sale de una guardia | fichada acá, check-in y check-out allá | **check-in / check-out** (se queda como está allá) |
+| El rastro de dónde estuvo el teléfono mientras duraba la guardia | fichada, en Careonys | **rastro de la guardia** |
+
+**Por qué así.** Acá no hay dos palabras peleando: hay una palabra puesta sobre dos cosas del lado
+de Careonys. Marcar entrada y salida ya tiene nombre aprobado en el glosario que comparten los dos
+productos, y además es el que está guardado del lado de Careonys desde el principio, así que no se
+toca. Lo que necesita nombre propio es lo otro: una sucesión de posiciones a lo largo de una
+guardia no es una marca, es un rastro. **Y el nombre visible no cambia por esto**: en la pantalla
+se sigue diciendo lo que se venía diciendo, porque las pantallas del Marketplace se apagan en la
+etapa 3 y su función pasa a las de Careonys.
+
+### Trampa 3 — el chat
+
+| Qué es | Cómo se llama hoy | Nombre propuesto |
+|---|---|---|
+| Un mensaje que el panel de la Prestadora le manda al Asistente, y el aviso que le llega al teléfono | chat, en Careonys | **aviso al Asistente** |
+| Una conversación de ida y vuelta entre una Familia y un Asistente, con el control que impide que ahí adentro pase un dato de contacto | chat, en el Marketplace | **conversación** |
+
+**Por qué así.** Uno va en un solo sentido y el otro en los dos, y llamarlos igual esconde
+justamente eso. *Avisar* es hacer saber, y no espera respuesta. *Conversar* es tratar con otro, y
+no existe si el otro no contesta. Y **«chat» se cae de los dos lados**: es palabra en inglés que
+tiene equivalente claro en castellano, así que no pasa la tercera pregunta de la regla.
+
+### Qué hace falta para cerrar esto
+
+Que el Desarrollador diga sí a los cuatro nombres, o cambie los que no le gusten. **Recién ahí** se
+escriben: hasta entonces no entra ninguno ni al código, ni a una tabla, ni a una pantalla, ni a
+este documento como si fuera decisión tomada.
+
+---
+
 ## Lo que este documento todavía no mira
 
 Falta el reparto de lo que no está acá porque no choca: lo que sólo tiene Careonys —el registro
