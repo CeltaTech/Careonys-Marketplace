@@ -1698,9 +1698,9 @@
       "pt-BR": "Não foi possível concluir o cadastramento. Confira os dados e tente novamente."
     },
     "alta.sin_prestadora": {
-      "es-AR": "Registro fallido. Vuelva a ingresar e inténtelo nuevamente.",
-      "en": "Registration failed. Please enter again and try once more.",
-      "pt-BR": "Cadastro falhou. Entre novamente e tente outra vez."
+      "es-AR": "Registro fallido.",
+      "en": "Registration failed.",
+      "pt-BR": "Cadastro falhou."
     },
     "alta.correo_reenviado": {
       "es-AR": "Se mandó el correo de confirmación de nuevo. Revise también la carpeta de correo no deseado.",

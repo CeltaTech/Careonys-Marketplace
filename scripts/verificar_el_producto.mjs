@@ -3,7 +3,8 @@
 
        node scripts/verificar_el_producto.mjs
 
-   `docs/EL_PRODUCTO.md` es lo que CeltaTech usa para saber qué está vendiendo.
+   `docs/CAREONYS MarketPlace EL PRODUCTO.md` es lo que CeltaTech usa para saber
+   qué está vendiendo.
    Un documento así sirve mientras esté al día; el día que una pantalla nueva no
    figura ahí, el documento pasó de ayudar a mentir, y nadie se entera hasta que
    alguien vende algo que el producto no hace.
@@ -49,7 +50,7 @@ import { dirname, join, basename } from 'node:path';
 import { archivos, seRevisaron, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
-const DOCUMENTO = join('docs', 'EL_PRODUCTO.md');
+const DOCUMENTO = join('docs', 'CAREONYS MarketPlace EL PRODUCTO.md');
 const IMAGENES = join('docs', 'pantallas');
 
 /* ---- CÓMO SE LLAMA CADA PANTALLA PARA QUIEN LA MIRA ----
