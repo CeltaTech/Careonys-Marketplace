@@ -4,14 +4,27 @@
        node scripts/verificar_copias.mjs
        node scripts/verificar_copias.mjs --arreglar
 
-   Once archivos de este proyecto viven repetidos en dos o tres carpetas. No es
-   descuido: el service worker de cada PWA solo alcanza su propia carpeta, así
-   que sin conexión no puede leer nada de arriba. Hasta que la migración a React
-   traiga imports de verdad —pendiente 13—, la copia es la única forma.
+   Nueve archivos de este proyecto viven repetidos en dos o tres carpetas, y son
+   de dos clases con dos motivos distintos.
 
-   El riesgo es que alguien corrija una y no las otras. Entonces dos personas ven
-   dos programas distintos y nadie se entera hasta que uno falla. Este guion
-   compara byte a byte y falla si alguna se separó.
+   **Los catálogos de datos**, porque sin conexión cada programa del teléfono
+   sólo alcanza lo que quedó guardado adentro de su propia carpeta. Un catálogo
+   que viviera únicamente arriba existiría mientras hay señal y desaparecería
+   justo el día que no la hay.
+
+   **Las hojas de estilo**, porque cada programa se arma desde su carpeta y se
+   lleva adentro las que nombra.
+
+   Los que **dejaron** de estar repetidos son los guiones del navegador. Vivían
+   copiados por el mismo motivo que los catálogos, y dejaron de estarlo cuando
+   las pantallas pasaron a ser programas: ahora los tres paquetes nombran el
+   mismo archivo de arriba y la herramienta de armado se lo lleva adentro, así
+   que no hay copia que pueda despegarse.
+
+   El riesgo de las que quedan es el de siempre: que alguien corrija una y no las
+   otras. Entonces dos personas ven dos programas distintos y nadie se entera
+   hasta que uno falla. Este guion compara byte a byte y falla si alguna se
+   separó.
 
    Cuando hay que cambiar uno de estos archivos: se edita el de la raíz y se
    copian los otros. El original siempre es el de arriba, y con `--arreglar` la
@@ -33,48 +46,23 @@ const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 // Cada grupo: el primero es el original, los demás son sus copias.
 export const GRUPOS = [
-  ['js/identidad.js', 'pwa-asistente/js/identidad.js', 'pwa-familia/js/identidad.js'],
-  ['js/texto.js', 'pwa-asistente/js/texto.js', 'pwa-familia/js/texto.js'],
-  ['js/clave.js', 'pwa-asistente/js/clave.js', 'pwa-familia/js/clave.js'],
-  ['js/apiClient.js', 'pwa-asistente/js/apiClient.js', 'pwa-familia/js/apiClient.js'],
-  ['js/auth.js', 'pwa-asistente/js/auth.js', 'pwa-familia/js/auth.js'],
-  ['js/catalogo.js', 'pwa-asistente/js/catalogo.js', 'pwa-familia/js/catalogo.js'],
   // Los dos lados de la misma grilla de días por turnos: el Asistente dice
   // cuándo puede trabajar y la Familia dice cuándo se necesita el cuidado, así
   // que las dos aplicaciones llevan copia (pendiente 40).
-  ['js/disponibilidad.js', 'pwa-asistente/js/disponibilidad.js',
-   'pwa-familia/js/disponibilidad.js'],
-  // La conversación entre la Familia y el Asistente es la misma pantalla de los
-  // dos lados, así que la arma un solo archivo y las dos aplicaciones llevan
-  // copia.
-  ['js/conversacion.js', 'pwa-asistente/js/conversacion.js',
-   'pwa-familia/js/conversacion.js'],
   ['data/catalogo-disponibilidad.json', 'pwa-asistente/data/catalogo-disponibilidad.json',
    'pwa-familia/data/catalogo-disponibilidad.json'],
-  // La cola de fichadas es del Asistente y de nadie más: la Familia no ficha.
-  // Y ésta es la copia que más importa que exista, porque el archivo está
-  // escrito justamente para el rato en que no hay conexión, que es cuando el
-  // service worker sólo alcanza su propia carpeta.
-  ['js/cola-fichadas.js', 'pwa-asistente/js/cola-fichadas.js'],
-  // Lo mismo con las cuatro fichas del legajo y con el paso de cierre: los
-  // pregunta el alta del Asistente y la Familia no los ve nunca.
-  ['js/fichas-legajo.js', 'pwa-asistente/js/fichas-legajo.js'],
+  // Las cuatro fichas del legajo las pregunta el alta del Asistente, y la
+  // Familia no las ve nunca.
   ['data/catalogo-fichas.json', 'pwa-asistente/data/catalogo-fichas.json'],
-  // Los cuatro papeles sueltos del legajo —foto, documento de identidad,
-  // antecedentes penales y título— los suben las dos altas del Asistente, así
-  // que la aplicación del teléfono lleva copia igual que de las fichas.
-  ['js/documentos-legajo.js', 'pwa-asistente/js/documentos-legajo.js'],
-  ['js/autorizaciones.js', 'pwa-asistente/js/autorizaciones.js'],
-  ['js/zonas.js', 'pwa-asistente/js/zonas.js'],
+  // Lo mismo con los permisos que el alta pide firmar.
   ['data/catalogo-autorizaciones.json', 'pwa-asistente/data/catalogo-autorizaciones.json'],
   ['data/catalogo-vocabularios.json', 'pwa-asistente/data/catalogo-vocabularios.json',
    'pwa-familia/data/catalogo-vocabularios.json'],
   ['data/catalogo-guias.json', 'pwa-asistente/data/catalogo-guias.json',
    'pwa-familia/data/catalogo-guias.json'],
-  // El texto de las pantallas en los tres idiomas. Las dos PWA lo necesitan por
-  // la misma razón que los demás: sin el archivo adentro de su carpeta, el
-  // service worker no lo alcanza y la aplicación arranca con las cinco frases
-  // de emergencia de `js/catalogo.js` y nada más.
+  // El texto de las pantallas en los tres idiomas. Es la copia que más importa
+  // que exista: sin el archivo adentro de su carpeta, sin conexión la
+  // aplicación arranca con las cinco frases de emergencia y nada más.
   ['data/catalogo-frases.json', 'pwa-asistente/data/catalogo-frases.json',
    'pwa-familia/data/catalogo-frases.json'],
   ['css/tokens.css', 'pwa-asistente/css/tokens.css', 'pwa-familia/css/tokens.css'],

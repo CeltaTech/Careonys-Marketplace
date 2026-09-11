@@ -4,8 +4,8 @@
    El catálogo guarda a dónde lleva cada servicio y con qué imagen se muestra, y
    los guarda como se escribían cuando cada pantalla era un archivo suelto:
    «solicitar-asistente.html#monitoreo» y «assets/images/algo.jpg». **Ese dato no
-   se cambia**, porque lo leen también los dos programas del teléfono, que siguen
-   abriendo archivos.
+   se cambia**: está guardado, cada Prestadora tiene cargado el suyo, y lo que se
+   guarda para siempre no se renombra.
 
    Así que se traduce al llegar, y se traduce en un solo lugar. Estaba escrito
    dos veces, una en cada pantalla que muestra la oferta, y las dos copias ya

@@ -71,11 +71,11 @@ export default function Tablero({ activa, pedido, navegar, alAbrirMenu }) {
       </div>
 
       <div className="grid-services">
-        <a className="service-btn" href="../directorio.html">
+        <a className="service-btn" href="../directorio">
           <div className="icon-box fondo-azul-oscuro"><i className="fas fa-user-search"></i></div>
           <span>{frase('familia.buscar_asistente')}</span>
         </a>
-        <a className="service-btn" href="../soporte-remoto.html">
+        <a className="service-btn" href="../soporte-remoto">
           <div className="icon-box fondo-azul-medio"><i className="fas fa-headset"></i></div>
           <span>{frase('acompanamiento.titulo')}</span>
         </a>
@@ -94,7 +94,7 @@ export default function Tablero({ activa, pedido, navegar, alAbrirMenu }) {
           publicarse, los mismos del directorio y en el mismo orden. */}
       <div className="section-title">
         <span>{frase('familia.asistentes')}</span>
-        <a href="../directorio.html">{frase('familia.ver_todos')}</a>
+        <a href="../directorio">{frase('familia.ver_todos')}</a>
       </div>
 
       {estado === 'cargando' ? (
@@ -150,7 +150,7 @@ function TarjetaDeAsistente({ fila, acceso }) {
   const inicial = (fila.full_name || '?').trim().charAt(0).toUpperCase();
 
   return (
-    <a className="caregiver-card" href={'../perfil.html?id=' + encodeURIComponent(fila.id)}>
+    <a className="caregiver-card" href={'../perfil?id=' + encodeURIComponent(fila.id)}>
       {foto ? <img src={foto} alt="" /> : <div className="card-inicial">{inicial}</div>}
       <h5>{fila.full_name || ''}</h5>
       {linea ? <p>{linea}</p> : null}

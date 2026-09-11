@@ -57,7 +57,6 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 
 import { hayArchivos, seRevisaron, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
-import { GRUPOS } from './verificar_copias.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const comoLoEscribeElProyecto = (ruta) => ruta.split(sep).join('/');
@@ -67,14 +66,14 @@ const comoLoEscribeElProyecto = (ruta) => ruta.split(sep).join('/');
    de una lista repetida acá: si mañana el original cambia de nombre o gana una
    copia, este chequeo se entera solo. */
 const ORIGINAL = 'js/apiClient.js';
-const GRUPO = GRUPOS.find((g) => g[0] === ORIGINAL);
-if (!GRUPO) {
-  console.error(
-    'No hay grupo de copias para «' + ORIGINAL + '» en scripts/verificar_copias.mjs.\n' +
-    'Sin esa lista este chequeo no sabe dónde se permite escribir la base, así que no verifica nada.');
-  process.exit(1);
-}
-const DONDE_SE_PERMITE = new Set(GRUPO);
+/* Hasta que las pantallas fueron programas, `js/apiClient.js` vivía copiado
+   adentro de cada aplicación de teléfono y los tres lugares valían. Ya no hay
+   copias: los tres paquetes nombran este mismo archivo, así que el único lugar
+   donde la dirección y la clave pueden estar escritas es el original. */
+const DONDE_SE_PERMITE = new Set([ORIGINAL]);
+
+/* La única puerta por la que el producto pide la base y la sesión. */
+const LA_PUERTA = 'comun/datos/puerta.js';
 
 const EXTENSIONES = [...EXTENSIONES_DE_PANTALLA, '.js', '.mjs', '.css', '.json', '.webmanifest',
                      '.md', '.sql', '.py', '.toml', '.txt', '.yml', '.yaml'];
@@ -182,11 +181,14 @@ export function verificarBase() {
   ];
 
   const archivos = hayArchivos(raiz, EXTENSIONES);
+  const leidos = [];
   let mirados = 0;
+  let entradas = 0;
 
   for (const camino of archivos) {
     const ruta = comoLoEscribeElProyecto(relative(raiz, camino));
     const contenido = readFileSync(camino, 'utf8');
+    leidos.push([ruta, contenido]);
     mirados++;
 
     for (const { que, patron } of NUNCA_EN_NINGUN_LADO) {
@@ -229,40 +231,53 @@ export function verificarBase() {
       '  cero apariciones fuera del original es lo que devuelve tanto lo bueno como lo roto.');
   }
 
-  /* Y el orden de los `<script>`, que `auth.js` necesita y nadie ve hasta que
-     falla. Se mira sólo en las pantallas que cargan los dos. */
-  let pantallas = 0;
-  for (const camino of hayArchivos(raiz, EXTENSIONES_DE_PANTALLA)) {
-    const ruta = comoLoEscribeElProyecto(relative(raiz, camino));
-    const html = readFileSync(camino, 'utf8');
-    const dondeAuth = html.search(/<script[^>]+src="[^"]*\bauth\.js/);
-    if (dondeAuth < 0) continue;
-    const dondeCliente = html.search(/<script[^>]+src="[^"]*\bapiClient\.js/);
-    pantallas++;
-    if (dondeCliente < 0) {
-      problemas.push(
-        ruta + ' carga `auth.js` y no carga `apiClient.js`.\n' +
-        '  De ahí sale la dirección de la base: la pantalla se planta al arrancar.');
-    } else if (dondeCliente > dondeAuth) {
-      problemas.push(
-        ruta + ' carga `apiClient.js` DESPUÉS de `auth.js`, y tiene que ser antes.\n' +
-        '  De ahí sale la dirección de la base: la pantalla se planta al arrancar.');
-    }
-  }
-  seRevisaron(pantallas, 'una sola pantalla que cargue `js/auth.js`');
+  /* Y el orden, que `auth.js` necesita y nadie ve hasta que falla. Antes lo
+     garantizaban dos `<script>` escritos en cada página suelta, y había que
+     comprobarlo pantalla por pantalla. Ahora las tres partes del producto piden
+     la base por una sola puerta, que los trae en orden y espera a cada uno: se
+     comprueba ahí, que es donde está dicho.
 
-  return { problemas, mirados, pantallas, cableado, agujas: AGUJAS.length };
+     Y se comprueba además que nadie entre por otro lado. Un archivo que pida
+     `auth.js` por su cuenta vuelve a quedar sin orden garantizado, y esta vez
+     sin ninguna página donde se vea: falla recién cuando alguien intenta entrar. */
+  const puerta = readFileSync(join(raiz, ...LA_PUERTA.split('/')), 'utf8');
+  const dondeCliente = puerta.search(/import\(\s*['"][^'"]*\bapiClient\.js/);
+  const dondeAuth = puerta.search(/import\(\s*['"][^'"]*\bauth\.js/);
+  if (dondeAuth < 0 || dondeCliente < 0) {
+    problemas.push(
+      LA_PUERTA + ' ya no pide `js/apiClient.js` y `js/auth.js`.\n' +
+      '  De ahí sale la dirección de la base, y esa puerta es por donde la piden las tres\n' +
+      '  partes del producto: sin eso no hay orden que comprobar y este chequeo no mira nada.');
+  } else if (dondeCliente > dondeAuth) {
+    problemas.push(
+      LA_PUERTA + ' pide `js/apiClient.js` DESPUÉS de `js/auth.js`, y tiene que ser antes.\n' +
+      '  De ahí sale la dirección de la base: el producto se planta al abrir la puerta.');
+  }
+
+  for (const [ruta, contenido] of leidos) {
+    if (ruta === LA_PUERTA || ruta === ORIGINAL || ruta === 'js/auth.js') continue;
+    if (/import\(?\s*['"][^'"]*\bauth\.js['"]/.test(contenido)) {
+      problemas.push(
+        ruta + ' pide `js/auth.js` por su cuenta, salteándose «' + LA_PUERTA + '».\n' +
+        '  Ahí está garantizado que antes se cargue de dónde sale la dirección de la base.\n' +
+        '  Se pide con `conLaBase()`, como el resto del producto.');
+    }
+    entradas++;
+  }
+  seRevisaron(entradas, 'un solo archivo donde mirar si se saltea la puerta a la base');
+
+  return { problemas, mirados, entradas, cableado, agujas: AGUJAS.length };
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
-  const { problemas, mirados, pantallas, agujas } = verificarBase();
+  const { problemas, mirados, entradas, agujas } = verificarBase();
   if (problemas.length) {
     console.error('\n' + problemas.join('\n\n') + '\n');
     process.exit(1);
   }
   console.log(
     'Base verificada: ' + mirados + ' archivos sin la dirección ni la clave escritas a mano (' +
-    agujas + ' formas de escribirlas), ' + pantallas +
-    ' pantallas que cargan `js/apiClient.js` antes que `js/auth.js`, y ninguna de las ' +
+    agujas + ' formas de escribirlas), la puerta pidiendo `js/apiClient.js` antes que ' +
+    '`js/auth.js` y ' + entradas + ' archivos que no se la saltean, y ninguna de las ' +
     NUNCA_EN_NINGUN_LADO.length + ' formas de credencial que no van a ningún lado.');
 }

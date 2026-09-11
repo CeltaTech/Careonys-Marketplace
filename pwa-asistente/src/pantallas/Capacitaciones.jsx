@@ -107,7 +107,7 @@ function Curso({ curso, evaluacion, intentos, frase }) {
       {seRinde ? (
         <a
           className="btn btn-primario"
-          href={'../examen.html?evaluacion=' + encodeURIComponent(evaluacion.clave)}
+          href={'../examen?evaluacion=' + encodeURIComponent(evaluacion.clave)}
         >{frase('capacitacion.rendir')}</a>
       ) : null}
     </div>

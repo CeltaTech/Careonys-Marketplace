@@ -20,10 +20,9 @@
    juntaron en `recorrido.mjs`, y las dos se prueban acá.
 
    Y se prueban de las dos puntas, porque cerrar de más también es una falla:
-   `nueva-clave.html` es la pantalla donde alguien cambia su contraseña, no un
-   lugar donde haya una guardada, y tomarla por caja fuerte sacaría del recorrido
-   a los siete archivos de código que hoy nombran la palabra «clave», sin que nadie
-   se entere.
+   la pantalla donde alguien cambia su contraseña no es un lugar donde haya una
+   guardada, y tomarla por caja fuerte sacaría del recorrido a los archivos de
+   código que hoy nombran la palabra «clave», sin que nadie se entere.
 
    CÓMO SE PRUEBA, Y POR QUÉ ASÍ
    No se mira el proyecto: se arma un árbol de mentira en la carpeta temporal del
@@ -78,8 +77,9 @@ const ARCHIVOS_CERRADOS = [
 // que dejó de existir sin que nada se pusiera rojo, y durante días este chequeo
 // dijo que cuidaba un archivo que no estaba.
 const CODIGO_QUE_SE_ABRE = [
-  'nueva-clave.html',
-  'recuperar-clave.html',
+  'web/src/pantallas/NuevaClave.jsx',
+  'web/src/pantallas/RecuperarClave.jsx',
+  'comun/formularios/CampoDeClave.jsx',
   'js/clave.js',
   'scripts/verificar_claves.mjs',
   'supabase/migrations/0002_siembra_ficticia.sql'

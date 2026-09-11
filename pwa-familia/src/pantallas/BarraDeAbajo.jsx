@@ -26,7 +26,7 @@ export default function BarraDeAbajo({ actual, navegar }) {
       <a className={clase('publicar')} onClick={() => navegar('publicar')}>
         <i className="fas fa-plus-circle"></i><span>{frase('familia.tab_publicar')}</span>
       </a>
-      <a className="tab-item" href="../directorio.html">
+      <a className="tab-item" href="../directorio">
         <i className="fas fa-users"></i><span>{frase('familia.asistentes')}</span>
       </a>
       <a className={clase('reportes')} onClick={() => navegar('reportes')}>

@@ -31,7 +31,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
-import { Texto } from '#comun/frases/lector.js';
+import { Identidad, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
 
 import Intro from './pantallas/Intro.jsx';
@@ -48,7 +48,7 @@ const CON_CARGA = ['reportes', 'postulaciones', 'conversacion', 'asistencia'];
 
 /* El destino del alta, tal como lo trae la página. El nombre corto de la
    Prestadora se le agrega en el arranque, cuando se sabe cuál es. */
-const ALTA = '../registrar-familia.html';
+const ALTA = '../registrar-familia';
 
 /* El identificador que puede venir en la dirección tiene que parecer un `uuid`:
    lo que viene ahí lo escribe cualquiera. */
@@ -72,6 +72,7 @@ export default function Programa() {
   const [destinoAlta, setDestinoAlta] = useState(ALTA);
   const [usuario, setUsuario] = useState({ nombre: '', correo: '' });
   const [saliendo, setSaliendo] = useState(false);
+  const [organizacion, setOrganizacion] = useState(Identidad.organizacion());
 
   /* La conversación que hay que abrir apenas se llegue a la pantalla de los
      mensajes. Vive en una caja y no en el estado: cambiarla no tiene que
@@ -122,6 +123,7 @@ export default function Programa() {
       try {
         const { ClienteDatos, Sesion } = await conLaBase();
         await ClienteDatos.initTenant();
+        setOrganizacion(Identidad.organizacion());
 
         /* El alta abre en una pantalla de afuera de esta aplicación, y allá la
            Prestadora sólo puede salir de la dirección: quien se va a dar de
@@ -152,6 +154,13 @@ export default function Programa() {
       }
     })();
   }, [irADondePideLaDireccion, navegar]);
+
+  /* El nombre de la pestaña, que la cabeza del documento no puede escribir:
+     lleva adentro el nombre de la Prestadora, y ése recién se sabe cuando
+     contesta la base. Por eso se vuelve a escribir cuando llega. */
+  useEffect(() => {
+    document.title = frase('familia.titulo_pagina');
+  }, [frase, organizacion]);
 
   /* El nombre y el correo del menú salen de la sesión y nacen vacíos: antes
      traían un nombre y un correo inventados, que hasta que la sesión llegara se
@@ -205,7 +214,7 @@ export default function Programa() {
             <i className="fas fa-home ancho-20 color-secundario"></i>{' '}
             <span>{frase('nav.inicio')}</span>
           </a>
-          <a className="drawer-menu-item" href="../directorio.html">
+          <a className="drawer-menu-item" href="../directorio">
             <i className="fas fa-search ancho-20 color-secundario"></i>{' '}
             <span>{frase('familia.buscar_asistente')}</span>
           </a>
@@ -228,11 +237,11 @@ export default function Programa() {
             <i className="fas fa-book-medical ancho-20 color-secundario"></i>{' '}
             <span>{frase('familia.reportes_titulo')}</span>
           </a>
-          <a className="drawer-menu-item" href="../cursos.html">
+          <a className="drawer-menu-item" href="../cursos">
             <i className="fas fa-graduation-cap ancho-20 color-secundario"></i>{' '}
             <span>{frase('pie.cursos')}</span>
           </a>
-          <a className="drawer-menu-item" href="../soporte-remoto.html">
+          <a className="drawer-menu-item" href="../soporte-remoto">
             <i className="fas fa-headset ancho-20 color-secundario"></i>{' '}
             <span>{frase('acompanamiento.titulo')}</span>
           </a>

@@ -285,20 +285,6 @@ const Sesion = {
     if (window.ClienteDatos) ClienteDatos.setAuthToken(null);
   },
 
-  // ── Guardia: manda a la pantalla de acceso si no hay sesión ──
-  // Se lleva de dónde venía, para volver ahí después de entrar.
-  async requireAuth(redirectTo = 'acceso.html') {
-    const session = await this.getSession();
-    if (!session) {
-      const aqui = window.location.pathname.split('/').pop() || '';
-      const vuelta = aqui ? ('?volver=' + encodeURIComponent(aqui)) : '';
-      window.location.href = redirectTo + vuelta;
-      return null;
-    }
-    if (window.ClienteDatos) ClienteDatos.setAuthToken(session.access_token);
-    return session;
-  },
-
   // ── Escuchar cambios de sesión (login / logout) ───────
   onAuthStateChange(callback) {
     return _sb.auth.onAuthStateChange((event, session) => {

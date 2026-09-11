@@ -43,15 +43,17 @@
    - Si el archivo al que apunta es **el que corresponde**. Sólo que esté.
    - La caja de las letras de la carpeta donde vive el proyecto: se compara
      desde la raíz para abajo, así que da igual dónde esté clonado.
-   - Las reescrituras de `vercel.json`: hoy no hay ninguna, y `cleanUrls` sólo
-     agrega un destino, nunca saca uno.
+   - Las reescrituras de `vercel.json`: la única que hay manda a la página única
+     del sitio todo lo que no sea una carpeta de archivos, que es exactamente lo
+     que acá se resuelve preguntándole a la lista de direcciones del programa.
 =================================================== */
 
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import {
-  hayArchivos, seRevisaron, conLaMismaCaja, esArmazon, EXTENSIONES_DE_PANTALLA, ARMAZONES
+  hayArchivos, seRevisaron, conLaMismaCaja, esArmazon, EXTENSIONES_DE_PANTALLA, ARMAZONES,
+  direccionesDelSitio, esUnaVista
 } from './recorrido.mjs';
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -150,6 +152,16 @@ const delIgnorado = [
   ['un nombre sin barra, en la raíz', sePublica(REGLAS_DE_PRUEBA, 'CLAUDE.md'), false],
   ['el mismo nombre más adentro', sePublica(REGLAS_DE_PRUEBA, 'pwa-familia/CLAUDE.md'), false],
 ];
+/* Y el tercero: que una dirección del programa se reconozca por la lista y una
+   inventada no. Sin esta segunda mitad, dar por buena toda dirección que no
+   está en el disco sería lo mismo que no mirar. */
+const UNAS_VISTAS = new Set(['/', '/directorio']);
+const delPrograma = [
+  ['una vista declarada', esUnaVista(UNAS_VISTAS, 'directorio'), true],
+  ['la raíz del sitio', esUnaVista(UNAS_VISTAS, ''), true],
+  ['una que nadie declaró', esUnaVista(UNAS_VISTAS, 'inventada'), false],
+];
+
 let corta = false;
 try {
   leerLoQueNoSePublica('*.md');
@@ -158,7 +170,7 @@ try {
 }
 delIgnorado.push(['una forma desconocida corta la corrida', corta, true]);
 
-const rotas = [...delDisco, ...delIgnorado].filter(([, dio, esperado]) => dio !== esperado);
+const rotas = [...delDisco, ...delIgnorado, ...delPrograma].filter(([, dio, esperado]) => dio !== esperado);
 if (rotas.length) {
   console.error('El lector está roto, así que este chequeo no verifica nada:');
   for (const [que, dio, esperado] of rotas) {
@@ -212,9 +224,12 @@ const dondeSePublica = (camino, nombre, suCarpeta) => {
   return paquete ? paquete.base : suCarpeta;
 };
 
+const VISTAS = direccionesDelSitio(raiz);
+
 const fallas = [];
 let miradas = 0;
 let alVuelo = 0;
+let deVista = 0;
 
 for (const camino of hayArchivos(raiz, DE_DONDE_SALEN)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
@@ -255,6 +270,15 @@ for (const camino of hayArchivos(raiz, DE_DONDE_SALEN)) {
         : sinPregunta.startsWith('/')
           ? join(raiz, ...sinPregunta.slice(1).split('/'))
           : resolve(dondeSePublica(camino, nombre, suCarpeta), ...sinPregunta.split('/'));
+      /* **Una vista del programa no es un archivo del disco.** Las quince
+         pantallas del sitio no existen con ese nombre en ninguna carpeta: el
+         servidor contesta la página única y el programa dibuja la que toca. Así
+         que primero se pregunta por la lista de direcciones, y sólo lo que no
+         esté ahí se va a buscar al disco. Una dirección inventada sigue
+         fallando, que es lo que este chequeo tiene que encontrar. */
+      const adentro = relative(raiz, destino).split(sep).join('/');
+      if (!deLaHerramienta && esUnaVista(VISTAS, adentro)) { deVista++; continue; }
+
       const como = conLaMismaCaja(raiz, destino);
 
       if (como === false) {
@@ -272,7 +296,6 @@ for (const camino of hayArchivos(raiz, DE_DONDE_SALEN)) {
       }
       if (deLaHerramienta) continue;
 
-      const adentro = relative(raiz, destino).split(sep).join('/');
       if (!sePublica(reglas, adentro)) {
         fallas.push(
           `${nombre}:${renglon}  «${cruda}» existe acá pero \`.vercelignore\` no lo sube.\n` +
@@ -297,6 +320,7 @@ if (fallas.length > 0) {
 
 console.log(
   `Rutas verificadas: ${miradas} direcciones locales escritas en pantallas, hojas y ` +
-  `manifiestos, todas apuntando a un archivo que está escrito con esas mismas letras y ` +
-  `que el sitio publica (${alVuelo} ${alVuelo === 1 ? 'se arma' : 'se arman'} al vuelo, ` +
+  `manifiestos, todas apuntando a una vista del programa o a un archivo escrito con ` +
+  `esas mismas letras y ` +
+  `que el sitio publica —${deVista} son vistas— (${alVuelo} ${alVuelo === 1 ? 'se arma' : 'se arman'} al vuelo, ` +
   'que no se puede juzgar leyendo).');

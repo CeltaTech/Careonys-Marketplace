@@ -31,7 +31,7 @@ hace perder el tiempo a quien lo apruebe.
 **Cómo se distinguen las citas, que acá conviven las de dos repositorios.** Toda cita a un archivo
 de Careonys lleva adelante el prefijo `careonys/` —`careonys/panel/src/lib/tipoDeAsistente.js:31`—,
 que es el nombre de la carpeta hermana donde vive ese producto. Una cita **sin prefijo**
-—`js/apiClient.js:247`, `panel-prestadora.html:210`— es de este repositorio, se abre desde su raíz
+—`js/apiClient.js:247`, `web/src/pantallas/panel-prestadora/OpcionesPropias.jsx:51`— es de este repositorio, se abre desde su raíz
 y la comprueba `scripts/verificar_referencias.mjs` como la de cualquier otro documento. Cuando la
 frase nombra un archivo de Careonys **por su nombre solo**, sin ruta, es porque una cita anterior
 de la misma sección ya lo presentó con la ruta entera.
@@ -127,7 +127,7 @@ migraciones, no supuesto:
   `careonys/panel/src/pages/configuracion/Asistentes.jsx:105` y `:155` (con su ruta en
   `careonys/backend/src/routes/panelConfiguracion.js:596`) y `ElCuidado.jsx:273`. **Ninguna para patologías,
   certificaciones, cursos, géneros, niveles educativos ni modalidades.** Este producto ya tiene la suya, y es una sola
-  para todas las listas: `panel-prestadora.html:210`, contra `vocabulario_items`. Careonys las tiene
+  para todas las listas: `web/src/pantallas/panel-prestadora/OpcionesPropias.jsx:51`, contra `vocabulario_items`. Careonys las tiene
   repartidas en tres pantallas y le faltan seis listas; acá el bloque es uno y sirve para
   cualquier vocabulario abierto, así que **el aporte va en este sentido**.
 
@@ -183,8 +183,8 @@ Cinco tablas, dos vistas y una función, todo en `supabase/migrations/0001_base_
 - `rendir_evaluacion` (`:1887`), que recibe las respuestas, corrige, cuenta el intento y devuelve
   el porcentaje.
 
-Las pantallas son `examen.html`, `cursos.html` y la de capacitaciones del programa del Asistente
-(`pwa-asistente/index.html:732`). El acceso desde el código está en `js/apiClient.js:831` y `:875`.
+Las pantallas son `web/src/pantallas/Examen.jsx`, `web/src/pantallas/Cursos.jsx` y la de capacitaciones del programa del Asistente
+(`pwa-asistente/src/pantallas/Capacitaciones.jsx:117`). El acceso desde el código está en `js/apiClient.js:831` y `:875`.
 
 Y el resultado no se queda ahí: el directorio suma la comprobación de curso aprobado cuando existe
 un intento aprobado (`supabase/migrations/0001_base_del_esquema.sql:773`).
@@ -235,8 +235,8 @@ de siempre: la general que trae el producto y la propia de cada Prestadora, que 
 - `guias_de` (`:1272`), abierta a quien no inició sesión (`:5514`), que devuelve sólo las
   publicadas y deja que la propia pise a la general.
 
-Se leen en la pantalla de guías del programa del Asistente (`pwa-asistente/index.html:800`) y se
-escriben en `guias-prestadora.html`. Y hay un camino para el teléfono sin señal:
+Se leen en la pantalla de guías del programa del Asistente (`pwa-asistente/src/pantallas/Guias.jsx:56`) y se
+escriben en `web/src/pantallas/GuiasPrestadora.jsx`. Y hay un camino para el teléfono sin señal:
 `scripts/generar_guias.mjs` deja el archivo que la aplicación guarda.
 
 **Qué tiene Careonys hoy.** Nada: 0 coincidencias de guía de cuidado en su código y en sus

@@ -1,38 +1,29 @@
-# Qué NO se sube al sitio publicado.
+# Qué NO se le manda al servidor que arma el sitio.
 #
-# Existe porque hasta el 31 de agosto de 2026 se subía el repositorio entero, y
-# cualquiera con la dirección podía leer `docs/PENDIENTES.md` —o sea la lista
-# enumerada de todo lo que este producto todavía no resuelve, sección de
-# seguridad incluida—, las migraciones con cada política de RLS escrita, y los
-# guiones de comprobación. La regla de la empresa dice «nunca información
-# sensible en registros, direcciones, parámetros ni mensajes públicos», y una
-# lista de debilidades conocidas servida por HTTP es exactamente eso.
+# Cambió de sentido el día que el sitio pasó a armarse. Antes se subía el
+# repositorio y lo subido era lo publicado, así que este archivo era lo único
+# que separaba una cosa de la otra: sin él, cualquiera con la dirección leía
+# `docs/PENDIENTES.md` —o sea la lista enumerada de todo lo que este producto
+# todavía no resuelve, sección de seguridad incluida—, las migraciones con cada
+# política de RLS escrita, y los guiones de comprobación.
 #
-# Que el esquema se lea no rompe el aislamiento —la base no depende de que nadie
-# lo conozca— pero la lista de pendientes le ahorra el trabajo a quien busque
-# por dónde entrar, y no hay ningún motivo para publicarla.
+# Ahora lo publicado es **solamente lo que el armado deja en su carpeta de
+# salida**, y quién arma y qué publica está escrito en `vercel.json` y en
+# `scripts/armar_todo.mjs`. Lo que este archivo decide es otra cosa: qué material
+# viaja hasta la máquina que arma. Nada de lo que viaja se publica por viajar,
+# pero lo que no hace falta allá tampoco tiene por qué salir de acá.
+#
+# De ahí la regla para mantenerlo: **si el armado lo necesita, no puede estar en
+# esta lista.** Sacar algo que hace falta no expone nada; rompe la publicación
+# entera, y se descubre recién al publicar.
 
 docs/*
-scripts/
 supabase/
 CLAUDE.md
 
-# Lo que es materia prima y no sitio. El armazón de React y los tres
-# `package.json` son de la herramienta de armado: lo que el servidor sirve es lo
-# construido, no esto. Publicarlos no rompe nada y tampoco sirve para nada, y un
-# armazón servido tal cual es una página en blanco con una dirección rota
-# adentro.
-web/
-package.json
-
-# Salvo los tres documentos legales, que sí los enlazan las pantallas públicas
-# («Términos» en `index.html:519`, `cursos.html:225`, `directorio.html:201`,
-# `perfil.html:237`, `solicitar-asistente.html:376` y `soporte-remoto.html:204`;
-# `registrar-asistente.html:535` y `:625`; `pwa-asistente/index.html:684`; y
-# «Privacidad» en `index.html:520`, `directorio.html:202` y
-# `solicitar-asistente.html:377`).
-# Que se muestren estando sin revisión profesional es otro asunto, y es el
-# pendiente 49; acá sólo se respeta lo que hoy la pantalla necesita.
+# Salvo los tres documentos legales, que los enlazan las pantallas y por eso el
+# armado los copia al sitio. Que se muestren estando sin revisión profesional es
+# otro asunto, y es el pendiente 49.
 !docs/terminos_y_condiciones_asistentes.md
 !docs/terminos_y_condiciones_familias.md
 !docs/politica_de_datos.md

@@ -69,9 +69,9 @@ const enEspanol = (n) => n.toLocaleString('es-AR');
    `scripts/verificar_el_producto.mjs`, y por el mismo motivo.
 
    Aparte van los **archivos** que las dibujan, que es otra pregunta y sigue
-   valiendo la pena: de ahí salen los renglones, los bloques de guión metidos
-   adentro del marcado, los estilos pegados y quién enlaza cada hoja. El
-   armazón de un paquete no cuenta: no tiene nada dibujado adentro. */
+   valiendo la pena: de ahí salen los renglones, los estilos pegados al
+   marcado y quiénes piden la base. El armazón de un paquete no cuenta: no
+   tiene nada dibujado adentro. */
 const RUTAS = join('web', 'src', 'Rutas.jsx');
 const direcciones = [
   ...[...leer(join(raiz, RUTAS)).matchAll(/<Route [^>]*path="([^"]+)"/g)]
@@ -111,20 +111,6 @@ for (const grupo of porContenido.values()) {
   if (grupo.length > 1) renglonesCopiados += grupo[0] * (grupo.length - 1);
 }
 
-/* ── EL JAVASCRIPT METIDO ADENTRO DEL HTML ───────────────────────────────
-   Los `<script>` sin `src`, que son los que traen código escrito ahí mismo.
-   Ese código no se puede leer con las herramientas de un archivo `.js`, y por
-   eso se mide aparte: es la deuda, no el total. */
-const bloque = /<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi;
-let bloques = 0;
-let renglonesEnHtml = 0;
-for (const camino of archivosDePantalla) {
-  for (const encontrado of leer(camino).matchAll(bloque)) {
-    bloques += 1;
-    renglonesEnHtml += renglones(encontrado[1].replace(/^\n/, '').replace(/\n[ \t]*$/, ''));
-  }
-}
-
 /* ── LAS HOJAS DE ESTILO Y SUS TOKENS ────────────────────────────────────
    Un token es una propiedad con nombre propio declarada en `css/tokens.css`.
    Se cuentan los nombres distintos, no las veces que aparecen: el mismo token
@@ -136,21 +122,23 @@ const dondeTokens = join(raiz, 'css', 'tokens.css');
 const tokens = new Set(
   Array.from(leer(dondeTokens).matchAll(/(--[a-z0-9-]+)\s*:/gi)).map((a) => a[1]));
 
-/* ── Y QUIÉN ENLAZA CADA HOJA ────────────────────────────────────────────
+/* ── Y QUIÉN PIDE CADA HOJA ──────────────────────────────────────────────
    La otra mitad de la misma pregunta: no cuántos renglones hay sino de quién
-   son. Se lee del marcado, resolviendo cada `<link href>` contra la carpeta de
-   la pantalla, así que una hoja que dejó de enlazarse deja de figurar sola.
-   Las de afuera —Font Awesome— no entran: la lista es de las hojas propias,
-   que son las que se cuentan arriba.
+   son. Antes cada pantalla enlazaba las suyas y se leía del marcado; hoy cada
+   paquete pide las suyas en el archivo por el que arranca, y se lee de ahí.
+   Una hoja que no pida nadie sigue figurando sola, que es para lo que sirve.
 
-   Se mide porque estaba escrito a mano y era falso: el
-   31 de agosto de 2026 esa tabla decía que `css/styles.css` la usaban «las 10
-   páginas de la raíz» cuando son 15, que `tokens.css` y `utilidades.css` las
-   usaban «las 16 pantallas» cuando son 17, y le daba 285 renglones a cada
-   `styles-pwa.css` cuando tienen 287. */
+   Se mide porque estuvo escrito a mano y era falso: el 31 de agosto de 2026
+   esa tabla decía que `css/styles.css` la usaban «las 10 páginas de la raíz»
+   cuando eran 15, que `tokens.css` y `utilidades.css` las usaban «las 16
+   pantallas» cuando eran 17, y le daba 285 renglones a cada `styles-pwa.css`
+   cuando tienen 287. */
+const arranques = archivos(raiz, ['principal.jsx']).sort();
+seRevisaron(arranques.length, 'un solo archivo por el que arranque un paquete');
+
 const laEnlazan = new Map(hojas.map((c) => [c, []]));
-for (const camino of archivosDePantalla) {
-  for (const encontrado of leer(camino).matchAll(/<link[^>]+href="([^"]+\.css)"/gi)) {
+for (const camino of arranques) {
+  for (const encontrado of leer(camino).matchAll(/import\s+['"]([^'"]+\.css)['"]/g)) {
     const destino = resolve(dirname(camino), encontrado[1]);
     if (laEnlazan.has(destino)) laEnlazan.get(destino).push(nombreDe(camino));
   }
@@ -169,59 +157,69 @@ for (const camino of hojas) {
 const renglonesCopiadosHojas = [...originalDe.keys()]
   .reduce((t, c) => t + renglones(leer(c)), 0);
 
-/* ── LO PEGADO AL HTML ───────────────────────────────────────────────────
-   Cada `style="…"` es un atributo, y adentro puede haber varias
-   declaraciones separadas por punto y coma. Se informan las dos cuentas
-   porque son dos cosas distintas: los atributos dicen en cuántos lugares hay
-   que entrar, las declaraciones dicen cuánto hay que mover. */
+/* ── LO PEGADO AL MARCADO ────────────────────────────────────────────────
+   Un estilo escrito ahí mismo, en el lugar donde se dibuja, en vez de una
+   clase de la hoja. Se informan las dos cuentas porque son dos cosas
+   distintas: los lugares dicen en cuántos puntos hay que entrar, las
+   declaraciones dicen cuánto hay que mover.
+
+   **La deuda sobrevivió al cambio de herramienta, y cambió de forma de
+   escribirse.** Antes era un atributo del marcado, con las declaraciones
+   separadas por punto y coma; hoy es un objeto escrito adentro del código,
+   con las declaraciones separadas por coma. Es la misma deuda y se mide
+   igual, leída como se escribe ahora.
+
+   **Y unos pocos nombran un objeto declarado aparte en vez de escribirlo ahí
+   mismo.** Ésos cuentan como lugar —hay que entrar igual— y no suman
+   declaraciones, porque las suyas no están ahí. */
+const UN_ESTILO = /\sstyle=\{/g;
+const ESCRITO_AHI = /\sstyle=\{\{([^}]*)\}\}/g;
+const UNA_DECLARACION = /(^|,)\s*[A-Za-z][A-Za-z0-9-]*\s*:/g;
+
 let atributosStyle = 0;
 let declaraciones = 0;
 
-/* Y la misma cuenta pantalla por pantalla, más los renglones de CSS que cada
-   una lleva en un bloque `<style>`. Sirve para saber cuál va a costar más y en
-   qué orden conviene portarla, y vive acá y no escrita a mano en
+/* Y la misma cuenta pantalla por pantalla. Sirve para saber cuál va a costar
+   más y en qué orden conviene limpiarla, y vive acá y no escrita a mano en
    `docs/PENDIENTES.md`, que es donde estuvo hasta el 31 de agosto de 2026
    diciendo 687 atributos cuando ya eran 247. */
 const pegados = [];
 for (const camino of archivosDePantalla) {
   const fuente = leer(camino);
-  let deEsta = 0;
+  const deEsta = (fuente.match(UN_ESTILO) || []).length;
   let declaracionesDeEsta = 0;
-  for (const encontrado of fuente.matchAll(/\sstyle="([^"]*)"/gi)) {
-    deEsta += 1;
-    declaracionesDeEsta += encontrado[1].split(';').filter((d) => d.trim()).length;
+  for (const encontrado of fuente.matchAll(ESCRITO_AHI)) {
+    declaracionesDeEsta += (encontrado[1].match(UNA_DECLARACION) || []).length;
   }
   atributosStyle += deEsta;
   declaraciones += declaracionesDeEsta;
 
-  let enBloque = 0;
-  for (const encontrado of fuente.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)) {
-    enBloque += renglones(encontrado[1].replace(/^\n/, '').replace(/\n[ \t]*$/, ''));
-  }
-
-  if (deEsta || enBloque) {
+  if (deEsta) {
     pegados.push({
       archivo: nombreDe(camino),
       atributos: deEsta,
-      declaraciones: declaracionesDeEsta,
-      bloque: enBloque
+      declaraciones: declaracionesDeEsta
     });
   }
 }
 pegados.sort((a, b) =>
-  b.atributos - a.atributos || b.bloque - a.bloque || a.archivo.localeCompare(b.archivo));
-seRevisaron(pegados.length, 'una sola pantalla con estilos pegados al HTML');
+  b.atributos - a.atributos || a.archivo.localeCompare(b.archivo));
+seRevisaron(pegados.length, 'una sola pantalla con estilos pegados al marcado');
 
 /* ── LA SESIÓN ───────────────────────────────────────────────────────────
-   Una pantalla rescata la sesión al abrir si carga `js/auth.js`, que es el
-   único lugar donde vive `Sesion`. */
-const conSesion = archivosDePantalla.filter((c) => /js\/auth\.js/.test(leer(c)));
+   Cuántos de los archivos que dibujan piden la base, y con ella la sesión.
+   Antes se contaba quién cargaba el archivo de sesión, que era lo único que
+   se podía preguntar cuando cada pantalla se armaba su propia carga. Hoy hay
+   una sola puerta y se entra por ahí, así que se cuenta quién la abre. */
+const conSesion = archivosDePantalla.filter((c) => /conLaBase\s*\(/.test(leer(c)));
 
 /* ── LO QUE SE PIDE AFUERA ───────────────────────────────────────────────
-   Los servidores distintos a los que la página le pide algo. No hay
-   `package.json` ni compilación: todo entra por dirección. */
+   Los servidores distintos a los que el navegador le pide algo. Se leen los
+   tres armazones —que son los tres archivos que el navegador abre— y las
+   hojas de estilo. Las bibliotecas dejaron de figurar acá porque dejaron de
+   entrar por dirección: hoy vienen adentro de lo armado. */
 const afuera = new Set();
-for (const camino of [...archivosDePantalla, ...hojas]) {
+for (const camino of [...ARMAZONES.map((a) => join(raiz, ...a.split('/'))), ...hojas]) {
   for (const encontrado of leer(camino).matchAll(/https:\/\/([a-z0-9.-]+)/gi)) {
     afuera.add(encontrado[1].toLowerCase());
   }
@@ -255,15 +253,16 @@ seRevisaron(chequeos.length, 'un solo chequeo');
    dejó de serlo. */
 const paquetes = archivos(raiz, ['package.json'])
   .map((camino) => dirname(relative(raiz, camino)).split(sep).join('/'))
+  .map((donde) => (donde === '.' ? 'la raíz, que arma a los otros tres' : donde))
   .sort();
 
 /* ── LA TABLA ────────────────────────────────────────────────────────────
    El renglón de los servidores de afuera dice de qué es cada uno, y eso no se
    puede medir: se escribe una vez y se comprueba que la cuenta no se haya
-   movido. El día que aparezca un quinto, la frase avisa que quedó vieja. */
+   movido. El día que aparezca uno más, la frase avisa que quedó vieja. */
 const DE_AFUERA = new Map([
-  [4, 'dos de tipografías y dos de bibliotecas'],
-  [5, 'dos de tipografías, dos de bibliotecas y el del mapa']
+  [3, 'dos de tipografías y el de los iconos'],
+  [4, 'dos de tipografías, el de los iconos y el del mapa']
 ]);
 
 const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
@@ -276,14 +275,12 @@ const renglonesTabla = [
    `el sitio es un programa con ${enEspanol(direcciones.length - 2)} direcciones, y los dos del teléfono son otros dos programas`],
   [`${enEspanol(renglonesGuiones)} renglones de JavaScript propio, en ${enEspanol(guiones.length)} archivos`,
    `${enEspanol(renglonesCopiados)} de ellos son copias byte a byte de otro archivo (pendiente 13)`],
-  [`${enEspanol(renglonesEnHtml)} renglones más metidos adentro del HTML`,
-   `en ${enEspanol(bloques)} bloques \`<script>\``],
   [`${enEspanol(renglonesHojas)} renglones de hojas de estilo, en ${enEspanol(hojas.length)} archivos`,
    `${enEspanol(tokens.size)} tokens con nombre en \`css/tokens.css\`, sin framework`],
-  [`${enEspanol(declaraciones)} declaraciones más, pegadas al HTML`,
-   `en ${enEspanol(atributosStyle)} atributos \`style=\` (fue el pendiente 8, cerrado)`],
+  [`${enEspanol(declaraciones)} declaraciones de estilo pegadas al marcado`,
+   `en ${enEspanol(atributosStyle)} lugares (fue el pendiente 8, cerrado)`],
   ['Supabase Auth funcionando',
-   `${enEspanol(conSesion.length)} de los ${enEspanol(archivosDePantalla.length)} archivos que las dibujan rescatan la sesión al abrir`],
+   `${enEspanol(conSesion.length)} de los ${enEspanol(archivosDePantalla.length)} archivos que las dibujan abren la puerta a la base`],
   [`${enEspanol(afuera.size)} servidores de afuera`,
    DE_AFUERA.get(afuera.size) || `${[...afuera].sort().join(', ')} — hay que decir de qué es cada uno`],
   [`${enEspanol(paquetes.length)} ${paquetes.length === 1 ? 'paquete que se construye solo' : 'paquetes que se construyen solos'}`,
@@ -304,45 +301,34 @@ const tabla =
    La otra mitad de lo mismo: el total va al README y el detalle por pantalla
    va a la lista de pendientes, donde dice qué va a costar más portar. Se
    escribe entre dos marcas para que el medidor sepa qué reemplazar. */
-const conBloque = pegados.filter((c) => c.bloque > 0);
-const renglonesEnBloques = conBloque.reduce((t, c) => t + c.bloque, 0);
-
 const renglonesReparto = pegados
-  .filter((c) => c.atributos > 0)
   .map((c) => `| \`${c.archivo}\` | ${enEspanol(c.atributos)} | ${enEspanol(c.declaraciones)} |`);
 
 const tablaReparto =
-  '| Archivo | Atributos `style=` | Declaraciones |\n|---|---:|---:|\n' +
-  renglonesReparto.join('\n') + '\n\n' +
-  `Hay además ${enEspanol(renglonesEnBloques)} renglones de CSS en bloques \`<style>\` adentro del ` +
-  'HTML:\n' +
-  conBloque.map((c) => `${enEspanol(c.bloque)} en \`${c.archivo}\``).join(', ') + '.\n';
+  '| Archivo | Lugares con estilo propio | Declaraciones |\n|---|---:|---:|\n' +
+  renglonesReparto.join('\n') + '\n';
 
 /* ── LA TABLA DE LAS HOJAS, PARA README.md ───────────────────────────
-   Qué hoja hay, cuánto mide y quién la enlaza. La columna de la derecha decía
+   Qué hoja hay, cuánto mide y quién la pide. La columna de la derecha decía
    a mano cuántas pantallas eran, y era la parte que más envejeció: se agrega
-   una pantalla y nadie vuelve a esa tabla. Ahora sale del marcado. */
+   una pantalla y nadie vuelve a esa tabla. Ahora sale del código. */
 const renglonesHojasTabla = hojas.map((camino) => {
   const quienes = laEnlazan.get(camino);
   const original = originalDe.get(camino);
   let usa;
-  if (quienes.length === 0) usa = '**no la enlaza ninguna pantalla**';
+  if (quienes.length === 0) usa = '**no la pide ningún paquete**';
   else if (quienes.length === 1) usa = `Sólo \`${quienes[0]}\``;
-  else usa = `${enEspanol(quienes.length)} de los ${enEspanol(archivosDePantalla.length)} archivos de pantalla`;
+  else usa = `${enEspanol(quienes.length)} de los ${enEspanol(arranques.length)} paquetes`;
   if (original) usa += `. Copia byte a byte de \`${nombreDe(original)}\``;
   return `| \`${nombreDe(camino)}\` | ${enEspanol(renglones(leer(camino)))} | ${usa} |`;
 });
 
 const tablaHojas =
-  '| Archivo | Renglones | La enlazan |\n|---|---:|---|\n' +
+  '| Archivo | Renglones | La piden |\n|---|---:|---|\n' +
   renglonesHojasTabla.join('\n') + '\n\n' +
   `En disco hay ${enEspanol(hojas.length)} archivos y ${enEspanol(renglonesHojas)} renglones, ` +
   `de los cuales ${enEspanol(renglonesCopiadosHojas)} son copias byte a byte de otro: son las que ` +
-  '`verificar_copias.mjs` compara.\n\n' +
-  `Hay además ${enEspanol(renglonesEnBloques)} renglones de CSS en bloques \`<style>\` adentro del ` +
-  'HTML: ' +
-  conBloque.map((c) => `${enEspanol(c.bloque)} en \`${c.archivo}\``).join(', ') + '. ' +
-  'Las demás pantallas no tienen ninguno.\n';
+  '`verificar_copias.mjs` compara.\n';
 
 /* Los renglones medidos, para que `verificar_estado.mjs` los compare con los
    que están escritos en el README. La fecha no se exporta a propósito: cambia

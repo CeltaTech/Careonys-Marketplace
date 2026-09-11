@@ -1,0 +1,10 @@
+{
+  "name": "sitio",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "instalar": "npm ci --prefix web && npm ci --prefix pwa-asistente && npm ci --prefix pwa-familia",
+    "construir": "node scripts/armar_todo.mjs",
+    "verificar": "node scripts/verificar_todo.mjs"
+  }
+}

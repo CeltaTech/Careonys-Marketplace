@@ -184,7 +184,9 @@ antes de escribir una tabla**, no después.
   que ya se hace con la base, y este producto no espera a tener herramienta de armado. Todavía no
   hay ningún módulo creado, y hasta entonces lo compartido se sigue construyendo acá con el
   reparto de `docs/MODULOS.md`.
-- Ya pasó lo que esto evita: `apiClient.js` está **triplicado byte a byte** (pendiente 13).
+- Ya pasó lo que esto evita: `apiClient.js` estuvo **triplicado byte a byte**, y hasta que el
+  paso a React le dio imports de verdad hubo que compararlo a mano para que las copias no se
+  separaran (pendiente 13).
 
 ## 5. Protocolo de sesión
 

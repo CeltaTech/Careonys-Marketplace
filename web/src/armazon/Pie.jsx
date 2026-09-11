@@ -4,9 +4,13 @@
    Estaba escrito entero adentro de cada una de las quince pantallas. Acá está
    una sola vez.
 
-   Los tres documentos legales se abren en una pestaña aparte y se piden al
-   sitio tal como están guardados: no son pantallas del producto, son textos que
-   la Prestadora adopta.
+   Los documentos legales se abren en una pestaña aparte y se piden al sitio tal
+   como están guardados: no son pantallas del producto, son textos que la
+   Prestadora adopta.
+
+   La columna de asistentes lleva dos enlaces a la misma pantalla y es a
+   propósito: uno la abre por arriba y el otro cae directo en el formulario.
+   Estaba así en las páginas de antes, y se conserva.
 =================================================== */
 
 import { Link } from 'react-router-dom';
@@ -25,6 +29,12 @@ const PARA_FAMILIAS = [
   { a: '/directorio', clave: 'pie.directorio' },
   { a: '/soporte-remoto', clave: 'pie.acompanamiento' },
   { a: '/cursos', clave: 'pie.cursos' }
+];
+
+const PARA_ASISTENTES = [
+  { a: '/registrar-asistente', clave: 'nav.registrarme_asistente' },
+  { a: '/registrar-asistente#registro', clave: 'pie.registrarme' },
+  { a: '/cursos', clave: 'pie.capacitacion' }
 ];
 
 export default function Pie() {
@@ -58,7 +68,9 @@ export default function Pie() {
 
         <div className="footer-col">
           <h4>{frase('pie.para_asistentes')}</h4>
-          <Link to="/registrar-asistente">{frase('nav.registrarme_asistente')}</Link>
+          {PARA_ASISTENTES.map(({ a, clave }) => (
+            <Link key={clave} to={a}>{frase(clave)}</Link>
+          ))}
         </div>
 
         <div className="footer-col">
@@ -67,6 +79,9 @@ export default function Pie() {
           <a href="#contacto">{frase('pie.contacto')}</a>
           <a href="/docs/terminos_y_condiciones_familias.md" target="_blank" rel="noreferrer">
             {frase('pie.terminos')}
+          </a>
+          <a href="/docs/politica_de_datos.md" target="_blank" rel="noreferrer">
+            {frase('pie.privacidad')}
           </a>
         </div>
       </div>

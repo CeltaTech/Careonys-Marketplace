@@ -2360,11 +2360,6 @@
       "en": "Send",
       "pt-BR": "Enviar"
     },
-    "acompanamiento.consulta_recibida": {
-      "es-AR": "¡Gracias! Un profesional se comunicará a la brevedad.",
-      "en": "Thank you. A professional will be in touch shortly.",
-      "pt-BR": "Obrigado! Um profissional entrará em contato em breve."
-    },
     "___________________": "── Los cursos ──",
     "cursos.titulo": {
       "es-AR": "Cursos de cuidado",
@@ -2495,11 +2490,6 @@
       "es-AR": "ENVIAR SOLICITUD",
       "en": "SEND REQUEST",
       "pt-BR": "ENVIAR SOLICITAÇÃO"
-    },
-    "cursos.solicitud_enviada": {
-      "es-AR": "✓ ¡Solicitud enviada! Recibirá información del curso en su correo.",
-      "en": "✓ Request sent. Information about the course will arrive by email.",
-      "pt-BR": "✓ Solicitação enviada. As informações do curso chegarão por e-mail."
     },
     "____________________": "── Pedir un Asistente ──",
     "solicitar.descripcion": {
@@ -2776,11 +2766,6 @@
       "es-AR": "ENVIAR",
       "en": "SEND",
       "pt-BR": "ENVIAR"
-    },
-    "solicitar.consulta_gracias": {
-      "es-AR": "✓ ¡Gracias! Nos pondremos en contacto a la brevedad.",
-      "en": "✓ Thank you. We will be in touch shortly.",
-      "pt-BR": "✓ Obrigado. Entraremos em contato em breve."
     },
     "_________________________________________": "── La pantalla de Guías de cuidado del Asistente ──",
     "guia.titulo": {

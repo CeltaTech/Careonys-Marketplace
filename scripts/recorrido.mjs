@@ -25,7 +25,7 @@
    tiene nada que hacer en `docs/`— va en su propia lista, que se pasa aparte.
 =================================================== */
 
-import { readdirSync, statSync, existsSync } from 'node:fs';
+import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 
 /* Las cajas fuertes se reconocen **por lo que dicen y no por cómo están
@@ -169,6 +169,30 @@ export const ARMAZONES = [
   'pwa-asistente/src/index.html',
   'pwa-familia/src/index.html'
 ];
+
+/* ── Y QUÉ DIRECCIONES CONTESTA EL SITIO ──────────────────────────────────
+   Mientras cada pantalla era un archivo suelto, preguntar si una dirección
+   llegaba a algún lado era preguntarle al disco si ese archivo estaba. Ya no:
+   las quince pantallas del sitio son vistas de un solo programa, y en el disco
+   no hay un archivo con el nombre de ninguna. Al servidor se le pide
+   «/directorio» y contesta la página única, que dibuja la vista que corresponde.
+
+   Quién sabe cuáles son es la lista de direcciones del programa, y nadie más:
+   una dirección que no figure ahí no existe en el sitio. Se lee de ahí en vez
+   de copiarla acá para que agregar una pantalla siga siendo un solo renglón. */
+export const LISTA_DE_DIRECCIONES = 'web/src/Rutas.jsx';
+
+export function direccionesDelSitio(raiz) {
+  const texto = readFileSync(join(raiz, ...LISTA_DE_DIRECCIONES.split('/')), 'utf8');
+  const dichas = Array.from(texto.matchAll(/<Route\s[^>]*\bpath="([^"]+)"/g))
+    .map((cual) => cual[1]);
+  seRevisaron(dichas.length, `una sola dirección declarada en «${LISTA_DE_DIRECCIONES}»`);
+  return new Set(dichas);
+}
+
+/** ¿Esa dirección —contada desde la raíz del sitio, sin barra adelante— es una
+ *  de las vistas del programa? La raíz del sitio se dice con la cadena vacía. */
+export const esUnaVista = (cuales, adentro) => cuales.has('/' + adentro);
 
 /** ¿Este archivo es el armazón de un paquete, y no una pantalla? */
 export const esArmazon = (camino) =>

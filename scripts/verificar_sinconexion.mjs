@@ -45,45 +45,9 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep, basename } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { archivos, seRevisaron, estaTalCual } from './recorrido.mjs';
+import { leer, pedidosEscritos } from './lo_que_guarda_el_telefono.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
-
-/* ── LEER LAS DOS LISTAS DEL ARCHIVO ──────────────────────────────────────
-   Se lee el texto y no se importa el archivo: un `service-worker.js` habla de
-   `self` y de `caches`, que en la línea de comandos no existen. */
-function leer(fuente) {
-  const nombre = /const\s+CACHE_NAME\s*=\s*['"]([^'"]+)['"]/.exec(fuente);
-  const lista = /const\s+ASSETS_TO_CACHE\s*=\s*\[([\s\S]*?)\]/.exec(fuente);
-  return {
-    nombre: nombre ? nombre[1] : null,
-    guardados: lista
-      ? Array.from(lista[1].matchAll(/['"]([^'"]+)['"]/g)).map((a) => a[1])
-      : []
-  };
-}
-
-/* Una prueba que no puede fallar no prueba nada: el lector se prueba contra un
-   archivo de mentira que sí tiene las dos listas y contra uno que no las tiene.
-   Sin esto, un `service-worker.js` que cambiara de forma dejaría el chequeo
-   mirando cero archivos guardados y diciendo ✔ igual. */
-const DE_MENTIRA = `
-  const CACHE_NAME = 'prueba-v3';
-  const ASSETS_TO_CACHE = [
-    './',
-    './index.html',
-    './data/catalogo-frases.json'
-  ];
-`;
-const VACIO_DE_MENTIRA = 'self.addEventListener("fetch", () => {});';
-const leido = leer(DE_MENTIRA);
-const nada = leer(VACIO_DE_MENTIRA);
-if (leido.nombre !== 'prueba-v3' || leido.guardados.length !== 3 ||
-    nada.nombre !== null || nada.guardados.length !== 0) {
-  console.error('El lector de `service-worker.js` está roto, así que no verifica nada:');
-  console.error('  del archivo de mentira leyó: ' + JSON.stringify(leido));
-  console.error('  del vacío leyó: ' + JSON.stringify(nada));
-  process.exit(1);
-}
 
 /* ── EL HISTORIAL ────────────────────────────────────────────────────────
    `shell` apagado a propósito: ningún nombre de archivo pasa por un
@@ -170,9 +134,7 @@ for (const camino of programas) {
     ? [carpeta, carpeta.slice(0, -4), '']
     : [carpeta];
 
-  /* `'./'` es la carpeta, que el servidor contesta con su `index.html`. */
-  const pedidos = lista.map((pedido) =>
-    pedido.replace(/^\.\//, '') || 'index.html');
+  const pedidos = pedidosEscritos(readFileSync(camino, 'utf8'));
   guardados += pedidos.length;
 
   /* No `existsSync`: en Windows contesta que sí a `js/Auth.js` cuando el

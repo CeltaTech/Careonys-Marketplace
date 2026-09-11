@@ -8,13 +8,8 @@
       },
       "cerrada": true,
       "usado_en": [
-        "directorio.html:78",
         "js/zonas.js:145",
         "js/zonas.js:218",
-        "mockup-app.html:472",
-        "pwa-familia/index.html:1146",
-        "pwa-familia/index.html:1299",
-        "pwa-familia/index.html:759",
         "pwa-familia/src/pantallas/Postulaciones.jsx:131",
         "pwa-familia/src/pantallas/Tablero.jsx:144",
         "web/src/pantallas/MockupApp.jsx:472"
@@ -205,10 +200,6 @@
       },
       "cerrada": true,
       "usado_en": [
-        "directorio.html:291",
-        "perfil.html:341",
-        "pwa-asistente/index.html:551",
-        "registrar-asistente.html:305",
         "web/src/pantallas/Directorio.jsx:216",
         "web/src/pantallas/Perfil.jsx:170"
       ],
@@ -267,8 +258,6 @@
         }
       ],
       "usado_en": [
-        "panel-prestadora.html:1166",
-        "panel-prestadora.html:189",
         "web/src/pantallas/panel-prestadora/Moneda.jsx:134"
       ]
     },
@@ -279,10 +268,7 @@
         "pt-BR": "Com ou sem dormida no domicílio"
       },
       "cerrada": false,
-      "usado_en": [
-        "pwa-asistente/index.html:638",
-        "registrar-asistente.html:410"
-      ],
+      "usado_en": [],
       "items": [
         {
           "en": "Living out",
@@ -306,12 +292,6 @@
       },
       "cerrada": false,
       "usado_en": [
-        "directorio.html:335",
-        "directorio.html:84",
-        "perfil.html:426",
-        "pwa-asistente/index.html:620",
-        "pwa-familia/index.html:797",
-        "registrar-asistente.html:385",
         "web/src/pantallas/Directorio.jsx:233",
         "web/src/pantallas/Perfil.jsx:197"
       ],
@@ -519,7 +499,6 @@
       },
       "cerrada": true,
       "usado_en": [
-        "pwa-asistente/index.html:1148",
         "pwa-asistente/src/pantallas/Capacitaciones.jsx:82"
       ],
       "items": [
@@ -601,9 +580,6 @@
       },
       "cerrada": true,
       "usado_en": [
-        "directorio.html:305",
-        "directorio.html:92",
-        "perfil.html:377",
         "web/src/pantallas/Directorio.jsx:401",
         "web/src/pantallas/Perfil.jsx:191"
       ],
@@ -689,8 +665,6 @@
       },
       "cerrada": false,
       "usado_en": [
-        "panel-prestadora.html:614",
-        "panel-prestadora.html:734",
         "web/src/pantallas/panel-prestadora/Verificaciones.jsx:126"
       ],
       "items": [
@@ -756,10 +730,7 @@
         "pt-BR": "Cursos acreditados que o Assistente declara"
       },
       "cerrada": false,
-      "usado_en": [
-        "pwa-asistente/index.html:587",
-        "registrar-asistente.html:353"
-      ],
+      "usado_en": [],
       "items": [
         {
           "en": "Course in gerontology for home care",
@@ -802,9 +773,7 @@
       "cerrada": false,
       "usado_en": [
         "data/catalogo-fichas.json:180",
-        "js/catalogo.js:463",
-        "pwa-asistente/index.html:622",
-        "registrar-asistente.html:388"
+        "js/catalogo.js:463"
       ],
       "items": [
         {
@@ -902,16 +871,8 @@
       "cerrada": true,
       "usado_en": [
         "data/catalogo-fichas.json:107",
-        "directorio.html:266",
-        "directorio.html:81",
-        "mockup-app.html:471",
-        "perfil.html:328",
-        "pwa-asistente/index.html:578",
-        "pwa-familia/index.html:1145",
-        "pwa-familia/index.html:1298",
         "pwa-familia/src/pantallas/Postulaciones.jsx:130",
         "pwa-familia/src/pantallas/Tablero.jsx:143",
-        "registrar-asistente.html:340",
         "web/src/pantallas/Directorio.jsx:204",
         "web/src/pantallas/MockupApp.jsx:471",
         "web/src/pantallas/Perfil.jsx:177"
@@ -1007,8 +968,6 @@
       },
       "cerrada": true,
       "usado_en": [
-        "cursos.html:105",
-        "pwa-asistente/index.html:1150",
         "pwa-asistente/src/pantallas/Capacitaciones.jsx:84"
       ],
       "items": [
@@ -1039,11 +998,7 @@
         "pt-BR": "Motivo pelo qual uma Família escreve"
       },
       "cerrada": true,
-      "usado_en": [
-        "index.html:283",
-        "solicitar-asistente.html:321",
-        "soporte-remoto.html:155"
-      ],
+      "usado_en": [],
       "items": [
         {
           "en": "Looking for a Caregiver",
@@ -1102,10 +1057,7 @@
         "pt-BR": "Nível de escolaridade alcançado"
       },
       "cerrada": true,
-      "usado_en": [
-        "pwa-asistente/index.html:583",
-        "registrar-asistente.html:344"
-      ],
+      "usado_en": [],
       "items": [
         {
           "en": "Secondary school completed",
@@ -1140,9 +1092,7 @@
         "pt-BR": "Situação fiscal"
       },
       "cerrada": true,
-      "usado_en": [
-        "registrar-asistente.html:311"
-      ],
+      "usado_en": [],
       "items": [
         {
           "en": "Monotributo social",
@@ -1285,8 +1235,6 @@
       },
       "cerrada": true,
       "usado_en": [
-        "panel-prestadora.html:615",
-        "panel-prestadora.html:735",
         "web/src/pantallas/panel-prestadora/Verificaciones.jsx:127"
       ],
       "items": [
@@ -1367,11 +1315,7 @@
         "pt-BR": "Intensidade da contratação"
       },
       "cerrada": true,
-      "usado_en": [
-        "pwa-asistente/index.html:636",
-        "pwa-familia/index.html:772",
-        "registrar-asistente.html:408"
-      ],
+      "usado_en": [],
       "items": [
         {
           "en": "By the hour",

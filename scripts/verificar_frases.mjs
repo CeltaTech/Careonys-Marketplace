@@ -336,10 +336,16 @@ function clavesUsadas(crudo, prefijos) {
   // misma forma: `'acceso.html'` es una dirección a la que se manda a alguien,
   // no una frase. Por eso lo que va después del punto no puede ser la
   // terminación de un archivo.
+  // La clave también puede llegar escrita entre comillas dobles, y ése no es
+  // el mismo caso: en una pantalla del programa una clave viaja como dato de un
+  // componente —`vacio="legajo.elegir_tipo"`—, y quien la pide es el
+  // componente, varios archivos más allá. Ahí no hay ningún `frase(` a la vista
+  // y la clave parecería huérfana. Por eso valen las dos comillas, y la del
+  // final tiene que ser la misma que la del principio.
   const ARCHIVOS = 'html|js|mjs|json|css|png|jpg|jpeg|svg|webp|ico|sql|md|txt';
   const forma = new RegExp(
-    "'((?:" + prefijos.join('|') + ')\\.(?!(?:' + ARCHIVOS + ")')[a-z0-9_]+)'", 'g');
-  for (const m of crudo.matchAll(forma)) usadas.add(m[1]);
+    "(['\"])((?:" + prefijos.join('|') + ')\\.(?!(?:' + ARCHIVOS + ')\\1)[a-z0-9_]+)\\1', 'g');
+  for (const m of crudo.matchAll(forma)) usadas.add(m[2]);
   return usadas;
 }
 
@@ -556,6 +562,24 @@ const PROGRAMA_NO_DEBE_VER = [
   'return <img src="/assets/images/logotipo.png" alt="" />;'
 ];
 
+/* Y con el reconocedor de claves, que decide si una frase del catálogo tiene
+   quién la pida. Si se queda corto, una frase que se está usando aparece como
+   huérfana y alguien la borra, así que se lo prueba en los dos sentidos. El
+   último caso de los que tiene que ver es una clave inventada: se la reconoce
+   igual, y por eso la regla que exige que exista puede denunciarla. */
+const GRUPOS_DE_PRUEBA = ['acceso', 'legajo'];
+const CLAVE_DEBE_VERSE = [
+  ['<span data-frase="acceso.correo">Correo</span>', 'acceso.correo'],
+  ["Texto.frase('acceso.correo')", 'acceso.correo'],
+  ['<SelectDelCatalogo vacio="legajo.elegir_tipo" />', 'legajo.elegir_tipo'],
+  ['<Campo claveDelVacio="acceso.inventada_a_proposito" />', 'acceso.inventada_a_proposito']
+];
+const CLAVE_NO_DEBE_VERSE = [
+  '<a href="acceso.html">Entrar</a>',
+  'import algo from "acceso.js";',
+  '<p>acceso.correo</p>'
+];
+
 /* Y lo mismo con la regla 6: un detector que no casa con nada da siempre por
    buena una pantalla que sí tiene el idioma escrito adentro. */
 const IDIOMA_DEBE_CASAR = [
@@ -626,6 +650,18 @@ for (const trozo of PROGRAMA_NO_DEBE_VER) {
   if (visto.length > 0) {
     roto.push('el lector del programa se queja de: ' + trozo
       + '  (vio «' + visto[0][1] + '»)');
+  }
+}
+for (const [trozo, clave] of CLAVE_DEBE_VERSE) {
+  if (!clavesUsadas(trozo, GRUPOS_DE_PRUEBA).has(clave)) {
+    roto.push('el reconocedor de claves no ve: ' + trozo);
+  }
+}
+for (const trozo of CLAVE_NO_DEBE_VERSE) {
+  const vistas = [...clavesUsadas(trozo, GRUPOS_DE_PRUEBA)];
+  if (vistas.length) {
+    roto.push('el reconocedor de claves se queja de: ' + trozo
+      + '  (vio «' + vistas[0] + '»)');
   }
 }
 for (const [html, texto] of DEBE_IRSE) {

@@ -31,14 +31,13 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
-| 17 pantallas, 27.495 renglones | el sitio es un programa con 15 direcciones, y los dos del teléfono son otros dos programas |
-| 17.790 renglones de JavaScript propio, en 53 archivos | 10.259 de ellos son copias byte a byte de otro archivo (pendiente 13) |
-| 6.832 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
+| 17 pantallas, 14.398 renglones | el sitio es un programa con 15 direcciones, y los dos del teléfono son otros dos programas |
+| 7.343 renglones de JavaScript propio, en 30 archivos | 0 de ellos son copias byte a byte de otro archivo (pendiente 13) |
 | 5.592 renglones de hojas de estilo, en 12 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
-| 874 declaraciones más, pegadas al HTML | en 219 atributos `style=` (fue el pendiente 8, cerrado) |
-| Supabase Auth funcionando | 13 de los 85 archivos que las dibujan rescatan la sesión al abrir |
-| 5 servidores de afuera | dos de tipografías, dos de bibliotecas y el del mapa |
-| 3 paquetes que se construyen solos | pwa-asistente, pwa-familia, web |
+| 641 declaraciones de estilo pegadas al marcado | en 219 lugares (fue el pendiente 8, cerrado) |
+| Supabase Auth funcionando | 19 de los 68 archivos que las dibujan abren la puerta a la base |
+| 3 servidores de afuera | dos de tipografías y el de los iconos |
+| 4 paquetes que se construyen solos | la raíz, que arma a los otros tres, pwa-asistente, pwa-familia, web |
 | 37 tablas y 8 migraciones en el repositorio | 41 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
@@ -60,24 +59,22 @@ sumaba 4.638 donde la tabla de arriba, que sí sale de medir, decía 4.642—.
 
 <!-- hojas: lo escribe scripts/medir_estado.mjs, no se edita a mano -->
 
-| Archivo | Renglones | La enlazan |
+| Archivo | Renglones | La piden |
 |---|---:|---|
-| `css/mockup-app.css` | 135 | Sólo `mockup-app.html` |
-| `css/styles.css` | 2.300 | 15 de los 85 archivos de pantalla |
-| `css/tokens.css` | 358 | 15 de los 85 archivos de pantalla |
-| `css/utilidades.css` | 191 | 15 de los 85 archivos de pantalla |
-| `pwa-asistente/css/styles-pwa.css` | 338 | Sólo `pwa-asistente/index.html` |
-| `pwa-asistente/css/tokens.css` | 358 | Sólo `pwa-asistente/index.html`. Copia byte a byte de `css/tokens.css` |
-| `pwa-asistente/css/utilidades.css` | 191 | Sólo `pwa-asistente/index.html`. Copia byte a byte de `css/utilidades.css` |
-| `pwa-asistente/src/estilos.css` | 288 | **no la enlaza ninguna pantalla** |
-| `pwa-familia/css/styles-pwa.css` | 338 | Sólo `pwa-familia/index.html`. Copia byte a byte de `pwa-asistente/css/styles-pwa.css` |
-| `pwa-familia/css/tokens.css` | 358 | Sólo `pwa-familia/index.html`. Copia byte a byte de `css/tokens.css` |
-| `pwa-familia/css/utilidades.css` | 191 | Sólo `pwa-familia/index.html`. Copia byte a byte de `css/utilidades.css` |
-| `pwa-familia/src/estilos.css` | 546 | **no la enlaza ninguna pantalla** |
+| `css/mockup-app.css` | 135 | **no la pide ningún paquete** |
+| `css/styles.css` | 2.300 | Sólo `web/src/principal.jsx` |
+| `css/tokens.css` | 358 | Sólo `web/src/principal.jsx` |
+| `css/utilidades.css` | 191 | Sólo `web/src/principal.jsx` |
+| `pwa-asistente/css/styles-pwa.css` | 338 | Sólo `pwa-asistente/src/principal.jsx` |
+| `pwa-asistente/css/tokens.css` | 358 | Sólo `pwa-asistente/src/principal.jsx`. Copia byte a byte de `css/tokens.css` |
+| `pwa-asistente/css/utilidades.css` | 191 | Sólo `pwa-asistente/src/principal.jsx`. Copia byte a byte de `css/utilidades.css` |
+| `pwa-asistente/src/estilos.css` | 288 | Sólo `pwa-asistente/src/principal.jsx` |
+| `pwa-familia/css/styles-pwa.css` | 338 | Sólo `pwa-familia/src/principal.jsx`. Copia byte a byte de `pwa-asistente/css/styles-pwa.css` |
+| `pwa-familia/css/tokens.css` | 358 | Sólo `pwa-familia/src/principal.jsx`. Copia byte a byte de `css/tokens.css` |
+| `pwa-familia/css/utilidades.css` | 191 | Sólo `pwa-familia/src/principal.jsx`. Copia byte a byte de `css/utilidades.css` |
+| `pwa-familia/src/estilos.css` | 546 | Sólo `pwa-familia/src/principal.jsx` |
 
 En disco hay 12 archivos y 5.592 renglones, de los cuales 1.436 son copias byte a byte de otro: son las que `verificar_copias.mjs` compara.
-
-Hay además 977 renglones de CSS en bloques `<style>` adentro del HTML: 533 en `pwa-familia/index.html`, 270 en `pwa-asistente/index.html`, 174 en `examen.html`. Las demás pantallas no tienen ninguno.
 
 <!-- fin de las hojas -->
 
@@ -275,7 +272,7 @@ los ganchos están en el repositorio y no los llama nadie. Para saltearlos en un
 
 <!-- guiones: lo escribe scripts/medir_estado.mjs, no se edita a mano -->
 
-En `scripts/` hay **82 archivos `.mjs` y uno de Python**: 42 chequeos `verificar_*`, 18 pruebas `probar_*` y 22 herramientas sueltas —medidores, generadores, el módulo que comparten y el servidor de trabajo—.
+En `scripts/` hay **83 archivos `.mjs` y uno de Python**: 42 chequeos `verificar_*`, 18 pruebas `probar_*` y 23 herramientas sueltas —medidores, generadores, el módulo que comparten y el servidor de trabajo—.
 
 <!-- fin de los guiones -->
 
@@ -293,7 +290,6 @@ antes de cada `commit` `scripts/verificar_estado.mjs`.
 | Archivo | Qué hace |
 |---|---|
 | `scripts/generar_manifiestos.mjs` | Escribe los dos `manifest.json` desde la identidad. Hacen falta generados porque el navegador los lee como archivo, sin pasar por ninguna página: ahí no hay JavaScript que resuelva un marcador. |
-| `scripts/generar_titulos_resueltos.mjs` | Escribe, en cada `<title>` y `<meta name="description">` que trae `data-organizacion-original`, el texto ya resuelto con la identidad. Hace falta generado porque un buscador no ejecuta guiones, así que lo que el servidor entrega antes de que corra ninguno tiene que llevar ya el nombre y no el marcador crudo (pendiente 79, cerrado). |
 | `scripts/verificar_copias.mjs` | Compara byte a byte los ocho archivos que viven repetidos en dos o tres carpetas y falla si alguno se separó. Cuando encuentra una diferencia dice cuál de los dos es más nuevo, para no pisar el cambio bueno. |
 | `scripts/revisar_base.mjs` | Sonda de solo lectura: pregunta qué tablas puede enumerar y leer alguien **sin sesión**, y si alguna le muestra dos Prestadoras distintas. Se corre en el momento en que la base vuelva a responder, antes de cargar el primer dato. No escribe ni borra nada, y se niega a correr contra una base que no sea la de este proyecto. |
 | `scripts/verificar_estado.mjs` | Que **los cuatro bloques medidos** sean los que salen de medir los archivos, y no unos escritos a mano que quedaron viejos: la tabla de números que abre este archivo, el reparto de estilos por pantalla de `docs/PENDIENTES.md`, la tabla de las hojas de estilo del «Estado real» y la cuenta de guiones que abre esta misma lista, los tres últimos entre marcas. Compara contra `scripts/medir_estado.mjs`, sin la fecha —cambia todos los días—, y también se pone en rojo si alguien saca las marcas. Se arregla con `node scripts/medir_estado.mjs --escribir`. |

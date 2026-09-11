@@ -76,8 +76,6 @@ function sinComentarios(texto, extension) {
   return t;
 }
 
-const { lineasGeneradas, revisarTitulosResueltos } = await import('./generar_titulos_resueltos.mjs');
-
 const hallazgos = [];
 for (const ruta of hayArchivos(raiz, EXTENSIONES, AJENAS)) {
   const rel = relative(raiz, ruta);
@@ -86,12 +84,13 @@ for (const ruta of hayArchivos(raiz, EXTENSIONES, AJENAS)) {
   const extension = rel.slice(rel.lastIndexOf('.'));
   const texto = readFileSync(ruta, 'utf8');
   const limpio = sinComentarios(texto, extension);
-  // El <title> y la <meta name="description"> que trae `data-organizacion-original`
-  // no son la marca escrita a mano: los genera `generar_titulos_resueltos.mjs`
-  // a partir de ese atributo, y ese archivo se comprueba aparte, más abajo.
-  const generadas = esPantalla(rel) ? lineasGeneradas(texto) : new Set();
+  /* Acá se salteaban los renglones que generaba `generar_titulos_resueltos.mjs`,
+     que escribía el nombre ya resuelto adentro de cada página suelta para que un
+     buscador —que no ejecuta guiones— no indexara el marcador crudo. Las páginas
+     sueltas se retiraron y ese trabajo lo hace ahora `scripts/armar_todo.mjs`
+     sobre lo construido, con el mismo `js/identidad.js`: el marcador no queda
+     escrito en ninguna parte del código, así que no hay renglón que saltear. */
   limpio.split('\n').forEach((renglon, i) => {
-    if (generadas.has(i + 1)) return;
     for (const termino of PROHIBIDO) {
       if (renglon.toLowerCase().includes(termino.toLowerCase())) {
         hallazgos.push(rel.split(sep).join('/') + ':' + (i + 1) + '  ' + renglon.trim().slice(0, 100));
@@ -110,11 +109,10 @@ if (hallazgos.length) {
   );
 }
 
-// Las tres copias de js/identidad.js tienen que ser iguales byte a byte. Quien
-// las compara es scripts/verificar_copias.mjs, que hace lo mismo con los otros
-// cuatro archivos repetidos: la comparación vive en un solo lugar.
-const { verificarCopias } = await import('./verificar_copias.mjs');
-problemas.push(...verificarCopias('js/identidad.js').problemas);
+// Acá se comparaban las tres copias de `js/identidad.js`, que existían porque
+// sin conexión cada programa del teléfono sólo alcanza su propia carpeta. Ya no
+// hay copias: los tres paquetes nombran el mismo archivo y la herramienta de
+// armado se lo lleva adentro, así que no hay ninguna que pueda despegarse.
 
 const { revisarManifiestos } = await import('./generar_manifiestos.mjs');
 const desactualizados = revisarManifiestos(false);
@@ -125,14 +123,6 @@ if (desactualizados.length) {
   );
 }
 
-const titulosDesactualizados = revisarTitulosResueltos(false);
-if (titulosDesactualizados.length) {
-  problemas.push(
-    'Estos títulos o descripciones no coinciden con la identidad:\n  ' +
-    titulosDesactualizados.join('\n  ') + '\n' +
-    'Se ponen al día con: node scripts/generar_titulos_resueltos.mjs'
-  );
-}
 
 
 if (problemas.length) {

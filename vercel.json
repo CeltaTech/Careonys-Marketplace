@@ -1,6 +1,15 @@
 {
+  "installCommand": "npm ci --prefix web && npm ci --prefix pwa-asistente && npm ci --prefix pwa-familia",
+  "buildCommand": "node scripts/armar_todo.mjs",
+  "outputDirectory": "dist",
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/:pantalla((?!pwa-asistente/|pwa-familia/|assets/|data/|docs/).*)",
+      "destination": "/index.html"
+    }
+  ],
   "headers": [
     {
       "source": "/pwa-asistente/service-worker.js",

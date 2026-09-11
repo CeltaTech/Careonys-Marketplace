@@ -69,19 +69,19 @@ la pantalla, de un guion o de la consola.
 REST pasa por `_supabaseRequest` (`js/apiClient.js:1191`), que sí es un embudo único —las 15
 llamadas de datos entran por ahí—. Pero **la autenticación y los archivos no lo tocan nunca**:
 `Sesion.login` (`js/auth.js:173`), `Sesion.signup` (`js/auth.js:190`), `Sesion.cambiarClave`
-(`js/auth.js:224`) y `Sesion.uploadFile` (`js/auth.js:365`) hablan derecho con el cliente de la
+(`js/auth.js:224`) y `Sesion.uploadFile` (`js/auth.js:351`) hablan derecho con el cliente de la
 plataforma. Y ahí están, justamente, tres de las seis categorías que la regla nombra: la entrada
 administrativa, el cambio de rol y de Organización, y el cambio de credencial.
 
-**Tres: y aunque hubiera un punto, hoy hay tres copias de él.** `js/apiClient.js` y `js/auth.js`
-están triplicados **byte a byte** en `pwa-asistente/js/` y `pwa-familia/js/` —es el pendiente 13—,
-así que cada gancho habría que escribirlo tres veces o unificar los archivos primero. Y `window._sb`
-está expuesto en global (`js/auth.js:436`): cualquier pantalla puede saltearse `Sesion` y llamar al
-cliente por su cuenta.
+**Tres: y el punto que hay tiene una puerta al costado.** `js/apiClient.js` y `js/auth.js` son hoy
+uno solo cada uno, y los tres programas los leen de ahí, así que un gancho se escribiría una vez.
+Pero `window._sb` está expuesto en global (`js/auth.js:422`): cualquier pantalla puede saltearse
+`Sesion` y llamar al cliente de la plataforma por su cuenta, y un gancho puesto en `Sesion` no la
+vería pasar.
 
 **Cuatro: el navegador ni siquiera está mandando quién es.** `resolverLegajo`
 (`js/apiClient.js:548`) recibe tres cosas —el legajo, el estado nuevo y una nota— y **ninguna es
-quién lo ejecuta**. La pantalla sí lo sabe: `panel-prestadora.html:1563` pide el perfil y lo usa para
+quién lo ejecuta**. La pantalla sí lo sabe: `web/src/pantallas/PanelPrestadora.jsx:176` pide el perfil y lo usa para
 el control de rol. Pero esa variable es local al arranque de la pantalla y nunca baja hasta la
 función. Lo único de la identidad que llega al servidor es el testigo de sesión en el encabezado
 (`js/apiClient.js:752`). O sea: **el servidor puede saber quién fue; el navegador no lo está
@@ -222,7 +222,7 @@ Se elige por las seis categorías que nombra la regla, no por comodidad.
   tablas, va a ser en otro lado y con otros lectores, y eso es un plan distinto que arranca por
   esa pregunta y no por ésta.
 - **La sesión de soporte.** No existe ninguna: se buscó `impersona`, `suplanta`, `actuar como`, `en
-  nombre de` y `support` en los 46 archivos y no hay mecanismo de suplantación. `soporte-remoto.html`
+  nombre de` y `support` en los 101 archivos del producto y no hay mecanismo de suplantación. `web/src/pantallas/Acompanamiento.jsx`
   no es una herramienta de soporte, es una página comercial. Así que hoy esa categoría no está
   incumplida. **Lo que sí queda escrito es que el día que se construya, la marca de sesión se
   construye con ella y no después**, porque la regla pide que *todo* lo que se haga adentro quede
@@ -253,7 +253,7 @@ dejar nada**. No es un `DELETE` y ningún disparador de estas tres tablas lo ve.
 de datos real y hoy no está en ningún pendiente. **Se abre pendiente aparte.**
 
 **Dos: el motivo de la decisión más crítica se está perdiendo, y no es culpa de que falte el
-rastro.** `panel-prestadora.html:898` y `:912` juntan la nota de la entrevista —el motivo de aprobar
+rastro.** `web/src/pantallas/panel-prestadora/ModalAuditoria.jsx:186` y `:202` juntan la nota de la entrevista —el motivo de aprobar
 o de rechazar—, `resolverLegajo` la manda como `notaPrestadora` (`js/apiClient.js:521`), y
 **`_mapToDatabase` la descarta**: no está en la lista de campos de `caregivers` (`js/apiClient.js:1412-1433`),
 así que se pierde con un aviso en la consola y nada más. Comprobado el 27 de agosto de 2026 leyendo
