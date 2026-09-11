@@ -150,6 +150,10 @@ const UN_CAMPO_DE_ARCHIVO = /<input\b[^>]*\btype\s*=\s*(['"]?)file\1[^>]*>/gi;
 const DICE_SU_DEPOSITO = /\bdata-deposito\s*=/i;
 const UN_ID = /\bid\s*=\s*(['"])([^'"]*)\1/i;
 
+/* El mismo nombre, pero puesto por el programa en vez de escrito con todas las
+   letras: `id={algo}`. Dice que hay un nombre y que hay que ir a buscar cual. */
+const LO_ESCRIBE_EL_PROGRAMA = /\bid\s*=\s*\{/i;
+
 /* Los papeles del legajo y a qué depósito va cada uno: eso lo declara
    `LOS_CUATRO`, y de ahí sale el `data-deposito` de esos campos. Se lo busca por
    lo que declara y no por su ruta, como en la tercera regla, así que las copias
@@ -157,6 +161,49 @@ const UN_ID = /\bid\s*=\s*(['"])([^'"]*)\1/i;
 const LOS_CUATRO = /\bLOS_CUATRO\s*:\s*\[([\s\S]*?)\n\s*\],/;
 const UN_CAMPO_DECLARADO = /\bcampo\s*:\s*['"]([^'"]+)['"]/g;
 const LO_DECLARA = /documentos-legajo\.js/;
+
+/* ---- QUIÉN CARGA EL GUION, SI LA PANTALLA YA NO ES UN ARCHIVO ----
+   Mientras cada pantalla era un archivo entero, preguntárselo al archivo que
+   dibuja los campos alcanzaba: el que los dibujaba era el mismo que pedía el
+   guion. Una pantalla del programa no es un archivo: es el archivo de la
+   pantalla más las piezas de la carpeta que lleva su nombre, y el guion lo pide
+   la pantalla una sola vez, no cada pieza.
+
+   Y no siempre lo pide por su nombre. En uno de los dos programas del teléfono
+   los archivos viejos están detrás de una puerta —una función por archivo, que
+   lo trae una sola vez—, así que la pantalla nombra la puerta y no el guion. Se
+   buscan entonces las dos cosas: quién lo nombra, y quién nombra una puerta que
+   adentro lo nombre a él. Cualquier otra puerta del mismo archivo no cuenta:
+   pedir las zonas no trae los documentos. */
+const UNA_PUERTA = /export\s+function\s+([\w$]+)\s*\([^)]*\)\s*\{([\s\S]*?)\n\}/g;
+
+function losQueCarganElGuion(caminos) {
+  const puertas = [];
+  const textos = new Map();
+  for (const camino of caminos) {
+    const texto = readFileSync(camino, 'utf8');
+    textos.set(relative(raiz, camino).split(sep).join('/'), texto);
+    for (const puerta of texto.matchAll(UNA_PUERTA)) {
+      if (LO_DECLARA.test(puerta[2])) puertas.push(puerta[1]);
+    }
+  }
+  const laPuerta = puertas.length
+    ? new RegExp('\\b(?:' + puertas.join('|') + ')\\s*\\(') : null;
+  const cargan = new Set();
+  for (const [nombre, texto] of textos) {
+    if (LO_DECLARA.test(texto) || (laPuerta && laPuerta.test(texto))) cargan.add(nombre);
+  }
+  return cargan;
+}
+
+/** Los nombres que podría tener la pantalla de la que una pieza forma parte: la
+ *  que lleva el nombre de la carpeta donde vive, un escalón más afuera. */
+function laPantallaDe(archivo) {
+  const partes = archivo.split('/');
+  if (partes.length < 2) return [];
+  const base = partes.slice(0, -2).concat(partes[partes.length - 2]).join('/');
+  return EXTENSIONES_DE_PANTALLA.map((extension) => base + extension);
+}
 
 /* Y las dos funciones que escriben la lista, para ejercerlas. */
 const LO_QUE_ACEPTA = /function\s+_loQueAcepta\s*\([\s\S]*?\n\}/;
@@ -272,10 +319,24 @@ function fallasDelAccept(texto, papeles) {
       'declara la migración y lo escribe `_loQueAcepta()`: acá va el depósito, con ' +
       '`data-deposito`, y la lista la pone él']);
   }
+
+  /* El nombre del campo puede no estar escrito con todas las letras: una
+     pantalla del programa dibuja los papeles del legajo recorriendo la lista que
+     los declara ahí mismo, y el nombre de cada campo sale de esa lista. Así que
+     se miran los nombres que la lista declara: si son todos papeles conocidos, el
+     campo dice a qué depósito va igual que si lo tuviera escrito. Alcanza con que
+     uno no lo sea para que el campo quede señalado, que es justamente lo que hay
+     que ver. */
+  const deLaLista = [...texto.matchAll(/(?:^|[^\w$])id:\s*(['"])([^'"]+)\1/g)]
+    .map((encontrada) => encontrada[2]);
+  const laListaEsDePapeles = deLaLista.length > 0
+    && deLaLista.every((cual) => papeles.has(cual));
+
   for (const m of texto.matchAll(UN_CAMPO_DE_ARCHIVO)) {
     if (DICE_SU_DEPOSITO.test(m[0])) continue;
     const id = UN_ID.exec(m[0]);
     if (id && papeles.has(id[2])) continue;
+    if (!id && laListaEsDePapeles && LO_ESCRIBE_EL_PROGRAMA.test(m[0])) continue;
     fallas.push([renglonDe(texto, m.index),
       'un campo de archivo que no dice a qué depósito va, así que nadie le puede ' +
       'escribir qué se acepta y el diálogo se abre de par en par. Va un ' +
@@ -515,6 +576,8 @@ for (const camino of pantallas) {
 }
 seRevisaron(papeles.size, 'ningún papel del legajo declarado en `LOS_CUATRO`');
 
+const carganElGuion = losQueCarganElGuion(pantallas);
+
 const fallas = [];
 let nombrados = 0;
 let llamadas = 0;
@@ -612,7 +675,9 @@ for (const camino of pantallas) {
   /* Y la pantalla que tiene esos papeles carga el guion que se los declara: sin
      él nadie les escribe el depósito, y el diálogo vuelve a abrirse de par en
      par sin que nada avise. */
-  if (esPantalla(archivo) && !LO_DECLARA.test(texto)) {
+  const loCarga = carganElGuion.has(archivo)
+    || laPantallaDe(archivo).some((cual) => carganElGuion.has(cual));
+  if (esPantalla(archivo) && !loCarga) {
     for (const m of texto.matchAll(UN_CAMPO_DE_ARCHIVO)) {
       const id = UN_ID.exec(m[0]);
       if (!id || !papeles.has(id[2]) || DICE_SU_DEPOSITO.test(m[0])) continue;

@@ -70,7 +70,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
-import { hayArchivos, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
+import { hayArchivos, EXTENSIONES_DE_PANTALLA, esPantalla } from './recorrido.mjs';
 import { soloCodigo, cuerpo, dentroDeTry, sinBloquesDeComentario } from './bloques.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -99,7 +99,12 @@ const PANTALLAS_QUE_SE_VAN = new Map([
    + 'que es la capacidad que todavía vive sólo acá, esté reescrito en las PWAs. El '
    + 'alta de una Familia ya salió: la hace `registrar-familia.html` desde el 31 de '
    + 'agosto de 2026. Hasta entonces se lo deja como está: sus puntos de carga se arreglan en '
-   + 'las pantallas que lo reemplacen, no acá.']
+   + 'las pantallas que lo reemplacen, no acá.'],
+  ['web/src/pantallas/MockupApp',
+   'Es el mismo modelo estético del renglón de arriba, pasado a pantalla del '
+   + 'programa. Mientras la página suelta siga publicada conviven las dos, y las '
+   + 'dos se van juntas el día que el chat esté reescrito en los programas del '
+   + 'teléfono. Se exime por el mismo motivo y no por uno propio.']
 ]);
 
 /* La clave se escribe **sin la extensión**, y acá se le saca a lo que se
@@ -148,7 +153,14 @@ const ESCRIBE = [
   /\.setAttribute\s*\(\s*['"]data-frase/,
   /\.style\.display\s*=/,
   /\b(mostrar|[a-z]{2,4}Mostrar|estado[A-Z]\w*|avisar|_avisar|_avisarEnOferta|migaPorClave)\s*\(/,
-  /\balert\s*\(/
+  /\balert\s*\(/,
+  /* En una pantalla del programa, escribir en la pantalla es **poner el valor
+     en el estado que la pantalla dibuja**: no hay ningún renglón que toque el
+     documento, y buscarlo era buscar algo que ya no existe. Un `setAlgo(...)`
+     suelto es eso. El punto queda afuera a propósito —`setAttribute`,
+     `setItem`, `setProperty` se llaman siempre colgando de algo—, que si no
+     guardar una cosa se leería como mostrarla. */
+  /(^|[^\w$.])set[A-Z]\w*\s*\(/
 ];
 
 /* Decir «esperá» sin escribir texto: apagar el botón, prender la rueda. Cuenta
@@ -158,7 +170,16 @@ const ESCRIBE = [
 const AVISA_QUE_ESPERA = [
   /\.disabled\s*=/,
   /\.classList\.(add|toggle)\s*\(/,
-  /\baria-busy\b/
+  /\baria-busy\b/,
+  /* Y las dos formas que tiene una pantalla del programa de decirlo sin que
+     nadie escriba nada: un estado que **nace** diciendo que está cargando, y un
+     botón que **nace** apagado. Las dos están escritas donde la pantalla declara
+     sus estados, que es un escalón más afuera del bloque que espera —por eso
+     `loDeAfuera()` sube todos los escalones y no uno—. Van escritas una por una,
+     como todo lo de esta lista: adivinarlo por la forma del renglón da avisos
+     que nadie puede arreglar. */
+  /useState\s*\([^)]*cargando/i,
+  /[Aa]pagado\s*\]\s*=\s*useState\s*\(\s*true\s*\)/
 ];
 
 /* Recorrer una lista para dibujarla. Es lo que separa traer **una lista de
@@ -237,6 +258,11 @@ export function esFrase(crudo) {
   if (CLAVE_DEL_CATALOGO.test(pelado)) return false;
   // Una declaración de estilo no es texto: `font-size:12px;color:red;`.
   if (/^[a-z-]+\s*:/.test(pelado) && pelado.includes(';')) return false;
+  /* Y un color del sistema de diseño tampoco: `var(--texto-secundario)` se
+     lee como tres palabras y no es ninguna. Aparece cuando una pantalla guarda
+     junto el cartel y el color con que lo pinta, que es un solo estado y no
+     dos, y el color no se traduce. */
+  if (/^var\(--[\w-]+\)$/.test(pelado)) return false;
   if (/^(https?:|\/|\.\/|#|data:)/.test(pelado)) return false;
   /* Un nombre de algo no es una frase: `aviso-prestadora`, `data-frase`,
      `paso_de_cierre`, `btn-primario`. Se reconocen porque no tienen ni un
@@ -281,6 +307,69 @@ function propio(lineas, desde) {
   return bloque;
 }
 
+/* ---- LO QUE RECORRE UNA LISTA QUE NO VINO DE NINGUN LADO ----
+   Recorrer no es dibujar lo que trajo la base. Una lista escrita en el archivo
+   —los siete papeles del legajo, por ejemplo— tiene siempre los mismos
+   elementos: no puede venir vacía, y pedirle la rama de «no vino nada» es
+   pedirle una rama a la que no se llega nunca. Se reconocen por lo único que
+   las distingue, que es estar declaradas ahí mismo como constantes.
+
+   Sin esto, una pantalla que trae **un** legajo y después arma sus papeles
+   recorriendo esa lista fija aparecía dibujando una lista que nunca dibujó. */
+function recorreListasFijas(texto, lineas) {
+  const fijas = [...lineas.join('\n').matchAll(/^const ([A-Z][A-Z0-9_]*)\s*=/gm)]
+    .map((encontrada) => encontrada[1]);
+  if (!fijas.length) return texto;
+  return texto.replace(
+    new RegExp('\\b(?:' + fijas.join('|') + ')\\s*\\.(?:map|forEach)\\s*\\(', 'g'), ' ');
+}
+
+/* ---- DÓNDE SE DIBUJA LA RAMA DE «NO VINO NADA» ----
+   En una página suelta se dibujaba en el mismo bloque que traía los datos: el
+   bloque escribía la lista, y si no había nada escribía el cartel. En una
+   pantalla del programa no hay tal cosa: el bloque guarda lo que vino, y quien
+   dibuja —lista o cartel— es la pantalla entera, más abajo. Así que la rama
+   no está adentro del bloque ni tampoco arriba de él: está **en el mismo
+   escalón de afuera, después**.
+
+   Por eso acá se mira el escalón de más afuera entero, de punta a punta. Si el
+   bloque no está adentro de ninguno, el escalón es el archivo. */
+function loQueDibuja(lineas, n) {
+  let hondo = 0;
+  let abre = -1;
+  for (let i = n - 1; i >= 0; i--) {
+    const codigo = soloCodigo(lineas[i]);
+    for (let c = codigo.length - 1; c >= 0; c--) {
+      if (codigo[c] === '}') hondo++;
+      else if (codigo[c] === '{') {
+        if (hondo === 0) abre = i; else hondo--;
+      }
+    }
+  }
+  return (abre < 0 ? lineas : cuerpo(lineas, abre)).map(sinComentario).join('\n');
+}
+
+/* ---- QUIÉN AVISA POR LOS DEMÁS ----
+   Lo de arriba nombra bloques que esperan, y son los únicos que interesaba
+   nombrar mientras el cartel de error se escribía en cada uno. El que avisa no
+   espera nada: prende el estado de error y guarda la clave de la frase, y eso
+   se hace en el acto. Así que acá se buscan aparte, por lo único que los
+   define —que adentro escriben en la pantalla—, para poder darle por cumplido
+   el estado de error al `catch` que los llama. */
+function losQueAvisan(lineas) {
+  const nombres = [];
+  for (let n = 0; n < lineas.length; n++) {
+    const codigo = soloCodigo(lineas[n]);
+    if (!/\{\s*$/.test(codigo)) continue;
+    const abre = codigo.match(
+      /(?:function\s+([\w$]+)\s*\(|(?:const|let|var)\s+([\w$]+)\s*=)/);
+    if (!abre) continue;
+    const dentro = cuerpo(lineas, n).map(sinComentario).join('\n');
+    if (alguno(ESCRIBE, dentro)) nombres.push({ nombre: abre[1] || abre[2] });
+  }
+  return nombres;
+}
+
 /** El nombre del bloque, y el del objeto que lo tiene adentro si hay alguno. */
 function comoSeLlama(lineas, desde) {
   const linea = lineas[desde];
@@ -303,6 +392,37 @@ function comoSeLlama(lineas, desde) {
  * asincrónicos con lo que se sabe de cada uno, porque para juzgar a un cargador
  * hay que mirar el proyecto entero y no un archivo solo.
  */
+/* ---- LO QUE SE DIJO JUSTO ANTES DE ARRANCAR EL BLOQUE ----
+   En una página suelta, el cartel de «esperá» se prendía adentro del mismo
+   bloque que espera. En una pantalla del programa no: el bloque que espera es
+   una función que se llama sola, y el estado de carga lo prende el renglón de
+   arriba, que está **afuera** de ella. Mirar sólo adentro daba por mudas a trece
+   pantallas que avisan una línea antes.
+
+   Así que también se mira lo que hay antes del bloque en **cada escalón de
+   afuera**, y no en uno solo: el aviso de que está cargando puede estar un
+   escalón más arriba todavía, ahí donde la pantalla declara sus estados y uno de
+   ellos **nace diciendo «cargando»**. Cada escalón se encuentra contando llaves
+   para atrás hasta que una quede sin cerrar: ésa es la que lo abre. */
+function loDeAfuera(lineas, n) {
+  const afuera = [];
+  let hondo = 0;
+  let hasta = n;
+  for (let i = n - 1; i >= 0; i--) {
+    const codigo = soloCodigo(lineas[i]);
+    for (let c = codigo.length - 1; c >= 0; c--) {
+      if (codigo[c] === '}') hondo++;
+      else if (codigo[c] === '{') {
+        if (hondo > 0) { hondo--; continue; }
+        afuera.push(...lineas.slice(i + 1, hasta));
+        hasta = i;
+      }
+    }
+  }
+  afuera.push(...lineas.slice(0, hasta));
+  return afuera;
+}
+
 export function estadosDe(texto) {
   const lineas = texto.split('\n');
   const fallas = [];
@@ -374,18 +494,23 @@ export function estadosDe(texto) {
     if (EXENTOS.has(que + ':' + (n + 1))) continue;
 
     const falta = [];
-    const antesDeEsperar = bloque.slice(0, primeraEspera);
+    const antesDeEsperar = [...loDeAfuera(lineas, n), ...bloque.slice(0, primeraEspera)];
     if (!antesDeEsperar.some((l) => alguno(ESCRIBE, sinComentario(l))
         || alguno(AVISA_QUE_ESPERA, sinComentario(l)))) {
       falta.push('no dice nada en la pantalla antes de esperar: falta el estado **cargando**');
     }
     if (!elCatchDice) {
+      /* Cuando hay `catch` el juicio no se cierra acá: puede estar contándolo
+         por medio de otro, y eso recién se sabe con todos los bloques a la
+         vista. Queda anotado y se resuelve abajo. */
       falta.push(atrapa.length
-        ? 'el `catch` no escribe nada en la pantalla: falta el estado **error**'
+        ? { atrapa, si: 'el `catch` no escribe nada en la pantalla: falta el estado **error**' }
         : 'no hay ningún `catch`: falta el estado **error**');
     }
-    const despuesDeEsperar = bloque.slice(primeraEspera).map(sinComentario).join(SALTO);
-    if (alguno(RECORRE_UNA_LISTA, despuesDeEsperar) && !alguno(HAY_VACIO, codigo)) {
+    const despuesDeEsperar = recorreListasFijas(
+      bloque.slice(primeraEspera).map(sinComentario).join(SALTO), lineas);
+    if (alguno(RECORRE_UNA_LISTA, despuesDeEsperar)
+      && !alguno(HAY_VACIO, codigo) && !alguno(HAY_VACIO, loQueDibuja(lineas, n))) {
       falta.push('dibuja una lista y no tiene la rama de «no vino nada»: falta el estado **vacío**');
     }
     for (const linea of escribe) {
@@ -398,7 +523,30 @@ export function estadosDe(texto) {
     if (falta.length) fallas.push([n + 1, que, falta]);
   }
 
-  return { fallas, bloques, puntos };
+  /* ---- EL `CATCH` QUE LO CUENTA POR MEDIO DE OTRO ----
+     Mirar solamente adentro del `catch` alcanzaba mientras cada pantalla tenía
+     el cartel de error escrito en cada bloque. En una pantalla del programa eso
+     se escribe una sola vez —prender el estado de error y guardar la clave de
+     la frase son siempre los mismos dos renglones— y después cada `catch` la
+     llama por su nombre. Es el mismo «ningún patrón repetido sin punto único de
+     verdad», y el chequeo lo daba por mudo justo por hacerlo bien.
+
+     Así que un `catch` que llama a algo que sí escribe en la pantalla cuenta
+     como que escribe. Se mira contra los bloques de este mismo archivo, que es
+     donde vive el que avisa. */
+  const losQueEscriben = [...bloques.filter((b) => b.nombre && b.muestra),
+    ...losQueAvisan(lineas)];
+  const resueltas = [];
+  for (const [renglon, que, falta] of fallas) {
+    const queda = falta
+      .map((punto) => (typeof punto === 'string' ? punto
+        : (punto.atrapa.some((c) => losQueEscriben.some((e) => llamaA(c, e)))
+          ? null : punto.si)))
+      .filter(Boolean);
+    if (queda.length) resueltas.push([renglon, que, queda]);
+  }
+
+  return { fallas: resueltas, bloques, puntos };
 }
 
 /** ¿El código de un bloque nombra a este otro? */
@@ -564,8 +712,32 @@ for (const { nombre, texto } of revisados) {
   puntos += salida.puntos;
   for (const [renglon, que, motivos] of salida.fallas) fallas.push([nombre, renglon, que, motivos]);
   for (const [renglon, que, motivos] of mensajesAMano(texto)) fallas.push([nombre, renglon, que, motivos]);
-  for (const bloque of salida.bloques) bloques.push({ ...bloque, archivo: nombre });
+  const renglones = texto.split('\n');
+  for (const bloque of salida.bloques) bloques.push({
+    ...bloque,
+    archivo: nombre,
+    /* ¿Esto lo puede llamar otro archivo? Lo que vive en un guión compartido,
+       sí: para eso está ahí. Lo que está escrito adentro de una pantalla, no,
+       salvo que la pantalla lo entregue con todas las letras. Ver `alcanza()`. */
+    compartido: !esPantalla(nombre)
+      || /(^|[^\w$])export([^\w$]|$)/.test(renglones[bloque.renglon - 1] || '')
+  });
 }
+
+/* ---- QUIÉN PUEDE LLAMAR A QUIÉN ----
+   Buscar el nombre por todo el proyecto alcanzaba mientras cada pantalla era
+   una página suelta: lo que se escribía adentro de una pantalla no se repetía
+   en ninguna otra, así que un nombre encontrado en otro lado era de verdad el
+   mismo. Desde que las pantallas son archivos del programa deja de ser cierto,
+   y por dos motivos a la vez: **lo que está adentro de un archivo no sale de
+   ahí si no lo entregan**, y además hoy conviven la página suelta que todavía
+   se publica y la pantalla nueva, que tienen los mismos nombres escritos dos
+   veces.
+
+   Sin esto cada una de las dos copias aparecía llamando a la otra, y el chequeo
+   daba por perdido un fallo en catorce lugares donde nadie llama a nadie. */
+const alcanza = (elQueLlama, definicion) =>
+  definicion.compartido || elQueLlama === definicion.archivo;
 
 /* ── Los cargadores, que se juzgan mirando el proyecto entero ────────────
    Dos cosas se propagan de un bloque al que lo llama, y las dos hacen falta
@@ -585,7 +757,8 @@ for (const propagar of ['atiende', 'trae']) {
     let cambio = false;
     for (const b of bloques) {
       if (b[propagar]) continue;
-      if (!nombrados.some((c) => c !== b && c[propagar] && llamaA(b.codigo, c))) continue;
+      if (!nombrados.some((c) => c !== b && c[propagar]
+        && alcanza(b.archivo, c) && llamaA(b.codigo, c))) continue;
       b[propagar] = true;
       cambio = true;
     }
@@ -613,6 +786,7 @@ for (const cargador of bloques.filter((b) => b.trae && !b.muestra && !b.atiende)
   if (!cargador.nombre) continue;
   const sueltos = [];
   for (const { nombre, texto } of revisados) {
+    if (!alcanza(nombre, cargador)) continue;
     const lineas = texto.split('\n');
     for (let i = 0; i < lineas.length; i++) {
       if (nombre === cargador.archivo && i + 1 === cargador.renglon) continue;

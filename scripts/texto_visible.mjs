@@ -7,6 +7,8 @@
 
    Qué cuenta como visible:
    - el texto entre etiquetas de un `.html`, sin los comentarios ni el `<style>`;
+   - lo mismo en una pantalla del programa, que es guión con etiquetas adentro:
+     ahí los comentarios son los del guión —ver `formatoDe()`—;
    - los atributos que se leen en pantalla (`placeholder`, `title`, `alt`,
      `aria-label`, `value`, `content`, `label`), menos el `value` de un casillero,
      un redondel, un campo escondido o una opción de lista, que es dato guardado
@@ -153,22 +155,44 @@ export function visibleDeMigracion(crudo) {
   return trozos;
 }
 
+/* ---- DE QUÉ MANERA SE LEE ESTE ARCHIVO ----
+   Son tres formas y no dos, desde que una pantalla puede ser un archivo del
+   programa en vez de una página suelta:
+
+   - **`'html'`** — una página suelta: el texto entre etiquetas, y adentro de
+     los bloques de guión, las cadenas de texto.
+   - **`'jsx'`** — una pantalla del programa: **es guión con etiquetas
+     adentro**, así que se lee como una página, pero sus comentarios son los
+     del guión y no los de la página. Sin esa distinción cada comentario
+     entraba como texto a la vista, y el primer día que hubo pantallas así dos
+     comentarios que contaban de dónde venía un nombre viejo se informaron como
+     si ese nombre estuviera en la pantalla.
+   - **`'codigo'`** — todo lo demás: sólo las cadenas de texto.
+
+   Se sigue aceptando el sí/no de antes —dos chequeos lo pasan escrito a mano,
+   sobre archivos que siempre son páginas—, y vale por `'html'`. */
+export const formatoDe = (nombre) =>
+  nombre.toLowerCase().endsWith('.jsx') ? 'jsx'
+    : nombre.toLowerCase().endsWith('.html') ? 'html' : 'codigo';
+
 /** Devuelve pares `[renglón, texto]` de lo que ve una persona. */
-export function visible(crudo, esHtml) {
+export function visible(crudo, formato) {
   const trozos = [];
   const anotar = (inicio, texto) => {
     if (texto.trim()) trozos.push([crudo.slice(0, inicio).split('\n').length, texto.trim()]);
   };
 
-  if (!esHtml) {
-    const sinComentarios = crudo.replace(/\/\/[^\n]*|\/\*[\s\S]*?\*\//g, enBlanco);
+  const comentariosDeGuion = (texto) => texto.replace(/\/\/[^\n]*|\/\*[\s\S]*?\*\//g, enBlanco);
+
+  if (!formato || formato === 'codigo') {
+    const sinComentarios = comentariosDeGuion(crudo);
     for (const c of sinComentarios.matchAll(/(?<![\w$])("[^"\n]*"|'[^'\n]*'|`[^`]*`)/g)) {
       anotar(c.index, c[1].slice(1, -1));
     }
     return trozos;
   }
 
-  const limpio = crudo
+  const limpio = (formato === 'jsx' ? comentariosDeGuion(crudo) : crudo)
     .replace(/<!--[\s\S]*?-->/g, enBlanco)
     .replace(/<style\b[\s\S]*?<\/style>/gi, enBlanco);
 

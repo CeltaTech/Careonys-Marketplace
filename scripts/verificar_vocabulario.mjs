@@ -57,8 +57,8 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { hayArchivos, EXTENSIONES_DE_PANTALLA, esPantalla } from './recorrido.mjs';
-import { visible, visibleDeMigracion, soloCastellano } from './texto_visible.mjs';
+import { hayArchivos, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
+import { visible, visibleDeMigracion, soloCastellano, formatoDe } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
@@ -195,7 +195,7 @@ for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js', '.jso
   const vistos = new Set();
   for (const [renglon, texto] of nombre.endsWith('.sql')
     ? visibleDeMigracion(crudo)
-    : visible(soloCastellano(crudo), esPantalla(nombre))) {
+    : visible(soloCastellano(crudo), formatoDe(nombre))) {
     const sobra = apariciónQueSobra(texto);
     if (sobra && !vistos.has(renglon + sobra)) {
       vistos.add(renglon + sobra);

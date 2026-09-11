@@ -106,7 +106,7 @@ alrededor.
   `js/catalogo.js:109` en lugar del archivo de frases, así que compararla contra el archivo daba
   faltantes que no existen.
 - **Valores guardados.** Una cadena al lado de un `===` viaja al servidor y traducirla rompe la
-  comparación. Es el mismo criterio que `sinValoresGuardados()` (`scripts/texto_visible.mjs:42`)
+  comparación. Es el mismo criterio que `sinValoresGuardados()` (`scripts/texto_visible.mjs:44`)
   ya aplicaba al `value` de un casillero.
 - **Lo que sólo llega a la consola**, que es el segundo argumento de las funciones que clasifican
   un error.

@@ -2383,7 +2383,7 @@ escribiendo el texto entero del elemento marcado**, y ahí adentro también vive
 Prestadora, que no se traduce nunca. Así que se partió en dos —el rótulo en su propio `<span>` con
 la clave `pie.sello_producto`, el nombre al lado— y el sello pide `Catalogo.traducir()` cuando ya
 está armado, porque nace después de que la pantalla se tradujo (`js/apiClient.js:169`). Es la misma
-regla que `despejar()` deja escrita en `scripts/texto_visible.mjs:87`: **un elemento convertido
+regla que `despejar()` deja escrita en `scripts/texto_visible.mjs:89`: **un elemento convertido
 lleva texto y nada más**. Probado en las tres: «Con la tecnología de», «Powered by» y «Com a
 tecnologia de», con el nombre intacto al lado en las tres.
 
@@ -3167,7 +3167,7 @@ apareció cuatro veces y se vio que era del mecanismo y no de la pantalla.
 casillero, un campo escondido o una opción de lista **no se lee en la pantalla**: es el dato que
 viaja al servidor, y `js/formulario-consulta.js` lo compara letra por letra —`novedades === 'si'`—.
 Traducirlo rompía el sí/no de novedades en los tres idiomas a la vez, en las cuatro pantallas.
-Ahora lo saca `sinValoresGuardados()` (`scripts/texto_visible.mjs:42`), que deja adentro el
+Ahora lo saca `sinValoresGuardados()` (`scripts/texto_visible.mjs:44`), que deja adentro el
 `value` de un botón porque ése sí se lee, y tiene una prueba de seis casos donde dos tienen que
 fallar: si la función se pasara de larga y tapara también el rótulo de un botón, la prueba se
 pone en rojo. **Y la misma regla estaba escrita dos veces**: `scripts/inventario_textos.mjs`

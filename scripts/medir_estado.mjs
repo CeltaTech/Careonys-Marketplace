@@ -29,7 +29,8 @@ import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve, sep, basename } from 'node:path';
 import { createHash } from 'node:crypto';
-import { archivos, seRevisaron, esArmazon, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
+import { archivos, seRevisaron, esArmazon, EXTENSIONES_DE_PANTALLA, ARMAZONES }
+  from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const escribir = process.argv.includes('--escribir');
@@ -55,14 +56,36 @@ function renglones(texto) {
 
 const enEspanol = (n) => n.toLocaleString('es-AR');
 
-/* ── LAS PANTALLAS ───────────────────────────────────────────────────────
-   Cada archivo `.html` es una pantalla: no hay ruteo, así que la cuenta de
-   archivos es la cuenta de pantallas. El armazón de un paquete no cuenta: no
-   tiene nada dibujado adentro. */
-const pantallas = archivos(raiz, EXTENSIONES_DE_PANTALLA)
+/* ── LAS PANTALLAS ─────────────────────────────────────────────
+   **Una pantalla es una dirección, y no un archivo.** Contar archivos daba la
+   cuenta de pantallas mientras cada pantalla era uno solo; hoy el sitio es un
+   programa y una pantalla se reparte entre el archivo que la dibuja y los
+   pedazos que usa, ninguno de los cuales es algo que alguien pueda abrir.
+   Contarlos daba ochenta y cinco pantallas donde hay diecisiete.
+
+   Las direcciones del sitio están declaradas todas juntas en un solo lugar, y
+   los dos programas del teléfono cuentan de a uno: cada uno es un programa
+   entero que se instala en su propia dirección. Es la misma cuenta que hace
+   `scripts/verificar_el_producto.mjs`, y por el mismo motivo.
+
+   Aparte van los **archivos** que las dibujan, que es otra pregunta y sigue
+   valiendo la pena: de ahí salen los renglones, los bloques de guión metidos
+   adentro del marcado, los estilos pegados y quién enlaza cada hoja. El
+   armazón de un paquete no cuenta: no tiene nada dibujado adentro. */
+const RUTAS = join('web', 'src', 'Rutas.jsx');
+const direcciones = [
+  ...[...leer(join(raiz, RUTAS)).matchAll(/<Route [^>]*path="([^"]+)"/g)]
+    .map((encontrada) => encontrada[1]),
+  ...ARMAZONES.filter((armazon) => !armazon.startsWith('web/'))
+    .map((armazon) => '/' + armazon.split('/')[0] + '/')
+].sort();
+seRevisaron(direcciones.length, 'ninguna dirección declarada');
+
+const archivosDePantalla = archivos(raiz, EXTENSIONES_DE_PANTALLA)
   .filter((camino) => !esArmazon(camino)).sort();
-seRevisaron(pantallas.length, 'una sola pantalla');
-const renglonesPantallas = pantallas.reduce((t, c) => t + renglones(leer(c)), 0);
+seRevisaron(archivosDePantalla.length, 'un solo archivo de pantalla');
+const renglonesPantallas =
+  archivosDePantalla.reduce((t, c) => t + renglones(leer(c)), 0);
 
 /* ── EL JAVASCRIPT PROPIO ────────────────────────────────────────────────
    Todo `.js` del proyecto: los de `js/`, los de las dos aplicaciones de
@@ -95,7 +118,7 @@ for (const grupo of porContenido.values()) {
 const bloque = /<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi;
 let bloques = 0;
 let renglonesEnHtml = 0;
-for (const camino of pantallas) {
+for (const camino of archivosDePantalla) {
   for (const encontrado of leer(camino).matchAll(bloque)) {
     bloques += 1;
     renglonesEnHtml += renglones(encontrado[1].replace(/^\n/, '').replace(/\n[ \t]*$/, ''));
@@ -126,7 +149,7 @@ const tokens = new Set(
    usaban «las 16 pantallas» cuando son 17, y le daba 285 renglones a cada
    `styles-pwa.css` cuando tienen 287. */
 const laEnlazan = new Map(hojas.map((c) => [c, []]));
-for (const camino of pantallas) {
+for (const camino of archivosDePantalla) {
   for (const encontrado of leer(camino).matchAll(/<link[^>]+href="([^"]+\.css)"/gi)) {
     const destino = resolve(dirname(camino), encontrado[1]);
     if (laEnlazan.has(destino)) laEnlazan.get(destino).push(nombreDe(camino));
@@ -160,7 +183,7 @@ let declaraciones = 0;
    `docs/PENDIENTES.md`, que es donde estuvo hasta el 31 de agosto de 2026
    diciendo 687 atributos cuando ya eran 247. */
 const pegados = [];
-for (const camino of pantallas) {
+for (const camino of archivosDePantalla) {
   const fuente = leer(camino);
   let deEsta = 0;
   let declaracionesDeEsta = 0;
@@ -192,13 +215,13 @@ seRevisaron(pegados.length, 'una sola pantalla con estilos pegados al HTML');
 /* ── LA SESIÓN ───────────────────────────────────────────────────────────
    Una pantalla rescata la sesión al abrir si carga `js/auth.js`, que es el
    único lugar donde vive `Sesion`. */
-const conSesion = pantallas.filter((c) => /js\/auth\.js/.test(leer(c)));
+const conSesion = archivosDePantalla.filter((c) => /js\/auth\.js/.test(leer(c)));
 
 /* ── LO QUE SE PIDE AFUERA ───────────────────────────────────────────────
    Los servidores distintos a los que la página le pide algo. No hay
    `package.json` ni compilación: todo entra por dirección. */
 const afuera = new Set();
-for (const camino of [...pantallas, ...hojas]) {
+for (const camino of [...archivosDePantalla, ...hojas]) {
   for (const encontrado of leer(camino).matchAll(/https:\/\/([a-z0-9.-]+)/gi)) {
     afuera.add(encontrado[1].toLowerCase());
   }
@@ -239,7 +262,8 @@ const paquetes = archivos(raiz, ['package.json'])
    puede medir: se escribe una vez y se comprueba que la cuenta no se haya
    movido. El día que aparezca un quinto, la frase avisa que quedó vieja. */
 const DE_AFUERA = new Map([
-  [4, 'dos de tipografías y dos de bibliotecas']
+  [4, 'dos de tipografías y dos de bibliotecas'],
+  [5, 'dos de tipografías, dos de bibliotecas y el del mapa']
 ]);
 
 const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
@@ -248,8 +272,8 @@ const hoy = new Date();
 const fecha = `${hoy.getDate()} de ${meses[hoy.getMonth()]} de ${hoy.getFullYear()}`;
 
 const renglonesTabla = [
-  [`${enEspanol(pantallas.length)} pantallas HTML, ${enEspanol(renglonesPantallas)} renglones`,
-   'sin ruteo: cada pantalla es un archivo'],
+  [`${enEspanol(direcciones.length)} pantallas, ${enEspanol(renglonesPantallas)} renglones`,
+   `el sitio es un programa con ${enEspanol(direcciones.length - 2)} direcciones, y los dos del teléfono son otros dos programas`],
   [`${enEspanol(renglonesGuiones)} renglones de JavaScript propio, en ${enEspanol(guiones.length)} archivos`,
    `${enEspanol(renglonesCopiados)} de ellos son copias byte a byte de otro archivo (pendiente 13)`],
   [`${enEspanol(renglonesEnHtml)} renglones más metidos adentro del HTML`,
@@ -259,7 +283,7 @@ const renglonesTabla = [
   [`${enEspanol(declaraciones)} declaraciones más, pegadas al HTML`,
    `en ${enEspanol(atributosStyle)} atributos \`style=\` (fue el pendiente 8, cerrado)`],
   ['Supabase Auth funcionando',
-   `${enEspanol(conSesion.length)} de las ${enEspanol(pantallas.length)} pantallas rescatan la sesión al abrir`],
+   `${enEspanol(conSesion.length)} de los ${enEspanol(archivosDePantalla.length)} archivos que las dibujan rescatan la sesión al abrir`],
   [`${enEspanol(afuera.size)} servidores de afuera`,
    DE_AFUERA.get(afuera.size) || `${[...afuera].sort().join(', ')} — hay que decir de qué es cada uno`],
   [`${enEspanol(paquetes.length)} ${paquetes.length === 1 ? 'paquete que se construye solo' : 'paquetes que se construyen solos'}`,
@@ -304,7 +328,7 @@ const renglonesHojasTabla = hojas.map((camino) => {
   let usa;
   if (quienes.length === 0) usa = '**no la enlaza ninguna pantalla**';
   else if (quienes.length === 1) usa = `Sólo \`${quienes[0]}\``;
-  else usa = `${enEspanol(quienes.length)} de las ${enEspanol(pantallas.length)} pantallas`;
+  else usa = `${enEspanol(quienes.length)} de los ${enEspanol(archivosDePantalla.length)} archivos de pantalla`;
   if (original) usa += `. Copia byte a byte de \`${nombreDe(original)}\``;
   return `| \`${nombreDe(camino)}\` | ${enEspanol(renglones(leer(camino)))} | ${usa} |`;
 });

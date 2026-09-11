@@ -46,8 +46,8 @@
 
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname, join, basename } from 'node:path';
-import { archivos, seRevisaron, esArmazon, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
+import { dirname, join } from 'node:path';
+import { seRevisaron, ARMAZONES } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DOCUMENTO = join('docs', 'CAREONYS MarketPlace EL PRODUCTO.md');
@@ -55,27 +55,27 @@ const IMAGENES = join('docs', 'pantallas');
 
 /* ---- CÓMO SE LLAMA CADA PANTALLA PARA QUIEN LA MIRA ----
 
-   A la izquierda, la pantalla tal como está guardada. A la derecha, el nombre
+   A la izquierda, la dirección en la que se la abre. A la derecha, el nombre
    con el que se la nombra delante de alguien. El documento habla de lo segundo
    y nunca de lo primero. */
 const COMO_SE_LLAMA = new Map([
-  ['index', 'Portada'],
-  ['acceso', 'Acceso'],
-  ['registrar-familia', 'Alta de Familia'],
-  ['registrar-asistente', 'Alta de Asistente'],
-  ['recuperar-clave', 'Recuperar la contraseña'],
-  ['nueva-clave', 'Elegir una contraseña nueva'],
-  ['directorio', 'Directorio de Asistentes'],
-  ['perfil', 'Perfil público del Asistente'],
-  ['solicitar-asistente', 'Solicitar un Asistente'],
-  ['cursos', 'Cursos'],
-  ['examen', 'Evaluaciones'],
-  ['panel-prestadora', 'Panel de la Prestadora'],
-  ['guias-prestadora', 'Guías de cuidado de la Prestadora'],
-  ['soporte-remoto', 'Acompañamiento en línea'],
-  ['mockup-app', 'Demostración en teléfono'],
-  ['pwa-asistente/index', 'La aplicación del Asistente'],
-  ['pwa-familia/index', 'La aplicación de la Familia']
+  ['/', 'Portada'],
+  ['/acceso', 'Acceso'],
+  ['/registrar-familia', 'Alta de Familia'],
+  ['/registrar-asistente', 'Alta de Asistente'],
+  ['/recuperar-clave', 'Recuperar la contraseña'],
+  ['/nueva-clave', 'Elegir una contraseña nueva'],
+  ['/directorio', 'Directorio de Asistentes'],
+  ['/perfil', 'Perfil público del Asistente'],
+  ['/solicitar-asistente', 'Solicitar un Asistente'],
+  ['/cursos', 'Cursos'],
+  ['/examen', 'Evaluaciones'],
+  ['/panel-prestadora', 'Panel de la Prestadora'],
+  ['/guias-prestadora', 'Guías de cuidado de la Prestadora'],
+  ['/soporte-remoto', 'Acompañamiento en línea'],
+  ['/mockup-app', 'Demostración en teléfono'],
+  ['/pwa-asistente/', 'La aplicación del Asistente'],
+  ['/pwa-familia/', 'La aplicación de la Familia']
 ]);
 
 /* Lo que sí puede aparecer escrito con punto adentro, porque es lengua y no
@@ -114,13 +114,28 @@ const problemas = [];
 
 // ── 1 y 2. Toda pantalla nombrada, y ninguna de más ────────────────────────
 
-const desdeLaRaiz = raiz.replace(/\\/g, '/') + '/';
-const pantallas = archivos(raiz, EXTENSIONES_DE_PANTALLA)
-  .filter((camino) => !esArmazon(camino))
-  .map((camino) => camino.replace(/\\/g, '/').replace(/\.html$/i, ''))
-  .map((camino) => (camino.startsWith(desdeLaRaiz) ? camino.slice(desdeLaRaiz.length) : camino))
-  .filter((camino) => !camino.startsWith('docs/'))
-  .sort();
+/* ---- DÓNDE NACE UNA PANTALLA ----
+
+   Una pantalla es una **dirección**, y no un archivo. El sitio es un solo
+   programa: sus direcciones están declaradas todas juntas en un único lugar, y
+   agregar una pantalla es agregarle un renglón a esa lista. Contar archivos acá
+   daría un número que no significa nada, porque una pantalla se reparte hoy
+   entre el archivo que la dibuja y los pedazos que usa, y ninguno de esos
+   pedazos es algo que alguien pueda abrir.
+
+   Los dos programas del teléfono se cuentan de a uno, como siempre: cada uno es
+   un programa entero que se instala en su propia dirección, y por dentro no
+   tiene direcciones que nadie escriba a mano. Cuáles son sale de los armazones,
+   que es donde ya está dicho cuáles son los paquetes. */
+const RUTAS = join('web', 'src', 'Rutas.jsx');
+
+const pantallas = [
+  ...[...readFileSync(join(raiz, RUTAS), 'utf8')
+    .matchAll(/<Route [^>]*path="([^"]+)"/g)].map((encontrada) => encontrada[1]),
+  ...ARMAZONES
+    .filter((armazon) => !armazon.startsWith('web/'))
+    .map((armazon) => '/' + armazon.split('/')[0] + '/')
+].sort();
 
 seRevisaron(pantallas.length, 'ninguna pantalla del producto');
 seRevisaron(COMO_SE_LLAMA.size, 'ningún nombre visible de pantalla en este chequeo');

@@ -51,7 +51,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import {
-  hayArchivos, seRevisaron, conLaMismaCaja, esArmazon, EXTENSIONES_DE_PANTALLA
+  hayArchivos, seRevisaron, conLaMismaCaja, esArmazon, EXTENSIONES_DE_PANTALLA, ARMAZONES
 } from './recorrido.mjs';
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -180,6 +180,38 @@ if (!existsSync(dondeEstaLoQueNoSePublica)) {
 const reglas = leerLoQueNoSePublica(readFileSync(dondeEstaLoQueNoSePublica, 'utf8'));
 seRevisaron(reglas.length, 'una sola regla adentro de `.vercelignore`');
 
+/* ---- UNA PANTALLA DEL PROGRAMA NO SE PUBLICA DONDE ESTÁ SU ARCHIVO ----
+   Una dirección que empieza con un punto se cuenta desde donde está la página
+   que la nombra, y mientras cada pantalla era una página suelta eso era lo
+   mismo que la carpeta del archivo. Desde que una pantalla es un pedazo de un
+   programa deja de serlo: la herramienta junta todos los pedazos en una sola
+   página, y esa página se publica en la dirección del programa, no en la de la
+   carpeta donde estaba escrito el pedazo.
+
+   El programa de la Familia, por ejemplo, se instala en `/pwa-familia/`, así
+   que un `../` escrito adentro de cualquiera de sus pedazos llega a la raíz del
+   sitio. Contarlo desde la carpeta del archivo daba por rotas trece direcciones
+   que están bien, y —peor— habría dado por buenas las que están mal.
+
+   Dónde se publica cada uno sale de los armazones, que es donde ya está dicho
+   cuáles son los paquetes: el del sitio se publica en la raíz, y los dos del
+   teléfono en la carpeta que lleva su nombre. */
+const PAQUETES = ARMAZONES.map((armazon) => {
+  const carpeta = armazon.split('/')[0];
+  return {
+    fuente: armazon.slice(0, armazon.lastIndexOf('/')) + '/',
+    base: carpeta === 'web' ? raiz : join(raiz, carpeta)
+  };
+});
+
+const dondeSePublica = (camino, nombre, suCarpeta) => {
+  /* El armazón no: él no es un pedazo que la herramienta junte, es la hoja
+     donde los junta, y lo que nombra lo busca al lado suyo. */
+  if (esArmazon(camino)) return suCarpeta;
+  const paquete = PAQUETES.find((cual) => nombre.startsWith(cual.fuente));
+  return paquete ? paquete.base : suCarpeta;
+};
+
 const fallas = [];
 let miradas = 0;
 let alVuelo = 0;
@@ -208,14 +240,21 @@ for (const camino of hayArchivos(raiz, DE_DONDE_SALEN)) {
          el servidor sirve es eso. Se comprueba igual que el archivo esté —un
          error de tipeo ahí rompe la construcción y no lo ve nadie hasta
          publicar— pero se lo busca adentro del paquete, que es donde vive, y
-         no se le pregunta a `.vercelignore` si lo sube. */
-      const deLaHerramienta = esArmazon(camino) && sinPregunta.startsWith('/src/');
+         no se le pregunta a `.vercelignore` si lo sube.
+
+         Y «adentro del paquete» quiere decir **la carpeta donde está el propio
+         armazón**, que es la que la herramienta toma por raíz. No es siempre el
+         mismo escalón: el armazón del sitio está afuera y nombra `/src/...`, y
+         los de los dos programas del teléfono están adentro de `src/` y nombran
+         lo que tienen al lado. Exigir el escalón habría dado por rotas las dos
+         direcciones que sí están. */
+      const deLaHerramienta = esArmazon(camino) && sinPregunta.startsWith('/');
 
       const destino = deLaHerramienta
         ? resolve(suCarpeta, ...sinPregunta.slice(1).split('/'))
         : sinPregunta.startsWith('/')
           ? join(raiz, ...sinPregunta.slice(1).split('/'))
-          : resolve(suCarpeta, ...sinPregunta.split('/'));
+          : resolve(dondeSePublica(camino, nombre, suCarpeta), ...sinPregunta.split('/'));
       const como = conLaMismaCaja(raiz, destino);
 
       if (como === false) {

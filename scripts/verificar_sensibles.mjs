@@ -104,16 +104,26 @@ const PARAMETROS_DE_LA_DIRECCION = new Map([
    La clave es el archivo **sin extensión ni carpeta**, así que alcanza a sus
    copias; los valores, los argumentos exactos. Un argumento nuevo en el mismo
    archivo se planta igual. */
+/* La clase de la alarma se imprime en tres archivos y es el mismo caso en los
+   tres: está escrita una vez acá y se registra abajo con los tres nombres. Era
+   uno solo mientras cada programa del teléfono era un archivo entero; al pasar a
+   pantallas, el mismo renglón quedó en la pantalla que dibuja las alarmas de
+   cada programa, y las páginas sueltas siguen publicadas hasta que se las
+   reemplace. */
+const LA_CLASE_DE_LA_ALARMA = {
+  valores: ['fila.clase'],
+  motivo: 'es la clase de una alarma —`jornada_abierta` o `salida_sin_entrada`—, ' +
+    'que es un valor fijo que escribe la propia `mis_alarmas()` ' +
+    '(`supabase/migrations/0001_base_del_esquema.sql:1633` y `:1648`) y no ' +
+    'un dato de ninguna persona. Se imprime cuando la base manda una clase que ' +
+    'la pantalla todavía no sabe nombrar, y sin verla el aviso no sirve para ' +
+    'agregarle la frase que le falta'
+};
+
 const REGISTROS_PERDONADOS = new Map([
-  ['index', {
-    valores: ['fila.clase'],
-    motivo: 'es la clase de una alarma —`jornada_abierta` o `salida_sin_entrada`—, ' +
-      'que es un valor fijo que escribe la propia `mis_alarmas()` ' +
-      '(`supabase/migrations/0001_base_del_esquema.sql:1633` y `:1648`) y no ' +
-      'un dato de ninguna persona. Se imprime cuando la base manda una clase que ' +
-      'la pantalla todavía no sabe nombrar, y sin verla el aviso no sirve para ' +
-      'agregarle la frase que le falta'
-  }],
+  ['index', LA_CLASE_DE_LA_ALARMA],
+  ['FranjaDeAlarmas', LA_CLASE_DE_LA_ALARMA],
+  ['Asistencia', LA_CLASE_DE_LA_ALARMA],
   ['catalogo', {
     valores: ['escrito'],
     motivo: 'es el texto crudo del atributo `data-huecos` cuando no es un JSON ' +
