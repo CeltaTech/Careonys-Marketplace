@@ -2298,3 +2298,18 @@ button:disabled:hover,
   font-weight: 600;
   text-decoration: none;
 }
+
+/* ---- Aparecer al bajar ----
+   La marca `con-aparicion` la pone el programa en el cuerpo de la página
+   cuando enciende el movimiento. Sin ella no se esconde nada: un bloque que
+   nadie va a poder encender tiene que quedar visible. */
+.con-aparicion .fade-in {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.con-aparicion .fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

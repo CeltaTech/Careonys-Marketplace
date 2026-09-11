@@ -16,11 +16,16 @@
    **Están las quince, y son todas las que hay.** Una dirección que no figure acá
    no existe en el sitio, y agregar una pantalla es agregarle un renglón a esta
    lista: no hay ningún otro lugar donde una dirección pueda nacer.
+
+   **Y acá se encienden los movimientos que son del sitio entero**, porque éste
+   es el único lugar que está por encima de las quince pantallas y adentro del
+   enrutador. Qué hacen está escrito donde viven.
 =================================================== */
 
 import { Routes, Route, Outlet } from 'react-router-dom';
 import Navegacion from './armazon/Navegacion.jsx';
 import Pie from './armazon/Pie.jsx';
+import { useAparecerAlBajar, useDeslizarHastaLaParte } from './armazon/movimientos.js';
 import Inicio from './pantallas/Inicio.jsx';
 import Cursos from './pantallas/Cursos.jsx';
 import SolicitarAsistente from './pantallas/SolicitarAsistente.jsx';
@@ -48,6 +53,9 @@ function ConMarco() {
 }
 
 export default function Rutas() {
+  useAparecerAlBajar();
+  useDeslizarHastaLaParte();
+
   return (
     <Routes>
       <Route element={<ConMarco />}>

@@ -338,9 +338,9 @@ Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2
   patología y verificación. Eran veinticinco opciones escritas a mano contra «los catálogos salen de la base»; ahora
   son cuatro `data-catalogo`. Las zonas llegan agrupadas por región, que la lista escrita a mano
   no hacía.
-- **Las ocho tarjetas de muestra hablan el mismo idioma que los filtros.** Cada una lleva ahora
-  `data-zone`, `data-type`, `data-patologia` y `data-verificacion` con claves del catálogo, y
-  `filterCards()`, en `js/main.js`, compara clave contra clave.
+- **Las ocho tarjetas de muestra hablaban el mismo idioma que los filtros.** Cada una llevaba
+  `data-zone`, `data-type`, `data-patologia` y `data-verificacion` con claves del catálogo. Hoy el
+  filtro compara clave contra clave (`web/src/pantallas/Directorio.jsx:26`).
 - **Antes comparaba contra el texto visible de la tarjeta, y fallaba de dos maneras.** La opción
   `medicos` no encontraba nunca a la tarjeta que decía «Médicos», porque la tilde no coincide;
   `parkinson` y `acv` no existían en ninguna tarjeta y devolvían cero sin explicar por qué. Y
@@ -3059,8 +3059,8 @@ decía la verdad la decía siempre en su forma mala: «no se pudo». Abrirle la 
 inició sesión es ampliar el acceso anónimo, que es decisión del Desarrollador —pendiente 25— y no
 de esta tarea.
 
-**Lo que hay ahora es un solo guion para los cinco**, `js/formulario-consulta.js`, que hace una
-cosa y la dice como es: si hay sesión **y** se resolvió una Prestadora guarda la consulta, que es
+**Lo que hay ahora es un solo formulario** (`web/src/formularios/FormularioDeConsulta.jsx`), que
+hace una cosa y la dice como es: si hay sesión **y** se resolvió una Prestadora guarda la consulta, que es
 el único caso en el que el guardado puede funcionar y el que va a andar solo el día que se abra la
 puerta; y si no, muestra el correo del producto con la consulta ya redactada adentro y deja que la
 persona la mande. **Nada dice «enviado» hasta que algo se envió.** El motivo va a
@@ -3165,7 +3165,7 @@ apareció cuatro veces y se vio que era del mecanismo y no de la pantalla.
 **Uno: el `value` de un redondel no es texto visible, y se estaba contando como tal.**
 `scripts/texto_visible.mjs` leía todos los `value` por igual. Pero el de un redondel, un
 casillero, un campo escondido o una opción de lista **no se lee en la pantalla**: es el dato que
-viaja al servidor, y `js/formulario-consulta.js` lo compara letra por letra —`novedades === 'si'`—.
+viaja al servidor, y `web/src/formularios/FormularioDeConsulta.jsx:88` lo compara letra por letra.
 Traducirlo rompía el sí/no de novedades en los tres idiomas a la vez, en las cuatro pantallas.
 Ahora lo saca `sinValoresGuardados()` (`scripts/texto_visible.mjs:44`), que deja adentro el
 `value` de un botón porque ése sí se lee, y tiene una prueba de seis casos donde dos tienen que
@@ -3287,13 +3287,13 @@ el paso 1 vacío avisa y **no** avanza; con el paso 1 completo avanza y no avisa
 `formulario-integral.html` seguía funcionando igual, resumen del paso 6 incluido.
 
 **El 9 de septiembre de 2026 el bloque se fue del todo**, porque la hoja de muestra que lo
-despertaba salió de uso y `wizard-care-search-form` no existe en ninguna otra pantalla: en su
-lugar `js/main.js:157` deja escrito qué había ahí y adónde se mudó el que publica un aviso de
-verdad. La precaución del 26 de agosto no se borró por sobrar: se cumplió, y dejó el bloque
+despertaba salió de uso y `wizard-care-search-form` no existe en ninguna otra pantalla. El que
+publica un aviso de verdad es `#form-nuevo-aviso` (`pwa-familia/src/pantallas/Publicar.jsx:136`).
+La precaución del 26 de agosto no se borró por sobrar: se cumplió, y dejó el bloque
 apagado desde el día en que la pantalla se apartó.
 
 **Se midió si pasaba en otro lado y no pasa.** De los doce selectores a los que `js/main.js` le
-engancha un manejador, sólo `.btn-next-step` y `.btn-prev-step` aparecen en más de una pantalla,
+enganchaba un manejador, sólo `.btn-next-step` y `.btn-prev-step` aparecen en más de una pantalla,
 y sólo `registrar-asistente.html` tenía además el suyo propio. Por eso no se agregó un chequeo:
 guardaría un caso único, y un chequeo que avisa de más se termina apagando.
 

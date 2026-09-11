@@ -7,10 +7,19 @@
    El logotipo y el nombre que se ven son los de la Prestadora que se esté
    mirando, no los del producto: hasta que se sepa cuál es, se muestra el
    producto, y eso lo resuelve el archivo de identidad.
+
+   **Cuál es la pantalla en la que uno está se marca sola.** Antes había que
+   comparar a mano el enlace contra el nombre del archivo abierto; ahora la
+   dirección la lleva el enrutador, así que el enlace se marca solo y la marca
+   se corrige sola al cambiar de pantalla.
+
+   **Y la barra cambia de aspecto al bajar**, que es el único movimiento propio
+   que tiene: apenas se empieza a bajar se despega del contenido con una
+   sombra.
 =================================================== */
 
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, NavLink } from 'react-router-dom';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { marca } from '#comun/frases/lector.js';
 
@@ -31,16 +40,24 @@ const REDES = [
 export default function Navegacion() {
   const { frase } = useFrases();
   const [abierto, setAbierto] = useState(false);
+  const [bajada, setBajada] = useState(false);
+
+  useEffect(() => {
+    const mirar = () => setBajada(window.scrollY > 30);
+    mirar();
+    window.addEventListener('scroll', mirar, { passive: true });
+    return () => window.removeEventListener('scroll', mirar);
+  }, []);
 
   return (
-    <nav className="navbar">
+    <nav className={bajada ? 'navbar scrolled' : 'navbar'}>
       <div className="navbar-inner">
         <Link to="/" className="navbar-logo">
           <img className="tenant-logo" src={'/' + marca('{{logotipo}}')} alt={frase('nav.inicio')} />
         </Link>
         <div className="navbar-links">
           {ENLACES.map(({ a, clave }) => (
-            <Link key={a} to={a}>{frase(clave)}</Link>
+            <NavLink key={a} to={a}>{frase(clave)}</NavLink>
           ))}
         </div>
         <div className="navbar-social">

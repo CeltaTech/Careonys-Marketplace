@@ -39,8 +39,8 @@ export const enBlanco = (t) => t.replace(/[^\n]/g, ' ');
    Sale de acá el `value` de un botón —`<input type="submit" value="Enviar">`—,
    que es texto visible de verdad y tiene que seguir contando.
    Apareció el 26 de agosto de 2026 al convertir tres pantallas del portal a la
-   vez: las tres tienen un sí/no de novedades cuyo valor `js/formulario-consulta.js`
-   compara con la cadena `'si'`. */
+   vez: las tres tienen un sí/no de novedades cuyo valor el formulario de
+   consulta compara con la cadena `'si'`. */
 export function sinValoresGuardados(html) {
   return html.replace(/<(input|option)\b[^>]*>/gi, (etiqueta, nombre) => {
     if (/^input$/i.test(nombre)) {

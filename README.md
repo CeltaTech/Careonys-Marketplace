@@ -31,9 +31,9 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
-| 17 pantallas, 14.398 renglones | el sitio es un programa con 15 direcciones, y los dos del teléfono son otros dos programas |
-| 7.343 renglones de JavaScript propio, en 30 archivos | 0 de ellos son copias byte a byte de otro archivo (pendiente 13) |
-| 5.592 renglones de hojas de estilo, en 12 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
+| 17 pantallas, 14.423 renglones | el sitio es un programa con 15 direcciones, y los dos del teléfono son otros dos programas |
+| 6.968 renglones de JavaScript propio, en 29 archivos | 0 de ellos son copias byte a byte de otro archivo (pendiente 13) |
+| 5.607 renglones de hojas de estilo, en 12 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
 | 641 declaraciones de estilo pegadas al marcado | en 219 lugares (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 19 de los 68 archivos que las dibujan abren la puerta a la base |
 | 3 servidores de afuera | dos de tipografías y el de los iconos |
@@ -62,7 +62,7 @@ sumaba 4.638 donde la tabla de arriba, que sí sale de medir, decía 4.642—.
 | Archivo | Renglones | La piden |
 |---|---:|---|
 | `css/mockup-app.css` | 135 | **no la pide ningún paquete** |
-| `css/styles.css` | 2.300 | Sólo `web/src/principal.jsx` |
+| `css/styles.css` | 2.315 | Sólo `web/src/principal.jsx` |
 | `css/tokens.css` | 358 | Sólo `web/src/principal.jsx` |
 | `css/utilidades.css` | 191 | Sólo `web/src/principal.jsx` |
 | `pwa-asistente/css/styles-pwa.css` | 338 | Sólo `pwa-asistente/src/principal.jsx` |
@@ -74,7 +74,7 @@ sumaba 4.638 donde la tabla de arriba, que sí sale de medir, decía 4.642—.
 | `pwa-familia/css/utilidades.css` | 191 | Sólo `pwa-familia/src/principal.jsx`. Copia byte a byte de `css/utilidades.css` |
 | `pwa-familia/src/estilos.css` | 546 | Sólo `pwa-familia/src/principal.jsx` |
 
-En disco hay 12 archivos y 5.592 renglones, de los cuales 1.436 son copias byte a byte de otro: son las que `verificar_copias.mjs` compara.
+En disco hay 12 archivos y 5.607 renglones, de los cuales 1.436 son copias byte a byte de otro: son las que `verificar_copias.mjs` compara.
 
 <!-- fin de las hojas -->
 
@@ -104,6 +104,7 @@ lo dice en su encabezado.
 ```
 Careonys-Marketplace/
 ├── CLAUDE.md                   ← las reglas propias de este producto, leer primero
+├── package.json                ← los tres comandos de la raíz: instalar, construir, verificar
 ├── docs/
 │   ├── GLOSARIO.md             ← los términos que nació este producto; el glosario está arriba
 │   ├── ALCANCE.md              ← qué existe y qué no. Referencia única
@@ -114,33 +115,58 @@ Careonys-Marketplace/
 │   ├── modelo_de_negocios_*.md             ← material de diseño; decisión comercial abierta
 │   ├── terminos_y_condiciones_*.md         ← modelos que la Prestadora adopta, cambia o descarta
 │   └── politica_de_datos.md                ← modelo, con el mismo criterio; los tres sin revisión de abogado
-├── *.html                      ← las 16 pantallas del sitio, una por archivo
-├── css/                        ← tokens.css, styles.css, utilidades.css, mockup-app.css
-├── js/                         ← apiClient.js, auth.js, main.js y doce más
-├── assets/images/
-├── data/                       ← los catálogos y las frases que leen las pantallas
+├── web/                        ← el sitio, con sus quince pantallas en src/
 ├── pwa-asistente/              ← aplicación instalable para Asistentes
 ├── pwa-familia/                ← aplicación instalable para Familias
+├── comun/                      ← lo que importan los tres: `datos/`, `formularios/`, `frases/`
+├── css/                        ← tokens.css, styles.css, utilidades.css, mockup-app.css
+├── js/                         ← apiClient.js, auth.js y doce más
+├── assets/images/
+├── data/                       ← los catálogos y las frases que leen las pantallas
 ├── scripts/                    ← los chequeos y las pruebas que corren antes de cada commit
 ├── supabase/                   ← config, migraciones y funciones
+├── dist/                       ← donde armar_todo.mjs deja los tres paquetes armados
 └── vercel.json
 ```
 
-**`supabase/migrations/` lleva 3 migraciones, aplicadas todas al 8 de septiembre de 2026.** Una
-migración aplicada no se edita: se corrige con otra adelante.
+**`supabase/migrations/` lleva 8 migraciones.** Una migración aplicada no se edita: se corrige
+con otra adelante.
 
-`apiClient.js` y `auth.js` existen **tres veces** —raíz, `pwa-asistente/`, `pwa-familia/`—
-idénticos byte a byte. La duplicación desaparece en la migración, cuando haya imports reales.
+`apiClient.js` y `auth.js` viven **una sola vez**, en `js/`, y los tres paquetes los importan con
+el apodo `#js`. Lo que sigue copiado son los catálogos y las hojas de estilo de los dos programas
+del teléfono: cada uno se arma desde su carpeta, y lo que guarda para trabajar sin señal sólo
+alcanza lo que quedó adentro de ella. `scripts/verificar_copias.mjs` las compara byte a byte y
+falla si alguna se separó.
 
 Las carpetas de la aplicación nueva se agregan cuando llegue su turno — no se anticipan carpetas
 vacías.
 
 ## Entorno de desarrollo
 
-El sitio actual es estático. Alcanza con servir la raíz:
+Son tres paquetes que se arman con Vite: `web/`, `pwa-asistente/` y `pwa-familia/`. Las
+dependencias se instalan una vez, para los tres:
 
 ```bash
-npx serve .          # queda en http://localhost:3000
+npm run instalar     # npm ci en cada paquete
+```
+
+Cada paquete se levanta por su cuenta, y cada uno tiene su puerto:
+
+```bash
+npm run dev --prefix web             # http://localhost:5601
+npm run dev --prefix pwa-asistente   # http://localhost:5602
+npm run dev --prefix pwa-familia     # http://localhost:5603
+```
+
+Las imágenes, los catálogos y las hojas de estilo viven en la raíz porque las comparten los tres.
+Mientras se desarrolla las sirve `scripts/carpetas_compartidas.mjs`, que los tres armados cargan,
+y que es además donde están escritos los apodos `#comun` y `#js`.
+
+Los tres se arman juntos en `dist/` —la web en la raíz y cada programa del teléfono adentro de la
+carpeta con la que se instaló—:
+
+```bash
+npm run construir    # node scripts/armar_todo.mjs
 ```
 
 Para la base, con Docker Desktop abierto:
@@ -289,6 +315,7 @@ antes de cada `commit` `scripts/verificar_estado.mjs`.
 
 | Archivo | Qué hace |
 |---|---|
+| `scripts/armar_todo.mjs` | Arma los tres paquetes y los deja en una sola carpeta de salida: la web en la raíz y cada programa del teléfono adentro de la carpeta con la que se instaló, porque esas direcciones ya están instaladas en teléfonos de verdad. La web se arma primero, que es la que vacía la salida entera. Copia además lo que no pasa por la herramienta de armado —las imágenes, los catálogos y los documentos legales—, y es el único lugar donde está escrito qué se publica y qué no. Al final compara lo armado contra lo que cada programa del teléfono dice que guarda para trabajar sin señal: guardar es todo o nada, y un solo archivo que falte tira abajo la copia entera. |
 | `scripts/generar_manifiestos.mjs` | Escribe los dos `manifest.json` desde la identidad. Hacen falta generados porque el navegador los lee como archivo, sin pasar por ninguna página: ahí no hay JavaScript que resuelva un marcador. |
 | `scripts/verificar_copias.mjs` | Compara byte a byte los ocho archivos que viven repetidos en dos o tres carpetas y falla si alguno se separó. Cuando encuentra una diferencia dice cuál de los dos es más nuevo, para no pisar el cambio bueno. |
 | `scripts/revisar_base.mjs` | Sonda de solo lectura: pregunta qué tablas puede enumerar y leer alguien **sin sesión**, y si alguna le muestra dos Prestadoras distintas. Se corre en el momento en que la base vuelva a responder, antes de cargar el primer dato. No escribe ni borra nada, y se niega a correr contra una base que no sea la de este proyecto. |

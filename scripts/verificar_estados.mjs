@@ -190,8 +190,8 @@ const AVISA_QUE_ESPERA = [
    es sobre los datos que volvieron. Lo que se recorre antes de pedir nada son
    los controles de la pantalla —las casillas marcadas, los campos del
    formulario—, y de eso no hay nada que decir. Sin esta distinción,
-   `js/main.js:244` —que junta lo elegido en seis pasos y publica un aviso—
-   figuraba como una grilla sin rama de «no vino nada». */
+   el asistente de seis pasos que publicaba un aviso figuraba como una grilla
+   sin rama de «no vino nada». */
 /* El salto de renglón, dicho por su número y no escrito: este mismo archivo lo
    leen los chequeos de texto visible, y una barra suelta confunde a más de uno.
    Es el mismo motivo por el que `bloques.mjs` arma así su expresión regular. */

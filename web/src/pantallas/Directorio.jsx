@@ -25,10 +25,10 @@
 
    **El filtro compara clave con clave.** Cada desplegable devuelve una clave de
    catálogo y cada Asistente trae las suyas, así que «medicos» encuentra a
-   «Médicos» y ningún cambio de redacción rompe un filtro sin avisar. Eso vivía
-   en `js/main.js`, que enganchaba los desplegables por su identificador y
-   prendía y apagaba tarjetas ya dibujadas; acá la misma decisión se toma antes
-   de dibujar, que es como se hacen las cosas de este lado.
+   «Médicos» y ningún cambio de redacción rompe un filtro sin avisar.
+
+   **Y la decisión se toma antes de dibujar**: la tarjeta que no corresponde a
+   lo elegido no llega a la pantalla.
 =================================================== */
 
 import { useEffect, useState } from 'react';
