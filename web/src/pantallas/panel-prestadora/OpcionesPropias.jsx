@@ -33,8 +33,8 @@
 =================================================== */
 
 import { useEffect, useRef, useState } from 'react';
-import { useFrases } from '../../frases/ProveedorDeFrases.jsx';
-import { Catalogo, Texto } from '../../frases/lector.js';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
+import { Catalogo, Texto } from '#comun/frases/lector.js';
 import Cartel from './Cartel.jsx';
 
 /* Dónde va la opción nueva adentro de su lista. Se cuenta desde las propias y
@@ -77,9 +77,20 @@ export default function OpcionesPropias({ base }) {
   useEffect(() => {
     let vigente = true;
     (async () => {
-      await cargarOpcionesPropias(() => vigente);
-      if (!vigente) return;
-      await cargarListasAbiertas(() => vigente);
+      /* Las dos cargas atrapan lo suyo, pero lo que falle afuera de ellas no
+         lo atrapaba nadie y la pantalla se quedaba en «cargando» sin decir
+         nada. El cartel de la lista es el que está a la vista en ese momento. */
+      try {
+        await cargarOpcionesPropias(() => vigente);
+        if (!vigente) return;
+        await cargarListasAbiertas(() => vigente);
+      } catch (err) {
+        if (!vigente) return;
+        setCartelLista({
+          tono: 'critico',
+          clave: Texto.claveDeError(err, 'Panel de la Prestadora, opciones propias, arranque:')
+        });
+      }
     })();
     return () => { vigente = false; };
     // Corre una vez, cuando el bloque entra.

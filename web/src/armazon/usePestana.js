@@ -23,7 +23,7 @@
 =================================================== */
 
 import { useEffect } from 'react';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 
 export function usePestana(claveDelTitulo, { descripcion = '', fueraDeBuscadores = false } = {}) {
   const { frase } = useFrases();

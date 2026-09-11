@@ -14,7 +14,10 @@
         "mockup-app.html:472",
         "pwa-familia/index.html:1146",
         "pwa-familia/index.html:1299",
-        "pwa-familia/index.html:759"
+        "pwa-familia/index.html:759",
+        "pwa-familia/src/pantallas/Postulaciones.jsx:131",
+        "pwa-familia/src/pantallas/Tablero.jsx:144",
+        "web/src/pantallas/MockupApp.jsx:472"
       ],
       "items": [
         {
@@ -205,7 +208,9 @@
         "directorio.html:291",
         "perfil.html:341",
         "pwa-asistente/index.html:551",
-        "registrar-asistente.html:305"
+        "registrar-asistente.html:305",
+        "web/src/pantallas/Directorio.jsx:216",
+        "web/src/pantallas/Perfil.jsx:170"
       ],
       "items": [
         {
@@ -263,7 +268,8 @@
       ],
       "usado_en": [
         "panel-prestadora.html:1166",
-        "panel-prestadora.html:189"
+        "panel-prestadora.html:189",
+        "web/src/pantallas/panel-prestadora/Moneda.jsx:134"
       ]
     },
     "retiro": {
@@ -305,7 +311,9 @@
         "perfil.html:426",
         "pwa-asistente/index.html:620",
         "pwa-familia/index.html:797",
-        "registrar-asistente.html:385"
+        "registrar-asistente.html:385",
+        "web/src/pantallas/Directorio.jsx:233",
+        "web/src/pantallas/Perfil.jsx:197"
       ],
       "items": [
         {
@@ -511,7 +519,8 @@
       },
       "cerrada": true,
       "usado_en": [
-        "pwa-asistente/index.html:1148"
+        "pwa-asistente/index.html:1148",
+        "pwa-asistente/src/pantallas/Capacitaciones.jsx:82"
       ],
       "items": [
         {
@@ -594,7 +603,9 @@
       "usado_en": [
         "directorio.html:305",
         "directorio.html:92",
-        "perfil.html:377"
+        "perfil.html:377",
+        "web/src/pantallas/Directorio.jsx:401",
+        "web/src/pantallas/Perfil.jsx:191"
       ],
       "items": [
         {
@@ -679,7 +690,8 @@
       "cerrada": false,
       "usado_en": [
         "panel-prestadora.html:614",
-        "panel-prestadora.html:734"
+        "panel-prestadora.html:734",
+        "web/src/pantallas/panel-prestadora/Verificaciones.jsx:126"
       ],
       "items": [
         {
@@ -897,7 +909,12 @@
         "pwa-asistente/index.html:578",
         "pwa-familia/index.html:1145",
         "pwa-familia/index.html:1298",
-        "registrar-asistente.html:340"
+        "pwa-familia/src/pantallas/Postulaciones.jsx:130",
+        "pwa-familia/src/pantallas/Tablero.jsx:143",
+        "registrar-asistente.html:340",
+        "web/src/pantallas/Directorio.jsx:204",
+        "web/src/pantallas/MockupApp.jsx:471",
+        "web/src/pantallas/Perfil.jsx:177"
       ],
       "items": [
         {
@@ -991,7 +1008,8 @@
       "cerrada": true,
       "usado_en": [
         "cursos.html:105",
-        "pwa-asistente/index.html:1150"
+        "pwa-asistente/index.html:1150",
+        "pwa-asistente/src/pantallas/Capacitaciones.jsx:84"
       ],
       "items": [
         {
@@ -1268,7 +1286,8 @@
       "cerrada": true,
       "usado_en": [
         "panel-prestadora.html:615",
-        "panel-prestadora.html:735"
+        "panel-prestadora.html:735",
+        "web/src/pantallas/panel-prestadora/Verificaciones.jsx:127"
       ],
       "items": [
         {

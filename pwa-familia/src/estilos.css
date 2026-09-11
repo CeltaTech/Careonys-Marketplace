@@ -1,0 +1,546 @@
+/* ===================================================
+   LOS ESTILOS PROPIOS DEL TELÉFONO DE LA FAMILIA
+
+   Esto es, tal cual, el bloque de estilos que la página suelta llevaba
+   escrito adentro del encabezado. Se mudó a un archivo aparte porque una
+   página armada con React ya no tiene dónde poner estilos sueltos, pero no
+   se le cambió ni una regla: lo que se veía antes es lo que se ve ahora.
+
+   Va después de los tres archivos compartidos de estilos y antes que nada
+   más, así que pisa a esos tres donde se superponen, igual que cuando
+   estaba escrito adentro de la página.
+=================================================== */
+
+body {
+  background: var(--superficie-hover);
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#phone-container {
+  width: 100%;
+  max-width: 420px;
+  height: 100vh;
+  max-height: 840px;
+  background: var(--superficie);
+  position: relative;
+  box-shadow: var(--sombra-media);
+  border-radius: 32px;
+  overflow: hidden;
+  border: 8px solid var(--azul-oscuro);
+  display: flex;
+  flex-direction: column;
+}
+
+#phone-container ::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  body {
+    background: var(--superficie);
+  }
+  #phone-container {
+    max-width: 100%;
+    height: 100vh;
+    max-height: 100%;
+    border-radius: 0;
+    border: none;
+  }
+}
+
+.app-screen {
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--fondo-app);
+  position: relative;
+}
+
+.app-screen.active {
+  display: flex;
+}
+
+/* CABECERAS */
+.app-header {
+  background: var(--superficie);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--borde-card);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-header h1 {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--marca-prestadora);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.app-header .btn-back {
+  font-size: 18px;
+  color: var(--texto-secundario);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+
+/* INTRO / LOGIN */
+#screen-intro {
+  background: linear-gradient(135deg, var(--fondo-app) 0%, var(--superficie-hover) 100%);
+  padding: 24px;
+  box-sizing: border-box;
+  justify-content: center;
+}
+
+.intro-logo-container {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.intro-logo-container img {
+  height: 60px;
+  margin-bottom: 12px;
+}
+
+.intro-logo-container h2 {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--marca-prestadora);
+  margin: 0;
+}
+
+.intro-logo-container p {
+  font-size: 13px;
+  color: var(--texto-secundario);
+  margin: 6px 0 0 0;
+}
+
+.login-card {
+  background: var(--superficie);
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: var(--sombra-suave);
+  border: 1px solid var(--borde-card);
+}
+
+.input-wrapper {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1.5px solid var(--borde-card);
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  background: var(--superficie-hundida);
+}
+
+.input-wrapper input:focus {
+  border-color: var(--marca-prestadora-acento);
+  background: var(--superficie);
+  outline: none;
+}
+
+.btn-login {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--marca-prestadora-acento);
+  color: var(--texto-sobre-color);
+  font-weight: 700;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: var(--sombra-media);
+}
+
+/* El renglón de abajo del ingreso, que lleva al alta. Es el mismo bloque
+   que la aplicación del Asistente tiene abajo de su tarjeta de ingreso: se
+   repite el aspecto y no el destino, porque cada una manda a su alta. */
+.btn-register-link {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--texto-secundario);
+}
+
+.btn-register-link a {
+  color: var(--marca-prestadora-acento);
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* DASHBOARD FAMILIA */
+.dashboard-header {
+  background: var(--superficie);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--borde-card);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.grid-services {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 16px;
+}
+
+.service-btn {
+  background: var(--superficie);
+  border: 1px solid var(--borde-card);
+  border-radius: 16px;
+  padding: 14px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: var(--sombra-suave);
+}
+
+.service-btn:hover {
+  transform: translateY(-2px);
+}
+
+.service-btn .icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--texto-sobre-color);
+  font-size: 18px;
+}
+
+.service-btn span {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--texto-principal);
+  text-align: center;
+}
+
+/* VERIFICACIÓN */
+.verification-widget {
+  background: var(--tono-atencion-fondo);
+  border: 1px solid var(--tono-atencion-borde);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin: 0 16px 16px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.verification-widget i {
+  color: var(--tono-atencion-texto);
+  font-size: 20px;
+}
+
+.verification-widget div h5 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tono-atencion-texto);
+}
+
+.verification-widget div p {
+  margin: 2px 0 0 0;
+  font-size: 11px;
+  color: var(--tono-atencion-texto);
+}
+
+/* SLIDERS */
+.section-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--marca-prestadora);
+  padding: 0 16px;
+  margin: 16px 0 8px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-title a {
+  font-size: 11px;
+  color: var(--marca-prestadora-acento);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.horizontal-slider {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 4px 16px 16px 16px;
+}
+
+.caregiver-card {
+  min-width: 140px;
+  width: 140px;
+  background: var(--superficie);
+  border: 1px solid var(--borde-card);
+  border-radius: 16px;
+  padding: 12px;
+  text-align: center;
+  box-shadow: var(--sombra-suave);
+  text-decoration: none;
+  color: inherit;
+}
+
+.caregiver-card img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--borde-card);
+  margin-bottom: 8px;
+}
+
+.caregiver-card h5 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--texto-titulo);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.caregiver-card p {
+  margin: 2px 0 0 0;
+  font-size: 10px;
+  color: var(--texto-secundario);
+}
+
+
+/* BARRA TABS */
+.bottom-tab-bar {
+  height: 64px;
+  background: var(--superficie);
+  border-top: 1px solid var(--borde-card);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 100;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color:var(--texto-secundario);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.tab-item.active {
+  color: var(--marca-prestadora-acento);
+}
+
+.tab-item i {
+  font-size: 18px;
+}
+
+.tab-item span {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* TIMELINE DE REPORTES */
+.reportes-header {
+  background: var(--marca-prestadora);
+  color: var(--texto-sobre-color);
+  padding: 20px;
+  border-radius: 0 0 24px 24px;
+}
+
+.reportes-paciente {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.reportes-paciente img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--superficie);
+}
+
+.timeline-log {
+  padding: 20px;
+  position: relative;
+}
+
+.timeline-log::after {
+  content: '';
+  position: absolute;
+  top: 24px;
+  left: 31px;
+  width: 2px;
+  height: calc(100% - 48px);
+  background: var(--tono-neutro-fondo);
+}
+
+.log-item {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.log-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--superficie);
+  border: 3px solid var(--marca-prestadora-acento);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.log-content {
+  flex: 1;
+  background: var(--superficie);
+  border: 1px solid var(--borde-card);
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: var(--sombra-suave);
+}
+
+.log-content h5 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--texto-titulo);
+}
+
+.log-content p {
+  margin: 4px 0 0 0;
+  font-size: 11px;
+  color: var(--texto-secundario);
+  line-height: 1.4;
+}
+
+.log-content span.time {
+  font-size: 10px;
+  color:var(--texto-secundario);
+  font-weight: 600;
+  float: right;
+}
+
+/* SIDEBAR DRAWER */
+.sidebar-drawer {
+  position: absolute;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100%;
+  background: var(--superficie);
+  box-shadow: var(--sombra-media);
+  z-index: 200;
+  transition: left 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-drawer.open {
+  left: 0;
+}
+
+.drawer-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--velo-modal);
+  z-index: 199;
+  display: none;
+}
+
+.drawer-overlay.open {
+  display: block;
+}
+
+.drawer-header {
+  background: linear-gradient(135deg, var(--marca-prestadora) 0%, var(--azul-oscuro) 100%);
+  color: var(--texto-sobre-color);
+  padding: 30px 20px;
+}
+
+.drawer-header img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid var(--superficie);
+  margin-bottom: 10px;
+}
+
+.drawer-header h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.drawer-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 20px;
+  color: var(--texto-principal);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+/* El de cerrar sesión es un botón y no un enlace: dispara una operación, y un
+   enlace no se puede apagar mientras corre («todo botón que dispara una operación se apaga»). */
+button.drawer-menu-item {
+  width: 100%;
+  background: none;
+  border: none;
+  font-family: inherit;
+  text-align: left;
+}

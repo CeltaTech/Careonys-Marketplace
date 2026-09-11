@@ -52,8 +52,8 @@ async function abrir() {
      busca así y no se lo toca. */
   window.supabase = await import('@supabase/supabase-js');
 
-  await import('../../../js/apiClient.js');
-  await import('../../../js/auth.js');
+  await import('#js/apiClient.js');
+  await import('#js/auth.js');
 
   /* El permiso de la sesión guardada, antes de nada. El archivo de sesión ya
      hace esto solo apenas se carga, pero lo hace sin que nadie lo espere: en

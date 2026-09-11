@@ -32,10 +32,10 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
 import { aLaRuta, aLaImagen } from '../armazon/direcciones.js';
-import { Catalogo, marca } from '../frases/lector.js';
+import { Catalogo, marca } from '#comun/frases/lector.js';
 import FormularioDeConsulta from '../formularios/FormularioDeConsulta.jsx';
 
 /* Las tres grillas piden las mismas claves que pedían escritas en la página, y

@@ -26,11 +26,11 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
 import { aLaRuta, aLaImagen } from '../armazon/direcciones.js';
-import { Catalogo, marca } from '../frases/lector.js';
-import { useLaBase } from '../datos/useLaBase.js';
+import { Catalogo, marca } from '#comun/frases/lector.js';
+import { useLaBase } from '#comun/datos/useLaBase.js';
 import FormularioDeConsulta from '../formularios/FormularioDeConsulta.jsx';
 
 /* Cuáles de las tarjetas de la oferta muestra esta pantalla, y en qué orden.

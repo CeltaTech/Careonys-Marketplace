@@ -15,8 +15,8 @@
    Ese campo pide su valor, así que el vaciado de las dos lo hace la pantalla.
 =================================================== */
 
-import CampoDeClave from '../../formularios/CampoDeClave.jsx';
-import { useFrases } from '../../frases/ProveedorDeFrases.jsx';
+import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { SelectDelCatalogo, CasillasDelCatalogo } from './DelCatalogo.jsx';
 import { Pane, Navegadores } from './Navegadores.jsx';
 

@@ -17,8 +17,8 @@
 =================================================== */
 
 import { useEffect, useState } from 'react';
-import { useFrases } from '../../frases/ProveedorDeFrases.jsx';
-import { Catalogo } from '../../frases/lector.js';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
+import { Catalogo } from '#comun/frases/lector.js';
 import Cartel from './Cartel.jsx';
 
 /* El estado en el que quedó el legajo se muestra con la misma frase que usa la

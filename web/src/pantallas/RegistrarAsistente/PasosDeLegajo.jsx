@@ -12,7 +12,7 @@
    `js/documentos-legajo.js`, que se lo escribe al campo al arrancar la pantalla.
 =================================================== */
 
-import { useFrases } from '../../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { CasillasDelCatalogo } from './DelCatalogo.jsx';
 import { Pane, Navegadores } from './Navegadores.jsx';
 

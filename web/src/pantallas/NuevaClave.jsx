@@ -30,12 +30,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
-import { Texto } from '../frases/lector.js';
-import { conLaBase } from '../datos/puerta.js';
-import { conLaRevisionDeClaves } from '../datos/claves.js';
-import CampoDeClave from '../formularios/CampoDeClave.jsx';
+import { Texto } from '#comun/frases/lector.js';
+import { conLaBase } from '#comun/datos/puerta.js';
+import { conLaRevisionDeClaves } from '#comun/datos/claves.js';
+import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
 
 /* Lo primero de todo, y por eso vive afuera del componente: se guarda la
    dirección con la que se llegó, apenas este archivo se lee y mucho antes de
@@ -84,64 +84,78 @@ export default function NuevaClave() {
     let vigente = true;
 
     (async () => {
-      const { ClienteDatos, Sesion } = await conLaBase();
-      revisarClave.current = await conLaRevisionDeClaves();
-      if (!vigente) return;
-
-      /* La Prestadora se usa sólo para la marca de la tarjeta. Que no se
-         reconozca no impide cambiar nada, así que no se avisa. */
+      /* Abrir la puerta a la base y traer la revisión de claves es lo primero,
+         y hasta acá pasaba afuera de todo `try`: si cualquiera de las dos
+         fallaba, la pantalla se quedaba en «cargando» para siempre y no decía
+         nada. Es el mismo caso que el de más abajo —no se pudo comprobar—, así
+         que se lo trata igual. */
       try {
-        await ClienteDatos.initTenant();
+        const { ClienteDatos, Sesion } = await conLaBase();
+        revisarClave.current = await conLaRevisionDeClaves();
+        if (!vigente) return;
+
+        /* La Prestadora se usa sólo para la marca de la tarjeta. Que no se
+           reconozca no impide cambiar nada, así que no se avisa. */
+        try {
+          await ClienteDatos.initTenant();
+        } catch (err) {
+          console.warn('Nueva contraseña, marca de la Prestadora:', err);
+        }
+        if (!vigente) return;
+
+        const motivo = motivoDelRechazo();
+        if (motivo) {
+          setAvisoSinEnlace({ clave: motivo });
+          setEstado('sin-enlace');
+          return;
+        }
+
+        /* Al abrir el enlace del correo, la biblioteca de la base deja abierta una
+           sesión de recuperación. Si no hay ninguna, o se entró a esta dirección
+           de frente o el enlace ya no valía. */
+        let sesion = null;
+        try {
+          sesion = await Sesion.getSession();
+        } catch (err) {
+          /* Que la comprobación **falle** no es lo mismo que no haber llegado por
+             el correo, y hasta acá se contaban igual: a quien se quedó sin red la
+             pantalla le decía «esta pantalla se abre desde el enlace que llega por
+             correo» y lo mandaba a pedir un enlace nuevo que tampoco iba a poder
+             abrir. Es el estado error, y sin él se veía igual que el vacío.
+
+             El título cambia junto con el aviso: dejarlo en «el enlace ya no
+             sirve» sería afirmar algo que nadie llegó a comprobar. Lo demás del
+             panel —que cada enlace vence, y el botón para pedir otro— sigue
+             valiendo, así que queda como está.
+
+             El detalle técnico lo registra `claveDeError` y no sale de la consola;
+             a la pantalla va la frase que corresponde a esa clase de falla. */
+          if (!vigente) return;
+          setTituloSinEnlace('nueva.no_se_pudo_comprobar');
+          setAvisoSinEnlace({ clave: Texto.claveDeError(err, 'Nueva contraseña, arranque:') });
+          setEstado('sin-enlace');
+          return;
+        }
+        if (!vigente) return;
+
+        if (!sesion) {
+          setAvisoSinEnlace({ clave: 'nueva.se_abre_desde_el_correo' });
+          setEstado('sin-enlace');
+          return;
+        }
+
+        /* Si la sesión no trae el correo, se nombra la cuenta sin decir cuál. Va
+           por el catálogo como todo lo demás: es texto que se lee. */
+        setCorreoEnCurso((sesion.user && sesion.user.email) || '');
+        setEstado('listo');
       } catch (err) {
-        console.warn('Nueva contraseña, marca de la Prestadora:', err);
-      }
-      if (!vigente) return;
-
-      const motivo = motivoDelRechazo();
-      if (motivo) {
-        setAvisoSinEnlace({ clave: motivo });
-        setEstado('sin-enlace');
-        return;
-      }
-
-      /* Al abrir el enlace del correo, la biblioteca de la base deja abierta una
-         sesión de recuperación. Si no hay ninguna, o se entró a esta dirección
-         de frente o el enlace ya no valía. */
-      let sesion = null;
-      try {
-        sesion = await Sesion.getSession();
-      } catch (err) {
-        /* Que la comprobación **falle** no es lo mismo que no haber llegado por
-           el correo, y hasta acá se contaban igual: a quien se quedó sin red la
-           pantalla le decía «esta pantalla se abre desde el enlace que llega por
-           correo» y lo mandaba a pedir un enlace nuevo que tampoco iba a poder
-           abrir. Es el estado error, y sin él se veía igual que el vacío.
-
-           El título cambia junto con el aviso: dejarlo en «el enlace ya no
-           sirve» sería afirmar algo que nadie llegó a comprobar. Lo demás del
-           panel —que cada enlace vence, y el botón para pedir otro— sigue
-           valiendo, así que queda como está.
-
-           El detalle técnico lo registra `claveDeError` y no sale de la consola;
-           a la pantalla va la frase que corresponde a esa clase de falla. */
+        /* El detalle técnico lo registra `claveDeError` y no sale de la
+           consola; a la pantalla va la frase de esa clase de falla. */
         if (!vigente) return;
         setTituloSinEnlace('nueva.no_se_pudo_comprobar');
         setAvisoSinEnlace({ clave: Texto.claveDeError(err, 'Nueva contraseña, arranque:') });
         setEstado('sin-enlace');
-        return;
       }
-      if (!vigente) return;
-
-      if (!sesion) {
-        setAvisoSinEnlace({ clave: 'nueva.se_abre_desde_el_correo' });
-        setEstado('sin-enlace');
-        return;
-      }
-
-      /* Si la sesión no trae el correo, se nombra la cuenta sin decir cuál. Va
-         por el catálogo como todo lo demás: es texto que se lee. */
-      setCorreoEnCurso((sesion.user && sesion.user.email) || '');
-      setEstado('listo');
     })();
 
     return () => { vigente = false; };

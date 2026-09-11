@@ -10,7 +10,7 @@
    formulario, nunca con el envoltorio.
 =================================================== */
 
-import { useFrases } from '../../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { aLaImagen } from '../../armazon/direcciones.js';
 
 const BENEFICIOS = [

@@ -27,10 +27,10 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
-import { Catalogo, Texto } from '../frases/lector.js';
-import { conLaBase } from '../datos/puerta.js';
+import { Catalogo, Texto } from '#comun/frases/lector.js';
+import { conLaBase } from '#comun/datos/puerta.js';
 
 /* El papel de la Familia, escrito una sola vez. Es el mismo valor que compara
    el acceso y el que se guarda al dar de alta una cuenta de Familia. */
@@ -100,7 +100,7 @@ export default function Perfil() {
            base: pedidas arriba viajarían hasta en las pantallas que no las
            miran. */
         const [, laFila] = await Promise.all([
-          import('../../../js/zonas.js'),
+          import('#js/zonas.js'),
           ClienteDatos.traerDelDirectorio(id),
           Catalogo.cargar()
         ]);

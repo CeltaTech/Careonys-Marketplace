@@ -35,11 +35,11 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
-import { Catalogo, Texto } from '../frases/lector.js';
-import { conLaBase } from '../datos/puerta.js';
-import CampoDeClave from '../formularios/CampoDeClave.jsx';
+import { Catalogo, Texto } from '#comun/frases/lector.js';
+import { conLaBase } from '#comun/datos/puerta.js';
+import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
 
 /* La hoja de la maqueta, tal cual está en `css/`, traída como texto para poder
    colgarla y descolgarla. Ver el comentario de arriba. */
@@ -427,7 +427,7 @@ export default function MockupApp() {
        nada. Se revisa antes de vaciar el campo, para que el mensaje no se
        pierda y se pueda corregir; y antes de dibujar la burbuja, porque una
        burbuja que aparece y desaparece parece un error del programa. */
-    await import('../../../js/contacto.js');
+    await import('#js/contacto.js');
     const revision = await window.Contacto.revisar(texto);
     if (!revision.pasa) {
       const porQue = revision.motivos.map((m) => m.motivo).filter(Boolean).join(' ');

@@ -137,7 +137,7 @@ export const NUNCA_SE_ABRE = new Set([...CAJAS_FUERTES, ...NO_ES_DEL_PROYECTO]);
    plantillas que arman marcado, los manejadores escritos en el marcado y el
    atributo `data-frase`—, y ésos hay que reescribirlos igual. Lo que sí termina
    es la parte silenciosa. */
-export const EXTENSIONES_DE_PANTALLA = ['.html'];
+export const EXTENSIONES_DE_PANTALLA = ['.html', '.jsx'];
 
 /* ── Y LO QUE TERMINA EN .html SIN SER UNA PANTALLA ───────────────────────
    El armazón de un paquete de React: unos pocos renglones sin nada dibujado
@@ -147,8 +147,17 @@ export const EXTENSIONES_DE_PANTALLA = ['.html'];
    Está acá y no adentro de cada chequeo porque son tres los que se lo cruzan,
    y los tres se equivocaban del mismo modo: uno le pedía un nombre visible y
    un capítulo en la foto del producto, otro lo sumaba a la cuenta de pantallas
-   del README, y el tercero daba por rota su única dirección. */
-export const ARMAZONES = ['web/index.html'];
+   del README, y el tercero daba por rota su única dirección.
+
+   **Son uno por paquete, y los paquetes son tres**: el del sitio y los dos de
+   los programas del teléfono. Los dos del teléfono viven un escalón más
+   adentro que el del sitio porque la página suelta que hoy está publicada ya
+   ocupa el nombre de afuera, y dos páginas no pueden llamarse igual. */
+export const ARMAZONES = [
+  'web/index.html',
+  'pwa-asistente/src/index.html',
+  'pwa-familia/src/index.html'
+];
 
 /** ¿Este archivo es el armazón de un paquete, y no una pantalla? */
 export const esArmazon = (camino) =>

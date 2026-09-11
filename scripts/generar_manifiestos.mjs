@@ -35,6 +35,11 @@ function armar(app) {
   return {
     name: IDENTIDAD.nombre + ' ' + app.sufijo,
     short_name: IDENTIDAD.nombreCorto + app.sufijo,
+    // El idioma por omisión del producto. Va escrito porque el navegador lee
+    // el manifiesto como archivo, sin ejecutar nada, y si no lo encuentra lo
+    // da por inglés. Es el mismo que usa `js/texto.js:66` cuando no hay
+    // pantalla que pregunte: si cambia allá, cambia acá.
+    lang: 'es-AR',
     start_url: 'index.html',
     display: 'standalone',
     background_color: '#fafafb',

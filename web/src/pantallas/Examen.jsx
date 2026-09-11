@@ -37,10 +37,10 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
-import { Texto } from '../frases/lector.js';
-import { conLaBase } from '../datos/puerta.js';
+import { Texto } from '#comun/frases/lector.js';
+import { conLaBase } from '#comun/datos/puerta.js';
 import { useSesionRequerida } from '../datos/useSesionRequerida.js';
 
 /* El papel que rinde evaluaciones. La función de la base rechaza igual a quien

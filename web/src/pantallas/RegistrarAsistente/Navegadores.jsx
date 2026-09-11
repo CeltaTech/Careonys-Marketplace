@@ -11,7 +11,7 @@
    siempre iguales salvo por el número al que llevan. Acá se escriben una vez.
 =================================================== */
 
-import { useFrases } from '../../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 
 export function Pane({ numero, paso, children }) {
   const seVe = numero === paso;

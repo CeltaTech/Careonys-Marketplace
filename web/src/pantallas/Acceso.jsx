@@ -25,11 +25,11 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
-import { Texto } from '../frases/lector.js';
-import { conLaBase } from '../datos/puerta.js';
-import CampoDeClave from '../formularios/CampoDeClave.jsx';
+import { Texto } from '#comun/frases/lector.js';
+import { conLaBase } from '#comun/datos/puerta.js';
+import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
 
 /* Dónde le toca entrar a cada papel. Los dos primeros son vistas de acá; los
    dos del teléfono son programas aparte, y ahí se sale de éste. */

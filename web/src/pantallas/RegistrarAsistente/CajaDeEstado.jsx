@@ -16,7 +16,7 @@
 =================================================== */
 
 import { useEffect, useRef } from 'react';
-import { Texto } from '../../frases/lector.js';
+import { Texto } from '#comun/frases/lector.js';
 
 const COLOR_DEL_ESTADO = {
   cargando: ['var(--tono-neutro-fondo)', 'var(--texto-secundario)'],

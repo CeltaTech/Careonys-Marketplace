@@ -29,10 +29,10 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
-import { Texto } from '../frases/lector.js';
-import { conLaBase } from '../datos/puerta.js';
+import { Texto } from '#comun/frases/lector.js';
+import { conLaBase } from '#comun/datos/puerta.js';
 
 export default function RecuperarClave() {
   const { frase } = useFrases();

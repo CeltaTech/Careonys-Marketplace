@@ -23,8 +23,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { conLaBase } from './puerta.js';
-import { Texto } from '../frases/lector.js';
+import { conLaBase } from '#comun/datos/puerta.js';
+import { Texto } from '#comun/frases/lector.js';
 
 export function useSesionRequerida() {
   const navegar = useNavigate();

@@ -43,9 +43,9 @@
 =================================================== */
 
 import { useState } from 'react';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
-import { useVocabulario } from './useVocabulario.js';
-import { Identidad, Texto } from '../frases/lector.js';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
+import { useVocabulario } from '#comun/formularios/useVocabulario.js';
+import { Identidad, Texto } from '#comun/frases/lector.js';
 
 const VACIO = { nombre: '', email: '', celular: '', eleccion: '', novedades: 'si' };
 

@@ -10,8 +10,8 @@
 =================================================== */
 
 import { Link } from 'react-router-dom';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
-import { marca } from '../frases/lector.js';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
+import { marca } from '#comun/frases/lector.js';
 
 const REDES = [
   { icono: 'fab fa-facebook-f', clave: 'nav.facebook' },

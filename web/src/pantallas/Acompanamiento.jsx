@@ -10,7 +10,7 @@
    frases, las ocho y todas las demás.
 =================================================== */
 
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
 import FormularioDeConsulta from '../formularios/FormularioDeConsulta.jsx';
 

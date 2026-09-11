@@ -18,9 +18,9 @@
    sigue siendo uno.
 =================================================== */
 
-import '../../../js/identidad.js';
-import '../../../js/texto.js';
-import '../../../js/catalogo.js';
+import '#js/identidad.js';
+import '#js/texto.js';
+import '#js/catalogo.js';
 
 /* El lector, tal cual quedó al ejecutarse. */
 export const Catalogo = window.Catalogo;

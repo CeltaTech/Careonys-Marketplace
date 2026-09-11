@@ -19,7 +19,7 @@ let pidiendose = null;
 /** Entrega lo que decide qué contraseña vale —o lo que ya estaba pedido—. */
 export function conLaRevisionDeClaves() {
   if (!pidiendose) {
-    pidiendose = import('../../../js/clave.js').then(() => window.Clave);
+    pidiendose = import('#js/clave.js').then(() => window.Clave);
   }
   return pidiendose;
 }

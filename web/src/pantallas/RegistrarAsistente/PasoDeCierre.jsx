@@ -13,7 +13,7 @@
    toca: sigue en pantalla, paso por paso.
 =================================================== */
 
-import { useFrases } from '../../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import CajaDeEstado from './CajaDeEstado.jsx';
 import { Pane, Navegadores } from './Navegadores.jsx';
 

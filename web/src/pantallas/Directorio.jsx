@@ -33,11 +33,11 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
-import { useVocabulario } from '../formularios/useVocabulario.js';
-import { Catalogo, Texto } from '../frases/lector.js';
-import { conLaBase } from '../datos/puerta.js';
+import { useVocabulario } from '#comun/formularios/useVocabulario.js';
+import { Catalogo, Texto } from '#comun/frases/lector.js';
+import { conLaBase } from '#comun/datos/puerta.js';
 
 /* Cómo se dicen las zonas de alguien que ya contestó lo sabe `js/zonas.js`, que
    es el mismo archivo que dibuja las casillas del formulario de alta. Se pide
@@ -46,7 +46,7 @@ import { conLaBase } from '../datos/puerta.js';
 let elLectorDeZonas = null;
 function conLasZonas() {
   if (!elLectorDeZonas) {
-    elLectorDeZonas = import('../../../js/zonas.js').then(() => window.Zonas);
+    elLectorDeZonas = import('#js/zonas.js').then(() => window.Zonas);
   }
   return elLectorDeZonas;
 }

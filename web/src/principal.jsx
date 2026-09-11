@@ -15,7 +15,7 @@ import '../../css/tokens.css';
 import '../../css/styles.css';
 import '../../css/utilidades.css';
 
-import { ProveedorDeFrases } from './frases/ProveedorDeFrases.jsx';
+import { ProveedorDeFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import Rutas from './Rutas.jsx';
 
 createRoot(document.getElementById('raiz')).render(

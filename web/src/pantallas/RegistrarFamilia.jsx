@@ -28,12 +28,12 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
-import { Texto } from '../frases/lector.js';
-import { conLaBase } from '../datos/puerta.js';
-import { conLaRevisionDeClaves } from '../datos/claves.js';
-import CampoDeClave from '../formularios/CampoDeClave.jsx';
+import { Texto } from '#comun/frases/lector.js';
+import { conLaBase } from '#comun/datos/puerta.js';
+import { conLaRevisionDeClaves } from '#comun/datos/claves.js';
+import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
 
 /* A dónde va quien ya tiene sesión, por el papel que tiene en la Prestadora
    donde está parada. Es la misma tabla de destinos que el acceso, y son dos

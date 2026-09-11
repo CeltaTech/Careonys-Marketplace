@@ -24,9 +24,9 @@
 =================================================== */
 
 import { useEffect, useState } from 'react';
-import { useFrases } from '../../frases/ProveedorDeFrases.jsx';
-import { useVocabulario } from '../../formularios/useVocabulario.js';
-import { Catalogo } from '../../frases/lector.js';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
+import { useVocabulario } from '#comun/formularios/useVocabulario.js';
+import { Catalogo } from '#comun/frases/lector.js';
 import Cartel from './Cartel.jsx';
 
 /* El valor de fábrica de la columna. Un papel del que la base no tiene ninguna

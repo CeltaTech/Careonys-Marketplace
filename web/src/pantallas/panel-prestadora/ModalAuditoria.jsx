@@ -25,8 +25,8 @@
 =================================================== */
 
 import { useState } from 'react';
-import { useFrases } from '../../frases/ProveedorDeFrases.jsx';
-import { Texto } from '../../frases/lector.js';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
+import { Texto } from '#comun/frases/lector.js';
 import Verificaciones from './Verificaciones.jsx';
 import Resoluciones from './Resoluciones.jsx';
 

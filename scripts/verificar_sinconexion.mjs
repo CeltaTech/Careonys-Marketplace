@@ -150,10 +150,30 @@ for (const camino of programas) {
     continue;
   }
 
+  /* ---- DE DÓNDE SALE CADA ARCHIVO QUE EL PROGRAMA GUARDA ----
+     Un programa de teléfono que vive adentro de `src/` no está nombrando
+     archivos del disco: nombra **direcciones de lo que la herramienta va a
+     armar**, y lo armado junta cosas que hoy están en tres lugares distintos.
+     Lo suyo propio está al lado; el manifiesto lo escribe el generador un
+     escalón afuera, junto a la página suelta que todavía se publica; y los
+     catálogos viven en la raíz, porque los comparten los tres paquetes.
+
+     Así que se busca en esos tres lugares, en ese orden, y el archivo tiene que
+     aparecer en alguno. **Esa lista es además la orden de mudanza**: lo que se
+     arma para publicar tiene que copiar desde esos mismos tres lugares, o el
+     programa instalado va a pedir algo que el sitio no tiene, y `cache.addAll()`
+     va a tirar abajo la copia entera sin decir nada.
+
+     Un programa que no vive adentro de `src/` es de los de antes de la
+     herramienta: todo lo suyo está en su carpeta y no hay nada que buscar. */
+  const origenes = carpeta.endsWith('/src')
+    ? [carpeta, carpeta.slice(0, -4), '']
+    : [carpeta];
+
   /* `'./'` es la carpeta, que el servidor contesta con su `index.html`. */
-  const caminos = lista.map((pedido) =>
-    `${carpeta}/${pedido.replace(/^\.\//, '') || 'index.html'}`);
-  guardados += caminos.length;
+  const pedidos = lista.map((pedido) =>
+    pedido.replace(/^\.\//, '') || 'index.html');
+  guardados += pedidos.length;
 
   /* No `existsSync`: en Windows contesta que sí a `js/Auth.js` cuando el
      archivo es `js/auth.js`, y el sitio se sirve desde Linux, que contesta 404.
@@ -162,11 +182,18 @@ for (const camino of programas) {
      y `cache.addAll()` es todo o nada, así que la copia sin conexión de esa
      aplicación no se habría instalado entera. El lector es el mismo que usa
      `verificar_rutas.mjs`, y vive en `scripts/recorrido.mjs`. */
-  const faltan = caminos.filter((c) => !estaTalCual(raiz, join(raiz, ...c.split('/'))));
+  const caminos = [];
+  const faltan = [];
+  for (const pedido of pedidos) {
+    const donde = origenes
+      .map((origen) => (origen ? origen + '/' : '') + pedido)
+      .find((camino) => estaTalCual(raiz, join(raiz, ...camino.split('/'))));
+    if (donde) caminos.push(donde); else faltan.push(pedido);
+  }
   if (faltan.length) {
     const cuantos = faltan.length === 1
-      ? 'un archivo que no está con ese nombre exacto'
-      : `${faltan.length} archivos que no están con ese nombre exacto`;
+      ? 'un archivo que no está con ese nombre exacto en ninguno de los lugares de donde sale'
+      : `${faltan.length} archivos que no están con ese nombre exacto en ninguno de los lugares de donde salen`;
     fallas.push(
       `${nombre}  guarda ${cuantos}, y \`cache.addAll()\` es todo o nada:\n` +
       faltan.map((c) => `      - ${c}`).join('\n'));

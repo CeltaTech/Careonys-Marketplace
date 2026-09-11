@@ -34,9 +34,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
-import { Catalogo, Identidad, Texto } from '../frases/lector.js';
+import { Catalogo, Identidad, Texto } from '#comun/frases/lector.js';
 import { useSesionRequerida } from '../datos/useSesionRequerida.js';
 
 /* El papel que puede escribir las guías de una Prestadora. Es el mismo valor

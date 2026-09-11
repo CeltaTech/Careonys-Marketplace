@@ -27,10 +27,10 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
-import { Catalogo, marca } from '../frases/lector.js';
-import { conLaBase } from '../datos/puerta.js';
+import { Catalogo, marca } from '#comun/frases/lector.js';
+import { conLaBase } from '#comun/datos/puerta.js';
 import FormularioDeConsulta from '../formularios/FormularioDeConsulta.jsx';
 
 /* El catálogo guarda la imagen como la escribía una página suelta que vivía en

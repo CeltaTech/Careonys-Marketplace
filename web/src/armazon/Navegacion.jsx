@@ -11,8 +11,8 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
-import { marca } from '../frases/lector.js';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
+import { marca } from '#comun/frases/lector.js';
 
 const ENLACES = [
   { a: '/solicitar-asistente', clave: 'nav.solicitar_asistente' },

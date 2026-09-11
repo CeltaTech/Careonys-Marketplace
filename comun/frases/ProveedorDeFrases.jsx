@@ -6,7 +6,7 @@
 
        const { frase } = useFrases();
        <h1>{frase('acompanamiento.titulo')}</h1>
-       <p>{frase('examen.intentos', { cuantos: 3 })}</p>
+       <p>{frase('capacitacion.quedan_intentos', { quedan: 3 })}</p>
 
    Tres cosas que este archivo resuelve y que conviene tener presentes:
 

@@ -13,7 +13,7 @@
    dibuja, que es lo mismo visto desde afuera.
 =================================================== */
 
-import { useFrases } from '../../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 
 const CLASES = 'p-16 redondeo-10 texto-13 interlineado-16 mb-12';
 

@@ -26,11 +26,11 @@
 =================================================== */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useFrases } from '../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
-import { Catalogo, Texto } from '../frases/lector.js';
-import { conLaBase } from '../datos/puerta.js';
-import { conLaRevisionDeClaves } from '../datos/claves.js';
+import { Catalogo, Texto } from '#comun/frases/lector.js';
+import { conLaBase } from '#comun/datos/puerta.js';
+import { conLaRevisionDeClaves } from '#comun/datos/claves.js';
 import Presentacion from './RegistrarAsistente/Presentacion.jsx';
 import BarraDePasos from './RegistrarAsistente/BarraDePasos.jsx';
 import CajaDeEstado from './RegistrarAsistente/CajaDeEstado.jsx';
@@ -146,11 +146,11 @@ export default function RegistrarAsistente() {
            sesión ya está disponible. */
         await Promise.all([
           conLaBase(),
-          import('../../../js/fichas-legajo.js'),
-          import('../../../js/documentos-legajo.js'),
-          import('../../../js/disponibilidad.js'),
-          import('../../../js/autorizaciones.js'),
-          import('../../../js/zonas.js')
+          import('#js/fichas-legajo.js'),
+          import('#js/documentos-legajo.js'),
+          import('#js/disponibilidad.js'),
+          import('#js/autorizaciones.js'),
+          import('#js/zonas.js')
         ]);
         if (!vigente) return;
 

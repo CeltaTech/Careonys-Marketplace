@@ -8,7 +8,7 @@
    tres que usaba la página, con los mismos nombres de color.
 =================================================== */
 
-import { useFrases } from '../../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 
 /* El rótulo de cada paso, en el orden en que se recorren. Las claves son las
    que la página ya usaba, y se dejan como están: `legajo.paso2_rotulo` rotula

@@ -16,8 +16,8 @@
 =================================================== */
 
 import { useEffect, useRef } from 'react';
-import { useVocabulario } from '../../formularios/useVocabulario.js';
-import { useFrases } from '../../frases/ProveedorDeFrases.jsx';
+import { useVocabulario } from '#comun/formularios/useVocabulario.js';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 
 /* El aviso que ocupa el lugar de la lista cuando no hay lista: adentro de un
    desplegable va como opción apagada, porque el navegador no dibuja más que

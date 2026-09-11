@@ -22,7 +22,7 @@
 =================================================== */
 
 import { useEffect, useState } from 'react';
-import { useFrases } from '../../frases/ProveedorDeFrases.jsx';
+import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import Cartel from './Cartel.jsx';
 
 /* Lo mismo que exige la tabla, dicho antes y en el idioma de la pantalla. La
