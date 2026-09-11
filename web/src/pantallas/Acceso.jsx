@@ -29,6 +29,7 @@ import { useFrases } from '../frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
 import { Texto } from '../frases/lector.js';
 import { conLaBase } from '../datos/puerta.js';
+import CampoDeClave from '../formularios/CampoDeClave.jsx';
 
 /* Dónde le toca entrar a cada papel. Los dos primeros son vistas de acá; los
    dos del teléfono son programas aparte, y ahí se sale de éste. */
@@ -185,8 +186,8 @@ export default function Acceso() {
 
             <div className="form-group">
               <label htmlFor="acceso-clave">{frase('acceso.contrasena')}</label>
-              <input
-                type="password" id="acceso-clave" autoComplete="current-password" required
+              <CampoDeClave
+                id="acceso-clave" autoComplete="current-password" required
                 value={clave} onChange={(e) => setClave(e.target.value)}
               />
             </div>

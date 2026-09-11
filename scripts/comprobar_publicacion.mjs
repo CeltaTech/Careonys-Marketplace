@@ -60,8 +60,11 @@ const TIPOS = {
   '.webp': 'image/webp',
 };
 
-// Lo que no se sirve: no vive en el sitio y pedirlo sería un rojo falso.
-const NO_SE_SIRVE = /^(docs|scripts|supabase|\.githooks|\.claude|\.agents)\/|^(CLAUDE|README)\.md$|^\./;
+/* Lo que no se sirve: no vive en el sitio y pedirlo sería un rojo falso. Y
+   `web/` está acá por lo mismo que `scripts/`, aunque el motivo sea otro: es
+   materia prima de la herramienta de armado, no sitio. Lo que el servidor
+   sirve es lo construido a partir de eso. */
+const NO_SE_SIRVE = /^(docs|scripts|supabase|web|\.githooks|\.claude|\.agents)\/|^(CLAUDE|README)\.md$|^package(-lock)?\.json$|^\./;
 
 /* Lo que git tiene guardado para esa ruta en el último commit, que es lo que el
    sitio clona. Devuelve nulo si la ruta no está en el commit —se la nombró a
@@ -123,13 +126,16 @@ if (control.status !== 404) {
    Lo cerró `.vercelignore`; esto es lo que avisa si alguna vez se vuelve a
    abrir. Los dos documentos legales quedan servidos a propósito: los enlazan
    las pantallas públicas, y que estén sin revisión profesional es el
-   pendiente 49, no esto. */
+   pendiente 49, no esto. Y el armazón de React entra en la misma lista por
+   otro motivo: servido tal cual es una página en blanco con una dirección
+   rota adentro, así que si aparece publicado es que algo se armó mal. */
 const NO_SE_PUBLICA = [
   'CLAUDE.md',
   'docs/PENDIENTES.md',
   'docs/ALCANCE.md',
   'scripts/verificar_todo.mjs',
   'supabase/migrations/0001_base_del_esquema.sql',
+  'web/src/principal.jsx',
 ];
 
 /* Y antes de creerle al 404 hay que saber que el archivo existe acá. Un archivo

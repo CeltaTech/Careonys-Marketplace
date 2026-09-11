@@ -20,8 +20,16 @@
 import { Routes, Route, Outlet } from 'react-router-dom';
 import Navegacion from './armazon/Navegacion.jsx';
 import Pie from './armazon/Pie.jsx';
-import Acceso from './pantallas/Acceso.jsx';
+import Inicio from './pantallas/Inicio.jsx';
+import Cursos from './pantallas/Cursos.jsx';
+import SolicitarAsistente from './pantallas/SolicitarAsistente.jsx';
 import Acompanamiento from './pantallas/Acompanamiento.jsx';
+import Directorio from './pantallas/Directorio.jsx';
+import Perfil from './pantallas/Perfil.jsx';
+import Acceso from './pantallas/Acceso.jsx';
+import RegistrarFamilia from './pantallas/RegistrarFamilia.jsx';
+import RecuperarClave from './pantallas/RecuperarClave.jsx';
+import NuevaClave from './pantallas/NuevaClave.jsx';
 
 function ConMarco() {
   return (
@@ -37,10 +45,18 @@ export default function Rutas() {
   return (
     <Routes>
       <Route element={<ConMarco />}>
+        <Route path="/" element={<Inicio />} />
+        <Route path="/cursos" element={<Cursos />} />
+        <Route path="/solicitar-asistente" element={<SolicitarAsistente />} />
         <Route path="/soporte-remoto" element={<Acompanamiento />} />
+        <Route path="/directorio" element={<Directorio />} />
+        <Route path="/perfil" element={<Perfil />} />
       </Route>
 
       <Route path="/acceso" element={<Acceso />} />
+      <Route path="/registrar-familia" element={<RegistrarFamilia />} />
+      <Route path="/recuperar-clave" element={<RecuperarClave />} />
+      <Route path="/nueva-clave" element={<NuevaClave />} />
     </Routes>
   );
 }

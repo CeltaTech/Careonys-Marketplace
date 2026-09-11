@@ -6,7 +6,7 @@
 > 54 archivos convertidos**. Las dos pantallas que faltaban se cerraron ese día por caminos
 > distintos: `mockup-app.html` se convirtió, y `formulario-integral.html` —que era una hoja de
 > muestra y ya había cumplido su función— salió de uso y se apartó a `fuera de uso/`, que ningún
-> chequeo abre (`scripts/recorrido.mjs:96`); el porqué está en `docs/ALCANCE.md`. Sus 119 frases
+> chequeo abre (`scripts/recorrido.mjs:103`); el porqué está en `docs/ALCANCE.md`. Sus 119 frases
 > se fueron con ella sin traducirse, y no se tiró nada: la pantalla sigue entera adentro de la
 > cuarentena. **La mitad de los datos ya no falta, y se miró antes de decirlo:**
 > `data/catalogo-oferta.json` tiene sus 15 fichas en los tres idiomas y

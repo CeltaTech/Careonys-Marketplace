@@ -28,7 +28,7 @@ const QUE_INCLUYE = [
 export default function Acompanamiento() {
   const { frase } = useFrases();
 
-  usePestana('acompanamiento.titulo');
+  usePestana('acompanamiento.titulo', { descripcion: 'acompanamiento.descripcion' });
 
   return (
     <>
@@ -85,7 +85,14 @@ export default function Acompanamiento() {
           <div className="contact-form fade-in">
             <h2>{frase('acompanamiento.consulta_titulo')}</h2>
             <p>{frase('acompanamiento.consulta_bajada')}</p>
-            <FormularioDeConsulta />
+            <FormularioDeConsulta
+              rotulos={{
+                pregunta: 'acompanamiento.campo_situacion',
+                elegir: 'acompanamiento.elija_opcion',
+                novedades: 'acompanamiento.campo_novedades',
+                enviar: 'acompanamiento.enviar',
+              }}
+            />
           </div>
         </div>
       </section>

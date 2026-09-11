@@ -1,8 +1,25 @@
 /* ===================================================
    EL FORMULARIO DE CONSULTA DE LAS PANTALLAS PÚBLICAS
 
-   Cuatro pantallas preguntan lo mismo —nombre, correo, celular, motivo y si
-   quiere novedades—, así que el formulario es uno solo y está acá.
+   Cuatro pantallas preguntan lo mismo —nombre, correo, celular, una elección y
+   si quiere novedades—, así que el formulario es uno solo y está acá.
+
+   **Pero las cuatro no lo preguntan con las mismas palabras, y eso no es un
+   descuido.** Una pregunta por la situación, otra por la consulta, y la de
+   cursos por cuál curso interesa. Los rótulos los pone la pantalla, y no tienen
+   valor por omisión a propósito: cuando lo tenían, tres pantallas quedaron
+   preguntando con las palabras de la cuarta sin que nada avisara.
+
+   **El aviso de enviado no lleva rótulo, y es a propósito.** Tres de las cuatro
+   pantallas traían escrito el suyo, pero ese cartel estaba apagado por estilo y
+   nadie lo prendía nunca: lo que la persona veía al enviar era siempre la misma
+   frase, la que escribía el programa. Así que la frase es una, y los tres textos
+   que nadie llegó a ver no se resucitan ahora como si hubieran funcionado.
+
+   **Y la elección sale de dos lados.** En tres pantallas es un motivo, que es un
+   vocabulario; en la de cursos es un curso, que sale de la oferta. La diferencia
+   no es sólo de dónde viene: lo que se guarda como motivo de la consulta también
+   cambia, porque un curso no es un motivo. Ver más abajo.
 
    **Qué hace con la respuesta, y por qué hace eso.** Guardar una consulta
    pública contra la base exige abrirle la tabla a quien no inició sesión, y eso
@@ -30,7 +47,7 @@ import { useFrases } from '../frases/ProveedorDeFrases.jsx';
 import { useVocabulario } from './useVocabulario.js';
 import { Identidad, Texto } from '../frases/lector.js';
 
-const VACIO = { nombre: '', email: '', celular: '', motivo: '', novedades: 'si' };
+const VACIO = { nombre: '', email: '', celular: '', eleccion: '', novedades: 'si' };
 
 /* Falla cerrado: ante cualquier duda contesta que no, y la consulta se va por
    correo, que es el camino que sí llega. */
@@ -42,9 +59,11 @@ async function sePuedeGuardar() {
   return Boolean(prestadora && prestadora.id);
 }
 
-export default function FormularioDeConsulta({ vocabulario = 'motivo_consulta', motivoFijo = '' }) {
+export default function FormularioDeConsulta({
+  rotulos, vocabulario = 'motivo_consulta', desdeLaOferta = false, motivoFijo = ''
+}) {
   const { frase } = useFrases();
-  const opciones = useVocabulario(vocabulario);
+  const opciones = useVocabulario(vocabulario, { desdeLaOferta });
 
   const [datos, setDatos] = useState(VACIO);
   const [estado, setEstado] = useState('listo');   // listo | enviando | guardado | error | por_correo
@@ -53,8 +72,8 @@ export default function FormularioDeConsulta({ vocabulario = 'motivo_consulta', 
   const cambiar = (campo) => (evento) =>
     setDatos((antes) => ({ ...antes, [campo]: evento.target.value }));
 
-  const etiquetaDelMotivo = () => {
-    const item = opciones.items.filter((i) => i.clave === datos.motivo)[0];
+  const etiquetaElegida = () => {
+    const item = opciones.items.filter((i) => i.clave === datos.eleccion)[0];
     return item ? opciones.texto(item) : '';
   };
 
@@ -65,7 +84,7 @@ export default function FormularioDeConsulta({ vocabulario = 'motivo_consulta', 
     [frase('consulta.dato_nombre'), datos.nombre],
     [frase('consulta.dato_correo'), datos.email],
     [frase('consulta.dato_celular'), datos.celular],
-    [frase('consulta.dato_motivo'), etiquetaDelMotivo()],
+    [frase(desdeLaOferta ? 'consulta.dato_curso' : 'consulta.dato_motivo'), etiquetaElegida()],
     [frase('consulta.dato_novedades'), frase(datos.novedades === 'si' ? 'comun.si' : 'comun.no')]
   ].filter(([, valor]) => valor).map(([etiqueta, valor]) => etiqueta + ': ' + valor).join('\n');
 
@@ -77,7 +96,7 @@ export default function FormularioDeConsulta({ vocabulario = 'motivo_consulta', 
     + '&body=' + encodeURIComponent(redaccion());
 
   const faltaAlgo = () =>
-    !datos.nombre.trim() || !datos.celular.trim() || !datos.motivo
+    !datos.nombre.trim() || !datos.celular.trim() || !datos.eleccion
     || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(datos.email.trim());
 
   async function enviar(evento) {
@@ -95,7 +114,10 @@ export default function FormularioDeConsulta({ vocabulario = 'motivo_consulta', 
       if (await sePuedeGuardar()) {
         await window.ClienteDatos.crearAvisoFamilia({
           paciente: datos.nombre,
-          motivoConsulta: datos.motivo || motivoFijo,
+          /* Un curso no es un motivo de consulta: la pantalla de cursos elige
+             entre cursos y trae escrito aparte cuál es su motivo. Cuál curso
+             eligió va en la redacción del correo, que es donde iba antes. */
+          motivoConsulta: desdeLaOferta ? motivoFijo : datos.eleccion,
           horarios: 'A coordinar',
           contacto: { nombre: datos.nombre, email: datos.email, celular: datos.celular }
         });
@@ -135,17 +157,17 @@ export default function FormularioDeConsulta({ vocabulario = 'motivo_consulta', 
       </div>
 
       <div className="form-group">
-        <label htmlFor="consulta-motivo">{frase('acompanamiento.campo_situacion')}</label>
+        <label htmlFor="consulta-eleccion">{frase(rotulos.pregunta)}</label>
         <select
-          id="consulta-motivo"
-          value={datos.motivo}
-          onChange={cambiar('motivo')}
+          id="consulta-eleccion"
+          value={datos.eleccion}
+          onChange={cambiar('eleccion')}
           disabled={opciones.estado === 'cargando'}
         >
           <option value="">
             {opciones.estado === 'cargando' ? frase('catalogo.cargando')
               : opciones.estado === 'error' ? frase('catalogo.error')
-                : frase('acompanamiento.elija_opcion')}
+                : frase(rotulos.elegir)}
           </option>
           {opciones.items.map((item) => (
             <option key={item.clave} value={item.clave}>{opciones.texto(item)}</option>
@@ -154,7 +176,7 @@ export default function FormularioDeConsulta({ vocabulario = 'motivo_consulta', 
       </div>
 
       <div className="form-group">
-        <label>{frase('acompanamiento.campo_novedades')}</label>
+        <label>{frase(rotulos.novedades)}</label>
         <div className="radio-group">
           <label>
             <input type="radio" name="novedades" value="si"
@@ -170,7 +192,7 @@ export default function FormularioDeConsulta({ vocabulario = 'motivo_consulta', 
       </div>
 
       <button type="submit" className="btn btn-secundario" disabled={estado === 'enviando'}>
-        {estado === 'enviando' ? frase('consulta.enviando') : frase('acompanamiento.enviar')}
+        {estado === 'enviando' ? frase('consulta.enviando') : frase(rotulos.enviar)}
       </button>
 
       {aviso && (

@@ -90,6 +90,13 @@ const NO_ES_DEL_PROYECTO = new Set([
   'package-lock.json',
   // Copias enteras del proyecto que deja el CLI de Claude Code.
   '.claude',
+  // Lo que arma la herramienta a partir del código: no lo escribió nadie, no lo
+  // lee nadie, y no entra al repositorio —ver `.gitignore`—. Mirarlo acá adentro
+  // es mirar dos veces lo mismo, y mal: lo construido junta en un archivo solo
+  // lo que estaba repartido en muchos, así que un chequeo que busca por archivo
+  // ve una pantalla que no existe, la marca escrita a mano donde no se escribió
+  // a mano, y la dirección de la base adentro de algo que no es su único lugar.
+  'dist',
   // La cuarentena: lo que se sospecha inútil y todavía no se borra, apartado a
   // propósito. Ya no se edita, así que avisar no sirve. Vive en `/fuera de uso/`
   // —ver `.gitignore`—, y el nombre frena en cualquier nivel por si aparece otra.
