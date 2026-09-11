@@ -15,23 +15,35 @@
 
    Los cuatro estados salen de acá para que ninguna pantalla los repita:
    **cargando** mientras se abre la puerta y se pregunta por la sesión,
-   **error** si no se pudo llegar, **vacío** —que acá es «no hay sesión»— que no
+   **error** si no se pudo llegar —y con él, la clave de la frase que lo
+   explica y la forma de volver a intentarlo, porque lo que falla pasa entero
+   acá adentro y la pantalla no tendría cómo—, **vacío** —que acá es «no hay sesión»— que no
    dibuja nada porque ya está yéndose, y **listo** con la sesión resuelta.
 =================================================== */
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { conLaBase } from './puerta.js';
+import { Texto } from '../frases/lector.js';
 
 export function useSesionRequerida() {
   const navegar = useNavigate();
   const donde = useLocation();
   const [estado, setEstado] = useState('cargando');
+  const [motivo, setMotivo] = useState('');
   const [base, setBase] = useState(null);
   const [sesion, setSesion] = useState(null);
+  const [intento, setIntento] = useState(0);
+
+  /* Volver a intentar es lo único que la persona puede hacer cuando no se pudo
+     llegar al servidor, y la pantalla no tiene cómo hacerlo por su cuenta: lo
+     que falla pasa entero acá adentro. Así que el botón de reintentar sale de
+     acá, junto con el estado que lo hace aparecer. */
+  const reintentar = useCallback(() => setIntento((cuantos) => cuantos + 1), []);
 
   useEffect(() => {
     let vigente = true;
+    setEstado('cargando');
 
     (async () => {
       try {
@@ -52,14 +64,20 @@ export function useSesionRequerida() {
         setSesion(laSesion);
         setEstado('listo');
       } catch (err) {
-        console.error('No se pudo comprobar la sesión:', err);
-        if (vigente) setEstado('error');
+        /* El detalle técnico queda en el registro y no sale de ahí; a la
+           pantalla va la clave de la frase que corresponde a esa clase de
+           fallo, que es la misma que diría la pantalla si el fallo fuera
+           suyo. */
+        if (vigente) {
+          setMotivo(Texto.claveDeError(err, 'No se pudo comprobar la sesión:'));
+          setEstado('error');
+        }
       }
     })();
 
     return () => { vigente = false; };
     // Se comprueba al entrar a cada vista, que es cuando la pantalla cambia.
-  }, [donde.pathname, navegar]);
+  }, [donde.pathname, navegar, intento]);
 
-  return { estado, base, sesion };
+  return { estado, motivo, base, sesion, reintentar };
 }

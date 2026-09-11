@@ -2118,3 +2118,183 @@ button:disabled:hover,
   color: var(--texto-secundario);
   cursor: default;
 }
+
+/* ── La pantalla de evaluaciones ───────────────────────────────────────────
+   El bloque venía escrito adentro de `examen.html`, que era el único lugar que
+   lo usaba. Al pasar la pantalla a una vista no hay dónde escribirlo, así que
+   sube acá tal cual estaba, sin una sola declaración cambiada, al lado del de
+   las pantallas de la sesión, que llegó por el mismo camino. */
+.examen-pantalla {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+  background: var(--fondo-app);
+}
+
+.examen-tarjeta {
+  width: 100%;
+  max-width: 640px;
+  align-self: flex-start;
+  background: var(--superficie);
+  border: 1px solid var(--borde-card);
+  border-radius: 16px;
+  box-shadow: var(--sombra-card);
+  padding: 32px;
+}
+
+.examen-marca {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.examen-marca img {
+  max-height: 48px;
+  margin-bottom: 12px;
+}
+
+.examen-marca .tenant-name {
+  display: block;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--texto-titulo);
+}
+
+.examen-titulo {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--texto-titulo);
+  margin: 0 0 6px;
+}
+
+.examen-bajada {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--texto-secundario);
+  margin: 0 0 20px;
+}
+
+.examen-aviso {
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.examen-aviso.critico {
+  background: var(--tono-critico-fondo);
+  color: var(--tono-critico-texto);
+}
+
+.examen-aviso.atencion {
+  background: var(--tono-atencion-fondo);
+  color: var(--tono-atencion-texto);
+}
+
+.examen-aviso.info {
+  background: var(--tono-info-fondo);
+  color: var(--tono-info-texto);
+}
+
+.examen-aviso.exito {
+  background: var(--tono-exito-fondo);
+  color: var(--tono-exito-texto);
+}
+
+.examen-cargando {
+  text-align: center;
+  color: var(--texto-secundario);
+  font-size: 14px;
+  padding: 32px 0;
+}
+
+.examen-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.examen-lista li + li {
+  margin-top: 12px;
+}
+
+.examen-lista button {
+  width: 100%;
+  text-align: left;
+  background: var(--superficie);
+  border: 1px solid var(--borde-card);
+  border-radius: 12px;
+  padding: 16px 18px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.examen-lista button:hover {
+  border-color: var(--marca-prestadora);
+}
+
+.examen-lista .nombre {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--texto-titulo);
+  margin-bottom: 4px;
+}
+
+.examen-lista .detalle {
+  display: block;
+  font-size: 13px;
+  color: var(--texto-secundario);
+}
+
+.examen-pregunta {
+  border: 1px solid var(--borde-card);
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.examen-pregunta .enunciado {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--texto-titulo);
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+
+.examen-opcion {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--texto-titulo);
+  cursor: pointer;
+}
+
+.examen-opcion input {
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.examen-resultado-cifra {
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0 0 4px;
+}
+
+.examen-pie {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--texto-secundario);
+}
+
+.examen-pie a {
+  color: var(--azul-medio-texto);
+  font-weight: 600;
+  text-decoration: none;
+}

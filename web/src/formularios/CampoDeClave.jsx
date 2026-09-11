@@ -39,7 +39,8 @@ import { conLaRevisionDeClaves } from '../datos/claves.js';
    para llevar el cursor al campo que quedó mal, y lo que hay que enfocar es el
    campo. */
 const CampoDeClave = forwardRef(function CampoDeClave({
-  id, value, onChange, autoComplete = 'current-password', required = false, ...resto
+  id, value, onChange, autoComplete = 'current-password', required = false,
+  placeholder, ...resto
 }, afuera) {
   const { frase } = useFrases();
   const [seVe, setSeVe] = useState(false);
@@ -73,7 +74,11 @@ const CampoDeClave = forwardRef(function CampoDeClave({
         autoComplete={autoComplete}
         required={required}
         minLength={minimo || undefined}
-        placeholder={minimo ? frase('clave.minimo', { cuantos: minimo }) : undefined}
+        /* El aviso del largo mínimo manda donde lo hay, y donde no lo hay manda
+           el que escriba la pantalla. Sin esto, una caja que pide la contraseña
+           de siempre quedaba muda: el largo mínimo sólo se pone al elegir una
+           nueva, y el texto propio se perdía por el camino. */
+        placeholder={minimo ? frase('clave.minimo', { cuantos: minimo }) : placeholder}
         value={value}
         onChange={onChange}
       />

@@ -13,8 +13,9 @@
    estaba repetido pantalla por pantalla; acá está dicho una vez, y en cuál de
    los dos grupos cae cada una se lee de un vistazo.
 
-   Las que todavía no están portadas no se inventan ni se esconden: falta que se
-   porten, y hasta entonces esta lista dice la verdad sobre qué hay.
+   **Están las quince, y son todas las que hay.** Una dirección que no figure acá
+   no existe en el sitio, y agregar una pantalla es agregarle un renglón a esta
+   lista: no hay ningún otro lugar donde una dirección pueda nacer.
 =================================================== */
 
 import { Routes, Route, Outlet } from 'react-router-dom';
@@ -30,6 +31,11 @@ import Acceso from './pantallas/Acceso.jsx';
 import RegistrarFamilia from './pantallas/RegistrarFamilia.jsx';
 import RecuperarClave from './pantallas/RecuperarClave.jsx';
 import NuevaClave from './pantallas/NuevaClave.jsx';
+import Examen from './pantallas/Examen.jsx';
+import GuiasPrestadora from './pantallas/GuiasPrestadora.jsx';
+import MockupApp from './pantallas/MockupApp.jsx';
+import PanelPrestadora from './pantallas/PanelPrestadora.jsx';
+import RegistrarAsistente from './pantallas/RegistrarAsistente.jsx';
 
 function ConMarco() {
   return (
@@ -51,12 +57,17 @@ export default function Rutas() {
         <Route path="/soporte-remoto" element={<Acompanamiento />} />
         <Route path="/directorio" element={<Directorio />} />
         <Route path="/perfil" element={<Perfil />} />
+        <Route path="/registrar-asistente" element={<RegistrarAsistente />} />
       </Route>
 
       <Route path="/acceso" element={<Acceso />} />
       <Route path="/registrar-familia" element={<RegistrarFamilia />} />
       <Route path="/recuperar-clave" element={<RecuperarClave />} />
       <Route path="/nueva-clave" element={<NuevaClave />} />
+      <Route path="/examen" element={<Examen />} />
+      <Route path="/guias-prestadora" element={<GuiasPrestadora />} />
+      <Route path="/mockup-app" element={<MockupApp />} />
+      <Route path="/panel-prestadora" element={<PanelPrestadora />} />
     </Routes>
   );
 }

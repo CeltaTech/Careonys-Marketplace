@@ -32,9 +32,9 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | | |
 |---|---|
 | 17 pantallas HTML, 13.121 renglones | sin ruteo: cada pantalla es un archivo |
-| 17.389 renglones de JavaScript propio, en 48 archivos | 10.253 de ellos son copias byte a byte de otro archivo (pendiente 13) |
+| 17.434 renglones de JavaScript propio, en 48 archivos | 10.259 de ellos son copias byte a byte de otro archivo (pendiente 13) |
 | 6.832 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
-| 4.578 renglones de hojas de estilo, en 10 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
+| 4.758 renglones de hojas de estilo, en 10 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
 | 874 declaraciones más, pegadas al HTML | en 219 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 13 de las 17 pantallas rescatan la sesión al abrir |
 | 5 servidores de afuera | cdn.jsdelivr.net, cdnjs.cloudflare.com, fonts.googleapis.com, fonts.gstatic.com, www.openstreetmap.org — hay que decir de qué es cada uno |
@@ -63,7 +63,7 @@ sumaba 4.638 donde la tabla de arriba, que sí sale de medir, decía 4.642—.
 | Archivo | Renglones | La enlazan |
 |---|---:|---|
 | `css/mockup-app.css` | 135 | Sólo `mockup-app.html` |
-| `css/styles.css` | 2.120 | 15 de las 17 pantallas |
+| `css/styles.css` | 2.300 | 15 de las 17 pantallas |
 | `css/tokens.css` | 358 | 15 de las 17 pantallas |
 | `css/utilidades.css` | 191 | 15 de las 17 pantallas |
 | `pwa-asistente/css/styles-pwa.css` | 338 | Sólo `pwa-asistente/index.html` |
@@ -73,7 +73,7 @@ sumaba 4.638 donde la tabla de arriba, que sí sale de medir, decía 4.642—.
 | `pwa-familia/css/tokens.css` | 358 | Sólo `pwa-familia/index.html`. Copia byte a byte de `css/tokens.css` |
 | `pwa-familia/css/utilidades.css` | 191 | Sólo `pwa-familia/index.html`. Copia byte a byte de `css/utilidades.css` |
 
-En disco hay 10 archivos y 4.578 renglones, de los cuales 1.436 son copias byte a byte de otro: son las que `verificar_copias.mjs` compara.
+En disco hay 10 archivos y 4.758 renglones, de los cuales 1.436 son copias byte a byte de otro: son las que `verificar_copias.mjs` compara.
 
 Hay además 977 renglones de CSS en bloques `<style>` adentro del HTML: 533 en `pwa-familia/index.html`, 270 en `pwa-asistente/index.html`, 174 en `examen.html`. Las demás pantallas no tienen ninguno.
 

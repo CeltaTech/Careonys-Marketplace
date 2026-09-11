@@ -29,7 +29,11 @@
       con **el mismo nombre**, que es lo que el archivo de sesión busca. Ganamos
       que ya no dependemos de que un servidor ajeno esté en pie para que alguien
       pueda entrar.
-   2. **El arranque.** El acceso a datos resuelve la Prestadora «cuando la
+   2. **El permiso de la sesión guardada.** El archivo de sesión lo restaura
+      solo apenas se carga, sin que nadie lo espere, y en una página suelta eso
+      alcanzaba: el aviso de «la página cargó» llegaba después. Acá ese aviso no
+      existe, así que se espera antes de seguir.
+   3. **El arranque.** El acceso a datos resuelve la Prestadora «cuando la
       página terminó de cargar». En un programa de una sola página ese momento
       ya pasó hace rato cuando alguien abre la puerta, así que ese aviso no
       llega nunca más y hay que dispararlo acá. Se dispara igual que allá: sin
@@ -50,6 +54,20 @@ async function abrir() {
 
   await import('../../../js/apiClient.js');
   await import('../../../js/auth.js');
+
+  /* El permiso de la sesión guardada, antes de nada. El archivo de sesión ya
+     hace esto solo apenas se carga, pero lo hace sin que nadie lo espere: en
+     una página suelta eso alcanzaba, porque entre que el navegador termina de
+     leer los archivos y avisa que la página cargó hay tiempo de sobra. Acá no
+     hay esa pausa, así que se espera a propósito. Sin esto, quien tiene sesión
+     abierta pide la Prestadora sin permiso, el pedido vuelve vacío y la marca
+     cae en la que nombre la dirección, que puede no ser la suya. */
+  try {
+    const sesion = await window.Sesion.getSession();
+    if (sesion) window.ClienteDatos.setAuthToken(sesion.access_token);
+  } catch (err) {
+    console.error('Restauración de la sesión guardada:', err);
+  }
 
   /* Lo que antes disparaba «la página terminó de cargar». Ver arriba. */
   window.ClienteDatos.initTenant().catch((err) => {

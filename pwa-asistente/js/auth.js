@@ -205,11 +205,14 @@ const Sesion = {
   // «esa cuenta no existe» le regala a cualquiera una forma de averiguar quién
   // está registrado. Siempre se responde lo mismo.
   //
-  // `volverA` es la dirección a la que lleva el enlace del correo. Tiene que
+  // `volverA` es la dirección a la que lleva el enlace del correo. Va sin
+  // extensión porque el sitio publica sus pantallas con la dirección limpia, y
+  // la de esta máquina también: es una sola pantalla que dibuja el programa, no
+  // un archivo que el servidor va a buscar. Tiene que
   // estar en la lista de direcciones permitidas del proyecto; si no está, el
   // enlace termina en la portada y la persona no puede cambiar nada.
   async pedirNuevaClave(email, volverA) {
-    const destino = volverA || (window.location.origin + '/nueva-clave.html');
+    const destino = volverA || (window.location.origin + '/nueva-clave');
     const { error } = await _sb.auth.resetPasswordForEmail(email, { redirectTo: destino });
     if (error) throw new Error(error.message);
   },

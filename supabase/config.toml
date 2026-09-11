@@ -170,15 +170,18 @@ site_url = "https://careonys-marketplace-celta-tech.vercel.app"
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
 # Los tres nombres del sitio publicado —Vercel le da uno por proyecto, uno corto y
-# uno por rama— más el servidor de pruebas de esta máquina, que es contra el que
-# se prueba antes de subir. El comodín cubre las pantallas que reciben un enlace
-# del correo: elegir una contraseña nueva y confirmar el alta.
+# uno por rama— más los dos servidores de pruebas de esta máquina, que son contra
+# los que se prueba antes de subir: el que sirve las pantallas sueltas y el de la
+# herramienta que arma la web. El comodín cubre las pantallas que reciben un
+# enlace del correo: elegir una contraseña nueva y confirmar el alta.
 additional_redirect_urls = [
   "https://careonys-marketplace-celta-tech.vercel.app/**",
   "https://careonys-marketplace.vercel.app/**",
   "https://careonys-marketplace-git-main-celta-tech.vercel.app/**",
   "http://localhost:5599/**",
-  "http://127.0.0.1:5599/**"
+  "http://127.0.0.1:5599/**",
+  "http://localhost:5601/**",
+  "http://127.0.0.1:5601/**"
 ]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
