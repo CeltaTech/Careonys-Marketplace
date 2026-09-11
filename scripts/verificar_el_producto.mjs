@@ -47,7 +47,7 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, basename } from 'node:path';
-import { archivos, seRevisaron, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
+import { archivos, seRevisaron, esArmazon, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DOCUMENTO = join('docs', 'CAREONYS MarketPlace EL PRODUCTO.md');
@@ -116,6 +116,7 @@ const problemas = [];
 
 const desdeLaRaiz = raiz.replace(/\\/g, '/') + '/';
 const pantallas = archivos(raiz, EXTENSIONES_DE_PANTALLA)
+  .filter((camino) => !esArmazon(camino))
   .map((camino) => camino.replace(/\\/g, '/').replace(/\.html$/i, ''))
   .map((camino) => (camino.startsWith(desdeLaRaiz) ? camino.slice(desdeLaRaiz.length) : camino))
   .filter((camino) => !camino.startsWith('docs/'))

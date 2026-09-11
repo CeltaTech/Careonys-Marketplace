@@ -17,6 +17,14 @@ scripts/
 supabase/
 CLAUDE.md
 
+# Lo que es materia prima y no sitio. El armazón de React y los tres
+# `package.json` son de la herramienta de armado: lo que el servidor sirve es lo
+# construido, no esto. Publicarlos no rompe nada y tampoco sirve para nada, y un
+# armazón servido tal cual es una página en blanco con una dirección rota
+# adentro.
+web/
+package.json
+
 # Salvo los tres documentos legales, que sí los enlazan las pantallas públicas
 # («Términos» en `index.html:519`, `cursos.html:225`, `directorio.html:201`,
 # `perfil.html:237`, `solicitar-asistente.html:376` y `soporte-remoto.html:204`;

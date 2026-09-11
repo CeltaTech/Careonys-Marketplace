@@ -48,6 +48,7 @@
 .flex.flex { display:flex; }
 .grilla.grilla { display:grid; }
 .bloque.bloque { display:block; }
+.bloque-en-linea.bloque-en-linea { display:inline-block; }
 
 /* ---- Cómo se acomoda lo de adentro ---- */
 .alinear-centro.alinear-centro { align-items:center; }
@@ -152,6 +153,7 @@
 .ancho-22.ancho-22 { width:22px; }
 .alto-22.alto-22 { height:22px; }
 .ancho-24.ancho-24 { width:24px; }
+.alto-400.alto-400 { height:400px; }
 .alto-380.alto-380 { height:380px; }
 .ancho-minimo-140.ancho-minimo-140 { min-width:140px; }
 .ancho-maximo-280.ancho-maximo-280 { max-width:280px; }

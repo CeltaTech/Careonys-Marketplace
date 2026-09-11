@@ -3097,7 +3097,7 @@ lo que sigue explica por qué; el consentimiento de novedades sigue sin tabla.
 
 El 9 de septiembre de 2026 `formulario-integral.html` se apartó a la cuarentena: hoy vive en
 `fuera de uso/formulario-integral.html`, la carpeta que `.gitignore:34` declara fuera del
-repositorio y que `scripts/recorrido.mjs:91` deja afuera de todos los chequeos.
+repositorio y que `scripts/recorrido.mjs:96` deja afuera de todos los chequeos.
 
 **No se saca una pantalla porque moleste, y ésta no era una pantalla.** Nació el 5 de agosto de
 2026 como **hoja de muestra**: su título decía «Formularios Oficiales de la App» y venía con un

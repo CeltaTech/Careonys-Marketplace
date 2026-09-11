@@ -29,7 +29,7 @@ import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve, sep, basename } from 'node:path';
 import { createHash } from 'node:crypto';
-import { archivos, seRevisaron, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
+import { archivos, seRevisaron, esArmazon, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const escribir = process.argv.includes('--escribir');
@@ -57,8 +57,10 @@ const enEspanol = (n) => n.toLocaleString('es-AR');
 
 /* ── LAS PANTALLAS ───────────────────────────────────────────────────────
    Cada archivo `.html` es una pantalla: no hay ruteo, así que la cuenta de
-   archivos es la cuenta de pantallas. */
-const pantallas = archivos(raiz, EXTENSIONES_DE_PANTALLA).sort();
+   archivos es la cuenta de pantallas. El armazón de un paquete no cuenta: no
+   tiene nada dibujado adentro. */
+const pantallas = archivos(raiz, EXTENSIONES_DE_PANTALLA)
+  .filter((camino) => !esArmazon(camino)).sort();
 seRevisaron(pantallas.length, 'una sola pantalla');
 const renglonesPantallas = pantallas.reduce((t, c) => t + renglones(leer(c)), 0);
 
@@ -223,6 +225,15 @@ const chequeos = archivos(join(raiz, 'scripts'), ['.mjs'])
   .filter((n) => /\/verificar_[a-z_]+\.mjs$/.test(n) && basename(n) !== 'verificar_todo.mjs');
 seRevisaron(chequeos.length, 'un solo chequeo');
 
+/* ── LOS PAQUETES ────────────────────────────────────────────────────────
+   Cada `package.json` es una parte que se construye sola. Se cuentan y se
+   nombran en vez de afirmar nada sobre ellos: el renglón de los servidores de
+   afuera decía «sin `package.json` ni compilación», y era cierto hasta que
+   dejó de serlo. */
+const paquetes = archivos(raiz, ['package.json'])
+  .map((camino) => dirname(relative(raiz, camino)).split(sep).join('/'))
+  .sort();
+
 /* ── LA TABLA ────────────────────────────────────────────────────────────
    El renglón de los servidores de afuera dice de qué es cada uno, y eso no se
    puede medir: se escribe una vez y se comprueba que la cuenta no se haya
@@ -249,8 +260,12 @@ const renglonesTabla = [
    `en ${enEspanol(atributosStyle)} atributos \`style=\` (fue el pendiente 8, cerrado)`],
   ['Supabase Auth funcionando',
    `${enEspanol(conSesion.length)} de las ${enEspanol(pantallas.length)} pantallas rescatan la sesión al abrir`],
-  [`${enEspanol(afuera.size)} servidores de afuera, sin \`package.json\` ni compilación`,
+  [`${enEspanol(afuera.size)} servidores de afuera`,
    DE_AFUERA.get(afuera.size) || `${[...afuera].sort().join(', ')} — hay que decir de qué es cada uno`],
+  [`${enEspanol(paquetes.length)} ${paquetes.length === 1 ? 'paquete que se construye solo' : 'paquetes que se construyen solos'}`,
+   paquetes.length === 0
+     ? 'ninguno: cada pantalla se sirve tal cual está escrita'
+     : paquetes.join(', ')],
   [`${enEspanol(tablas.size)} tablas y ${enEspanol(migraciones.length)} migraciones en el repositorio`,
    `${enEspanol(chequeos.length)} chequeos las miran antes de cada commit`]
 ];

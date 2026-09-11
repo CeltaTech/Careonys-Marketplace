@@ -83,6 +83,11 @@ const CERRADAS = new Set(CAJAS_FUERTES.map(desnudo));
 const NO_ES_DEL_PROYECTO = new Set([
   // Dependencias y estado de las herramientas.
   'node_modules', '.git', '.vercel', '.temp', '.branches',
+  // El inventario que el gestor de paquetes escribe solo con lo que bajó: no
+  // lo escribió nadie de acá, no lo lee nadie de acá, y adentro tiene miles de
+  // firmas que a un chequeo de texto le parecen palabras. Una de ellas hacía
+  // que el control del trato de usted informara tres apariciones de «Ti».
+  'package-lock.json',
   // Copias enteras del proyecto que deja el CLI de Claude Code.
   '.claude',
   // La cuarentena: lo que se sospecha inútil y todavía no se borra, apartado a
@@ -126,6 +131,21 @@ export const NUNCA_SE_ABRE = new Set([...CAJAS_FUERTES, ...NO_ES_DEL_PROYECTO]);
    atributo `data-frase`—, y ésos hay que reescribirlos igual. Lo que sí termina
    es la parte silenciosa. */
 export const EXTENSIONES_DE_PANTALLA = ['.html'];
+
+/* ── Y LO QUE TERMINA EN .html SIN SER UNA PANTALLA ───────────────────────
+   El armazón de un paquete de React: unos pocos renglones sin nada dibujado
+   adentro, que la herramienta de armado rellena con lo construido. No se
+   publica, no tiene contenido y no lo abre nadie.
+
+   Está acá y no adentro de cada chequeo porque son tres los que se lo cruzan,
+   y los tres se equivocaban del mismo modo: uno le pedía un nombre visible y
+   un capítulo en la foto del producto, otro lo sumaba a la cuenta de pantallas
+   del README, y el tercero daba por rota su única dirección. */
+export const ARMAZONES = ['web/index.html'];
+
+/** ¿Este archivo es el armazón de un paquete, y no una pantalla? */
+export const esArmazon = (camino) =>
+  ARMAZONES.some((a) => camino.split(sep).join('/').toLowerCase().endsWith(a));
 
 /** ¿Este archivo es una pantalla? Sirve tanto con el nombre como con la sola
  *  extensión, que es como lo preguntan algunos chequeos. */

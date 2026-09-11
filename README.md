@@ -26,18 +26,19 @@ dos repositorios y dos proyectos de Supabase independientes.
 Sitio estático en HTML, CSS y JavaScript plano, en proceso de migración a React + Vite para
 alinearse con el stack de Careonys.
 
-Medido el 10 de septiembre de 2026 sobre el árbol de trabajo con `node scripts/medir_estado.mjs`, que es de
+Medido el 11 de septiembre de 2026 sobre el árbol de trabajo con `node scripts/medir_estado.mjs`, que es de
 donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
 | 17 pantallas HTML, 13.121 renglones | sin ruteo: cada pantalla es un archivo |
-| 16.933 renglones de JavaScript propio, en 39 archivos | 10.253 de ellos son copias byte a byte de otro archivo (pendiente 13) |
+| 17.081 renglones de JavaScript propio, en 42 archivos | 10.253 de ellos son copias byte a byte de otro archivo (pendiente 13) |
 | 6.832 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
-| 4.572 renglones de hojas de estilo, en 10 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
-| 880 declaraciones más, pegadas al HTML | en 221 atributos `style=` (fue el pendiente 8, cerrado) |
+| 4.578 renglones de hojas de estilo, en 10 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
+| 874 declaraciones más, pegadas al HTML | en 219 atributos `style=` (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 13 de las 17 pantallas rescatan la sesión al abrir |
-| 5 servidores de afuera, sin `package.json` ni compilación | cdn.jsdelivr.net, cdnjs.cloudflare.com, fonts.googleapis.com, fonts.gstatic.com, www.openstreetmap.org — hay que decir de qué es cada uno |
+| 5 servidores de afuera | cdn.jsdelivr.net, cdnjs.cloudflare.com, fonts.googleapis.com, fonts.gstatic.com, www.openstreetmap.org — hay que decir de qué es cada uno |
+| 3 paquetes que se construyen solos | pwa-asistente, pwa-familia, web |
 | 37 tablas y 8 migraciones en el repositorio | 41 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
@@ -64,15 +65,15 @@ sumaba 4.638 donde la tabla de arriba, que sí sale de medir, decía 4.642—.
 | `css/mockup-app.css` | 135 | Sólo `mockup-app.html` |
 | `css/styles.css` | 2.120 | 15 de las 17 pantallas |
 | `css/tokens.css` | 358 | 15 de las 17 pantallas |
-| `css/utilidades.css` | 189 | 15 de las 17 pantallas |
+| `css/utilidades.css` | 191 | 15 de las 17 pantallas |
 | `pwa-asistente/css/styles-pwa.css` | 338 | Sólo `pwa-asistente/index.html` |
 | `pwa-asistente/css/tokens.css` | 358 | Sólo `pwa-asistente/index.html`. Copia byte a byte de `css/tokens.css` |
-| `pwa-asistente/css/utilidades.css` | 189 | Sólo `pwa-asistente/index.html`. Copia byte a byte de `css/utilidades.css` |
+| `pwa-asistente/css/utilidades.css` | 191 | Sólo `pwa-asistente/index.html`. Copia byte a byte de `css/utilidades.css` |
 | `pwa-familia/css/styles-pwa.css` | 338 | Sólo `pwa-familia/index.html`. Copia byte a byte de `pwa-asistente/css/styles-pwa.css` |
 | `pwa-familia/css/tokens.css` | 358 | Sólo `pwa-familia/index.html`. Copia byte a byte de `css/tokens.css` |
-| `pwa-familia/css/utilidades.css` | 189 | Sólo `pwa-familia/index.html`. Copia byte a byte de `css/utilidades.css` |
+| `pwa-familia/css/utilidades.css` | 191 | Sólo `pwa-familia/index.html`. Copia byte a byte de `css/utilidades.css` |
 
-En disco hay 10 archivos y 4.572 renglones, de los cuales 1.432 son copias byte a byte de otro: son las que `verificar_copias.mjs` compara.
+En disco hay 10 archivos y 4.578 renglones, de los cuales 1.436 son copias byte a byte de otro: son las que `verificar_copias.mjs` compara.
 
 Hay además 977 renglones de CSS en bloques `<style>` adentro del HTML: 533 en `pwa-familia/index.html`, 270 en `pwa-asistente/index.html`, 174 en `examen.html`. Las demás pantallas no tienen ninguno.
 

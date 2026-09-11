@@ -51,7 +51,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import {
-  hayArchivos, seRevisaron, conLaMismaCaja, EXTENSIONES_DE_PANTALLA
+  hayArchivos, seRevisaron, conLaMismaCaja, esArmazon, EXTENSIONES_DE_PANTALLA
 } from './recorrido.mjs';
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -203,9 +203,19 @@ for (const camino of hayArchivos(raiz, DE_DONDE_SALEN)) {
       vistas.add(renglon + '|' + sinPregunta);
       miradas++;
 
-      const destino = sinPregunta.startsWith('/')
-        ? join(raiz, ...sinPregunta.slice(1).split('/'))
-        : resolve(suCarpeta, ...sinPregunta.split('/'));
+      /* El punto de entrada de un armazón no es una dirección del sitio: la
+         herramienta de armado se lo lleva adentro de lo construido, y lo que
+         el servidor sirve es eso. Se comprueba igual que el archivo esté —un
+         error de tipeo ahí rompe la construcción y no lo ve nadie hasta
+         publicar— pero se lo busca adentro del paquete, que es donde vive, y
+         no se le pregunta a `.vercelignore` si lo sube. */
+      const deLaHerramienta = esArmazon(camino) && sinPregunta.startsWith('/src/');
+
+      const destino = deLaHerramienta
+        ? resolve(suCarpeta, ...sinPregunta.slice(1).split('/'))
+        : sinPregunta.startsWith('/')
+          ? join(raiz, ...sinPregunta.slice(1).split('/'))
+          : resolve(suCarpeta, ...sinPregunta.split('/'));
       const como = conLaMismaCaja(raiz, destino);
 
       if (como === false) {
@@ -221,6 +231,8 @@ for (const camino of hayArchivos(raiz, DE_DONDE_SALEN)) {
           '      Linux, que sí: publicado da 404, y ninguna prueba de esta máquina lo ve.');
         continue;
       }
+      if (deLaHerramienta) continue;
+
       const adentro = relative(raiz, destino).split(sep).join('/');
       if (!sePublica(reglas, adentro)) {
         fallas.push(
