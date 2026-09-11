@@ -379,7 +379,7 @@ export default function PanelPrestadora() {
                   <tr key={a.id}>
                     <td>
                       <strong>{a.nombre}</strong><br />
-                      <span style={{ fontSize: '11px', color: 'var(--texto-secundario)' }}>
+                      <span className="texto-11 color-secundario">
                         {frase('panel.detalle_dni')} {a.dni} |{' '}
                         {frase('panel.fila_telefono')} {a.telefono}
                       </span>
@@ -387,9 +387,7 @@ export default function PanelPrestadora() {
                     <td>{a.profesion}</td>
                     <td>{a.zona}</td>
                     <td>
-                      <span style={{
-                        color: 'var(--azul-medio-texto)', fontSize: '11px', fontWeight: 700
-                      }}>
+                      <span className="color-azul-medio texto-11 peso-700">
                         <i className="fas fa-file-pdf"></i>{' '}
                         {frase('panel.documentos_cargados')}
                       </span>
@@ -406,8 +404,7 @@ export default function PanelPrestadora() {
                       )}
                     </td>
                     <td>
-                      <button className="btn btn-secundario"
-                        style={{ fontSize: '11px', padding: '6px 12px' }}
+                      <button className="btn btn-secundario texto-11 p-6-12"
                         disabled={abriendo === a.id}
                         onClick={() => abrirAuditoria(a.id)}>
                         {abriendo === a.id ? frase('panel.abriendo') : (

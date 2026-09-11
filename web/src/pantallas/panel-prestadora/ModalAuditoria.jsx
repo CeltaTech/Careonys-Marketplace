@@ -37,7 +37,7 @@ function Documento({ documento }) {
   const { frase } = useFrases();
   if (!documento || !documento.url) {
     return (
-      <span style={{ color: 'var(--texto-secundario)' }}>
+      <span className="color-secundario">
         {frase(documento && documento.falta === 'sin_enlace'
           ? 'panel.documento_sin_enlace' : 'panel.documento_pendiente')}
       </span>
@@ -45,7 +45,7 @@ function Documento({ documento }) {
   }
   return (
     <a href={documento.url} target="_blank" rel="noopener"
-      style={{ color: 'var(--azul-medio-texto)', fontWeight: 700 }}>
+      className="color-azul-medio peso-700">
       {frase(documento.rotulo)}
     </a>
   );

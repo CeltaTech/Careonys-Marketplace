@@ -102,7 +102,7 @@ function Anotacion({ anotacion }) {
         <h5>{titulo}</h5>
         <p>{anotacion.daily_notes}</p>
         {anotacion.blood_pressure ? (
-          <p style={{ marginTop: '4px', fontSize: '11px', color: 'var(--azul-medio-texto)' }}>
+          <p className="mt-4 texto-11 color-azul-medio">
             {'🩺 ' + frase('reporte.presion') + ': ' + anotacion.blood_pressure
               + ' | ' + frase('reporte.glucemia') + ': ' + (anotacion.glycemia || sinDato)}
           </p>

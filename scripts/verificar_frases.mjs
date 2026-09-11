@@ -43,16 +43,26 @@
    - **Los nombres comerciales**, que la regla de la empresa exceptúa: un plan se
      llama igual en los tres idiomas. Se declaran en `IGUALES_EN_TODOS`.
 
-   UNA PANTALLA ESTÁ CONVERTIDA CUANDO TIENE AL MENOS UN `data-frase`. No hay
-   lista que mantener: la primera clave que alguien le pone a una pantalla la
-   mete adentro de la regla 4, y de ahí no sale más.
+   UNA PÁGINA SUELTA ESTÁ CONVERTIDA CUANDO TIENE AL MENOS UN `data-frase`. No
+   hay lista que mantener: la primera clave que alguien le pone a una pantalla
+   la mete adentro de la regla 4, y de ahí no sale más.
+
+   Y UNA PANTALLA DE UN PROGRAMA ESTÁ CONVERTIDA CUANDO PIDE FRASES. El
+   mecanismo es otro y el portero también: en una página suelta la frase se
+   marca en el elemento, y en una pantalla de un programa se la pide por su
+   clave. Mientras se buscó el atributo en las dos por igual, ninguna pantalla
+   del programa entró jamás en la regla 4 —no tienen ese atributo y no lo van a
+   tener—, así que la mitad del producto podía escribir el texto a mano sin que
+   nadie dijera nada.
 =================================================== */
 
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { hayArchivos, seRevisaron, EXTENSIONES_DE_PANTALLA, esPantalla } from './recorrido.mjs';
+import {
+  hayArchivos, seRevisaron, EXTENSIONES_DE_PANTALLA, esPaginaSuelta, esDelPrograma
+} from './recorrido.mjs';
 import { visible, enBlanco, despejar, sinEntidades } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -135,6 +145,144 @@ const sinComentarios = (crudo, esHtml) => (esHtml
     .replace(/<script\b[\s\S]*?<\/script>/gi, enCodigo)
   : enCodigo(crudo));
 
+/* ── EL TEXTO A LA VISTA EN UNA PANTALLA DE UN PROGRAMA ────────────────────
+   Una página suelta es marcado con bloques de guión adentro, así que para
+   encontrar lo que una persona lee alcanza con tapar las etiquetas y quedarse
+   con lo del medio. Una pantalla de un programa es al revés: código de punta a
+   punta, con el marcado adentro del código. Lo que una persona lee ahí es lo
+   que queda entre una etiqueta y la siguiente, y solamente eso; todo lo demás
+   es código, y leerlo como si fuera texto haría gritar cada renglón del
+   archivo.
+
+   Tres cosas hubo que distinguir, y las tres costaron:
+
+   1. **Lo que está entre llaves es código, no texto**, y las llaves abren en un
+      hueco y cierran muchas etiquetas más adelante: así se escribe una
+      condición. De modo que se cuentan de corrido, y no hueco por hueco.
+   2. **Después de la última etiqueta vuelve a haber código.** Se lleva la
+      cuenta de cuántos elementos quedan abiertos y sólo se junta texto
+      mientras haya alguno; si no, la cola del archivo se leería como si fuera
+      lo que dice la pantalla.
+   3. **Un signo de menor no siempre abre una etiqueta.** `renglon < total` es
+      una comparación. Se pide que lo que tenga delante no sea un dato. Una
+      etiqueta de cierre, en cambio, entra siempre, porque lo que tiene delante
+      es justamente el texto que se está buscando. */
+
+/* Lo que tiene delante un signo de menor decide si abre una etiqueta o si
+   compara dos cosas. Un dato delante quiere decir comparación; pero una
+   palabra del lenguaje también termina en letra y no es ningún dato, y
+   `return` es justamente la que tiene delante casi toda pantalla. */
+const ANTES_ES_DATO = /[\w$)\]]$/;
+const NO_ES_UN_DATO = /(?:^|[^\w$])(?:return|yield|await|default|case|else|do|typeof|in|of)$/;
+const comparaYNoAbre = (s, i) => {
+  const previo = s.slice(Math.max(0, i - 40), i).replace(/\s+$/, '');
+  return ANTES_ES_DATO.test(previo) && !NO_ES_UN_DATO.test(previo);
+};
+const UNA_BARRA = String.fromCharCode(92);
+
+/* Las notas de una pantalla de un programa. Se borran las de bloque y las de
+   renglón, pero de estas últimas sólo las de los renglones que no traen
+   ninguna comilla delante: una dirección web lleva dos barras adentro de un
+   texto, y borrar desde ahí dejaría la comilla sin cerrar, y con ella medio
+   archivo sin mirar. */
+const enCodigoDePrograma = (t) => t
+  .replace(/\/\*[\s\S]*?\*\//g, enBlanco)
+  .replace(/^([^\n'"`]*?)\/\/[^\n]*/gm, (m, antes) => antes + enBlanco(m.slice(antes.length)));
+
+/** Dónde termina la cadena que empieza en `i`. */
+function finDeCadena(s, i) {
+  const cierre = s[i];
+  let j = i + 1;
+  while (j < s.length) {
+    if (s[j] === UNA_BARRA) { j += 2; continue; }
+    if (s[j] === cierre) return j + 1;
+    if (cierre !== '`' && s[j] === '\n') return j;
+    j++;
+  }
+  return s.length;
+}
+
+/** Dónde termina la etiqueta que empieza en `i`, y de qué clase es. Se cuentan
+    las llaves de los atributos y se respeta lo que esté entre comillas, así un
+    signo de mayor escrito adentro de un atributo no la corta por la mitad. */
+function finDeEtiqueta(s, i) {
+  let j = i + 1, comilla = null, hondo = 0;
+  for (; j < s.length; j++) {
+    const c = s[j];
+    if (comilla) { if (c === comilla) comilla = null; continue; }
+    if (c === "'" || c === '"' || c === '`') comilla = c;
+    else if (c === '{') hondo++;
+    else if (c === '}') hondo--;
+    else if (c === '>' && hondo === 0) break;
+  }
+  return {
+    sigue: Math.min(j + 1, s.length),
+    cierra: s[i + 1] === '/',
+    sola: s[j - 1] === '/'
+  };
+}
+
+const hayEtiqueta = (s, i) => s[i] === '<'
+  && (s[i + 1] === '>' || s[i + 1] === '/' || /[A-Za-z]/.test(s[i + 1] || ''));
+
+/** Lo que una persona lee en una pantalla de un programa, con dónde empieza
+    cada texto. */
+function textoDePrograma(s) {
+  const salida = [];
+  const abiertos = [];
+  let i = 0, junto = '', inicio = 0;
+  const guardar = () => {
+    if (/[A-Za-z\u00C0-\u00FF]{2,}/.test(junto.replace(/&[a-z#0-9]+;/gi, ' '))) {
+      salida.push([inicio, junto.trim().replace(/\s+/g, ' ')]);
+    }
+    junto = '';
+  };
+
+  while (i < s.length) {
+    const tope = abiertos[abiertos.length - 1];
+    const c = s[i];
+
+    /* Afuera de todo elemento, y adentro de unas llaves, lo que hay es código:
+       se saltean las cadenas enteras y sólo se mira si empieza una etiqueta. */
+    if (!tope || tope.esCodigo) {
+      if (c === "'" || c === '"' || c === '`') { i = finDeCadena(s, i); continue; }
+      if (tope) {
+        if (c === '{') { tope.hondo++; i++; continue; }
+        if (c === '}') { tope.hondo--; if (tope.hondo === 0) abiertos.pop(); i++; continue; }
+      }
+      if (hayEtiqueta(s, i) && s[i + 1] !== '/'
+          && !comparaYNoAbre(s, i)) {
+        const { sigue, sola } = finDeEtiqueta(s, i);
+        if (!sola) abiertos.push({ esCodigo: false });
+        i = sigue; continue;
+      }
+      i++; continue;
+    }
+
+    /* Adentro de un elemento, lo que hay es lo que se lee. */
+    if (hayEtiqueta(s, i)) {
+      guardar();
+      const { sigue, cierra, sola } = finDeEtiqueta(s, i);
+      if (cierra) abiertos.pop();
+      else if (!sola) abiertos.push({ esCodigo: false });
+      i = sigue; continue;
+    }
+    if (c === '{') { guardar(); abiertos.push({ esCodigo: true, hondo: 1 }); i++; continue; }
+    if (!junto) inicio = i;
+    junto += c;
+    i++;
+  }
+  guardar();
+  return salida;
+}
+
+/* Y lo que una pantalla de un programa pone a la vista sin que sea texto entre
+   etiquetas: los atributos que se muestran y los tres carteles del navegador.
+   Se mira sólo lo escrito con todas las letras, porque un atributo que recibe
+   un dato no es texto a mano. El nombre tiene que empezar donde empieza el
+   atributo, para que `subtitle` no pase por `title`. */
+const ESCRIBE_A_LA_VISTA = /(?<![\w-])(?:textContent|innerHTML|innerText|placeholder|title|alt|aria-label|alert|confirm|prompt)\s*(?:=|\()\s*('[^'\n]{2,}'|"[^"\n]{2,}")/g;
+
 /* Regla 6: `Intl` con el idioma escrito adentro.
 
    Una fecha, una hora y un importe son texto visible tanto como una etiqueta.
@@ -164,6 +312,11 @@ const IDIOMA_ESCRITO = /\bIntl\.[A-Za-z]+\s*\(\s*(?:\[\s*)?('[^'\n]*'|"[^"\n]*")
    omisión. */
 const IDIOMA_GUARDADO = /\bidioma\s*:\s*('[^'\n]*'|"[^"\n]*"|IDIOMA_POR_DEFECTO\b)/g;
 const IDIOMA_PISADO = /\bCatalogo\.idioma\s*=(?!=)/g;
+
+/* Una pantalla de un programa está convertida cuando pide frases. Las pide
+   por su nombre corto adentro del programa, o por el nombre largo cuando el
+   catálogo se usa desde afuera; las dos formas valen igual. */
+const PIDE_FRASES = /(?:\bfrase|(?:Catalogo|Texto)\.frase)\s*\(/;
 
 // ── Qué claves usa cada archivo ────────────────────────────────────────────
 
@@ -212,10 +365,14 @@ for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJEN
   const nombre = relative(raiz, camino).split(sep).join('/');
   if (nombre.endsWith('sw.js')) continue;
   revisados++;
-  const esHtml = esPantalla(nombre);
+  /* Dos clases de pantalla, y no se leen igual. Una página suelta es marcado
+     con bloques de guión adentro; una pantalla de un programa es código de
+     punta a punta, con el marcado adentro del código. */
+  const esHtml = esPaginaSuelta(nombre);
+  const delPrograma = esDelPrograma(nombre);
   const crudo = readFileSync(camino, 'utf8');
 
-  const sinNotas = sinComentarios(crudo, esHtml);
+  const sinNotas = delPrograma ? enCodigoDePrograma(crudo) : sinComentarios(crudo, esHtml);
   for (const clave of clavesUsadas(sinNotas, PREFIJOS)) usadasEnTodo.add(clave);
 
   // Regla 6. Vale para toda pantalla y todo guión, esté convertido o no: es el
@@ -264,6 +421,35 @@ for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJEN
   // los que sí salían del catálogo. Su gemela `pwa-asistente/index.html` sí
   // entraba, así que las dos pantallas del mismo botón se juzgaban con
   // distinta vara. Encontrado el 31 de agosto de 2026.
+  /* Regla 4 en una pantalla de un programa, que tiene su propio portero porque
+     tiene otro mecanismo: en una página suelta la frase se marca en el
+     elemento, y en una pantalla de un programa se la pide por su clave. Una
+     pantalla que pide frases está convertida, y desde ahí no puede quedar en
+     ella ni un texto escrito con todas las letras.
+
+     Mientras se buscó el atributo en las dos por igual, ninguna pantalla del
+     programa entró jamás en esta regla: no tienen ese atributo y no lo van a
+     tener. Media docena de pantallas pasaban enteras sin que nadie les mirara
+     una sola palabra, justo el día que la mitad del producto pasó a estar
+     escrita así. */
+  if (delPrograma) {
+    if (!PIDE_FRASES.test(sinNotas)) continue;
+    convertidas++;
+
+    for (const [desde, texto] of textoDePrograma(sinNotas)) {
+      const renglon = sinNotas.slice(0, desde).split('\n').length;
+      fallas.push(`${nombre}:${renglon}  texto escrito a mano: «${texto.slice(0, 70)}»`);
+    }
+
+    for (const m of sinNotas.matchAll(ESCRIBE_A_LA_VISTA)) {
+      const texto = m[1].slice(1, -1);
+      if (!/[A-Za-z\u00C0-\u00FF]{2,}/.test(texto)) continue;
+      const renglon = sinNotas.slice(0, m.index).split('\n').length;
+      fallas.push(`${nombre}:${renglon}  texto escrito a mano a la vista: «${texto.slice(0, 70)}»`);
+    }
+    continue;
+  }
+
   if (!esHtml) continue;
 
   const guiones = (crudo.match(/<script\b[^>]*>([\s\S]*?)<\/script>/gi) || []).join('\n')
@@ -352,6 +538,24 @@ const DEBE_IRSE = [
   ['<input data-frase-placeholder="x" placeholder="Escriba acá" />', 'Escriba acá'],
   ['<button class="b" data-frase="x" id="c">\n  Entrar\n</button>', 'Entrar']
 ];
+/* Y lo mismo con el lector de las pantallas del programa, que es el que más
+   fácil se pasa de largo: si se queda corto no encuentra nada, y este chequeo
+   da por buena una pantalla escrita entera a mano. Se lo prueba contra lo que
+   tiene que ver y contra lo que no. */
+const PROGRAMA_DEBE_VER = [
+  'return <p>Texto suelto</p>;',
+  'return <p>{frase(x)} y suelto</p>;',
+  'return <>{a}<b>Suelto</b></>;',
+  'return <p>{n < 3 ? uno : dos} al hilo</p>;'
+];
+const PROGRAMA_NO_DEBE_VER = [
+  'return <p>{frase("acceso.correo")}</p>;',
+  'const total = renglon < maximo ? uno : dos;',
+  'function X() { return <p>{a}</p>; }\nexport default X;',
+  'return <p>{estado === "listo" && <b>{frase(y)}</b>}</p>;',
+  'return <img src="/assets/images/logotipo.png" alt="" />;'
+];
+
 /* Y lo mismo con la regla 6: un detector que no casa con nada da siempre por
    buena una pantalla que sí tiene el idioma escrito adentro. */
 const IDIOMA_DEBE_CASAR = [
@@ -411,6 +615,18 @@ for (const linea of IDIOMA_NO_DEBE_CASAR) {
 }
 for (const [html, texto] of DEBE_QUEDAR) {
   if (despejar(html).indexOf(texto) === -1) roto.push('deja de ver: ' + texto);
+}
+for (const trozo of PROGRAMA_DEBE_VER) {
+  if (textoDePrograma(trozo).length === 0) {
+    roto.push('el lector del programa no ve: ' + trozo);
+  }
+}
+for (const trozo of PROGRAMA_NO_DEBE_VER) {
+  const visto = textoDePrograma(trozo);
+  if (visto.length > 0) {
+    roto.push('el lector del programa se queja de: ' + trozo
+      + '  (vio «' + visto[0][1] + '»)');
+  }
 }
 for (const [html, texto] of DEBE_IRSE) {
   if (despejar(html).indexOf(texto) !== -1) roto.push('no despeja: ' + texto);

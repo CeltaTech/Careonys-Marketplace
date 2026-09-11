@@ -137,7 +137,18 @@ export const NUNCA_SE_ABRE = new Set([...CAJAS_FUERTES, ...NO_ES_DEL_PROYECTO]);
    plantillas que arman marcado, los manejadores escritos en el marcado y el
    atributo `data-frase`—, y ésos hay que reescribirlos igual. Lo que sí termina
    es la parte silenciosa. */
-export const EXTENSIONES_DE_PANTALLA = ['.html', '.jsx'];
+/* Y son dos clases, no una. Una **página suelta** es marcado con bloques de
+   guión adentro; una **pantalla de un programa** es código de punta a punta,
+   con el marcado adentro del código. Casi todos los chequeos las miran igual
+   y les alcanza con la lista de abajo, pero unos pocos tienen que leerlas
+   distinto, porque lo que buscan se escribe distinto en cada una. Esos piden
+   estas dos, y así la extensión sigue viviendo en un solo lugar. */
+export const PAGINA_SUELTA = '.html';
+export const PANTALLA_DE_PROGRAMA = '.jsx';
+export const esPaginaSuelta = (nombre) => nombre.toLowerCase().endsWith(PAGINA_SUELTA);
+export const esDelPrograma = (nombre) => nombre.toLowerCase().endsWith(PANTALLA_DE_PROGRAMA);
+
+export const EXTENSIONES_DE_PANTALLA = [PAGINA_SUELTA, PANTALLA_DE_PROGRAMA];
 
 /* ── Y LO QUE TERMINA EN .html SIN SER UNA PANTALLA ───────────────────────
    El armazón de un paquete de React: unos pocos renglones sin nada dibujado

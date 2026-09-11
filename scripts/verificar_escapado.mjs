@@ -38,6 +38,17 @@
       o un `textContent`. Va a la consola con `console.error`, y a la pantalla va
       lo que devuelve `Texto.mensajeDeError`.
 
+   5. **La única puerta equivalente en una pantalla de un programa.** Ahí el
+      marcado está adentro del código y lo que se mete adentro se convierte en
+      texto solo, así que ninguna de las cuatro formas de arriba puede pasar.
+      Queda un atributo, con un nombre que ya avisa lo que hace, capaz de
+      saltearse esa conversión. Hoy no lo usa nadie y así tiene que quedar.
+
+   Y un archivo de pantalla se revisa distinto según qué sea: una página suelta
+   es marcado con el código adentro de sus bloques de guión, y una pantalla de
+   un programa es código de punta a punta. Mientras se les buscaron los bloques
+   de guión a las dos por igual, las del programa pasaban enteras sin revisar.
+
    Cuando un caso sea legítimo de verdad, se marca adentro de la interpolación
    con un comentario que empiece por `seguro:` y siga con la razón. El comentario
    obliga a escribirla, y queda a la vista de quien lea el renglón. Marcar sin
@@ -54,7 +65,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { hayArchivos, EXTENSIONES_DE_PANTALLA, esPantalla } from './recorrido.mjs';
+import { hayArchivos, EXTENSIONES_DE_PANTALLA, esPaginaSuelta } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -292,7 +303,7 @@ export function revisarCodigo(codigo, base = 0) {
   /* El texto crudo del error va a la consola; a la pantalla va la frase. Se
      mira la sentencia entera y no sólo la llamada, porque el crudo suele venir
      pegado con `+` o metido en una plantilla unos caracteres más allá. */
-  const A_LA_VISTA = /\balert\s*\(|\bconfirm\s*\(|\.(?:inner|outer)HTML\b|\.(?:textContent|innerText)\b/;
+  const A_LA_VISTA = /\balert\s*\(|\bconfirm\s*\(|\.(?:inner|outer)HTML\b|\.(?:textContent|innerText)\b|dangerouslySetInnerHTML/;
   const CRUDO = /\.(?:message|error_description)\b/g;
   const limpio = sinComentarios(codigo);
   for (const a of limpio.matchAll(CRUDO)) {
@@ -305,6 +316,23 @@ export function revisarCodigo(codigo, base = 0) {
       motivo: 'el texto crudo de un error llega a la pantalla',
       muestra: codigo.slice(abre, cierra).trim().replace(/\s+/g, ' ').slice(0, 70),
       remedio: 'a la pantalla va Texto.mensajeDeError(err, qué se intentaba); el crudo, a console.error'
+    });
+  }
+
+  /* La única puerta por la que entra marcado sin convertir en una pantalla
+     de un programa. En una página suelta la abre `innerHTML`; acá la abre un
+     atributo cuyo nombre ya avisa lo que hace, y que es lo único capaz de
+     saltear la conversión a texto que el programa hace solo. Hoy no lo usa
+     nadie, y ese es justamente el estado que hay que sostener. */
+  for (const a of limpio.matchAll(/dangerouslySetInnerHTML/g)) {
+    const desde = limpio.lastIndexOf('\n', a.index) + 1;
+    let hasta = limpio.indexOf('\n', a.index);
+    if (hasta < 0) hasta = limpio.length;
+    reparos.push({
+      renglon: renglon(a.index),
+      motivo: 'entra marcado en la pantalla sin convertirlo en texto',
+      muestra: codigo.slice(desde, hasta).trim().replace(/\s+/g, ' ').slice(0, 70),
+      remedio: 'el dato se dibuja como texto; si de verdad tiene que ser marcado, se arma con etiquetas'
     });
   }
 
@@ -324,7 +352,8 @@ const MALOS = [
   ['una rama del ternario es dato', 'el.innerHTML = `<p>${a.ok ? a.nombre : \'\'}</p>`;'],
   ['el respaldo es fijo pero el dato no', 'el.innerHTML = `<p>${a.zona || \'Cobertura\'}</p>`;'],
   ['el error crudo en un aviso', "alert('No se pudo guardar: ' + err.message);"],
-  ['el error crudo escapado sigue siendo crudo', "el.innerHTML = `<p>${Texto.escapar(err.message)}</p>`;"]
+  ['el error crudo escapado sigue siendo crudo', "el.innerHTML = `<p>${Texto.escapar(err.message)}</p>`;"],
+  ['marcado metido sin convertir', 'return <p dangerouslySetInnerHTML={{ __html: a.nota }} />;']
 ];
 const BUENOS = [
   ['dato escapado', 'el.innerHTML = `<h5>${Texto.escapar(asp.nombre)}</h5>`;'],
@@ -339,7 +368,8 @@ const BUENOS = [
   ['marcado fijo sin datos', "el.innerHTML = '<p>No hay registros todavía.</p>';"],
   ['el error crudo va a la consola', "console.error('Publicar el aviso:', err.message);"],
   ['el error clasificado antes de mostrarse', "alert(Texto.mensajeDeError(err, 'guardar la novedad'));"],
-  ['el error se relanza con su texto', "if (error) throw new Error(error.message);"]
+  ['el error se relanza con su texto', "if (error) throw new Error(error.message);"],
+  ['el dato se dibuja como texto', 'return <p>{a.nota}</p>;']
 ];
 
 const noDetecta = MALOS.filter(([, c]) => revisarCodigo(c).length === 0).map(([n]) => n);
@@ -360,7 +390,12 @@ for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJEN
   const crudo = readFileSync(camino, 'utf8');
   const reparos = [];
 
-  if (esPantalla(nombre)) {
+  /* Una página suelta es marcado con código adentro, en sus bloques de
+     guión; una pantalla de un programa es código de punta a punta, con el
+     marcado adentro del código y no al revés. Mientras se les miraron los
+     bloques de guión a las dos por igual, las pantallas del programa pasaban
+     enteras sin que nadie les mirara nada: no tienen ninguno. */
+  if (esPaginaSuelta(nombre)) {
     const sinEstilo = crudo.replace(/<!--[\s\S]*?-->/g, enBlanco);
     for (const g of sinEstilo.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
       if (/\bsrc\s*=/i.test(g[1])) continue;

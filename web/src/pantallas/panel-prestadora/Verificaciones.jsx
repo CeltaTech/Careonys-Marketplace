@@ -157,12 +157,11 @@ export default function Verificaciones({ base, caregiverId, token }) {
 
           return (
             <div
-              className="flex gap-12 mb-12"
-              style={{ alignItems: 'center', justifyContent: 'space-between' }}
+              className="flex gap-12 mb-12 alinear-centro justificar-entre"
               key={papel.clave}
             >
               <span className="texto-12 peso-700">{papeles.texto(papel)}</span>
-              <span className="flex gap-12" style={{ alignItems: 'center' }}>
+              <span className="flex gap-12 alinear-centro">
                 {fila.verificado_el && (
                   <span className="texto-11 color-secundario">
                     {frase('panel.verificaciones_marcado_el', {

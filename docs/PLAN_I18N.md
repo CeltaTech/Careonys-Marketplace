@@ -296,7 +296,7 @@ Por lo que ya se midió, y de a una pantalla por vez:
 - **Quién traduce.** Es la decisión 2 de abajo, la única que sigue abierta.
 - **Los nombres comerciales.** La regla de la empresa los exceptúa: un plan que se llama de una
   manera se llama igual en los tres idiomas. ✔ Ya están marcados: son las 10 claves de
-  `IGUALES_EN_TODOS` (`scripts/verificar_frases.mjs:80`) —las cuatro redes sociales, los tres
+  `IGUALES_EN_TODOS` (`scripts/verificar_frases.mjs:88`) —las cuatro redes sociales, los tres
   medios que cita la portada, el nombre comercial de los cursos y los dos marcadores de marca—, y
   el chequeo no les pide traducción.
 - **«PresDemo».** Ya no está. Aparecía 19 veces en la cuenta y **no era texto para traducir**: era

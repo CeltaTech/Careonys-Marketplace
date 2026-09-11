@@ -84,8 +84,7 @@ export default function Resoluciones({ base, caregiverId, token }) {
       <div>
         {filas.map((fila, cual) => (
           <div className="mb-12" key={fila.id || cual}>
-            <div className="flex gap-12 texto-12 peso-700"
-              style={{ alignItems: 'center', justifyContent: 'space-between' }}>
+            <div className="flex gap-12 texto-12 peso-700 alinear-centro justificar-entre">
               <span>
                 {frase(FRASE_DE_ESTADO[fila.estado] || 'panel.resoluciones_estado_desconocido')}
               </span>

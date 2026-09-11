@@ -1068,9 +1068,7 @@ export default function MockupApp() {
                   <h5>{titulo}</h5>
                   <p>{log.daily_notes}</p>
                   {log.blood_pressure && (
-                    <p style={{
-                      marginTop: '4px', fontSize: '11px', color: 'var(--azul-medio-texto)'
-                    }}>
+                    <p className="mt-4 texto-11 color-azul-medio">
                       {'🩺 ' + frase('reporte.presion') + ': ' + log.blood_pressure
                         + ' | ' + frase('reporte.glucemia') + ': '
                         + (log.glycemia || frase('reporte.sin_dato'))}

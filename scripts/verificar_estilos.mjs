@@ -21,6 +21,12 @@
    Lo que hay adentro de un `<script>` o de un `.js` se cuenta aparte y no hace
    fallar: ahí el atributo lo arma una plantilla, y cambiarlo pide mirar el
    guion entero. Se informa para que se vea cuánto queda.
+
+   **Y la regla no depende de cómo se escriba el atributo.** Una pantalla
+   suelta lo escribe con comillas y una pantalla de un programa lo escribe
+   como una lista de pares; es la misma decisión, cae en la misma regla y se
+   cuenta junto con las otras. Si sólo se mirara la forma vieja, la mitad del
+   producto habría quedado sin vigilancia el día que pasó a ser un programa.
 =================================================== */
 
 import { readdirSync, readFileSync, statSync } from 'node:fs';
@@ -87,11 +93,121 @@ function etiquetas(s) {
   return salida;
 }
 
+/* ---- EL MISMO ATRIBUTO, ESCRITO COMO LO ESCRIBE UN PROGRAMA ----
+   Una pantalla suelta dice `style="gap:12px"`: una cadena de texto, con el
+   nombre de la propiedad tal como se escribe en una hoja. Una pantalla de un
+   programa dice lo mismo `style={{ gap: 12 }}`: una lista de pares, con el
+   nombre en una sola palabra y el número sin unidad, que quiere decir
+   píxeles. Es la misma decisión y tiene que caer en la misma regla, porque si
+   no la mitad de las pantallas del producto dejarían de estar vigiladas el
+   día que pasaron a ser parte de un programa.
+
+   Sólo cuenta la lista que está escrita entera con todas las letras. Si
+   alguno de los valores sale de una cuenta o de una variable, la lista no se
+   puede comparar con ninguna clase, y una clase no podría reemplazarla
+   aunque existiera: eso no es repetir a mano, es decidir en el momento. */
+
+/* Las propiedades que no llevan unidad: un número suelto ahí vale por sí
+   mismo, y ponerle píxeles lo convertiría en otra cosa. */
+const SIN_UNIDAD = new Set([
+  'opacity', 'zIndex', 'fontWeight', 'lineHeight', 'flex', 'flexGrow',
+  'flexShrink', 'order', 'columnCount', 'gridColumn', 'gridRow', 'gridArea',
+  'tabSize', 'zoom', 'aspectRatio', 'animationIterationCount'
+]);
+
+const UN_NUMERO = /^-?[0-9]+(\.[0-9]+)?$/;
+
+/** Dónde empieza y termina cada lista de estilos escrita como la escribe un
+    programa. Se cuentan las llaves respetando lo que esté entre comillas, así
+    una llave escrita adentro de un texto no corta la lista por la mitad. */
+function objetosDeEstilo(s) {
+  const ABRE = 'style={{';
+  const salida = [];
+  let i = s.indexOf(ABRE);
+  while (i >= 0) {
+    let hondo = 1, comilla = null, j = i + ABRE.length;
+    for (; j < s.length && hondo > 0; j++) {
+      const c = s[j];
+      if (comilla) { if (c === comilla) comilla = null; continue; }
+      if (c === "'" || c === '"' || c === '`') comilla = c;
+      else if (c === '{') hondo++;
+      else if (c === '}') hondo--;
+    }
+    if (hondo > 0) break;
+    salida.push([i, s.slice(i + ABRE.length, j - 1)]);
+    i = s.indexOf(ABRE, j);
+  }
+  return salida;
+}
+
+/** Los pares de la lista, cortando por las comas que están al aire: una coma
+    adentro de un texto o de unos paréntesis pertenece al valor y no separa. */
+function pares(cuerpo) {
+  const partes = [];
+  let actual = '', hondo = 0, comilla = null;
+  for (const c of cuerpo) {
+    if (comilla) { actual += c; if (c === comilla) comilla = null; continue; }
+    if (c === "'" || c === '"' || c === '`') { comilla = c; actual += c; continue; }
+    if (c === '{' || c === '[' || c === '(') hondo++;
+    if (c === '}' || c === ']' || c === ')') hondo--;
+    if (c === ',' && hondo === 0) { partes.push(actual); actual = ''; continue; }
+    actual += c;
+  }
+  if (actual.trim()) partes.push(actual);
+  return partes;
+}
+
+/** La lista escrita como la escribiría una hoja, o `null` si alguno de los
+    valores no está escrito con todas las letras. */
+function declaracionesDeUnObjeto(cuerpo) {
+  const salida = [];
+  for (const parte of pares(cuerpo)) {
+    const crudo = parte.trim();
+    const corte = crudo.indexOf(':');
+    if (corte < 0) return null;
+    let clave = crudo.slice(0, corte).trim();
+    const valor = crudo.slice(corte + 1).trim();
+    const entrecomillado = /^'[^']*'$|^"[^"]*"$/.test(clave);
+    if (entrecomillado) clave = clave.slice(1, -1);
+    const enLaHoja = entrecomillado ? clave
+      : clave.replace(/[A-Z]/g, (letra) => '-' + letra.toLowerCase());
+    if (/^'[^']*'$|^"[^"]*"$/.test(valor)) {
+      salida.push(enLaHoja.toLowerCase() + ':' + valor.slice(1, -1).trim());
+    } else if (UN_NUMERO.test(valor)) {
+      const unidad = Number(valor) === 0 || SIN_UNIDAD.has(clave) ? '' : 'px';
+      salida.push(enLaHoja.toLowerCase() + ':' + valor + unidad);
+    } else return null;
+  }
+  return salida.length > 0 ? salida : null;
+}
+
 const rangosDeGuion = (s) => [...s.matchAll(/<script\b[^>]*>[\s\S]*?<\/script>/g)]
   .map((m) => [m.index, m.index + m[0].length]);
 
 export function verificarEstilos() {
   const porDeclaracion = clasesDeUtilidad();
+
+  /* Una prueba que no puede fallar no prueba nada: antes de recorrer el
+     proyecto, el lector de listas se prueba contra una que sobra entera, una
+     que decide en el momento y una que dice algo que ninguna clase nombra. */
+  const sobra = (fragmento) => {
+    const [primero] = objetosDeEstilo(fragmento);
+    const decls = primero && declaracionesDeUnObjeto(primero[1]);
+    return Boolean(decls && decls.every((d) => porDeclaracion.has(d)));
+  };
+  const BANCO = [
+    ["style={{ display: 'flex', alignItems: 'center' }}", true],
+    ['style={{ gap: 12 }}', true],
+    ['style={{ gap: separacion }}', false],
+    ["style={{ padding: '40px 24px' }}", false]
+  ];
+  const rotas = BANCO.filter(([fragmento, esperado]) => sobra(fragmento) !== esperado);
+  if (rotas.length) {
+    console.error('El lector de listas de estilo está roto, así que no verifica nada:');
+    for (const [fragmento] of rotas) console.error('  - ' + fragmento);
+    process.exit(1);
+  }
+
   const problemas = [];
   let enMarcado = 0, enGuion = 0, sobranEnGuion = 0;
 
@@ -103,6 +219,15 @@ export function verificarEstilos() {
     const esGuion = rel.endsWith('.js');
     const guiones = esGuion ? [] : rangosDeGuion(texto);
     const renglonDe = (i) => texto.slice(0, i).split('\n').length;
+
+    for (const [ini, cuerpo] of objetosDeEstilo(texto)) {
+      enMarcado++;
+      const decls = declaracionesDeUnObjeto(cuerpo);
+      if (!decls || !decls.every((d) => porDeclaracion.has(d))) continue;
+      problemas.push(rel + ':' + renglonDe(ini) + '\n'
+        + '  dice   style={{ ' + cuerpo.replace(/\s+/g, ' ').trim() + ' }}\n'
+        + '  y ya es className="' + decls.map((d) => porDeclaracion.get(d)).join(' ') + '"');
+    }
 
     for (const [ini, fin] of etiquetas(texto)) {
       const etiqueta = texto.slice(ini, fin);

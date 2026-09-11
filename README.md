@@ -31,7 +31,7 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
-| 17 pantallas, 27.502 renglones | el sitio es un programa con 15 direcciones, y los dos del teléfono son otros dos programas |
+| 17 pantallas, 27.495 renglones | el sitio es un programa con 15 direcciones, y los dos del teléfono son otros dos programas |
 | 17.790 renglones de JavaScript propio, en 53 archivos | 10.259 de ellos son copias byte a byte de otro archivo (pendiente 13) |
 | 6.832 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
 | 5.592 renglones de hojas de estilo, en 12 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |

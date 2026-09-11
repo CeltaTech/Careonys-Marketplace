@@ -393,8 +393,15 @@ if (fallas.length > 0) {
   process.exit(1);
 }
 
+/* Cuántos registros quedan exentos y por cuántos motivos distintos. El
+   número sale de la lista y no escrito a mano: escrito a mano se despega de
+   ella sin que nadie lo note, y un cartel que miente es peor que no tenerlo. */
+const exentos = REGISTROS_PERDONADOS.size;
+const motivos = new Set(
+  [...REGISTROS_PERDONADOS.values()].map((cual) => cual.motivo)).size;
+
 console.log(
   `Datos sensibles verificados: ${parametros} parámetros de la barra de direcciones, ` +
   `todos entre los ${PARAMETROS_DE_LA_DIRECCION.size} declarados con su motivo, y ` +
   `${registros} registros de actividades que no imprimen más que su mensaje y su ` +
-  `error (1 exento, con su motivo).`);
+  `error (${exentos} exentos, por ${motivos} motivos escritos).`);
