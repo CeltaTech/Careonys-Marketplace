@@ -32,7 +32,7 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | | |
 |---|---|
 | 17 pantallas HTML, 13.121 renglones | sin ruteo: cada pantalla es un archivo |
-| 17.081 renglones de JavaScript propio, en 42 archivos | 10.253 de ellos son copias byte a byte de otro archivo (pendiente 13) |
+| 17.296 renglones de JavaScript propio, en 46 archivos | 10.253 de ellos son copias byte a byte de otro archivo (pendiente 13) |
 | 6.832 renglones más metidos adentro del HTML | en 14 bloques `<script>` |
 | 4.578 renglones de hojas de estilo, en 10 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
 | 874 declaraciones más, pegadas al HTML | en 219 atributos `style=` (fue el pendiente 8, cerrado) |

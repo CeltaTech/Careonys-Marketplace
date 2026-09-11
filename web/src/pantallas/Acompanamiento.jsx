@@ -10,8 +10,8 @@
    frases, las ocho y todas las demás.
 =================================================== */
 
-import { useEffect } from 'react';
 import { useFrases } from '../frases/ProveedorDeFrases.jsx';
+import { usePestana } from '../armazon/usePestana.js';
 import FormularioDeConsulta from '../formularios/FormularioDeConsulta.jsx';
 
 const QUE_INCLUYE = [
@@ -28,13 +28,7 @@ const QUE_INCLUYE = [
 export default function Acompanamiento() {
   const { frase } = useFrases();
 
-  /* El título y la descripción de la pestaña son de esta pantalla, no del
-     sitio entero, así que se ponen al entrar y no quedan puestos al salir. */
-  useEffect(() => {
-    const anterior = document.title;
-    document.title = frase('acompanamiento.titulo');
-    return () => { document.title = anterior; };
-  }, [frase]);
+  usePestana('acompanamiento.titulo');
 
   return (
     <>
