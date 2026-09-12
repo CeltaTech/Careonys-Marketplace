@@ -2,11 +2,17 @@
   "installCommand": "npm ci --prefix web && npm ci --prefix pwa-asistente && npm ci --prefix pwa-familia",
   "buildCommand": "node scripts/armar_todo.mjs",
   "outputDirectory": "dist",
-  "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/:pagina.html",
+      "destination": "/:pagina",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
-      "source": "/((?!pwa-asistente/|pwa-familia/|assets/|data/|docs/).*)",
+      "source": "/((?!pwa-asistente|pwa-familia|assets|data|docs).*)",
       "destination": "/index.html"
     }
   ],
