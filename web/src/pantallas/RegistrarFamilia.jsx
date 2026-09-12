@@ -196,13 +196,10 @@ export default function RegistrarFamilia() {
     try {
       const { ClienteDatos, Sesion } = await conLaBase();
 
-      /* La Prestadora, antes que la cuenta, y otra vez: la de arriba se resolvió
-         cuando se abrió la pantalla, y entre una cosa y la otra pasa todo el
-         tiempo que la persona tarda en llenar el formulario. Si no hay, no se
-         crea nada. */
-      if (!prestadora.current || !prestadora.current.slug) {
-        prestadora.current = await ClienteDatos.initTenant();
-      }
+      /* La Prestadora, antes que la cuenta. El botón está apagado mientras no
+         haya ninguna, así que acá no debería faltar nunca; si igual falta, no se
+         crea nada. Volver a resolverla no serviría: sale de la dirección, que es
+         la misma con la que se abrió la pantalla. */
       if (!prestadora.current || !prestadora.current.slug) {
         setAvisoErrorAlta({ clave: 'alta.sin_prestadora' });
         return;
@@ -249,7 +246,7 @@ export default function RegistrarFamilia() {
          resuelta queda apagado, que es lo mismo que hace el arranque: dejarlo
          encendido invita a apretar una puerta que no abre. */
       setCreando(false);
-      setHayPrestadora(Boolean(prestadora.current && prestadora.current.slug));
+      setNombreCorto((prestadora.current && prestadora.current.slug) || '');
     }
   }
 
