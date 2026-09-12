@@ -27,7 +27,7 @@ import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
 import BarraDeAbajo from './BarraDeAbajo.jsx';
-import { CasillasDelCatalogo, SelectDelCatalogo } from './DelCatalogo.jsx';
+import { CasillasDelCatalogo, SelectDelCatalogo } from '#comun/formularios/DelCatalogo.jsx';
 
 /* La grilla se monta una vez para toda la vida del programa. La marca vive
    afuera del componente a propósito: React puede montar y desmontar una pantalla

@@ -4,15 +4,25 @@
    «Los catálogos salen de la base. Una lista de opciones nunca se escribe
    adentro de una pantalla.» En la página suelta esto lo hacía `js/catalogo.js`
    recorriendo el documento y llenando todo lo que llevara `data-catalogo`. Acá
-   la pantalla la dibuja el programa, así que el mismo catálogo se pide por el
+   la pantalla la dibuja el programa y ese recorrido ya no alcanza —los nodos
+   nacen y mueren cuando React quiere—, así que el mismo catálogo se pide por el
    gancho de siempre y lo que sale se dibuja igual que lo dibujaba aquél: la
    misma opción vacía adelante, los mismos grupos por región, la misma clase en
-   cada casilla y el mismo nombre de campo.
+   cada casilla, el mismo nombre de campo —que es el que después lee el
+   formulario al enviar— y las mismas casillas tildadas de entrada.
+
+   **Las tres partes del producto piden las mismas listas**, así que el
+   desplegable y el grupo de casillas viven acá, una sola vez, y los consume el
+   registro del sitio, el legajo del Asistente y el aviso de la Familia.
 
    **Los cuatro estados, y no tres.** Mientras el catálogo viaja el desplegable
    queda apagado y dice que está cargando; si no llega lo dice; si llega vacío
    lo dice. Un desplegable vacío y uno que todavía no llegó se ven igual, y ésa
    es justamente la falla que esto viene a no tener.
+
+   **Qué dice la opción vacía se pregunta.** No es siempre la misma: el Tipo de
+   Asistente dice «elegir el tipo» y los demás dicen «seleccionar», que es lo
+   que la página declaraba campo por campo.
 =================================================== */
 
 import { useEffect, useRef } from 'react';
@@ -30,11 +40,12 @@ function claveDelAviso(estado, cuantos) {
 }
 
 /* Un desplegable. Si los ítems traen `region` se agrupan: los de región vacía
-   son los encabezados y los demás cuelgan del suyo. Ninguno de los nueve
-   vocabularios de esta pantalla los trae hoy, y la rama queda porque el día que
-   una Prestadora los cargue el desplegable tiene que agruparlos igual que
-   agrupaba antes. */
-export function SelectDelCatalogo({ id, clave, required, extras = [], onChange }) {
+   son los encabezados y los demás cuelgan del suyo. Ningún vocabulario los trae
+   hoy, y la rama queda porque el día que una Prestadora los cargue el
+   desplegable tiene que agruparlos igual que agrupaba antes. */
+export function SelectDelCatalogo({
+  id, clave, required, className, vacio = 'comun.seleccionar', extras = [], onChange,
+}) {
   const { frase } = useFrases();
   const { estado, items, texto } = useVocabulario(clave);
   const campo = useRef(null);
@@ -69,7 +80,8 @@ export function SelectDelCatalogo({ id, clave, required, extras = [], onChange }
 
   if (aviso) {
     return (
-      <select ref={campo} id={id} required={required} disabled={estado === 'cargando'} onChange={alElegir}>
+      <select ref={campo} id={id} className={className} required={required}
+        disabled={estado === 'cargando'} onChange={alElegir}>
         <option value="" disabled>{frase(aviso)}</option>
       </select>
     );
@@ -79,8 +91,9 @@ export function SelectDelCatalogo({ id, clave, required, extras = [], onChange }
   const sinRegion = items.filter((i) => !i.region);
 
   return (
-    <select ref={campo} id={id} required={required} defaultValue="" onChange={alElegir}>
-      <option value="">{frase('comun.seleccionar')}</option>
+    <select ref={campo} id={id} className={className} required={required}
+      defaultValue="" onChange={alElegir}>
+      <option value="">{frase(vacio)}</option>
       {!agrupado && items.map((i) => (
         <option key={i.clave} value={i.clave}>{texto(i)}</option>
       ))}
@@ -107,9 +120,10 @@ export function SelectDelCatalogo({ id, clave, required, extras = [], onChange }
 }
 
 /* Un grupo de casillas, para los vocabularios donde se elige más de una cosa
-   —patologías, tareas, certificaciones—. El nombre del campo, la clase de cada
-   casilla y cuáles vienen tildadas de entrada son los mismos tres ajustes que
-   la página declaraba en el atributo.
+   —patologías, tareas, certificaciones, modalidades, retiro—. El nombre del
+   campo, la clase de cada casilla y cuáles vienen tildadas de entrada son los
+   mismos tres ajustes que la página declaraba en el atributo, y el nombre
+   importa porque al enviar el formulario junta lo marcado buscándolo por ahí.
 
    Lo tildado de entrada se pone como propiedad y no como atributo, igual que lo
    ponía `_llenarGrupo`: así `form.reset()` las deja destildadas, que es lo que

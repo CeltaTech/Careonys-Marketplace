@@ -19,7 +19,7 @@
 
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
-import { SelectDelCatalogo } from '../../piezas/DelCatalogo.jsx';
+import { SelectDelCatalogo } from '#comun/formularios/DelCatalogo.jsx';
 
 export default function PasoUno({ activo, irA, campoDeClave }) {
   const { frase } = useFrases();

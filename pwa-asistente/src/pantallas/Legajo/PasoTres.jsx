@@ -10,7 +10,7 @@
 =================================================== */
 
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
-import { CasillasDelCatalogo } from '../../piezas/DelCatalogo.jsx';
+import { CasillasDelCatalogo } from '#comun/formularios/DelCatalogo.jsx';
 
 export default function PasoTres({ activo, irA }) {
   const { frase } = useFrases();

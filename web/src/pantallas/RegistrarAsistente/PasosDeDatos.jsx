@@ -17,7 +17,7 @@
 
 import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
-import { SelectDelCatalogo, CasillasDelCatalogo } from './DelCatalogo.jsx';
+import { SelectDelCatalogo, CasillasDelCatalogo } from '#comun/formularios/DelCatalogo.jsx';
 import { Pane, Navegadores } from './Navegadores.jsx';
 
 export default function PasosDeDatos({

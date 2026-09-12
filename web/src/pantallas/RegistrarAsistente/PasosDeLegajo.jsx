@@ -13,7 +13,7 @@
 =================================================== */
 
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
-import { CasillasDelCatalogo } from './DelCatalogo.jsx';
+import { CasillasDelCatalogo } from '#comun/formularios/DelCatalogo.jsx';
 import { Pane, Navegadores } from './Navegadores.jsx';
 
 /* Lo que viene tildado de entrada, escrito una vez arriba y no en cada dibujo:
@@ -103,7 +103,8 @@ export default function PasosDeLegajo({
         {/* Mientras no se sepa qué Tipo de Asistente se eligió, el aviso está
             escondido por la clase, igual que nacía en la página. Cuando se sabe,
             manda el estilo: se ve sólo si ese tipo exige matrícula. Y si se
-            intentó pasar de paso sin cargarla, se repinta en rojo y queda así. */}
+            intentó pasar de paso sin cargarla, se repinta en rojo hasta que la
+            matrícula esté cargada. */}
         <p
           id="ficha-matricula-obligatoria-aviso"
           className={exigeMatricula === null ? 'oculto' : undefined}

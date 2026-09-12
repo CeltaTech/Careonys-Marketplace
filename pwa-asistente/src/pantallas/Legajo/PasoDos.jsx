@@ -19,7 +19,7 @@
 =================================================== */
 
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
-import { SelectDelCatalogo, CasillasDelCatalogo } from '../../piezas/DelCatalogo.jsx';
+import { SelectDelCatalogo, CasillasDelCatalogo } from '#comun/formularios/DelCatalogo.jsx';
 
 export default function PasoDos({ activo, irA, alElegirTipo, avisoDeMatricula }) {
   const { frase } = useFrases();

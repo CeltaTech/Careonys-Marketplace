@@ -16,7 +16,7 @@
 =================================================== */
 
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
-import { CasillasDelCatalogo } from '../../piezas/DelCatalogo.jsx';
+import { CasillasDelCatalogo } from '#comun/formularios/DelCatalogo.jsx';
 
 const POR_HORAS = ['horas'];
 const CON_RETIRO = ['con_retiro'];

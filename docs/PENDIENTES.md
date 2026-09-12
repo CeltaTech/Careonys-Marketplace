@@ -228,16 +228,15 @@ agosto de 2026, porque la que estaba escrita a mano decía 687 atributos `style=
 | `pwa-asistente/src/pantallas/Inicio.jsx` | 3 | 8 |
 | `pwa-asistente/src/Programa.jsx` | 3 | 7 |
 | `pwa-familia/src/Programa.jsx` | 3 | 7 |
+| `comun/formularios/DelCatalogo.jsx` | 2 | 0 |
 | `pwa-asistente/src/pantallas/Acceso.jsx` | 2 | 6 |
 | `pwa-asistente/src/pantallas/Inicio/EstadoDelLegajo.jsx` | 2 | 10 |
-| `pwa-asistente/src/piezas/DelCatalogo.jsx` | 2 | 0 |
 | `web/src/pantallas/Directorio.jsx` | 2 | 3 |
 | `web/src/pantallas/panel-prestadora/Resoluciones.jsx` | 2 | 8 |
 | `web/src/pantallas/panel-prestadora/Verificaciones.jsx` | 2 | 8 |
 | `web/src/pantallas/PanelPrestadora.jsx` | 2 | 4 |
 | `web/src/pantallas/Perfil.jsx` | 2 | 2 |
 | `web/src/pantallas/RegistrarAsistente/BarraDePasos.jsx` | 2 | 4 |
-| `web/src/pantallas/RegistrarAsistente/DelCatalogo.jsx` | 2 | 0 |
 | `web/src/pantallas/RegistrarAsistente/Navegadores.jsx` | 2 | 4 |
 | `pwa-asistente/src/pantallas/Inicio/FormularioDeReporte.jsx` | 1 | 4 |
 | `pwa-familia/src/pantallas/Intro.jsx` | 1 | 5 |
