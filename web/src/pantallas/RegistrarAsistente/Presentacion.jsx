@@ -11,7 +11,7 @@
 =================================================== */
 
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
-import { aLaImagen } from '../../armazon/direcciones.js';
+import { aLaImagen } from '#comun/direcciones.js';
 
 const BENEFICIOS = [
   { icono: '💼', titulo: 'alta.beneficio_oportunidades', texto: 'alta.beneficio_oportunidades_texto' },

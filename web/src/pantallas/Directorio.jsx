@@ -38,6 +38,7 @@ import { usePestana } from '../armazon/usePestana.js';
 import { useVocabulario } from '#comun/formularios/useVocabulario.js';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
+import { conPrestadora } from '#comun/direcciones.js';
 
 /* Cómo se dicen las zonas de alguien que ya contestó lo sabe `js/zonas.js`, que
    es el mismo archivo que dibuja las casillas del formulario de alta. Se pide
@@ -241,9 +242,8 @@ export default function Directorio() {
      hace falta —ése se conserva solo— y `slugPedido` queda en nulo, así que no
      se agrega nada. */
   function enlaceAlPerfil(fila) {
-    const nombreCorto = piezas.ClienteDatos.slugPedido;
-    return '/perfil?id=' + encodeURIComponent(fila.id)
-      + (nombreCorto ? '&t=' + encodeURIComponent(nombreCorto) : '');
+    return conPrestadora(
+      '/perfil?id=' + encodeURIComponent(fila.id), piezas.ClienteDatos.slugPedido);
   }
 
   const buscado = sinTildes(busqueda);

@@ -33,6 +33,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Identidad, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
+import { conPrestadora } from '#comun/direcciones.js';
 
 import Intro from './pantallas/Intro.jsx';
 import Tablero from './pantallas/Tablero.jsx';
@@ -131,10 +132,7 @@ export default function Programa() {
            `?t=`, el nombre corto viaja en el enlace; sin él, la pantalla de alta
            abre sin Prestadora y no da de alta a nadie —falla cerrado, antes que
            dejar nacer una cuenta huérfana—. Por subdominio se conserva solo. */
-        const nombreCorto = ClienteDatos.slugPedido;
-        if (nombreCorto && ALTA.indexOf('?') === -1) {
-          setDestinoAlta(ALTA + '?t=' + encodeURIComponent(nombreCorto));
-        }
+        setDestinoAlta(conPrestadora(ALTA, ClienteDatos.slugPedido));
 
         /* El directorio del tablero, que se pide una vez y sólo si la
            Prestadora quedó resuelta. */

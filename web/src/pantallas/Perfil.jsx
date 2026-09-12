@@ -29,6 +29,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
+import { conPrestadora } from '#comun/direcciones.js';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
 
@@ -213,8 +214,7 @@ export default function Perfil() {
      «Contactar» sin sesión cae en una pantalla que ya no sabe de qué Prestadora
      se estaba hablando. Por subdominio no hace falta: ése se conserva solo, y
      el nombre corto queda en nulo. */
-  const enlaceDeAcceso = nombreCorto
-    ? '/acceso?t=' + encodeURIComponent(nombreCorto) : '/acceso';
+  const enlaceDeAcceso = conPrestadora('/acceso', nombreCorto);
 
   /* Dos formas de escribir la última miga, porque son dos cosas distintas. El
      nombre de la persona es un dato y se escribe tal cual. «Perfil» es un

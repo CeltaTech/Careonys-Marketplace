@@ -27,6 +27,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
+import { conPrestadora } from '#comun/direcciones.js';
 import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
 import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
@@ -102,9 +103,8 @@ export default function Acceso() {
      sacarla. Sin el nombre corto, la pantalla de alta abre sin Prestadora y no
      da de alta a nadie —falla cerrado a propósito, antes que dejar nacer una
      ficha huérfana—, y la persona queda contra una puerta cerrada sin saber por
-     qué. Por subdominio no hace falta: ése se conserva solo. */
-  const conPrestadora = (camino) =>
-    nombreCorto ? camino + '?t=' + encodeURIComponent(nombreCorto) : camino;
+     qué. Lo mismo vale para la recuperación de la clave, que también dibuja la
+     marca de quien mandó a entrar. */
 
   async function entrar(evento) {
     evento.preventDefault();
@@ -197,16 +197,18 @@ export default function Acceso() {
             </button>
 
             <p className="acceso-pie">
-              <Link to="/recuperar-clave" onClick={recordarCorreo}>{frase('acceso.olvide')}</Link>
+              <Link to={conPrestadora('/recuperar-clave', nombreCorto)} onClick={recordarCorreo}>
+                {frase('acceso.olvide')}
+              </Link>
             </p>
 
             <p className="acceso-pie">
               <span>{frase('acceso.sin_cuenta')}</span>{' '}
-              <Link to={conPrestadora('/registrar-asistente')}>
+              <Link to={conPrestadora('/registrar-asistente', nombreCorto)}>
                 {frase('acceso.darse_de_alta')}
               </Link>{' '}
               <span>{frase('acceso.o_bien')}</span>{' '}
-              <Link to={conPrestadora('/registrar-familia')}>
+              <Link to={conPrestadora('/registrar-familia', nombreCorto)}>
                 {frase('acceso.darse_de_alta_familia')}
               </Link>
             </p>

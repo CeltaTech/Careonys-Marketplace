@@ -34,7 +34,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
-import { aLaRuta, aLaImagen } from '../armazon/direcciones.js';
+import { aLaRuta, aLaImagen } from '#comun/direcciones.js';
 import { Catalogo, marca } from '#comun/frases/lector.js';
 import FormularioDeConsulta from '../formularios/FormularioDeConsulta.jsx';
 

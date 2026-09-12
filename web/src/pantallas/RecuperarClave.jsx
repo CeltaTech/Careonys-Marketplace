@@ -31,6 +31,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
+import { conPrestadora } from '#comun/direcciones.js';
 import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
 
@@ -46,6 +47,7 @@ export default function RecuperarClave() {
   const [correoAvisado, setCorreoAvisado] = useState('');
   const [avisoEnvio, setAvisoEnvio] = useState('');
   const [enviando, setEnviando] = useState(false);
+  const [nombreCorto, setNombreCorto] = useState('');
 
   useEffect(() => {
     let vigente = true;
@@ -57,6 +59,7 @@ export default function RecuperarClave() {
         await ClienteDatos.initTenant();
         if (!vigente) return;
 
+        setNombreCorto(ClienteDatos.slugPedido || '');
         setEstado('listo');
 
         /* Lo que dejó escrito la pantalla de acceso. Se borra apenas se usa:
@@ -159,7 +162,7 @@ export default function RecuperarClave() {
             </button>
 
             <p className="acceso-pie">
-              <Link to="/acceso">{frase('recuperar.volver')}</Link>
+              <Link to={conPrestadora('/acceso', nombreCorto)}>{frase('recuperar.volver')}</Link>
             </p>
           </form>
         )}
@@ -183,7 +186,7 @@ export default function RecuperarClave() {
               {frase('recuperar.no_aparece')}
             </p>
             <p className="acceso-pie">
-              <Link to="/acceso">{frase('recuperar.volver')}</Link>
+              <Link to={conPrestadora('/acceso', nombreCorto)}>{frase('recuperar.volver')}</Link>
             </p>
           </div>
         )}

@@ -1,5 +1,5 @@
 /* ===================================================
-   LAS DIRECCIONES QUE VIENEN ESCRITAS EN EL CATÁLOGO
+   LAS DIRECCIONES DE ADENTRO DEL SITIO
 
    El catálogo guarda a dónde lleva cada servicio y con qué imagen se muestra, y
    los guarda como se escribían cuando cada pantalla era un archivo suelto:
@@ -33,4 +33,15 @@ export function aLaImagen(camino) {
   if (!valor) return undefined;
   if (/^(https?:)?\/\//.test(valor) || valor.charAt(0) === '/') return valor;
   return '/' + valor;
+}
+
+/* Y la Prestadora pegada a una dirección de acá adentro. Quien todavía no
+   inició sesión no tiene perfil de dónde sacarla, así que la única forma de que
+   viaje de una pantalla a la siguiente es que vaya escrita en la dirección. Sin
+   nombre corto la dirección sale limpia, que es lo que corresponde cuando se
+   entró por el subdominio: ése se conserva solo. */
+export function conPrestadora(camino, nombreCorto) {
+  if (!nombreCorto) return camino;
+  const separador = String(camino).indexOf('?') === -1 ? '?' : '&';
+  return camino + separador + 't=' + encodeURIComponent(nombreCorto);
 }

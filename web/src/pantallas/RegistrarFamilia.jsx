@@ -30,6 +30,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
+import { conPrestadora } from '#comun/direcciones.js';
 import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
 import { conLaRevisionDeClaves } from '#comun/datos/claves.js';
@@ -56,7 +57,7 @@ export default function RegistrarFamilia() {
   const [estado, setEstado] = useState('cargando');
   const [intento, setIntento] = useState(0);
 
-  const [hayPrestadora, setHayPrestadora] = useState(false);
+  const [nombreCorto, setNombreCorto] = useState('');
   const [avisoPrestadora, setAvisoPrestadora] = useState(null);
   const [avisoErrorAlta, setAvisoErrorAlta] = useState(null);
   const [avisoConfirmarHecho, setAvisoConfirmarHecho] = useState(null);
@@ -75,8 +76,8 @@ export default function RegistrarFamilia() {
 
   /* La Prestadora de esta alta y el correo con el que se creó la cuenta viven
      fuera del dibujo: los leen y los escriben los dos manejadores, y cambiarlos
-     no tiene por qué redibujar nada. Lo que sí se dibuja —si hay Prestadora o
-     no— va aparte, en `hayPrestadora`. */
+     no tiene por qué redibujar nada. Lo que sí se dibuja —cuál es la
+     Prestadora, que además dice si hay una— va aparte, en `nombreCorto`. */
   const prestadora = useRef(null);
   const correoDelAlta = useRef(null);
   const revisarClave = useRef(null);
@@ -113,7 +114,7 @@ export default function RegistrarFamilia() {
         if (!vigente) return;
 
         prestadora.current = laPrestadora;
-        setHayPrestadora(Boolean(laPrestadora && laPrestadora.slug));
+        setNombreCorto((laPrestadora && laPrestadora.slug) || '');
         setEstado('listo');
 
         /* El estado vacío del arranque: la dirección no nombró ninguna
@@ -354,7 +355,7 @@ export default function RegistrarFamilia() {
             <button
               type="submit"
               className="btn btn-primario ancho-total mt-8"
-              disabled={creando || !hayPrestadora}
+              disabled={creando || !nombreCorto}
             >
               {frase(creando ? 'alta_familia.creando' : 'alta_familia.crear')}
             </button>
@@ -363,7 +364,9 @@ export default function RegistrarFamilia() {
 
             <p className="acceso-pie">
               <span>{frase('alta_familia.ya_tiene_cuenta')}</span>{' '}
-              <Link to="/acceso">{frase('alta_familia.ir_al_acceso')}</Link>
+              <Link to={conPrestadora('/acceso', nombreCorto)}>
+                {frase('alta_familia.ir_al_acceso')}
+              </Link>
             </p>
           </form>
         )}
@@ -384,7 +387,10 @@ export default function RegistrarFamilia() {
               {frase(reenviando ? 'alta_familia.reenviando' : 'alta_familia.reenviar')}
             </button>
 
-            <Link to="/acceso" className="btn btn-primario ancho-total mt-8">
+            <Link
+              to={conPrestadora('/acceso', nombreCorto)}
+              className="btn btn-primario ancho-total mt-8"
+            >
               {frase('alta_familia.volver_al_acceso')}
             </Link>
           </div>
