@@ -6,7 +6,7 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/:pantalla((?!pwa-asistente/|pwa-familia/|assets/|data/|docs/).*)",
+      "source": "/((?!pwa-asistente/|pwa-familia/|assets/|data/|docs/).*)",
       "destination": "/index.html"
     }
   ],
