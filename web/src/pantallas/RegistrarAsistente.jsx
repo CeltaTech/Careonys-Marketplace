@@ -304,10 +304,12 @@ export default function RegistrarAsistente() {
       });
       const exige = FichasLegajo.requiereMatricula(valorDe('profesion'));
       const tiene = FichasLegajo.recolectar('ficha-matricula', 'matricula').length > 0;
-      if (exige && !tiene) {
-        valido = false;
-        setAvisoMatriculaCritico(true);
-      }
+      const falta = exige && !tiene;
+      if (falta) valido = false;
+      /* Se pinta y se despinta en el mismo renglón: cargada la matrícula, el
+         aviso vuelve a ser el de siempre. Dejarlo en rojo después de arreglado
+         señala un error que ya no está. */
+      setAvisoMatriculaCritico(falta);
     }
 
     if (!valido) {
