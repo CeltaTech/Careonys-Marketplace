@@ -88,7 +88,7 @@ export default function Pie() {
 
       <div className="footer-bottom">
         <p>
-          © 2025 <span className="tenant-name">{marca('{{organizacion}}')}</span>{' '}
+          © {new Date().getFullYear()} <span className="tenant-name">{marca('{{organizacion}}')}</span>{' '}
           {frase('pie.derechos')}
         </p>
       </div>
