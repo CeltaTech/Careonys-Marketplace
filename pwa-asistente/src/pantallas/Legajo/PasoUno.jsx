@@ -56,7 +56,7 @@ export default function PasoUno({ activo, irA, campoDeClave }) {
           <label>{frase('legajo.celular')}</label>
           {/* El ejemplo de celular está escrito acá adentro, en castellano y con
               formato argentino, y no sale del catálogo como los otros cinco. */}
-          <input type="tel" id="w-celular" placeholder="11 2345 6789" required />
+          <input type="tel" id="w-celular" placeholder={frase('legajo.celular_ejemplo')} required />
         </div>
         <div className="wfield">
           <label>{frase('legajo.nacimiento')}</label>

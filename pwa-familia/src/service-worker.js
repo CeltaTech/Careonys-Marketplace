@@ -22,7 +22,7 @@
    queda con lo que tenía, que es justamente lo que se busca el resto del tiempo.
 =================================================== */
 
-const CACHE_NAME = 'familia-v80';
+const CACHE_NAME = 'familia-v81';
 
 /* Lo que armó la herramienta, más lo que vive afuera de este programa. */
 const ASSETS_TO_CACHE = [

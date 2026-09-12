@@ -3077,6 +3077,11 @@
       "en": "11 digits",
       "pt-BR": "11 algarismos"
     },
+    "legajo.celular_ejemplo": {
+      "es-AR": "Código de área y número",
+      "en": "Area code and number",
+      "pt-BR": "Código de área e número"
+    },
     "legajo.repetir_contrasena": {
       "es-AR": "Repetir la contraseña",
       "en": "Re-enter the password",

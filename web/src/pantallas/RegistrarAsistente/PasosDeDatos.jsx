@@ -50,7 +50,7 @@ export default function PasosDeDatos({
           </div>
           <div className="form-group">
             <label htmlFor="celular">{frase('legajo.celular')}</label>
-            <input type="tel" id="celular" placeholder="11 2345 6789" required />
+            <input type="tel" id="celular" placeholder={frase('legajo.celular_ejemplo')} required />
           </div>
           {/* El largo mínimo no se escribe acá: lo sabe el archivo que decide qué
               contraseña vale, y se lo pregunta el campo. */}
