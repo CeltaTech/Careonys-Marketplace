@@ -218,9 +218,9 @@ const FichasLegajo = {
       const idCampo = Texto.escapar(`ficha-${tipoFicha}-${campo.clave}-${indice}`);
       return `<div class="form-group mb-12${esCasilla ? ' flex alinear-centro gap-8' : ''}" data-clave="${Texto.escapar(campo.clave)}">
         ${esCasilla
-          ? `${/* seguro: es marcado que arma este mismo módulo, y sus datos ya van escapados ahí */ this._inputCampo(tipoFicha, campo, indice)}<label for="${idCampo}" style="margin:0;cursor:pointer;">${Texto.escapar(t.etiqueta)}</label>`
-          : `<label for="${idCampo}">${Texto.escapar(t.etiqueta)}${campo.obligatorio ? ' <span style="color:var(--rojo-peligro-texto);">*</span>' : ''}</label>${/* seguro: es marcado que arma este mismo módulo, y sus datos ya van escapados ahí */ this._inputCampo(tipoFicha, campo, indice)}`}
-        ${t.ayuda ? `<p style="font-size:11px;color:var(--texto-secundario);margin:4px 0 0 0;">${Texto.escapar(t.ayuda)}</p>` : ''}
+          ? `${/* seguro: es marcado que arma este mismo módulo, y sus datos ya van escapados ahí */ this._inputCampo(tipoFicha, campo, indice)}<label for="${idCampo}" class="m-0 mano">${Texto.escapar(t.etiqueta)}</label>`
+          : `<label for="${idCampo}">${Texto.escapar(t.etiqueta)}${campo.obligatorio ? ' <span class="color-peligro">*</span>' : ''}</label>${/* seguro: es marcado que arma este mismo módulo, y sus datos ya van escapados ahí */ this._inputCampo(tipoFicha, campo, indice)}`}
+        ${t.ayuda ? `<p class="texto-11 color-secundario m-solo-arriba-4">${Texto.escapar(t.ayuda)}</p>` : ''}
       </div>`;
     }).join('');
 
@@ -228,8 +228,8 @@ const FichasLegajo = {
       ? `<p style="font-size:11.5px;color:var(--tono-atencion-texto);background:var(--tono-atencion-fondo);border-radius:8px;padding:10px;margin-bottom:12px;">${Texto.escapar(ficha.advertencia[this.idioma] || ficha.advertencia['es-AR'])}</p>`
       : '';
 
-    return `<div class="ficha-bloque" data-ficha="${Texto.escapar(tipoFicha)}" data-indice="${indice}"
-        style="background:var(--superficie-hover);border-radius:12px;padding:16px;border:1px solid var(--borde-card);margin-bottom:12px;position:relative;">
+    return `<div class="ficha-bloque fondo-superficie-hover redondeo-12 p-16 borde-tarjeta mb-12 relativo"
+        data-ficha="${Texto.escapar(tipoFicha)}" data-indice="${indice}">
       ${advertencia}
       ${camposHTML}
       <button type="button" class="btn-quitar-ficha" style="position:absolute;top:12px;right:12px;background:none;border:none;color:var(--rojo-peligro-texto);cursor:pointer;font-size:13px;">
@@ -248,7 +248,7 @@ const FichasLegajo = {
     const tituloNuevo = (ficha[this.idioma] || ficha['es-AR']).titulo_nuevo;
 
     contenedor.innerHTML = `
-      <h4 style="font-size:14px;font-weight:700;color:var(--texto-titulo);margin-bottom:10px;">${Texto.escapar(titulo)}</h4>
+      <h4 class="texto-14 peso-700 color-titulo mb-10">${Texto.escapar(titulo)}</h4>
       <div class="fichas-lista" data-ficha="${Texto.escapar(tipoFicha)}"></div>
       <button type="button" class="btn btn-sobre-oscuro btn-agregar-ficha" data-ficha="${Texto.escapar(tipoFicha)}"
         style="border-color:var(--borde-card);color:var(--azul-medio-texto);font-size:12.5px;padding:8px 14px;">

@@ -40,3 +40,8 @@ Thumbs.db
 # proyecto. `scripts/verificar_referencias.mjs` tampoco les revisa las citas, por el
 # mismo motivo. Van con `**/` porque hay una en `docs/` y otra en `assets/images/`.
 **/Nueva carpeta/
+
+# Lo que deja Python cuando alguien importa `scripts/servidor_local.py` desde otro
+# archivo en vez de correrlo derecho: una copia compilada del módulo, que se rehace
+# sola y sirve sólo en la máquina que la hizo.
+__pycache__/
