@@ -17,6 +17,7 @@
 
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { CasillasDelCatalogo } from '#comun/formularios/DelCatalogo.jsx';
+import { HUECOS_DEL_ALTA } from '#comun/formularios/altaDeAsistente.js';
 
 const POR_HORAS = ['horas'];
 const CON_RETIRO = ['con_retiro'];
@@ -57,11 +58,11 @@ export default function PasoCuatro({ activo, irA, disponibilidad }) {
       <p id="disponibilidad-bajada" style={{ fontSize: '10px', color: 'var(--texto-secundario)', margin: '0 0 4px' }}>
         {disponibilidad.bajada}
       </p>
-      <div id="grilla-disponibilidad"></div>
+      <div id={HUECOS_DEL_ALTA.grillaDeDisponibilidad}></div>
       <p id="disponibilidad-ayuda" style={{ fontSize: '10px', color: 'var(--texto-secundario)', margin: '6px 0 0' }}>
         {disponibilidad.ayuda}
       </p>
-      <div id="preguntas-disponibilidad"></div>
+      <div id={HUECOS_DEL_ALTA.preguntasDeDisponibilidad}></div>
 
       <div className="wnav">
         <button type="button" className="wbtn-prev" onClick={() => irA(3)}>

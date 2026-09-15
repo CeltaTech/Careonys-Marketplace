@@ -37,6 +37,7 @@ import {
   conLasZonas, conLaDisponibilidad, conLasFichas,
   conLosDocumentos, conLasAutorizaciones, conLaRevisionDeClaves
 } from '#comun/datos/modulos.js';
+import { HUECOS_DEL_ALTA, limpiarElAlta } from '#comun/formularios/altaDeAsistente.js';
 
 import BarraDeProgreso from './Legajo/BarraDeProgreso.jsx';
 import PasoUno from './Legajo/PasoUno.jsx';
@@ -82,15 +83,6 @@ export default function Legajo({ activa, base, navegar }) {
     if (pantalla) pantalla.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  /* Las cuatro fichas repetibles. Está aparte porque después de enviar hay que
-     volver a montarlas: vaciar el formulario limpia los campos, pero no borra
-     los bloques que la persona agregó. */
-  const montarFichas = useCallback(() => {
-    const FichasLegajo = fichas.current;
-    if (!FichasLegajo) return;
-    FichasLegajo.montarSecciones();
-  }, []);
-
   /* Las piezas grandes se montan una sola vez, cuando la puerta a la base ya
      está abierta, y no cada vez que se entra a la pantalla: lo que la persona
      lleva cargado tiene que seguir ahí al volver. */
@@ -111,8 +103,8 @@ export default function Legajo({ activa, base, navegar }) {
           bajada: texto.bajada || '',
           ayuda: texto.ayuda_grilla || ''
         });
-        await Disponibilidad.montarGrilla('grilla-disponibilidad');
-        await Disponibilidad.montarPreguntas('preguntas-disponibilidad');
+        await Disponibilidad.montarGrilla(HUECOS_DEL_ALTA.grillaDeDisponibilidad);
+        await Disponibilidad.montarPreguntas(HUECOS_DEL_ALTA.preguntasDeDisponibilidad);
       } catch (err) {
         console.error('Paso de disponibilidad del Asistente:', err);
         setDisponibilidad({
@@ -130,7 +122,7 @@ export default function Legajo({ activa, base, navegar }) {
         const FichasLegajo = await conLasFichas();
         fichas.current = FichasLegajo;
         await FichasLegajo.cargar();
-        montarFichas();
+        FichasLegajo.montarSecciones();
 
         /* Con las fichas a mano ya se puede decir si el tipo elegido exige
            Matrícula. Sin tipo elegido no exige ninguna, que es lo que contesta
@@ -148,7 +140,7 @@ export default function Legajo({ activa, base, navegar }) {
           recordatorio: textos.recordatorio || '',
           boton: textos.boton || antes.boton
         }));
-        await Autorizaciones.montar('autorizaciones-container');
+        await Autorizaciones.montar(HUECOS_DEL_ALTA.autorizaciones);
       } catch (err) {
         console.error('Legajo del Asistente:', err);
         window.alert(Texto.mensajeDeError(err, 'cargar los pasos del legajo'));
@@ -160,7 +152,7 @@ export default function Legajo({ activa, base, navegar }) {
     (async () => {
       try {
         const Zonas = await conLasZonas();
-        await Zonas.montar('zonas');
+        await Zonas.montar(HUECOS_DEL_ALTA.zonas);
       } catch (err) {
         console.error('Zonas de cobertura del Asistente:', err);
       }
@@ -230,11 +222,9 @@ export default function Legajo({ activa, base, navegar }) {
       setGuardando(SIN_GUARDADO);
       setEspera(null);
       setExito(true);
-      if (formulario.current) formulario.current.reset();
-      Disponibilidad.limpiar('grilla-disponibilidad', 'preguntas-disponibilidad');
-      Autorizaciones.limpiar('autorizaciones-container');
-      Zonas.limpiar('zonas');
-      montarFichas();
+      limpiarElAlta(formulario.current, {
+        Disponibilidad, Autorizaciones, Zonas, FichasLegajo
+      });
       irA(1);
       setTimeout(() => setExito(false), 6000);
     } catch (err) {
@@ -248,7 +238,7 @@ export default function Legajo({ activa, base, navegar }) {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [base, frase, irA, montarFichas]);
+  }, [base, frase, irA]);
 
   async function enviar(evento) {
     evento.preventDefault();
@@ -277,23 +267,25 @@ export default function Legajo({ activa, base, navegar }) {
     /* La zona tiene dos formas de contestarse y cuál se mostró lo sabe el
        módulo, así que se le pregunta a él. Una lista de casillas sin tildar no
        la agarra el navegador, y sin esto el legajo se enviaba sin zona. */
-    if (!Zonas.hayRespuesta('zonas')) {
+    if (!Zonas.hayRespuesta(HUECOS_DEL_ALTA.zonas)) {
       window.alert(Catalogo.frase('alta.zonas_falta'));
       irA(1);
-      document.getElementById('zonas').scrollIntoView({ block: 'center' });
+      document.getElementById(HUECOS_DEL_ALTA.zonas).scrollIntoView({ block: 'center' });
       return;
     }
-    const zonasElegidas = Zonas.recolectar('zonas');
+    const zonasElegidas = Zonas.recolectar(HUECOS_DEL_ALTA.zonas);
 
     const patologias = Array.from(document.querySelectorAll('input[name="patologia"]:checked')).map((cb) => cb.value);
     const tareas = Array.from(document.querySelectorAll('input[name="tarea_cuidado"]:checked')).map((cb) => cb.value);
     const cursos = Array.from(document.querySelectorAll('input[name="certificacion"]:checked')).map((cb) => cb.value);
 
-    const franjas = Disponibilidad.recolectar('grilla-disponibilidad', 'preguntas-disponibilidad');
+    const franjas = Disponibilidad.recolectar(
+      HUECOS_DEL_ALTA.grillaDeDisponibilidad, HUECOS_DEL_ALTA.preguntasDeDisponibilidad
+    );
 
     const legajo = {
       ...FichasLegajo.recolectarSecciones(),
-      autorizaciones: Autorizaciones.recolectar('autorizaciones-container'),
+      autorizaciones: Autorizaciones.recolectar(HUECOS_DEL_ALTA.autorizaciones),
       disponibilidad: franjas,
       zonas: zonasElegidas.zonas
     };

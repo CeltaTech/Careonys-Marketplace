@@ -34,6 +34,7 @@ import {
   conLaRevisionDeClaves, conLasZonas, conLaDisponibilidad,
   conLasFichas, conLosDocumentos, conLasAutorizaciones
 } from '#comun/datos/modulos.js';
+import { HUECOS_DEL_ALTA, limpiarElAlta } from '#comun/formularios/altaDeAsistente.js';
 import Presentacion from './RegistrarAsistente/Presentacion.jsx';
 import BarraDePasos from './RegistrarAsistente/BarraDePasos.jsx';
 import CajaDeEstado from './RegistrarAsistente/CajaDeEstado.jsx';
@@ -190,7 +191,7 @@ export default function RegistrarAsistente() {
         // Las zonas de cobertura. La lista es de cada Prestadora y sale de la
         // base, así que el módulo la trae y arma el campo; si esa Prestadora no
         // cargó ninguna, el mismo hueco pasa a ser el de texto libre.
-        await Zonas.montar('zonas');
+        await Zonas.montar(HUECOS_DEL_ALTA.zonas);
         if (!vigente) return;
 
         // La disponibilidad. La grilla y la pregunta de los reemplazos urgentes
@@ -203,8 +204,8 @@ export default function RegistrarAsistente() {
           bajada: pasoDisponibilidad.bajada || '',
           ayuda: pasoDisponibilidad.ayuda_grilla || ''
         });
-        await Disponibilidad.montarGrilla('grilla-disponibilidad');
-        await Disponibilidad.montarPreguntas('preguntas-disponibilidad');
+        await Disponibilidad.montarGrilla(HUECOS_DEL_ALTA.grillaDeDisponibilidad);
+        await Disponibilidad.montarPreguntas(HUECOS_DEL_ALTA.preguntasDeDisponibilidad);
         if (!vigente) return;
 
         // El cierre: lo que la persona autoriza a publicar.
@@ -216,7 +217,7 @@ export default function RegistrarAsistente() {
           recordatorio: cierre.recordatorio || '',
           boton: cierre.boton || ''
         });
-        await Autorizaciones.montar('autorizaciones-container');
+        await Autorizaciones.montar(HUECOS_DEL_ALTA.autorizaciones);
         if (!vigente) return;
 
         // Estado listo: el cartel se va y lo que queda es el formulario.
@@ -277,7 +278,7 @@ export default function RegistrarAsistente() {
     if (hueco && !Zonas) {
       valido = false;
       if (!primerCampoMal) primerCampoMal = hueco;
-    } else if (hueco && !Zonas.hayRespuesta('zonas')) {
+    } else if (hueco && !Zonas.hayRespuesta(HUECOS_DEL_ALTA.zonas)) {
       valido = false;
       hueco.style.outline = '2px solid var(--rojo-peligro)';
       hueco.style.borderRadius = '4px';
@@ -384,13 +385,15 @@ export default function RegistrarAsistente() {
       const cursos = Array.from(form.querySelectorAll('input[name="certificacion"]:checked')).map((cb) => cb.value);
       // Días y turnos salen con la clave del catálogo —`lunes`, `manana`—, que
       // es lo que esperan las columnas de franjas_asistente.
-      const disponibilidad = Disponibilidad.recolectar('grilla-disponibilidad', 'preguntas-disponibilidad');
+      const disponibilidad = Disponibilidad.recolectar(
+        HUECOS_DEL_ALTA.grillaDeDisponibilidad, HUECOS_DEL_ALTA.preguntasDeDisponibilidad
+      );
 
       /* Las zonas llegan en un solo objeto porque hay dos formas de contestar y
          quien guarda no tiene por qué saber cuál se mostró: las tildadas van a
          zonas_asistente con el legajo, y lo escrito a mano va a caregivers con
          el resto del alta. */
-      const zonasElegidas = Zonas.recolectar('zonas');
+      const zonasElegidas = Zonas.recolectar(HUECOS_DEL_ALTA.zonas);
 
       const data = {
         user_id: userId,
@@ -428,7 +431,7 @@ export default function RegistrarAsistente() {
 
       const legajo = {
         ...FichasLegajo.recolectarSecciones(),
-        autorizaciones: Autorizaciones.recolectar('autorizaciones-container'),
+        autorizaciones: Autorizaciones.recolectar(HUECOS_DEL_ALTA.autorizaciones),
         disponibilidad,
         zonas: zonasElegidas.zonas
       };
@@ -457,14 +460,12 @@ export default function RegistrarAsistente() {
       // Estado listo: el cartel se va y lo que queda es el cartel de éxito.
       setAltaEstado({ cual: null });
       setExito(true);
-      form.reset();
-      /* `form.reset()` es del navegador y vacía lo que el navegador tiene. Las
-         dos contraseñas las tiene la pantalla, así que se vacían acá: sin esto
-         volverían a escribirse solas en el dibujo siguiente. */
+      limpiarElAlta(form, { Disponibilidad, Autorizaciones, Zonas, FichasLegajo });
+      /* Las dos contraseñas las tiene la pantalla y no el navegador, así que se
+         vacían acá: sin esto volverían a escribirse solas en el dibujo
+         siguiente. */
       setClave('');
       setClaveRepetida('');
-      Disponibilidad.limpiar('grilla-disponibilidad', 'preguntas-disponibilidad');
-      FichasLegajo.montarSecciones();
       irAlPaso(1);
       clearTimeout(relojDelExito.current);
       relojDelExito.current = setTimeout(() => setExito(false), 6000);

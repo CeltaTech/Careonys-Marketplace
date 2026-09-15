@@ -20,6 +20,7 @@
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
 import { SelectDelCatalogo } from '#comun/formularios/DelCatalogo.jsx';
+import { HUECOS_DEL_ALTA } from '#comun/formularios/altaDeAsistente.js';
 
 export default function PasoUno({ activo, irA, campoDeClave }) {
   const { frase } = useFrases();
@@ -74,7 +75,7 @@ export default function PasoUno({ activo, irA, campoDeClave }) {
           <label>{frase('legajo.domicilio')}</label>
           <input type="text" id="w-domicilio" placeholder={frase('legajo.domicilio_ejemplo')} required />
         </div>
-        <div className="wfield wgrid-2-full" id="zonas"></div>
+        <div className="wfield wgrid-2-full" id={HUECOS_DEL_ALTA.zonas}></div>
         <div className="wfield">
           <label>{frase('legajo.cbu')}</label>
           <input type="text" id="w-cbu" placeholder={frase('legajo.cbu_ejemplo')} required />

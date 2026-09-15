@@ -19,6 +19,7 @@ import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { SelectDelCatalogo, CasillasDelCatalogo } from '#comun/formularios/DelCatalogo.jsx';
 import { Pane, Navegadores } from './Navegadores.jsx';
+import { HUECOS_DEL_ALTA } from '#comun/formularios/altaDeAsistente.js';
 
 export default function PasosDeDatos({
   paso, irAlPaso, seguir,
@@ -98,7 +99,7 @@ export default function PasosDeDatos({
               sale de la base y es de cada Prestadora, así que no puede estar
               escrita acá. Con la Prestadora sin lista cargada, este mismo hueco
               muestra el campo de texto libre. */}
-          <div className="form-group grilla-fila-entera" id="zonas"></div>
+          <div className="form-group grilla-fila-entera" id={HUECOS_DEL_ALTA.zonas}></div>
           <div className="form-group">
             <label htmlFor="cbu-alias">{frase('legajo.cbu')}</label>
             <input type="text" id="cbu-alias" placeholder={frase('alta.cbu_ejemplo')} required />

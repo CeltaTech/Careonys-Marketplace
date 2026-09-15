@@ -22,6 +22,7 @@
 =================================================== */
 
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
+import { HUECOS_DEL_ALTA } from '#comun/formularios/altaDeAsistente.js';
 
 export default function PasoCinco({
   activo, irA, cierre, enviando, espera, avisoConfirmacion,
@@ -49,7 +50,7 @@ export default function PasoCinco({
       <p id="cierre-recordatorio" style={{ fontSize: '10px', color: 'var(--tono-exito-texto)', background: 'var(--tono-exito-fondo)', borderRadius: '8px', padding: '8px', margin: '0 0 8px' }}>
         {cierre.recordatorio}
       </p>
-      <div id="autorizaciones-container"></div>
+      <div id={HUECOS_DEL_ALTA.autorizaciones}></div>
 
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', margin: '12px 0', fontSize: '12px', color: 'var(--texto-principal)' }}>
         <input type="checkbox" id="w-terminos" required style={{ width: '18px', height: '18px', marginTop: '2px', flexShrink: 0 }} />

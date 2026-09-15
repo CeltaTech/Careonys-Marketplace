@@ -15,6 +15,7 @@
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { CasillasDelCatalogo } from '#comun/formularios/DelCatalogo.jsx';
 import { Pane, Navegadores } from './Navegadores.jsx';
+import { HUECOS_DEL_ALTA } from '#comun/formularios/altaDeAsistente.js';
 
 /* Lo que viene tildado de entrada, escrito una vez arriba y no en cada dibujo:
    son las mismas dos que declaraba el atributo de la página. */
@@ -81,13 +82,13 @@ export default function PasosDeLegajo({
           <p id="disponibilidad-bajada" className="texto-12-5 color-secundario mb-12">
             {textosDisponibilidad.bajada}
           </p>
-          <div id="grilla-disponibilidad"></div>
+          <div id={HUECOS_DEL_ALTA.grillaDeDisponibilidad}></div>
           <p id="disponibilidad-ayuda"
             style={{ fontSize: '11.5px', color: 'var(--texto-secundario)', margin: '8px 0 0 0' }}>
             {textosDisponibilidad.ayuda}
           </p>
 
-          <div id="preguntas-disponibilidad" style={{ marginTop: '20px' }}></div>
+          <div id={HUECOS_DEL_ALTA.preguntasDeDisponibilidad} style={{ marginTop: '20px' }}></div>
         </div>
 
         <Navegadores anterior={3} siguiente={5} irAlPaso={irAlPaso} seguir={seguir} />

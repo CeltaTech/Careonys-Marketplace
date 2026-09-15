@@ -16,6 +16,7 @@
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import CajaDeEstado from './CajaDeEstado.jsx';
 import { Pane, Navegadores } from './Navegadores.jsx';
+import { HUECOS_DEL_ALTA } from '#comun/formularios/altaDeAsistente.js';
 
 export default function PasoDeCierre({
   paso, irAlPaso, textosCierre, altaEstado, enviando, esperandoCorreo, correoDelAlta,
@@ -38,7 +39,7 @@ export default function PasoDeCierre({
         {textosCierre.recordatorio}
       </p>
 
-      <div id="autorizaciones-container"></div>
+      <div id={HUECOS_DEL_ALTA.autorizaciones}></div>
 
       <div style={{
         margin: '20px 0', fontSize: '12.5px', color: 'var(--texto-principal)',
