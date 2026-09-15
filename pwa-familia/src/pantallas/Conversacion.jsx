@@ -10,6 +10,9 @@
    que es la misma decisión en las dos aplicaciones de teléfono. Lo propio de
    ésta es la caja y la cabecera.
 
+   **Si la pieza no llegó a montarse, acá se dice y se ofrece volver a
+   intentar.** Una caja vacía se lee como «no hay mensajes», y no es lo mismo.
+
    El hilo abierto se refresca solo cada pocos segundos. Al salir de la pantalla
    se para, y eso lo hace la navegación del programa, no este archivo: es ella la
    que sabe que se está yendo.
@@ -17,11 +20,12 @@
 
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { useLaConversacion } from '#comun/datos/useLaConversacion.js';
+import { EstadoDeLaLista } from '#comun/listas/EstadoDeLaLista.jsx';
 
 export default function Conversacion({ activa, pedido, navegar, pedidaRef }) {
   const { frase } = useFrases();
 
-  useLaConversacion('familia', pedido, pedidaRef);
+  const { fallo, reintentar } = useLaConversacion('familia', pedido, pedidaRef);
 
   return (
     <div className={'app-screen' + (activa ? ' active' : '')} id="screen-conversacion">
@@ -37,6 +41,8 @@ export default function Conversacion({ activa, pedido, navegar, pedidaRef }) {
         <p className="texto-12 color-secundario m-0 mb-12" id="conversacion-bajada">
           {frase('conversacion.bajada')}
         </p>
+        <EstadoDeLaLista estado={fallo ? 'error' : 'listo'} prefijo="mensajes"
+          error="conversacion.error" alReintentar={reintentar} />
         <div id="conversacion-caja"></div>
       </div>
     </div>
