@@ -234,7 +234,6 @@ agosto de 2026, porque la que estaba escrita a mano decía 687 atributos `style=
 | `web/src/pantallas/Directorio.jsx` | 2 | 3 |
 | `web/src/pantallas/panel-prestadora/Resoluciones.jsx` | 2 | 8 |
 | `web/src/pantallas/panel-prestadora/Verificaciones.jsx` | 2 | 8 |
-| `web/src/pantallas/PanelPrestadora.jsx` | 2 | 4 |
 | `web/src/pantallas/Perfil.jsx` | 2 | 2 |
 | `web/src/pantallas/RegistrarAsistente/BarraDePasos.jsx` | 2 | 4 |
 | `web/src/pantallas/RegistrarAsistente/Navegadores.jsx` | 2 | 4 |
@@ -242,10 +241,12 @@ agosto de 2026, porque la que estaba escrita a mano decía 687 atributos `style=
 | `comun/marca/SelloDelProducto.jsx` | 1 | 0 |
 | `pwa-asistente/src/pantallas/Inicio/FormularioDeReporte.jsx` | 1 | 4 |
 | `pwa-familia/src/pantallas/Intro.jsx` | 1 | 2 |
+| `web/src/armazon/MarcoDelPanel.jsx` | 1 | 1 |
 | `web/src/formularios/FormularioDeConsulta.jsx` | 1 | 0 |
 | `web/src/pantallas/Examen.jsx` | 1 | 2 |
 | `web/src/pantallas/GuiasPrestadora.jsx` | 1 | 2 |
 | `web/src/pantallas/panel-prestadora/Cartel.jsx` | 1 | 2 |
+| `web/src/pantallas/PanelPrestadora.jsx` | 1 | 2 |
 | `web/src/pantallas/RegistrarAsistente/CajaDeEstado.jsx` | 1 | 9 |
 | `web/src/pantallas/RegistrarAsistente/PasosDeDatos.jsx` | 1 | 4 |
 

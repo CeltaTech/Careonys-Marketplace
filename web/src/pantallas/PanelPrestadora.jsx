@@ -33,9 +33,9 @@
 =================================================== */
 
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
+import { MarcoDelPanel } from '../armazon/MarcoDelPanel.jsx';
 import { Identidad, Texto } from '#comun/frases/lector.js';
 import { useSesionRequerida } from '../datos/useSesionRequerida.js';
 import Cartel from './panel-prestadora/Cartel.jsx';
@@ -281,151 +281,113 @@ export default function PanelPrestadora() {
 
   return (
     <>
-      <header className="tenant-header">
-        <div className="tenant-brand">
-          <i className="fas fa-hospital-user color-azul-medio"></i>{' '}
-          <span>{frase('comun.organizacion')}</span>{' '}
-          <span className="tenant-badge">{frase('panel.guia_organizacion')}</span>
-        </div>
-        <div className="texto-13">
-          <i className="fas fa-user-shield"></i>{' '}
-          <span>{frase('panel.guia_operador')}</span>{' '}
-          <Link to="/" className="ml-8"
-            style={{ color: 'var(--texto-sobre-color)', textDecoration: 'underline' }}>
-            {frase('panel.guia_volver_portal')}
-          </Link>
-        </div>
-      </header>
+      <MarcoDelPanel icono="fas fa-hospital-user color-azul-medio">
 
-      <div className="admin-layout">
-        {/* EL MENÚ NOMBRA SÓLO PANTALLAS QUE EXISTEN. Eran seis entradas y
-            cuatro no llevaban a ningún lado. «Presentismo GPS Vivo» no va a
-            tener pantalla nunca: la fichada es de la Familia y del Asistente, y
-            la Prestadora no la mira. Las otras esperan una decisión que no está
-            tomada, y están anotadas en la lista de pendientes. */}
-        <aside className="admin-sidebar">
-          <ul className="sidebar-menu">
-            <li>
-              <Link to="/panel-prestadora" className="active">
-                <i className="fas fa-users-cog"></i>{' '}
-                <span>{frase('panel.guia_menu_legajos')}</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/guias-prestadora">
-                <i className="fas fa-book-medical"></i>{' '}
-                <span>{frase('panel.guia_menu_guias')}</span>
-              </Link>
-            </li>
-          </ul>
-        </aside>
+        {/* LOS NÚMEROS SALEN DE LA BASE, Y POR ESO SON DOS. Los otros dos que
+            había estaban escritos a mano y decían siempre lo mismo pasara lo
+            que pasara. Y arrancan en raya: mientras la consulta viaja, un
+            número sería un número que nadie contó. */}
+        <div className="kpi-grid">
+          <div className="kpi-card">
+            <div className="kpi-val">
+              {numeros.revision === null ? SIN_CUENTA : numeros.revision}
+            </div>
+            <div className="kpi-label">{frase('panel.kpi_revision')}</div>
+          </div>
+          <div className="kpi-card">
+            <div className="kpi-val">
+              {numeros.validados === null ? SIN_CUENTA : numeros.validados}
+            </div>
+            <div className="kpi-label">{frase('panel.kpi_validados')}</div>
+          </div>
+        </div>
 
-        <main className="admin-content">
-          {/* LOS NÚMEROS SALEN DE LA BASE, Y POR ESO SON DOS. Los otros dos que
-              había estaban escritos a mano y decían siempre lo mismo pasara lo
-              que pasara. Y arrancan en raya: mientras la consulta viaja, un
-              número sería un número que nadie contó. */}
-          <div className="kpi-grid">
-            <div className="kpi-card">
-              <div className="kpi-val">
-                {numeros.revision === null ? SIN_CUENTA : numeros.revision}
-              </div>
-              <div className="kpi-label">{frase('panel.kpi_revision')}</div>
+        <div className="card-dashboard">
+          <div className="flex justificar-entre alinear-centro mb-16">
+            <div>
+              <h3 className="m-0 texto-18 color-titulo">
+                <i className="fas fa-clipboard-check"></i>{' '}
+                <span>{frase('panel.legajos_encabezado')}</span>
+              </h3>
+              <p className="m-solo-arriba-4 texto-13 color-secundario">
+                {frase('panel.legajos_bajada')}
+              </p>
             </div>
-            <div className="kpi-card">
-              <div className="kpi-val">
-                {numeros.validados === null ? SIN_CUENTA : numeros.validados}
-              </div>
-              <div className="kpi-label">{frase('panel.kpi_validados')}</div>
-            </div>
+            <button className="btn btn-secundario"
+              style={{ fontSize: '12px', padding: '8px 16px' }}
+              disabled={actualizando}
+              onClick={() => cargarAspirantes()}>
+              <i className="fas fa-sync-alt"></i>{' '}
+              <span>{frase('panel.guia_actualizar')}</span>
+            </button>
           </div>
 
-          <div className="card-dashboard">
-            <div className="flex justificar-entre alinear-centro mb-16">
-              <div>
-                <h3 className="m-0 texto-18 color-titulo">
-                  <i className="fas fa-clipboard-check"></i>{' '}
-                  <span>{frase('panel.legajos_encabezado')}</span>
-                </h3>
-                <p className="m-solo-arriba-4 texto-13 color-secundario">
-                  {frase('panel.legajos_bajada')}
-                </p>
-              </div>
-              <button className="btn btn-secundario"
-                style={{ fontSize: '12px', padding: '8px 16px' }}
-                disabled={actualizando}
-                onClick={() => cargarAspirantes()}>
-                <i className="fas fa-sync-alt"></i>{' '}
-                <span>{frase('panel.guia_actualizar')}</span>
-              </button>
-            </div>
+          <Cartel tono={cartel && cartel.tono} clave={cartel && cartel.clave}
+            huecos={cartel && cartel.huecos} clase="" estilo={CAJA_DEL_CARTEL} />
 
-            <Cartel tono={cartel && cartel.tono} clave={cartel && cartel.clave}
-              huecos={cartel && cartel.huecos} clase="" estilo={CAJA_DEL_CARTEL} />
-
-            <table className="aspirantes-table">
-              <thead>
-                <tr>
-                  <th>{frase('panel.col_aspirante')}</th>
-                  <th>{frase('panel.col_tipo')}</th>
-                  <th>{frase('avisos.rotulo_zona')}</th>
-                  <th>{frase('panel.col_documentacion')}</th>
-                  <th>{frase('panel.col_auditoria')}</th>
-                  <th>{frase('panel.opciones_col_acciones')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filas.map((a) => (
-                  <tr key={a.id}>
-                    <td>
-                      <strong>{a.nombre}</strong><br />
-                      <span className="texto-11 color-secundario">
-                        {frase('panel.detalle_dni')} {a.dni} |{' '}
-                        {frase('panel.fila_telefono')} {a.telefono}
+          <table className="aspirantes-table">
+            <thead>
+              <tr>
+                <th>{frase('panel.col_aspirante')}</th>
+                <th>{frase('panel.col_tipo')}</th>
+                <th>{frase('avisos.rotulo_zona')}</th>
+                <th>{frase('panel.col_documentacion')}</th>
+                <th>{frase('panel.col_auditoria')}</th>
+                <th>{frase('panel.opciones_col_acciones')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filas.map((a) => (
+                <tr key={a.id}>
+                  <td>
+                    <strong>{a.nombre}</strong><br />
+                    <span className="texto-11 color-secundario">
+                      {frase('panel.detalle_dni')} {a.dni} |{' '}
+                      {frase('panel.fila_telefono')} {a.telefono}
+                    </span>
+                  </td>
+                  <td>{a.profesion}</td>
+                  <td>{a.zona}</td>
+                  <td>
+                    <span className="color-azul-medio texto-11 peso-700">
+                      <i className="fas fa-file-pdf"></i>{' '}
+                      {frase('panel.documentos_cargados')}
+                    </span>
+                  </td>
+                  <td>
+                    {a.estado === 'en_revision' ? (
+                      <span className="status-pill status-revision">
+                        {frase('panel.estado_en_revision')}
                       </span>
-                    </td>
-                    <td>{a.profesion}</td>
-                    <td>{a.zona}</td>
-                    <td>
-                      <span className="color-azul-medio texto-11 peso-700">
-                        <i className="fas fa-file-pdf"></i>{' '}
-                        {frase('panel.documentos_cargados')}
+                    ) : (
+                      <span className="status-pill status-validado">
+                        {frase('panel.estado_validado')}
                       </span>
-                    </td>
-                    <td>
-                      {a.estado === 'en_revision' ? (
-                        <span className="status-pill status-revision">
-                          {frase('panel.estado_en_revision')}
-                        </span>
-                      ) : (
-                        <span className="status-pill status-validado">
-                          {frase('panel.estado_validado')}
-                        </span>
+                    )}
+                  </td>
+                  <td>
+                    <button className="btn btn-secundario texto-11 p-6-12"
+                      disabled={abriendo === a.id}
+                      onClick={() => abrirAuditoria(a.id)}>
+                      {abriendo === a.id ? frase('panel.abriendo') : (
+                        <>
+                          <i className="fas fa-search-plus"></i>{' '}
+                          {frase('panel.auditar')}
+                        </>
                       )}
-                    </td>
-                    <td>
-                      <button className="btn btn-secundario texto-11 p-6-12"
-                        disabled={abriendo === a.id}
-                        onClick={() => abrirAuditoria(a.id)}>
-                        {abriendo === a.id ? frase('panel.abriendo') : (
-                          <>
-                            <i className="fas fa-search-plus"></i>{' '}
-                            {frase('panel.auditar')}
-                          </>
-                        )}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-          {operativa && <TopeDeAlarma base={base} />}
-          {operativa && <Moneda base={base} />}
-          {operativa && <OpcionesPropias base={base} />}
-        </main>
-      </div>
+        {operativa && <TopeDeAlarma base={base} />}
+        {operativa && <Moneda base={base} />}
+        {operativa && <OpcionesPropias base={base} />}
+
+      </MarcoDelPanel>
 
       <ModalAuditoria
         base={base}

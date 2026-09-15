@@ -33,9 +33,9 @@
 =================================================== */
 
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
+import { MarcoDelPanel } from '../armazon/MarcoDelPanel.jsx';
 import { Catalogo, Identidad, Texto } from '#comun/frases/lector.js';
 import { useSesionRequerida } from '../datos/useSesionRequerida.js';
 
@@ -480,290 +480,254 @@ export default function GuiasPrestadora() {
   // ── LA PANTALLA ─────────────────────────────────────────────────────────
 
   return (
-    <>
-      <header className="tenant-header">
-        <div className="tenant-brand">
+    <MarcoDelPanel icono="fas fa-book-medical">
+
+      <div className="card-dashboard mb-16">
+        <h3 className="m-0 texto-18 color-titulo">
           <i className="fas fa-book-medical"></i>{' '}
-          <span>{frase('comun.organizacion')}</span>{' '}
-          <span className="tenant-badge">{frase('panel.guia_organizacion')}</span>
-        </div>
-        <div className="texto-13">
-          <i className="fas fa-user-shield"></i>{' '}
-          <span>{frase('panel.guia_operador')}</span>{' '}
-          <Link to="/" className="color-sobre-color ml-8">
-            {frase('panel.guia_volver_portal')}
-          </Link>
-        </div>
-      </header>
-
-      <div className="admin-layout">
-        <aside className="admin-sidebar">
-          <ul className="sidebar-menu">
-            <li>
-              <Link to="/panel-prestadora">
-                <i className="fas fa-users-cog"></i>{' '}
-                <span>{frase('panel.guia_menu_legajos')}</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/guias-prestadora" className="active">
-                <i className="fas fa-book-medical"></i>{' '}
-                <span>{frase('panel.guia_menu_guias')}</span>
-              </Link>
-            </li>
-          </ul>
-        </aside>
-
-        <main className="admin-content">
-
-          <div className="card-dashboard mb-16">
-            <h3 className="m-0 texto-18 color-titulo">
-              <i className="fas fa-book-medical"></i>{' '}
-              <span>{frase('panel.guia_encabezado')}</span>
-            </h3>
-            <p className="m-solo-arriba-4 texto-13 color-secundario">{frase('panel.guia_bajada')}</p>
-            <p className="fondo-info p-10 redondeo-8 texto-12 color-principal mt-12">
-              {frase('panel.guia_aviso_sin_tratamientos')}
-            </p>
-          </div>
-
-          <div className="card-dashboard mb-16">
-            <div className="flex justificar-entre alinear-centro mb-16">
-              <h3 className="m-0 texto-18 color-titulo">
-                <i className="fas fa-list-check"></i>{' '}
-                <span>{frase('panel.guia_lista_titulo')}</span>
-              </h3>
-              <button
-                type="button"
-                className="btn btn-secundario texto-12 p-9-12"
-                disabled={actualizando}
-                onClick={() => {
-                  if (operativa) cargarGuias(guardia.base.ClienteDatos);
-                }}
-              >
-                <i className="fas fa-sync-alt"></i>{' '}
-                <span>{frase('panel.guia_actualizar')}</span>
-              </button>
-            </div>
-
-            <Cartel aviso={avisoLista} />
-
-            <table className="aspirantes-table">
-              <thead>
-                <tr>
-                  <th>{frase('panel.guia_tabla_lista')}</th>
-                  <th>{frase('panel.guia_tabla_opcion')}</th>
-                  <th>{frase('panel.guia_tabla_estado')}</th>
-                  <th>{frase('panel.guia_tabla_revision')}</th>
-                  <th>{frase('panel.guia_tabla_acciones')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filas.map((guia) => {
-                  const item = guia.vocabulario_items || {};
-                  const lista = item.vocabularios || {};
-                  return (
-                    <tr key={guia.id}>
-                      <td>{Catalogo.textoDe(lista.i18n) || lista.clave || ''}</td>
-                      <td><strong>{Catalogo.textoDe(item.i18n) || item.clave || ''}</strong></td>
-                      <td>
-                        <span
-                          className={'status-pill ' + (guia.publicada ? 'status-validado' : 'status-revision')}
-                        >
-                          {frase(guia.publicada
-                            ? 'panel.guia_estado_publicada'
-                            : 'panel.guia_estado_borrador')}
-                        </span>
-                      </td>
-                      <td className="texto-12">
-                        {guia.revisada_por ? (
-                          <>
-                            {guia.revisada_por}
-                            <br />
-                            <span className="color-secundario">
-                              {Texto.fechaCorta(guia.revisada_el)}
-                            </span>
-                          </>
-                        ) : (
-                          <span className="color-secundario">{frase('panel.guia_sin_revision')}</span>
-                        )}
-                      </td>
-                      <td>
-                        <button
-                          type="button"
-                          className="btn btn-secundario texto-11 p-6-12 mr-8"
-                          onClick={() => corregirGuia(guia.id)}
-                        >
-                          {frase('panel.guia_corregir')}
-                        </button>
-                        <button
-                          type="button"
-                          className="btn fondo-peligro color-sobre-color texto-11 p-6-12"
-                          disabled={borrandoId === guia.id}
-                          onClick={() => borrarGuia(guia.id)}
-                        >
-                          {frase('panel.guia_borrar')}
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="card-dashboard">
-            <h3 className="m-0 mb-16 texto-18 color-titulo">
-              <i className="fas fa-pen-to-square"></i>{' '}
-              <span>
-                {frase(enCorreccion ? 'panel.guia_form_correccion' : 'panel.guia_form_nueva')}
-              </span>
-            </h3>
-
-            <Cartel aviso={avisoForm} />
-
-            <div className="grilla-2 gap-16">
-              <div className="form-group">
-                <label htmlFor="campo-vocabulario">{frase('panel.guia_campo_lista')}</label>
-                <select
-                  id="campo-vocabulario"
-                  value={vocabularioId}
-                  disabled={!vocabulariosHabilitados}
-                  onChange={(e) => alElegirLista(e.target.value)}
-                >
-                  <option value="">{frase('panel.guia_elegir_lista')}</option>
-                  {vocabularios.map((fila) => (
-                    <option key={fila.id} value={fila.id}>{rotuloDeFila(fila)}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-group">
-                <label htmlFor="campo-opcion">{frase('panel.guia_campo_opcion')}</label>
-                <select
-                  id="campo-opcion"
-                  value={opcionId}
-                  disabled={!opcionesHabilitadas}
-                  onChange={(e) => setOpcionId(e.target.value)}
-                >
-                  <option value="">{frase('panel.guia_elegir_opcion')}</option>
-                  {opciones.map((fila) => (
-                    <option key={fila.id} value={fila.id}>{rotuloDeFila(fila)}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="campo-descripcion">{frase('panel.guia_campo_descripcion')}</label>
-              <textarea
-                id="campo-descripcion"
-                ref={campoDescripcion}
-                rows="3"
-                placeholder={frase('panel.guia_hueco_descripcion')}
-                value={descripcion}
-                onChange={(e) => setDescripcion(e.target.value)}
-              ></textarea>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="campo-que-esperar">{frase('panel.guia_campo_que_esperar')}</label>
-              <textarea
-                id="campo-que-esperar"
-                rows="3"
-                placeholder={frase('panel.guia_hueco_que_esperar')}
-                value={queEsperar}
-                onChange={(e) => setQueEsperar(e.target.value)}
-              ></textarea>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="campo-senales">
-                <span>{frase('panel.guia_campo_senales')}</span>{' '}
-                <span className="color-secundario texto-11">{frase('panel.guia_ayuda_lineas')}</span>
-              </label>
-              <textarea
-                id="campo-senales"
-                rows="4"
-                placeholder={frase('panel.guia_hueco_senales')}
-                value={senales}
-                onChange={(e) => setSenales(e.target.value)}
-              ></textarea>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="campo-emergencia">
-                <span>{frase('panel.guia_campo_emergencia')}</span>{' '}
-                <span className="color-secundario texto-11">{frase('panel.guia_ayuda_lineas')}</span>
-              </label>
-              <textarea
-                id="campo-emergencia"
-                rows="4"
-                placeholder={frase('panel.guia_hueco_emergencia')}
-                value={emergencia}
-                onChange={(e) => setEmergencia(e.target.value)}
-              ></textarea>
-            </div>
-
-            <div className="fondo-superficie-hundida p-16 redondeo-12 borde-tarjeta mb-16">
-              <label className="peso-700 texto-13 color-principal mano">
-                <input
-                  type="checkbox"
-                  id="campo-publicada"
-                  className="ancho-20"
-                  checked={publicada}
-                  onChange={(e) => setPublicada(e.target.checked)}
-                />{' '}
-                <span>{frase('panel.guia_campo_publicada')}</span>
-              </label>
-              <p className="texto-11 color-secundario m-solo-arriba-4">
-                {frase('panel.guia_ayuda_publicar')}
-              </p>
-              <div className="grilla-2 gap-16 mt-12">
-                <div className="form-group m-0">
-                  <label htmlFor="campo-revisada-por">{frase('panel.guia_campo_revisada_por')}</label>
-                  <input
-                    type="text"
-                    id="campo-revisada-por"
-                    placeholder={frase('panel.guia_hueco_revisada_por')}
-                    value={revisadaPor}
-                    onChange={(e) => setRevisadaPor(e.target.value)}
-                  />
-                </div>
-                <div className="form-group m-0">
-                  <label htmlFor="campo-revisada-el">{frase('panel.guia_campo_revisada_el')}</label>
-                  <input
-                    type="date"
-                    id="campo-revisada-el"
-                    value={revisadaEl}
-                    onChange={(e) => setRevisadaEl(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-12">
-              <button
-                type="button"
-                className="btn peso-700 texto-13"
-                disabled={guardando}
-                onClick={guardarGuia}
-              >
-                <i className="fas fa-floppy-disk"></i>{' '}
-                <span>{frase(guardando ? 'panel.guia_guardando' : 'panel.guia_guardar')}</span>
-              </button>
-              <button
-                type="button"
-                className="btn btn-secundario texto-13"
-                disabled={guardando}
-                onClick={cancelarEdicion}
-              >
-                {frase('panel.guia_cancelar')}
-              </button>
-            </div>
-          </div>
-
-        </main>
+          <span>{frase('panel.guia_encabezado')}</span>
+        </h3>
+        <p className="m-solo-arriba-4 texto-13 color-secundario">{frase('panel.guia_bajada')}</p>
+        <p className="fondo-info p-10 redondeo-8 texto-12 color-principal mt-12">
+          {frase('panel.guia_aviso_sin_tratamientos')}
+        </p>
       </div>
-    </>
+
+      <div className="card-dashboard mb-16">
+        <div className="flex justificar-entre alinear-centro mb-16">
+          <h3 className="m-0 texto-18 color-titulo">
+            <i className="fas fa-list-check"></i>{' '}
+            <span>{frase('panel.guia_lista_titulo')}</span>
+          </h3>
+          <button
+            type="button"
+            className="btn btn-secundario texto-12 p-9-12"
+            disabled={actualizando}
+            onClick={() => {
+              if (operativa) cargarGuias(guardia.base.ClienteDatos);
+            }}
+          >
+            <i className="fas fa-sync-alt"></i>{' '}
+            <span>{frase('panel.guia_actualizar')}</span>
+          </button>
+        </div>
+
+        <Cartel aviso={avisoLista} />
+
+        <table className="aspirantes-table">
+          <thead>
+            <tr>
+              <th>{frase('panel.guia_tabla_lista')}</th>
+              <th>{frase('panel.guia_tabla_opcion')}</th>
+              <th>{frase('panel.guia_tabla_estado')}</th>
+              <th>{frase('panel.guia_tabla_revision')}</th>
+              <th>{frase('panel.guia_tabla_acciones')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filas.map((guia) => {
+              const item = guia.vocabulario_items || {};
+              const lista = item.vocabularios || {};
+              return (
+                <tr key={guia.id}>
+                  <td>{Catalogo.textoDe(lista.i18n) || lista.clave || ''}</td>
+                  <td><strong>{Catalogo.textoDe(item.i18n) || item.clave || ''}</strong></td>
+                  <td>
+                    <span
+                      className={'status-pill ' + (guia.publicada ? 'status-validado' : 'status-revision')}
+                    >
+                      {frase(guia.publicada
+                        ? 'panel.guia_estado_publicada'
+                        : 'panel.guia_estado_borrador')}
+                    </span>
+                  </td>
+                  <td className="texto-12">
+                    {guia.revisada_por ? (
+                      <>
+                        {guia.revisada_por}
+                        <br />
+                        <span className="color-secundario">
+                          {Texto.fechaCorta(guia.revisada_el)}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="color-secundario">{frase('panel.guia_sin_revision')}</span>
+                    )}
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      className="btn btn-secundario texto-11 p-6-12 mr-8"
+                      onClick={() => corregirGuia(guia.id)}
+                    >
+                      {frase('panel.guia_corregir')}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn fondo-peligro color-sobre-color texto-11 p-6-12"
+                      disabled={borrandoId === guia.id}
+                      onClick={() => borrarGuia(guia.id)}
+                    >
+                      {frase('panel.guia_borrar')}
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="card-dashboard">
+        <h3 className="m-0 mb-16 texto-18 color-titulo">
+          <i className="fas fa-pen-to-square"></i>{' '}
+          <span>
+            {frase(enCorreccion ? 'panel.guia_form_correccion' : 'panel.guia_form_nueva')}
+          </span>
+        </h3>
+
+        <Cartel aviso={avisoForm} />
+
+        <div className="grilla-2 gap-16">
+          <div className="form-group">
+            <label htmlFor="campo-vocabulario">{frase('panel.guia_campo_lista')}</label>
+            <select
+              id="campo-vocabulario"
+              value={vocabularioId}
+              disabled={!vocabulariosHabilitados}
+              onChange={(e) => alElegirLista(e.target.value)}
+            >
+              <option value="">{frase('panel.guia_elegir_lista')}</option>
+              {vocabularios.map((fila) => (
+                <option key={fila.id} value={fila.id}>{rotuloDeFila(fila)}</option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
+            <label htmlFor="campo-opcion">{frase('panel.guia_campo_opcion')}</label>
+            <select
+              id="campo-opcion"
+              value={opcionId}
+              disabled={!opcionesHabilitadas}
+              onChange={(e) => setOpcionId(e.target.value)}
+            >
+              <option value="">{frase('panel.guia_elegir_opcion')}</option>
+              {opciones.map((fila) => (
+                <option key={fila.id} value={fila.id}>{rotuloDeFila(fila)}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="campo-descripcion">{frase('panel.guia_campo_descripcion')}</label>
+          <textarea
+            id="campo-descripcion"
+            ref={campoDescripcion}
+            rows="3"
+            placeholder={frase('panel.guia_hueco_descripcion')}
+            value={descripcion}
+            onChange={(e) => setDescripcion(e.target.value)}
+          ></textarea>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="campo-que-esperar">{frase('panel.guia_campo_que_esperar')}</label>
+          <textarea
+            id="campo-que-esperar"
+            rows="3"
+            placeholder={frase('panel.guia_hueco_que_esperar')}
+            value={queEsperar}
+            onChange={(e) => setQueEsperar(e.target.value)}
+          ></textarea>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="campo-senales">
+            <span>{frase('panel.guia_campo_senales')}</span>{' '}
+            <span className="color-secundario texto-11">{frase('panel.guia_ayuda_lineas')}</span>
+          </label>
+          <textarea
+            id="campo-senales"
+            rows="4"
+            placeholder={frase('panel.guia_hueco_senales')}
+            value={senales}
+            onChange={(e) => setSenales(e.target.value)}
+          ></textarea>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="campo-emergencia">
+            <span>{frase('panel.guia_campo_emergencia')}</span>{' '}
+            <span className="color-secundario texto-11">{frase('panel.guia_ayuda_lineas')}</span>
+          </label>
+          <textarea
+            id="campo-emergencia"
+            rows="4"
+            placeholder={frase('panel.guia_hueco_emergencia')}
+            value={emergencia}
+            onChange={(e) => setEmergencia(e.target.value)}
+          ></textarea>
+        </div>
+
+        <div className="fondo-superficie-hundida p-16 redondeo-12 borde-tarjeta mb-16">
+          <label className="peso-700 texto-13 color-principal mano">
+            <input
+              type="checkbox"
+              id="campo-publicada"
+              className="ancho-20"
+              checked={publicada}
+              onChange={(e) => setPublicada(e.target.checked)}
+            />{' '}
+            <span>{frase('panel.guia_campo_publicada')}</span>
+          </label>
+          <p className="texto-11 color-secundario m-solo-arriba-4">
+            {frase('panel.guia_ayuda_publicar')}
+          </p>
+          <div className="grilla-2 gap-16 mt-12">
+            <div className="form-group m-0">
+              <label htmlFor="campo-revisada-por">{frase('panel.guia_campo_revisada_por')}</label>
+              <input
+                type="text"
+                id="campo-revisada-por"
+                placeholder={frase('panel.guia_hueco_revisada_por')}
+                value={revisadaPor}
+                onChange={(e) => setRevisadaPor(e.target.value)}
+              />
+            </div>
+            <div className="form-group m-0">
+              <label htmlFor="campo-revisada-el">{frase('panel.guia_campo_revisada_el')}</label>
+              <input
+                type="date"
+                id="campo-revisada-el"
+                value={revisadaEl}
+                onChange={(e) => setRevisadaEl(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex gap-12">
+          <button
+            type="button"
+            className="btn peso-700 texto-13"
+            disabled={guardando}
+            onClick={guardarGuia}
+          >
+            <i className="fas fa-floppy-disk"></i>{' '}
+            <span>{frase(guardando ? 'panel.guia_guardando' : 'panel.guia_guardar')}</span>
+          </button>
+          <button
+            type="button"
+            className="btn btn-secundario texto-13"
+            disabled={guardando}
+            onClick={cancelarEdicion}
+          >
+            {frase('panel.guia_cancelar')}
+          </button>
+        </div>
+      </div>
+
+    </MarcoDelPanel>
   );
 }
