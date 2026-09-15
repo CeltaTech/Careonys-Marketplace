@@ -245,7 +245,6 @@ agosto de 2026, porque la que estaba escrita a mano decía 687 atributos `style=
 | `web/src/formularios/FormularioDeConsulta.jsx` | 1 | 0 |
 | `web/src/pantallas/Examen.jsx` | 1 | 2 |
 | `web/src/pantallas/PanelPrestadora.jsx` | 1 | 2 |
-| `web/src/pantallas/RegistrarAsistente/CajaDeEstado.jsx` | 1 | 9 |
 | `web/src/pantallas/RegistrarAsistente/PasosDeDatos.jsx` | 1 | 4 |
 
 <!-- fin del reparto -->

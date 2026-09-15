@@ -11,6 +11,12 @@
    `Texto.frase`, que si el catálogo no llegó cae en `error.generico` antes que
    dejar la caja muda.
 
+   **El color lo pone la caja de aviso del sitio.** Cada uno de los cuatro
+   estados es uno de sus tonos: gris mientras se espera, rojo cuando algo no se
+   pudo hacer, amarillo cuando falta algo y verde cuando salió bien. Lo propio
+   de esta caja es lo que la de aviso no tiene: la rueda que gira, el traerse
+   sola a la vista y el poder llevar un botón adentro.
+
    Con `cual` vacío la caja desaparece, que es el estado listo: lo que se ve
    entonces es el formulario, no un cartel diciendo que está listo.
 =================================================== */
@@ -18,16 +24,21 @@
 import { useEffect, useRef } from 'react';
 import { Texto } from '#comun/frases/lector.js';
 
-const COLOR_DEL_ESTADO = {
-  cargando: ['var(--tono-neutro-fondo)', 'var(--texto-secundario)'],
-  error: ['var(--tono-critico-fondo)', 'var(--tono-critico-texto)'],
-  vacio: ['var(--tono-atencion-fondo)', 'var(--tono-atencion-texto)'],
-  listo: ['var(--tono-exito-fondo)', 'var(--tono-exito-texto)']
+const TONO_DEL_ESTADO = {
+  cargando: 'neutro',
+  error: 'critico',
+  vacio: 'atencion',
+  listo: 'exito'
 };
 
-export default function CajaDeEstado({ id, cual, clave, huecos, estilo, children }) {
+/* La caja de aviso deja lugar abajo porque casi siempre va arriba de lo que
+   anuncia. Acá el hueco lo elige cada pantalla, así que se arranca sin ninguno
+   y `clase` trae el que corresponda. */
+const CAJA = 'flex alinear-centro gap-10 envolver m-0 ';
+
+export default function CajaDeEstado({ id, cual, clave, huecos, clase = '', children }) {
   const caja = useRef(null);
-  const color = COLOR_DEL_ESTADO[cual] || COLOR_DEL_ESTADO.cargando;
+  const tono = TONO_DEL_ESTADO[cual] || TONO_DEL_ESTADO.cargando;
 
   /* Lo que no se ve no avisa: con la caja fuera de la pantalla, un error queda
      dicho y nadie lo lee. Se trae a la vista sola, igual que antes. */
@@ -40,18 +51,7 @@ export default function CajaDeEstado({ id, cual, clave, huecos, estilo, children
     <div
       ref={caja}
       id={id}
-      style={{
-        alignItems: 'center',
-        gap: '10px',
-        flexWrap: 'wrap',
-        padding: '12px 14px',
-        borderRadius: '12px',
-        fontSize: '13px',
-        ...estilo,
-        background: color[0],
-        color: color[1],
-        display: cual ? 'flex' : 'none'
-      }}
+      className={'aviso ' + tono + ' ' + CAJA + clase + (cual ? '' : ' oculto')}
     >
       <i
         id={id + '-rueda'}

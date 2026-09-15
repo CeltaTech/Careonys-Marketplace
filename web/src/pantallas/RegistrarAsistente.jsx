@@ -667,7 +667,7 @@ export default function RegistrarAsistente() {
             cual={legajoEstado.cual}
             clave={legajoEstado.clave}
             huecos={legajoEstado.huecos}
-            estilo={{ marginBottom: '20px' }}
+            clase="mb-20"
           >
             <button
               type="button"

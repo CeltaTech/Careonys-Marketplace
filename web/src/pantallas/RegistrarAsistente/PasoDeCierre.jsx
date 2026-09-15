@@ -79,7 +79,7 @@ export default function PasoDeCierre({
         cual={altaEstado.cual}
         clave={altaEstado.clave}
         huecos={altaEstado.huecos}
-        estilo={{ marginTop: '16px' }}
+        clase="mt-16"
       />
 
       {/* Falta confirmar el correo. La cuenta ya quedó creada y el legajo sigue

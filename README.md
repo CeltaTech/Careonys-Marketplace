@@ -34,7 +34,7 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | 17 pantallas, 13.918 renglones | el sitio es un programa con 15 direcciones, y los dos del teléfono son otros dos programas |
 | 7.379 renglones de JavaScript propio, en 35 archivos | 0 de ellos son copias byte a byte de otro archivo (pendiente 13) |
 | 5.601 renglones de hojas de estilo, en 12 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
-| 615 declaraciones de estilo pegadas al marcado | en 215 lugares (fue el pendiente 8, cerrado) |
+| 606 declaraciones de estilo pegadas al marcado | en 214 lugares (fue el pendiente 8, cerrado) |
 | Supabase Auth funcionando | 16 de los 71 archivos que las dibujan abren la puerta a la base |
 | 3 servidores de afuera | dos de tipografías y el de los iconos |
 | 4 paquetes que se construyen solos | la raíz, que arma a los otros tres, pwa-asistente, pwa-familia, web |
