@@ -33,6 +33,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Identidad, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
+import { nombreDeQuienEntro } from '#comun/acceso/nombreDeQuienEntro.js';
+import { useLaSalida } from '#comun/acceso/useLaSalida.js';
 import { conPrestadora } from '#comun/direcciones.js';
 import { lasConversacionesSiYaLlegaron } from '#comun/datos/modulos.js';
 
@@ -73,8 +75,8 @@ export default function Programa() {
   const [avisoClave, setAvisoClave] = useState('');
   const [destinoAlta, setDestinoAlta] = useState(ALTA);
   const [usuario, setUsuario] = useState({ nombre: '', correo: '' });
-  const [saliendo, setSaliendo] = useState(false);
   const [organizacion, setOrganizacion] = useState(Identidad.organizacion());
+  const { saliendo, salir } = useLaSalida();
 
   /* La conversación que hay que abrir apenas se llegue a la pantalla de los
      mensajes. Vive en una caja y no en el estado: cambiarla no tiene que
@@ -168,7 +170,7 @@ export default function Programa() {
   function recordarAQuienEntro(user) {
     setUsuario({
       correo: user.email,
-      nombre: (user.user_metadata?.full_name || user.email.split('@')[0]).toUpperCase()
+      nombre: nombreDeQuienEntro(user)
     });
   }
 
@@ -177,21 +179,10 @@ export default function Programa() {
     if (!irADondePideLaDireccion()) navegar('dashboard');
   }
 
-  /* El botón se apaga mientras se cierra la sesión. Y los cuatro estados: si no
-     se pudo cerrar, se dice —antes el error no llegaba a ninguna parte y la
-     persona se quedaba mirando el menú, creyendo que había salido—. */
   async function cerrarSesion() {
-    if (!confirm(frase('comun.confirmar_salir'))) return;
-    setSaliendo(true);
-    try {
-      const { Sesion } = await conLaBase();
-      await Sesion.logout();
-      navegar('intro');
-    } catch (err) {
-      alert(frase(Texto.claveDeError(err, 'cerrar la sesión')));
-    } finally {
-      setSaliendo(false);
-    }
+    const { salio, aviso } = await salir();
+    if (aviso) alert(frase(aviso));
+    if (salio) navegar('intro');
   }
 
   return (

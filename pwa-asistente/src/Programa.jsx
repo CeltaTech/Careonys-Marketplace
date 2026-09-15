@@ -42,6 +42,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Identidad, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
+import { nombreDeQuienEntro } from '#comun/acceso/nombreDeQuienEntro.js';
+import { useLaSalida } from '#comun/acceso/useLaSalida.js';
 
 import { conLaCola, lasConversacionesSiYaLlegaron } from '#comun/datos/modulos.js';
 import Acceso from './pantallas/Acceso.jsx';
@@ -52,12 +54,6 @@ import Guias from './pantallas/Guias.jsx';
 import Avisos from './pantallas/Avisos.jsx';
 import Conversacion from './pantallas/Conversacion.jsx';
 
-/* El nombre que se ve en el menú: el que la persona puso al darse de alta, o lo
-   que esté antes de la arroba de su correo. En mayúsculas, como siempre. */
-export function nombreDeMenu(cuenta) {
-  return (cuenta.user_metadata?.full_name || cuenta.email.split('@')[0]).toUpperCase();
-}
-
 export default function Programa() {
   const { frase } = useFrases();
 
@@ -67,9 +63,9 @@ export default function Programa() {
   const [avisoArranque, setAvisoArranque] = useState('');
   const [arrancando, setArrancando] = useState(true);
   const [cajon, setCajon] = useState(false);
-  const [cerrando, setCerrando] = useState(false);
   const [pendientes, setPendientes] = useState({ cuantas: 0, motivo: null, trabada: false });
   const [destino, setDestino] = useState({ pantalla: 'intro', visita: 0 });
+  const { saliendo, salir } = useLaSalida();
 
   /* La conversación que otra pantalla pidió abrir. Se olvida apenas se usó,
      para que volver a Mensajes no lleve siempre al mismo lado. */
@@ -113,7 +109,7 @@ export default function Programa() {
           setUsuario({
             id: session.user.id,
             correo: session.user.email,
-            nombre: nombreDeMenu(session.user)
+            nombre: nombreDeQuienEntro(session.user)
           });
           navegar('dashboard');
         }
@@ -141,21 +137,11 @@ export default function Programa() {
     if (descripcion) descripcion.setAttribute('content', frase('asistente.descripcion_pagina'));
   }, [frase, organizacion]);
 
-  /* Cerrar la sesión: se pregunta, se apaga el botón mientras tanto, y si algo
-     falla se dice. El nombre y el correo del menú quedan como estaban, igual que
-     antes. */
+  /* El nombre y el correo siguen en el menú después de salir. */
   async function cerrarSesion() {
-    if (!base) return;
-    if (!window.confirm(frase('comun.confirmar_salir'))) return;
-    setCerrando(true);
-    try {
-      await base.Sesion.logout();
-      navegar('intro');
-    } catch (err) {
-      window.alert(Texto.mensajeDeError(err, 'cerrar la sesión'));
-    } finally {
-      setCerrando(false);
-    }
+    const { salio, aviso } = await salir();
+    if (aviso) window.alert(frase(aviso));
+    if (salio) navegar('intro');
   }
 
   /* Cuántas veces se entró a cada pantalla. Vale `null` para las que no son la
@@ -205,10 +191,10 @@ export default function Programa() {
             type="button"
             className="drawer-menu-item color-peligro"
             id="btn-logout"
-            disabled={cerrando}
+            disabled={saliendo}
             onClick={cerrarSesion}
           >
-            {cerrando ? frase('asistente.cerrando_sesion') : (
+            {saliendo ? frase('asistente.cerrando_sesion') : (
               <>
                 <i className="fas fa-sign-out-alt ancho-20 color-peligro"></i>{' '}
                 <span>{frase('asistente.menu_cerrar_sesion')}</span>

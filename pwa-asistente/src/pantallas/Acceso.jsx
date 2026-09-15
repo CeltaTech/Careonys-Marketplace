@@ -27,10 +27,10 @@
 
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { useElIngreso } from '#comun/acceso/useElIngreso.js';
+import { nombreDeQuienEntro } from '#comun/acceso/nombreDeQuienEntro.js';
 import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
 
 import { conLaCola } from '#comun/datos/modulos.js';
-import { nombreDeMenu } from '../Programa.jsx';
 
 export default function Acceso({ activa, base, arrancando, avisoArranque, navegar, alEntrar }) {
   const { frase } = useFrases();
@@ -44,7 +44,7 @@ export default function Acceso({ activa, base, arrancando, avisoArranque, navega
     if (aviso) window.alert(frase(aviso));
     if (!entro) return;
 
-    alEntrar({ id: usuario.id, correo: usuario.email, nombre: nombreDeMenu(usuario) });
+    alEntrar({ id: usuario.id, correo: usuario.email, nombre: nombreDeQuienEntro(usuario) });
     navegar('dashboard');
     /* Recién ahora hay legajo con el que mandar lo que estuviera esperando
        desde antes de entrar. */
