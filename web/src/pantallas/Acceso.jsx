@@ -18,6 +18,10 @@
    clave y se pide la frase al dibujar, así que un cambio de idioma con el
    cartel en pantalla lo alcanza solo, sin que nadie lo vaya a buscar.
 
+   **Abrir la sesión lo hace la pieza compartida**, la misma de las dos puertas
+   del teléfono. Acá queda lo que es de esta pantalla: dónde se dibuja el aviso
+   y a dónde va cada quien.
+
    **A dónde va cada quien después de entrar** son dos destinos distintos y no
    uno: las vistas de esta web las abre el enrutador sin recargar, y los dos
    programas del teléfono son otros programas, así que a ésos se va de verdad.
@@ -30,6 +34,7 @@ import { usePestana } from '../armazon/usePestana.js';
 import { conPrestadora } from '#comun/direcciones.js';
 import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
+import { useElIngreso } from '#comun/acceso/useElIngreso.js';
 import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
 import { Aviso } from '#comun/avisos/Aviso.jsx';
 
@@ -55,9 +60,9 @@ export default function Acceso() {
   const [nombreCorto, setNombreCorto] = useState('');
   const [avisoPrestadora, setAvisoPrestadora] = useState('');
   const [avisoAcceso, setAvisoAcceso] = useState('');
-  const [entrando, setEntrando] = useState(false);
   const [correo, setCorreo] = useState('');
   const [clave, setClave] = useState('');
+  const { entrando, ingresar } = useElIngreso();
 
   const irA = useCallback((destino) => {
     if (destino.afuera) window.location.href = destino.a;
@@ -111,22 +116,19 @@ export default function Acceso() {
     evento.preventDefault();
     setAvisoAcceso('');
 
-    const elCorreo = correo.trim();
-    if (!elCorreo || !clave) {
-      setAvisoAcceso('acceso.faltan_datos');
-      return;
-    }
+    const { entro, aviso } = await ingresar(correo, clave);
+    if (aviso) setAvisoAcceso(aviso);
+    if (!entro) return;
 
-    setEntrando(true);
+    /* Se entró, pero todavía falta saber a dónde va esta persona, y eso se le
+       pregunta a la base. Si no se puede, se avisa y se queda en la puerta: sin
+       esto la pantalla se quedaba quieta, con la sesión abierta y sin decir
+       nada. */
     try {
       const { Sesion } = await conLaBase();
-      await Sesion.login(elCorreo, clave);
       irA(aDondeVa(await Sesion.perfil(), parametros.get('volver')));
     } catch (err) {
-      // El detalle técnico lo registra `claveDeError` y no sale de la consola;
-      // a la pantalla va la frase que corresponde a esa clase de falla.
-      setAvisoAcceso(Texto.claveDeError(err, 'Acceso, inicio de sesión:'));
-      setEntrando(false);
+      setAvisoAcceso(Texto.claveDeError(err, 'Acceso, a dónde va:'));
     }
   }
 

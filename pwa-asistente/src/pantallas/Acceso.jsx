@@ -13,6 +13,11 @@
    y destaparla y la que dice cómo se llama ese botón en los tres idiomas. Antes
    era un campo pelado que no se podía destapar.
 
+   **Abrir la sesión lo hace la pieza compartida**, la misma que usan la puerta
+   de la web y la de las Familias. Acá queda lo de esta pantalla: de dónde salen
+   los dos campos, cómo se avisa, a dónde se va, y vaciar la cola de lo que
+   quedó sin mandar, que recién ahí tiene legajo con el que ir.
+
    **El cartel de abajo es el estado error del arranque**, y lo escribe el
    armazón: si algo falla al arrancar, esta pantalla queda igual a la de quien
    nunca inició sesión, y sin el cartel no habría forma de distinguir «no hay
@@ -20,9 +25,8 @@
    está apagado.
 =================================================== */
 
-import { useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
-import { Texto } from '#comun/frases/lector.js';
+import { useElIngreso } from '#comun/acceso/useElIngreso.js';
 import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
 
 import { conLaCola } from '#comun/datos/modulos.js';
@@ -30,26 +34,22 @@ import { nombreDeMenu } from '../Programa.jsx';
 
 export default function Acceso({ activa, base, arrancando, avisoArranque, navegar, alEntrar }) {
   const { frase } = useFrases();
-  const [entrando, setEntrando] = useState(false);
+  const { entrando, ingresar } = useElIngreso();
 
   async function entrar() {
-    const email = document.getElementById('login-email').value.trim();
+    const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-pass').value;
-    if (!email || !password) { window.alert(frase('acceso.faltan_datos')); return; }
-    setEntrando(true);
-    try {
-      const user = await base.Sesion.login(email, password);
-      alEntrar({ id: user.id, correo: user.email, nombre: nombreDeMenu(user) });
-      navegar('dashboard');
-      /* Recién ahora hay legajo con el que mandar lo que estuviera esperando
-         desde antes de entrar. */
-      const cola = await conLaCola();
-      cola.sincronizar();
-    } catch (err) {
-      window.alert(Texto.mensajeDeError(err, 'iniciar sesión'));
-    } finally {
-      setEntrando(false);
-    }
+
+    const { entro, usuario, aviso } = await ingresar(email, password);
+    if (aviso) window.alert(frase(aviso));
+    if (!entro) return;
+
+    alEntrar({ id: usuario.id, correo: usuario.email, nombre: nombreDeMenu(usuario) });
+    navegar('dashboard');
+    /* Recién ahora hay legajo con el que mandar lo que estuviera esperando
+       desde antes de entrar. */
+    const cola = await conLaCola();
+    cola.sincronizar();
   }
 
   return (

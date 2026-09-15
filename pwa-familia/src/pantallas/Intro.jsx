@@ -17,42 +17,30 @@
    clave del catálogo y no como texto ya escrito, así que cambiar de idioma con
    el cartel a la vista lo cambia también a él.
 
+   Abrir la sesión lo hace la pieza compartida, la misma que usan la puerta de
+   la web y la del Asistente. Acá queda lo de esta pantalla: los dos campos, el
+   cartel, y a dónde se va después de entrar.
+
    La contraseña se pide con el campo compartido, que es el que trae el botón de
    mostrarla: escribirla a ciegas y equivocarse es la causa más común de no poder
    entrar.
 =================================================== */
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
-import { Texto } from '#comun/frases/lector.js';
-import { conLaBase } from '#comun/datos/puerta.js';
+import { useElIngreso } from '#comun/acceso/useElIngreso.js';
 import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
 
 export default function Intro({ activa, ocupada, avisoClave, destinoAlta, alEntrar }) {
   const { frase } = useFrases();
   const [correo, setCorreo] = useState('');
   const [clave, setClave] = useState('');
-  const [entrando, setEntrando] = useState(false);
-  const enCurso = useRef(false);
+  const { entrando, ingresar } = useElIngreso();
 
   async function entrar() {
-    if (enCurso.current) return;
-    /* La misma falta que avisa `acceso.html`, con la misma frase: una sola clave
-       para las dos pantallas, no dos textos que se corrigen por separado. */
-    const email = correo.trim();
-    if (!email || !clave) { alert(frase('acceso.faltan_datos')); return; }
-    enCurso.current = true;
-    setEntrando(true);
-    try {
-      const { Sesion } = await conLaBase();
-      const user = await Sesion.login(email, clave);
-      alEntrar(user);
-    } catch (err) {
-      alert(frase(Texto.claveDeError(err, 'iniciar sesión')));
-    } finally {
-      enCurso.current = false;
-      setEntrando(false);
-    }
+    const { entro, usuario, aviso } = await ingresar(correo, clave);
+    if (aviso) alert(frase(aviso));
+    if (entro) alEntrar(usuario);
   }
 
   return (
