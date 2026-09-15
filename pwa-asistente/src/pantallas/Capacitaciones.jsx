@@ -15,11 +15,20 @@
 
    El examen vive en una pantalla del sitio y no en la aplicación: el botón de
    rendir lleva ahí, y sale sólo si hay algo que rendir.
+
+   **Lo que se dice mientras la lista no está lo dibuja la pieza que comparten
+   las pantallas de teléfono.** Buscando, no se pudo y no hay nada se escriben
+   una sola vez, y el botón de volver a intentar pide su texto con el mismo
+   nombre que las demás.
+
+   **La falla se guarda por su clave y no por su texto**, así que un cambio de
+   idioma con el cartel abierto también lo alcanza.
 =================================================== */
 
 import { useEffect, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
+import { EstadoDeLaLista } from '#comun/listas/EstadoDeLaLista.jsx';
 
 /* Cómo le fue a esta persona con la evaluación de un curso: qué se lee, de qué
    color y con qué icono. */
@@ -126,7 +135,7 @@ export default function Capacitaciones({ activa, visita, base, navegar }) {
   const [cursos, setCursos] = useState([]);
   const [evaluaciones, setEvaluaciones] = useState([]);
   const [intentos, setIntentos] = useState([]);
-  const [aviso, setAviso] = useState('');
+  const [claveDelError, setClaveDelError] = useState('');
   const [pedido, setPedido] = useState(0);
 
   useEffect(() => {
@@ -149,7 +158,7 @@ export default function Capacitaciones({ activa, visita, base, navegar }) {
         setEstado('listo');
       } catch (err) {
         if (!vigente) return;
-        setAviso(Texto.mensajeDeError(err, 'traer sus capacitaciones'));
+        setClaveDelError(Texto.claveDeError(err, 'traer sus capacitaciones'));
         setEstado('error');
       }
     })();
@@ -166,24 +175,10 @@ export default function Capacitaciones({ activa, visita, base, navegar }) {
       </div>
 
       <div className="capacitaciones-cuerpo">
-        <div className="pwa-estado" id="cap-cargando" hidden={estado !== 'cargando'}>
-          {frase('capacitacion.cargando')}
-        </div>
-
-        <div className="pwa-estado" id="cap-error" hidden={estado !== 'error'}>
-          <p id="cap-error-texto">{aviso}</p>
-          <button
-            type="button"
-            className="btn btn-primario"
-            id="cap-reintentar"
-            onClick={() => setPedido((antes) => antes + 1)}
-          >{frase('acceso.reintentar')}</button>
-        </div>
-
-        <div className="pwa-estado" id="cap-vacio" hidden={estado !== 'vacio'}>
-          <p>{frase('capacitacion.vacio')}</p>
-          <p className="pwa-estado-bajada">{frase('capacitacion.vacio_bajada')}</p>
-        </div>
+        <EstadoDeLaLista estado={estado} prefijo="cap"
+          cargando="capacitacion.cargando" error={claveDelError}
+          alReintentar={() => setPedido((antes) => antes + 1)}
+          vacio="capacitacion.vacio" vacioBajada="capacitacion.vacio_bajada" />
 
         <div id="cap-listo" hidden={estado !== 'listo'}>
           <p className="capacitaciones-bajada">{frase('capacitacion.aclaracion')}</p>
