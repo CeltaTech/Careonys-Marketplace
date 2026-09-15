@@ -19,12 +19,13 @@
    **Y el motivo es obligatorio.** No se resuelve sin escribirlo, y la base lo
    exige otra vez por si alguien llama por afuera de esta pantalla.
 
-   **El modal está siempre puesto y se muestra o se esconde**, igual que antes:
-   de ahí sale que lo escrito en el motivo siga estando al volver a abrir otro
-   legajo, que es como se comportaba la página suelta.
+   **Cada legajo se abre con el motivo en blanco.** El cuadro está siempre
+   puesto y se muestra o se esconde, así que el motivo se vacía cada vez que se
+   abre: lo que se escribió sobre una persona no puede quedar escrito sobre la
+   siguiente.
 =================================================== */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Texto } from '#comun/frases/lector.js';
 import Verificaciones from './Verificaciones.jsx';
@@ -58,6 +59,13 @@ export default function ModalAuditoria({
 
   const [nota, setNota] = useState('');
   const [resolviendo, setResolviendo] = useState(null);
+
+  /* El cuadro no se desarma al cerrarse, así que el motivo tampoco se iría
+     solo. Se vacía al abrirse y al cambiar de persona: mientras se escribe no
+     pasa nada, porque ninguna de las dos cosas cambió. */
+  useEffect(() => {
+    if (abierto) setNota('');
+  }, [abierto, caregiverId]);
 
   const rotulo = (clave) => frase(clave);
 
