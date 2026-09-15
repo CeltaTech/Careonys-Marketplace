@@ -26,7 +26,7 @@
 import { useEffect, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { useVocabulario } from '#comun/formularios/useVocabulario.js';
-import { Catalogo } from '#comun/frases/lector.js';
+import { Catalogo, Texto } from '#comun/frases/lector.js';
 import Cartel from './Cartel.jsx';
 
 /* El valor de fábrica de la columna. Un papel del que la base no tiene ninguna
@@ -165,7 +165,7 @@ export default function Verificaciones({ base, caregiverId, token }) {
                 {fila.verificado_el && (
                   <span className="texto-11 color-secundario">
                     {frase('panel.verificaciones_marcado_el', {
-                      fecha: new Date(fila.verificado_el).toLocaleDateString(Catalogo.idioma)
+                      fecha: Texto.fechaCorta(fila.verificado_el)
                     })}
                   </span>
                 )}

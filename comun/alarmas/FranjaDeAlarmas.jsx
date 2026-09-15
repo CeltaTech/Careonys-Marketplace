@@ -50,8 +50,7 @@ function TarjetaDeAlarma({ fila, irAMensajes }) {
 
   /* La fecha y la hora las escribe el lector de siempre, en el idioma de la
      pantalla; acá no se arma ningún formato a mano. */
-  const cuando = [Texto.fechaCorta(fila.ocurrio_el), Texto.horaCorta(fila.ocurrio_el)]
-    .filter(Boolean).join(' · ');
+  const cuando = Texto.fechaYHora(fila.ocurrio_el);
 
   /* Los dos huecos van siempre, aunque una de las dos frases no los tenga: la
      que no los usa los ignora, y así el emparejamiento queda en un solo

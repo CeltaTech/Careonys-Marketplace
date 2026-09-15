@@ -174,8 +174,7 @@ function TarjetaDeMarca({ marca, nombre }) {
      señal, las dos dejaron de ser la misma, y mostrar la segunda le diría a la
      Familia que alguien entró a las seis de la tarde cuando en realidad entró a
      las ocho de la mañana. */
-  const cuando = [Texto.fechaCorta(marca.marcada_en), Texto.horaCorta(marca.marcada_en)]
-    .filter(Boolean).join(' · ');
+  const cuando = Texto.fechaYHora(marca.marcada_en);
 
   /* La ubicación es opcional: el Asistente puede haber marcado sin permiso de
      ubicación, y eso no es una falta. Se dice cuál de las dos cosas pasó. */

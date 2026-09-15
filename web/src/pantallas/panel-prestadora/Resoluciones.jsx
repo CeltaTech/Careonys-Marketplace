@@ -18,7 +18,7 @@
 
 import { useEffect, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
-import { Catalogo } from '#comun/frases/lector.js';
+import { Texto } from '#comun/frases/lector.js';
 import Cartel from './Cartel.jsx';
 
 /* El estado en el que quedó el legajo se muestra con la misma frase que usa la
@@ -89,7 +89,7 @@ export default function Resoluciones({ base, caregiverId, token }) {
                 {frase(FRASE_DE_ESTADO[fila.estado] || 'panel.resoluciones_estado_desconocido')}
               </span>
               <span className="texto-11 color-secundario peso-400">
-                {new Date(fila.created_at).toLocaleString(Catalogo.idioma)}
+                {Texto.fechaYHora(fila.created_at)}
               </span>
             </div>
             {/* El motivo lo escribió una persona: se dibuja como texto, que es

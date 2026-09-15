@@ -148,11 +148,32 @@ const Texto = {
    */
   horaCorta(valor) {
     if (!valor) return '';
+    /* Una fecha sin hora no tiene ninguna, y hacerle decir una es
+       inventarla: la medianoche de Greenwich, traída a la hora de esta
+       máquina, sale nueve de la noche acá y nueve de la mañana del otro lado
+       del mundo. Junto a `fechaCorta`, que el día lo arma bien, el par
+       terminaba nombrando un momento que nunca existió. */
+    if (typeof valor === 'string' && SOLO_FECHA.test(valor)) return '';
     const fecha = new Date(valor);
     if (isNaN(fecha.getTime())) return '';
     return new Intl.DateTimeFormat(idiomaDeForma(), {
       hour: '2-digit', minute: '2-digit'
     }).format(fecha);
+  },
+
+  /**
+   * El día y la hora juntos: «12/08/2026 · 14:05». Es lo que se escribe cuando
+   * importa el momento exacto —una fichada, una alarma, un mensaje—. Sale de
+   * las dos de arriba, así que hereda de ellas el idioma de la pantalla y la
+   * cadena vacía ante cualquier cosa que no sea una fecha.
+   *
+   * El año va siempre. Una marca sin año se lee bien mientras es de esta
+   * semana, y el día que alguien abre un hilo viejo el mismo «12/08» puede ser
+   * de hace un año.
+   */
+  fechaYHora(valor) {
+    return [Texto.fechaCorta(valor), Texto.horaCorta(valor)]
+      .filter(Boolean).join(' · ');
   },
 
   /**

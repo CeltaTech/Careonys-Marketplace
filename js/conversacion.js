@@ -82,20 +82,6 @@
     return elemento;
   }
 
-  /* La fecha, en el idioma que la persona está leyendo. `toLocaleString` con el
-     idioma del catálogo y no con el del navegador: son dos cosas distintas y la
-     que vale es la que eligió. */
-  function cuando(fechaIso, conHora) {
-    if (!fechaIso) return '';
-    const fecha = new Date(fechaIso);
-    if (isNaN(fecha.getTime())) return '';
-    const idioma = (window.Catalogo && window.Catalogo.idioma) || 'es-AR';
-    const formato = conHora
-      ? { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }
-      : { day: '2-digit', month: '2-digit', year: 'numeric' };
-    try { return fecha.toLocaleString(idioma, formato); } catch (e) { return fechaIso; }
-  }
-
   // ── Los cuatro estados ────────────────────────────────────────────────────
   function mostrar(cual) {
     if (!contenedor) return;
@@ -216,7 +202,7 @@
       renglon.appendChild(nodo('span', 'conv-item-ultimo',
         conversacion.ultimo_texto || frase('conversacion.sin_mensajes')));
       renglon.appendChild(nodo('span', 'conv-item-fecha',
-        cuando(conversacion.ultimo_el || conversacion.created_at, true)));
+        window.Texto.fechaYHora(conversacion.ultimo_el || conversacion.created_at)));
       renglon.addEventListener('click', () => abrir(conversacion));
       renglones.appendChild(renglon);
     }
@@ -235,7 +221,7 @@
       const mio = miId && mensaje.autor_id === miId;
       const globo = nodo('div', 'conv-globo' + (mio ? ' conv-globo-mio' : ''));
       globo.appendChild(nodo('p', 'conv-globo-texto', mensaje.contenido || ''));
-      globo.appendChild(nodo('span', 'conv-globo-fecha', cuando(mensaje.created_at, true)));
+      globo.appendChild(nodo('span', 'conv-globo-fecha', window.Texto.fechaYHora(mensaje.created_at)));
       globos.appendChild(globo);
     }
     globos.scrollTop = globos.scrollHeight;

@@ -926,7 +926,7 @@ registradas pueden comunicarse con ella, y que lo hacen por la plataforma
 Lo que falta —empezar una conversación con esa persona en particular— quedó anotado como pendiente 46.
 
 **Tres traducciones que estaban por escribirse dos veces subieron a los archivos compartidos**
-(«ningún patrón repetido sin punto único de verdad»): el precio en pesos es `Texto.importe` (`js/texto.js:167`), la etiqueta de una lista es
+(«ningún patrón repetido sin punto único de verdad»): el precio en pesos es `Texto.importe` (`js/texto.js:188`), la etiqueta de una lista es
 `Catalogo.etiquetaSiExiste` (`js/catalogo.js:449`), y la de una tarea —que puede estar en cualquiera
 de tres listas— es `Catalogo.etiquetaDeTarea` (`js/catalogo.js:462`). Vivían adentro de
 `directorio.html`; ahora las dos pantallas las piden al mismo lugar.

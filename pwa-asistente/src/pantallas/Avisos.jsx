@@ -28,15 +28,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
 
-/* La fecha, en el idioma que la persona está leyendo. Sale del catálogo, que es
-   donde se decide el idioma de todo lo demás. */
-function avFecha(iso) {
-  if (!iso) return '';
-  const fecha = new Date(iso);
-  if (isNaN(fecha.getTime())) return '';
-  try { return fecha.toLocaleDateString(Catalogo.idioma); } catch (e) { return iso; }
-}
-
 /* Una clave guardada, traducida a lo que se lee. Si el vocabulario no la tiene
    se devuelve la clave cruda: es fea, pero es el dato que el aviso sí trae, y
    decir «sin especificar» sobre algo especificado sería mentir. */
@@ -178,7 +169,7 @@ function Aviso({ aviso, base, frase, misPostulaciones, alPostularse, alRetirarse
 
       <Franjas base={base} avisoId={aviso.id} frase={frase} />
 
-      <p className="curso-datos">{frase('avisos.publicado', { fecha: avFecha(aviso.created_at) })}</p>
+      <p className="curso-datos">{frase('avisos.publicado', { fecha: Texto.fechaCorta(aviso.created_at) })}</p>
 
       {/* Cuando ya se ofreció. El botón de retirar sale sólo si se sabe con qué
           fila: ofrecer un botón que no puede hacer nada es peor que no
