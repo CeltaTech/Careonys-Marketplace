@@ -31,6 +31,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
+import { TarjetaDeAcceso } from '../armazon/TarjetaDeAcceso.jsx';
 import { conPrestadora } from '#comun/direcciones.js';
 import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
@@ -106,91 +107,64 @@ export default function RecuperarClave() {
   }
 
   return (
-    <main className="acceso-pantalla">
-      <div className="acceso-tarjeta">
+    <TarjetaDeAcceso
+      estado={estado}
+      cargando="recuperar.cargando"
+      alReintentar={() => setIntento((cuantos) => cuantos + 1)}
+    >
+      {estado === 'listo' && (
+        <form onSubmit={enviar} noValidate>
+          <h2 className="texto-20 peso-800 color-titulo mb-8">
+            {frase('recuperar.titulo')}
+          </h2>
+          <p className="texto-14 color-secundario interlineado-16 mb-20">
+            {frase('recuperar.explicacion')}
+          </p>
 
-        <div className="acceso-marca">
-          <img className="tenant-logo" src="/assets/images/logotipo.png" alt="" />
-          <span className="tenant-name"></span>
+          <Aviso aviso={avisoEnvio} />
+
+          <div className="form-group">
+            <label htmlFor="recuperar-email">{frase('acceso.correo')}</label>
+            <input
+              type="email" id="recuperar-email" autoComplete="username" required
+              value={correo} onChange={(e) => setCorreo(e.target.value)}
+            />
+          </div>
+
+          <button type="submit" className="btn btn-primario ancho-total mt-8" disabled={enviando}>
+            {frase(enviando ? 'recuperar.enviando' : 'recuperar.enviar')}
+          </button>
+
+          <p className="acceso-pie">
+            <Link to={conPrestadora('/acceso', nombreCorto)}>{frase('recuperar.volver')}</Link>
+          </p>
+        </form>
+      )}
+
+      {estado === 'enviado' && (
+        <div>
+          <h2 className="texto-20 peso-800 color-titulo mb-8">
+            {frase('recuperar.revise_correo')}
+          </h2>
+          {/* El correo va solo, en su propio renglón, y no adentro de la
+              frase. Una frase se traduce entera, así que partirla en dos
+              pedazos alrededor del correo sale mal en cuanto un idioma ordena
+              distinto. Arriba y aparte, se lee igual de bien en los tres. */}
+          <p className="texto-15 peso-700 color-titulo interlineado-16">
+            <strong>{correoAvisado}</strong>
+          </p>
+          <p className="texto-14 color-secundario interlineado-16">
+            {frase('recuperar.enlace_enviado')}
+          </p>
+          <p className="texto-14 color-secundario interlineado-16 mt-12">
+            {frase('recuperar.no_aparece')}
+          </p>
+          <p className="acceso-pie">
+            <Link to={conPrestadora('/acceso', nombreCorto)}>{frase('recuperar.volver')}</Link>
+          </p>
         </div>
+      )}
 
-        {estado === 'cargando' && (
-          <div className="acceso-cargando">
-            <i className="fas fa-circle-notch fa-spin"></i>{' '}
-            <span>{frase('recuperar.cargando')}</span>
-          </div>
-        )}
-
-        {estado === 'error' && (
-          <div>
-            {/* Las dos frases son las mismas de la pantalla de acceso y se piden
-                con su clave: la misma frase escrita dos veces se traduce dos
-                veces y se corrige una sola. */}
-            <Aviso aviso="acceso.sin_servidor" />
-            <button
-              type="button"
-              className="btn btn-secundario ancho-total"
-              onClick={() => setIntento((cuantos) => cuantos + 1)}
-            >
-              {frase('acceso.reintentar')}
-            </button>
-          </div>
-        )}
-
-        {estado === 'listo' && (
-          <form onSubmit={enviar} noValidate>
-            <h2 className="texto-20 peso-800 color-titulo mb-8">
-              {frase('recuperar.titulo')}
-            </h2>
-            <p className="texto-14 color-secundario interlineado-16 mb-20">
-              {frase('recuperar.explicacion')}
-            </p>
-
-            <Aviso aviso={avisoEnvio} />
-
-            <div className="form-group">
-              <label htmlFor="recuperar-email">{frase('acceso.correo')}</label>
-              <input
-                type="email" id="recuperar-email" autoComplete="username" required
-                value={correo} onChange={(e) => setCorreo(e.target.value)}
-              />
-            </div>
-
-            <button type="submit" className="btn btn-primario ancho-total mt-8" disabled={enviando}>
-              {frase(enviando ? 'recuperar.enviando' : 'recuperar.enviar')}
-            </button>
-
-            <p className="acceso-pie">
-              <Link to={conPrestadora('/acceso', nombreCorto)}>{frase('recuperar.volver')}</Link>
-            </p>
-          </form>
-        )}
-
-        {estado === 'enviado' && (
-          <div>
-            <h2 className="texto-20 peso-800 color-titulo mb-8">
-              {frase('recuperar.revise_correo')}
-            </h2>
-            {/* El correo va solo, en su propio renglón, y no adentro de la
-                frase. Una frase se traduce entera, así que partirla en dos
-                pedazos alrededor del correo sale mal en cuanto un idioma ordena
-                distinto. Arriba y aparte, se lee igual de bien en los tres. */}
-            <p className="texto-15 peso-700 color-titulo interlineado-16">
-              <strong>{correoAvisado}</strong>
-            </p>
-            <p className="texto-14 color-secundario interlineado-16">
-              {frase('recuperar.enlace_enviado')}
-            </p>
-            <p className="texto-14 color-secundario interlineado-16 mt-12">
-              {frase('recuperar.no_aparece')}
-            </p>
-            <p className="acceso-pie">
-              <Link to={conPrestadora('/acceso', nombreCorto)}>{frase('recuperar.volver')}</Link>
-            </p>
-          </div>
-        )}
-
-      </div>
-    </main>
+    </TarjetaDeAcceso>
   );
 }

@@ -32,6 +32,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
+import { TarjetaDeAcceso } from '../armazon/TarjetaDeAcceso.jsx';
 import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
 import { conLaRevisionDeClaves } from '#comun/datos/modulos.js';
@@ -185,90 +186,75 @@ export default function NuevaClave() {
   }
 
   return (
-    <main className="acceso-pantalla">
-      <div className="acceso-tarjeta">
-
-        <div className="acceso-marca">
-          <img className="tenant-logo" src="/assets/images/logotipo.png" alt="" />
-          <span className="tenant-name"></span>
+    <TarjetaDeAcceso estado={estado} cargando="nueva.comprobando">
+      {estado === 'sin-enlace' && (
+        <div>
+          <h2 className="texto-20 peso-800 color-titulo mb-8">{frase(tituloSinEnlace)}</h2>
+          <Aviso aviso={avisoSinEnlace} />
+          <p className="texto-14 color-secundario interlineado-16 mb-20">
+            {frase('nueva.cada_enlace')}
+          </p>
+          <Link to="/recuperar-clave" className="btn btn-primario ancho-total">
+            {frase('nueva.pedir_otro')}
+          </Link>
+          <p className="acceso-pie">
+            <Link to="/acceso">{frase('recuperar.volver')}</Link>
+          </p>
         </div>
+      )}
 
-        {estado === 'cargando' && (
-          <div className="acceso-cargando">
-            <i className="fas fa-circle-notch fa-spin"></i>{' '}
-            <span>{frase('nueva.comprobando')}</span>
+      {estado === 'listo' && (
+        <form onSubmit={guardarLaClave} noValidate>
+          <h2 className="texto-20 peso-800 color-titulo mb-8">{frase('nueva.titulo')}</h2>
+
+          {/* El largo mínimo no se dice acá: lo dice la indicación que lleva
+              adentro el campo de contraseña, que lo va a buscar al único lugar
+              donde ese número existe. Repetirlo era tener dos. */}
+          <p className="texto-15 peso-700 color-titulo interlineado-16">
+            <strong>{correoEnCurso || frase('nueva.esta_cuenta')}</strong>
+          </p>
+          <p className="texto-14 color-secundario interlineado-16 mb-20">
+            {frase('nueva.explicacion')}
+          </p>
+
+          <Aviso aviso={avisoErrorCambio} />
+
+          <div className="form-group">
+            <label htmlFor="nueva-clave">{frase('nueva.clave_nueva')}</label>
+            <CampoDeClave
+              id="nueva-clave" autoComplete="new-password" required
+              ref={campoClave}
+              value={clave} onChange={(e) => setClave(e.target.value)}
+            />
           </div>
-        )}
 
-        {estado === 'sin-enlace' && (
-          <div>
-            <h2 className="texto-20 peso-800 color-titulo mb-8">{frase(tituloSinEnlace)}</h2>
-            <Aviso aviso={avisoSinEnlace} />
-            <p className="texto-14 color-secundario interlineado-16 mb-20">
-              {frase('nueva.cada_enlace')}
-            </p>
-            <Link to="/recuperar-clave" className="btn btn-primario ancho-total">
-              {frase('nueva.pedir_otro')}
-            </Link>
-            <p className="acceso-pie">
-              <Link to="/acceso">{frase('recuperar.volver')}</Link>
-            </p>
+          <div className="form-group">
+            <label htmlFor="nueva-clave-repetida">{frase('nueva.repetir')}</label>
+            <CampoDeClave
+              id="nueva-clave-repetida" autoComplete="new-password" required
+              ref={campoClaveRepetida}
+              value={claveRepetida} onChange={(e) => setClaveRepetida(e.target.value)}
+            />
           </div>
-        )}
 
-        {estado === 'listo' && (
-          <form onSubmit={guardarLaClave} noValidate>
-            <h2 className="texto-20 peso-800 color-titulo mb-8">{frase('nueva.titulo')}</h2>
+          <button type="submit" className="btn btn-primario ancho-total mt-8" disabled={guardando}>
+            {frase(guardando ? 'nueva.guardando' : 'nueva.guardar')}
+          </button>
+        </form>
+      )}
 
-            {/* El largo mínimo no se dice acá: lo dice la indicación que lleva
-                adentro el campo de contraseña, que lo va a buscar al único lugar
-                donde ese número existe. Repetirlo era tener dos. */}
-            <p className="texto-15 peso-700 color-titulo interlineado-16">
-              <strong>{correoEnCurso || frase('nueva.esta_cuenta')}</strong>
-            </p>
-            <p className="texto-14 color-secundario interlineado-16 mb-20">
-              {frase('nueva.explicacion')}
-            </p>
+      {estado === 'hecho' && (
+        <div>
+          <h2 className="texto-20 peso-800 color-titulo mb-8">{frase('nueva.cambiada')}</h2>
+          <p className="texto-14 color-secundario interlineado-16 mb-20">
+            {frase('nueva.ya_se_puede')}
+          </p>
+          <Link to="/acceso" className="btn btn-primario ancho-total">
+            {frase('nueva.ir_al_acceso')}
+          </Link>
+        </div>
+      )}
 
-            <Aviso aviso={avisoErrorCambio} />
-
-            <div className="form-group">
-              <label htmlFor="nueva-clave">{frase('nueva.clave_nueva')}</label>
-              <CampoDeClave
-                id="nueva-clave" autoComplete="new-password" required
-                ref={campoClave}
-                value={clave} onChange={(e) => setClave(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="nueva-clave-repetida">{frase('nueva.repetir')}</label>
-              <CampoDeClave
-                id="nueva-clave-repetida" autoComplete="new-password" required
-                ref={campoClaveRepetida}
-                value={claveRepetida} onChange={(e) => setClaveRepetida(e.target.value)}
-              />
-            </div>
-
-            <button type="submit" className="btn btn-primario ancho-total mt-8" disabled={guardando}>
-              {frase(guardando ? 'nueva.guardando' : 'nueva.guardar')}
-            </button>
-          </form>
-        )}
-
-        {estado === 'hecho' && (
-          <div>
-            <h2 className="texto-20 peso-800 color-titulo mb-8">{frase('nueva.cambiada')}</h2>
-            <p className="texto-14 color-secundario interlineado-16 mb-20">
-              {frase('nueva.ya_se_puede')}
-            </p>
-            <Link to="/acceso" className="btn btn-primario ancho-total">
-              {frase('nueva.ir_al_acceso')}
-            </Link>
-          </div>
-        )}
-
-      </div>
-    </main>
+    </TarjetaDeAcceso>
   );
 }

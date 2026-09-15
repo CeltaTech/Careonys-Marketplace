@@ -30,6 +30,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
+import { TarjetaDeAcceso } from '../armazon/TarjetaDeAcceso.jsx';
 import { conPrestadora } from '#comun/direcciones.js';
 import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
@@ -266,123 +267,99 @@ export default function RegistrarFamilia() {
   }
 
   return (
-    <main className="acceso-pantalla">
-      <div className="acceso-tarjeta">
+    <TarjetaDeAcceso
+      estado={estado}
+      cargando="alta_familia.preparando"
+      alReintentar={() => setIntento((cuantos) => cuantos + 1)}
+    >
+      {estado === 'listo' && (
+        <form onSubmit={crearLaCuenta} noValidate>
+          <h1 className="texto-18 peso-700 mb-8 color-titulo">
+            {frase('alta_familia.encabezado')}
+          </h1>
+          <p className="texto-13 color-secundario mb-16">
+            {frase('alta_familia.bajada')}
+          </p>
 
-        <div className="acceso-marca">
-          <img className="tenant-logo" src="/assets/images/logotipo.png" alt="" />
-          <span className="tenant-name"></span>
-        </div>
+          <Aviso aviso={avisoPrestadora} />
+          <Aviso aviso={avisoErrorAlta} />
 
-        {estado === 'cargando' && (
-          <div className="acceso-cargando">
-            <i className="fas fa-circle-notch fa-spin"></i>{' '}
-            <span>{frase('alta_familia.preparando')}</span>
+          <div className="form-group">
+            <label htmlFor="alta-nombre">{frase('alta_familia.nombre')}</label>
+            <input
+              type="text" id="alta-nombre" autoComplete="name" required
+              value={nombre} onChange={(e) => setNombre(e.target.value)}
+            />
           </div>
-        )}
 
-        {estado === 'error' && (
-          <div>
-            <Aviso aviso="acceso.sin_servidor" />
-            <button
-              type="button"
-              className="btn btn-secundario ancho-total"
-              onClick={() => setIntento((cuantos) => cuantos + 1)}
-            >
-              {frase('acceso.reintentar')}
-            </button>
+          <div className="form-group">
+            <label htmlFor="alta-email">{frase('acceso.correo')}</label>
+            <input
+              type="email" id="alta-email" autoComplete="email" required
+              value={correo} onChange={(e) => setCorreo(e.target.value)}
+            />
           </div>
-        )}
 
-        {estado === 'listo' && (
-          <form onSubmit={crearLaCuenta} noValidate>
-            <h1 className="texto-18 peso-700 mb-8 color-titulo">
-              {frase('alta_familia.encabezado')}
-            </h1>
-            <p className="texto-13 color-secundario mb-16">
-              {frase('alta_familia.bajada')}
-            </p>
+          <div className="form-group">
+            <label htmlFor="alta-clave">{frase('acceso.contrasena')}</label>
+            <CampoDeClave
+              ref={campoClave}
+              id="alta-clave" autoComplete="new-password" required
+              value={clave} onChange={(e) => setClave(e.target.value)}
+            />
+          </div>
 
-            <Aviso aviso={avisoPrestadora} />
-            <Aviso aviso={avisoErrorAlta} />
+          <div className="form-group">
+            <label htmlFor="alta-clave-repetida">{frase('alta_familia.repetir_clave')}</label>
+            <CampoDeClave
+              ref={campoClaveRepetida}
+              id="alta-clave-repetida" autoComplete="new-password" required
+              value={claveRepetida} onChange={(e) => setClaveRepetida(e.target.value)}
+            />
+          </div>
 
-            <div className="form-group">
-              <label htmlFor="alta-nombre">{frase('alta_familia.nombre')}</label>
-              <input
-                type="text" id="alta-nombre" autoComplete="name" required
-                value={nombre} onChange={(e) => setNombre(e.target.value)}
-              />
-            </div>
+          <button
+            type="submit"
+            className="btn btn-primario ancho-total mt-8"
+            disabled={creando || !nombreCorto}
+          >
+            {frase(creando ? 'alta_familia.creando' : 'alta_familia.crear')}
+          </button>
 
-            <div className="form-group">
-              <label htmlFor="alta-email">{frase('acceso.correo')}</label>
-              <input
-                type="email" id="alta-email" autoComplete="email" required
-                value={correo} onChange={(e) => setCorreo(e.target.value)}
-              />
-            </div>
+          <p className="acceso-pie">{frase('alta_familia.avisa_confirmacion')}</p>
 
-            <div className="form-group">
-              <label htmlFor="alta-clave">{frase('acceso.contrasena')}</label>
-              <CampoDeClave
-                ref={campoClave}
-                id="alta-clave" autoComplete="new-password" required
-                value={clave} onChange={(e) => setClave(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="alta-clave-repetida">{frase('alta_familia.repetir_clave')}</label>
-              <CampoDeClave
-                ref={campoClaveRepetida}
-                id="alta-clave-repetida" autoComplete="new-password" required
-                value={claveRepetida} onChange={(e) => setClaveRepetida(e.target.value)}
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="btn btn-primario ancho-total mt-8"
-              disabled={creando || !nombreCorto}
-            >
-              {frase(creando ? 'alta_familia.creando' : 'alta_familia.crear')}
-            </button>
-
-            <p className="acceso-pie">{frase('alta_familia.avisa_confirmacion')}</p>
-
-            <p className="acceso-pie">
-              <span>{frase('alta_familia.ya_tiene_cuenta')}</span>{' '}
-              <Link to={conPrestadora('/acceso', nombreCorto)}>
-                {frase('alta_familia.ir_al_acceso')}
-              </Link>
-            </p>
-          </form>
-        )}
-
-        {estado === 'confirmar' && (
-          <div>
-            <Aviso aviso={avisoConfirmarHecho} tono="atencion" />
-            <Aviso aviso={avisoConfirmarError} />
-
-            <button
-              type="button"
-              className="btn btn-secundario ancho-total"
-              onClick={reenviarLaConfirmacion}
-              disabled={reenviando}
-            >
-              {frase(reenviando ? 'alta_familia.reenviando' : 'alta_familia.reenviar')}
-            </button>
-
-            <Link
-              to={conPrestadora('/acceso', nombreCorto)}
-              className="btn btn-primario ancho-total mt-8"
-            >
-              {frase('alta_familia.volver_al_acceso')}
+          <p className="acceso-pie">
+            <span>{frase('alta_familia.ya_tiene_cuenta')}</span>{' '}
+            <Link to={conPrestadora('/acceso', nombreCorto)}>
+              {frase('alta_familia.ir_al_acceso')}
             </Link>
-          </div>
-        )}
+          </p>
+        </form>
+      )}
 
-      </div>
-    </main>
+      {estado === 'confirmar' && (
+        <div>
+          <Aviso aviso={avisoConfirmarHecho} tono="atencion" />
+          <Aviso aviso={avisoConfirmarError} />
+
+          <button
+            type="button"
+            className="btn btn-secundario ancho-total"
+            onClick={reenviarLaConfirmacion}
+            disabled={reenviando}
+          >
+            {frase(reenviando ? 'alta_familia.reenviando' : 'alta_familia.reenviar')}
+          </button>
+
+          <Link
+            to={conPrestadora('/acceso', nombreCorto)}
+            className="btn btn-primario ancho-total mt-8"
+          >
+            {frase('alta_familia.volver_al_acceso')}
+          </Link>
+        </div>
+      )}
+
+    </TarjetaDeAcceso>
   );
 }

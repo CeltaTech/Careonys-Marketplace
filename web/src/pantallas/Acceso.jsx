@@ -31,6 +31,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
+import { TarjetaDeAcceso } from '../armazon/TarjetaDeAcceso.jsx';
 import { conPrestadora } from '#comun/direcciones.js';
 import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
@@ -142,79 +143,55 @@ export default function Acceso() {
   };
 
   return (
-    <main className="acceso-pantalla">
-      <div className="acceso-tarjeta">
+    <TarjetaDeAcceso
+      estado={estado}
+      cargando="acceso.verificando"
+      alReintentar={() => setIntento((cuantos) => cuantos + 1)}
+    >
+      {estado === 'listo' && (
+        <form onSubmit={entrar} noValidate>
+          <Aviso aviso={avisoPrestadora} tono="atencion" />
+          <Aviso aviso={avisoAcceso} />
 
-        <div className="acceso-marca">
-          <img className="tenant-logo" src="/assets/images/logotipo.png" alt="" />
-          <span className="tenant-name"></span>
-        </div>
-
-        {estado === 'cargando' && (
-          <div className="acceso-cargando">
-            <i className="fas fa-circle-notch fa-spin"></i>{' '}
-            <span>{frase('acceso.verificando')}</span>
+          <div className="form-group">
+            <label htmlFor="acceso-email">{frase('acceso.correo')}</label>
+            <input
+              type="email" id="acceso-email" autoComplete="username" required
+              value={correo} onChange={(e) => setCorreo(e.target.value)}
+            />
           </div>
-        )}
 
-        {estado === 'error' && (
-          <div>
-            <Aviso aviso="acceso.sin_servidor" />
-            <button
-              type="button"
-              className="btn btn-secundario ancho-total"
-              onClick={() => setIntento((cuantos) => cuantos + 1)}
-            >
-              {frase('acceso.reintentar')}
-            </button>
+          <div className="form-group">
+            <label htmlFor="acceso-clave">{frase('acceso.contrasena')}</label>
+            <CampoDeClave
+              id="acceso-clave" autoComplete="current-password" required
+              value={clave} onChange={(e) => setClave(e.target.value)}
+            />
           </div>
-        )}
 
-        {estado === 'listo' && (
-          <form onSubmit={entrar} noValidate>
-            <Aviso aviso={avisoPrestadora} tono="atencion" />
-            <Aviso aviso={avisoAcceso} />
+          <button type="submit" className="btn btn-primario ancho-total mt-8" disabled={entrando}>
+            {frase(entrando ? 'acceso.entrando' : 'acceso.entrar')}
+          </button>
 
-            <div className="form-group">
-              <label htmlFor="acceso-email">{frase('acceso.correo')}</label>
-              <input
-                type="email" id="acceso-email" autoComplete="username" required
-                value={correo} onChange={(e) => setCorreo(e.target.value)}
-              />
-            </div>
+          <p className="acceso-pie">
+            <Link to={conPrestadora('/recuperar-clave', nombreCorto)} onClick={recordarCorreo}>
+              {frase('acceso.olvide')}
+            </Link>
+          </p>
 
-            <div className="form-group">
-              <label htmlFor="acceso-clave">{frase('acceso.contrasena')}</label>
-              <CampoDeClave
-                id="acceso-clave" autoComplete="current-password" required
-                value={clave} onChange={(e) => setClave(e.target.value)}
-              />
-            </div>
+          <p className="acceso-pie">
+            <span>{frase('acceso.sin_cuenta')}</span>{' '}
+            <Link to={conPrestadora('/registrar-asistente', nombreCorto)}>
+              {frase('acceso.darse_de_alta')}
+            </Link>{' '}
+            <span>{frase('acceso.o_bien')}</span>{' '}
+            <Link to={conPrestadora('/registrar-familia', nombreCorto)}>
+              {frase('acceso.darse_de_alta_familia')}
+            </Link>
+          </p>
+        </form>
+      )}
 
-            <button type="submit" className="btn btn-primario ancho-total mt-8" disabled={entrando}>
-              {frase(entrando ? 'acceso.entrando' : 'acceso.entrar')}
-            </button>
-
-            <p className="acceso-pie">
-              <Link to={conPrestadora('/recuperar-clave', nombreCorto)} onClick={recordarCorreo}>
-                {frase('acceso.olvide')}
-              </Link>
-            </p>
-
-            <p className="acceso-pie">
-              <span>{frase('acceso.sin_cuenta')}</span>{' '}
-              <Link to={conPrestadora('/registrar-asistente', nombreCorto)}>
-                {frase('acceso.darse_de_alta')}
-              </Link>{' '}
-              <span>{frase('acceso.o_bien')}</span>{' '}
-              <Link to={conPrestadora('/registrar-familia', nombreCorto)}>
-                {frase('acceso.darse_de_alta_familia')}
-              </Link>
-            </p>
-          </form>
-        )}
-
-      </div>
-    </main>
+    </TarjetaDeAcceso>
   );
 }
