@@ -93,18 +93,17 @@
     }));
   }
 
-  // Un identificador que no choca con ninguno. `randomUUID` no existe en un
-  // sitio servido sin cifrar —que es como se lo ve en desarrollo—, así que hay
-  // un camino de respaldo con la misma forma.
+  // Un identificador que no choca con ninguno, y sale del único que los arma
+  // en todo el producto, que está con la sesión. Acá se lo pide antes de
+  // guardar la fichada, y es lo que hace que reintentar sea seguro: la que sí
+  // llegó pero cuya respuesta se perdió en el camino vuelve con el mismo
+  // identificador, y la base la ignora en vez de duplicarla.
+  //
+  // Está cuando esto corre: los dos programas del teléfono abren la puerta a
+  // la base apenas arrancan, y de ahí sale la sesión, antes que cualquier
+  // pantalla.
   function nuevoId() {
-    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
-    const azar = new Uint8Array(16);
-    crypto.getRandomValues(azar);
-    azar[6] = (azar[6] & 0x0f) | 0x40;
-    azar[8] = (azar[8] & 0x3f) | 0x80;
-    const hex = Array.from(azar, (b) => b.toString(16).padStart(2, '0')).join('');
-    return hex.slice(0, 8) + '-' + hex.slice(8, 12) + '-' + hex.slice(12, 16) +
-           '-' + hex.slice(16, 20) + '-' + hex.slice(20);
+    return window.Sesion.uuidNuevo();
   }
 
   // Se le pasa a quien quiera mostrarlo el estado de la cola: cuántas están

@@ -69,13 +69,13 @@ la pantalla, de un guion o de la consola.
 REST pasa por `_supabaseRequest` (`js/apiClient.js:1191`), que sí es un embudo único —las 15
 llamadas de datos entran por ahí—. Pero **la autenticación y los archivos no lo tocan nunca**:
 `Sesion.login` (`js/auth.js:173`), `Sesion.signup` (`js/auth.js:190`), `Sesion.cambiarClave`
-(`js/auth.js:224`) y `Sesion.uploadFile` (`js/auth.js:351`) hablan derecho con el cliente de la
+(`js/auth.js:224`) y `Sesion.uploadFile` (`js/auth.js:361`) hablan derecho con el cliente de la
 plataforma. Y ahí están, justamente, tres de las seis categorías que la regla nombra: la entrada
 administrativa, el cambio de rol y de Organización, y el cambio de credencial.
 
 **Tres: y el punto que hay tiene una puerta al costado.** `js/apiClient.js` y `js/auth.js` son hoy
 uno solo cada uno, y los tres programas los leen de ahí, así que un gancho se escribiría una vez.
-Pero `window._sb` está expuesto en global (`js/auth.js:422`): cualquier pantalla puede saltearse
+Pero `window._sb` está expuesto en global (`js/auth.js:432`): cualquier pantalla puede saltearse
 `Sesion` y llamar al cliente de la plataforma por su cuenta, y un gancho puesto en `Sesion` no la
 vería pasar.
 
