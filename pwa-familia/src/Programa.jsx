@@ -31,9 +31,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
-import { Identidad, Texto } from '#comun/frases/lector.js';
-import { conLaBase } from '#comun/datos/puerta.js';
 import { nombreDeQuienEntro } from '#comun/acceso/nombreDeQuienEntro.js';
+import { useElArranque } from '#comun/acceso/useElArranque.js';
 import { useLaSalida } from '#comun/acceso/useLaSalida.js';
 import { conPrestadora } from '#comun/direcciones.js';
 import { lasConversacionesSiYaLlegaron } from '#comun/datos/modulos.js';
@@ -59,11 +58,6 @@ const ALTA = '../registrar-familia';
 const FORMA_DE_UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-/* El arranque corre una sola vez en la vida del programa. La marca vive afuera
-   del componente a propósito: React puede montar y desmontar el programa más de
-   una vez, y arrancar dos veces pediría dos veces el directorio. */
-let arrancado = false;
-
 export default function Programa() {
   const { frase } = useFrases();
   const [pantalla, setPantalla] = useState('intro');
@@ -71,11 +65,8 @@ export default function Programa() {
     dashboard: 0, reportes: 0, postulaciones: 0, conversacion: 0, asistencia: 0
   });
   const [menuAbierto, setMenuAbierto] = useState(false);
-  const [ocupada, setOcupada] = useState(true);
-  const [avisoClave, setAvisoClave] = useState('');
   const [destinoAlta, setDestinoAlta] = useState(ALTA);
   const [usuario, setUsuario] = useState({ nombre: '', correo: '' });
-  const [organizacion, setOrganizacion] = useState(Identidad.organizacion());
   const { saliendo, salir } = useLaSalida();
 
   /* La conversación que hay que abrir apenas se llegue a la pantalla de los
@@ -119,43 +110,33 @@ export default function Programa() {
     return true;
   }, [irAMensajes]);
 
-  /* Los cuatro estados del arranque. */
-  useEffect(() => {
-    if (arrancado) return;
-    arrancado = true;
-    (async () => {
-      setAvisoClave('acceso.verificando');
-      try {
-        const { ClienteDatos, Sesion } = await conLaBase();
-        await ClienteDatos.initTenant();
-        setOrganizacion(Identidad.organizacion());
-
+  /* El arranque. El orden y el aviso los lleva la pieza compartida; acá queda
+     lo propio de la Familia. */
+  const { arrancando, aviso: avisoArranque, organizacion } = useElArranque(
+    'arrancar la aplicación de la Familia',
+    {
+      apenasSeSabeLaPrestadora: ({ ClienteDatos }) => {
         /* El alta abre en una pantalla de afuera de esta aplicación, y allá la
            Prestadora sólo puede salir de la dirección: quien se va a dar de
            alta todavía no tiene perfil de dónde sacarla. Si acá se llegó por
-           `?t=`, el nombre corto viaja en el enlace; sin él, la pantalla de alta
-           abre sin Prestadora y no da de alta a nadie —falla cerrado, antes que
-           dejar nacer una cuenta huérfana—. Por subdominio se conserva solo. */
+           `?t=`, el nombre corto viaja en el enlace; sin él, la pantalla de
+           alta abre sin Prestadora y no da de alta a nadie —falla cerrado,
+           antes que dejar nacer una cuenta huérfana—. Por subdominio se
+           conserva solo. */
         setDestinoAlta(conPrestadora(ALTA, ClienteDatos.slugPedido));
 
         /* El directorio del tablero, que se pide una vez y sólo si la
            Prestadora quedó resuelta. */
         setPedidos((antes) => ({ ...antes, dashboard: antes.dashboard + 1 }));
+      },
 
-        /* Restaurar la sesión que ya estuviera abierta. */
-        const session = await Sesion.getSession();
-        if (session) {
-          recordarAQuienEntro(session.user);
-          if (!irADondePideLaDireccion()) navegar('dashboard');
-        }
-        setAvisoClave('');
-      } catch (err) {
-        setAvisoClave(Texto.claveDeError(err, 'arrancar la aplicación de la Familia'));
-      } finally {
-        setOcupada(false);
+      conLaSesionQueHubiera: (puerta, sesion) => {
+        if (!sesion) return;
+        recordarAQuienEntro(sesion.user);
+        if (!irADondePideLaDireccion()) navegar('dashboard');
       }
-    })();
-  }, [irADondePideLaDireccion, navegar]);
+    }
+  );
 
   /* El nombre de la pestaña, que la cabeza del documento no puede escribir:
      lleva adentro el nombre de la Prestadora, y ése recién se sabe cuando
@@ -256,7 +237,8 @@ export default function Programa() {
       {/* Las siete pantallas. Están todas puestas y sólo una lleva la marca de
           activa: sacarlas y volverlas a poner perdería lo escrito en el
           formulario del aviso y vaciaría el hilo de mensajes. */}
-      <Intro activa={pantalla === 'intro'} ocupada={ocupada} avisoClave={avisoClave}
+      <Intro activa={pantalla === 'intro'} ocupada={arrancando}
+        avisoClave={avisoArranque}
         destinoAlta={destinoAlta} alEntrar={alEntrar} />
 
       <Tablero activa={pantalla === 'dashboard'} pedido={pedidos.dashboard}

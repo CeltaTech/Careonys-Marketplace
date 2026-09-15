@@ -40,9 +40,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
-import { Identidad, Texto } from '#comun/frases/lector.js';
-import { conLaBase } from '#comun/datos/puerta.js';
 import { nombreDeQuienEntro } from '#comun/acceso/nombreDeQuienEntro.js';
+import { useElArranque } from '#comun/acceso/useElArranque.js';
 import { useLaSalida } from '#comun/acceso/useLaSalida.js';
 
 import { conLaCola, lasConversacionesSiYaLlegaron } from '#comun/datos/modulos.js';
@@ -59,9 +58,6 @@ export default function Programa() {
 
   const [base, setBase] = useState(null);
   const [usuario, setUsuario] = useState(null);
-  const [organizacion, setOrganizacion] = useState(Identidad.organizacion());
-  const [avisoArranque, setAvisoArranque] = useState('');
-  const [arrancando, setArrancando] = useState(true);
   const [cajon, setCajon] = useState(false);
   const [pendientes, setPendientes] = useState({ cuantas: 0, motivo: null, trabada: false });
   const [destino, setDestino] = useState({ pantalla: 'intro', visita: 0 });
@@ -86,47 +82,34 @@ export default function Programa() {
     navegar('conversacion');
   }, [navegar]);
 
-  /* El arranque. Mismo orden que tenía el aviso de «la página cargó»: el texto
-     de la pantalla ya lo trajo el proveedor de frases, después la Prestadora,
-     después la sesión guardada, y al final la cola de fichadas, que se engancha
-     haya sesión o no. Mientras esto corre se está viendo la pantalla de acceso,
-     que es la que muestra los cuatro estados: el botón de entrar apagado
-     mientras se averigua, el cartel de abajo si algo falla, y la propia pantalla
-     de acceso cuando no hay sesión, que es la verdad. */
-  useEffect(() => {
-    let vigente = true;
-    (async () => {
-      try {
-        const puerta = await conLaBase();
-        await puerta.ClienteDatos.initTenant();
-        if (!vigente) return;
-        setBase(puerta);
-        setOrganizacion(Identidad.organizacion());
+  /* El arranque. El orden y el aviso los lleva la pieza compartida; acá queda
+     lo propio del Asistente: la puerta que reciben las pantallas, a dónde va
+     quien ya tenía sesión, y la cola de fichadas, que se engancha haya sesión
+     o no. Mientras esto corre se está viendo la pantalla de acceso, que es la
+     que muestra los cuatro estados: el botón de entrar apagado mientras se
+     averigua, el cartel de abajo si algo falla, y la propia pantalla de acceso
+     cuando no hay sesión, que es la verdad. */
+  const { arrancando, aviso: avisoArranque, organizacion } = useElArranque(
+    'arrancar el portal del Asistente',
+    {
+      apenasSeSabeLaPrestadora: (puerta) => setBase(puerta),
 
-        const session = await puerta.Sesion.getSession();
-        if (!vigente) return;
-        if (session) {
+      conLaSesionQueHubiera: async (puerta, sesion) => {
+        if (sesion) {
           setUsuario({
-            id: session.user.id,
-            correo: session.user.email,
-            nombre: nombreDeQuienEntro(session.user)
+            id: sesion.user.id,
+            correo: sesion.user.email,
+            nombre: nombreDeQuienEntro(sesion.user)
           });
           navegar('dashboard');
         }
 
         const cola = await conLaCola();
-        if (!vigente) return;
         cola.alCambiar((cuantas, motivo, trabada) => setPendientes({ cuantas, motivo, trabada }));
         cola.arrancar();
-      } catch (err) {
-        console.error('Arranque de la aplicación del Asistente:', err);
-        if (vigente) setAvisoArranque(Texto.mensajeDeError(err, 'arrancar el portal del Asistente'));
-      } finally {
-        if (vigente) setArrancando(false);
       }
-    })();
-    return () => { vigente = false; };
-  }, [navegar]);
+    }
+  );
 
   /* Lo que la cabeza del documento decía con estas mismas dos claves. Se vuelve
      a escribir cuando llega el nombre de la Prestadora, porque las dos frases lo

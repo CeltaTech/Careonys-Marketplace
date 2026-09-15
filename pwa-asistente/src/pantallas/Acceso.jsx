@@ -84,7 +84,7 @@ export default function Acceso({ activa, base, arrancando, avisoArranque, navega
           className="warranque-aviso"
           id="arranque-aviso"
           style={{ display: avisoArranque ? 'block' : 'none' }}
-        >{avisoArranque}</p>
+        >{avisoArranque ? frase(avisoArranque) : ''}</p>
         <div className="btn-register-link">
           <span>{frase('asistente.sin_cuenta')}</span>{' '}
           <a onClick={() => navegar('registro')}>{frase('asistente.registrarse')}</a>
