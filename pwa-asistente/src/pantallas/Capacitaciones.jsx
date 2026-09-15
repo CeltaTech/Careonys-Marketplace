@@ -73,17 +73,23 @@ function Curso({ curso, evaluacion, intentos, frase }) {
   const nombre = Catalogo.textoDe(curso.nombre_i18n);
   const descripcion = Catalogo.textoDe(curso.descripcion_i18n);
 
-  /* Las horas y el certificado son de este renglón; el nivel y la modalidad son
-     claves guardadas y su texto sale del catálogo. La etiqueta que no está en el
-     vocabulario devuelve vacío, y entonces no se dibuja nada: es preferible que
-     falte el dato a que la tarjeta muestre la clave en crudo. */
+  /* Los cuatro datos de la tarjeta salen del catálogo: las horas y el certificado
+     como frase, y el nivel y la modalidad como etiqueta de una clave guardada. La
+     etiqueta que no está en el vocabulario devuelve vacío, y entonces no se dibuja
+     nada: es preferible que falte el dato a que la tarjeta muestre la clave en
+     crudo. Las horas tienen dos frases y no una con el número adentro, porque en
+     singular la palabra cambia y no en todos los idiomas cambia igual. */
   const datos = [];
-  if (curso.horas) datos.push(curso.horas + (curso.horas === 1 ? ' hora' : ' horas'));
+  if (curso.horas) {
+    datos.push(curso.horas === 1
+      ? frase('capacitacion.una_hora')
+      : frase('capacitacion.varias_horas', { horas: curso.horas }));
+  }
   const nivel = Catalogo.etiquetaSiExiste('nivel_curso', curso.nivel);
   if (nivel) datos.push(nivel);
   const modalidad = Catalogo.etiquetaSiExiste('modalidad_curso', curso.modalidad);
   if (modalidad) datos.push(modalidad);
-  if (curso.otorga_certificado) datos.push('Otorga certificado');
+  if (curso.otorga_certificado) datos.push(frase('capacitacion.otorga_certificado'));
 
   const usados = evaluacion
     ? intentos.filter((i) => i.evaluacion_id === evaluacion.id).length

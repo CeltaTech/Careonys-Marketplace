@@ -3343,6 +3343,21 @@
       "en": "No attempts left.",
       "pt-BR": "Não restam tentativas."
     },
+    "capacitacion.una_hora": {
+      "es-AR": "1 hora",
+      "en": "1 hour",
+      "pt-BR": "1 hora"
+    },
+    "capacitacion.varias_horas": {
+      "es-AR": "{horas} horas",
+      "en": "{horas} hours",
+      "pt-BR": "{horas} horas"
+    },
+    "capacitacion.otorga_certificado": {
+      "es-AR": "Otorga certificado",
+      "en": "Grants a certificate",
+      "pt-BR": "Concede certificado"
+    },
     "_3": "── La pantalla donde la Prestadora escribe sus propias Guías de cuidado ──",
     "panel.guia_titulo": {
       "es-AR": "Guías de cuidado — {{organizacion}}",

@@ -499,7 +499,7 @@
       },
       "cerrada": true,
       "usado_en": [
-        "pwa-asistente/src/pantallas/Capacitaciones.jsx:82"
+        "pwa-asistente/src/pantallas/Capacitaciones.jsx:88"
       ],
       "items": [
         {
@@ -968,7 +968,7 @@
       },
       "cerrada": true,
       "usado_en": [
-        "pwa-asistente/src/pantallas/Capacitaciones.jsx:84"
+        "pwa-asistente/src/pantallas/Capacitaciones.jsx:90"
       ],
       "items": [
         {
