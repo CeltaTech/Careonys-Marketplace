@@ -2,55 +2,26 @@
    LOS MENSAJES
 
    Un contenedor vacío y nada más. La lista, los cuatro estados, el hilo y el
-   formulario los arma `js/conversacion.js`, que es el mismo archivo que dibuja
-   el chat del Asistente: es la misma pantalla vista desde cada lado, y por eso
-   no se escribe dos veces.
+   formulario los arma una pieza compartida, que es la misma que dibuja el chat
+   del Asistente: es la misma pantalla vista desde cada lado, y por eso no se
+   escribe dos veces.
 
-   Se monta una sola vez y después se recarga, porque montar de nuevo vaciaría
-   el hilo que se está leyendo. La marca de si ya se montó vive afuera del
-   componente: React puede montar y desmontar una pantalla más de una vez, y lo
-   que hay adentro de la caja no lo dibuja él.
+   Cuándo se monta esa pieza y cuándo se recarga lo decide `useLaConversacion`,
+   que es la misma decisión en las dos aplicaciones de teléfono. Lo propio de
+   ésta es la caja y la cabecera.
 
    El hilo abierto se refresca solo cada pocos segundos. Al salir de la pantalla
    se para, y eso lo hace la navegación del programa, no este archivo: es ella la
    que sabe que se está yendo.
 =================================================== */
 
-import { useEffect } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
-import { conLaBase } from '#comun/datos/puerta.js';
-import { conLasConversaciones } from '#comun/datos/modulos.js';
-
-let montada = false;
+import { useLaConversacion } from '#comun/datos/useLaConversacion.js';
 
 export default function Conversacion({ activa, pedido, navegar, pedidaRef }) {
   const { frase } = useFrases();
 
-  useEffect(() => {
-    if (!pedido) return undefined;
-    let vigente = true;
-    (async () => {
-      try {
-        await conLaBase();
-        const Conversaciones = await conLasConversaciones();
-        if (!vigente) return;
-        if (!montada) {
-          await Conversaciones.montar('conversacion-caja', { lado: 'familia' });
-          montada = true;
-        } else {
-          await Conversaciones.recargar();
-        }
-        if (pedidaRef.current) {
-          const pedida = pedidaRef.current;
-          pedidaRef.current = null;
-          await Conversaciones.abrirPorId(pedida);
-        }
-      } catch (err) {
-        console.error('Mensajes de la Familia:', err);
-      }
-    })();
-    return () => { vigente = false; };
-  }, [pedido, pedidaRef]);
+  useLaConversacion('familia', pedido, pedidaRef);
 
   return (
     <div className={'app-screen' + (activa ? ' active' : '')} id="screen-conversacion">
