@@ -754,7 +754,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
   y las dos pantallas consumen el mismo («ningún patrón repetido sin punto único de verdad»). Copiarlo habría sido tener el mismo paso dos
   veces, con el precio de siempre: se arregla uno y el otro queda viejo.
 - **Subir los archivos también dejó de estar en la pantalla.** `FichasLegajo.subirArchivos`
-  (`js/fichas-legajo.js:305`) es el único lugar que sabe a qué depósito van la matrícula y el
+  (`js/fichas-legajo.js:359`) es el único lugar que sabe a qué depósito van la matrícula y el
   título, y devuelve la lista de los que no subieron para que quien llama avise una sola vez.
 - **De paso arregló algo que estaba mal en el portal.** Cuando la ficha de estudio no traía archivo
   —es optativo—, la fila viajaba igual con una clave `archivo` en `null`. La columna se llama
@@ -1197,7 +1197,7 @@ atributo, y `!important` los habría dejado sin efecto.
 **Y `.oculto` está escrito tres veces** (`css/utilidades.css:47`), porque un elemento puede
 llevar `oculto` junto con `flex` o `grilla` —se esconde y se muestra, y cuando se muestra va
 en fila—, y escondido tiene que ganar siempre. Comprobado en el navegador el mismo día sobre el
-caso real que lo pedía: el grupo de una casilla del legajo (`js/fichas-legajo.js:110`) mide
+caso real que lo pedía: el grupo de una casilla del legajo (`js/fichas-legajo.js:144`) mide
 `flex` visible, `none` con la clase puesta y `flex` de nuevo al sacársela.
 
 **Esconder dejó de ser estilo y pasó a ser estado.** Los 39 `display:none` enteros y 16 más que

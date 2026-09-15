@@ -88,10 +88,7 @@ export default function Legajo({ activa, base, navegar }) {
   const montarFichas = useCallback(() => {
     const FichasLegajo = fichas.current;
     if (!FichasLegajo) return;
-    FichasLegajo.montarSeccion('ficha-matricula', 'matricula');
-    FichasLegajo.montarSeccion('ficha-estudio', 'estudio', { obligatoriaAlMontar: true });
-    FichasLegajo.montarSeccion('ficha-experiencia_laboral', 'experiencia_laboral', { obligatoriaAlMontar: true });
-    FichasLegajo.montarSeccion('ficha-referencia', 'referencia', { obligatoriaAlMontar: true });
+    FichasLegajo.montarSecciones();
   }, []);
 
   /* Las piezas grandes se montan una sola vez, cuando la puerta a la base ya
@@ -295,10 +292,7 @@ export default function Legajo({ activa, base, navegar }) {
     const franjas = Disponibilidad.recolectar('grilla-disponibilidad', 'preguntas-disponibilidad');
 
     const legajo = {
-      matriculas: FichasLegajo.recolectar('ficha-matricula', 'matricula'),
-      estudios: FichasLegajo.recolectar('ficha-estudio', 'estudio'),
-      experiencia: FichasLegajo.recolectar('ficha-experiencia_laboral', 'experiencia_laboral'),
-      referencias: FichasLegajo.recolectar('ficha-referencia', 'referencia'),
+      ...FichasLegajo.recolectarSecciones(),
       autorizaciones: Autorizaciones.recolectar('autorizaciones-container'),
       disponibilidad: franjas,
       zonas: zonasElegidas.zonas

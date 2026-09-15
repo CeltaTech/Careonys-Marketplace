@@ -26,6 +26,40 @@ const FichasLegajo = {
      una lista escrita a mano (fue el pendiente 118, cerrado). */
   DEPOSITO: 'documentos-cuidadores',
 
+  /* Con qué nombre viaja cada ficha adentro del legajo. Cuáles son las fichas
+     y en qué orden van no se escribe acá: lo dice la declaración, así que una
+     ficha nueva aparece sola en las dos altas. Lo que la declaración no puede
+     decir es el nombre con el que la fila llega a la base, porque ése no
+     describe un formulario: es el nombre de lo guardado, que «se nombra por lo
+     que hace, y no se renombra». */
+  CLAVE_EN_EL_LEGAJO: {
+    matricula: 'matriculas',
+    estudio: 'estudios',
+    experiencia_laboral: 'experiencia',
+    referencia: 'referencias'
+  },
+
+  /* Las fichas del legajo listas para usar: cuál es cada una, en qué
+     contenedor va, con qué nombre viaja y si nace con un bloque abierto. El
+     contenedor no se declara en ningún lado porque se deduce del tipo.
+
+     Una ficha nace con un bloque abierto salvo que su declaración diga bajo
+     qué condición es obligatoria: si eso depende de algo que todavía no se
+     eligió —la Matrícula depende del Tipo de Asistente—, abrirla al entrar le
+     pone delante un formulario en rojo a quien capaz no tiene que llenarlo.
+
+     Esto estaba escrito cinco veces, en dos programas: el portal y la
+     aplicación del teléfono decían la misma lista al dibujar, al recoger y al
+     validar. Una ficha nueva había que acordarse de sumarla en los cinco. */
+  get secciones() {
+    return Object.keys(this.fichas).map((tipo) => ({
+      tipo,
+      contenedorId: 'ficha-' + tipo,
+      clave: this.CLAVE_EN_EL_LEGAJO[tipo],
+      obligatoriaAlMontar: !this.fichas[tipo].obligatoria_cuando
+    }));
+  },
+
   async cargar() {
     const [fichasRes, vocabRes] = await Promise.all([
       fetch('data/catalogo-fichas.json').then(r => r.json()),
@@ -258,6 +292,16 @@ const FichasLegajo = {
     }
   },
 
+  // Dibuja las fichas del legajo, cada una en su contenedor. Es lo que llaman
+  // las dos altas: el portal y la aplicación del teléfono dibujan las mismas
+  // fichas, en el mismo orden, con la misma regla de cuál nace abierta.
+  montarSecciones() {
+    this.secciones.forEach((seccion) => {
+      this.montarSeccion(seccion.contenedorId, seccion.tipo,
+        { obligatoriaAlMontar: seccion.obligatoriaAlMontar });
+    });
+  },
+
   // Recolecta los datos cargados en una sección: un array de objetos, uno por bloque agregado.
   recolectar(contenedorId, tipoFicha) {
     const contenedor = document.getElementById(contenedorId);
@@ -290,7 +334,17 @@ const FichasLegajo = {
     });
   },
 
-  // Sube los archivos de matrícula y de estudio y deja en cada fila el camino
+  // Recoge todas las fichas del legajo de una vez, cada una bajo el nombre con
+  // el que se guarda. Lo que devuelve entra tal cual adentro del legajo.
+  recolectarSecciones() {
+    const legajo = {};
+    this.secciones.forEach((seccion) => {
+      legajo[seccion.clave] = this.recolectar(seccion.contenedorId, seccion.tipo);
+    });
+    return legajo;
+  },
+
+  // Sube los archivos de las fichas que llevan y deja en cada fila el camino
   // adentro del depósito, nunca el archivo: una fila con un `File` adentro no
   // entra en ninguna tabla, y la columna se llama `archivo_url`.
   //
@@ -304,9 +358,12 @@ const FichasLegajo = {
   // entregó el papel.
   async subirArchivos(legajo, carpeta, deposito = FichasLegajo.DEPOSITO) {
     const fallados = [];
-    const porClave = { matriculas: 'matricula', estudios: 'estudio' };
 
-    for (const clave of Object.keys(porClave)) {
+    // Se recorren todas las fichas y decide cada fila: una ficha que no lleva
+    // archivo no trae el campo, y se saltea sola. Una segunda lista de cuáles
+    // llevan sería la misma decisión escrita otra vez.
+    for (const seccion of this.secciones) {
+      const clave = seccion.clave;
       const filas = legajo[clave] || [];
       for (let i = 0; i < filas.length; i++) {
         const fila = filas[i];
@@ -330,7 +387,7 @@ const FichasLegajo = {
         } catch (errArchivo) {
           console.error('Legajo, ' + clave + ' ' + i + ':', errArchivo);
           fallados.push({
-            nombre: 'el archivo de «' + this._tituloFicha(porClave[clave]) + '»',
+            nombre: 'el archivo de «' + this._tituloFicha(seccion.tipo) + '»',
             motivo: Texto.mensajeDeError(errArchivo)
           });
         }
@@ -356,6 +413,17 @@ const FichasLegajo = {
         campo.addEventListener('input', () => { campo.style.outline = ''; }, { once: true });
         campo.addEventListener('change', () => { campo.style.outline = ''; }, { once: true });
       }
+    });
+    return valido;
+  },
+
+  // Valida todas las fichas del legajo. Las recorre enteras aunque la primera
+  // falle: quien está cargando tiene que ver de una sola vez todo lo que le
+  // falta, y no un campo por intento.
+  validarSecciones() {
+    let valido = true;
+    this.secciones.forEach((seccion) => {
+      if (!this.validarSeccion(seccion.contenedorId, seccion.tipo)) valido = false;
     });
     return valido;
   }

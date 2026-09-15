@@ -41,17 +41,6 @@ import PasosDeDatos from './RegistrarAsistente/PasosDeDatos.jsx';
 import PasosDeLegajo from './RegistrarAsistente/PasosDeLegajo.jsx';
 import PasoDeCierre from './RegistrarAsistente/PasoDeCierre.jsx';
 
-/* Las cuatro fichas repetibles del paso 5, tal como se montan. La matrícula es
-   la única que no nace con un bloque abierto: se carga sólo si el Tipo de
-   Asistente elegido la exige. */
-function montarFichas(FichasLegajo) {
-  if (!FichasLegajo || !FichasLegajo.fichas) return;
-  FichasLegajo.montarSeccion('ficha-matricula', 'matricula');
-  FichasLegajo.montarSeccion('ficha-estudio', 'estudio', { obligatoriaAlMontar: true });
-  FichasLegajo.montarSeccion('ficha-experiencia_laboral', 'experiencia_laboral', { obligatoriaAlMontar: true });
-  FichasLegajo.montarSeccion('ficha-referencia', 'referencia', { obligatoriaAlMontar: true });
-}
-
 const valorDe = (id) => {
   const campo = document.getElementById(id);
   return campo ? campo.value : '';
@@ -177,7 +166,7 @@ export default function RegistrarAsistente() {
 
         await FichasLegajo.cargar();
         if (!vigente) return;
-        montarFichas(FichasLegajo);
+        FichasLegajo.montarSecciones();
         fichasListas.current = true;
 
         const tipos = FichasLegajo.opcionesVocabulario('tipo_asistente');
@@ -316,9 +305,7 @@ export default function RegistrarAsistente() {
        es obligatoria sólo cuando el Tipo de Asistente elegido la exige. */
     if (paneId === 'step-pane-5' && fichasListas.current) {
       const { FichasLegajo } = modulos.current;
-      ['matricula', 'estudio', 'experiencia_laboral', 'referencia'].forEach((tipo) => {
-        if (!FichasLegajo.validarSeccion(`ficha-${tipo}`, tipo)) valido = false;
-      });
+      if (!FichasLegajo.validarSecciones()) valido = false;
       const exige = FichasLegajo.requiereMatricula(valorDe('profesion'));
       const tiene = FichasLegajo.recolectar('ficha-matricula', 'matricula').length > 0;
       const falta = exige && !tiene;
@@ -440,10 +427,7 @@ export default function RegistrarAsistente() {
       }
 
       const legajo = {
-        matriculas: FichasLegajo.recolectar('ficha-matricula', 'matricula'),
-        estudios: FichasLegajo.recolectar('ficha-estudio', 'estudio'),
-        experiencia: FichasLegajo.recolectar('ficha-experiencia_laboral', 'experiencia_laboral'),
-        referencias: FichasLegajo.recolectar('ficha-referencia', 'referencia'),
+        ...FichasLegajo.recolectarSecciones(),
         autorizaciones: Autorizaciones.recolectar('autorizaciones-container'),
         disponibilidad,
         zonas: zonasElegidas.zonas
@@ -480,7 +464,7 @@ export default function RegistrarAsistente() {
       setClave('');
       setClaveRepetida('');
       Disponibilidad.limpiar('grilla-disponibilidad', 'preguntas-disponibilidad');
-      montarFichas();
+      FichasLegajo.montarSecciones();
       irAlPaso(1);
       clearTimeout(relojDelExito.current);
       relojDelExito.current = setTimeout(() => setExito(false), 6000);
