@@ -35,6 +35,7 @@ import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
 import { conLaRevisionDeClaves } from '#comun/datos/modulos.js';
 import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
+import { Aviso } from '#comun/avisos/Aviso.jsx';
 
 /* A dónde va quien ya tiene sesión, por el papel que tiene en la Prestadora
    donde está parada. Es la misma tabla de destinos que el acceso, y son dos
@@ -86,12 +87,6 @@ export default function RegistrarFamilia() {
     if (destino.afuera) window.location.href = destino.a;
     else navegar(destino.a, { replace: true });
   }, [navegar]);
-
-  /* Una caja de aviso que se abre es porque hay algo que decir, así que nunca
-     queda en blanco: si la frase no se resolvió se dice lo genérico, que vive
-     en el lector de frases en los tres idiomas. */
-  const decir = (aviso) =>
-    aviso ? (frase(aviso.clave, aviso.huecos) || frase('error.generico')) : '';
 
   useEffect(() => {
     let vigente = true;
@@ -288,7 +283,7 @@ export default function RegistrarFamilia() {
 
         {estado === 'error' && (
           <div>
-            <div className="acceso-aviso critico">{frase('acceso.sin_servidor')}</div>
+            <Aviso aviso="acceso.sin_servidor" />
             <button
               type="button"
               className="btn btn-secundario ancho-total"
@@ -308,12 +303,8 @@ export default function RegistrarFamilia() {
               {frase('alta_familia.bajada')}
             </p>
 
-            {avisoPrestadora && (
-              <div className="acceso-aviso critico">{decir(avisoPrestadora)}</div>
-            )}
-            {avisoErrorAlta && (
-              <div className="acceso-aviso critico">{decir(avisoErrorAlta)}</div>
-            )}
+            <Aviso aviso={avisoPrestadora} />
+            <Aviso aviso={avisoErrorAlta} />
 
             <div className="form-group">
               <label htmlFor="alta-nombre">{frase('alta_familia.nombre')}</label>
@@ -370,10 +361,8 @@ export default function RegistrarFamilia() {
 
         {estado === 'confirmar' && (
           <div>
-            <div className="acceso-aviso atencion">{decir(avisoConfirmarHecho)}</div>
-            {avisoConfirmarError && (
-              <div className="acceso-aviso critico">{decir(avisoConfirmarError)}</div>
-            )}
+            <Aviso aviso={avisoConfirmarHecho} tono="atencion" />
+            <Aviso aviso={avisoConfirmarError} />
 
             <button
               type="button"

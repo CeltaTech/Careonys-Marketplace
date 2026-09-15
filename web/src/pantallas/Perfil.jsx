@@ -33,6 +33,7 @@ import { conPrestadora } from '#comun/direcciones.js';
 import { conLasZonas } from '#comun/datos/modulos.js';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
+import { Aviso } from '#comun/avisos/Aviso.jsx';
 
 /* El papel de la Familia, escrito una sola vez. Es el mismo valor que compara
    el acceso y el que se guarda al dar de alta una cuenta de Familia. */
@@ -418,14 +419,7 @@ export default function Perfil() {
                   <h3>{frase('perfil.contactar')}</h3>
                   <p>{frase('perfil.contacto_bajada')}</p>
 
-                  {aviso && (
-                    <div className={'acceso-aviso ' + aviso.tono} role="status">
-                      <span>{frase(aviso.clave)}</span>
-                      {/* El motivo técnico ya viene clasificado y traducido, así
-                          que se escribe tal cual y en un nodo aparte. */}
-                      <span>{aviso.detalle ? ' ' + aviso.detalle : ''}</span>
-                    </div>
-                  )}
+                  <Aviso aviso={aviso} />
 
                   {/* Qué se ofrece acá lo decide **quién mira**: sin sesión, un
                       botón que lleva a entrar; con sesión de Familia, el que

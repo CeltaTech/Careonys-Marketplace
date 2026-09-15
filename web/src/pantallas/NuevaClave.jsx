@@ -36,6 +36,7 @@ import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
 import { conLaRevisionDeClaves } from '#comun/datos/modulos.js';
 import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
+import { Aviso } from '#comun/avisos/Aviso.jsx';
 
 /* Lo primero de todo, y por eso vive afuera del componente: se guarda la
    dirección con la que se llegó, apenas este archivo se lee y mucho antes de
@@ -73,12 +74,6 @@ export default function NuevaClave() {
   const campoClave = useRef(null);
   const campoClaveRepetida = useRef(null);
   const revisarClave = useRef(null);
-
-  /* Una caja de aviso que se abre es porque hay algo que decir, así que nunca
-     queda en blanco: si la frase no se resolvió se dice lo genérico, que vive en
-     el lector de frases en los tres idiomas. */
-  const decir = (aviso) =>
-    aviso ? (frase(aviso.clave, aviso.huecos) || frase('error.generico')) : '';
 
   useEffect(() => {
     let vigente = true;
@@ -208,7 +203,7 @@ export default function NuevaClave() {
         {estado === 'sin-enlace' && (
           <div>
             <h2 className="texto-20 peso-800 color-titulo mb-8">{frase(tituloSinEnlace)}</h2>
-            <div className="acceso-aviso critico">{decir(avisoSinEnlace)}</div>
+            <Aviso aviso={avisoSinEnlace} />
             <p className="texto-14 color-secundario interlineado-16 mb-20">
               {frase('nueva.cada_enlace')}
             </p>
@@ -235,9 +230,7 @@ export default function NuevaClave() {
               {frase('nueva.explicacion')}
             </p>
 
-            {avisoErrorCambio && (
-              <div className="acceso-aviso critico">{decir(avisoErrorCambio)}</div>
-            )}
+            <Aviso aviso={avisoErrorCambio} />
 
             <div className="form-group">
               <label htmlFor="nueva-clave">{frase('nueva.clave_nueva')}</label>

@@ -201,7 +201,7 @@
       "cerrada": true,
       "usado_en": [
         "web/src/pantallas/Directorio.jsx:206",
-        "web/src/pantallas/Perfil.jsx:179"
+        "web/src/pantallas/Perfil.jsx:180"
       ],
       "items": [
         {
@@ -293,7 +293,7 @@
       "cerrada": false,
       "usado_en": [
         "web/src/pantallas/Directorio.jsx:223",
-        "web/src/pantallas/Perfil.jsx:206"
+        "web/src/pantallas/Perfil.jsx:207"
       ],
       "items": [
         {
@@ -581,7 +581,7 @@
       "cerrada": true,
       "usado_en": [
         "web/src/pantallas/Directorio.jsx:390",
-        "web/src/pantallas/Perfil.jsx:200"
+        "web/src/pantallas/Perfil.jsx:201"
       ],
       "items": [
         {
@@ -875,7 +875,7 @@
         "pwa-familia/src/pantallas/Tablero.jsx:143",
         "web/src/pantallas/Directorio.jsx:194",
         "web/src/pantallas/MockupApp.jsx:471",
-        "web/src/pantallas/Perfil.jsx:186"
+        "web/src/pantallas/Perfil.jsx:187"
       ],
       "items": [
         {

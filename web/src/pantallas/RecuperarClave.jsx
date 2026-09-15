@@ -34,6 +34,7 @@ import { usePestana } from '../armazon/usePestana.js';
 import { conPrestadora } from '#comun/direcciones.js';
 import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
+import { Aviso } from '#comun/avisos/Aviso.jsx';
 
 export default function RecuperarClave() {
   const { frase } = useFrases();
@@ -125,7 +126,7 @@ export default function RecuperarClave() {
             {/* Las dos frases son las mismas de la pantalla de acceso y se piden
                 con su clave: la misma frase escrita dos veces se traduce dos
                 veces y se corrige una sola. */}
-            <div className="acceso-aviso critico">{frase('acceso.sin_servidor')}</div>
+            <Aviso aviso="acceso.sin_servidor" />
             <button
               type="button"
               className="btn btn-secundario ancho-total"
@@ -145,9 +146,7 @@ export default function RecuperarClave() {
               {frase('recuperar.explicacion')}
             </p>
 
-            {avisoEnvio && (
-              <div className="acceso-aviso critico">{frase(avisoEnvio)}</div>
-            )}
+            <Aviso aviso={avisoEnvio} />
 
             <div className="form-group">
               <label htmlFor="recuperar-email">{frase('acceso.correo')}</label>

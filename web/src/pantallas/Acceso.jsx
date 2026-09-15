@@ -31,6 +31,7 @@ import { conPrestadora } from '#comun/direcciones.js';
 import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
 import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
+import { Aviso } from '#comun/avisos/Aviso.jsx';
 
 /* Dónde le toca entrar a cada papel. Los dos primeros son vistas de acá; los
    dos del teléfono son programas aparte, y ahí se sale de éste. */
@@ -156,7 +157,7 @@ export default function Acceso() {
 
         {estado === 'error' && (
           <div>
-            <div className="acceso-aviso critico">{frase('acceso.sin_servidor')}</div>
+            <Aviso aviso="acceso.sin_servidor" />
             <button
               type="button"
               className="btn btn-secundario ancho-total"
@@ -169,12 +170,8 @@ export default function Acceso() {
 
         {estado === 'listo' && (
           <form onSubmit={entrar} noValidate>
-            {avisoPrestadora && (
-              <div className="acceso-aviso atencion">{frase(avisoPrestadora)}</div>
-            )}
-            {avisoAcceso && (
-              <div className="acceso-aviso critico">{frase(avisoAcceso)}</div>
-            )}
+            <Aviso aviso={avisoPrestadora} tono="atencion" />
+            <Aviso aviso={avisoAcceso} />
 
             <div className="form-group">
               <label htmlFor="acceso-email">{frase('acceso.correo')}</label>
