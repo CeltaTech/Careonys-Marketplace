@@ -7,10 +7,19 @@
    se le pida, incluso una inventada. El sitio de este producto es
    `careonys-marketplace.vercel.app`.
 
-   Así que acá la primera comprobación es el control negativo: si una dirección
-   inventada **no** contesta 404, el servidor está sirviendo un comodín y
-   ninguna de las otras comprobaciones significa nada. Recién con ese control en
-   verde tiene sentido pedir los archivos de verdad.
+   Así que acá la primera comprobación es el control negativo: se pide una
+   dirección inventada de las que el sitio contesta con un archivo —una bajo
+   `/assets/`— y tiene que contestar 404. Si contesta otra cosa, el servidor
+   está sirviendo un comodín y ninguna de las otras comprobaciones significa
+   nada. Recién con ese control en verde tiene sentido pedir los archivos de
+   verdad.
+
+   Las direcciones de las pantallas son harina de otro costal. El sitio es un
+   programa de una sola página: a `/perfil` y a cualquier otra que no empiece
+   por una carpeta de archivos le contesta 200 con la misma página, y eso es lo
+   que tiene que hacer. Por eso «está publicado» no se lee del código de
+   respuesta sino del contenido: un archivo está publicado cuando lo que vuelve
+   es él.
 
    Y lo que se compara **no es el archivo de esta máquina, es el que git subió**.
    No es lo mismo y el 31 de agosto de 2026 este guión dio tres rojos falsos por
@@ -60,12 +69,6 @@ const TIPOS = {
   '.webp': 'image/webp',
 };
 
-/* Lo que no se sirve: no vive en el sitio y pedirlo sería un rojo falso. Y
-   `web/` está acá por lo mismo que `scripts/`, aunque el motivo sea otro: es
-   materia prima de la herramienta de armado, no sitio. Lo que el servidor
-   sirve es lo construido a partir de eso. */
-const NO_SE_SIRVE = /^(docs|scripts|supabase|web|\.githooks|\.claude|\.agents)\/|^(CLAUDE|README)\.md$|^package(-lock)?\.json$|^\./;
-
 /* Lo que git tiene guardado para esa ruta en el último commit, que es lo que el
    sitio clona. Devuelve nulo si la ruta no está en el commit —se la nombró a
    mano y nunca se subió—, y ahí se cae al disco avisando. */
@@ -92,11 +95,16 @@ function archivosDelUltimoCommit() {
   return salida.split('\n').map((l) => l.trim()).filter(Boolean);
 }
 
+/* Lo que el sitio sirve es lo que quedó en la carpeta armada, y nada más: la
+   materia prima —las pantallas sin armar, los guiones, las migraciones— no
+   viaja, y su dirección en el sitio no existe. Así que en vez de una lista de
+   carpetas a saltear, que se queda vieja cada vez que nace una, se pregunta si
+   el archivo quedó armado; y la dirección en el sitio es ese mismo camino. */
+const armada = join(raiz, 'dist');
 const pedidos = process.argv.slice(2);
 const candidatos = (pedidos.length ? pedidos : archivosDelUltimoCommit())
   .map((r) => r.split(sep).join('/'))
-  .filter((r) => !NO_SE_SIRVE.test(r))
-  .filter((r) => existsSync(join(raiz, r)));
+  .filter((r) => existsSync(join(raiz, r)) && existsSync(join(armada, r)));
 
 let rojos = 0;
 const decir = (bien, texto) => {
@@ -106,11 +114,20 @@ const decir = (bien, texto) => {
 
 console.log(`\nSitio: ${sitio}\n`);
 
+/* Y sin la carpeta armada no se sabe cuáles de los archivos del commit sirve el
+   sitio, así que no quedaría nada que comparar y todo saldría verde por
+   ausencia. */
+if (!existsSync(armada)) {
+  console.log('  ✘ Falta la carpeta armada. Se arma con: node scripts/armar_todo.mjs');
+  console.log('');
+  process.exit(1);
+}
+
 // ── El control que deja fallar a los demás ─────────────────────────────────
-const inventada = `/no-existe-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}.js`;
+const inventada = `/assets/no-existe-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}.js`;
 const control = await fetch(sitio + inventada, { redirect: 'manual' });
 decir(control.status === 404,
-  `Control: una dirección inventada contesta ${control.status} (tiene que ser 404). ` +
+  `Control: un archivo inventado contesta ${control.status} (tiene que ser 404). ` +
   (control.status === 404 ? '' : 'El servidor sirve un comodín: lo de abajo no prueba nada.'));
 
 if (control.status !== 404) {
@@ -152,9 +169,15 @@ for (const ruta of NO_SE_PUBLICA) {
       'no prueba nada — hay que nombrar acá un archivo que sí esté');
     continue;
   }
+  /* Y el 404 no es la única forma de estar cerrado: al que cae adentro del
+     programa de una sola página el sitio le contesta 200 con la página, que no
+     es el archivo. Está publicado cuando lo que vuelve es él. */
+  const enElRepo = delUltimoCommit(ruta) || readFileSync(join(raiz, ruta));
   const r = await fetch(`${sitio}/${ruta}`, { redirect: 'manual' });
-  decir(r.status === 404, `Cerrado: ${ruta} contesta ${r.status}` +
-    (r.status === 404 ? '' : ' y tendría que contestar 404 — está publicado'));
+  const publicado = r.status !== 404 && Buffer.from(await r.arrayBuffer()).equals(enElRepo);
+  decir(!publicado, `Cerrado: ${ruta} contesta ${r.status}` +
+    (publicado ? ' con su propio contenido — está publicado'
+      : r.status === 404 ? '' : ' con la página del sitio, no con el archivo'));
 }
 
 if (!candidatos.length) {

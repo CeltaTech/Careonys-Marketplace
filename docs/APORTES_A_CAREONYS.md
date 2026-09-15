@@ -407,8 +407,8 @@ alguno se pone rojo el cambio no se guarda. Tardan menos de un segundo todos jun
   lo mismo (`scripts/probar_exenciones.mjs`). Un chequeo que pasa con la carpeta vacía no estaba
   revisando nada.
 - Y la comprobación de que la publicación salió bien **arranca por un control negativo**: le pide
-  al sitio una dirección inventada y, si no contesta que no existe, se corta ahí y no informa nada
-  (`scripts/comprobar_publicacion.mjs:112`). Sin eso, un servidor que contesta cualquier cosa a
+  al sitio un archivo inventado y, si no contesta que no existe, se corta ahí y no informa nada
+  (`scripts/comprobar_publicacion.mjs:129`). Sin eso, un servidor que contesta cualquier cosa a
   cualquier pedido da todo verde.
 
 **Qué tiene Careonys hoy, y qué tiene que acá no hay.**
