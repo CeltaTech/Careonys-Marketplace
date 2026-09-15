@@ -34,7 +34,7 @@ import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
 import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
-import { conLaRevisionDeClaves } from '#comun/datos/claves.js';
+import { conLaRevisionDeClaves } from '#comun/datos/modulos.js';
 import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
 
 /* Lo primero de todo, y por eso vive afuera del componente: se guarda la

@@ -43,7 +43,7 @@ import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Identidad, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
 
-import { conLaCola } from './piezas/modulos.js';
+import { conLaCola, lasConversacionesSiYaLlegaron } from '#comun/datos/modulos.js';
 import Acceso from './pantallas/Acceso.jsx';
 import Inicio from './pantallas/Inicio.jsx';
 import Legajo from './pantallas/Legajo.jsx';
@@ -81,7 +81,8 @@ export default function Programa() {
   const navegar = useCallback((cual) => {
     setDestino((antes) => ({ pantalla: cual, visita: antes.visita + 1 }));
     setCajon(false);
-    if (cual !== 'conversacion' && window.Conversaciones) window.Conversaciones.detener();
+    const Conversaciones = lasConversacionesSiYaLlegaron();
+    if (cual !== 'conversacion' && Conversaciones) Conversaciones.detener();
   }, []);
 
   const irAMensajes = useCallback((conversacionId) => {

@@ -34,6 +34,7 @@ import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Identidad, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
 import { conPrestadora } from '#comun/direcciones.js';
+import { lasConversacionesSiYaLlegaron } from '#comun/datos/modulos.js';
 
 import Intro from './pantallas/Intro.jsx';
 import Tablero from './pantallas/Tablero.jsx';
@@ -89,8 +90,9 @@ export default function Programa() {
     setMenuAbierto(false);
     /* El hilo abierto se refresca solo cada pocos segundos. Al salir de la
        pantalla se para, o el reloj sigue pidiendo contra algo que nadie mira. */
-    if (cual !== 'conversacion' && window.Conversaciones) {
-      window.Conversaciones.detener();
+    const Conversaciones = lasConversacionesSiYaLlegaron();
+    if (cual !== 'conversacion' && Conversaciones) {
+      Conversaciones.detener();
     }
   }, []);
 

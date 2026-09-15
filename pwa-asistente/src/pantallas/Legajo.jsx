@@ -33,12 +33,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
-import { conLaRevisionDeClaves } from '#comun/datos/claves.js';
-
 import {
   conLasZonas, conLaDisponibilidad, conLasFichas,
-  conLosDocumentos, conLasAutorizaciones
-} from '../piezas/modulos.js';
+  conLosDocumentos, conLasAutorizaciones, conLaRevisionDeClaves
+} from '#comun/datos/modulos.js';
 
 import BarraDeProgreso from './Legajo/BarraDeProgreso.jsx';
 import PasoUno from './Legajo/PasoUno.jsx';

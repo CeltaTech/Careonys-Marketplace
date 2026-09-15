@@ -26,6 +26,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
+import { conLaDisponibilidad } from '#comun/datos/modulos.js';
 import BarraDeAbajo from './BarraDeAbajo.jsx';
 import { CasillasDelCatalogo, SelectDelCatalogo } from '#comun/formularios/DelCatalogo.jsx';
 
@@ -56,9 +57,9 @@ export default function Publicar({ activa, navegar }) {
     grillaPedida = true;
     (async () => {
       try {
-        await import('#js/disponibilidad.js');
-        await window.Franjas.montarTextos('franjas-cuidado', 'paso_de_franjas_aviso');
-        await window.Franjas.montarGrilla('grilla-cuidado', 'grilla_aviso');
+        const Franjas = await conLaDisponibilidad();
+        await Franjas.montarTextos('franjas-cuidado', 'paso_de_franjas_aviso');
+        await Franjas.montarGrilla('grilla-cuidado', 'grilla_aviso');
       } catch (err) {
         console.error('Grilla de las franjas del aviso:', err);
       }
@@ -75,9 +76,6 @@ export default function Publicar({ activa, navegar }) {
       alert(frase('familia.aviso_faltan_datos'));
       return;
     }
-    /* Un par `{ dia, turno }` por casillero marcado, con claves de catálogo. Va
-       a `franjas_aviso`, una fila cada uno. */
-    const franjas = window.Franjas.recolectar('grilla-cuidado').franjas;
     const patologias = Array.from(
       document.querySelectorAll('input[name="patologia"]:checked')
     ).map((casilla) => casilla.value);
@@ -86,6 +84,12 @@ export default function Publicar({ activa, navegar }) {
     enCurso.current = true;
     setPublicando(true);
     try {
+      /* Un par `{ dia, turno }` por casillero marcado, con claves de catálogo.
+         Va a `franjas_aviso`, una fila cada uno. La grilla se la lee la misma
+         pieza que la dibujó, y se la espera acá adentro: si no llegó, el aviso
+         no se publica a medias. */
+      const Franjas = await conLaDisponibilidad();
+      const franjas = Franjas.recolectar('grilla-cuidado').franjas;
       const { ClienteDatos, Sesion } = await conLaBase();
       const sesion = await Sesion.getSession();
       await ClienteDatos.crearAviso({
@@ -102,7 +106,7 @@ export default function Publicar({ activa, navegar }) {
       /* `reset()` no desmarca la grilla: sus casilleros son botones y no
          controles de formulario. Sin esto, la búsqueda siguiente arrancaría con
          lo que se marcó en la anterior. */
-      window.Franjas.limpiar('grilla-cuidado');
+      Franjas.limpiar('grilla-cuidado');
       setTimeout(() => {
         setPublicado(false);
         navegar('dashboard');

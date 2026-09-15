@@ -25,11 +25,12 @@
    una frase apenas hay un nombre real: lo que se lee ahí pasó a ser un dato.
 =================================================== */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
 import { conPrestadora } from '#comun/direcciones.js';
+import { conLasZonas } from '#comun/datos/modulos.js';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
 
@@ -84,6 +85,11 @@ export default function Perfil() {
   const [contactando, setContactando] = useState(false);
   const [aviso, setAviso] = useState(null);
 
+  /* Cómo se escriben las zonas, guardado cuando llega. El dibujo no puede
+     esperar a que llegue, e ir a buscarlo al navegador deja que una pieza que
+     no llegó se vea igual que una que llegó vacía. */
+  const zonas = useRef(null);
+
   useEffect(() => {
     let vigente = true;
     setEstado('cargando');
@@ -100,14 +106,16 @@ export default function Perfil() {
            piden acá adentro y no arriba de todo por lo mismo que la puerta a la
            base: pedidas arriba viajarían hasta en las pantallas que no las
            miran. */
-        const [, laFila] = await Promise.all([
-          import('#js/zonas.js'),
+        const [lasZonas, laFila] = await Promise.all([
+          conLasZonas(),
           ClienteDatos.traerDelDirectorio(id),
           Catalogo.cargar()
         ]);
         if (!vigente) return;
 
         if (!laFila) { setEstado('vacio'); return; }
+
+        zonas.current = lasZonas;
 
         // El título de la pestaña lleva el nombre de la Prestadora, que es de
         // quien es este directorio, y no el del producto: la persona llegó por
@@ -157,14 +165,14 @@ export default function Perfil() {
      hasta que se vuelvan a pedir. */
   const perfilDibujado = useMemo(() => {
     if (!fila) return null;
-    const Zonas = window.Zonas;
+    const Zonas = zonas.current;
     const nombre = fila.full_name || '';
 
     // Arriba las regiones, que es lo que ubica de un vistazo, y acá van todas:
     // el «y 2 más» existe porque una tarjeta del directorio no tiene lugar, y
     // esta pantalla sí. Cuando la respuesta es texto libre esta línea queda
     // vacía a propósito: abajo está entera, y repetirla la diría dos veces.
-    const zona = (fila.zonas || []).length ? Zonas.resumen(fila, Infinity) : '';
+    const zona = Zonas && (fila.zonas || []).length ? Zonas.resumen(fila, Infinity) : '';
     // «Prefiero no decirlo» no se escribe: es la respuesta de quien no quiso
     // decirlo, y ponerla igual sería publicarla con otras palabras.
     const genero = fila.gender === 'sin_declarar'

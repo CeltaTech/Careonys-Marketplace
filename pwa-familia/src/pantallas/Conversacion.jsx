@@ -19,6 +19,7 @@
 import { useEffect } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { conLaBase } from '#comun/datos/puerta.js';
+import { conLasConversaciones } from '#comun/datos/modulos.js';
 
 let montada = false;
 
@@ -31,18 +32,18 @@ export default function Conversacion({ activa, pedido, navegar, pedidaRef }) {
     (async () => {
       try {
         await conLaBase();
-        await import('#js/conversacion.js');
+        const Conversaciones = await conLasConversaciones();
         if (!vigente) return;
         if (!montada) {
-          await window.Conversaciones.montar('conversacion-caja', { lado: 'familia' });
+          await Conversaciones.montar('conversacion-caja', { lado: 'familia' });
           montada = true;
         } else {
-          await window.Conversaciones.recargar();
+          await Conversaciones.recargar();
         }
         if (pedidaRef.current) {
           const pedida = pedidaRef.current;
           pedidaRef.current = null;
-          await window.Conversaciones.abrirPorId(pedida);
+          await Conversaciones.abrirPorId(pedida);
         }
       } catch (err) {
         console.error('Mensajes de la Familia:', err);

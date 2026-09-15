@@ -33,7 +33,7 @@ import { usePestana } from '../armazon/usePestana.js';
 import { conPrestadora } from '#comun/direcciones.js';
 import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
-import { conLaRevisionDeClaves } from '#comun/datos/claves.js';
+import { conLaRevisionDeClaves } from '#comun/datos/modulos.js';
 import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
 
 /* A dónde va quien ya tiene sesión, por el papel que tiene en la Prestadora

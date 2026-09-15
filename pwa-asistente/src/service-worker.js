@@ -22,7 +22,7 @@
    queda con lo que tenía, que es justamente lo que se busca el resto del tiempo.
 =================================================== */
 
-const CACHE_NAME = 'asistente-v85';
+const CACHE_NAME = 'asistente-v86';
 
 /* Lo que armó la herramienta, más lo que vive afuera de este programa. */
 const ASSETS_TO_CACHE = [

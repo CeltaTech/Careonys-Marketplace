@@ -39,18 +39,7 @@ import { useVocabulario } from '#comun/formularios/useVocabulario.js';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
 import { conPrestadora } from '#comun/direcciones.js';
-
-/* Cómo se dicen las zonas de alguien que ya contestó lo sabe `js/zonas.js`, que
-   es el mismo archivo que dibuja las casillas del formulario de alta. Se pide
-   diferido por la misma razón que la puerta a la base, y una sola vez: la
-   segunda pantalla que lo pida recibe el mismo. */
-let elLectorDeZonas = null;
-function conLasZonas() {
-  if (!elLectorDeZonas) {
-    elLectorDeZonas = import('#js/zonas.js').then(() => window.Zonas);
-  }
-  return elLectorDeZonas;
-}
+import { conLasZonas } from '#comun/datos/modulos.js';
 
 /* La búsqueda libre ignora tildes: quien escribe «nunez» busca Núñez. Las
    tildes se sacan por su número y no escribiéndolas: una tilde suelta adentro

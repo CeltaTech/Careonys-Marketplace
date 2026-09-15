@@ -3,10 +3,10 @@
 
    La página suelta traía trece `<script>` en la cabecera y cada uno dejaba su
    nombre colgado del navegador: las zonas, la grilla de disponibilidad, las
-   fichas del legajo, los documentos, las autorizaciones, los mensajes y la cola
-   de fichadas. Esos archivos no se tocan —siguen siendo los mismos que usa la
-   versión publicada— y siguen trabajando igual: se les pide un pedazo del
-   documento y ellos lo llenan y lo leen.
+   fichas del legajo, los documentos, las autorizaciones, los mensajes, la cola
+   de fichadas y lo que decide qué contraseña vale. Esos archivos no se tocan
+   —siguen siendo los mismos que usa la versión publicada— y siguen trabajando
+   igual: se les pide un pedazo del documento y ellos lo llenan y lo leen.
 
    Lo que cambia es **cuándo llegan**. Pedidos arriba de todo viajarían siempre,
    incluso para quien sólo entra a mirar sus avisos; pedidos acá adentro, la
@@ -20,6 +20,11 @@
    esperarlo y devolver ese nombre: acá no se copia ni una línea de lo que
    hacen.
 
+   **Las tres partes del producto piden las mismas piezas**, así que las puertas
+   viven acá, una sola vez, y las abren el sitio, el programa del Asistente y el
+   de la Familia. Pedirlas a mano dejaba el nombre del navegador a la vista de
+   la pantalla, y una pieza que no llegó se veía igual que una que llegó vacía.
+
    **La dirección va escrita entera en cada función, y no es descuido.** La
    herramienta de armado necesita leer el nombre del archivo tal cual para
    reemplazar el atajo `#js` por la carpeta de verdad y armar el paquete; con
@@ -28,11 +33,18 @@
 =================================================== */
 
 /* Se recuerda el pedido, no el resultado, así dos pantallas que llamen a la vez
-   comparten la misma espera en vez de disparar dos. */
+   comparten la misma espera en vez de disparar dos. Y se anota aparte lo que ya
+   llegó, para poder preguntarlo sin pedirlo. */
 const pedidos = {};
+const llegados = {};
 
 function unaSolaVez(cual, traer, nombre) {
-  if (!pedidos[cual]) pedidos[cual] = traer().then(() => window[nombre]);
+  if (!pedidos[cual]) {
+    pedidos[cual] = traer().then(() => {
+      llegados[cual] = window[nombre];
+      return llegados[cual];
+    });
+  }
   return pedidos[cual];
 }
 
@@ -61,12 +73,26 @@ export function conLasAutorizaciones() {
   return unaSolaVez('autorizaciones', () => import('#js/autorizaciones.js'), 'Autorizaciones');
 }
 
-/** La caja de mensajes con la Familia. */
+/** La caja de mensajes entre la Familia y el Asistente. */
 export function conLasConversaciones() {
   return unaSolaVez('conversaciones', () => import('#js/conversacion.js'), 'Conversaciones');
+}
+
+/** La caja de mensajes, pero solamente si ya llegó. Al salir de esa pantalla
+    hay que pararle el reloj que pide mensajes nuevos, y eso no se le hace a una
+    pieza que nunca se pidió: traerla para apagarla sería traerla justo cuando
+    se la deja de usar. Devuelve nada mientras no se haya abierto nunca. */
+export function lasConversacionesSiYaLlegaron() {
+  return llegados.conversaciones || null;
 }
 
 /** La cola que guarda las fichadas en el teléfono cuando no hay señal. */
 export function conLaCola() {
   return unaSolaVez('cola', () => import('#js/cola-fichadas.js'), 'ColaFichadas');
+}
+
+/** El largo mínimo de una contraseña y qué está mal, para las cuatro pantallas
+    que piden una. */
+export function conLaRevisionDeClaves() {
+  return unaSolaVez('claves', () => import('#js/clave.js'), 'Clave');
 }

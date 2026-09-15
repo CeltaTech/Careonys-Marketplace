@@ -33,7 +33,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Texto } from '#comun/frases/lector.js';
 
-import { conLaCola } from '../../piezas/modulos.js';
+import { conLaCola } from '#comun/datos/modulos.js';
 
 /* Los tres estados que se cuentan con un renglón de texto. El cuarto —listo—
    apaga ese renglón y prende el desplegable, así que no lleva frase. Cada clave

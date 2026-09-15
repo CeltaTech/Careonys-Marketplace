@@ -33,7 +33,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useFrases } from '../frases/ProveedorDeFrases.jsx';
-import { conLaRevisionDeClaves } from '../datos/claves.js';
+import { conLaRevisionDeClaves } from '../datos/modulos.js';
 
 /* Se pasa hacia afuera el campo de adentro, no la caja: las pantallas lo usan
    para llevar el cursor al campo que quedó mal, y lo que hay que enfocar es el

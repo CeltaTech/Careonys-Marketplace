@@ -200,8 +200,8 @@
       },
       "cerrada": true,
       "usado_en": [
-        "web/src/pantallas/Directorio.jsx:217",
-        "web/src/pantallas/Perfil.jsx:171"
+        "web/src/pantallas/Directorio.jsx:206",
+        "web/src/pantallas/Perfil.jsx:179"
       ],
       "items": [
         {
@@ -292,8 +292,8 @@
       },
       "cerrada": false,
       "usado_en": [
-        "web/src/pantallas/Directorio.jsx:234",
-        "web/src/pantallas/Perfil.jsx:198"
+        "web/src/pantallas/Directorio.jsx:223",
+        "web/src/pantallas/Perfil.jsx:206"
       ],
       "items": [
         {
@@ -580,8 +580,8 @@
       },
       "cerrada": true,
       "usado_en": [
-        "web/src/pantallas/Directorio.jsx:401",
-        "web/src/pantallas/Perfil.jsx:192"
+        "web/src/pantallas/Directorio.jsx:390",
+        "web/src/pantallas/Perfil.jsx:200"
       ],
       "items": [
         {
@@ -873,9 +873,9 @@
         "data/catalogo-fichas.json:107",
         "pwa-familia/src/pantallas/Postulaciones.jsx:130",
         "pwa-familia/src/pantallas/Tablero.jsx:143",
-        "web/src/pantallas/Directorio.jsx:205",
+        "web/src/pantallas/Directorio.jsx:194",
         "web/src/pantallas/MockupApp.jsx:471",
-        "web/src/pantallas/Perfil.jsx:178"
+        "web/src/pantallas/Perfil.jsx:186"
       ],
       "items": [
         {

@@ -30,7 +30,10 @@ import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { usePestana } from '../armazon/usePestana.js';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
-import { conLaRevisionDeClaves } from '#comun/datos/claves.js';
+import {
+  conLaRevisionDeClaves, conLasZonas, conLaDisponibilidad,
+  conLasFichas, conLosDocumentos, conLasAutorizaciones
+} from '#comun/datos/modulos.js';
 import Presentacion from './RegistrarAsistente/Presentacion.jsx';
 import BarraDePasos from './RegistrarAsistente/BarraDePasos.jsx';
 import CajaDeEstado from './RegistrarAsistente/CajaDeEstado.jsx';
@@ -41,8 +44,7 @@ import PasoDeCierre from './RegistrarAsistente/PasoDeCierre.jsx';
 /* Las cuatro fichas repetibles del paso 5, tal como se montan. La matrícula es
    la única que no nace con un bloque abierto: se carga sólo si el Tipo de
    Asistente elegido la exige. */
-function montarFichas() {
-  const FichasLegajo = window.FichasLegajo;
+function montarFichas(FichasLegajo) {
   if (!FichasLegajo || !FichasLegajo.fichas) return;
   FichasLegajo.montarSeccion('ficha-matricula', 'matricula');
   FichasLegajo.montarSeccion('ficha-estudio', 'estudio', { obligatoriaAlMontar: true });
@@ -90,6 +92,11 @@ export default function RegistrarAsistente() {
   const campoClave = useRef(null);
   const campoClaveRepetida = useRef(null);
   const fichasListas = useRef(false);
+  /* Las cinco piezas que arman los pasos, guardadas cuando llegan. La revisión
+     de un paso y el cierre del alta las necesitan sin poder esperar, y ir a
+     buscarlas al navegador deja que una pieza que no llegó se vea igual que una
+     que llegó vacía. */
+  const modulos = useRef(null);
   const yaSeAvisoDeLosArchivos = useRef(false);
   const relojDelExito = useRef(null);
 
@@ -144,17 +151,19 @@ export default function RegistrarAsistente() {
            de la base y el módulo las pide por el cliente de datos, y los cuatro
            selectores de archivo sólo pueden declarar qué aceptan cuando la
            sesión ya está disponible. */
-        await Promise.all([
-          conLaBase(),
-          import('#js/fichas-legajo.js'),
-          import('#js/documentos-legajo.js'),
-          import('#js/disponibilidad.js'),
-          import('#js/autorizaciones.js'),
-          import('#js/zonas.js')
-        ]);
+        const [, FichasLegajo, DocumentosLegajo, Disponibilidad, Autorizaciones, Zonas] =
+          await Promise.all([
+            conLaBase(),
+            conLasFichas(),
+            conLosDocumentos(),
+            conLaDisponibilidad(),
+            conLasAutorizaciones(),
+            conLasZonas()
+          ]);
         if (!vigente) return;
-
-        const { FichasLegajo, DocumentosLegajo, Disponibilidad, Autorizaciones, Zonas } = window;
+        modulos.current = {
+          FichasLegajo, DocumentosLegajo, Disponibilidad, Autorizaciones, Zonas
+        };
 
         // A qué depósito va cada papel lo declara el módulo, y con eso queda
         // escrito lo que cada selector deja elegir.
@@ -168,7 +177,7 @@ export default function RegistrarAsistente() {
 
         await FichasLegajo.cargar();
         if (!vigente) return;
-        montarFichas();
+        montarFichas(FichasLegajo);
         fichasListas.current = true;
 
         const tipos = FichasLegajo.opcionesVocabulario('tipo_asistente');
@@ -270,8 +279,16 @@ export default function RegistrarAsistente() {
        mostró lo sabe el módulo. Preguntarle a él es lo que evita tener la misma
        decisión escrita en dos lados. */
     const hueco = pane.querySelector('#zonas');
-    const Zonas = window.Zonas;
-    if (hueco && Zonas && !Zonas.hayRespuesta('zonas')) {
+    const Zonas = modulos.current && modulos.current.Zonas;
+    /* Sin la pieza no hay con qué contestar ni a quién preguntarle si se
+       contestó, así que el paso no pasa: lo que no se pudo resolver se deniega.
+       Y no se pinta nada de rojo, porque el hueco quedó vacío y no hay ahí nada
+       que se pueda llenar; el aviso de que el formulario no se armó ya está
+       arriba, con su botón para volver a intentarlo. */
+    if (hueco && !Zonas) {
+      valido = false;
+      if (!primerCampoMal) primerCampoMal = hueco;
+    } else if (hueco && !Zonas.hayRespuesta('zonas')) {
       valido = false;
       hueco.style.outline = '2px solid var(--rojo-peligro)';
       hueco.style.borderRadius = '4px';
@@ -298,7 +315,7 @@ export default function RegistrarAsistente() {
     /* Paso 5 (Legajo): las fichas ya validan sus propios bloques, y la Matrícula
        es obligatoria sólo cuando el Tipo de Asistente elegido la exige. */
     if (paneId === 'step-pane-5' && fichasListas.current) {
-      const FichasLegajo = window.FichasLegajo;
+      const { FichasLegajo } = modulos.current;
       ['matricula', 'estudio', 'experiencia_laboral', 'referencia'].forEach((tipo) => {
         if (!FichasLegajo.validarSeccion(`ficha-${tipo}`, tipo)) valido = false;
       });
@@ -336,7 +353,10 @@ export default function RegistrarAsistente() {
      después de un guardado que falló dejaría el legajo perdido y sin aviso. */
   async function guardarLegajo(userId, email) {
     const form = formulario.current;
-    const { ClienteDatos, DocumentosLegajo, FichasLegajo, Disponibilidad, Autorizaciones, Zonas } = window;
+    const { ClienteDatos } = window;
+    const {
+      DocumentosLegajo, FichasLegajo, Disponibilidad, Autorizaciones, Zonas
+    } = modulos.current;
 
     // Estado cargando, antes de la primera espera. Cerrar el alta son cinco
     // escrituras seguidas y ninguna es instantánea.
@@ -682,8 +702,8 @@ export default function RegistrarAsistente() {
               seguir={seguir}
               tiposDeAsistente={tiposDeAsistente}
               alCambiarProfesion={(evento) => {
-                const FichasLegajo = window.FichasLegajo;
-                if (FichasLegajo) setExigeMatricula(FichasLegajo.requiereMatricula(evento.target.value));
+                const piezas = modulos.current;
+                if (piezas) setExigeMatricula(piezas.FichasLegajo.requiereMatricula(evento.target.value));
               }}
               clave={clave}
               alEscribirClave={(evento) => setClave(evento.target.value)}

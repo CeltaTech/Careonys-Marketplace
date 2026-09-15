@@ -21,7 +21,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
-import { conLasConversaciones } from '../piezas/modulos.js';
+import { conLasConversaciones } from '#comun/datos/modulos.js';
 
 export default function Conversacion({ activa, visita, pedida, navegar }) {
   const { frase } = useFrases();

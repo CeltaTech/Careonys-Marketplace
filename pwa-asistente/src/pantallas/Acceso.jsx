@@ -25,7 +25,7 @@ import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Texto } from '#comun/frases/lector.js';
 import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
 
-import { conLaCola } from '../piezas/modulos.js';
+import { conLaCola } from '#comun/datos/modulos.js';
 import { nombreDeMenu } from '../Programa.jsx';
 
 export default function Acceso({ activa, base, arrancando, avisoArranque, navegar, alEntrar }) {
