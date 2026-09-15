@@ -21,6 +21,7 @@
 
 import { useEffect, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
+import { SelloDelProducto } from '#comun/marca/SelloDelProducto.jsx';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
 import BarraDeAbajo from './BarraDeAbajo.jsx';
@@ -124,10 +125,7 @@ export default function Tablero({ activa, pedido, navegar, alAbrirMenu }) {
         </div>
       ) : null}
 
-      <div style={{ textAlign: 'center', padding: '24px 0', fontSize: '10px', color: 'var(--texto-secundario)' }}>
-        <span>{frase('pie.sello_producto')}</span>{' '}
-        <strong className="color-marca-acento">{frase('comun.producto')}</strong>
-      </div>
+      <SelloDelProducto style={{ padding: '24px 0' }} />
 
       <BarraDeAbajo actual="dashboard" navegar={navegar} />
     </div>

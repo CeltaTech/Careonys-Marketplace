@@ -12,6 +12,7 @@
 =================================================== */
 
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
+import { SelloDelProducto } from '#comun/marca/SelloDelProducto.jsx';
 
 import { FranjaDeAlarmas } from '#comun/alarmas/FranjaDeAlarmas.jsx';
 import EstadoDelLegajo from './Inicio/EstadoDelLegajo.jsx';
@@ -48,10 +49,7 @@ export default function Inicio({ activa, visita, base, usuario, pendientes, nave
 
       <FormularioDeReporte base={base} />
 
-      <div style={{ textAlign: 'center', padding: '12px 0 24px 0', fontSize: '10px', color: 'var(--texto-secundario)' }}>
-        <span>{frase('pie.sello_producto')}</span>{' '}
-        <strong className="color-marca-acento">{frase('comun.producto')}</strong>
-      </div>
+      <SelloDelProducto style={{ padding: '12px 0 24px 0' }} />
 
       <div className="bottom-tab-bar">
         <a className="tab-item active" onClick={() => navegar('dashboard')}>

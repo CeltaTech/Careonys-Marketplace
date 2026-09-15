@@ -26,6 +26,7 @@
 =================================================== */
 
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
+import { SelloDelProducto } from '#comun/marca/SelloDelProducto.jsx';
 import { useElIngreso } from '#comun/acceso/useElIngreso.js';
 import { nombreDeQuienEntro } from '#comun/acceso/nombreDeQuienEntro.js';
 import CampoDeClave from '#comun/formularios/CampoDeClave.jsx';
@@ -90,10 +91,7 @@ export default function Acceso({ activa, base, arrancando, avisoArranque, navega
           <a onClick={() => navegar('registro')}>{frase('asistente.registrarse')}</a>
         </div>
       </div>
-      <div style={{ textAlign: 'center', marginTop: 'auto', fontSize: '10px', color: 'var(--texto-secundario)', paddingTop: '20px' }}>
-        <span>{frase('pie.sello_producto')}</span>{' '}
-        <strong className="color-marca-acento">{frase('comun.producto')}</strong>
-      </div>
+      <SelloDelProducto style={{ marginTop: 'auto', paddingTop: '20px' }} />
     </div>
   );
 }

@@ -959,11 +959,6 @@
       "en": "No reports are shown here yet. For now, they can be requested directly from the care assistant.",
       "pt-BR": "Ainda não são exibidos relatórios aqui. Por enquanto, é possível pedi-los diretamente ao assistente."
     },
-    "familia.cerrando_sesion": {
-      "es-AR": "Cerrando la sesión…",
-      "en": "Signing out…",
-      "pt-BR": "Saindo da sessão…"
-    },
     "familia.aviso_faltan_datos": {
       "es-AR": "Faltan el nombre del Paciente, la zona y la modalidad del servicio.",
       "en": "The Patient’s name, the area and the service arrangement are missing.",
@@ -995,10 +990,15 @@
       "en": "Do you confirm that you want to sign out? To come back in, the email address and the password have to be entered again.",
       "pt-BR": "Confirma que deseja encerrar a sessão? Para entrar de novo é preciso digitar outra vez o e-mail e a senha."
     },
-    "asistente.cerrando_sesion": {
+    "comun.cerrar_sesion": {
+      "es-AR": "Cerrar sesión",
+      "en": "Sign out",
+      "pt-BR": "Sair da sessão"
+    },
+    "comun.cerrando_sesion": {
       "es-AR": "Cerrando la sesión…",
       "en": "Signing out…",
-      "pt-BR": "Encerrando a sessão…"
+      "pt-BR": "Saindo da sessão…"
     },
     "asistente.falta_terminos": {
       "es-AR": "Para terminar el alta hay que aceptar los Términos y Condiciones.",
@@ -2864,11 +2864,6 @@
       "es-AR": "Completar Legajo",
       "en": "Complete Personnel File",
       "pt-BR": "Preencher Ficha Funcional"
-    },
-    "asistente.menu_cerrar_sesion": {
-      "es-AR": "Cerrar sesión",
-      "en": "Sign out",
-      "pt-BR": "Sair da sessão"
     },
     "asistente.logo_prestadora": {
       "es-AR": "Logo de la Prestadora",

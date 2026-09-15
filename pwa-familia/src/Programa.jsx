@@ -34,6 +34,8 @@ import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { nombreDeQuienEntro } from '#comun/acceso/nombreDeQuienEntro.js';
 import { useElArranque } from '#comun/acceso/useElArranque.js';
 import { useLaSalida } from '#comun/acceso/useLaSalida.js';
+import { SalidaDeLaSesion } from '#comun/acceso/SalidaDeLaSesion.jsx';
+import { SelloDelProducto } from '#comun/marca/SelloDelProducto.jsx';
 import { conPrestadora } from '#comun/direcciones.js';
 import { lasConversacionesSiYaLlegaron } from '#comun/datos/modulos.js';
 
@@ -217,21 +219,9 @@ export default function Programa() {
             <i className="fas fa-headset ancho-20 color-secundario"></i>{' '}
             <span>{frase('acompanamiento.titulo')}</span>
           </a>
-          <div style={{ borderTop: '1px solid var(--borde-card)', margin: '8px 0' }}></div>
-          <button type="button" className="drawer-menu-item color-peligro" id="btn-logout"
-            disabled={saliendo} onClick={cerrarSesion}>
-            {saliendo ? frase('familia.cerrando_sesion') : (
-              <>
-                <i className="fas fa-sign-out-alt ancho-20 color-peligro"></i>{' '}
-                <span>{frase('asistente.menu_cerrar_sesion')}</span>
-              </>
-            )}
-          </button>
+          <SalidaDeLaSesion saliendo={saliendo} alSalir={cerrarSesion} />
         </div>
-        <div className="p-16 centrar-texto texto-10 color-secundario borde-arriba">
-          <span>{frase('pie.sello_producto')}</span>{' '}
-          <strong className="color-marca-acento">{frase('comun.producto')}</strong>
-        </div>
+        <SelloDelProducto className="p-16 borde-arriba" />
       </div>
 
       {/* Las siete pantallas. Están todas puestas y sólo una lleva la marca de

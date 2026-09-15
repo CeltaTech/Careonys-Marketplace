@@ -210,7 +210,7 @@ agosto de 2026, porque la que estaba escrita a mano decía 687 atributos `style=
 
 | Archivo | Lugares con estilo propio | Declaraciones |
 |---|---:|---:|
-| `web/src/pantallas/MockupApp.jsx` | 47 | 211 |
+| `web/src/pantallas/MockupApp.jsx` | 47 | 205 |
 | `web/src/pantallas/SolicitarAsistente.jsx` | 22 | 30 |
 | `web/src/pantallas/Inicio.jsx` | 21 | 30 |
 | `web/src/pantallas/RegistrarAsistente/PasoDeCierre.jsx` | 13 | 51 |
@@ -223,14 +223,14 @@ agosto de 2026, porque la que estaba escrita a mano decía 687 atributos `style=
 | `web/src/pantallas/RegistrarAsistente/Presentacion.jsx` | 6 | 28 |
 | `pwa-asistente/src/pantallas/Legajo/PasoDos.jsx` | 5 | 17 |
 | `pwa-familia/src/pantallas/Reportes.jsx` | 5 | 5 |
-| `pwa-familia/src/pantallas/Tablero.jsx` | 5 | 10 |
+| `pwa-familia/src/pantallas/Tablero.jsx` | 5 | 7 |
 | `pwa-asistente/src/pantallas/Legajo/PasoCuatro.jsx` | 4 | 11 |
-| `pwa-asistente/src/pantallas/Inicio.jsx` | 3 | 8 |
-| `pwa-asistente/src/Programa.jsx` | 3 | 7 |
-| `pwa-familia/src/Programa.jsx` | 3 | 7 |
+| `pwa-asistente/src/pantallas/Inicio.jsx` | 3 | 5 |
 | `comun/formularios/DelCatalogo.jsx` | 2 | 0 |
-| `pwa-asistente/src/pantallas/Acceso.jsx` | 2 | 6 |
+| `pwa-asistente/src/pantallas/Acceso.jsx` | 2 | 3 |
 | `pwa-asistente/src/pantallas/Inicio/EstadoDelLegajo.jsx` | 2 | 10 |
+| `pwa-asistente/src/Programa.jsx` | 2 | 5 |
+| `pwa-familia/src/Programa.jsx` | 2 | 5 |
 | `web/src/pantallas/Directorio.jsx` | 2 | 3 |
 | `web/src/pantallas/panel-prestadora/Resoluciones.jsx` | 2 | 8 |
 | `web/src/pantallas/panel-prestadora/Verificaciones.jsx` | 2 | 8 |
@@ -238,8 +238,10 @@ agosto de 2026, porque la que estaba escrita a mano decía 687 atributos `style=
 | `web/src/pantallas/Perfil.jsx` | 2 | 2 |
 | `web/src/pantallas/RegistrarAsistente/BarraDePasos.jsx` | 2 | 4 |
 | `web/src/pantallas/RegistrarAsistente/Navegadores.jsx` | 2 | 4 |
+| `comun/acceso/SalidaDeLaSesion.jsx` | 1 | 1 |
+| `comun/marca/SelloDelProducto.jsx` | 1 | 0 |
 | `pwa-asistente/src/pantallas/Inicio/FormularioDeReporte.jsx` | 1 | 4 |
-| `pwa-familia/src/pantallas/Intro.jsx` | 1 | 5 |
+| `pwa-familia/src/pantallas/Intro.jsx` | 1 | 2 |
 | `web/src/formularios/FormularioDeConsulta.jsx` | 1 | 0 |
 | `web/src/pantallas/Examen.jsx` | 1 | 2 |
 | `web/src/pantallas/GuiasPrestadora.jsx` | 1 | 2 |

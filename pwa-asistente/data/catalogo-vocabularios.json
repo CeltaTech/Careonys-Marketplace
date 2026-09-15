@@ -11,8 +11,8 @@
         "js/zonas.js:142",
         "js/zonas.js:215",
         "pwa-familia/src/pantallas/Postulaciones.jsx:131",
-        "pwa-familia/src/pantallas/Tablero.jsx:144",
-        "web/src/pantallas/MockupApp.jsx:472"
+        "pwa-familia/src/pantallas/Tablero.jsx:142",
+        "web/src/pantallas/MockupApp.jsx:473"
       ],
       "items": [
         {
@@ -872,9 +872,9 @@
       "usado_en": [
         "data/catalogo-fichas.json:107",
         "pwa-familia/src/pantallas/Postulaciones.jsx:130",
-        "pwa-familia/src/pantallas/Tablero.jsx:143",
+        "pwa-familia/src/pantallas/Tablero.jsx:141",
         "web/src/pantallas/Directorio.jsx:194",
-        "web/src/pantallas/MockupApp.jsx:471",
+        "web/src/pantallas/MockupApp.jsx:472",
         "web/src/pantallas/Perfil.jsx:187"
       ],
       "items": [

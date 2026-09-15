@@ -36,6 +36,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
+import { SelloDelProducto } from '#comun/marca/SelloDelProducto.jsx';
 import { usePestana } from '../armazon/usePestana.js';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
@@ -575,15 +576,12 @@ export default function MockupApp() {
           <button type="button" className="drawer-menu-item color-peligro" id="btn-logout"
             disabled={cerrandoSesion} onClick={salir}>
             {cerrandoSesion
-              ? frase('familia.cerrando_sesion')
+              ? frase('comun.cerrando_sesion')
               : (<><i className="fas fa-sign-out-alt color-peligro"></i>{' '}
-                <span>{frase('asistente.menu_cerrar_sesion')}</span></>)}
+                <span>{frase('comun.cerrar_sesion')}</span></>)}
           </button>
         </div>
-        <div className="p-16 centrar-texto texto-10 color-secundario borde-arriba">
-          <span>{frase('pie.sello_producto')}</span>{' '}
-          <strong className="color-marca-acento">{frase('comun.producto')}</strong>
-        </div>
+        <SelloDelProducto className="p-16 borde-arriba" />
       </div>
 
       {/* 1. VISTA: INTRO / LOGIN */}
@@ -635,13 +633,7 @@ export default function MockupApp() {
           </div>
         </div>
 
-        <div style={{
-          textAlign: 'center', marginTop: 'auto', fontSize: '10px',
-          color: 'var(--texto-secundario)', paddingTop: '20px'
-        }}>
-          <span>{frase('pie.sello_producto')}</span>{' '}
-          <strong className="color-marca-acento">{frase('comun.producto')}</strong>
-        </div>
+        <SelloDelProducto style={{ marginTop: 'auto', paddingTop: '20px' }} />
       </div>
 
       {/* 2. VISTA: SELECCIÓN DE ROL / SIGNUP */}
@@ -883,13 +875,7 @@ export default function MockupApp() {
         </div>
 
         {/* FOOTER DISCRETO */}
-        <div style={{
-          textAlign: 'center', padding: '24px 0', fontSize: '10px',
-          color: 'var(--texto-secundario)'
-        }}>
-          <span>{frase('pie.sello_producto')}</span>{' '}
-          <strong className="color-marca-acento">{frase('comun.producto')}</strong>
-        </div>
+        <SelloDelProducto style={{ padding: '24px 0' }} />
 
         <BarraDeAbajo activa="dashboard" conSenal />
       </div>
