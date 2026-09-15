@@ -37,7 +37,13 @@
    rechazo llega acá como cualquier otro error del envío: `textoDeError` lo pasa
    por `Texto.mensajeDeError`, que lo reconoce y devuelve
    `error.contacto_bloqueado` en el idioma que corresponda. El texto **se queda
-   en el campo**, porque `campo.value = ''` sólo corre cuando el mensaje entró.
+   en el campo**: lo escrito se vacía cuando el mensaje entró, no cuando lo
+   rechazaron.
+
+   **Cada hilo se abre con el campo en blanco.** El formulario se arma una sola
+   vez y lo usan todas las conversaciones, así que lo que quedó escrito y sin
+   enviar se vacía al entrar a un hilo: lo que se escribió para una persona no
+   puede salir hacia otra.
 
    Los mensajes se dibujan con `textContent`, nunca con `innerHTML`. El
    contenido lo escribe la otra parte, así que es lo último a lo que se le puede
@@ -276,6 +282,9 @@
     const errorEnvio = contenedor.querySelector('[data-parte="error-envio"]');
     errorEnvio.hidden = true;
     errorEnvio.textContent = '';
+    /* El formulario es uno solo para todos los hilos, así que lo que quedó
+       escrito sin enviar se vacía acá: no puede salir hacia otra persona. */
+    contenedor.querySelector('[data-parte="campo"]').value = '';
     // El cargando, el error y el vacío del hilo los pinta `traerMensajes`, que
     // es la que sabe si el pedido fue la carga entera o un refresco del reloj.
     await traerMensajes(false);
