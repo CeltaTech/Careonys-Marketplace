@@ -38,6 +38,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
+import { Aviso } from '#comun/avisos/Aviso.jsx';
 import { usePestana } from '../armazon/usePestana.js';
 import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
@@ -80,12 +81,6 @@ export default function Examen() {
   const [corrigiendo, setCorrigiendo] = useState(false);
 
   const [resultado, setResultado] = useState(null);
-
-  /* Una caja que se abre es porque hay algo que decir, así que nunca queda en
-     blanco: si la frase no se resolvió, se dice lo genérico. Era lo que hacía
-     `avisar` en la página, y vale para los dos carteles del examen. */
-  const loQueDiceElAviso = (aviso) =>
-    frase(aviso.clave, aviso.huecos) || frase('error.generico');
 
   /* Los tres motivos por los que esta pantalla no tiene nada que mostrar. Van
      por clave como todo lo demás; cuál de los tres es lo decide quien llama. */
@@ -347,7 +342,7 @@ export default function Examen() {
                 acceso y se pide con su clave: una clave no se renombra, y la
                 misma frase escrita dos veces se traduce dos veces y se corrige
                 una sola. */}
-            <div className="examen-aviso critico">{frase(claveQueSeLee)}</div>
+            <Aviso aviso={claveQueSeLee} />
             <button
               type="button"
               className="btn btn-secundario ancho-total"
@@ -409,16 +404,8 @@ export default function Examen() {
               )}
             </p>
 
-            {avisoIntentos && (
-              <div className={'examen-aviso ' + avisoIntentos.tono}>
-                {loQueDiceElAviso(avisoIntentos)}
-              </div>
-            )}
-            {avisoExamen && (
-              <div className={'examen-aviso ' + avisoExamen.tono}>
-                {loQueDiceElAviso(avisoExamen)}
-              </div>
-            )}
+            <Aviso aviso={avisoIntentos} />
+            <Aviso aviso={avisoExamen} />
 
             <div>
               {enCurso.preguntas.map((pregunta, cuantas) => (
@@ -460,7 +447,9 @@ export default function Examen() {
 
         {cual === 'resultado' && resultado && (
           <div>
-            <div className={'examen-aviso ' + (aprobado ? 'exito' : 'atencion')}>
+            {/* El resultado usa la misma caja que los avisos, con tres
+                renglones adentro en lugar de una frase. */}
+            <div className={'aviso ' + (aprobado ? 'exito' : 'atencion')}>
               {/* La cifra es un número y un signo: no hay nada que traducir. */}
               <p className="examen-resultado-cifra">{resultado.porcentaje + '%'}</p>
               <p style={{ fontWeight: 700, margin: '0 0 6px' }}>

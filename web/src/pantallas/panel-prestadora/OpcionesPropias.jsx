@@ -35,7 +35,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
-import Cartel from './Cartel.jsx';
+import { Aviso } from '#comun/avisos/Aviso.jsx';
 
 /* Dónde va la opción nueva adentro de su lista. Se cuenta desde las propias y
    arranca en 101, que es lo que hizo la migración 0040: así lo que agrega la
@@ -323,8 +323,7 @@ export default function OpcionesPropias({ base }) {
         </p>
       </div>
 
-      <Cartel tono={cartelLista && cartelLista.tono} clave={cartelLista && cartelLista.clave}
-        huecos={cartelLista && cartelLista.huecos} />
+      <Aviso aviso={cartelLista} />
 
       <table className="aspirantes-table">
         <thead>
@@ -369,8 +368,7 @@ export default function OpcionesPropias({ base }) {
           {frase(enCorreccion ? 'panel.opciones_form_correccion' : 'panel.opciones_form_nueva')}
         </h4>
 
-        <Cartel tono={cartelForm && cartelForm.tono} clave={cartelForm && cartelForm.clave}
-          huecos={cartelForm && cartelForm.huecos} />
+        <Aviso aviso={cartelForm} />
 
         <div className="grilla-2 gap-16">
           <div className="form-group">

@@ -27,7 +27,7 @@ import { useEffect, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { useVocabulario } from '#comun/formularios/useVocabulario.js';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
-import Cartel from './Cartel.jsx';
+import { Aviso } from '#comun/avisos/Aviso.jsx';
 
 /* El valor de fábrica de la columna. Un papel del que la base no tiene ninguna
    fila vale «sin presentar», así el legajo recién llegado se ve completo —los
@@ -141,8 +141,7 @@ export default function Verificaciones({ base, caregiverId, token }) {
         {frase('panel.verificaciones_bajada')}
       </p>
 
-      <Cartel tono={cartel && cartel.tono} clave={cartel && cartel.clave}
-        huecos={cartel && cartel.huecos} />
+      <Aviso aviso={cartel} />
 
       <div>
         {!cartelDeCarga && papeles.items.map((papel) => {

@@ -3647,7 +3647,7 @@ una decisión que no está tomada, y son el pendiente 145. El menú quedó en do
 
 **Y la hoja de estilos pedía cuatro columnas fijas.** Con dos recuadros quedaban apretados contra
 la izquierda y media fila vacía al lado, así que `.kpi-grid` pasó a `auto-fit`
-(`css/styles.css:1889`): reparte los que haya, y se acomoda solo el día que aparezca el tercero. Es
+(`css/styles.css:1911`): reparte los que haya, y se acomoda solo el día que aparezca el tercero. Es
 la única regla del proyecto que usa esa clase, comprobado antes de tocarla.
 
 ### Los avisos tienen autora, y las cuentas con las que se entra hoy faltan

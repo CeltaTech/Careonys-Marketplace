@@ -38,7 +38,7 @@ import { usePestana } from '../armazon/usePestana.js';
 import { MarcoDelPanel } from '../armazon/MarcoDelPanel.jsx';
 import { Identidad, Texto } from '#comun/frases/lector.js';
 import { useSesionRequerida } from '../datos/useSesionRequerida.js';
-import Cartel from './panel-prestadora/Cartel.jsx';
+import { Aviso } from '#comun/avisos/Aviso.jsx';
 import ModalAuditoria from './panel-prestadora/ModalAuditoria.jsx';
 import TopeDeAlarma from './panel-prestadora/TopeDeAlarma.jsx';
 import Moneda from './panel-prestadora/Moneda.jsx';
@@ -51,13 +51,6 @@ const ROL_QUE_AUDITA = 'coordinador';
 /* Sin cuenta va la raya y no el cero: cero es un dato y no se puede usar para
    decir «no se sabe». */
 const SIN_CUENTA = '—';
-
-/* La caja del cartel de la tabla no tiene clases: las medidas venían escritas
-   en el marcado y se dejan tal cual estaban. */
-const CAJA_DEL_CARTEL = {
-  padding: '16px', borderRadius: '10px', fontSize: '13px',
-  lineHeight: '1.5', marginBottom: '12px'
-};
 
 /* Los tres papeles del legajo, con el rótulo con el que se nombra cada enlace.
    Viven acá porque el orden en que se muestran es el de esta pantalla. */
@@ -322,8 +315,7 @@ export default function PanelPrestadora() {
             </button>
           </div>
 
-          <Cartel tono={cartel && cartel.tono} clave={cartel && cartel.clave}
-            huecos={cartel && cartel.huecos} clase="" estilo={CAJA_DEL_CARTEL} />
+          <Aviso aviso={cartel} />
 
           <table className="aspirantes-table">
             <thead>

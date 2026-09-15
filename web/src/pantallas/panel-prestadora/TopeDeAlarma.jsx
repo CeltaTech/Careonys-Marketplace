@@ -23,7 +23,7 @@
 
 import { useEffect, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
-import Cartel from './Cartel.jsx';
+import { Aviso } from '#comun/avisos/Aviso.jsx';
 
 /* Lo mismo que exige la tabla, dicho antes y en el idioma de la pantalla. La
    comprobación que manda es la de la base; ésta le evita a la persona un viaje
@@ -132,8 +132,7 @@ export default function TopeDeAlarma({ base }) {
         </p>
       </div>
 
-      <Cartel tono={cartel && cartel.tono} clave={cartel && cartel.clave}
-        huecos={cartel && cartel.huecos} />
+      <Aviso aviso={cartel} />
 
       <div className="form-group">
         <label htmlFor="tope-horas">{frase('alarmas.tope_campo')}</label>

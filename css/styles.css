@@ -619,6 +619,46 @@ button:disabled:hover,
   background: var(--superficie);
 }
 
+/* ── La caja de aviso ──────────────────────────────────────────────────────
+   Un renglón de color con una sola frase adentro. No es de ninguna pantalla:
+   la abren la entrada, el alta, el perfil, el panel de la Prestadora y la
+   evaluación, y antes estaba escrita cuatro veces, dos como clase y dos como
+   medidas sueltas en el marcado. Los cinco tonos son los del sistema de
+   diseño y no hay ningún color escrito acá. */
+
+.aviso {
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.aviso.critico {
+  background: var(--tono-critico-fondo);
+  color: var(--tono-critico-texto);
+}
+
+.aviso.atencion {
+  background: var(--tono-atencion-fondo);
+  color: var(--tono-atencion-texto);
+}
+
+.aviso.info {
+  background: var(--tono-info-fondo);
+  color: var(--tono-info-texto);
+}
+
+.aviso.exito {
+  background: var(--tono-exito-fondo);
+  color: var(--tono-exito-texto);
+}
+
+.aviso.neutro {
+  background: var(--tono-neutro-fondo);
+  color: var(--tono-neutro-texto);
+}
+
 /* ── Las pantallas de la sesión ────────────────────────────────────────────
    Tres usan esta misma tarjeta centrada: entrar, pedir el enlace para
    recuperar la contraseña y elegir la nueva. El estilo vivía adentro de
@@ -658,24 +698,6 @@ button:disabled:hover,
   font-size: 18px;
   font-weight: 800;
   color: var(--texto-titulo);
-}
-
-.acceso-aviso {
-  border-radius: 10px;
-  padding: 12px 14px;
-  font-size: 13px;
-  line-height: 1.5;
-  margin-bottom: 16px;
-}
-
-.acceso-aviso.critico {
-  background: var(--tono-critico-fondo);
-  color: var(--tono-critico-texto);
-}
-
-.acceso-aviso.atencion {
-  background: var(--tono-atencion-fondo);
-  color: var(--tono-atencion-texto);
 }
 
 .acceso-pie {
@@ -2172,34 +2194,6 @@ button:disabled:hover,
   line-height: 1.6;
   color: var(--texto-secundario);
   margin: 0 0 20px;
-}
-
-.examen-aviso {
-  border-radius: 10px;
-  padding: 12px 14px;
-  font-size: 13px;
-  line-height: 1.5;
-  margin-bottom: 16px;
-}
-
-.examen-aviso.critico {
-  background: var(--tono-critico-fondo);
-  color: var(--tono-critico-texto);
-}
-
-.examen-aviso.atencion {
-  background: var(--tono-atencion-fondo);
-  color: var(--tono-atencion-texto);
-}
-
-.examen-aviso.info {
-  background: var(--tono-info-fondo);
-  color: var(--tono-info-texto);
-}
-
-.examen-aviso.exito {
-  background: var(--tono-exito-fondo);
-  color: var(--tono-exito-texto);
 }
 
 .examen-cargando {

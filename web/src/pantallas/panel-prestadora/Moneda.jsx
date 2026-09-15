@@ -30,7 +30,7 @@ import { useEffect, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { useVocabulario } from '#comun/formularios/useVocabulario.js';
 import { Catalogo } from '#comun/frases/lector.js';
-import Cartel from './Cartel.jsx';
+import { Aviso } from '#comun/avisos/Aviso.jsx';
 
 export default function Moneda({ base }) {
   const { frase } = useFrases();
@@ -147,8 +147,7 @@ export default function Moneda({ base }) {
         </p>
       </div>
 
-      <Cartel tono={cartel && cartel.tono} clave={cartel && cartel.clave}
-        huecos={cartel && cartel.huecos} />
+      <Aviso aviso={cartel} />
 
       <div className="form-group">
         <label htmlFor="moneda-elegida">{frase('panel.moneda_campo')}</label>

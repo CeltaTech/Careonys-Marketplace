@@ -19,7 +19,7 @@
 import { useEffect, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Texto } from '#comun/frases/lector.js';
-import Cartel from './Cartel.jsx';
+import { Aviso } from '#comun/avisos/Aviso.jsx';
 
 /* El estado en el que quedó el legajo se muestra con la misma frase que usa la
    tabla de arriba, para que la misma cosa no se llame de dos maneras en la
@@ -78,8 +78,7 @@ export default function Resoluciones({ base, caregiverId, token }) {
         {frase('panel.resoluciones_bajada')}
       </p>
 
-      <Cartel tono={cartel && cartel.tono} clave={cartel && cartel.clave}
-        huecos={cartel && cartel.huecos} />
+      <Aviso aviso={cartel} />
 
       <div>
         {filas.map((fila, cual) => (

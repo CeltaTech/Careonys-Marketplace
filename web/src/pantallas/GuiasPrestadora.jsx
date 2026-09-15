@@ -34,6 +34,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
+import { Aviso } from '#comun/avisos/Aviso.jsx';
 import { usePestana } from '../armazon/usePestana.js';
 import { MarcoDelPanel } from '../armazon/MarcoDelPanel.jsx';
 import { Catalogo, Identidad, Texto } from '#comun/frases/lector.js';
@@ -67,24 +68,6 @@ const rotuloDeFila = (fila) => {
     ? nombre + ' · ' + Catalogo.frase('panel.guia_propia')
     : nombre;
 };
-
-/* Un cartel de estado. Recibe la clave del catálogo y el tono, y de ahí salen
-   los dos colores, que son variables del sistema de diseño y no valores
-   escritos acá. */
-function Cartel({ aviso }) {
-  if (!aviso || !aviso.tono) return null;
-  return (
-    <div
-      className="p-16 redondeo-10 texto-13 interlineado-16 mb-12"
-      style={{
-        background: 'var(--tono-' + aviso.tono + '-fondo)',
-        color: 'var(--tono-' + aviso.tono + '-texto)'
-      }}
-    >
-      {Texto.frase(aviso.clave, aviso.huecos)}
-    </div>
-  );
-}
 
 export default function GuiasPrestadora() {
   const { frase } = useFrases();
@@ -512,7 +495,7 @@ export default function GuiasPrestadora() {
           </button>
         </div>
 
-        <Cartel aviso={avisoLista} />
+        <Aviso aviso={avisoLista} />
 
         <table className="aspirantes-table">
           <thead>
@@ -586,7 +569,7 @@ export default function GuiasPrestadora() {
           </span>
         </h3>
 
-        <Cartel aviso={avisoForm} />
+        <Aviso aviso={avisoForm} />
 
         <div className="grilla-2 gap-16">
           <div className="form-group">

@@ -31,11 +31,11 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 
 | | |
 |---|---|
-| 17 pantallas, 13.994 renglones | el sitio es un programa con 15 direcciones, y los dos del teléfono son otros dos programas |
+| 17 pantallas, 13.918 renglones | el sitio es un programa con 15 direcciones, y los dos del teléfono son otros dos programas |
 | 7.379 renglones de JavaScript propio, en 35 archivos | 0 de ellos son copias byte a byte de otro archivo (pendiente 13) |
-| 5.607 renglones de hojas de estilo, en 12 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
-| 619 declaraciones de estilo pegadas al marcado | en 217 lugares (fue el pendiente 8, cerrado) |
-| Supabase Auth funcionando | 16 de los 72 archivos que las dibujan abren la puerta a la base |
+| 5.601 renglones de hojas de estilo, en 12 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
+| 615 declaraciones de estilo pegadas al marcado | en 215 lugares (fue el pendiente 8, cerrado) |
+| Supabase Auth funcionando | 16 de los 71 archivos que las dibujan abren la puerta a la base |
 | 3 servidores de afuera | dos de tipografías y el de los iconos |
 | 4 paquetes que se construyen solos | la raíz, que arma a los otros tres, pwa-asistente, pwa-familia, web |
 | 37 tablas y 8 migraciones en el repositorio | 41 chequeos las miran antes de cada commit |
@@ -62,7 +62,7 @@ sumaba 4.638 donde la tabla de arriba, que sí sale de medir, decía 4.642—.
 | Archivo | Renglones | La piden |
 |---|---:|---|
 | `css/mockup-app.css` | 135 | **no la pide ningún paquete** |
-| `css/styles.css` | 2.315 | Sólo `web/src/principal.jsx` |
+| `css/styles.css` | 2.309 | Sólo `web/src/principal.jsx` |
 | `css/tokens.css` | 358 | Sólo `web/src/principal.jsx` |
 | `css/utilidades.css` | 191 | Sólo `web/src/principal.jsx` |
 | `pwa-asistente/css/styles-pwa.css` | 338 | Sólo `pwa-asistente/src/principal.jsx` |
@@ -74,7 +74,7 @@ sumaba 4.638 donde la tabla de arriba, que sí sale de medir, decía 4.642—.
 | `pwa-familia/css/utilidades.css` | 191 | Sólo `pwa-familia/src/principal.jsx`. Copia byte a byte de `css/utilidades.css` |
 | `pwa-familia/src/estilos.css` | 546 | Sólo `pwa-familia/src/principal.jsx` |
 
-En disco hay 12 archivos y 5.607 renglones, de los cuales 1.436 son copias byte a byte de otro: son las que `verificar_copias.mjs` compara.
+En disco hay 12 archivos y 5.601 renglones, de los cuales 1.436 son copias byte a byte de otro: son las que `verificar_copias.mjs` compara.
 
 <!-- fin de las hojas -->
 
