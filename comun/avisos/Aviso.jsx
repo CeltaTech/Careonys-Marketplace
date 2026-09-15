@@ -32,7 +32,7 @@ import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 
 /**
  * @param aviso  La clave de la frase, o un aviso con `clave`, `huecos`,
- *               `detalle` y `tono`. Vacío no dibuja nada.
+ *               `claveDelDetalle` y `tono`. Vacío no dibuja nada.
  * @param tono   `critico`, `exito`, `atencion`, `info` o `neutro`, cuando el
  *               aviso no lo trae escrito.
  */
@@ -48,13 +48,13 @@ export function Aviso({ aviso, tono = 'critico' }) {
      es peor que no abrirla: se dice lo general antes que nada. */
   const texto = frase(clave, esTexto ? undefined : aviso.huecos) || frase('error.generico');
   const color = (!esTexto && aviso.tono) || tono;
-  const detalle = esTexto ? '' : aviso.detalle;
+  const detalle = esTexto || !aviso.claveDelDetalle ? '' : frase(aviso.claveDelDetalle);
 
   return (
     <div className={'aviso ' + color} role={color === 'critico' ? 'alert' : 'status'}>
       <span>{texto}</span>
-      {/* El motivo ya viene clasificado y traducido, así que se escribe tal
-          cual y en un nodo aparte. */}
+      {/* El motivo llega clasificado y como clave, igual que el texto de
+          arriba, y se escribe en un nodo aparte. */}
       {detalle ? <span>{' ' + detalle}</span> : null}
     </div>
   );

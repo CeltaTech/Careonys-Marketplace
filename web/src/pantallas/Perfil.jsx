@@ -247,11 +247,12 @@ export default function Perfil() {
       window.location.href = DESTINO_CONVERSACION + encodeURIComponent(conversacion.id);
     } catch (err) {
       // Dos renglones y son dos cosas distintas: qué no se pudo hacer, que es
-      // una frase de esta pantalla, y por qué, que lo clasifica `Texto`.
+      // una frase de esta pantalla, y por qué, que lo clasifica `Texto`. Los
+      // dos se guardan por su clave y se escriben al dibujarlos.
       setAviso({
         clave: 'perfil.contactar_error',
         tono: 'critico',
-        detalle: Texto.mensajeDeError(err, 'abrir la conversación')
+        claveDelDetalle: Texto.claveDeError(err, 'abrir la conversación')
       });
       setContactando(false);
     }

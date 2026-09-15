@@ -25,6 +25,13 @@
    la persona quedaba con el legajo guardado, sin cuenta con qué entrar, y sin
    enterarse.
 
+   **Los carteles guardan la clave de la frase y no la frase.** El del guardado,
+   el de la confirmación del correo y el título de los dos pasos que traen sus
+   textos de afuera: cuando lo que hay que decir sale del catálogo se guarda la
+   clave y se escribe al dibujarla, así que un cambio de idioma con el cartel a
+   la vista también lo alcanza. Los textos que llegan de la base se guardan como
+   vienen, porque no hay clave que guardar.
+
    **Y guardar el legajo está escrito una sola vez**, porque hay dos caminos que
    terminan en lo mismo: el normal, y el de «ya confirmé el correo». Dos copias
    de eso se despegan con el tiempo.
@@ -46,15 +53,15 @@ import PasoTres from './Legajo/PasoTres.jsx';
 import PasoCuatro from './Legajo/PasoCuatro.jsx';
 import PasoCinco from './Legajo/PasoCinco.jsx';
 
-const SIN_AVISO = { texto: '', esFalla: true };
-const SIN_GUARDADO = { texto: '', color: 'var(--texto-secundario)' };
+const SIN_AVISO = { clave: '', esFalla: true };
+const SIN_GUARDADO = { clave: '', color: 'var(--texto-secundario)' };
 
 export default function Legajo({ activa, base, navegar }) {
   const { frase } = useFrases();
 
   const [paso, setPaso] = useState(1);
-  const [disponibilidad, setDisponibilidad] = useState({ titulo: '', bajada: '', ayuda: '' });
-  const [cierre, setCierre] = useState({ titulo: '', bajada: '', recordatorio: '', boton: '' });
+  const [disponibilidad, setDisponibilidad] = useState({ clave: '', titulo: '', bajada: '', ayuda: '' });
+  const [cierre, setCierre] = useState({ clave: '', titulo: '', bajada: '', recordatorio: '', boton: '' });
   const [avisoDeMatricula, setAvisoDeMatricula] = useState(undefined);
   const [enviando, setEnviando] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
@@ -93,12 +100,13 @@ export default function Legajo({ activa, base, navegar }) {
     /* El paso de disponibilidad. El título dice que está cargando mientras los
        textos viajan, y si algo falla lo dice ahí mismo. */
     (async () => {
-      setDisponibilidad({ titulo: frase('catalogo.cargando'), bajada: '', ayuda: '' });
+      setDisponibilidad({ clave: 'catalogo.cargando', titulo: '', bajada: '', ayuda: '' });
       try {
         const Disponibilidad = await conLaDisponibilidad();
         const declaracion = await Disponibilidad.cargar();
         const texto = Disponibilidad.texto(declaracion.paso_de_disponibilidad);
         setDisponibilidad({
+          clave: '',
           titulo: texto.titulo || '',
           bajada: texto.bajada || '',
           ayuda: texto.ayuda_grilla || ''
@@ -108,7 +116,8 @@ export default function Legajo({ activa, base, navegar }) {
       } catch (err) {
         console.error('Paso de disponibilidad del Asistente:', err);
         setDisponibilidad({
-          titulo: Texto.mensajeDeError(err, 'cargar el paso de disponibilidad'),
+          clave: Texto.claveDeError(err, 'cargar el paso de disponibilidad'),
+          titulo: '',
           bajada: '',
           ayuda: ''
         });
@@ -117,7 +126,7 @@ export default function Legajo({ activa, base, navegar }) {
 
     /* Las fichas y el paso de cierre. */
     (async () => {
-      setCierre({ titulo: frase('catalogo.cargando'), bajada: '', recordatorio: '', boton: '' });
+      setCierre({ clave: 'catalogo.cargando', titulo: '', bajada: '', recordatorio: '', boton: '' });
       try {
         const FichasLegajo = await conLasFichas();
         fichas.current = FichasLegajo;
@@ -135,6 +144,7 @@ export default function Legajo({ activa, base, navegar }) {
         const Autorizaciones = await conLasAutorizaciones();
         const textos = await Autorizaciones.textosDelPaso();
         setCierre((antes) => ({
+          clave: '',
           titulo: textos.titulo || '',
           bajada: textos.bajada || '',
           recordatorio: textos.recordatorio || '',
@@ -172,8 +182,8 @@ export default function Legajo({ activa, base, navegar }) {
     setAvisoDeMatricula(FichasLegajo.requiereMatricula(evento.target.value) ? 'block' : 'none');
   };
 
-  const avisarConfirmacion = (aviso, esFalla = true) =>
-    setAvisoConfirmacion({ texto: aviso || '', esFalla: esFalla });
+  const avisarConfirmacion = (clave, esFalla = true) =>
+    setAvisoConfirmacion({ clave: clave || '', esFalla: esFalla });
 
   /* Guardar el legajo. Los cuatro estados: mientras viaja lo dice el cartel de
      abajo —los dos caminos que llegan acá apagan además su botón—, si falla lo
@@ -181,7 +191,7 @@ export default function Legajo({ activa, base, navegar }) {
      venir sin ninguno y ése es el caso bueno, y al terminar queda el recuadro
      verde de siempre. */
   const guardarLegajo = useCallback(async (data, legajo) => {
-    setGuardando({ texto: frase('asistente.guardando_legajo'), color: 'var(--texto-secundario)' });
+    setGuardando({ clave: 'asistente.guardando_legajo', color: 'var(--texto-secundario)' });
     try {
       const FichasLegajo = fichas.current || await conLasFichas();
       const DocumentosLegajo = await conLosDocumentos();
@@ -233,7 +243,7 @@ export default function Legajo({ activa, base, navegar }) {
          significaba dos avisos seguidos por la misma falla. */
       console.error('Guardado del legajo del Asistente:', err);
       setGuardando({
-        texto: Texto.mensajeDeError(err, 'guardar el legajo'),
+        clave: Texto.claveDeError(err, 'guardar el legajo'),
         color: 'var(--rojo-peligro-texto)'
       });
     }
@@ -374,7 +384,7 @@ export default function Legajo({ activa, base, navegar }) {
       await base.Sesion.login(pendiente.correo, pendiente.clave);
       await guardarLegajo(pendiente.data, pendiente.legajo);
     } catch (err) {
-      avisarConfirmacion(Texto.mensajeDeError(err, 'entrar después de confirmar el correo'));
+      avisarConfirmacion(Texto.claveDeError(err, 'entrar después de confirmar el correo'));
     } finally {
       setConfirmando(false);
     }
@@ -388,9 +398,9 @@ export default function Legajo({ activa, base, navegar }) {
     setReenviando(true);
     try {
       await base.Sesion.reenviarConfirmacion(pendiente.correo);
-      avisarConfirmacion(Catalogo.frase('asistente.correo_reenviado'), false);
+      avisarConfirmacion('asistente.correo_reenviado', false);
     } catch (err) {
-      avisarConfirmacion(Texto.mensajeDeError(err, 'volver a mandar el correo de confirmación'));
+      avisarConfirmacion(Texto.claveDeError(err, 'volver a mandar el correo de confirmación'));
     } finally {
       setReenviando(false);
     }

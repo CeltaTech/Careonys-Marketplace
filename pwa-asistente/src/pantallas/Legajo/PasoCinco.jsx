@@ -42,7 +42,7 @@ export default function PasoCinco({
       </div>
 
       <h4 id="cierre-titulo" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--texto-principal)', margin: '16px 0 4px' }}>
-        {cierre.titulo}
+        {cierre.clave ? frase(cierre.clave) : cierre.titulo}
       </h4>
       <p id="cierre-bajada" style={{ fontSize: '10px', color: 'var(--texto-secundario)', margin: '0 0 8px' }}>
         {cierre.bajada}
@@ -100,17 +100,17 @@ export default function PasoCinco({
           className="wespera-correo-aviso"
           id="w-espera-correo-aviso"
           style={{
-            display: avisoConfirmacion.texto ? 'block' : 'none',
+            display: avisoConfirmacion.clave ? 'block' : 'none',
             color: avisoConfirmacion.esFalla ? 'var(--rojo-peligro-texto)' : 'var(--verde-exito-texto)'
           }}
-        >{avisoConfirmacion.texto}</p>
+        >{avisoConfirmacion.clave ? frase(avisoConfirmacion.clave) : ''}</p>
       </div>
 
       <p
         className="wguardando"
         id="w-guardando"
-        style={{ display: guardando.texto ? 'block' : 'none', color: guardando.color }}
-      >{guardando.texto}</p>
+        style={{ display: guardando.clave ? 'block' : 'none', color: guardando.color }}
+      >{guardando.clave ? frase(guardando.clave) : ''}</p>
 
       <div className="wsuccess-msg" id="w-success" style={{ display: exito ? 'block' : 'none' }}>
         {frase('legajo.enviado')}

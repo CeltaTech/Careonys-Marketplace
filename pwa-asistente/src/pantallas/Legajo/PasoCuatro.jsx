@@ -53,7 +53,7 @@ export default function PasoCuatro({ activo, irA, disponibilidad }) {
       </div>
 
       <p id="disponibilidad-titulo" style={{ fontSize: '11px', fontWeight: 700, color: 'var(--texto-principal)', margin: '12px 0 2px' }}>
-        {disponibilidad.titulo}
+        {disponibilidad.clave ? frase(disponibilidad.clave) : disponibilidad.titulo}
       </p>
       <p id="disponibilidad-bajada" style={{ fontSize: '10px', color: 'var(--texto-secundario)', margin: '0 0 4px' }}>
         {disponibilidad.bajada}
