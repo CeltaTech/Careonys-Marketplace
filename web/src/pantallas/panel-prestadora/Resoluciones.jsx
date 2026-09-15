@@ -67,11 +67,8 @@ export default function Resoluciones({ base, caregiverId, token }) {
   }, [base, caregiverId, token]);
 
   return (
-    <div style={{
-      background: 'var(--superficie-hundida)', padding: '16px', borderRadius: '12px',
-      margin: '16px 0', border: '1px solid var(--borde-card)'
-    }}>
-      <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', color: 'var(--texto-titulo)' }}>
+    <div className="fondo-superficie-hundida p-16 redondeo-12 borde-tarjeta mt-16 mb-16">
+      <h4 className="m-0 mb-4 texto-14 color-titulo">
         {frase('panel.resoluciones_titulo')}
       </h4>
       <p className="texto-11 color-secundario m-0 mb-12">

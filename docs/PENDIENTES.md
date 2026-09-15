@@ -218,13 +218,13 @@ agosto de 2026, porque la que estaba escrita a mano decía 687 atributos `style=
 | `pwa-asistente/src/pantallas/Legajo/PasoCinco.jsx` | 10 | 30 |
 | `web/src/pantallas/Cursos.jsx` | 9 | 14 |
 | `web/src/pantallas/RegistrarAsistente/PasosDeLegajo.jsx` | 9 | 24 |
-| `web/src/pantallas/panel-prestadora/ModalAuditoria.jsx` | 6 | 24 |
 | `web/src/pantallas/RegistrarAsistente.jsx` | 6 | 21 |
 | `web/src/pantallas/RegistrarAsistente/Presentacion.jsx` | 6 | 28 |
 | `pwa-asistente/src/pantallas/Legajo/PasoDos.jsx` | 5 | 17 |
 | `pwa-familia/src/pantallas/Reportes.jsx` | 5 | 5 |
 | `pwa-familia/src/pantallas/Tablero.jsx` | 5 | 7 |
 | `pwa-asistente/src/pantallas/Legajo/PasoCuatro.jsx` | 4 | 11 |
+| `web/src/pantallas/panel-prestadora/ModalAuditoria.jsx` | 4 | 16 |
 | `pwa-asistente/src/pantallas/Inicio.jsx` | 3 | 5 |
 | `comun/formularios/DelCatalogo.jsx` | 2 | 0 |
 | `pwa-asistente/src/pantallas/Acceso.jsx` | 2 | 3 |
@@ -232,8 +232,6 @@ agosto de 2026, porque la que estaba escrita a mano decía 687 atributos `style=
 | `pwa-asistente/src/Programa.jsx` | 2 | 5 |
 | `pwa-familia/src/Programa.jsx` | 2 | 5 |
 | `web/src/pantallas/Directorio.jsx` | 2 | 3 |
-| `web/src/pantallas/panel-prestadora/Resoluciones.jsx` | 2 | 8 |
-| `web/src/pantallas/panel-prestadora/Verificaciones.jsx` | 2 | 8 |
 | `web/src/pantallas/Perfil.jsx` | 2 | 2 |
 | `web/src/pantallas/RegistrarAsistente/BarraDePasos.jsx` | 2 | 4 |
 | `web/src/pantallas/RegistrarAsistente/Navegadores.jsx` | 2 | 4 |
