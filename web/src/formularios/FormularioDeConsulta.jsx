@@ -38,6 +38,9 @@
    y el cuarto —que acá no es «vacío» sino «no hay a dónde mandarlo»— con su
    propio cartel y el enlace de correo.
 
+   **El aviso guarda la clave de la frase y no la frase**, así que un cambio de
+   idioma con el cartel abierto también lo alcanza.
+
    La lógica es la misma que ya estaba escrita y medida; lo único que cambió es
    que la pantalla la dibuja React en vez de armarla a mano.
 =================================================== */
@@ -67,7 +70,7 @@ export default function FormularioDeConsulta({
 
   const [datos, setDatos] = useState(VACIO);
   const [estado, setEstado] = useState('listo');   // listo | enviando | guardado | error | por_correo
-  const [aviso, setAviso] = useState('');
+  const [claveDelAviso, setAviso] = useState('');
 
   const cambiar = (campo) => (evento) =>
     setDatos((antes) => ({ ...antes, [campo]: evento.target.value }));
@@ -103,12 +106,12 @@ export default function FormularioDeConsulta({
     evento.preventDefault();
     if (faltaAlgo()) {
       setEstado('error');
-      setAviso(frase('aviso.faltan_campos'));
+      setAviso('aviso.faltan_campos');
       return;
     }
 
     setEstado('enviando');
-    setAviso(frase('consulta.enviando'));
+    setAviso('consulta.enviando');
 
     try {
       if (await sePuedeGuardar()) {
@@ -122,17 +125,17 @@ export default function FormularioDeConsulta({
           contacto: { nombre: datos.nombre, email: datos.email, celular: datos.celular }
         });
         setEstado('guardado');
-        setAviso(frase('consulta.enviada'));
+        setAviso('consulta.enviada');
         setDatos(VACIO);
       } else {
         setEstado('por_correo');
-        setAviso(frase('consulta.no_se_recibe_aca'));
+        setAviso('consulta.no_se_recibe_aca');
       }
     } catch (err) {
       // El texto crudo de la base nombra tablas y restricciones: queda en la
       // consola, y a la pantalla va la frase del catálogo.
       setEstado('error');
-      setAviso(Texto.mensajeDeError(err, 'dejar la consulta'));
+      setAviso(Texto.claveDeError(err, 'dejar la consulta'));
     }
   }
 
@@ -195,9 +198,9 @@ export default function FormularioDeConsulta({
         {estado === 'enviando' ? frase('consulta.enviando') : frase(rotulos.enviar)}
       </button>
 
-      {aviso && (
+      {claveDelAviso && (
         <div className="consulta-respuesta" style={color ? { color } : undefined} role="status">
-          {aviso}
+          {frase(claveDelAviso)}
           {estado === 'por_correo' && direccionDeCorreo() && (
             <>
               <br />

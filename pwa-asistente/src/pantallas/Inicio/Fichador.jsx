@@ -24,6 +24,11 @@
    —si el sistema rechazó alguna— por qué, con un motivo de la lista cerrada de
    motivos aprobados y nunca con el texto que devolvió el servidor.
 
+   **El renglón de arriba guarda la clave de la frase y no la frase**, con los
+   huecos que lleve, y la marca de la que habla —entrada o salida— viaja
+   también como clave. Se escribe recién al dibujarlo, así que un cambio de
+   idioma con el aviso puesto también lo alcanza.
+
    **El desplegable y los campos no viven en el estado**, igual que antes: el
    valor se lee del documento en el momento en que se aprieta el botón, no
    cuando vuelve el GPS.
@@ -53,7 +58,7 @@ export default function Fichador({ visita, base, pendientes }) {
   const { frase } = useFrases();
   const [vinculos, setVinculos] = useState([]);
   const [estadoVinculos, setEstadoVinculos] = useState('cargando');
-  const [aviso, setAviso] = useState('');
+  const [aviso, setAviso] = useState(null);
   const [corriendo, setCorriendo] = useState(false);
   const selector = useRef(null);
 
@@ -89,12 +94,13 @@ export default function Fichador({ visita, base, pendientes }) {
   }, [visita, base]);
 
   async function ficharGPS(tipo) {
-    const nombreTipo = frase(FRASE_DEL_FICHADO[tipo]);
+    const claveTipo = FRASE_DEL_FICHADO[tipo];
+    const nombreTipo = frase(claveTipo);
     const conversacionId = selector.current ? selector.current.value : '';
-    setAviso(frase('fichado.buscando'));
+    setAviso({ clave: 'fichado.buscando' });
     if (!navigator.geolocation) {
       window.alert(frase('fichado.sin_soporte'));
-      setAviso(frase('fichado.sin_soporte_estado'));
+      setAviso({ clave: 'fichado.sin_soporte_estado' });
       return;
     }
     setCorriendo(true);
@@ -105,13 +111,17 @@ export default function Fichador({ visita, base, pendientes }) {
       /* La hora del acto, tomada acá y no cuando la fichada llegue a la base:
          entre las dos puede haber horas si el teléfono está sin señal. */
       const marcadaEn = new Date();
-      setAviso(frase('fichado.registrando', { tipo: nombreTipo }));
+      setAviso({ clave: 'fichado.registrando', tipo: claveTipo });
       try {
         /* El legajo, no la cuenta. Y si no hay legajo no se inventa ninguno: lo
            dice y se planta, en vez de mandar un identificador cualquiera para
            que lo rechace la base. */
         const caregiverId = await base.ClienteDatos.legajoPropio();
-        if (!caregiverId) throw new Error(frase('fichado.sin_legajo'));
+        if (!caregiverId) {
+          window.alert(frase('fichado.sin_legajo'));
+          setAviso({ clave: 'fichado.error_estado' });
+          return;
+        }
 
         const fichada = {
           id: ColaFichadas.nuevoId(),
@@ -129,7 +139,7 @@ export default function Fichador({ visita, base, pendientes }) {
           await base.ClienteDatos.registrarFichadoGPS(fichada);
           await ColaFichadas.quitar(fichada.id);
           window.alert(frase('fichado.registrado', { tipo: nombreTipo, lat: norte, lng: este }));
-          setAviso(frase('fichado.ultimo', { tipo: nombreTipo, hora }));
+          setAviso({ clave: 'fichado.ultimo', tipo: claveTipo, datos: { hora } });
         } catch (errEnvio) {
           /* No salió ahora, y no se perdió. Los dos casos se dicen distinto
              porque son distintos: sin señal se manda solo y no hay nada que
@@ -137,17 +147,17 @@ export default function Fichador({ visita, base, pendientes }) {
              guardada, pero conviene que la persona sepa que algo pasó. */
           if (ColaFichadas.esFaltaDeSenal(errEnvio)) {
             window.alert(frase('fichado.sin_senal', { tipo: nombreTipo, hora }));
-            setAviso(frase('fichado.sin_senal_estado', { tipo: nombreTipo, hora }));
+            setAviso({ clave: 'fichado.sin_senal_estado', tipo: claveTipo, datos: { hora } });
           } else {
             window.alert(frase('fichado.guardada_igual', {
               tipo: nombreTipo, hora, detalle: Texto.mensajeDeError(errEnvio, 'registrar el fichado')
             }));
-            setAviso(frase('fichado.sin_senal_estado', { tipo: nombreTipo, hora }));
+            setAviso({ clave: 'fichado.sin_senal_estado', tipo: claveTipo, datos: { hora } });
           }
         }
       } catch (err) {
         window.alert(Texto.mensajeDeError(err, 'registrar el fichado'));
-        setAviso(frase('fichado.error_estado'));
+        setAviso({ clave: 'fichado.error_estado' });
       } finally {
         setCorriendo(false);
       }
@@ -161,9 +171,19 @@ export default function Fichador({ visita, base, pendientes }) {
       const loNego = fallo && fallo.code === fallo.PERMISSION_DENIED;
       window.alert(frase(loNego ? 'fichado.permiso_denegado' : 'fichado.sin_ubicacion',
         { tipo: nombreTipo }));
-      setAviso(frase(loNego ? 'fichado.permiso_denegado_estado' : 'fichado.sin_ubicacion_estado'));
+      setAviso({ clave: loNego ? 'fichado.permiso_denegado_estado' : 'fichado.sin_ubicacion_estado' });
       setCorriendo(false);
     });
+  }
+
+  /* El aviso se escribe recién acá, a partir de la clave guardada. El tipo de
+     marca se resuelve del mismo modo, porque también es texto visible. */
+  function textoDelAviso() {
+    if (!aviso) return '';
+    const huecos = aviso.tipo
+      ? Object.assign({}, aviso.datos, { tipo: frase(aviso.tipo) })
+      : aviso.datos;
+    return frase(aviso.clave, huecos);
   }
 
   /* Qué dice el renglón de las que todavía no salieron del teléfono. En los tres
@@ -193,7 +213,7 @@ export default function Fichador({ visita, base, pendientes }) {
       <i className="fas fa-map-marked-alt"></i>
       <h4 className="m-0 texto-15 color-titulo peso-800">{frase('asistente.fichador')}</h4>
       <p id="gps-status" className="m-solo-arriba-4 texto-12 color-secundario">
-        {aviso || frase('asistente.fichador_bajada')}
+        {textoDelAviso() || frase('asistente.fichador_bajada')}
       </p>
       <div className="form-group-pwa mt-16">
         <label htmlFor="gps-vinculo">{frase('fichado.para_quien')}</label>

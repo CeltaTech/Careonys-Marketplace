@@ -21,11 +21,17 @@
 
    **Que el filtro no deje ninguna no es lo mismo que no haber guías**, así que
    se dice distinto y no se manda la pantalla al estado vacío.
+
+   **Lo que se dice mientras la lista no está lo dibuja la pieza que comparten
+   las pantallas de teléfono**, y la falla se guarda por su clave y no por su
+   texto, así que un cambio de idioma con el cartel abierto también lo
+   alcanza.
 =================================================== */
 
 import { useEffect, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
+import { EstadoDeLaLista } from '#comun/listas/EstadoDeLaLista.jsx';
 
 function Guia({ entrada, frase }) {
   const guia = entrada.guia;
@@ -58,7 +64,7 @@ export default function Guias({ activa, visita, base, navegar }) {
   const [estado, setEstado] = useState('cargando');
   const [todas, setTodas] = useState([]);
   const [buscado, setBuscado] = useState('');
-  const [aviso, setAviso] = useState('');
+  const [claveDelError, setClaveDelError] = useState('');
   const [pedido, setPedido] = useState(0);
 
   useEffect(() => {
@@ -92,7 +98,7 @@ export default function Guias({ activa, visita, base, navegar }) {
         setEstado('listo');
       } catch (err) {
         if (!vigente) return;
-        setAviso(Texto.mensajeDeError(err, 'traer las guías de cuidado'));
+        setClaveDelError(Texto.claveDeError(err, 'traer las guías de cuidado'));
         setEstado('error');
       }
     })();
@@ -112,24 +118,10 @@ export default function Guias({ activa, visita, base, navegar }) {
       </div>
 
       <div className="capacitaciones-cuerpo">
-        <div className="pwa-estado" id="gui-cargando" hidden={estado !== 'cargando'}>
-          {frase('guia.cargando')}
-        </div>
-
-        <div className="pwa-estado" id="gui-error" hidden={estado !== 'error'}>
-          <p id="gui-error-texto">{aviso}</p>
-          <button
-            type="button"
-            className="btn btn-primario"
-            id="gui-reintentar"
-            onClick={() => setPedido((antes) => antes + 1)}
-          >{frase('acceso.reintentar')}</button>
-        </div>
-
-        <div className="pwa-estado" id="gui-vacio" hidden={estado !== 'vacio'}>
-          <p>{frase('guia.vacio')}</p>
-          <p className="pwa-estado-bajada">{frase('guia.vacio_bajada')}</p>
-        </div>
+        <EstadoDeLaLista estado={estado} prefijo="gui"
+          cargando="guia.cargando" error={claveDelError}
+          alReintentar={() => setPedido((antes) => antes + 1)}
+          vacio="guia.vacio" vacioBajada="guia.vacio_bajada" />
 
         <div id="gui-listo" hidden={estado !== 'listo'}>
           <p className="capacitaciones-bajada">{frase('guia.aclaracion')}</p>

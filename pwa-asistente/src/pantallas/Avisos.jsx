@@ -22,11 +22,20 @@
    El texto que escribió una persona —la descripción de un aviso— entra como
    texto y nunca como marcado: lo escribió otro, y es lo último a lo que se le
    puede dar de comer marcado.
+
+   **Todo lo que la pantalla guarda para decir después se guarda por su clave y
+   no por su texto**: el cartel de que se postuló, el de que retiró la
+   postulación y el de la falla. Así un cambio de idioma con el cartel abierto
+   también lo alcanza.
+
+   **Lo que se dice mientras la lista no está lo dibuja la pieza que comparten
+   las pantallas de teléfono.**
 =================================================== */
 
 import { useEffect, useRef, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
+import { EstadoDeLaLista } from '#comun/listas/EstadoDeLaLista.jsx';
 
 /* Una clave guardada, traducida a lo que se lee. Si el vocabulario no la tiene
    se devuelve la clave cruda: es fea, pero es el dato que el aviso sí trae, y
@@ -47,7 +56,7 @@ function avLista(valores, traducir) {
 function Franjas({ base, avisoId, frase }) {
   const [estado, setEstado] = useState('quieto');
   const [franjas, setFranjas] = useState([]);
-  const [aviso, setAviso] = useState('');
+  const [claveDelError, setClaveDelError] = useState('');
   const pedidas = useRef(false);
 
   async function alAbrirse(evento) {
@@ -61,7 +70,7 @@ function Franjas({ base, avisoId, frase }) {
       setEstado('listo');
     } catch (err) {
       pedidas.current = false;
-      setAviso(Texto.mensajeDeError(err, frase('avisos.error')));
+      setClaveDelError(Texto.claveDeError(err, frase('avisos.error')));
       setEstado('error');
     }
   }
@@ -72,7 +81,7 @@ function Franjas({ base, avisoId, frase }) {
       <div className="curso-datos">
         {estado === 'cargando' ? <span className="curso-dato">{frase('avisos.cargando')}</span> : null}
         {estado === 'vacio' ? <span className="curso-dato">{frase('avisos.sin_dato')}</span> : null}
-        {estado === 'error' ? <span className="conv-error">{aviso}</span> : null}
+        {estado === 'error' ? <span className="conv-error">{frase(claveDelError)}</span> : null}
         {estado === 'listo' ? franjas.map((franja, cual) => (
           <span className="curso-dato" key={cual}>
             {avTexto('dia_semana', franja.dia) + ' · ' + avTexto('turno', franja.turno)}
@@ -88,9 +97,9 @@ function Aviso({ aviso, base, frase, misPostulaciones, alPostularse, alRetirarse
   const [mensaje, setMensaje] = useState('');
   const [postulando, setPostulando] = useState(false);
   const [retirando, setRetirando] = useState(false);
-  const [dicho, setDicho] = useState('');
-  const [error, setError] = useState('');
-  const [textoPostulado, setTextoPostulado] = useState(frase('avisos.ya_postulado'));
+  const [claveDeLoDicho, setDicho] = useState('');
+  const [claveDelError, setError] = useState('');
+  const [clavePostulado, setTextoPostulado] = useState('avisos.ya_postulado');
 
   const idDelCampo = 'av-mensaje-' + aviso.id;
 
@@ -112,7 +121,7 @@ function Aviso({ aviso, base, frase, misPostulaciones, alPostularse, alRetirarse
       aviso.ya_me_postule = true;
       setMensaje('');
       setYaEsta(true);
-      setTextoPostulado(frase('avisos.postulado_ok'));
+      setTextoPostulado('avisos.postulado_ok');
     } catch (err) {
       /* Sin legajo no se puede uno postular, y eso no es una falla del servidor:
          es un paso que falta. Se dice lo que falta, y además se lo separa de
@@ -121,8 +130,8 @@ function Aviso({ aviso, base, frase, misPostulaciones, alPostularse, alRetirarse
       const faltaElLegajo = err && err.message === 'postulacion_sin_legajo';
       if (!faltaElLegajo) console.error('Postulación a un aviso:', err);
       setError(faltaElLegajo
-        ? frase('avisos.sin_legajo')
-        : Texto.mensajeDeError(err, frase('avisos.error_postular')));
+        ? 'avisos.sin_legajo'
+        : Texto.claveDeError(err, frase('avisos.error_postular')));
     } finally {
       setPostulando(false);
     }
@@ -139,10 +148,10 @@ function Aviso({ aviso, base, frase, misPostulaciones, alPostularse, alRetirarse
       alRetirarse(aviso.id);
       aviso.ya_me_postule = false;
       setYaEsta(false);
-      setTextoPostulado(frase('avisos.ya_postulado'));
-      setDicho(frase('avisos.retirada'));
+      setTextoPostulado('avisos.ya_postulado');
+      setDicho('avisos.retirada');
     } catch (err) {
-      setError(Texto.mensajeDeError(err, frase('avisos.error_retirar')));
+      setError(Texto.claveDeError(err, frase('avisos.error_retirar')));
     } finally {
       setRetirando(false);
     }
@@ -175,7 +184,7 @@ function Aviso({ aviso, base, frase, misPostulaciones, alPostularse, alRetirarse
           fila: ofrecer un botón que no puede hacer nada es peor que no
           ofrecerlo. */}
       <div hidden={!yaEsta}>
-        <p className="curso-resultado curso-resultado-aprobado">{textoPostulado}</p>
+        <p className="curso-resultado curso-resultado-aprobado">{frase(clavePostulado)}</p>
         <button
           type="button"
           className="btn btn-sobre-oscuro"
@@ -207,8 +216,12 @@ function Aviso({ aviso, base, frase, misPostulaciones, alPostularse, alRetirarse
         >{postulando ? frase('avisos.postulando') : frase('avisos.postularse')}</button>
       </div>
 
-      <p className="pwa-estado-bajada" hidden={!dicho}>{dicho}</p>
-      <p className="conv-error" hidden={!error}>{error}</p>
+      <p className="pwa-estado-bajada" hidden={!claveDeLoDicho}>
+        {claveDeLoDicho ? frase(claveDeLoDicho) : ''}
+      </p>
+      <p className="conv-error" hidden={!claveDelError}>
+        {claveDelError ? frase(claveDelError) : ''}
+      </p>
     </div>
   );
 }
@@ -219,7 +232,7 @@ export default function Avisos({ activa, visita, base, navegar }) {
   const [avisos, setAvisos] = useState([]);
   const [hayLegajo, setHayLegajo] = useState(false);
   const [misPostulaciones, setMisPostulaciones] = useState({});
-  const [aviso, setAviso] = useState('');
+  const [claveDelError, setClaveDelError] = useState('');
   const [pedido, setPedido] = useState(0);
 
   useEffect(() => {
@@ -256,7 +269,7 @@ export default function Avisos({ activa, visita, base, navegar }) {
         setEstado('listo');
       } catch (err) {
         if (!vigente) return;
-        setAviso(Texto.mensajeDeError(err, frase('avisos.error')));
+        setClaveDelError(Texto.claveDeError(err, frase('avisos.error')));
         setEstado('error');
       }
     })();
@@ -283,24 +296,10 @@ export default function Avisos({ activa, visita, base, navegar }) {
       </div>
 
       <div className="capacitaciones-cuerpo">
-        <div className="pwa-estado" id="av-cargando" hidden={estado !== 'cargando'}>
-          {frase('avisos.cargando')}
-        </div>
-
-        <div className="pwa-estado" id="av-error" hidden={estado !== 'error'}>
-          <p id="av-error-texto">{aviso}</p>
-          <button
-            type="button"
-            className="btn btn-primario"
-            id="av-reintentar"
-            onClick={() => setPedido((antes) => antes + 1)}
-          >{frase('acceso.reintentar')}</button>
-        </div>
-
-        <div className="pwa-estado" id="av-vacio" hidden={estado !== 'vacio'}>
-          <p>{frase('avisos.vacio_titulo')}</p>
-          <p className="pwa-estado-bajada">{frase('avisos.vacio_bajada')}</p>
-        </div>
+        <EstadoDeLaLista estado={estado} prefijo="av"
+          cargando="avisos.cargando" error={claveDelError}
+          alReintentar={() => setPedido((antes) => antes + 1)}
+          vacio="avisos.vacio_titulo" vacioBajada="avisos.vacio_bajada" />
 
         <div id="av-listo" hidden={estado !== 'listo'}>
           <p className="pwa-estado-bajada" id="av-sin-legajo" hidden={hayLegajo}>

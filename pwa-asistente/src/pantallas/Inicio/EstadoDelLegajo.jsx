@@ -8,6 +8,9 @@
    del «sin conexión» que se escribía pasara lo que pasara. Y los cuatro textos
    salen del catálogo.
 
+   **El renglón guarda la clave de la frase y no la frase.** Así un cambio de
+   idioma con el renglón ya escrito también lo alcanza.
+
    Se pregunta cuando aparece quien inició sesión —al arrancar con sesión
    guardada, o al entrar—, y no cada vez que se vuelve al inicio: es lo mismo que
    hacía la pantalla de antes.
@@ -19,31 +22,31 @@ import { Texto } from '#comun/frases/lector.js';
 
 export default function EstadoDelLegajo({ base, usuario, navegar }) {
   const { frase } = useFrases();
-  const [texto, setTexto] = useState('');
+  const [clave, setClave] = useState('');
 
   useEffect(() => {
     if (!base || !usuario) return;
     let vigente = true;
-    setTexto(frase('comun.cargando'));
+    setClave('comun.cargando');
     (async () => {
       try {
         const aspirantes = await base.ClienteDatos.getAspirantes();
         if (!vigente) return;
         if (!aspirantes || aspirantes.length === 0) {
-          setTexto(frase('asistente.legajo_sin_legajo'));
+          setClave('asistente.legajo_sin_legajo');
           return;
         }
         /* El legajo de quien inició sesión, buscado por su correo. */
         const correo = usuario.id ? (await base.Sesion.getSession())?.user?.email : null;
         if (!vigente) return;
         const asp = (correo && aspirantes.find((a) => a.email === correo)) || aspirantes[0];
-        setTexto(asp.estado === 'validado_prestadora'
-          ? frase('asistente.legajo_validado')
-          : frase('asistente.legajo_tramitando'));
+        setClave(asp.estado === 'validado_prestadora'
+          ? 'asistente.legajo_validado'
+          : 'asistente.legajo_tramitando');
       } catch (err) {
         if (!vigente) return;
         console.error('Estado del legajo del Asistente:', err);
-        setTexto(Texto.mensajeDeError(err, 'traer el estado del legajo'));
+        setClave(Texto.claveDeError(err, 'traer el estado del legajo'));
       }
     })();
     return () => { vigente = false; };
@@ -56,7 +59,7 @@ export default function EstadoDelLegajo({ base, usuario, navegar }) {
       <div style={{ flex: 1, textAlign: 'left' }}>
         <h5 className="m-0 texto-13 color-info peso-700">{frase('asistente.estado_legajo')}</h5>
         <p id="legajo-estado-txt" className="m-solo-arriba-2 texto-11 color-info">
-          {texto || frase('asistente.cargando_estado')}
+          {frase(clave || 'asistente.cargando_estado')}
         </p>
       </div>
       <button
