@@ -88,15 +88,12 @@
   }
 
   // Un cartel legible en el lugar donde iba el campo. Una pantalla que se queda
-  // vacía no avisa de nada, y la persona cree que el campo no existe.
+  // vacía no avisa de nada, y la persona cree que el campo no existe. El
+  // cartel lo dibuja el catálogo, que es el único que los arma en todo el
+  // producto; acá sólo se le dice de parte de quién habla, para que el
+  // registro de la consola nombre al módulo que se quedó sin dibujar.
   function _avisar(contenedor, texto, err) {
-    if (err) console.error('Zonas:', err);
-    contenedor.textContent = '';
-    const p = document.createElement('p');
-    p.className = 'gd-aviso';
-    p.style.cssText = 'font-size:12.5px;color:var(--texto-secundario);margin:0;';
-    p.textContent = texto;
-    contenedor.appendChild(p);
+    Catalogo.avisarEnElLugar('Zonas', contenedor, texto, err);
   }
 
   // El rótulo y la ayuda de un campo, con la misma estructura en los dos

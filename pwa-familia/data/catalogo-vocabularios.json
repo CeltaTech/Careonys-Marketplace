@@ -8,8 +8,8 @@
       },
       "cerrada": true,
       "usado_en": [
-        "js/zonas.js:145",
-        "js/zonas.js:218",
+        "js/zonas.js:142",
+        "js/zonas.js:215",
         "pwa-familia/src/pantallas/Postulaciones.jsx:131",
         "pwa-familia/src/pantallas/Tablero.jsx:144",
         "web/src/pantallas/MockupApp.jsx:472"

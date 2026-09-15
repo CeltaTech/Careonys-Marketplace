@@ -722,6 +722,28 @@
       });
     },
 
+    /* El mismo cartel, en el lugar donde iba lo que no se pudo dibujar. Lo
+       piden los tres pasos que se arman solos desde una declaración: las
+       autorizaciones del cierre, la grilla de franjas y las zonas de
+       cobertura. Un contenedor que se queda vacío no avisa de nada, y quien
+       está cargando su legajo cree que ese paso no existe.
+
+       `quien` es el nombre del módulo que se quedó sin dibujar, y va al
+       registro de la consola junto con el error: sin eso, tres pasos
+       distintos dejan el mismo renglón y no se sabe cuál falló.
+
+       La apariencia sale de las clases de `css/utilidades.css`, que los tres
+       programas cargan al arrancar: es el mismo cartel en los tres, y cómo
+       se ve se decide en un solo lugar. */
+    avisarEnElLugar(quien, contenedor, texto, err) {
+      if (err) console.error(quien + ':', err);
+      contenedor.textContent = '';
+      const p = document.createElement('p');
+      p.className = 'texto-12-5 color-secundario m-0';
+      p.textContent = texto;
+      contenedor.appendChild(p);
+    },
+
     // El aviso que ocupa el lugar de la lista cuando no hay lista. Se ve en la
     // pantalla, no solo en la consola.
     _avisar(elemento, texto) {
