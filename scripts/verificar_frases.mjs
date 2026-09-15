@@ -21,6 +21,9 @@
       Éste es el que sostiene a los otros tres: sin él, la pantalla que se toca
       mañana vuelve a nacer en un solo idioma y el chequeo no se entera, porque
       lo que no está en el catálogo tampoco se puede pedir que esté completo.
+      **Y ningún módulo escribe texto a la vista**, aunque no sea una pantalla:
+      el que arma marcado con una plantilla escribe lo que se lee igual que
+      ella.
    5. **Ninguna de las cinco frases de arranque está además en el archivo.** Ésas
       viven en `js/catalogo.js` porque son las que hacen falta cuando el archivo
       no llegó; tenerlas en los dos lados significa corregir una sola y creer que
@@ -276,12 +279,94 @@ function textoDePrograma(s) {
   return salida;
 }
 
+/* ── EL TEXTO A LA VISTA EN EL MARCADO QUE ARMA UN MÓDULO ──────────────────
+   Un módulo no es una pantalla, pero también escribe lo que se lee: arma el
+   marcado con una plantilla y lo cuelga del documento. Lo que queda entre
+   etiquetas ahí adentro es texto que una persona lee, igual que el de una
+   pantalla, y por eso se lo busca igual.
+
+   Los huecos `${...}` se saltean enteros: lo que llega por un hueco se
+   resolvió en otro lado, y es justamente por ahí por donde entra una frase del
+   catálogo. Y se cuentan de corrido, como en una pantalla, porque una
+   condición abre en un hueco y cierra varias etiquetas más adelante. */
+const HAY_PALABRA = /[A-Za-z\u00C0-\u00FF]{2,}/;
+
+function textoDePlantilla(t) {
+  const salida = [];
+  let i = 0, junto = '', inicio = 0, hondo = 0, enEtiqueta = false;
+  const guardar = () => {
+    if (HAY_PALABRA.test(junto.replace(/&[a-z#0-9]+;/gi, ' '))) {
+      salida.push([inicio, junto.trim().replace(/\s+/g, ' ')]);
+    }
+    junto = '';
+  };
+  while (i < t.length) {
+    const c = t[i];
+    if (hondo > 0) {
+      if (c === '{') hondo++;
+      else if (c === '}') hondo--;
+      i++; continue;
+    }
+    if (c === '$' && t[i + 1] === '{') { guardar(); hondo = 1; i += 2; continue; }
+    if (enEtiqueta) { if (c === '>') enEtiqueta = false; i++; continue; }
+    if (c === '<' && /[A-Za-z/!]/.test(t[i + 1] || '')) { guardar(); enEtiqueta = true; i++; continue; }
+    if (!junto) inicio = i;
+    junto += c;
+    i++;
+  }
+  guardar();
+  return salida;
+}
+
+/** Las plantillas de un archivo, con dónde empieza cada una. Las cadenas
+    comunes se saltean enteras: una plantilla es la única que arma marcado. */
+function plantillas(s) {
+  const salida = [];
+  let i = 0;
+  while (i < s.length) {
+    const c = s[i];
+    if (c === "'" || c === '"') { i = finDeCadena(s, i); continue; }
+    if (c === '`') {
+      const desde = i;
+      const fin = finDeCadena(s, i);
+      salida.push([desde, s.slice(desde + 1, fin - 1)]);
+      i = fin; continue;
+    }
+    i++;
+  }
+  return salida;
+}
+
+/** Lo que una persona lee en el marcado que arma un módulo, con dónde empieza
+    cada texto, contado sobre el archivo entero. */
+function textoDeMarcadoArmado(s) {
+  const salida = [];
+  for (const [desde, plantilla] of plantillas(s)) {
+    if (!/<[A-Za-z]/.test(plantilla)) continue;
+    for (const [d, texto] of textoDePlantilla(plantilla)) salida.push([desde + 1 + d, texto]);
+  }
+  return salida;
+}
+
 /* Y lo que una pantalla de un programa pone a la vista sin que sea texto entre
    etiquetas: los atributos que se muestran y los tres carteles del navegador.
    Se mira sólo lo escrito con todas las letras, porque un atributo que recibe
    un dato no es texto a mano. El nombre tiene que empezar donde empieza el
    atributo, para que `subtitle` no pase por `title`. */
 const ESCRIBE_A_LA_VISTA = /(?<![\w-])(?:textContent|innerHTML|innerText|placeholder|title|alt|aria-label|alert|confirm|prompt)\s*(?:=|\()\s*('[^'\n]{2,}'|"[^"\n]{2,}")/g;
+
+/* Y hay un caso que no es texto escrito a mano aunque tenga esa forma: el
+   rótulo que nace en castellano y en el mismo aliento recibe su `data-frase`.
+   Ése es el respaldo de la clave —el catálogo lo pisa apenas llega— y está así
+   a propósito en dos lugares: el botón de `js/clave.js`, que no puede aparecer
+   sin rótulo ni el instante que tarda el archivo en llegar, y el sello de
+   `js/apiClient.js`, que nace después de que la pantalla ya se tradujo. Se lo
+   reconoce por el elemento: si al mismo se le pone la clave, el texto viaja
+   con ella. */
+function llevaSuClave(t, hasta) {
+  const quien = /([A-Za-z_$][A-Za-z0-9_$]*)\s*\.\s*$/.exec(t.slice(0, hasta));
+  return !!quien && new RegExp(quien[1] + '[.]setAttribute[(][^)]*data-frase').test(t);
+}
 
 /* Regla 6: `Intl` con el idioma escrito adentro.
 
@@ -378,7 +463,7 @@ for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJEN
   const delPrograma = esDelPrograma(nombre);
   const crudo = readFileSync(camino, 'utf8');
 
-  const sinNotas = delPrograma ? enCodigoDePrograma(crudo) : sinComentarios(crudo, esHtml);
+  const sinNotas = esHtml ? sinComentarios(crudo, true) : enCodigoDePrograma(crudo);
   for (const clave of clavesUsadas(sinNotas, PREFIJOS)) usadasEnTodo.add(clave);
 
   // Regla 6. Vale para toda pantalla y todo guión, esté convertido o no: es el
@@ -456,7 +541,31 @@ for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJEN
     continue;
   }
 
-  if (!esHtml) continue;
+  /* Regla 4c: un módulo tampoco. No tiene portero, y es a propósito: una
+     pantalla se convierte —hay un antes y un después, y el portero lo
+     reconoce—, pero un módulo no tiene ese momento. O escribe a la vista un
+     texto suyo, o no escribe ninguno.
+
+     Mientras esto no se miró, los tres textos de las fichas repetibles del
+     legajo —el botón que quita una, la primera opción de cada lista y la
+     pregunta antes de quitar algo ya cargado— estuvieron escritos a mano desde
+     el día que se escribió el archivo, en una pantalla que por lo demás sale
+     entera del catálogo, y ningún chequeo dijo una palabra. */
+  if (!esHtml) {
+    for (const [desde, texto] of textoDeMarcadoArmado(sinNotas)) {
+      const renglon = sinNotas.slice(0, desde).split('\n').length;
+      fallas.push(`${nombre}:${renglon}  texto escrito a mano en el marcado que arma:`
+        + ` «${texto.slice(0, 70)}»`);
+    }
+    for (const m of sinNotas.matchAll(ESCRIBE_A_LA_VISTA)) {
+      const texto = m[1].slice(1, -1);
+      if (!HAY_PALABRA.test(texto)) continue;
+      if (llevaSuClave(sinNotas, m.index)) continue;
+      const renglon = sinNotas.slice(0, m.index).split('\n').length;
+      fallas.push(`${nombre}:${renglon}  texto escrito a mano a la vista: «${texto.slice(0, 70)}»`);
+    }
+    continue;
+  }
 
   const guiones = (crudo.match(/<script\b[^>]*>([\s\S]*?)<\/script>/gi) || []).join('\n')
     .replace(/\/\/[^\n]*|\/\*[\s\S]*?\*\//g, enBlanco);
@@ -562,6 +671,21 @@ const PROGRAMA_NO_DEBE_VER = [
   'return <img src="/assets/images/logotipo.png" alt="" />;'
 ];
 
+/* Y con el lector del marcado que arma un módulo, que es el mismo caso: si se
+   queda corto no se entera de nada, y si se pasa denuncia el nombre de una
+   clase de hoja de estilo como si fuera un rótulo. */
+const MARCADO_DEBE_VER = [
+  'caja.innerHTML = `<button>Quitar</button>`;',
+  'const h = `<option value="">— Seleccionar —</option>`;',
+  'const h = `<p>${n} de ${total} cargados</p>`;'
+];
+const MARCADO_NO_DEBE_VER = [
+  'caja.innerHTML = `<button>${frase("legajo.quitar_ficha")}</button>`;',
+  'const h = `<div class="ficha-bloque" data-orden="${n}"></div>`;',
+  "const consulta = 'select nombre from tabla';",
+  'const d = `<i class="fas fa-times-circle"></i>`;'
+];
+
 /* Y con el reconocedor de claves, que decide si una frase del catálogo tiene
    quién la pida. Si se queda corto, una frase que se está usando aparece como
    huérfana y alguien la borra, así que se lo prueba en los dos sentidos. El
@@ -649,6 +773,18 @@ for (const trozo of PROGRAMA_NO_DEBE_VER) {
   const visto = textoDePrograma(trozo);
   if (visto.length > 0) {
     roto.push('el lector del programa se queja de: ' + trozo
+      + '  (vio «' + visto[0][1] + '»)');
+  }
+}
+for (const trozo of MARCADO_DEBE_VER) {
+  if (textoDeMarcadoArmado(trozo).length === 0) {
+    roto.push('el lector del marcado armado no ve: ' + trozo);
+  }
+}
+for (const trozo of MARCADO_NO_DEBE_VER) {
+  const visto = textoDeMarcadoArmado(trozo);
+  if (visto.length > 0) {
+    roto.push('el lector del marcado armado se queja de: ' + trozo
       + '  (vio «' + visto[0][1] + '»)');
   }
 }
