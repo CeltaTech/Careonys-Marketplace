@@ -104,12 +104,11 @@ const PARAMETROS_DE_LA_DIRECCION = new Map([
    La clave es el archivo **sin extensión ni carpeta**, así que alcanza a sus
    copias; los valores, los argumentos exactos. Un argumento nuevo en el mismo
    archivo se planta igual. */
-/* La clase de la alarma se imprime en tres archivos y es el mismo caso en los
-   tres: está escrita una vez acá y se registra abajo con los tres nombres. Era
-   uno solo mientras cada programa del teléfono era un archivo entero; al pasar a
-   pantallas, el mismo renglón quedó en la pantalla que dibuja las alarmas de
-   cada programa, y las páginas sueltas siguen publicadas hasta que se las
-   reemplace. */
+/* La clase de la alarma se imprime en dos archivos y es el mismo caso en los
+   dos: está escrita una vez acá y se registra abajo con los dos nombres. La
+   franja de alarmas es una sola y la comparten los dos programas del teléfono;
+   el otro nombre es el de las páginas sueltas, que siguen publicadas hasta que
+   se las reemplace. */
 const LA_CLASE_DE_LA_ALARMA = {
   valores: ['fila.clase'],
   motivo: 'es la clase de una alarma —`jornada_abierta` o `salida_sin_entrada`—, ' +
@@ -123,7 +122,6 @@ const LA_CLASE_DE_LA_ALARMA = {
 const REGISTROS_PERDONADOS = new Map([
   ['index', LA_CLASE_DE_LA_ALARMA],
   ['FranjaDeAlarmas', LA_CLASE_DE_LA_ALARMA],
-  ['Asistencia', LA_CLASE_DE_LA_ALARMA],
   ['catalogo', {
     valores: ['escrito'],
     motivo: 'es el texto crudo del atributo `data-huecos` cuando no es un JSON ' +

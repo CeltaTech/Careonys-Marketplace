@@ -13,7 +13,7 @@
 
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 
-import FranjaDeAlarmas from './Inicio/FranjaDeAlarmas.jsx';
+import { FranjaDeAlarmas } from '#comun/alarmas/FranjaDeAlarmas.jsx';
 import EstadoDelLegajo from './Inicio/EstadoDelLegajo.jsx';
 import Fichador from './Inicio/Fichador.jsx';
 import FormularioDeReporte from './Inicio/FormularioDeReporte.jsx';
@@ -40,7 +40,7 @@ export default function Inicio({ activa, visita, base, usuario, pendientes, nave
         <div className="ancho-24"></div>
       </div>
 
-      <FranjaDeAlarmas visita={visita} base={base} irAMensajes={irAMensajes} />
+      <FranjaDeAlarmas visita={visita} irAMensajes={irAMensajes} borde="p-16" />
 
       <EstadoDelLegajo base={base} usuario={usuario} navegar={navegar} />
 

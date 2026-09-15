@@ -33,15 +33,7 @@ import { useEffect, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
-
-/* La clave que devuelve la base y la frase que se lee van emparejadas acá,
-   enteras y no armadas con un `+`: el catálogo se revisa leyendo el archivo, y
-   una clave construida a pedazos no la ve nadie desde afuera —ni para comprobar
-   que está en los tres idiomas, ni para avisar que sobra—. */
-const FRASE_DE_LA_ALARMA = {
-  jornada_abierta: 'alarmas.jornada_abierta',
-  salida_sin_entrada: 'alarmas.salida_sin_entrada'
-};
+import { FranjaDeAlarmas } from '#comun/alarmas/FranjaDeAlarmas.jsx';
 
 export default function Asistencia({ activa, pedido, navegar, irAMensajes }) {
   const { frase } = useFrases();
@@ -57,123 +49,9 @@ export default function Asistencia({ activa, pedido, navegar, irAMensajes }) {
       </div>
 
       <div className="p-16">
-        <FranjaDeAlarmas pedido={pedido} irAMensajes={irAMensajes} />
+        <FranjaDeAlarmas visita={pedido} irAMensajes={irAMensajes} borde="mb-12" />
         <ListaDeMarcas pedido={pedido} />
       </div>
-    </div>
-  );
-}
-
-/* ── La franja de alarmas: lo que quedó a medias ───────────────────────────── */
-function FranjaDeAlarmas({ pedido, irAMensajes }) {
-  const { frase } = useFrases();
-  const [estado, setEstado] = useState('cargando');
-  const [alarmas, setAlarmas] = useState([]);
-  const [claveDelError, setClaveDelError] = useState('');
-  const [intento, setIntento] = useState(0);
-
-  useEffect(() => {
-    if (!pedido) return undefined;
-    let vigente = true;
-    setEstado('cargando');
-    (async () => {
-      try {
-        const { ClienteDatos } = await conLaBase();
-        const filas = await ClienteDatos.misAlarmas();
-        if (!vigente) return;
-        /* Una clase que esta pantalla no sabe nombrar no se dibuja muda: se deja
-           afuera. Que aparezca una quiere decir que la base sabe de algo que acá
-           todavía no tiene frase, y el aviso queda en la consola. */
-        const conocidas = (filas || []).filter((fila) => {
-          if (FRASE_DE_LA_ALARMA[fila.clase]) return true;
-          console.error('Alarma de una clase que esta pantalla no conoce:', fila.clase);
-          return false;
-        });
-        if (conocidas.length === 0) { setAlarmas([]); setEstado('vacio'); return; }
-        setAlarmas(conocidas);
-        setEstado('listo');
-      } catch (err) {
-        if (!vigente) return;
-        console.error('Alarmas de la Familia:', err);
-        setClaveDelError(Texto.claveDeError(err, frase('alarmas.error')));
-        setEstado('error');
-      }
-    })();
-    return () => { vigente = false; };
-  }, [pedido, intento]);
-
-  return (
-    <div id="alarmas-franja" className="mb-12">
-      <h2 className="m-0 texto-13 peso-700" id="alarmas-titulo">{frase('alarmas.titulo')}</h2>
-      <p className="texto-11 color-secundario m-0 mt-8 mb-12" id="alarmas-bajada">
-        {frase('alarmas.bajada')}
-      </p>
-
-      {estado === 'cargando' ? (
-        <div className="pwa-estado" id="ala-cargando">{frase('alarmas.cargando')}</div>
-      ) : null}
-
-      {estado === 'error' ? (
-        <div className="pwa-estado" id="ala-error">
-          <p id="ala-error-texto">{frase('alarmas.error') + ' ' + frase(claveDelError)}</p>
-          <button type="button" className="btn btn-primario" id="ala-reintentar"
-            onClick={() => setIntento((cuantos) => cuantos + 1)}>
-            {frase('alarmas.reintentar')}
-          </button>
-        </div>
-      ) : null}
-
-      {estado === 'vacio' ? (
-        <div className="pwa-estado" id="ala-vacio">
-          <p id="ala-vacio-texto">{frase('alarmas.vacio')}</p>
-        </div>
-      ) : null}
-
-      {estado === 'listo' ? (
-        <div id="alarmas-lista">
-          {alarmas.map((fila, cual) => (
-            <TarjetaDeAlarma key={fila.id || cual} fila={fila} irAMensajes={irAMensajes} />
-          ))}
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-function TarjetaDeAlarma({ fila, irAMensajes }) {
-  const { frase } = useFrases();
-
-  /* La fecha y la hora las escribe `js/texto.js` en el idioma de la pantalla;
-     acá no se arma ningún formato a mano. */
-  const cuando = [Texto.fechaCorta(fila.ocurrio_el), Texto.horaCorta(fila.ocurrio_el)]
-    .filter(Boolean).join(' · ');
-
-  /* Los dos huecos van siempre, aunque una de las dos frases no los tenga: la
-     que no los usa los ignora, y así el emparejamiento de arriba queda en un
-     solo llamado. */
-  const clave = FRASE_DE_LA_ALARMA[fila.clase];
-  const motivo = clave ? frase(clave, { horas: fila.horas, tope: fila.tope_horas }) : '';
-
-  return (
-    <div className="fondo-superficie borde-tarjeta redondeo-16 p-16 mb-12">
-      <div className="flex alinear-centro gap-12">
-        <div className="flex-1">
-          {/* El nombre puede no venir. No se rompe nada y no se inventa ninguno:
-              el renglón queda vacío, igual que en la lista de conversaciones. */}
-          <h5 className="m-0 texto-13 peso-700">{fila.otra_parte || ''}</h5>
-          <p className="m-0 texto-11 color-secundario">{cuando}</p>
-        </div>
-      </div>
-      <p className="texto-12 m-0 mt-8 mb-8">{motivo}</p>
-      {/* Preguntar es abrir la conversación de ese vínculo, y nada más. Sin
-          conversación no hay a dónde ir: no va el botón, en vez de dejar uno que
-          no lleva a ningún lado. */}
-      {fila.conversacion_id ? (
-        <button type="button" className="btn btn-primario ancho-total"
-          onClick={() => irAMensajes(fila.conversacion_id)}>
-          {frase('alarmas.ir_a_la_conversacion')}
-        </button>
-      ) : null}
     </div>
   );
 }
