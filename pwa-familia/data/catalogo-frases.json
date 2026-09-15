@@ -3167,6 +3167,16 @@
       "en": "📜 Diploma / Certificates",
       "pt-BR": "📜 Diploma / Certificados"
     },
+    "legajo.quitar_ficha": {
+      "es-AR": "Quitar",
+      "en": "Remove",
+      "pt-BR": "Remover"
+    },
+    "legajo.quitar_ficha_pregunta": {
+      "es-AR": "Se va a quitar lo que está cargado acá y no se puede deshacer.\n\n¿Confirma?",
+      "en": "What is entered here is about to be removed, and it cannot be undone.\n\nPlease confirm.",
+      "pt-BR": "O que está preenchido aqui será removido, e não é possível desfazer.\n\nConfirma?"
+    },
     "legajo.matricula_obligatoria": {
       "es-AR": "El Tipo de Asistente que eligió exige Matrícula vigente y verificada para poder publicarse. Cárguela acá.",
       "en": "The type of Care Assistant selected requires a current, verified professional registration in order to be published. Please upload it here.",

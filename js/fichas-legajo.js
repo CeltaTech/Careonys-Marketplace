@@ -20,6 +20,15 @@ const FichasLegajo = {
   },
   contadores: {},
 
+  /* El texto que no sale de la declaración también sale del catálogo: acá
+     adentro no se escribe ninguno. Se resuelve al dibujar, que es como se
+     resuelve todo lo demás de esta pantalla —los rótulos de cada ficha salen
+     resueltos del mismo modo—, así que hay una sola manera y no dos. */
+  _frase(clave) {
+    if (typeof window === 'undefined' || !window.Catalogo) return '';
+    try { return window.Catalogo.frase(clave) || ''; } catch (err) { return ''; }
+  },
+
   /* A qué depósito van los archivos de las fichas. Está escrito una sola vez:
      lo usa `subirArchivos` para dejarlos ahí y `_inputCampo` para decirle al
      selector qué se puede elegir, que sale de lo que ese depósito acepta y no de
@@ -188,7 +197,8 @@ const FichasLegajo = {
     if (campo.tipo === 'lista') {
       const opciones = this._opciones(campo.vocabulario)
         .map(o => `<option value="${Texto.escapar(o.clave)}">${Texto.escapar(o[this.idioma] || o['es-AR'])}</option>`).join('');
-      return `<select id="${id}" data-campo="${clave}" ${req}><option value="">— Seleccionar —</option>${opciones}</select>`;
+      const elegir = Texto.escapar(this._frase('comun.seleccionar'));
+      return `<select id="${id}" data-campo="${clave}" ${req}><option value="">${elegir}</option>${opciones}</select>`;
     }
     if (campo.tipo === 'lista_multiple') {
       const vocs = Array.isArray(campo.vocabulario) ? campo.vocabulario : [campo.vocabulario];
@@ -233,7 +243,7 @@ const FichasLegajo = {
       ${advertencia}
       ${camposHTML}
       <button type="button" class="btn-quitar-ficha" style="position:absolute;top:12px;right:12px;background:none;border:none;color:var(--rojo-peligro-texto);cursor:pointer;font-size:13px;">
-        <i class="fas fa-times-circle"></i> Quitar</button>
+        <i class="fas fa-times-circle"></i> ${Texto.escapar(this._frase('legajo.quitar_ficha'))}</button>
     </div>`;
   },
 
@@ -270,8 +280,7 @@ const FichasLegajo = {
       // que sí sin leer, que es como después se pierde lo que sí importaba.
       bloque.querySelector('.btn-quitar-ficha').addEventListener('click', () => {
         if (this._tieneAlgoCargado(bloque)
-            && !confirm('Se va a quitar este bloque con todo lo que tiene cargado. '
-                        + 'No se puede deshacer.\n\n¿Confirma?')) {
+            && !confirm(this._frase('legajo.quitar_ficha_pregunta'))) {
           return;
         }
         bloque.remove();
