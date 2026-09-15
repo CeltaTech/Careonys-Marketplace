@@ -114,7 +114,7 @@
     error.hidden = true;
     const errorTexto = nodo('p', 'pwa-estado-bajada', '');
     errorTexto.setAttribute('data-parte', 'error-texto');
-    const reintentar = nodo('button', 'btn btn-secundario', frase('conversacion.reintentar'));
+    const reintentar = nodo('button', 'btn btn-secundario', frase('acceso.reintentar'));
     reintentar.type = 'button';
     reintentar.addEventListener('click', () => { recargar(); });
     error.appendChild(errorTexto);

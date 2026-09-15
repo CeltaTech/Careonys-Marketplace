@@ -22,6 +22,7 @@ import { useEffect, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
+import { EstadoDeLaLista } from '#comun/listas/EstadoDeLaLista.jsx';
 
 export default function Postulaciones({ activa, pedido, navegar, irAMensajes }) {
   const { frase } = useFrases();
@@ -80,30 +81,10 @@ export default function Postulaciones({ activa, pedido, navegar, irAMensajes }) 
           {frase('postulaciones.bajada')}
         </p>
 
-        {estado === 'cargando' ? (
-          <div className="pwa-estado" id="pos-cargando">{frase('postulaciones.cargando')}</div>
-        ) : null}
-
-        {estado === 'error' ? (
-          <div className="pwa-estado" id="pos-error">
-            <p id="pos-error-texto">
-              {frase('postulaciones.error') + ' ' + frase(claveDelError)}
-            </p>
-            <button type="button" className="btn btn-primario" id="pos-reintentar"
-              onClick={volverAPedir}>
-              {frase('postulaciones.reintentar')}
-            </button>
-          </div>
-        ) : null}
-
-        {estado === 'vacio' ? (
-          <div className="pwa-estado" id="pos-vacio">
-            <p id="pos-vacio-titulo">{frase('postulaciones.vacio_titulo')}</p>
-            <p className="pwa-estado-bajada" id="pos-vacio-bajada">
-              {frase('postulaciones.vacio_bajada')}
-            </p>
-          </div>
-        ) : null}
+        <EstadoDeLaLista estado={estado} prefijo="pos"
+          cargando="postulaciones.cargando" error={claveDelError}
+          encabezadoDelError="postulaciones.error" alReintentar={volverAPedir}
+          vacio="postulaciones.vacio_titulo" vacioBajada="postulaciones.vacio_bajada" />
 
         {estado === 'listo' ? (
           <div id="postulaciones-lista">

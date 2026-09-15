@@ -18,7 +18,7 @@
 
 import { copiaSinSenal } from '#comun/sinconexion/copiaSinSenal.js';
 
-const CACHE_NAME = 'familia-v86';
+const CACHE_NAME = 'familia-v87';
 
 /* Lo que armó la herramienta, más lo que vive afuera de este programa. */
 const ASSETS_TO_CACHE = [

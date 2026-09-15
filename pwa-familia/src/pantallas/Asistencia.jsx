@@ -34,6 +34,7 @@ import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
 import { FranjaDeAlarmas } from '#comun/alarmas/FranjaDeAlarmas.jsx';
+import { EstadoDeLaLista } from '#comun/listas/EstadoDeLaLista.jsx';
 
 export default function Asistencia({ activa, pedido, navegar, irAMensajes }) {
   const { frase } = useFrases();
@@ -131,25 +132,11 @@ function ListaDeMarcas({ pedido }) {
         </select>
       ) : null}
 
-      {estado === 'cargando' ? (
-        <div className="pwa-estado" id="asi-cargando">{frase('asistencia.cargando')}</div>
-      ) : null}
-
-      {estado === 'error' ? (
-        <div className="pwa-estado" id="asi-error">
-          <p id="asi-error-texto">{frase('asistencia.error') + ' ' + frase(claveDelError)}</p>
-          <button type="button" className="btn btn-primario" id="asi-reintentar"
-            onClick={() => setIntento((cuantos) => cuantos + 1)}>
-            {frase('asistencia.reintentar')}
-          </button>
-        </div>
-      ) : null}
-
-      {vacio ? (
-        <div className="pwa-estado" id="asi-vacio">
-          <p id="asi-vacio-texto">{frase('asistencia.vacio')}</p>
-        </div>
-      ) : null}
+      <EstadoDeLaLista estado={vacio ? 'vacio' : estado} prefijo="asi"
+        cargando="asistencia.cargando" error={claveDelError}
+        encabezadoDelError="asistencia.error"
+        alReintentar={() => setIntento((cuantos) => cuantos + 1)}
+        vacio="asistencia.vacio" />
 
       {estado === 'listo' && visibles.length > 0 ? (
         <div id="asistencia-lista">

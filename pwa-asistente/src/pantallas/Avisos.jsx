@@ -294,7 +294,7 @@ export default function Avisos({ activa, visita, base, navegar }) {
             className="btn btn-primario"
             id="av-reintentar"
             onClick={() => setPedido((antes) => antes + 1)}
-          >{frase('avisos.reintentar')}</button>
+          >{frase('acceso.reintentar')}</button>
         </div>
 
         <div className="pwa-estado" id="av-vacio" hidden={estado !== 'vacio'}>

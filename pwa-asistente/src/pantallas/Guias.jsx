@@ -123,7 +123,7 @@ export default function Guias({ activa, visita, base, navegar }) {
             className="btn btn-primario"
             id="gui-reintentar"
             onClick={() => setPedido((antes) => antes + 1)}
-          >{frase('guia.reintentar')}</button>
+          >{frase('acceso.reintentar')}</button>
         </div>
 
         <div className="pwa-estado" id="gui-vacio" hidden={estado !== 'vacio'}>

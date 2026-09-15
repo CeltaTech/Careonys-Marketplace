@@ -35,6 +35,7 @@ import { useEffect, useState } from 'react';
 import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
+import { EstadoDeLaLista } from '#comun/listas/EstadoDeLaLista.jsx';
 
 /* La clave que devuelve la base y la frase que se lee van emparejadas acá,
    enteras y no armadas con un `+`: el catálogo se revisa leyendo el archivo, y
@@ -127,25 +128,11 @@ export function FranjaDeAlarmas({ visita, irAMensajes, borde = '' }) {
         {frase('alarmas.bajada')}
       </p>
 
-      {estado === 'cargando' ? (
-        <div className="pwa-estado" id="ala-cargando">{frase('alarmas.cargando')}</div>
-      ) : null}
-
-      {estado === 'error' ? (
-        <div className="pwa-estado" id="ala-error">
-          <p id="ala-error-texto">{frase('alarmas.error') + ' ' + frase(claveDelError)}</p>
-          <button type="button" className="btn btn-primario" id="ala-reintentar"
-            onClick={() => setIntento((cuantos) => cuantos + 1)}>
-            {frase('alarmas.reintentar')}
-          </button>
-        </div>
-      ) : null}
-
-      {estado === 'vacio' ? (
-        <div className="pwa-estado" id="ala-vacio">
-          <p id="ala-vacio-texto">{frase('alarmas.vacio')}</p>
-        </div>
-      ) : null}
+      <EstadoDeLaLista estado={estado} prefijo="ala"
+        cargando="alarmas.cargando" error={claveDelError}
+        encabezadoDelError="alarmas.error"
+        alReintentar={() => setIntento((cuantos) => cuantos + 1)}
+        vacio="alarmas.vacio" />
 
       {estado === 'listo' ? (
         <div id="alarmas-lista">

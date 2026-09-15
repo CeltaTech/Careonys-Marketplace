@@ -1215,11 +1215,6 @@
       "en": "There are no records yet. They appear here when the Assistant clocks in and says the shift is for you.",
       "pt-BR": "Ainda não há nenhum registro. Eles aparecem aqui quando o Assistente registra a entrada dizendo que o turno é para você."
     },
-    "asistencia.reintentar": {
-      "es-AR": "Reintentar",
-      "en": "Try again",
-      "pt-BR": "Tentar de novo"
-    },
     "alarmas.titulo": {
       "es-AR": "Algo quedó a medias",
       "en": "Something is unfinished",
@@ -1239,11 +1234,6 @@
       "es-AR": "No se pudo revisar si quedó algo a medias.",
       "en": "It was not possible to check for unfinished records.",
       "pt-BR": "Não foi possível verificar se algo ficou pela metade."
-    },
-    "alarmas.reintentar": {
-      "es-AR": "Reintentar",
-      "en": "Try again",
-      "pt-BR": "Tentar de novo"
     },
     "alarmas.vacio": {
       "es-AR": "No hay nada a medias. Todas las entradas tienen su salida.",
@@ -2778,11 +2768,6 @@
       "en": "Loading the care guides…",
       "pt-BR": "Buscando os guias de cuidado..."
     },
-    "guia.reintentar": {
-      "es-AR": "Reintentar",
-      "en": "Try again",
-      "pt-BR": "Tentar de novo"
-    },
     "guia.vacio": {
       "es-AR": "Todavía no hay ninguna guía publicada.",
       "en": "No guide has been published yet.",
@@ -3690,11 +3675,6 @@
       "en": "The job posts could not be loaded.",
       "pt-BR": "Não foi possível carregar os anúncios."
     },
-    "avisos.reintentar": {
-      "es-AR": "Reintentar",
-      "en": "Try again",
-      "pt-BR": "Tentar de novo"
-    },
     "avisos.vacio_titulo": {
       "es-AR": "No hay avisos abiertos",
       "en": "No open job posts",
@@ -3846,11 +3826,6 @@
       "en": "The applications could not be loaded.",
       "pt-BR": "Não foi possível carregar as candidaturas."
     },
-    "postulaciones.reintentar": {
-      "es-AR": "Reintentar",
-      "en": "Try again",
-      "pt-BR": "Tentar de novo"
-    },
     "postulaciones.vacio_titulo": {
       "es-AR": "Todavía no se postuló nadie",
       "en": "Nobody has applied yet",
@@ -3941,11 +3916,6 @@
       "es-AR": "No se pudieron traer las conversaciones.",
       "en": "The conversations could not be loaded.",
       "pt-BR": "Não foi possível carregar as conversas."
-    },
-    "conversacion.reintentar": {
-      "es-AR": "Reintentar",
-      "en": "Try again",
-      "pt-BR": "Tentar de novo"
     },
     "conversacion.vacio_titulo": {
       "es-AR": "No hay ninguna conversación",

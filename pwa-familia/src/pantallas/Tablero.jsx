@@ -24,6 +24,7 @@ import { useFrases } from '#comun/frases/ProveedorDeFrases.jsx';
 import { SelloDelProducto } from '#comun/marca/SelloDelProducto.jsx';
 import { Catalogo, Texto } from '#comun/frases/lector.js';
 import { conLaBase } from '#comun/datos/puerta.js';
+import { EstadoDeLaLista } from '#comun/listas/EstadoDeLaLista.jsx';
 import BarraDeAbajo from './BarraDeAbajo.jsx';
 
 export default function Tablero({ activa, pedido, navegar, alAbrirMenu }) {
@@ -98,26 +99,10 @@ export default function Tablero({ activa, pedido, navegar, alAbrirMenu }) {
         <a href="../directorio">{frase('familia.ver_todos')}</a>
       </div>
 
-      {estado === 'cargando' ? (
-        <div className="pwa-estado" id="rec-cargando">{frase('directorio.cargando')}</div>
-      ) : null}
-
-      {estado === 'error' ? (
-        <div className="pwa-estado" id="rec-error">
-          <p id="rec-error-texto">{frase(claveDelError)}</p>
-          <button type="button" className="btn btn-primario" id="rec-reintentar"
-            onClick={() => setIntento((cuantos) => cuantos + 1)}>
-            {frase('acceso.reintentar')}
-          </button>
-        </div>
-      ) : null}
-
-      {estado === 'vacio' ? (
-        <div className="pwa-estado" id="rec-vacio">
-          <p>{frase('directorio.vacio')}</p>
-          <p className="pwa-estado-bajada">{frase('directorio.vacio_bajada')}</p>
-        </div>
-      ) : null}
+      <EstadoDeLaLista estado={estado} prefijo="rec"
+        cargando="directorio.cargando" error={claveDelError}
+        alReintentar={() => setIntento((cuantos) => cuantos + 1)}
+        vacio="directorio.vacio" vacioBajada="directorio.vacio_bajada" />
 
       {estado === 'listo' ? (
         <div className="horizontal-slider" id="recommended-caregivers-list">
