@@ -278,6 +278,7 @@ const Texto = {
     }
 
     const crudo = String(
+      /* seguro: acá es donde el texto crudo se vuelve una clave del catálogo, y a la pantalla va la clave */
       (error && (error.message || error.error_description)) || ''
     ).toLowerCase();
     const dice = (...trozos) => trozos.some((trozo) => crudo.includes(trozo));

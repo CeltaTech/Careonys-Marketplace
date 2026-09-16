@@ -30,13 +30,13 @@
 
    3. **El HTML armado con `+`**, que es la forma vieja de lo mismo.
 
-   4. **El texto crudo de un error que llega a la vista.** La regla «un mensaje de error es texto visible»
-      dice que lo que devuelven
-      el navegador o la base nombra tablas, columnas y restricciones, y eso no se
-      le muestra a nadie. Se avisa cuando un `.message` o un `.error_description`
-      aparece en la misma sentencia que un `alert`, un `confirm`, un `innerHTML`
-      o un `textContent`. Va a la consola con `console.error`, y a la pantalla va
-      lo que devuelve `Texto.mensajeDeError`.
+   4. **El texto crudo de un error que llega a la vista.** La regla «un mensaje de
+      error es texto visible» dice que lo que devuelven el navegador o la base
+      nombra tablas, columnas y restricciones, y eso no se le muestra a nadie.
+      Se mira **a dónde va** cada `.message` y cada `.error_description`, que
+      tienen tres destinos legítimos y ninguno más: la consola, una comparación
+      contra un texto escrito, y volver a tirarlo. Cualquier otro se avisa. A la
+      pantalla va la clave que devuelve `Texto.claveDeError`.
 
    5. **La única puerta equivalente en una pantalla de un programa.** Ahí el
       marcado está adentro del código y lo que se mete adentro se convierte en
@@ -49,23 +49,36 @@
    un programa es código de punta a punta. Mientras se les buscaron los bloques
    de guión a las dos por igual, las del programa pasaban enteras sin revisar.
 
+   **Y el punto 4 se quedó ciego una segunda vez, por otro camino.** Preguntaba
+   si en la misma sentencia había un `alert`, un `confirm`, un `innerHTML` o un
+   `textContent`: eso es la forma de una página suelta, y una pantalla de un
+   programa no escribe ninguna de las cuatro —guarda el error en su estado y lo
+   dibuja unos cuantos renglones más abajo—. Los archivos estaban todos, se
+   abrían todos, y adentro no quedaba nada que juzgar. Por eso ahora se mira el
+   destino, que no depende de la forma, y por eso el renglón final dice cuántas
+   cosas miró: un número que baja a cero avisa, un ✔ solo no avisa nada.
+
    Cuando un caso sea legítimo de verdad, se marca adentro de la interpolación
-   con un comentario que empiece por `seguro:` y siga con la razón. El comentario
-   obliga a escribirla, y queda a la vista de quien lea el renglón. Marcar sin
-   razón es autoengaño con más pasos.
+   —o adentro de la sentencia, si lo que se deja pasar es un texto crudo de
+   error— con un comentario que empiece por `seguro:` y siga con la razón. El
+   comentario obliga a escribirla, y queda a la vista de quien lea el renglón.
+   Marcar sin razón es autoengaño con más pasos.
 
    Qué NO mira, y hay que leer con ojos: **no sigue el rastro de una variable.**
    Si el dato se copió antes a una variable local sin punto —`const nombre =
    asp.nombre`— y después se interpola esa variable, este chequeo la deja pasar.
    Vale igual la pena: caza la forma en que el problema aparece casi siempre, que
-   es el dato pegado derecho desde el objeto.
+   es el dato pegado derecho desde el objeto. Y del texto crudo de un error mira
+   la sentencia donde aparece, acotada a un par de renglones para cada lado: una
+   sentencia que llame a la consola y además muestre algo en la pantalla pasa,
+   porque el destino bueno tapa al malo.
 =================================================== */
 
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { hayArchivos, EXTENSIONES_DE_PANTALLA, esPaginaSuelta } from './recorrido.mjs';
+import { hayArchivos, seRevisaron, EXTENSIONES_DE_PANTALLA, esPaginaSuelta } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -74,6 +87,11 @@ const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const AJENAS = ['docs', 'supabase', 'scripts', 'assets'];
 
 const PARECE_MARCADO = /<[a-zA-Z][a-zA-Z0-9-]*[\s/>]/;
+const CRUDO = /\.(?:message|error_description)\b/g;
+const COMPARA_ANTES = /(?:===|!==|==|!=)$/;
+const COMPARA_DESPUES = /^(?:===|!==|==|!=)/;
+const VA_A_LA_CONSOLA = /^console\./;
+const ANTES_DE_UNA_REGEX = /(?:^|[(,=:[!&|?{};+*%<>~^]|\breturn)\s*$/;
 const MANEJADOR_EN_LINEA = /\son[a-z]+\s*=\s*"[^"]*\$\{/;
 
 /** Reemplaza el contenido de las cadenas por espacios, para poder buscar sintaxis. */
@@ -151,6 +169,138 @@ function finDeLiteral(texto, inicio) {
     i++;
   }
   return -1;
+}
+
+/**
+ * Igual que `sinCadenas`, pero deja a la vista lo que hay adentro de un `${...}`.
+ * Sirve para buscar sintaxis alrededor de algo sin que un punto y coma escrito
+ * adentro de un texto corte la sentencia donde no corta, y sin perder de vista
+ * la llamada que envuelve a un dato interpolado. Conserva el largo, así que las
+ * posiciones siguen siendo las mismas.
+ */
+export function sinTextoLiteral(codigo) {
+  let fuera = '';
+  let i = 0;
+  while (i < codigo.length) {
+    const c = codigo[i];
+    /* Una expresión regular no es un texto, pero adentro puede llevar una
+       comilla suelta —`.replace(/'/g, …)` lleva una— y si se la toma por el
+       principio de un texto, todo lo que sigue queda emparejado al revés y se
+       borra código de verdad. Se la saltea entera. */
+    if (c === '/' && ANTES_DE_UNA_REGEX.test(fuera)) {
+      let j = i + 1;
+      let enClase = false;
+      while (j < codigo.length && codigo[j] !== '\n') {
+        const d = codigo[j];
+        if (d === '\\') { j += 2; continue; }
+        if (d === '[') enClase = true;
+        else if (d === ']') enClase = false;
+        else if (d === '/' && !enClase) break;
+        j += 1;
+      }
+      if (j < codigo.length && codigo[j] === '/') {
+        fuera += ' '.repeat(j - i + 1);
+        i = j + 1;
+        continue;
+      }
+    }
+    if (c === "'" || c === '"') {
+      const fin = finDeLiteral(codigo, i);
+      if (fin < 0) { fuera += c; i += 1; continue; }
+      fuera += ' '.repeat(fin - i + 1);
+      i = fin + 1;
+      continue;
+    }
+    if (c === '`') {
+      const fin = finDeLiteral(codigo, i);
+      if (fin < 0) { fuera += c; i += 1; continue; }
+      const dentro = codigo.slice(i + 1, fin);
+      let hueco = '';
+      let j = 0;
+      while (j < dentro.length) {
+        if (dentro[j] === '$' && dentro[j + 1] === '{') {
+          const desde = j + 2;
+          let hondo = 1;
+          let k = desde;
+          while (k < dentro.length && hondo > 0) {
+            if (dentro[k] === '{') hondo += 1;
+            else if (dentro[k] === '}') hondo -= 1;
+            k += 1;
+          }
+          hueco += '  ' + sinTextoLiteral(dentro.slice(desde, k - 1)) + ' ';
+          j = k;
+          continue;
+        }
+        hueco += dentro[j] === '\n' ? '\n' : ' ';
+        j += 1;
+      }
+      fuera += ' ' + hueco + ' ';
+      i = fin + 1;
+      continue;
+    }
+    fuera += c;
+    i += 1;
+  }
+  return fuera;
+}
+
+/**
+ * Dónde empieza y dónde termina la sentencia que contiene a `pos`. Acotada a un
+ * par de renglones para cada lado: una sentencia más larga que eso no existe en
+ * este proyecto, y sin el tope un literal mal cerrado en cualquier parte del
+ * archivo se lleva puesta media pantalla de código y la deja pasar entera.
+ */
+function laSentencia(plano, pos) {
+  let desde = piso(plano, pos, -2);
+  for (let i = pos; i > desde; i -= 1) {
+    const c = plano[i - 1];
+    if (c === ';' || c === '{' || c === '}') { desde = i; break; }
+  }
+  let hasta = piso(plano, pos, 2);
+  for (let i = pos; i < plano.length; i += 1) {
+    const c = plano[i];
+    if (c === ';' || c === '}') { hasta = Math.min(i, hasta); break; }
+  }
+  return [desde, hasta];
+}
+
+/** Dónde arranca el renglón que está `cuantos` más arriba o más abajo de `pos`. */
+function piso(plano, pos, cuantos) {
+  let i = pos;
+  for (let n = 0; n < Math.abs(cuantos); n += 1) {
+    const salto = cuantos < 0 ? plano.lastIndexOf('\n', i - 1) : plano.indexOf('\n', i + 1);
+    if (salto < 0) return cuantos < 0 ? 0 : plano.length;
+    i = salto;
+  }
+  return cuantos < 0 ? i + 1 : i;
+}
+
+/**
+ * Los nombres de las llamadas que envuelven a `pos`, de adentro hacia afuera.
+ * Con eso se sabe a dónde va lo que está ahí: `console.error(String(err.message))`
+ * va a la consola aunque entre medio haya otra llamada.
+ */
+function lasLlamadasQueLoEnvuelven(plano, pos, tope) {
+  const nombres = [];
+  let desde = pos;
+  while (desde > tope) {
+    let hondo = 0;
+    let abre = -1;
+    for (let i = desde; i > tope; i -= 1) {
+      const c = plano[i - 1];
+      if (c === ')') hondo += 1;
+      else if (c === '(') {
+        if (hondo === 0) { abre = i - 1; break; }
+        hondo -= 1;
+      }
+    }
+    if (abre < 0) return nombres;
+    const m = plano.slice(tope, abre).match(/([A-Za-z_$][\w$]*(?:\s*\.\s*[A-Za-z_$][\w$]*)*)\s*$/);
+    if (!m) return nombres;
+    nombres.push(m[1].replace(/\s+/g, ''));
+    desde = abre - m[1].length;
+  }
+  return nombres;
 }
 
 /**
@@ -240,7 +390,7 @@ function leerPlantilla(texto, inicio) {
 }
 
 /** Devuelve los reparos de un texto de código. `base` desplaza los renglones. */
-export function revisarCodigo(codigo, base = 0) {
+export function revisarCodigo(codigo, base = 0, cuenta = { crudos: 0, interpolaciones: 0 }) {
   const reparos = [];
   const renglon = (pos) => base + codigo.slice(0, pos).split('\n').length - 1;
 
@@ -271,6 +421,7 @@ export function revisarCodigo(codigo, base = 0) {
           });
         }
         for (const { posicion, expresion } of plantilla.interpolaciones) {
+          cuenta.interpolaciones += 1;
           if (expresion.includes('seguro:')) continue;
           if (expresion.includes('Texto.escapar(')) continue;
           if (!sinCadenas(expresion).includes('.')) continue;
@@ -300,22 +451,33 @@ export function revisarCodigo(codigo, base = 0) {
     });
   }
 
-  /* El texto crudo del error va a la consola; a la pantalla va la frase. Se
-     mira la sentencia entera y no sólo la llamada, porque el crudo suele venir
-     pegado con `+` o metido en una plantilla unos caracteres más allá. */
-  const A_LA_VISTA = /\balert\s*\(|\bconfirm\s*\(|\.(?:inner|outer)HTML\b|\.(?:textContent|innerText)\b|dangerouslySetInnerHTML/;
-  const CRUDO = /\.(?:message|error_description)\b/g;
   const limpio = sinComentarios(codigo);
+  /* El texto crudo de un error lo escribió el servidor y nombra tablas, columnas
+     y restricciones: no se le muestra a nadie. Se mira **a dónde va**, y no en
+     qué renglón aparece. Mientras se preguntó si en la misma sentencia había un
+     `alert`, un `innerHTML` o un `textContent`, las pantallas del programa
+     quedaron afuera sin que nadie lo dijera: una pantalla de React no escribe
+     ninguna de las tres —guarda el error en su estado y lo dibuja después, a
+     unos cuantos renglones de distancia—, así que la regla existía y no alcanzaba
+     a las tres cuartas partes del proyecto. Por destino son tres los usos
+     legítimos, y cualquier otro se avisa: la consola, una comparación contra un
+     texto escrito, y volver a tirarlo. */
+  const plano = sinTextoLiteral(limpio);
   for (const a of limpio.matchAll(CRUDO)) {
-    const abre = Math.max(limpio.lastIndexOf('\n', a.index), limpio.lastIndexOf(';', a.index)) + 1;
-    let cierra = limpio.indexOf('\n', a.index);
-    if (cierra < 0) cierra = limpio.length;
-    if (!A_LA_VISTA.test(limpio.slice(abre, cierra))) continue;
+    cuenta.crudos += 1;
+    const [abre, cierra] = laSentencia(plano, a.index);
+    const muestra = codigo.slice(abre, cierra).trim().replace(/\s+/g, ' ').slice(0, 70);
+    if (codigo.slice(abre, cierra).includes('seguro:')) continue;
+    if (/\bthrow\b/.test(plano.slice(abre, a.index))) continue;
+    const despues = plano.slice(a.index + a[0].length, cierra).trimStart();
+    if (COMPARA_ANTES.test(plano.slice(abre, a.index).trimEnd())
+        || COMPARA_DESPUES.test(despues)) continue;
+    if (lasLlamadasQueLoEnvuelven(plano, a.index, abre).some((n) => VA_A_LA_CONSOLA.test(n))) continue;
     reparos.push({
       renglon: renglon(a.index),
       motivo: 'el texto crudo de un error llega a la pantalla',
-      muestra: codigo.slice(abre, cierra).trim().replace(/\s+/g, ' ').slice(0, 70),
-      remedio: 'a la pantalla va Texto.mensajeDeError(err, qué se intentaba); el crudo, a console.error'
+      muestra,
+      remedio: 'a la pantalla va Texto.claveDeError(err, qué se intentaba); el crudo, a console.error'
     });
   }
 
@@ -353,7 +515,11 @@ const MALOS = [
   ['el respaldo es fijo pero el dato no', 'el.innerHTML = `<p>${a.zona || \'Cobertura\'}</p>`;'],
   ['el error crudo en un aviso', "alert('No se pudo guardar: ' + err.message);"],
   ['el error crudo escapado sigue siendo crudo', "el.innerHTML = `<p>${Texto.escapar(err.message)}</p>`;"],
-  ['marcado metido sin convertir', 'return <p dangerouslySetInnerHTML={{ __html: a.nota }} />;']
+  ['marcado metido sin convertir', 'return <p dangerouslySetInnerHTML={{ __html: a.nota }} />;'],
+  ['el error crudo guardado en el estado de una pantalla', 'setAviso(err.message);'],
+  ['el error crudo dibujado derecho en una pantalla', 'return <p>{err.message}</p>;'],
+  ['el error crudo pegado adentro de una frase', "setAviso('No se pudo guardar: ' + err.message);"],
+  ['el error crudo metido en una plantilla', 'setAviso(`No se pudo: ${err.message}`);']
 ];
 const BUENOS = [
   ['dato escapado', 'el.innerHTML = `<h5>${Texto.escapar(asp.nombre)}</h5>`;'],
@@ -369,7 +535,11 @@ const BUENOS = [
   ['el error crudo va a la consola', "console.error('Publicar el aviso:', err.message);"],
   ['el error clasificado antes de mostrarse', "alert(Texto.mensajeDeError(err, 'guardar la novedad'));"],
   ['el error se relanza con su texto', "if (error) throw new Error(error.message);"],
-  ['el dato se dibuja como texto', 'return <p>{a.nota}</p>;']
+  ['el dato se dibuja como texto', 'return <p>{a.nota}</p>;'],
+  ['el error crudo comparado contra un texto escrito', "const falta = err.message === 'sin_legajo';"],
+  ['el error crudo envuelto para la consola', "console.error('Falla:', String(err.message));"],
+  ['el error crudo adentro de una plantilla que va a la consola', 'console.error(`Falla: ${err.message}`);'],
+  ['el error crudo donde se lo clasifica, con su razón', "const crudo = String(/* seguro: acá se traduce a una clave */ (error && error.message) || '');"]
 ];
 
 const noDetecta = MALOS.filter(([, c]) => revisarCodigo(c).length === 0).map(([n]) => n);
@@ -383,6 +553,7 @@ if (noDetecta.length || sePasa.length) {
 
 const fallas = [];
 let revisados = 0;
+const miradas = { crudos: 0, interpolaciones: 0 };
 
 for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
@@ -400,10 +571,10 @@ for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJEN
     for (const g of sinEstilo.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
       if (/\bsrc\s*=/i.test(g[1])) continue;
       const desde = g.index + g[0].indexOf(g[2]);
-      reparos.push(...revisarCodigo(g[2], sinEstilo.slice(0, desde).split('\n').length));
+      reparos.push(...revisarCodigo(g[2], sinEstilo.slice(0, desde).split('\n').length, miradas));
     }
   } else {
-    reparos.push(...revisarCodigo(crudo, 1));
+    reparos.push(...revisarCodigo(crudo, 1, miradas));
   }
 
   for (const r of reparos) {
@@ -419,4 +590,14 @@ if (fallas.length > 0) {
   process.exit(1);
 }
 
-console.log(`Escapado verificado: ${revisados} archivos sin datos ni errores crudos en la pantalla.`);
+/* Y que no quede mirando cero: la cuenta de archivos estaba entera mientras la
+   de adentro era cero, que es cómo un chequeo dice ✔ sin haber mirado nada. */
+seRevisaron(
+  miradas.interpolaciones + miradas.crudos,
+  'ni un dato entrando en el marcado ni un texto crudo de error donde mirar'
+);
+
+console.log(
+  `Escapado verificado: ${revisados} archivos sin datos ni errores crudos en la pantalla `
+  + `(${miradas.interpolaciones} datos entrando en el marcado y ${miradas.crudos} textos crudos de error, mirados de a uno).`
+);
