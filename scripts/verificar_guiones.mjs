@@ -36,9 +36,10 @@ import vm from 'node:vm';
 import { hayArchivos } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
-/* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
-   este: los guiones de las herramientas, que no los corre ningún navegador. */
-const AJENAS = ['docs', 'supabase', 'scripts'];
+/* Acá no hace falta decir qué carpetas no se miran, porque el recorrido no
+   arranca en la raíz: arranca adentro de `js/` y no sale de ahí. Hubo una lista
+   de carpetas ajenas y no servía para nada —ninguna de las tres cae adentro de
+   `js/`—, y una lista que no excluye nada se lee como protección cuando es aire. */
 
 /** Devuelve el mensaje del error de sintaxis, o null si el código se puede leer. */
 function revisar(codigo, nombre) {
@@ -53,7 +54,7 @@ function revisar(codigo, nombre) {
 const fallas = [];
 let revisados = 0;
 
-for (const camino of hayArchivos(join(raiz, 'js'), ['.js'], AJENAS)) {
+for (const camino of hayArchivos(join(raiz, 'js'), ['.js'])) {
   revisados++;
   const nombre = relative(raiz, camino).split(sep).join('/');
   const error = revisar(readFileSync(camino, 'utf8'), nombre);
@@ -67,4 +68,9 @@ if (fallas.length > 0) {
   process.exit(1);
 }
 
-console.log(`Guiones verificados: ${revisados} guiones del navegador sin errores de sintaxis.`);
+/* El renglón dice cuáles son y no sólo cuántos. Leído como «tantos guiones del
+   navegador» parecía que fueran todos los del proyecto, y son 35: los otros 21
+   viven adentro de los tres programas y los lee la herramienta de armado, que es
+   justamente el motivo por el que acá no están. */
+console.log(`Guiones verificados: los ${revisados} de \`js/\`, que son los que no `
+  + `lee nadie más, sin errores de sintaxis.`);
