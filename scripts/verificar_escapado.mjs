@@ -22,8 +22,11 @@
       decide solo —una clase, un color, un texto fijo elegido con un ternario—
       no lo lleva.
 
-   2. **Los manejadores escritos adentro del marcado** (`onclick="..."` y
-      compañía) que interpolen cualquier cosa. Ahí escapar no sirve: el navegador
+   2. **Los manejadores escritos adentro del marcado** (`onclick=` y compañía)
+      que interpolen cualquier cosa, **escritos de las tres maneras**: con
+      comillas dobles, con comillas simples y sin comillas. Las tres son el mismo
+      agujero, porque el atributo se cierra con la comilla que lo abrió. Ahí
+      escapar no sirve: el navegador
       deshace el escapado del atributo antes de leerlo como código, así que
       `&#39;` vuelve a ser una comilla y cierra la cadena igual. Se arreglan con
       `addEventListener`, no con `Texto.escapar`.
@@ -114,7 +117,13 @@ const COMPARA_ANTES = /(?:===|!==|==|!=)$/;
 const COMPARA_DESPUES = /^(?:===|!==|==|!=)/;
 const VA_A_LA_CONSOLA = /^console\./;
 const ANTES_DE_UNA_REGEX = /(?:^|[(,=:[!&|?{};+*%<>~^]|\breturn)\s*$/;
-const MANEJADOR_EN_LINEA = /\son[a-z]+\s*=\s*"[^"]*\$\{/;
+/* El atributo se cierra con la comilla que lo abrió, y en el marcado también
+   se escribe sin ninguna: las tres maneras son el mismo manejador y el mismo
+   agujero. Se reconocía sólo la de comillas dobles, así que la misma línea con
+   comillas simples no la miraba nadie; y cuando encima llevaba un punto, la
+   agarraba la regla de arriba con el consejo al revés —escapar—, que es
+   justamente lo que el punto 2 del encabezado dice que acá no sirve. */
+const MANEJADOR_EN_LINEA = /\son[a-z]+\s*=\s*(?:"[^"]*|'[^']*|[^\s"'>]*)\$\{/;
 
 /** Reemplaza el contenido de las cadenas por espacios, para poder buscar sintaxis. */
 function sinCadenas(expresion) {
@@ -680,11 +689,21 @@ const enBlanco = (t) => t.replace(/[^\n]/g, ' ');
 
 /* Una prueba que no puede fallar no prueba nada: antes de recorrer el proyecto,
    el detector se prueba contra código que sí falla y contra código que no. */
+/* Que se ponga colorada no alcanza: tiene que ponerse colorada por el motivo
+   que corresponde. Un manejador que lleva un punto adentro lo agarra igual la
+   regla del dato sin escapar, con el consejo al revés, y una prueba que sólo
+   pregunta «¿avisó algo?» da por buena esa confusión. El tercer lugar del
+   renglón, cuando está, dice por cuál de los motivos tiene que avisar. */
+const MANEJADOR = 'un manejador escrito adentro del marcado interpola un dato';
+
 const MALOS = [
   ['dato pegado derecho', 'el.innerHTML = `<h5>${asp.nombre}</h5>`;'],
   ['dato adentro de un atributo', 'el.innerHTML = `<img src="${asp.fotoUrl}" />`;'],
   ['dato en una plantilla anidada', 'el.innerHTML = `<p>${x ? `<b>${log.notas}</b>` : \'\'}</p>`;'],
-  ['manejador escrito en el marcado', 'el.innerHTML = `<button onclick="ver(\'${a.id}\')">Ver</button>`;'],
+  ['manejador escrito en el marcado', 'el.innerHTML = `<button onclick="ver(\'${a.id}\')">Ver</button>`;', MANEJADOR],
+  ['manejador escrito con comillas simples', "el.innerHTML = `<button onclick='ver(${i})'>Ver</button>`;", MANEJADOR],
+  ['manejador escrito sin comillas', 'el.innerHTML = `<button onclick=ver(${i})>Ver</button>`;', MANEJADOR],
+  ['el manejador escapado sigue siendo un manejador', "el.innerHTML = `<button onclick='ver(${Texto.escapar(a.id)})'>Ver</button>`;", MANEJADOR],
   ['marcado pegado con +', "el.innerHTML = '<span>' + Identidad.datos.nombre + '</span>';"],
   ['una rama del ternario es dato', 'el.innerHTML = `<p>${a.ok ? a.nombre : \'\'}</p>`;'],
   ['el respaldo es fijo pero el dato no', 'el.innerHTML = `<p>${a.zona || \'Cobertura\'}</p>`;'],
@@ -717,7 +736,10 @@ const BUENOS = [
   ['el error crudo donde se lo clasifica, con su razón', "const crudo = String(/* seguro: acá se traduce a una clave */ (error && error.message) || '');"]
 ];
 
-const noDetecta = MALOS.filter(([, c]) => revisarCodigo(c).length === 0).map(([n]) => n);
+const noDetecta = MALOS.filter(([, c, motivo]) => {
+  const reparos = revisarCodigo(c);
+  return motivo ? !reparos.some((r) => r.motivo === motivo) : reparos.length === 0;
+}).map(([n]) => n);
 const sePasa = BUENOS.filter(([, c]) => revisarCodigo(c).length > 0).map(([n]) => n);
 if (noDetecta.length || sePasa.length) {
   console.error('El detector está roto, así que no verifica nada:');

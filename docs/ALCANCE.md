@@ -4514,7 +4514,7 @@ que quedar.
 **Y el chequeo que existe para esto no miraba ahí.** `scripts/verificar_escapado.mjs`
 tiene, desde que existe, la regla del texto crudo de un error que llega a la
 vista. Dejaba afuera la carpeta entera del servidor
-(`scripts/verificar_escapado.mjs:87`) y leía pantallas y guiones del navegador,
+(`scripts/verificar_escapado.mjs:90`) y leía pantallas y guiones del navegador,
 nunca el único archivo del producto escrito en el otro lenguaje. Así que el
 defecto estuvo en su lugar con los 41 chequeos en verde. Y el archivo hermano que
 sí nombra esa carpeta escribió la mitad de la razón: decía que ahí el detalle
@@ -4644,6 +4644,40 @@ si un nombre suena sensible, obliga a que alguien lo decida.
 
 Y el cartel verde decía «3 exentos» cuando lo que contaba eran tres archivos, no tres
 valores. Ahora cuenta valores (`:569`).
+
+### El mismo manejador escrito con comillas simples no lo miraba nadie
+
+El chequeo de escapado dice en su propio encabezado que un manejador escrito adentro
+del marcado —`onclick=` y compañía— no se arregla escapando: el navegador deshace el
+escapado del atributo antes de leerlo como código, así que la comilla vuelve a ser una
+comilla y cierra la cadena igual. Se arregla sacando el atributo y colgando el manejador
+aparte, y no de otra manera.
+
+La regla que hacía cumplir eso reconocía una sola manera de escribirlo, la de comillas
+dobles (`scripts/verificar_escapado.mjs:126`). Un atributo se cierra con la comilla que
+lo abrió, y en el marcado también se escribe sin ninguna: las tres maneras son el mismo
+manejador y el mismo agujero.
+
+Probado antes de tocar nada, sobre una plantilla de verdad del producto. Con comillas
+dobles el chequeo se puso colorado y nombró archivo y renglón. La misma línea escrita con
+comillas simples terminó en verde, y encima quedó contada entre las interpolaciones que
+el cartel verde certificaba miradas de a una.
+
+El segundo medio es el peor de los dos. Cuando el manejador lleva un punto adentro, lo
+agarra la regla de arriba —la del dato que entra al marcado sin escapar— con el consejo
+exactamente al revés: envolverlo en `Texto.escapar()`. Siguiendo ese consejo la línea
+queda en verde con el manejador todavía puesto, que es justo lo que el encabezado dice
+que no sirve. Dos reglas del mismo archivo se contradecían y ninguna avisaba, porque la
+que hablaba decía lo que no correspondía.
+
+Y el banco de pruebas no podía ver nada de esto, porque preguntaba nada más si algo había
+avisado (`scripts/verificar_escapado.mjs:739`). Una prueba que sólo pregunta «¿se puso
+colorada?» da por buena una regla que avisa por el motivo equivocado. Ahora el renglón de
+una prueba puede decir por cuál de los motivos tiene que avisar
+(`scripts/verificar_escapado.mjs:697`), y las cuatro del manejador lo dicen.
+
+No había daño puesto: ningún manejador escrito de las dos maneras nuevas existe hoy en el
+producto, y el chequeo sigue en verde sobre los mismos 110 archivos.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
