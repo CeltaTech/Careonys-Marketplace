@@ -25,6 +25,18 @@
    `scripts/mensajes_de_contacto.mjs`, porque las dos mitades de la puerta se
    prueban con las mismas. Dos listas separadas dejarían de coincidir sin que
    nadie se enterara.
+
+   CADA MENSAJE SE PRUEBA CONTRA LOS TRES IDIOMAS, Y LAS LISTAS ESTÁN EN LOS
+   TRES
+   Son dos cosas distintas y hacían falta las dos. La primera es el bucle: el
+   reconocedor no puede depender del idioma de la pantalla, así que todo mensaje
+   se revisa con los tres puestos. La segunda es que las listas tengan mensajes
+   escritos en los tres idiomas, y es la que faltaba: las reglas son palabras
+   —«calle», «depto», «buscame»—, y con las dos listas enteras en castellano el
+   reconocedor nunca vio una palabra en inglés ni en portugués, mientras este
+   chequeo escribía en verde «117 mensajes revisados en 3 idiomas». Pasaban
+   enteros «my instagram is marialopezcare», «write me on whatsapp», «apartment
+   4 at the back» y «toque a campainha 12», entre otros.
 =================================================== */
 
 import { readFileSync } from 'node:fs';
@@ -32,16 +44,32 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { seRevisaron } from './recorrido.mjs';
-import { NO_PASAN, PASAN } from './mensajes_de_contacto.mjs';
+import { NO_PASAN, PASAN, IDIOMAS } from './mensajes_de_contacto.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
 const { Contacto } = require(join(raiz, 'js', 'contacto.js'));
 const reglas = JSON.parse(readFileSync(join(raiz, 'data', 'patrones-contacto.json'), 'utf8'));
 
-const IDIOMAS = ['es-AR', 'en', 'pt-BR'];
 seRevisaron((reglas.reglas || []).length, 'una sola regla en `data/patrones-contacto.json`');
 seRevisaron(IDIOMAS.length, 'un solo idioma contra el que probar');
+
+/* Y que las dos listas estén escritas en los tres idiomas, que no es lo mismo
+   que correrlas contra los tres. El reconocedor no mira el idioma de la
+   pantalla: mira palabras, y una palabra está en un idioma. Las dos listas
+   estuvieron enteras en castellano mientras el producto se usaba en tres, y
+   como el bucle las cruza contra los tres este chequeo escribía «117 mensajes
+   revisados en 3 idiomas» sin que el reconocedor hubiera visto una sola palabra
+   en inglés o en portugués: pasaban diecisiete de veintiún equivalentes reales
+   de los mensajes que el castellano sí bloquea. Contar el cruce y no los
+   idiomas de lo escrito es la forma más fácil de que este chequeo vuelva a
+   mirar un solo idioma sin que nadie se entere. */
+for (const idioma of IDIOMAS) {
+  seRevisaron(NO_PASAN.filter((m) => m[2] === idioma).length,
+    `ningún mensaje escrito en ${idioma} que tenga que quedar bloqueado`);
+  seRevisaron(PASAN.filter((m) => m[1] === idioma).length,
+    `ningún mensaje escrito en ${idioma} que tenga que pasar`);
+}
 
 
 const fallas = [];
@@ -62,7 +90,7 @@ for (const idioma of IDIOMAS) {
     }
   }
 
-  for (const texto of PASAN) {
+  for (const [texto] of PASAN) {
     const revision = Contacto.revisarCon(reglas, texto, idioma);
     if (!revision.pasa) {
       fallas.push(`[${idioma}] tendría que pasar y quedó bloqueado por `
@@ -91,6 +119,10 @@ if (fallas.length > 0) {
 }
 
 const cuenta = (NO_PASAN.length + PASAN.length) * IDIOMAS.length;
-console.log(`Contacto: ${cuenta} mensajes revisados `
-  + `(${NO_PASAN.length} que no pasan y ${PASAN.length} que sí, en ${IDIOMAS.length} idiomas), `
+const porIdioma = IDIOMAS
+  .map((i) => `${NO_PASAN.filter((m) => m[2] === i).length + PASAN.filter((m) => m[1] === i).length} en ${i}`)
+  .join(', ');
+console.log(`Contacto: ${cuenta} revisiones `
+  + `(${NO_PASAN.length} mensajes que no pasan y ${PASAN.length} que sí —${porIdioma}—, `
+  + `cada uno contra los ${IDIOMAS.length} idiomas de la pantalla), `
   + `contra ${(reglas.reglas || []).length} reglas.`);

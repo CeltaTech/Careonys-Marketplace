@@ -255,7 +255,7 @@ comprobar('el rechazo no le devuelve a nadie el mensaje que escribió',
 
 // --- 2. Los trece que sí tienen que entrar ---------------------------------
 let entraron = 0;
-for (const texto of PASAN) {
+for (const [texto] of PASAN) {
   const { estado, cuerpo } = await mandar(texto);
   if (estado < 400 && Array.isArray(cuerpo) && cuerpo.length === 1) entraron++;
   else console.log('        (quedó bloqueado y tendría que pasar: ' + JSON.stringify(texto)

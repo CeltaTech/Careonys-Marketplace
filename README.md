@@ -38,7 +38,7 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | Supabase Auth funcionando | 25 de los 71 archivos que las dibujan abren la puerta a la base |
 | 3 servidores de afuera | dos de tipografías y el de los iconos |
 | 4 paquetes que se construyen solos | la raíz, que arma a los otros tres, pwa-asistente, pwa-familia, web |
-| 37 tablas y 8 migraciones en el repositorio | 41 chequeos las miran antes de cada commit |
+| 37 tablas y 9 migraciones en el repositorio | 41 chequeos las miran antes de cada commit |
 
 **Qué está construido y qué no lo dice `docs/ALCANCE.md`**, que es la referencia — no este archivo
 ni ningún otro. Lo que queda abierto está en `docs/PENDIENTES.md`.

@@ -3424,6 +3424,54 @@ Contaba de más: las pantallas que reciben la puerta ya abierta como dato —por
 ejemplo `web/src/pantallas/panel-prestadora/Moneda.jsx:58`— no la abren, la usan.
 El número honesto se volvió a sacar desde el código antes de escribir nada.
 
+### El chat dejaba pasar los datos de contacto escritos en inglés o en portugués
+
+La tercera puerta es la que no deja que un Asistente y una Familia se pasen un
+teléfono, un correo o un domicilio por el chat, porque ese dato es justamente lo
+que el Marketplace vende. Tiene dos mitades: el reconocedor del navegador, que
+avisa antes de mandar, y el disparador del servidor, que es el que de verdad no
+deja guardar el mensaje. Las dos leen las mismas nueve reglas, que viven en la
+tabla `patrones_de_contacto`.
+
+Las nueve reglas están escritas con palabras, y las palabras estaban todas en
+castellano: «calle», «depto», «timbre», «mi instagram», «buscame». El producto
+se usa en tres idiomas desde el día uno, así que el mismo mensaje traducido
+entraba entero. De veintiún equivalentes reales de los mensajes que el castellano
+sí bloquea, pasaban **diecisiete**:
+
+| Lo que no pasaba | Lo que sí pasaba |
+|---|---|
+| `mi instagram es marialopezcuidados` | `my instagram is marialopezcare` |
+| `escribime por whatsapp` | `write me on whatsapp` |
+| `vivo en la calle Rivadavia 4500` | `I live at Rivadavia street 4500` |
+| `depto 4 del fondo` | `apartment 4 at the back` |
+| `tocá el timbre 12` | `toque a campainha 12` |
+
+**Y el chequeo que cuida esa puerta decía que estaba probada en los tres.** Sus
+treinta y nueve mensajes de prueba estaban todos escritos en castellano, y el
+bucle los cruzaba contra los tres idiomas —pero el idioma sólo elige con qué
+frase se avisa, no cambia lo que el reconocedor mira—. Así que el número que
+imprimía, «117 mensajes revisados en 3 idiomas», era treinta y nueve por tres, y
+el reconocedor no había visto nunca una palabra en inglés ni en portugués. Es el
+mismo defecto de siempre: un corpus escrito a mano que conoce una sola de las
+formas en que se escribe lo mismo.
+
+Se corrigió de las dos puntas. Las cinco reglas que son de palabras se ampliaron
+a los tres idiomas en `supabase/migrations/0009_el_chat_reconoce_el_contacto_en_los_tres_idiomas.sql`,
+porque es en la tabla donde viven y el archivo del navegador es una copia
+generada. Y las dos listas de prueba ahora dicen en qué idioma está escrito cada
+mensaje, con veintitrés nuevos que no pueden pasar y veintidós que no pueden
+quedar bloqueados; el chequeo se planta si a alguna de las dos listas le falta
+alguno de los tres idiomas.
+
+**Tres palabras quedaron afuera a propósito**, y hay un mensaje de prueba por
+cada una para que nadie las agregue sin darse cuenta: «floor», porque «I clean
+the floor 2 times a week» no es un piso; «drive», porque «I drive 30 minutes» no
+es una calle; y «andar», porque «posso andar 20 minutos» tampoco. El daño de
+este control no es dejar pasar un teléfono —eso se arregla agregando una regla—
+sino cortarle la conversación a un Asistente que está diciendo lo que cobra y
+cuándo puede.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
