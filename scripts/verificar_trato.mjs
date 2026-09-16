@@ -37,8 +37,12 @@ const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
    pero además **carga texto que después se lee en la pantalla** —las etiquetas de
    los vocabularios, las Guías de cuidado—, y ese texto se escapaba de acá. De
    cada `.sql` se mira sólo lo rotulado `"es-AR"`, nunca las sentencias ni los
-   comentarios: eso lo resuelve `visibleDeMigracion()`. */
-const AJENAS = ['docs', 'scripts', 'assets'];
+   comentarios: eso lo resuelve `visibleDeMigracion()`.
+   Y `assets/` también, desde el 16 de septiembre de 2026. Acá decía que ahí no
+   hay texto que vea una persona, y no es cierto: un dibujo lleva adentro el
+   rótulo que lee el lector de pantalla y, cuando hace falta, letras dibujadas.
+   Dos de los del proyecto los tienen. Quedaba afuera sin que nada lo dijera. */
+const AJENAS = ['docs', 'scripts'];
 
 /* Sólo formas que no pueden ser otra cosa. Las ambiguas —«completa», «carga»,
    «agenda», «entrevista»— son terceras personas legítimas en casi todos los

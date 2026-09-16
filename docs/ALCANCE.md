@@ -4267,6 +4267,34 @@ ninguna migración declara: el chequeo terminaba en verde. Ahora sale en rojo co
 archivo y renglón. Hoy esa puerta no sube ni baja ningún archivo, así que no
 había daño; lo que había era un lugar del producto donde nadie miraba.
 
+### Un dibujo se leía como si fuera un guión, y de un guión no se lee casi nada
+
+Los dos chequeos que revisan el texto que ve una persona —el del trato de usted y el del
+vocabulario— dejaban la carpeta de los dibujos afuera de lo que abrían. Ninguno de los dos
+encabezados lo decía: los dos explican con detalle por qué **sí** se miran las migraciones, y
+ninguno nombra los dibujos.
+
+Adentro de un dibujo hay texto que una persona lee. `assets/images/retrato_generico.svg:1` lleva
+el rótulo que le dicta al lector de pantalla, y `assets/images/logo_cuidarnorte.svg` lleva letras
+dibujadas. Al ponerlos adentro del corpus apareció la mitad de fondo: `formatoDe()`, en
+`scripts/texto_visible.mjs:181`, clasificaba por la extensión, conocía dos —la de una página y la
+de una pantalla— y a todo lo demás lo trataba como guión. De un guión, `visible()` busca
+solamente cadenas de texto entre comillas, así que un rótulo escrito como atributo y unas letras
+escritas entre etiquetas no existían. Y encima, el `//` de la dirección que todo dibujo lleva en
+su primer renglón le tapaba ese renglón entero, porque en un guión `//` abre un comentario.
+
+Comprobado antes de tocar nada: con los dibujos ya adentro del corpus, poniéndole al rótulo de
+uno voseo y la palabra que el glosario sacó, los dos chequeos seguían terminando en verde.
+
+Ahora un dibujo se reparte como lo que es, marcado, y los dos van a rojo nombrando archivo y
+renglón. El corpus de los dos pasó de 158 archivos a 160. No había daño puesto: el rótulo «Sin
+foto» no lo gobierna ninguna lista de frases, pero un dibujo abierto adentro de una imagen nunca
+llega a mostrarlo, y el nombre de una Prestadora sobre su propio logotipo es legítimo.
+
+Y como los cuatro chequeos que usan ese repartidor prueban su **detector** —que la palabra
+buscada se reconozca— y ninguno probaba su **lector** —que el texto llegue hasta el detector—, el
+lector pasó a tener su propio banco de pruebas, escrito una sola vez donde vive él.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

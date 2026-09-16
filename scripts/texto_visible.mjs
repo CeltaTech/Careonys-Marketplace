@@ -167,13 +167,20 @@ export function visibleDeMigracion(crudo) {
      entraba como texto a la vista, y el primer día que hubo pantallas así dos
      comentarios que contaban de dónde venía un nombre viejo se informaron como
      si ese nombre estuviera en la pantalla.
+   - **`'html'` también para un dibujo**, desde el 16 de septiembre de 2026. Un
+     dibujo es marcado, no guión: lo que una persona lee ahí es el rótulo que
+     le dicta al lector de pantalla y las letras dibujadas entre etiquetas.
+     Leído como guión no se veía nada de eso, y encima el `//` de la dirección
+     que todo dibujo lleva en su primer renglón tapaba el renglón entero como
+     si fuera un comentario. Comprobado poniéndole voseo al rótulo de uno: los
+     dos chequeos que leen el texto a la vista terminaban en verde.
    - **`'codigo'`** — todo lo demás: sólo las cadenas de texto.
 
    Se sigue aceptando el sí/no de antes —dos chequeos lo pasan escrito a mano,
    sobre archivos que siempre son páginas—, y vale por `'html'`. */
 export const formatoDe = (nombre) =>
   nombre.toLowerCase().endsWith('.jsx') ? 'jsx'
-    : nombre.toLowerCase().endsWith('.html') ? 'html' : 'codigo';
+    : /\.(html|svg)$/i.test(nombre) ? 'html' : 'codigo';
 
 /** Devuelve pares `[renglón, texto]` de lo que ve una persona. */
 export function visible(crudo, formato) {
@@ -350,4 +357,36 @@ export function textoDePrograma(s) {
   }
   guardar();
   return salida;
+}
+
+/* ── QUE EL LECTOR LEA LO QUE DICE QUE LEE ─────────────────────────────────
+   Los cuatro chequeos que usan este archivo prueban su **detector** —que la
+   palabra buscada se reconozca— y ninguno prueba su **lector**: que el texto
+   llegue hasta el detector. Un lector que devuelve nada deja a los cuatro en
+   verde sin haber mirado nada, que es exactamente lo que pasó con los dibujos.
+   Se prueba acá y no en cada chequeo porque el lector es uno solo. */
+const DEBERIA_LEERSE = [
+  ['el rótulo de un dibujo', '<svg xmlns="http://www.w3.org/2000/svg" aria-label="Sin foto">',
+    'sin foto'],
+  ['las letras dibujadas de un dibujo', '<svg><text x="0">Cuidar Norte</text></svg>',
+    'cuidar norte'],
+  ['el texto de una página', '<p>Solicitar Asistente</p>', 'solicitar asistente'],
+];
+const NO_DEBERIA_LEERSE = [
+  ['el comentario de una página', '<!-- Antes se llamaba cuidador -->', 'cuidador'],
+];
+
+const leidoDe = (marcado) => visible(marcado, formatoDe('dibujo.svg'))
+  .map(([, texto]) => texto).join(' ').toLowerCase();
+const rotos = [];
+for (const [que, marcado, esperado] of DEBERIA_LEERSE) {
+  if (!leidoDe(marcado).includes(esperado)) rotos.push('no lee ' + que);
+}
+for (const [que, marcado, prohibido] of NO_DEBERIA_LEERSE) {
+  if (leidoDe(marcado).includes(prohibido)) rotos.push('lee de más ' + que);
+}
+if (rotos.length > 0) {
+  console.error('El lector del texto a la vista está roto, así que no verifica nada:');
+  for (const roto of rotos) console.error('  - ' + roto);
+  process.exit(1);
 }
