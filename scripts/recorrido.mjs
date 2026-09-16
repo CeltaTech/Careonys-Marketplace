@@ -226,10 +226,48 @@ export const ARMAZONES = [
    de copiarla acá para que agregar una pantalla siga siendo un solo renglón. */
 export const LISTA_DE_DIRECCIONES = 'web/src/Rutas.jsx';
 
+/* Dónde termina la etiqueta `<Route …>`. No alcanza con buscar el primer `>`:
+   `element={<Inicio />}` lleva uno adentro. Se cuenta la llave y se respeta la
+   comilla, que es lo que separa el atributo del componente que dibuja. */
+function finDeLaEtiqueta(texto, desde) {
+  let llaves = 0;
+  let comilla = '';
+  for (let i = desde; i < texto.length; i++) {
+    const c = texto[i];
+    if (comilla) { if (c === comilla) comilla = ''; continue; }
+    if (c === '"' || c === "'") { comilla = c; continue; }
+    if (c === '{') llaves++;
+    else if (c === '}') llaves--;
+    else if (c === '>' && llaves === 0) return i;
+  }
+  return texto.length;
+}
+
+/**
+ * Las direcciones declaradas en un texto de rutas, venga el `path` donde venga
+ * adentro de la etiqueta.
+ *
+ * Antes se leía `<Route [^>]*path="…"`, que es pedirle al `path` que esté antes
+ * que cualquier `>`. Una ruta escrita `<Route element={<Algo />} path="/x" />`
+ * —y el archivo ya escribe así la que pone el marco— no la veía nadie, y una
+ * pantalla entera desaparecía sin ruido de todo lo que se cuenta a partir de
+ * acá: de las direcciones del sitio y de la foto del producto.
+ */
+export function direccionesDeclaradas(texto) {
+  const dichas = [];
+  const ABRE = /<Route\b/g;
+  let encontrada;
+  while ((encontrada = ABRE.exec(texto)) !== null) {
+    const etiqueta = texto.slice(encontrada.index, finDeLaEtiqueta(texto, encontrada.index));
+    const camino = /\bpath="([^"]+)"/.exec(etiqueta);
+    if (camino) dichas.push(camino[1]);
+  }
+  return dichas;
+}
+
 export function direccionesDelSitio(raiz) {
   const texto = readFileSync(join(raiz, ...LISTA_DE_DIRECCIONES.split('/')), 'utf8');
-  const dichas = Array.from(texto.matchAll(/<Route\s[^>]*\bpath="([^"]+)"/g))
-    .map((cual) => cual[1]);
+  const dichas = direccionesDeclaradas(texto);
   seRevisaron(dichas.length, `una sola dirección declarada en «${LISTA_DE_DIRECCIONES}»`);
   return new Set(dichas);
 }

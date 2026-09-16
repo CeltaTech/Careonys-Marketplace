@@ -3777,7 +3777,7 @@ chequeo pudiera mirar: `scripts/verificar_arranque.mjs:53`,
 Qué se hizo: una tercera regla, `carpetasEximidasQueNoEstan()`
 (`scripts/verificar_red.mjs:309`), que lee la lista en sus tres formas —suelta, como conjunto y
 exportada— sin mirar adentro de los comentarios. Contra qué se compara sale de
-`carpetasDelProyecto()` (`scripts/recorrido.mjs:279`), que recorre con la misma regla con la que
+`carpetasDelProyecto()` (`scripts/recorrido.mjs:317`), que recorre con la misma regla con la que
 se recorre todo: nombra la carpeta que existe aunque no se pueda entrar en ella —una caja fuerte
 está, y decir que no se la mira es cierto—, y sólo denuncia lo que no está en ningún lado. Las
 seis exenciones muertas se sacaron, y con ellas el bloque de `scripts/citas.mjs`, que no tenía
@@ -3811,6 +3811,38 @@ de sus extensiones entrara: se declaran en `scripts/verificar_identidad.mjs:49` 
 escrito. Ahí nadie resuelve `{{producto}}` —no hay página que cargar—, así que la marca escrita en
 una herramienta no es la marca escrita a mano: es la única forma de escribirla. El recorrido pasó
 de 147 archivos a 159 y siguió en verde, así que no había daño puesto.
+
+### La foto del producto perdía una pantalla si la ruta se escribía con el componente adelante
+
+Cuáles son las pantallas del sitio no lo decide nadie a mano: sale de leer el archivo
+donde están declaradas las direcciones. De esa lectura cuelgan dos cosas. Una, el
+chequeo que exige que toda dirección escrita en una pantalla, en una hoja de estilo, en
+un guion o en un manifiesto lleve a algún lado. La otra, la foto del producto: la lista
+de pantallas con el nombre que tiene cada una delante de una persona, que es lo que
+CeltaTech mira para saber qué está vendiendo.
+
+Las dos leían la misma etiqueta y las dos la leían igual de mal. Le pedían al camino
+estar escrito antes que cualquier signo de mayor, y adentro de la etiqueta hay uno: el
+que cierra el componente que dibuja la pantalla. Una ruta escrita con el componente
+adelante y el camino atrás no la veía ninguna de las dos. La pantalla desaparecía de la
+foto sin ponerse nada en rojo, y su dirección pasaba a ser una dirección que nadie
+declaró y que nadie reclama.
+
+No es una forma imaginaria: el propio archivo de direcciones ya escribe así la que pone
+el marco alrededor de las demás. Se lo probó agregando una dirección con esa forma, y la
+foto del producto siguió diciendo diecisiete pantallas, en verde, sin nombrar la nueva.
+Con el arreglo puesto, la misma dirección la nombra y se pone en rojo.
+
+Ahora hay un solo lector, que camina la etiqueta contando llaves y respetando comillas
+hasta encontrar dónde termina de verdad. La segunda lectura, escrita aparte adentro del
+guion de la foto, se borró: era la misma decisión tomada dos veces. Y el chequeo de las
+direcciones prueba primero al lector contra siete etiquetas inventadas —las tres formas
+de escribir una ruta, la que pone el marco, una anidada, un signo de mayor adentro de
+una comilla, y un texto sin ninguna ruta— porque todo lo que ese chequeo afirma descansa
+en que el lector sepa leer.
+
+No se encontró ningún daño: hoy todas las direcciones del sitio están escritas con el
+camino adelante.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 

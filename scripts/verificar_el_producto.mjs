@@ -47,7 +47,7 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { seRevisaron, ARMAZONES } from './recorrido.mjs';
+import { seRevisaron, ARMAZONES, direccionesDelSitio } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DOCUMENTO = join('docs', 'CAREONYS MarketPlace EL PRODUCTO.md');
@@ -126,12 +126,14 @@ const problemas = [];
    Los dos programas del teléfono se cuentan de a uno, como siempre: cada uno es
    un programa entero que se instala en su propia dirección, y por dentro no
    tiene direcciones que nadie escriba a mano. Cuáles son sale de los armazones,
-   que es donde ya está dicho cuáles son los paquetes. */
-const RUTAS = join('web', 'src', 'Rutas.jsx');
+   que es donde ya está dicho cuáles son los paquetes.
 
+   Cuáles son las direcciones lo lee `recorrido.mjs` y nadie más. Acá había una
+   segunda lectura, escrita aparte, que le pedía al `path` estar antes que
+   cualquier `>`: una ruta escrita con el componente adelante no la veía, y la
+   pantalla desaparecía de la foto del producto sin que nadie se enterara. */
 const pantallas = [
-  ...[...readFileSync(join(raiz, RUTAS), 'utf8')
-    .matchAll(/<Route [^>]*path="([^"]+)"/g)].map((encontrada) => encontrada[1]),
+  ...direccionesDelSitio(raiz),
   ...ARMAZONES
     .filter((armazon) => !armazon.startsWith('web/'))
     .map((armazon) => '/' + armazon.split('/')[0] + '/')

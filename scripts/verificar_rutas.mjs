@@ -54,7 +54,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import {
   hayArchivos, seRevisaron, conLaMismaCaja, esArmazon, EXTENSIONES_DE_PANTALLA, ARMAZONES,
-  direccionesDelSitio, esUnaVista
+  direccionesDelSitio, direccionesDeclaradas, esUnaVista
 } from './recorrido.mjs';
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -281,6 +281,36 @@ const dondeSePublica = (camino, nombre, suCarpeta) => {
      rota una dirección que anda. */
   return nombre.toLowerCase().endsWith('.js') ? raiz : suCarpeta;
 };
+
+/* ── QUE EL LECTOR DE DIRECCIONES SEPA LEER ────────────────────────────────
+   Todo lo que este chequeo dice descansa en la lista de direcciones del sitio,
+   y esa lista sale de leer una etiqueta. Un lector que se saltea una etiqueta
+   no pone nada rojo: deja de contar una pantalla, y la que deje de contar
+   pasa a ser una dirección que nadie escribió y que nadie reclama.
+
+   Se lo prueba con las tres formas de escribir la misma ruta y con las dos que
+   no son una ruta. La segunda es la que faltaba: el archivo de rutas ya escribe
+   el componente adelante para la que pone el marco, así que la forma existe. */
+const BIEN_LEIDAS = [
+  ['el camino adelante', '<Route path="/x" element={<X />} />', ['/x']],
+  ['el componente adelante', '<Route element={<X />} path="/x" />', ['/x']],
+  ['repartida en varios renglones', '<Route\n  path="/x"\n  element={<X />}\n/>', ['/x']],
+  ['una que pone el marco y no tiene camino', '<Route element={<Marco />}>', []],
+  ['anidada adentro de la que pone el marco',
+   '<Route element={<Marco />}>\n  <Route path="/x" element={<X />} />\n</Route>', ['/x']],
+  ['un mayor adentro de una comilla', '<Route path="/x" title="a>b" />', ['/x']],
+  ['ninguna ruta escrita', '<div>nada</div>', []]
+];
+
+const malLeidas = BIEN_LEIDAS.filter(
+  ([, texto, espera]) => direccionesDeclaradas(texto).join('|') !== espera.join('|'));
+if (malLeidas.length) {
+  console.error(
+    '\nEl lector de direcciones está roto, así que este chequeo no prueba nada:\n  ' +
+    malLeidas.map(([que]) => que).join('\n  ') + '\n');
+  process.exit(1);
+}
+seRevisaron(BIEN_LEIDAS.length, 'ni una ruta inventada con la que probar el lector');
 
 const VISTAS = direccionesDelSitio(raiz);
 
