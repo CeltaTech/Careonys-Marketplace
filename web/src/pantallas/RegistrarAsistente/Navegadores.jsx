@@ -17,7 +17,7 @@ export function Pane({ numero, paso, children }) {
   const seVe = numero === paso;
   return (
     <div
-      className={seVe ? 'wizard-step-pane' : 'wizard-step-pane oculto'}
+      className={seVe ? undefined : 'oculto'}
       id={`step-pane-${numero}`}
       style={{ display: seVe ? 'block' : 'none' }}
     >
@@ -34,7 +34,7 @@ export function Navegadores({ anterior, siguiente, irAlPaso, seguir, children })
   if (!anterior) {
     return (
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '24px' }}>
-        <button type="button" className="btn btn-primario btn-next-step" data-next={siguiente}
+        <button type="button" className="btn btn-primario" data-next={siguiente}
           onClick={() => seguir(siguiente)}>
           <span>{frase('alta.siguiente_paso')}</span> <i className="fas fa-arrow-right ml-8"></i>
         </button>
@@ -46,14 +46,14 @@ export function Navegadores({ anterior, siguiente, irAlPaso, seguir, children })
     <div className="flex justificar-entre mt-24">
       <button
         type="button"
-        className="btn btn-sobre-oscuro btn-prev-step borde-color-tarjeta color-secundario"
+        className="btn btn-sobre-oscuro borde-color-tarjeta color-secundario"
         data-prev={anterior}
         onClick={() => irAlPaso(anterior)}
       >
         <i className="fas fa-arrow-left mr-8"></i> <span>{frase('alta.anterior')}</span>
       </button>
       {children || (
-        <button type="button" className="btn btn-primario btn-next-step" data-next={siguiente}
+        <button type="button" className="btn btn-primario" data-next={siguiente}
           onClick={() => seguir(siguiente)}>
           <span>{frase('alta.siguiente_paso')}</span> <i className="fas fa-arrow-right ml-8"></i>
         </button>

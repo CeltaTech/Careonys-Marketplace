@@ -199,7 +199,7 @@ export default function FormularioDeConsulta({
       </button>
 
       {claveDelAviso && (
-        <div className="consulta-respuesta" style={color ? { color } : undefined} role="status">
+        <div style={color ? { color } : undefined} role="status">
           {frase(claveDelAviso)}
           {estado === 'por_correo' && direccionDeCorreo() && (
             <>
