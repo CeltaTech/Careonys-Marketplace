@@ -254,8 +254,11 @@ export function visible(crudo, formato) {
 /* Lo que tiene delante un signo de menor decide si abre una etiqueta o si
    compara dos cosas. Un dato delante quiere decir comparación; pero una
    palabra del lenguaje también termina en letra y no es ningún dato, y
-   `return` es justamente la que tiene delante casi toda pantalla. */
-const ANTES_ES_DATO = /[\w$)\]]$/;
+   `return` es justamente la que tiene delante casi toda pantalla. Un texto
+   escrito cerrado también es un dato: detrás de él una barra nunca abre nada,
+   y el atributo vacío de una etiqueta que se cierra sola —`alt="" />`— deja
+   justo esa comilla delante. */
+const ANTES_ES_DATO = /[\w$)\]'"`]$/;
 const NO_ES_UN_DATO = /(?:^|[^\w$])(?:return|yield|await|default|case|else|do|typeof|in|of)$/;
 const comparaYNoAbre = (s, i) => {
   const previo = s.slice(Math.max(0, i - 40), i).replace(/\s+$/, '');
@@ -291,9 +294,13 @@ export function finDeCadena(s, i) {
     un texto que se come el archivo entero hasta la próxima —pasó, y dejó sin
     mirar noventa y cuatro renglones de un chequeo—. Una barra detrás de un
     dato divide en vez de abrir, una expresión regular no cruza el fin de
-    renglón, y los corchetes de una clase esconden la barra que la cerraría. */
+    renglón, y los corchetes de una clase esconden la barra que la cerraría.
+   Y una barra pegada detrás de un `<` cierra una etiqueta: `</i>` no abre
+   ninguna expresión regular, y leerlo así se traga desde ahí hasta la próxima
+   barra, con los textos que haya en el medio. */
 export function finDeExpresionRegular(s, i) {
   if (s[i] !== '/' || s[i + 1] === '/' || s[i + 1] === '*') return i;
+  if (s[i - 1] === '<') return i;
   if (comparaYNoAbre(s, i)) return i;
   let j = i + 1;
   let enUnaClase = false;
@@ -452,6 +459,21 @@ for (const [que, codigo, deberia] of DESPEJES) {
 }
 if (sinCadenas("const A = 'x';\nconst B = 1;").split('\n').length !== 2) {
   despejados.push('conserva los renglones');
+}
+/* Y la barra del marcado no abre ninguna expresión regular. Esto se le
+   pregunta al detector directo y no al despeje, porque despejando no se nota:
+   lo que el error se traga sale igual, ya que una expresión regular pasa
+   entera. Se nota recién cuando alguien cuenta los textos escritos que
+   quedaron adentro, y ahí ya son ciento cuarenta y tres renglones de un
+   archivo que no miró nadie. */
+const MARCAS = [
+  ['la barra que cierra una etiqueta', '<i></i> <span>x</span>', 4],
+  ['la barra de una etiqueta que se cierra sola', '<img alt="" /> <span>x</span>', 12]
+];
+for (const [que, marcado, donde] of MARCAS) {
+  if (finDeExpresionRegular(marcado, donde) !== donde) {
+    despejados.push('toma por expresión regular ' + que);
+  }
 }
 if (despejados.length > 0) {
   console.error('El despeje de cadenas está roto, así que no verifica nada:');

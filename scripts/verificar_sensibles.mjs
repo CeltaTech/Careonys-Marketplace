@@ -81,6 +81,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
 import { hayArchivos, EXTENSIONES_DE_PANTALLA, seRevisaron } from './recorrido.mjs';
+import { enCodigoDePrograma, finDeLoQueNoSeLee } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
@@ -205,7 +206,10 @@ const REGISTROS_PERDONADOS = new Map([
 
 // ── Cómo se reconoce cada cosa ─────────────────────────────────────────────
 
-const BARRA = 92; // el código de la barra invertida, para no escribirla suelta
+const BARRA = 92; /* el código de la barra invertida, para no escribirla suelta.
+  Queda un solo uso: el `${` tapado con una barra adentro de una plantilla, que
+  no abre ningún hueco. Dónde empieza y dónde termina cada texto escrito ya no
+  se cuenta acá, que era de donde salían los errores. */
 
 /* Un parámetro escrito adentro de una dirección. Qué dirección es se decide
    mirando **la cadena de textos pegados** de la que ese parámetro forma parte:
@@ -248,32 +252,43 @@ function renglonDe(texto, indice) {
 
 /* Deja el comentario en blanco sin mover ningún renglón. Hace falta: la
    cabecera de `js/apiClient.js` explica el `?tenant=` en un comentario, y un
-   chequeo que lee el comentario como código cuenta un parámetro que no existe. */
+   chequeo que lee el comentario como código cuenta un parámetro que no existe.
+   Las dos formas de nota que trae el lenguaje las borra el módulo que lee texto
+   visible, que es el que sabe hacerlo sin cortar una dirección web al medio;
+   acá queda sólo la nota del marcado, que es de las pantallas y de nadie más. */
 function sinComentarios(texto, esPantalla) {
-  const tapar = (m) => m.replace(/[^\r\n]/g, ' ');
-  let t = texto;
-  if (esPantalla) t = t.replace(/<!--[\s\S]*?-->/g, tapar);
-  t = t.replace(/\/\*[\s\S]*?\*\//g, tapar);
-  return t.replace(/^([^\n'"`]*?)\/\/[^\n]*/gm,
-    (m, antes) => antes + tapar(m.slice(antes.length)));
+  const t = esPantalla
+    ? texto.replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/[^\n]/g, ' '))
+    : texto;
+  return enCodigoDePrograma(t);
 }
 
 /* Los textos escritos de un archivo: `[inicio, fin, contenido]`. Sirven para
    dos cosas: son donde se escribe una dirección, y son lo único que se mira
-   para decidir de quién es. */
+   para decidir de quién es.
+
+   Dónde empieza y dónde termina un texto escrito es una sola pregunta —«¿esto
+   se lee o se saltea entero?»— y este archivo se la contestaba cinco veces por
+   su cuenta: acá, al cortar por comas, al buscar el paréntesis que cierra, al
+   separar los valores de un argumento y al borrar las notas. Las cinco copias
+   compartían las dos mismas fallas: ninguna reconocía una expresión regular
+   —así que una comilla de acento grave escrita adentro de una abría un texto
+   que se comía el archivo hasta la próxima, y un parámetro sin declarar
+   escrito en el medio no lo veía nadie—, y todas leían como tapada la comilla
+   que viene detrás de una barra ya tapada. La pregunta se la hace ahora el
+   módulo que lee el texto visible, que es donde ya estaba contestada. */
 function textosEscritos(texto) {
   const salida = [];
-  let comilla = null, inicio = 0;
-  for (let i = 0; i < texto.length; i++) {
-    const c = texto[i];
-    if (comilla) {
-      if (c === comilla && texto.charCodeAt(i - 1) !== BARRA) {
-        salida.push([inicio, i, texto.slice(inicio + 1, i)]);
-        comilla = null;
-      }
+  let i = 0;
+  while (i < texto.length) {
+    const { fin, clase } = finDeLoQueNoSeLee(texto, i);
+    if (clase === 'cadena' || clase === 'plantilla') {
+      if (texto[fin - 1] === texto[i]) salida.push([i, fin - 1, texto.slice(i + 1, fin - 1)]);
+      i = fin;
       continue;
     }
-    if (c === "'" || c === '"' || c === '`') { comilla = c; inicio = i; }
+    if (clase) { i = fin; continue; }
+    i++;
   }
   return salida;
 }
@@ -319,15 +334,11 @@ function parametrosDeUnTexto(texto) {
 /** Corta una lista de argumentos por las comas de primer nivel. */
 function porComas(s) {
   const salida = [];
-  let prof = 0, act = '', comilla = null;
+  let prof = 0, act = '';
   for (let i = 0; i < s.length; i++) {
     const c = s[i];
-    if (comilla) {
-      act += c;
-      if (c === comilla && s.charCodeAt(i - 1) !== BARRA) comilla = null;
-      continue;
-    }
-    if (c === "'" || c === '"' || c === '`') { comilla = c; act += c; continue; }
+    const { fin, clase } = finDeLoQueNoSeLee(s, i);
+    if (clase) { act += s.slice(i, fin); i = fin - 1; continue; }
     if ('([{'.includes(c)) prof++;
     if (')]}'.includes(c)) prof--;
     if (c === ',' && prof === 0) { salida.push(act.trim()); act = ''; continue; }
@@ -339,14 +350,11 @@ function porComas(s) {
 
 /** Lo que hay entre el paréntesis de `desde` y el que lo cierra, o `null`. */
 function entreParentesis(texto, desde) {
-  let prof = 0, comilla = null;
+  let prof = 0;
   for (let i = desde; i < texto.length; i++) {
     const c = texto[i];
-    if (comilla) {
-      if (c === comilla && texto.charCodeAt(i - 1) !== BARRA) comilla = null;
-      continue;
-    }
-    if (c === "'" || c === '"' || c === '`') { comilla = c; continue; }
+    const { fin, clase } = finDeLoQueNoSeLee(texto, i);
+    if (clase) { i = fin - 1; continue; }
     if (c === '(') prof++;
     if (c === ')') { prof--; if (prof === 0) return texto.slice(desde + 1, i); }
   }
@@ -366,17 +374,17 @@ function valoresDeUnArgumento(arg) {
   const blanquear = (desde, hasta) => { for (let k = desde; k < hasta; k++) resto[k] = ' '; };
   let i = 0;
   while (i < arg.length) {
-    const c = arg[i];
-    if (c === "'" || c === '"') {
+    const { fin, clase } = finDeLoQueNoSeLee(arg, i);
+    if (!clase) { i++; continue; }
+    /* La expresión regular no se borra: no es un texto escrito, y lo que deja
+       a la vista es código como cualquier otro. Alcanza con saltearla entera
+       para no leer como comilla una que vaya escrita adentro. */
+    if (clase === 'expresion') { i = fin; continue; }
+    if (clase === 'plantilla') {
       let j = i + 1;
-      while (j < arg.length && !(arg[j] === c && arg.charCodeAt(j - 1) !== BARRA)) j++;
-      blanquear(i, Math.min(j + 1, arg.length)); i = j + 1; continue;
-    }
-    if (c === '`') {
-      let j = i + 1;
-      while (j < arg.length) {
-        if (arg[j] === '`' && arg.charCodeAt(j - 1) !== BARRA) break;
-        if (arg[j] === '$' && arg[j + 1] === '{' && arg.charCodeAt(j - 1) !== BARRA) {
+      while (j < fin - 1) {
+        if (arg.charCodeAt(j) === BARRA) { j += 2; continue; }
+        if (arg[j] === '$' && arg[j + 1] === '{') {
           let prof = 1, k = j + 2;
           while (k < arg.length && prof > 0) {
             if (arg[k] === '{') prof++; else if (arg[k] === '}') prof--;
@@ -388,9 +396,9 @@ function valoresDeUnArgumento(arg) {
         }
         j++;
       }
-      blanquear(i, Math.min(j + 1, arg.length)); i = j + 1; continue;
     }
-    i++;
+    blanquear(i, fin);
+    i = fin;
   }
   for (const [desde, hasta] of pedazosDe(resto)) {
     if (!resto.slice(desde, hasta).join('').trim()) continue;
@@ -470,6 +478,15 @@ const MAL = [
   ['el mismo, leído por una pantalla de un programa, que se la pide a las rutas',
    "const [parametros] = useSearchParams();\n" +
    "const dni = parametros.get('dni');\n"],
+  ['el mismo, con una expresión regular de acento grave escrita más arriba',
+   "const CUALQUIERA = /[`]/;\n"
+   + "const enlace = 'perfil.html?dni=' + encodeURIComponent(fila.documento);\n"],
+  ['el mismo, detrás de un texto que termina con una barra invertida tapada',
+   String.raw`const SEPARADOR = '\\';` + '\n'
+   + "const enlace = 'perfil.html?dni=' + encodeURIComponent(fila.documento);\n"],
+  ['el mismo, detrás de una división, que no abre ninguna expresión regular',
+   "const mitad = total / 2;\n"
+   + "const enlace = 'perfil.html?dni=' + encodeURIComponent(fila.documento);\n"],
   ['un registro con un dato suelto',
    'console.log(legajo);\n'],
   ['un registro con el dato disfrazado de mensaje',

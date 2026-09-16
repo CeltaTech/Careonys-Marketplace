@@ -3771,7 +3771,7 @@ Y había daño puesto. Seis chequeos eximían a `Nueva carpeta`, que se había m
 cuarentena (`docs/PENDIENTES.md:66`) y por lo tanto ya no existía en ningún lado donde ningún
 chequeo pudiera mirar: `scripts/verificar_arranque.mjs:53`,
 `scripts/verificar_botones.mjs:67`, `scripts/verificar_deposito.mjs:125`,
-`scripts/verificar_estados.mjs:79`, `scripts/verificar_sensibles.mjs:103` y un bloque entero en
+`scripts/verificar_estados.mjs:79`, `scripts/verificar_sensibles.mjs:104` y un bloque entero en
 `scripts/citas.mjs`. Seis renglones perdonando a un fantasma.
 
 Qué se hizo: una tercera regla, `carpetasEximidasQueNoEstan()`
@@ -4301,7 +4301,7 @@ Son los tres que quedaban de la familia «el encabezado dice una cosa y el códi
 los tres la salida honesta era arreglar el encabezado y no ensanchar el chequeo: ensanchar los
 habría puesto en rojo sobre lo que las reglas de la empresa mandan escribir.
 
-**Los datos sensibles.** `scripts/verificar_sensibles.mjs:103` deja afuera cinco carpetas y el
+**Los datos sensibles.** `scripts/verificar_sensibles.mjs:104` deja afuera cinco carpetas y el
 encabezado no nombraba ninguna. Ahora las nombra a las cinco con su motivo, y de `supabase/` dice
 además lo que importa: ahí el detalle crudo del error va a propósito, porque la regla de la
 empresa manda que el cliente reciba un mensaje entendible y el detalle quede en el registro del
@@ -4519,7 +4519,7 @@ nunca el único archivo del producto escrito en el otro lenguaje. Así que el
 defecto estuvo en su lugar con los 41 chequeos en verde. Y el archivo hermano que
 sí nombra esa carpeta escribió la mitad de la razón: decía que ahí el detalle
 crudo va a propósito, lo cual es cierto del registro del servidor y falso de la
-respuesta (`scripts/verificar_sensibles.mjs:96`).
+respuesta (`scripts/verificar_sensibles.mjs:97`).
 
 Ahora la carpeta entra —quedan afuera las migraciones, que son esquema y no le
 contestan a nadie— y entra también la extensión del servidor. El detector nuevo
@@ -4627,7 +4627,7 @@ y el chequeo terminó en verde, contando las dos filtraciones entre los registro
 certificaba como limpios.
 
 **Lo que se cambió.** Ahora hay una función que dice qué valores imprime un argumento
-(`scripts/verificar_sensibles.mjs:363`): blanquea cada texto escrito dejando el
+(`scripts/verificar_sensibles.mjs:371`): blanquea cada texto escrito dejando el
 argumento del mismo largo —para recortar después el original y no una reconstrucción—,
 saca aparte las expresiones de adentro de cada `${}`, y corta lo que queda por lo que
 pega y por lo que elige (`:412`). Un `?:` y un `||` cortan igual que una suma, porque
@@ -4838,6 +4838,35 @@ aparezca, porque uno escrito adentro de un texto no cierra nada.
 con comilla común, y el renglón verde dice los mismos quince que antes. Falsificado
 en los dos sentidos, y el banco de pruebas del lector —que probaba una sola de las
 tres maneras— ahora prueba las tres y la nota adentro de la lista.
+
+### La misma pregunta contestada cinco veces adentro de un solo chequeo
+
+El chequeo que vigila que no salgan datos por la barra de direcciones ni por el
+registro de actividades tiene que saber dónde empieza y dónde termina cada texto
+escrito de un archivo: es ahí donde se escribe una dirección. Esa pregunta
+—«¿esto se lee o se saltea entero?»— se la contestaba cinco veces por su cuenta,
+en cinco recorridos distintos escritos uno al lado del otro: al juntar los textos
+escritos, al cortar una lista de argumentos por sus comas, al buscar el paréntesis
+que cierra, al separar los valores de un argumento y al borrar las notas.
+
+Las cinco copias compartían las dos mismas fallas. Ninguna reconocía una
+expresión regular, así que una comilla escrita adentro de una abría un texto que
+se comía el archivo hasta la próxima comilla, y lo que quedaba en el medio no lo
+miraba nadie. Y todas leían como tapada la comilla que viene detrás de una barra
+invertida que ya estaba tapada, con el mismo efecto.
+
+No era una posibilidad: estaba pasando. El archivo que traduce el error de la
+base a una frase que se puede mostrar escribe `.replace(/"/g, '&quot;')`, y desde
+esa comilla hasta el final del archivo —ciento cuarenta y tres renglones— el
+chequeo no leía nada. Es justamente el archivo donde un dato que se escape
+importa. Un parámetro sin declarar escrito ahí abajo pasaba en verde.
+
+La pregunta se la hace ahora el módulo que lee el texto visible, que es donde ya
+estaba contestada. Y contestándola en un solo lugar apareció lo que faltaba
+también ahí: una barra pegada a un `<` cierra una etiqueta y una etiqueta que se
+cierra sola termina en `/>`, y ninguna de las dos abre ninguna expresión regular.
+Leerlas así se tragaba desde ahí hasta la próxima barra del renglón, con los
+textos que hubiera en el medio.
 
 ### El vigilante de los chequeos era el único chequeo que no vigilaba nadie
 
