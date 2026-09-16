@@ -73,6 +73,18 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative } from 'node:path';
 import { hayArchivos, seRevisaron, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
+import { comoSeEscribe, valorDe } from './atributos.mjs';
+
+/* Cómo se escribe el valor de un atributo no se contesta acá. Estaba
+   contestado dos veces en este mismo archivo y no igual: el lector de las
+   pantallas conocía las dos comillas y las llaves, y el del marcado suelto
+   conocía una sola comilla, así que una clase escrita con comillas simples no
+   la nombraba nadie y podía quedar sin declarar en ninguna hoja. Lo contesta
+   `scripts/atributos.mjs`, que existe justamente para eso y lo tiene escrito
+   una sola vez —incluido el motivo escrito por el que el valor sin comillas
+   ningunas, que el marcado admite, queda afuera: este proyecto no lo escribe—. */
+const NOMBRA_UNA_CLASE = new RegExp(comoSeEscribe('class'), 'g');
+const NOMBRA_UNA_CLASE_DE_PANTALLA = new RegExp(comoSeEscribe('className'), 'g');
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const BARRA = String.fromCharCode(92);
@@ -94,8 +106,10 @@ export function clasesQueDeclara(css) {
 
 export function clasesQueNombra(html) {
   const encontradas = new Set();
-  for (const m of html.matchAll(/class="([^"]*)"/g)) {
-    for (const clase of m[1].split(/\s+/).filter(Boolean)) {
+  for (const m of html.matchAll(NOMBRA_UNA_CLASE)) {
+    const suelta = valorDe(m);
+    if (suelta === null) continue;
+    for (const clase of suelta.split(/\s+/).filter(Boolean)) {
       if (ES_NOMBRE(clase) && !VIENE_DE_AFUERA(clase)) encontradas.add(clase);
     }
   }
@@ -188,9 +202,9 @@ function entreLlaves(texto, desde) {
 
 export function clasesQueNombraUnaPantalla(jsx) {
   const encontradas = new Set();
-  for (const m of jsx.matchAll(/className=(?:"([^"]*)"|'([^']*)'|\{)/g)) {
-    const suelta = m[1] !== undefined ? m[1] : m[2];
-    if (suelta === undefined) {
+  for (const m of jsx.matchAll(NOMBRA_UNA_CLASE_DE_PANTALLA)) {
+    const suelta = valorDe(m);
+    if (suelta === null) {
       clasesDeLaExpresion(entreLlaves(jsx, m.index + m[0].length - 1), encontradas);
       continue;
     }
@@ -228,6 +242,10 @@ const PRUEBAS = [
   /* Así escribe el marcado un guion del navegador, que es de donde salió el
      nombre que nadie miraba. */
   [clasesQueNombra('return `<div class="lista-en-un-guion">${x}</div>`;'), 'lista-en-un-guion', true],
+  [clasesQueNombra("<div class='con-comillas-simples'>"), 'con-comillas-simples', true],
+  [clasesQueNombra('<div class = "con-espacios">'), 'con-espacios', true],
+  [clasesQueNombraUnaPantalla("el.className = 'puesta-por-un-guion';"), 'puesta-por-un-guion', true],
+  [clasesQueNombraUnaPantalla("<div className='con-comillas-simples'>"), 'con-comillas-simples', true],
   [clasesQueAgarraUnGuion("document.querySelector('.wizard-step-pane')"), 'wizard-step-pane', true],
   [clasesQueAgarraUnGuion('elemento.classList.add("fade-in")'), 'fade-in', true],
   [clasesQueAgarraUnGuion("const s = '.logo-brand, .tenant-logo, .navbar-logo img';"), 'logo-brand', true],
@@ -282,9 +300,11 @@ for (const archivo of conMarcado) {
     for (const c of clasesQueAgarraUnGuion(bloque[1])) agarradas.add(c);
   }
   for (const c of clasesQueAgarraUnaPantalla(html)) agarradas.add(c);
-  /* Las dos formas de nombrar no se pisan: `class="` no aparece nunca adentro
-     de un `className="`, así que cada pantalla la lee la que le corresponde sin
-     preguntarle de qué tipo es. */
+  /* Las dos formas de nombrar no se pisan: después de `class` el que nombra una
+     clase de pantalla escribe letras y no un `=`, así que cada pantalla la lee
+     la que le corresponde sin preguntarle de qué tipo es. Y el lector admite
+     espacios alrededor del `=`, que el marcado permite, así que entra también
+     el nombre que un guion le pone a un elemento ya hecho. */
   for (const clase of new Set([...clasesQueNombra(html), ...clasesQueNombraUnaPantalla(html)])) {
     if (!nombradas.has(clase)) nombradas.set(clase, new Set());
     nombradas.get(clase).add(relative(raiz, archivo).split(BARRA).join('/'));
@@ -310,7 +330,9 @@ if (huerfanas.length) {
 
 console.log(
   `Clases verificadas: ${nombradas.size} nombradas en ${conMarcado.length} pantallas y ` +
-  'guiones del navegador, que también escriben marcado, ' +
+  'guiones del navegador, que también escriben marcado —en el atributo escrito ' +
+  'de cualquiera de sus formas, y también cuando un guion se lo pone a un ' +
+  'elemento ya hecho—, ' +
   `todas declaradas en alguna de las ${hojas.length} hojas o agarradas por algún guion ` +
   '(Font Awesome exenta, por venir de afuera).'
 );

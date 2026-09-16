@@ -4117,10 +4117,10 @@ chequeo manda hacer cuando encuentra uno, y no cambia nada de lo que se ve porqu
 regla lo alcanzaba.
 
 El corpus ahora se arma con las pantallas y los guiones del navegador
-(`scripts/verificar_clases.mjs:266`), y pasó de 74 archivos a 109 y de 363 nombres a 367.
+(`scripts/verificar_clases.mjs:284`), y pasó de 74 archivos a 109 y de 363 nombres a 367.
 El banco de pruebas del propio chequeo ganó el caso que faltaba: una clase escrita adentro
 de un texto de plantilla, que es como un guion escribe marcado
-(`scripts/verificar_clases.mjs:230`).
+(`scripts/verificar_clases.mjs:244`).
 
 Se comprobó de las tres maneras antes de darlo por bueno. Con la clase muerta puesta de
 vuelta y el corpus ancho, el chequeo se pone en rojo y nombra el archivo. Con la clase
@@ -4678,6 +4678,35 @@ una prueba puede decir por cuál de los motivos tiene que avisar
 
 No había daño puesto: ningún manejador escrito de las dos maneras nuevas existe hoy en el
 producto, y el chequeo sigue en verde sobre los mismos 110 archivos.
+
+### El chequeo de clases contestaba dos veces, y distinto, cómo se escribe un atributo
+
+Cómo se escribe el valor de un atributo en el marcado —entre comillas dobles, entre
+comillas simples, entre acentos graves, entre llaves— estaba contestado dos veces adentro
+del mismo archivo, y no igual. El lector de las pantallas conocía las dos comillas y las
+llaves. El del marcado suelto conocía una sola comilla
+(`scripts/verificar_clases.mjs:86`).
+
+La consecuencia: una clase escrita con comillas simples no la nombraba nadie, así que
+podía quedar sin declarar en ninguna hoja de estilo sin que el chequeo dijera una
+palabra. Probado antes de tocar nada, sobre una plantilla de verdad del producto: una
+clase inventada escrita con comillas dobles puso el chequeo colorado y nombró el archivo;
+la misma clase inventada escrita con comillas simples terminó en verde.
+
+Lo que agrava el caso es que la respuesta única ya existía y este chequeo no se la pedía.
+`scripts/atributos.mjs` nació justamente para esto, y su encabezado dice que una lista de
+formas escrita dos veces se completa una vez y queda corta la otra —que es, palabra por
+palabra, lo que había pasado acá—. Lo usaban dos chequeos y éste no. Ahora las dos
+lecturas se la piden, y la forma de escribir un atributo se contesta en un solo lugar.
+
+Entraron 23 nombres de clase que no miraba nadie. Ninguno viene de una comilla simple:
+todos son de un guion que le pone la clase a un elemento ya hecho, escrito con espacios
+alrededor del signo igual —que el marcado permite y el lector viejo rechazaba—. No se
+perdió ninguno, y los 379 están declarados en alguna hoja o agarrados por algún guion,
+así que no había daño puesto.
+
+El valor escrito sin comillas ningunas sigue afuera, y el motivo está escrito donde
+corresponde: el marcado lo admite y este proyecto no lo escribe.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
