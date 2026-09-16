@@ -13,12 +13,19 @@
    sin una sola forma de entrar al producto, y siguió así hasta que alguien fue
    a contar filas a mano.
 
-   QUÉ MIRA. Tres columnas apuntan a `auth.users`: `profiles.id`,
-   `caregivers.user_id` y `avisos.familia_id`. Para cada identificador que
-   las migraciones escriben en alguna de las tres se exige que ese mismo
-   identificador aparezca en una migración que dé de alta cuentas. Es
-   exactamente lo que se rompió: al desaparecer el archivo de las cuentas, esos
-   seis `uuid` quedaron nombrados en un solo lado.
+   QUÉ MIRA. Las columnas que apuntan a `auth.users`, **leídas de las propias
+   migraciones y no escritas acá**. Para cada identificador que las migraciones
+   escriben en alguna de ellas se exige que ese mismo identificador aparezca en
+   una migración que dé de alta cuentas. Es exactamente lo que se rompió: al
+   desaparecer el archivo de las cuentas, esos seis `uuid` quedaron nombrados en
+   un solo lado.
+
+   Cuáles son esas columnas estuvo escrito acá a mano, y decía tres cuando las
+   migraciones declaran seis. `conversaciones.familia_id`, `mensajes.autor_id` y
+   `prestadora_de_la_sesion.usuario_id` quedaron fuera del chequeo sin que nada
+   avisara: la última ni siquiera existía el día que se escribió la lista. Una
+   fila colgada en cualquiera de las tres pasaba en verde, que es el mismo
+   silencio que este archivo existe para romper.
 
    Y las filas vienen escritas de dos maneras, que se leen distinto. La que
    nombra sus columnas —`INSERT INTO tabla (id, ...) VALUES (...)`— se lee sola.
@@ -57,13 +64,15 @@ import { seRevisaron } from './recorrido.mjs';
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CARPETA = join(raiz, 'supabase', 'migrations');
 
-/* Las columnas que apuntan a `auth.users`, con la tabla donde viven. Si mañana
-   aparece una cuarta, entra acá: el resto del archivo no la nombra. */
-const APUNTAN_A_UNA_CUENTA = [
-  ['profiles', 'id'],
-  ['caregivers', 'user_id'],
-  ['avisos', 'familia_id'],
-];
+/* Cómo se declara que una columna apunta a `auth.users`, en las dos formas en
+   que este proyecto lo escribe. La de arriba es la del volcado: la tabla se
+   crea primero y la restricción se agrega después, aparte. El `[^;]*?` no es
+   prolijidad: mantiene la búsqueda adentro de una sola sentencia, para que el
+   nombre de una tabla no se empareje con la llave de la siguiente. */
+const APARTE =
+  /alter\s+table\s+(?:only\s+)?(?:public\.)?"?([a-z_]\w*)"?\s+add\s+constraint\s+[^;]*?foreign\s+key\s*\(\s*"?([a-z_]\w*)"?\s*\)\s*references\s+auth\.users\b/gi;
+const REFERENCIA_UNA_CUENTA = /references\s+auth\.users\b/i;
+const AL_PIE = /foreign\s+key\s*\(\s*"?([a-z_]\w*)"?\s*\)/i;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DA_DE_ALTA_CUENTAS = /insert\s+into\s+auth\.users\b/i;
@@ -174,22 +183,63 @@ export function ordenDeLasColumnas(sql) {
   return tablas;
 }
 
+/** Qué columnas apuntan a `auth.users`, según lo que declaran las migraciones.
+ *  Devuelve un conjunto de `tabla.columna`.
+ *
+ *  Se lee y no se escribe. Escritas a mano eran tres y las migraciones declaran
+ *  seis: la lista envejeció sola, en silencio, y el chequeo siguió diciendo ✔
+ *  sobre la mitad de lo que tenía que mirar.
+ *
+ *  Las dos formas de declararlo se reconocen. Aparte, que es como lo escribe un
+ *  volcado y como están escritas hoy las seis. Y adentro del `create table`, que
+ *  es como lo escribe una persona, sea al lado de la columna o al pie de la
+ *  tabla. */
+export function columnasQueApuntanAUnaCuenta(sql) {
+  const pares = new Set();
+
+  for (const m of sql.matchAll(APARTE)) {
+    pares.add(m[1].toLowerCase() + '.' + m[2].toLowerCase());
+  }
+
+  const CREA = /create\s+table\s+(?:if\s+not\s+exists\s+)?(?:public\.)?"?([a-z_]\w*)"?\s*\(/gi;
+  for (const m of sql.matchAll(CREA)) {
+    const abre = m.index + m[0].length - 1;
+    const cierra = cierraElParentesis(sql, abre);
+    if (cierra < 0) continue;
+    for (const parte of partirEnLoAlto(sql.slice(abre + 1, cierra))) {
+      const limpia = parte.trim();
+      if (!limpia || !REFERENCIA_UNA_CUENTA.test(limpia)) continue;
+      /* Al pie de la tabla el nombre va adentro del paréntesis; al lado de la
+         columna, la columna es la primera palabra del renglón. */
+      const nombre = limpia.match(AL_PIE) || limpia.match(/^"?([a-z_]\w*)"?/i);
+      if (nombre) pares.add(m[1].toLowerCase() + '.' + nombre[1].toLowerCase());
+    }
+  }
+
+  return pares;
+}
+
 /* El nombre de la tabla se mete en el medio, así que el patrón se arma. Los
    dos costados se escriben como patrones de verdad y no como texto, porque un
    texto con barras se copia mal de un lado a otro y llega roto sin avisar. */
 const ANTES_DEL_NOMBRE = /insert\s+into\s+(?:public\.)?"?/.source;
 const DESPUES_DEL_NOMBRE = /"?\s*(?:\(([^)]*)\))?\s*values\s*\(([\s\S]*?)\)\s*;/.source;
 
-/* Los identificadores de cuenta que un texto escribe en las tres columnas.
+/* Los identificadores de cuenta que un texto escribe en esas columnas.
    Devuelve pares [tabla.columna, uuid], para poder decir dónde estaba.
+
+   `pares` trae qué columnas apuntan a una cuenta, y va sin valor por omisión a
+   propósito: un conjunto vacío por descuido haría que esto devolviera cero sin
+   que nada suene, que es la falla que se está arreglando.
 
    `orden` trae las columnas de cada tabla, para poder leer el `insert` que no
    nombra ninguna. El que viene sin lista y sin orden conocido no se saltea en
    silencio: sale por `sinOrden`, porque saltear callado es exactamente cómo
    este chequeo pasó a mirar cero. */
-export function cuentasNombradas(texto, orden = new Map(), sinOrden = []) {
+export function cuentasNombradas(texto, pares, orden = new Map(), sinOrden = []) {
+  if (!(pares instanceof Set)) throw new Error('cuentasNombradas necesita el conjunto de columnas que apuntan a una cuenta.');
   const nombrados = [];
-  for (const [tabla, columna] of APUNTAN_A_UNA_CUENTA) {
+  for (const [tabla, columna] of [...pares].map((par) => par.split('.'))) {
     const patron = new RegExp(ANTES_DEL_NOMBRE + tabla + DESPUES_DEL_NOMBRE, 'gi');
     for (const fila of texto.matchAll(patron)) {
       let cols;
@@ -234,10 +284,11 @@ export function cuentasCreadas(texto) {
     `INSERT INTO public.profiles (id, tenant_id, full_name, role) VALUES ('${id}', ` +
     `'f166d60e-96fe-4c50-888d-f34f41f78e46', 'Alguien Ficticio', 'familiar');`;
   const uno = 'ccccccc1-0000-4000-8000-000000000001';
+  const perfilYNadaMas = new Set(['profiles.id']);
 
-  if (cuentasNombradas(perfil(uno)).length !== 1) rotas.push('no lee el identificador de un perfil');
-  if (cuentasNombradas(perfil(uno))[0][1] !== uno) rotas.push('lee mal el identificador de un perfil');
-  if (cuentasNombradas('select 1;').length !== 0) rotas.push('inventa identificadores donde no hay ninguno');
+  if (cuentasNombradas(perfil(uno), perfilYNadaMas).length !== 1) rotas.push('no lee el identificador de un perfil');
+  if (cuentasNombradas(perfil(uno), perfilYNadaMas)[0][1] !== uno) rotas.push('lee mal el identificador de un perfil');
+  if (cuentasNombradas('select 1;', perfilYNadaMas).length !== 0) rotas.push('inventa identificadores donde no hay ninguno');
   if (cuentasCreadas(`insert into auth.users values ('${uno}');`).length !== 1) {
     rotas.push('no ve la cuenta que sí se crea');
   }
@@ -266,18 +317,59 @@ export function cuentasCreadas(texto) {
   if ((columnas.get('profiles') || []).join() !== 'id,tenant_id,full_name,role,created_at') {
     rotas.push('lee mal el orden con el que nació la tabla');
   }
-  if (cuentasNombradas(perfilVolcado(uno), columnas).length !== 1) {
+  if (cuentasNombradas(perfilVolcado(uno), perfilYNadaMas, columnas).length !== 1) {
     rotas.push('no lee el perfil escrito como lo escribe un volcado');
   }
-  if ((cuentasNombradas(perfilVolcado(uno), columnas)[0] || [])[1] !== uno) {
+  if ((cuentasNombradas(perfilVolcado(uno), perfilYNadaMas, columnas)[0] || [])[1] !== uno) {
     rotas.push('lee mal el identificador del perfil escrito como lo escribe un volcado');
   }
 
   const sinSaber = [];
-  if (cuentasNombradas(perfilVolcado(uno), new Map(), sinSaber).length !== 0) {
+  if (cuentasNombradas(perfilVolcado(uno), perfilYNadaMas, new Map(), sinSaber).length !== 0) {
     rotas.push('adivina el lugar de la columna sin saber el orden de la tabla');
   }
   if (!sinSaber.includes('profiles')) rotas.push('se saltea callado la fila que no puede leer');
+
+  /* Y que sepa solo cuáles son esas columnas. Escritas a mano decían tres y las
+     migraciones declaran seis, así que tres columnas que apuntan a una cuenta
+     quedaron sin mirar. Se prueban las dos formas de declararlo: aparte, que es
+     como lo escribe un volcado, y adentro del `create table`, al lado de la
+     columna y al pie de la tabla, que es como lo escribe una persona. */
+  const APARTE_DE_PRUEBA =
+    'ALTER TABLE ONLY public.conversaciones\n' +
+    '    ADD CONSTRAINT conversaciones_familia_id_fkey FOREIGN KEY (familia_id) ' +
+    'REFERENCES auth.users(id) ON DELETE CASCADE;\n';
+  const ADENTRO_DE_PRUEBA =
+    'CREATE TABLE public.recados (\n' +
+    '    id uuid PRIMARY KEY,\n' +
+    '    autor_id uuid NOT NULL REFERENCES auth.users(id),\n' +
+    '    tenant_id uuid NOT NULL,\n' +
+    '    FOREIGN KEY (revisor_id) REFERENCES auth.users(id)\n' +
+    ');\n';
+  const SIN_CUENTA =
+    'ALTER TABLE ONLY public.legajos\n' +
+    '    ADD CONSTRAINT legajos_tenant_id_fkey FOREIGN KEY (tenant_id) ' +
+    'REFERENCES public.tenants(id);\n';
+
+  const leidas = columnasQueApuntanAUnaCuenta(APARTE_DE_PRUEBA + ADENTRO_DE_PRUEBA + SIN_CUENTA);
+  for (const esperada of ['conversaciones.familia_id', 'recados.autor_id', 'recados.revisor_id']) {
+    if (!leidas.has(esperada)) rotas.push('no lee la columna que apunta a una cuenta: ' + esperada);
+  }
+  if (leidas.has('legajos.tenant_id')) rotas.push('toma por cuenta una llave que apunta a otra tabla');
+  if (leidas.size !== 3) rotas.push('inventa columnas que apuntan a una cuenta: ' + [...leidas].join(', '));
+
+  /* Y que el nombre de una tabla no se empareje con la llave de la siguiente
+     sentencia, que es lo que pasa si la búsqueda cruza el punto y coma. */
+  const DOS_SENTENCIAS =
+    'ALTER TABLE ONLY public.legajos ADD CONSTRAINT a FOREIGN KEY (tenant_id) ' +
+    'REFERENCES public.tenants(id);\n' +
+    'ALTER TABLE ONLY public.recados ADD CONSTRAINT b FOREIGN KEY (autor_id) ' +
+    'REFERENCES auth.users(id);\n';
+  const dos = columnasQueApuntanAUnaCuenta(DOS_SENTENCIAS);
+  if (dos.has('legajos.autor_id') || dos.has('legajos.tenant_id')) {
+    rotas.push('cruza el punto y coma y le cuelga a una tabla la llave de la siguiente');
+  }
+  if (!dos.has('recados.autor_id')) rotas.push('pierde la llave que viene después de otra sentencia');
 
 
   if (rotas.length) {
@@ -296,6 +388,19 @@ const nombradas = [];      // [archivo, tabla.columna, uuid]
 const orden = new Map();   // tabla -> columnas, en el orden con el que nació
 let creanCuentas = 0;
 
+/* Qué columnas apuntan a una cuenta se junta de todas las migraciones antes de
+   leer una sola fila, y no migración por migración como el orden de las
+   columnas. Son dos cosas distintas: el orden de una tabla cambia con el
+   tiempo y una fila se lee con el orden que la tabla tenía ese día, mientras
+   que a dónde apunta una columna es una sola cosa, la declare el archivo que la
+   declare. */
+const apuntanAUnaCuenta = new Set();
+for (const nombre of migraciones) {
+  const texto = readFileSync(join(CARPETA, nombre), 'utf8');
+  for (const par of columnasQueApuntanAUnaCuenta(texto)) apuntanAUnaCuenta.add(par);
+}
+seRevisaron(apuntanAUnaCuenta.size, 'ninguna columna que apunte a una cuenta');
+
 for (const nombre of migraciones) {
   const texto = readFileSync(join(CARPETA, nombre), 'utf8');
 
@@ -306,7 +411,7 @@ for (const nombre of migraciones) {
   for (const id of cuentasCreadas(texto)) creadas.add(id);
 
   const sinOrden = [];
-  for (const [donde, id] of cuentasNombradas(texto, orden, sinOrden)) {
+  for (const [donde, id] of cuentasNombradas(texto, apuntanAUnaCuenta, orden, sinOrden)) {
     nombradas.push([nombre, donde, id]);
   }
   for (const tabla of new Set(sinOrden)) {
@@ -375,7 +480,8 @@ if (problemas.length) {
 if (creanCuentas > 0) seRevisaron(nombradas.length, 'ni una fila que apunte a una cuenta');
 
 const distintas = new Set(nombradas.map(([, , id]) => id)).size;
-const cuantas = `${migraciones.length} migraciones, ${nombradas.length} referencias a ${distintas} cuentas`;
+const cuantas = `${migraciones.length} migraciones, ${apuntanAUnaCuenta.size} columnas que apuntan a una cuenta`
+  + ` —leídas de las migraciones, no escritas acá—, ${nombradas.length} referencias a ${distintas} cuentas`;
 if (creanCuentas === 0 && nombradas.length === 0) {
   console.log(`Cuentas: ${cuantas}. Ninguna migración las nombra todavía.`);
 } else {

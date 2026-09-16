@@ -4057,6 +4057,44 @@ la lectura de columnas: con la palabra sin terminar, una tabla con `primary_colo
 se leía con una sola columna. Con el arreglo se leen las tres. Los dos bancos —el de
 las claves y el del esquema— se plantan el día que alguien saque el arreglo.
 
+### El chequeo de las cuentas huérfanas miraba tres de las seis columnas
+
+`scripts/verificar_cuentas.mjs` existe por un silencio: al juntarse las setenta y seis
+migraciones en tres archivos, el volcado pidió sólo el esquema `public`, las cuentas
+ficticias viven en `auth`, y se fueron sin que nada avisara. El chequeo nació para que una
+fila que apunte a una cuenta que ninguna migración crea no vuelva a pasar en verde.
+
+Cuáles son las columnas que apuntan a una cuenta estaba **escrito a mano acá adentro**, y
+decía tres: `profiles.id`, `caregivers.user_id` y `avisos.familia_id`. Las migraciones
+declaran seis. `conversaciones.familia_id`
+(`supabase/migrations/0001_base_del_esquema.sql:4094`), `mensajes.autor_id` (`:4326`) y
+`prestadora_de_la_sesion.usuario_id`
+(`supabase/migrations/0007_una_persona_entra_en_todas_las_prestadoras.sql:113`) quedaron
+fuera del chequeo. La última ni siquiera existía el día que se escribió la lista, y el
+renglón de al lado pedía que la cuarta se agregara a mano: nadie la agregó.
+
+Se probó antes de tocar nada, con una fila colgada en cada una de las tres: las tres
+pasaban sin que el chequeo las viera.
+
+Ahora las columnas **se leen de las propias migraciones**
+(`scripts/verificar_cuentas.mjs:197`), en las dos formas en que se declara una llave
+foránea: aparte, que es como lo escribe un volcado y como están escritas hoy las seis, y
+adentro del `create table`, al lado de la columna o al pie de la tabla, que es como lo
+escribe una persona. La búsqueda de la primera forma se queda adentro de una sola
+sentencia (`scripts/verificar_cuentas.mjs:72`), porque si cruza el punto y coma le cuelga
+a una tabla la llave de la siguiente.
+
+Y el conjunto de columnas **no tiene valor por omisión**
+(`scripts/verificar_cuentas.mjs:239`): un conjunto vacío por descuido haría que la lectura
+de filas devolviera cero sin que nada sonara, que es exactamente la falla que se está
+arreglando. Se junta de todas las migraciones antes de leer una sola fila
+(`scripts/verificar_cuentas.mjs:397`) y se declara con `seRevisaron()`, así que el día que
+deje de leer ninguna, se planta.
+
+No había daño: las dos primeras no tienen ninguna fila sembrada, y la tercera sólo la
+escriben tres funciones, con `auth.uid()` y con `new.id`, que no son identificadores
+escritos.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
