@@ -65,7 +65,7 @@ const EXCLUSIVO_DE_UN_CLIENTE = /^exclusivo/;
    un `claves.txt`, un `credenciales.env`, una carpeta `contraseñas`. Y `.md` y
    `.txt` quedan a propósito afuera de la lista de código: un documento que se
    llama así no es una pantalla, es una nota con lo que guarda adentro. */
-const ANUNCIA_UNA_CLAVE = /clave|contrase|secret|credencial|password/;
+export const ANUNCIA_UNA_CLAVE = /clave|contrase|secret|credencial|password/;
 
 /* La lista de lo que este proyecto considera código vive acá y en un solo
    lugar, porque la usan dos preguntas distintas: si un nombre con «clave»
@@ -77,8 +77,25 @@ export const EXTENSIONES_DE_CODIGO = [
   '.html', '.js', '.mjs', '.cjs', '.css', '.json', '.sql', '.ts', '.tsx', '.jsx',
   '.svg', '.webmanifest'
 ];
-const ES_CODIGO = new RegExp(
-  '\.(' + EXTENSIONES_DE_CODIGO.map((e) => e.slice(1)).join('|') + ')$', 'i');
+const conEsasExtensiones = (extensiones) => new RegExp(
+  String.raw`\.(` + extensiones.map((e) => e.slice(1)).join('|') + ')$', 'i');
+const ES_CODIGO = conEsasExtensiones(EXTENSIONES_DE_CODIGO);
+
+/* Y UNA IMAGEN TAMPOCO ES UNA CAJA FUERTE
+   Una clave es texto escrito: un `claves.txt`, un `credenciales.env`, una nota
+   con lo que guarda adentro. `docs/pantallas/27-recuperar-clave.png` es la foto
+   de la pantalla donde alguien cambia la suya, hermana de `RecuperarClave.jsx`,
+   y estaba cerrada —ella y la de al lado— porque la pregunta que evita cerrar
+   de más era «¿el nombre es código?», y una captura de pantalla no es código.
+   Eran dos archivos que el proyecto guarda y que ningún recorrido podía ver.
+
+   La lista vive acá porque la usan dos preguntas distintas —ésta, y la de qué
+   archivos no tiene sentido abrir para buscar texto adentro, en
+   `scripts/listar.mjs`—, y dos listas escritas aparte se despegan. */
+export const EXTENSIONES_DE_IMAGEN = [
+  '.png', '.jpg', '.jpeg', '.gif', '.webp', '.ico', '.avif', '.bmp'
+];
+const ES_IMAGEN = conEsasExtensiones(EXTENSIONES_DE_IMAGEN);
 
 /* Deja el nombre en su forma más desnuda: separa las palabras pegadas en
    mayúscula —`NoHacerCommit`— y borra todo lo que no sea una letra. Así
@@ -121,7 +138,7 @@ export const nuncaSeAbre = (nombre) => {
   if (NO_ES_DEL_PROYECTO.has(nombre)) return true;
   const limpio = desnudo(nombre);
   if (CERRADAS.has(limpio) || EXCLUSIVO_DE_UN_CLIENTE.test(limpio)) return true;
-  if (ES_CODIGO.test(nombre)) return false;
+  if (ES_CODIGO.test(nombre) || ES_IMAGEN.test(nombre)) return false;
   return ANUNCIA_UNA_CLAVE.test(nombre.toLowerCase());
 };
 
@@ -284,7 +301,6 @@ export function seRevisaron(cuantos, que) {
    comprueba que el archivo que dejó afuera de toda caja fuerte aparezca, para
    que un recorrido que devolviera siempre la lista vacía no pase. */
 export const ARMAN_SU_PROPIO_CORPUS = new Map([
-  ['verificar_cajas.mjs', 'arma su propio árbol de prueba y ya comprueba que no venga vacío'],
   ['verificar_etiquetas.mjs', 'su corpus es el banco de nombres inventados con el que se prueba el detector, escrito adentro del guion, y ya se planta si queda vacío: las etiquetas de verdad son cero hoy y eso es un estado legítimo']
 ]);
 

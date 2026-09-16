@@ -3472,6 +3472,45 @@ este control no es dejar pasar un teléfono —eso se arregla agregando una regl
 sino cortarle la conversación a un Asistente que está diciendo lo que cobra y
 cuándo puede.
 
+### Dos capturas de pantalla estaban tratadas como cajas fuertes, y nadie las veía
+
+La regla de la bóveda dice que una carpeta o un archivo que anuncia que guarda
+claves no se abre, no se lista y no se cita. El proyecto la hace cumplir en un
+solo lugar, `nuncaSeAbre()`, y la pregunta tiene dos puntas: cerrar lo que hay
+que cerrar, y **no cerrar de más**, porque un archivo que queda afuera del
+recorrido deja de revisarse y eso no lo avisa nadie.
+
+La segunda punta preguntaba «¿el nombre es código?». Un `NuevaClave.jsx` es la
+pantalla donde alguien cambia su contraseña, no un lugar donde haya una
+guardada, así que se abre. Pero una captura de pantalla no es código, y en
+`docs/pantallas/` hay dos que se llaman `27-recuperar-clave.png` y
+`28-nueva-clave.png`. Las dos estaban cerradas. Se nota en el buscador del
+propio proyecto: `node scripts/listar.mjs .png` devolvía **46 imágenes de las 48
+que hay en el disco**, sin decir que faltaban dos.
+
+Y el chequeo que cuida esa mitad no podía encontrarlo. Se probaba contra seis
+rutas escritas a mano —dos pantallas, el campo que comparten, un guion y una
+migración—, y **las seis eran código**, que es justo el caso que la regla sí
+resolvía bien. Una de las seis, además, no probaba nada: el nombre de la siembra
+ficticia no trae ninguna de las palabras que frenan, así que ese renglón pasaba
+igual con la regla rota.
+
+Se corrigió de las dos puntas:
+
+- **Una imagen no es una clave escrita.** Una clave es texto —un `claves.txt`,
+  un `credenciales.env`, una nota con lo que guarda adentro—, y una foto de la
+  pantalla donde alguien cambia la suya es hermana del código que la dibuja. La
+  lista de extensiones de imagen vive en `scripts/recorrido.mjs` y la consume
+  también `scripts/listar.mjs`, que la tenía escrita por segunda vez.
+- **La lista de la otra punta ya no se escribe a mano.** Sale de los archivos que
+  el proyecto guarda, preguntando sólo por el nombre —no se abre ninguno—, y una
+  caja fuerte, que por definición es lo que nunca entra al repositorio, no puede
+  aparecer ahí. Crece sola.
+
+El chequeo dejó además de estar exento de declarar qué cuenta: ahora se planta si
+esa lista sale vacía. Con la regla angostada otra vez a mano, la versión nueva
+nombra las dos capturas y se pone roja; la vieja escribe su renglón verde entero.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
@@ -3659,7 +3698,7 @@ lo que sigue explica por qué; el consentimiento de novedades sigue sin tabla.
 
 El 9 de septiembre de 2026 `formulario-integral.html` se apartó a la cuarentena: hoy vive en
 `fuera de uso/formulario-integral.html`, la carpeta que `.gitignore:34` declara fuera del
-repositorio y que `scripts/recorrido.mjs:116` deja afuera de todos los chequeos.
+repositorio y que `scripts/recorrido.mjs:133` deja afuera de todos los chequeos.
 
 **No se saca una pantalla porque moleste, y ésta no era una pantalla.** Nació el 5 de agosto de
 2026 como **hoja de muestra**: su título decía «Formularios Oficiales de la App» y venía con un

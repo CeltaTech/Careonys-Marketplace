@@ -42,13 +42,22 @@
 import { readFileSync } from 'node:fs';
 import { join, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { archivos } from './recorrido.mjs';
+import { archivos, EXTENSIONES_DE_IMAGEN } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 /* Las extensiones que no son texto: leerlas para buscar adentro no sirve y
-   además llena la pantalla de basura. Se listan igual, sólo no se leen. */
-const NO_ES_TEXTO = /\.(png|jpe?g|gif|webp|ico|pdf|zip|woff2?|ttf|eot|mp4|webm)$/i;
+   además llena la pantalla de basura. Se listan igual, sólo no se leen.
+
+   Las imágenes no se escriben acá: salen de `scripts/recorrido.mjs`, que las
+   necesita para la otra pregunta que se hace con la misma lista —si un nombre
+   con la palabra «clave» adentro es una caja fuerte o una captura de pantalla—.
+   Estaban escritas en los dos lugares, y de dos listas iguales siempre hay una
+   que se queda vieja. */
+const NO_ES_TEXTO = new RegExp(
+  String.raw`\.(` +
+  [...EXTENSIONES_DE_IMAGEN.map((e) => e.slice(1)), 'pdf', 'zip', 'woff2?', 'ttf', 'eot',
+    'mp4', 'webm'].join('|') + ')$', 'i');
 
 const argumentos = process.argv.slice(2);
 
