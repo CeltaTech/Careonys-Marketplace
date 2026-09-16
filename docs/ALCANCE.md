@@ -681,7 +681,7 @@ descartaba sin decir nada. Era el pendiente 23, y estaba abierto desde que la pa
   palabra nombraba un interruptor de código —`useSupabase`— dice interruptor. Donde todavía se lee
   es en `patrones_de_contacto.banderas` (`supabase/migrations/0001_base_del_esquema.sql:2893`), que
   no guarda ninguna casilla marcada sino las letras `g` e `i` con que se lee una expresión regular
-  y que `js/contacto.js:112` le pasa a `RegExp`. Es otra cosa con el mismo nombre, y queda anotado
+  y que `js/contacto.js:113` le pasa a `RegExp`. Es otra cosa con el mismo nombre, y queda anotado
   acá para que quien lo encuentre no crea que es un resto del renombre.
 - **Y «disponible para reemplazos urgentes» dejó de ser una autorización.** El Desarrollador
   decidió el mismo día que eso no es algo que se permita sino algo que se está: se mudó al paso de

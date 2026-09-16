@@ -52,7 +52,8 @@
    sólo alcanza su propia carpeta. Las dos PWAs sí tienen chat —`js/conversacion.js`,
    montado en las dos—, pero ese chat no usa este archivo: se apoya derecho en la
    puerta del servidor y muestra lo que ella conteste. El único que lee esto es
-   `mockup-app.html`, que se va cuando cierre el pendiente 6. El día que una
+   la pantalla de la maqueta, `web/src/pantallas/MockupApp.jsx`, que se va cuando
+   cierre el pendiente 6. El día que una
    pantalla de una PWA quiera avisar antes de mandar, se copia y se agrega a
    `scripts/verificar_copias.mjs`.
 =================================================== */
