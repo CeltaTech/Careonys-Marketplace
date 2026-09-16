@@ -90,6 +90,16 @@ export default function Legajo({ activa, base, navegar }) {
     if (pantalla) pantalla.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
+  /* En qué paso está puesta una ficha del legajo. Se le pregunta a la pantalla
+     y no a una lista escrita acá: las fichas viven repartidas en tres pasos, y
+     el día que una cambie de lugar —o nazca una nueva, que aparece sola porque
+     sale del catálogo— esto la encuentra igual. */
+  function pasoDeLaFicha(contenedorId) {
+    const donde = document.getElementById(contenedorId);
+    const panel = donde && donde.closest('.wpane');
+    return panel ? Number(panel.id.replace('wp', '')) : 0;
+  }
+
   /* Las piezas grandes se montan una sola vez, cuando la puerta a la base ya
      está abierta, y no cada vez que se entra a la pantalla: lo que la persona
      lleva cargado tiene que seguir ahí al volver. */
@@ -283,6 +293,39 @@ export default function Legajo({ activa, base, navegar }) {
       document.getElementById(HUECOS_DEL_ALTA.zonas).scrollIntoView({ block: 'center' });
       return;
     }
+
+    /* Lo que falta adentro de las fichas repetibles. Las fichas ya saben
+       marcarse en rojo solas, pero nadie se lo estaba pidiendo: el alta de
+       escritorio las revisa antes de dejar pasar de paso y acá no las revisaba
+       nadie, así que un legajo con una ficha a medias se enviaba igual y
+       llegaba incompleto a la Prestadora, con la persona creyendo que había
+       terminado. Se recorren todas y no se corta en la primera, para que vea de
+       una sola vez todo lo que le falta y no un campo por intento; y se va al
+       paso más temprano de los que quedaron con algo rojo. */
+    let pasoConFaltantes = 0;
+    for (const seccion of FichasLegajo.secciones) {
+      if (FichasLegajo.validarSeccion(seccion.contenedorId, seccion.tipo)) continue;
+      const cual = pasoDeLaFicha(seccion.contenedorId);
+      if (cual && (!pasoConFaltantes || cual < pasoConFaltantes)) pasoConFaltantes = cual;
+    }
+    if (pasoConFaltantes) {
+      window.alert(frase('alta.faltan_obligatorios'));
+      irA(pasoConFaltantes);
+      return;
+    }
+
+    /* Y la Matrícula, que el navegador no puede exigir porque no siempre es
+       obligatoria: lo es sólo cuando el Tipo de Asistente elegido la pide, y eso
+       lo dice el vocabulario. Sin ella el legajo no se puede publicar, así que
+       enviarlo sin avisar es hacerle perder el viaje a quien lo cargó. */
+    const tipoElegido = document.getElementById('w-profesion').value;
+    if (FichasLegajo.requiereMatricula(tipoElegido)
+        && FichasLegajo.recolectar('ficha-matricula', 'matricula').length === 0) {
+      window.alert(frase('legajo.matricula_obligatoria'));
+      irA(pasoDeLaFicha('ficha-matricula') || 2);
+      return;
+    }
+
     const zonasElegidas = Zonas.recolectar(HUECOS_DEL_ALTA.zonas);
 
     const patologias = Array.from(document.querySelectorAll('input[name="patologia"]:checked')).map((cb) => cb.value);
