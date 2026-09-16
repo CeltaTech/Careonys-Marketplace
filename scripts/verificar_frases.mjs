@@ -331,10 +331,22 @@ const usadasEnTodo = new Set();
 let convertidas = 0;
 let revisados = 0;
 
+/* Y la misma cuenta separando las pantallas de lo demás, que es lo único que
+   contesta «cuánto falta». El corpus trae además los guiones del navegador, los
+   módulos, los enganches y la configuración de armado, que no son pantallas y
+   casi ninguno va a pedir una frase nunca. Contados todos juntos, el número
+   decía que faltaban cuarenta y dos pantallas cuando faltan siete, y el
+   pendiente del i18n se guía por este renglón. */
+let pantallas = 0;
+let pantallasConvertidas = 0;
+const esArchivoDePantalla = (nombre) =>
+  EXTENSIONES_DE_PANTALLA.some((extension) => nombre.toLowerCase().endsWith(extension));
+
 for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   if (nombre.endsWith('sw.js')) continue;
   revisados++;
+  if (esArchivoDePantalla(nombre)) pantallas++;
   /* Dos clases de pantalla, y no se leen igual. Una página suelta es marcado
      con bloques de guión adentro; una pantalla de un programa es código de
      punta a punta, con el marcado adentro del código. */
@@ -405,6 +417,7 @@ for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJEN
   if (delPrograma) {
     if (!PIDE_FRASES.test(sinNotas)) continue;
     convertidas++;
+    if (esArchivoDePantalla(nombre)) pantallasConvertidas++;
 
     for (const [desde, texto] of textoDePrograma(sinNotas)) {
       const renglon = sinNotas.slice(0, desde).split('\n').length;
@@ -452,6 +465,7 @@ for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJEN
 
   if (/\bdata-frase\b/.test(sinNotas)) {
     convertidas++;
+    if (esArchivoDePantalla(nombre)) pantallasConvertidas++;
 
     // Regla 4a: en el HTML no puede quedar texto que una persona lea y que no
     // salga del catálogo.
@@ -717,4 +731,6 @@ if (fallas.length) {
 }
 
 console.log(`Frases verificadas: ${claves.length} en los tres idiomas, `
-  + `${convertidas} de ${revisados} archivos ya convertidos.`);
+  + `${pantallasConvertidas} de ${pantallas} pantallas ya convertidas `
+  + `(y ${convertidas} de ${revisados} archivos del corpus, que trae además `
+  + `guiones, módulos y configuración de armado, que no son pantallas).`);

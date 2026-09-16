@@ -4347,6 +4347,29 @@ alguno de esos casos, porque la exención que se queda sin nada que eximir perdo
 avisa sola. Eso también se comprobó al revés, apuntando la exención a un archivo limpio: va a
 rojo y lo nombra.
 
+### El i18n parecía tener cuarenta y dos pantallas pendientes y tiene tres
+
+El chequeo de las frases termina diciendo cuántos archivos van convertidos sobre cuántos abre,
+y el pendiente del i18n dice con todas sus letras que ese renglón es el que contesta cuánto
+falta. El denominador eran los 109 archivos del corpus, y el corpus no son sólo pantallas:
+`scripts/verificar_frases.mjs:334` abre además los guiones del navegador, los módulos comunes,
+los enganches y la configuración de armado de los tres programas. Ninguno de ésos va a pedir
+una frase nunca, y sin embargo todos contaban como pantalla sin convertir.
+
+Contando pantallas van **67 de 74**. Las siete que quedan son las tres cáscaras de HTML, los
+tres puntos de entrada y el repartidor de direcciones; abiertos uno por uno con el mismo lector
+que usan los chequeos del texto a la vista, los cuatro últimos no tienen una sola palabra que
+una persona lea —lo que salía de ellos eran renglones de importación—. Así que lo que falta
+son las tres cáscaras, y ahí lo único escrito en un solo idioma es el título y la descripción
+que necesita un buscador.
+
+El renglón final ahora dice las dos cuentas y nombra la diferencia, para que ninguna de las dos
+se lea como la otra.
+
+Es la otra cara de la familia del pendiente 154. Ahí un chequeo miraba menos de lo que decía;
+acá cuenta más de lo que la pregunta pide. Las dos terminan en lo mismo: alguien decide
+mirando un número que no significa lo que parece.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
