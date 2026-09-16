@@ -4320,6 +4320,33 @@ sueltas; hoy los escribe `scripts/armar_todo.mjs` sobre lo construido, que ning�
 porque no está en el proyecto: se arma y se publica. El encabezado dice ahora que hoy no los
 compara nadie, que es lo único honesto mientras siga así.
 
+### La regla del modo oscuro no abría ninguna herramienta, y una herramienta pinta
+
+El chequeo del modo oscuro busca un token pensado para letra pintando un fondo: de noche ese
+token se aclara y el fondo queda claro con letra clara encima. La lista de carpetas que dejaba
+afuera, en `scripts/verificar_temas.mjs:79`, no tenía **ni una palabra escrita al lado** diciendo
+por qué quedaba afuera cada una, y adentro de esa lista había una que no correspondía: la de las
+herramientas de esta máquina.
+
+Una herramienta también pinta. `scripts/generar_manifiestos.mjs:96` elige el color de fondo y el
+color de la barra de estado de los dos programas del teléfono, y por ese mismo agujero ya se le
+había despegado antes el color de la barra de estado sin que nadie se enterara. A eso se sumaba
+una segunda estrechez: la lista de extensiones que abría nombraba dos de las cuatro que el
+proyecto escribe, así que la extensión en la que está escrita casi toda herramienta tampoco
+entraba por ningún lado.
+
+Comprobado antes de tocar nada, escribiéndole a esa herramienta un token de letra pintando un
+fondo con una de las formas que el detector reconoce: el chequeo terminaba en verde. Con las dos
+estrecheces sacadas se pone en rojo nombrando archivo y renglón.
+
+El corpus pasó de 121 archivos a 204 y adentro no había ninguno mal pintado. Quedó un solo
+exento, con el mismo patrón que ya usa `scripts/verificar_paleta.mjs`: el banco con el que este
+chequeo se prueba a sí mismo escribe a propósito lo que busca. Lleva su motivo escrito en
+`scripts/verificar_temas.mjs:85`, y más abajo se comprueba que ese banco siga teniendo adentro
+alguno de esos casos, porque la exención que se queda sin nada que eximir perdona el aire y no
+avisa sola. Eso también se comprobó al revés, apuntando la exención a un archivo limpio: va a
+rojo y lo nombra.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

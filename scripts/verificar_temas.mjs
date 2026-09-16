@@ -65,7 +65,27 @@ const COPIAS = [
   'pwa-familia/css/tokens.css'
 ];
 
-const AJENAS = ['docs', 'supabase', 'assets', 'scripts'];
+/* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
+   éste, dicho por su nombre porque antes no decía nada: `docs`, que es texto;
+   `supabase`, que es el servidor y no pinta ninguna pantalla; y `assets`, donde
+   un dibujo lleva sus colores escritos adentro a propósito, porque abierto
+   dentro de una imagen no alcanza las variables de la hoja de estilos.
+
+   `scripts/` estuvo acá y salió el 16 de septiembre de 2026, junto con las dos
+   extensiones que faltaban. Una herramienta también pinta: la que arma el
+   manifiesto de los dos programas del teléfono elige colores, y por el mismo
+   agujero se le había despegado el color de la barra de estado. Eran 83
+   archivos que no abría nadie para esta regla. No había ninguno mal. */
+const AJENAS = ['docs', 'supabase', 'assets'];
+
+/* El único exento, y por lo mismo que en `verificar_paleta.mjs`: el banco con el
+   que este chequeo se prueba a sí mismo escribe a propósito lo que busca. Más
+   abajo se comprueba que siga teniendo alguno adentro, porque la exención que se
+   queda sin nada que eximir no avisa sola. */
+const BANCOS = new Map([
+  ['scripts/verificar_temas.mjs',
+   'el banco con el que este mismo chequeo se prueba antes de recorrer nada']
+]);
 
 /* Pintadas con un token de letra a propósito: no son un fondo con letra encima,
    son un dibujo que acompaña a la letra y cambia de noche junto con ella. */
@@ -278,10 +298,19 @@ for (const rel of COPIAS) {
 seRevisaron(comparados + fallas.length, 'un solo archivo de tokens que comparar');
 
 let revisados = 0;
-for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.css', '.js'], AJENAS)) {
+let eximidos = 0;
+const bancosSinFondo = new Set(BANCOS.keys());
+for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.css', '.js', '.mjs', '.ts'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
-  revisados++;
   const extension = nombre.slice(nombre.lastIndexOf('.'));
+  if (BANCOS.has(nombre)) {
+    eximidos++;
+    if (fondosDeLetra(readFileSync(camino, 'utf8'), extension, nombre).length) {
+      bancosSinFondo.delete(nombre);
+    }
+    continue;
+  }
+  revisados++;
   for (const [renglon, donde] of fondosDeLetra(readFileSync(camino, 'utf8'), extension, nombre)) {
     fallas.push(
       `${nombre}:${renglon}  un token de letra pintando un fondo:\n  ${donde}\n` +
@@ -295,6 +324,18 @@ if (fallas.length > 0) {
   process.exit(1);
 }
 
+/* Y que la exención siga eximiendo algo. Si el banco se queda sin ningún fondo
+   pintado con un token de letra, dejó de ser un banco y perdona el aire. */
+if (bancosSinFondo.size) {
+  console.error('Exenciones que ya no eximen nada:\n');
+  for (const nombre of bancosSinFondo) {
+    console.error(`  - \`${nombre}\` está eximido —${BANCOS.get(nombre)}— y adentro no`);
+    console.error('    tiene ni un token de letra pintando un fondo. O la exención se saca.');
+  }
+  process.exit(1);
+}
+
 console.log(
   `Modo oscuro verificado: ${comparados} archivos donde las dos maneras de encenderlo dicen ` +
-  `lo mismo (${tokens} declaraciones), y ${revisados} sin tokens de letra pintando fondos.`);
+  `lo mismo (${tokens} declaraciones), y ${revisados} sin tokens de letra pintando fondos ` +
+  `(${eximidos} banco de prueba exento, con su motivo y con fondos así adentro).`);
