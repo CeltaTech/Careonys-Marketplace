@@ -59,6 +59,26 @@ import {
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
+/* Cómo se lee una dirección guardada adentro de un catálogo lo contesta el
+   programa y no este chequeo: `comun/direcciones.js` es el único lugar donde
+   está escrito que a un destino se le saca el `.html` del final, que «index» es
+   la raíz y que el ancla viaja pegada. Se le pregunta a él en vez de volver a
+   escribirlo acá.
+
+   Ese archivo es código del navegador y vive arriba de `scripts/`, donde no hay
+   ningún `package.json` que diga que ahí adentro se escribe en módulos. Node lo
+   lee igual —le alcanza con mirar lo que tiene adentro— pero antes avisa, y
+   cuatro renglones de aviso arriba del renglón verde hacen dudar de un chequeo
+   que anduvo bien. Se apaga ese aviso y ninguno más: cualquier otro sigue
+   saliendo por donde salía. */
+const avisosDeAntes = process.listeners('warning');
+process.removeAllListeners('warning');
+process.on('warning', (aviso) => {
+  if (aviso.code === 'MODULE_TYPELESS_PACKAGE_JSON') return;
+  for (const previo of avisosDeAntes) previo(aviso);
+});
+const { aLaRuta, aLaImagen } = await import('../comun/direcciones.js');
+
 /* `.json` entra entero desde el 16 de septiembre de 2026. Antes se nombraba sólo
    el manifiesto de cada aplicación de teléfono, con el argumento de que los
    catálogos de datos no tienen direcciones adentro. No era cierto: la oferta de
@@ -91,9 +111,42 @@ const CARPETAS_DE_VERDAD = [...carpetasDelProyecto(raiz)]
    reescritura del servidor, que empiezan con barra y no son direcciones. */
 const esUnCatalogo = (nombre) => /(^|\/)catalogo-[^/]+\.json$/i.test(nombre);
 
-/** La dirección escrita como valor de un campo adentro de un catálogo. */
+/* Cómo termina el nombre de una pantalla, que es lo único que hace falta saber
+   para reconocer un destino escrito como se escribía cuando cada pantalla era
+   una página suelta. Sale de la lista de extensiones y no se escribe acá. */
+const COMO_TERMINA_UNA_PANTALLA = EXTENSIONES_DE_PANTALLA
+  .map((extension) => extension.replace('.', '[.]'))
+  .join('|');
+
+/** La dirección escrita como valor de un campo adentro de un catálogo.
+
+    Son tres formas y no una. Hasta el 16 de septiembre de 2026 se pedía que
+    empezara por una carpeta que existe de verdad, que es como está escrita cada
+    imagen, y con eso solo quedaban afuera las siete que dicen a dónde lleva cada
+    servicio de la portada —«cursos.html», «solicitar-asistente.html#gestor»—,
+    escritas como se escribían cuando cada pantalla era una página suelta. Ese
+    dato está guardado y no se renombra, así que la forma vieja es la forma. Son
+    siete en cada uno de los tres catálogos de la oferta: veintiuna direcciones
+    que el chequeo abría el archivo para no mirar. Se comprobó antes de tocar
+    nada, apuntando una de ellas a una página que no existe en ningún lado: los
+    41 chequeos terminaban en verde.
+
+    Y son dos formas, no tres: una dirección escrita con la barra adelante y
+    nada más no entra, porque con esa forma también se escribe un patrón de
+    reescritura del servidor, que no es una dirección. El banco de más abajo lo
+    dice con ese mismo ejemplo. */
 const EN_UN_CATALOGO = new RegExp(
-  String.raw`"\s*:\s*"(\/?(?:` + CARPETAS_DE_VERDAD + String.raw`)\/[^"]+)"`, 'gi');
+  String.raw`"\s*:\s*"(`
+  + String.raw`\/?(?:` + CARPETAS_DE_VERDAD + String.raw`)\/[^"]+|`
+  + String.raw`[^"\s]+(?:` + COMO_TERMINA_UNA_PANTALLA + String.raw`)(?:[#?][^"]*)?`
+  + ')"', 'gi');
+
+/* Y una vez reconocida, se lee con la función con la que la lee el programa: la
+   que nombra una pantalla por `aLaRuta()` y cualquier otra por `aLaImagen()`.
+   Las dos contestan una dirección contada desde la raíz del sitio. */
+const NOMBRA_UNA_PANTALLA = new RegExp('(?:' + COMO_TERMINA_UNA_PANTALLA + ')$', 'i');
+const comoLaLeeElPrograma = (valor) =>
+  (NOMBRA_UNA_PANTALLA.test(valor) ? aLaRuta(valor) : aLaImagen(valor));
 
 const DIRECCIONES = [
   /* La mirada de atrás es lo que separa `src=` de `data-attr-src=`, que no es
@@ -230,6 +283,13 @@ const enTexto = (muestra) => DIRECCIONES
   .flatMap((p) => Array.from(muestra.matchAll(new RegExp(p.source, p.flags))))
   .map((encontrada) => encontrada[1])
   .join(' ');
+/* Las páginas con las que se prueba se arman con la extensión que dice
+   `recorrido.mjs`, que es de donde sale en todo el proyecto: escribirla acá
+   ataría el banco a que las pantallas sigan llamándose como se llaman hoy. */
+const UNA_PAGINA = 'cursos' + EXTENSIONES_DE_PANTALLA[0];
+const OTRA_PAGINA = 'solicitar-asistente' + EXTENSIONES_DE_PANTALLA[0];
+const LA_PORTADA = 'index' + EXTENSIONES_DE_PANTALLA[0];
+
 const deLasFormas = [
   ['un `src` del marcado', enTexto('<img src="assets/f.png">'), 'assets/f.png'],
   ['un `to` de una pantalla', enTexto('<Link to="/directorio">'), '/directorio'],
@@ -240,8 +300,24 @@ const deLasFormas = [
   ['un `fetch()` armado al vuelo', enTexto('fetch(`${base}/x`)'), ''],
   ['el nombre de un campo, que no es una dirección', enTexto('<b data-attr-src="nombre">'), ''],
   ['una imagen de un catálogo', enTexto('"imagen": "assets/images/f.png"'), 'assets/images/f.png'],
+  ['un destino de catálogo escrito como nombre de página',
+    enTexto('"enlace": "' + UNA_PAGINA + '"'), UNA_PAGINA],
+  ['el mismo con su ancla pegada',
+    enTexto('"enlace": "' + OTRA_PAGINA + '#gestor"'), OTRA_PAGINA + '#gestor'],
+  ['un texto que termina en puntos, que no es una dirección',
+    enTexto('"es-AR": "Enviando..."'), ''],
   ['un patrón de reescritura, que no es una dirección',
     enTexto('"source": "/((?!assets).*)"'), ''],
+];
+
+/* Y que una dirección de catálogo se lea como la lee el programa. Reconocerla no
+   alcanza: «cursos.html» no es ningún archivo del disco, y juzgarla sin traducir
+   la daría por rota. */
+const deLosCatalogos = [
+  ['un destino, sin la extensión del final', comoLaLeeElPrograma(UNA_PAGINA), '/cursos'],
+  ['la portada, que es la raíz', comoLaLeeElPrograma(LA_PORTADA), '/'],
+  ['una imagen, contada desde la raíz del sitio',
+    comoLaLeeElPrograma('assets/images/f.png'), '/assets/images/f.png'],
 ];
 
 let corta = false;
@@ -252,7 +328,8 @@ try {
 }
 delIgnorado.push(['una forma desconocida corta la corrida', corta, true]);
 
-const rotas = [...delDisco, ...delIgnorado, ...delPrograma, ...deLasFormas].filter(([, dio, esperado]) => dio !== esperado);
+const rotas = [...delDisco, ...delIgnorado, ...delPrograma, ...deLasFormas, ...deLosCatalogos]
+  .filter(([, dio, esperado]) => dio !== esperado);
 if (rotas.length) {
   console.error('El lector está roto, así que este chequeo no verifica nada:');
   for (const [que, dio, esperado] of rotas) {
@@ -367,8 +444,8 @@ for (const camino of hayArchivos(raiz, DE_DONDE_SALEN)) {
   for (const patron of DIRECCIONES) {
     /* Lo que vale para un catálogo no vale para cualquier `.json`, y una
        dirección de catálogo no cuelga de la carpeta donde está el catálogo: el
-       programa le pone la barra adelante al leerla, y eso está escrito en
-       `comun/direcciones.js`. Se lee entonces desde la raíz del sitio. */
+       programa la traduce al leerla, y eso está escrito en
+       `comun/direcciones.js`, que es a quien se le pregunta más abajo. */
     const deUnCatalogo = patron === EN_UN_CATALOGO;
     if (deUnCatalogo && !esUnCatalogo(nombre)) continue;
 
@@ -401,10 +478,10 @@ for (const camino of hayArchivos(raiz, DE_DONDE_SALEN)) {
 
       const destino = deLaHerramienta
         ? resolve(suCarpeta, ...sinPregunta.slice(1).split('/'))
-        : sinPregunta.startsWith('/')
-          ? join(raiz, ...sinPregunta.slice(1).split('/'))
-          : deUnCatalogo
-            ? join(raiz, ...sinPregunta.split('/'))
+        : deUnCatalogo
+          ? join(raiz, ...comoLaLeeElPrograma(sinPregunta).slice(1).split('/'))
+          : sinPregunta.startsWith('/')
+            ? join(raiz, ...sinPregunta.slice(1).split('/'))
             : resolve(dondeSePublica(camino, nombre, suCarpeta), ...sinPregunta.split('/'));
       /* **Una vista del programa no es un archivo del disco.** Las quince
          pantallas del sitio no existen con ese nombre en ninguna carpeta: el

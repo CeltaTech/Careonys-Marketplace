@@ -4839,6 +4839,41 @@ con comilla común, y el renglón verde dice los mismos quince que antes. Falsif
 en los dos sentidos, y el banco de pruebas del lector —que probaba una sola de las
 tres maneras— ahora prueba las tres y la nota adentro de la lista.
 
+### El destino guardado como se escribía cuando cada pantalla era una página suelta
+
+El chequeo que garantiza que toda dirección escrita adentro del producto lleve a algún
+lado abre también los catálogos de datos. Para reconocer una dirección adentro de uno
+pedía que el valor empezara por una carpeta que existe de verdad, que es exactamente
+como está escrita cada imagen.
+
+Los siete destinos de la oferta de la portada —el único campo del catálogo que apunta a
+una pantalla, el que dice a dónde lleva cada servicio— no están escritos así:
+«cursos.html», «solicitar-asistente.html#gestor». Están guardados como se escribían
+cuando cada pantalla era una página suelta, y eso no es un descuido: cada Prestadora
+tiene el suyo cargado, y lo que se guarda para siempre no se renombra
+(`comun/direcciones.js:6`). Son siete en cada una de las tres copias del catálogo:
+veintiuna direcciones que el chequeo abría el archivo para no mirar. Se comprobó antes
+de tocar nada, apuntando una de ellas a una página que no existe en ningún lado: los 41
+chequeos terminaban en verde.
+
+Como el dato no se toca, el que aprende es el chequeo. Cómo se lee un destino guardado
+ya está escrito en un solo lugar —que al nombre de la pantalla se le saca la extensión
+del final, que «index» es la raíz y que el ancla viaja pegada
+(`comun/direcciones.js:18`)—, así que ahora se le pregunta a él en vez de volver a
+escribirlo (`scripts/verificar_rutas.mjs:148`). Reconocerlo tampoco se escribe a mano:
+cómo termina el nombre de una pantalla sale de la misma lista de extensiones de la que
+sale en todo el proyecto (`scripts/verificar_rutas.mjs:117`), y con eso el detector pasó
+a conocer las dos formas en que un catálogo guarda una dirección
+(`scripts/verificar_rutas.mjs:138`).
+
+Son dos formas y no tres: una dirección que empieza por una barra y nada más queda
+afuera a propósito, porque con esa misma forma se escribe un patrón de reescritura del
+servidor, que no es una dirección. El banco de pruebas lo dice con ese mismo ejemplo, y
+tiene además una prueba nueva para la traducción (`scripts/verificar_rutas.mjs:316`):
+reconocer el destino no alcanza, porque «cursos.html» no es ningún archivo del disco y
+juzgarlo sin traducir lo daría por roto. El chequeo pasó de mirar 122 direcciones a
+mirar 143, y las veintiuna nuevas son exactamente esos destinos.
+
 ### El nombre del evento, escrito a mano seis veces en el mismo archivo
 
 La regla de la empresa dice que todo botón que dispara una operación se apaga mientras
