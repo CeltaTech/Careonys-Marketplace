@@ -4807,6 +4807,38 @@ los 109 archivos de su recorrido. Falsificado en los dos sentidos sobre un módu
 real, y los dos bancos de prueba —el del despeje y el del chequeo de frases—
 hablan cuando se le saca el reconocimiento.
 
+### Un archivo de la copia sin señal escrito con otra comilla se caía de la lista
+
+El lector que dice qué guarda cada programa del teléfono para trabajar sin señal
+conocía dos de las tres maneras de escribir un texto en este lenguaje. Faltaba la
+de acento grave, y lo que estuviera escrito con ella salía de la lista en
+silencio.
+
+**Qué se escondía, y no es sólo un chequeo.** Ese lector lo usan dos: el chequeo
+que comprueba que la lista no nombre nada que falte, y el armado, que comprueba
+que lo publicado tenga de verdad todo lo que el teléfono va a pedir. Y `cache.addAll()`
+es todo o nada: si falta uno solo de los archivos, el teléfono se queda sin copia
+entera. Un renglón de la lista escrito con acento grave no lo miraba ninguno de
+los dos, y el chequeo terminaba en verde diciendo un número más chico que el de
+verdad.
+
+**Comprobado sobre el `service-worker.js` de un programa real.** Agregado un
+archivo que no existe, escrito con comilla común, el chequeo lo denuncia por su
+nombre. El mismo renglón escrito con acento grave: verde, y el número de archivos
+guardados sin moverse.
+
+**Qué se hizo.** Qué es un texto lo contesta ahora `scripts/texto_visible.mjs`,
+que es donde vive esa pregunta desde que dejó de estar contestada tres veces. De
+paso se fueron dos cosas más que estaban escritas de memoria: las notas ya no
+entran —una nota con una comilla adentro de la lista alcanzaba para desordenarla—
+y el corchete que cierra la lista se cuenta en vez de tomarse el primero que
+aparezca, porque uno escrito adentro de un texto no cierra nada.
+
+**Qué había en su lugar.** Nada: los dos programas declaran sus quince archivos
+con comilla común, y el renglón verde dice los mismos quince que antes. Falsificado
+en los dos sentidos, y el banco de pruebas del lector —que probaba una sola de las
+tres maneras— ahora prueba las tres y la nota adentro de la lista.
+
 ### El vigilante de los chequeos era el único chequeo que no vigilaba nadie
 
 `scripts/verificar_red.mjs` existe para que ningún otro chequeo pueda escribir su
