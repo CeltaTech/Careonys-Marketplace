@@ -132,8 +132,36 @@ const PUERTAS_DE_DATOS = [
   /\bFichasLegajo\.\w/,
   /\bthis\.(cargar|cargarOferta)\s*\(/,  // los mismos módulos, vistos desde adentro
   /\b_traer\s*\(/,
-  /\b_supabaseRequest\s*\(/
+  /\b_supabaseRequest\s*\(/,
+  /\bconLaBase\s*\(/        // la misma base, desde las pantallas portadas
 ];
+
+/* La puerta del mundo portado es una sola, y estuvo faltando acá desde que se
+   abrió. Las pantallas que pasaron a React no nombran `ClienteDatos` ni
+   `Sesion`: piden `conLaBase()` y la puerta les entrega las dos. Sin ese
+   renglón este chequeo abría esos archivos, no reconocía adentro ninguna
+   espera de datos, y los descartaba en silencio —que es la ceguera que no se
+   nota, porque el titular sigue contando archivos.
+
+   Y el resto de `comun/datos/modulos.js` no entra, a propósito. `conLasZonas`,
+   `conLasFichas`, `conLaCola` y sus hermanas no traen datos: traen la pieza que
+   los sabe pedir, y esa pieza ya está nombrada más arriba por su propia cara
+   —`Disponibilidad`, `FichasLegajo`, `Autorizaciones`—. Contarlas sería contar
+   dos veces el mismo viaje, y avisar por el camión en vez de por la carga:
+   quedaban marcadas como carga sin estados tres esperas que no muestran nada y
+   que nadie podría arreglar. */
+
+/* Y que la puerta siga llamándose así. Escrita a mano acá arriba, un renombre
+   allá la deja muda otra vez, y esta vez sin nadie que lo note. */
+const PUERTA_PORTADA = 'comun/datos/puerta.js';
+if (!/^export function conLaBase\s*\(/m.test(readFileSync(join(raiz, PUERTA_PORTADA), 'utf8'))) {
+  throw new Error(
+    `\`${PUERTA_PORTADA}\` ya no exporta \`conLaBase\`, así que este chequeo dejó de `
+    + 'mirar todo lo que las pantallas portadas piden a la base.\n'
+    + 'Suele ser que la puerta se renombró o se mudó de archivo, y hay que ponerlo '
+    + 'al día en PUERTAS_DE_DATOS.'
+  );
+}
 
 /* Escribir en la pantalla. Sólo lo que escribe de verdad: poner el resultado en
    una variable no es mostrarlo. Los ayudantes con nombre propio —`mostrar`, los

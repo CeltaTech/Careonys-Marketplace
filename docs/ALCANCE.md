@@ -2962,6 +2962,16 @@ todo estaba bien, y la de ahora lo denuncia con su renglón y corta. El renglón
 treinta y cinco manejadores a treinta y seis, y quedaron dos casos nuevos en su autoprueba, uno
 que tiene que romper y uno que tiene que pasar.
 
+### La pantalla de Mensajes no decía nada mientras la traía, y el chequeo miraba por una puerta que ya no se usa
+
+El chequeo de los cuatro estados no adivina qué es una carga de datos: tiene escritas una por una las puertas por donde entran, y juzga sólo los bloques que esperan por alguna de ellas. La lista se escribió cuando todas las pantallas eran del navegador y nombraban las piezas por su cara —`ClienteDatos`, `Sesion`, `Catalogo`—. Las pantallas que pasaron a React no nombran ninguna de las tres: le piden la puerta a `comun/datos/puerta.js` y la puerta les entrega las dos primeras ya abiertas. Ese renglón nunca se agregó, así que los archivos portados entraban al recorrido, se abrían, y adentro no se reconocía ninguna espera de datos: quedaban descartados en silencio, con el titular contándolos como revisados.
+
+Agregada la puerta, apareció un punto de carga que no había mirado nadie: la pantalla de Mensajes, que es la misma en los dos programas del teléfono. Entre que se entra y que llega la pieza que dibuja el hilo hay dos esperas —abrir la puerta de la base y traer el archivo de la conversación—, y en ese rato la caja está vacía. Una caja vacía se lee como «no hay mensajes», que es justo lo contrario de lo que está pasando. La frase que faltaba mostrar ya estaba escrita en los tres idiomas desde el día que se hizo la pieza, y la pieza misma la usa más adelante para su propia lista; lo único que no existía era quien la mostrara antes. Ahora el gancho que decide el montaje devuelve también si está buscando, y las dos pantallas se lo pasan al cartel que ya usaban para el error.
+
+Lo que **no** se agregó a la lista de puertas, y es la mitad de la decisión, es el resto de la familia de `comun/datos/modulos.js`. `conLasZonas`, `conLasFichas`, `conLaCola` y sus hermanas no traen datos: traen la pieza que los sabe pedir, y esa pieza ya estaba nombrada por su cara más arriba. Contarlas era contar dos veces el mismo viaje y avisar por el camión en vez de por la carga: marcaba como carga sin estados tres esperas que no muestran nada y que nadie podría arreglar, que es exactamente lo que la cabecera de ese chequeo se propone evitar.
+
+Se probó de las dos maneras. Quitándole el aviso al punto de carga que ahora se ve, la versión anterior del chequeo seguía diciendo que todo estaba bien y la de ahora lo denuncia con su archivo y su renglón. Su titular pasó de 80 puntos de carga a 81. Y como la puerta queda escrita a mano en dos lados, se le puso una guarda que se planta si deja de llamarse así: un renombre la dejaría muda otra vez, y esta vez sin nadie que lo notara.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

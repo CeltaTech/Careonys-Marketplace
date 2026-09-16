@@ -25,7 +25,7 @@ import { EstadoDeLaLista } from '#comun/listas/EstadoDeLaLista.jsx';
 export default function Conversacion({ activa, pedido, navegar, pedidaRef }) {
   const { frase } = useFrases();
 
-  const { fallo, reintentar } = useLaConversacion('familia', pedido, pedidaRef);
+  const { fallo, cargando, reintentar } = useLaConversacion('familia', pedido, pedidaRef);
 
   return (
     <div className={'app-screen' + (activa ? ' active' : '')} id="screen-conversacion">
@@ -41,7 +41,8 @@ export default function Conversacion({ activa, pedido, navegar, pedidaRef }) {
         <p className="texto-12 color-secundario m-0 mb-12" id="conversacion-bajada">
           {frase('conversacion.bajada')}
         </p>
-        <EstadoDeLaLista estado={fallo ? 'error' : 'listo'} prefijo="mensajes"
+        <EstadoDeLaLista estado={cargando ? 'cargando' : (fallo ? 'error' : 'listo')}
+          prefijo="mensajes" cargando="conversacion.cargando"
           error="conversacion.error" alReintentar={reintentar} />
         <div id="conversacion-caja"></div>
       </div>

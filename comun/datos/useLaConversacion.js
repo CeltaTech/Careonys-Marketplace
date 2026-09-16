@@ -21,6 +21,12 @@
    **Y si la pantalla se deja antes de que llegue la pieza, no se monta nada.**
    Montar sobre una caja que ya no está en la página deja el mecanismo colgado.
 
+   **Y mientras la pieza viaja, la pantalla lo dice.** Entre que se entra y que
+   la pieza queda montada hay dos esperas —la puerta de la base y el archivo de
+   la conversación—, y en ese rato la caja está vacía, que es exactamente lo que
+   se ve cuando no hay mensajes. Se avisa con la misma frase que la pieza usa
+   después para su propia lista, así lo que se lee no cambia a mitad de camino.
+
    **Si el montaje falla, la pantalla lo dice y ofrece volver a intentar.** La
    caja queda vacía cuando la pieza no llegó a montarse, y una caja vacía se
    lee como «no hay mensajes». El aviso lo dibuja la pantalla, con el mismo
@@ -42,10 +48,15 @@ const montadas = {};
  * @param lado      De qué lado de la conversación está parada la pantalla.
  * @param visita    Cuántas veces se entró. Vacío mientras no es la de ahora.
  * @param pedidaRef Dónde queda anotado el hilo que hay que abrir al entrar.
- * @returns         Si hubo falla, y con qué se vuelve a intentar.
+ * @returns         Si está buscando, si hubo falla, y con qué se vuelve a
+ *                  intentar.
  */
 export function useLaConversacion(lado, visita, pedidaRef) {
   const [fallo, setFallo] = useState(false);
+  /* Arranca en falso y no en verdadero: mientras no es la pantalla de ahora no
+     se está esperando nada, y un cartel de «buscando» sobre una pantalla que
+     nadie abrió es un cartel mintiendo. */
+  const [cargando, setCargando] = useState(false);
   /* Reintentar es entrar de nuevo: se corre el mismo intento otra vez, y por
      eso el número es una dependencia más y no un camino aparte. */
   const [intento, setIntento] = useState(0);
@@ -54,6 +65,7 @@ export function useLaConversacion(lado, visita, pedidaRef) {
     if (!visita) return undefined;
     let vigente = true;
     (async () => {
+      setCargando(true);
       try {
         await conLaBase();
         const Conversaciones = await conLasConversaciones();
@@ -73,10 +85,12 @@ export function useLaConversacion(lado, visita, pedidaRef) {
       } catch (err) {
         console.error('Montar la pantalla de Mensajes:', err);
         if (vigente) setFallo(true);
+      } finally {
+        if (vigente) setCargando(false);
       }
     })();
     return () => { vigente = false; };
   }, [lado, visita, pedidaRef, intento]);
 
-  return { fallo, reintentar: () => setIntento((antes) => antes + 1) };
+  return { fallo, cargando, reintentar: () => setIntento((antes) => antes + 1) };
 }
