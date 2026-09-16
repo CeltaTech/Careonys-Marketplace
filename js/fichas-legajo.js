@@ -205,7 +205,7 @@ const FichasLegajo = {
       const opciones = vocs.flatMap(v => this._opciones(v))
         .map(o => `<label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:400;"><input type="checkbox" data-campo="${clave}" value="${Texto.escapar(o.clave)}" /> ${Texto.escapar(o[this.idioma] || o['es-AR'])}</label>`)
         .join('');
-      return `<div class="lista-multiple-opciones" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">${opciones}</div>`;
+      return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">${opciones}</div>`;
     }
     return `<input type="text" id="${id}" data-campo="${clave}" ${req} />`;
   },

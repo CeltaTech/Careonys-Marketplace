@@ -4095,6 +4095,39 @@ No había daño: las dos primeras no tienen ninguna fila sembrada, y la tercera 
 escriben tres funciones, con `auth.uid()` y con `new.id`, que no son identificadores
 escritos.
 
+### El chequeo de las clases leía las pantallas y no el guion que también escribe marcado
+
+Nombrar una clase que ninguna hoja declara no rompe nada, y por eso dura: el navegador la
+ignora, la pantalla se sigue viendo, y el marcado queda diciendo que hay un estilo propio
+donde no lo hay. Para eso existe `scripts/verificar_clases.mjs`.
+
+Lo que buscaba lo buscaba bien; dónde lo buscaba era el problema. El conjunto de nombres a
+revisar salía únicamente de las pantallas, y en este proyecto el marcado no lo escriben
+sólo las pantallas: un guion del navegador también lo escribe. La ficha del Legajo arma la
+suya entera adentro de `js/fichas-legajo.js:203`, con los nombres de clase escritos a mano
+en el texto que devuelve. Veintiséis nombres de clase vivían ahí, y el chequeo no abría ese
+archivo para buscarlos: decía en verde «363 nombradas en 74 pantallas» y no mentía sobre lo
+que había mirado, porque nunca decía que hubiera algo más.
+
+Y había daño puesto. Uno de esos veintiséis —el envoltorio de una lista de varias
+opciones, en `js/fichas-legajo.js:208`— no lo declaraba ninguna de las doce hojas del
+proyecto ni lo agarraba ningún guion. Era un nombre muerto: todo lo que pinta ese envoltorio
+está escrito al lado, en el mismo renglón. Se sacó del marcado, que es lo que el propio
+chequeo manda hacer cuando encuentra uno, y no cambia nada de lo que se ve porque ninguna
+regla lo alcanzaba.
+
+El corpus ahora se arma con las pantallas y los guiones del navegador
+(`scripts/verificar_clases.mjs:266`), y pasó de 74 archivos a 109 y de 363 nombres a 367.
+El banco de pruebas del propio chequeo ganó el caso que faltaba: una clase escrita adentro
+de un texto de plantilla, que es como un guion escribe marcado
+(`scripts/verificar_clases.mjs:230`).
+
+Se comprobó de las tres maneras antes de darlo por bueno. Con la clase muerta puesta de
+vuelta y el corpus ancho, el chequeo se pone en rojo y nombra el archivo. Con la clase
+puesta y el corpus angosto de antes, contesta verde —«363 nombradas en 74»—, que es la
+ceguera reproducida tal cual. Y rompiendo el detector para que no entienda los textos de
+plantilla, el banco de pruebas lo caza solo.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

@@ -42,6 +42,20 @@
      media palabra—. Todo eso se descarta, o el chequeo se llenaría de nombres
      que nadie escribió nunca.
 
+   Y de dónde sale el marcado, que no es una sola clase de archivo: además de
+   las pantallas, lo escribe un guion del navegador. La ficha del Legajo arma ahí
+   adentro la suya entera, con los nombres de clase escritos a mano. Leyendo sólo
+   las pantallas quedaban veintiséis de esos nombres mirados por nadie, y uno de
+   ellos —el envoltorio de una lista de varias opciones— no lo declaraba ninguna
+   hoja ni lo agarraba ningún guion. Era exactamente lo que este chequeo existe
+   para encontrar, y estaba adentro de su propio punto ciego.
+
+   De ahí sale una latitud que conviene decir en voz alta: un guion se lee dos
+   veces, como marcado y como programa, así que un nombre que escriba en el
+   marcado y además mencione suelto entre comillas se perdona a sí mismo. Se deja
+   así porque mencionarlo suelto es justamente agarrarlo, y una agarradera no
+   tiene por qué estar en ninguna hoja.
+
    Y la asimetría con los guiones es a propósito: allá vale cualquier texto
    entre comillas, porque un guion menciona la clase para agarrarla. Acá no
    puede valer, porque entonces cada `className="tarjeta"` se autorizaría a sí
@@ -211,6 +225,9 @@ const PRUEBAS = [
   [clasesQueNombra('<div class="tarjeta fas fa-user {{producto}}">'), 'tarjeta', true],
   [clasesQueNombra('<div class="tarjeta fas fa-user {{producto}}">'), 'fas', false],
   [clasesQueNombra('<div class="tarjeta fas fa-user {{producto}}">'), 'fa-user', false],
+  /* Así escribe el marcado un guion del navegador, que es de donde salió el
+     nombre que nadie miraba. */
+  [clasesQueNombra('return `<div class="lista-en-un-guion">${x}</div>`;'), 'lista-en-un-guion', true],
   [clasesQueAgarraUnGuion("document.querySelector('.wizard-step-pane')"), 'wizard-step-pane', true],
   [clasesQueAgarraUnGuion('elemento.classList.add("fade-in")'), 'fade-in', true],
   [clasesQueAgarraUnGuion("const s = '.logo-brand, .tenant-logo, .navbar-logo img';"), 'logo-brand', true],
@@ -241,7 +258,12 @@ if (rotas.length) {
 
 /* ── El proyecto ────────────────────────────────────────────────────────── */
 const hojas = hayArchivos(raiz, ['.css']);
-const paginas = hayArchivos(raiz, EXTENSIONES_DE_PANTALLA);
+/* El marcado no vive solamente en las pantallas: un guion del navegador también
+   escribe marcado, y la ficha del Legajo escribe ahí adentro la suya entera.
+   Leyendo sólo las pantallas quedaban veintiséis nombres de clase mirados por
+   nadie, y uno de ellos no lo declaraba ninguna hoja ni lo agarraba ningún
+   guion: estuvo escrito en el marcado, sin estilo propio, sin que nada avisara. */
+const conMarcado = hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js']);
 const guiones = hayArchivos(raiz, ['.js']);
 
 const declaradas = new Set();
@@ -251,8 +273,8 @@ const agarradas = new Set();
 for (const guion of guiones) for (const c of clasesQueAgarraUnGuion(readFileSync(guion, 'utf8'))) agarradas.add(c);
 
 const nombradas = new Map();
-for (const pagina of paginas) {
-  const html = readFileSync(pagina, 'utf8');
+for (const archivo of conMarcado) {
+  const html = readFileSync(archivo, 'utf8');
   for (const bloque of html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)) {
     for (const c of clasesQueDeclara(bloque[1])) declaradas.add(c);
   }
@@ -265,7 +287,7 @@ for (const pagina of paginas) {
      preguntarle de qué tipo es. */
   for (const clase of new Set([...clasesQueNombra(html), ...clasesQueNombraUnaPantalla(html)])) {
     if (!nombradas.has(clase)) nombradas.set(clase, new Set());
-    nombradas.get(clase).add(relative(raiz, pagina).split(BARRA).join('/'));
+    nombradas.get(clase).add(relative(raiz, archivo).split(BARRA).join('/'));
   }
 }
 
@@ -287,7 +309,8 @@ if (huerfanas.length) {
 }
 
 console.log(
-  `Clases verificadas: ${nombradas.size} nombradas en ${paginas.length} pantallas, ` +
+  `Clases verificadas: ${nombradas.size} nombradas en ${conMarcado.length} pantallas y ` +
+  'guiones del navegador, que también escriben marcado, ' +
   `todas declaradas en alguna de las ${hojas.length} hojas o agarradas por algún guion ` +
   '(Font Awesome exenta, por venir de afuera).'
 );
