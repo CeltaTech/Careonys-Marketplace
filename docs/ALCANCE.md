@@ -4161,6 +4161,23 @@ contesta verde, que es la ceguera reproducida tal cual. Y se barrió el resto: l
 fuera del corpus donde aparece el nombre de una Prestadora del seed son la migración que la carga
 y el logotipo que es de ella.
 
+### La foto del producto tenía escrito a mano que una imagen es un `.png`
+
+El documento que CeltaTech mira para saber qué está vendiendo muestra treinta y una fotos de
+pantalla, y `scripts/verificar_el_producto.mjs` cierra las dos puntas: que ninguna foto citada
+falte y que ninguna foto guardada esté sin citar. La segunda es la que importa acá, porque una
+imagen guardada que no muestra nadie es una que se sacó del documento y quedó dando vueltas, o
+una que se guardó para ponerla y nunca se puso.
+
+Qué es una imagen estaba contestado a mano adentro del chequeo: un `.png` y nada más
+(`scripts/verificar_el_producto.mjs:178`). Hoy las treinta y una lo son, así que no había nada
+puesto; el día que alguien guarde una en cualquier otro formato, esa imagen no existía para la
+regla. Se comprobó dejando una en la carpeta: el chequeo contestaba verde.
+
+Ahora qué es una imagen lo contesta `recorrido.mjs`, que ya lo tenía contestado para otras dos
+preguntas del proyecto (`scripts/recorrido.mjs:95`). Con el mismo archivo de prueba puesto, el
+chequeo se pone en rojo y lo nombra.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

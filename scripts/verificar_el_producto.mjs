@@ -47,7 +47,7 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { seRevisaron, ARMAZONES, direccionesDelSitio } from './recorrido.mjs';
+import { seRevisaron, ARMAZONES, direccionesDelSitio, EXTENSIONES_DE_IMAGEN } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DOCUMENTO = join('docs', 'CAREONYS MarketPlace EL PRODUCTO.md');
@@ -171,8 +171,14 @@ for (const [pantalla, nombre] of COMO_SE_LLAMA) {
 
 // ── 3. Las imágenes cierran por los dos lados ──────────────────────────────
 
+/* Qué es una imagen lo contesta `recorrido.mjs` y no este archivo. Acá estaba
+   escrito a mano que una foto de pantalla es un `.png`, y hoy las treinta y una
+   lo son; una guardada en cualquier otro formato quedaba huérfana acá adentro
+   sin que nada avisara, comprobado poniendo una. */
 const guardadas = existsSync(join(raiz, IMAGENES))
-  ? readdirSync(join(raiz, IMAGENES)).filter((n) => /\.png$/i.test(n)).sort()
+  ? readdirSync(join(raiz, IMAGENES))
+    .filter((n) => EXTENSIONES_DE_IMAGEN.some((e) => n.toLowerCase().endsWith(e)))
+    .sort()
   : [];
 
 seRevisaron(guardadas.length, 'ninguna imagen de pantalla guardada');
