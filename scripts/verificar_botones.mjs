@@ -77,13 +77,24 @@ const PALABRAS = new Set([
   'try', 'typeof', 'await', 'new', 'delete', 'void', 'case', 'with'
 ]);
 
-/* Cada función con nombre del archivo, y el texto de su cuerpo. */
+/* Cada función con nombre del archivo, y el texto de su cuerpo.
+
+   La cuarta forma es la que da una función envuelta en una llamada, que es como
+   las pantallas portadas declaran casi todos sus manejadores. Las tres primeras
+   piden que la función arranque pegada al `=`, y ahí el nombre no quedaba
+   registrado: el manejador se buscaba en esta tabla, salía vacío, y como un
+   cuerpo vacío no tiene ningún `await`, se lo descartaba adentro del archivo sin
+   mirarlo. Eran tres manejadores de verdad que este chequeo nunca abrió, y el
+   renglón verde los contaba de menos. No se nombra acá ninguna de esas
+   envolturas: alcanza con que lo primero que reciba la llamada sea una función,
+   porque una llamada común recibe valores. */
 function funciones(lineas) {
   const mapa = new Map();
   const FORMAS = [
     /(?:^|\W)(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\(/,
     /(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?(?:function\s*)?\(/,
-    /^\s*(?:async\s+)?([A-Za-z_$][\w$]*)\s*\([^()]*\)\s*\{\s*$/
+    /^\s*(?:async\s+)?([A-Za-z_$][\w$]*)\s*\([^()]*\)\s*\{\s*$/,
+    /(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*[A-Za-z_$][\w$]*\s*\(\s*(?:async\s*)?(?:function\b|\()/
   ];
   for (let n = 0; n < lineas.length; n++) {
     for (const forma of FORMAS) {
@@ -395,7 +406,14 @@ const MAL_JSX = [
   ['un manejador con nombre que espera y no apaga nada',
    'async function enviar() {\n  await mandar();\n}\n<form onSubmit={enviar}>x</form>'],
   ['un apagado clavado en falso, que no apaga nada',
-   'async function enviar() {\n  await mandar();\n}\n<button disabled={false} onClick={enviar}>x</button>']
+   'async function enviar() {\n  await mandar();\n}\n<button disabled={false} onClick={enviar}>x</button>'],
+  /* Y el manejador declarado como los declaran casi todas las pantallas
+     portadas: envuelto en una llamada. Mientras todo lo que se probaba acá
+     empezaba con `async function`, el detector podía no reconocer ninguna otra
+     manera de declarar una función y este banco seguía en verde. */
+  ['un manejador envuelto en una llamada, que espera y no apaga nada',
+   'const enviar = useCallback(async () => {\n  await mandar();\n}, []);\n'
+   + '<form onSubmit={enviar}>x</form>']
 ];
 
 const BIEN_JSX = [
@@ -413,7 +431,10 @@ const BIEN_JSX = [
   ['una puerta compartida que prende su propia bandera',
    'const { entrando, ingresar } = useElIngreso();\nasync function entrar() {\n  await ingresar(correo, clave);\n}\n<form onSubmit={entrar}>x</form>\n<button disabled={entrando}>y</button>'],
   ['un manejador que no espera nada',
-   '<button onClick={() => abrir()}>x</button>']
+   '<button onClick={() => abrir()}>x</button>'],
+  ['el mismo envuelto en una llamada, con su bandera',
+   'const enviar = useCallback(async () => {\n  setEnviando(true);\n  await mandar();\n}, []);\n'
+   + '<form onSubmit={enviar}>x</form>\n<button disabled={enviando}>y</button>']
 ];
 
 const noDetectaJsx = MAL_JSX.filter(([, t]) => botonesSinApagarJsx(t).fallas.length === 0);

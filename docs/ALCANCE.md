@@ -4389,8 +4389,8 @@ servidor y no apaga ningún botón: el chequeo terminó en verde. Con la puerta 
 manejador lo deja en rojo con archivo y renglón.
 
 La puerta ya no nombra ninguna de las cuatro formas: le alcanza con que haya un manejador de
-pulsación, escrito como esté (`scripts/verificar_botones.mjs:127`). Y tiene prueba propia contra
-las cuatro (`scripts/verificar_botones.mjs:372`), porque ninguna de las pruebas que ya había la
+pulsación, escrito como esté (`scripts/verificar_botones.mjs:138`). Y tiene prueba propia contra
+las cuatro (`scripts/verificar_botones.mjs:383`), porque ninguna de las pruebas que ya había la
 tocaba: todas le hablaban derecho al detector, sin pasar por ella. El botón del chat se apaga
 mientras abre y se devuelve en un `finally` (`js/conversacion.js:215`).
 
@@ -4838,6 +4838,35 @@ aparezca, porque uno escrito adentro de un texto no cierra nada.
 con comilla común, y el renglón verde dice los mismos quince que antes. Falsificado
 en los dos sentidos, y el banco de pruebas del lector —que probaba una sola de las
 tres maneras— ahora prueba las tres y la nota adentro de la lista.
+
+### Las tres maneras de declarar una función, y la que usan casi todas las pantallas
+
+El chequeo que vigila que un botón que dispara una operación se apague mientras
+la operación corre necesita, para cada manejador, el cuerpo de la función que
+lleva su nombre. Armaba esa tabla con tres maneras de declarar una función
+(`scripts/verificar_botones.mjs:93`), y las tres piden que la función arranque
+pegada al signo igual. Las pantallas portadas declaran casi todos sus
+manejadores envueltos en una llamada, y así declarados no entraban en la tabla.
+
+La consecuencia es la ceguera que no se nota: el archivo estaba, se abría, el
+manejador se buscaba en la tabla, salía vacío, y como un cuerpo vacío no tiene
+ningún `await`, se lo descartaba sin mirarlo. Tres manejadores de verdad
+—dos en `web/src/pantallas/Examen.jsx` y uno en
+`web/src/pantallas/PanelPrestadora.jsx`— nunca se abrieron, y el renglón verde
+decía treinta y siete manejadores donde son cuarenta.
+
+Ninguno de los tres estaba mal escrito: los tres prenden una bandera que apaga
+un botón. Pero eso no lo sabía nadie, porque nadie los había mirado. Probado
+inyectando en una de esas pantallas un manejador envuelto que espera y no apaga
+nada: con la forma vieja el chequeo terminaba en verde y ni siquiera lo sumaba a
+la cuenta.
+
+La cuarta manera no nombra ninguna envoltura, que sería volver a escribir una
+lista a mano. Le alcanza con que lo primero que recibe la llamada sea una
+función, porque una llamada común recibe valores. Y el banco de pruebas, que
+declaraba todos sus manejadores de la única manera que el detector conocía, sumó
+uno envuelto y su versión buena: con la forma vieja puesta de nuevo, el banco se
+rompe.
 
 ### Las nueve formas de archivo que podía tener una cita
 
