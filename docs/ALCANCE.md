@@ -3675,6 +3675,39 @@ Y las formas de escribir una dirección pasan a probarse de a una contra una mue
 el proyecto. Una forma que falta no se nota en el renglón final: el número baja solo y nadie sabe de
 cuánto tenía que ser.
 
+### Los dos colores del manifiesto estaban escritos a mano en la única carpeta que el control de la paleta no abre
+
+Los dos programas para el teléfono declaran en su manifiesto el color con el que el sistema
+operativo pinta la barra de estado del programa instalado y el papel de la pantalla de arranque.
+Ese manifiesto lo genera `scripts/generar_manifiestos.mjs`, y ahí los dos colores estaban
+escritos con su número: `#1A365D` y `#fafafb`.
+
+Un color escrito con su número adentro de un manifiesto es legítimo, y es el único lugar del
+proyecto donde lo es: el sistema operativo lo lee antes de que exista ninguna hoja de estilo, así
+que no hay token que resolver. Lo que no es legítimo es que ese número no salga de ningún lado.
+`css/tokens.css` ya decía las dos cosas —`--marca-prestadora` y `--fondo-app`— y nadie las
+comparaba con el manifiesto.
+
+Se despegaron. El token de la marca vale `oklch(0.22 0.02 250)`, que es `#141B24`, y el manifiesto
+seguía diciendo `#1A365D`: un azul de medio tono contra un azul casi negro, y ésa es una
+diferencia que se ve. El del papel decía `#fafafb` contra el `#F6F9FB` del token, que se ve menos
+y es el mismo despegue. Y `#1A365D` es, encima, el mismo número que `css/tokens.css:168` nombra
+como ejemplo de «un color a mano disfrazado de variable».
+
+Por qué no lo encontró el control de la paleta: porque no abre `scripts/`
+(`scripts/verificar_paleta.mjs:58`), y con razón, porque su propio banco de pruebas escribe
+colores a propósito. El número a mano estaba en la única carpeta donde ese control no mira.
+
+Qué se hizo: el generador dejó de escribirlos. Lee los dos tokens del modo claro de
+`css/tokens.css` —corta la hoja donde empieza el modo oscuro, porque el manifiesto es uno solo y
+no cambia de noche— y los convierte a número con la fórmula de CSS Color 4, la misma que aplica
+el navegador. Si un token no está, o deja de estar escrito en OKLCH, el generador se planta en
+vez de inventar un color.
+
+No hizo falta ningún control nuevo: `scripts/verificar_identidad.mjs:125` ya compara los dos
+manifiestos contra lo que el generador produce, así que la cadena queda entera —el token manda,
+el generador escribe, el chequeo compara— y no hay copia que se pueda despegar.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
