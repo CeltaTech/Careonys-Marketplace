@@ -54,25 +54,47 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import {
   hayArchivos, seRevisaron, conLaMismaCaja, esArmazon, EXTENSIONES_DE_PANTALLA, ARMAZONES,
-  direccionesDelSitio, direccionesDeclaradas, esUnaVista
+  direccionesDelSitio, direccionesDeclaradas, esUnaVista, carpetasDelProyecto
 } from './recorrido.mjs';
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
-/* Los manifiestos de las dos aplicaciones de teléfono se nombran por el archivo
-   entero y no por la extensión: `.json` a secas traería los catálogos de datos y
-   la configuración de las herramientas, que no tienen direcciones adentro.
+/* `.json` entra entero desde el 16 de septiembre de 2026. Antes se nombraba sólo
+   el manifiesto de cada aplicación de teléfono, con el argumento de que los
+   catálogos de datos no tienen direcciones adentro. No era cierto: la oferta de
+   la portada nombra trece imágenes, y sus dos copias que viajan al teléfono
+   otras trece cada una. Treinta y nueve direcciones que no abría nadie.
 
    Y `.js` está acá desde el 16 de septiembre de 2026. Una dirección local no se
    escribe sólo en el marcado: el código va a buscar un catálogo de datos por su
    dirección, y esos archivos no los abría nadie. Se comprobó antes de tocar
    nada, apuntando el Legajo a un catálogo que no existe: los 41 chequeos
    terminaban en verde. */
-const DE_DONDE_SALEN = [...EXTENSIONES_DE_PANTALLA, '.css', '.js', '.webmanifest', 'manifest.json'];
+const DE_DONDE_SALEN = [...EXTENSIONES_DE_PANTALLA, '.css', '.js', '.webmanifest', '.json'];
 
 /* Dónde se escribe una dirección local: el marcado, la hoja de estilos, el
    manifiesto, y el código de la pantalla cuando manda a otra sin que nadie
    haya hecho clic en nada. */
+/* Un nombre de carpeta puede traer un punto o un espacio, que la expresión
+   leería como suyos. Se los deja entre corchetes, que es la manera de decir
+   «este carácter y ninguna otra cosa». De la más larga a la más corta, para
+   que una no se corte a mitad de camino contra el principio de otra. */
+const comoSeLee = (nombre) => nombre.replace(/[^A-Za-z0-9_-]/g, (letra) => '[' + letra + ']');
+const CARPETAS_DE_VERDAD = [...carpetasDelProyecto(raiz)]
+  .sort((a, b) => b.length - a.length)
+  .map(comoSeLee)
+  .join('|');
+
+/* Un catálogo de datos se llama así en todo el proyecto: `catalogo-` y después
+   qué guarda. No alcanza con que el archivo sea un `.json`: la configuración de
+   una herramienta también lo es, y lo que tiene adentro son patrones de
+   reescritura del servidor, que empiezan con barra y no son direcciones. */
+const esUnCatalogo = (nombre) => /(^|\/)catalogo-[^/]+\.json$/i.test(nombre);
+
+/** La dirección escrita como valor de un campo adentro de un catálogo. */
+const EN_UN_CATALOGO = new RegExp(
+  String.raw`"\s*:\s*"(\/?(?:` + CARPETAS_DE_VERDAD + String.raw`)\/[^"]+)"`, 'gi');
+
 const DIRECCIONES = [
   /* La mirada de atrás es lo que separa `src=` de `data-attr-src=`, que no es
      una dirección sino el nombre del campo del que sale el dato.
@@ -98,6 +120,11 @@ const DIRECCIONES = [
      con un pedazo variable adentro, `SE_ARMA_AL_VUELO`. */
   /\bfetch\(\s*'([^']+)'/g,
   /\bfetch\(\s*"([^"]+)"/g,
+  /* Y la que vive adentro de un catálogo de datos, que no se escribe como en el
+     marcado sino como el valor de un campo. Se pide que empiece por una carpeta
+     que existe de verdad: así no se confunde con una dirección un patrón de
+     reescritura del servidor, que también empieza con barra. */
+  EN_UN_CATALOGO,
 ];
 
 /* Una dirección escrita entre llaves la arma el programa mientras corre: adentro
@@ -212,6 +239,9 @@ const deLasFormas = [
   ['un `fetch()` del código', enTexto("fetch('data/catalogo.json')"), 'data/catalogo.json'],
   ['un `fetch()` armado al vuelo', enTexto('fetch(`${base}/x`)'), ''],
   ['el nombre de un campo, que no es una dirección', enTexto('<b data-attr-src="nombre">'), ''],
+  ['una imagen de un catálogo', enTexto('"imagen": "assets/images/f.png"'), 'assets/images/f.png'],
+  ['un patrón de reescritura, que no es una dirección',
+    enTexto('"source": "/((?!assets).*)"'), ''],
 ];
 
 let corta = false;
@@ -328,6 +358,13 @@ for (const camino of hayArchivos(raiz, DE_DONDE_SALEN)) {
   alVuelo += Array.from(texto.matchAll(ENTRE_LLAVES)).length;
 
   for (const patron of DIRECCIONES) {
+    /* Lo que vale para un catálogo no vale para cualquier `.json`, y una
+       dirección de catálogo no cuelga de la carpeta donde está el catálogo: el
+       programa le pone la barra adelante al leerla, y eso está escrito en
+       `comun/direcciones.js`. Se lee entonces desde la raíz del sitio. */
+    const deUnCatalogo = patron === EN_UN_CATALOGO;
+    if (deUnCatalogo && !esUnCatalogo(nombre)) continue;
+
     for (const encontrada of texto.matchAll(patron)) {
       const cruda = encontrada[1].trim();
       if (!cruda || SALE_DEL_PROYECTO.test(cruda)) continue;
@@ -359,7 +396,9 @@ for (const camino of hayArchivos(raiz, DE_DONDE_SALEN)) {
         ? resolve(suCarpeta, ...sinPregunta.slice(1).split('/'))
         : sinPregunta.startsWith('/')
           ? join(raiz, ...sinPregunta.slice(1).split('/'))
-          : resolve(dondeSePublica(camino, nombre, suCarpeta), ...sinPregunta.split('/'));
+          : deUnCatalogo
+            ? join(raiz, ...sinPregunta.split('/'))
+            : resolve(dondeSePublica(camino, nombre, suCarpeta), ...sinPregunta.split('/'));
       /* **Una vista del programa no es un archivo del disco.** Las quince
          pantallas del sitio no existen con ese nombre en ninguna carpeta: el
          servidor contesta la página única y el programa dibuja la que toca. Así
@@ -409,8 +448,8 @@ if (fallas.length > 0) {
 }
 
 console.log(
-  `Rutas verificadas: ${miradas} direcciones locales escritas en pantallas, hojas, guiones ` +
-  `y manifiestos, todas apuntando a una vista del programa o a un archivo escrito con ` +
+  `Rutas verificadas: ${miradas} direcciones locales escritas en pantallas, hojas, guiones` +
+  `, manifiestos y catálogos, todas apuntando a una vista del programa o a un archivo escrito con ` +
   `esas mismas letras y ` +
   `que el sitio publica —${deVista} son vistas— (${alVuelo} ${alVuelo === 1 ? 'se arma' : 'se arman'} al vuelo, ` +
   'que no se puede juzgar leyendo).');

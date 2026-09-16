@@ -4223,6 +4223,30 @@ Una extensión que falta es un exento que nadie escribió. Ahora qué archivo se
 abre lo contesta el recorrido del proyecto, que ya sabe qué no es texto, y son
 doscientos setenta y nueve. No había nada escrito en ninguno de los nueve.
 
+### El chequeo de las direcciones dejaba afuera los catálogos porque un comentario decía que no tenían ninguna
+
+El chequeo que comprueba que toda dirección de adentro del sitio lleve a algún
+lado abría el marcado, las hojas de estilo, los guiones del navegador y el
+manifiesto de cada aplicación de teléfono. Los catálogos de datos quedaban
+afuera, y el comentario que lo explicaba decía que adentro de un catálogo no hay
+direcciones.
+
+Sí las hay. La oferta de la portada guarda con qué imagen se muestra cada
+servicio, y son trece; sus dos copias que viajan al teléfono, otras trece cada
+una. Treinta y nueve direcciones que no abría nadie.
+
+Ahora se abren los catálogos, y una dirección escrita adentro de uno se lee
+desde la raíz del sitio, que es como la lee el producto: el programa le pone la
+barra adelante al leerla. Un catálogo se reconoce por su nombre —así los nombra
+todo el proyecto—, y no por ser un archivo de datos: la configuración de una
+herramienta también lo es, y lo que guarda adentro son patrones de reescritura
+del servidor, que empiezan con barra y no son direcciones de archivos.
+
+Comprobado antes de tocar nada, cambiándole a una imagen del catálogo el nombre
+por uno que no existe: el chequeo terminaba en verde. Ahora sale en rojo y dice
+archivo y renglón. Las direcciones miradas pasaron de 83 a 122, y las
+treinta y nueve que se sumaron estaban todas bien.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
