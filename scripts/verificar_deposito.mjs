@@ -37,9 +37,9 @@
       migraciones.
    3. **`.storage.from(` sólo se llama desde el archivo que define las dos
       funciones**, `urlPublica` y `urlFirmada`. No hay ninguna ruta escrita acá:
-      el archivo se busca por lo que define, así que las tres copias de
-      `js/auth.js` (pendiente 13) pasan sin nombrarlas, y el día que se
-      desdupliquen esto sigue valiendo. El motivo es que la diferencia entre
+      el archivo se busca por lo que define, así que no hace falta nombrarlo, y
+      el día que cambie de carpeta —o que haya más de uno— esto sigue valiendo.
+      El motivo es que la diferencia entre
       «enlace que vence» y «dirección para siempre» viva en un solo lugar: una
       llamada suelta la vuelve a decidir, y ahí es donde se decide mal.
    4. **El tope de tamaño y los tipos de archivo que el navegador rechaza dicen
@@ -595,13 +595,13 @@ for (const camino of pantallas) {
 
   /* 3. Al depósito le habla el archivo que sabe la diferencia entre un enlace
      que vence y una dirección para siempre, y nadie más. Se lo busca por lo que
-     define y no por su ruta: hoy son tres copias del mismo archivo. */
+     define y no por su ruta: hoy es uno solo. */
   const sabeLaDiferencia = DEFINE_PUBLICA.test(texto) && DEFINE_FIRMADA.test(texto);
 
   /* 4. Y ese mismo archivo es el que tiene la copia del tope y de los tipos.
-     Se le exige a cada copia por separado, así que las tres de `js/auth.js`
-     entran las tres: que una se despegue de las otras dos es exactamente el
-     defecto que esto busca. */
+     Se le exige a cada copia por separado, que es lo que hace falta el día que
+     haya más de una: que se despeguen entre ellas es exactamente el defecto
+     que esto busca. */
   if (sabeLaDiferencia) {
     const copia = copiaDelNavegador(texto);
     if (!copia) {
@@ -724,7 +724,9 @@ console.log(
   `Depósito verificado: ${declarados.size} depósitos declarados (${publicos} público), ` +
   `${nombrados} nombres escritos en el código, todos declarados y ninguno privado ` +
   `servido por dirección pública, las ${llamadas} llamadas al depósito salen del ` +
-  'archivo que define `urlPublica()` y `urlFirmada()`, las ' + copias +
-  ' copias del tope de tamaño y de los tipos dicen lo mismo que la migración, y ' +
+  'archivo que define `urlPublica()` y `urlFirmada()`, ' +
+  (copias === 1
+    ? 'la copia del tope de tamaño y de los tipos dice lo mismo que la migración, y '
+    : `las ${copias} copias del tope de tamaño y de los tipos dicen lo mismo que la migración, y `) +
   `los ${campos} campos de archivo dicen a qué depósito van sin escribir a mano ` +
   'qué se puede elegir.');
