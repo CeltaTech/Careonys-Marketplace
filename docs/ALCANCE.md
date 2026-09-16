@@ -4537,7 +4537,7 @@ RLS filtra filas, y vaciar la tabla no es filtrar filas—, así que un permiso 
 con sesión vaciar cualquier tabla del producto.
 
 La regla reconocía el permiso por una sola forma de escribirlo: una tabla por vez y con el esquema
-nombrado adelante (`scripts/verificar_esquema.mjs:664`). Postgres deja decir exactamente lo mismo
+nombrado adelante (`scripts/verificar_esquema.mjs:678`). Postgres deja decir exactamente lo mismo
 de otras cuatro maneras, y las cuatro le pasaban por al lado sin que dijera nada:
 
 - **sin nombrar el esquema**, que es lo que Postgres entiende igual porque `public` es el esquema
@@ -4561,10 +4561,10 @@ sale a sacárselos a quien entra sin sesión
 por ahí, y por ahí no había nadie mirando.
 
 Ahora un permiso se reconoce por lo que alcanza y no por cómo se escribió
-(`scripts/verificar_esquema.mjs:685`), en un único lugar del que también toma la decimoquinta
-regla (`scripts/verificar_esquema.mjs:795`), que tenía la misma forma escrita a mano por segunda
+(`scripts/verificar_esquema.mjs:699`), en un único lugar del que también toma la decimoquinta
+regla (`scripts/verificar_esquema.mjs:811`), que tenía la misma forma escrita a mano por segunda
 vez. Y los roles a los que nadie llega de afuera se nombran uno por uno
-(`scripts/verificar_esquema.mjs:827`), para que un rol nuevo llegue en rojo y no en silencio. Los
+(`scripts/verificar_esquema.mjs:843`), para que un rol nuevo llegue en rojo y no en silencio. Los
 permisos de tabla juzgados pasaron de 86 a 88.
 
 ### La copia que no baja de ningún original era invisible para el buscador de copias
@@ -4745,6 +4745,33 @@ siempre.
 
 **No había daño puesto:** hoy las quince direcciones están escritas con comillas
 dobles.
+
+### El nombre de una política escrito sin comillas no lo miraba ninguna de las tres reglas
+
+Postgres admite las dos formas de escribir el nombre de una política: entre comillas dobles cuando
+lleva espacios —que es como las escribe este proyecto, en castellano— y desnudo cuando no los
+lleva. Son la misma política.
+
+El chequeo del esquema reconocía sólo la primera. Y como las tres reglas que juzgan políticas
+—la que exige que la del depósito de archivos nombre la Organización, la que exige que la que deja
+escribir la nombre en su `with check`, y la que sigue las bajas para no juzgar una política que ya
+no está— la buscan por el nombre, una política escrita sin comillas no la miraba ninguna de las
+tres.
+
+Lo peor es lo más corto de escribir: una política que abre la tabla entera, para todo y para
+cualquiera con sesión, cabe en un solo renglón sin un espacio adentro del nombre. Escrita así,
+terminaba en verde.
+
+Comprobado antes de tocar nada, sobre el proyecto sin tocar. Para verlo hubo que neutralizar
+primero la regla ruidosa que reclama el aviso final de recarga del esquema, que tapaba a la
+callada. Con eso puesto, tres casos que tienen que salir rojos salieron verdes: la política del
+depósito sin nombrar la Organización, la que deja escribir sin nombrarla, y la que abre de par en
+par. Ahora los tres salen rojos y el mensaje nombra la política.
+
+No había daño puesto: las ochenta y cinco políticas escritas hoy llevan su nombre en castellano
+entre comillas. Los tres casos nuevos quedaron en el banco de pruebas del propio chequeo, más uno
+del lado que tiene que seguir pasando: la que abre de par en par con el nombre desnudo y después se
+da de baja, que no es una falla porque ya no está en pie.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
@@ -5597,7 +5624,7 @@ abierto sino una trampa armada: la protección no vivía donde se la lee, y ya s
 vez sin que nadie se enterara —una migración se la llevó puesta y la siguiente tuvo que
 reponerla—. Por eso el chequeo del esquema no se cree esa exención: va y mira que el permiso siga
 nombrando sus columnas, y se planta si alguna migración futura vuelve a conceder `update` sobre
-`profiles` sin nombrarlas (`scripts/verificar_esquema.mjs:1577`).
+`profiles` sin nombrarlas (`scripts/verificar_esquema.mjs:1606`).
 
 **Sobre el pendiente 75, el Desarrollador eligió la opción A: el papel nuevo baja el sello.** Había
 tres defendibles —bajarlo, prohibir el cambio mientras el sello esté puesto, o permitirlo y

@@ -637,7 +637,21 @@ const AGREGA_MONEDA =
    una tabla que una siembra anterior llenaba, y sin esto la sexta regla buscaría
    un nombre que ya no existe—. */
 const INSERTA = /insert\s+into\s+(?:"?public"?\.)?"?([a-z_][a-z0-9_]*)"?/gi;
-const POLITICA_DEPOSITO = /create\s+policy\s+"([^"]+)"\s+on\s+storage\.objects/gi;
+/* Cómo se escribe el nombre de una política. Entre comillas dobles cuando
+   lleva espacios —que es como los escribe este proyecto, en castellano— y
+   desnudo cuando no los lleva: las dos maneras son la misma política. Se
+   reconocía sólo la primera, y las tres reglas que juzgan políticas la buscan
+   por el nombre, así que la misma política escrita sin comillas no la miraba
+   ninguna. La más ancha que se puede escribir es justamente la más corta:
+   `create policy p on public.x for all to authenticated using (true)`, que sin
+   comillas terminaba en verde. Se captura con las comillas puestas y se las
+   saca al leer, para no correr los números de los grupos que vienen después. */
+const NOMBRE_DE_POLITICA = String.raw`("[^"]+"|[a-z_][a-z0-9_]*)`;
+const nombreDePolitica = (bruto) =>
+  (bruto.startsWith('"') ? bruto.slice(1, -1) : bruto);
+const POLITICA_DEPOSITO = new RegExp(
+  String.raw`create\s+policy\s+` + NOMBRE_DE_POLITICA + String.raw`\s+on\s+storage\.objects`,
+  'gi');
 /* Desde dónde rige la novena regla. Cuando las migraciones eran setenta y
    cuatro, el límite estaba más adelante: antes de él estaba el volcado de la
    instalación, con los `grant all` que una migración posterior vino a sacar, y
@@ -767,9 +781,11 @@ const NO_ENTRA_EN_UNA_TRANSACCION = [
    iguales adentro de un bucle, una por cada tabla de un arreglo, las escribe
    así, y sin esa alternativa el nombre de la tabla se leía como `public`. Hoy no
    queda ninguna escrita así, y la alternativa se deja para el día que vuelva. */
-const POLITICA_DE_TABLA =
-  /create\s+policy\s+"([^"]+)"\s+on\s+(?:"?([a-z_][a-z0-9_]*)"?\s*\.\s*)?(%I|"?[a-z_][a-z0-9_]*"?)/gi;
-const BAJA_DE_POLITICA = /drop\s+policy\s+(?:if\s+exists\s+)?"([^"]+)"/gi;
+const POLITICA_DE_TABLA = new RegExp(
+  String.raw`create\s+policy\s+` + NOMBRE_DE_POLITICA +
+  String.raw`\s+on\s+(?:"?([a-z_][a-z0-9_]*)"?\s*\.\s*)?(%I|"?[a-z_][a-z0-9_]*"?)`, 'gi');
+const BAJA_DE_POLITICA = new RegExp(
+  String.raw`drop\s+policy\s+(?:if\s+exists\s+)?` + NOMBRE_DE_POLITICA, 'gi');
 /* Para la duodécima. La comparación con la columna de la Organización y lo que
    viene a contestarla; y la deducción hecha a mano, que es sacar esa columna de
    una tabla preguntando quién inició sesión. */
@@ -1085,8 +1101,9 @@ function politicasDadasDeBaja(textos, nombres) {
     const limpio = texto.replace(/\r\n/g, '\n').split('\n')
       .map((l) => (/^\s*--/.test(l) ? ' '.repeat(l.length) : l)).join('\n');
     for (const m of limpio.matchAll(BAJA_DE_POLITICA)) {
-      if (!bajas.has(m[1])) bajas.set(m[1], []);
-      bajas.get(m[1]).push([nombres[i], m.index]);
+      const nombre = nombreDePolitica(m[1]);
+      if (!bajas.has(nombre)) bajas.set(nombre, []);
+      bajas.get(nombre).push([nombres[i], m.index]);
     }
   }
   return bajas;
@@ -1103,7 +1120,8 @@ function politicasDeTabla(sinComentarios) {
     if ((m[2] || 'public').toLowerCase() !== 'public') continue;
     const corte = sinComentarios.indexOf(';', m.index);
     const cuerpo = sinComentarios.slice(m.index, corte > 0 ? corte : sinComentarios.length);
-    salida.push([m[1], m[3].replace(/"/g, '').toLowerCase(), m.index, cuerpo]);
+    salida.push([nombreDePolitica(m[1]), m[3].replace(/"/g, '').toLowerCase(),
+      m.index, cuerpo]);
   }
   return salida;
 }
@@ -1495,7 +1513,7 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, b
 
   /* 7. La política del depósito de archivos nombra la Organización. */
   for (const m of sinComentarios.matchAll(POLITICA_DEPOSITO)) {
-    const nombre = m[1];
+    const nombre = nombreDePolitica(m[1]);
     const corte = sinComentarios.indexOf(';', m.index);
     const cuerpo = sinComentarios.slice(m.index, corte > 0 ? corte : sinComentarios.length);
     if (NOMBRA_ORGANIZACION.test(cuerpo)) continue;
@@ -1895,6 +1913,18 @@ const MAL = [
    "  using (tenant_id = (auth.jwt()->'user_metadata'->>'tenant_id')::uuid);\n"],
   ['una política del depósito que no nombra la Organización',
    DEPOSITO("bucket_id = 'papeles'")],
+  /* Las tres siguientes son la misma política de las de arriba, con el nombre
+     escrito desnudo en vez de entre comillas. Postgres admite las dos formas y
+     las tres reglas que juzgan políticas la buscan por el nombre: escritas así
+     no las miraba ninguna, y la tercera es la más ancha que se puede escribir. */
+  ['la misma del depósito, con el nombre desnudo',
+   DEPOSITO("bucket_id = 'papeles'").replace('"Papeles de cualquiera"', 'papeles')],
+  ['una que deja escribir sin nombrar la Organización, con el nombre desnudo',
+   'create policy lo_mio on public.cosas for insert to authenticated\n' +
+   '  with check (true);\n'],
+  ['el `for all` que abre de par en par, con el nombre desnudo',
+   'create policy lo_mio on public.cosas for all to authenticated\n' +
+   '  using (true) with check (true);\n'],
   ['una tabla que se crea sin encender su RLS',
    CREA],
   ['una tabla sin columna de Organización',
@@ -2082,6 +2112,10 @@ const BIEN = [
    'create policy "Vieja" on public.cosas for all to authenticated\n' +
    '  with check (true);\n' +
    'drop policy if exists "Vieja" on public.cosas;\n'],
+  ['la que abre de par en par con el nombre desnudo y después se da de baja',
+   'create policy vieja on public.cosas for all to authenticated\n' +
+   '  with check (true);\n' +
+   'drop policy if exists vieja on public.cosas;\n'],
   ['la baja escrita antes del alta, como en un bucle con `execute format`',
    'drop policy if exists "Lo mío" on public.%I;\n' +
    'create policy "Lo mío" on public.%I for all to authenticated\n' +
