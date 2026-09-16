@@ -45,6 +45,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
 import { hayArchivos, seRevisaron, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
+import { objetosDeEstilo, pares } from './verificar_estilos.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -144,6 +145,28 @@ export function fondosDeLetra(crudo, extension, nombre) {
                        `style="… ${prop}: ${valor.trim()}"`]);
       }
     }
+    /* Y el mismo atributo escrito como lo escribe un programa. Hasta acá esto
+       leía sólo `style="…"`, que es como lo escribe una pantalla suelta, y las
+       pantallas portadas lo escriben `style={{ … }}`: se abrían, se recorrían
+       enteras y adentro no se reconocía ningún estilo. El corte de llaves y de
+       comas lo presta `verificar_estilos.mjs`, que ya tuvo que resolverlo para
+       lo suyo; escribirlo de nuevo acá sería la misma decisión en dos lugares.
+
+       Se mira par por par y no la lista entera: a diferencia de aquel chequeo,
+       acá no hace falta que **todos** los valores estén escritos con todas las
+       letras. Alcanza con que lo esté el que pinta el fondo. */
+    for (const [donde, cuerpo] of objetosDeEstilo(crudo)) {
+      for (const parte of pares(cuerpo)) {
+        const corte = parte.indexOf(':');
+        if (corte < 0) continue;
+        const clave = parte.slice(0, corte).trim().replace(/^['"`]|['"`]$/g, '');
+        const valor = parte.slice(corte + 1).trim();
+        const enLaHoja = clave.replace(/[A-Z]/g, (letra) => '-' + letra.toLowerCase());
+        if (!enLaHoja.startsWith('background') || !TOKEN_DE_LETRA.test(valor)) continue;
+        hallados.push([crudo.slice(0, donde).split('\n').length,
+                       `style={{ … ${clave}: ${valor} }}`]);
+      }
+    }
   }
   return hallados;
 }
@@ -170,14 +193,21 @@ const MAL_FONDO = [
   ['.x { background: var(--tono-exito-texto); }', '.css'],
   ['.x { background-color: var(--texto-principal); }', '.css'],
   ['<style>.x { background: var(--azul-medio-texto); }</style>', EXTENSIONES_DE_PANTALLA[0]],
-  ['<div style="background:var(--tono-critico-texto)">Hola</div>', EXTENSIONES_DE_PANTALLA[0]]
+  ['<div style="background:var(--tono-critico-texto)">Hola</div>', EXTENSIONES_DE_PANTALLA[0]],
+  ["<div style={{ background: 'var(--tono-critico-texto)' }}>Hola</div>", EXTENSIONES_DE_PANTALLA[1]],
+  ["<div style={{ backgroundColor: 'var(--texto-principal)' }}>Hola</div>", EXTENSIONES_DE_PANTALLA[1]],
+  ["<div style={{ width: ancho, background: 'var(--texto-principal)' }}>Hola</div>",
+   EXTENSIONES_DE_PANTALLA[1]]
 ];
 const BIEN_FONDO = [
   ['.x { background: var(--relleno-exito); }', '.css'],
   ['.x { color: var(--tono-exito-texto); }', '.css'],
   ['.x { border-color: var(--texto-principal); }', '.css'],
   ['.hamburger span { background: var(--texto-principal); }', '.css'],
-  ['<div style="color:var(--tono-critico-texto)">Hola</div>', EXTENSIONES_DE_PANTALLA[0]]
+  ['<div style="color:var(--tono-critico-texto)">Hola</div>', EXTENSIONES_DE_PANTALLA[0]],
+  ["<div style={{ color: 'var(--tono-critico-texto)' }}>Hola</div>", EXTENSIONES_DE_PANTALLA[1]],
+  ["<div style={{ background: 'var(--relleno-exito)' }}>Hola</div>", EXTENSIONES_DE_PANTALLA[1]],
+  ["<div style={{ borderColor: 'var(--texto-principal)' }}>Hola</div>", EXTENSIONES_DE_PANTALLA[1]]
 ];
 
 const noDetectaTema = MAL_TEMA.filter(([, css]) => problemasDeTema(css).length === 0);

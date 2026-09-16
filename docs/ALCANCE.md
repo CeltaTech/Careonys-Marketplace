@@ -2972,6 +2972,38 @@ Lo que **no** se agregó a la lista de puertas, y es la mitad de la decisión, e
 
 Se probó de las dos maneras. Quitándole el aviso al punto de carga que ahora se ve, la versión anterior del chequeo seguía diciendo que todo estaba bien y la de ahora lo denuncia con su archivo y su renglón. Su titular pasó de 80 puntos de carga a 81. Y como la puerta queda escrita a mano en dos lados, se le puso una guarda que se planta si deja de llamarse así: un renombre la dejaría muda otra vez, y esta vez sin nadie que lo notara.
 
+### La regla del modo oscuro no regía sobre la mitad de las pantallas
+
+De noche, un token pensado para letra se aclara. Si ese mismo token está pintando un fondo, la
+pastilla se aclara con él y queda clara con letra clara: ilegible. Por eso el chequeo de temas
+guarda, además de que las dos maneras de encender la noche digan lo mismo, que ningún token de
+letra pinte un fondo.
+
+Para eso lee las hojas de estilo y también el estilo escrito al lado de la cosa. Y eso último lo
+leía en una sola forma: entre comillas, que es como lo escribe una pantalla suelta. Una pantalla
+de un programa escribe ese mismo estilo como una lista de pares, y hoy son la mitad de las
+pantallas del producto. Se abrían las ochenta y seis, se recorrían enteras, y adentro no se
+reconocía ningún estilo. El titular seguía diciendo ochenta y seis archivos revisados, que era
+cierto y no quería decir nada.
+
+La cabecera del chequeo de estilos ya tenía escrita la regla que a éste le faltaba aplicar: es la
+misma decisión escrita de dos maneras, y si sólo se mirara la forma vieja, la mitad del producto
+habría quedado sin vigilancia el día que pasó a ser un programa.
+
+El corte de llaves y de comas —saber dónde termina un par y empieza el siguiente cuando adentro
+hay más llaves— no se escribió de nuevo: lo presta el chequeo de estilos, que ya había tenido que
+resolverlo para lo suyo. La misma decisión en dos lados se despega sola. Con una diferencia
+deliberada al usarlo: allá hacen falta todos los valores de la lista, y acá alcanza con el que
+pinta el fondo.
+
+**Se probó de las dos maneras**: pintando a propósito un fondo con un token de letra en una
+pantalla del programa, la versión anterior seguía diciendo que todo estaba bien y la de ahora lo
+denuncia con su archivo y su renglón. Y quedaron seis casos nuevos en su autoprueba, tres que
+tienen que romper y tres que tienen que pasar.
+
+Detrás no había nada roto: ninguna pantalla del programa estaba pintando un fondo con un token de
+letra. La regla, sencillamente, no regía sobre ellas.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

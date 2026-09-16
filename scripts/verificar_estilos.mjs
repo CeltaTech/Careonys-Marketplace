@@ -120,7 +120,7 @@ const UN_NUMERO = /^-?[0-9]+(\.[0-9]+)?$/;
 /** Dónde empieza y termina cada lista de estilos escrita como la escribe un
     programa. Se cuentan las llaves respetando lo que esté entre comillas, así
     una llave escrita adentro de un texto no corta la lista por la mitad. */
-function objetosDeEstilo(s) {
+export function objetosDeEstilo(s) {
   const ABRE = 'style={{';
   const salida = [];
   let i = s.indexOf(ABRE);
@@ -142,7 +142,7 @@ function objetosDeEstilo(s) {
 
 /** Los pares de la lista, cortando por las comas que están al aire: una coma
     adentro de un texto o de unos paréntesis pertenece al valor y no separa. */
-function pares(cuerpo) {
+export function pares(cuerpo) {
   const partes = [];
   let actual = '', hondo = 0, comilla = null;
   for (const c of cuerpo) {
