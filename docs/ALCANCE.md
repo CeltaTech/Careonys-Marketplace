@@ -4465,6 +4465,33 @@ nueva la nombra con su archivo y su lista. Al banco de pruebas entraron tres cas
 mezclada —un archivo y una clave sin extensión—, una lista de direcciones del sitio y una de
 opciones de un vocabulario; las dos últimas no se tienen que tocar.
 
+### El chequeo de etiquetas no miraba ninguna etiqueta publicada
+
+Una etiqueta de git marca una versión y queda para siempre: no se renombra, porque el nombre
+viejo ya viajó a todas las copias del repositorio. `scripts/verificar_etiquetas.mjs` existe
+para que ninguna lleve un nombre adentro —del producto, de la empresa, de la modalidad—, y su
+detector está probado contra doce nombres inventados.
+
+Lo que abría eran las etiquetas de esta máquina, y nada más: `git tag --list` no sabe nada
+del repositorio de arriba. Esas son justamente las que todavía se borran sin que se entere
+nadie. Las publicadas, que son las únicas que ya no tienen arreglo, no las miró nunca. Y el
+encabezado decía con todas las letras que hoy no hay ninguna «ni acá ni en GitHub»: eso se
+había mirado a mano una vez, y comprobarlo no lo comprobaba nadie.
+
+Probado de punta a punta sin salir de esta máquina: se armó un repositorio de mentira, se le
+publicó una etiqueta con nombre, se borró la copia local, y la versión vieja del chequeo
+siguió informando «cero etiquetas» mientras la nueva la nombra y se pone roja.
+
+Ahora se preguntan las dos listas y se juntan sin repetir
+(`scripts/verificar_etiquetas.mjs:154`). Si el repositorio de arriba no contesta —sin conexión,
+o sin permiso— las publicadas quedan sin mirar y el último renglón lo dice, en vez de contar
+un cero que no midió nada. Es la misma forma que ya usa el chequeo de las reglas del chat: lo
+que sólo se puede comprobar con la red delante se informa hecho o no hecho, nunca en silencio.
+
+Y al banco de pruebas entró la primera apuntada al corpus y no al detector: una salida de
+mentira del remoto (`scripts/verificar_etiquetas.mjs:114`), con una rama que no hay que
+confundir con una etiqueta y con la etiqueta anotada, que git escribe dos veces.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
