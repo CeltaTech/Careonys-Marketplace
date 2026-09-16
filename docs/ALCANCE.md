@@ -4861,8 +4861,8 @@ detectaba.
 
 Ahora dónde empieza y dónde termina una expresión regular lo contesta el módulo
 compartido, que es el único lugar donde está escrito todo lo que puede ir
-delante de una barra. Sobre los ochenta y cinco archivos de programa del
-producto, el cambio recupera texto en veintisiete y no tapa nada en ninguno.
+delante de una barra. Sobre los ciento diez archivos que este chequeo abre,
+el cambio recupera texto en veintiocho y no tapa nada en ninguno.
 
 ### La misma pregunta contestada cinco veces adentro de un solo chequeo
 
