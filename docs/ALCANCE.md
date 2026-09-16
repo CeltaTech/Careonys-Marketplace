@@ -3912,6 +3912,31 @@ nombra y se pone rojo. No había ninguno puesto.
 El guion hermano, el de las guías de cuidado, se revisó en el mismo momento y no tiene el
 defecto: compara cada guía entera, así que un campo de más no se le escapa.
 
+### Las citas sólo se revisaban en seis formas de archivo, y el proyecto escribe muchas más
+
+La regla de la empresa pide que toda afirmación sobre una decisión ya tomada diga en qué
+archivo y en qué renglón está escrita. Dos chequeos la sostienen: uno pregunta si la cita
+apunta a algo, el otro si apunta a lo que dice. Los dos sacan de un mismo lado la lista de
+archivos donde buscar.
+
+Esa lista nombraba seis formas de archivo a mano. El proyecto escribe bastantes más, y las
+que quedaban afuera no eran de adorno: la puerta que da de alta y de baja a las personas,
+los catálogos del producto, y el archivo que le dice al repositorio qué no guardar. Se
+probó escribiendo, adentro de esa puerta, una cita a un archivo que no existe: los dos
+chequeos terminaron en verde y con el mismo número de citas de siempre. El archivo no se
+había abierto.
+
+Ahora no hay lista de formas de archivo: se abre todo lo que no sea una imagen ni un
+archivo binario, que es la misma regla con la que el recorrido ya decide qué es texto. El
+corpus pasó de 230 archivos a 270.
+
+**Y ahí había daño puesto, dos veces.** Una cita adentro del catálogo que dice qué
+verificación frena qué cosa mandaba a leer una migración que ya no existe —desapareció en
+el aplastamiento—, justo en el renglón que explica quién puede ver el detalle de una
+validación; se reapuntó a las dos políticas que hoy lo sostienen. Y la cita del archivo que
+le dice al repositorio qué no guardar se había corrido cincuenta y seis renglones de donde
+apuntaba. Las dos estaban ahí sin que nadie las mirara.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

@@ -14,9 +14,9 @@
    correría entero.
 =================================================== */
 
-import { relative, sep } from 'node:path';
+import { basename, relative, sep } from 'node:path';
 
-import { EXTENSIONES_DE_PANTALLA, hayArchivos } from './recorrido.mjs';
+import { archivos, esTexto, seRevisaron } from './recorrido.mjs';
 
 /* Una cita: `ruta.ext:123`, `ruta.ext:123-140` o `ruta.ext:12:34`. El acento
    invertido de los dos lados es parte de la cita: sin él, `README.md:1` adentro
@@ -99,10 +99,16 @@ export const PREFIJOS_DE_AFUERA = ['careonys/', 'celtatech/'];
    migración del esquema y ahí no había nada escrito.
 
    Se recorre desde la raíz, y por eso una carpeta nueva entra sola. Una lista de
-   carpetas escrita acá sabría sólo de las que había el día que se la escribió. */
-export const EXTENSIONES_CON_CITAS = [
-  ...EXTENSIONES_DE_PANTALLA, '.md', '.mjs', '.js', '.css'
-];
+   carpetas escrita acá sabría sólo de las que había el día que se la escribió.
+
+   Y por eso acá tampoco hay lista de formas de archivo. Una cita se escribe en
+   cualquier cosa que alguien lea: el comentario de un programa, el renglón de un
+   documento, el motivo escrito adentro de un catálogo, la nota al lado de una
+   línea de `.gitignore`. Se abre todo lo que no sea una imagen ni un archivo
+   binario, que es la misma regla con la que el recorrido decide qué es texto.
+   Escrita a mano eran seis formas, y dejaban afuera la puerta que da de alta y de
+   baja a las personas, los catálogos y el `.gitignore` —dos citas de verdad que
+   no miraba nadie—. */
 
 /* Y lo único que queda afuera del recorrido, con su motivo escrito. */
 export const NO_SE_RECORREN = new Map([
@@ -114,8 +120,11 @@ export const NO_SE_RECORREN = new Map([
 
 /** Todos los archivos del proyecto donde puede haber una cita, desde la raíz. */
 export function documentosConCitas(raiz) {
-  return hayArchivos(raiz, EXTENSIONES_CON_CITAS, [...NO_SE_RECORREN.keys()])
+  const encontrados = archivos(raiz, [''], [...NO_SE_RECORREN.keys()])
+    .filter((camino) => esTexto(basename(camino)))
     .map((camino) => relative(raiz, camino).split(sep).join('/'));
+  seRevisaron(encontrados.length, 'ni un archivo de texto donde pueda haber una cita');
+  return encontrados;
 }
 
 /* Rutas inventadas. No nombran ningún archivo y no hay adónde apunten: existen

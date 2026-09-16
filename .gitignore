@@ -30,7 +30,7 @@ Thumbs.db
 # no hace falta. Decidido por el Desarrollador el 5 de septiembre de 2026: antes de
 # borrar nada hay que estar seguro, y mientras tanto no molesta.
 # El nombre no es nuevo: es el que ya usaba `assets/images/fuera de uso/`, que se mudó
-# entera acá adentro. Y `scripts/recorrido.mjs:89` hace que ningún chequeo la abra.
+# entera acá adentro. Y `scripts/recorrido.mjs:145` hace que ningún chequeo la abra.
 # Acá va sólo lo que se sospecha inútil. El código que se sabe que sirve y que se quedó sin
 # ninguna pantalla que lo llame no va acá: sube al estante de códigos útiles de la empresa,
 # afuera de todos los productos, porque acá quedaría en una sola máquina. Está en `CLAUDE.md` §4.
