@@ -58,6 +58,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
 import { hayArchivos, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
+import { comoSeEscribe, valorDe } from './atributos.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
@@ -76,11 +77,13 @@ const AJENAS = ['docs', 'supabase', 'scripts'];
    eximir nada. */
 const ESCRITAS_A_MANO = new Map([]);
 
-/* Las tres maneras de escribir un valor con todas las letras. Una pantalla
-   suelta usa comillas, una pantalla de un programa usa llaves, y las dos
-   admiten comillas simples: es la misma decisión escrita de tres formas, y
-   mirar una sola dejaba las otras dos sin nadie que las viera. */
-const VALOR_ESCRITO = /\bvalue\s*=\s*(?:"([^"]*)"|'([^']*)'|\{\s*(?:"([^"]*)"|'([^']*)'|`([^`]*)`)\s*\})/i;
+/* Las maneras de escribir un valor con todas las letras. Una pantalla suelta
+   usa comillas, una pantalla de un programa usa llaves, y las dos admiten
+   comillas simples: es la misma decisión escrita de varias formas, y mirar una
+   sola dejaba las otras sin nadie que las viera. Cuáles son vive en
+   `scripts/atributos.mjs`, escritas una sola vez, porque el chequeo del
+   depósito pregunta exactamente lo mismo sobre otro atributo. */
+const VALOR_ESCRITO = new RegExp(comoSeEscribe('value'), 'i');
 /* Y el valor que sale de un dato, que es justamente la forma correcta. */
 const HAY_VALUE = /\bvalue\s*=/i;
 const OPCION = /<option\b([^>]*)>([^<]*)/gi;
@@ -102,8 +105,8 @@ function opcionesDeUnaPantalla(crudo) {
   for (const m of limpio.matchAll(OPCION)) {
     const renglon = limpio.slice(0, m.index).split('\n').length;
     const escrito = VALOR_ESCRITO.exec(m[1]);
-    if (escrito) {
-      const valor = (escrito[1] ?? escrito[2] ?? escrito[3] ?? escrito[4] ?? escrito[5]);
+    const valor = escrito && valorDe(escrito);
+    if (valor) {
       if (valor.trim() !== '') salida.push([renglon, valor]);
       continue;
     }

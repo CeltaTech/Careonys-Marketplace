@@ -298,7 +298,7 @@ los ganchos están en el repositorio y no los llama nadie. Para saltearlos en un
 
 <!-- guiones: lo escribe scripts/medir_estado.mjs, no se edita a mano -->
 
-En `scripts/` hay **83 archivos `.mjs` y uno de Python**: 42 chequeos `verificar_*`, 18 pruebas `probar_*` y 23 herramientas sueltas —medidores, generadores, el módulo que comparten y el servidor de trabajo—.
+En `scripts/` hay **84 archivos `.mjs` y uno de Python**: 42 chequeos `verificar_*`, 18 pruebas `probar_*` y 24 herramientas sueltas —medidores, generadores, el módulo que comparten y el servidor de trabajo—.
 
 <!-- fin de los guiones -->
 

@@ -29,7 +29,9 @@
       migración.** No se adivina qué texto es un nombre de depósito: se miran
       los lugares donde va uno —el primer argumento de `uploadFile`,
       `urlPublica` y `urlFirmada`; un `deposito:` o `deposito =` con el nombre
-      escrito; y el tramo de una dirección `/storage/v1/object/public/…/`—.
+      escrito, venga entre comillas o entre llaves; y el tramo de una dirección
+      `/storage/v1/object/public/…/`—. Las maneras de envolver un valor las
+      reconoce `scripts/atributos.mjs`, que las tiene escritas una sola vez.
    2. **Ninguna dirección pública nombra un depósito declarado privado.** Los
       lugares públicos son dos: la dirección armada a mano y `urlPublica()`.
       Quién es privado sale de `depositosDeclarados()`, en
@@ -70,9 +72,10 @@
       catálogos viene a evitar.
 
       Se mira que ninguna pantalla escriba la lista —un `accept` sólo vale si su
-      valor entero sale de una interpolación—, que todo campo de archivo diga a
-      dónde va —con un `data-deposito`, o siendo uno de los papeles que declara
-      `LOS_CUATRO`, que se lo escribe—, y que la pantalla que tiene esos papeles
+      valor entero sale de una interpolación, y da igual si viene entre comillas
+      o entre llaves—, que todo campo de archivo diga a dónde va —con un
+      `data-deposito`, o siendo uno de los papeles que declara `LOS_CUATRO`, que
+      se lo escribe—, y que la pantalla que tiene esos papeles
       cargue el guion que se los declara. Y lo que escribe la lista se ejerce, no
       se lee: se sacan `_loQueAcepta()` y `_escribirLoQueSeAcepta()` del archivo
       real y se los corre contra los tipos de la migración y contra una pantalla
@@ -107,23 +110,29 @@ import { dirname, join, relative, sep } from 'node:path';
 
 import { hayArchivos, EXTENSIONES_DE_PANTALLA, esPantalla, seRevisaron } from './recorrido.mjs';
 import { depositosDeclarados, limitesDeclarados } from './verificar_esquema.mjs';
+import { comoSeEscribe, valorDe } from './atributos.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
    éste: un depósito se nombra donde vive una pantalla o su guion. */
 const AJENAS = ['docs', 'supabase', 'scripts', 'data', 'assets', 'Nueva carpeta'];
 
-/* Los lugares donde va un nombre de depósito, y si ese lugar es una dirección
-   pública. Lo público es lo que se sirve sin sesión y sin vencimiento. */
+/* Los lugares donde va un nombre de depósito, si ese lugar es una dirección
+   pública, y de dónde sale el nombre de cada coincidencia. Lo público es lo que
+   se sirve sin sesión y sin vencimiento. */
 const LUGARES = [
   [/\b(?:uploadFile|urlFirmada)\s*\(\s*['"`]([^'"`]+)['"`]/g, false,
-   'el primer argumento'],
+   'el primer argumento', (m) => m[1]],
   [/\burlPublica\s*\(\s*['"`]([^'"`]+)['"`]/g, true,
-   'el primer argumento'],
-  [/\bdeposito\s*[:=]\s*['"`]([^'"`]+)['"`]/g, false,
-   'un `deposito:` escrito'],
+   'el primer argumento', (m) => m[1]],
+  /* El mismo nombre escrito como atributo o como propiedad, y envuelto de
+     cualquiera de las maneras: hasta el 16 de septiembre de 2026 acá se leían
+     sólo las comillas, y un `data-deposito={"privadoo"}` —que es como lo
+     escribe una pantalla de un programa— no lo miraba nadie. */
+  [new RegExp(comoSeEscribe('deposito', { separador: '[:=]', acento: true }), 'g'), false,
+   'un `deposito:` escrito', valorDe],
   [/\/storage\/v1\/object\/public\/([^/'"`$\s]+)\//g, true,
-   'una dirección pública armada a mano'],
+   'una dirección pública armada a mano', (m) => m[1]],
 ];
 
 const HABLA_AL_DEPOSITO = /\.storage\s*\.\s*from\s*\(/g;
@@ -143,8 +152,9 @@ const LA_DECISION = /function\s+_porQueNoSeSube\s*\([\s\S]*?\n\}/;
 
 /* Lo que un campo de archivo deja elegir. Un `accept` sólo pasa si su valor
    entero sale de una interpolación: un tipo escrito adentro es la lista escrita
-   a mano que esta regla persigue. */
-const UN_ACCEPT = /\baccept\s*=\s*(['"])([\s\S]*?)\1/g;
+   a mano que esta regla persigue. Y venga envuelto como venga —entre comillas o
+   entre llaves—, que es la misma decisión escrita de dos maneras. */
+const UN_ACCEPT = new RegExp(comoSeEscribe('accept'), 'g');
 const SOLO_INTERPOLADO = /^\$\{[^}]*\}$/;
 const UN_CAMPO_DE_ARCHIVO = /<input\b[^>]*\btype\s*=\s*(['"]?)file\1[^>]*>/gi;
 const DICE_SU_DEPOSITO = /\bdata-deposito\s*=/i;
@@ -296,14 +306,18 @@ function renglonDe(texto, indice) {
 /** Los nombres de depósito de un archivo: `[renglón, nombre, esPublico, dónde]`. */
 function nombresDeUnArchivo(texto) {
   const salida = [];
-  for (const [patron, publico, donde] of LUGARES) {
+  for (const [patron, publico, donde, leer] of LUGARES) {
     for (const m of texto.matchAll(new RegExp(patron.source, patron.flags))) {
       /* Un depósito que llega por variable no se puede leer acá, y no hace
          falta: la pantalla no escribió ningún nombre. Vale para el
          `data-deposito` que arma `js/fichas-legajo.js`, y no para una dirección
          pública, donde el nombre sí tiene que estar a la vista. */
-      if (!publico && SOLO_INTERPOLADO.test(m[1])) continue;
-      salida.push([renglonDe(texto, m.index), m[1], publico, donde]);
+      /* Sin nombre escrito con todas las letras no hay nada que comparar: el
+         depósito llega por variable, y la pantalla no escribió ninguno. */
+      const nombre = leer(m);
+      if (nombre === null || nombre === '') continue;
+      if (!publico && SOLO_INTERPOLADO.test(nombre)) continue;
+      salida.push([renglonDe(texto, m.index), nombre, publico, donde]);
     }
   }
   return salida.sort((a, b) => a[0] - b[0]);
@@ -313,9 +327,12 @@ function nombresDeUnArchivo(texto) {
 function fallasDelAccept(texto, papeles) {
   const fallas = [];
   for (const m of texto.matchAll(UN_ACCEPT)) {
-    if (SOLO_INTERPOLADO.test(m[2].trim())) continue;
+    const escrito = valorDe(m);
+    /* Sin nada escrito con todas las letras, la lista sale de un dato, que es
+       justamente la forma correcta. */
+    if (escrito === null || SOLO_INTERPOLADO.test(escrito.trim())) continue;
     fallas.push([renglonDe(texto, m.index),
-      `un campo de archivo dice a mano qué se puede elegir («${m[2]}»). Eso lo ` +
+      `un campo de archivo dice a mano qué se puede elegir («${escrito}»). Eso lo ` +
       'declara la migración y lo escribe `_loQueAcepta()`: acá va el depósito, con ' +
       '`data-deposito`, y la lista la pone él']);
   }
@@ -411,6 +428,10 @@ const MAL = [
    "await Sesion.urlFirmada('privadoo', camino, 300);\n"],
   ['el mismo error escrito como `deposito:`',
    "{ campo: 'dni', deposito: 'privadoo' }\n"],
+  ['el mismo, escrito entre llaves, como lo escribe una pantalla de un programa',
+   '<input type="file" data-deposito={"privadoo"} />\n'],
+  ['el mismo, entre comillas simples adentro de las llaves',
+   "<input type=\"file\" data-deposito={'privadoo'} />\n"],
   ['un depósito privado servido por dirección pública armada a mano',
    'return base + `/storage/v1/object/public/privado/${camino}`;\n'],
   ['un depósito privado servido con `urlPublica()`',
@@ -428,6 +449,8 @@ const BIEN = [
    'await Sesion.uploadFile(deposito, camino, archivo);\n'],
   ['un `data-deposito` que la pantalla arma con una variable, sin escribir el nombre',
    'return `<input type="file" data-deposito="${deposito}" />`;\n'],
+  ['el mismo, puesto por el programa entre llaves, que tampoco escribe ningún nombre',
+   '<input type="file" data-deposito={deposito} />\n'],
 ];
 
 /* Y las de la quinta. Los papeles de prueba son de mentira a propósito: que el
@@ -439,6 +462,10 @@ const ACCEPT_MAL = [
    '<input type="file" id="file-dni" accept="image/*,.pdf" />'],
   ['la misma lista, escrita con extensiones',
    '<input type="file" id="file-dni" accept=".jpg,.jpeg,.png,.pdf" />'],
+  ['la misma, escrita entre llaves, como la escribe una pantalla de un programa',
+   '<input type="file" id="file-dni" accept={".jpg,.png"} />'],
+  ['la misma, entre comillas simples adentro de las llaves',
+   "<input type=\"file\" id=\"file-dni\" accept={'image/*'} />"],
   ['un campo de archivo que no dice a qué depósito va',
    '<input type="file" id="otro-papel" />'],
 ];
@@ -450,6 +477,10 @@ const ACCEPT_BIEN = [
    '<input type="file" id="file-dni" />'],
   ['un `accept` armado con lo que contesta el depósito',
    'return `<input type="file" data-deposito="${d}" accept="${Texto.escapar(acepta)}" />`;'],
+  ['el mismo, pedido entre llaves, que es como lo pide una pantalla de un programa',
+   '<input type="file" id="file-dni" accept={loQueAcepta(d)} />'],
+  ['el mismo, armado con un molde adentro de las llaves',
+   '<input type="file" id="file-dni" accept={`${acepta}`} />'],
   ['un campo que no es de archivo, que esta regla no mira',
    '<input type="text" id="apellido" maxlength="60" />'],
 ];

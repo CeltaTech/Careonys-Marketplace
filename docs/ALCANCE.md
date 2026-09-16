@@ -3058,6 +3058,38 @@ casos nuevos en su autoprueba, tres que tienen que romper y cuatro que tienen qu
 Detrás no había nada roto: las veintinueve opciones que hoy existen en el producto sacan su valor
 de un dato, o son el renglón vacío que abre un desplegable.
 
+### El depósito escrito entre llaves no lo miraba nadie
+
+El producto guarda archivos en dos depósitos, y cuál es cuál no puede depender de la memoria de
+quien escribe la pantalla: uno es privado —ahí van los documentos de identidad— y el otro es
+público a propósito, porque la foto del directorio se ve sin cuenta. El chequeo que lo cuida
+pregunta, entre otras cosas, dos cuestiones que son la misma pregunta hecha sobre dos atributos
+distintos: si el nombre del depósito está escrito con todas las letras adentro de la pantalla, y
+si la lista de archivos que un campo deja elegir está escrita con todas las letras ahí también.
+
+Las dos conocían las comillas y no las llaves. Una pantalla de un programa escribe entre llaves
+todo el tiempo, así que las dos reglas estaban mirando sólo la mitad del producto. La de la lista
+de archivos deja pasar un catálogo escrito adentro de una pantalla, que es justo lo que la regla
+de los catálogos viene a evitar. La del nombre del depósito es peor: un nombre que ninguna
+migración declara no rompe nada a la vista, el archivo simplemente no aparece, y nadie sabe por
+qué.
+
+El arreglo no fue ensanchar dos listas de formas. Las maneras de envolver un valor pasaron a
+vivir en un solo archivo, y el chequeo de las opciones —que hace exactamente la misma pregunta
+sobre un tercer atributo, y que había tenido que aprenderlas por su cuenta— las lee de ahí. Dos
+listas parecidas se completan una y queda corta la otra: es el mismo motivo por el que el
+proyecto ya tenía un solo lugar donde se decide qué archivos se recorren y otro donde se cuenta
+dónde termina un bloque de código.
+
+**Se probó de las dos maneras**, con las dos cosas metidas en una pantalla de verdad: la versión
+anterior las dio por buenas y la de ahora las denuncia con su renglón. Las mismas dos escritas
+entre comillas ya salían en rojo antes, así que el archivo se estaba leyendo entero y lo que no
+se reconocía era la forma. Quedaron siete casos nuevos entre las dos autopruebas.
+
+**No había nada roto detrás.** Los seis nombres de depósito que el producto escribe son los dos
+declarados, y los siete campos de archivo dicen a qué depósito van sin escribir a mano qué se
+puede elegir.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
