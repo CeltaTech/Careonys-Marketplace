@@ -3578,6 +3578,42 @@ archivos; y con la tabla de pendientes vaciada a propósito, el que corre las
 pruebas se sigue plantando antes de empezar, que era lo que esa lectura
 protegía.
 
+### El aplastamiento se reconocía por los dos nombres que dejó, y ya había habido otro
+
+El chequeo que verifica que una migración, una vez escrita, se quede quieta
+tiene un corte: las migraciones de antes del aplastamiento —el commit que juntó
+todas las anteriores en unos pocos archivos— quedan del otro lado. No es un
+perdón, y el motivo se muerde la cola: la única manera de ponerlas en verde
+sería editarlas o reescribir el historial, que es exactamente lo que la regla
+prohíbe.
+
+Su encabezado promete que a ese commit se lo reconoce **por su forma**, y explica
+por qué no puede ser por una fecha —perdonaría todo lo que se haga ese mismo
+día— ni por un hash —el chequeo corre antes del commit, cuando todavía no hay
+hash—. Y agrega que si mañana se vuelve a aplastar, el corte se corre solo hasta
+ahí.
+
+Estaba reconocido por los dos nombres de archivo que dejó el último. Con los
+nombres, el reconocimiento vale una sola vez: de los dos aplastamientos que ya
+hubo veía uno. El otro, el que juntó setenta y cuatro migraciones en tres
+archivos con otros nombres, no lo reconocía ninguno de los renglones que lo
+buscaban, y el que venga tampoco lo haría.
+
+Éste no es de los que se quedan callados: el día que se aplastara otra vez,
+fallaría en rojo. Y hoy el corte cae en el mismo commit con las dos lecturas, así
+que ningún número del renglón verde cambia.
+
+La forma ahora se deriva, y son dos cosas juntas: la carpeta queda con
+exactamente los archivos que ese mismo commit escribe y ninguno más, y se lleva
+por delante alguna otra migración. Un commit corriente no tiene ninguna de las
+dos, porque agrega una migración y deja la carpeta con una más.
+
+Falsificado en los dos sentidos: el detector se prueba ahora contra siete commits
+inventados antes de mirar el historial —dos de ellos con nombres de archivo que
+no existen—, y devolviéndole la lectura por nombres se planta antes de leer nada;
+con la lectura derivada reconoce los dos aplastamientos del historial, y el corte
+sigue cayendo donde caía.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

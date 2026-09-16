@@ -69,14 +69,16 @@
    historial, y las dos cosas son justamente lo que esta regla prohíbe. Ya no se
    pueden arreglar, y quien lo intente rompe la regla otra vez.
 
-   **Se lo reconoce por su forma, no por una fecha ni por un hash.** Por la
-   fecha no, porque perdonaría todo lo que se haga ese mismo día. Por el hash
-   tampoco, porque este chequeo corre en el gancho de antes de cada commit y ahí
-   el commit todavía no tiene hash. La forma son tres cosas juntas, y ninguna
-   sola alcanza: **deja la carpeta con exactamente los archivos del
-   aplastamiento y ninguno más**, **escribe los dos** y **se lleva por delante
-   alguna otra migración**. Un commit corriente no tiene ninguna de las tres:
-   agrega una migración y deja la carpeta con una más.
+   **Se lo reconoce por su forma, no por una fecha, ni por un hash, ni por los
+   nombres que dejó.** Por la fecha no, porque perdonaría todo lo que se haga ese
+   mismo día. Por el hash tampoco, porque este chequeo corre en el gancho de
+   antes de cada commit y ahí el commit todavía no tiene hash. Y por los nombres
+   menos que nada: cada aplastamiento deja los suyos, así que reconocerlo por
+   ellos es reconocer uno solo. La forma son dos cosas juntas, y ninguna sola
+   alcanza: **la carpeta queda con exactamente los archivos que ese mismo commit
+   escribe, y ninguno más**, y **se lleva por delante alguna otra migración**. Un
+   commit corriente no tiene ninguna de las dos: agrega una migración y deja la
+   carpeta con una más.
 
    **Y se toma el último que tenga esa forma, no el primero.** Un aplastamiento
    no es un hecho único: ya hubo dos. Si mañana hay otro, el corte se corre solo
@@ -119,27 +121,74 @@ const detalle = process.argv.includes('--detalle');
 const CARPETA = 'supabase/migrations';
 const SEPARADOR = String.fromCharCode(1);   /* lo que %x01 deja entre commits */
 
-/* El aplastamiento: el commit que dejó la base entera en estos dos archivos.
-   Es el punto de partida, y lo de antes está en el historial y no se puede
-   arreglar sin romper la misma regla que lo juzga. */
-const EL_APLASTAMIENTO = ['0001_base_del_esquema.sql', '0002_siembra_ficticia.sql'];
-
-/** ¿Este commit es un aplastamiento? Las tres cosas a la vez, y ninguna sola
-    alcanza: deja la carpeta con exactamente los archivos de arriba y ninguno
-    más, escribe los dos, y se lleva por delante alguna otra migración. */
-function esElAplastamiento(commit, quedan) {
-  if (quedan.length !== EL_APLASTAMIENTO.length) return false;
-  if (!EL_APLASTAMIENTO.every((n) => quedan.includes(n))) return false;
-  const escribe = (n) => commit.cambios.some(([estado, ruta]) =>
-    (estado === 'A' || estado === 'M') && nombreDe(ruta) === n);
-  if (!EL_APLASTAMIENTO.every(escribe)) return false;
-  return commit.cambios.some(([estado, ruta]) =>
-    estado === 'D' && !EL_APLASTAMIENTO.includes(nombreDe(ruta)));
-}
-
 /** El número de aplicación de una migración: los cuatro dígitos del principio. */
 const numeroDe = (ruta) => (ruta.split('/').pop() || '').slice(0, 4);
 const nombreDe = (ruta) => ruta.split('/').pop() || ruta;
+
+/* El aplastamiento es el punto de partida, y lo de antes está en el historial y
+   no se puede arreglar sin romper la misma regla que lo juzga.
+
+   Estaba escrito con los dos nombres que dejó el último, y con los nombres el
+   reconocimiento vale una sola vez. El del 8 de septiembre de 2026, que juntó
+   setenta y cuatro migraciones en tres archivos con otros nombres, no lo
+   reconocía ninguno de los renglones que lo buscaban, aunque el encabezado de
+   arriba diga que ya hubo dos y que el corte se corre solo hasta el último que
+   tenga esta forma. Hoy no cambia nada —el corte cae en el mismo commit—, pero
+   el día que se vuelva a aplastar, con los nombres que sean, se corre. */
+
+/** ¿Este commit es un aplastamiento? Las dos cosas a la vez, y ninguna sola
+    alcanza: la carpeta queda con exactamente los archivos que él mismo escribe
+    y ninguno más, y se lleva por delante alguna otra migración. */
+function esElAplastamiento(commit, quedan) {
+  if (!quedan.length) return false;
+  const escritos = new Set(commit.cambios
+    .filter(([estado]) => estado === 'A' || estado === 'M')
+    .map(([, ruta]) => nombreDe(ruta)));
+  if (!quedan.every((n) => escritos.has(n))) return false;
+  return commit.cambios.some(([estado, ruta]) =>
+    estado === 'D' && !quedan.includes(nombreDe(ruta)));
+}
+
+/* Y el detector se prueba contra commits inventados antes de mirar el historial.
+   Probarlo sólo contra los dos aplastamientos que hay no dice nada de si va a
+   reconocer el próximo, que es justo lo que antes no hacía. */
+const CARPETA_INVENTADA = 'supabase/migrations/';
+const INVENTADOS = [
+  ['un aplastamiento con los nombres de hoy',
+    [['M', '0001_base_del_esquema.sql'], ['M', '0002_siembra_ficticia.sql'],
+      ['D', '0003_una_cualquiera.sql']],
+    ['0001_base_del_esquema.sql', '0002_siembra_ficticia.sql'], true],
+  ['un aplastamiento con otros nombres, que es el que viene',
+    [['A', '0001_todo_junto.sql'], ['D', '0001_base_del_esquema.sql'],
+      ['D', '0002_siembra_ficticia.sql']],
+    ['0001_todo_junto.sql'], true],
+  ['un aplastamiento de setenta y cuatro en tres, que es el que ya pasó',
+    [['A', '0001_una.sql'], ['A', '0002_otra.sql'], ['A', '0003_la_tercera.sql'],
+      ['D', '0001_la_vieja.sql'], ['D', '0002_la_mas_vieja.sql']],
+    ['0001_una.sql', '0002_otra.sql', '0003_la_tercera.sql'], true],
+  ['un commit corriente, que agrega una y deja la carpeta con una más',
+    [['A', '0003_la_nueva.sql']],
+    ['0001_base_del_esquema.sql', '0002_siembra_ficticia.sql', '0003_la_nueva.sql'], false],
+  ['un commit que borra una y no escribe ninguna',
+    [['D', '0003_la_que_sale.sql']],
+    ['0001_base_del_esquema.sql', '0002_siembra_ficticia.sql'], false],
+  ['un commit que reescribe todas y no borra ninguna',
+    [['M', '0001_base_del_esquema.sql'], ['M', '0002_siembra_ficticia.sql']],
+    ['0001_base_del_esquema.sql', '0002_siembra_ficticia.sql'], false],
+  ['un commit que deja la carpeta vacía',
+    [['D', '0001_base_del_esquema.sql'], ['D', '0002_siembra_ficticia.sql']],
+    [], false]
+];
+for (const [que, cambios, quedan, esperado] of INVENTADOS) {
+  const conCarpeta = cambios.map(([estado, nombre]) => [estado, CARPETA_INVENTADA + nombre]);
+  if (esElAplastamiento({ cambios: conCarpeta }, quedan) !== esperado) {
+    console.error('El detector del aplastamiento está roto: con ' + que + ' contestó ' +
+      (esperado ? 'que no lo es, y lo es' : 'que lo es, y no lo es') +
+      '. No se miró el historial.');
+    process.exit(1);
+  }
+}
+
 
 function git(...argumentos) {
   return execFileSync('git', argumentos,
