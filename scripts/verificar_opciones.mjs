@@ -11,7 +11,7 @@
    (`celtatech\CLAUDE.md`, «Las reglas de desarrollo»). Y la de este producto
    dice qué pasa cuando no se cumple: «Cada lista de opciones que hoy esté
    escrita adentro de un componente es una tabla que alguien no creó»
-   (`CLAUDE.md:42`).
+   (`CLAUDE.md:121`).
 
    Por qué importa más de lo que parece. Una opción escrita a mano no es sólo un
    texto sin traducir: es **un valor que se guarda en la base y que ningún

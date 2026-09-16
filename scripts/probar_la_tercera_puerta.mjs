@@ -290,7 +290,7 @@ sostener('la base tiene las reglas encendidas',
 // --- Limpieza --------------------------------------------------------------
 /* Los mensajes y la conversación no se pueden borrar con la sesión: el permiso
    de `conversaciones` y `mensajes` no incluye `delete` para nadie
-   (`supabase/migrations/0001_base_del_esquema.sql:5658` y `:5674`), a propósito
+   (`supabase/migrations/0001_base_del_esquema.sql:5749` y `:5829`), a propósito
    —un canal donde el mensaje se puede borrar después no sirve para lo que las
    dos partes lo usan—. Así que se van con la llave de administración, que es
    la misma con la que se borran las cuentas. */

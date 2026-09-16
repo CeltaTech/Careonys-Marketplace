@@ -77,7 +77,7 @@ const LA_SIEMBRA_NO_PUEDE = new Map([
      porque apuntan a `auth.users` y una siembra no puede crear cuentas. Hoy
      la siembra las llena igual, porque carga con los disparadores y las
      claves foráneas apagados
-     (`supabase/migrations/0002_siembra_ficticia.sql:32`), así que la exención
+     (`supabase/migrations/0002_siembra_ficticia.sql:43`), así que la exención
      se sacó. Sacarla es parte
      del trabajo: una exención que sobra vuelve verde para siempre una columna
      que después se puede vaciar sin que nadie se entere. */

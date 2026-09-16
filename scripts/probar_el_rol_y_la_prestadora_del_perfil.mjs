@@ -31,7 +31,7 @@
 
    Desde el 31 de agosto de 2026 hay además un disparador,
    `el_rol_y_la_prestadora_no_se_escriben_solos`
-   (`supabase/migrations/0001_base_del_esquema.sql:3877`), que cerró
+   (`supabase/migrations/0001_base_del_esquema.sql:3945`), que cerró
    el pendiente 82 y rechaza el cambio de `role` y de `tenant_id` diga lo
    que diga el permiso. **Las dos redes valen, porque cuidan de cosas
    distintas**: el disparador, de quien intenta el cambio; esta prueba, del día
@@ -195,7 +195,7 @@ if (!antes) {
 
 // El rol pedido en el alta ya tiene que haber sido ignorado: lo dice el
 // comentario de `crear_perfil_al_registrarse()`
-// (`supabase/migrations/0001_base_del_esquema.sql:365`),
+// (`supabase/migrations/0001_base_del_esquema.sql:371`),
 // «el rol nunca sale de los metadatos sin filtrar», y es la puerta de al lado
 // de la que mide esta prueba.
 console.log('El rol y la Prestadora del perfil');

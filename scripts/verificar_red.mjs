@@ -191,7 +191,7 @@ export function clavesConLaExtension(texto) {
    `archivo.sql:160` y `archivo.mjs:12-20`. Sin sacárselo, esa clave no termina
    en extensión, no tenía «pinta de archivo» y se salteaba **entera**: este
    chequeo dijo ✔ durante días sobre una exención que nombraba
-   `0005_acceso_por_sesion.sql:160`, una migración que el aplastamiento se
+   «0005_acceso_por_sesion.sql:160», una migración que el aplastamiento se
    llevó. Encontrado el 8 de septiembre de 2026, y es la forma exacta de la
    enfermedad que este archivo persigue: la regla estaba escrita, el resumen la
    anunciaba, y no miraba. */
@@ -199,31 +199,36 @@ const CON_PINTA_DE_ARCHIVO = /(\/|\.(mjs|js|html|css|md|sql|json|webmanifest))$/
 const SIN_RENGLON = (clave) => clave.replace(/(?::\d+)+(?:-\d+)?$/, '');
 const MAPA_CON_NOMBRE = /const ([A-Z][A-Z0-9_]*) = new Map\(\[\r?\n([\s\S]*?)^\]\);/gm;
 
-/* Y hay una exención cuyas claves **no tienen que estar**: `AJENOS`, en
-   `scripts/citas.mjs`, nombra archivos que viven en el repositorio de Careonys.
-   Para ella la regla se da vuelta en vez de apagarse —que es la diferencia
+/* Y hay exenciones cuyas claves **no tienen que estar**, y son dos clases. Las
+   de `AJENOS`, en `scripts/citas.mjs`, nombran archivos que viven en el
+   repositorio de Careonys. Las de `INVENTADOS`, en el mismo archivo, no nombran
+   ningún archivo de ninguna parte: son las rutas que un banco de pruebas escribe
+   justamente para que no apunten a nada.
+
+   Para las dos la regla se da vuelta en vez de apagarse —que es la diferencia
    entre eximir y dejar de mirar—: si alguno de esos archivos aparece acá, la
    exención pasó a decir algo falso y hay que sacarla. */
-const NOMBRAN_LO_DE_AFUERA = new Map([
-  ['citas.mjs AJENOS', 'nombra archivos del repositorio de Careonys, que acá no están']
+const NO_TIENEN_QUE_ESTAR = new Map([
+  ['citas.mjs AJENOS', 'nombra archivos del repositorio de Careonys, que acá no están'],
+  ['citas.mjs INVENTADOS', 'nombra rutas inventadas, que no son ningún archivo']
 ]);
 
 /** Las exenciones de este texto que nombran un archivo y se equivocan. */
 export function exencionesQueMienten(archivo, texto, existe) {
   const mentiras = [];
   for (const mapa of sinComentarios(texto).matchAll(MAPA_CON_NOMBRE)) {
-    const deAfuera = NOMBRAN_LO_DE_AFUERA.has(archivo + ' ' + mapa[1]);
+    const noTieneQueEstar = NO_TIENEN_QUE_ESTAR.has(archivo + ' ' + mapa[1]);
     for (const clave of mapa[2].matchAll(CLAVE)) {
       const ruta = SIN_RENGLON(clave[1]);
       if (!CON_PINTA_DE_ARCHIVO.test(ruta)) continue;
       const esta = existe(ruta);
-      if (!deAfuera && !esta) {
+      if (!noTieneQueEstar && !esta) {
         mentiras.push({ lista: mapa[1], clave: clave[1], porque: 'ese archivo no est\u00e1' });
       }
-      if (deAfuera && esta) {
+      if (noTieneQueEstar && esta) {
         mentiras.push({
           lista: mapa[1], clave: clave[1],
-          porque: 'la exenci\u00f3n dice que vive afuera y el archivo est\u00e1 ac\u00e1'
+          porque: 'la exenci\u00f3n dice que no tiene que estar y el archivo est\u00e1 ac\u00e1'
         });
       }
     }

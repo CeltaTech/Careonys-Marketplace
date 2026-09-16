@@ -6,7 +6,7 @@
    Una Guía de cuidado es lo que el Asistente lee al entrar a un domicilio: qué
    es la patología, qué se ve en la casa, qué señales obligan a avisar y cómo
    actuar en una emergencia. Vive en `guias_cuidado` —que hoy nace en
-   `supabase/migrations/0001_base_del_esquema.sql:2658`— y
+   `supabase/migrations/0001_base_del_esquema.sql:2590`— y
    sale por `guias_de`, que es una puerta: exige el nombre corto de una
    Prestadora y devuelve el catálogo general más lo que agregó esa Prestadora,
    donde **lo suyo reemplaza a lo general**.
@@ -73,7 +73,7 @@ const IDIOMAS = ['es-AR', 'en', 'pt-BR'];
 const PARTES = ['descripcion', 'que_esperar', 'senales_de_alarma', 'en_emergencia'];
 
 /* Los nombres cortos de las dos Prestadoras inventadas. Están escritos acá por
-   el mismo motivo que en `scripts/probar_aislamiento.mjs:489`: no existe forma de
+   el mismo motivo que en `scripts/probar_aislamiento.mjs:491`: no existe forma de
    pedir la lista de Prestadoras sin sesión, que es
    justamente la propiedad que se quiere conservar. Son datos de prueba, no
    configuración del producto. */

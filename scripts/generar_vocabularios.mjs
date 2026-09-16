@@ -5,7 +5,7 @@
        node scripts/generar_vocabularios.mjs --escribir  ← rehace el archivo
 
    Los vocabularios viven en tablas —`vocabularios` y `vocabulario_items`,
-   `supabase/migrations/0001_base_del_esquema.sql:647` y `:592`—. La verdad
+   `supabase/migrations/0001_base_del_esquema.sql:653` y `:598`—. La verdad
    es la base; `data/catalogo-vocabularios.json` pasó a ser una copia.
 
    **Y no se puede borrar**, que es lo primero que uno intenta: los dos

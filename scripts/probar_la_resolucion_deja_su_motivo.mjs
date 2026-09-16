@@ -12,7 +12,7 @@
 
    QUÉ MIRA. Lo que fue el pendiente 90, cerrado el 2 de septiembre de 2026 con
    `resolver_legajo()` y la tabla `resoluciones_legajo`
-   (`supabase/migrations/0001_base_del_esquema.sql:1999` y `:1954`).
+   (`supabase/migrations/0001_base_del_esquema.sql:2029` y `:1984`).
    La pantalla de la Prestadora pedía el motivo por el que se
    otorga el aval o se rechaza un legajo, el cliente de datos lo mandaba, y ahí
    se terminaba: no había ninguna columna donde pudiera caer y se descartaba con

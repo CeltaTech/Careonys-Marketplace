@@ -14,6 +14,10 @@
    correría entero.
 =================================================== */
 
+import { relative, sep } from 'node:path';
+
+import { EXTENSIONES_DE_PANTALLA, hayArchivos } from './recorrido.mjs';
+
 /* Una cita: `ruta.ext:123`, `ruta.ext:123-140` o `ruta.ext:12:34`. El acento
    invertido de los dos lados es parte de la cita: sin él, `README.md:1` adentro
    de una frase corriente no es una referencia sino una casualidad. */
@@ -84,3 +88,56 @@ export const PREFIJOS_DE_AFUERA = ['careonys/', 'celtatech/'];
 
 /* Carpetas de trabajo de quien desarrolla: no son documentación del proyecto. */
 export const AJENAS = ['Nueva carpeta'];
+
+/* ---- DÓNDE SE BUSCAN LAS CITAS ----
+
+   En todo el proyecto, y no sólo en `docs/`. La regla de la empresa
+   —«documentación verificable»— no nombra una carpeta: habla de toda afirmación
+   sobre una decisión ya tomada. Y la mitad de lo que este proyecto explica de sí
+   mismo no vive en `docs/`: vive en el encabezado de cada guion, de cada
+   pantalla y de cada módulo, que es donde lo lee quien va a tocar esa pieza.
+   Mirando sólo `docs/` quedaban noventa y cinco citas sin revisar, y treinta de
+   ellas ya apuntaban a la nada, justamente adentro de los archivos que explican
+   cómo funciona el producto: un encabezado señalaba el renglón 647 de la
+   migración del esquema y ahí no había nada escrito.
+
+   Se recorre desde la raíz, y por eso una carpeta nueva entra sola. Una lista de
+   carpetas escrita acá sabría sólo de las que había el día que se la escribió. */
+export const EXTENSIONES_CON_CITAS = [
+  ...EXTENSIONES_DE_PANTALLA, '.md', '.mjs', '.js', '.css'
+];
+
+/* Y lo único que queda afuera del recorrido, con su motivo escrito. */
+export const NO_SE_RECORREN = new Map([
+  ['migrations',
+   'una migración aplicada no se edita jamás, se corrige con otra adelante: una cita ' +
+   'suya que se corrió no se puede arreglar, y exigirla sería pedir lo que la regla ' +
+   'de la base prohíbe']
+]);
+
+/** Todos los archivos del proyecto donde puede haber una cita, desde la raíz. */
+export function documentosConCitas(raiz) {
+  return hayArchivos(raiz, EXTENSIONES_CON_CITAS, [...AJENAS, ...NO_SE_RECORREN.keys()])
+    .map((camino) => relative(raiz, camino).split(sep).join('/'));
+}
+
+/* Rutas inventadas. No nombran ningún archivo y no hay adónde apunten: existen
+   para mostrar la forma de una cita, o para probar que el detector la reconoce.
+   Un banco de pruebas sin ellas no probaría nada, y son las únicas citas del
+   proyecto que tienen que quedar sin apuntar a nada.
+
+   Se exime la ruta y no el archivo que la escribe: adentro del mismo guion, una
+   cita a un archivo de verdad se sigue comprobando entera. */
+export const INVENTADOS = new Map([
+  ['x.js', 'el archivo de mentira contra el que se prueban los detectores de citas'],
+  ['y.html', 'el mismo, para la etiqueta que cierra'],
+  ['z.js', 'el que nunca existe, para probar que una cita a un archivo ausente falla'],
+  ['afuera/x.js',
+   'el de mentira de un repositorio hermano, para probar que el perdón de lo de ' +
+   'afuera perdona sólo lo de afuera'],
+  ['archivo.sql', 'el nombre genérico con que un mensaje de error muestra la forma de una cita'],
+  ['archivo.mjs', 'el mismo, para un tramo de renglones'],
+  ['pantalla.html',
+   'el nombre genérico con que se explica la forma corta, la que hereda el archivo ' +
+   'de la cita de al lado']
+]);

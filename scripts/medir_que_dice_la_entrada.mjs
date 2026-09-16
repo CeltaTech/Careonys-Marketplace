@@ -167,7 +167,7 @@ function dejarlaSinConfirmar(correo) {
    cualquiera que se registra: si se creara con la llave de servicio nacería
    confirmada seguro.
 
-   **Nace sin confirmar**, que es lo que corresponde: `supabase/config.toml:253` pide
+   **Nace sin confirmar**, que es lo que corresponde: `supabase/config.toml:256` pide
    `enable_confirmations = true` y, desde que se recreó el contenedor de cuentas de
    esta máquina (fue el pendiente 123, cerrado el 4 de septiembre de 2026),
    `/auth/v1/settings` contesta `mailer_autoconfirm: false`, igual que el servidor

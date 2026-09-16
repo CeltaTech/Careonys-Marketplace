@@ -33,7 +33,7 @@
    Sin una fila en `autorizaciones_asistente` la persona no aparece nunca en el
    directorio, aunque su Prestadora le valide el legajo: la vista
    `directorio` la exige con un `join` y no con un `left join`
-   (`supabase/migrations/0012_autorizaciones_y_disponibilidad.sql:186`). Una
+   (`supabase/migrations/0001_base_del_esquema.sql:797`). Una
    pantalla de alta sin este paso da de alta a alguien que no se va a ver, y no
    avisa. Era el pendiente 36.
 

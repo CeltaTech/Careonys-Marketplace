@@ -17,7 +17,7 @@
    frena, y que se frena por lo que tiene que frenarse —que el papel no
    llegó— y no por cualquier otra cosa: un legajo al que le falta un papel
    de otra puerta (los antecedentes penales, que frenan la `publicacion` y
-   no el `alta` —`supabase/migrations/0001_base_del_esquema.sql:817`—) tiene
+   no el `alta` —`supabase/migrations/0001_base_del_esquema.sql:802`—) tiene
    que poder darse de alta igual.
 
    ESTA PRUEBA FALLABA A PROPÓSITO, Y HOY PASA. Fue el pendiente 143: la
@@ -26,7 +26,7 @@
    Desarrollador contestó el 4 de septiembre de 2026 que alcanza con que el
    software compruebe, solo, que el papel llegó, y hoy lo escribe
    `el_legajo_no_completa_el_alta_sin_sus_papeles()`
-   (`supabase/migrations/0001_base_del_esquema.sql:883`).
+   (`supabase/migrations/0001_base_del_esquema.sql:889`).
    **Si vuelve a dar rojo, algo se rompió.**
 
    POR QUÉ PUEDE FALLAR. Que el alta rechace un legajo sin el documento de

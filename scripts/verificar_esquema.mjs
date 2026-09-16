@@ -45,7 +45,7 @@
       El disparador no tiene que estar en la misma migración que la siembra —el
       arreglo puede llegar después, como llegó acá—, pero tiene que estar en
       alguna: hoy lo atiende `la_prestadora_nace_configurada`
-      (`supabase/migrations/0001_base_del_esquema.sql:1476`).
+      (`supabase/migrations/0001_base_del_esquema.sql:1506`).
    7. **Toda política sobre `storage.objects` nombra la Organización en su
       condición** (regla de la empresa «los archivos se guardan privados por
       defecto… la ruta empieza por la Organización, y la política lo exige»).
@@ -68,10 +68,10 @@
       es. `auth.jwt()` entra en la lista aunque el token venga firmado: adentro
       viaja `user_metadata`, que en Supabase lo escribe la propia cuenta.
       Resolverla por membresía es lo que hace `public.prestadora_actual()`
-      (`supabase/migrations/0001_base_del_esquema.sql:417`), que va a buscar el
+      (`supabase/migrations/0001_base_del_esquema.sql:423`), que va a buscar el
       `tenant_id` a `profiles` por `auth.uid()`. Su propio comentario lo dice con
       todas las letras —«sale de su membresía, nunca del pedido»,
-      `supabase/migrations/0001_base_del_esquema.sql:429`—, y esta regla es lo
+      `supabase/migrations/0001_base_del_esquema.sql:435`—, y esta regla es lo
       que hace que eso siga siendo cierto.
 
       **Esta regla no tiene lista de exenciones, y es a propósito.** Hoy no hay
@@ -90,7 +90,7 @@
       instalación lo regala sola: «Toda base de Supabase nace concediéndoles a
       `anon` y a `authenticated` los permisos por omisión de cada tabla y cada
       secuencia que se cree en `public`, y entre ellos están TRUNCATE, REFERENCES
-      y TRIGGER» (`supabase/migrations/0001_base_del_esquema.sql:48`), que es por
+      y TRIGGER» (`supabase/migrations/0001_base_del_esquema.sql:55`), que es por
       lo que esa migración arranca sacándoselos con `ALTER DEFAULT PRIVILEGES`
       antes de crear nada. Un `grant all` escrito a mano se los devuelve todos de
       una vez, `REFERENCES` y `TRIGGER` incluidos, que ninguna pantalla usa y que
@@ -156,7 +156,7 @@
       aparezca una.
 
       **Un `with check` más angosto que su `using` es legítimo y no se juzga.**
-      «Mensajes de las dos partes» (`supabase/migrations/0001_base_del_esquema.sql:4697`)
+      «Mensajes de las dos partes» (`supabase/migrations/0001_base_del_esquema.sql:4772`)
       lo es a propósito: se puede *leer* un mensaje del aviso en el que uno
       participa y no se puede *escribirlo* como si fuera de otro. Por eso la
       regla no compara las dos condiciones —eso daría rojo en las dos—, sino que
@@ -352,7 +352,7 @@
    migración, y nadie vuelve a leerlo. La regla de la moneda no tiene hoy ningún
    incumplimiento: tenía uno —`caregivers.hourly_rate`, el único importe del
    esquema, guardado como número a secas— y hoy `moneda_valor_hora` está
-   declarada al lado (`supabase/migrations/0001_base_del_esquema.sql:485`), así que
+   declarada al lado (`supabase/migrations/0001_base_del_esquema.sql:491`), así que
    `SIN_MONEDA` quedó vacía. La lista sigue declarada para que el día que
    aparezca un caso que de verdad no pueda cumplirla, el motivo se escriba ahí y
    quede a la vista.
@@ -435,7 +435,7 @@ const SIN_ORGANIZACION = new Map([
    'porque a cualquiera le alcanza con abrirse una conversación en esa Prestadora. No hay ' +
    'dos Organizaciones que separar ahí adentro, y por eso mismo está además en ' +
    'TABLAS_DEL_PRODUCTO_AL_ALCANCE_ANONIMO, que va y mira que siga sin la columna; ' +
-   '`supabase/migrations/0001_base_del_esquema.sql:2928`']
+   '`supabase/migrations/0001_base_del_esquema.sql:2889`']
 ]);
 
 /* Funciones SECURITY DEFINER que conservan a propósito el permiso del rol
@@ -452,34 +452,34 @@ export const AL_ALCANCE_ANONIMO = new Map([
   ['prestadora_por_slug',
    'la pantalla de ingreso tiene que saber qué nombre y qué colores mostrar antes de que ' +
    'exista ninguna sesión; devuelve una sola Prestadora, la que nombra el argumento, y ' +
-   'sólo sus columnas de marca; `supabase/migrations/0001_base_del_esquema.sql:1834`'],
+   'sólo sus columnas de marca; `supabase/migrations/0001_base_del_esquema.sql:1864`'],
   ['directorio_de',
    'el directorio se ve sin cuenta por decisión del 24 de agosto de 2026, así que la ' +
    'puerta se abre sin sesión o no hay directorio; no devuelve ni una columna que la ' +
    'vista `directorio` no publicara ya, y esa vista no tiene datos de contacto; ' +
-   '`supabase/migrations/0001_base_del_esquema.sql:859`'],
+   '`supabase/migrations/0001_base_del_esquema.sql:865`'],
   ['perfil_del_directorio',
    'la misma puerta, para una sola persona; ' +
-   '`supabase/migrations/0001_base_del_esquema.sql:1768`'],
+   '`supabase/migrations/0001_base_del_esquema.sql:1798`'],
   ['zonas_de',
    'quien completa el formulario de reclutamiento todavía no tiene cuenta y necesita ver ' +
    'la lista de zonas para tildar las suyas; exige el nombre corto, así que devuelve las de ' +
    'una sola Prestadora, y sólo el nombre y el orden de cada zona, que es lo mismo que ya ' +
-   'muestra el formulario; `supabase/migrations/0001_base_del_esquema.sql:2101`'],
+   'muestra el formulario; `supabase/migrations/0001_base_del_esquema.sql:2131`'],
   ['vocabularios_de',
    'las listas de opciones las piden pantallas que se ven sin cuenta —el directorio y el ' +
    'formulario de reclutamiento—, así que la puerta se abre sin sesión o esas pantallas ' +
    'quedan sin opciones; exige el nombre corto, devuelve el catálogo general del producto ' +
    'más lo que agregó esa sola Prestadora, y ninguna de las dos cosas es dato de una ' +
    'persona: son las opciones que la pantalla iba a mostrar igual; ' +
-   '`supabase/migrations/0001_base_del_esquema.sql:2045`'],
+   '`supabase/migrations/0001_base_del_esquema.sql:2075`'],
   ['guias_de',
    'la guía la lee el Asistente en el domicilio, donde la aplicación puede estar mostrando ' +
    'la pantalla antes de resolver la sesión, así que cuelga de la misma puerta que el ' +
    'catálogo del que depende; exige el nombre corto, devuelve la guía general del producto ' +
    'más la que escribió esa sola Prestadora, y sólo las publicadas; ninguna es dato de una ' +
    'persona: son textos sobre una patología, nunca sobre un Paciente; ' +
-   '`supabase/migrations/0001_base_del_esquema.sql:1266`']
+   '`supabase/migrations/0001_base_del_esquema.sql:1272`']
 ]);
 
 /* Vistas de `public` que a propósito se ven sin sesión, con el motivo **y con
@@ -503,7 +503,7 @@ export const VISTAS_AL_ALCANCE_ANONIMO = new Map([
    '—`tenant_id is null`— y a las publicadas, así que no sale por ahí ni un curso de una ' +
    'Prestadora ni el nombre de ninguna. Y no publica una sola columna del contenido del ' +
    'curso: ni evaluaciones, ni preguntas, ni opciones, que se siguen pidiendo con sesión; ' +
-   '`supabase/migrations/0001_base_del_esquema.sql:2857`'],
+   '`supabase/migrations/0001_base_del_esquema.sql:2818`'],
   ['oferta_comercial_publica',
    'la oferta comercial de la portada —Busco Asistente, Cursos, Monitoreo y el resto de ' +
    '`data-oferta="servicios"`— la dibujan `index.html` y `solicitar-asistente.html`, dos ' +
@@ -511,7 +511,7 @@ export const VISTAS_AL_ALCANCE_ANONIMO = new Map([
    'no tienen qué mostrar. No es un listado suelto: su cuerpo la acota a la oferta general ' +
    'del producto —`tenant_id is null`— y a las activas, así que no sale por ahí ni un ' +
    'ítem propio de una Prestadora ni el nombre de ninguna; ' +
-   '`supabase/migrations/0001_base_del_esquema.sql:2831`']
+   '`supabase/migrations/0001_base_del_esquema.sql:2792`']
 ]);
 
 /* Tablas de `public` que a propósito se leen sin sesión porque **no guardan
@@ -540,7 +540,7 @@ export const TABLAS_DEL_PRODUCTO_AL_ALCANCE_ANONIMO = new Map([
    'para que `scripts/verificar_patrones_contacto.mjs` pueda comparar el archivo contra ' +
    'la tabla sin ninguna credencial: sin eso la copia se despega en silencio, que es lo ' +
    'que ese chequeo viene a evitar; ' +
-   '`supabase/migrations/0001_base_del_esquema.sql:2928`']
+   '`supabase/migrations/0001_base_del_esquema.sql:2889`']
 ]);
 
 /* Políticas del depósito de archivos que no nombran la Organización, con el
@@ -554,13 +554,13 @@ const SIN_ORGANIZACION_EN_EL_DEPOSITO = new Map([
    'cada cuenta llega a la suya y a ninguna otra; no hay dos Organizaciones adentro de ' +
    'esa condición que separar. Lo que las separa está en otro lado: **una cuenta tiene ' +
    'un solo legajo**, por el índice único `idx_caregivers_user_unico` ' +
-   '(`supabase/migrations/0001_base_del_esquema.sql:3590`). ' +
+   '(`supabase/migrations/0001_base_del_esquema.sql:3637`). ' +
    'La política que deja mirar al personal de la Prestadora llega a la carpeta ' +
    'por ese legajo, y si una misma cuenta llegara a tener legajo en dos Prestadoras, ' +
    'las dos verían la carpeta entera, con los papeles que la persona subió para la otra'],
   ['Avatar propio',
    'la misma condición y el mismo apoyo, sobre el depósito `avatares`, que además es ' +
-   'público a propósito (`supabase/migrations/0001_base_del_esquema.sql:5955`): ' +
+   'público a propósito (`supabase/migrations/0001_base_del_esquema.sql:6038`): ' +
    'la foto es lo que el directorio muestra sin ' +
    'cuenta, así que ahí no hay nada que aislar hacia afuera. Lo que la condición cuida ' +
    'es la escritura: que nadie deje una foto en la carpeta de otro']
@@ -580,7 +580,7 @@ const SIN_ORGANIZACION_AL_ESCRIBIR = new Map([
        'así que una política suya que la preguntara se estaría preguntando a sí ' +
        'misma. Lo que impide mudarse de Prestadora, o hacerse `coordinador`, es el ' +
        'permiso por columna: `grant update (full_name)` y nada más ' +
-       '(`supabase/migrations/0001_base_del_esquema.sql:5864`). Eso no se cree: ' +
+       '(`supabase/migrations/0001_base_del_esquema.sql:5939`). Eso no se cree: ' +
        'se comprueba acá mismo.' }]
 ]);
 
@@ -589,7 +589,7 @@ const SIN_ORGANIZACION_AL_ESCRIBIR = new Map([
    Está vacía, y eso es una novedad del 5 de septiembre de 2026: tenía uno solo,
    `caregivers.hourly_rate`, que era el único importe de todo el esquema y era un
    número a secas. Hoy tiene su columna al lado —`moneda_valor_hora`
-   (`supabase/migrations/0001_base_del_esquema.sql:485`), que se llena sola con la
+   (`supabase/migrations/0001_base_del_esquema.sql:491`), que se llena sola con la
    moneda que eligió la Prestadora— y con eso la regla dejó de tener
    excepciones. La lista queda declarada porque el día que aparezca un importe
    que de verdad no pueda traer la suya, el lugar donde se escribe el motivo es
@@ -917,7 +917,7 @@ export function clavesPrimarias(textos) {
  * column grid_schedule_7x3;` adentro de un comentario, justamente para explicar
  * lo que esa migración **no** hacía. Leído sin sacarlos, el esquema pierde una
  * columna que está: `grid_schedule_7x3` sigue declarada, en
- * `supabase/migrations/0001_base_del_esquema.sql:2158`.
+ * `supabase/migrations/0001_base_del_esquema.sql:2188`.
  */
 export function columnasDeclaradas(textos) {
   const columnas = new Map();
@@ -965,7 +965,7 @@ export function columnasDeclaradas(textos) {
 
    **Y no cuenta las que están adentro de un texto ni de un comentario**, que es
    lo que rompía la cuenta en silencio. `patrones_de_contacto`
-   (`supabase/migrations/0001_base_del_esquema.sql:2939`) escribe
+   (`supabase/migrations/0001_base_del_esquema.sql:2900`) escribe
    `check (patron !~ '\\(\\?[=!<]')`: ese paréntesis vive adentro de una
    expresión guardada como texto y no abre nada, pero contado como si abriera
    dejaba la cuenta desbalanceada para siempre, así que esta función se comía el
@@ -1174,7 +1174,7 @@ export function limitesDeclarados(textos) {
  *
  * Se sigue **un solo salto** de llamadas: la función que el disparador ejecuta,
  * y las que ésa nombra. Con eso alcanza para `la_prestadora_nace_configurada`
- * (`supabase/migrations/0001_base_del_esquema.sql:1476`), donde el disparador no
+ * (`supabase/migrations/0001_base_del_esquema.sql:1506`), donde el disparador no
  * siembra él mismo sino que llama a las que saben cuál es la configuración de
  * fábrica —que es como tiene que ser, porque esas mismas funciones las usa
  * también el arreglo de las Prestadoras que ya habían nacido sin ella—.
@@ -1522,7 +1522,7 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, b
 
   /* 11 bis. Lo que sostiene a una exenta se comprueba, no se cree. La de arriba
      dice que la sostiene el permiso por columna: acá se mira que lo siga siendo
-     (`supabase/migrations/0001_base_del_esquema.sql:5864`). Rige desde donde
+     (`supabase/migrations/0001_base_del_esquema.sql:5939`). Rige desde donde
      empiezan las migraciones, por lo mismo que la novena, y no es un caso
      inventado: ya pasó que una migración sacara ese permiso sin querer. */
   if (!nombre || nombre.slice(0, 4) >= LA_PUERTA_SE_CERRO) {

@@ -66,7 +66,7 @@ sesión propia, cambia el dato y no anota nada. Un disparador se dispara igual, 
 la pantalla, de un guion o de la consola.
 
 **Dos: no hay un punto por donde pasen todas las escrituras.** Hay dos caminos y no uno. Todo lo
-REST pasa por `_supabaseRequest` (`js/apiClient.js:1191`), que sí es un embudo único —las 15
+REST pasa por `_supabaseRequest` (`js/apiClient.js:1190`), que sí es un embudo único —las 15
 llamadas de datos entran por ahí—. Pero **la autenticación y los archivos no lo tocan nunca**:
 `Sesion.login` (`js/auth.js:173`), `Sesion.signup` (`js/auth.js:190`), `Sesion.cambiarClave`
 (`js/auth.js:224`) y `Sesion.uploadFile` (`js/auth.js:361`) hablan derecho con el cliente de la
@@ -250,7 +250,7 @@ alguien quiera sumar más adelante.
 **Uno: el motivo de la decisión más crítica se está perdiendo, y no es culpa de que falte el
 rastro.** `web/src/pantallas/panel-prestadora/ModalAuditoria.jsx:186` y `:202` juntan la nota de la entrevista —el motivo de aprobar
 o de rechazar—, `resolverLegajo` la manda como `notaPrestadora` (`js/apiClient.js:521`), y
-**`_mapToDatabase` la descarta**: no está en la lista de campos de `caregivers` (`js/apiClient.js:1412-1433`),
+**`_mapToDatabase` la descarta**: no está en la lista de campos de `caregivers` (`js/apiClient.js:1411-1432`),
 así que se pierde con un aviso en la consola y nada más. Comprobado el 27 de agosto de 2026 leyendo
 las dos listas. Y no hay columna donde pudiera caer: `caregivers` no tiene ninguna para eso. **Se
 abre pendiente aparte**, y en §12 queda la pregunta de si el motivo va a una columna del legajo o a

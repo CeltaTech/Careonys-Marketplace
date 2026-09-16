@@ -921,12 +921,11 @@ const ClienteDatos = {
   // Manda un mensaje al chat. Devuelve lo que quedó guardado.
   //
   // El autor viaja en el cuerpo porque la columna no tiene valor por omisión
-  // (`supabase/migrations/0001_esquema_inicial.sql:140`), a diferencia de la
+  // (`supabase/migrations/0001_base_del_esquema.sql:2736`), a diferencia de la
   // columna de la Organización, que sí lo tiene. **Que venga del navegador no
-  // lo vuelve falsificable**: la política exige `author_id = auth.uid()` salvo
-  // que quien escriba sea personal de la Prestadora
-  // (`supabase/migrations/0020_la_barrera_tambien_va_entre_familias.sql:109`),
-  // así que un mensaje firmado con otra persona lo rechaza la base. Si algún
+  // lo vuelve falsificable**: la política exige `author_id = auth.uid()` al
+  // escribir (`supabase/migrations/0001_base_del_esquema.sql:4774`), así que un
+  // mensaje firmado con otra persona lo rechaza la base. Si algún
   // día esa columna toma `auth.uid()` por omisión, este parámetro sobra.
   async enviarMensaje(contenido, autorId) {
     const filas = await this._supabaseRequest('POST', 'messages', {

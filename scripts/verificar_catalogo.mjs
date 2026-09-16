@@ -4,7 +4,7 @@
        node scripts/verificar_catalogo.mjs
 
    Los vocabularios viven en tablas —`vocabularios` y `vocabulario_items`,
-   `supabase/migrations/0001_base_del_esquema.sql:647` y `:592`— y
+   `supabase/migrations/0001_base_del_esquema.sql:653` y `:598`— y
    `data/catalogo-vocabularios.json` es una copia generada, que existe sólo
    porque los dos programas para el teléfono la necesitan sin conexión. Una
    copia que nadie compara vuelve a ser una segunda verdad en cuanto alguien

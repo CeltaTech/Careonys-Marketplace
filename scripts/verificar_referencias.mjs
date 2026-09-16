@@ -12,8 +12,8 @@
    regla se convierte en adorno.
 
    El 25 de agosto de 2026 había 94 citas con renglón y 26 apuntaban a la nada:
-   `js/main.js:199` era una llave sola, `formulario-integral.html:191` un
-   `</div>`, `directorio.html:528` estaba fuera del archivo —tiene 330 renglones—
+   «js/main.js:199» era una llave sola, «formulario-integral.html:191» un
+   `</div>`, «directorio.html:528» estaba fuera del archivo —tiene 330 renglones—
    y cuatro nombraban archivos que ya no existen con ese nombre.
 
    ---- Las tres cosas que se exigen ----
@@ -48,22 +48,30 @@
    La forma de una cita y la lista de documentos eximidos viven en
    `scripts/citas.mjs`, porque las comparten los dos chequeos.
 
-   ---- Qué documentos mira ----
+   ---- Qué archivos mira ----
 
-   Todos los de `docs/`, sin excepción. Al que habla de otro repositorio se le
-   perdona una sola cosa —que un archivo **de afuera** no esté acá—, y para eso
-   la ruta tiene que empezar por una carpeta declarada en `PREFIJOS_DE_AFUERA`.
-   Un archivo de este repositorio que no está le sigue fallando igual.
+   Todos los del proyecto, y no sólo los de `docs/`. Cuáles y por qué lo dice
+   `scripts/citas.mjs`, que es de donde sale el recorrido: el hermano de este
+   chequeo tiene que mirar exactamente los mismos, y dos recorridos escritos
+   aparte dejan de coincidir sin que nadie se entere.
+
+   Se perdonan dos cosas y las dos son acotadas. Al documento que habla de otro
+   repositorio se le perdona que un archivo **de afuera** no esté acá, y para eso
+   la ruta tiene que empezar por una carpeta declarada en `PREFIJOS_DE_AFUERA`;
+   un archivo de este repositorio que no está le sigue fallando igual. Y a las
+   rutas inventadas —las que un banco de pruebas escribe justamente para que no
+   nombren nada— se les perdona no existir, y nada más: si el renglón que nombran
+   está vacío, fallan igual.
 =================================================== */
 
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { hayArchivos } from './recorrido.mjs';
+import { seRevisaron } from './recorrido.mjs';
 import {
-  citasDe, SIN_CONTENIDO, renglonesDe,
-  AJENOS, DE_OTRO_REPOSITORIO, PREFIJOS_DE_AFUERA, AJENAS
+  citasDe, SIN_CONTENIDO, renglonesDe, documentosConCitas,
+  AJENOS, DE_OTRO_REPOSITORIO, PREFIJOS_DE_AFUERA, INVENTADOS, NO_SE_RECORREN
 } from './citas.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -152,27 +160,62 @@ if (PREFIJOS_DE_AFUERA.length === 0 ||
 }
 const esDeAfuera = (ruta) => PREFIJOS_DE_AFUERA.some((p) => ruta.startsWith(p));
 
+/* Y que el perdón de lo inventado perdone una sola cosa: que el archivo no
+   exista. Si además tapara el renglón vacío, alcanzaría con anotar una ruta acá
+   para que sus citas dejaran de revisarse. */
+const esInventado = (ruta) => INVENTADOS.has(ruta);
+/* `w.js` no está en `INVENTADOS` a propósito: es la ruta ausente que **no** se
+   perdona. Se la arma acá en vez de escribirla entre acentos invertidos porque,
+   escrita así, este mismo chequeo la leería como una cita suya y se plantaría
+   sobre su propia prueba. */
+const acento = String.fromCharCode(96);
+const enCita = (ruta) => 'Ver ' + acento + ruta + acento + '.';
+if (citasRotas(enCita('z.js:1'), leerFalso, existeFalso, esInventado).length !== 0 ||
+    citasRotas(enCita('w.js:1'), leerFalso, existeFalso, esInventado).length !== 1 ||
+    citasRotas(enCita('x.js:4'), leerFalso, existeFalso, esInventado).length !== 1) {
+  console.error(
+    'El perdón de las rutas inventadas está roto: o no perdona la inventada, o\n' +
+    'perdona una que no lo es, o tapa el renglón vacío de una que sí. No se revisó nada.');
+  process.exit(1);
+}
+if (INVENTADOS.size === 0 || [...INVENTADOS.values()].some((m) => !m || m.length < 20)) {
+  console.error(
+    'INVENTADOS de `scripts/citas.mjs` tiene que traer al menos una ruta, y cada una\n' +
+    'con su motivo escrito. Sin motivo, la excepción se vuelve un lugar donde esconder\n' +
+    'una cita rota.');
+  process.exit(1);
+}
+
 const leer = (ruta) => readFileSync(join(raiz, ruta.split('/').join(sep)), 'utf8');
 const existe = (ruta) => existsSync(join(raiz, ruta.split('/').join(sep)));
 
 const fallas = [];
-let revisados = 0;
+let recorridos = 0;
+let conCitas = 0;
 let citas = 0;
 
-for (const camino of hayArchivos(join(raiz, 'docs'), ['.md'], AJENAS)) {
-  const nombre = relative(raiz, camino).split(sep).join('/');
-  revisados++;
-  const texto = readFileSync(camino, 'utf8');
-  for (const linea of texto.split(String.fromCharCode(10))) citas += citasDe(linea).length;
+for (const nombre of documentosConCitas(raiz)) {
+  recorridos++;
+  const texto = readFileSync(join(raiz, nombre.split('/').join(sep)), 'utf8');
+  let cuantas = 0;
+  for (const linea of texto.split(String.fromCharCode(10))) cuantas += citasDe(linea).length;
+  if (cuantas === 0) continue;
+  citas += cuantas;
+  conCitas++;
   // Al documento que habla de otro repositorio se le calla una sola cosa: que
   // un archivo **de afuera** no esté acá. Un renglón equivocado de un archivo
   // que sí está le sigue fallando igual, y un archivo de este repositorio que
-  // ya no está, también.
-  const perdona = DE_OTRO_REPOSITORIO.has(nombre) ? esDeAfuera : () => false;
+  // ya no está, también. Y a una ruta inventada se le calla lo mismo, en
+  // cualquier archivo: no nombra nada, así que no hay dónde apuntar.
+  const deAfuera = DE_OTRO_REPOSITORIO.has(nombre) ? esDeAfuera : () => false;
+  const perdona = (ruta) => esInventado(ruta) || deAfuera(ruta);
   for (const [renglon, cita, motivo] of citasRotas(texto, leer, existe, perdona)) {
     fallas.push(`${nombre}:${renglon}  ${cita}\n  ${motivo}`);
   }
 }
+
+/* Un ✔ sobre cero citas no dice que estén bien: dice que no se miró. */
+seRevisaron(citas, 'ni una cita con renglón en todo el proyecto');
 
 if (fallas.length > 0) {
   console.error('Citas que ya no apuntan donde dicen:\n');
@@ -187,6 +230,8 @@ if (fallas.length > 0) {
 }
 
 console.log(
-  `Citas verificadas: ${citas} con renglón en ${revisados} documentos, todas apuntando a algo ` +
-  `(a ${DE_OTRO_REPOSITORIO.size} que hablan de otro repositorio se les perdona lo que ` +
-  `viva en ${PREFIJOS_DE_AFUERA.join(' o ')}).`);
+  `Citas verificadas: ${citas} con renglón, repartidas en ${conCitas} de los ${recorridos} ` +
+  `archivos del proyecto que se recorren, todas apuntando a algo (a ` +
+  `${DE_OTRO_REPOSITORIO.size} que hablan de otro repositorio se les perdona lo que viva en ` +
+  `${PREFIJOS_DE_AFUERA.join(' o ')}, a ${INVENTADOS.size} rutas inventadas no existir, y ` +
+  `${NO_SE_RECORREN.size} carpeta queda afuera con su motivo escrito).`);

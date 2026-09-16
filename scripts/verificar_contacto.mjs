@@ -16,7 +16,7 @@
 
    Qué no mira: la puerta de verdad, que está del lado del servidor —el
    disparador `el_mensaje_no_lleva_datos_de_contacto`,
-   `supabase/migrations/0001_base_del_esquema.sql:3870`— y la prueba
+   `supabase/migrations/0001_base_del_esquema.sql:3938`— y la prueba
    `scripts/probar_la_tercera_puerta.mjs` con una
    sesión y sin pasar por ninguna pantalla. Esto revisa el reconocedor del
    navegador, que es el que avisa antes de mandar.

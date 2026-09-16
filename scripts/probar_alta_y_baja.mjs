@@ -202,7 +202,7 @@ comprobar(12, 'Un camino que no existe contesta 404', r.estado === 404, `contest
 // ── Limpieza ───────────────────────────────────────────────────────────────
 /* Se borra en orden, y el orden importa: toda Prestadora nace con seis filas
    de configuración de puntaje —`configuracion_de_fabrica_del_puntaje()`,
-   `supabase/migrations/0001_base_del_esquema.sql:203`— que apuntan a
+   `supabase/migrations/0001_base_del_esquema.sql:209`— que apuntan a
    `tenants` sin cascada, así que borrar la Prestadora derecho choca contra la
    clave ajena y devuelve 409. No es un defecto del producto —la baja de
    CeltaTech no borra nada, marca `cancelado`— sino de esta limpieza, que sí

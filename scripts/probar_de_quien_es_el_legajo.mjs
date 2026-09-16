@@ -21,7 +21,7 @@
 
    Era el pendiente 74, de la misma familia que el 66, y lo cerró el disparador
    `el_legajo_no_se_sella_solo`
-   (`supabase/migrations/0001_base_del_esquema.sql:3863`): una política
+   (`supabase/migrations/0001_base_del_esquema.sql:3931`): una política
    decide por fila, y acá lo que importa es
    qué columna se toca. **ESTA PRUEBA FALLABA A PROPÓSITO Y HOY PASA. Si vuelve
    a dar rojo, el dueño de un legajo volvió a poder cambiarse.**

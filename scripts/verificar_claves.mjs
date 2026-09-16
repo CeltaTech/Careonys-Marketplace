@@ -73,7 +73,7 @@ const COLUMNAS = {
   puesto: 'puesto_experiencia',
   // `tipo` y `estado` se nombran por tabla y no por columna sola: hay un
   // segundo `estado`, el de `oferta_comercial`
-  // (`supabase/migrations/0001_base_del_esquema.sql:2799`), que ningún
+  // (`supabase/migrations/0001_base_del_esquema.sql:2760`), que ningún
   // vocabulario gobierna, porque «publicado»/«proximamente» son el ciclo de
   // vida del ítem, no una verificación. El día que otra tabla necesite
   // gobernar el suyo, se agrega acá con el mismo par tabla.columna.

@@ -352,7 +352,7 @@ export default function MockupApp() {
          por `Sesion.perfil()`, y nunca de los metadatos de la cuenta: esos los
          escribe quien se registra, así que un papel leído de ahí sería un papel
          que la persona se dio a sí misma. La base ya lo dice de su lado
-         —`supabase/migrations/0005_acceso_por_sesion.sql:66`, donde
+         —`supabase/migrations/0001_base_del_esquema.sql:345`, donde
          `coordinador` no está entre los papeles que se pueden pedir al
          registrarse—; acá se dice del lado de la pantalla. */
       const perfil = await Sesion.perfil();

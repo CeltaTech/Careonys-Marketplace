@@ -896,7 +896,7 @@ atiende, precio por hora y si acepta reemplazos urgentes. Son exactamente los qu
 `directorio`, la vista que sólo deja pasar a quien tiene el legajo validado por la
 Prestadora **y** además autorizó que se lo publique.
 
-- **Lo trae `traerDelDirectorio` (`js/apiClient.js:978`)**, que pide una sola fila filtrando por
+- **Lo trae `traerDelDirectorio` (`js/apiClient.js:977`)**, que pide una sola fila filtrando por
   identificador y por Prestadora. Un identificador que no tiene forma de identificador se contesta
   sin preguntarle a la base: la base devolvería un error de sintaxis, y un error en pantalla se lee
   como que el sistema se rompió, cuando lo que hay es un enlace viejo. Los hay: hasta el 25 de
@@ -2282,7 +2282,7 @@ escrita: es la sección que sigue.
 el pendiente 15. No era una cuestión de prolijidad. Quien escribe la llamada a mano decide solo si
 manda el token de quien inició sesión o la clave pública, y de ese renglón depende que la base
 sepa quién está preguntando. Ahora son `ClienteDatos.getMensajes()` y
-`ClienteDatos.enviarMensaje()` (`js/apiClient.js:931`), que arman el pedido una sola vez para
+`ClienteDatos.enviarMensaje()` (`js/apiClient.js:930`), que arman el pedido una sola vez para
 todos.
 
 Se ganó algo que no se buscaba: la lectura vieja miraba `res.ok` y, si venía en falso, seguía de
@@ -3209,6 +3209,48 @@ que hacer.
 **Se probó devolviéndole a una la separación**: la versión anterior la dio por
 buena en verde y la de ahora la denuncia.
 
+### La mitad de lo que el producto explica de sí mismo no se verificaba
+
+La regla de la empresa pide que toda afirmación sobre una decisión ya tomada
+diga en qué archivo y en qué renglón está lo que afirma. Dos chequeos hermanos
+la hacen cumplir: uno comprueba que la cita apunte **a algo**, y el otro que
+apunte **a lo que dice**, reconstruyendo del historial el renglón que la cita
+fue a buscar.
+
+Los dos la hacían cumplir sobre una sola carpeta: la de los documentos. Y la
+mitad de lo que este proyecto explica de sí mismo no vive ahí. Vive en el
+encabezado de cada guion, de cada pantalla y de cada módulo, que es justamente
+donde lo lee quien va a tocar esa pieza.
+
+**Noventa y cuatro citas fuera de esa carpeta no las miraba nadie**, y decenas
+de ellas ya no apuntaban a lo que decían, o directamente a nada: renglones en
+blanco adentro de la migración del esquema, migraciones que la unificación
+borró, pantallas retiradas por la mudanza. Un encabezado señalaba el renglón
+647 de la migración del esquema, y ahí no había nada escrito.
+
+**El recorrido ahora sale de la raíz del repositorio**, así que una carpeta
+nueva entra sola, y **lo comparten los dos hermanos en un solo lugar**: dos
+recorridos escritos aparte dejan de coincidir sin que nadie se entere.
+
+**Queda una sola carpeta afuera, con su motivo escrito**, y es el único motivo
+que puede tener: una migración aplicada no se edita jamás, se corrige con otra
+adelante. Una cita suya que quedó vieja no se puede arreglar, y exigirla sería
+pedir lo que la regla de la base prohíbe.
+
+**Y las rutas inventadas tienen un perdón angosto.** Un banco de pruebas
+escribe rutas que no nombran ningún archivo, justamente para probar que el
+detector las reconoce. A ésas se les perdona una sola cosa, no existir. Si el
+renglón que nombran está vacío, fallan igual, y hay una guarda que se planta si
+ese perdón se ensancha, o si alguna se anota sin su motivo escrito al lado.
+
+**Se repararon ochenta y siete citas**: setenta y seis las corrigió solo el
+chequeo de la deriva, y once se corrigieron a mano, una por una, comprobando
+contra el archivo al que apuntan.
+
+**Se probó metiéndole a un guion una cita a un renglón que no existe**: la
+versión anterior la dio por buena en verde y la de ahora la denuncia con su
+renglón.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
@@ -3298,7 +3340,7 @@ ficticia y sesión simulada: el legajo se creó con fecha de alta del **1 de ene
 `update` posterior la corrió al **1 de enero de 2010**. Las dos veces la base guardó lo que le
 mandaron.
 
-**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:1360` la traduce a `fechaRegistro` y ese
+**Hoy no se veía en ninguna pantalla** —`js/apiClient.js:1359` la traduce a `fechaRegistro` y ese
 nombre no aparece en ningún otro archivo del proyecto—, así que no había consecuencia visible. Se
 arregló igual, porque la antigüedad es exactamente la clase de dato que después se usa para ordenar
 un directorio o para decidir a quién se muestra primero, y ese día el agujero pasa a ser una
@@ -3799,7 +3841,7 @@ regresa a «sin presentar» —la columna no puede seguir diciendo que alguien l
 ya no está comprobado— y no refresca la fecha cuando el estado no cambió.
 
 **Y el cliente de datos aprendió a hacer un alta-o-modificación en un solo pedido.**
-`_supabaseUpsert()` (`js/apiClient.js:1324`) se apoya en la restricción de unicidad de
+`_supabaseUpsert()` (`js/apiClient.js:1323`) se apoya en la restricción de unicidad de
 `(legajo, tipo)` del esquema (`supabase/migrations/0001_base_del_esquema.sql:3554`), así que
 marcar el mismo papel dos veces corrige el renglón que ya está en vez de agregar otro. No existía
 en ninguna de las tres copias del archivo,
@@ -4108,7 +4150,7 @@ cosa.
 
 **Y lo que la opción A todavía le debe a quien la sufre.** Que la persona vea, **antes** de cambiar
 un papel, que hacerlo le baja el sello. Hoy no se puede escribir: ninguna pantalla cambia
-`documents` —el mapeo existe en `js/apiClient.js:1423` y no lo usa nadie— y el chequeo de frases se
+`documents` —el mapeo existe en `js/apiClient.js:1422` y no lo usa nadie— y el chequeo de frases se
 pone en rojo con toda frase de catálogo que ninguna pantalla nombre. La frase entra el día que
 entre la pantalla; es el **pendiente 108**.
 
@@ -4181,7 +4223,7 @@ prestación.
 
 El mercado es de una Prestadora: sus Asistentes ofreciendo, sus Familias buscando. Muchos de un
 lado y muchos del otro, pero **todos adentro de la misma Organización**. Es lo que ya hace
-`js/apiClient.js:958`, que resuelve una Prestadora y le muestra los suyos a `directorio.html`.
+`js/apiClient.js:957`, que resuelve una Prestadora y le muestra los suyos a `directorio.html`.
 
 **Ninguna búsqueda, en ninguna modalidad, mezcla Asistentes de dos Prestadoras.** Mezclarlas sería
 abandonar el aislamiento entre Organizaciones para conseguir un desorden general. No

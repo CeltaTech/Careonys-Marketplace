@@ -72,7 +72,7 @@
     18. Con la autorización en «no», tampoco.
     19. Con la autorización en «sí», recién ahí aparece.
     20. Y el directorio de la OTRA Prestadora no lo muestra. Es la razón de ser
-        de `directorio_de()` —`supabase/migrations/0001_base_del_esquema.sql:876`—,
+        de `directorio_de()` —`supabase/migrations/0001_base_del_esquema.sql:882`—,
         y hasta el 26 de agosto de 2026 no lo probaba nada.
     21. El directorio no devuelve ningún dato personal ni ningún camino del
         depósito privado. (17 a 21 también necesitan --local, por lo mismo:
@@ -81,7 +81,7 @@
    El directorio se pide siempre por la puerta de UNA Prestadora
    —`directorio_de(<nombre corto>)`, `perfil_del_directorio(<nombre corto>,
    <id>)`—, porque `directorio` no está concedida a nadie
-   —`supabase/migrations/0001_base_del_esquema.sql:876`—. Leerla derecho
+   —`supabase/migrations/0001_base_del_esquema.sql:882`—. Leerla derecho
    devuelve vacío siempre, y una prueba escrita así no puede fallar.
 
    Y sobre el examen, que es lo que acredita que alguien sabe
@@ -156,7 +156,7 @@
         suyo y ninguna ve una sola fila de la otra, ni pidiéndola por su
         identificador. Y el contacto de la segunda se abre por el **otro**
         camino del mercado —desde el directorio, sin aviso—, que es el que usa
-        `perfil.html:573` y que hasta el 2 de septiembre de 2026 no probaba
+        `web/src/pantallas/Perfil.jsx:245` y que hasta el 2 de septiembre de 2026 no probaba
         nada: las dos conversaciones colgaban de un aviso.
 
    Y sobre las cuatro funciones que le dan de comer a las pantallas de ese
@@ -486,7 +486,7 @@ async function entrar(email, password) {
 // Se piden por su nombre corto, de a una. No se listan: la lista se quito a
 // proposito —no existe ninguna respuesta que devuelva mas de una Prestadora—,
 // y una prueba no es motivo para reabrirla. Los dos nombres cortos los crea
-// la siembra (`supabase/migrations/0002_siembra_ficticia.sql:58-59`) y no
+// la siembra (`supabase/migrations/0002_siembra_ficticia.sql:75-76`) y no
 // cambian.
 const NOMBRES_CORTOS = ['presdemo', 'cuidarnorte'];
 const prestadoras = [];
@@ -821,7 +821,7 @@ if (!coordinador) {
 // con la clave pública y nada más. Tres condiciones tienen que cumplirse a la vez
 // para aparecer: que la Prestadora haya validado el legajo, que la persona haya
 // dicho que sí, y que estén comprobados los papeles que la puerta de
-// publicación exige (`supabase/migrations/0001_base_del_esquema.sql:817`).
+// publicación exige (`supabase/migrations/0001_base_del_esquema.sql:802`).
 // Se prueban por separado, porque ninguna de las tres
 // alcanza sola.
 console.log('');
@@ -951,7 +951,7 @@ if (!coordinador) {
 
   // El mismo pedido que hace la pantalla: alta o modificación en uno solo,
   // apoyado en la restricción de unicidad (legajo, tipo) de la tabla
-  // (`supabase/migrations/0001_base_del_esquema.sql:3493`).
+  // (`supabase/migrations/0001_base_del_esquema.sql:3554`).
   const marcar = (legajoId, tenantId, tipo, estado, token, extra = {}) =>
     rest('/rest/v1/verificaciones_asistente?on_conflict=caregiver_id,tipo', {
       method: 'POST',
@@ -1632,7 +1632,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
 
   /* Y el mensaje del Asistente no lo puede reescribir. Esto no lo decide la
      política —la fila es la misma que acaba de marcar— sino el permiso por
-     columna (`supabase/migrations/0001_base_del_esquema.sql:5690-5704`), que
+     columna (`supabase/migrations/0001_base_del_esquema.sql:5902-5916`), que
      es lo único que distingue «puede tocar la fila»
      de «puede tocar esta columna». Se mira el rechazo y además que el texto
      siga siendo el que escribió su autor: un rechazo que igual hubiera dejado
@@ -1764,7 +1764,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
        las dos preguntaban por el aviso con un `exists` que no repetía de quién
        era. La RLS de `avisos` no alcanza para filtrarlo: a este mismo
        coordinador le devuelve **todos** los avisos de su Organización
-       (`0001_base_del_esquema.sql:4482`), así que el
+       (`supabase/migrations/0001_base_del_esquema.sql:4557`), así que el
        `exists` daba verdadero para cualquier fila y el personal leía el reporte
        de cuidado y la conversación enteros. Ya está cerrado, y esto es lo que
        faltaba para que se notara: las tres tablas de arriba están en
@@ -1843,7 +1843,8 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
      o la Familia mira el directorio, compara perfiles y contacta—, y hasta el 2
      de septiembre de 2026 esta prueba abría las dos conversaciones colgadas de
      un aviso, así que el camino del directorio no lo probaba nada. Es el que
-     usa `perfil.html:573`, que llama a `abrirConversacion(idAsistente, null)`.
+     usa `web/src/pantallas/Perfil.jsx:245`, que llama a
+     `abrirConversacion(idAsistente, null)`.
      Se comprueba que la fila entre y que quede **con el aviso en nulo**: si
      alguna vez la columna pasara a exigir valor, el contacto desde el
      directorio dejaría de poder abrirse y ninguna otra comprobación lo diría. */

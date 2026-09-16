@@ -5,7 +5,7 @@
        node scripts/generar_guias.mjs --escribir  ← rehace el archivo
 
    Mismo trato que `generar_vocabularios.mjs`, para las guías de cuidado
-   (`supabase/migrations/0001_base_del_esquema.sql:2658`): la verdad es
+   (`supabase/migrations/0001_base_del_esquema.sql:2590`): la verdad es
    la base, `data/catalogo-guias.json` es una
    copia para que el teléfono del Asistente las tenga sin conexión.
 

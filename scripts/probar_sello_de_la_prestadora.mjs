@@ -23,7 +23,7 @@
    a propósito, para que el día que el arreglo existiera se supiera que
    funcionó por algo más que por mirarlo. Ese día fue el 31 de agosto de 2026,
    y hoy lo frena `el_legajo_no_se_sella_solo()`
-   (`supabase/migrations/0001_base_del_esquema.sql:961-965`).
+   (`supabase/migrations/0001_base_del_esquema.sql:967-971`).
    **Si vuelve a dar rojo, algo se rompió.**
 
    POR QUÉ PUEDE FALLAR. Las tres comprobaciones del sello podrían dar
@@ -218,7 +218,7 @@ comprobar('no puede ponerse el sello sobre su propio legajo',
 // porque no dio permiso».
 //
 // El directorio tiene una tercera condición —los papeles de la puerta de
-// publicación, `supabase/migrations/0001_base_del_esquema.sql:817`—, y a este
+// publicación, `supabase/migrations/0001_base_del_esquema.sql:802`—, y a este
 // legajo también le faltan.
 // O sea que esta comprobación ya no aísla al sello ella sola: quien aísla al
 // sello es la anterior, que le pregunta a la base en qué estado quedó el

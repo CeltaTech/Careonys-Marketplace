@@ -4,7 +4,7 @@
        node scripts/verificar_patrones_contacto.mjs
 
    Las reglas con las que se reconoce un dato de contacto viven en la tabla
-   `patrones_de_contacto` (`supabase/migrations/0001_base_del_esquema.sql:2928`),
+   `patrones_de_contacto` (`supabase/migrations/0001_base_del_esquema.sql:2889`),
    y `data/patrones-contacto.json` es
    una copia generada, que existe sólo porque el reconocedor del navegador tiene
    que poder avisar sin conexión.
@@ -41,7 +41,7 @@ const IDIOMAS = ['es-AR', 'en', 'pt-BR'];
 
 /* Lo que Postgres no sabe traducir. Es la misma lista que la restricción
    `el_patron_lo_entienden_los_dos_lados`
-   (`supabase/migrations/0001_base_del_esquema.sql:2939`), y está acá para
+   (`supabase/migrations/0001_base_del_esquema.sql:2900`), y está acá para
    que el problema se vea al escribir la regla y no al aplicar la migración:
    `\B`, las referencias hacia atrás `\1`..`\9` y los cuatro miradores
    `(?=`, `(?!`, `(?<=`, `(?<!`. */

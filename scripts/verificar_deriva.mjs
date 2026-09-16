@@ -58,15 +58,20 @@
    También se cuentan, sin rojo, los textos repetidos y las citas cuyo renglón
    todavía no se guardó en ningún commit.
 
-   ---- A qué documentos mira ----
+   ---- A qué archivos mira ----
 
-   A todos los de `docs/`, sin ninguna excepción. Hubo dos y las dos se cayeron
-   el 8 de septiembre de 2026, al borrarse los documentos que las justificaban:
-   las **fotos fechadas**, que ya no existen, y los **planes**, eximidos por
-   citar el código del día en que se escribieron. De los planes que quedan
-   ninguno es una foto: son propuestas todavía sin ejecutar, y sus citas apuntan
-   al código de hoy, que es justo lo que esta comprobación cuida. Un plan que se
-   ejecuta se borra, y lo que quede vigente se muda al documento que sí vive.
+   A todos los del proyecto, y no sólo a los de `docs/`. Cuáles y por qué lo dice
+   `scripts/citas.mjs`, que es de donde sale el recorrido: el hermano de este
+   chequeo tiene que mirar exactamente los mismos, y dos recorridos escritos
+   aparte dejan de coincidir sin que nadie se entere.
+
+   Ninguno exento. Hubo dos y las dos excepciones se cayeron al borrarse los
+   documentos que las justificaban: las **fotos fechadas**, que ya no existen, y
+   los **planes**, eximidos por citar el código del día en que se escribieron. De
+   los planes que quedan ninguno es una foto: son propuestas todavía sin
+   ejecutar, y sus citas apuntan al código de hoy, que es justo lo que esta
+   comprobación cuida. Un plan que se ejecuta se borra, y lo que quede vigente se
+   muda al documento que sí vive.
 
    ---- La prueba de que puede fallar ----
 
@@ -80,10 +85,10 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname, join, relative, sep } from 'node:path';
+import { dirname, join } from 'node:path';
 
-import { hayArchivos } from './recorrido.mjs';
-import { citasDe, renglonesDe, AJENOS, AJENAS } from './citas.mjs';
+import { seRevisaron } from './recorrido.mjs';
+import { citasDe, renglonesDe, documentosConCitas, AJENOS } from './citas.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const arreglar = process.argv.includes('--arreglar');
@@ -194,8 +199,7 @@ function traerTodos(claves) {
 
 /* ---- Los documentos ---------------------------------------------------- */
 
-const documentos = hayArchivos(join(raiz, 'docs'), ['.md'], AJENAS)
-  .map((a) => relative(raiz, a).split(sep).join('/'));
+const documentos = documentosConCitas(raiz);
 
 /* Primera vuelta: juntar todas las citas y qué versión hace falta de cada una. */
 const citas = [];
@@ -221,6 +225,11 @@ for (const doc of documentos) {
     }
   }
 }
+
+/* Un ✔ sobre cero citas no dice que el historial les dé la razón: dice que no
+   se miró ninguna. Y el recorrido vive en otro archivo, así que este guion tiene
+   que declarar acá qué fue lo que contó. */
+seRevisaron(citas.length, 'ni una cita con renglón que contrastar contra el historial');
 
 const versiones = traerTodos([...claves]);
 const deHoy = new Map();
@@ -375,5 +384,6 @@ console.log('Citas verificadas contra el historial: ' +
     ? ', y ' + cuenta.perdidas + ' no se pudieron resolver, que no es lo mismo que mal' +
       (detalle ? '' : ' (--detalle)')
     : '') +
-  ' en los ' + documentos.length + ' documentos de docs/, sin ninguno exento.');
+  ' en los ' + documentos.length + ' archivos del proyecto que se recorren, ' +
+  'sin ninguno exento.');
 process.exit(0);

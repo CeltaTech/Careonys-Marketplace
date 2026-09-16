@@ -481,7 +481,7 @@ export function estadosDe(texto) {
 
     /* Y una tercera forma de contar el fallo, que no es decirlo ni volver a
        lanzarlo: **anotarlo en una lista que la función devuelve**. Es lo que
-       hace `js/fichas-legajo.js:285`, que sube varios archivos del legajo y no
+       hace `js/fichas-legajo.js:369`, que sube varios archivos del legajo y no
        quiere frenar el alta entera porque uno no subió: junta los que fallaron
        y los devuelve, para que quien llama avise una sola vez y sin perder lo
        demás. El fallo le llega igual a quien muestra —que es todo lo que un
