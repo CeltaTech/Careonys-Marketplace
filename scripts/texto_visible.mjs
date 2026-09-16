@@ -309,6 +309,29 @@ export function finDeExpresionRegular(s, i) {
   return i;
 }
 
+/** Dónde sigue el código después de lo que empieza en `i`, y qué es lo que
+    empieza ahí: `plantilla` la cadena de acento grave, `cadena` las otras dos,
+    `expresion` una expresión regular, y nada cuando ahí no empieza ninguna de
+    las tres.
+
+    Es una sola pregunta —«¿esto se lee o se saltea entero?»— que tres
+    recorridos se hacían cada uno por su lado: el que despeja las cadenas, el
+    que lee lo que dice una pantalla y el que junta las plantillas de un
+    módulo. Y la contestaban distinto: dos de los tres no reconocían la
+    expresión regular, así que una comilla de acento grave escrita adentro de
+    una abría un texto que se comía el archivo hasta la próxima, y lo que
+    quedaba en el medio no lo miraba nadie. */
+export function finDeLoQueNoSeLee(s, i) {
+  const c = s[i];
+  if (c === '/') {
+    const fin = finDeExpresionRegular(s, i);
+    return fin > i ? { fin, clase: 'expresion' } : { fin: i, clase: null };
+  }
+  if (c === '`') return { fin: finDeCadena(s, i), clase: 'plantilla' };
+  if (c === "'" || c === '"') return { fin: finDeCadena(s, i), clase: 'cadena' };
+  return { fin: i, clase: null };
+}
+
 /** Lo mismo al revés: lo que hay adentro de una cadena, en blanco. Contesta
     qué **hace** un guion y no qué **nombra**: una guarda escrita adentro de un
     texto de prueba está nombrada, no llamada, y quien pregunte por la de
@@ -319,18 +342,10 @@ export function sinCadenas(codigo) {
   let fuera = '';
   let i = 0;
   while (i < codigo.length) {
-    const c = codigo[i];
-    if (c === '/') {
-      const fin = finDeExpresionRegular(codigo, i);
-      if (fin > i) { fuera += codigo.slice(i, fin); i = fin; continue; }
-    }
-    if (c === "'" || c === '"' || c === '`') {
-      const fin = finDeCadena(codigo, i);
-      fuera += enBlanco(codigo.slice(i, fin));
-      i = fin;
-      continue;
-    }
-    fuera += c;
+    const { fin, clase } = finDeLoQueNoSeLee(codigo, i);
+    if (clase === 'expresion') { fuera += codigo.slice(i, fin); i = fin; continue; }
+    if (clase) { fuera += enBlanco(codigo.slice(i, fin)); i = fin; continue; }
+    fuera += codigo[i];
     i++;
   }
   return fuera;
@@ -379,7 +394,8 @@ export function textoDePrograma(s) {
     /* Afuera de todo elemento, y adentro de unas llaves, lo que hay es código:
        se saltean las cadenas enteras y sólo se mira si empieza una etiqueta. */
     if (!tope || tope.esCodigo) {
-      if (c === "'" || c === '"' || c === '`') { i = finDeCadena(s, i); continue; }
+      const salteo = finDeLoQueNoSeLee(s, i);
+      if (salteo.clase) { i = salteo.fin; continue; }
       if (tope) {
         if (c === '{') { tope.hondo++; i++; continue; }
         if (c === '}') { tope.hondo--; if (tope.hondo === 0) abiertos.pop(); i++; continue; }

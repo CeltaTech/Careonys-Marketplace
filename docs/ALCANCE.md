@@ -4352,7 +4352,7 @@ rojo y lo nombra.
 El chequeo de las frases termina diciendo cuántos archivos van convertidos sobre cuántos abre,
 y el pendiente del i18n dice con todas sus letras que ese renglón es el que contesta cuánto
 falta. El denominador eran los 109 archivos del corpus, y el corpus no son sólo pantallas:
-`scripts/verificar_frases.mjs:334` abre además los guiones del navegador, los módulos comunes,
+`scripts/verificar_frases.mjs:338` abre además los guiones del navegador, los módulos comunes,
 los enganches y la configuración de armado de los tres programas. Ninguno de ésos va a pedir
 una frase nunca, y sin embargo todos contaban como pantalla sin convertir.
 
@@ -4772,6 +4772,40 @@ No había daño puesto: las ochenta y cinco políticas escritas hoy llevan su no
 entre comillas. Los tres casos nuevos quedaron en el banco de pruebas del propio chequeo, más uno
 del lado que tiene que seguir pasando: la que abre de par en par con el nombre desnudo y después se
 da de baja, que no es una falla porque ya no está en pie.
+
+### Una comilla escrita adentro de una expresión regular escondía media pantalla
+
+Arreglado el chequeo que vigila a los demás quedó a la vista que la misma trampa
+seguía en pie dos puertas más allá, y ahí sí con daño posible sobre lo que una
+persona lee.
+
+La pregunta «¿esto se lee, o se saltea entero?» estaba contestada tres veces, cada
+una por su lado: en el despeje de cadenas, en el lector de lo que dice una pantalla
+y en el que junta las plantillas con las que un módulo arma marcado. Los tres
+caminan el archivo igual —ven una comilla y saltan a la que cierra—, y dos de los
+tres no reconocían una expresión regular. `/[`]/` es una forma corriente de nombrar
+a las tres comillas; leída como si abriera un texto, la de acento grave no termina
+en el fin de renglón y se come el archivo hasta la próxima.
+
+**Qué se escondía.** Todo lo que viniera detrás. En una pantalla, el texto escrito
+a mano que la regla de i18n existe para encontrar: comprobado sobre un módulo de
+verdad, el chequeo denunciaba «texto escrito a mano en el marcado que arma» y dejó
+de verlo con sólo poner ese renglón delante. El chequeo terminaba en verde con la
+pantalla escrita a mano adentro.
+
+**Qué se hizo.** La pregunta quedó con una sola respuesta, en
+`scripts/texto_visible.mjs`: contesta dónde sigue el código y qué es lo que empieza
+ahí —una plantilla, una cadena común, una expresión regular, o nada—, y los tres
+recorridos se la piden. El que junta plantillas necesita distinguir la de acento
+grave de las otras dos, y por eso la respuesta trae el nombre de lo que encontró y
+no sólo dónde termina.
+
+**Qué había en su lugar.** Nada: en el proyecto no hay hoy ninguna expresión
+regular con una comilla de acento grave adentro fuera de las bibliotecas que vienen
+de afuera, y el lector de pantallas devuelve exactamente lo mismo que antes sobre
+los 109 archivos de su recorrido. Falsificado en los dos sentidos sobre un módulo
+real, y los dos bancos de prueba —el del despeje y el del chequeo de frases—
+hablan cuando se le saca el reconocimiento.
 
 ### El vigilante de los chequeos era el único chequeo que no vigilaba nadie
 

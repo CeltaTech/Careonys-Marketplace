@@ -68,7 +68,7 @@ import {
 } from './recorrido.mjs';
 import {
   visible, enBlanco, despejar, sinEntidades,
-  enCodigoDePrograma, finDeCadena, textoDePrograma,
+  enCodigoDePrograma, finDeLoQueNoSeLee, textoDePrograma,
 } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -192,19 +192,23 @@ function textoDePlantilla(t) {
 }
 
 /** Las plantillas de un archivo, con dónde empieza cada una. Las cadenas
-    comunes se saltean enteras: una plantilla es la única que arma marcado. */
+    comunes se saltean enteras: una plantilla es la única que arma marcado.
+
+    Qué se saltea y qué se junta lo contesta `scripts/texto_visible.mjs`, que es
+    donde vive esa pregunta. Acá estaba contestada a mano, y de las tres cosas
+    que hay que reconocer conocía dos: no sabía de una expresión regular. Una
+    comilla de acento grave escrita adentro de una —`/[`]/` es una forma normal
+    de nombrar a las tres— abría una plantilla de mentira que se comía el
+    archivo hasta la próxima comilla, y todo el marcado que hubiera en el medio
+    salía sin que nadie lo mirara: un texto escrito a mano en una pantalla se
+    escondía detrás de un renglón que no tiene nada que ver con él. */
 function plantillas(s) {
   const salida = [];
   let i = 0;
   while (i < s.length) {
-    const c = s[i];
-    if (c === "'" || c === '"') { i = finDeCadena(s, i); continue; }
-    if (c === '`') {
-      const desde = i;
-      const fin = finDeCadena(s, i);
-      salida.push([desde, s.slice(desde + 1, fin - 1)]);
-      i = fin; continue;
-    }
+    const { fin, clase } = finDeLoQueNoSeLee(s, i);
+    if (clase === 'plantilla') { salida.push([i, s.slice(i + 1, fin - 1)]); i = fin; continue; }
+    if (clase) { i = fin; continue; }
     i++;
   }
   return salida;
@@ -554,7 +558,11 @@ const PROGRAMA_DEBE_VER = [
   'return <p>Texto suelto</p>;',
   'return <p>{frase(x)} y suelto</p>;',
   'return <>{a}<b>Suelto</b></>;',
-  'return <p>{n < 3 ? uno : dos} al hilo</p>;'
+  'return <p>{n < 3 ? uno : dos} al hilo</p>;',
+  /* Y el mismo renglón que escondía el marcado de un módulo: acá escondía
+     la pantalla entera, porque el lector arranca leyendo código y ahí una
+     comilla de acento grave abría un texto que no terminaba nunca. */
+  'const S = /[`]/;\nreturn <p>Texto suelto</p>;'
 ];
 const PROGRAMA_NO_DEBE_VER = [
   'return <p>{frase("acceso.correo")}</p>;',
@@ -570,7 +578,14 @@ const PROGRAMA_NO_DEBE_VER = [
 const MARCADO_DEBE_VER = [
   'caja.innerHTML = `<button>Quitar</button>`;',
   'const h = `<option value="">— Seleccionar —</option>`;',
-  'const h = `<p>${n} de ${total} cargados</p>`;'
+  'const h = `<p>${n} de ${total} cargados</p>`;',
+  /* Una comilla de acento grave escrita adentro de una expresión regular
+     no abre ninguna plantilla. Mientras se creyó que sí, todo lo que
+     viniera detrás quedaba adentro de una plantilla de mentira y no lo
+     miraba nadie: comprobado sobre un módulo de verdad, el texto escrito
+     a mano que el chequeo denunciaba dejó de verse con sólo poner este
+     renglón delante. */
+  'const CUALQUIERA = /[`]/;\ncaja.innerHTML = `<button>Quitar</button>`;'
 ];
 const MARCADO_NO_DEBE_VER = [
   'caja.innerHTML = `<button>${frase("legajo.quitar_ficha")}</button>`;',
