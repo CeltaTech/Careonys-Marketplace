@@ -36,9 +36,10 @@
    dice «es todo o nada». Ahora los dos leen el disco con la misma función.
 
    Qué NO mira:
-   - Las direcciones que se arman al vuelo (`src="${…}"`): no se pueden juzgar
-     leyendo, porque el nombre no está escrito en ningún lado. Se cuentan aparte
-     y el número sale en el mensaje, para que no desaparezcan en silencio.
+   - Las direcciones que arma el programa mientras corre —entre llaves, o con un
+     hueco adentro de un texto—: no se pueden juzgar leyendo, porque el nombre no
+     está escrito en ningún lado. Se cuentan aparte y el número sale en el
+     mensaje, para que no desaparezcan en silencio.
    - Las que salen del proyecto: `https:`, `//`, `data:`, `mailto:`, `#`.
    - Si el archivo al que apunta es **el que corresponde**. Sólo que esté.
    - La caja de las letras de la carpeta donde vive el proyecto: se compara
@@ -67,12 +68,25 @@ const DE_DONDE_SALEN = [...EXTENSIONES_DE_PANTALLA, '.css', '.webmanifest', 'man
    manifiesto, que son las tres formas que este proyecto usa. */
 const DIRECCIONES = [
   /* La mirada de atrás es lo que separa `src=` de `data-attr-src=`, que no es
-     una dirección sino el nombre del campo del que sale el dato. */
-  /(?<![-\w])(?:src|href)\s*=\s*"([^"]+)"/gi,
-  /(?<![-\w])(?:src|href)\s*=\s*'([^']+)'/gi,
+     una dirección sino el nombre del campo del que sale el dato.
+
+     Y `to` está acá desde el 16 de septiembre de 2026. Una pantalla del
+     programa no escribe `href` para ir a otra pantalla —eso recargaría el
+     sitio entero—: escribe `to`. Mientras este chequeo preguntó sólo por
+     `src` y por `href`, las 37 direcciones escritas así no las miró nadie, y
+     el renglón final decía ✔ igual. */
+  /(?<![-\w])(?:src|href|to)\s*=\s*"([^"]+)"/gi,
+  /(?<![-\w])(?:src|href|to)\s*=\s*'([^']+)'/gi,
   /url\(\s*['"]?([^'")]+)['"]?\s*\)/gi,
   /"src"\s*:\s*"([^"]+)"/gi,
 ];
+
+/* Una dirección escrita entre llaves la arma el programa mientras corre: adentro
+   hay una variable, una llamada o dos textos sumados, y ninguna de las tres está
+   escrita en ningún lado para ir a buscarla al disco. No se juzga, se cuenta.
+   Antes no se contaba: el mensaje decía «0 se arman al vuelo» y eran casi
+   cuarenta, porque sólo se reconocía la forma de una página suelta. */
+const ENTRE_LLAVES = /(?<![-\w])(?:src|href|to)\s*=\s*\{/gi;
 
 const SALE_DEL_PROYECTO = /^(https?:|\/\/|data:|blob:|mailto:|tel:|javascript:|#)/i;
 const SE_ARMA_AL_VUELO = (ref) => ref.includes('${') || ref.includes('{{');
@@ -236,6 +250,8 @@ for (const camino of hayArchivos(raiz, DE_DONDE_SALEN)) {
   const texto = readFileSync(camino, 'utf8');
   const suCarpeta = dirname(camino);
   const vistas = new Set();
+
+  alVuelo += Array.from(texto.matchAll(ENTRE_LLAVES)).length;
 
   for (const patron of DIRECCIONES) {
     for (const encontrada of texto.matchAll(patron)) {
