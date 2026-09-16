@@ -3770,7 +3770,7 @@ Probado antes de tocar nada: se metió `carpeta que no existe en ningun lado` en
 Y había daño puesto. Seis chequeos eximían a `Nueva carpeta`, que se había mudado entera a la
 cuarentena (`docs/PENDIENTES.md:66`) y por lo tanto ya no existía en ningún lado donde ningún
 chequeo pudiera mirar: `scripts/verificar_arranque.mjs:53`,
-`scripts/verificar_botones.mjs:67`, `scripts/verificar_deposito.mjs:125`,
+`scripts/verificar_botones.mjs:78`, `scripts/verificar_deposito.mjs:125`,
 `scripts/verificar_estados.mjs:79`, `scripts/verificar_sensibles.mjs:104` y un bloque entero en
 `scripts/citas.mjs`. Seis renglones perdonando a un fantasma.
 
@@ -4390,7 +4390,7 @@ manejador lo deja en rojo con archivo y renglón.
 
 La puerta ya no nombra ninguna de las cuatro formas: le alcanza con que haya un manejador de
 pulsación, escrito como esté (`scripts/verificar_botones.mjs:138`). Y tiene prueba propia contra
-las cuatro (`scripts/verificar_botones.mjs:383`), porque ninguna de las pruebas que ya había la
+las cuatro (`scripts/verificar_botones.mjs:417`), porque ninguna de las pruebas que ya había la
 tocaba: todas le hablaban derecho al detector, sin pasar por ella. El botón del chat se apaga
 mientras abre y se devuelve en un `finally` (`js/conversacion.js:215`).
 
@@ -4839,6 +4839,31 @@ con comilla común, y el renglón verde dice los mismos quince que antes. Falsif
 en los dos sentidos, y el banco de pruebas del lector —que probaba una sola de las
 tres maneras— ahora prueba las tres y la nota adentro de la lista.
 
+### El nombre del evento, escrito a mano seis veces en el mismo archivo
+
+La regla de la empresa dice que todo botón que dispara una operación se apaga mientras
+la operación corre, y termina con «nunca dos envíos». El chequeo que la vigila decidía
+antes que nada si algo era un manejador, y para eso preguntaba cómo se llamaba el
+evento. Lo preguntaba seis veces adentro del mismo archivo —las cuatro formas del
+marcado suelto, la puerta que decide si el archivo se abre siquiera, y la forma de las
+pantallas portadas— y las seis conocían dos nombres: el clic y el envío de un
+formulario.
+
+Con eso abría 54 pantallas de las 66 que enganchan algo, y las otras doce las descartaba
+enteras. Adentro había dos operaciones de verdad: una lista desplegable que escribe en
+la base cada vez que se la cambia
+(`web/src/pantallas/panel-prestadora/Verificaciones.jsx:171`), y un renglón que le pide
+datos al servidor al desplegarse. La primera está bien hecha —se apaga mientras
+guarda—, y nada cuidaba que siguiera estándolo: sacándole el apagado, el chequeo seguía
+diciendo que estaba todo bien.
+
+Una tecla y un clic hacen el mismo doble envío, así que el nombre del evento nunca fue
+lo que decide. Lo que decide es si el manejador espera algo, y eso este chequeo ya lo
+tenía escrito. Ahora cómo se engancha un manejador se escribe una sola vez y sin nombrar
+ningún evento (`scripts/verificar_botones.mjs:143`), las seis preguntas salen de ahí, y
+la puerta de las pantallas portadas, que no tenía ninguna prueba propia, tiene la suya
+(`scripts/verificar_botones.mjs:498`).
+
 ### La lista de estilos que estaba subida arriba con un nombre
 
 La regla es que si todo lo que dice un atributo `style=` ya tiene clase, ese atributo
@@ -4910,7 +4935,7 @@ que al que de verdad no tiene nombre no se le invente uno.
 El chequeo que vigila que un botón que dispara una operación se apague mientras
 la operación corre necesita, para cada manejador, el cuerpo de la función que
 lleva su nombre. Armaba esa tabla con tres maneras de declarar una función
-(`scripts/verificar_botones.mjs:93`), y las tres piden que la función arranque
+(`scripts/verificar_botones.mjs:104`), y las tres piden que la función arranque
 pegada al signo igual. Las pantallas portadas declaran casi todos sus
 manejadores envueltos en una llamada, y así declarados no entraban en la tabla.
 

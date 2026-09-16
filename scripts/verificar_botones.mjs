@@ -32,6 +32,17 @@
    que la persona pueda tocar el botón de nuevo, así que apagarlo no protege de
    nada. El doble envío existe solamente mientras la operación está en el aire.
 
+   Y de ahí se sigue que acá no se nombra ningún evento. Mientras el nombre se
+   escribía a mano —«click o submit», y seis veces en este mismo archivo: las
+   cuatro formas sueltas, la puerta y la forma portada—, este chequeo abría 54
+   pantallas de las 66 que enganchan algo y las otras doce las descartaba
+   enteras. Adentro había un `<select>` que escribe en la base cada vez que se lo
+   cambia, y un renglón que le pide datos al servidor al desplegarse: dos maneras
+   de disparar una operación que ninguna lista de dos nombres iba a contener. Una
+   tecla y un clic hacen el mismo doble envío. Ahora se escribe una sola vez cómo
+   se engancha un manejador, sin decir de qué evento, y lo que decide sigue
+   siendo el `await`.
+
    Qué NO mira, dicho de frente:
    - En el marcado suelto no sabe si el botón que se apaga es el que se tocó:
      apagar el equivocado pasa igual. En la forma portada sí lo sabe cuando el
@@ -124,18 +135,35 @@ function apaga(texto, mapa, nivel = 0) {
   return false;
 }
 
-const MANEJADOR = /addEventListener\(\s*['"](?:click|submit)['"]\s*,\s*async/;
-const DESDE_MARCADO = /onclick\s*=\s*"\s*([A-Za-z_$][\w$]*)\s*\(/g;
-const DELEGA = /addEventListener\(\s*['"](?:click|submit)['"]\s*,\s*\([^)]*\)\s*=>\s*([A-Za-z_$][\w$]*)\s*\(/g;
-const POR_NOMBRE = /addEventListener\(\s*['"](?:click|submit)['"]\s*,\s*([A-Za-z_$][\w$]*)\s*\)/g;
+/* Cómo se engancha un manejador, escrito una sola vez para los seis lugares que
+   lo preguntaban cada uno por su cuenta: las cuatro formas sueltas de acá abajo,
+   la puerta que decide si el archivo se abre siquiera, y las dos de las
+   pantallas portadas. No nombra ningún evento, y es a propósito: el motivo está
+   escrito arriba, y es que lo que decide es el `await` de adentro. */
+const ENGANCHE_SUELTO = String.raw`addEventListener\(\s*['"][a-zA-Z]+['"]\s*,`;
+const ENGANCHE_DE_MARCADO = String.raw`\bon[a-z]+\s*=\s*"`;
+const ENGANCHE_PORTADO = String.raw`\bon[A-Z][\w$]*=\{`;
+
+const MANEJADOR = new RegExp(ENGANCHE_SUELTO + String.raw`\s*async`);
+const DESDE_MARCADO = new RegExp(
+  ENGANCHE_DE_MARCADO + String.raw`\s*([A-Za-z_$][\w$]*)\s*\(`, 'g');
+const DELEGA = new RegExp(
+  ENGANCHE_SUELTO + String.raw`\s*\([^)]*\)\s*=>\s*([A-Za-z_$][\w$]*)\s*\(`, 'g');
+const POR_NOMBRE = new RegExp(
+  ENGANCHE_SUELTO + String.raw`\s*([A-Za-z_$][\w$]*)\s*\)`, 'g');
 
 /* La puerta que decide si un archivo se mira siquiera, y no nombra ninguna de
-   las cuatro formas de arriba a propósito: le alcanza con que haya un manejador
-   de pulsación, escrito como esté. Escrita con las formas, la puerta sabía dos
-   de las cuatro —la que lleva `async` pegado y la que sale del marcado—, así que
-   el archivo con un manejador pasado por su nombre se descartaba entero antes de
-   que ningún detector lo abriera, y ensancharlos a ellos no cambiaba nada. */
-const HAY_SUELTO = /addEventListener\(\s*['"](?:click|submit)['"]|onclick\s*=/;
+   las cuatro formas de arriba a propósito: le alcanza con que haya un manejador,
+   del evento que sea y escrito como esté. Escrita con las formas, la puerta
+   sabía dos de las cuatro —la que lleva `async` pegado y la que sale del
+   marcado—, así que el archivo con un manejador pasado por su nombre se
+   descartaba entero antes de que ningún detector lo abriera, y ensancharlos a
+   ellos no cambiaba nada. Del enganche escrito en el marcado pide además que
+   arranque un nombre, que lo tienen todos: sin eso, un archivo que sólo nombra
+   el atributo adentro de un comentario entraba y se contaba como pantalla con
+   botones, y el renglón verde decía una de más. */
+const HAY_SUELTO = new RegExp(
+  ENGANCHE_SUELTO + '|' + ENGANCHE_DE_MARCADO + String.raw`\s*[A-Za-z_$]`);
 
 /**
  * Los manejadores que esperan algo y no apagan ningún botón.
@@ -282,8 +310,9 @@ function prendeBandera(cuerpoTexto, banderas, companeras, mapa, nivel = 0) {
      onClick={async () => …}               espera ahí mismo
      onClick={guardar} / {() => borrar(…)}  llama a una función con nombre
      onClick={ya ? undefined : borrar}      elige con una condición */
-const MANEJADOR_JSX =
-  /on(?:Click|Submit)=\{\s*(?:async\s*\(|(?:\([^)]*\)\s*=>\s*)?([A-Za-z_$][\w$]*)\s*[(}]|[^{}]*\?[^{}]*:\s*([A-Za-z_$][\w$]*)\s*\})/g;
+const MANEJADOR_JSX = new RegExp(ENGANCHE_PORTADO + String.raw`\s*(?:async\s*\(|`
+  + String.raw`(?:\([^)]*\)\s*=>\s*)?([A-Za-z_$][\w$]*)\s*[(}]|`
+  + String.raw`[^{}]*\?[^{}]*:\s*([A-Za-z_$][\w$]*)\s*\})`, 'g');
 
 /**
  * Lo mismo que `botonesSinApagar`, para las pantallas portadas.
@@ -335,6 +364,11 @@ const MAL = [
   ['un manejador pasado por su nombre a secas, que espera y no apaga nada',
    'async function refrescar() {\n  await traer();\n}\n'
    + "lista.addEventListener('click', refrescar);"],
+  /* Y uno que no es una pulsación. Mientras todo lo que se probaba acá era un
+     clic o un envío de formulario, el detector podía conocer solamente esos dos
+     nombres y este banco seguía en verde. */
+  ['un cambio que espera una operación y no apaga nada',
+   "papel.addEventListener('change', async () => {\n  await guardar();\n});"],
   ['el apagado que está en el manejador de al lado, no en este',
    "a.addEventListener('click', async () => {\n  await guardar();\n});\n"
    + "b.addEventListener('click', async () => {\n  b.disabled = true;\n  await otra();\n});"]
@@ -384,7 +418,8 @@ const PUERTA = [
   ['el que lleva `async` pegado', "b.addEventListener('click', async () => {});"],
   ['el que delega en una función', "b.addEventListener('submit', () => enviar());"],
   ['el pasado por su nombre a secas', "b.addEventListener('click', enviar);"],
-  ['el que sale del marcado', '<button onclick="enviar();">x</button>']
+  ['el que sale del marcado', '<button onclick="enviar();">x</button>'],
+  ['el de un evento que no es una pulsación', "b.addEventListener('change', async () => {});"]
 ];
 
 const noEntran = PUERTA.filter(([, t]) => !HAY_SUELTO.test(t));
@@ -407,6 +442,12 @@ const MAL_JSX = [
    'async function enviar() {\n  await mandar();\n}\n<form onSubmit={enviar}>x</form>'],
   ['un apagado clavado en falso, que no apaga nada',
    'async function enviar() {\n  await mandar();\n}\n<button disabled={false} onClick={enviar}>x</button>'],
+  /* Y un <select> que escribe en la base cada vez que se lo cambia, que no es
+     una pulsación y es la misma operación. Mientras acá todo era `onClick` y
+     `onSubmit`, el lector podía conocer solamente esos dos nombres y este banco
+     seguía en verde. */
+  ['un <select> que escribe al cambiar y no apaga nada',
+   'async function guardar() {\n  await mandar();\n}\n<select onChange={guardar}>x</select>'],
   /* Y el manejador declarado como los declaran casi todas las pantallas
      portadas: envuelto en una llamada. Mientras todo lo que se probaba acá
      empezaba con `async function`, el detector podía no reconocer ninguna otra
@@ -432,6 +473,9 @@ const BIEN_JSX = [
    'const { entrando, ingresar } = useElIngreso();\nasync function entrar() {\n  await ingresar(correo, clave);\n}\n<form onSubmit={entrar}>x</form>\n<button disabled={entrando}>y</button>'],
   ['un manejador que no espera nada',
    '<button onClick={() => abrir()}>x</button>'],
+  ['el mismo <select>, con su apagado puesto',
+   'async function guardar() {\n  await mandar();\n}\n'
+   + '<select disabled={guardando} onChange={guardar}>x</select>'],
   ['el mismo envuelto en una llamada, con su bandera',
    'const enviar = useCallback(async () => {\n  setEnviando(true);\n  await mandar();\n}, []);\n'
    + '<form onSubmit={enviar}>x</form>\n<button disabled={enviando}>y</button>']
@@ -446,6 +490,27 @@ if (noDetectaJsx.length || sePasaJsx.length) {
   process.exit(1);
 }
 
+
+/* Y la puerta de la forma portada, que no tenía ninguna prueba y era el sexto
+   lugar de este archivo donde el nombre del evento estaba escrito a mano. Es la
+   que descartaba doce pantallas enteras antes de que ningún detector las
+   abriera. */
+const PUERTA_PORTADA = [
+  ['una pulsación', '<button onClick={enviar}>x</button>'],
+  ['un envío de formulario', '<form onSubmit={enviar}>x</form>'],
+  ['un cambio', '<select onChange={guardar}>x</select>'],
+  ['una tecla', '<input onKeyDown={enviar} />'],
+  ['un renglón que se despliega', '<details onToggle={traer}>x</details>']
+];
+
+const noEntranPortadas = PUERTA_PORTADA.filter(
+  ([, t]) => !new RegExp(ENGANCHE_PORTADO).test(t));
+if (noEntranPortadas.length) {
+  console.error('La puerta de las pantallas portadas descarta manejadores:');
+  for (const [q] of noEntranPortadas) console.error('  no entra: ' + q);
+  process.exit(1);
+}
+
 const fallas = [];
 let revisados = 0;
 let manejadores = 0;
@@ -454,7 +519,7 @@ for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJEN
   const nombre = relative(raiz, camino).split(sep).join('/');
   const texto = readFileSync(camino, 'utf8');
   const sueltas = HAY_SUELTO.test(texto);
-  const portadas = /on(?:Click|Submit)=\{/.test(texto);
+  const portadas = new RegExp(ENGANCHE_PORTADO).test(texto);
   if (!sueltas && !portadas) continue;
   revisados++;
   if (sueltas) {
