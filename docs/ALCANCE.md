@@ -3545,6 +3545,39 @@ Falsificado en los dos sentidos: con un archivo llamado con la palabra y otro
 con la palabra adentro de la función de altas y bajas, la versión nueva los
 nombra a los dos y se pone roja; la vieja escribe su renglón verde entero.
 
+### La misma lectura estaba escrita dos veces, y un comentario decía que era una sola
+
+La lista de pendientes es una tabla, y sus filas abiertas se reconocen igual en
+todas partes: el número entre barras al empezar el renglón. Dos guiones
+necesitan esa lectura. El que comprueba que ningún archivo cite en presente un
+pendiente ya cerrado, y el que corre todas las pruebas, que la usa para que
+ninguna roja quede perdonada contra un número que no existe.
+
+Cada uno la tenía escrita por su cuenta.
+
+Lo llamativo es que el primero ya guardaba la lectura en una función aparte y la
+ofrecía a los demás, con un comentario que decía que el otro la usa «y por eso
+vive exportada acá». No la usaba: tenía su propia copia tres pantallas más
+abajo. Y no podía usarla aunque quisiera, porque ese archivo hacía todo su
+trabajo al abrirse: pedirle la función significaba recorrer el proyecto entero
+sin haberlo pedido, y un rojo suyo mataba a quien la hubiera pedido, por algo
+que no tenía nada que ver.
+
+Así que el comentario describía un arreglo que no existía, y la duplicación
+contra la que advertía era exactamente lo que había.
+
+Las tres cosas se corrigieron juntas: el guion que revisa las citas hace su
+trabajo adentro de la guarda que el proyecto ya usa en otras partes —sólo cuando
+se lo corre a mano, no cuando otro archivo lo importa—, el que corre las pruebas
+le pide la función en vez de repetirla, y el comentario pasó a decir lo que
+ahora es cierto.
+
+Falsificado en los dos sentidos: al importarlo, el guion ya no recorre nada ni
+imprime su renglón verde, y corrido a mano sigue revisando los mismos 258
+archivos; y con la tabla de pendientes vaciada a propósito, el que corre las
+pruebas se sigue plantando antes de empezar, que era lo que esa lectura
+protegía.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

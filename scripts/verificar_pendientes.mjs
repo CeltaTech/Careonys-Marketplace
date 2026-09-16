@@ -51,17 +51,20 @@
 
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname, join, relative, sep } from 'node:path';
+import { dirname, join, relative, resolve, sep } from 'node:path';
 
 import { hayArchivos, seRevisaron, EXTENSIONES_DE_CODIGO } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rutaLista = join(raiz, 'docs', 'PENDIENTES.md');
 
-/* Las filas de la lista empiezan con el número entre barras. Es la misma
-   expresión que usa `scripts/probar_todo.mjs` para lo mismo, y por eso vive
-   exportada acá: dos copias de esta lectura se despegan igual que se despegó la
-   lista de funciones anónimas. */
+/* Las filas de la lista empiezan con el número entre barras. `scripts/probar_todo.mjs`
+   lee lo mismo, para comprobar que cada roja esperada apunta a un pendiente que
+   sigue abierto, y la lee desde acá: una sola expresión, en un solo lugar, igual
+   que la lista de funciones anónimas. Que se pueda importar es parte de eso, y
+   por eso lo que este chequeo hace cuando se lo corre a mano está abajo, adentro
+   de su guarda: sin ella, pedirle esta función significaba recorrer el proyecto
+   entero, y un rojo de acá mataba a quien la hubiera pedido. */
 export function pendientesAbiertos(texto) {
   return new Set([...texto.matchAll(/^\|\s*(\d+)\s*\|/gm)].map((m) => Number(m[1])));
 }
@@ -147,76 +150,79 @@ export function citasColgadas(texto, abiertos) {
   return { colgadas, cuantas };
 }
 
-const abiertos = pendientesAbiertos(readFileSync(rutaLista, 'utf8'));
-if (abiertos.size === 0) {
-  console.error(
-    'No se pudo leer ningún pendiente abierto de docs/PENDIENTES.md.\n' +
-    'Sin eso este chequeo diría que está todo bien sin haber mirado nada.\n' +
-    'Suele ser que la tabla cambió de forma y hay que ponerla al día acá.'
-  );
-  process.exit(1);
-}
-
-/* ── Las tres pruebas del propio detector, antes de mirar el proyecto ────── */
-const ABIERTO = [...abiertos][0];
-const CERRADO = 99999;
-const PRUEBAS = [
-  ['una cita a un pendiente cerrado sin decirlo', `esto es el pendiente ${CERRADO} y sigue abierto`, 1],
-  ['una cita a un pendiente cerrado que lo aclara', `fue el pendiente ${CERRADO}, cerrado el martes`, 0],
-  ['una cita a un pendiente abierto', `esto lo traba el pendiente ${ABIERTO}`, 0],
-  ['una cita en pasado', `eran el pendiente ${CERRADO}, y se arreglaron`, 0],
-  ['una cita en pasado y en plural', `las clases que cerraron el pendiente ${CERRADO}`, 0],
-  ['una cita en futuro', `esto cerrará el pendiente ${CERRADO} algún día`, 1],
-  ['un «fue» lejos de la cita', `fue un lío. Hoy esto es el pendiente ${CERRADO}`, 1],
-  ['una lista donde uno solo está cerrado', `los pendientes ${ABIERTO} y ${CERRADO}`, 1],
-  ['una cita con el número en negrita', `esto es el pendiente **${CERRADO}** y sigue abierto`, 1],
-  ['una cita con el número resaltado', 'esto es el pendiente `' + CERRADO + '` y sigue abierto', 1],
-  ['una cita en negrita a un pendiente abierto', `esto lo traba el pendiente **${ABIERTO}**`, 0]
-];
-for (const [que, texto, esperadas] of PRUEBAS) {
-  const { colgadas } = citasColgadas(texto, abiertos);
-  if (colgadas.length !== esperadas) {
+// Solo revisa el proyecto cuando se lo corre a mano, no cuando otro archivo lo importa.
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
+  const abiertos = pendientesAbiertos(readFileSync(rutaLista, 'utf8'));
+  if (abiertos.size === 0) {
     console.error(
-      `El detector de este chequeo está roto: con ${que} devolvió ${colgadas.length}\n` +
-      `hallazgo(s) y tenía que devolver ${esperadas}. No se revisó el proyecto.`
+      'No se pudo leer ningún pendiente abierto de docs/PENDIENTES.md.\n' +
+      'Sin eso este chequeo diría que está todo bien sin haber mirado nada.\n' +
+      'Suele ser que la tabla cambió de forma y hay que ponerla al día acá.'
     );
     process.exit(1);
   }
-}
 
-/* ── El proyecto ─────────────────────────────────────────────────────────── */
-const hallazgos = [];
-let citas = 0;
-let mirados = 0;
-
-for (const ruta of hayArchivos(raiz, EXTENSIONES)) {
-  const rel = relative(raiz, ruta);
-  if (NARRAN_UN_MOMENTO(rel)) continue;
-  if (rel === join('scripts', 'verificar_pendientes.mjs')) continue;
-  mirados++;
-  const { colgadas, cuantas } = citasColgadas(readFileSync(ruta, 'utf8'), abiertos);
-  citas += cuantas;
-  for (const c of colgadas) {
-    const cual = c.texto === `pendiente ${c.numero}` ? '' : ` → el ${c.numero}`;
-    hallazgos.push(`${rel.split(sep).join('/')}:${c.renglon}  «${c.texto}»${cual}`);
+  /* ── Las tres pruebas del propio detector, antes de mirar el proyecto ────── */
+  const ABIERTO = [...abiertos][0];
+  const CERRADO = 99999;
+  const PRUEBAS = [
+    ['una cita a un pendiente cerrado sin decirlo', `esto es el pendiente ${CERRADO} y sigue abierto`, 1],
+    ['una cita a un pendiente cerrado que lo aclara', `fue el pendiente ${CERRADO}, cerrado el martes`, 0],
+    ['una cita a un pendiente abierto', `esto lo traba el pendiente ${ABIERTO}`, 0],
+    ['una cita en pasado', `eran el pendiente ${CERRADO}, y se arreglaron`, 0],
+    ['una cita en pasado y en plural', `las clases que cerraron el pendiente ${CERRADO}`, 0],
+    ['una cita en futuro', `esto cerrará el pendiente ${CERRADO} algún día`, 1],
+    ['un «fue» lejos de la cita', `fue un lío. Hoy esto es el pendiente ${CERRADO}`, 1],
+    ['una lista donde uno solo está cerrado', `los pendientes ${ABIERTO} y ${CERRADO}`, 1],
+    ['una cita con el número en negrita', `esto es el pendiente **${CERRADO}** y sigue abierto`, 1],
+    ['una cita con el número resaltado', 'esto es el pendiente `' + CERRADO + '` y sigue abierto', 1],
+    ['una cita en negrita a un pendiente abierto', `esto lo traba el pendiente **${ABIERTO}**`, 0]
+  ];
+  for (const [que, texto, esperadas] of PRUEBAS) {
+    const { colgadas } = citasColgadas(texto, abiertos);
+    if (colgadas.length !== esperadas) {
+      console.error(
+        `El detector de este chequeo está roto: con ${que} devolvió ${colgadas.length}\n` +
+        `hallazgo(s) y tenía que devolver ${esperadas}. No se revisó el proyecto.`
+      );
+      process.exit(1);
+    }
   }
-}
 
-seRevisaron(citas, 'ni una sola cita a un pendiente en todo el proyecto');
+  /* ── El proyecto ─────────────────────────────────────────────────────────── */
+  const hallazgos = [];
+  let citas = 0;
+  let mirados = 0;
 
-if (hallazgos.length) {
-  console.error(
-    `\n${hallazgos.length} cita(s) hablan de un pendiente que ya no está abierto:\n\n  ` +
-    hallazgos.join('\n  ') +
-    '\n\nO el pendiente sigue vivo y falta su fila en docs/PENDIENTES.md, o se cerró\n' +
-    'y el texto tiene que decirlo —«fue el pendiente N, cerrado», «la migración que\n' +
-    'cerró el pendiente N»—. Dejar la cita está bien; dejarla en presente, no: quien\n' +
-    'la lee sale a buscar un número que no existe, o peor, le cree.\n'
+  for (const ruta of hayArchivos(raiz, EXTENSIONES)) {
+    const rel = relative(raiz, ruta);
+    if (NARRAN_UN_MOMENTO(rel)) continue;
+    if (rel === join('scripts', 'verificar_pendientes.mjs')) continue;
+    mirados++;
+    const { colgadas, cuantas } = citasColgadas(readFileSync(ruta, 'utf8'), abiertos);
+    citas += cuantas;
+    for (const c of colgadas) {
+      const cual = c.texto === `pendiente ${c.numero}` ? '' : ` → el ${c.numero}`;
+      hallazgos.push(`${rel.split(sep).join('/')}:${c.renglon}  «${c.texto}»${cual}`);
+    }
+  }
+
+  seRevisaron(citas, 'ni una sola cita a un pendiente en todo el proyecto');
+
+  if (hallazgos.length) {
+    console.error(
+      `\n${hallazgos.length} cita(s) hablan de un pendiente que ya no está abierto:\n\n  ` +
+      hallazgos.join('\n  ') +
+      '\n\nO el pendiente sigue vivo y falta su fila en docs/PENDIENTES.md, o se cerró\n' +
+      'y el texto tiene que decirlo —«fue el pendiente N, cerrado», «la migración que\n' +
+      'cerró el pendiente N»—. Dejar la cita está bien; dejarla en presente, no: quien\n' +
+      'la lee sale a buscar un número que no existe, o peor, le cree.\n'
+    );
+    process.exit(1);
+  }
+
+  console.log(
+    `Pendientes verificados: ${citas} citas en ${mirados} archivos, ninguna hablando en presente ` +
+    `de alguno de los que ya se cerraron (${abiertos.size} abiertos hoy).`
   );
-  process.exit(1);
 }
-
-console.log(
-  `Pendientes verificados: ${citas} citas en ${mirados} archivos, ninguna hablando en presente ` +
-  `de alguno de los que ya se cerraron (${abiertos.size} abiertos hoy).`
-);

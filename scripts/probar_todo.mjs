@@ -82,6 +82,11 @@ import { dirname, join } from 'node:path';
 import { spawnSync, execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
 
+/* Qué fila de la lista está abierta lo lee `scripts/verificar_pendientes.mjs`,
+   que es de quien es la pregunta, y se le pide acá en vez de volver a escribirla:
+   dos lecturas de la misma tabla se despegan el día que la tabla cambie de forma. */
+import { pendientesAbiertos } from './verificar_pendientes.mjs';
+
 const aca = dirname(fileURLToPath(import.meta.url));
 
 /* En este orden: primero la de la siembra, que no crea ni una cuenta y mira los
@@ -139,9 +144,8 @@ const nombrar = (numeros) => numeros.length === 1
    de permisos quedó anotada contra el pendiente 67, que se había cerrado el 26
    de agosto de 2026, y su rojo —que venía de otra cosa, y de algo que estaba
    bien— se dio por bueno cinco días. */
-const listaDePendientes = readFileSync(join(aca, '..', 'docs', 'PENDIENTES.md'), 'utf8');
-const abiertos = new Set(
-  [...listaDePendientes.matchAll(/^\|\s*(\d+)\s*\|/gm)].map((m) => Number(m[1]))
+const abiertos = pendientesAbiertos(
+  readFileSync(join(aca, '..', 'docs', 'PENDIENTES.md'), 'utf8')
 );
 
 if (abiertos.size === 0) {
