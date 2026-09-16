@@ -23,8 +23,15 @@
    —el volcado—, donde el orden de los valores lo pone el `create table` de esa
    tabla; y la que junta una lista de valores contra otra tabla para sacar de
    ahí la Prestadora. Empareja las columnas con los valores y, si la columna
-   está en la tabla de abajo, exige que el valor sea una clave del vocabulario
-   que le corresponde. Entiende el texto suelto (`'enfermero'`) y el arreglo
+   tiene vocabulario, exige que el valor sea una clave de ese vocabulario.
+
+   Qué vocabulario gobierna cada columna se sabe de dos maneras, y la primera
+   no se escribe: la columna que se llama igual que un vocabulario queda
+   gobernada por él sola. Abajo están sólo los pares que no se pueden adivinar,
+   que son casi todos, porque esas columnas se llaman en inglés. Mientras el
+   emparejamiento fue nada más que la tabla escrita a mano, dos columnas
+   sembradas quedaron afuera sin que nada avisara: la comprobación que pondera
+   cada Prestadora y la moneda de la Prestadora. Entiende el texto suelto (`'enfermero'`) y el arreglo
    (`'["higiene"]'::jsonb`).
 
    La forma que no nombra las columnas es la que siembra casi todo, y era la
@@ -38,6 +45,9 @@
      cuatro formas distintas —`turno_manana`, `guardia_12`, `flexible`,
      `A coordinar`— porque ningún vocabulario la gobierna, y `nationality`
      tampoco tiene uno. Es el pendiente 31 y se decide, no se adivina.
+   - **Una columna de catálogo que no se llame como su vocabulario y que nadie
+     haya anotado abajo.** Esas dos son las únicas dos formas de saberlo, y la
+     segunda la escribe una persona.
    - **Lo que escriben las pantallas en vivo.** Acá sólo se leen migraciones.
      Las pantallas arman sus opciones desde el mismo catálogo, así que no
      pueden inventar una clave; el día que una escriba un valor a mano, este
@@ -51,9 +61,14 @@ import { seRevisaron } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-/* Qué vocabulario manda en cada columna. La clave es el nombre de la columna en
-   la base; el valor, el del vocabulario en `data/catalogo-vocabularios.json`.
-   Una columna que no está acá no se revisa. */
+/* Qué vocabulario manda en cada columna **cuando los dos no se llaman igual**.
+   La clave es el nombre de la columna en la base; el valor, el del vocabulario en
+   `data/catalogo-vocabularios.json`.
+
+   Acá abajo están solamente los pares que hay que decir: casi todas estas
+   columnas se llaman en inglés y su vocabulario en castellano, así que nadie
+   puede adivinarlos. La columna que se llama igual que su vocabulario no se
+   escribe: se empareja sola, y escribirla igual rompe el chequeo a propósito. */
 const COLUMNAS = {
   profession: 'tipo_asistente',
   profession_required: 'tipo_asistente',
@@ -69,7 +84,6 @@ const COLUMNAS = {
   modalidad: 'modalidad_curso',
   nivel: 'nivel_curso',
   dia: 'dia_semana',
-  turno: 'turno',
   puesto: 'puesto_experiencia',
   // `tipo` y `estado` se nombran por tabla y no por columna sola: hay un
   // segundo `estado`, el de `oferta_comercial`
@@ -92,12 +106,35 @@ function clavesDe(nombre) {
   return new Set(((v && v.items) || []).map((i) => i.clave));
 }
 
+/** Qué vocabulario gobierna una columna, o `undefined` si ninguno la gobierna.
+ *  Primero el par que nombra tabla y columna, después el que nombra sólo la
+ *  columna, y recién si no hay ninguno escrito, la columna que se llama igual
+ *  que un vocabulario. Ese último caso es el obvio, y por obvio no lo anotaba
+ *  nadie: `ponderacion_comprobacion.comprobacion` y `tenants.moneda` estuvieron
+ *  sembradas y fuera de este chequeo sin que nada avisara. */
+function vocabularioDe(tabla, columna) {
+  const conTabla = `${tabla}.${columna}`;
+  if (tabla && Object.hasOwn(COLUMNAS, conTabla)) return COLUMNAS[conTabla];
+  if (Object.hasOwn(COLUMNAS, columna)) return COLUMNAS[columna];
+  return Object.hasOwn(vocabularios, columna) ? columna : undefined;
+}
+
 /* Un vocabulario nombrado arriba que no exista es un error del chequeo, no del
    código revisado: sin claves contra las que comparar, todo pasa. */
 const sinVocabulario = Object.values(COLUMNAS).filter((v) => clavesDe(v).size === 0);
 if (sinVocabulario.length) {
   console.error('El chequeo nombra vocabularios que el catálogo no tiene: '
     + sinVocabulario.join(', '));
+  process.exit(1);
+}
+
+/* Y un par escrito a mano que diga lo mismo que el nombre de la columna ya dice
+   no gobierna nada: sobra, y deja creer que sin escribirlo la columna quedaría
+   afuera. Se borra el renglón. */
+const dePorSi = Object.keys(COLUMNAS).filter((columna) => columna === COLUMNAS[columna]);
+if (dePorSi.length) {
+  console.error('El chequeo escribe a mano pares que el nombre de la columna ya dice, '
+    + 'así que esos renglones sobran: ' + dePorSi.join(', '));
   process.exit(1);
 }
 
@@ -279,7 +316,7 @@ function revisarSql(sql, declaradas = columnasDeclaradas([sql])) {
    *  cuántas están bien: una tupla que no se empareja no se miró. */
   const revisarTuplas = (tabla, columnas, tuplas, arranque) => {
     const interesan = columnas
-      .map((c, i) => [i, c, COLUMNAS[`${tabla}.${c}`] || COLUMNAS[c]])
+      .map((c, i) => [i, c, vocabularioDe(tabla, c)])
       .filter(([, , vocabulario]) => vocabulario !== undefined);
     if (interesan.length === 0) return 0;
 
@@ -363,6 +400,8 @@ const ESQUEMA_DE_PRUEBA = `create table public.caregivers (
 `;
 
 const MALOS = [
+  ['la columna que se llama igual que su vocabulario',
+   "insert into public.ponderacion_comprobacion (tenant_id, comprobacion) values ('a', 'domicilio_inventado');"],
   ['una profesión que no existe',
    "insert into public.caregivers (id, profession) values ('a', 'enfermero');"],
   ['una patología inventada adentro del arreglo',
@@ -385,6 +424,17 @@ const MALOS = [
    ESQUEMA_DE_PRUEBA + "insert into public.caregivers values ('a', 'gerontologo', 'de más');"]
 ];
 const BUENOS = [
+  ['una columna que empieza como una restricción no corre el volcado',
+   `create table public.prueba_de_columnas (
+  id uuid primary key,
+  primary_color text not null,
+  moneda text
+);
+insert into public.prueba_de_columnas values ('a', 'sin definir', 'ARS');`],
+  ['la columna que se llama igual que su vocabulario, con su clave buena',
+   "insert into public.ponderacion_comprobacion (tenant_id, comprobacion) values ('a', 'matricula');"],
+  ['la moneda de la Prestadora, que también se empareja por su nombre',
+   "insert into public.tenants (slug, moneda) values ('presdemo', 'ARS');"],
   ['todas las claves buenas',
    "insert into public.caregivers (id, profession, zone) values ('a', 'gerontologo', 'zona_norte');"],
   ['arreglo con claves buenas',

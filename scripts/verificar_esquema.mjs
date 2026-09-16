@@ -601,7 +601,12 @@ const FUNCION = /create\s+(?:or\s+replace\s+)?function\s+(?:public\.)?([a-z_][a-
 const PLATA = /(price|precio|rate|tarifa|monto|importe|honorario|cobro|salario|remuneracion|pago|fee|amount)/i;
 const NUMERO = /\b(numeric|decimal|money|integer|bigint|real|double\s+precision|smallint)\b/i;
 const MONEDA = /(moneda|currency)/i;
-const NO_ES_COLUMNA = /^(primary|unique|constraint|foreign|check|--)/i;
+/* Lo que adentro de un `create table` no es una columna sino una restricción.
+   La palabra tiene que terminar ahí, y el `\b` no es prolijidad: sin él,
+   `primary_color` empieza igual que `primary key` y se descartaba como si fuera
+   una restricción. `tenants` quedó declarada con once columnas teniendo doce, y
+   con eso toda siembra volcada de esa tabla dejaba de emparejarse. */
+const NO_ES_COLUMNA = /^(?:(?:primary|unique|constraint|foreign|check)\b|--)/i;
 const CLAVE_APARTE =
   /alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?"?public"?\."?([a-z_][a-z0-9_]*)"?[^;]*add\s+constraint[^;]*primary\s+key\s*\(\s*"?([a-z_][a-z0-9_]*)"?/gi;
 const AGREGA_ORGANIZACION =
@@ -2074,6 +2079,25 @@ if (ME_CORRIERON_A_MI) {
     console.error('El detector está roto, así que no verifica nada:');
     console.error('  no detecta: una restricción de varios renglones, leída como si '
       + 'cada uno de sus renglones declarara una columna: ' + leidas.join(', '));
+    process.exit(1);
+  }
+
+  /* Y que no descarte una columna por cómo empieza su nombre. `primary_color`
+     empieza igual que `primary key`, y sin exigir que la palabra termine ahí se
+     descartaba como si fuera una restricción: `tenants` quedó declarada con once
+     columnas teniendo doce, y con eso toda siembra volcada de esa tabla dejaba
+     de emparejarse con sus columnas sin que nada sonara. */
+  const EMPIEZA_COMO_RESTRICCION = 'create table public.pinturas (\n' +
+    '  id uuid primary key,\n' +
+    '  primary_color text not null,\n' +
+    '  checklist text\n' +
+    ');\n';
+  const conPrefijo =
+    [...(columnasDeclaradas([EMPIEZA_COMO_RESTRICCION]).get('pinturas') || [])];
+  if (conPrefijo.join(', ') !== 'id, primary_color, checklist') {
+    console.error('El detector está roto, así que no verifica nada:');
+    console.error('  no detecta: una columna cuyo nombre empieza como una restricción, '
+      + 'descartada como si lo fuera: ' + conPrefijo.join(', '));
     process.exit(1);
   }
 

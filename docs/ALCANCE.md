@@ -2899,7 +2899,7 @@ cinco de avisos y todo el contenido de los cuatro legajos pasaban sin que nadie 
 valores.**
 
 Un chequeo que no mira no es un chequeo que pasa: es un chequeo que no existe. Pasó entonces a
-reconocer las dos formas (`scripts/verificar_claves.mjs:247`) y conoce cinco columnas más
+reconocer las dos formas (`scripts/verificar_claves.mjs:284`) y conoce cinco columnas más
 —modalidad y nivel de un curso, día y turno de una franja, puesto de una experiencia—.
 
 **Se probó que puede fallar**, que es la única forma de saber que sirve. Con dos valores
@@ -4004,6 +4004,59 @@ las llaves de una pantalla portada.
 
 No había ninguna lista escrita a mano adentro de un guión.
 
+### El chequeo de las claves sembradas emparejaba columnas y vocabularios sólo a mano
+
+`scripts/verificar_claves.mjs` se planta cuando una migración siembra, en una
+columna gobernada por un vocabulario, un valor que ese vocabulario no tiene. Para
+saber qué vocabulario gobierna qué columna leía una tabla escrita a mano
+(`scripts/verificar_claves.mjs:72`). Una columna que nadie hubiera anotado ahí no
+se revisaba, y no decía nada: pasaba como si no tuviera catálogo.
+
+Dos columnas estaban en ese caso, y las dos se llaman **exactamente igual** que su
+vocabulario, que es justamente por qué nadie las anotó: `ponderacion_comprobacion`
+guarda cuánto pondera cada comprobación
+(`supabase/migrations/0001_base_del_esquema.sql:2937`) y la Prestadora guarda su
+moneda (`supabase/migrations/0001_base_del_esquema.sql:3116`). Las dos están
+sembradas —quince filas la primera, tres la segunda— y ninguna de las dieciocho la
+miraba nadie.
+
+Se probó antes de tocar nada, adentro del banco del propio chequeo: una siembra con
+un valor inventado en la columna `comprobacion` y el chequeo dijo «no detecta».
+
+Ahora el emparejamiento tiene dos formas y la primera no se escribe: **la columna
+que se llama igual que un vocabulario queda gobernada por él sola**. La tabla a
+mano queda para los pares que no se pueden adivinar, que son casi todos, porque
+esas columnas se llaman en inglés y su vocabulario en castellano. Y un par escrito
+a mano que diga lo mismo que el nombre ya dice planta el chequeo, para que no
+parezca que sin escribirlo la columna quedaría afuera: así se cayó el único que
+había, el del turno. Ninguno de los dieciocho valores sembrados estaba mal.
+
+### Una columna que empieza como una restricción se leía como si lo fuera
+
+Salió de lo anterior, y es más viejo. Adentro de un `create table`, lo que no es una
+columna es una restricción, y `scripts/verificar_esquema.mjs:609` las reconocía por
+cómo empieza el renglón: `primary`, `unique`, `constraint`, `foreign`, `check`. Sin
+exigir que la palabra **termine** ahí, `primary_color` empieza igual que `primary
+key` y se descartaba como si fuera una restricción.
+
+La consecuencia no se veía: `tenants` quedaba declarada con once columnas teniendo
+doce (`supabase/migrations/0001_base_del_esquema.sql:3104`), y toda siembra volcada
+de esa tabla —la que no nombra las columnas y se empareja por orden— dejaba de
+emparejarse, porque la cantidad de valores no daba con la cantidad de columnas. El
+chequeo de las claves lo decía en voz alta, pero sólo cuando alguna columna de esa
+tabla tenía vocabulario, y hasta ahora ninguna de `tenants` lo tenía. Al emparejar
+la moneda por su nombre, el defecto se destapó solo.
+
+Quien lee columnas así no es sólo ese chequeo: `columnasDeclaradas()` la usan
+también la cuarta regla de `scripts/verificar_red.mjs:735` —la que se planta cuando
+una exención nombra una columna que ya no existe— y la lectura de las claves
+primarias. Con una columna de menos, las tres contestaban de menos.
+
+Se probó en el banco del propio `verificar_esquema.mjs`, que ya tenía un caso para
+la lectura de columnas: con la palabra sin terminar, una tabla con `primary_color`
+se leía con una sola columna. Con el arreglo se leen las tres. Los dos bancos —el de
+las claves y el del esquema— se plantan el día que alguien saque el arreglo.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
@@ -4855,7 +4908,7 @@ abierto sino una trampa armada: la protección no vivía donde se la lee, y ya s
 vez sin que nadie se enterara —una migración se la llevó puesta y la siguiente tuvo que
 reponerla—. Por eso el chequeo del esquema no se cree esa exención: va y mira que el permiso siga
 nombrando sus columnas, y se planta si alguna migración futura vuelve a conceder `update` sobre
-`profiles` sin nombrarlas (`scripts/verificar_esquema.mjs:1523`).
+`profiles` sin nombrarlas (`scripts/verificar_esquema.mjs:1528`).
 
 **Sobre el pendiente 75, el Desarrollador eligió la opción A: el papel nuevo baja el sello.** Había
 tres defendibles —bajarlo, prohibir el cambio mientras el sello esté puesto, o permitirlo y
