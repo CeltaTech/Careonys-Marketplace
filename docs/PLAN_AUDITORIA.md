@@ -267,9 +267,9 @@ lo tiene. Se eligió a favor de la regla de privacidad, a conciencia.
 
 ## 10. Cómo se prueba, y por qué la prueba puede fallar
 
-Va adentro de `scripts/probar_aislamiento.mjs`, que es donde ya viven las 132 comprobaciones y las
-seis cuentas ficticias. En el tramo que corre con `--local`, que es el único donde se puede ascender
-a alguien a coordinador.
+Va adentro de `scripts/probar_aislamiento.mjs`, que es donde ya viven las comprobaciones de
+aislamiento y las seis cuentas ficticias. En el tramo que corre con `--local`, que es el
+único donde se puede ascender a alguien a coordinador.
 
 1. El coordinador de la Prestadora A valida el legajo de la cuenta A.
 2. Se consulta `auditoria` y tiene que haber **exactamente una fila**, con `tabla = 'caregivers'`,

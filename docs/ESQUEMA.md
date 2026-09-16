@@ -1,8 +1,8 @@
 # Esquema de base de datos
 
 > **Cómo se diseña la base de este proyecto.** Cuando esto se escribió no había ninguna
-> migración; al 8 de septiembre de 2026 hay 3 aplicadas y 36 tablas, y lo de abajo sigue siendo
-> la regla con la que se escribe cada una. La cuenta la mide `node scripts/verificar_esquema.mjs`.
+> migración; ahora hay varias, y lo de abajo sigue siendo la regla con la que se escribe cada
+> una. Cuántas son, y cuántas tablas hay, lo mide `node scripts/verificar_esquema.mjs`.
 >
 > La §1 desarma cinco errores de seguridad sobre veinte renglones de SQL. Está primero a propósito:
 > son sutiles, se escriben sin darse cuenta y ninguno da error al aplicarlo. Las reglas de la §2
