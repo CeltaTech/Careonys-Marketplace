@@ -3716,7 +3716,7 @@ de carpetas a saltear —`node_modules`, `.git`, `assets` y `supabase`— y su p
 una caja fuerte, que era una sola forma de escribirlo.
 
 El proyecto tiene una regla para eso y es una sola: `nuncaSeAbre()`, en
-`scripts/recorrido.mjs:151`. Sabe las cinco maneras de nombrar una caja fuerte, sabe que una
+`scripts/recorrido.mjs:152`. Sabe las cinco maneras de nombrar una caja fuerte, sabe que una
 carpeta que empieza con «exclusivo» es de una Prestadora y no se mezcla, sabe qué nombre de
 archivo anuncia una clave, y sabe qué carpetas no son del proyecto. La copia que vivía adentro
 del control de estilos no sabía casi nada de eso.
@@ -3777,7 +3777,7 @@ chequeo pudiera mirar: `scripts/verificar_arranque.mjs:53`,
 Qué se hizo: una tercera regla, `carpetasEximidasQueNoEstan()`
 (`scripts/verificar_red.mjs:417`), que lee la lista en sus tres formas —suelta, como conjunto y
 exportada— sin mirar adentro de los comentarios. Contra qué se compara sale de
-`carpetasDelProyecto()` (`scripts/recorrido.mjs:317`), que recorre con la misma regla con la que
+`carpetasDelProyecto()` (`scripts/recorrido.mjs:331`), que recorre con la misma regla con la que
 se recorre todo: nombra la carpeta que existe aunque no se pueda entrar en ella —una caja fuerte
 está, y decir que no se la mira es cierto—, y sólo denuncia lo que no está en ningún lado. Las
 seis exenciones muertas se sacaron, y con ellas el bloque de `scripts/citas.mjs`, que no tenía
@@ -4175,7 +4175,7 @@ puesto; el día que alguien guarde una en cualquier otro formato, esa imagen no 
 regla. Se comprobó dejando una en la carpeta: el chequeo contestaba verde.
 
 Ahora qué es una imagen lo contesta `recorrido.mjs`, que ya lo tenía contestado para otras dos
-preguntas del proyecto (`scripts/recorrido.mjs:95`). Con el mismo archivo de prueba puesto, el
+preguntas del proyecto (`scripts/recorrido.mjs:96`). Con el mismo archivo de prueba puesto, el
 chequeo se pone en rojo y lo nombra.
 
 ### La carpeta eximida sin ponerle nombre a la lista no la miraba nadie
@@ -4708,6 +4708,44 @@ así que no había daño puesto.
 El valor escrito sin comillas ningunas sigue afuera, y el motivo está escrito donde
 corresponde: el marcado lo admite y este proyecto no lo escribe.
 
+### La lista de direcciones del sitio la leían dos lectores, y el que medía era el ciego
+
+Las direcciones del sitio están declaradas todas juntas en un solo lugar, y de
+ahí sale todo lo que cuenta pantallas: la foto del producto que CeltaTech mira
+para saber qué está vendiendo, la tabla del README y el chequeo que comprueba
+que ninguna dirección escrita lleve a una vista que no existe.
+
+Leer esa lista es leer una etiqueta, y existe un lector compartido que nació
+porque la forma escrita a mano —pedirle a la dirección que esté antes que
+cualquier `>` de la etiqueta— se saltea la ruta que escribe el componente
+adelante, que es como el archivo escribe la que pone el marco. Eso está escrito
+en el encabezado del lector. El guion que mide el estado del proyecto se había
+quedado con esa forma vieja copiada adentro, así que la misma lista tenía dos
+lectores y no contestaban lo mismo.
+
+**Probado antes de tocar nada.** Con dos rutas inventadas puestas en el archivo
+—una con el componente adelante y otra con comillas simples—, el guion que mide
+siguió contestando quince direcciones y diecisiete pantallas, y el chequeo de la
+tabla del README sólo notó que el archivo tenía dos renglones más. El que mide
+era el ciego.
+
+**Y adentro del lector compartido apareció el segundo agujero.** Cómo se escribe
+el valor del atributo estaba contestado ahí a mano, con una sola comilla,
+teniendo al lado el archivo que existe justamente para contestar eso. Una
+pantalla nueva declarada con comillas simples no la contaba nadie —ni la foto
+del producto— y, al no ser un renglón de más, tampoco la delataba ninguna cuenta
+de renglones: comprobado, terminaba en verde.
+
+**Cómo quedó.** Hay un solo lector, y le pregunta al archivo de los atributos
+cómo se escribe un valor. El banco de pruebas del lector, que probaba tres
+formas de escribir la ruta y ninguna forma de escribir el valor, tiene ahora sus
+renglones: la comilla simple, los espacios alrededor del igual, y la dirección
+que sale de un dato, que no se puede juzgar leyendo y se deja afuera como
+siempre.
+
+**No había daño puesto:** hoy las quince direcciones están escritas con comillas
+dobles.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
@@ -4895,7 +4933,7 @@ lo que sigue explica por qué; el consentimiento de novedades sigue sin tabla.
 
 El 9 de septiembre de 2026 `formulario-integral.html` se apartó a la cuarentena: hoy vive en
 `fuera de uso/formulario-integral.html`, la carpeta que `.gitignore:34` declara fuera del
-repositorio y que `scripts/recorrido.mjs:147` deja afuera de todos los chequeos.
+repositorio y que `scripts/recorrido.mjs:148` deja afuera de todos los chequeos.
 
 **No se saca una pantalla porque moleste, y ésta no era una pantalla.** Nació el 5 de agosto de
 2026 como **hoja de muestra**: su título decía «Formularios Oficiales de la App» y venía con un

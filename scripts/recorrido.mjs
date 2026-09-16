@@ -27,6 +27,7 @@
 
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
+import { comoSeEscribe, valorDe } from './atributos.mjs';
 
 /* Las cajas fuertes se reconocen **por lo que dicen y no por cómo están
    escritas**. Antes se comparaba el nombre exacto, y eso alcanzaba justo para
@@ -252,15 +253,28 @@ function finDeLaEtiqueta(texto, desde) {
  * —y el archivo ya escribe así la que pone el marco— no la veía nadie, y una
  * pantalla entera desaparecía sin ruido de todo lo que se cuenta a partir de
  * acá: de las direcciones del sitio y de la foto del producto.
+ *
+ * Y cómo se escribe el valor del atributo tampoco se contesta acá: lo contesta
+ * `scripts/atributos.mjs`, que existe justamente para eso. Estaba escrito a
+ * mano con una sola comilla, y una pantalla admite las dos: una dirección
+ * declarada con comillas simples no la contaba nadie —ni la foto del producto,
+ * que es lo que CeltaTech mira para saber qué está vendiendo—, y al no ser un
+ * renglón de más tampoco la delataba ninguna cuenta de renglones.
  */
+const DICE_UN_CAMINO = new RegExp(comoSeEscribe('path'));
+
 export function direccionesDeclaradas(texto) {
   const dichas = [];
   const ABRE = /<Route\b/g;
   let encontrada;
   while ((encontrada = ABRE.exec(texto)) !== null) {
     const etiqueta = texto.slice(encontrada.index, finDeLaEtiqueta(texto, encontrada.index));
-    const camino = /\bpath="([^"]+)"/.exec(etiqueta);
-    if (camino) dichas.push(camino[1]);
+    const camino = DICE_UN_CAMINO.exec(etiqueta);
+    if (camino === null) continue;
+    /* La dirección que sale de una expresión no se puede juzgar leyendo, y hoy
+       no hay ninguna escrita así: se la deja afuera igual que antes. */
+    const suelta = valorDe(camino);
+    if (suelta !== null) dichas.push(suelta);
   }
   return dichas;
 }

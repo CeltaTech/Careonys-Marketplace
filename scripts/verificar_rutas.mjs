@@ -318,9 +318,12 @@ const dondeSePublica = (camino, nombre, suCarpeta) => {
    no pone nada rojo: deja de contar una pantalla, y la que deje de contar
    pasa a ser una dirección que nadie escribió y que nadie reclama.
 
-   Se lo prueba con las tres formas de escribir la misma ruta y con las dos que
-   no son una ruta. La segunda es la que faltaba: el archivo de rutas ya escribe
-   el componente adelante para la que pone el marco, así que la forma existe. */
+   Se lo prueba con las formas de escribir la misma ruta y con las que no son
+   una ruta. La del componente adelante es la que faltaba primero: el archivo de
+   rutas ya escribe así la que pone el marco. Y las de la comilla simple y los
+   espacios alrededor del igual son las que faltaban después: el valor del
+   atributo se escribe de varias maneras y todas dicen lo mismo, así que quien
+   contesta cuál es no es este archivo. */
 const BIEN_LEIDAS = [
   ['el camino adelante', '<Route path="/x" element={<X />} />', ['/x']],
   ['el componente adelante', '<Route element={<X />} path="/x" />', ['/x']],
@@ -329,6 +332,10 @@ const BIEN_LEIDAS = [
   ['anidada adentro de la que pone el marco',
    '<Route element={<Marco />}>\n  <Route path="/x" element={<X />} />\n</Route>', ['/x']],
   ['un mayor adentro de una comilla', '<Route path="/x" title="a>b" />', ['/x']],
+  ['el camino entre comillas simples', "<Route path='/x' element={<X />} />", ['/x']],
+  ['el camino con espacios alrededor del igual', '<Route path = "/x" />', ['/x']],
+  ['un camino que sale de un dato, que no se puede juzgar leyendo',
+   '<Route path={RUTA} element={<X />} />', []],
   ['ninguna ruta escrita', '<div>nada</div>', []]
 ];
 

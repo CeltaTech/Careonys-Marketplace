@@ -29,8 +29,8 @@ import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve, sep, basename } from 'node:path';
 import { createHash } from 'node:crypto';
-import { archivos, seRevisaron, esArmazon, EXTENSIONES_DE_PANTALLA, ARMAZONES }
-  from './recorrido.mjs';
+import { archivos, seRevisaron, esArmazon, EXTENSIONES_DE_PANTALLA, ARMAZONES,
+  direccionesDelSitio } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const escribir = process.argv.includes('--escribir');
@@ -66,16 +66,18 @@ const enEspanol = (n) => n.toLocaleString('es-AR');
    Las direcciones del sitio están declaradas todas juntas en un solo lugar, y
    los dos programas del teléfono cuentan de a uno: cada uno es un programa
    entero que se instala en su propia dirección. Es la misma cuenta que hace
-   `scripts/verificar_el_producto.mjs`, y por el mismo motivo.
+   `scripts/verificar_el_producto.mjs`, y ahora es además el mismo lector: acá
+   estaba escrito a mano, con la forma vieja que pide que la dirección esté
+   antes que cualquier `>` de la etiqueta. Dos lectores de la misma lista
+   terminan contestando distinto, y el que contestaba de menos era éste, que es
+   justamente el que mide.
 
    Aparte van los **archivos** que las dibujan, que es otra pregunta y sigue
    valiendo la pena: de ahí salen los renglones, los estilos pegados al
    marcado y quiénes piden la base. El armazón de un paquete no cuenta: no
    tiene nada dibujado adentro. */
-const RUTAS = join('web', 'src', 'Rutas.jsx');
 const direcciones = [
-  ...[...leer(join(raiz, RUTAS)).matchAll(/<Route [^>]*path="([^"]+)"/g)]
-    .map((encontrada) => encontrada[1]),
+  ...direccionesDelSitio(raiz),
   ...ARMAZONES.filter((armazon) => !armazon.startsWith('web/'))
     .map((armazon) => '/' + armazon.split('/')[0] + '/')
 ].sort();
