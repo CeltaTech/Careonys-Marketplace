@@ -3937,6 +3937,34 @@ validación; se reapuntó a las dos políticas que hoy lo sostienen. Y la cita d
 le dice al repositorio qué no guardar se había corrido cincuenta y seis renglones de donde
 apuntaba. Las dos estaban ahí sin que nadie las mirara.
 
+### El chequeo que prohíbe los colores escritos a mano se saltaba los guiones del proyecto
+
+Los colores del producto viven en un solo lugar y se usan por su nombre. Un color escrito
+con su número no cambia cuando se enciende el modo oscuro, así que un chequeo los busca y
+se planta si aparece alguno.
+
+Ese chequeo miraba las pantallas, las hojas de estilo y el JavaScript de las pantallas, y
+se saltaba la carpeta de los guiones entera. No estaba escrito en ninguna parte: el propio
+encabezado del chequeo nombraba tres carpetas que no mira, y la de los guiones no era
+ninguna de las tres. Y además no abría la forma de archivo con la que están escritos casi
+todos los guiones, así que ni sacando la carpeta de la lista los habría mirado.
+
+Un guion también pinta. El que arma el manifiesto de los dos programas del teléfono escribe
+el color con el que el teléfono pinta la barra de estado y el fondo de la pantalla de
+arranque, y ese color estuvo ahí escrito a mano y despegado del que el proyecto tenía
+decidido. Es un daño real que ya se había corregido antes, y esta es la razón por la que
+nadie lo había visto. Se probó volviendo a poner ese mismo color a mano en ese mismo
+guion: verde, y con la frase «y ninguno exento» al final.
+
+Ahora la forma del archivo se pregunta en vez de compararse contra una letra suelta, y la
+carpeta de los guiones entra al recorrido. Pasó de 118 archivos mirados a 200. Adentro no
+había ningún color de más salvo en dos lugares, que son a propósito: el banco de prueba de
+este mismo chequeo y el del chequeo del modo oscuro, que escriben colores porque un
+detector que no se prueba contra lo que tiene que saltar no prueba nada. Están eximidos de
+a uno, con el motivo escrito al lado, y el día que alguno se quede sin un solo color adentro
+el chequeo se planta: una exención que ya no exime nada sigue perdonando, y lo único que
+perdona es el aire. Eso también se probó, vaciándole los colores a uno de los dos.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
