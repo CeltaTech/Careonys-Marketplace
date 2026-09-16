@@ -3644,6 +3644,37 @@ de una exención vieja suya: una exención que no exime nada dejó de nombrar al
 se entera. Salió, y la que queda se cuenta mientras se recorre: si alguna vez saltea cero archivos,
 el chequeo se planta con código de salida 1 en vez de decir ✔.
 
+### El chequeo de las rutas no abría los guiones, y una dirección también se escribe ahí
+
+`scripts/verificar_rutas.mjs` comprueba que toda dirección local escrita en el proyecto llegue a
+algún lado en el sitio publicado: que el archivo exista, con esa misma caja de letras, y que
+`.vercelignore` no lo deje afuera. Abría el marcado, las hojas de estilo y los manifiestos.
+
+Los guiones no. Y ahí hay direcciones: `js/fichas-legajo.js` va a buscar dos catálogos de datos por
+su dirección mientras el programa corre, y `web/src/datos/useSesionRequerida.js` manda a la puerta
+de entrada escribiendo la dirección entera.
+
+La comprobación se hizo antes de tocar nada. Apuntando el Legajo a un catálogo que no existe, los 41
+chequeos terminaban en verde. Es la forma más cara de equivocarse: anda en esta máquina, donde el
+archivo se pide igual y está, y da 404 el día que se publica.
+
+Se corrigió abriendo también los guiones y agregando a las formas conocidas la que el código usa
+para pedir un archivo mientras corre. Aparecieron tres direcciones que no miraba nadie —dos
+catálogos y una vista— y las tres están bien.
+
+Adentro salieron dos cosas más, y las dos eran de la misma clase:
+
+- La forma con que se escribe una dirección adentro de una hoja de estilos terminaba reconociendo
+  también el final de cualquier nombre de función que termine con esas mismas tres letras. Con los
+  guiones abiertos daba por rotas dos que no eran direcciones. Ahora exige que antes no haya letra.
+- **Un guion no es una página.** Lo que escribe adentro no se busca al lado suyo sino al lado de la
+  página que lo cargó, que es quien le fija el punto de partida al navegador. Buscarlo al lado del
+  guion daba por rotos los dos catálogos que sí están.
+
+Y las formas de escribir una dirección pasan a probarse de a una contra una muestra antes de mirar
+el proyecto. Una forma que falta no se nota en el renglón final: el número baja solo y nadie sabe de
+cuánto tenía que ser.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

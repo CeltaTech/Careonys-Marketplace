@@ -61,8 +61,14 @@ const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 /* Los manifiestos de las dos aplicaciones de teléfono se nombran por el archivo
    entero y no por la extensión: `.json` a secas traería los catálogos de datos y
-   la configuración de las herramientas, que no tienen direcciones adentro. */
-const DE_DONDE_SALEN = [...EXTENSIONES_DE_PANTALLA, '.css', '.webmanifest', 'manifest.json'];
+   la configuración de las herramientas, que no tienen direcciones adentro.
+
+   Y `.js` está acá desde el 16 de septiembre de 2026. Una dirección local no se
+   escribe sólo en el marcado: el código va a buscar un catálogo de datos por su
+   dirección, y esos archivos no los abría nadie. Se comprobó antes de tocar
+   nada, apuntando el Legajo a un catálogo que no existe: los 41 chequeos
+   terminaban en verde. */
+const DE_DONDE_SALEN = [...EXTENSIONES_DE_PANTALLA, '.css', '.js', '.webmanifest', 'manifest.json'];
 
 /* Dónde se escribe una dirección local: el marcado, la hoja de estilos, el
    manifiesto, y el código de la pantalla cuando manda a otra sin que nadie
@@ -78,7 +84,7 @@ const DIRECCIONES = [
      el renglón final decía ✔ igual. */
   /(?<![-\w])(?:src|href|to)\s*=\s*"([^"]+)"/gi,
   /(?<![-\w])(?:src|href|to)\s*=\s*'([^']+)'/gi,
-  /url\(\s*['"]?([^'")]+)['"]?\s*\)/gi,
+  /(?<![-\w])url\(\s*['"]?([^'")]+)['"]?\s*\)/gi,
   /"src"\s*:\s*"([^"]+)"/gi,
   /* Y la que no se escribe en el marcado sino en el código: el programa manda a
      otra pantalla sin que nadie haya hecho clic en nada. Se toman sólo las que
@@ -87,6 +93,11 @@ const DIRECCIONES = [
      tienen su propia lista y no viven en ninguna carpeta. */
   /\bnavegar\(\s*'(\/[^']*)'/g,
   /\bnavegar\(\s*"(\/[^"]*)"/g,
+  /* Y la que va a buscar un archivo del sitio mientras el programa corre. Las
+     que salen para afuera las descarta `SALE_DEL_PROYECTO`, y las que se arman
+     con un pedazo variable adentro, `SE_ARMA_AL_VUELO`. */
+  /\bfetch\(\s*'([^']+)'/g,
+  /\bfetch\(\s*"([^"]+)"/g,
 ];
 
 /* Una dirección escrita entre llaves la arma el programa mientras corre: adentro
@@ -184,6 +195,25 @@ const delPrograma = [
   ['una que nadie declaró', esUnaVista(UNAS_VISTAS, 'inventada'), false],
 ];
 
+/* Y el cuarto: que las formas en que este proyecto escribe una dirección estén
+   todas reconocidas. Una forma que falta no se nota en el renglón final —el
+   número baja solo y nadie sabe de cuánto tenía que ser—, así que cada una se
+   nombra acá y se prueba contra una muestra. */
+const enTexto = (muestra) => DIRECCIONES
+  .flatMap((p) => Array.from(muestra.matchAll(new RegExp(p.source, p.flags))))
+  .map((encontrada) => encontrada[1])
+  .join(' ');
+const deLasFormas = [
+  ['un `src` del marcado', enTexto('<img src="assets/f.png">'), 'assets/f.png'],
+  ['un `to` de una pantalla', enTexto('<Link to="/directorio">'), '/directorio'],
+  ['un `url()` de una hoja', enTexto("background: url('assets/f.png')"), 'assets/f.png'],
+  ['un nombre de función que termina igual', enTexto('getPublicUrl(camino)'), ''],
+  ['un `navegar()` del código', enTexto("navegar('/perfil')"), '/perfil'],
+  ['un `fetch()` del código', enTexto("fetch('data/catalogo.json')"), 'data/catalogo.json'],
+  ['un `fetch()` armado al vuelo', enTexto('fetch(`${base}/x`)'), ''],
+  ['el nombre de un campo, que no es una dirección', enTexto('<b data-attr-src="nombre">'), ''],
+];
+
 let corta = false;
 try {
   leerLoQueNoSePublica('*.md');
@@ -192,7 +222,7 @@ try {
 }
 delIgnorado.push(['una forma desconocida corta la corrida', corta, true]);
 
-const rotas = [...delDisco, ...delIgnorado, ...delPrograma].filter(([, dio, esperado]) => dio !== esperado);
+const rotas = [...delDisco, ...delIgnorado, ...delPrograma, ...deLasFormas].filter(([, dio, esperado]) => dio !== esperado);
 if (rotas.length) {
   console.error('El lector está roto, así que este chequeo no verifica nada:');
   for (const [que, dio, esperado] of rotas) {
@@ -243,7 +273,13 @@ const dondeSePublica = (camino, nombre, suCarpeta) => {
      donde los junta, y lo que nombra lo busca al lado suyo. */
   if (esArmazon(camino)) return suCarpeta;
   const paquete = PAQUETES.find((cual) => nombre.startsWith(cual.fuente));
-  return paquete ? paquete.base : suCarpeta;
+  if (paquete) return paquete.base;
+  /* Y un guion no es una página. Lo que escribe adentro no se busca al lado
+     suyo sino al lado de la página que lo cargó, que es quien le fija el punto
+     de partida al navegador: `js/fichas-legajo.js` pide `data/...` y el que
+     pide es el sitio, no la carpeta `js/`. Buscarlo al lado del guion daría por
+     rota una dirección que anda. */
+  return nombre.toLowerCase().endsWith('.js') ? raiz : suCarpeta;
 };
 
 const VISTAS = direccionesDelSitio(raiz);
@@ -330,7 +366,7 @@ for (const camino of hayArchivos(raiz, DE_DONDE_SALEN)) {
   }
 }
 
-seRevisaron(miradas, 'una sola dirección local escrita en una pantalla, una hoja o un manifiesto');
+seRevisaron(miradas, 'una sola dirección local escrita en una pantalla, una hoja, un guion o un manifiesto');
 
 if (fallas.length > 0) {
   console.error('Direcciones locales que no llegan a ningún lado en el sitio publicado:\n');
@@ -343,8 +379,8 @@ if (fallas.length > 0) {
 }
 
 console.log(
-  `Rutas verificadas: ${miradas} direcciones locales escritas en pantallas, hojas y ` +
-  `manifiestos, todas apuntando a una vista del programa o a un archivo escrito con ` +
+  `Rutas verificadas: ${miradas} direcciones locales escritas en pantallas, hojas, guiones ` +
+  `y manifiestos, todas apuntando a una vista del programa o a un archivo escrito con ` +
   `esas mismas letras y ` +
   `que el sitio publica —${deVista} son vistas— (${alVuelo} ${alVuelo === 1 ? 'se arma' : 'se arman'} al vuelo, ` +
   'que no se puede juzgar leyendo).');
