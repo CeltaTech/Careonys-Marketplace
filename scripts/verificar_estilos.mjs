@@ -27,6 +27,15 @@
    como una lista de pares; es la misma decisión, cae en la misma regla y se
    cuenta junto con las otras. Si sólo se mirara la forma vieja, la mitad del
    producto habría quedado sin vigilancia el día que pasó a ser un programa.
+
+   **Y tampoco de dónde esté escrita la lista.** Una pantalla de un programa
+   puede escribirla ahí mismo, pegada al atributo, o subirla arriba de todo con
+   un nombre y poner el nombre en el atributo, que es lo que se hace cuando la
+   misma lista se usa en dos renglones. Es la misma decisión escrita de otra
+   manera. Hasta el 16 de septiembre de 2026 acá se buscaba el texto `style={{`
+   y nada más, así que la lista con nombre no la miraba nadie: dos de ellas
+   estaban repitiendo a mano lo que la hoja de utilidades ya nombra, en una
+   pantalla abierta y contada, y el renglón verde las contaba de menos.
 =================================================== */
 
 import { readFileSync } from 'node:fs';
@@ -47,6 +56,28 @@ const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
    contado dos veces— y las cajas fuertes escritas de cualquier otra forma que
    no fuera «no commit». */
 const AJENAS = ['assets', 'supabase'];
+
+/* Los que sobran y no se cambian todavía, con su motivo escrito al lado. La
+   pantalla se nombra sin su extensión, que la sabe `recorrido.mjs`. Y no se
+   exime la pantalla entera sino cada lista, por las clases que dirían lo mismo
+   —no por el renglón, que se corre solo—: así una lista nueva ahí adentro sigue
+   cayendo en la regla y no queda perdonada de arriba. */
+const ESPERAN_LA_MAQUETA = new Map([
+  ['pwa-familia/src/pantallas/Reportes', {
+    clases: ['centrar-texto texto-12 color-secundario p-20',
+      'centrar-texto texto-12 color-peligro p-20'],
+    motivo: 'la maqueta de las dos aplicaciones de teléfono la trae el Desarrollador, y hasta '
+      + 'que llegue no se toca ahí nada de cómo se ve: cambiarlo ahora es trabajo que la '
+      + 'maqueta pisa'
+  }]
+]);
+
+const sinExtension = (rel) => {
+  for (const punta of EXTENSIONES_DE_PANTALLA) {
+    if (rel.endsWith(punta)) return rel.slice(0, -punta.length);
+  }
+  return rel;
+};
 
 /* `font-size : 11px ; color:red` → ['font-size:11px', 'color:red'] */
 function declaraciones(valor) {
@@ -120,6 +151,13 @@ const UN_NUMERO = /^-?[0-9]+(\.[0-9]+)?$/;
 /** Dónde empieza y termina cada lista de estilos escrita como la escribe un
     programa. Se cuentan las llaves respetando lo que esté entre comillas, así
     una llave escrita adentro de un texto no corta la lista por la mitad. */
+/* La lista puesta arriba con un nombre, que el atributo después nombra. El
+   nombre se busca declarado en el mismo archivo: si viene de afuera —un
+   parámetro, algo importado— acá no hay ninguna lista que leer, y eso no es
+   repetir a mano. Se informa el renglón donde está escrita la lista y no el del
+   atributo, porque es ahí donde se cambia. */
+const LA_NOMBRA = /style=\{\s*([A-Za-z_$][\w$]*)\s*\}/g;
+
 export function objetosDeEstilo(s) {
   const ABRE = 'style={{';
   const salida = [];
@@ -137,7 +175,25 @@ export function objetosDeEstilo(s) {
     salida.push([i, s.slice(i + ABRE.length, j - 1)]);
     i = s.indexOf(ABRE, j);
   }
-  return salida;
+  const yaEsta = new Set(salida.map(([donde]) => donde));
+  for (const m of s.matchAll(LA_NOMBRA)) {
+    const declarada = s.match(new RegExp(String.raw`\b(?:const|let|var)\s+${m[1]}\s*=\s*\{`));
+    if (!declarada) continue;
+    if (yaEsta.has(declarada.index)) continue;
+    const arranque = declarada.index + declarada[0].length;
+    let hondo = 1, comilla = null, j = arranque;
+    for (; j < s.length && hondo > 0; j++) {
+      const c = s[j];
+      if (comilla) { if (c === comilla) comilla = null; continue; }
+      if (c === "'" || c === '"' || c === '`') comilla = c;
+      else if (c === '{') hondo++;
+      else if (c === '}') hondo--;
+    }
+    if (hondo > 0) continue;
+    yaEsta.add(declarada.index);
+    salida.push([declarada.index, s.slice(arranque, j - 1), m[1]]);
+  }
+  return salida.sort((a, b) => a[0] - b[0]);
 }
 
 /** Los pares de la lista, cortando por las comas que están al aire: una coma
@@ -199,7 +255,12 @@ export function verificarEstilos() {
     ["style={{ display: 'flex', alignItems: 'center' }}", true],
     ['style={{ gap: 12 }}', true],
     ['style={{ gap: separacion }}', false],
-    ["style={{ padding: '40px 24px' }}", false]
+    ["style={{ padding: '40px 24px' }}", false],
+    /* Y la misma lista subida arriba con un nombre. Mientras todo lo que se
+       probaba acá venía pegado al atributo, el lector podía no conocer ninguna
+       otra manera de escribirla y este banco seguía en verde. */
+    ["const E = { display: 'flex', alignItems: 'center' };\n<p style={E}>x</p>", true],
+    ['const E = { gap: separacion };\n<p style={E}>x</p>', false]
   ];
   const rotas = BANCO.filter(([fragmento, esperado]) => sobra(fragmento) !== esperado);
   if (rotas.length) {
@@ -209,7 +270,7 @@ export function verificarEstilos() {
   }
 
   const problemas = [];
-  let enMarcado = 0, enGuion = 0, sobranEnGuion = 0;
+  let enMarcado = 0, enGuion = 0, sobranEnGuion = 0, esperan = 0;
 
   const rutas = hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJENAS);
   for (const ruta of rutas) {
@@ -219,13 +280,19 @@ export function verificarEstilos() {
     const guiones = esGuion ? [] : rangosDeGuion(texto);
     const renglonDe = (i) => texto.slice(0, i).split('\n').length;
 
-    for (const [ini, cuerpo] of objetosDeEstilo(texto)) {
+    for (const [ini, cuerpo, nombre] of objetosDeEstilo(texto)) {
       enMarcado++;
       const decls = declaracionesDeUnObjeto(cuerpo);
       if (!decls || !decls.every((d) => porDeclaracion.has(d))) continue;
+      const clases = decls.map((d) => porDeclaracion.get(d)).join(' ');
+      const espera = ESPERAN_LA_MAQUETA.get(sinExtension(rel));
+      if (espera && espera.clases.includes(clases)) { esperan++; continue; }
+      const escrita = nombre
+        ? 'la lista `' + nombre + '` = { ' + cuerpo.replace(/\s+/g, ' ').trim() + ' }'
+        : 'style={{ ' + cuerpo.replace(/\s+/g, ' ').trim() + ' }}';
       problemas.push(rel + ':' + renglonDe(ini) + '\n'
-        + '  dice   style={{ ' + cuerpo.replace(/\s+/g, ' ').trim() + ' }}\n'
-        + '  y ya es className="' + decls.map((d) => porDeclaracion.get(d)).join(' ') + '"');
+        + '  dice   ' + escrita + '\n'
+        + '  y ya es className="' + clases + '"');
     }
 
     for (const [ini, fin] of etiquetas(texto)) {
@@ -248,7 +315,8 @@ export function verificarEstilos() {
         + '  y ya es class="' + decls.map((d) => porDeclaracion.get(d)).join(' ') + '"');
     }
   }
-  return { problemas, enMarcado, enGuion, sobranEnGuion, clases: new Set(porDeclaracion.values()).size };
+  return { problemas, enMarcado, enGuion, sobranEnGuion, esperan,
+    clases: new Set(porDeclaracion.values()).size };
 }
 
 // Solo imprime cuando se lo corre a mano, no cuando otro archivo lo importa.
@@ -262,6 +330,9 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
     process.exit(1);
   }
   console.log('Estilos verificados: ' + r.clases + ' clases de utilidad, y ninguno de los '
-    + r.enMarcado + ' atributos `style=` del marcado repite a mano lo que alguna ya dice. '
-    + 'Quedan ' + r.enGuion + ' adentro de guiones, ' + r.sobranEnGuion + ' de ellos convertibles.');
+    + r.enMarcado + ' atributos `style=` del marcado repite a mano lo que alguna ya dice, '
+    + 'la lista pegada al atributo y la que está subida arriba con un nombre. '
+    + 'Quedan ' + r.enGuion + ' adentro de guiones, ' + r.sobranEnGuion + ' de ellos convertibles, '
+    + 'y ' + r.esperan + ' que sobran esperan la maqueta de las aplicaciones de teléfono, '
+    + 'con su motivo escrito.');
 }

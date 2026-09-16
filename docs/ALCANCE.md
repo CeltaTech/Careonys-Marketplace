@@ -4839,6 +4839,26 @@ con comilla común, y el renglón verde dice los mismos quince que antes. Falsif
 en los dos sentidos, y el banco de pruebas del lector —que probaba una sola de las
 tres maneras— ahora prueba las tres y la nota adentro de la lista.
 
+### La lista de estilos que estaba subida arriba con un nombre
+
+La regla es que si todo lo que dice un atributo `style=` ya tiene clase, ese atributo
+sobra. El chequeo que la vigila buscaba un texto: la lista escrita ahí mismo, pegada al
+atributo. Pero una pantalla de un programa puede subir la lista arriba de todo, ponerle
+un nombre y nombrarlo en el atributo, que es lo que se hace cuando la misma lista se usa
+en dos renglones. Es la misma decisión escrita de otra manera, y no la miraba nadie.
+
+Ahora el nombre se busca declarado en el mismo archivo y la lista se lee de ahí
+(`scripts/verificar_estilos.mjs:159`). Si el nombre viene de afuera —un parámetro, algo
+importado— no hay ninguna lista que leer, y eso no es repetir a mano: es decidir en el
+momento.
+
+Aparecieron cinco listas con nombre. Dos repiten a mano lo que la hoja de utilidades ya
+nombra (`pwa-familia/src/pantallas/Reportes.jsx:27`), y no se cambian todavía: están en
+una de las dos aplicaciones de teléfono, cuya maqueta trae el Desarrollador, y hasta que
+llegue no se toca ahí nada de cómo se ve. Quedan escritas con su motivo al lado
+(`scripts/verificar_estilos.mjs:65`), contadas en el renglón verde y no escondidas, y
+vaciar ese permiso pone el chequeo en rojo.
+
 ### La mayúscula que el archivo compartido dejaba en manos del que llamaba
 
 Cinco chequeos preguntan lo mismo: si el valor de un atributo está escrito con todas las
