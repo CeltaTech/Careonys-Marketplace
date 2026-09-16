@@ -3614,6 +3614,36 @@ no existen—, y devolviéndole la lectura por nombres se planta antes de leer n
 con la lectura derivada reconoce los dos aplastamientos del historial, y el corte
 sigue cayendo donde caía.
 
+### Los dos chequeos del texto visible abrían cuatro clases de archivo, y el proyecto escribe seis
+
+`scripts/verificar_vocabulario.mjs` busca las palabras que el glosario sacó en el texto que ve una
+persona. `scripts/verificar_trato.mjs` busca el tuteo en ese mismo texto. Los dos armaban su corpus
+con la misma lista escrita a mano adentro de cada archivo —las dos extensiones de pantalla, más
+`.js`, `.json` y `.sql`—, y los dos decían 145 archivos.
+
+El proyecto escribe más que eso. La puerta por la que CeltaTech da de alta y de baja a un Cliente
+está en `supabase/functions/alta-y-baja/index.ts`, y sus mensajes de error son texto visible como
+cualquier otro. Las doce hojas de estilo también quedaban afuera. Trece archivos presentes en el
+disco, que se podían abrir, y que no abría ninguno de los dos.
+
+La comprobación se hizo antes de tocar nada. Con «avise a los cuidadores» metido en un mensaje de esa
+puerta y «Tu cuerpo no es JSON, revisalo» en otro, los dos chequeos seguían diciendo 145 archivos y
+terminando en verde.
+
+`scripts/recorrido.mjs` ya tiene la lista de lo que este proyecto considera código en un solo lugar,
+y su propio comentario dice para qué sirve: para que quien recorra buscando texto escrito por una
+persona sepa qué archivos hay que abrir. `scripts/verificar_glosario.mjs` ya había tenido que ir a
+buscarla, después de encontrar exactamente este mismo agujero. Ahora la piden los tres. El corpus
+pasó de 145 a 158 archivos y ninguno de los dos encontró nada, así que esta vez no había daño hecho.
+
+Y adentro apareció una segunda cosa. Los dos salteaban dos nombres: `manifest.json`, que existe dos
+veces, y `sw.js`, que no existe ninguna —el archivo que atiende sin conexión se llama
+`service-worker.js` y vive adentro de cada aplicación de teléfono—. Era una exención que salteaba
+cero archivos desde siempre, que es justo lo que el encabezado del chequeo del vocabulario denuncia
+de una exención vieja suya: una exención que no exime nada dejó de nombrar algo que exista, y nadie
+se entera. Salió, y la que queda se cuenta mientras se recorre: si alguna vez saltea cero archivos,
+el chequeo se planta con código de salida 1 en vez de decir ✔.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

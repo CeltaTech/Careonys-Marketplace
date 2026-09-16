@@ -26,7 +26,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { hayArchivos, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
+import { hayArchivos, EXTENSIONES_DE_CODIGO } from './recorrido.mjs';
 import { visible, visibleDeMigracion, soloCastellano, formatoDe } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -96,10 +96,25 @@ if (noDetecta.length || sePasa.length) {
 
 const fallas = [];
 let revisados = 0;
+let eximidos = 0;
 
-for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js', '.json', '.sql'], AJENAS)) {
+/* Qué archivos se abren lo contesta `recorrido.mjs` con la lista de lo que este
+   proyecto considera código, y no una lista escrita acá. Una escrita acá conoce
+   las extensiones que había el día que se escribió, y el proyecto sigue sumando:
+   ésta nombraba cuatro, y la puerta por la que CeltaTech da de alta y de baja a
+   un Cliente está escrita en una quinta, así que sus mensajes no los abría nadie
+   —tampoco las hojas de estilo—. Se comprobó metiéndole un tuteo adentro: este
+   chequeo seguía dando verde. Es la misma lista que ya pide el control del
+   glosario, por el mismo motivo y después del mismo hallazgo. */
+for (const camino of hayArchivos(raiz, EXTENSIONES_DE_CODIGO, AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
-  if (nombre.endsWith('manifest.json') || nombre.endsWith('sw.js')) continue;
+  /* Lo que se saltea se cuenta, porque una exención que no exime nada no es
+     inofensiva: pasó a nombrar algo que el proyecto ya no escribe y nadie se
+     entera. Acá había dos y una era eso: `sw.js` no es el nombre de ningún
+     archivo de este proyecto —el que atiende sin conexión se llama
+     `service-worker.js` y vive adentro de cada aplicación de teléfono—, así
+     que salteaba cero archivos desde siempre. La que queda se comprueba abajo. */
+  if (nombre.endsWith('manifest.json')) { eximidos++; continue; }
   revisados++;
   const crudo = readFileSync(camino, 'utf8');
   const renglones = crudo.split(/\r?\n/);
@@ -123,6 +138,14 @@ for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js', '.jso
       fallas.push(`${nombre}:${renglon}  «${acierto[1]}»  ${texto.slice(0, 90)}`);
     }
   }
+}
+
+if (eximidos === 0) {
+  console.error(
+    'La exención de `manifest.json` no salteó ningún archivo, así que dejó de\n' +
+    'nombrar algo que exista y este chequeo no está eximiendo lo que dice eximir.\n' +
+    'Se le corrige el nombre, o se la saca.');
+  process.exit(1);
 }
 
 if (fallas.length > 0) {
