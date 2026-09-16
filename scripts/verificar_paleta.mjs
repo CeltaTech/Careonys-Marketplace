@@ -68,10 +68,26 @@ import { enBlanco } from './texto_visible.mjs';
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
-   este: acá se revisa lo que pinta una pantalla. `scripts/` estuvo en esta lista
-   y salió: un guion también pinta, y el que arma el manifiesto de los dos
-   programas del teléfono tenía el color escrito a mano y despegado del decidido
-   sin que acá se viera nada. */
+   éste, dicho entero y una por una, porque antes sólo estaba escrito el motivo de
+   la que se había ido y las tres que quedaban no decían nada. Acá se revisa lo
+   que pinta una pantalla.
+
+   - `docs`: es texto, y nombra colores con su número justamente para explicarlos
+     —entre ellos el que se había despegado—. Meterlo adentro pondría en rojo el
+     documento que cuenta lo que pasó.
+   - `supabase`: es el servidor y no pinta ninguna pantalla. Y el color de marca
+     de cada Prestadora vive ahí **a propósito**, como dato suyo que es: lo
+     declaran y lo siembran las migraciones. Eso no es un color escrito a mano,
+     es la identidad de cada una, que por definición no sale de la paleta del
+     producto. Por lo mismo tampoco entra la extensión del servidor: el único
+     archivo así del proyecto vive adentro de esta carpeta.
+   - `assets`: un dibujo lleva sus colores escritos adentro, y también a
+     propósito: abierto adentro de una imagen no alcanza las variables de la hoja
+     de estilos, así que no tiene de dónde tomarlos.
+
+   `scripts/` estuvo en esta lista y salió: un guion también pinta, y el que arma
+   el manifiesto de los dos programas del teléfono tenía el color escrito a mano
+   y despegado del decidido sin que acá se viera nada. */
 const AJENAS = ['docs', 'supabase', 'assets'];
 
 /* Los dos bancos de prueba, que escriben colores a propósito. Se nombran de a
