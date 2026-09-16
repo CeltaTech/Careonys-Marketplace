@@ -211,7 +211,7 @@ Deno.serve(async (pedido: Request): Promise<Response> => {
     });
     if (!r.ok) {
       console.error('El alta falló:', r.estado, r.cuerpo);
-      return responder(502, { error: 'La base rechazó el alta', detalle: r.cuerpo });
+      return responder(502, { error: 'La base rechazó el alta' });
     }
 
     const fila = (Array.isArray(r.cuerpo) ? r.cuerpo[0] : r.cuerpo) as
@@ -254,7 +254,7 @@ Deno.serve(async (pedido: Request): Promise<Response> => {
       });
       if (!r.ok) {
         console.error('La corrección falló:', r.estado, r.cuerpo);
-        return responder(502, { error: 'La base rechazó la corrección', detalle: r.cuerpo });
+        return responder(502, { error: 'La base rechazó la corrección' });
       }
 
       const fila = (Array.isArray(r.cuerpo) ? r.cuerpo[0] : r.cuerpo) as
@@ -288,7 +288,7 @@ Deno.serve(async (pedido: Request): Promise<Response> => {
     });
     if (!r.ok) {
       console.error('El cambio de estado falló:', r.estado, r.cuerpo);
-      return responder(502, { error: 'La base rechazó el cambio', detalle: r.cuerpo });
+      return responder(502, { error: 'La base rechazó el cambio' });
     }
 
     const fila = (Array.isArray(r.cuerpo) ? r.cuerpo[0] : r.cuerpo) as

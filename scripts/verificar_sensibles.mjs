@@ -89,7 +89,9 @@ const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
      propósito**: la regla de la empresa dice que el cliente recibe un mensaje
      entendible y el detalle queda en el registro del servidor. Meter esa
      carpeta adentro no taparía ningún agujero: pondría en rojo justamente lo
-     que la regla manda escribir. */
+     que la regla manda escribir. La otra mitad de esa misma regla —que ese
+     detalle se quede en el registro y no viaje adentro de la respuesta— la
+     mira `scripts/verificar_escapado.mjs`, que sí abre esa carpeta. */
 const AJENAS = ['docs', 'supabase', 'scripts', 'data', 'assets'];
 
 /* ── 1. Lo que puede viajar en la barra de direcciones ──────────────────────

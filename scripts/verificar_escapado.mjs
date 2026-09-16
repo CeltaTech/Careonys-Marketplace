@@ -13,7 +13,7 @@
    veintiuno la escribe alguien apurado. Una regla que no se verifica sola no es
    una regla.
 
-   Qué mira, en cada `.html` y cada archivo de `js/`:
+   Qué mira, en cada `.html`, cada archivo de `js/` y cada puerta del servidor:
 
    1. **Toda plantilla que parezca HTML** —cualquier texto entre acentos graves
       que contenga algo con forma de etiqueta— y cada `${...}` de adentro. Un
@@ -43,6 +43,21 @@
       texto solo, así que ninguna de las cuatro formas de arriba puede pasar.
       Queda un atributo, con un nombre que ya avisa lo que hace, capaz de
       saltearse esa conversión. Hoy no lo usa nadie y así tiene que quedar.
+
+   6. **Y en una puerta, lo que contestó la base no vuelve en la respuesta.** La
+      regla de la empresa cierra en dos mitades: el cliente recibe un mensaje
+      entendible, el detalle queda en el registro del servidor. Los cinco puntos
+      de arriba son la primera mitad vista desde una pantalla; una puerta es la
+      misma regla del otro lado del cable, donde «la vista» no es una pantalla
+      sino el cuerpo de la respuesta, que del otro lado alguien guarda, reintenta
+      y escribe en su propio registro. Y lo que la base contesta cuando rechaza
+      algo nombra la función, la tabla y la restricción: mandárselo a quien golpea
+      la puerta es contarle el producto por dentro, que es justo lo que la regla
+      fundamental de la empresa dice que no tiene que saber. Quién habla con la
+      base se reconoce porque adentro tiene un pedido a la red, y quién arma una
+      respuesta porque adentro construye una: no hay ningún nombre escrito a
+      mano. La consola sigue siendo destino legítimo, que es justo donde el
+      detalle tiene que quedar.
 
    Y un archivo de pantalla se revisa distinto según qué sea: una página suelta
    es marcado con el código adentro de sus bloques de guión, y una pantalla de
@@ -83,8 +98,15 @@ import { hayArchivos, seRevisaron, EXTENSIONES_DE_PANTALLA, esPaginaSuelta } fro
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
-   este: un dato entra en una pantalla, y en esas carpetas no hay pantallas. */
-const AJENAS = ['docs', 'supabase', 'scripts', 'assets'];
+   este: un dato entra en una pantalla, y en esas carpetas no hay pantallas.
+
+   `supabase` estuvo en esta lista y ya no está. Pantallas sigue sin haber, pero
+   ahí adentro vive la única puerta del servidor, que es donde vale el punto 6 —
+   y mientras la carpeta entera quedó afuera, la regla del texto crudo no miró
+   nunca el único lugar del producto que le contesta a otro programa. Lo que se
+   deja afuera de ahí son las migraciones, que son esquema y no le contestan a
+   nadie. */
+const AJENAS = ['docs', 'migrations', 'scripts', 'assets'];
 
 const PARECE_MARCADO = /<[a-zA-Z][a-zA-Z0-9-]*[\s/>]/;
 const CRUDO = /\.(?:message|error_description)\b/g;
@@ -501,6 +523,159 @@ export function revisarCodigo(codigo, base = 0, cuenta = { crudos: 0, interpolac
   return reparos;
 }
 
+
+/* ── 6. En una puerta, lo que contestó la base no vuelve en la respuesta ────
+
+   La regla de la empresa cierra en dos mitades: «El cliente recibe un mensaje
+   entendible; el detalle queda en el registro del servidor». Los cinco puntos de
+   arriba son la primera mitad vista desde una pantalla; una puerta es la misma
+   regla del otro lado del cable. Ahí «la vista» no es una pantalla: es el cuerpo
+   de la respuesta, que del otro lado alguien guarda, reintenta y escribe en su
+   propio registro.
+
+   Y hay un segundo motivo que sólo vale acá: lo que la base contesta cuando
+   rechaza algo nombra la función, la tabla y la restricción. Mandárselo a quien
+   golpea la puerta es contarle el producto por dentro, que es justo lo que la
+   regla fundamental de la empresa dice que no tiene que saber.
+
+   Nada de esto se busca por nombres escritos a mano. Quién habla con la base se
+   reconoce porque adentro tiene un pedido a la red; quién arma una respuesta,
+   porque adentro construye una. Lo que se prohíbe es que la variable donde quedó
+   la contestación de la base —o cualquiera de sus campos— aparezca adentro de
+   una respuesta. La misma contestación mandada a la consola pasa, que es
+   exactamente donde tiene que quedar.
+
+   Una fila sacada de ahí y copiada a otra variable también pasa, por lo mismo que
+   ya dice el encabezado: este chequeo no sigue el rastro de una variable. */
+
+const BARRA = '\\';
+
+/** Desde el paréntesis o la llave de `i`, el índice del que lo cierra. */
+function cierreDe(texto, i) {
+  const abre = texto[i];
+  const cierra = abre === '(' ? ')' : '}';
+  let hondo = 0;
+  let comilla = null;
+  for (let k = i; k < texto.length; k++) {
+    const c = texto[k];
+    if (comilla) {
+      if (c === BARRA) { k++; continue; }
+      if (c === comilla) comilla = null;
+      continue;
+    }
+    if (c === "'" || c === '"' || c === '`') { comilla = c; continue; }
+    if (c === abre) hondo++;
+    else if (c === cierra) { hondo--; if (hondo === 0) return k; }
+  }
+  return texto.length;
+}
+
+/** Los nombres de las funciones que tienen `que` adentro del cuerpo. */
+function funcionesCon(texto, que) {
+  const nombres = new Set();
+  for (const m of texto.matchAll(/\bfunction\s+([A-Za-z_$][\w$]*)\s*\(/g)) {
+    const llave = texto.indexOf('{', m.index + m[0].length);
+    if (llave < 0) continue;
+    if (que.test(texto.slice(llave, cierreDe(texto, llave)))) nombres.add(m[1]);
+  }
+  return nombres;
+}
+
+/* Las comillas tapan lo que llevan adentro, para que una palabra de un mensaje
+   no se confunda con el nombre de una variable. Los acentos graves no: ahí
+   adentro se interpola, y una interpolación es código. */
+function sinTextos(s) {
+  let fuera = '';
+  let comilla = null;
+  for (let k = 0; k < s.length; k++) {
+    const c = s[k];
+    if (comilla) {
+      if (c === BARRA) { k++; continue; }
+      if (c === comilla) comilla = null;
+      continue;
+    }
+    if (c === "'" || c === '"') { comilla = c; continue; }
+    fuera += c;
+  }
+  return fuera;
+}
+
+/**
+ * En una puerta: lo que contestó la base viajando adentro de una respuesta.
+ * Devuelve `[renglón, qué se ve]` por cada uno.
+ */
+export function crudoQueVuelve(texto, miradas) {
+  const hablanConLaBase = funcionesCon(texto, /\bfetch\s*\(/);
+  if (hablanConLaBase.size === 0) return [];
+  const armanRespuesta = funcionesCon(texto, /new\s+Response\s*\(/);
+
+  const guardan = new Set();
+  for (const m of texto.matchAll(
+    /\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*await\s+([A-Za-z_$][\w$]*)\s*\(/g)) {
+    if (hablanConLaBase.has(m[2])) guardan.add(m[1]);
+  }
+  if (guardan.size === 0) return [];
+
+  const hallazgos = [];
+  for (const m of texto.matchAll(/([A-Za-z_$][\w$]*)\s*\(/g)) {
+    const antes = texto.slice(Math.max(0, m.index - 12), m.index);
+    /* La declaración de la función no es una llamada a ella. */
+    if (/\bfunction\s+$/.test(antes)) continue;
+    const esRespuesta = armanRespuesta.has(m[1])
+      || (m[1] === 'Response' && /\bnew\s+$/.test(antes));
+    if (!esRespuesta) continue;
+    const abre = m.index + m[0].length - 1;
+    if (miradas) miradas.respuestas++;
+    const dentro = sinTextos(texto.slice(abre + 1, cierreDe(texto, abre)));
+    const raices = new Set([...dentro.matchAll(/[A-Za-z_$][\w$]*/g)]
+      .filter((t) => dentro[t.index - 1] !== '.')
+      .map((t) => t[0]));
+    for (const variable of guardan) {
+      if (!raices.has(variable)) continue;
+      hallazgos.push([texto.slice(0, m.index).split('\n').length, variable]);
+      break;
+    }
+  }
+  return hallazgos;
+}
+
+/* Y el detector de la puerta también se prueba, con una puerta de mentira que
+   tiene las tres piezas de la de verdad: la que habla con la base, la que arma
+   la respuesta, y la que decide. */
+const PUERTA = (respuesta) => [
+  'async function llamarALaBase(funcion, argumentos) {',
+  '  const respuesta = await fetch(BASE + funcion, { body: JSON.stringify(argumentos) });',
+  '  return { ok: respuesta.ok, cuerpo: await respuesta.text() };',
+  '}',
+  'function responder(estado, cuerpo) {',
+  '  return new Response(JSON.stringify(cuerpo), { status: estado });',
+  '}',
+  'Deno.serve(async () => {',
+  '  const r = await llamarALaBase("alta", {});',
+  '  if (!r.ok) {',
+  '    console.error("El alta falló:", r.estado, r.cuerpo);',
+  '    return responder(502, ' + respuesta + ');',
+  '  }',
+  '  const fila = r.cuerpo[0];',
+  '  return responder(200, { tenant_ref: fila.id, slug: fila.slug });',
+  '});'
+].join('\n');
+
+const PUERTAS_MAL = [
+  ['el detalle de la base vuelve en la respuesta', PUERTA('{ error: "La base rechazó el alta", detalle: r.cuerpo }')],
+  ['vuelve la contestación entera', PUERTA('{ error: "No se pudo", detalle: r }')],
+  ['vuelve adentro de una plantilla', PUERTA('{ error: `No se pudo: ${r.cuerpo}` }')],
+  ['vuelve en una respuesta armada a mano, sin pasar por la que las arma',
+   PUERTA('{ error: "x" }').replace(
+     'return responder(502, { error: "x" });',
+     'return new Response(JSON.stringify({ detalle: r.cuerpo }), { status: 502 });')]
+];
+const PUERTAS_BIEN = [
+  ['la respuesta lleva un mensaje escrito y el detalle queda en la consola',
+   PUERTA('{ error: "La base rechazó el alta" }')],
+  ['una pantalla, que no es una puerta', "el.textContent = asp.nombre;"]
+];
+
 const enBlanco = (t) => t.replace(/[^\n]/g, ' ');
 
 /* Una prueba que no puede fallar no prueba nada: antes de recorrer el proyecto,
@@ -551,11 +726,20 @@ if (noDetecta.length || sePasa.length) {
   process.exit(1);
 }
 
+const puertaCiega = PUERTAS_MAL.filter(([, c]) => crudoQueVuelve(c).length === 0).map(([n]) => n);
+const puertaChillona = PUERTAS_BIEN.filter(([, c]) => crudoQueVuelve(c).length > 0).map(([n]) => n);
+if (puertaCiega.length || puertaChillona.length) {
+  console.error('El detector de la puerta está roto, así que no verifica nada:');
+  if (puertaCiega.length) console.error('  no detecta: ' + puertaCiega.join(' / '));
+  if (puertaChillona.length) console.error('  avisa de más: ' + puertaChillona.join(' / '));
+  process.exit(1);
+}
+
 const fallas = [];
 let revisados = 0;
-const miradas = { crudos: 0, interpolaciones: 0 };
+const miradas = { crudos: 0, interpolaciones: 0, respuestas: 0 };
 
-for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJENAS)) {
+for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js', '.ts'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   revisados++;
   const crudo = readFileSync(camino, 'utf8');
@@ -577,6 +761,18 @@ for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJEN
     reparos.push(...revisarCodigo(crudo, 1, miradas));
   }
 
+  /* Y si el archivo es una puerta, lo que contestó la base no vuelve adentro de
+     la respuesta. Esto no depende de que el archivo sea una pantalla: depende de
+     que adentro haya alguien que le hable a la base y alguien que conteste. */
+  for (const [renglon, variable] of crudoQueVuelve(crudo, miradas)) {
+    reparos.push({
+      renglon,
+      motivo: 'lo que contestó la base vuelve adentro de la respuesta',
+      muestra: variable,
+      remedio: 'la respuesta lleva un mensaje entendible; el detalle queda en el registro del servidor'
+    });
+  }
+
   for (const r of reparos) {
     fallas.push(`${nombre}:${r.renglon}  ${r.motivo}\n      ${r.muestra}\n      → ${r.remedio}`);
   }
@@ -593,11 +789,12 @@ if (fallas.length > 0) {
 /* Y que no quede mirando cero: la cuenta de archivos estaba entera mientras la
    de adentro era cero, que es cómo un chequeo dice ✔ sin haber mirado nada. */
 seRevisaron(
-  miradas.interpolaciones + miradas.crudos,
-  'ni un dato entrando en el marcado ni un texto crudo de error donde mirar'
+  miradas.interpolaciones + miradas.crudos + miradas.respuestas,
+  'ni un dato entrando en el marcado, ni un texto crudo de error, ni una respuesta de una puerta donde mirar'
 );
 
 console.log(
-  `Escapado verificado: ${revisados} archivos sin datos ni errores crudos en la pantalla `
-  + `(${miradas.interpolaciones} datos entrando en el marcado y ${miradas.crudos} textos crudos de error, mirados de a uno).`
+  `Escapado verificado: ${revisados} archivos sin datos ni errores crudos en la pantalla ni en la respuesta `
+  + `(${miradas.interpolaciones} datos entrando en el marcado, ${miradas.crudos} textos crudos de error `
+  + `y ${miradas.respuestas} respuestas de una puerta, mirados de a uno).`
 );

@@ -3771,7 +3771,7 @@ Y había daño puesto. Seis chequeos eximían a `Nueva carpeta`, que se había m
 cuarentena (`docs/PENDIENTES.md:66`) y por lo tanto ya no existía en ningún lado donde ningún
 chequeo pudiera mirar: `scripts/verificar_arranque.mjs:53`,
 `scripts/verificar_botones.mjs:67`, `scripts/verificar_deposito.mjs:125`,
-`scripts/verificar_estados.mjs:79`, `scripts/verificar_sensibles.mjs:93` y un bloque entero en
+`scripts/verificar_estados.mjs:79`, `scripts/verificar_sensibles.mjs:95` y un bloque entero en
 `scripts/citas.mjs`. Seis renglones perdonando a un fantasma.
 
 Qué se hizo: una tercera regla, `carpetasEximidasQueNoEstan()`
@@ -4301,7 +4301,7 @@ Son los tres que quedaban de la familia «el encabezado dice una cosa y el códi
 los tres la salida honesta era arreglar el encabezado y no ensanchar el chequeo: ensanchar los
 habría puesto en rojo sobre lo que las reglas de la empresa mandan escribir.
 
-**Los datos sensibles.** `scripts/verificar_sensibles.mjs:93` deja afuera cinco carpetas y el
+**Los datos sensibles.** `scripts/verificar_sensibles.mjs:95` deja afuera cinco carpetas y el
 encabezado no nombraba ninguna. Ahora las nombra a las cinco con su motivo, y de `supabase/` dice
 además lo que importa: ahí el detalle crudo del error va a propósito, porque la regla de la
 empresa manda que el cliente reciba un mensaje entendible y el detalle quede en el registro del
@@ -4491,6 +4491,43 @@ que sólo se puede comprobar con la red delante se informa hecho o no hecho, nun
 Y al banco de pruebas entró la primera apuntada al corpus y no al detector: una salida de
 mentira del remoto (`scripts/verificar_etiquetas.mjs:114`), con una rama que no hay que
 confundir con una etiqueta y con la etiqueta anotada, que git escribe dos veces.
+
+### La puerta devolvía, palabra por palabra, lo que la base contestó al rechazar
+
+La puerta por la que CeltaTech da de alta, corrige o suspende una Prestadora
+contestaba con dos cosas cuando la base rechazaba algo: una frase entendible y,
+al lado, el cuerpo crudo de la respuesta de la base
+(`supabase/functions/alta-y-baja/index.ts:214`, `:257` y `:291`). Ese cuerpo
+nombra la función que se llamó, la tabla, la columna y la restricción que se
+violó.
+
+Son dos reglas rotas al mismo tiempo. La de seguridad dice que el cliente recibe
+un mensaje entendible y que el detalle queda en el registro del servidor; acá
+quedaba en el registro **y además** viajaba. Y la regla fundamental de la empresa
+dice que CeltaTech trata al producto como texto opaco: contarle cómo se llaman
+las tablas de adentro es justo lo contrario.
+
+Lo que se corrigió: las tres respuestas quedaron con su frase y sin el detalle. El
+`console.error` de al lado no se tocó, que es exactamente donde el detalle tiene
+que quedar.
+
+**Y el chequeo que existe para esto no miraba ahí.** `scripts/verificar_escapado.mjs`
+tiene, desde que existe, la regla del texto crudo de un error que llega a la
+vista. Dejaba afuera la carpeta entera del servidor
+(`scripts/verificar_escapado.mjs:87`) y leía pantallas y guiones del navegador,
+nunca el único archivo del producto escrito en el otro lenguaje. Así que el
+defecto estuvo en su lugar con los 41 chequeos en verde. Y el archivo hermano que
+sí nombra esa carpeta escribió la mitad de la razón: decía que ahí el detalle
+crudo va a propósito, lo cual es cierto del registro del servidor y falso de la
+respuesta (`scripts/verificar_sensibles.mjs:88`).
+
+Ahora la carpeta entra —quedan afuera las migraciones, que son esquema y no le
+contestan a nadie— y entra también la extensión del servidor. El detector nuevo
+no conoce ningún nombre escrito a mano: quién habla con la base se reconoce
+porque adentro tiene un pedido a la red, quién arma una respuesta porque adentro
+construye una, y lo que se prohíbe es que la variable donde quedó la contestación
+de la base aparezca adentro de una respuesta. El corpus pasó de 109 archivos a
+110 y el renglón final dice además cuántas respuestas miró.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
