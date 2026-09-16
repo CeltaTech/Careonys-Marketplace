@@ -12,7 +12,9 @@
 
    QUÉ CUENTA COMO TEXTO VISIBLE
    - El texto suelto entre etiquetas, salvo el de `<script>`, `<style>` y los
-     comentarios.
+     comentarios. En una pantalla de un programa eso no se busca tapando las
+     etiquetas sino recorriendo el archivo, porque ahí el marcado está adentro
+     del código y no al revés.
    - Los atributos que la persona llega a leer: `placeholder`, `alt`, `title`,
      `aria-label`, `value` de un botón, y el `content` de `<meta name=…>`.
    - En los guiones, todo texto entre comillas que termina en pantalla:
@@ -65,15 +67,52 @@
      archivo de mentira que escribe cuatro frases de cuatro maneras distintas y
      dos cosas que no son texto, aparecen las cuatro y no aparecen las dos.
 
+   - **Lo que en una pantalla de un programa es código y parecía texto.** Es el
+     mismo error que el de arriba, una capa más adentro, y duró desde que existe
+     la primera pantalla escrita así: acá había una sola manera de leer un
+     archivo, la del marcado, y una pantalla de un programa no es marcado. De
+     modo que su nota de encabezado, sus importaciones y el cuerpo entero de su
+     función se contaban como **una** frase larguísima «que hay que traducir»;
+     cada `{frase('nav.inicio')}` —es decir, justo lo que ya está traducido—
+     figuraba como una frase pendiente, siete veces; y la flecha de un
+     `onClick={() => irA(2)}` cortaba la etiqueta por la mitad y dejaba
+     «irA(2)}>» adentro del inventario, trece veces. Así la cuenta informaba
+     1124 frases distintas por traducir mientras el chequeo de frases informaba
+     979 ya traducidas en los tres idiomas: un número que no se podía usar para
+     planear nada.
+
+     Y al mismo tiempo, del otro lado, no contaba nada: lo que una pantalla de
+     esas escribe desde el código se buscaba adentro de sus bloques de
+     `<script>`, que una pantalla de un programa no tiene.
+
+     Lo que lee una pantalla de un programa no se resolvió acá: se resolvió una
+     vez en `scripts/verificar_frases.mjs`, que es el chequeo que tuvo que
+     aprender a distinguir el texto del código, y ahora vive en
+     `scripts/texto_visible.mjs`, que es de los dos. Una lista repetida dos
+     veces se arregla una vez y queda mal la otra, y eso es exactamente lo que
+     había pasado.
+
    LO QUE ESTA CUENTA NO PUEDE DECIR: si dos pantallas dicen la misma frase, acá
    figura dos veces. La cuenta de frases distintas está abajo, y es la que
    manda para calcular el trabajo: traducir es por frase, no por aparición.
+
+   Y no cuenta el texto escrito entre comillas adentro de un hueco de una
+   pantalla de un programa —`{hay ? 'Sí' : 'No'}`—, que sería trabajo por hacer.
+   Ahí adentro conviven las frases con los nombres de clase, las direcciones y
+   los valores guardados, y contarlas todas devolvería el ruido que esta cuenta
+   viene de sacarse de encima. Se cuentan sólo las que van a parar a algo que se
+   lee —`textContent`, `placeholder`, `alert` y sus hermanas—, que es el mismo
+   lugar que mira el chequeo de frases. Una escrita en cualquier otra parte del
+   hueco no la ve ninguno de los dos, y eso está sin resolver.
 =================================================== */
 
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative } from 'node:path';
-import { despejar, sinValoresGuardados, visible } from './texto_visible.mjs';
+import {
+  despejar, formatoDe, sinValoresGuardados, visible,
+  enCodigoDePrograma, textoDePrograma,
+} from './texto_visible.mjs';
 import { EXTENSIONES_DE_PANTALLA, nuncaSeAbre } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -118,9 +157,25 @@ function archivos(dir, ext, acc = []) {
   return acc;
 }
 
-/** Saca comentarios, `<script>` y `<style>`, que no son texto visible. */
-function sinLoQueNoSeVe(html) {
-  return html
+/* Saca lo que no se ve, que en cada formato es otra cosa.
+
+   En una página suelta no se ven los comentarios de marcado, el guion y la hoja
+   de estilo. Una pantalla de un programa no tiene nada de eso: es código de
+   punta a punta, y lo que no se ve ahí son sus notas. Mientras acá hubo una
+   sola forma —la del marcado—, cada nota de cada pantalla de programa entró al
+   inventario como texto a traducir, y el encabezado entero de cada archivo
+   —nota, importaciones y cuerpo de la función— se contó como una frase
+   larguísima. De ahí salían las mil ciento veinticuatro «frases distintas» que
+   este guion informaba, contra las novecientas setenta y nueve que ya están
+   traducidas.
+
+   Las notas de una pantalla de programa las saca el chequeo de frases, que es
+   el que tuvo que aprender a distinguirlas: no borra desde cualquier par de
+   barras, porque una dirección web lleva dos adentro de un texto y borrar desde
+   ahí deja la comilla sin cerrar y con ella medio archivo sin mirar. */
+function sinLoQueNoSeVe(crudo, formato) {
+  if (formato === 'jsx') return enCodigoDePrograma(crudo);
+  return crudo
     .replace(/<!--[\s\S]*?-->/g, ' ')
     .replace(/<script\b[\s\S]*?<\/script>/gi, ' ')
     .replace(/<style\b[\s\S]*?<\/style>/gi, ' ');
@@ -146,11 +201,22 @@ const agregar = (archivo, grupo, texto) => {
 // --- LAS PANTALLAS ---
 for (const ruta of archivos(raiz, EXTENSIONES_DE_PANTALLA)) {
   const rel = relative(raiz, ruta).replace(/\\/g, '/');
+  const formato = formatoDe(ruta);
   const bruto = despejar(readFileSync(ruta, 'utf8'));
-  const enPantalla = sinLoQueNoSeVe(bruto);
+  const enPantalla = sinLoQueNoSeVe(bruto, formato);
 
-  // El texto entre etiquetas.
-  for (const trozo of enPantalla.split(/<[^>]*>/)) agregar(rel, 'texto en pantalla', trozo);
+  /* El texto a la vista, que en cada formato se busca de otra manera. En una
+     página suelta alcanza con tapar las etiquetas y quedarse con lo del medio.
+     En una pantalla de un programa no: hay que recorrerla, porque el marcado
+     está adentro del código y no al revés, y porque una etiqueta lleva código
+     adentro —`onClick={() => irA(2)}`— cuya flecha cortaba la etiqueta por la
+     mitad y dejaba el resto contado como frase, trece veces. Quien la recorre
+     es el mismo lector que usa el chequeo de frases, y por eso las dos cuentas
+     miran lo mismo. */
+  const aLaVista = formato === 'jsx'
+    ? textoDePrograma(enPantalla).map(([, texto]) => texto)
+    : enPantalla.split(/<[^>]*>/);
+  for (const trozo of aLaVista) agregar(rel, 'texto en pantalla', trozo);
 
   // Los atributos que se leen. Se buscan sobre el HTML entero menos comentarios,
   // porque un `alt` puede estar adentro de una plantilla de `<script>`.
@@ -225,17 +291,26 @@ const ESCRIBEN = new RegExp(
 function leerValor(t, desde, tope = 900) {
   let i = desde;
   let comilla = null;
-  // El tope no corta adentro de una cadena: una plantilla de marcado pasa
-  // holgada los novecientos caracteres, y cortarla ahí devolvía a contar
-  // pedazos de atributo. Lo que la termina es su propia comilla, y para eso
-  // ya no hace falta adivinar dónde. El techo absoluto es por si nunca cierra.
+  let hondo = 0;
+  /* El tope no corta adentro de una cadena: una plantilla de marcado pasa
+     holgada los novecientos caracteres, y cortarla ahí devolvía a contar
+     pedazos de atributo. Lo que la termina es su propia comilla, y para eso
+     ya no hace falta adivinar dónde. El techo absoluto es por si nunca cierra.
+
+     Y lo que también la termina es el paréntesis o la llave que no abrió ella.
+     Sin eso, un `alert('hola')` escrito adentro de una pantalla de programa
+     —donde nadie pone punto y coma, porque va colgado de un `onClick={...}`—
+     seguía leyendo novecientos caracteres de marcado, y las clases de cada
+     `<div>` que encontraba en el camino entraban al inventario como frases. */
   for (; i < t.length && (comilla ? i - desde < 20000 : i - desde < tope); i++) {
     const c = t[i];
     if (comilla) {
       if (c === '\\') i++;
       else if (c === comilla) comilla = null;
     } else if (c === "'" || c === '"' || c === '`') comilla = c;
-    else if (c === ';') break;
+    else if (c === '(' || c === '{' || c === '[') hondo++;
+    else if (c === ')' || c === '}' || c === ']') { if (!hondo) break; hondo--; }
+    else if (c === ';' && !hondo) break;
   }
   return t.slice(desde, i);
 }
@@ -320,10 +395,15 @@ const sinLoQueSeIntentaba = (t) => t.replace(
 for (const ruta of archivos(raiz, ['.js', ...EXTENSIONES_DE_PANTALLA])) {
   const rel = relative(raiz, ruta).replace(/\\/g, '/');
   const bruto = readFileSync(ruta, 'utf8');
-  const guion = ruta.endsWith('.js')
-    ? bruto.replace(/^\s*\/\/.*$/gm, ' ').replace(/\/\*[\s\S]*?\*\//g, ' ')
-    : (bruto.match(/<script\b[^>]*>([\s\S]*?)<\/script>/gi) || []).join('\n')
-        .replace(/^\s*\/\/.*$/gm, ' ').replace(/\/\*[\s\S]*?\*\//g, ' ');
+  /* Una pantalla de programa no tiene `<script>`: el guion es el archivo
+     entero, igual que en un `.js`. Buscándole bloques de `<script>` se sacaban
+     cero textos de las setenta y pico de pantallas de programa que ya existen,
+     así que todo lo que ellas escriben desde el código no lo contaba nadie. */
+  const crudoDelGuion = formatoDe(ruta) === 'html'
+    ? (bruto.match(/<script\b[^>]*>([\s\S]*?)<\/script>/gi) || []).join('\n')
+    : bruto;
+  const guion = crudoDelGuion
+    .replace(/^\s*\/\/.*$/gm, ' ').replace(/\/\*[\s\S]*?\*\//g, ' ');
 
   // Los elementos que este mismo guion marca con `data-frase`.
   const marcados = new Set();
