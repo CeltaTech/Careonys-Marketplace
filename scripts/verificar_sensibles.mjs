@@ -35,6 +35,12 @@
       alguien lo decida. Un parámetro nuevo se planta hasta que se lo declare,
       y declararlo es contestar la única pregunta que importa: ¿esto puede
       quedar escrito en el historial de un navegador ajeno?
+
+      Y las pantallas no piden la barra de direcciones de una sola manera: una
+      página suelta se la arma, y una pantalla de un programa se la pide a las
+      rutas. Las dos cuentan, porque la regla es sobre lo que termina escrito
+      en el historial y no sobre cómo se lo pidió. Mirar una sola dejaría la
+      regla vigilando la mitad del producto que ya no se escribe.
    2. **Todo argumento de un registro es un mensaje o un error.** «Mensaje» es
       cualquier cosa que lleve un texto escrito adentro; «error» es lo que se
       atrapó en un `catch`. Un argumento que no es ninguna de las dos es un
@@ -151,7 +157,16 @@ const ESLABONES = 3; // cuántos textos hacia atrás se miran de una cadena
    `URLSearchParams`: `.get(` suelto es también cómo se le pide algo a un `Map`,
    y confundirlos avisaría de más. */
 const DE_LA_BARRA_SUELTO = /new\s+URLSearchParams\s*\([^)]*\)\s*\.get\s*\(\s*['"]([A-Za-z_][\w-]*)['"]/g;
-const NOMBRA_LA_BARRA = /(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*new\s+URLSearchParams/g;
+/* Quién se guarda la barra de direcciones con un nombre. Son dos formas y son
+   las dos que hay: una página suelta se la arma, y una pantalla de un programa
+   se la pide a las rutas, que se la entregan adentro de una lista. Sabiendo
+   una sola, los parámetros que leen las pantallas portadas no los cuenta
+   nadie, y la regla —que un parámetro nuevo se plante hasta que alguien lo
+   declare— deja de regir justo donde se escribe hoy. */
+const NOMBRA_LA_BARRA = [
+  /(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*new\s+URLSearchParams/g,
+  /(?:const|let|var)\s*\[\s*([A-Za-z_$][\w$]*)[^\]]*\]\s*=\s*useSearchParams\s*\(/g
+];
 
 const REGISTRO = /console\.(?:log|info|warn|debug|error)\s*\(/g;
 /* Lo que se atrapa en un `catch`, con cualquiera de los nombres que este
@@ -224,10 +239,12 @@ function parametrosDeUnTexto(texto) {
   for (const m of texto.matchAll(DE_LA_BARRA_SUELTO)) {
     salida.push([renglonDe(texto, m.index), m[1], 'se lee de la dirección']);
   }
-  for (const v of texto.matchAll(NOMBRA_LA_BARRA)) {
-    const pide = new RegExp('\\b' + v[1] + '\\s*\\.get\\s*\\(\\s*[\'"]([A-Za-z_][\\w-]*)[\'"]', 'g');
-    for (const m of texto.matchAll(pide)) {
-      salida.push([renglonDe(texto, m.index), m[1], 'se lee de la dirección']);
+  for (const forma of NOMBRA_LA_BARRA) {
+    for (const v of texto.matchAll(forma)) {
+      const pide = new RegExp(String.raw`\b` + v[1] + String.raw`\s*\.get\s*\(\s*['"]([A-Za-z_][\w-]*)['"]`, 'g');
+      for (const m of texto.matchAll(pide)) {
+        salida.push([renglonDe(texto, m.index), m[1], 'se lee de la dirección']);
+      }
     }
   }
   return salida.sort((a, b) => a[0] - b[0]);
@@ -307,6 +324,9 @@ const MAL = [
   ['el mismo, leído por una variable',
    "const partes = new URLSearchParams(window.location.search);\n" +
    "const dni = partes.get('dni');\n"],
+  ['el mismo, leído por una pantalla de un programa, que se la pide a las rutas',
+   "const [parametros] = useSearchParams();\n" +
+   "const dni = parametros.get('dni');\n"],
   ['un registro con un dato suelto',
    'console.log(legajo);\n'],
   ['un registro con el dato disfrazado de mensaje',

@@ -3151,6 +3151,34 @@ por pedazos por el mismo motivo por el que este chequeo tampoco escribe adentro
 la dirección de la base: escritas enteras, sería el primero en caer en su
 propia regla.
 
+### La barra de direcciones tiene dos formas de agarrarse y la regla miraba una
+
+Lo que viaja en una dirección queda escrito donde nadie lo borra: en el
+historial del navegador, en el «compartir» que alguien le manda a un tercero y
+en el registro de cualquier intermediario del camino. Sacar el dato de la base
+no lo saca de ahí. Por eso la regla no juzga si un nombre suena sensible —eso
+lo decide quien lo escribe— sino que obliga a declararlo, con el motivo al
+lado, y planta cualquier parámetro nuevo hasta que alguien conteste la única
+pregunta que importa: ¿esto puede quedar escrito en el historial de un
+navegador ajeno?
+
+La regla conocía una sola manera de agarrar la barra de direcciones: la que se
+arma una página suelta. La otra —la de una pantalla de un programa, que se la
+pide a las rutas y la recibe adentro de una lista— no la veía. Cuatro lecturas
+repartidas en tres pantallas portadas no las contaba nadie: el chequeo pasó de
+contar diez parámetros a catorce.
+
+**No había nada saliendo.** Los cuatro parámetros que no se veían están
+declarados con su motivo. Lo que se había perdido era la regla, y justo sobre
+la parte del producto que se escribe hoy: un parámetro nuevo escrito en una
+pantalla portada habría entrado sin que nadie lo decidiera.
+
+**Se probó metiéndole a una pantalla de verdad la lectura de un parámetro sin
+declarar**: la versión anterior la dio por buena en verde y la de ahora la
+denuncia con su renglón. La forma portada quedó en la autoprueba, al lado de
+las otras dos, y al lado de la que prueba que pedirle algo a una lista con
+nombres sigue sin confundirse con la barra de direcciones.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
