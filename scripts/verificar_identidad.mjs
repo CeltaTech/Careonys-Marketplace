@@ -31,7 +31,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { hayArchivos, EXTENSIONES_DE_PANTALLA, esPantalla } from './recorrido.mjs';
+import { hayArchivos, seRevisaron, EXTENSIONES_DE_PANTALLA, esPantalla } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -76,11 +76,19 @@ function sinComentarios(texto, extension) {
   return t;
 }
 
+/* Y que no quede buscando nada: lo prohibido sale de la identidad, así que si
+   la identidad dejara de traer sus palabras —un renombre, un archivo movido—
+   este chequeo recorrería los mismos archivos y no buscaría adentro ni una
+   sola cosa, y diría ✔ igual. */
+seRevisaron(PROHIBIDO.length, 'ni una palabra de la marca que buscar en la identidad');
+
 const hallazgos = [];
+let revisados = 0;
 for (const ruta of hayArchivos(raiz, EXTENSIONES, AJENAS)) {
   const rel = relative(raiz, ruta);
   if (ARCHIVOS_EXENTOS.has(rel) || GENERADOS.has(rel)) continue;
   if (rel.toLowerCase().endsWith('.md')) continue;
+  revisados += 1;
   const extension = rel.slice(rel.lastIndexOf('.'));
   const texto = readFileSync(ruta, 'utf8');
   const limpio = sinComentarios(texto, extension);
@@ -129,4 +137,6 @@ if (problemas.length) {
   console.error('\n' + problemas.join('\n\n') + '\n');
   process.exit(1);
 }
-console.log('Identidad verificada: el nombre solo vive en js/identidad.js.');
+console.log(
+  `Identidad verificada: el nombre solo vive en js/identidad.js `
+  + `(${PROHIBIDO.length} palabras de la marca buscadas en ${revisados} archivos).`);
