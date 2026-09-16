@@ -3126,6 +3126,31 @@ el buscador roto: le entregaba los tres escalones en un orden que se resuelve de
 Puesta la pantalla primero hacen falta dos, y la prueba se planta si la segunda no vuelve a ver
 los mismos archivos —que era, justamente, el defecto que la primera versión no vio.
 
+### Pedir la sesión por la ventana tenía dos formas que nadie miraba
+
+Este producto pide la base y la sesión por una sola puerta, y esa puerta las
+trae en el orden que hace falta: primero de dónde sale la dirección de la base,
+después la sesión. Quien las pida por su cuenta se queda sin ese orden, y el
+defecto no se ve al abrir la pantalla: aparece recién cuando alguien intenta
+entrar, con un aviso que no dice ni de lejos lo que está pasando. Por eso hay
+una regla que vigila que nadie entre por otro lado.
+
+La regla reconocía una sola de las tres maneras de pedir un archivo: la de las
+páginas sueltas, la que espera a que el archivo llegue. Las otras dos —las dos
+que se escriben arriba de todo, que son las que escribe un programa— pasaban de
+largo. Es decir que la regla estaba vigilando la mitad del producto que ya casi
+no se escribe.
+
+**No había nada roto detrás.** Ningún archivo pide la sesión por su cuenta, de
+ninguna de las tres maneras.
+
+**Se probó metiéndolo en una pantalla de verdad**: la versión anterior lo dio
+por bueno y la de ahora lo denuncia con su renglón. Las tres maneras quedaron
+en la autoprueba, que se planta si alguna deja de reconocerse, y están armadas
+por pedazos por el mismo motivo por el que este chequeo tampoco escribe adentro
+la dirección de la base: escritas enteras, sería el primero en caer en su
+propia regla.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

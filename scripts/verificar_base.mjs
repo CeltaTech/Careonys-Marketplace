@@ -26,7 +26,12 @@
       exactamente lo que devuelve un producto que ya no se conecta a nada.
    3. Que toda pantalla que carga `js/auth.js` cargue antes `js/apiClient.js`.
       El orden importa de verdad —`auth.js` se planta si no está—, y un orden que
-      hay que recordar se olvida.
+      hay que recordar se olvida. Hoy eso lo garantiza una sola puerta, así que
+      se comprueba ahí y se comprueba además que nadie entre por otro lado. Y
+      pedir un archivo se escribe de tres maneras: la que espera a que llegue,
+      que es la de las páginas sueltas, y las dos de arriba de todo, que son las
+      que escribe un programa. Mirar sólo la primera dejaría sin vigilancia
+      justo la parte del producto que se escribe hoy.
    4. Que en ningún archivo del proyecto haya nada con forma de credencial que
       no sea la publicable: una clave secreta `sb_secret_…`, un jetón con forma
       de JWT, una dirección de base con la contraseña adentro —la que va entre
@@ -71,6 +76,24 @@ const ORIGINAL = 'js/apiClient.js';
    copias: los tres paquetes nombran este mismo archivo, así que el único lugar
    donde la dirección y la clave pueden estar escritas es el original. */
 const DONDE_SE_PERMITE = new Set([ORIGINAL]);
+
+/* ---- LAS TRES MANERAS DE PEDIR UN ARCHIVO ----
+   Una página suelta lo pide cuando lo necesita, entre paréntesis. Un programa
+   lo pide arriba de todo, y ahí hay dos formas: con nombres, diciendo de dónde
+   vienen, y a secas, sólo para que se cargue. Las tres son la misma cosa:
+   saltearse la puerta. Mirar nada más que la primera dejaría la regla
+   vigilando la mitad vieja del producto, que es justamente la que ya no se
+   escribe.
+
+   Ninguna de las tres se escribe acá con el nombre del archivo adentro, por lo
+   mismo que este archivo tampoco escribe la dirección de la base: sería el
+   primero en caer en su propia regla. */
+const COMO_SE_PIDE = [
+  String.raw`import\s*\(\s*['"][^'"]*\bauth\.js['"]`,
+  String.raw`(?:import|export)\b[^;\n]*\bfrom\s*['"][^'"]*\bauth\.js['"]`,
+  String.raw`import\s*['"][^'"]*\bauth\.js['"]`
+];
+const PIDE_AUTH = new RegExp(COMO_SE_PIDE.join('|'));
 
 /* La única puerta por la que el producto pide la base y la sesión. */
 const LA_PUERTA = 'comun/datos/puerta.js';
@@ -124,8 +147,25 @@ const DE_MENTIRA = {
   aws: 'AKIA' + 'ABCDEFGHIJKLMNOP'
 };
 
+/* Las tres maneras de pedirlo, armadas por pedazos por el mismo motivo que los
+   valores de mentira: escritas enteras, este archivo sería el primero en
+   saltearse la puerta según su propia regla. */
+const ELLA = 'auth' + '.js';
+const PIDIENDOLO = [
+  ['entre paréntesis', 'await import' + "('#js/" + ELLA + "')"],
+  ['con nombres, arriba de todo', 'import { entrar } from ' + "'#js/" + ELLA + "'"],
+  ['a secas, arriba de todo', 'import ' + "'#js/" + ELLA + "'"]
+];
+/* Nombrarla no es pedirla: los comentarios del producto la nombran. */
+const NOMBRARLA = 'el aviso de arranque lo escribe ' + ELLA + ', no esta pantalla';
+
 function autoprueba() {
   const roto = [];
+  for (const [como, texto] of PIDIENDOLO) {
+    if (!PIDE_AUTH.test(texto)) roto.push('no reconoce que se la pida ' + como);
+  }
+  if (PIDE_AUTH.test(NOMBRARLA)) roto.push('llama pedido a una mención suelta');
+
   const declarado = loQueDeclara(
     '  supabaseUrl: ' + "'" + DE_MENTIRA.direccion + "'" + ',\n' +
     '  supabaseKey: ' + "'" + DE_MENTIRA.clave + "'" + ',\n');
@@ -256,7 +296,7 @@ export function verificarBase() {
 
   for (const [ruta, contenido] of leidos) {
     if (ruta === LA_PUERTA || ruta === ORIGINAL || ruta === 'js/auth.js') continue;
-    if (/import\(?\s*['"][^'"]*\bauth\.js['"]/.test(contenido)) {
+    if (PIDE_AUTH.test(contenido)) {
       problemas.push(
         ruta + ' pide `js/auth.js` por su cuenta, salteándose «' + LA_PUERTA + '».\n' +
         '  Ahí está garantizado que antes se cargue de dónde sale la dirección de la base.\n' +
@@ -278,6 +318,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
   console.log(
     'Base verificada: ' + mirados + ' archivos sin la dirección ni la clave escritas a mano (' +
     agujas + ' formas de escribirlas), la puerta pidiendo `js/apiClient.js` antes que ' +
-    '`js/auth.js` y ' + entradas + ' archivos que no se la saltean, y ninguna de las ' +
+    '`js/auth.js` y ' + entradas + ' archivos que no se la saltean (' + COMO_SE_PIDE.length +
+    ' maneras de pedirlo), y ninguna de las ' +
     NUNCA_EN_NINGUN_LADO.length + ' formas de credencial que no van a ningún lado.');
 }
