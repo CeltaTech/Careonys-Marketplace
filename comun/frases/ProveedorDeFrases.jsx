@@ -43,6 +43,21 @@ export function ProveedorDeFrases({ children }) {
     return () => { vigente = false; };
   }, []);
 
+  /* `lang` no es decorativo: de ahí sacan el idioma el lector de pantalla, el
+     corrector del navegador y el partido de palabras al final del renglón. La
+     página de arranque lo declara `es` porque alguno hay que poner antes de que
+     corra nada, y sin esto se quedaba en castellano para siempre: la pantalla
+     entera en inglés y un lector de pantalla leyéndola con pronunciación
+     castellana.
+
+     El lector suelto lo escribe recién cuando el texto llegó
+     (`js/catalogo.js:834`), porque allá, si el archivo no llega, lo que queda a
+     la vista es el castellano que la página trae escrito adentro. Acá no hay
+     dónde escribirlo —por eso mientras viaja no se dibuja nada—, así que lo que
+     se ve está desde el primer momento en el idioma que se pidió, y así se
+     declara. Es el mismo criterio: `lang` describe lo que está escrito. */
+  useEffect(() => { document.documentElement.setAttribute('lang', idioma); }, [idioma]);
+
   const valor = useMemo(() => ({
     idioma,
     idiomas: IDIOMAS,
