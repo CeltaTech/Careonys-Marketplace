@@ -815,10 +815,40 @@ export function conMoneda(textos) {
 }
 
 /** El tipo declarado de cada columna del cuerpo de un `create table`. */
+/* Los pedazos de un cuerpo de tabla, cortados por las comas que están al ras.
+   Las de adentro de un paréntesis o de un texto no cortan.
+
+   **Leído renglón por renglón el cuerpo declara columnas que no existen.** Una
+   restricción escrita en varios renglones —`check (CASE WHEN … ELSE … END)`—
+   deja cada uno de esos renglones empezando por una palabra que no es la suya,
+   y así `cursos` llegaba a tener diecinueve columnas: las catorce que tiene más
+   `case`, `when`, `else`, `end)` y `end))`. Eso corre el orden de las columnas,
+   que es justamente lo que `verificar_claves.mjs` necesita para leer una
+   siembra volcada, y le da por buena a `verificar_red.mjs` una exención que
+   nombre cualquiera de esas cinco. */
+function alRas(cuerpo) {
+  const partes = [];
+  let hondo = 0;
+  let desde = 0;
+  let enTexto = false;
+  for (let i = 0; i < cuerpo.length; i++) {
+    const c = cuerpo[i];
+    /* La comilla de adentro se escribe doblada, y con esto se resuelve sola:
+       la primera cierra el texto y la segunda lo vuelve a abrir. */
+    if (enTexto) { if (c === "'") enTexto = false; continue; }
+    if (c === "'") { enTexto = true; continue; }
+    if (c === '(') hondo++;
+    else if (c === ')') hondo--;
+    else if (c === ',' && hondo === 0) { partes.push(cuerpo.slice(desde, i)); desde = i + 1; }
+  }
+  partes.push(cuerpo.slice(desde));
+  return partes;
+}
+
 function tiposDeColumna(cuerpo) {
   const salida = new Map();
-  for (const linea of cuerpo.split('\n')) {
-    const l = linea.trim().replace(/,$/, '');
+  for (const pedazo of alRas(cuerpo)) {
+    const l = pedazo.trim().split('\n')[0].trim();
     if (!l || NO_ES_COLUMNA.test(l)) continue;
     const partes = l.split(/\s+/);
     salida.set(partes[0].replace(/"/g, '').toLowerCase(),
@@ -863,15 +893,24 @@ export function clavesPrimarias(textos) {
 }
 
 /**
- * Las columnas que hoy tiene cada tabla: `tabla → Set(columnas)`. Se sigue el
- * orden de las migraciones y se aplica lo que cada una hace, porque una columna
- * no es sólo lo que dice el `create table`: puede agregarse, renombrarse o
- * sacarse después, y la tabla entera puede cambiar de nombre en el medio.
+ * Las columnas que hoy tiene cada tabla: `tabla → Set(columnas)`, **y en el
+ * orden en que la tabla las declara**. Se sigue el orden de las migraciones y
+ * se aplica lo que cada una hace, porque una columna no es sólo lo que dice el
+ * `create table`: puede agregarse, renombrarse o sacarse después, y la tabla
+ * entera puede cambiar de nombre en el medio.
  *
- * No la usa este chequeo: la usa la octava regla de `scripts/verificar_red.mjs`,
- * que se planta cuando una exención nombra una columna que ya no existe. Vive
- * acá porque acá está el punto único de verdad de cómo se leen las migraciones,
- * y una segunda copia de esta lectura se despega de ésta el primer día.
+ * **El orden importa y por eso se sostiene a mano.** Una siembra volcada de la
+ * base no nombra las columnas —`insert into tabla values (…)`— y el orden es lo
+ * único que dice qué valor va en qué lugar, así que `verificar_claves.mjs` lee
+ * de acá para poder juzgarla. De ahí que agregar una columna la ponga al final,
+ * que sacarla la saque de la fila, y que renombrarla la deje donde estaba, que
+ * es lo que hace Postgres.
+ *
+ * La usan la octava regla de `scripts/verificar_red.mjs`, que se planta cuando
+ * una exención nombra una columna que ya no existe, y `verificar_claves.mjs`.
+ * Vive acá porque acá está el punto único de verdad de cómo se leen las
+ * migraciones, y una segunda copia de esta lectura se despega de ésta el primer
+ * día.
  *
  * **Se sacan los comentarios de renglones enteros antes de mirar**, y no es
  * cautela de más: una migración escribió `alter table public.avisos drop
@@ -883,8 +922,9 @@ export function clavesPrimarias(textos) {
 export function columnasDeclaradas(textos) {
   const columnas = new Map();
   const poner = (tabla, columna) => {
-    if (!columnas.has(tabla)) columnas.set(tabla, new Set());
-    columnas.get(tabla).add(columna);
+    if (!columnas.has(tabla)) columnas.set(tabla, []);
+    const suyas = columnas.get(tabla);
+    if (!suyas.includes(columna)) suyas.push(columna);
   };
   for (const texto of textos) {
     const t = texto.replace(/\r\n/g, '\n').replace(/^[ \t]*--.*$/gm, '');
@@ -898,12 +938,15 @@ export function columnasDeclaradas(textos) {
     for (const m of t.matchAll(RENOMBRA_COLUMNA)) {
       const suyas = columnas.get(m[1].toLowerCase());
       if (!suyas) continue;
-      suyas.delete(m[2].toLowerCase());
-      suyas.add(m[3].toLowerCase());
+      const donde = suyas.indexOf(m[2].toLowerCase());
+      if (donde < 0) { poner(m[1].toLowerCase(), m[3].toLowerCase()); continue; }
+      suyas[donde] = m[3].toLowerCase();
     }
     for (const m of t.matchAll(SACA_COLUMNA)) {
       const suyas = columnas.get(m[1].toLowerCase());
-      if (suyas) suyas.delete(m[2].toLowerCase());
+      if (!suyas) continue;
+      const donde = suyas.indexOf(m[2].toLowerCase());
+      if (donde >= 0) suyas.splice(donde, 1);
     }
     for (const m of t.matchAll(RENOMBRA)) {
       const antes = m[1].toLowerCase();
@@ -913,7 +956,7 @@ export function columnasDeclaradas(textos) {
       columnas.delete(antes);
     }
   }
-  return columnas;
+  return new Map([...columnas].map(([tabla, suyas]) => [tabla, new Set(suyas)]));
 }
 
 /* De la paréntesis que abre hasta la que cierra, contando. Una definición de
@@ -1999,6 +2042,30 @@ if (ME_CORRIERON_A_MI) {
     console.error('El detector está roto, así que no verifica nada:');
     for (const [q] of noDetecta) console.error('  no detecta: ' + q);
     for (const [q] of sePasa) console.error('  avisa de más: ' + q);
+    process.exit(1);
+  }
+
+  /* Y que la lectura de las columnas no invente ninguna. Una restricción
+     escrita en varios renglones es lo único del cuerpo de una tabla que trae
+     comas y paréntesis adentro, y leída renglón por renglón cada uno de esos
+     renglones parecía declarar una columna más. Importa el orden además del
+     nombre: es el orden lo que `scripts/verificar_claves.mjs` usa para saber
+     qué valor de una siembra volcada va en qué columna, y una de más corre
+     todas las que siguen. */
+  const CON_RESTRICCION_LARGA = 'create table public.visitas (\n' +
+    '  id uuid primary key,\n' +
+    '  modalidad text,\n' +
+    '  constraint coherente check (\n' +
+    '    CASE\n' +
+    "      WHEN (modalidad = 'presencial') THEN (id is not null)\n" +
+    '      ELSE true\n' +
+    '    END)\n' +
+    ');\n';
+  const leidas = [...(columnasDeclaradas([CON_RESTRICCION_LARGA]).get('visitas') || [])];
+  if (leidas.join(', ') !== 'id, modalidad') {
+    console.error('El detector está roto, así que no verifica nada:');
+    console.error('  no detecta: una restricción de varios renglones, leída como si '
+      + 'cada uno de sus renglones declarara una columna: ' + leidas.join(', '));
     process.exit(1);
   }
 

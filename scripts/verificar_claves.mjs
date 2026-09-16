@@ -225,34 +225,13 @@ function textosDe(valor) {
   return [crudo];
 }
 
-/* Lo que declara el esquema, que es lo único que dice en qué orden vienen los
-   valores de un volcado. Un volcado escribe `insert into public.caregivers
-   values (…)` y no nombra ninguna columna: el orden es el de la tabla, y sin
-   leer el `create table` no hay contra qué emparejar nada. */
-const CREA_TABLA =
-  /create\s+table\s+(?:if\s+not\s+exists\s+)?(?:public\.)?"?(\w+)"?\s*\(/gi;
-
-/* Un renglón de adentro del `create table` que no declara una columna sino una
-   restricción de la tabla entera. No ocupa lugar en el orden de los valores. */
-const NO_ES_UNA_COLUMNA =
-  /^(constraint|primary|unique|foreign|check|exclude|like|partition)\b/i;
-
-/** Las columnas de cada tabla, en el orden en que el esquema las declara. */
-function columnasDeclaradas(textos) {
-  const tablas = new Map();
-  for (const texto of textos) {
-    const limpio = sinComentarios(texto);
-    for (const m of limpio.matchAll(CREA_TABLA)) {
-      const abre = m.index + m[0].length - 1;
-      const cierra = finDeParentesis(limpio, abre);
-      if (cierra < 0) continue;
-      tablas.set(m[1].toLowerCase(), partirAlRas(limpio.slice(abre + 1, cierra))
-        .filter((renglon) => !NO_ES_UNA_COLUMNA.test(renglon))
-        .map((renglon) => renglon.split(/\s+/)[0].replace(/"/g, '').toLowerCase()));
-    }
-  }
-  return tablas;
-}
+/* De dónde sale el orden de las columnas, que es lo único que dice qué valor va
+   en qué lugar cuando la siembra no las nombra. Se lee de `verificar_esquema.mjs`
+   y no se vuelve a escribir acá: ahí está el punto único de verdad de cómo se
+   leen las migraciones, y una segunda copia se despega de aquélla el primer día
+   —una columna agregada, sacada o renombrada deja de contarse igual de los dos
+   lados y el emparejamiento se corre entero sin avisar—. */
+import { columnasDeclaradas } from './verificar_esquema.mjs';
 
 /* La lista de columnas es opcional: sin ella la siembra es un volcado. */
 const INSERT = /insert\s+into\s+(?:public\.)?"?(\w+)"?\s*(?:\(([^)]*)\)\s*)?values/gi;
@@ -335,7 +314,7 @@ function revisarSql(sql, declaradas = columnasDeclaradas([sql])) {
        nadie. */
     const columnas = cabecera[2] !== undefined
       ? cabecera[2].split(',').map((c) => c.trim().replace(/"/g, ''))
-      : declaradas.get(tabla);
+      : (declaradas.has(tabla) ? [...declaradas.get(tabla)] : undefined);
     if (columnas === undefined) {
       reparos.push({
         renglon: renglon(cabecera.index),
@@ -374,6 +353,15 @@ function revisarSql(sql, declaradas = columnasDeclaradas([sql])) {
 
 /* ── Autoprueba: si el detector está roto, esto lo dice antes de revisar nada ── */
 
+/* Un esquema mínimo para las pruebas del volcado. Va de a una columna por
+   renglón, que es como se escribe una migración y como se lee de ella. */
+const ESQUEMA_DE_PRUEBA = `create table public.caregivers (
+  id uuid primary key,
+  profession text,
+  constraint sin_vacio check (profession <> '')
+);
+`;
+
 const MALOS = [
   ['una profesión que no existe',
    "insert into public.caregivers (id, profession) values ('a', 'enfermero');"],
@@ -390,11 +378,11 @@ const MALOS = [
   ['el puesto de una experiencia laboral, en la misma forma',
    "insert into public.experiencia_laboral_asistente (tenant_id, caregiver_id, puesto) select c.tenant_id, c.id, x.puesto from public.caregivers c join (values ('a'::uuid, 'enfermero')) as x(caregiver_id, puesto) on x.caregiver_id = c.id;"],
   ['el volcado que no nombra las columnas',
-   "create table public.caregivers (id uuid primary key, profession text, constraint x check (profession <> ''));\ninsert into public.caregivers values ('a', 'enfermero');"],
+   ESQUEMA_DE_PRUEBA + "insert into public.caregivers values ('a', 'enfermero');"],
   ['el volcado de una tabla que ninguna migración declara',
    "insert into public.caregivers values ('a', 'gerontologo');"],
   ['el volcado que escribe más valores que columnas tiene la tabla',
-   "create table public.caregivers (id uuid primary key, profession text, constraint x check (profession <> ''));\ninsert into public.caregivers values ('a', 'gerontologo', 'de más');"]
+   ESQUEMA_DE_PRUEBA + "insert into public.caregivers values ('a', 'gerontologo', 'de más');"]
 ];
 const BUENOS = [
   ['todas las claves buenas',
@@ -414,7 +402,7 @@ const BUENOS = [
   ['una lista de valores sin nombres de columna no se juzga a ciegas',
    "insert into public.caregivers (id, zone) select v.a, v.b from (values ('a', 'zona_este')) v;"],
   ['el volcado con todas las claves buenas',
-   "create table public.caregivers (id uuid primary key, profession text, constraint x check (profession <> ''));\ninsert into public.caregivers values ('a', 'gerontologo');"]
+   ESQUEMA_DE_PRUEBA + "insert into public.caregivers values ('a', 'gerontologo');"]
 ];
 
 const noDetecta = MALOS.filter(([, s]) => revisarSql(s).reparos.length === 0).map(([n]) => n);

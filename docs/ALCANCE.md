@@ -2899,7 +2899,7 @@ cinco de avisos y todo el contenido de los cuatro legajos pasaban sin que nadie 
 valores.**
 
 Un chequeo que no mira no es un chequeo que pasa: es un chequeo que no existe. Pasó entonces a
-reconocer las dos formas (`scripts/verificar_claves.mjs:268`) y conoce cinco columnas más
+reconocer las dos formas (`scripts/verificar_claves.mjs:247`) y conoce cinco columnas más
 —modalidad y nivel de un curso, día y turno de una franja, puesto de una experiencia—.
 
 **Se probó que puede fallar**, que es la única forma de saber que sirve. Con dos valores
@@ -2922,6 +2922,27 @@ columnas, el chequeo se planta en vez de saltearla en silencio; y el renglón de
 siembras leídas. **Se volvió a probar de las dos maneras**: con una clave inventada metida en
 una fila de volcado, la versión anterior seguía diciendo que todo estaba bien, y la de ahora la
 denuncia con su renglón y corta.
+
+### La lectura de las migraciones inventaba columnas, y la delató la guarda del arreglo anterior
+
+El arreglo de recién dejó puesta una regla nueva: si una siembra volcada trae una cantidad de
+valores que no es la de las columnas de su tabla, el chequeo se planta en vez de saltearla en
+silencio. Esa regla se plantó enseguida contra una tabla de verdad. Decía que la de cursos tiene
+diecinueve columnas, y tiene catorce.
+
+Las cinco de más se llamaban `case`, `when`, `else`, `end)` y `end))`. La lectura partía el
+cuerpo de la tabla renglón por renglón, y una restricción escrita en varios renglones deja cada
+uno de ellos empezando por una palabra que no es el nombre de ninguna columna. El defecto no
+estaba en el chequeo de las claves sino en la lectura de migraciones que comparten tres, así que
+una columna inventada corría el orden que el de las claves necesita para saber qué valor va en
+qué lugar, y además le daba por buena al de la red una exención que nombrara cualquiera de esas
+cinco.
+
+Ahora el cuerpo se corta por las comas que están al ras —las de adentro de un paréntesis o de un
+texto no cortan—, y el chequeo trae una prueba propia que se planta si vuelve a inventar una
+columna. **Se probó de las dos maneras**: con una exención que nombra una de esas cinco metida
+en un guión de verdad, la versión anterior decía que todo estaba bien, y la de ahora la denuncia
+con su renglón y corta.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
@@ -3774,7 +3795,7 @@ abierto sino una trampa armada: la protección no vivía donde se la lee, y ya s
 vez sin que nadie se enterara —una migración se la llevó puesta y la siguiente tuvo que
 reponerla—. Por eso el chequeo del esquema no se cree esa exención: va y mira que el permiso siga
 nombrando sus columnas, y se planta si alguna migración futura vuelve a conceder `update` sobre
-`profiles` sin nombrarlas (`scripts/verificar_esquema.mjs:1472`).
+`profiles` sin nombrarlas (`scripts/verificar_esquema.mjs:1515`).
 
 **Sobre el pendiente 75, el Desarrollador eligió la opción A: el papel nuevo baja el sello.** Había
 tres defendibles —bajarlo, prohibir el cambio mientras el sello esté puesto, o permitirlo y
