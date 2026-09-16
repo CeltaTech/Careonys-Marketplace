@@ -3749,6 +3749,40 @@ decide un solo archivo.
 Es la quinta vez que la misma regla se rompe por el mismo camino: alguien vuelve a escribir el
 recorrido en su archivo en vez de pedirlo.
 
+### Seis chequeos perdonaban una carpeta que ya no existía, y el que vigila las exenciones no los veía
+
+`scripts/verificar_red.mjs` es el chequeo que vigila a los demás, y dos de sus reglas están
+puestas justamente para esto: que ninguna exención escrita en `scripts/` siga nombrando un
+archivo que ya no está, y que ninguna nombre una columna que ninguna migración declara. Una
+exención que ya no exime nada no es inofensiva: sigue salteando lo que nombra, así que apaga el
+chequeo sobre eso y no queda rastro.
+
+Las dos reglas leían una sola forma de escribir una exención: un mapa, `const NOMBRE = new
+Map([…])` (`scripts/verificar_red.mjs:219`), y de ahí sólo miraban las claves que tienen pinta de
+archivo (`scripts/verificar_red.mjs:217`) o de columna (`scripts/verificar_red.mjs:272`). Pero
+este proyecto escribe otra exención distinta diecisiete veces: `const AJENAS = […]`, la lista de
+carpetas que un chequeo declara no mirar. Es una lista suelta y no un mapa, y sus valores no
+tienen pinta de archivo ni de columna, así que se caía por las tres redes a la vez.
+
+Probado antes de tocar nada: se metió `carpeta que no existe en ningun lado` en la lista de
+`scripts/verificar_trato.mjs:41` y `verificar_red.mjs` terminó en verde.
+
+Y había daño puesto. Seis chequeos eximían a `Nueva carpeta`, que se había mudado entera a la
+cuarentena (`docs/PENDIENTES.md:66`) y por lo tanto ya no existía en ningún lado donde ningún
+chequeo pudiera mirar: `scripts/verificar_arranque.mjs:53`,
+`scripts/verificar_botones.mjs:57`, `scripts/verificar_deposito.mjs:118`,
+`scripts/verificar_estados.mjs:79`, `scripts/verificar_sensibles.mjs:81` y un bloque entero en
+`scripts/citas.mjs`. Seis renglones perdonando a un fantasma.
+
+Qué se hizo: una tercera regla, `carpetasEximidasQueNoEstan()`
+(`scripts/verificar_red.mjs:309`), que lee la lista en sus tres formas —suelta, como conjunto y
+exportada— sin mirar adentro de los comentarios. Contra qué se compara sale de
+`carpetasDelProyecto()` (`scripts/recorrido.mjs:279`), que recorre con la misma regla con la que
+se recorre todo: nombra la carpeta que existe aunque no se pueda entrar en ella —una caja fuerte
+está, y decir que no se la mira es cierto—, y sólo denuncia lo que no está en ningún lado. Las
+seis exenciones muertas se sacaron, y con ellas el bloque de `scripts/citas.mjs`, que no tenía
+ningún otro nombre adentro.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

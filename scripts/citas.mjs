@@ -86,9 +86,6 @@ export const DE_OTRO_REPOSITORIO = new Map([
    `careonys_viejo/` entraría igual. */
 export const PREFIJOS_DE_AFUERA = ['careonys/', 'celtatech/'];
 
-/* Carpetas de trabajo de quien desarrolla: no son documentación del proyecto. */
-export const AJENAS = ['Nueva carpeta'];
-
 /* ---- DÓNDE SE BUSCAN LAS CITAS ----
 
    En todo el proyecto, y no sólo en `docs/`. La regla de la empresa
@@ -117,7 +114,7 @@ export const NO_SE_RECORREN = new Map([
 
 /** Todos los archivos del proyecto donde puede haber una cita, desde la raíz. */
 export function documentosConCitas(raiz) {
-  return hayArchivos(raiz, EXTENSIONES_CON_CITAS, [...AJENAS, ...NO_SE_RECORREN.keys()])
+  return hayArchivos(raiz, EXTENSIONES_CON_CITAS, [...NO_SE_RECORREN.keys()])
     .map((camino) => relative(raiz, camino).split(sep).join('/'));
 }
 

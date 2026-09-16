@@ -78,7 +78,7 @@ const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
    éste: una dirección se arma y un registro se escribe donde vive una pantalla
    o su guion. */
-const AJENAS = ['docs', 'supabase', 'scripts', 'data', 'assets', 'Nueva carpeta'];
+const AJENAS = ['docs', 'supabase', 'scripts', 'data', 'assets'];
 
 /* ── 1. Lo que puede viajar en la barra de direcciones ──────────────────────
    Cada nombre, con por qué puede quedar escrito en el historial de un

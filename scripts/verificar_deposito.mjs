@@ -115,7 +115,7 @@ import { comoSeEscribe, valorDe } from './atributos.mjs';
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
    éste: un depósito se nombra donde vive una pantalla o su guion. */
-const AJENAS = ['docs', 'supabase', 'scripts', 'data', 'assets', 'Nueva carpeta'];
+const AJENAS = ['docs', 'supabase', 'scripts', 'data', 'assets'];
 
 /* Los lugares donde va un nombre de depósito, si ese lugar es una dirección
    pública, y de dónde sale el nombre de cada coincidencia. Lo público es lo que

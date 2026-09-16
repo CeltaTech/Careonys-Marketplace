@@ -16,7 +16,7 @@
    atributos `style=` del marcado» y lo contó como éxito. Está en el pendiente
    69 de `docs/PENDIENTES.md`.
 
-   QUÉ EXIGE, QUE SON SEIS COSAS
+   QUÉ EXIGE, QUE SON SIETE COSAS
    1. Que todo chequeo llame por lo menos una vez a `seRevisaron()` o a
       `hayArchivos()`, las dos de `scripts/recorrido.mjs`, que son las que se
       plantan cuando la cuenta da cero. La llamada se busca **con los
@@ -61,9 +61,21 @@
       hace te frena. Y del otro lado exige que exista: una orden de correr
       algo que ya no está es peor que ninguna, porque manda a alguien a
       buscar un archivo que se renombró y no dice adónde fue.
+   7. Que ninguna carpeta eximida en una lista `AJENAS` haya dejado de
+      existir. Es la tercera y la cuarta otra vez, en la única forma que a las
+      dos se les escapaba: una exención que no tiene pinta de archivo ni de
+      columna, y que además se escribe como una lista suelta y no como un mapa.
+      Cada nombre ahí adentro apaga ese chequeo sobre esa carpeta mientras esté
+      escrito. Medido el 16 de septiembre de 2026: **seis chequeos eximían a una
+      carpeta que se había mudado entera a la cuarentena**, así que ya no
+      existía en ningún lado donde ningún chequeo pudiera mirar. Seis renglones
+      perdonando a un fantasma, y ninguna de las dos reglas de arriba los veía.
+      Qué carpetas hay sale de `carpetasDelProyecto()`, que mira con la misma
+      regla con la que se recorre: lo que ningún chequeo puede abrir tampoco se
+      puede eximir, porque ya está afuera de todo.
 
    CÓMO SE PRUEBA, Y POR QUÉ ASÍ
-   Seis veces, porque las seis pueden fallar:
+   Siete veces, porque las siete pueden fallar:
    1. Contra la función de verdad: `seRevisaron(0, …)` tiene que cortar y
       `seRevisaron(3, …)` tiene que devolver 3. Sin esto, la guarda podría estar
       vacía por dentro y todos los chequeos «cumplirían» igual.
@@ -84,13 +96,20 @@
       mención, y **la fila** del nombre citado en un párrafo: son las dos formas
       en que esta regla se pondría roja sin motivo, y un rojo sin motivo en un
       chequeo del gancho de `commit` termina en que alguien lo apaga.
+   7. Contra cinco listas de carpetas de mentira: una que nombra carpetas que
+      están, una que nombra una que ya no está, la misma escrita como conjunto,
+      la misma exportada, y una escrita adentro de un comentario. Las tres
+      formas se miran porque el proyecto usa las tres, y la comentada porque un
+      ejemplo apagado no exime nada y ponerse rojo por él sería un rojo sin
+      motivo.
 =================================================== */
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
-  seRevisaron, hayArchivos, archivos, ARMAN_SU_PROPIO_CORPUS, EXTENSIONES_DE_PANTALLA
+  seRevisaron, hayArchivos, archivos, carpetasDelProyecto, ARMAN_SU_PROPIO_CORPUS,
+  EXTENSIONES_DE_PANTALLA
 } from './recorrido.mjs';
 import { columnasDeclaradas } from './verificar_esquema.mjs';
 
@@ -268,6 +287,35 @@ export function clavesSinSuColumna(texto, columnas) {
     }
   }
   return perdidas;
+}
+
+/* ── LA CARPETA EXIMIDA QUE YA NO ESTÁ ──────────────────
+   La misma enfermedad, una forma más. Un chequeo declara en `AJENAS` las
+   carpetas que no mira, y cada nombre de ésos es una exención como cualquier
+   otra: mientras esté escrito, ese chequeo no entra ahí. Pero no tiene pinta de
+   archivo ni de columna, y encima se escribe como una lista y no como un mapa,
+   así que las dos reglas de arriba no la miraban ni por casualidad.
+
+   El caso que la pide: seis chequeos eximían a `Nueva carpeta`, que se había
+   mudado entera a la cuarentena y ya no existía en ningún lado donde ningún
+   chequeo pudiera mirar. Seis renglones perdonando a un fantasma.
+
+   Qué carpetas hay sale de `carpetasDelProyecto()`, de `recorrido.mjs`, que
+   mira con la misma regla con la que se recorre: lo que ningún chequeo puede
+   abrir tampoco se puede eximir, porque ya está afuera. */
+const LISTA_DE_AJENAS = /const AJENAS = (?:new Set\()?\[([^\]]*)\]/g;
+
+/** Las carpetas que este texto dice no mirar y que ya no están. */
+export function carpetasEximidasQueNoEstan(texto, carpetas) {
+  const idas = [];
+  for (const lista of sinComentarios(texto).matchAll(LISTA_DE_AJENAS)) {
+    for (const nombre of lista[1].matchAll(/'([^']+)'/g)) {
+      if (!carpetas.has(nombre[1])) {
+        idas.push({ lista: 'AJENAS', clave: nombre[1], porque: 'esa carpeta no est\u00e1' });
+      }
+    }
+  }
+  return idas;
 }
 
 /* ── Y QUE EL README LOS NOMBRE A TODOS ───────────────────────────────────
@@ -479,6 +527,27 @@ if (sinColumna(conMapa('LA_SIEMBRA_NO_PUEDE', 'visitas.color')).length === 0) {
 if (sinColumna(conMapa('LA_SIEMBRA_NO_PUEDE', 'paseos.motivo')).length === 0) {
   fallas.push('Dio por buena una exención que nombra una tabla que no existe.');
 }
+/* ── 8 bis. Que reconozca la carpeta eximida que ya no está ────────── */
+
+const CARPETAS_DE_MENTIRA = new Set(['docs', 'assets']);
+const sinCarpeta = (texto) => carpetasEximidasQueNoEstan(texto, CARPETAS_DE_MENTIRA);
+
+if (sinCarpeta("const AJENAS = ['docs', 'assets'];").length > 0) {
+  fallas.push('Se quejó de una exención que nombra carpetas que están.');
+}
+if (sinCarpeta("const AJENAS = ['docs', 'la que se fue'];").length === 0) {
+  fallas.push('Dio por buena una exención que nombra una carpeta que ya no está.');
+}
+if (sinCarpeta("const AJENAS = new Set(['la que se fue']);").length === 0) {
+  fallas.push('No reconoció la lista escrita como conjunto, que es la otra forma.');
+}
+if (sinCarpeta("export const AJENAS = ['la que se fue'];").length === 0) {
+  fallas.push('No reconoció la lista exportada, que es la tercera forma.');
+}
+if (sinCarpeta("/* const AJENAS = ['la que se fue']; */").length > 0) {
+  fallas.push('Se quejó de una lista escrita adentro de un comentario.');
+}
+
 if (sinColumna(conMapa('AFUERA', 'verificar_todo.mjs')).length > 0) {
   fallas.push('Confundió el nombre de un archivo con una columna.');
 }
@@ -596,6 +665,9 @@ seRevisaron(migraciones.length, 'ninguna migración de la que sacar las columnas
 const columnas = columnasDeclaradas(migraciones.map((m) => readFileSync(m, 'utf8')));
 seRevisaron(columnas.size, 'ninguna tabla en las migraciones');
 
+const carpetasReales = carpetasDelProyecto(join(aca, '..'));
+seRevisaron(carpetasReales.size, 'ninguna carpeta en el proyecto contra la que mirar');
+
 const exencionesTorcidas = [];
 for (const nombre of guiones) {
   const texto = readFileSync(join(aca, nombre), 'utf8');
@@ -604,6 +676,9 @@ for (const nombre of guiones) {
   }
   for (const perdida of clavesSinSuColumna(texto, columnas)) {
     exencionesTorcidas.push([nombre, perdida]);
+  }
+  for (const ida of carpetasEximidasQueNoEstan(texto, carpetasReales)) {
+    exencionesTorcidas.push([nombre, ida]);
   }
 }
 
@@ -723,6 +798,8 @@ if (fallas.length > 0) {
     'escritas por archivo, así que apagan el chequeo sobre él entero. Si el archivo\n' +
     'se renombró, se corrige la clave; si se fue, se borra el renglón. Lo mismo\n' +
     'vale para la que nombra una columna: sale de las migraciones, no de la base.\n' +
+    'Y una exención que nombra una carpeta en `AJENAS` se saca igual: si la\n' +
+    'carpeta se fue, el renglón que la eximía se va con ella.\n' +
     'Y el guion que un documento manda a correr se agrega a la lista de guiones\n' +
     'del `README.md`, con una fila que empiece el renglón. Esa lista es una\n' +
     'selección a propósito y no tiene que estar entera; tiene que estar el que\n' +
@@ -737,7 +814,8 @@ console.log(
   `pantallas escrita a mano ni metida adentro de la clave de una exención, y los ` +
   `${enElReadme.size} nombrados en la tabla del README. Y en los ${guiones.length} guiones ` +
   `de \`scripts/\`, ninguna exención que nombre un archivo que ya no está ni una ` +
-  `columna que no declara ninguna de las ${migraciones.length} migraciones. Y de los ` +
+  `columna que no declara ninguna de las ${migraciones.length} migraciones ni una ` +
+  `carpeta que ya no está entre las ${carpetasReales.size} del proyecto. Y de los ` +
   `${ordenados.size} guiones que los ${documentos.length} documentos mandan a correr, los ` +
   `${ordenados.size} existen y los ${ordenados.size} tienen su fila entre las ` +
   `${conSuFila.size} de la lista de guiones del \`README.md\`.`

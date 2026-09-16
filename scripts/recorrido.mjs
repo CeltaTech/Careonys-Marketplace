@@ -266,6 +266,28 @@ export function archivos(carpeta, extensiones, ademas = [], encontrados = []) {
   return encontrados;
 }
 
+/**
+ * Los nombres de carpeta que se pueden nombrar: sirve para lo contrario que
+ * `archivos`, que es saber si una carpeta que alguien dice no mirar sigue
+ * estando ahí. Una que ya no está perdona algo que no existe.
+ *
+ * Lo que `nuncaSeAbre` cierra entra igual por su nombre y no se entra adentro.
+ * El nombre existe —`node_modules` está ahí, y un chequeo que diga no mirarlo
+ * está diciendo la verdad—; lo que no se puede es ir a ver qué guarda. Así, lo
+ * único que queda afuera es lo que de verdad no está en ningún lado.
+ */
+export function carpetasDelProyecto(carpeta, encontradas = new Set()) {
+  if (!existsSync(carpeta)) return encontradas;
+  for (const nombre of readdirSync(carpeta)) {
+    const camino = join(carpeta, nombre);
+    if (!statSync(camino).isDirectory()) continue;
+    encontradas.add(nombre);
+    if (nuncaSeAbre(nombre)) continue;
+    carpetasDelProyecto(camino, encontradas);
+  }
+  return encontradas;
+}
+
 /* ===================================================
    Y LA OTRA MITAD: QUE HAYA ENCONTRADO ALGO
 

@@ -50,7 +50,7 @@ import { soloCodigo, cuerpo, dentroDeTry } from './bloques.mjs';
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 /* Carpetas que este chequeo no mira: no son pantallas. */
-const AJENAS = ['docs', 'supabase', 'scripts', 'data', 'assets', 'Nueva carpeta'];
+const AJENAS = ['docs', 'supabase', 'scripts', 'data', 'assets'];
 
 /* Arranques exentos, cada uno con su motivo escrito al lado. Una exención sin
    motivo es una excepción que nadie va a poder revisar después. */

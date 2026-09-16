@@ -76,7 +76,7 @@ import { soloCodigo, cuerpo, dentroDeTry, sinBloquesDeComentario } from './bloqu
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 /* Carpetas que este chequeo no mira: no son pantallas. */
-const AJENAS = ['docs', 'supabase', 'scripts', 'data', 'assets', 'css', 'Nueva carpeta'];
+const AJENAS = ['docs', 'supabase', 'scripts', 'data', 'assets', 'css'];
 
 /* Puntos de carga exentos, cada uno con su motivo escrito al lado. Una exención
    sin motivo es una excepción que nadie va a poder revisar después. */
