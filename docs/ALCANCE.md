@@ -3352,6 +3352,40 @@ guion se planta y el chequeo se niega a correr. Y poniendo en el archivo una gu�
 escrita, la versión anterior nombró sus cuatro partes como faltantes mientras la de ahora no dijo
 nada de la forma.
 
+### El chequeo de las Guías de cuidado leía el 17 % de lo que tenía delante
+
+Las Guías de cuidado explican qué hacer frente a una patología, y tienen una regla escrita
+encima: **una guía dice qué hacer, nunca a qué número llamar.** El número de emergencia cambia
+por país, así que es dato de la Prestadora y no del producto. El chequeo que lo vigila leía las
+guías sembradas con `[^;]*;`, es decir hasta el primer punto y coma — y una guía está llena de
+punto y coma adentro de la prosa.
+
+Medido antes de tocar nada: de los 135.182 caracteres de guía escritos en la siembra el chequeo
+miraba 23.359 y perdía 111.823, el 82,7 %. Seis filas quedaban partidas, y por cómo está escrita
+la sentencia **la parte que se perdía siempre era la última**, `en_emergencia`, que es
+exactamente aquella sobre la que trata la regla.
+
+La misma pasada encontró otras dos. Las guías que escribe una Prestadora se bajaban enteras y se
+usaban sólo para sacarles una huella y compararlas entre sí: el texto pasaba delante y nadie lo
+leía, y son las únicas guías que no están escritas en el repositorio. Y la lista de Prestadoras
+de ejemplo estaba escrita a mano con dos nombres cuando la siembra carga tres, así que el
+aislamiento se probaba sobre dos tercios de las que existen.
+
+**Ninguna de las tres dejó daño.** En los 23.359 caracteres que sí miraba no hay ningún número
+de emergencia, y las dos guías propias que hay hoy en la base publicada —`presdemo` y
+`cuidarnorte`, las dos de `patologia/alzheimer`, 11.409 caracteres entre las dos— están limpias.
+Era una regla dormida.
+
+Qué cambió: la lectura de una sentencia respeta las comillas del propio texto, así que un punto y
+coma escrito adentro de una guía ya no la corta. El detector de números vive en una sola función
+que corre sobre las dos miradas —lo escrito en el repositorio y lo que devuelve la base—, para
+que no se vayan separando. Y los nombres cortos de las Prestadoras de ejemplo salen de la
+siembra en vez de escribirse a mano.
+
+La prueba que puede fallar: el banco del propio chequeo incluye una guía con un número escondido
+después de un punto y coma de la prosa y otra con una comilla adentro del texto. Devolviéndole al
+lector su forma vieja, el banco se planta.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

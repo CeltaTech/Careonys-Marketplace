@@ -72,13 +72,6 @@ const aRuta = (r) => join(raiz, r);
 const IDIOMAS = ['es-AR', 'en', 'pt-BR'];
 const PARTES = ['descripcion', 'que_esperar', 'senales_de_alarma', 'en_emergencia'];
 
-/* Los nombres cortos de las dos Prestadoras inventadas. Están escritos acá por
-   el mismo motivo que en `scripts/probar_aislamiento.mjs:491`: no existe forma de
-   pedir la lista de Prestadoras sin sesión, que es
-   justamente la propiedad que se quiere conservar. Son datos de prueba, no
-   configuración del producto. */
-const NOMBRES_CORTOS = ['presdemo', 'cuidarnorte'];
-
 const problemas = [];
 let mirados = 0;
 
@@ -89,6 +82,19 @@ const migraciones = archivos(aRuta('supabase/migrations'), ['.sql'])
   .map((camino) => ({ camino, nombre: camino.split(/[\\/]/).pop(), texto: readFileSync(camino, 'utf8') }));
 
 seRevisaron(migraciones.length, 'una sola migración en supabase/migrations');
+
+/* Los nombres cortos de las Prestadoras inventadas. **No se pueden pedir a la
+   base**: no existe forma de listar Prestadoras sin sesión, y ésa es justamente
+   la propiedad que se quiere conservar. Pero sí están escritos en la siembra,
+   que este chequeo ya lee entera, así que salen de ahí en vez de escribirse a
+   mano acá: la lista a mano conocía dos, y la siembra carga tres desde que se
+   agregó la tercera, así que el aislamiento se probaba sobre dos tercios de las
+   que existen y nada lo decía. Se toma el segundo valor de cada fila, que es el
+   nombre corto. */
+const NOMBRES_CORTOS = [...new Set(
+  migraciones.flatMap((m) => sentenciasDe(m.texto, 'tenants').map((s) => textosDe(s)[1]))
+)].filter(Boolean);
+seRevisaron(NOMBRES_CORTOS.length, 'ninguna Prestadora de ejemplo escrita en la siembra');
 
 const laQueCrea = migraciones.find((m) => /create table[^;]*guias_cuidado/is.test(m.texto));
 if (!laQueCrea) {
@@ -186,14 +192,63 @@ const SUELTO = new RegExp('(?<![\\d.,:/-])(' + NUMEROS_DE_EMERGENCIA.join('|') +
    porque si no los tres primeros hallazgos son todos falsos —lo fueron—. */
 const UUID = /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi;
 
+/** Dónde termina de verdad la sentencia que empieza en `desde`.
+ *
+ *  Antes esto era `[^;]*;`, y una guía está llena de punto y coma: el texto de
+ *  una sola de ellas los tiene adentro de la prosa, y ahí se cortaba la lectura.
+ *  Seis de las guías sembradas quedaban partidas, y cuatro de ellas perdían
+ *  todo menos la primera parte. **La parte que se perdía siempre era la
+ *  última**, que es `en_emergencia` —justo la que esta regla existe para
+ *  vigilar, porque es la que podría terminar diciendo a qué número llamar—.
+ *
+ *  Un punto y coma sólo cierra la sentencia cuando está **afuera** de un texto
+ *  entre comillas simples, y dos comillas seguidas adentro de un texto son una
+ *  comilla escrita, no el final. Eso es todo lo que hay que saber de SQL para
+ *  leer esto bien, y escrito así no depende de cómo esté redactada la prosa. */
+export function finDeSentencia(texto, desde) {
+  let i = desde;
+  let enTexto = false;
+  while (i < texto.length) {
+    const letra = texto[i];
+    if (enTexto) {
+      if (letra === "'") {
+        if (texto[i + 1] === "'") i++;
+        else enTexto = false;
+      }
+    } else if (letra === "'") enTexto = true;
+    else if (letra === ';') return i + 1;
+    i++;
+  }
+  return texto.length;
+}
+
+/** Las sentencias que cargan filas en una tabla, enteras. */
+export function sentenciasDe(texto, tabla) {
+  const arranca = new RegExp(
+    String.raw`insert\s+into\s+public\.` + tabla + String.raw`\b`, 'gi');
+  const sentencias = [];
+  for (const inicio of texto.matchAll(arranca)) {
+    sentencias.push(texto.slice(inicio.index, finDeSentencia(texto, inicio.index)));
+  }
+  return sentencias;
+}
+
+/** Las sentencias que cargan guías, enteras. */
+export const sentenciasDeGuia = (texto) => sentenciasDe(texto, 'guias_cuidado');
+
+/** Los textos entre comillas simples de una sentencia, ya desescapados. */
+export function textosDe(sentencia) {
+  return [...sentencia.matchAll(/'((?:[^']|'')*)'/g)].map((m) => m[1].split("''").join("'"));
+}
+
 /** Los textos de guía que están escritos en el repositorio, con su origen.
  *  De la migración se toman sólo los textos por idioma —lo que va entre llaves—
  *  y no la fila entera, que además lleva identificadores y fechas. */
 function textosDeGuia() {
   const fuentes = [];
   for (const m of migraciones) {
-    for (const fila of m.texto.matchAll(/insert\s+into\s+public\.guias_cuidado\b[^;]*;/gis)) {
-      const soloTexto = [...fila[0].matchAll(/'(\{[\s\S]*?\})'/g)].map((j) => j[1]).join('\n');
+    for (const fila of sentenciasDeGuia(m.texto)) {
+      const soloTexto = [...fila.matchAll(/'(\{[\s\S]*?\})'/g)].map((j) => j[1]).join('\n');
       fuentes.push({ donde: m.nombre, texto: soloTexto });
     }
   }
@@ -205,18 +260,59 @@ function textosDeGuia() {
   return fuentes;
 }
 
-for (const { donde, texto: crudo } of textosDeGuia()) {
-  mirados++;
-  const texto = crudo.replace(UUID, ' ');
+/** Los números de emergencia que aparecen escritos en un texto de guía. */
+export function numerosDeEmergenciaEn(crudo) {
+  const texto = String(crudo).replace(UUID, ' ');
   const hallados = new Set();
   for (const m of texto.matchAll(LLAMAR)) hallados.add(m[0].replace(/\s+/g, ' ').trim());
   for (const m of texto.matchAll(SUELTO)) hallados.add(m[1]);
-  if (hallados.size) {
-    problemas.push(`En \`${donde}\` una guía escribe un número de emergencia: ` +
-      [...hallados].slice(0, 4).map((h) => `«${h}»`).join(', ') + '. ' +
-      'Las guías dicen qué hacer, nunca a qué número llamar: el número cambia por país, ' +
-      'así que es dato de la Prestadora y no del producto.');
+  return [...hallados];
+}
+
+/** El reclamo, escrito en un solo lugar porque lo usan los dos recorridos: el
+ *  de lo que está escrito en el repositorio y el de lo que devuelve la base. */
+function reclamoPorNumero(donde, hallados) {
+  return `En \`${donde}\` una guía escribe un número de emergencia: ` +
+    hallados.slice(0, 4).map((h) => `«${h}»`).join(', ') + '. ' +
+    'Las guías dicen qué hacer, nunca a qué número llamar: el número cambia por país, ' +
+    'así que es dato de la Prestadora y no del producto.';
+}
+
+/* ── Las pruebas del propio detector, antes de mirar nada ──────────────────
+   Una prueba que no puede fallar no prueba nada. La segunda fila es el defecto
+   que se arregló acá: una guía cuyo texto lleva un punto y coma adentro, que es
+   como están escritas seis de las sembradas.
+
+   El número esperado cuenta **hallazgos**, no números: «llame al 107» lo
+   encuentran los dos caminos —el del verbo y el de la lista cerrada— y son dos
+   hallazgos del mismo número. Se cuenta así a propósito, para que la prueba se
+   plante también si se apaga uno solo de los dos caminos. */
+const PRUEBAS = [
+  ['una guía sin ningún número',
+    "insert into public.guias_cuidado values ('{\"es-AR\": \"Acompañe y espere 10 minutos\"}');", 0],
+  ['un número escondido después de un punto y coma de la prosa',
+    "insert into public.guias_cuidado values ('{\"en\": \"Stay close; there may be checks\"}', '{\"es-AR\": \"Llame al 107\"}');", 2],
+  ['una comilla escrita adentro del texto',
+    "insert into public.guias_cuidado values ('{\"es-AR\": \"la Familia''s; llame al 911\"}');", 2],
+  ['una lista pelada al final de un paso',
+    "insert into public.guias_cuidado values ('{\"pt-BR\": \"Procure ajuda. 192\"}');", 1]
+];
+for (const [que, sql, esperados] of PRUEBAS) {
+  const encontrados = sentenciasDeGuia(sql)
+    .flatMap((s) => numerosDeEmergenciaEn([...s.matchAll(/'(\{[\s\S]*?\})'/g)].map((j) => j[1]).join('\n')));
+  if (encontrados.length !== esperados) {
+    console.error(
+      `El detector de este chequeo está roto: con ${que} encontró ${encontrados.length} ` +
+      `número(s) y tenía que encontrar ${esperados}. No se revisó nada.`
+    );
+    process.exit(1);
   }
+}
+
+for (const { donde, texto: crudo } of textosDeGuia()) {
+  mirados++;
+  const hallados = numerosDeEmergenciaEn(crudo);
+  if (hallados.length) problemas.push(reclamoPorNumero(donde, hallados));
 }
 
 // ── B. Lo que sólo se comprueba con la base delante ────────────────────────
@@ -305,9 +401,15 @@ async function interrogar(base) {
   }
 
   // B3. Cada guía general que sale de la puerta trae sus cuatro partes, y las
-  //     trae en los tres idiomas. Lo que escribe una Prestadora se mide
-  //     distinto —va en el idioma de ella— y acá no aparece: se pidió sin
-  //     nombre corto.
+  //     trae en los tres idiomas, y ninguna de ellas escribe un número de
+  //     emergencia. Lo que escribe una Prestadora se mide distinto —va en el
+  //     idioma de ella— y acá no aparece: se pidió sin nombre corto.
+  //
+  //     Lo del número se mira acá y no sólo sobre el repositorio a propósito.
+  //     Una guía puede haber entrado a la base por cualquier camino, y el texto
+  //     que la gente lee es el que devuelve la puerta, no el que quedó escrito
+  //     en una migración. Es el mismo detector de más arriba, una sola vez,
+  //     para que las dos miradas no se vayan separando.
   const deLaPuerta = [];
   for (const [vocabulario, opciones] of Object.entries(general.datos || {})) {
     for (const [opcion, guia] of Object.entries(opciones || {})) deLaPuerta.push({ vocabulario, opcion, guia });
@@ -324,11 +426,21 @@ async function interrogar(base) {
         }
       }
     }
+    const conNumero = numerosDeEmergenciaEn(JSON.stringify(guia));
+    if (conNumero.length) {
+      problemas.push(reclamoPorNumero(`${base.nombre} → ${vocabulario}/${opcion}`, conNumero));
+    }
   }
 
   // B4. Aislamiento: pidiendo con el nombre de una Prestadora no aparece texto
   //     de otra. Hacen falta dos con guía propia; con menos no se probó nada, y
   //     eso se dice en voz alta en vez de pasar callado.
+  //
+  //     Y de paso se le mira el número de emergencia a cada guía propia. Antes
+  //     se bajaban enteras y se usaban sólo para sacarles la huella y
+  //     compararlas entre sí: el texto pasaba delante y nadie lo leía. Son las
+  //     únicas guías que no están escritas en el repositorio, así que si no se
+  //     miran acá no se miran en ningún lado.
   const propiasDe = {};
   for (const corto of NOMBRES_CORTOS) {
     const r = await rpc('guias_de', { p_slug: corto });
@@ -336,7 +448,15 @@ async function interrogar(base) {
     const suyas = [];
     for (const [vocabulario, opciones] of Object.entries(r.datos || {})) {
       for (const [opcion, guia] of Object.entries(opciones || {})) {
-        if (guia && guia.propia) suyas.push({ clave: `${vocabulario}/${opcion}`, huella: JSON.stringify(guia) });
+        if (guia && guia.propia) {
+          const huella = JSON.stringify(guia);
+          suyas.push({ clave: `${vocabulario}/${opcion}`, huella });
+          mirados++;
+          const conNumero = numerosDeEmergenciaEn(huella);
+          if (conNumero.length) {
+            problemas.push(reclamoPorNumero(`${base.nombre} → ${corto}/${vocabulario}/${opcion}`, conNumero));
+          }
+        }
       }
     }
     propiasDe[corto] = suyas;
