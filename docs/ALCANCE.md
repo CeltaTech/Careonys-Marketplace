@@ -3179,6 +3179,36 @@ denuncia con su renglón. La forma portada quedó en la autoprueba, al lado de
 las otras dos, y al lado de la que prueba que pedirle algo a una lista con
 nombres sigue sin confundirse con la barra de direcciones.
 
+### Dos copias se separaron de su original y el chequeo de las copias dijo ✔
+
+Algunos archivos viven repetidos adentro de cada programa del teléfono, porque
+sin señal un programa sólo alcanza lo que quedó guardado en su propia carpeta.
+El riesgo de una copia es siempre el mismo: que alguien corrija una y no las
+otras, y que dos personas terminen viendo dos cosas distintas. Para eso hay un
+chequeo que las compara byte a byte.
+
+Comparaba las que alguien había anotado a mano en una lista, y la oferta de la
+portada no estaba anotada. Cuando se corrigió arriba —los cursos dejaron de dar
+por sentado que son sólo para las Familias— el mismo cambio bajó a las copias
+que sí estaban anotadas, y no bajó a las dos que no. Se quedaron con el texto
+viejo, y el chequeo siguió diciendo ✔ todos los días desde entonces.
+
+**Una lista escrita a mano sólo sabe de lo que había el día que se la
+escribió.** Así que el chequeo dejó de confiar en la suya: ahora sale a buscar.
+Un archivo que está adentro de un programa y también arriba, con el mismo
+nombre y en el mismo lugar, o es una copia declarada o es una excepción escrita
+con su motivo. La única excepción de hoy es el archivo donde cada programa
+declara cómo se llama y de qué depende, que se parece a una copia y no lo es.
+
+**Las dos copias se alinearon con el original**, después de mirar el historial
+para saber cuál de los dos textos era el bueno. El guion se negó a pisarlas por
+su cuenta —una copia más nueva que su original puede ser el cambio bueno, y
+pisarla lo borraría sin que nadie se entere—, que es exactamente lo que tiene
+que hacer.
+
+**Se probó devolviéndole a una la separación**: la versión anterior la dio por
+buena en verde y la de ahora la denuncia.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

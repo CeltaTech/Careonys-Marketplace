@@ -4,8 +4,11 @@
        node scripts/verificar_copias.mjs
        node scripts/verificar_copias.mjs --arreglar
 
-   Nueve archivos de este proyecto viven repetidos en dos o tres carpetas, y son
-   de dos clases con dos motivos distintos.
+   Unos cuantos archivos de este proyecto viven repetidos en dos o tres carpetas,
+   y son de dos clases con dos motivos distintos. Cuántos son lo dice el renglón
+   de salida, que sale de contarlos: el número escrito acá a mano envejecería en
+   silencio, y justamente de un renglón que se quedó viejo nace la mitad de abajo
+   de este guion.
 
    **Los catálogos de datos**, porque sin conexión cada programa del teléfono
    sólo alcanza lo que quedó guardado adentro de su propia carpeta. Un catálogo
@@ -37,10 +40,10 @@
    y los arregla una persona.
 =================================================== */
 
-import { copyFileSync, readFileSync, statSync } from 'node:fs';
+import { copyFileSync, existsSync, readFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname, join, resolve, sep } from 'node:path';
-import { seRevisaron } from './recorrido.mjs';
+import { dirname, join, relative, resolve, sep } from 'node:path';
+import { EXTENSIONES_DE_PANTALLA, hayArchivos, seRevisaron } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -65,12 +68,99 @@ export const GRUPOS = [
   // aplicación arranca con las cinco frases de emergencia y nada más.
   ['data/catalogo-frases.json', 'pwa-asistente/data/catalogo-frases.json',
    'pwa-familia/data/catalogo-frases.json'],
+  // La oferta de la portada. Sin conexión no hay base de la que traerla, así que
+  // cada programa necesita la suya adentro. Es la que se separó y dio origen a
+  // la búsqueda de más abajo.
+  ['data/catalogo-oferta.json', 'pwa-asistente/data/catalogo-oferta.json',
+   'pwa-familia/data/catalogo-oferta.json'],
   ['css/tokens.css', 'pwa-asistente/css/tokens.css', 'pwa-familia/css/tokens.css'],
   // Las clases de utilidad: las tres carpetas escriben las mismas, y una copia
   // que se despegue esconde o muestra distinto en una sola de las tres.
   ['css/utilidades.css', 'pwa-asistente/css/utilidades.css', 'pwa-familia/css/utilidades.css'],
   ['pwa-asistente/css/styles-pwa.css', 'pwa-familia/css/styles-pwa.css']
 ];
+
+/* ---- Y LAS COPIAS QUE NADIE DECLARÓ ----
+   La lista de arriba se escribe a mano, y una lista escrita a mano sólo sabe de
+   lo que había el día que se la escribió. El día que alguien copia un archivo
+   más adentro de un programa y no agrega el renglón, este guion no lo compara
+   con nadie: la copia se separa del original y el chequeo sigue diciendo ✔, que
+   es exactamente el daño que viene a evitar.
+
+   No es hipotético. La oferta de la portada se corrigió arriba —los cursos
+   dejaron de ser sólo para las Familias— y las dos copias de los teléfonos se
+   quedaron con el texto viejo, sin que nadie se enterara, porque ese archivo no
+   estaba en la lista.
+
+   Así que no se confía en la lista: se sale a buscar. Un archivo que está
+   adentro de un programa y también arriba, con el mismo nombre y en el mismo
+   lugar, o es una copia declarada o es una excepción escrita con su motivo.
+   Cualquier otra cosa planta el chequeo. */
+const NO_SON_COPIAS = new Map([
+  ['package.json', 'cada programa declara lo suyo: cómo se llama y de qué depende']
+]);
+
+const PROGRAMAS = ['pwa-asistente', 'pwa-familia', 'web'];
+const EXTENSIONES = [...EXTENSIONES_DE_PANTALLA,
+  '.json', '.css', '.js', '.webmanifest', '.svg', '.txt', '.md'];
+const NO_SE_ARMAN = ['node_modules', 'dist'];
+
+/** Los archivos que viven adentro de los tres programas, por su nombre desde la raíz. */
+function archivosDeLosProgramas() {
+  const salida = [];
+  for (const programa of PROGRAMAS) {
+    for (const camino of hayArchivos(join(raiz, programa), EXTENSIONES, NO_SE_ARMAN)) {
+      salida.push(relative(raiz, camino).split(sep).join('/'));
+    }
+  }
+  return salida;
+}
+
+/**
+ * De los archivos de adentro de los programas, los que también están arriba y
+ * nadie declaró ni como copia ni como excepción.
+ *
+ * `estaArriba` entra por separado para poder probar esto sin tocar el disco.
+ */
+export function copiasSinDeclarar(deLosProgramas, estaArriba) {
+  const declaradas = new Set(GRUPOS.flat());
+  const sueltas = [];
+  let coinciden = 0;
+  let exentos = 0;
+  for (const rel of deLosProgramas) {
+    const arriba = rel.slice(rel.indexOf('/') + 1);
+    if (!estaArriba(arriba)) continue;
+    coinciden++;
+    if (declaradas.has(rel)) continue;
+    if (NO_SON_COPIAS.has(arriba)) { exentos++; continue; }
+    sueltas.push([rel, arriba]);
+  }
+  return { sueltas, coinciden, exentos };
+}
+
+/* Una prueba que no puede fallar no prueba nada: antes de salir a buscar, el
+   buscador se prueba contra las cuatro cosas que puede encontrarse. */
+function probarElBuscador() {
+  const arriba = new Set(['data/catalogo-frases.json', 'data/catalogo-inventado.json', 'package.json']);
+  const { sueltas, coinciden, exentos } = copiasSinDeclarar([
+    'pwa-asistente/data/catalogo-frases.json',
+    'pwa-asistente/data/catalogo-inventado.json',
+    'pwa-asistente/package.json',
+    'pwa-asistente/src/pantallas/Inventada.jsx'
+  ], (r) => arriba.has(r));
+  const roto = [];
+  if (sueltas.length !== 1 || sueltas[0][0] !== 'pwa-asistente/data/catalogo-inventado.json') {
+    roto.push('no encuentra la copia que nadie declaró, o encuentra de más');
+  }
+  if (coinciden !== 3) roto.push('no cuenta bien los que también están arriba');
+  if (exentos !== 1) roto.push('no reconoce la excepción escrita');
+  if (roto.length) {
+    console.error('El buscador de copias sin declarar está roto, así que no verifica nada:');
+    for (const r of roto) console.error('  ' + r);
+    process.exit(1);
+  }
+}
+probarElBuscador();
 
 // Devuelve la lista de problemas, vacía si está todo bien. `soloGrupo` limita la
 // revisión a un grupo, por su original: lo usa `verificar_identidad.mjs`.
@@ -107,13 +197,29 @@ export function verificarCopias(soloGrupo) {
       }
     }
   }
+  /* Y las que nadie declaró. No corre cuando se pide un grupo suelto: ahí quien
+     llama pregunta por ése y no por el estado de todo el proyecto. */
+  let coinciden = 0;
+  let exentos = 0;
+  if (!soloGrupo) {
+    const hallado = copiasSinDeclarar(
+      archivosDeLosProgramas(),
+      (arriba) => existsSync(join(raiz, arriba.split('/').join(sep))));
+    coinciden = hallado.coinciden;
+    exentos = hallado.exentos;
+    for (const [rel, arriba] of hallado.sueltas) {
+      problemas.push(rel + ' es una copia de ' + arriba + ' que nadie declaró.\n'
+        + '  Mientras no esté en `GRUPOS`, nadie las compara y se separan calladas.\n'
+        + '  Si no es una copia, va a `NO_SON_COPIAS` con el motivo escrito.');
+    }
+  }
   /* Sin esto, un `soloGrupo` mal escrito descarta los diecisiete grupos y
      devuelve «0 problemas», que se lee igual que «está todo bien». */
   seRevisaron(
     comparadas + problemas.length,
     soloGrupo ? `el grupo «${soloGrupo}» en la lista de copias` : 'un solo grupo de copias'
   );
-  return { problemas, comparadas };
+  return { problemas, comparadas, coinciden, exentos };
 }
 
 /* Copia cada original encima de las copias que se separaron, salvo las que son
@@ -161,10 +267,12 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
       process.exit(1);
     }
   }
-  const { problemas, comparadas } = verificarCopias();
+  const { problemas, comparadas, coinciden, exentos } = verificarCopias();
   if (problemas.length) {
     console.error('\n' + problemas.join('\n\n') + '\n');
     process.exit(1);
   }
-  console.log('Copias verificadas: ' + comparadas + ' iguales byte a byte a su original.');
+  console.log('Copias verificadas: ' + comparadas + ' iguales byte a byte a su original, y'
+    + ' ninguna sin declarar entre los ' + coinciden + ' archivos de los tres programas que'
+    + ' también están arriba (' + exentos + ' exentos, con su motivo escrito).');
 }
