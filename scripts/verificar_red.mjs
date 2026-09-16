@@ -107,7 +107,11 @@
       nombre.
    3. Contra un chequeo de mentira escrito acá mismo que **no** llama a
       ninguna de las dos, y que tiene que ser señalado. Y contra otro que sí la
-      llama pero sólo adentro de un comentario, que tampoco vale.
+      llama pero sólo adentro de un comentario, que tampoco vale. Y contra un
+      tercero que la nombra adentro de un texto, que es como la nombran las
+      pruebas de este mismo archivo: nombrada no es llamada. Y contra un cuarto
+      que la llama de verdad pero detrás de una comilla escrita adentro de una
+      expresión regular, que no tiene que perderse.
    4. Contra tres chequeos de mentira para la extensión: uno que la escribe,
       uno que sólo la nombra en un comentario y uno que la pide como
       corresponde. Los tres tienen que salir como salen.
@@ -139,12 +143,27 @@ import {
   EXTENSIONES_DE_PANTALLA
 } from './recorrido.mjs';
 import { columnasDeclaradas } from './verificar_esquema.mjs';
+import { enCodigoDePrograma, sinCadenas } from './texto_visible.mjs';
 
 const aca = dirname(fileURLToPath(import.meta.url));
 
-/* Quien corre a los demás no revisa nada por su cuenta, y este archivo tampoco
-   se revisa a sí mismo. */
-const NO_SON_CHEQUEOS = new Set(['verificar_todo.mjs', 'verificar_red.mjs']);
+/* Quien corre a los demás no revisa nada por su cuenta: no tiene corpus propio
+   ni extensión escrita, así que juzgarlo con estas tres reglas sería ponerse
+   rojo por algo que no es su trabajo. Es el único, y va con su motivo escrito
+   al lado como cualquier otra exención de este proyecto.
+
+   `verificar_red.mjs` estaba acá adentro, sin más motivo escrito que «este
+   archivo tampoco se revisa a sí mismo», que no dice por qué. El vigilante era
+   el único chequeo que no vigilaba nadie. La prueba de que alguna vez se lo
+   pensó adentro son los dos renglones de más abajo que lo nombran para eximirlo
+   de las otras dos reglas: escritos para un archivo que nunca entraba, eran
+   código muerto. Y más abajo todavía, la regla que compara la carpeta contra la
+   tabla del `README.md` dejó escrito el agujero con todas las letras —que
+   contra esta lista no servía porque a él «no lo notaría nadie»— y en vez de
+   arreglar la lista se fabricó una segunda. Ahora hay una sola. */
+const NO_SON_CHEQUEOS = new Map([
+  ['verificar_todo.mjs', 'no es un chequeo sino el que los corre']
+]);
 
 /* La única excepción, con su motivo escrito, sale de `scripts/recorrido.mjs`:
    está pegada a la guarda de la que exime, y la comparte con
@@ -153,18 +172,19 @@ const NO_SON_CHEQUEOS = new Set(['verificar_todo.mjs', 'verificar_red.mjs']);
 
 const GUARDAS = ['seRevisaron(', 'hayArchivos('];
 
-const enBlanco = (t) => t.replace(/[^\n]/g, ' ');
-
-/** El mismo despeje que usan los demás chequeos, acotado a `.mjs`. */
-function sinComentarios(texto) {
-  return texto
-    .replace(/\/\*[\s\S]*?\*\//g, enBlanco)
-    .replace(/^([^\n'"`]*?)\/\/[^\n]*/gm, (m, antes) => antes + enBlanco(m.slice(antes.length)));
-}
+/* El despeje de las notas estaba escrito acá adentro, renglón por renglón igual
+   al que `scripts/texto_visible.mjs` exporta desde hace rato. Se pide, no se
+   copia. */
 
 /** ¿Este texto de chequeo se planta si no encuentra nada? */
 export function tieneGuarda(texto) {
-  const limpio = sinComentarios(texto);
+  /* Y no alcanza con sacar las notas: una guarda escrita adentro de un texto
+     está **nombrada**, no **llamada**. Este mismo archivo es la prueba: sus
+     pruebas de más abajo son chequeos de mentira escritos entre comillas, y
+     varios traen la guarda adentro para que haya algo que reconocer. Mirando
+     sólo las notas, cualquier archivo que nombrara la guarda en un ejemplo, en
+     un mensaje de error o en un comentario entre comillas pasaba por tenerla. */
+  const limpio = sinCadenas(enCodigoDePrograma(texto));
   return GUARDAS.some((g) => limpio.includes(g));
 }
 
@@ -186,7 +206,7 @@ const A_MANO = /['"`]\.html['"`]/;
 
 /** ¿Este texto escribe a mano la extensión de las pantallas? */
 export function escribeLaExtension(texto) {
-  return A_MANO.test(sinComentarios(texto));
+  return A_MANO.test(enCodigoDePrograma(texto));
 }
 /* ── LA EXTENSIÓN METIDA ADENTRO DE UNA EXENCIÓN ──────────────────
    La misma atadura, escondida donde no se la busca. Una exención se escribe
@@ -205,7 +225,7 @@ const MAPA = /new Map\(\[\r?\n([\s\S]*?)^\]\);/gm;
 /** Las claves de exención de este texto que traen la extensión de las pantallas. */
 export function clavesConLaExtension(texto) {
   const traidoras = [];
-  for (const mapa of sinComentarios(texto).matchAll(MAPA)) {
+  for (const mapa of enCodigoDePrograma(texto).matchAll(MAPA)) {
     for (const clave of mapa[1].matchAll(CLAVE)) {
       if (EXTENSIONES_DE_PANTALLA.some((e) => clave[1].endsWith(e))) traidoras.push(clave[1]);
     }
@@ -301,7 +321,7 @@ const NO_TIENEN_QUE_ESTAR = new Map([
 /** Las exenciones de este texto que nombran un archivo y se equivocan. */
 export function exencionesQueMienten(archivo, texto, existe) {
   const mentiras = [];
-  for (const mapa of sinComentarios(texto).matchAll(MAPA_CON_NOMBRE)) {
+  for (const mapa of enCodigoDePrograma(texto).matchAll(MAPA_CON_NOMBRE)) {
     const noTieneQueEstar = NO_TIENEN_QUE_ESTAR.has(archivo + ' ' + mapa[1]);
     const claves = [...mapa[2].matchAll(CLAVE)].map((c) => c[1]);
     if (!mapaDeArchivos(claves)) continue;
@@ -341,7 +361,7 @@ const CON_PINTA_DE_COLUMNA = /^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$/;
 /** Las claves de exención de este texto que nombran una columna que no está. */
 export function clavesSinSuColumna(texto, columnas) {
   const perdidas = [];
-  for (const mapa of sinComentarios(texto).matchAll(MAPA_CON_NOMBRE)) {
+  for (const mapa of enCodigoDePrograma(texto).matchAll(MAPA_CON_NOMBRE)) {
     const claves = [...mapa[2].matchAll(CLAVE)].map((c) => c[1]);
     if (mapaDeArchivos(claves)) continue;
     for (const clave of claves) {
@@ -404,7 +424,7 @@ function tercerArgumento(texto, desde) {
 /** Las carpetas que este texto deja afuera sin ponerle nombre a la lista. */
 export function carpetasDeUnPedido(texto) {
   const nombres = [];
-  const limpio = sinComentarios(texto);
+  const limpio = enCodigoDePrograma(texto);
   for (const llamada of limpio.matchAll(LLAMA_AL_RECORRIDO)) {
     const tercero = tercerArgumento(limpio, llamada.index + llamada[0].length);
     if (!tercero || !tercero.includes('[')) continue;
@@ -416,7 +436,7 @@ export function carpetasDeUnPedido(texto) {
 /** Las carpetas que este texto dice no mirar y que ya no están. */
 export function carpetasEximidasQueNoEstan(texto, carpetas) {
   const idas = [];
-  for (const lista of sinComentarios(texto).matchAll(LISTA_DE_AJENAS)) {
+  for (const lista of enCodigoDePrograma(texto).matchAll(LISTA_DE_AJENAS)) {
     for (const nombre of lista[1].matchAll(/'([^']+)'/g)) {
       if (!carpetas.has(nombre[1])) {
         idas.push({ lista: 'AJENAS', clave: nombre[1], porque: 'esa carpeta no est\u00e1' });
@@ -458,7 +478,7 @@ const FORMA_SIN_DIGITOS = '[a-z_]+';
 
 /** Los renglones de este texto que escriben un nombre guardado sin dígitos. */
 export function nombresSinDigitos(texto) {
-  const limpio = sinComentarios(texto);
+  const limpio = enCodigoDePrograma(texto);
   const encontrados = [];
   let desde = 0;
   for (;;) {
@@ -566,6 +586,38 @@ if (tieneGuarda(SOLO_EN_UN_COMENTARIO)) {
   fallas.push('Dio por bueno un chequeo que sólo nombra la guarda en un comentario.');
 }
 if (!tieneGuarda(CON_GUARDA)) fallas.push('Marcó como falta un chequeo que sí tiene la guarda.');
+
+/* Y la que no se veía: la guarda escrita adentro de un texto. Las pruebas de
+   este mismo archivo son chequeos de mentira entre comillas, y varias la traen
+   adentro; mirando sólo los comentarios, cualquier archivo que la nombrara en
+   un ejemplo pasaba por tenerla. Así pasó `verificar_pendientes.mjs`. */
+const SOLO_NOMBRADA_EN_UN_TEXTO = `
+import { archivos } from './recorrido.mjs';
+const DE_MENTIRA = \`
+import { hayArchivos } from './recorrido.mjs';
+for (const c of hayArchivos(raiz, ['.js'])) revisar(c);
+\`;
+for (const c of archivos(raiz, ['.js'])) revisar(c);
+`;
+
+/* Y la vuelta de la misma moneda: sacar las cadenas no puede costarle el
+   renglón de al lado a quien escribe una comilla adentro de una expresión
+   regular. La de acento grave es la que muerde, porque no termina en el fin de
+   renglón: leída como si abriera un texto se come el archivo hasta la próxima. */
+const GUARDA_DETRAS_DE_UNA_COMILLA_SUELTA = `
+const CUALQUIERA = /['"\`]/;
+import { seRevisaron } from './recorrido.mjs';
+seRevisaron(cuantos, 'nada que revisar');
+`;
+
+if (tieneGuarda(SOLO_NOMBRADA_EN_UN_TEXTO)) {
+  fallas.push('Dio por bueno un chequeo que sólo nombra la guarda adentro de un texto.');
+}
+if (!tieneGuarda(GUARDA_DETRAS_DE_UNA_COMILLA_SUELTA)) {
+  fallas.push(
+    'Perdió la guarda que venía detrás de una comilla escrita adentro de una ' +
+    'expresión regular.');
+}
 
 /* ── 4. Que reconozca la extensión escrita a mano ───────────────────────── */
 
@@ -917,15 +969,13 @@ for (const nombre of guiones) {
 const enElReadme = enLaTablaDelReadme(readFileSync(join(aca, '..', 'README.md'), 'utf8'));
 seRevisaron(enElReadme.size, 'ningún chequeo nombrado en la tabla del README');
 
-/* Los dos lados se comparan contra la carpeta entera menos `verificar_todo.mjs`,
-   que no es un chequeo sino el que los corre. Contra `chequeos` no serviría:
-   esa lista deja afuera también a `verificar_red.mjs` —porque no se revisa a sí
-   mismo— y entonces borrarle a él su fila del README no lo notaría nadie. */
-const EL_CORREDOR = 'verificar_todo.mjs';
-const enDisco = readdirSync(aca)
-  .filter((n) => n.startsWith('verificar_') && n.endsWith('.mjs') && n !== EL_CORREDOR)
-  .map((n) => n.replace('.mjs', ''))
-  .sort();
+/* Los dos lados se comparan contra `chequeos`, que es la carpeta entera menos
+   el que los corre. Acá había una segunda lista, escrita aparte porque contra
+   aquélla «no serviría»: dejaba afuera también a `verificar_red.mjs` y entonces
+   borrarle a él su fila del README no lo notaría nadie. El agujero estaba
+   escrito con todas las letras y lo que se arregló fue este renglón y no la
+   lista. Arreglada la lista, las dos son la misma y queda una sola. */
+const enDisco = chequeos.map((n) => n.replace('.mjs', ''));
 seRevisaron(enDisco.length, 'ningún chequeo en `scripts/` con el que comparar la tabla');
 
 const sinFila = enDisco.filter((n) => !enElReadme.has(n));
@@ -1046,8 +1096,10 @@ if (fallas.length > 0) {
 }
 
 console.log(
-  `Red verificada: ${revisados} chequeos que se plantan si no encuentran nada ` +
-  `(${ARMAN_SU_PROPIO_CORPUS.size} exento, con su motivo), ninguno con la extensión de las ` +
+  `Red verificada: ${revisados} de los ${chequeos.length + NO_SON_CHEQUEOS.size} ` +
+  `\`verificar_*.mjs\` de \`scripts/\` se plantan si no encuentran nada ` +
+  `(${ARMAN_SU_PROPIO_CORPUS.size} exento y ${NO_SON_CHEQUEOS.size} que no es un chequeo ` +
+  `sino el que los corre, los dos con su motivo), ninguno con la extensión de las ` +
   `pantallas escrita a mano ni metida adentro de la clave de una exención, y los ` +
   `${enElReadme.size} nombrados en la tabla del README. Y en los ${guiones.length} guiones ` +
   `de \`scripts/\`, ninguna exención que nombre un archivo que ya no está ni una ` +

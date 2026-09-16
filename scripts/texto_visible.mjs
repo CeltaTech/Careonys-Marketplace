@@ -285,6 +285,57 @@ export function finDeCadena(s, i) {
   return s.length;
 }
 
+/** Dónde termina la expresión regular que empieza en `i`, y el mismo `i` si
+    ahí no empieza ninguna. Hace falta para no leer como comilla la que va
+    escrita adentro de una: `/['"`]/` trae las tres, y la de acento grave abre
+    un texto que se come el archivo entero hasta la próxima —pasó, y dejó sin
+    mirar noventa y cuatro renglones de un chequeo—. Una barra detrás de un
+    dato divide en vez de abrir, una expresión regular no cruza el fin de
+    renglón, y los corchetes de una clase esconden la barra que la cerraría. */
+export function finDeExpresionRegular(s, i) {
+  if (s[i] !== '/' || s[i + 1] === '/' || s[i + 1] === '*') return i;
+  if (comparaYNoAbre(s, i)) return i;
+  let j = i + 1;
+  let enUnaClase = false;
+  while (j < s.length) {
+    const c = s[j];
+    if (c === '\n') return i;
+    if (c === UNA_BARRA) { j += 2; continue; }
+    if (c === '[') enUnaClase = true;
+    else if (c === ']') enUnaClase = false;
+    else if (c === '/' && !enUnaClase) return j + 1;
+    j++;
+  }
+  return i;
+}
+
+/** Lo mismo al revés: lo que hay adentro de una cadena, en blanco. Contesta
+    qué **hace** un guion y no qué **nombra**: una guarda escrita adentro de un
+    texto de prueba está nombrada, no llamada, y quien pregunte por la de
+    afuera se la va a creer. Las expresiones regulares pasan enteras, que para
+    eso se las reconoce: son código y no texto. Se conservan los renglones,
+    porque quien llama cuenta líneas. */
+export function sinCadenas(codigo) {
+  let fuera = '';
+  let i = 0;
+  while (i < codigo.length) {
+    const c = codigo[i];
+    if (c === '/') {
+      const fin = finDeExpresionRegular(codigo, i);
+      if (fin > i) { fuera += codigo.slice(i, fin); i = fin; continue; }
+    }
+    if (c === "'" || c === '"' || c === '`') {
+      const fin = finDeCadena(codigo, i);
+      fuera += enBlanco(codigo.slice(i, fin));
+      i = fin;
+      continue;
+    }
+    fuera += c;
+    i++;
+  }
+  return fuera;
+}
+
 /** Dónde termina la etiqueta que empieza en `i`, y de qué clase es. Se cuentan
     las llaves de los atributos y se respeta lo que esté entre comillas, así un
     signo de mayor escrito adentro de un atributo no la corta por la mitad. */
@@ -357,6 +408,39 @@ export function textoDePrograma(s) {
   }
   guardar();
   return salida;
+}
+
+/* ── QUE EL DESPEJE DE CADENAS NO SE COMA LO QUE NO ES SUYO ───────────────
+   `sinCadenas` la usan dos chequeos para preguntarle a un guion qué **hace**, y
+   la respuesta les llega ya masticada: si se blanquea de más, el que pregunta
+   ve un archivo sin llamadas y se pone rojo por nada; si se blanquea de menos,
+   una guarda nombrada adentro de un ejemplo pasa por llamada. Las dos veces el
+   detector está bien y el que miente es el despeje. */
+const DESPEJES = [
+  ['blanquea lo que hay adentro de un texto',
+   "const A = 'seRevisaron(';", false],
+  ['deja la llamada de verdad',
+   "seRevisaron(cuantos, 'nada');", true],
+  ['no lee como comilla la que va adentro de una expresión regular',
+   "const R = /[`]/;\nseRevisaron(cuantos, 'nada');", true],
+  ['una comilla simple adentro de una expresión regular tampoco',
+   "const R = /[']/;\nseRevisaron(cuantos, 'nada');", true],
+  ['una barra detrás de un dato divide, no abre una expresión regular',
+   "const mitad = total / 2;\nseRevisaron(mitad, 'nada');", true],
+];
+const despejados = [];
+for (const [que, codigo, deberia] of DESPEJES) {
+  if (sinCadenas(codigo).includes('seRevisaron(') !== deberia) {
+    despejados.push(que);
+  }
+}
+if (sinCadenas("const A = 'x';\nconst B = 1;").split('\n').length !== 2) {
+  despejados.push('conserva los renglones');
+}
+if (despejados.length > 0) {
+  console.error('El despeje de cadenas está roto, así que no verifica nada:');
+  for (const roto of despejados) console.error('  - ' + roto);
+  process.exit(1);
 }
 
 /* ── QUE EL LECTOR LEA LO QUE DICE QUE LEE ─────────────────────────────────

@@ -3758,8 +3758,8 @@ exención que ya no exime nada no es inofensiva: sigue salteando lo que nombra, 
 chequeo sobre eso y no queda rastro.
 
 Las dos reglas leían una sola forma de escribir una exención: un mapa, `const NOMBRE = new
-Map([…])` (`scripts/verificar_red.mjs:285`), y de ahí sólo miraban las claves que tienen pinta de
-archivo (`scripts/verificar_red.mjs:236`) o de columna (`scripts/verificar_red.mjs:339`). Pero
+Map([…])` (`scripts/verificar_red.mjs:305`), y de ahí sólo miraban las claves que tienen pinta de
+archivo (`scripts/verificar_red.mjs:256`) o de columna (`scripts/verificar_red.mjs:359`). Pero
 este proyecto escribe otra exención distinta diecisiete veces: `const AJENAS = […]`, la lista de
 carpetas que un chequeo declara no mirar. Es una lista suelta y no un mapa, y sus valores no
 tienen pinta de archivo ni de columna, así que se caía por las tres redes a la vez.
@@ -3775,7 +3775,7 @@ chequeo pudiera mirar: `scripts/verificar_arranque.mjs:53`,
 `scripts/citas.mjs`. Seis renglones perdonando a un fantasma.
 
 Qué se hizo: una tercera regla, `carpetasEximidasQueNoEstan()`
-(`scripts/verificar_red.mjs:417`), que lee la lista en sus tres formas —suelta, como conjunto y
+(`scripts/verificar_red.mjs:437`), que lee la lista en sus tres formas —suelta, como conjunto y
 exportada— sin mirar adentro de los comentarios. Contra qué se compara sale de
 `carpetasDelProyecto()` (`scripts/recorrido.mjs:331`), que recorre con la misma regla con la que
 se recorre todo: nombra la carpeta que existe aunque no se pueda entrar en ella —una caja fuerte
@@ -4048,7 +4048,7 @@ tabla tenía vocabulario, y hasta ahora ninguna de `tenants` lo tenía. Al empar
 la moneda por su nombre, el defecto se destapó solo.
 
 Quien lee columnas así no es sólo ese chequeo: `columnasDeclaradas()` la usan
-también la cuarta regla de `scripts/verificar_red.mjs:892` —la que se planta cuando
+también la cuarta regla de `scripts/verificar_red.mjs:944` —la que se planta cuando
 una exención nombra una columna que ya no existe— y la lectura de las claves
 primarias. Con una columna de menos, las tres contestaban de menos.
 
@@ -4441,7 +4441,7 @@ escrita a mano: ocho extensiones, o una barra al final. El proyecto escribe trec
 extensiones, así que una clave que nombrara un `.jsx`, un `.ts` o un `.svg` se salteaba
 entera. Y la segunda ceguera es la que importa: la regla de más arriba **en ese mismo
 archivo** obliga a que la clave que nombra una pantalla se escriba **sin extensión**
-(`scripts/verificar_red.mjs:279`). Escrita como ese archivo manda, la clave no tenía forma
+(`scripts/verificar_red.mjs:299`). Escrita como ese archivo manda, la clave no tenía forma
 de archivo y la regla no la miraba. Las dos reglas se contradecían, y la que callaba decía
 ✔.
 
@@ -4454,10 +4454,10 @@ acá. Una clave nombra un archivo cuando trae una extensión de las que hay, cua
 tramo es una carpeta del proyecto, o cuando termina en barra. La que empieza con barra queda
 afuera: nombra una dirección del sitio, y de ésas se ocupa `scripts/verificar_rutas.mjs`. Y
 la clave que no es ni una cosa ni la otra hereda la clase de su lista
-(`scripts/verificar_red.mjs:283`), porque una lista de exenciones no mezcla clases: es lo
+(`scripts/verificar_red.mjs:303`), porque una lista de exenciones no mezcla clases: es lo
 único que alcanza a la clave escrita sin extensión. La búsqueda del archivo se volvió
 tolerante a esa extensión que la otra regla manda sacar
-(`scripts/verificar_red.mjs:872`), con el motivo escrito al lado.
+(`scripts/verificar_red.mjs:924`), con el motivo escrito al lado.
 
 Probado en los dos sentidos, con una exención muerta inventada adentro de
 `scripts/verificar_estados.mjs`: la copia vieja de la regla no la nombró ni una vez, y la
@@ -4654,7 +4654,7 @@ comilla y cierra la cadena igual. Se arregla sacando el atributo y colgando el m
 aparte, y no de otra manera.
 
 La regla que hacía cumplir eso reconocía una sola manera de escribirlo, la de comillas
-dobles (`scripts/verificar_escapado.mjs:126`). Un atributo se cierra con la comilla que
+dobles (`scripts/verificar_escapado.mjs:127`). Un atributo se cierra con la comilla que
 lo abrió, y en el marcado también se escribe sin ninguna: las tres maneras son el mismo
 manejador y el mismo agujero.
 
@@ -4671,10 +4671,10 @@ que no sirve. Dos reglas del mismo archivo se contradecían y ninguna avisaba, p
 que hablaba decía lo que no correspondía.
 
 Y el banco de pruebas no podía ver nada de esto, porque preguntaba nada más si algo había
-avisado (`scripts/verificar_escapado.mjs:739`). Una prueba que sólo pregunta «¿se puso
+avisado (`scripts/verificar_escapado.mjs:717`). Una prueba que sólo pregunta «¿se puso
 colorada?» da por buena una regla que avisa por el motivo equivocado. Ahora el renglón de
 una prueba puede decir por cuál de los motivos tiene que avisar
-(`scripts/verificar_escapado.mjs:697`), y las cuatro del manejador lo dicen.
+(`scripts/verificar_escapado.mjs:675`), y las cuatro del manejador lo dicen.
 
 No había daño puesto: ningún manejador escrito de las dos maneras nuevas existe hoy en el
 producto, y el chequeo sigue en verde sobre los mismos 110 archivos.
@@ -4772,6 +4772,76 @@ No había daño puesto: las ochenta y cinco políticas escritas hoy llevan su no
 entre comillas. Los tres casos nuevos quedaron en el banco de pruebas del propio chequeo, más uno
 del lado que tiene que seguir pasando: la que abre de par en par con el nombre desnudo y después se
 da de baja, que no es una falla porque ya no está en pie.
+
+### El vigilante de los chequeos era el único chequeo que no vigilaba nadie
+
+`scripts/verificar_red.mjs` existe para que ningún otro chequeo pueda escribir su
+✔ sin haber mirado nada: abre uno por uno los `verificar_*.mjs` de `scripts/` y
+exige que cada uno llame a `seRevisaron()` o a `hayArchivos()`, las dos guardas
+que se plantan cuando el recorrido vuelve vacío.
+
+Estaba ciego de dos maneras a la vez, y las dos se probaron antes de tocar nada.
+
+**La primera: se dejaba afuera a sí mismo.** En la carpeta hay 42 archivos
+`verificar_*.mjs`; entraban 40 y se revisaban 39. El que faltaba era él. La lista
+que lo eximía lo nombraba junto al que corre a los demás, y el único motivo
+escrito al lado era «este archivo tampoco se revisa a sí mismo», que repite la
+decisión en vez de darla. La prueba de que alguna vez se lo pensó adentro son dos
+renglones del propio recorrido escritos para eximirlo de las otras dos reglas:
+escritos para un archivo que nunca entraba, eran código muerto. Y más abajo, la
+regla que compara la carpeta contra la tabla del `README.md` dejó el agujero
+escrito con todas las letras —que contra esa lista no servía porque borrarle a él
+su fila «no lo notaría nadie»— y en vez de arreglar la lista se fabricó una
+segunda. Dos listas para lo mismo, una de ellas por la ceguera de la otra.
+
+**La segunda, y es la que tenía dientes: una guarda nombrada no es una guarda
+llamada.** Para decidir si un chequeo se planta, se leía su texto con los
+comentarios borrados y se buscaba `seRevisaron(` o `hayArchivos(`. Las cadenas
+quedaban a la vista. Y este proyecto escribe chequeos de mentira entre comillas
+—son las pruebas de los propios chequeos—, así que cualquier archivo que nombrara
+la guarda adentro de un ejemplo, de un mensaje de error o de un consejo pasaba
+por tenerla. Probado antes de tocar nada con un texto que sólo la nombra adentro
+de otro texto: dio por bueno un chequeo que no llama a ninguna de las dos.
+
+Las dos cegueras se sostenían la una a la otra: meter a `verificar_red.mjs`
+adentro del recorrido sin arreglar lo segundo no habría servido de nada, porque
+sus propias pruebas nombran las guardas entre comillas y habría pasado igual.
+
+**Qué se hizo.** La lista de los que no son chequeos quedó con uno solo, el que
+corre a los demás, y con su motivo escrito al lado como cualquier otra exención
+del proyecto. `verificar_red.mjs` entra ahora en su propio recorrido, los dos
+renglones que lo eximen de las otras dos reglas pasaron a ser código vivo, y la
+segunda lista desapareció: la tabla del `README.md` se compara contra la misma.
+Los chequeos revisados pasaron de 39 a 40, y el renglón verde dice ahora los dos
+números —40 de 42— en vez de uno solo.
+
+Y la pregunta «qué hace este guion, y no qué nombra» pasó a tener una sola
+respuesta, en `scripts/texto_visible.mjs`, que es donde ya vivía el despeje de
+comentarios que `verificar_red.mjs` tenía copiado renglón por renglón. Ahí se
+escribió `sinCadenas`, y `scripts/verificar_escapado.mjs`, que tenía la suya,
+ahora pide la misma.
+
+**Y el despeje trajo su propia trampa, que costó encontrar.** Escrito de la
+manera evidente —al ver una comilla, blanquear hasta la que cierra— se lleva
+puesto medio archivo, porque una comilla también se escribe adentro de una
+expresión regular. La de acento grave es la que muerde: no termina en el fin de
+renglón, así que leída como si abriera un texto se come todo hasta la próxima. En
+`scripts/verificar_pendientes.mjs` hay una expresión regular con las tres
+comillas adentro, y el despeje ingenuo dejó sin mirar noventa y cuatro renglones
+del archivo, entre ellos la llamada real a la guarda: el chequeo lo denunció como
+ciego cuando no lo era. Por eso `sinCadenas` reconoce primero la expresión
+regular y la deja pasar entera —es código, no texto—, distinguiendo la barra que
+abre una de la que divide por lo que tiene delante.
+
+**Qué había en su lugar.** Nada: los 40 chequeos llaman de verdad a alguna de las
+dos guardas. Falsificado en los dos sentidos sobre un chequeo real: sacándole la
+llamada y dejando el nombre adentro de un texto, el chequeo viejo terminó en
+verde y el nuevo se pone rojo nombrando el archivo.
+
+Y el banco de pruebas creció por los dos lados: el de `verificar_red.mjs` con el
+chequeo que sólo nombra la guarda adentro de un texto y con el que la llama
+detrás de una comilla suelta, y `scripts/texto_visible.mjs` estrenó el suyo para
+el despeje, que hasta acá probaba su lector y no esto.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 

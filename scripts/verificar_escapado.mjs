@@ -97,6 +97,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
 import { hayArchivos, seRevisaron, EXTENSIONES_DE_PANTALLA, esPaginaSuelta } from './recorrido.mjs';
+import { sinCadenas } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -125,29 +126,6 @@ const ANTES_DE_UNA_REGEX = /(?:^|[(,=:[!&|?{};+*%<>~^]|\breturn)\s*$/;
    justamente lo que el punto 2 del encabezado dice que acá no sirve. */
 const MANEJADOR_EN_LINEA = /\son[a-z]+\s*=\s*(?:"[^"]*|'[^']*|[^\s"'>]*)\$\{/;
 
-/** Reemplaza el contenido de las cadenas por espacios, para poder buscar sintaxis. */
-function sinCadenas(expresion) {
-  let fuera = '';
-  let i = 0;
-  while (i < expresion.length) {
-    const c = expresion[i];
-    if (c === "'" || c === '"' || c === '`') {
-      const cierre = c;
-      fuera += ' ';
-      i++;
-      while (i < expresion.length && expresion[i] !== cierre) {
-        i += expresion[i] === '\\' ? 2 : 1;
-        fuera += ' ';
-      }
-      fuera += ' ';
-      i++;
-      continue;
-    }
-    fuera += c;
-    i++;
-  }
-  return fuera;
-}
 
 /** Reemplaza los comentarios por espacios, dejando las cadenas intactas. */
 function sinComentarios(codigo) {
