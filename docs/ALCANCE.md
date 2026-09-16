@@ -3985,6 +3985,25 @@ por su lado, y por eso quedó escrita ahora en el encabezado de los dos.
 Ahora los guiones entran, y las tres maneras se reconocen. Pasó de 86 archivos mirados a
 121. No había ninguna pastilla mal pintada adentro.
 
+### El chequeo de las listas de opciones no abría ningún guión del navegador
+
+Una lista de opciones nunca se escribe adentro de una pantalla: sale de la base. Un chequeo
+lo sostiene, y abría las pantallas y nada más.
+
+Un guión también arma marcado. La ficha del legajo escribe ahí su desplegable entero, con
+sus opciones adentro, y hasta ahora ese archivo no se abría. Se probó escribiendo una lista
+de dos opciones a mano adentro de un guión de verdad: verde, con el archivo delante.
+
+Ahora los guiones entran: de 74 archivos mirados a 109. Y con ellos entraron dos maneras de
+escribir que una pantalla no tiene. La primera son sus comentarios, que explican cómo se
+arma el marcado y para eso nombran una opción; se tapan igual que los del marcado, porque un
+comentario no es lo que ve nadie. La segunda es cómo un guión saca un valor de un dato:
+mete el dato adentro del molde, entre comillas y todo, que a los ojos del chequeo se parecía
+a un valor escrito a mano. Esa es la forma correcta y queda reconocida como tal, igual que
+las llaves de una pantalla portada.
+
+No había ninguna lista escrita a mano adentro de un guión.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

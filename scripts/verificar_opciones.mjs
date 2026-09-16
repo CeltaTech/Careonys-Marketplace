@@ -21,6 +21,10 @@
    sin vocabulario, así que el día que entra la quinta forma no se entera nadie.
    Esto es lo que impide que entre la quinta.
 
+   Dónde mira: las pantallas y los guiones del navegador. Un guión también arma
+   marcado —la ficha del legajo escribe ahí su `<select>` entero—, y hasta que se
+   lo abrió una lista escrita a mano adentro de un guión no la miraba nadie.
+
    Qué mira:
    - cada `<option>` de cada pantalla, **fuera de los comentarios** —de los del
      marcado y de los de una pantalla de un programa—. Un `<option>` nombrado
@@ -86,6 +90,10 @@ const ESCRITAS_A_MANO = new Map([]);
 const VALOR_ESCRITO = new RegExp(comoSeEscribe('value'), 'i');
 /* Y el valor que sale de un dato, que es justamente la forma correcta. */
 const HAY_VALUE = /\bvalue\s*=/i;
+/* La tercera manera de sacar el valor de un dato, y es la del guión: el marcado
+   se arma adentro de un molde y el valor entra ahí. Entre comillas y todo, eso no
+   es una opción escrita a mano —así arma la ficha del legajo su desplegable—. */
+const DESDE_UN_MOLDE = /\$\{/;
 const OPCION = /<option\b([^>]*)>([^<]*)/gi;
 const HAY_PALABRA = /[A-Za-z\u00C0-\u00FF]{2,}/;
 
@@ -95,7 +103,11 @@ const HAY_PALABRA = /[A-Za-z\u00C0-\u00FF]{2,}/;
 function sinComentarios(crudo) {
   const enBlanco = (t) => t.replace(/[^\n]/g, ' ');
   return crudo.replace(/<!--[\s\S]*?-->/g, enBlanco)
-    .replace(/\{\s*\/\*[\s\S]*?\*\/\s*\}/g, enBlanco);
+    /* Y los dos comentarios de un guión, que explican cómo se arma el marcado y
+       para eso nombran un `<option>`. El de llaves —el de una pantalla de un
+       programa— queda adentro del primero de los dos. */
+    .replace(/\/\*[\s\S]*?\*\//g, enBlanco)
+    .replace(/^([^\n'"`]*?)\/\/[^\n]*/gm, (m, antes) => antes + enBlanco(m.slice(antes.length)));
 }
 
 /** Las opciones escritas a mano de una pantalla: `[renglón, valor]`. */
@@ -107,7 +119,7 @@ function opcionesDeUnaPantalla(crudo) {
     const escrito = VALOR_ESCRITO.exec(m[1]);
     const valor = escrito && valorDe(escrito);
     if (valor) {
-      if (valor.trim() !== '') salida.push([renglon, valor]);
+      if (valor.trim() !== '' && !DESDE_UN_MOLDE.test(valor)) salida.push([renglon, valor]);
       continue;
     }
     /* Sin `value` con todas las letras quedan dos casos que no son lo mismo: el
@@ -135,6 +147,8 @@ const MAL = [
    '<select id="x">\n  <option value={\'turno_manana\'}>Turno Mañana</option>\n</select>\n'],
   ['la que no lleva valor ninguno y guarda el texto que tiene adentro',
    '<select id="x">\n  <option>Turno Mañana</option>\n</select>\n'],
+  ['una lista escrita a mano adentro de un guión, que también arma marcado',
+   'const x = `<select id="x"><option value="turno_manana">Turno Mañana</option></select>`;\n'],
 ];
 
 const BIEN = [
@@ -152,6 +166,12 @@ const BIEN = [
    '<select id="x">\n  <option key={i.clave} value={i.clave}>{texto(i)}</option>\n</select>\n'],
   ['una opción sin valor cuyo texto sale del catálogo',
    '<select id="x">\n  <option>{texto(i)}</option>\n</select>\n'],
+  ['una opción nombrada adentro del comentario de bloque de un guión',
+   '/* Acá se dibujan sus <option>, uno por cada fila. */\nconst x = 1;\n'],
+  ['una opción nombrada adentro del comentario de renglón de un guión',
+   '// Acá se dibujan sus <option>, uno por cada fila.\nconst x = 1;\n'],
+  ['una opción de un guión cuyo valor entra al molde desde un dato',
+   'const x = `<option value="${escapar(o.clave)}">${o.texto}</option>`;\n'],
 ];
 
 const noDetecta = MAL.filter(([, t]) => opcionesDeUnaPantalla(t).length === 0);
@@ -167,20 +187,20 @@ const fallas = [];
 let revisadas = 0;
 let exentas = 0;
 
-for (const camino of hayArchivos(raiz, EXTENSIONES_DE_PANTALLA, AJENAS)) {
+for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJENAS)) {
   const pantalla = relative(raiz, camino).split(sep).join('/');
   revisadas++;
   const sinExtension = pantalla.replace(/\.[^./]+$/, '');
   const perdonadas = ESCRITAS_A_MANO.get(sinExtension)?.valores ?? [];
   for (const [renglon, valor] of opcionesDeUnaPantalla(readFileSync(camino, 'utf8'))) {
     if (perdonadas.includes(valor)) { exentas++; continue; }
-    fallas.push(`${pantalla}:${renglon}  la opción «${valor}» está escrita adentro de la ` +
-      'pantalla; un catálogo sale de la base');
+    fallas.push(`${pantalla}:${renglon}  la opción «${valor}» está escrita a mano acá; ` +
+      'un catálogo sale de la base');
   }
 }
 
 if (fallas.length > 0) {
-  console.error('Listas de opciones escritas adentro de una pantalla:\n');
+  console.error('Listas de opciones escritas a mano:\n');
   for (const falla of fallas) console.error('  - ' + falla);
   console.error(
     '\nUna lista de opciones nunca se escribe adentro de una pantalla: sale de la\n' +
@@ -193,5 +213,5 @@ if (fallas.length > 0) {
 }
 
 console.log(
-  `Opciones verificadas: ${revisadas} pantallas sin ninguna lista de opciones escrita ` +
+  `Opciones verificadas: ${revisadas} pantallas y guiones sin ninguna lista de opciones escrita ` +
   `a mano (${exentas} exentas, con su motivo y su pendiente).`);
