@@ -4034,7 +4034,7 @@ había, el del turno. Ninguno de los dieciocho valores sembrados estaba mal.
 ### Una columna que empieza como una restricción se leía como si lo fuera
 
 Salió de lo anterior, y es más viejo. Adentro de un `create table`, lo que no es una
-columna es una restricción, y `scripts/verificar_esquema.mjs:609` las reconocía por
+columna es una restricción, y `scripts/verificar_esquema.mjs:620` las reconocía por
 cómo empieza el renglón: `primary`, `unique`, `constraint`, `foreign`, `check`. Sin
 exigir que la palabra **termine** ahí, `primary_color` empieza igual que `primary
 key` y se descartaba como si fuera una restricción.
@@ -4528,6 +4528,44 @@ porque adentro tiene un pedido a la red, quién arma una respuesta porque adentr
 construye una, y lo que se prohíbe es que la variable donde quedó la contestación
 de la base aparezca adentro de una respuesta. El corpus pasó de 109 archivos a
 110 y el renglón final dice además cuántas respuestas miró.
+
+### El permiso que las alcanza a todas de un saque era invisible para la regla que lo prohíbe
+
+La novena regla de `scripts/verificar_esquema.mjs` existe por una sola razón: que ningún permiso
+de tabla le dé `all` ni `truncate` a quien inicia sesión. `truncate` no mira ninguna política —la
+RLS filtra filas, y vaciar la tabla no es filtrar filas—, así que un permiso así deja a cualquiera
+con sesión vaciar cualquier tabla del producto.
+
+La regla reconocía el permiso por una sola forma de escribirlo: una tabla por vez y con el esquema
+nombrado adelante (`scripts/verificar_esquema.mjs:664`). Postgres deja decir exactamente lo mismo
+de otras cuatro maneras, y las cuatro le pasaban por al lado sin que dijera nada:
+
+- **sin nombrar el esquema**, que es lo que Postgres entiende igual porque `public` es el esquema
+  por omisión;
+- **dos tablas separadas por coma en el mismo renglón**, donde la regla no encontraba ni una: la
+  forma escrita no coincidía, así que las dos quedaban invisibles;
+- **«todas las tablas del esquema»**, un renglón que alcanza a todas de un saque —el más corto de
+  escribir y el que más da—;
+- **los permisos por omisión**, que rigen sobre las tablas que todavía no existen.
+
+Probado antes de tocar nada: se le entregaron a la regla las cinco formas de escribir el mismo
+permiso, y contestó rojo a dos y verde a tres.
+
+**No había daño puesto.** Todo permiso escrito hoy nombra su tabla y su esquema
+(`supabase/migrations/0001_base_del_esquema.sql:5239`). Lo que sí había eran dos renglones que no
+miraba ninguna regla: los permisos por omisión sobre todas las tablas que se creen
+(`supabase/migrations/0001_base_del_esquema.sql:6013`), que están a salvo porque van al dueño del
+esquema y al rol del servidor, y que quedan justo enfrente del renglón donde esa misma migración
+sale a sacárselos a quien entra sin sesión
+(`supabase/migrations/0001_base_del_esquema.sql:63`). El agujero que la regla persigue vuelve solo
+por ahí, y por ahí no había nadie mirando.
+
+Ahora un permiso se reconoce por lo que alcanza y no por cómo se escribió
+(`scripts/verificar_esquema.mjs:685`), en un único lugar del que también toma la decimoquinta
+regla (`scripts/verificar_esquema.mjs:795`), que tenía la misma forma escrita a mano por segunda
+vez. Y los roles a los que nadie llega de afuera se nombran uno por uno
+(`scripts/verificar_esquema.mjs:827`), para que un rol nuevo llegue en rojo y no en silencio. Los
+permisos de tabla juzgados pasaron de 86 a 88.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
@@ -5028,7 +5066,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 - **La puerta es `guias_de(p_slug)`** (`:272`), del mismo tipo que `vocabularios_de`: la tabla no le
   concede nada a `anon` (`:254`), y lo que sale a la calle es una función que **exige el nombre
   corto**, devuelve la general más la de esa sola Prestadora, y sólo las publicadas. Está anotada
-  con su motivo en `scripts/verificar_esquema.mjs:465`, que es donde viven las funciones que llegan
+  con su motivo en `scripts/verificar_esquema.mjs:476`, que es donde viven las funciones que llegan
   al alcance anónimo a propósito.
 - **La pantalla nueva es `screen-guias`** en la aplicación del Asistente
   (`pwa-asistente/src/pantallas/Guias.jsx:106`), con los cuatro estados y un buscador. **Es una biblioteca de
@@ -5380,7 +5418,7 @@ abierto sino una trampa armada: la protección no vivía donde se la lee, y ya s
 vez sin que nadie se enterara —una migración se la llevó puesta y la siguiente tuvo que
 reponerla—. Por eso el chequeo del esquema no se cree esa exención: va y mira que el permiso siga
 nombrando sus columnas, y se planta si alguna migración futura vuelve a conceder `update` sobre
-`profiles` sin nombrarlas (`scripts/verificar_esquema.mjs:1528`).
+`profiles` sin nombrarlas (`scripts/verificar_esquema.mjs:1577`).
 
 **Sobre el pendiente 75, el Desarrollador eligió la opción A: el papel nuevo baja el sello.** Había
 tres defendibles —bajarlo, prohibir el cambio mientras el sello esté puesto, o permitirlo y

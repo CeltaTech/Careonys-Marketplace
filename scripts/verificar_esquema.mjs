@@ -96,6 +96,15 @@
       una vez, `REFERENCES` y `TRIGGER` incluidos, que ninguna pantalla usa y que
       PostgREST no sabe pedir. Los verbos se escriben uno por uno.
 
+      **Y un permiso se reconoce por lo que hace, no por cómo se escribió.**
+      Postgres deja decir lo mismo de varias maneras: nombrando el esquema o no,
+      una tabla o varias separadas por coma, y sin nombrar ninguna —«todas las
+      tablas del esquema»—, que es la más corta de escribir y la que más da. A
+      eso se le suman los permisos por omisión, que rigen sobre las tablas que
+      todavía no existen: son los que la instalación trae puestos y los que esta
+      misma base tuvo que salir a revocar en su primer renglón, así que son el
+      camino por el que el agujero vuelve solo.
+
       **La regla rige desde la primera migración, porque no hay ninguna
       anterior.** Cuando eran setenta y cuatro había un límite: antes de él
       estaba el volcado que dejó la instalación, con veintiún `GRANT ALL` que
@@ -372,7 +381,9 @@
      ninguno, así que falla cerrada —`42501` en la pantalla— y ésa es la
      dirección segura. Además hay casos legítimos, como una tabla que sólo tocan
      funciones `security definer`. Lo que no tiene caso legítimo es `truncate`,
-     que se salta la RLS entera.
+     que se salta la RLS entera. Y mira las tablas de `public`: un permiso sobre
+     otro esquema no lo juzga, porque las del producto viven todas ahí y las del
+     depósito de archivos las gobierna la regla de las políticas del depósito.
    - Un importe se reconoce por el nombre de la columna. Una que se llame de otra
      manera no se detecta; hoy la única del esquema es `caregivers.hourly_rate`.
    - De la clave primaria mira el tipo, no que sea una sola columna. Una clave
@@ -642,9 +653,51 @@ const CAMBIA_EL_ESQUEMA =
   /^[ \t]*(?:create|alter|drop)\s+(?:or\s+replace\s+)?(?:table|function|policy|type|index|view|trigger|schema|sequence|extension|domain|publication|materialized)\b|^[ \t]*(?:grant|revoke)\b|^[ \t]*comment\s+on\b/im;
 const AVISA_A_POSTGREST = /^\s*notify\s+pgrst\s*,\s*'reload schema'\s*;\s*$/i;
 const EL_AVISO_EMPIEZA = '0001';
+/* Cómo se escribe un permiso. Lo que va entre `on` y `to` no se escribe acá a
+   propósito: Postgres deja decir lo mismo de varias maneras —con `table` o sin
+   él, nombrando el esquema o no, una tabla o varias separadas por coma, y la que
+   no nombra ninguna y las alcanza a todas—, y reconocer una sola de esas maneras
+   es no mirar las otras. Qué alcanza cada una lo contesta `objetosDelPermiso()`,
+   que es el único lugar donde eso está escrito. */
+const CUERPO_DEL_PERMISO = String.raw`\s+([a-z][a-z0-9_,\s()]*?)\s+on\s+([^;]*?)\s+`;
+const A_QUIENES = String.raw`([a-z_,\s"]+)`;
 const GRANT_DE_TABLA =
-  /grant\s+([a-z][a-z0-9_,\s()]*?)\s+on\s+(?:table\s+)?"?public"?\."?([a-z_][a-z0-9_]*)"?\s+to\s+([a-z_,\s"]+)/gi;
+  new RegExp('grant' + CUERPO_DEL_PERMISO + String.raw`to\s+` + A_QUIENES, 'gi');
 const ABRE_DE_MAS = /\ball\b|\btruncate\b/i;
+/* Lo que se concede sobre algo que no es una tabla. Las funciones tienen su
+   propia regla, y de un esquema, una secuencia o una base de datos no se vacían
+   filas. */
+const NO_ES_UNA_TABLA =
+  /^(?:all\s+)?(?:functions?|procedures?|routines?|sequences?|schemas?|databases?|domains?|types?|languages?|tablespaces?|large\s+objects?|foreign\s+)\b/i;
+/* Las dos formas que no nombran ninguna tabla y las alcanzan a todas: la de un
+   permiso suelto, y la de los permisos por omisión, que rige sobre las tablas
+   que todavía no existen. */
+const TODAS_LAS_TABLAS = /^all\s+tables\s+in\s+schema\s+([a-z_][a-z0-9_]*)/i;
+const LAS_QUE_VENGAN = /^tables$/i;
+
+/**
+ * Qué tablas de `public` alcanza un permiso, escrito como esté escrito.
+ * Lo de otro esquema queda afuera: las tablas del producto viven en `public`, y
+ * un nombre sin esquema es `public` por omisión. La forma por omisión se cuenta
+ * como de `public` aunque el esquema lo nombre el `alter` de más atrás, que no
+ * entra en la captura: sobrar un aviso es la dirección segura.
+ */
+function objetosDelPermiso(objetivo) {
+  const limpio = objetivo.trim().replace(/^table\s+/i, '').trim();
+  if (NO_ES_UNA_TABLA.test(limpio)) return [];
+  const todas = limpio.match(TODAS_LAS_TABLAS);
+  if (todas) return todas[1].toLowerCase() === 'public' ? ['todas las tablas de public'] : [];
+  if (LAS_QUE_VENGAN.test(limpio)) return ['todas las tablas que se creen'];
+  const nombres = [];
+  for (const suelto of limpio.split(',')) {
+    const partes = suelto.trim().replace(/"/g, '').split('.');
+    if (partes.length > 2) continue;
+    if (partes.length === 2 && partes[0].toLowerCase() !== 'public') continue;
+    const nombre = partes[partes.length - 1].toLowerCase();
+    if (/^[a-z_][a-z0-9_]*$/.test(nombre)) nombres.push(nombre);
+  }
+  return nombres;
+}
 /* Para la decimotercera. Todo lo que le cambia el nombre a algo ya guardado.
    Las políticas entran a propósito: acá cada una se vuelve a crear con un
    `drop policy if exists` que la busca por el nombre, así que una renombrada
@@ -739,8 +792,8 @@ const ESCRIBE = /\b(?:insert|update|delete)\b/i;
    los dos verbos, porque esta regla no mira lo que dice una migracion sino el
    **neto** de todas: un `grant` que una migracion posterior revoca no es un
    agujero, y uno que nadie revoco lo es aunque su migracion se vea prolija. */
-const PERMISO_DE_TABLA =
-  /\b(grant|revoke)\s+([a-z][a-z0-9_,\s()]*?)\s+on\s+(?:table\s+)?"?public"?\."?([a-z_][a-z0-9_]*)"?\s+(?:to|from)\s+([a-z_,\s"]+)/gi;
+const PERMISO_DE_TABLA = new RegExp(
+  String.raw`\b(grant|revoke)` + CUERPO_DEL_PERMISO + String.raw`(?:to|from)\s+` + A_QUIENES, 'gi');
 /* Un `drop` de tabla o de vista: el objeto se va y con el se van sus permisos,
    asi que lo que hubiera concedido antes deja de contar. Aca las vistas se
    borran y se vuelven a crear seguido, y sin esto el neto arrastraria permisos
@@ -766,7 +819,12 @@ const COMPARA_EL_NOMBRE_CORTO = (parametro) =>
    impedir es la disyuncion, que es donde el nulo se convierte en «todas». */
 const EL_NULO_DEJA_PASAR = (parametro) =>
   new RegExp(parametro + '\\s+is\\s+null\\s+or\\b|\\bor\\s+' + parametro + '\\s+is\\s+null\\b', 'i');
-const DEL_SERVIDOR = /service_role/i;
+/* Los roles a los que nadie llega de afuera. `service_role` usa la llave del
+   servidor, y `postgres` es el dueño del esquema: ya puede todo sobre lo suyo,
+   concederle algo no le agrega nada, y por PostgREST no entra nadie con ese rol.
+   Se nombran uno por uno y no al revés —cualquier rol que no esté acá se avisa—
+   para que un rol nuevo llegue en rojo y no en silencio. */
+const DEL_SERVIDOR = /^(?:service_role|postgres|supabase_admin|supabase_auth_admin|supabase_storage_admin)$/i;
 const DEL_PEDIDO = /current_setting\s*\(|request\.headers|request\.jwt|auth\.jwt\s*\(/i;
 const NOMBRA_ORGANIZACION = /prestadora_actual\s*\(\s*\)|\btenant_id\b|\bprestadora_id\b/i;
 const ACOTADA = /\bwhere\b[^;]*\b(?:slug|id)\s*=/i;
@@ -1258,10 +1316,10 @@ export function alcanceAnonimo(textos, migraciones) {
       const concede = m[1].toLowerCase() === 'grant';
       const verbos = m[2].toLowerCase().replace(/\([^)]*\)/g, '')
         .split(',').map((v) => v.trim()).filter(Boolean);
-      const objeto = nombreDeHoy(m[3].toLowerCase(), renombres);
+      const objetos = objetosDelPermiso(m[3]).map((o) => nombreDeHoy(o, renombres));
       const roles = m[4].replace(/"/g, '').split(',').map((r) => r.trim()).filter(Boolean);
       if (!roles.some((r) => SIN_SESION.test(r))) continue;
-      for (const verbo of verbos) {
+      for (const objeto of objetos) for (const verbo of verbos) {
         const clave = objeto + '|' + verbo;
         if (concede) {
           tiene.set(clave, { archivo, indice: m.index, objeto, verbo });
@@ -1469,10 +1527,12 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, b
       if (!ABRE_DE_MAS.test(verbos)) continue;
       const quienes = m[3].replace(/[\s"]/g, '').split(',').filter((r) => !DEL_SERVIDOR.test(r));
       if (quienes.length === 0) continue;
-      fallas.push([renglonDe(t, m.index),
-        'este permiso sobre `' + m[2] + '` le da «' + verbos.trim() + '» a ' +
-        quienes.join(' y ') + '; ahí adentro va `truncate`, que no mira ninguna ' +
-        'política y vacía la tabla entera. Los verbos se escriben uno por uno']);
+      for (const objeto of objetosDelPermiso(m[2])) {
+        fallas.push([renglonDe(t, m.index),
+          'este permiso sobre `' + objeto + '` le da «' + verbos.trim() + '» a ' +
+          quienes.join(' y ') + '; ahí adentro va `truncate`, que no mira ninguna ' +
+          'política y vacía la tabla entera. Los verbos se escriben uno por uno']);
+      }
     }
   }
 
@@ -1533,12 +1593,13 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, b
   if (!nombre || nombre.slice(0, 4) >= LA_PUERTA_SE_CERRO) {
     const sostenidas = [...SIN_ORGANIZACION_AL_ESCRIBIR.values()].map((v) => v.tabla);
     for (const m of sinComentarios.matchAll(GRANT_DE_TABLA)) {
-      if (!sostenidas.includes(m[2].toLowerCase())) continue;
+      const alcanzadas = objetosDelPermiso(m[2]).filter((o) => sostenidas.includes(o));
+      if (alcanzadas.length === 0) continue;
       if (!ESCRIBE.test(m[1]) || m[1].includes('(')) continue;
       const quienes = m[3].replace(/[\s"]/g, '').split(',').filter((r) => !DEL_SERVIDOR.test(r));
       if (quienes.length === 0) continue;
-      fallas.push([renglonDe(t, m.index),
-        'este permiso deja escribir `' + m[2] + '` a ' + quienes.join(' y ') +
+      for (const tabla of alcanzadas) fallas.push([renglonDe(t, m.index),
+        'este permiso deja escribir `' + tabla + '` a ' + quienes.join(' y ') +
         ' sin nombrar columnas, y una política de esa tabla está exenta de la ' +
         'undécima regla justamente porque el permiso por columna la sostenía. ' +
         'Sin lista de columnas se puede escribir cualquiera, incluidas las que ' +
@@ -1818,6 +1879,14 @@ const MAL = [
    'grant all on table public.visitas to anon, authenticated;\n'],
   ['el mismo, nombrando `truncate` de frente',
    'grant select, truncate on public.visitas to authenticated;\n'],
+  ['el mismo, sin nombrar el esquema, que es `public` por omisión',
+   'grant all on visitas to authenticated;\n'],
+  ['el mismo, con dos tablas en el mismo renglón',
+   'grant all on public.visitas, public.papeles to authenticated;\n'],
+  ['el que no nombra ninguna tabla y las alcanza a todas de un saque',
+   'grant all on all tables in schema public to authenticated;\n'],
+  ['el que se las concede a las tablas que todavía no existen',
+   'alter default privileges in schema public grant all on tables to authenticated;\n'],
   ['una política que saca la Organización de un encabezado del pedido',
    'create policy "Lo mío" on public.cosas for select to authenticated\n' +
    "  using (tenant_id = (current_setting('request.headers', true)::json->>'x-prestadora')::uuid);\n"],
@@ -2189,7 +2258,8 @@ if (ME_CORRIERON_A_MI) {
       const limpio = texto.split('\n')
         .map((l) => (/^\s*--/.test(l) ? '' : l)).join('\n');
       for (const m of limpio.matchAll(GRANT_DE_TABLA)) {
-        if (!/^\s*execute\b/i.test(m[1])) permisos++;
+        if (/^\s*execute\b/i.test(m[1])) continue;
+        if (objetosDelPermiso(m[2]).length) permisos++;
       }
     }
     enteras++;
