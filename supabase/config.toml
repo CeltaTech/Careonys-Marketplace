@@ -251,7 +251,7 @@ double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
 # Dice `true` porque es lo que hace el servidor alojado: se comprobó contra
 # `/auth/v1/settings`, que devuelve `mailer_autoconfirm: false`. Antes decía
-# `false` y era mentira; ese desacuerdo es el pendiente 21. Cambiarlo a `false`
+# `false` y era mentira; ese desacuerdo fue el pendiente 21, ya cerrado. Cambiarlo a `false`
 # apagaría la confirmación en el sitio publicado, y esa decisión no está tomada.
 enable_confirmations = true
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.

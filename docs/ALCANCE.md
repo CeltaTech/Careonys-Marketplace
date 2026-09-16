@@ -3286,6 +3286,38 @@ horas», y Guardia es palabra del glosario que comparten los dos productos: el g
 una Guardia no es un turno, así que traducirla por «shift» o por «turno» pisaría una distinción
 hecha a propósito.
 
+### Tres frases del producto mandan a buscar un pendiente que ya no existe
+
+Hay un chequeo que vigila que ningún archivo vivo hable en presente de un pendiente cerrado. La
+razón es sencilla: quien lee «esto es el pendiente 21» sale a buscar el 21, y si ya no está,
+o pierde el tiempo o —peor— le cree a la frase y da por abierto algo que se cerró hace meses.
+
+**A qué archivos les miraba.** A una lista escrita a mano: documentos, guiones, hojas de estilo,
+pantallas y migraciones. Esa lista conoce el mundo de los archivos sueltos y nada más. **Dejaba
+afuera entera la carpeta de los catálogos**, que es donde vive la prosa que explica por qué existe
+cada uno; **la configuración de la base**; y **la única función que corre en el servidor**.
+
+**Y ahí estaban las tres.** Dos copias de un catálogo dicen que una decisión del Desarrollador es
+el pendiente 2. La configuración de la base dice que un desacuerdo es el pendiente 21. Ninguno de
+los dos tiene fila abierta: los dos se cerraron. Las tres frases quedaron escritas en pasado.
+
+**Esto es daño ya hecho, no una regla dormida.** No es que la regla pudiera fallar algún día: ya
+había fallado, y tres veces, en silencio, mientras el chequeo decía en verde que estaba todo bien.
+
+**De dónde sale el corpus ahora.** De la lista única donde este proyecto dice qué escribe —la
+misma que decide si un nombre con «clave» adentro es una caja fuerte o una pantalla—, más los
+documentos y las dos formas que escribe una persona y no son código de la aplicación: la
+configuración de la base y los guiones sueltos de una sola tarea.
+
+**Y el detector aprendió a leer el número resaltado.** Quien escribe un documento resalta el
+número para que se vea, y la forma sin resaltar era la única que se reconocía; hay cinco citas
+escritas así.
+
+**Se probó de las dos maneras.** Angostando el detector a la forma vieja, la propia prueba del
+guion se planta y el chequeo se niega a correr. Y devolviéndole a la configuración de la base su
+frase en presente, la versión anterior la dio por buena en verde mientras la de ahora la nombra
+con su renglón.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
@@ -3473,7 +3505,7 @@ lo que sigue explica por qué; el consentimiento de novedades sigue sin tabla.
 
 El 9 de septiembre de 2026 `formulario-integral.html` se apartó a la cuarentena: hoy vive en
 `fuera de uso/formulario-integral.html`, la carpeta que `.gitignore:34` declara fuera del
-repositorio y que `scripts/recorrido.mjs:103` deja afuera de todos los chequeos.
+repositorio y que `scripts/recorrido.mjs:116` deja afuera de todos los chequeos.
 
 **No se saca una pantalla porque moleste, y ésta no era una pantalla.** Nació el 5 de agosto de
 2026 como **hoja de muestra**: su título decía «Formularios Oficiales de la App» y venía con un

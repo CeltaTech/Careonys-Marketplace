@@ -53,7 +53,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { hayArchivos, seRevisaron, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
+import { hayArchivos, seRevisaron, EXTENSIONES_DE_CODIGO } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rutaLista = join(raiz, 'docs', 'PENDIENTES.md');
@@ -66,8 +66,13 @@ export function pendientesAbiertos(texto) {
   return new Set([...texto.matchAll(/^\|\s*(\d+)\s*\|/gm)].map((m) => Number(m[1])));
 }
 
-/* «pendiente 66», «pendientes 74 y 75», «pendientes 8, 42 y 67». */
-const CITA = /\bpendientes?\b\s+(?:el\s+)?(\d+(?:\s*(?:,|y|\/|ni)\s*(?:el\s+)?\d+)*)/gi;
+/* «pendiente 66», «pendientes 74 y 75», «pendientes 8, 42 y 67». Y el número
+   puede venir resaltado —`pendiente **75**`, `el pendiente `75``—, que es como
+   está escrito en cinco lugares: quien escribe un documento resalta el número
+   para que se vea, y la forma sin resaltar era la única que este chequeo
+   reconocía. */
+const CITA =
+  /\bpendientes?\b[\s*_`]+(?:el\s+)?[*_`]*(\d+(?:\s*(?:,|y|\/|ni)\s*(?:el\s+)?[*_`]*\d+)*)/gi;
 
 /* Lo que alcanza para que una cita a algo cerrado no sea un error. Se busca en
    la misma frase, no en el archivo entero: una nota de cierre tres párrafos más
@@ -95,7 +100,19 @@ const aplanar = (t) => t.replace(/[\s*\/#>|-]+/g, ' ');
 const PASADO = /\b(era|eran|fue|fueron)\s+(el|la|los|las)?\s*$/i;
 const PEGADO = 60;
 
-const EXTENSIONES = ['.md', '.mjs', '.js', ...EXTENSIONES_DE_PANTALLA, '.css', '.sql'];
+/* Una cita a un pendiente la escribe una persona, y una persona escribe en
+   cualquier archivo del proyecto que no sea una imagen. La lista de antes
+   —documentos, guiones, hojas de estilo, pantallas y migraciones— conocía el
+   mundo de los archivos sueltos y nada más: dejaba afuera `data/` entera, que es
+   donde viven los catálogos con la prosa que explica por qué existe cada uno, y
+   también la configuración de la base y la única función que corre en el
+   servidor. Tres citas colgadas vivían justamente ahí.
+
+   Ahora sale de la lista de extensiones de código de `recorrido.mjs`, que es el
+   único lugar donde este proyecto dice qué escribe, más los documentos y las dos
+   formas que no son código de la aplicación pero las escribe alguien igual: la
+   configuración de la base y los guiones sueltos de una sola tarea. */
+const EXTENSIONES = [...EXTENSIONES_DE_CODIGO, '.md', '.txt', '.toml', '.py'];
 
 /* Narran un momento con fecha, o son historia que no se corrige. El motivo de
    cada uno está en el encabezado. */
@@ -151,7 +168,10 @@ const PRUEBAS = [
   ['una cita en pasado y en plural', `las clases que cerraron el pendiente ${CERRADO}`, 0],
   ['una cita en futuro', `esto cerrará el pendiente ${CERRADO} algún día`, 1],
   ['un «fue» lejos de la cita', `fue un lío. Hoy esto es el pendiente ${CERRADO}`, 1],
-  ['una lista donde uno solo está cerrado', `los pendientes ${ABIERTO} y ${CERRADO}`, 1]
+  ['una lista donde uno solo está cerrado', `los pendientes ${ABIERTO} y ${CERRADO}`, 1],
+  ['una cita con el número en negrita', `esto es el pendiente **${CERRADO}** y sigue abierto`, 1],
+  ['una cita con el número resaltado', 'esto es el pendiente `' + CERRADO + '` y sigue abierto', 1],
+  ['una cita en negrita a un pendiente abierto', `esto lo traba el pendiente **${ABIERTO}**`, 0]
 ];
 for (const [que, texto, esperadas] of PRUEBAS) {
   const { colgadas } = citasColgadas(texto, abiertos);

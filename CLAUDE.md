@@ -163,7 +163,7 @@ de documentos que ya cumplieron su función, y ésta de código que sigue funcio
 tiene quién lo llame.
 
 **Y `fuera de uso/` no es eso: es la cuarentena.** Ahí va lo que se sospecha inútil y todavía no
-se borra, y ahí **no se hace trazabilidad**: no la abre ningún chequeo (`scripts/recorrido.mjs:101`)
+se borra, y ahí **no se hace trazabilidad**: no la abre ningún chequeo (`scripts/recorrido.mjs:114`)
 y no entra al repositorio (`.gitignore:34`). Lo que se sabe que sirve no se guarda ahí, porque ahí
 quedaría en una sola máquina y a la vista de un solo producto.
 

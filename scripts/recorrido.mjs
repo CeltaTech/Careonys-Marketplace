@@ -52,20 +52,33 @@ const CAJAS_FUERTES = [
 const EXCLUSIVO_DE_UN_CLIENTE = /^exclusivo/;
 
 /* Lo que anuncia en el nombre que adentro hay una clave. **Pero un archivo de
-   código no es una caja fuerte por llamarse `nueva-clave.html`**: ésa es la
+   código no es una caja fuerte por llamarse `NuevaClave.jsx`**: ésa es la
    pantalla donde alguien cambia su contraseña, no un lugar donde haya ninguna
-   guardada. Hoy el proyecto tiene seis nombres así —las dos pantallas,
-   `js/clave.js` y sus dos copias, `scripts/verificar_claves.mjs` y una
-   migración—, y tomarlos por cajas fuertes sacaría del recorrido a seis
-   archivos de código de verdad, que es la falla del otro lado: cerrar de más
-   deja de revisar y tampoco avisa.
+   guardada. Cuantos nombres así hay hoy no se anota acá: la cuenta a mano
+   envejece en silencio y nadie se entera, que es exactamente la falla que este
+   comentario viene a explicar. Son pantallas donde se cambia una contraseña,
+   el campo que comparten, y los archivos que atienden ese cambio. Tomarlos por
+   cajas fuertes los sacaría del recorrido, que es la falla del otro lado:
+   cerrar de más deja de revisar y tampoco avisa.
 
    Por eso la palabra sola frena únicamente cuando el nombre **no** es código:
    un `claves.txt`, un `credenciales.env`, una carpeta `contraseñas`. Y `.md` y
    `.txt` quedan a propósito afuera de la lista de código: un documento que se
    llama así no es una pantalla, es una nota con lo que guarda adentro. */
 const ANUNCIA_UNA_CLAVE = /clave|contrase|secret|credencial|password/;
-const ES_CODIGO = /\.(html|js|mjs|cjs|css|json|sql|ts|tsx|jsx|svg|webmanifest)$/i;
+
+/* La lista de lo que este proyecto considera código vive acá y en un solo
+   lugar, porque la usan dos preguntas distintas: si un nombre con «clave»
+   adentro es una caja fuerte o una pantalla, y —para quien recorra buscando
+   texto escrito por una persona— qué archivos hay que abrir. Dos listas
+   escritas aparte se despegan el día uno, y la que se despega es siempre la del
+   chequeo, que deja de mirar la mitad del proyecto sin que nada se ponga rojo. */
+export const EXTENSIONES_DE_CODIGO = [
+  '.html', '.js', '.mjs', '.cjs', '.css', '.json', '.sql', '.ts', '.tsx', '.jsx',
+  '.svg', '.webmanifest'
+];
+const ES_CODIGO = new RegExp(
+  '\.(' + EXTENSIONES_DE_CODIGO.map((e) => e.slice(1)).join('|') + ')$', 'i');
 
 /* Deja el nombre en su forma más desnuda: separa las palabras pegadas en
    mayúscula —`NoHacerCommit`— y borra todo lo que no sea una letra. Así
