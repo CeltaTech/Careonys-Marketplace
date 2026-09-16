@@ -29,24 +29,24 @@
    producto habría quedado sin vigilancia el día que pasó a ser un programa.
 =================================================== */
 
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve, sep } from 'node:path';
-import { seRevisaron, esPantalla } from './recorrido.mjs';
+import { hayArchivos, seRevisaron, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
-const SALTAR = new Set(['node_modules', '.git', 'assets', 'supabase']);
 
-function archivos(dir, salida = []) {
-  for (const nombre of readdirSync(dir)) {
-    // Las cajas fuertes no se abren, y se reconocen por el nombre.
-    if (SALTAR.has(nombre) || /^no.?commit$/i.test(nombre)) continue;
-    const ruta = join(dir, nombre);
-    if (statSync(ruta).isDirectory()) archivos(ruta, salida);
-    else if (esPantalla(nombre) || nombre.endsWith('.js')) salida.push(ruta);
-  }
-  return salida;
-}
+/* Lo único que este chequeo decide por su cuenta es qué carpetas no le
+   interesan: un dibujo no es una pantalla, y lo que cuelga de `supabase` es
+   esquema, no marcado.
+
+   Qué es una caja fuerte, qué carpeta no es del proyecto y qué archivo anuncia
+   una clave lo decide `recorrido.mjs` y nadie más. Acá había una lista propia
+   que creía saberlo, y dejaba abiertas siete puertas que el proyecto cierra:
+   entre ellas `dist`, que es el producto armado —o sea, el mismo marcado
+   contado dos veces— y las cajas fuertes escritas de cualquier otra forma que
+   no fuera «no commit». */
+const AJENAS = ['assets', 'supabase'];
 
 /* `font-size : 11px ; color:red` → ['font-size:11px', 'color:red'] */
 function declaraciones(valor) {
@@ -211,8 +211,7 @@ export function verificarEstilos() {
   const problemas = [];
   let enMarcado = 0, enGuion = 0, sobranEnGuion = 0;
 
-  const rutas = archivos(raiz);
-  seRevisaron(rutas.length, 'un solo archivo de pantalla que revisar');
+  const rutas = hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJENAS);
   for (const ruta of rutas) {
     const texto = readFileSync(ruta, 'utf8');
     const rel = relative(raiz, ruta).split(sep).join('/');

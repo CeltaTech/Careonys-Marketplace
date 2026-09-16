@@ -3708,6 +3708,47 @@ No hizo falta ningún control nuevo: `scripts/verificar_identidad.mjs:125` ya co
 manifiestos contra lo que el generador produce, así que la cadena queda entera —el token manda,
 el generador escribe, el chequeo compara— y no hay copia que se pueda despegar.
 
+### El chequeo de los estilos recorría el disco con su propia regla, y abría siete puertas que el proyecto cierra
+
+El control que vigila que no vuelva a escribirse a mano lo que ya tiene clase no le preguntaba al
+proyecto qué archivos hay: se armaba la lista él. Tenía su propio recorrido, con su propia lista
+de carpetas a saltear —`node_modules`, `.git`, `assets` y `supabase`— y su propia idea de qué es
+una caja fuerte, que era una sola forma de escribirlo.
+
+El proyecto tiene una regla para eso y es una sola: `nuncaSeAbre()`, en
+`scripts/recorrido.mjs:151`. Sabe las cinco maneras de nombrar una caja fuerte, sabe que una
+carpeta que empieza con «exclusivo» es de una Prestadora y no se mezcla, sabe qué nombre de
+archivo anuncia una clave, y sabe qué carpetas no son del proyecto. La copia que vivía adentro
+del control de estilos no sabía casi nada de eso.
+
+Qué dejaba entrar. De los veintidós nombres que el proyecto cierra, la regla propia dejaba pasar
+catorce: las cajas fuertes escritas de cualquier forma que no fuera «no commit», la carpeta
+exclusiva de una Prestadora, `.vercel`, `.temp`, `.branches`, `.claude`, `dist`, `fuera de uso` y
+los archivos de bloqueo de paquetes. Puertas abiertas de verdad, hoy, en el disco: siete.
+
+Lo más gordo de las siete es `dist`, que es el producto armado. Adentro hay treinta y siete
+archivos de marcado y de guion que son el mismo producto otra vez, generado, y este control los
+venía leyendo: informaba doscientos catorce atributos donde el producto tiene ciento noventa y
+cuatro. Veinte de los que contaba no existían como decisión de nadie —eran la copia que escupe la
+herramienta de armado—, y `scripts/recorrido.mjs` lo dice con todas las letras: mirarlo ahí
+adentro es mirar dos veces lo mismo, y mal.
+
+Cómo se probó, sin abrir ninguna caja fuerte de verdad. Se puso un atributo `style="display:flex"`
+—que tiene clase, o sea que el control tiene que denunciarlo— adentro de `dist/index.html`: la
+versión vieja lo denunció, la nueva no lo ve. Y se creó una carpeta inventada llamada
+`no pushear`, con un archivo inventado adentro: la versión vieja la abrió y citó su contenido en
+pantalla. La carpeta se borró en el mismo comando. Nada de lo que se leyó en esa prueba era de
+nadie.
+
+Qué se hizo: el recorrido propio se fue entero. Ahora la lista la pide, como todos los demás, con
+`hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJENAS)`, y lo único que este control
+sigue decidiendo por su cuenta es qué carpetas no le interesan —`assets`, porque un dibujo no es
+una pantalla, y `supabase`, porque ahí hay esquema y no marcado—. Quién es una caja fuerte lo
+decide un solo archivo.
+
+Es la quinta vez que la misma regla se rompe por el mismo camino: alguien vuelve a escribir el
+recorrido en su archivo en vez de pedirlo.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
