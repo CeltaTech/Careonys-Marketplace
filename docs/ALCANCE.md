@@ -4839,6 +4839,29 @@ con comilla común, y el renglón verde dice los mismos quince que antes. Falsif
 en los dos sentidos, y el banco de pruebas del lector —que probaba una sola de las
 tres maneras— ahora prueba las tres y la nota adentro de la lista.
 
+### La misma ceguera, en el chequeo de los cuatro estados
+
+La pregunta de la sección de abajo —dónde se declara una función y cómo se
+llama— se contesta a mano en tres chequeos distintos. En el que vigila que todo
+componente que carga datos maneje sus cuatro estados estaba escrita con la misma
+falla: dos maneras de declarar un bloque que espera, las dos pidiendo que la
+palabra que lo marca venga pegada al nombre o al signo igual
+(`scripts/verificar_estados.mjs:407`).
+
+Un bloque declarado envuelto en una llamada quedaba sin nombre, y un bloque sin
+nombre no se juzga. Son dos consecuencias y las dos importan: el bloque que trae
+datos y no muestra nada se saltea entero antes de buscarle quién lo llama
+(`scripts/verificar_estados.mjs:835`), y el que sí escribe en la pantalla no
+entra en la lista de los que avisan, así que no le perdona el fallo al bloque
+que lo llama por su nombre. Eran seis bloques que podían tener nombre y no lo
+tenían.
+
+Probado inyectando en una pantalla de verdad un bloque envuelto que trae datos,
+no muestra nada, no atiende el fallo y se lo llama sin recoger nada: con la
+forma vieja el chequeo terminaba en verde sin nombrarlo siquiera, y con la nueva
+lo señala. El banco de pruebas sumó un bloque envuelto, y al lado la prueba de
+que al que de verdad no tiene nombre no se le invente uno.
+
 ### Las tres maneras de declarar una función, y la que usan casi todas las pantallas
 
 El chequeo que vigila que un botón que dispara una operación se apague mientras

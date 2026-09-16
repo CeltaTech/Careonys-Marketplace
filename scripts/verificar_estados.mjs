@@ -393,11 +393,22 @@ function losQueAvisan(lineas) {
   return nombres;
 }
 
-/** El nombre del bloque, y el del objeto que lo tiene adentro si hay alguno. */
+/** El nombre del bloque, y el del objeto que lo tiene adentro si hay alguno.
+
+   La tercera manera es la función envuelta en una llamada, que es como las
+   pantallas del programa declaran casi todos sus bloques. Las dos primeras
+   piden que el `async` venga pegado al nombre o al signo igual, así que esos
+   bloques quedaban sin nombre, y un bloque sin nombre no se juzga: el que trae
+   datos y no muestra nada se saltea entero más abajo, y el que sí escribe en la
+   pantalla no cuenta para perdonarle el fallo al `catch` que lo llama. Eran seis
+   el 16 de septiembre de 2026. No se nombra acá ninguna envoltura: alcanza con
+   que lo primero que reciba la llamada sea una función, porque una llamada
+   común recibe valores. */
 function comoSeLlama(lineas, desde) {
   const linea = lineas[desde];
   const conNombre = linea.match(/(?:async\s+function\s+|async\s+)([\w$]+)\s*\(/)
-    || linea.match(/(?:const|let|var)\s+([\w$]+)\s*=\s*async\b/);
+    || linea.match(/(?:const|let|var)\s+([\w$]+)\s*=\s*async\b/)
+    || linea.match(/(?:const|let|var)\s+([\w$]+)\s*=\s*[A-Za-z_$][\w$]*\s*\(\s*(?:async\s*)?(?:function\b|\()/);
   const nombre = conNombre ? conNombre[1] : null;
   let objeto = null;
   for (let i = desde - 1; i >= 0 && !objeto; i--) {
@@ -682,6 +693,18 @@ const atrapaBienDe = (t) => estadosDe(t).bloques[0].atrapaBien;
 const noDetectaA = atrapaBienDe(LA_TIRA_A_UN_TACHO) ? ['la lista que nadie devuelve'] : [];
 const sePasaA = atrapaBienDe(JUNTA_LOS_QUE_FALLARON) ? [] : ['la lista que sí se devuelve'];
 
+/* El bloque declarado envuelto en una llamada. Lo que se prueba acá no es si
+   avisa, sino si lo reconoció por su nombre: un bloque sin nombre no se juzga.
+   Mientras todo lo que se probaba en este banco traía el `async` pegado, el
+   detector podía no reconocer ninguna otra manera de declarar un bloque y el
+   banco seguía en verde. */
+const ENVUELTO = 'const traer = useCallback(async () => {\n'
+  + '  const r = await fetch(ARCHIVO);\n  return r.json();\n}, []);';
+const nombreDe = (t) => estadosDe(t).bloques[0].nombre;
+const sinNombre = nombreDe(ENVUELTO) === 'traer' ? [] : ['el bloque envuelto en una llamada'];
+const conNombreDeMas = nombreDe('(async () => {\n  await traer();\n})();')
+  ? ['el bloque que de verdad no tiene nombre'] : [];
+
 const noDetecta = MAL.filter(([, t]) => estadosDe(t).fallas.length === 0);
 const sePasa = BIEN.filter(([, t]) => estadosDe(t).fallas.length > 0);
 
@@ -699,7 +722,8 @@ const sePasaD = BIEN_DEBER.filter((l) => !pasaElDeber(l));
 
 if (noDetecta.length || sePasa.length || noDetectaM.length || sePasaM.length
     || noDetectaD.length || sePasaD.length
-    || noDetectaA.length || sePasaA.length) {
+    || noDetectaA.length || sePasaA.length
+    || sinNombre.length || conNombreDeMas.length) {
   console.error('El detector está roto, así que no verifica nada:');
   for (const [q] of noDetecta) console.error('  no detecta: ' + q);
   for (const [q] of sePasa) console.error('  avisa de más: ' + q);
@@ -709,6 +733,8 @@ if (noDetecta.length || sePasa.length || noDetectaM.length || sePasaM.length
   for (const l of sePasaD) console.error('  avisa de más en el llamado: ' + l);
   for (const q of noDetectaA) console.error('  da por contado un fallo que no lo está: ' + q);
   for (const q of sePasaA) console.error('  no reconoce el fallo anotado en la lista: ' + q);
+  for (const q of sinNombre) console.error('  no le reconoce el nombre: ' + q);
+  for (const q of conNombreDeMas) console.error('  le inventa un nombre: ' + q);
   process.exit(1);
 }
 
