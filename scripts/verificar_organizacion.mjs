@@ -66,39 +66,139 @@ function loQueDeclaraIdentidad() {
   return { logotipo: ruta[1], codigo: codigo[1] };
 }
 
+/** Las columnas de `public.tenants`, en el orden en que las declara la migración
+ *  que crea la tabla.
+ *
+ *  Hacen falta porque el volcado de la siembra escribe `INSERT INTO
+ *  public.tenants VALUES (...)` sin nombrar ninguna columna. Sin ese orden, el
+ *  primer valor parece el nombre corto y en realidad es el `uuid`, que es
+ *  justamente lo que este chequeo estuvo leyendo: contaba una Prestadora de las
+ *  tres que carga la siembra, y las únicas dos palabras que le prohibía escribir
+ *  a una pantalla eran un `uuid` y el nombre corto de la primera. */
+function columnasDeTenants() {
+  for (const archivo of readdirSync(MIGRACIONES).sort()) {
+    if (!archivo.endsWith('.sql')) continue;
+    const texto = readFileSync(join(MIGRACIONES, archivo), 'utf8');
+    const desde = texto.search(/create\s+table\s+(?:if\s+not\s+exists\s+)?public\.tenants\s*\(/i);
+    if (desde === -1) continue;
+
+    const columnas = [];
+    for (const renglon of texto.slice(texto.indexOf('(', desde) + 1).split('\n')) {
+      if (renglon.startsWith(')')) break;
+      const nombre = renglon.trim().match(/^([a-z_][a-z0-9_]*)\s+[a-z]/i);
+      if (nombre && nombre[1].toLowerCase() !== 'constraint') columnas.push(nombre[1].toLowerCase());
+    }
+    if (columnas.includes('slug')) return columnas;
+  }
+  throw new Error(
+    'Ninguna migración crea `public.tenants` con una columna `slug`, así que no se sabe\n' +
+    'en qué orden vienen los valores de la siembra y este chequeo no probó nada.'
+  );
+}
+
+/** Los valores de un `insert`, tupla por tupla, leídos desde `desde`.
+ *
+ *  Se lee a mano y no con una expresión regular porque adentro de un texto puede
+ *  haber una coma, un paréntesis o un punto y coma —la descripción de una
+ *  Prestadora los tiene—, y cortar por cualquiera de ellos deja afuera todo lo
+ *  que venga después. Las dos comillas seguidas de adentro de un texto son una
+ *  sola comilla, y los paréntesis de una llamada como `now()` no cierran la
+ *  tupla. Se para en el primer signo que ya no es una tupla ni la coma que
+ *  separa dos, que es donde empieza el resto de la sentencia. */
+function tuplas(texto, desde) {
+  const filas = [];
+  let fila = null;
+  let bruto = '';
+  let entreComillas = false;
+  let enTexto = false;
+  let hondo = 0;
+
+  for (let i = desde; i < texto.length; i++) {
+    const c = texto[i];
+
+    if (enTexto) {
+      if (c === "'" && texto[i + 1] === "'") { bruto += "'"; i++; continue; }
+      if (c === "'") { enTexto = false; continue; }
+      bruto += c;
+      continue;
+    }
+    if (c === "'") { enTexto = true; entreComillas = true; continue; }
+
+    if (fila === null) {
+      if (c === '(') { fila = []; bruto = ''; entreComillas = false; hondo = 0; continue; }
+      if (c === ',' || /\s/.test(c)) continue;
+      break;
+    }
+
+    if (c === '(') { hondo++; bruto += c; continue; }
+    if (c === ')' && hondo > 0) { hondo--; bruto += c; continue; }
+    if (c === ')') {
+      fila.push({ valor: bruto.trim(), entreComillas });
+      filas.push(fila);
+      fila = null;
+      continue;
+    }
+    if (c === ',') {
+      fila.push({ valor: bruto.trim(), entreComillas });
+      bruto = '';
+      entreComillas = false;
+      continue;
+    }
+    bruto += c;
+  }
+  return filas;
+}
+
 /** Las Prestadoras que las migraciones cargan con nombre escrito.
  *
  *  Se miran las altas y **también los cambios de nombre**. Una Prestadora
  *  renombrada por una migración posterior tiene dos nombres, y el segundo no
  *  está en ningún alta: si acá se leyeran sólo las altas, el nombre con el que
  *  hoy se la ve sería justamente el único que ninguna pantalla tendría prohibido
- *  escribir. */
+ *  escribir.
+ *
+ *  Y se miran **todas las altas de cada archivo, no la primera**. La siembra
+ *  escribe una sentencia por Prestadora, así que quedarse con la primera es
+ *  quedarse con una sola. */
 function prestadorasDelSeed(codigoDelProducto) {
   const nombres = new Map(); // nombre → archivo de la migración que lo escribe
   const cortos = new Set();  // los nombres cortos, que son una Prestadora cada uno
+  const declaradas = columnasDeTenants();
+
+  const anotar = (slug, nombre, archivo) => {
+    if (!slug || slug === codigoDelProducto) return;
+    cortos.add(slug);
+    nombres.set(slug, archivo);
+    if (nombre) nombres.set(nombre, archivo);
+  };
+
   for (const archivo of readdirSync(MIGRACIONES).sort()) {
     if (!archivo.endsWith('.sql')) continue;
     const texto = readFileSync(join(MIGRACIONES, archivo), 'utf8');
 
-    const desde = texto.toLowerCase().indexOf('into public.tenants');
-    if (desde !== -1) {
-      const bloque = texto.slice(desde, texto.indexOf(';', desde));
-      for (const fila of bloque.matchAll(/\(\s*'([^']+)'\s*,\s*\n?\s*'([^']+)'/g)) {
-        const [, slug, nombre] = fila;
-        if (slug === codigoDelProducto) continue;
-        cortos.add(slug);
-        nombres.set(slug, archivo);
-        nombres.set(nombre, archivo);
+    for (const alta of texto.matchAll(/insert\s+into\s+public\.tenants\s*(\([^)]*\))?\s*values/gi)) {
+      const columnas = alta[1]
+        ? alta[1].slice(1, -1).split(',').map((c) => c.trim().toLowerCase().replace(/"/g, ''))
+        : declaradas;
+      const dondeSlug = columnas.indexOf('slug');
+      const dondeNombre = columnas.indexOf('name');
+      if (dondeSlug === -1) continue;
+
+      for (const fila of tuplas(texto, alta.index + alta[0].length)) {
+        const slug = fila[dondeSlug];
+        const nombre = fila[dondeNombre];
+        /* El alta que vive adentro de una función carga variables, no palabras:
+           ahí no hay ningún nombre que una pantalla pueda copiar. */
+        if (!slug || !slug.entreComillas) continue;
+        anotar(slug.valor, nombre && nombre.entreComillas ? nombre.valor : null, archivo);
       }
     }
 
     for (const cambio of texto.matchAll(/update\s+public\.tenants([\s\S]*?);/gi)) {
       const nombre = cambio[1].match(/\bname\s*=\s*'([^']+)'/i);
       const slug = cambio[1].match(/\bslug\s*=\s*'([^']+)'/i);
-      if (!nombre || !slug || slug[1] === codigoDelProducto) continue;
-      cortos.add(slug[1]);
-      nombres.set(slug[1], archivo);
-      nombres.set(nombre[1], archivo);
+      if (!nombre || !slug) continue;
+      anotar(slug[1], nombre[1], archivo);
     }
   }
   return { nombres, cuantas: cortos.size };

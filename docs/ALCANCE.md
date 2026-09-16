@@ -2641,10 +2641,10 @@ mostraba el nombre **del producto** en el lugar donde va el de la Organización.
 cosas, cada una contra su punto único de verdad: que ningún nombre de Prestadora esté escrito en
 el marcado, los guiones ni los estilos —y la lista de Prestadoras no está escrita adentro del
 chequeo, sale de `supabase/migrations/`, de las altas y de los cambios de nombre posteriores,
-`scripts/verificar_organizacion.mjs:76`—, y
+`scripts/verificar_organizacion.mjs:163`—, y
 que la única ruta de logotipo que se escriba sea la que declara `js/identidad.js`. Si ninguna
 migración carga una Prestadora con nombre, el chequeo **falla** en vez de pasar en verde sobre una
-lista vacía (`scripts/verificar_organizacion.mjs:111`).
+lista vacía (`scripts/verificar_organizacion.mjs:211`).
 
 **Se probó que puede fallar**, que es la regla de que una prueba que no puede fallar no prueba
 nada. Se rompieron las dos reglas a propósito: se escribió el nombre de una de las Prestadoras del
@@ -2737,7 +2737,7 @@ El chequeo de organización también quedaba corto: armaba su lista de nombres p
 sólo las altas, así que el nombre nuevo de una Prestadora renombrada por una migración posterior
 —justamente el nombre con el que hoy se la ve— era el único que ninguna pantalla tenía prohibido
 escribir. Ahora lee las altas y los cambios de nombre
-(`scripts/verificar_organizacion.mjs:76`). Probado igual: escrito a mano en una pantalla, el nombre
+(`scripts/verificar_organizacion.mjs:163`). Probado igual: escrito a mano en una pantalla, el nombre
 nuevo la pone en rojo y nombra la migración que lo escribe.
 
 De paso viajaron dos comentarios de tabla que seguían nombrando `caregivers_publicos`, una vista
