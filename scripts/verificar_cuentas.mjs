@@ -20,6 +20,15 @@
    exactamente lo que se rompió: al desaparecer el archivo de las cuentas, esos
    seis `uuid` quedaron nombrados en un solo lado.
 
+   Y las filas vienen escritas de dos maneras, que se leen distinto. La que
+   nombra sus columnas —`INSERT INTO tabla (id, ...) VALUES (...)`— se lee sola.
+   La que no las nombra, que es como escribe un volcado y como está escrita hoy
+   la siembra entera, se apoya en el orden con el que la tabla fue creada, así
+   que ese orden se saca del `CREATE TABLE` y se va juntando migración por
+   migración. La fila que no nombra columnas y cuya tabla no crea ninguna
+   migración anterior **no se saltea**: se informa. Saltear callado es
+   exactamente cómo esto pasó a revisar cero filas mientras decía ✔.
+
    Y dos cosas más, que van con la anterior:
 
      * Que quien crea cuentas cree también su identidad del proveedor `email`.
@@ -95,17 +104,103 @@ function sinComillas(valor) {
   return limpio;
 }
 
+/* --- El orden con el que nació cada tabla ---------------------------------
+   Un volcado no escribe la lista de columnas: escribe `INSERT INTO tabla
+   VALUES (...)` y se apoya en el orden con el que la tabla fue creada. Así
+   está escrita la siembra entera, así que sin esto no se lee ni una fila. El
+   orden sale del `CREATE TABLE`, que es el mismo del que se sirvió el volcado
+   para escribirlas, y se va juntando migración por migración en orden, para
+   que cada `insert` se lea con el orden que la tabla tenía en ese momento. */
+const EMPIEZAN_UNA_REGLA = /^(constraint|primary|unique|foreign|check|exclude|like)\b/i;
+
+/* Partir por comas de las de afuera: adentro de un texto o de un paréntesis
+   —`numeric(10,2)`, `timezone('utc'::text, now())`— la coma no separa nada. */
+function partirEnLoAlto(cuerpo) {
+  const partes = [];
+  let actual = '';
+  let enTexto = false;
+  let hondura = 0;
+  for (let i = 0; i < cuerpo.length; i++) {
+    const c = cuerpo[i];
+    if (enTexto) {
+      if (c === "'" && cuerpo[i + 1] === "'") { actual += "''"; i++; continue; }
+      if (c === "'") enTexto = false;
+      actual += c;
+      continue;
+    }
+    if (c === "'") { enTexto = true; actual += c; continue; }
+    if (c === '(') hondura++;
+    if (c === ')') hondura--;
+    if (c === ',' && hondura === 0) { partes.push(actual); actual = ''; continue; }
+    actual += c;
+  }
+  partes.push(actual);
+  return partes;
+}
+
+function cierraElParentesis(texto, abre) {
+  let hondura = 0;
+  let enTexto = false;
+  for (let i = abre; i < texto.length; i++) {
+    const c = texto[i];
+    if (enTexto) {
+      if (c === "'" && texto[i + 1] === "'") { i++; continue; }
+      if (c === "'") enTexto = false;
+      continue;
+    }
+    if (c === "'") { enTexto = true; continue; }
+    if (c === '(') hondura++;
+    else if (c === ')') { hondura--; if (hondura === 0) return i; }
+  }
+  return -1;
+}
+
+export function ordenDeLasColumnas(sql) {
+  const tablas = new Map();
+  const CREA = /create\s+table\s+(?:if\s+not\s+exists\s+)?(?:public\.)?"?([a-z_]\w*)"?\s*\(/gi;
+  for (const m of sql.matchAll(CREA)) {
+    const abre = m.index + m[0].length - 1;
+    const cierra = cierraElParentesis(sql, abre);
+    if (cierra < 0) continue;
+    const columnas = [];
+    for (const parte of partirEnLoAlto(sql.slice(abre + 1, cierra))) {
+      const limpia = parte.trim();
+      if (!limpia || EMPIEZAN_UNA_REGLA.test(limpia)) continue;
+      const nombre = limpia.match(/^"?([a-z_]\w*)"?/i);
+      if (nombre) columnas.push(nombre[1].toLowerCase());
+    }
+    if (columnas.length) tablas.set(m[1].toLowerCase(), columnas);
+  }
+  return tablas;
+}
+
+/* El nombre de la tabla se mete en el medio, así que el patrón se arma. Los
+   dos costados se escriben como patrones de verdad y no como texto, porque un
+   texto con barras se copia mal de un lado a otro y llega roto sin avisar. */
+const ANTES_DEL_NOMBRE = /insert\s+into\s+(?:public\.)?"?/.source;
+const DESPUES_DEL_NOMBRE = /"?\s*(?:\(([^)]*)\))?\s*values\s*\(([\s\S]*?)\)\s*;/.source;
+
 /* Los identificadores de cuenta que un texto escribe en las tres columnas.
-   Devuelve pares [tabla.columna, uuid], para poder decir dónde estaba. */
-export function cuentasNombradas(texto) {
+   Devuelve pares [tabla.columna, uuid], para poder decir dónde estaba.
+
+   `orden` trae las columnas de cada tabla, para poder leer el `insert` que no
+   nombra ninguna. El que viene sin lista y sin orden conocido no se saltea en
+   silencio: sale por `sinOrden`, porque saltear callado es exactamente cómo
+   este chequeo pasó a mirar cero. */
+export function cuentasNombradas(texto, orden = new Map(), sinOrden = []) {
   const nombrados = [];
   for (const [tabla, columna] of APUNTAN_A_UNA_CUENTA) {
-    const patron = new RegExp(
-      'insert\\s+into\\s+(?:public\\.)?"?' + tabla + '"?\\s*\\(([^)]*)\\)\\s*values\\s*\\(([\\s\\S]*?)\\)\\s*;',
-      'gi'
-    );
+    const patron = new RegExp(ANTES_DEL_NOMBRE + tabla + DESPUES_DEL_NOMBRE, 'gi');
     for (const fila of texto.matchAll(patron)) {
-      const cols = fila[1].split(',').map((c) => c.trim().replace(/^"|"$/g, '').toLowerCase());
+      let cols;
+      if (fila[1] !== undefined) {
+        cols = fila[1].split(',').map((c) => c.trim().replace(/^"|"$/g, '').toLowerCase());
+      } else if (orden.has(tabla)) {
+        cols = orden.get(tabla);
+      } else {
+        sinOrden.push(tabla);
+        continue;
+      }
       const donde = cols.indexOf(columna);
       if (donde < 0) continue;
       const valores = partir(fila[2]);
@@ -153,6 +248,38 @@ export function cuentasCreadas(texto) {
   if (!UNA_CLAVE.test("'$2a$10$abcdefghijklmnopqrstuv'")) rotas.push('no ve un hash de bcrypt');
   if (UNA_CLAVE.test('null, now(), now()')) rotas.push('ve una clave donde no hay ninguna');
 
+  /* La forma del volcado: sin lista de columnas, apoyada en el orden de la
+     tabla. Es la que estuvo sin leerse, así que se prueba entera. */
+  const creaPerfiles =
+    'CREATE TABLE public.profiles (\n' +
+    '    id uuid NOT NULL,\n' +
+    '    tenant_id uuid,\n' +
+    '    full_name text,\n' +
+    '    role text DEFAULT \'familiar\'::text NOT NULL,\n' +
+    '    created_at timestamp with time zone DEFAULT timezone(\'utc\'::text, now())\n' +
+    ');';
+  const columnas = ordenDeLasColumnas(creaPerfiles);
+  const perfilVolcado = (id) =>
+    `INSERT INTO public.profiles VALUES ('${id}', ` +
+    `'f166d60e-96fe-4c50-888d-f34f41f78e46', 'Alguien Ficticio', 'familiar', NULL);`;
+
+  if ((columnas.get('profiles') || []).join() !== 'id,tenant_id,full_name,role,created_at') {
+    rotas.push('lee mal el orden con el que nació la tabla');
+  }
+  if (cuentasNombradas(perfilVolcado(uno), columnas).length !== 1) {
+    rotas.push('no lee el perfil escrito como lo escribe un volcado');
+  }
+  if ((cuentasNombradas(perfilVolcado(uno), columnas)[0] || [])[1] !== uno) {
+    rotas.push('lee mal el identificador del perfil escrito como lo escribe un volcado');
+  }
+
+  const sinSaber = [];
+  if (cuentasNombradas(perfilVolcado(uno), new Map(), sinSaber).length !== 0) {
+    rotas.push('adivina el lugar de la columna sin saber el orden de la tabla');
+  }
+  if (!sinSaber.includes('profiles')) rotas.push('se saltea callado la fila que no puede leer');
+
+
   if (rotas.length) {
     console.error('El chequeo está roto y por eso no encuentra nada:\n  ' + rotas.join('\n  '));
     process.exit(1);
@@ -166,13 +293,30 @@ seRevisaron(migraciones.length, 'ninguna migración que mirar');
 const problemas = [];
 const creadas = new Set();
 const nombradas = [];      // [archivo, tabla.columna, uuid]
+const orden = new Map();   // tabla -> columnas, en el orden con el que nació
 let creanCuentas = 0;
 
 for (const nombre of migraciones) {
   const texto = readFileSync(join(CARPETA, nombre), 'utf8');
 
+  /* Primero el orden y después las filas, en el orden de las migraciones: una
+     fila se lee con el orden que la tabla tenía cuando esa fila entró. */
+  for (const [tabla, columnas] of ordenDeLasColumnas(texto)) orden.set(tabla, columnas);
+
   for (const id of cuentasCreadas(texto)) creadas.add(id);
-  for (const [donde, id] of cuentasNombradas(texto)) nombradas.push([nombre, donde, id]);
+
+  const sinOrden = [];
+  for (const [donde, id] of cuentasNombradas(texto, orden, sinOrden)) {
+    nombradas.push([nombre, donde, id]);
+  }
+  for (const tabla of new Set(sinOrden)) {
+    problemas.push(
+      `${nombre} escribe filas en \`${tabla}\` sin nombrar las columnas, y ninguna ` +
+      'migración anterior crea esa tabla, así que no hay manera de saber qué valor va en ' +
+      'cada lugar. Esas filas quedaron sin revisar, y eso se dice: saltearlas callado es ' +
+      'exactamente cómo este chequeo llegó a mirar cero.'
+    );
+  }
 
   if (DA_DE_ALTA_CUENTAS.test(texto)) {
     creanCuentas++;
@@ -222,6 +366,13 @@ if (problemas.length) {
   console.error('\n' + problemas.join('\n\n') + '\n');
   process.exit(1);
 }
+
+/* Y que no quede mirando cero. Estuvo diciendo ✔ sobre ninguna referencia: la
+   siembra se reescribió como la escribe un volcado, sin nombrar las columnas, y
+   acá sólo se sabía leer la otra forma. Migraciones había, y cuentas creadas
+   también; lo que no se reconocía era la forma de adentro, y eso `hayArchivos`
+   no lo puede ver. */
+if (creanCuentas > 0) seRevisaron(nombradas.length, 'ni una fila que apunte a una cuenta');
 
 const distintas = new Set(nombradas.map(([, , id]) => id)).size;
 const cuantas = `${migraciones.length} migraciones, ${nombradas.length} referencias a ${distintas} cuentas`;
