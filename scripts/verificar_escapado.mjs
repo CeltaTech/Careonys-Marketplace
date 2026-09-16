@@ -97,7 +97,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
 import { hayArchivos, seRevisaron, EXTENSIONES_DE_PANTALLA, esPaginaSuelta } from './recorrido.mjs';
-import { sinCadenas } from './texto_visible.mjs';
+import { sinCadenas, finDeExpresionRegular } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -117,7 +117,6 @@ const CRUDO = /\.(?:message|error_description)\b/g;
 const COMPARA_ANTES = /(?:===|!==|==|!=)$/;
 const COMPARA_DESPUES = /^(?:===|!==|==|!=)/;
 const VA_A_LA_CONSOLA = /^console\./;
-const ANTES_DE_UNA_REGEX = /(?:^|[(,=:[!&|?{};+*%<>~^]|\breturn)\s*$/;
 /* El atributo se cierra con la comilla que lo abrió, y en el marcado también
    se escribe sin ninguna: las tres maneras son el mismo manejador y el mismo
    agujero. Se reconocía sólo la de comillas dobles, así que la misma línea con
@@ -195,21 +194,17 @@ export function sinTextoLiteral(codigo) {
     /* Una expresión regular no es un texto, pero adentro puede llevar una
        comilla suelta —`.replace(/'/g, …)` lleva una— y si se la toma por el
        principio de un texto, todo lo que sigue queda emparejado al revés y se
-       borra código de verdad. Se la saltea entera. */
-    if (c === '/' && ANTES_DE_UNA_REGEX.test(fuera)) {
-      let j = i + 1;
-      let enClase = false;
-      while (j < codigo.length && codigo[j] !== '\n') {
-        const d = codigo[j];
-        if (d === '\\') { j += 2; continue; }
-        if (d === '[') enClase = true;
-        else if (d === ']') enClase = false;
-        else if (d === '/' && !enClase) break;
-        j += 1;
-      }
-      if (j < codigo.length && codigo[j] === '/') {
-        fuera += ' '.repeat(j - i + 1);
-        i = j + 1;
+       borra código de verdad. Se la saltea entera. Dónde empieza y dónde
+       termina una la contesta el módulo compartido, que es el único que tiene
+       escrito todo lo que puede ir delante de una barra: acá estaba escrito a
+       mano, y de las varias formas conocía unas pocas, así que la barra que
+       cierra una etiqueta del marcado —`</i>`— abría una expresión regular que
+       no existía y borraba desde ahí hasta la próxima barra del renglón. */
+    if (c === '/') {
+      const finDeLaRegex = finDeExpresionRegular(codigo, i);
+      if (finDeLaRegex > i) {
+        fuera += ' '.repeat(finDeLaRegex - i);
+        i = finDeLaRegex;
         continue;
       }
     }
@@ -691,7 +686,9 @@ const MALOS = [
   ['el error crudo guardado en el estado de una pantalla', 'setAviso(err.message);'],
   ['el error crudo dibujado derecho en una pantalla', 'return <p>{err.message}</p>;'],
   ['el error crudo pegado adentro de una frase', "setAviso('No se pudo guardar: ' + err.message);"],
-  ['el error crudo metido en una plantilla', 'setAviso(`No se pudo: ${err.message}`);']
+  ['el error crudo metido en una plantilla', 'setAviso(`No se pudo: ${err.message}`);'],
+  ['el error crudo detrás de una etiqueta que se cierra, con la razón de otra cosa en el medio',
+   '<i className="fas fa-x"></i> {/*seguro: lo arma este mismo módulo*/} <span>{err.message}</span>']
 ];
 const BUENOS = [
   ['dato escapado', 'el.innerHTML = `<h5>${Texto.escapar(asp.nombre)}</h5>`;'],

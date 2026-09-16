@@ -4654,7 +4654,7 @@ comilla y cierra la cadena igual. Se arregla sacando el atributo y colgando el m
 aparte, y no de otra manera.
 
 La regla que hacía cumplir eso reconocía una sola manera de escribirlo, la de comillas
-dobles (`scripts/verificar_escapado.mjs:127`). Un atributo se cierra con la comilla que
+dobles (`scripts/verificar_escapado.mjs:126`). Un atributo se cierra con la comilla que
 lo abrió, y en el marcado también se escribe sin ninguna: las tres maneras son el mismo
 manejador y el mismo agujero.
 
@@ -4671,10 +4671,10 @@ que no sirve. Dos reglas del mismo archivo se contradecían y ninguna avisaba, p
 que hablaba decía lo que no correspondía.
 
 Y el banco de pruebas no podía ver nada de esto, porque preguntaba nada más si algo había
-avisado (`scripts/verificar_escapado.mjs:717`). Una prueba que sólo pregunta «¿se puso
+avisado (`scripts/verificar_escapado.mjs:714`). Una prueba que sólo pregunta «¿se puso
 colorada?» da por buena una regla que avisa por el motivo equivocado. Ahora el renglón de
 una prueba puede decir por cuál de los motivos tiene que avisar
-(`scripts/verificar_escapado.mjs:675`), y las cuatro del manejador lo dicen.
+(`scripts/verificar_escapado.mjs:670`), y las cuatro del manejador lo dicen.
 
 No había daño puesto: ningún manejador escrito de las dos maneras nuevas existe hoy en el
 producto, y el chequeo sigue en verde sobre los mismos 110 archivos.
@@ -4838,6 +4838,31 @@ aparezca, porque uno escrito adentro de un texto no cierra nada.
 con comilla común, y el renglón verde dice los mismos quince que antes. Falsificado
 en los dos sentidos, y el banco de pruebas del lector —que probaba una sola de las
 tres maneras— ahora prueba las tres y la nota adentro de la lista.
+
+### La sexta copia del mismo recorrido, en otro chequeo
+
+El chequeo que vigila que ningún dato entre sin convertir en el marcado, y que
+el texto crudo de un error no llegue a la pantalla ni vuelva en la respuesta de
+una puerta, tapaba los textos escritos con un recorrido propio, escrito a mano,
+igual en fondo al que ya tenía el módulo compartido. Ese recorrido decidía si
+una barra empezaba una expresión regular mirando una lista escrita a mano de lo
+que puede ir delante de ella. En esa lista está el signo de mayor, porque
+`x > /re/` es válido. Y el marcado cierra sus etiquetas con una barra pegada a
+un signo de menor: `</i>`. Así que cada `</i>`, cada `</span>` y cada `</strong>`
+abría una expresión regular que no existía, y borraba desde ahí hasta la
+próxima barra del renglón, con lo que hubiera en el medio.
+
+Tenía consecuencia. Un error crudo dibujado en una pantalla, con un ícono
+delante y una razón escrita para otra cosa en el medio, pasaba en verde: el
+borrado se comía las llaves que marcan dónde empieza la sentencia, el chequeo
+salía a buscar la razón mucho más atrás de donde debía, encontraba una que no
+hablaba de él y lo perdonaba. Sin el ícono delante, el mismo renglón se
+detectaba.
+
+Ahora dónde empieza y dónde termina una expresión regular lo contesta el módulo
+compartido, que es el único lugar donde está escrito todo lo que puede ir
+delante de una barra. Sobre los ochenta y cinco archivos de programa del
+producto, el cambio recupera texto en veintisiete y no tapa nada en ninguno.
 
 ### La misma pregunta contestada cinco veces adentro de un solo chequeo
 
