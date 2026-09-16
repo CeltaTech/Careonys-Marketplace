@@ -3251,6 +3251,41 @@ contra el archivo al que apuntan.
 versión anterior la dio por buena en verde y la de ahora la denuncia con su
 renglón.
 
+### Una opción del catálogo puede quedar sin traducir y nadie avisa
+
+El catálogo de vocabularios es el que arma cada lista desplegable del producto: veintiséis listas
+y ciento cincuenta opciones. El chequeo que lo cuida le exigía al título de cada lista sus tres
+idiomas y a cada opción de esa lista, sólo el castellano.
+
+**Es al revés de como se lee una pantalla.** El título rotula la lista; lo que la persona lee
+opción por opción, y elige, son las opciones. El chequeo las abría a las ciento cincuenta y
+descartaba dos tercios de cada una.
+
+**Y hay una opción, hoy, escrita sólo en castellano.** Una Familia que mira el producto en inglés
+o en portugués la ve en castellano adentro de una lista traducida. Nada se ve roto: cuando falta
+el idioma, el producto cae al castellano en silencio, que es lo correcto para que la pantalla no
+quede vacía y es exactamente lo que hace que esto no se note.
+
+**La base sí lo exige.** La restricción de la tabla de opciones pide los tres idiomas y deja una
+sola puerta: que la opción declare que la traducción está pendiente y escriba al lado por qué.
+**Pero esa puerta no viaja en lo que la base devuelve**, que manda la clave y los idiomas y nada
+más, así que el archivo que se copia al teléfono no tiene cómo leerla.
+
+**Ahora la regla está escrita también de este lado**, con la exención nombrada una por una y su
+motivo al lado, **y dada vuelta en lugar de apagada**: el día que esa opción tenga sus tres
+idiomas, la exención pasa a decir algo falso y el chequeo la denuncia para que se saque. Y una
+exención que nombre una opción que no existe también es roja.
+
+**Se probó de las dos maneras.** Angostando el detector a la forma vieja, la propia prueba del
+guion se planta y el chequeo se niega a correr. Y corriendo el mismo archivo sin la exención, la
+versión anterior lo dio por bueno en verde mientras la de ahora nombra la opción y los dos idiomas
+que le faltan.
+
+**Qué palabra falta sigue siendo decisión del Desarrollador.** La opción dice «Guardia de 12
+horas», y Guardia es palabra del glosario que comparten los dos productos: el glosario dice que
+una Guardia no es un turno, así que traducirla por «shift» o por «turno» pisaría una distinción
+hecha a propósito.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
