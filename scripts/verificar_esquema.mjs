@@ -1374,15 +1374,23 @@ export function fallasDeUnaMigracion(texto, conColumna, claves, sigue, nombre, b
     /* 4. La moneda del importe. */
     const tieneMoneda = MONEDA.test(columnas) || conSuMoneda.has(tabla);
     const primera = renglonDe(t, t.indexOf('(', m.index));
-    columnas.split('\n').forEach((linea, i) => {
-      const l = linea.trim().replace(/,$/, '');
-      if (!l || NO_ES_COLUMNA.test(l)) return;
+    /* Se recorre por los mismos pedazos que `tiposDeColumna`, y no renglón por
+       renglón: un `check` de varios renglones trae adentro palabras que empiezan
+       renglón sin ser columnas. El renglón que se informa sale de dónde arranca
+       el pedazo, que es donde está escrita la columna. */
+    let desde = 0;
+    for (const pedazo of alRas(columnas)) {
+      const arranque = desde;
+      desde += pedazo.length + 1;
+      const l = pedazo.trim().split('\n')[0].trim();
+      if (!l || NO_ES_COLUMNA.test(l)) continue;
       const columna = l.split(/\s+/)[0].replace(/"/g, '');
-      if (!PLATA.test(columna) || !NUMERO.test(l)) return;
-      if (tieneMoneda || SIN_MONEDA.has(tabla + '.' + columna)) return;
-      fallas.push([primera + i,
+      if (!PLATA.test(columna) || !NUMERO.test(l)) continue;
+      if (tieneMoneda || SIN_MONEDA.has(tabla + '.' + columna)) continue;
+      const hasta = columnas.slice(0, arranque + pedazo.indexOf(l));
+      fallas.push([primera + hasta.split('\n').length - 1,
         '`' + tabla + '.' + columna + '` guarda un importe y la tabla no tiene moneda']);
-    });
+    }
   }
 
   /* 2. La función que se saltea la RLS no queda al alcance de quien no inició sesión. */

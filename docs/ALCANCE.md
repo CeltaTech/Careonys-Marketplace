@@ -3795,7 +3795,7 @@ abierto sino una trampa armada: la protección no vivía donde se la lee, y ya s
 vez sin que nadie se enterara —una migración se la llevó puesta y la siguiente tuvo que
 reponerla—. Por eso el chequeo del esquema no se cree esa exención: va y mira que el permiso siga
 nombrando sus columnas, y se planta si alguna migración futura vuelve a conceder `update` sobre
-`profiles` sin nombrarlas (`scripts/verificar_esquema.mjs:1515`).
+`profiles` sin nombrarlas (`scripts/verificar_esquema.mjs:1523`).
 
 **Sobre el pendiente 75, el Desarrollador eligió la opción A: el papel nuevo baja el sello.** Había
 tres defendibles —bajarlo, prohibir el cambio mientras el sello esté puesto, o permitirlo y
