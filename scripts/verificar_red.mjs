@@ -61,8 +61,9 @@
       hace te frena. Y del otro lado exige que exista: una orden de correr
       algo que ya no está es peor que ninguna, porque manda a alguien a
       buscar un archivo que se renombró y no dice adónde fue.
-   7. Que ninguna carpeta eximida en una lista `AJENAS` haya dejado de
-      existir. Es la tercera y la cuarta otra vez, en la única forma que a las
+   7. Que ninguna carpeta eximida haya dejado de existir, esté la lista con
+      nombre —`AJENAS`— o escrita derecho adentro del pedido de archivos, que
+      es como la escriben dos chequeos y es la forma que se le escapaba. Es la tercera y la cuarta otra vez, en la única forma que a las
       dos se les escapaba: una exención que no tiene pinta de archivo ni de
       columna, y que además se escribe como una lista suelta y no como un mapa.
       Cada nombre ahí adentro apaga ese chequeo sobre esa carpeta mientras esté
@@ -323,6 +324,46 @@ export function clavesSinSuColumna(texto, columnas) {
    abrir tampoco se puede eximir, porque ya está afuera. */
 const LISTA_DE_AJENAS = /const AJENAS = (?:new Set\()?\[([^\]]*)\]/g;
 
+/* Y la cuarta forma, que no tiene nombre: la lista escrita derecho adentro del
+   pedido de archivos, que es el tercer argumento de `hayArchivos` y de
+   `archivos`. Buscarla por el nombre `AJENAS` no la encuentra nunca, y son dos
+   los chequeos que la escriben así. Se toma el tercer argumento contando
+   paréntesis y corchetes, y no por su lugar en el texto, porque el primero
+   suele ser un `join(...)` con comas adentro. */
+const LLAMA_AL_RECORRIDO = /\b(?:hayArchivos|archivos)\s*\(/g;
+
+function tercerArgumento(texto, desde) {
+  let profundidad = 0;
+  let cual = 0;
+  let arranque = desde;
+  for (let i = desde; i < texto.length; i++) {
+    const caracter = texto[i];
+    if (caracter === '(' || caracter === '[' || caracter === '{') { profundidad++; continue; }
+    if (caracter === ')' && profundidad === 0) {
+      return cual === 2 ? texto.slice(arranque, i) : null;
+    }
+    if (caracter === ')' || caracter === ']' || caracter === '}') { profundidad--; continue; }
+    if (caracter === ',' && profundidad === 0) {
+      if (cual === 2) return texto.slice(arranque, i);
+      cual++;
+      arranque = i + 1;
+    }
+  }
+  return null;
+}
+
+/** Las carpetas que este texto deja afuera sin ponerle nombre a la lista. */
+export function carpetasDeUnPedido(texto) {
+  const nombres = [];
+  const limpio = sinComentarios(texto);
+  for (const llamada of limpio.matchAll(LLAMA_AL_RECORRIDO)) {
+    const tercero = tercerArgumento(limpio, llamada.index + llamada[0].length);
+    if (!tercero || !tercero.includes('[')) continue;
+    for (const nombre of tercero.matchAll(/'([^']+)'/g)) nombres.push(nombre[1]);
+  }
+  return nombres;
+}
+
 /** Las carpetas que este texto dice no mirar y que ya no están. */
 export function carpetasEximidasQueNoEstan(texto, carpetas) {
   const idas = [];
@@ -331,6 +372,15 @@ export function carpetasEximidasQueNoEstan(texto, carpetas) {
       if (!carpetas.has(nombre[1])) {
         idas.push({ lista: 'AJENAS', clave: nombre[1], porque: 'esa carpeta no est\u00e1' });
       }
+    }
+  }
+  for (const nombre of carpetasDeUnPedido(texto)) {
+    if (!carpetas.has(nombre)) {
+      idas.push({
+        lista: 'la lista escrita adentro del pedido',
+        clave: nombre,
+        porque: 'esa carpeta no está'
+      });
     }
   }
   return idas;
@@ -601,6 +651,22 @@ if (sinCarpeta("export const AJENAS = ['la que se fue'];").length === 0) {
 }
 if (sinCarpeta("/* const AJENAS = ['la que se fue']; */").length > 0) {
   fallas.push('Se quejó de una lista escrita adentro de un comentario.');
+}
+/* Y la cuarta forma, la que no tiene nombre. */
+if (sinCarpeta("hayArchivos(raiz, ['.js'], ['la que se fue']);").length === 0) {
+  fallas.push('No reconoció la lista escrita adentro del pedido, que es la cuarta forma.');
+}
+if (sinCarpeta("archivos(join(raiz, 'a', 'b'), ['.js'], ['docs', 'la que se fue']);").length === 0) {
+  fallas.push('Se perdió el tercer argumento cuando el primero lleva comas adentro.');
+}
+if (sinCarpeta("hayArchivos(raiz, ['.js'], ['docs', 'assets']);").length > 0) {
+  fallas.push('Se quejó de un pedido que deja afuera carpetas que están.');
+}
+if (sinCarpeta("archivos(raiz, ['manifest.json']);").length > 0) {
+  fallas.push('Confundió un nombre de archivo del segundo argumento con una carpeta.');
+}
+if (sinCarpeta("hayArchivos(raiz, ['.js'], AJENAS);").length > 0) {
+  fallas.push('Inventó carpetas cuando la lista se pasa por su nombre.');
 }
 
 if (sinColumna(conMapa('AFUERA', 'verificar_todo.mjs')).length > 0) {

@@ -3758,8 +3758,8 @@ exención que ya no exime nada no es inofensiva: sigue salteando lo que nombra, 
 chequeo sobre eso y no queda rastro.
 
 Las dos reglas leían una sola forma de escribir una exención: un mapa, `const NOMBRE = new
-Map([…])` (`scripts/verificar_red.mjs:237`), y de ahí sólo miraban las claves que tienen pinta de
-archivo (`scripts/verificar_red.mjs:235`) o de columna (`scripts/verificar_red.mjs:290`). Pero
+Map([…])` (`scripts/verificar_red.mjs:238`), y de ahí sólo miraban las claves que tienen pinta de
+archivo (`scripts/verificar_red.mjs:236`) o de columna (`scripts/verificar_red.mjs:291`). Pero
 este proyecto escribe otra exención distinta diecisiete veces: `const AJENAS = […]`, la lista de
 carpetas que un chequeo declara no mirar. Es una lista suelta y no un mapa, y sus valores no
 tienen pinta de archivo ni de columna, así que se caía por las tres redes a la vez.
@@ -3775,7 +3775,7 @@ chequeo pudiera mirar: `scripts/verificar_arranque.mjs:53`,
 `scripts/citas.mjs`. Seis renglones perdonando a un fantasma.
 
 Qué se hizo: una tercera regla, `carpetasEximidasQueNoEstan()`
-(`scripts/verificar_red.mjs:327`), que lee la lista en sus tres formas —suelta, como conjunto y
+(`scripts/verificar_red.mjs:368`), que lee la lista en sus tres formas —suelta, como conjunto y
 exportada— sin mirar adentro de los comentarios. Contra qué se compara sale de
 `carpetasDelProyecto()` (`scripts/recorrido.mjs:317`), que recorre con la misma regla con la que
 se recorre todo: nombra la carpeta que existe aunque no se pueda entrar en ella —una caja fuerte
@@ -4048,7 +4048,7 @@ tabla tenía vocabulario, y hasta ahora ninguna de `tenants` lo tenía. Al empar
 la moneda por su nombre, el defecto se destapó solo.
 
 Quien lee columnas así no es sólo ese chequeo: `columnasDeclaradas()` la usan
-también la cuarta regla de `scripts/verificar_red.mjs:735` —la que se planta cuando
+también la cuarta regla de `scripts/verificar_red.mjs:801` —la que se planta cuando
 una exención nombra una columna que ya no existe— y la lectura de las claves
 primarias. Con una columna de menos, las tres contestaban de menos.
 
@@ -4177,6 +4177,28 @@ regla. Se comprobó dejando una en la carpeta: el chequeo contestaba verde.
 Ahora qué es una imagen lo contesta `recorrido.mjs`, que ya lo tenía contestado para otras dos
 preguntas del proyecto (`scripts/recorrido.mjs:95`). Con el mismo archivo de prueba puesto, el
 chequeo se pone en rojo y lo nombra.
+
+### La carpeta eximida sin ponerle nombre a la lista no la miraba nadie
+
+El chequeo que vigila a los demás chequeos tiene una regla para que ninguno se
+quede eximiendo una carpeta que ya no existe: una exención que no exime nada
+sigue salteando lo que nombra, así que apaga el chequeo sobre eso y nadie se
+entera. Esa regla buscaba la lista por su nombre, `AJENAS`, en tres formas de
+escribirla.
+
+Hay una cuarta forma y no tiene nombre: la lista escrita derecho adentro del
+pedido de archivos, que es el tercer argumento de `hayArchivos` y de
+`archivos`. Buscar por el nombre no la encuentra nunca, y hoy son dos los
+chequeos que la escriben así: el de la Organización y el de los usos.
+
+Comprobado antes de tocar nada: se le cambió a uno de los dos una carpeta por
+otra que no existe y el chequeo terminó en verde sin nombrarlo. Con el arreglo
+puesto, el mismo cambio sale en rojo y dice archivo y carpeta.
+
+El tercer argumento se toma contando paréntesis y corchetes, y no por su lugar
+en el texto, porque el primero suele ser un `join(...)` con comas adentro. Y un
+pedido que no lleva tercer argumento, o que lo lleva por su nombre, no inventa
+carpetas.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
