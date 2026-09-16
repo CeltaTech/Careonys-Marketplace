@@ -38,6 +38,16 @@
    Las excepciones legítimas están en `FORMAS`, con su motivo: hay cosas pintadas
    con un token de letra que **sí** tienen que cambiar de noche, porque no son un
    fondo con letra encima sino un dibujo del mismo color que la letra.
+
+   Dónde mira, que son las cuatro puertas por las que se pinta un fondo: la hoja
+   de estilo; el bloque `<style>` de adentro de una pantalla; el atributo
+   `style=`, lo escriba el marcado o lo escriba una pantalla portada entre
+   llaves; y el guión, que pinta sin escribir marcado —`elemento.style.cssText`
+   y `elemento.style.background`—. La del guión fue la última y se descubrió
+   tarde: hasta entonces el JavaScript no se abría, y adentro hay marcado escrito
+   con todas las letras —una ficha del legajo se arma así— que no miraba nadie.
+   Es la misma cuarta puerta que el chequeo de la paleta ya había descubierto
+   tarde por su lado.
 =================================================== */
 
 import { readFileSync } from 'node:fs';
@@ -77,6 +87,11 @@ const TOKEN_DE_LETRA = /var\(\s*--(?:texto-[\w-]+|[\w-]+-texto)\s*[,)]/;
 const REGLA = /([^{}]+)\{([^{}]*)\}/g;
 const BLOQUE_STYLE = /<style\b[^>]*>([\s\S]*?)<\/style>/gi;
 const ATRIBUTO_STYLE = /style\s*=\s*"([^"]*)"|style\s*=\s*'([^']*)'/gi;
+
+/* Las dos maneras que tiene un guión de pintar sin escribir marcado: la hoja
+   entera de un elemento y una propiedad suelta. */
+const HOJA_DE_UN_ELEMENTO = /style\.cssText\s*=\s*(?:'([^']*)'|"([^"]*)"|`([^`]*)`)/g;
+const PROPIEDAD_SUELTA = /style\.(background\w*)\s*=\s*(?:'([^']*)'|"([^"]*)"|`([^`]*)`)/g;
 
 const sinComentarios = (t) => t.replace(/\/\*[\s\S]*?\*\//g, ' ');
 
@@ -167,6 +182,23 @@ export function fondosDeLetra(crudo, extension, nombre) {
                        `style={{ … ${clave}: ${valor} }}`]);
       }
     }
+    /* Y lo que pinta un guión sin escribir marcado. Acá no se abría ningún `.js`:
+       adentro hay marcado escrito con todas las letras —la ficha del legajo se
+       arma así— y además estas dos formas, que no se parecen a un atributo. */
+    for (const hoja of crudo.matchAll(HOJA_DE_UN_ELEMENTO)) {
+      const cuerpo = hoja[1] ?? hoja[2] ?? hoja[3];
+      for (const [, prop, valor] of (cuerpo + ';').matchAll(DECLARACION)) {
+        if (!prop.startsWith('background') || !TOKEN_DE_LETRA.test(valor)) continue;
+        hallados.push([crudo.slice(0, hoja.index).split('\n').length,
+                       `style.cssText = '… ${prop}: ${valor.trim()}'`]);
+      }
+    }
+    for (const suelta of crudo.matchAll(PROPIEDAD_SUELTA)) {
+      const valor = suelta[2] ?? suelta[3] ?? suelta[4];
+      if (!TOKEN_DE_LETRA.test(valor)) continue;
+      hallados.push([crudo.slice(0, suelta.index).split('\n').length,
+                     `style.${suelta[1]} = '${valor.trim()}'`]);
+    }
   }
   return hallados;
 }
@@ -197,7 +229,10 @@ const MAL_FONDO = [
   ["<div style={{ background: 'var(--tono-critico-texto)' }}>Hola</div>", EXTENSIONES_DE_PANTALLA[1]],
   ["<div style={{ backgroundColor: 'var(--texto-principal)' }}>Hola</div>", EXTENSIONES_DE_PANTALLA[1]],
   ["<div style={{ width: ancho, background: 'var(--texto-principal)' }}>Hola</div>",
-   EXTENSIONES_DE_PANTALLA[1]]
+   EXTENSIONES_DE_PANTALLA[1]],
+  ["caja.style.cssText = 'padding:8px; background: var(--texto-principal);';", '.js'],
+  ["caja.style.backgroundColor = 'var(--tono-critico-texto)';", '.js'],
+  ['lista.innerHTML = `<p style="background:var(--texto-secundario)">Hola</p>`;', '.js']
 ];
 const BIEN_FONDO = [
   ['.x { background: var(--relleno-exito); }', '.css'],
@@ -207,7 +242,10 @@ const BIEN_FONDO = [
   ['<div style="color:var(--tono-critico-texto)">Hola</div>', EXTENSIONES_DE_PANTALLA[0]],
   ["<div style={{ color: 'var(--tono-critico-texto)' }}>Hola</div>", EXTENSIONES_DE_PANTALLA[1]],
   ["<div style={{ background: 'var(--relleno-exito)' }}>Hola</div>", EXTENSIONES_DE_PANTALLA[1]],
-  ["<div style={{ borderColor: 'var(--texto-principal)' }}>Hola</div>", EXTENSIONES_DE_PANTALLA[1]]
+  ["<div style={{ borderColor: 'var(--texto-principal)' }}>Hola</div>", EXTENSIONES_DE_PANTALLA[1]],
+  ["caja.style.cssText = 'padding:8px; color: var(--texto-principal);';", '.js'],
+  ["caja.style.backgroundColor = 'var(--relleno-exito)';", '.js'],
+  ['lista.innerHTML = `<p style="color:var(--texto-secundario)">Hola</p>`;', '.js']
 ];
 
 const noDetectaTema = MAL_TEMA.filter(([, css]) => problemasDeTema(css).length === 0);
@@ -240,7 +278,7 @@ for (const rel of COPIAS) {
 seRevisaron(comparados + fallas.length, 'un solo archivo de tokens que comparar');
 
 let revisados = 0;
-for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.css'], AJENAS)) {
+for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.css', '.js'], AJENAS)) {
   const nombre = relative(raiz, camino).split(sep).join('/');
   revisados++;
   const extension = nombre.slice(nombre.lastIndexOf('.'));

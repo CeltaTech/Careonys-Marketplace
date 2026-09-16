@@ -3965,6 +3965,26 @@ a uno, con el motivo escrito al lado, y el día que alguno se quede sin un solo 
 el chequeo se planta: una exención que ya no exime nada sigue perdonando, y lo único que
 perdona es el aire. Eso también se probó, vaciándole los colores a uno de los dos.
 
+### El chequeo del modo oscuro no abría ningún guión del navegador
+
+Hay un color hecho para pintar letras y otro hecho para pintar fondos. El de letras se
+aclara de noche a propósito, porque eso es lo que tiene que hacer una letra cuando el papel
+se pone negro; usado como fondo de una pastilla con letra blanca encima hace lo contrario,
+y de día no se nota. Un chequeo lo prohíbe.
+
+Ese chequeo abría las hojas de estilo y las pantallas, y ningún guión del navegador. No
+estaba escrito en ninguna parte que no los mirara. Y adentro de un guión hay tres maneras
+de pintar: marcado escrito con todas las letras adentro del programa —la ficha del legajo
+se arma así—, la hoja entera de un elemento escrita de un saque, y una propiedad suelta.
+Las tres quedaban afuera. Se probó poniendo las tres adentro de un guión de verdad: verde
+las tres veces.
+
+Es la misma puerta que el chequeo de los colores escritos a mano ya había descubierto tarde
+por su lado, y por eso quedó escrita ahora en el encabezado de los dos.
+
+Ahora los guiones entran, y las tres maneras se reconocen. Pasó de 86 archivos mirados a
+121. No había ninguna pastilla mal pintada adentro.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
