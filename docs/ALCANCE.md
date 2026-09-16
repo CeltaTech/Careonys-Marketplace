@@ -3386,6 +3386,44 @@ La prueba que puede fallar: el banco del propio chequeo incluye una guía con un
 después de un punto y coma de la prosa y otra con una comilla adentro del texto. Devolviéndole al
 lector su forma vieja, el banco se planta.
 
+### El README decía 16 cuando son 25, y el chequeo que lo cuida no leía media tabla
+
+El README abre con una tabla que dice qué es este producto hoy, y arriba de ella
+dice que esa tabla no se escribe a mano: la escribe `scripts/medir_estado.mjs`
+midiendo los archivos, y `scripts/verificar_estado.mjs` comprueba antes de cada
+commit que lo escrito sea lo mismo que sale de medir. Las dos mitades estaban
+ciegas, cada una por su lado, y las dos se probaron contra el proyecto sin tocar
+antes de escribir una línea.
+
+**El medidor conocía una sola forma de abrir la puerta a la base.** Contaba las
+pantallas que llaman a `conLaBase(` y nada más. Pero las dos aplicaciones de
+teléfono abren la puerta **una sola vez**, en `pwa-asistente/src/Programa.jsx:22`
+y en `pwa-familia/src/Programa.jsx:120`, y de ahí la reparten hacia adentro; y la
+web tiene atajos compartidos —`useElArranque`, `useSesionRequerida` y cuatro
+más— que la abren por dentro. De los 71 archivos que dibujan pantallas, el README
+declaraba 16 y los que la abren son **25**: los nueve que faltaban incluyen
+justamente los dos archivos que abren la puerta de cada aplicación de teléfono.
+Ahora la lista de atajos se deriva leyendo qué funciones llaman a `conLaBase` y
+no se escribe a mano, así que un atajo nuevo entra solo.
+
+**Y el que comparaba miraba una parte del bloque.** `compararEntreMarcas` se
+quedaba con los renglones que arrancaban de cierta manera —las filas de una
+tabla— y descartaba todo lo demás que el medidor escribe adentro de las marcas.
+La frase que cierra la tabla de las hojas de estilo —«En disco hay N archivos y
+M renglones, de los cuales K son copias byte a byte»— tiene tres números medidos,
+y los tres se podían cambiar a mano sin que nada protestara. Los encabezados de
+las tablas corrían la misma suerte. Se falsificó en vivo: cambiada esa frase a
+«3 archivos y 99 renglones, de los cuales 7 son copias», el chequeo terminaba en
+verde y su propio renglón seguía afirmando que esos números salen de medir los
+archivos. Ahora se compara el bloque entero, renglón por renglón, sin más recorte
+que los blancos que el medidor deja de cada lado.
+
+**El número que este trabajo venía a corregir no era el que se creía.** La
+anotación que abrió el caso decía que los archivos que abren la puerta eran 35.
+Contaba de más: las pantallas que reciben la puerta ya abierta como dato —por
+ejemplo `web/src/pantallas/panel-prestadora/Moneda.jsx:58`— no la abren, la usan.
+El número honesto se volvió a sacar desde el código antes de escribir nada.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

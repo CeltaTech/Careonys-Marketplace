@@ -35,7 +35,7 @@ donde sale esta tabla: no se escribe a mano y no queda vieja.
 | 7.424 renglones de JavaScript propio, en 35 archivos | 0 de ellos son copias byte a byte de otro archivo (pendiente 13) |
 | 5.625 renglones de hojas de estilo, en 12 archivos | 63 tokens con nombre en `css/tokens.css`, sin framework |
 | 582 declaraciones de estilo pegadas al marcado | en 208 lugares (fue el pendiente 8, cerrado) |
-| Supabase Auth funcionando | 16 de los 71 archivos que las dibujan abren la puerta a la base |
+| Supabase Auth funcionando | 25 de los 71 archivos que las dibujan abren la puerta a la base |
 | 3 servidores de afuera | dos de tipografías y el de los iconos |
 | 4 paquetes que se construyen solos | la raíz, que arma a los otros tres, pwa-asistente, pwa-familia, web |
 | 37 tablas y 8 migraciones en el repositorio | 41 chequeos las miran antes de cada commit |

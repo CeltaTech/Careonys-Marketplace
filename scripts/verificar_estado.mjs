@@ -54,6 +54,7 @@ const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const {
   renglonesTabla, renglonesReparto, renglonesHojasTabla, renglonesFraseGuiones,
+  tablaReparto, tablaHojas, parrafoGuiones,
   ABRE_REPARTO, CIERRA_REPARTO, ABRE_HOJAS, CIERRA_HOJAS,
   ABRE_GUIONES, CIERRA_GUIONES
 } = await import('./medir_estado.mjs');
@@ -105,6 +106,40 @@ if (arranque === -1) {
   }
 }
 
+/** Lo que un bloque entre marcas dice de verdad: todos sus renglones, sin los
+ *  blancos que el medidor pone de cada lado. **Todos**, y no los que tienen
+ *  cierta forma: la forma la elige quien escribe el chequeo, y el día que el
+ *  medidor agrega un renglón de otra forma ese renglón deja de mirarse sin que
+ *  nadie se entere. */
+export function sinBlancosDeLosBordes(renglones) {
+  const copia = [...renglones];
+  while (copia.length && copia[0].trim() === '') copia.shift();
+  while (copia.length && copia[copia.length - 1].trim() === '') copia.pop();
+  return copia;
+}
+
+/* ── La prueba del recorte, antes de mirar nada ──────────────────────────
+   Una prueba que no puede fallar no prueba nada. La segunda fila es el defecto
+   que se arregló acá: la frase de prosa que cierra la tabla de las hojas, con
+   sus tres números medidos, tiene que quedar adentro de lo que se compara. */
+const PRUEBAS = [
+  ['un bloque de puras filas', ['', '| `a.css` | 1 | x |', '| `b.css` | 2 | y |', ''], 2],
+  ['un bloque que cierra con una frase de prosa',
+    ['', '| Archivo | Renglones |', '|---|---:|', '| `a.css` | 1 |', '',
+      'En disco hay 12 archivos y 5.625 renglones.', ''], 5],
+  ['un bloque de un solo párrafo', ['', 'En `scripts/` hay 83 guiones.', ''], 1]
+];
+for (const [que, entrada, esperados] of PRUEBAS) {
+  const salen = sinBlancosDeLosBordes(entrada).length;
+  if (salen !== esperados) {
+    console.error(
+      `El recorte de este chequeo está roto: con ${que} deja ${salen} renglones ` +
+      `para comparar y tenían que ser ${esperados}. No se revisó nada.`
+    );
+    process.exit(1);
+  }
+}
+
 /* ── Y LO QUE VIVE EN EL MEDIO DE OTRO DOCUMENTO, ENTRE MARCAS ──────────
    Tres bloques y un solo procedimiento. Estaban escritos dos veces, y la copia
    arrastraba un error en el aviso de «faltan las marcas»: nombraba `ABRE` y
@@ -115,8 +150,20 @@ if (arranque === -1) {
    Se busca entre las marcas y no por el título, porque el título es texto que
    alguien puede querer reescribir y las marcas dicen para qué están. Si faltan,
    es un problema y no un permiso para no mirar: sacarlas sería la forma más
-   fácil de apagar este chequeo sin que se note. */
-function compararEntreMarcas(camino, abre, cierra, medidos, comoSeLlama, empieza) {
+   fácil de apagar este chequeo sin que se note.
+
+   **Y se compara el bloque entero, no los renglones que empiezan de cierta
+   manera.** Antes se quedaba con los que arrancaban con `| \``, es decir con
+   las filas de una tabla, y todo lo demás que el medidor escribe adentro de
+   las marcas pasaba sin que nadie lo leyera: la frase que cierra la tabla de
+   las hojas —«En disco hay N archivos y M renglones, de los cuales K son
+   copias byte a byte»— tiene tres números medidos, y los tres se podían
+   cambiar a mano adentro de un bloque cuya marca dice, con todas las letras,
+   que no se edita a mano. El chequeo seguía diciendo ✔ y su propio renglón
+   verde seguía afirmando que esos números salen de medir los archivos. El
+   encabezado de cada tabla corría la misma suerte. Ahora lo que se compara es
+   lo mismo que el medidor escribe, tal cual, renglón por renglón. */
+function compararEntreMarcas(camino, abre, cierra, contenido, comoSeLlama) {
   const donde = camino.join('/');
   const renglones = readFileSync(join(raiz, ...camino), 'utf8').split(/\r?\n/);
 
@@ -132,9 +179,10 @@ function compararEntreMarcas(camino, abre, cierra, medidos, comoSeLlama, empieza
     return;
   }
 
-  const escritos = renglones.slice(desde + 1, hasta)
-    .map((r) => r.trim())
-    .filter((r) => r.startsWith(empieza));
+  /* El medidor deja un renglón en blanco de cada lado, siempre; son suyos y
+     no se comparan. Lo de adentro va tal cual. */
+  const escritos = sinBlancosDeLosBordes(renglones.slice(desde + 1, hasta));
+  const medidos = sinBlancosDeLosBordes(contenido.split('\n'));
 
   if (escritos.length !== medidos.length) {
     problemas.push(
@@ -154,8 +202,8 @@ function compararEntreMarcas(camino, abre, cierra, medidos, comoSeLlama, empieza
 }
 
 compararEntreMarcas(
-  ['docs', 'PENDIENTES.md'], ABRE_REPARTO, CIERRA_REPARTO, renglonesReparto,
-  'el reparto de estilos por pantalla', '| `'
+  ['docs', 'PENDIENTES.md'], ABRE_REPARTO, CIERRA_REPARTO, tablaReparto,
+  'el reparto de estilos por pantalla'
 );
 
 /* La de las hojas, encontrada el 31 de agosto de 2026 tirando del mismo hilo:
@@ -170,16 +218,16 @@ compararEntreMarcas(
    iba a revisar: se agrega una pantalla y la tabla no se entera. Ahora sale de
    leer los `<link href>` del marcado. */
 compararEntreMarcas(
-  ['README.md'], ABRE_HOJAS, CIERRA_HOJAS, renglonesHojasTabla,
-  'la tabla de las hojas de estilo', '| `'
+  ['README.md'], ABRE_HOJAS, CIERRA_HOJAS, tablaHojas,
+  'la tabla de las hojas de estilo'
 );
 
 /* Y la frase que abre la lista de guiones, del mismo archivo. Envejeció en
    menos de un día: decía «51 archivos `.mjs`» y «doce herramientas sueltas»,
    con la fecha de ese mismo día escrita al lado, cuando ya eran 52 y trece. */
 compararEntreMarcas(
-  ['README.md'], ABRE_GUIONES, CIERRA_GUIONES, renglonesFraseGuiones,
-  'la cuenta de los guiones', 'En `scripts/`'
+  ['README.md'], ABRE_GUIONES, CIERRA_GUIONES, parrafoGuiones,
+  'la cuenta de los guiones'
 );
 
 if (problemas.length) {

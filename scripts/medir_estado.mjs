@@ -210,8 +210,36 @@ seRevisaron(pegados.length, 'una sola pantalla con estilos pegados al marcado');
    Cuántos de los archivos que dibujan piden la base, y con ella la sesión.
    Antes se contaba quién cargaba el archivo de sesión, que era lo único que
    se podía preguntar cuando cada pantalla se armaba su propia carga. Hoy hay
-   una sola puerta y se entra por ahí, así que se cuenta quién la abre. */
-const conSesion = archivosDePantalla.filter((c) => /conLaBase\s*\(/.test(leer(c)));
+   una sola puerta y se entra por ahí, así que se cuenta quién la abre.
+
+   Pero abrirla no es una sola forma de escribirse. Una pantalla la abre
+   llamando a `conLaBase()` derecho, o usando una pieza compartida que la
+   llama por dentro —el arranque de las dos aplicaciones de teléfono, el
+   ingreso, la salida, la conversación, la guardia del panel—. Buscando sólo
+   la primera forma la cuenta daba 16 cuando son 25, y las nueve que faltaban
+   no eran un caso raro: entre ellas están los dos archivos que abren la
+   puerta una vez por aplicación de teléfono y se la reparten a todas las
+   demás, que son justamente donde se abre de verdad.
+
+   Los nombres de esas piezas no se escriben acá. Se buscan: un archivo que
+   no dibuje y que llame a `conLaBase()` es un atajo, y lo que exporta es el
+   nombre por el que las pantallas lo piden. Una lista a mano habría nacido
+   con dos y hoy harían falta seis, sin que nada avisara. */
+const ABRE_LA_PUERTA = /conLaBase\s*\(/;
+const esPantalla_ = new Set(archivosDePantalla);
+const atajos = new Set();
+for (const camino of archivos(raiz, ['.js', '.jsx'])) {
+  if (esPantalla_.has(camino) || !ABRE_LA_PUERTA.test(leer(camino))) continue;
+  for (const m of leer(camino).matchAll(/export\s+(?:default\s+)?(?:async\s+)?function\s+(\w+)/g)) {
+    if (m[1] !== 'conLaBase') atajos.add(m[1]);
+  }
+}
+seRevisaron(atajos.size, 'ningún atajo que abra la puerta por dentro');
+/* El `<` del final es porque un atajo puede ser además un componente, y ahí
+   la pantalla lo escribe como etiqueta y no como llamada. */
+const PORATAJO = new RegExp(String.raw`\b(` + [...atajos].join('|') + String.raw`)\s*[(<]`);
+const conSesion = archivosDePantalla.filter(
+  (c) => ABRE_LA_PUERTA.test(leer(c)) || PORATAJO.test(leer(c)));
 
 /* ── LO QUE SE PIDE AFUERA ───────────────────────────────────────────────
    Los servidores distintos a los que el navegador le pide algo. Se leen los
