@@ -85,7 +85,7 @@ function leerVolcado(texto) {
   const renglones = texto.split('\n');
   const tablas = {};
   for (let i = 0; i < renglones.length; i++) {
-    const cabecera = renglones[i].match(/^INSERT INTO "public"\."([a-z_]+)" \((.*)\) VALUES$/);
+    const cabecera = renglones[i].match(/^INSERT INTO "public"\."([a-z_][a-z0-9_]*)" \((.*)\) VALUES$/);
     if (!cabecera) continue;
     const columnas = cabecera[2].split(', ').map(c => c.replace(/"/g, ''));
     const filas = [];

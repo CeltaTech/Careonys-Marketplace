@@ -73,18 +73,18 @@ function tablasDelCodigo() {
   for (const rel of archivos) {
     let texto;
     try { texto = readFileSync(join(raiz, rel), 'utf8'); } catch { continue; }
-    for (const m of texto.matchAll(/_supabase(?:Get|Post|Patch)\('([a-z_]+)'/g)) nombres.add(m[1]);
-    for (const m of texto.matchAll(/table === '([a-z_]+)'/g)) nombres.add(m[1]);
-    for (const m of texto.matchAll(/_supabaseRequest\('[A-Z]+', *'([a-z_]+)'/g)) nombres.add(m[1]);
-    for (const m of texto.matchAll(/from\('([a-z_]+)'\)/g)) nombres.add(m[1]);
-    for (const m of texto.matchAll(/rest\/v1\/([a-z_]+)/g)) nombres.add(m[1]);
+    for (const m of texto.matchAll(/_supabase(?:Get|Post|Patch)\('([a-z_][a-z0-9_]*)'/g)) nombres.add(m[1]);
+    for (const m of texto.matchAll(/table === '([a-z_][a-z0-9_]*)'/g)) nombres.add(m[1]);
+    for (const m of texto.matchAll(/_supabaseRequest\('[A-Z]+', *'([a-z_][a-z0-9_]*)'/g)) nombres.add(m[1]);
+    for (const m of texto.matchAll(/from\('([a-z_][a-z0-9_]*)'\)/g)) nombres.add(m[1]);
+    for (const m of texto.matchAll(/rest\/v1\/([a-z_][a-z0-9_]*)/g)) nombres.add(m[1]);
   }
   // Y las vistas que crean las migraciones: son direcciones web igual que las
   // tablas, y la sonda tiene que mirarlas aunque el código todavía no las use.
   try {
     for (const arch of readdirSync(join(raiz, 'supabase', 'migrations'))) {
       const sql = readFileSync(join(raiz, 'supabase', 'migrations', arch), 'utf8');
-      for (const m of sql.matchAll(/create (?:or replace )?view public\.([a-z_]+)/gi)) nombres.add(m[1]);
+      for (const m of sql.matchAll(/create (?:or replace )?view public\.([a-z_][a-z0-9_]*)/gi)) nombres.add(m[1]);
     }
   } catch { /* todavía no hay migraciones */ }
   return [...nombres].sort();

@@ -221,7 +221,7 @@ export function calcularUsos() {
 
   const enComillas = (texto) => {
     const salida = [];
-    for (const encontrado of texto.matchAll(/["']([a-z_]+)["']/g)) salida.push(encontrado[1]);
+    for (const encontrado of texto.matchAll(/["']([a-z_][a-z0-9_]*)["']/g)) salida.push(encontrado[1]);
     return salida;
   };
 
@@ -244,7 +244,7 @@ export function calcularUsos() {
   }
   const llamada = new Map();
   for (const quien of porArgumento) {
-    llamada.set(quien, new RegExp(String.raw`\b${quien}\(\s*["']([a-z_]+)["']`, 'g'));
+    llamada.set(quien, new RegExp(String.raw`\b${quien}\(\s*["']([a-z_][a-z0-9_]*)["']`, 'g'));
   }
 
   // --- Formas 1, 2 y 5: en el marcado y en los guiones ---------------------
@@ -257,8 +257,8 @@ export function calcularUsos() {
       const numero = i + 1;
 
       if (esMarcado) {
-        for (const x of renglon.matchAll(/data-catalogo="([a-z_]+)"/g)) anotar(x[1], relativa, numero);
-        for (const x of renglon.matchAll(/data-campo="[^"]*@([a-z_]+)"/g)) anotar(x[1], relativa, numero);
+        for (const x of renglon.matchAll(/data-catalogo="([a-z_][a-z0-9_]*)"/g)) anotar(x[1], relativa, numero);
+        for (const x of renglon.matchAll(/data-campo="[^"]*@([a-z_][a-z0-9_]*)"/g)) anotar(x[1], relativa, numero);
       }
 
       for (const quien of llamada.values()) {
@@ -296,7 +296,7 @@ export function calcularUsos() {
 
   // --- Forma 4: los ejes de la grilla de disponibilidad ---------------------
   readFileSync(aRuta(DISPONIBILIDAD), 'utf8').split('\n').forEach((renglon, i) => {
-    const x = renglon.match(/"(?:filas|columnas)"\s*:\s*"([a-z_]+)"/);
+    const x = renglon.match(/"(?:filas|columnas)"\s*:\s*"([a-z_][a-z0-9_]*)"/);
     if (x) anotar(x[1], DISPONIBILIDAD, i + 1);
   });
 

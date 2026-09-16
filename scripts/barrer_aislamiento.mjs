@@ -58,7 +58,7 @@ const textos = archivos.map((n) => readFileSync(join(carpeta, n), 'utf8'));
 const renombres = new Map();
 for (const t of textos) {
   for (const m of t.replace(/\r\n/g, '\n').matchAll(
-    /alter\s+table\s+(?:if\s+exists\s+)?"?public"?\."?([a-z_]+)"?\s+rename\s+to\s+"?([a-z_]+)"?/gi)) {
+    /alter\s+table\s+(?:if\s+exists\s+)?"?public"?\."?([a-z_][a-z0-9_]*)"?\s+rename\s+to\s+"?([a-z_][a-z0-9_]*)"?/gi)) {
     renombres.set(m[1].toLowerCase(), m[2].toLowerCase());
   }
 }
@@ -74,7 +74,7 @@ function nombreDeHoy(tabla) {
 const vistas = new Set();
 for (const t of textos) {
   for (const m of t.replace(/\r\n/g, '\n').matchAll(
-    /create\s+(?:or\s+replace\s+)?view\s+"?public"?\."?([a-z_]+)"?/gi)) {
+    /create\s+(?:or\s+replace\s+)?view\s+"?public"?\."?([a-z_][a-z0-9_]*)"?/gi)) {
     vistas.add(m[1].toLowerCase());
   }
 }

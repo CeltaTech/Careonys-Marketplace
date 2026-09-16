@@ -3758,8 +3758,8 @@ exención que ya no exime nada no es inofensiva: sigue salteando lo que nombra, 
 chequeo sobre eso y no queda rastro.
 
 Las dos reglas leían una sola forma de escribir una exención: un mapa, `const NOMBRE = new
-Map([…])` (`scripts/verificar_red.mjs:219`), y de ahí sólo miraban las claves que tienen pinta de
-archivo (`scripts/verificar_red.mjs:217`) o de columna (`scripts/verificar_red.mjs:272`). Pero
+Map([…])` (`scripts/verificar_red.mjs:237`), y de ahí sólo miraban las claves que tienen pinta de
+archivo (`scripts/verificar_red.mjs:235`) o de columna (`scripts/verificar_red.mjs:290`). Pero
 este proyecto escribe otra exención distinta diecisiete veces: `const AJENAS = […]`, la lista de
 carpetas que un chequeo declara no mirar. Es una lista suelta y no un mapa, y sus valores no
 tienen pinta de archivo ni de columna, así que se caía por las tres redes a la vez.
@@ -3775,7 +3775,7 @@ chequeo pudiera mirar: `scripts/verificar_arranque.mjs:53`,
 `scripts/citas.mjs`. Seis renglones perdonando a un fantasma.
 
 Qué se hizo: una tercera regla, `carpetasEximidasQueNoEstan()`
-(`scripts/verificar_red.mjs:309`), que lee la lista en sus tres formas —suelta, como conjunto y
+(`scripts/verificar_red.mjs:327`), que lee la lista en sus tres formas —suelta, como conjunto y
 exportada— sin mirar adentro de los comentarios. Contra qué se compara sale de
 `carpetasDelProyecto()` (`scripts/recorrido.mjs:317`), que recorre con la misma regla con la que
 se recorre todo: nombra la carpeta que existe aunque no se pueda entrar en ella —una caja fuerte
@@ -3843,6 +3843,35 @@ en que el lector sepa leer.
 
 No se encontró ningún daño: hoy todas las direcciones del sitio están escritas con el
 camino adelante.
+
+### El chequeo del esquema le pedía a los nombres guardados que no tuvieran dígitos
+
+Las quince reglas que se comprueban sobre cada migración empiezan todas por lo mismo:
+encontrar qué tablas, qué columnas y qué funciones declara el texto. Esa búsqueda estaba
+escrita veintisiete veces adentro del mismo guion, y las veintisiete pedían que el
+nombre fuera solamente letras y guiones bajos.
+
+En Postgres un nombre lleva dígitos. Y el glosario de la empresa aprobó una palabra que
+tiene uno en el medio, `i18n`, precisamente porque traducirla confunde más que dejarla.
+Las cuatro funciones del esquema que empiezan por esa palabra no las veía ninguna de las
+quince reglas. No estaban exentas: estaban afuera, y nadie lo decía.
+
+Lo que eso dejaba abierto no es contable. La segunda de las quince es la que exige que
+toda función que se saltea la RLS le revoque el permiso a quien no inició sesión, que es
+lo que impide que cualquiera con la clave pública la llame desde afuera. Se probó
+agregándole al esquema una función de ese tipo, sin ninguna revocación, con un dígito en
+el nombre: el chequeo la ignoró, siguió diciendo treinta y siete funciones y terminó en
+verde. Con el arreglo puesto, la nombra y se pone en rojo.
+
+Las veintisiete quedaron escritas como se escribe un nombre de verdad, y lo mismo las
+catorce iguales que había en otros cuatro guiones que leen la misma base. Hoy no había
+daño: ninguna de las cuatro funciones invisibles se saltea la RLS.
+
+Y para que la forma no vuelva, el chequeo que vigila a los chequeos tiene una regla más,
+la octava: ninguno puede escribir así el nombre de algo guardado. Vale cuando lo que se
+nombra es un archivo de este proyecto —ese nombre lo elige el proyecto y no lleva
+dígitos—, y esa excepción se reconoce por el prefijo que la delata, no por una lista de
+archivos que habría que mantener.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 

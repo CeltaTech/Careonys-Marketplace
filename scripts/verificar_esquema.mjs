@@ -596,16 +596,16 @@ const SIN_ORGANIZACION_AL_ESCRIBIR = new Map([
    éste y no un comentario suelto. */
 const SIN_MONEDA = new Map([]);
 
-const TABLA = /create\s+table\s+(?:if\s+not\s+exists\s+)?"?public"?\."?([a-z_]+)"?\s*\(/gi;
-const FUNCION = /create\s+(?:or\s+replace\s+)?function\s+(?:public\.)?([a-z_]+)\s*\(/gi;
+const TABLA = /create\s+table\s+(?:if\s+not\s+exists\s+)?"?public"?\."?([a-z_][a-z0-9_]*)"?\s*\(/gi;
+const FUNCION = /create\s+(?:or\s+replace\s+)?function\s+(?:public\.)?([a-z_][a-z0-9_]*)\s*\(/gi;
 const PLATA = /(price|precio|rate|tarifa|monto|importe|honorario|cobro|salario|remuneracion|pago|fee|amount)/i;
 const NUMERO = /\b(numeric|decimal|money|integer|bigint|real|double\s+precision|smallint)\b/i;
 const MONEDA = /(moneda|currency)/i;
 const NO_ES_COLUMNA = /^(primary|unique|constraint|foreign|check|--)/i;
 const CLAVE_APARTE =
-  /alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?"?public"?\."?([a-z_]+)"?[^;]*add\s+constraint[^;]*primary\s+key\s*\(\s*"?([a-z_]+)"?/gi;
+  /alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?"?public"?\."?([a-z_][a-z0-9_]*)"?[^;]*add\s+constraint[^;]*primary\s+key\s*\(\s*"?([a-z_][a-z0-9_]*)"?/gi;
 const AGREGA_ORGANIZACION =
-  /alter\s+table\s+(?:if\s+exists\s+)?"?public"?\."?([a-z_]+)"?[^;]*add\s+column[^;]*\b(?:prestadora_id|tenant_id)\b/gi;
+  /alter\s+table\s+(?:if\s+exists\s+)?"?public"?\."?([a-z_][a-z0-9_]*)"?[^;]*add\s+column[^;]*\b(?:prestadora_id|tenant_id)\b/gi;
 /* Y lo mismo para la moneda. Hasta el 5 de septiembre de 2026 la cuarta regla
    miraba nada más que el cuerpo del `create table`, así que una columna de
    moneda que llegara después —que es la única forma de dársela a una tabla que
@@ -614,13 +614,13 @@ const AGREGA_ORGANIZACION =
    cumplía. Hoy ninguna migración la agrega así, porque `moneda_valor_hora` se
    declara junto a su importe, y el caso vive en las pruebas de más abajo. */
 const AGREGA_MONEDA =
-  /alter\s+table\s+(?:if\s+exists\s+)?"?public"?\."?([a-z_]+)"?[^;]*add\s+column[^;]*\b\w*(?:moneda|currency)\w*\b/gi;
+  /alter\s+table\s+(?:if\s+exists\s+)?"?public"?\."?([a-z_][a-z0-9_]*)"?[^;]*add\s+column[^;]*\b\w*(?:moneda|currency)\w*\b/gi;
 /* Para la sexta. Un `insert` que sale de recorrer `tenants`, el `create trigger`
    colgado de esa misma tabla, y el `rename to` que le cambia el nombre a una
    tabla en el medio —ya pasó que un renombre posterior le cambiara el nombre a
    una tabla que una siembra anterior llenaba, y sin esto la sexta regla buscaría
    un nombre que ya no existe—. */
-const INSERTA = /insert\s+into\s+(?:"?public"?\.)?"?([a-z_]+)"?/gi;
+const INSERTA = /insert\s+into\s+(?:"?public"?\.)?"?([a-z_][a-z0-9_]*)"?/gi;
 const POLITICA_DEPOSITO = /create\s+policy\s+"([^"]+)"\s+on\s+storage\.objects/gi;
 /* Desde dónde rige la novena regla. Cuando las migraciones eran setenta y
    cuatro, el límite estaba más adelante: antes de él estaba el volcado de la
@@ -638,7 +638,7 @@ const CAMBIA_EL_ESQUEMA =
 const AVISA_A_POSTGREST = /^\s*notify\s+pgrst\s*,\s*'reload schema'\s*;\s*$/i;
 const EL_AVISO_EMPIEZA = '0001';
 const GRANT_DE_TABLA =
-  /grant\s+([a-z][a-z0-9_,\s()]*?)\s+on\s+(?:table\s+)?"?public"?\."?([a-z_]+)"?\s+to\s+([a-z_,\s"]+)/gi;
+  /grant\s+([a-z][a-z0-9_,\s()]*?)\s+on\s+(?:table\s+)?"?public"?\."?([a-z_][a-z0-9_]*)"?\s+to\s+([a-z_,\s"]+)/gi;
 const ABRE_DE_MAS = /\ball\b|\btruncate\b/i;
 /* Para la decimotercera. Todo lo que le cambia el nombre a algo ya guardado.
    Las políticas entran a propósito: acá cada una se vuelve a crear con un
@@ -710,7 +710,7 @@ const NO_ENTRA_EN_UNA_TRANSACCION = [
    así, y sin esa alternativa el nombre de la tabla se leía como `public`. Hoy no
    queda ninguna escrita así, y la alternativa se deja para el día que vuelva. */
 const POLITICA_DE_TABLA =
-  /create\s+policy\s+"([^"]+)"\s+on\s+(?:"?([a-z_]+)"?\s*\.\s*)?(%I|"?[a-z_]+"?)/gi;
+  /create\s+policy\s+"([^"]+)"\s+on\s+(?:"?([a-z_][a-z0-9_]*)"?\s*\.\s*)?(%I|"?[a-z_][a-z0-9_]*"?)/gi;
 const BAJA_DE_POLITICA = /drop\s+policy\s+(?:if\s+exists\s+)?"([^"]+)"/gi;
 /* Para la duodécima. La comparación con la columna de la Organización y lo que
    viene a contestarla; y la deducción hecha a mano, que es sacar esa columna de
@@ -719,7 +719,7 @@ const COMPARA_ORGANIZACION =
   /\b(?:tenant_id|prestadora_id)\s*(?:=|<>|!=|\bin\b)\s*(\(?[\s\S]{0,140})/gi;
 const RESUELVE_SOLA = /\bselect\b|auth\.uid\s*\(/i;
 const FUNCION_CON_CUERPO =
-  /create\s+(?:or\s+replace\s+)?function\s+(?:"?public"?\.)?"?([a-z_]+)"?[\s\S]{0,400}?\$([a-z_]*)\$([\s\S]*?)\$\2\$/gi;
+  /create\s+(?:or\s+replace\s+)?function\s+(?:"?public"?\.)?"?([a-z_][a-z0-9_]*)"?[\s\S]{0,400}?\$([a-z_]*)\$([\s\S]*?)\$\2\$/gi;
 const DEDUCE_LA_ORGANIZACION =
   /\bselect\b[\s\S]{0,120}?\b(?:tenant_id|prestadora_id)\b[\s\S]{0,120}?\bfrom\b[\s\S]{0,200}?auth\.uid\s*\(/i;
 /* La única que tiene derecho a deducirla. **No es una exención con otro
@@ -735,19 +735,19 @@ const ESCRIBE = /\b(?:insert|update|delete)\b/i;
    **neto** de todas: un `grant` que una migracion posterior revoca no es un
    agujero, y uno que nadie revoco lo es aunque su migracion se vea prolija. */
 const PERMISO_DE_TABLA =
-  /\b(grant|revoke)\s+([a-z][a-z0-9_,\s()]*?)\s+on\s+(?:table\s+)?"?public"?\."?([a-z_]+)"?\s+(?:to|from)\s+([a-z_,\s"]+)/gi;
+  /\b(grant|revoke)\s+([a-z][a-z0-9_,\s()]*?)\s+on\s+(?:table\s+)?"?public"?\."?([a-z_][a-z0-9_]*)"?\s+(?:to|from)\s+([a-z_,\s"]+)/gi;
 /* Un `drop` de tabla o de vista: el objeto se va y con el se van sus permisos,
    asi que lo que hubiera concedido antes deja de contar. Aca las vistas se
    borran y se vuelven a crear seguido, y sin esto el neto arrastraria permisos
    de un objeto que ya no es el mismo. */
 const BORRA_EL_OBJETO =
-  /drop\s+(?:table|(?:materialized\s+)?view)\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_]+)"?/gi;
+  /drop\s+(?:table|(?:materialized\s+)?view)\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_][a-z0-9_]*)"?/gi;
 /* Quien entra sin sesion. `PUBLIC` entra porque `anon` hereda de el: conceder a
    `PUBLIC` es conceder a todos, incluido el que no inicio sesion. */
 const SIN_SESION = /^(?:anon|public)$/i;
 /* Una funcion con sus parametros y su cuerpo, para mirarle la puerta. */
 const FUNCION_CON_PARAMETROS =
-  /create\s+(?:or\s+replace\s+)?function\s+(?:"?public"?\.)?"?([a-z_]+)"?\s*\(([^)]*)\)([\s\S]{0,400}?)\$([a-z_]*)\$([\s\S]*?)\$\4\$/gi;
+  /create\s+(?:or\s+replace\s+)?function\s+(?:"?public"?\.)?"?([a-z_][a-z0-9_]*)"?\s*\(([^)]*)\)([\s\S]{0,400}?)\$([a-z_]*)\$([\s\S]*?)\$\4\$/gi;
 /* El nombre corto de una Prestadora, que es lo que la puerta publica exige.
    El nombre del parametro no se fija aca a proposito: lo que hace de puerta no
    es como se llama el parametro sino que el cuerpo lo compare contra `slug`. */
@@ -766,7 +766,7 @@ const DEL_PEDIDO = /current_setting\s*\(|request\.headers|request\.jwt|auth\.jwt
 const NOMBRA_ORGANIZACION = /prestadora_actual\s*\(\s*\)|\btenant_id\b|\bprestadora_id\b/i;
 const ACOTADA = /\bwhere\b[^;]*\b(?:slug|id)\s*=/i;
 const DISPARADOR =
-  /create\s+(?:or\s+replace\s+)?trigger\s+"?[a-z_]+"?[^;]*\bon\s+(?:"?public"?\.)?"?tenants"?[^;]*\bexecute\s+(?:function|procedure)\s+(?:"?public"?\.)?"?([a-z_]+)"?/gi;
+  /create\s+(?:or\s+replace\s+)?trigger\s+"?[a-z_][a-z0-9_]*"?[^;]*\bon\s+(?:"?public"?\.)?"?tenants"?[^;]*\bexecute\s+(?:function|procedure)\s+(?:"?public"?\.)?"?([a-z_][a-z0-9_]*)"?/gi;
 /* Sigue el nombre de una tabla **y el de una vista**. Las vistas entraron el
    31 de agosto de 2026, y no por prolijidad: sin ellas este seguimiento decia
    que una vista seguia existiendo con `select` para `anon` con su nombre viejo,
@@ -775,15 +775,15 @@ const DISPARADOR =
    `PGRST205` —«no existe»— al nombre viejo y `42501` —«sin permiso»— al nuevo, que
    son dos hechos distintos y hay que poder distinguirlos. */
 const RENOMBRA =
-  /alter\s+(?:table|(?:materialized\s+)?view)\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_]+)"?\s+rename\s+to\s+"?([a-z_]+)"?/gi;
+  /alter\s+(?:table|(?:materialized\s+)?view)\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_][a-z0-9_]*)"?\s+rename\s+to\s+"?([a-z_][a-z0-9_]*)"?/gi;
 /* Para `columnasDeclaradas`: las tres cosas que le pasan a una columna despues
    de nacer. */
 const AGREGA_COLUMNA =
-  /alter\s+table\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_]+)"?\s+add\s+column\s+(?:if\s+not\s+exists\s+)?"?([a-z_]+)"?/gi;
+  /alter\s+table\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_][a-z0-9_]*)"?\s+add\s+column\s+(?:if\s+not\s+exists\s+)?"?([a-z_][a-z0-9_]*)"?/gi;
 const SACA_COLUMNA =
-  /alter\s+table\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_]+)"?\s+drop\s+column\s+(?:if\s+exists\s+)?"?([a-z_]+)"?/gi;
+  /alter\s+table\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_][a-z0-9_]*)"?\s+drop\s+column\s+(?:if\s+exists\s+)?"?([a-z_][a-z0-9_]*)"?/gi;
 const RENOMBRA_COLUMNA =
-  /alter\s+table\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_]+)"?\s+rename\s+column\s+"?([a-z_]+)"?\s+to\s+"?([a-z_]+)"?/gi;
+  /alter\s+table\s+(?:if\s+exists\s+)?(?:"?public"?\.)?"?([a-z_][a-z0-9_]*)"?\s+rename\s+column\s+"?([a-z_][a-z0-9_]*)"?\s+to\s+"?([a-z_][a-z0-9_]*)"?/gi;
 
 /** Las tablas que en algún lado reciben su columna de Organización. */
 export function conOrganizacion(textos) {
@@ -876,7 +876,7 @@ export function clavesPrimarias(textos) {
       for (const linea of cuerpo.split('\n')) {
         const l = linea.trim();
         if (!/primary\s+key/i.test(l)) continue;
-        const conParentesis = l.match(/primary\s+key\s*\(\s*"?([a-z_]+)"?/i);
+        const conParentesis = l.match(/primary\s+key\s*\(\s*"?([a-z_][a-z0-9_]*)"?/i);
         const nombre = conParentesis ? conParentesis[1] : l.split(/\s+/)[0];
         columna.set(tabla, nombre.replace(/"/g, '').toLowerCase());
       }
@@ -1303,7 +1303,7 @@ export function alcanceAnonimo(textos, migraciones) {
    queda con la última definición de cada una, porque acá las vistas se vuelven
    a crear —`caregivers_publicos` tres veces— y lo que vale es la que quedó. */
 const DEFINE_LA_VISTA =
-  /create\s+(?:or\s+replace\s+)?view\s+(?:"?public"?\.)?"?([a-z_]+)"?\s+as([\s\S]*?);/gi;
+  /create\s+(?:or\s+replace\s+)?view\s+(?:"?public"?\.)?"?([a-z_][a-z0-9_]*)"?\s+as([\s\S]*?);/gi;
 
 export function cuerposDeVista(textos) {
   const cuerpos = new Map();

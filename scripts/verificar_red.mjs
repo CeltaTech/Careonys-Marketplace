@@ -16,7 +16,7 @@
    atributos `style=` del marcado» y lo contó como éxito. Está en el pendiente
    69 de `docs/PENDIENTES.md`.
 
-   QUÉ EXIGE, QUE SON SIETE COSAS
+   QUÉ EXIGE, QUE SON OCHO COSAS
    1. Que todo chequeo llame por lo menos una vez a `seRevisaron()` o a
       `hayArchivos()`, las dos de `scripts/recorrido.mjs`, que son las que se
       plantan cuando la cuenta da cero. La llamada se busca **con los
@@ -73,9 +73,23 @@
       Qué carpetas hay sale de `carpetasDelProyecto()`, que mira con la misma
       regla con la que se recorre: lo que ningún chequeo puede abrir tampoco se
       puede eximir, porque ya está afuera de todo.
+   8. Que ningún chequeo escriba el nombre de algo guardado —una tabla, una
+      columna, una función— con la forma `[a-z_]+`. Es la tercera clase de
+      ceguera en su forma más barata de escribir y más cara de encontrar: el
+      archivo está, el chequeo lo abre, y adentro descarta lo que busca porque
+      le pide al nombre una forma que la base no le pide. En Postgres un nombre
+      lleva dígitos, y el glosario de la empresa aprobó `i18n`, que es
+      justamente una palabra con un dígito en el medio y que va a seguir
+      apareciendo en nombres nuevos. Medido el 16 de septiembre de 2026:
+      `verificar_esquema.mjs` la escribía **veintisiete veces**, y sus quince
+      reglas no veían ninguna de las cuatro funciones que empiezan por `i18n`;
+      una función `SECURITY DEFINER` con un dígito en el nombre, abierta a quien
+      no inició sesión, pasaba en verde. La forma sí vale cuando lo que se
+      nombra es un archivo de este proyecto, porque ese nombre lo elige el
+      proyecto: se reconoce por el prefijo que lo delata, no por una lista.
 
    CÓMO SE PRUEBA, Y POR QUÉ ASÍ
-   Siete veces, porque las siete pueden fallar:
+   Ocho veces, porque las ocho pueden fallar:
    1. Contra la función de verdad: `seRevisaron(0, …)` tiene que cortar y
       `seRevisaron(3, …)` tiene que devolver 3. Sin esto, la guarda podría estar
       vacía por dentro y todos los chequeos «cumplirían» igual.
@@ -102,6 +116,10 @@
       formas se miran porque el proyecto usa las tres, y la comentada porque un
       ejemplo apagado no exime nada y ponerse rojo por él sería un rojo sin
       motivo.
+   8. Contra cuatro textos de mentira para la forma sin dígitos: uno que la
+      escribe donde nombra algo guardado, uno que la escribe donde nombra un
+      archivo del proyecto, uno que la escribe adentro de un comentario y uno
+      escrito como corresponde. Sólo el primero tiene que salir señalado.
 =================================================== */
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -316,6 +334,43 @@ export function carpetasEximidasQueNoEstan(texto, carpetas) {
     }
   }
   return idas;
+}
+
+/* ── EL NOMBRE GUARDADO ESCRITO SIN DÍGITOS ────────────────────────────
+   La tercera clase de ceguera otra vez, y acá duele más que en ningún lado.
+   Un chequeo que lee las migraciones no puede pedirle al nombre de una tabla,
+   de una columna o de una función que se escriba sólo con letras y guiones
+   bajos: en Postgres un nombre lleva dígitos, y el glosario de la empresa
+   aprobó `i18n`, que es justamente una palabra con un dígito en el medio y
+   que va a seguir apareciendo en nombres nuevos.
+
+   El caso que la pide: `verificar_esquema.mjs` escribía veintisiete veces la
+   forma `[a-z_]+`. Cuatro funciones del esquema —las cuatro que empiezan por
+   `i18n`— no las veía ninguna de las quince reglas, y una función `SECURITY
+   DEFINER` con un dígito en el nombre, abierta a quien no inició sesión,
+   pasaba en verde. Se probó poniendo una.
+
+   Qué se exime y por qué: la forma vale cuando lo que se nombra es un archivo
+   del propio proyecto y no algo guardado en la base. Ahí el nombre lo elige
+   este proyecto y no lleva dígitos a propósito, así que se reconoce por el
+   prefijo que lo delata y no por una lista de archivos. */
+const PREFIJOS_DEL_PROYECTO = ['verificar_'];
+const FORMA_SIN_DIGITOS = '[a-z_]+';
+
+/** Los renglones de este texto que escriben un nombre guardado sin dígitos. */
+export function nombresSinDigitos(texto) {
+  const limpio = sinComentarios(texto);
+  const encontrados = [];
+  let desde = 0;
+  for (;;) {
+    const donde = limpio.indexOf(FORMA_SIN_DIGITOS, desde);
+    if (donde < 0) break;
+    desde = donde + FORMA_SIN_DIGITOS.length;
+    const antes = limpio.slice(Math.max(0, donde - 20), donde);
+    if (PREFIJOS_DEL_PROYECTO.some((pre) => antes.endsWith(pre))) continue;
+    encontrados.push(limpio.slice(0, donde).split('\n').length);
+  }
+  return encontrados;
 }
 
 /* ── Y QUE EL README LOS NOMBRE A TODOS ───────────────────────────────────
@@ -552,6 +607,21 @@ if (sinColumna(conMapa('AFUERA', 'verificar_todo.mjs')).length > 0) {
   fallas.push('Confundió el nombre de un archivo con una columna.');
 }
 
+/* ── 8 ter. Que reconozca el nombre guardado escrito sin dígitos ────── */
+
+if (nombresSinDigitos('const TABLA = /public\.([a-z_]+)/;').length === 0) {
+  fallas.push('Dio por bueno un nombre guardado escrito sin dígitos.');
+}
+if (nombresSinDigitos('const CHEQUEOS = /verificar_[a-z_]+\.mjs/;').length > 0) {
+  fallas.push('Se quejó del nombre de un archivo del proyecto, que lo elige el proyecto.');
+}
+if (nombresSinDigitos('// antes decía /public\.([a-z_]+)/ y ahora no.').length > 0) {
+  fallas.push('Se quejó de una forma escrita adentro de un comentario.');
+}
+if (nombresSinDigitos('const TABLA = /public\.([a-z_][a-z0-9_]*)/;').length > 0) {
+  fallas.push('Se quejó de un nombre guardado escrito como corresponde.');
+}
+
 /* ── 6. Que note una tabla a la que le falta un chequeo ─────────────────── */
 
 const TABLA_COMPLETA = [
@@ -669,8 +739,10 @@ const carpetasReales = carpetasDelProyecto(join(aca, '..'));
 seRevisaron(carpetasReales.size, 'ninguna carpeta en el proyecto contra la que mirar');
 
 const exencionesTorcidas = [];
+const formasSinDigitos = [];
 for (const nombre of guiones) {
   const texto = readFileSync(join(aca, nombre), 'utf8');
+  for (const renglon of nombresSinDigitos(texto)) formasSinDigitos.push([nombre, renglon]);
   for (const mentira of exencionesQueMienten(nombre, texto, existeElArchivo)) {
     exencionesTorcidas.push([nombre, mentira]);
   }
@@ -772,6 +844,14 @@ for (const [nombre, clave] of conLaExtensionEnLaClave) {
   );
 }
 
+for (const [nombre, renglon] of formasSinDigitos) {
+  fallas.push(
+    `\`scripts/${nombre}:${renglon}\` escribe el nombre de algo guardado como \`[a-z_]+\`.\n` +
+    '      En Postgres un nombre lleva dígitos, y el glosario aprobó `i18n`. Lo que se\n' +
+    '      escriba así queda afuera de ese chequeo sin que nadie se entere.'
+  );
+}
+
 for (const [nombre, { lista, clave, porque }] of exencionesTorcidas) {
   fallas.push(
     `\`scripts/${nombre}\` exime a \`${clave}\` en \`${lista}\`, y ${porque}.\n` +
@@ -815,7 +895,8 @@ console.log(
   `${enElReadme.size} nombrados en la tabla del README. Y en los ${guiones.length} guiones ` +
   `de \`scripts/\`, ninguna exención que nombre un archivo que ya no está ni una ` +
   `columna que no declara ninguna de las ${migraciones.length} migraciones ni una ` +
-  `carpeta que ya no está entre las ${carpetasReales.size} del proyecto. Y de los ` +
+  `carpeta que ya no está entre las ${carpetasReales.size} del proyecto, ni un nombre ` +
+  `de algo guardado escrito sin dígitos. Y de los ` +
   `${ordenados.size} guiones que los ${documentos.length} documentos mandan a correr, los ` +
   `${ordenados.size} existen y los ${ordenados.size} tienen su fila entre las ` +
   `${conSuFila.size} de la lista de guiones del \`README.md\`.`
