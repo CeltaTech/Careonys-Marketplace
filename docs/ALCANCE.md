@@ -382,9 +382,9 @@ esperando una decisión suya.
 - **Había una palabra que la línea de comandos se inventó y nadie aprobó.** Al Desarrollador le
   resultó desagradable, con razón: dejaba al Asistente como algo puesto en exhibición. Estaba en
   70 lugares de 20 archivos.
-- **El nombre bueno ya estaba escrito y no hubo que inventar nada:** `docs/GLOSARIO.md:28` dice
-  que `directorio` nombra una pantalla, la pantalla ya se llamaba `directorio.html`, la ficha ya
-  se llamaba `perfil.html`, y la casilla guardada en la base ya se llamaba `perfil_publicado`.
+- **El nombre bueno ya estaba escrito y no hubo que inventar nada:** la pantalla ya se llamaba
+  `directorio.html`, la ficha ya se llamaba `perfil.html`, y la casilla guardada en la base ya
+  se llamaba `perfil_publicado`.
 - **Y va sin adjetivo.** Por un rato se escribió «directorio público», hasta que el Desarrollador
   preguntó el 24 de agosto de 2026 por qué no «directorio» a secas. No hay respuesta: directorio
   hay uno solo y se ve sin sesión, así que el adjetivo no distinguía nada de nada. Que se vea sin
@@ -2106,7 +2106,7 @@ mostrar si la barrera existe. Comprueban que cada Familia publica su aviso y sal
 sin haberlo mandado, que mandarlo a nombre de otra no sirve, que ninguna ve, modifica ni borra
 el aviso de la otra, ni sus horarios, ni su conversación, ni ningún reporte, y que los pesos del
 puntaje no se leen ni se cambian desde una sesión que no es del personal. Esa última no mira una
-tabla vacía: **las filas existen porque las siembra `supabase/migrations/0002_siembra_ficticia.sql:183`**, así que ver cero ahí es la
+tabla vacía: **las filas existen porque las siembra `supabase/migrations/0002_siembra_ficticia.sql:612`**, así que ver cero ahí es la
 política y no la falta de datos. **Las doce quedaron escritas y no corridas**: el guion completo
 necesita `--local` con `supabase start`, porque el registro por correo del servidor remoto pide
 confirmar la casilla y ahí la prueba nunca llega a tener sesión. Está dicho en la cabecera del
@@ -2709,7 +2709,7 @@ columna por columna.
 
 1. **La fila de la Prestadora de ejemplo.** Nombre, descripción y logotipo escritos a mano contra
    la base. Es el desvío, y ahora esa fila la escribe la siembra ficticia
-   (`supabase/migrations/0002_siembra_ficticia.sql:58`), **sin condición**. La versión anterior
+   (`supabase/migrations/0002_siembra_ficticia.sql:75`), **sin condición**. La versión anterior
    escribía el logotipo sólo `where logo_url is null`, y contra
    la base publicada eso no hizo nada, porque el valor ya estaba puesto: una migración que no corre
    justo donde hace falta no arregla nada. Entre los dos textos ganó el de la base publicada, que
@@ -2947,8 +2947,8 @@ puesto también un permiso **por columna** escrito a propósito, `update (full_n
 `REVOKE ALL ON TABLE` no distingue el permiso sobre la tabla entera del permiso sobre una columna,
 borra los dos. El permiso volvió, y es el que la base tiene hoy: `profiles` le da a
 `authenticated` la consulta de la tabla y la escritura de una sola columna
-(`supabase/migrations/0001_base_del_esquema.sql:5937-5939`). Ninguna pantalla lo usa —`js/auth.js:244`
-sólo lee `profiles`, no le escribe—, así que mientras faltó no hubo síntoma visible; lo que se
+(`supabase/migrations/0001_base_del_esquema.sql:5937-5939`). Ninguna pantalla lo usa —`js/auth.js:250`
+le pide el perfil a la base y no le escribe nada—, así que mientras faltó no hubo síntoma visible; lo que se
 había roto no era una función, era una defensa.
 
 **Por qué ese permiso es la defensa, y no una comodidad.** `profiles` tiene la política «Su propio
@@ -3425,7 +3425,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
   igual que si estuviera bien.
 - **Las diecinueve guías generales están escritas y ninguna está publicada.** La siembra ficticia
   las trae, una por cada patología del catálogo, con sus cuatro partes en los tres idiomas y
-  **como borrador** (`supabase/migrations/0002_siembra_ficticia.sql:527`), y la base lo confirma:
+  **como borrador** (`supabase/migrations/0002_siembra_ficticia.sql:502`), y la base lo confirma:
   diecinueve guías generales sin publicar, y dos de Prestadora publicadas. La base no deja
   publicar una guía sin que quede escrito quién la revisó y cuándo, y esa firma no la puede poner
   una migración: es una persona haciéndose responsable de lo que ahí dice, no un dato. Así que la
@@ -3487,7 +3487,7 @@ que `scripts/verificar_opciones.mjs` pide para un desplegable que sale de la bas
 **Los cinco estados tienen nombre, y el nombre sale de la base.** El vocabulario cerrado
 `estado_verificacion` tiene cargadas sus cinco claves —«Sin presentar», «Presentado, sin
 comprobar», «Comprobado», «Rechazado» y «Vencido»—, en los tres idiomas
-(`supabase/migrations/0002_siembra_ficticia.sql:358`). «Comprobado» dice exactamente lo mismo que
+(`supabase/migrations/0002_siembra_ficticia.sql:333`). «Comprobado» dice exactamente lo mismo que
 ya decía la tarjeta del directorio a la Familia, y es a propósito: dos palabras distintas para el
 mismo hecho es como se empieza a tener dos catálogos.
 
@@ -3564,7 +3564,7 @@ hoy es un volcado de datos y un volcado no lleva comprobaciones. Quien la sostie
 `scripts/probar_aislamiento.mjs`, que no corre en cada `commit`.
 
 **Probado con las dos Organizaciones ficticias, y la prueba puede fallar.** Dos comprobaciones
-nuevas en `scripts/probar_aislamiento.mjs:872`, que llevaron la corrida de 127 a 129. Van sobre un
+nuevas en `scripts/probar_aislamiento.mjs:819`, que llevaron la corrida de 127 a 129. Van sobre un
 legajo recién creado, y en este orden: valida la Prestadora y no aparece; dice que sí la persona y
 **tampoco** aparece; se le comprueba **un** papel de los dos y sigue sin aparecer —que es lo que
 distingue «la puerta mira la lista entera» de «la puerta se conforma con encontrar algo»—; y recién
@@ -3671,7 +3671,7 @@ autora, y cada Familia lo es sólo de los seis de su propia Organización, nunca
 
 **Lo que hoy falta son las cuentas, y falta de verdad.** La base reconstruida trae los seis
 perfiles ficticios —Familia, Asistente y personal de la Prestadora en PresDemo y en Cuidar Norte
-(`supabase/migrations/0002_siembra_ficticia.sql:631`)— y **ninguna cuenta de acceso detrás**:
+(`supabase/migrations/0002_siembra_ficticia.sql:639`)— y **ninguna cuenta de acceso detrás**:
 `auth.users` queda vacía, porque ninguna migración escribe una sola fila ahí. Cuidar Sur está sin
 cuentas a propósito —estar casi vacía es lo que la hace útil para probar el aislamiento—, pero las
 otras dos quedaron sin ellas sin que nadie lo decidiera. La consecuencia práctica es que **al

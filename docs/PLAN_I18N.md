@@ -13,7 +13,7 @@
 > `data/catalogo-vocabularios.json` sus 26 listas con 150 opciones, 149 de ellas en los tres
 > idiomas; la única que sigue sólo en castellano es `guardia_12`, y es a propósito, marcada
 > `i18n_pendiente` y con el motivo escrito al lado
-> (`supabase/migrations/0002_siembra_ficticia.sql:416`). Queda además la única decisión abierta del
+> (`supabase/migrations/0002_siembra_ficticia.sql:391`). Queda además la única decisión abierta del
 > Desarrollador —quién traduce—, que es la número 2 de la sección 5.
 >
 > Corresponde al pendiente 9. Cuando esté todo convertido, este archivo se borra. **La conversión
@@ -143,7 +143,7 @@ Tres cosas quedaron afuera de la cuenta, y no por descuido:
   8 de septiembre de 2026 esos archivos tienen las tres columnas y **149 de las 150 opciones están
   en los tres idiomas**. La que falta es `guardia_12`, sin `en` ni `pt-BR` a propósito, marcada
   `i18n_pendiente` y con el motivo escrito al lado
-  (`supabase/migrations/0002_siembra_ficticia.sql:416`). Y no depende de que alguien se acuerde: la
+  (`supabase/migrations/0002_siembra_ficticia.sql:391`). Y no depende de que alguien se acuerde: la
   base lo exige por esquema, con `i18n_completo()`
   (`supabase/migrations/0001_base_del_esquema.sql:378`) adentro de la restricción de cada tabla que
   guarda texto visible.

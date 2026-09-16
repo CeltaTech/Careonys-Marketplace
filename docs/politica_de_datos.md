@@ -142,7 +142,7 @@ nadie más que él. **El personal de la Prestadora no la ve en ningún caso**: l
 tabla son la del Asistente que fichó y la de la Familia del vínculo, y ninguna lo nombra
 —`supabase/migrations/0001_base_del_esquema.sql:4592-4594`—, y la
 propia tabla lo deja escrito
-—`supabase/migrations/0001_base_del_esquema.sql:2446-2448`—. El motivo está en la §8.4:
+—`supabase/migrations/0001_base_del_esquema.sql:2296`—. El motivo está en la §8.4:
 mirar a qué hora entra y sale una persona es dirigir el trabajo.
 
 **4.4. Qué se dice antes de marcar.** La pantalla pregunta, antes de tomar la posición, **para

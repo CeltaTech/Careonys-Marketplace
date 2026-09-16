@@ -247,12 +247,7 @@ alguien quiera sumar más adelante.
 
 ## 9. Lo que este plan NO cierra, dicho antes de que sorprenda
 
-**Uno: el pisado de archivos.** `Sesion.uploadFile` sube con `upsert: true` (`js/auth.js:250`) y
-el camino es determinístico, así que **subir dos veces el mismo documento destruye el primero sin
-dejar nada**. No es un `DELETE` y ningún disparador de estas tres tablas lo ve. Es una destrucción
-de datos real y hoy no está en ningún pendiente. **Se abre pendiente aparte.**
-
-**Dos: el motivo de la decisión más crítica se está perdiendo, y no es culpa de que falte el
+**Uno: el motivo de la decisión más crítica se está perdiendo, y no es culpa de que falte el
 rastro.** `web/src/pantallas/panel-prestadora/ModalAuditoria.jsx:186` y `:202` juntan la nota de la entrevista —el motivo de aprobar
 o de rechazar—, `resolverLegajo` la manda como `notaPrestadora` (`js/apiClient.js:521`), y
 **`_mapToDatabase` la descarta**: no está en la lista de campos de `caregivers` (`js/apiClient.js:1412-1433`),
@@ -261,12 +256,12 @@ las dos listas. Y no hay columna donde pudiera caer: `caregivers` no tiene ningu
 abre pendiente aparte**, y en §12 queda la pregunta de si el motivo va a una columna del legajo o a
 la fila del rastro.
 
-**Tres: las acciones de cuenta siguen fuera de alcance.** Entrar, cambiar la clave, pedir el enlace
+**Dos: las acciones de cuenta siguen fuera de alcance.** Entrar, cambiar la clave, pedir el enlace
 de recuperación: eso vive en el esquema `auth`, que el producto no alcanza. El disparador sobre
 `profiles` va a ver el alta —porque el perfil se crea con ella— pero no la entrada ni el cambio de
 credencial. Alcanzarlas necesita una función del lado del servidor, y eso es otra tanda.
 
-**Cuatro: el rastro dice qué columna cambió, no qué decía antes**, salvo las tres de veredicto. Es
+**Tres: el rastro dice qué columna cambió, no qué decía antes**, salvo las tres de veredicto. Es
 la decisión del §5 y se paga acá: si mañana alguien quiere saber cuál era el CBU viejo, el rastro no
 lo tiene. Se eligió a favor de la regla de privacidad, a conciencia.
 
@@ -312,7 +307,7 @@ lista cerrada del §5. Sin ellos el rastro del sello no distingue aprobar de rec
 única pregunta que a esa fila se le va a hacer. El costo es que `role` y `tenant_id` quedan
 escritos, y ninguno de los dos dice nada personal.
 
-**c. Dónde va el motivo de la resolución** —la nota de la entrevista que hoy se pierde (§9, dos).
+**c. Dónde va el motivo de la resolución** —la nota de la entrevista que hoy se pierde (§9, uno).
 Las dos son defendibles:
 
 | | Qué implica | A favor | En contra |

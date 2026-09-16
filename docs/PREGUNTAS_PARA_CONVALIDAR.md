@@ -10,8 +10,8 @@ eso se escribe la migración que las carga. **Nada de esto está en la base toda
 aplica ningún cambio hasta que estas preguntas estén convalidadas.
 
 **Una advertencia sobre lo que ya está cargado.** Las cuatro preguntas sembradas hoy —las dos
-de la evaluación general en `supabase/migrations/0002_siembra_ficticia.sql:592` y `:593`, y las dos
-de una Prestadora en `:594` y `:595`— preguntan por posiciones, maniobras y frecuencias, es decir,
+de la evaluación general en `supabase/migrations/0002_siembra_ficticia.sql:573` y `:574`, y las dos
+de una Prestadora en `:575` y `:576`— preguntan por posiciones, maniobras y frecuencias, es decir,
 por tratamiento. Eso choca con la línea que trazan el comentario de la tabla de guías —«No guarda
 tratamientos, a proposito: el producto avisa, no prescribe»,
 `supabase/migrations/0001_base_del_esquema.sql:2631`— y la pantalla del Asistente
@@ -60,7 +60,7 @@ Prestadora no la pone a dirigir el trabajo. A quién se avisa un caso así no es
 | Opciones equivocadas | Creíbles. Una pregunta con tres opciones absurdas se acierta sin saber nada |
 
 Hoy las dos evaluaciones piden **100 %** para aprobar
-(`supabase/migrations/0002_siembra_ficticia.sql:279-281` y `supabase/migrations/0002_siembra_ficticia.sql:282`). Con dos
+(`supabase/migrations/0002_siembra_ficticia.sql:215` y `supabase/migrations/0002_siembra_ficticia.sql:216`). Con dos
 preguntas eso tenía sentido; con diez, el 70 % es lo que pide el pendiente 24 y es además el
 valor que la columna `porcentaje_para_aprobar` trae por defecto
 (`supabase/migrations/0001_base_del_esquema.sql:2487`).
@@ -205,7 +205,7 @@ al Paciente con una persona que la Prestadora no comprobó.
 - **De quién:** de PresDemo, con `tenant_id` cargado. Ninguna otra Prestadora la ve.
 - **De qué curso cuelga:** del curso propio de PresDemo «RCP avanzada», de 10 horas, avanzado y
   **presencial**, que se cursa en la sede y se rinde al terminar
-  (`supabase/migrations/0002_siembra_ficticia.sql:282`).
+  (`supabase/migrations/0002_siembra_ficticia.sql:216`).
 - **Intentos:** 2 hoy.
 - **Qué se rinde acá, y qué no.** La maniobra es presencial y la evalúa el instructor mirando
   hacerla; no se puede acreditar eligiendo una opción de una lista, y ninguna de estas diez
