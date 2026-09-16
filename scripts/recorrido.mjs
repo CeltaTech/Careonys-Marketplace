@@ -97,6 +97,20 @@ export const EXTENSIONES_DE_IMAGEN = [
 ];
 const ES_IMAGEN = conEsasExtensiones(EXTENSIONES_DE_IMAGEN);
 
+/* Y LO QUE NO ES TEXTO, QUE ES LA PREGUNTA DE AL LADO
+   Abrir una imagen, un empaquetado, una tipografía o un video para buscar
+   palabras adentro no sirve. Lo pregunta el buscador del proyecto, para no
+   llenar la pantalla de basura, y lo pregunta el control del glosario, que
+   tiene que abrir **todos** los archivos de texto y no una lista de extensiones
+   escrita a mano: esa lista dejaba sin abrir diez archivos de verdad, entre
+   ellos la función que da de alta y de baja a la gente. */
+const NO_ES_TEXTO = conEsasExtensiones([
+  ...EXTENSIONES_DE_IMAGEN, '.pdf', '.zip', '.woff', '.woff2', '.ttf', '.eot', '.mp4', '.webm'
+]);
+
+/** ¿Este archivo se puede leer buscando palabras adentro? */
+export const esTexto = (nombre) => !NO_ES_TEXTO.test(nombre);
+
 /* Deja el nombre en su forma más desnuda: separa las palabras pegadas en
    mayúscula —`NoHacerCommit`— y borra todo lo que no sea una letra. Así
    `no_commit`, `No commit`, `NO HACER COMMIT` y `ReferenciaNoHacerCommit`

@@ -72,19 +72,21 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
-import { hayArchivos, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
+import { archivos, esTexto, seRevisaron } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 /* Todo archivo de texto del proyecto. No se filtra por carpeta: la regla vale
-   en la documentación, en el código y en la configuración por igual. La de las
-   pantallas no se escribe acá —sale de `recorrido.mjs`—, así que el día que
-   dejen de ser `.html` este chequeo las sigue mirando. */
-const EXTENSIONES = [
-  ...EXTENSIONES_DE_PANTALLA,
-  '.md', '.mjs', '.js', '.css', '.json', '.sql', '.toml',
-  '.webmanifest', '.yml', '.yaml', '.txt'
-];
+   en la documentación, en el código y en la configuración por igual.
+
+   Y «todo» quiere decir todo. Acá había trece extensiones escritas a mano, y
+   dejaban diez archivos de verdad sin abrir: la función que da de alta y de
+   baja a la gente, los dos dibujos del sitio, los dos guiones que corren antes
+   de cada commit, un guion de Python y los cuatro archivos que dicen qué se
+   sube y qué no. Ninguno se recorría, y el verde de este chequeo no lo decía.
+   Ahora la pregunta es la contraria —qué **no** es texto—, se hace en
+   `recorrido.mjs` y la comparte con el buscador del proyecto. */
+const esDeTexto = (camino) => esTexto(camino);
 
 /* ── Las palabras ─────────────────────────────────────────────────────────
    `formas` son todas las maneras de escribir la vieja; `aprobada` es la que va
@@ -92,8 +94,17 @@ const EXTENSIONES = [
    o `null` si no la usó ninguno en toda la historia. */
 const PROHIBIDAS = [
   {
-    formas: 'multiidioma|multiidiomas|multilenguaje|multilenguajes|' +
-            'internacionalizacion|internacionalización|i10n',
+    /* Las formas se escriben una por una y no con un patrón que las abrevie,
+       para que el número del renglón verde diga cuántas maneras de escribirla
+       se están mirando de verdad. Las de guion y las de espacio estaban sin
+       mirar: la frontera de palabra no deja afuera el guion, así que
+       `multi-idioma` no es `multiidioma` y pasaba entero. */
+    formas: 'multiidioma|multiidiomas|multi-idioma|multi-idiomas|' +
+            'multi idioma|multi idiomas|' +
+            'multilenguaje|multilenguajes|multi-lenguaje|multi-lenguajes|' +
+            'multi lenguaje|multi lenguajes|' +
+            'internacionalizacion|internacionalización|' +
+            'internationalization|internationalisation|i10n',
     aprobada: 'i18n',
     porque: 'aprobada por el Desarrollador el 2026-08-29, y vale igual para el ' +
             'texto y para los identificadores',
@@ -172,6 +183,10 @@ const SOBRAN = [
   'la regla de multiidioma rige el texto',
   '«Multiidioma desde el día uno»',
   'docs/PLAN_MULTIIDIOMA.md',
+  'docs/PLAN_MULTI-IDIOMA.md',
+  'la pantalla es multi idioma',
+  'el soporte multi-lenguaje',
+  'the internationalization of the screen',
   'está trabado el multilenguaje',
   'la internacionalización de la pantalla',
   'la carpeta i10n',
@@ -188,6 +203,8 @@ const NO_SOBRAN = [
   'la RLS de la tabla',
   'tenant_id nulo es la oferta general',
   'multiidiomatico no es la palabra',
+  'multi-idiomatico tampoco lo es',
+  'el paquete se llama i18next',
   'CeltaTech desarrolla Careonys'
 ];
 
@@ -245,7 +262,10 @@ const fallas = [];
 const exencionesUsadas = new Set();
 let revisados = 0;
 
-for (const camino of hayArchivos(raiz, EXTENSIONES)) {
+const deTexto = archivos(raiz, ['']).filter(esDeTexto);
+seRevisaron(deTexto.length, 'ningún archivo de texto colgando de la raíz del proyecto');
+
+for (const camino of deTexto) {
   const rel = relative(raiz, camino).split(sep).join('/');
   const texto = readFileSync(camino, 'utf8');
   const motivo = exento(rel);
@@ -262,6 +282,18 @@ for (const camino of hayArchivos(raiz, EXTENSIONES)) {
   }
 
   revisados += 1;
+
+  /* El nombre del archivo también. Acá se miraba lo que el archivo dice adentro
+     y nunca cómo se llama, y el caso que hubo fue justamente un nombre:
+     `PLAN_MULTIIDIOMA.md`. Se agarró porque otros documentos lo nombraban
+     adentro; si no lo hubiera nombrado ninguno, el archivo habría pasado. */
+  const enElNombre = palabraQueSobra(rel);
+  if (enElNombre) {
+    fallas.push(
+      `${rel}  «${enElNombre.escrita}» → «${enElNombre.entrada.aprobada}»\n` +
+      '      está en el nombre del archivo, no adentro');
+  }
+
   const renglones = texto.split('\n');
   for (let i = 0; i < renglones.length; i += 1) {
     const visto = palabraQueSobra(renglones[i]);

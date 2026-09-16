@@ -42,22 +42,17 @@
 import { readFileSync } from 'node:fs';
 import { join, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { archivos, EXTENSIONES_DE_IMAGEN } from './recorrido.mjs';
+import { archivos, esTexto } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 /* Las extensiones que no son texto: leerlas para buscar adentro no sirve y
    además llena la pantalla de basura. Se listan igual, sólo no se leen.
 
-   Las imágenes no se escriben acá: salen de `scripts/recorrido.mjs`, que las
-   necesita para la otra pregunta que se hace con la misma lista —si un nombre
-   con la palabra «clave» adentro es una caja fuerte o una captura de pantalla—.
-   Estaban escritas en los dos lugares, y de dos listas iguales siempre hay una
-   que se queda vieja. */
-const NO_ES_TEXTO = new RegExp(
-  String.raw`\.(` +
-  [...EXTENSIONES_DE_IMAGEN.map((e) => e.slice(1)), 'pdf', 'zip', 'woff2?', 'ttf', 'eot',
-    'mp4', 'webm'].join('|') + ')$', 'i');
+   Cuáles son no se escribe acá: sale de `scripts/recorrido.mjs`, que se hace la
+   misma pregunta para el control del glosario, que abre todos los archivos de
+   texto. Estaba escrito en los dos lugares, y de dos listas iguales siempre hay
+   una que se queda vieja. */
 
 const argumentos = process.argv.slice(2);
 
@@ -108,7 +103,7 @@ try {
 function buscar(expresion, imprimir) {
   let cuantos = 0;
   for (const camino of caminos) {
-    if (NO_ES_TEXTO.test(camino)) continue;
+    if (!esTexto(camino)) continue;
     let texto;
     try {
       texto = readFileSync(join(raiz, camino), 'utf8');

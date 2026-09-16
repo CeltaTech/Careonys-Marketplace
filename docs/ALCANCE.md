@@ -3511,6 +3511,40 @@ El chequeo dejó además de estar exento de declarar qué cuenta: ahora se plant
 esa lista sale vacía. Con la regla angostada otra vez a mano, la versión nueva
 nombra las dos capturas y se pone roja; la vieja escribe su renglón verde entero.
 
+### El control del glosario miraba trece extensiones, nunca los nombres y una sola forma de la palabra
+
+El glosario de la empresa dice que su regla aplica a «código, nombres de tablas
+y columnas, claves de idioma, texto visible, documentación y mensajes de
+commit». El chequeo que la hace cumplir cumplía bastante menos que eso, y por
+tres motivos distintos a la vez.
+
+**Abría trece extensiones escritas a mano.** Diez archivos de texto del proyecto
+quedaban sin abrir: la función que da de alta y de baja a la gente, los dos
+dibujos del sitio, los dos guiones que corren antes de cada commit, un guion de
+Python y los cuatro archivos que dicen qué se sube y qué no. Eran 266 archivos
+revisados sobre 276, y el renglón verde no tenía cómo decirlo. Ahora la pregunta
+es la contraria —qué **no** es texto: una imagen, un empaquetado, una tipografía,
+un video—, se responde en `scripts/recorrido.mjs` y la comparte con el buscador
+del proyecto, que se la hacía por su cuenta.
+
+**Miraba lo que cada archivo dice adentro y nunca cómo se llama.** El caso que
+motivó el chequeo fue justamente un nombre de archivo: el plan de i18n se
+llamaba con la palabra vieja, y se agarró de rebote porque otros documentos lo
+nombraban adentro. Si no lo hubiera nombrado ninguno, el archivo habría pasado.
+Ahora el detector también pasa por el nombre.
+
+**Y de la palabra conocía una sola manera de escribirla.** La frontera de
+palabra no deja afuera el guion —a propósito, para que un nombre de archivo
+cuente igual que una frase—, así que la misma palabra con un guion en el medio
+no es la misma cadena y pasaba entera; lo mismo con la de espacio y con la forma
+inglesa. Las formas se escriben una por una, y no con un patrón que las abrevie,
+para que el número del renglón verde diga cuántas maneras se están mirando de
+verdad: **eran once y son veintiuna**.
+
+Falsificado en los dos sentidos: con un archivo llamado con la palabra y otro
+con la palabra adentro de la función de altas y bajas, la versión nueva los
+nombra a los dos y se pone roja; la vieja escribe su renglón verde entero.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
@@ -3698,7 +3732,7 @@ lo que sigue explica por qué; el consentimiento de novedades sigue sin tabla.
 
 El 9 de septiembre de 2026 `formulario-integral.html` se apartó a la cuarentena: hoy vive en
 `fuera de uso/formulario-integral.html`, la carpeta que `.gitignore:34` declara fuera del
-repositorio y que `scripts/recorrido.mjs:133` deja afuera de todos los chequeos.
+repositorio y que `scripts/recorrido.mjs:147` deja afuera de todos los chequeos.
 
 **No se saca una pantalla porque moleste, y ésta no era una pantalla.** Nació el 5 de agosto de
 2026 como **hoja de muestra**: su título decía «Formularios Oficiales de la App» y venía con un
