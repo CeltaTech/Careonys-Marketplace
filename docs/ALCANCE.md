@@ -3704,7 +3704,7 @@ no cambia de noche— y los convierte a número con la fórmula de CSS Color 4, 
 el navegador. Si un token no está, o deja de estar escrito en OKLCH, el generador se planta en
 vez de inventar un color.
 
-No hizo falta ningún control nuevo: `scripts/verificar_identidad.mjs:138` ya compara los dos
+No hizo falta ningún control nuevo: `scripts/verificar_identidad.mjs:143` ya compara los dos
 manifiestos contra lo que el generador produce, así que la cadena queda entera —el token manda,
 el generador escribe, el chequeo compara— y no hay copia que se pueda despegar.
 
@@ -3771,7 +3771,7 @@ Y había daño puesto. Seis chequeos eximían a `Nueva carpeta`, que se había m
 cuarentena (`docs/PENDIENTES.md:66`) y por lo tanto ya no existía en ningún lado donde ningún
 chequeo pudiera mirar: `scripts/verificar_arranque.mjs:53`,
 `scripts/verificar_botones.mjs:57`, `scripts/verificar_deposito.mjs:125`,
-`scripts/verificar_estados.mjs:79`, `scripts/verificar_sensibles.mjs:81` y un bloque entero en
+`scripts/verificar_estados.mjs:79`, `scripts/verificar_sensibles.mjs:93` y un bloque entero en
 `scripts/citas.mjs`. Seis renglones perdonando a un fantasma.
 
 Qué se hizo: una tercera regla, `carpetasEximidasQueNoEstan()`
@@ -3788,7 +3788,7 @@ ningún otro nombre adentro.
 `scripts/verificar_identidad.mjs` existe para que el nombre comercial, el dominio y el correo de
 contacto vivan en un solo lugar y ningún otro archivo los escriba a mano. Abría las pantallas, las
 hojas de estilo, los `.js`, los `.json`, los manifiestos y los `.txt`, y nada más
-(`scripts/verificar_identidad.mjs:56`).
+(`scripts/verificar_identidad.mjs:61`).
 
 Quedaban afuera el esquema, la puerta de alta y baja y los dibujos —`.sql`, `.ts` y `.svg`—, que
 son tres lugares donde lo escrito termina delante de una persona: el texto que siembra una
@@ -3803,11 +3803,11 @@ existen: dos exenciones perdonando archivos que no están, que es la misma enfer
 
 Qué se hizo: el recorrido abre ahora todo lo que puede terminar delante de una persona —se le
 sumaron `.mjs`, `.cjs`, `.ts`, `.sql` y `.svg`—, `sinComentarios()` aprendió los dos guiones del
-esquema y el comentario del dibujo (`scripts/verificar_identidad.mjs:72`), y las exenciones
-quedaron en una sola, la de verdad (`scripts/verificar_identidad.mjs:60`).
+esquema y el comentario del dibujo (`scripts/verificar_identidad.mjs:77`), y las exenciones
+quedaron en una sola, la de verdad (`scripts/verificar_identidad.mjs:65`).
 
 Y las herramientas de `scripts/` pasaron a estar afuera **porque se decidió**, no porque ninguna
-de sus extensiones entrara: se declaran en `scripts/verificar_identidad.mjs:49` con su motivo
+de sus extensiones entrara: se declaran en `scripts/verificar_identidad.mjs:54` con su motivo
 escrito. Ahí nadie resuelve `{{producto}}` —no hay página que cargar—, así que la marca escrita en
 una herramienta no es la marca escrita a mano: es la única forma de escribirla. El recorrido pasó
 de 147 archivos a 159 y siguió en verde, así que no había daño puesto.
@@ -4294,6 +4294,31 @@ llega a mostrarlo, y el nombre de una Prestadora sobre su propio logotipo es leg
 Y como los cuatro chequeos que usan ese repartidor prueban su **detector** —que la palabra
 buscada se reconozca— y ninguno probaba su **lector** —que el texto llegue hasta el detector—, el
 lector pasó a tener su propio banco de pruebas, escrito una sola vez donde vive él.
+
+### Tres encabezados prometían lo que el código no hacía
+
+Son los tres que quedaban de la familia «el encabezado dice una cosa y el código hace otra», y en
+los tres la salida honesta era arreglar el encabezado y no ensanchar el chequeo: ensanchar los
+habría puesto en rojo sobre lo que las reglas de la empresa mandan escribir.
+
+**Los datos sensibles.** `scripts/verificar_sensibles.mjs:93` deja afuera cinco carpetas y el
+encabezado no nombraba ninguna. Ahora las nombra a las cinco con su motivo, y de `supabase/` dice
+además lo que importa: ahí el detalle crudo del error va a propósito, porque la regla de la
+empresa manda que el cliente reciba un mensaje entendible y el detalle quede en el registro del
+servidor. Meterla adentro no taparía ningún agujero, pondría en rojo lo que la regla exige.
+
+**La deriva de las citas.** `scripts/verificar_deriva.mjs` decía «Ninguno exento» en su encabezado
+y «sin ninguno exento» en su renglón verde. Hay una carpeta afuera desde siempre, declarada en
+`scripts/citas.mjs:114` con su motivo: la de los cambios de la base, porque un cambio aplicado no
+se edita jamás y exigirle a una cita suya que se arregle sería pedir justo lo que la regla de la
+base prohíbe. El hermano ya lo decía en su renglón verde y éste no. Ahora lo dicen los dos, y el
+número sale de la lista misma.
+
+**La marca.** `scripts/verificar_identidad.mjs` prometía comparar el `<title>` y la
+`<meta name="description">` ya resueltos contra `js/identidad.js`. Lo hacía cuando había páginas
+sueltas; hoy los escribe `scripts/armar_todo.mjs` sobre lo construido, que ningún chequeo abre
+porque no está en el proyecto: se arma y se publica. El encabezado dice ahora que hoy no los
+compara nadie, que es lo único honesto mientras siga así.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 

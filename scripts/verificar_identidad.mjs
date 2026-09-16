@@ -26,11 +26,16 @@
      no lo alcanzaba.
 
    Qué mira además del nombre:
-   - que los dos `manifest.json` estén al día con la identidad;
-   - que el `<title>` y la `<meta name="description">` que traen
-     `data-organizacion-original` —el marcador resuelto a mano para que un
-     buscador lo indexe sin ejecutar guiones, pendiente 79— sigan diciendo lo
-     mismo que resuelve `js/identidad.js` hoy.
+   - que los dos `manifest.json` estén al día con la identidad.
+
+   Y qué **no** mira, dicho acá para que no se lea como una promesa: el `<title>`
+   y la `<meta name="description">` ya resueltos, que un buscador necesita
+   escritos porque no ejecuta guiones. Los escribía un guion adentro de cada
+   página suelta y este chequeo los comparaba contra `js/identidad.js`. Las
+   páginas sueltas se retiraron, ese trabajo pasó a `scripts/armar_todo.mjs` y
+   hoy los resueltos sólo existen en lo construido, que ningún chequeo abre
+   porque no está en el proyecto: se arma y se publica. Así que **hoy no los
+   compara nadie**, y decirlo es lo único honesto mientras siga así.
 =================================================== */
 
 import { readFileSync } from 'node:fs';
@@ -143,8 +148,6 @@ if (desactualizados.length) {
     'Se ponen al día con: node scripts/generar_manifiestos.mjs'
   );
 }
-
-
 
 if (problemas.length) {
   console.error('\n' + problemas.join('\n\n') + '\n');

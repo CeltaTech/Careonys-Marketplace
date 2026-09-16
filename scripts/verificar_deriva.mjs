@@ -65,7 +65,14 @@
    chequeo tiene que mirar exactamente los mismos, y dos recorridos escritos
    aparte dejan de coincidir sin que nadie se entere.
 
-   Ninguno exento. Hubo dos y las dos excepciones se cayeron al borrarse los
+   Una sola carpeta queda afuera, y no es una exención de este chequeo: es la de
+   `scripts/citas.mjs`, con su motivo escrito ahí, y la comparten los dos
+   hermanos. Son las migraciones, porque una migración aplicada no se edita
+   jamás: una cita suya que se corrió no se puede arreglar, y exigirla sería
+   pedir justo lo que la regla de la base prohíbe. Hoy hay dos así, y las dos
+   nombran archivos que ya no están.
+
+   Fuera de ésa, ninguno exento. Hubo dos y las dos excepciones se cayeron al borrarse los
    documentos que las justificaban: las **fotos fechadas**, que ya no existen, y
    los **planes**, eximidos por citar el código del día en que se escribieron. De
    los planes que quedan ninguno es una foto: son propuestas todavía sin
@@ -88,7 +95,9 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 import { seRevisaron } from './recorrido.mjs';
-import { citasDe, renglonesDe, documentosConCitas, AJENOS } from './citas.mjs';
+import {
+  citasDe, renglonesDe, documentosConCitas, AJENOS, NO_SE_RECORREN
+} from './citas.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const arreglar = process.argv.includes('--arreglar');
@@ -385,5 +394,6 @@ console.log('Citas verificadas contra el historial: ' +
       (detalle ? '' : ' (--detalle)')
     : '') +
   ' en los ' + documentos.length + ' archivos del proyecto que se recorren, ' +
-  'sin ninguno exento.');
+  'sin ninguno exento (' + NO_SE_RECORREN.size + ' carpeta queda afuera del ' +
+  'recorrido, con su motivo escrito).');
 process.exit(0);

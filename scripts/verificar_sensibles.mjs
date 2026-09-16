@@ -76,8 +76,20 @@ import { hayArchivos, EXTENSIONES_DE_PANTALLA, seRevisaron } from './recorrido.m
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
-   éste: una dirección se arma y un registro se escribe donde vive una pantalla
-   o su guion. */
+   éste, dicho entero y una por una, porque decirlo a medias ya se comió a dos
+   chequeos hermanos: una dirección se arma y un registro del navegador se
+   escribe donde vive una pantalla o su guion, y no en otro lado.
+
+   - `docs` y `data`: texto y catálogos, que no arman direcciones ni escriben
+     registros.
+   - `assets`: dibujos e imágenes.
+   - `scripts`: son herramientas de esta máquina; lo que imprimen lo lee quien
+     las corre, no el navegador de nadie.
+   - `supabase`: es el servidor. **Y ahí el detalle crudo del error va a
+     propósito**: la regla de la empresa dice que el cliente recibe un mensaje
+     entendible y el detalle queda en el registro del servidor. Meter esa
+     carpeta adentro no taparía ningún agujero: pondría en rojo justamente lo
+     que la regla manda escribir. */
 const AJENAS = ['docs', 'supabase', 'scripts', 'data', 'assets'];
 
 /* ── 1. Lo que puede viajar en la barra de direcciones ──────────────────────
