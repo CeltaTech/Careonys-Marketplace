@@ -39,7 +39,7 @@
       clave de AWS. Ninguna de esas cinco va al navegador, ni siquiera en el
       archivo que sí puede tener la publicable, y **ninguna tiene hoy un uso
       legítimo en este repositorio**: se midió el 31 de agosto de 2026 sobre
-      los 224 archivos de texto del proyecto y las cinco dieron cero. Esta
+      los archivos de texto del proyecto y las cinco dieron cero. Esta
       cuarta no tiene exentos, y es a propósito: la regla de la empresa dice
       «toda credencial vive en variable de entorno, nunca en el código ni en el
       repositorio», y un exento acá sería una credencial subida con permiso.
@@ -61,7 +61,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 
-import { hayArchivos, seRevisaron, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
+import { archivos, esTexto, seRevisaron, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const comoLoEscribeElProyecto = (ruta) => ruta.split(sep).join('/');
@@ -98,8 +98,15 @@ const PIDE_AUTH = new RegExp(COMO_SE_PIDE.join('|'));
 /* La única puerta por la que el producto pide la base y la sesión. */
 const LA_PUERTA = 'comun/datos/puerta.js';
 
-const EXTENSIONES = [...EXTENSIONES_DE_PANTALLA, '.js', '.mjs', '.css', '.json', '.webmanifest',
-                     '.md', '.sql', '.py', '.toml', '.txt', '.yml', '.yaml'];
+/* Qué archivo se abre lo contesta `recorrido.mjs`, que sabe qué no es texto, y
+   no una lista de extensiones escrita acá. La lista escrita a mano dejaba sin
+   abrir nueve archivos de verdad: los dos enganches del control de versiones,
+   cuatro listas de lo que no se sube, dos dibujos y la puerta que da de alta y
+   de baja a la gente, que es donde vive la clave de servicio. Comprobado
+   poniéndole a esa puerta algo con forma de clave secreta: el chequeo terminaba
+   en verde. La cuarta regla dice que no tiene exentos, y una extensión que
+   falta es un exento que nadie escribió. */
+const esDelProyecto = (camino) => esTexto(camino);
 
 /* Con forma de secreta o de token: no van al navegador ni en broma, así que no
    hay archivo exento de esto, ni siquiera el original. */
@@ -220,12 +227,13 @@ export function verificarBase() {
     { que: 'la clave publicable', texto: clave }
   ];
 
-  const archivos = hayArchivos(raiz, EXTENSIONES);
+  const delProyecto = archivos(raiz, ['']).filter(esDelProyecto);
+  seRevisaron(delProyecto.length, 'un solo archivo de texto colgando de la raíz del proyecto');
   const leidos = [];
   let mirados = 0;
   let entradas = 0;
 
-  for (const camino of archivos) {
+  for (const camino of delProyecto) {
     const ruta = comoLoEscribeElProyecto(relative(raiz, camino));
     const contenido = readFileSync(camino, 'utf8');
     leidos.push([ruta, contenido]);

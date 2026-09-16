@@ -4200,6 +4200,29 @@ en el texto, porque el primero suele ser un `join(...)` con comas adentro. Y un
 pedido que no lleva tercer argumento, o que lo lleva por su nombre, no inventa
 carpetas.
 
+### La regla que dice no tener exentos tenía nueve, escritos como una lista de extensiones
+
+El chequeo de la base tiene cuatro reglas y la cuarta busca, en todo el
+proyecto, cinco cosas con forma de credencial que no pueden estar escritas en
+ningún lado. Su propio encabezado dice que esa regla **no tiene exentos, y es a
+propósito**, porque la regla de la empresa dice que toda credencial vive en
+variable de entorno y un exento acá sería una credencial subida con permiso.
+
+Los archivos que abría salían de una lista de extensiones escrita a mano.
+Medido: esa lista abría doscientos setenta y uno de los doscientos ochenta
+archivos de texto del proyecto. Los nueve que nunca se abrieron son los dos
+enganches del control de versiones, cuatro listas de lo que no se sube, dos
+dibujos y la puerta que da de alta y de baja a la gente, que está escrita en
+otro idioma y es justo donde vive la clave de servicio.
+
+Comprobado antes de tocar nada: se le escribió a esa puerta algo con forma de
+clave secreta y el chequeo terminó en verde. Con el arreglo puesto, el mismo
+texto sale en rojo y nombra el archivo.
+
+Una extensión que falta es un exento que nadie escribió. Ahora qué archivo se
+abre lo contesta el recorrido del proyecto, que ya sabe qué no es texto, y son
+doscientos setenta y nueve. No había nada escrito en ninguno de los nueve.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
