@@ -2944,6 +2944,24 @@ columna. **Se probó de las dos maneras**: con una exención que nombra una de e
 en un guión de verdad, la versión anterior decía que todo estaba bien, y la de ahora la denuncia
 con su renglón y corta.
 
+### El chequeo de los botones no reconocía una de las tres formas de escribir un manejador
+
+Es el mismo defecto que el anterior en otro lugar, y en un chequeo que ya se había arreglado
+una vez por este motivo. Una pantalla puede decir qué hace un botón de tres maneras: esperando
+la operación ahí mismo, nombrando una función, o eligiendo entre dos con una condición. Las dos
+primeras las reconocía; la tercera no, y el manejador quedaba sin mirar con el archivo abierto
+delante.
+
+En el proyecto hay uno solo escrito de la tercera manera, y está bien escrito: apaga su botón
+mientras la operación corre. Lo que faltaba era que alguien lo estuviera mirando, para el día
+que se escriba uno que no lo haga.
+
+**Se probó de las dos maneras**: con un botón que espera una operación y no se apaga, escrito de
+la tercera manera y metido en una pantalla de verdad, la versión anterior seguía diciendo que
+todo estaba bien, y la de ahora lo denuncia con su renglón y corta. El renglón de salida pasó de
+treinta y cinco manejadores a treinta y seis, y quedaron dos casos nuevos en su autoprueba, uno
+que tiene que romper y uno que tiene que pasar.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

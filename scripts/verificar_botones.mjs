@@ -241,8 +241,16 @@ function prendeBandera(cuerpoTexto, banderas, companeras, mapa, nivel = 0) {
   return false;
 }
 
+/* Las tres formas en que una pantalla portada engancha un manejador. La
+   tercera se agregó después: el chequeo leía sólo las dos primeras y a la otra
+   la descartaba adentro del archivo, que es la ceguera que no se nota —el
+   archivo estaba, se abrió, y adentro no se reconoció nada—.
+
+     onClick={async () => …}               espera ahí mismo
+     onClick={guardar} / {() => borrar(…)}  llama a una función con nombre
+     onClick={ya ? undefined : borrar}      elige con una condición */
 const MANEJADOR_JSX =
-  /on(?:Click|Submit)=\{\s*(?:async\s*\(|(?:\([^)]*\)\s*=>\s*)?([A-Za-z_$][\w$]*)\s*[(}])/g;
+  /on(?:Click|Submit)=\{\s*(?:async\s*\(|(?:\([^)]*\)\s*=>\s*)?([A-Za-z_$][\w$]*)\s*[(}]|[^{}]*\?[^{}]*:\s*([A-Za-z_$][\w$]*)\s*\})/g;
 
 /**
  * Lo mismo que `botonesSinApagar`, para las pantallas portadas.
@@ -260,7 +268,7 @@ export function botonesSinApagarJsx(texto) {
 
   for (const encontrado of texto.matchAll(MANEJADOR_JSX)) {
     const renglon = texto.slice(0, encontrado.index).split('\n').length;
-    const nombre = encontrado[1];
+    const nombre = encontrado[1] || encontrado[2];
     const cuerpoTexto = nombre ? (mapa.get(nombre) || '') : cuerpo(lineas, renglon - 1).join('\n');
     if (!/\bawait\b/.test(cuerpoTexto)) continue;
     const quien = nombre ? nombre + '()' : 'manejador escrito ahí mismo';
@@ -332,6 +340,9 @@ if (noDetecta.length || sePasa.length) {
 /* Y las mismas pruebas para la forma portada. */
 
 const MAL_JSX = [
+  ['el manejador elegido con una condición, que espera y no apaga nada',
+   'async function borrar() {\n  await quitar();\n}\n'
+   + '<button onClick={ya ? undefined : borrar}>x</button>'],
   ['un manejador escrito ahí mismo que espera y no apaga nada',
    '<button onClick={async () => {\n  await guardar();\n}}>x</button>'],
   ['un manejador con nombre que espera y no apaga nada',
@@ -341,6 +352,9 @@ const MAL_JSX = [
 ];
 
 const BIEN_JSX = [
+  ['el mismo, con su apagado en la etiqueta',
+   'async function borrar() {\n  await quitar();\n}\n'
+   + '<button disabled={borrando} onClick={ya ? undefined : borrar}>x</button>'],
   ['el apagado en la misma etiqueta',
    'async function enviar() {\n  await mandar();\n}\n<button disabled={enviando} onClick={enviar}>x</button>'],
   ['el apagado en otro renglón de la misma etiqueta',
