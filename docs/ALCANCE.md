@@ -3004,6 +3004,32 @@ tienen que romper y tres que tienen que pasar.
 Detrás no había nada roto: ninguna pantalla del programa estaba pintando un fondo con un token de
 letra. La regla, sencillamente, no regía sobre ellas.
 
+### Un rótulo escrito entre llaves no lo miraba nadie
+
+El chequeo de frases guarda que ningún texto que una persona lea esté escrito a mano en una
+pantalla: todos salen del catálogo, en los tres idiomas, desde el primer día. Y mira dos lugares
+distintos, porque el texto visible aparece en dos: entre las etiquetas, y adentro de un atributo
+—el texto de ayuda de un campo, la descripción de una imagen, el rótulo que lee el lector de
+pantalla—.
+
+Lo segundo lo leía en una sola forma: el valor entre comillas, que es la única que admite el
+marcado de siempre. Una pantalla de un programa admite dos, y la otra es entre llaves. Escrito
+así, el rótulo a mano pasaba entero, con el archivo abierto delante y con el resto de esa misma
+pantalla revisado renglón por renglón.
+
+Es la misma falla que las anteriores y conviene decirla en su tamaño: no dejó ciego a un chequeo
+entero, dejó ciega una de las dos maneras de escribir lo mismo. Lo que decide si un rótulo está a
+mano no es cómo está envuelto el valor —es que esté escrito con todas las letras—, y el
+reconocedor estaba mirando el envoltorio.
+
+**Se probó de las dos maneras**, con el mismo rótulo escrito de las dos formas y metido en una
+pantalla de verdad: la versión anterior veía el de comillas y daba por buena la pantalla con el de
+llaves adentro; la de ahora denuncia los dos con su renglón. Y quedaron ocho casos nuevos en su
+autoprueba, cuatro que tienen que casar y cuatro que no. Entre estos últimos está el que no puede
+confundirse: un atributo cuyo nombre termina con la palabra buscada y no es ella.
+
+Detrás no había nada roto: ninguna pantalla estaba escribiendo un rótulo de esa manera.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

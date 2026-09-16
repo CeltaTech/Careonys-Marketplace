@@ -225,8 +225,14 @@ function textoDeMarcadoArmado(s) {
    etiquetas: los atributos que se muestran y los tres carteles del navegador.
    Se mira sólo lo escrito con todas las letras, porque un atributo que recibe
    un dato no es texto a mano. El nombre tiene que empezar donde empieza el
-   atributo, para que `subtitle` no pase por `title`. */
-const ESCRIBE_A_LA_VISTA = /(?<![\w-])(?:textContent|innerHTML|innerText|placeholder|title|alt|aria-label|alert|confirm|prompt)\s*(?:=|\()\s*('[^'\n]{2,}'|"[^"\n]{2,}")/g;
+   atributo, para que `subtitle` no pase por `title`.
+
+   Y el valor puede venir de dos maneras, porque una pantalla de un programa
+   admite las dos: entre comillas, como en el marcado de siempre, o entre
+   llaves. Hasta acá se miraba sólo la primera, así que un rótulo escrito a mano
+   entre llaves pasaba entero con el archivo abierto delante. Lo que decide no
+   es cómo está envuelto: es que esté escrito con todas las letras. */
+const ESCRIBE_A_LA_VISTA = /(?<![\w-])(?:textContent|innerHTML|innerText|placeholder|title|alt|aria-label|alert|confirm|prompt)\s*(?:=\s*\{?|\()\s*('[^'\n]{2,}'|"[^"\n]{2,}")/g;
 
 /* Y hay un caso que no es texto escrito a mano aunque tenga esa forma: el
    rótulo que nace en castellano y en el mismo aliento recibe su `data-frase`.
@@ -612,10 +618,28 @@ const PISADO_NO_DEBE_CASAR = [
   '      return window.Catalogo.idioma || IDIOMA_POR_DEFECTO;'
 ];
 
+/* Y con el reconocedor de lo que se pone a la vista sin ser texto entre
+   etiquetas, que es de los que se pasan de largo sin avisar: si no casa, una
+   pantalla con el rótulo escrito a mano adentro de un atributo pasa en verde. */
+const A_LA_VISTA_DEBE_CASAR = [
+  '<input placeholder="Escriba su nombre" />',
+  '<input placeholder={"Escriba su nombre"} />',
+  "<img alt={'Retrato de la persona'} />",
+  '<button title={ "Quitar la ficha" }>x</button>'
+];
+const A_LA_VISTA_NO_DEBE_CASAR = [
+  "<input placeholder={frase('acceso.correo')} />",
+  '<Campo subtitle="Texto que no es un title" />',
+  '<img alt="" />',
+  '<img alt={imagen.descripcion} />'
+];
+
 const roto = [];
 for (const [regla, forma, casan, noCasan] of [
   ['la regla 7 (idioma guardado)', IDIOMA_GUARDADO, GUARDADO_DEBE_CASAR, GUARDADO_NO_DEBE_CASAR],
-  ['la regla 7 (idioma pisado)', IDIOMA_PISADO, PISADO_DEBE_CASAR, PISADO_NO_DEBE_CASAR]
+  ['la regla 7 (idioma pisado)', IDIOMA_PISADO, PISADO_DEBE_CASAR, PISADO_NO_DEBE_CASAR],
+  ['lo que se pone a la vista', ESCRIBE_A_LA_VISTA,
+   A_LA_VISTA_DEBE_CASAR, A_LA_VISTA_NO_DEBE_CASAR]
 ]) {
   for (const linea of casan) {
     forma.lastIndex = 0;
