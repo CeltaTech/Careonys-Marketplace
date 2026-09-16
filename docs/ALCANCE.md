@@ -4839,6 +4839,29 @@ con comilla común, y el renglón verde dice los mismos quince que antes. Falsif
 en los dos sentidos, y el banco de pruebas del lector —que probaba una sola de las
 tres maneras— ahora prueba las tres y la nota adentro de la lista.
 
+### La mayúscula que el archivo compartido dejaba en manos del que llamaba
+
+Cinco chequeos preguntan lo mismo: si el valor de un atributo está escrito con todas las
+letras o si sale de un dato. Para que no lo contestara cada uno por su lado existe un
+archivo que lo contesta una sola vez. Ese archivo devolvía un texto, y con el texto se
+iba también una decisión: quien llamara tenía que acordarse de contemplar la mayúscula.
+Uno solo de los cinco se acordaba.
+
+El más llamativo era el del depósito de archivos, porque ahí al lado todas las
+expresiones escritas a mano sobre esa misma palabra sí la contemplan. El único renglón
+donde el legajo dice a qué depósito van sus papeles la escribe como constante de un
+guion, entera en mayúscula (`js/fichas-legajo.js:36`), y no lo miraba nadie: cambiarle
+una letra a ese nombre dejaba el chequeo entero en verde, con el archivo abierto
+delante, y el archivo simplemente no habría aparecido nunca.
+
+Ahora el nombre se reconoce letra por letra adentro del archivo compartido
+(`scripts/atributos.mjs:74`), así que no hay bandera que poner y no hay dónde
+olvidársela. Y porque la cola de fichadas llama «depósito» a un depósito de la base del
+teléfono, que es otra cosa con el mismo nombre, los nombres que declara
+`createObjectStore()` salen del propio archivo que los declara
+(`scripts/verificar_deposito.mjs:326`) y no de una lista de exenciones: este chequeo no
+tiene ninguna, y eso es a propósito.
+
 ### La misma ceguera, en el chequeo de los cuatro estados
 
 La pregunta de la sección de abajo —dónde se declara una función y cómo se

@@ -86,8 +86,11 @@ const ESCRITAS_A_MANO = new Map([]);
    comillas simples: es la misma decisión escrita de varias formas, y mirar una
    sola dejaba las otras sin nadie que las viera. Cuáles son vive en
    `scripts/atributos.mjs`, escritas una sola vez, porque el chequeo del
-   depósito pregunta exactamente lo mismo sobre otro atributo. */
-const VALOR_ESCRITO = new RegExp(comoSeEscribe('value'), 'i');
+   depósito pregunta exactamente lo mismo sobre otro atributo. Que el nombre
+   venga en mayúscula o en minúscula lo contesta ese mismo archivo: acá había
+   una bandera puesta a mano, y los otros cuatro chequeos que preguntan lo mismo
+   no la tenían. */
+const VALOR_ESCRITO = new RegExp(comoSeEscribe('value'));
 /* Y el valor que sale de un dato, que es justamente la forma correcta. */
 const HAY_VALUE = /\bvalue\s*=/i;
 /* La tercera manera de sacar el valor de un dato, y es la del guión: el marcado

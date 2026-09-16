@@ -135,7 +135,10 @@ const LUGARES = [
   /* El mismo nombre escrito como atributo o como propiedad, y envuelto de
      cualquiera de las maneras: hasta el 16 de septiembre de 2026 acá se leían
      sólo las comillas, y un `data-deposito={"privadoo"}` —que es como lo
-     escribe una pantalla de un programa— no lo miraba nadie. */
+     escribe una pantalla de un programa— no lo miraba nadie. Y da lo mismo la
+     mayúscula: un guion escribe su constante `DEPOSITO`, que es la misma
+     palabra. Quién sabe escribirla es `scripts/atributos.mjs`, y ahí está
+     escrito por qué no se resuelve con una bandera acá. */
   [new RegExp(comoSeEscribe('deposito', { separador: '[:=]', acento: true }), 'g'), false,
    'un `deposito:` escrito', valorDe],
   [/\/storage\/v1\/object\/public\/([^/'"`$\s]+)\//g, true,
@@ -310,9 +313,33 @@ function renglonDe(texto, indice) {
   return texto.slice(0, indice).split('\n').length;
 }
 
+/* Los depósitos de la base del teléfono, que se llaman igual y no son esto.
+   Un depósito de archivos lo declara una migración; uno de la base del teléfono
+   lo declara `createObjectStore()`, y de ahí sale el nombre —no de una lista
+   escrita a mano, que este chequeo no tiene y no va a tener—. Sin esto, la cola
+   de fichadas nombraría un depósito que ninguna migración declara: es verdad, y
+   no es una falla, porque es otra cosa con el mismo nombre. */
+const COMILLA = String.fromCharCode(39, 34, 96);
+const DECLARA_UNO_DEL_TELEFONO = new RegExp(
+  String.raw`\bcreateObjectStore\s*\(\s*(?:([${COMILLA}])([^${COMILLA}]+)\1|([A-Za-z_$][\w$]*))`, 'g');
+
+function depositosDelTelefono(texto) {
+  const nombres = new Set();
+  for (const m of texto.matchAll(DECLARA_UNO_DEL_TELEFONO)) {
+    /* Escrito con todas las letras adentro de la llamada, o puesto ahí por una
+       constante del mismo archivo, que es como lo escribe la cola de fichadas. */
+    if (m[2] !== undefined) { nombres.add(m[2]); continue; }
+    const atada = texto.match(new RegExp(
+      String.raw`\b(?:const|let|var)\s+${m[3]}\s*=\s*([${COMILLA}])([^${COMILLA}]+)\1`));
+    if (atada) nombres.add(atada[2]);
+  }
+  return nombres;
+}
+
 /** Los nombres de depósito de un archivo: `[renglón, nombre, esPublico, dónde]`. */
 function nombresDeUnArchivo(texto) {
   const salida = [];
+  const delTelefono = depositosDelTelefono(texto);
   for (const [patron, publico, donde, leer] of LUGARES) {
     for (const m of texto.matchAll(new RegExp(patron.source, patron.flags))) {
       /* Un depósito que llega por variable no se puede leer acá, y no hace
@@ -324,6 +351,7 @@ function nombresDeUnArchivo(texto) {
       const nombre = leer(m);
       if (nombre === null || nombre === '') continue;
       if (!publico && SOLO_INTERPOLADO.test(nombre)) continue;
+      if (delTelefono.has(nombre)) continue;
       salida.push([renglonDe(texto, m.index), nombre, publico, donde]);
     }
   }
@@ -435,6 +463,12 @@ const MAL = [
    "await Sesion.urlFirmada('privadoo', camino, 300);\n"],
   ['el mismo error escrito como `deposito:`',
    "{ campo: 'dni', deposito: 'privadoo' }\n"],
+  /* Y el mismo, escrito como la constante de un guion, que va entera en
+     mayúscula. Mientras todo lo que se probaba acá venía en minúscula, el
+     detector podía no reconocer ninguna otra manera de escribir la palabra y
+     este banco seguía en verde. */
+  ['el mismo, escrito como la constante de un guion',
+   "const DEPOSITO = 'privadoo';\n"],
   ['el mismo, escrito entre llaves, como lo escribe una pantalla de un programa',
    '<input type="file" data-deposito={"privadoo"} />\n'],
   ['el mismo, entre comillas simples adentro de las llaves',
@@ -458,6 +492,10 @@ const BIEN = [
    'return `<input type="file" data-deposito="${deposito}" />`;\n'],
   ['el mismo, puesto por el programa entre llaves, que tampoco escribe ningún nombre',
    '<input type="file" data-deposito={deposito} />\n'],
+  /* Y la otra cosa que se llama igual. Sin esto, reconocer la constante en
+     mayúscula convertiría la cola de fichadas en una falla inventada. */
+  ['un depósito de la base del teléfono, que se llama igual y no es un depósito de archivos',
+   "const DEPOSITO = 'pendientes';\nbase.createObjectStore(DEPOSITO, { keyPath: 'id' });\n"],
 ];
 
 /* Y las de la quinta. Los papeles de prueba son de mentira a propósito: que el
