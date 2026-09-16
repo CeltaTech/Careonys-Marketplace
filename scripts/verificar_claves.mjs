@@ -18,10 +18,20 @@
    La 0003 sembró ocho valores así —era el pendiente 27— y ninguno dio error en
    ningún momento. Sin un chequeo, la siembra siguiente vuelve a hacerlo.
 
-   Qué mira: cada `insert into` de cada migración. Empareja la lista de columnas
-   con la de valores y, si la columna está en la tabla de abajo, exige que el
-   valor sea una clave del vocabulario que le corresponde. Entiende el texto
-   suelto (`'enfermero'`) y el arreglo (`'["higiene"]'::jsonb`).
+   Qué mira: cada `insert into` de cada migración, en las tres formas en que
+   estas migraciones siembran. La que nombra las columnas; la que no las nombra
+   —el volcado—, donde el orden de los valores lo pone el `create table` de esa
+   tabla; y la que junta una lista de valores contra otra tabla para sacar de
+   ahí la Prestadora. Empareja las columnas con los valores y, si la columna
+   está en la tabla de abajo, exige que el valor sea una clave del vocabulario
+   que le corresponde. Entiende el texto suelto (`'enfermero'`) y el arreglo
+   (`'["higiene"]'::jsonb`).
+
+   La forma que no nombra las columnas es la que siembra casi todo, y era la
+   que este chequeo no sabía leer: de las 525 siembras que había el día que se
+   corrigió, 511 eran así y no se miraba ninguna. No avisaba nada porque el
+   titular contaba migraciones abiertas, que eran todas las que hay.
+   Por eso ahora dice cuántas siembras leyó, que es lo que se estaba haciendo.
 
    Qué NO mira, y hay que leer con ojos:
    - **Las columnas que todavía no tienen dueño.** `schedule_type` guarda hoy
@@ -215,7 +225,37 @@ function textosDe(valor) {
   return [crudo];
 }
 
-const INSERT = /insert\s+into\s+(?:public\.)?"?(\w+)"?\s*\(([^)]*)\)\s*values/gi;
+/* Lo que declara el esquema, que es lo único que dice en qué orden vienen los
+   valores de un volcado. Un volcado escribe `insert into public.caregivers
+   values (…)` y no nombra ninguna columna: el orden es el de la tabla, y sin
+   leer el `create table` no hay contra qué emparejar nada. */
+const CREA_TABLA =
+  /create\s+table\s+(?:if\s+not\s+exists\s+)?(?:public\.)?"?(\w+)"?\s*\(/gi;
+
+/* Un renglón de adentro del `create table` que no declara una columna sino una
+   restricción de la tabla entera. No ocupa lugar en el orden de los valores. */
+const NO_ES_UNA_COLUMNA =
+  /^(constraint|primary|unique|foreign|check|exclude|like|partition)\b/i;
+
+/** Las columnas de cada tabla, en el orden en que el esquema las declara. */
+function columnasDeclaradas(textos) {
+  const tablas = new Map();
+  for (const texto of textos) {
+    const limpio = sinComentarios(texto);
+    for (const m of limpio.matchAll(CREA_TABLA)) {
+      const abre = m.index + m[0].length - 1;
+      const cierra = finDeParentesis(limpio, abre);
+      if (cierra < 0) continue;
+      tablas.set(m[1].toLowerCase(), partirAlRas(limpio.slice(abre + 1, cierra))
+        .filter((renglon) => !NO_ES_UNA_COLUMNA.test(renglon))
+        .map((renglon) => renglon.split(/\s+/)[0].replace(/"/g, '').toLowerCase()));
+    }
+  }
+  return tablas;
+}
+
+/* La lista de columnas es opcional: sin ella la siembra es un volcado. */
+const INSERT = /insert\s+into\s+(?:public\.)?"?(\w+)"?\s*(?:\(([^)]*)\)\s*)?values/gi;
 
 /** Los bloques `(values (…), (…)) as f(col, col)`, con sus columnas.
  *
@@ -247,22 +287,27 @@ function bloquesDeValores(sql) {
   return bloques;
 }
 
-/** Los reparos de un texto SQL. Cada uno dice renglón, columna, valor y remedio. */
-function revisarSql(sql) {
+/** Los reparos de un texto SQL, y cuántas siembras se leyeron para encontrarlos.
+ *  Cada reparo dice renglón, columna, valor y remedio. */
+function revisarSql(sql, declaradas = columnasDeclaradas([sql])) {
   const limpio = sinComentarios(sql);
   const reparos = [];
+  let siembras = 0;
   const renglon = (i) => limpio.slice(0, i).split('\n').length;
 
-  /** Empareja cada tupla con su lista de columnas y anota lo que no es clave. */
+  /** Empareja cada tupla con su lista de columnas y anota lo que no es clave.
+   *  Devuelve cuántas tuplas no se pudieron emparejar, que no es lo mismo que
+   *  cuántas están bien: una tupla que no se empareja no se miró. */
   const revisarTuplas = (tabla, columnas, tuplas, arranque) => {
     const interesan = columnas
       .map((c, i) => [i, c, COLUMNAS[`${tabla}.${c}`] || COLUMNAS[c]])
       .filter(([, , vocabulario]) => vocabulario !== undefined);
-    if (interesan.length === 0) return;
+    if (interesan.length === 0) return 0;
 
+    let salteadas = 0;
     for (const tupla of tuplas) {
       const valores = partirAlRas(tupla);
-      if (valores.length !== columnas.length) continue;
+      if (valores.length !== columnas.length) { salteadas++; continue; }
       for (const [i, columna, vocabulario] of interesan) {
         const validas = clavesDe(vocabulario);
         for (const texto of textosDe(valores[i])) {
@@ -276,18 +321,43 @@ function revisarSql(sql) {
         }
       }
     }
+    return salteadas;
   };
 
   INSERT.lastIndex = 0;
   let cabecera;
   while ((cabecera = INSERT.exec(limpio)) !== null) {
+    const tabla = cabecera[1].toLowerCase();
     const arranque = cabecera.index + cabecera[0].length;
-    revisarTuplas(
-      cabecera[1],
-      cabecera[2].split(',').map((c) => c.trim().replace(/"/g, '')),
-      tuplasDesde(limpio, arranque),
-      arranque
+    /* Sin lista de columnas el orden lo pone la tabla. Si ninguna migración la
+       declara no hay contra qué emparejar, y eso se dice en voz alta: callarse
+       es justamente lo que hace que una siembra entera pase sin que la mire
+       nadie. */
+    const columnas = cabecera[2] !== undefined
+      ? cabecera[2].split(',').map((c) => c.trim().replace(/"/g, ''))
+      : declaradas.get(tabla);
+    if (columnas === undefined) {
+      reparos.push({
+        renglon: renglon(cabecera.index),
+        motivo: 'la siembra no nombra las columnas y ninguna migración declara la tabla',
+        columna: tabla,
+        remedio: 'nombrar las columnas en el `insert`'
+      });
+      continue;
+    }
+    siembras++;
+    const salteadas = revisarTuplas(
+      tabla, columnas, tuplasDesde(limpio, arranque), arranque
     );
+    if (salteadas > 0) {
+      reparos.push({
+        renglon: renglon(cabecera.index),
+        motivo: `${salteadas} filas escriben una cantidad de valores que no es la de `
+          + `las ${columnas.length} columnas, así que no se sabe cuál va con cuál`,
+        columna: tabla,
+        remedio: 'nombrar las columnas en el `insert`'
+      });
+    }
   }
 
   /* Y la otra forma de sembrar, la que junta una lista de valores contra una
@@ -295,10 +365,11 @@ function revisarSql(sql) {
      inequívoca —es un `join`—, así que sólo se juzgan las columnas que la
      lista de arriba gobierna por nombre solo, nunca las que piden tabla. */
   for (const bloque of bloquesDeValores(limpio)) {
+    siembras++;
     revisarTuplas(null, bloque.columnas, bloque.tuplas, bloque.arranque);
   }
 
-  return reparos;
+  return { reparos, siembras };
 }
 
 /* ── Autoprueba: si el detector está roto, esto lo dice antes de revisar nada ── */
@@ -317,7 +388,13 @@ const MALOS = [
   ['la siembra que junta una lista de valores contra otra tabla',
    "insert into public.franjas_asistente (tenant_id, caregiver_id, dia, turno) select c.tenant_id, c.id, f.dia, f.turno from public.caregivers c join (values ('a'::uuid, 'lunes', 'manana'), ('b'::uuid, 'lunes', 'mediodia')) as f(caregiver_id, dia, turno) on f.caregiver_id = c.id;"],
   ['el puesto de una experiencia laboral, en la misma forma',
-   "insert into public.experiencia_laboral_asistente (tenant_id, caregiver_id, puesto) select c.tenant_id, c.id, x.puesto from public.caregivers c join (values ('a'::uuid, 'enfermero')) as x(caregiver_id, puesto) on x.caregiver_id = c.id;"]
+   "insert into public.experiencia_laboral_asistente (tenant_id, caregiver_id, puesto) select c.tenant_id, c.id, x.puesto from public.caregivers c join (values ('a'::uuid, 'enfermero')) as x(caregiver_id, puesto) on x.caregiver_id = c.id;"],
+  ['el volcado que no nombra las columnas',
+   "create table public.caregivers (id uuid primary key, profession text, constraint x check (profession <> ''));\ninsert into public.caregivers values ('a', 'enfermero');"],
+  ['el volcado de una tabla que ninguna migración declara',
+   "insert into public.caregivers values ('a', 'gerontologo');"],
+  ['el volcado que escribe más valores que columnas tiene la tabla',
+   "create table public.caregivers (id uuid primary key, profession text, constraint x check (profession <> ''));\ninsert into public.caregivers values ('a', 'gerontologo', 'de más');"]
 ];
 const BUENOS = [
   ['todas las claves buenas',
@@ -335,11 +412,13 @@ const BUENOS = [
   ['la lista de valores con todas las claves buenas',
    "insert into public.franjas_asistente (tenant_id, caregiver_id, dia, turno) select c.tenant_id, c.id, f.dia, f.turno from public.caregivers c join (values ('a'::uuid, 'lunes', 'manana'), ('b'::uuid, 'sabado', 'noche')) as f(caregiver_id, dia, turno) on f.caregiver_id = c.id;"],
   ['una lista de valores sin nombres de columna no se juzga a ciegas',
-   "insert into public.caregivers (id, zone) select v.a, v.b from (values ('a', 'zona_este')) v;"]
+   "insert into public.caregivers (id, zone) select v.a, v.b from (values ('a', 'zona_este')) v;"],
+  ['el volcado con todas las claves buenas',
+   "create table public.caregivers (id uuid primary key, profession text, constraint x check (profession <> ''));\ninsert into public.caregivers values ('a', 'gerontologo');"]
 ];
 
-const noDetecta = MALOS.filter(([, s]) => revisarSql(s).length === 0).map(([n]) => n);
-const sePasa = BUENOS.filter(([, s]) => revisarSql(s).length > 0).map(([n]) => n);
+const noDetecta = MALOS.filter(([, s]) => revisarSql(s).reparos.length === 0).map(([n]) => n);
+const sePasa = BUENOS.filter(([, s]) => revisarSql(s).reparos.length > 0).map(([n]) => n);
 if (noDetecta.length || sePasa.length) {
   console.error('La autoprueba del chequeo falló, así que el chequeo no vale:');
   if (noDetecta.length) console.error('  no detecta: ' + noDetecta.join(' / '));
@@ -352,17 +431,28 @@ if (noDetecta.length || sePasa.length) {
 const carpeta = join(raiz, 'supabase', 'migrations');
 const fallas = [];
 let revisados = 0;
+let siembras = 0;
 
 const migraciones = readdirSync(carpeta).filter((n) => n.endsWith('.sql')).sort();
 seRevisaron(migraciones.length, 'una sola migración `.sql` para revisar');
 
-for (const nombre of migraciones) {
+const textos = migraciones.map((n) => readFileSync(join(carpeta, n), 'utf8'));
+const declaradas = columnasDeclaradas(textos);
+seRevisaron(declaradas.size, 'una sola tabla declarada en las migraciones');
+
+for (const [i, nombre] of migraciones.entries()) {
   revisados++;
-  for (const r of revisarSql(readFileSync(join(carpeta, nombre), 'utf8'))) {
+  const salida = revisarSql(textos[i], declaradas);
+  siembras += salida.siembras;
+  for (const r of salida.reparos) {
     fallas.push(`supabase/migrations/${nombre}:${r.renglon}  ${r.columna}: ${r.motivo}`
       + `\n      ${r.remedio}`);
   }
 }
+
+/* El número que faltaba. Mientras el titular contaba migraciones abiertas decía
+   ocho de ocho y sonaba bien, con el volcado entero sin leer. */
+seRevisaron(siembras, 'una sola siembra emparejada con sus columnas');
 
 if (fallas.length > 0) {
   console.error('Valores sembrados que el catálogo no reconoce:\n');
@@ -373,4 +463,5 @@ if (fallas.length > 0) {
   process.exit(1);
 }
 
-console.log(`Claves verificadas: ${revisados} migraciones sin valores fuera del catálogo.`);
+console.log(`Claves verificadas: ${siembras} siembras de ${revisados} migraciones, `
+  + 'todas emparejadas con sus columnas y sin valores fuera del catálogo.');

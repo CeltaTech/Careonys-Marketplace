@@ -2898,9 +2898,9 @@ declaran junto a la tabla sino después de la lista. **Veintisiete filas de fran
 cinco de avisos y todo el contenido de los cuatro legajos pasaban sin que nadie les mirara los
 valores.**
 
-Un chequeo que no mira no es un chequeo que pasa: es un chequeo que no existe. Ahora reconoce las
-dos formas (`scripts/verificar_claves.mjs:228`) y conoce cinco columnas más —modalidad y nivel de
-un curso, día y turno de una franja, puesto de una experiencia—.
+Un chequeo que no mira no es un chequeo que pasa: es un chequeo que no existe. Pasó entonces a
+reconocer las dos formas (`scripts/verificar_claves.mjs:268`) y conoce cinco columnas más
+—modalidad y nivel de un curso, día y turno de una franja, puesto de una experiencia—.
 
 **Se probó que puede fallar**, que es la única forma de saber que sirve. Con dos valores
 cambiados a mano adentro de la siembra —un turno que no existe y una profesión que no está en el
@@ -2909,6 +2909,19 @@ las migraciones del repositorio están limpias. Además quedaron cuatro casos nu
 autoprueba, dos que tienen que romper y dos que tienen que pasar; uno de esos dos últimos es una
 lista de valores **sin** nombres de columna, que el chequeo tiene que dejar pasar en vez de
 adivinar a qué columna corresponde cada uno.
+
+**Y le faltaba una tercera forma, que era la que sembraba casi todo.** Al volver a leer el
+chequeo apareció que el volcado —`insert into tabla values (…)`, sin nombrar ninguna columna,
+que es como se escribe una siembra exportada de la base— tampoco lo miraba nadie. De las 525
+siembras que hay en las migraciones, 511 son de esa forma. El renglón de salida no lo dejaba
+ver, porque contaba migraciones abiertas y no siembras leídas, y las ocho estaban abiertas.
+
+Ahora el orden de los valores sale del `create table` de cada tabla, que es lo único que dice
+qué valor va en qué lugar; si una tabla no está declarada, o una fila trae más valores que
+columnas, el chequeo se planta en vez de saltearla en silencio; y el renglón de salida cuenta
+siembras leídas. **Se volvió a probar de las dos maneras**: con una clave inventada metida en
+una fila de volcado, la versión anterior seguía diciendo que todo estaba bien, y la de ahora la
+denuncia con su renglón y corta.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
