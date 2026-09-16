@@ -38,6 +38,20 @@
    chequeos— ni si el `service-worker.js` está bien escrito más allá de sus dos
    listas. Y no puede mirar nada si el proyecto no está bajo control de
    versiones: ahí se planta, porque el número lo compara contra el historial.
+
+   **Y hay una tercera cosa que no mira, y es la más grande: que la lista esté
+   completa.** Comprueba que todo lo que está anotado exista; no comprueba que
+   esté anotado todo lo que el programa va a pedir. Un archivo que una pantalla
+   busca y que nadie anotó no rompe nada mientras haya señal —se trae del
+   servidor y se ve igual—, y el día sin señal la pantalla se queda vacía sin
+   decir por qué. La forma en que puede pasar es concreta: los dos programas del
+   teléfono comparten los módulos de `comun/`, que traen los catálogos con una
+   importación que se resuelve recién cuando alguien la pide, así que una
+   pantalla nueva de un programa puede empezar a pedir un catálogo que sólo el
+   otro tenía anotado, sin que cambie ni una línea de su lista. Hoy no pasa: se
+   siguió a mano lo que pide cada pantalla y todo lo que se pide está anotado en
+   la lista del programa que lo pide. Cuando aparezca el primer caso, esto deja
+   de ser un límite escrito y pasa a ser una regla que hay que construir.
 =================================================== */
 
 import { readFileSync } from 'node:fs';
