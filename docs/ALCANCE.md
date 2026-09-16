@@ -3770,7 +3770,7 @@ Probado antes de tocar nada: se metió `carpeta que no existe en ningun lado` en
 Y había daño puesto. Seis chequeos eximían a `Nueva carpeta`, que se había mudado entera a la
 cuarentena (`docs/PENDIENTES.md:66`) y por lo tanto ya no existía en ningún lado donde ningún
 chequeo pudiera mirar: `scripts/verificar_arranque.mjs:53`,
-`scripts/verificar_botones.mjs:57`, `scripts/verificar_deposito.mjs:118`,
+`scripts/verificar_botones.mjs:57`, `scripts/verificar_deposito.mjs:125`,
 `scripts/verificar_estados.mjs:79`, `scripts/verificar_sensibles.mjs:81` y un bloque entero en
 `scripts/citas.mjs`. Seis renglones perdonando a un fantasma.
 
@@ -4246,6 +4246,26 @@ Comprobado antes de tocar nada, cambiándole a una imagen del catálogo el nombr
 por uno que no existe: el chequeo terminaba en verde. Ahora sale en rojo y dice
 archivo y renglón. Las direcciones miradas pasaron de 83 a 122, y las
 treinta y nueve que se sumaron estaban todas bien.
+
+### El chequeo del depósito de archivos se llevó puesta la misma puerta que el de la Organización
+
+Su encabezado decía que lo que no entra en el corpus son las migraciones y los
+guiones de herramienta. Lo que el código dejaba afuera era la carpeta entera que
+contiene las migraciones, y adentro de esa carpeta hay una pieza que no es una
+migración: la puerta que da de alta y de baja a la gente. También quedaban
+afuera, sin que el encabezado lo dijera, los documentos, los catálogos de datos
+y los dibujos. Y la lista de extensiones no incluía la del idioma en que está
+escrita esa puerta, así que aunque la carpeta hubiera entrado, el archivo no.
+
+Es el mismo defecto que ya se había encontrado en el chequeo que vigila que
+ninguna pantalla escriba a mano el nombre de una Prestadora, y aparece por el
+mismo motivo: un encabezado que dice «las migraciones» cuando el código dice «la
+carpeta de las migraciones».
+
+Comprobado poniéndole a esa puerta una llamada al depósito con un nombre que
+ninguna migración declara: el chequeo terminaba en verde. Ahora sale en rojo con
+archivo y renglón. Hoy esa puerta no sube ni baja ningún archivo, así que no
+había daño; lo que había era un lugar del producto donde nadie miraba.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 

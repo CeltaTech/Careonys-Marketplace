@@ -92,9 +92,13 @@
      `scripts/probar_aislamiento.mjs`.
    - El vencimiento de un enlace firmado. Que exista lo garantiza `urlFirmada()`;
      cuánto dura lo elige cada pantalla.
-   - Las migraciones y los guiones de `scripts/` no entran en el corpus: ahí un
-     nombre de depósito es o la declaración misma o una prueba que lo nombra a
-     propósito.
+   - Qué queda afuera del corpus, dicho entero, porque decirlo a medias ya se
+     comió un chequeo hermano: las migraciones, donde un nombre de depósito es
+     la declaración misma; los guiones de `scripts/`, donde es una prueba que lo
+     nombra a propósito; los documentos, los catálogos de datos y los dibujos,
+     que no suben ni bajan nada. La carpeta que contiene las migraciones **sí**
+     entra, porque adentro vive además la puerta que da de alta y de baja a la
+     gente, que es código del producto y podría subir un archivo.
 
    **No tiene lista de exenciones, y es a propósito.** Hoy no hay ningún caso
    que la necesite, así que la lista nacería vacía; y una lista vacía no la
@@ -114,8 +118,11 @@ import { comoSeEscribe, valorDe } from './atributos.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
-   éste: un depósito se nombra donde vive una pantalla o su guion. */
-const AJENAS = ['docs', 'supabase', 'scripts', 'data', 'assets'];
+   éste: un depósito se nombra donde vive una pantalla o su guion. Las
+   migraciones y nada más de lo que está en su carpeta: la puerta de alta y baja
+   vive ahí al lado y es código del producto. Y la extensión no es sólo la de
+   una pantalla, porque esa puerta está escrita en otro idioma. */
+const AJENAS = ['docs', 'migrations', 'scripts', 'data', 'assets'];
 
 /* Los lugares donde va un nombre de depósito, si ese lugar es una dirección
    pública, y de dónde sale el nombre de cada coincidencia. Lo público es lo que
@@ -594,7 +601,7 @@ seRevisaron(limites.size, 'ningún tope de tamaño declarado en supabase/migrati
 
 // ── Lo que hace el código ──────────────────────────────────────────────────
 
-const pantallas = hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJENAS);
+const pantallas = hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js', '.ts'], AJENAS);
 
 /* Los papeles del legajo, primero: la quinta regla los necesita para saber qué
    campo de archivo tiene quien le escriba el depósito sin decirlo en la
