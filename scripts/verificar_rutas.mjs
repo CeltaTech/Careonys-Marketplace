@@ -64,8 +64,9 @@ const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
    la configuración de las herramientas, que no tienen direcciones adentro. */
 const DE_DONDE_SALEN = [...EXTENSIONES_DE_PANTALLA, '.css', '.webmanifest', 'manifest.json'];
 
-/* Dónde se escribe una dirección local. El marcado, la hoja de estilos y el
-   manifiesto, que son las tres formas que este proyecto usa. */
+/* Dónde se escribe una dirección local: el marcado, la hoja de estilos, el
+   manifiesto, y el código de la pantalla cuando manda a otra sin que nadie
+   haya hecho clic en nada. */
 const DIRECCIONES = [
   /* La mirada de atrás es lo que separa `src=` de `data-attr-src=`, que no es
      una dirección sino el nombre del campo del que sale el dato.
@@ -79,6 +80,13 @@ const DIRECCIONES = [
   /(?<![-\w])(?:src|href|to)\s*=\s*'([^']+)'/gi,
   /url\(\s*['"]?([^'")]+)['"]?\s*\)/gi,
   /"src"\s*:\s*"([^"]+)"/gi,
+  /* Y la que no se escribe en el marcado sino en el código: el programa manda a
+     otra pantalla sin que nadie haya hecho clic en nada. Se toman sólo las que
+     empiezan con barra, que son las del sitio; las que no —`'dashboard'`,
+     `'reportes'`— son los nombres de pantalla de cada programa de teléfono, que
+     tienen su propia lista y no viven en ninguna carpeta. */
+  /\bnavegar\(\s*'(\/[^']*)'/g,
+  /\bnavegar\(\s*"(\/[^"]*)"/g,
 ];
 
 /* Una dirección escrita entre llaves la arma el programa mientras corre: adentro
