@@ -3771,7 +3771,7 @@ Y había daño puesto. Seis chequeos eximían a `Nueva carpeta`, que se había m
 cuarentena (`docs/PENDIENTES.md:66`) y por lo tanto ya no existía en ningún lado donde ningún
 chequeo pudiera mirar: `scripts/verificar_arranque.mjs:53`,
 `scripts/verificar_botones.mjs:67`, `scripts/verificar_deposito.mjs:125`,
-`scripts/verificar_estados.mjs:79`, `scripts/verificar_sensibles.mjs:95` y un bloque entero en
+`scripts/verificar_estados.mjs:79`, `scripts/verificar_sensibles.mjs:103` y un bloque entero en
 `scripts/citas.mjs`. Seis renglones perdonando a un fantasma.
 
 Qué se hizo: una tercera regla, `carpetasEximidasQueNoEstan()`
@@ -4301,7 +4301,7 @@ Son los tres que quedaban de la familia «el encabezado dice una cosa y el códi
 los tres la salida honesta era arreglar el encabezado y no ensanchar el chequeo: ensanchar los
 habría puesto en rojo sobre lo que las reglas de la empresa mandan escribir.
 
-**Los datos sensibles.** `scripts/verificar_sensibles.mjs:95` deja afuera cinco carpetas y el
+**Los datos sensibles.** `scripts/verificar_sensibles.mjs:103` deja afuera cinco carpetas y el
 encabezado no nombraba ninguna. Ahora las nombra a las cinco con su motivo, y de `supabase/` dice
 además lo que importa: ahí el detalle crudo del error va a propósito, porque la regla de la
 empresa manda que el cliente reciba un mensaje entendible y el detalle quede en el registro del
@@ -4519,7 +4519,7 @@ nunca el único archivo del producto escrito en el otro lenguaje. Así que el
 defecto estuvo en su lugar con los 41 chequeos en verde. Y el archivo hermano que
 sí nombra esa carpeta escribió la mitad de la razón: decía que ahí el detalle
 crudo va a propósito, lo cual es cierto del registro del servidor y falso de la
-respuesta (`scripts/verificar_sensibles.mjs:88`).
+respuesta (`scripts/verificar_sensibles.mjs:96`).
 
 Ahora la carpeta entra —quedan afuera las migraciones, que son esquema y no le
 contestan a nadie— y entra también la extensión del servidor. El detector nuevo
@@ -4598,6 +4598,52 @@ de verdad también adentro de sus pruebas, así que sacar un renglón de la list
 rompía la prueba en vez de hacer hablar al buscador. La lista entra ahora por
 parámetro (`scripts/verificar_copias.mjs:135`, `scripts/verificar_copias.mjs:169`)
 y cada prueba arma la suya: una prueba habla del detector, no del proyecto.
+
+### Un dato pegado adentro del mensaje se le escapaba al chequeo de datos sensibles
+
+El chequeo que vigila que no salgan datos por el registro de actividades existe por
+un peligro que él mismo escribe en su cabecera: un `console.log(legajo)` de una tarde
+imprime el documento de identidad de una persona en la consola de cualquiera que abra
+esa pantalla, y no se ve en la pantalla, así que nadie lo nota.
+
+Para juzgar cada cosa que un registro imprime preguntaba una sola cosa: ¿lleva un
+texto escrito adentro? Si lo llevaba, era un mensaje y pasaba. De ahí salía que la
+misma filtración, escrita de tres maneras, se juzgaba de tres maneras distintas:
+
+- `console.log(legajo)` — se plantaba.
+- `console.log('Legajo: ' + legajo)` — pasaba.
+- `` console.log(`Legajo: ${legajo}`) `` — pasaba.
+
+Las dos últimas son la primera escrita cuatro caracteres más larga, y la segunda es
+la manera en que este proyecto escribe casi todos sus registros.
+
+Que el problema se conocía está escrito en la misma cabecera: había una excepción a
+mano para el `JSON.stringify()`, «la forma corta de imprimir una fila entera, y el
+texto de al lado la disfraza de mensaje». Se le había puesto nombre a una de las
+formas del disfraz y se había tapado esa sola.
+
+**Probado antes de tocar nada.** Se metieron esos dos renglones arriba de `js/zonas.js`
+y el chequeo terminó en verde, contando las dos filtraciones entre los registros que
+certificaba como limpios.
+
+**Lo que se cambió.** Ahora hay una función que dice qué valores imprime un argumento
+(`scripts/verificar_sensibles.mjs:363`): blanquea cada texto escrito dejando el
+argumento del mismo largo —para recortar después el original y no una reconstrucción—,
+saca aparte las expresiones de adentro de cada `${}`, y corta lo que queda por lo que
+pega y por lo que elige (`:412`). Un `?:` y un `||` cortan igual que una suma, porque
+se imprime la rama que toque. Cada valor que sale de ahí se juzga con la misma vara
+que un argumento suelto (`:444`).
+
+**Lo que apareció al mirar.** Catorce registros que hasta hoy no miraba nadie, con
+veintiún valores adentro. **Ninguno es el dato de una persona**: son claves del
+catálogo, nombres de tabla y de columna, vocabularios, un `uuid`, el número de orden
+de un archivo, la pila de llamadas, y dos mensajes que la función no tiene escritos
+porque se los pasa quien la llama. Los veintiuno quedaron declarados con su motivo
+escrito, en cinco motivos (`:186`), que es exactamente lo que la regla pide: no juzga
+si un nombre suena sensible, obliga a que alguien lo decida.
+
+Y el cartel verde decía «3 exentos» cuando lo que contaba eran tres archivos, no tres
+valores. Ahora cuenta valores (`:569`).
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 

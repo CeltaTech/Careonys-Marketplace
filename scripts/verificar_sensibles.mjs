@@ -41,12 +41,20 @@
       rutas. Las dos cuentan, porque la regla es sobre lo que termina escrito
       en el historial y no sobre cómo se lo pidió. Mirar una sola dejaría la
       regla vigilando la mitad del producto que ya no se escribe.
-   2. **Todo argumento de un registro es un mensaje o un error.** «Mensaje» es
-      cualquier cosa que lleve un texto escrito adentro; «error» es lo que se
-      atrapó en un `catch`. Un argumento que no es ninguna de las dos es un
-      dato, y un dato de este producto es el legajo de una persona. Tampoco
-      pasa un `JSON.stringify()` adentro de un registro: es la forma corta de
-      imprimir una fila entera, y el texto de al lado la disfraza de mensaje.
+   2. **Todo lo que un registro imprime es un mensaje o un error.** «Mensaje»
+      es el texto escrito ahí mismo; «error» es lo que se atrapó en un
+      `catch`. Cualquier otra cosa es un dato, y un dato de este producto es el
+      legajo de una persona: se planta hasta que alguien lo declare en
+      `REGISTROS_PERDONADOS`, con el motivo escrito al lado.
+
+      Y un dato no deja de ser un dato porque tenga un texto al lado. Son tres
+      maneras de escribir lo mismo y se juzgan igual: suelto, `console.log(x)`;
+      pegado con una suma, `console.log('Equis: ' + x)`; o metido adentro de un
+      `${}`. Preguntar si el argumento «lleva un texto adentro» dejaba pasar
+      las dos últimas, que son la misma filtración escrita cuatro caracteres
+      más larga. Por el mismo motivo se miran las dos ramas de un `?:` y las
+      dos de un `||`: se imprime la que toque. Y tampoco pasa un
+      `JSON.stringify()`, que es la forma corta de imprimir una fila entera.
 
    Qué NO mira, dicho de frente:
    - **Las direcciones que no son la barra**: la de una fuente de letra, la de
@@ -139,15 +147,60 @@ const LA_CLASE_DE_LA_ALARMA = {
     'agregarle la frase que le falta'
 };
 
+const EL_ATRIBUTO_CRUDO = {
+  valores: ['escrito'],
+  motivo: 'es el texto crudo del atributo `data-huecos` cuando no es un JSON ' +
+    'válido. Lo escribe quien programa el marcado, no una persona que usa el ' +
+    'producto, y sin verlo el aviso no sirve para arreglarlo'
+};
+
+/* Los tres motivos que siguen aparecen en varios archivos, así que se escriben
+   una vez. Todos son valores que ya se imprimían pegados adentro del mensaje,
+   donde la regla no los miraba; al mirarlos, hubo que decidirlos uno por uno. */
+const NOMBRA_UNA_PIEZA = (valores) => ({
+  valores,
+  motivo: 'nombra una pieza del producto y no un dato de ninguna persona: una ' +
+    'clave del catálogo, un vocabulario, el nombre de una tabla o de una ' +
+    'columna, un `uuid` o el número de orden de un archivo. Sin verlo el aviso ' +
+    'no sirve para arreglar aquello de lo que avisa'
+});
+
+const EL_MENSAJE_LO_TRAE_QUIEN_LLAMA = (valores) => ({
+  valores,
+  motivo: 'es el mensaje mismo, que en este caso no está escrito ahí sino que lo ' +
+    'trae quien llama —qué se estaba intentando, o qué parte de la pantalla ' +
+    'falló—. Es texto de quien programa, y una función que sirve a varias ' +
+    'pantallas no puede tenerlo escrito adentro'
+});
+
+const NO_SALE_DE_NINGUNA_FILA = {
+  valores: ['sinClave', 'new Error().stack'],
+  motivo: 'no sale de ninguna fila de la base: uno es el sí o el no que elige ' +
+    'cuál de los dos mensajes escritos se imprime, y la pila dice por qué ' +
+    'funciones se llegó hasta acá, que es lo único que permite encontrar quién ' +
+    'pidió la frase que falta'
+};
+
+/* Qué valores se le perdonan a cada archivo, por su nombre a secas. Un archivo
+   puede tener más de un motivo, así que cada nombre lleva una lista. */
 const REGISTROS_PERDONADOS = new Map([
-  ['index', LA_CLASE_DE_LA_ALARMA],
-  ['FranjaDeAlarmas', LA_CLASE_DE_LA_ALARMA],
-  ['catalogo', {
-    valores: ['escrito'],
-    motivo: 'es el texto crudo del atributo `data-huecos` cuando no es un JSON ' +
-      'válido. Lo escribe quien programa el marcado, no una persona que usa el ' +
-      'producto, y sin verlo el aviso no sirve para arreglarlo'
-  }]
+  ['index', [LA_CLASE_DE_LA_ALARMA]],
+  ['FranjaDeAlarmas', [LA_CLASE_DE_LA_ALARMA]],
+  ['apiClient', [NOMBRA_UNA_PIEZA([
+    'aviso.id', 'table', "perdidas.map((c) => '«' + c + '»').join(', ')"])]],
+  ['catalogo', [
+    EL_ATRIBUTO_CRUDO,
+    NO_SALE_DE_NINGUNA_FILA,
+    NOMBRA_UNA_PIEZA(['cual', 'clave', 'valor', 'vocabulario',
+      "solo.filter((c) => !lista.some((i) => i.clave === c)).join(', ')"]),
+    EL_MENSAJE_LO_TRAE_QUIEN_LLAMA(['quien'])
+  ]],
+  ['documentos-legajo', [NOMBRA_UNA_PIEZA(['doc.clave'])]],
+  ['fichas-legajo', [NOMBRA_UNA_PIEZA(['clave', 'i'])]],
+  ['texto', [EL_MENSAJE_LO_TRAE_QUIEN_LLAMA(['queSeIntentaba'])]],
+  ['Inicio', [NOMBRA_UNA_PIEZA(["faltan.join(', ')"])]],
+  ['SolicitarAsistente', [NOMBRA_UNA_PIEZA(['cual',
+    "cuales.filter((c) => !lista.some((i) => i.clave === c)).join(', ')"])]]
 ]);
 
 // ── Cómo se reconoce cada cosa ─────────────────────────────────────────────
@@ -186,7 +239,6 @@ const REGISTRO = /console\.(?:log|info|warn|debug|error)\s*\(/g;
 /* Lo que se atrapa en un `catch`, con cualquiera de los nombres que este
    proyecto le pone, y su `.message`. */
 const ES_ERROR = /^(?:e|[\w$]*(?:err|error)[\w$]*)(?:\.message)?$/i;
-const TIENE_TEXTO = /['"`]/;
 const IMPRIME_UNA_FILA = /JSON\.stringify\s*\(/;
 
 /** El renglón donde cae una posición del texto. */
@@ -301,7 +353,81 @@ function entreParentesis(texto, desde) {
   return null;
 }
 
-/** Los registros de un texto: `[renglón, argumento]` de los que no son mensaje. */
+/* Los valores que imprime un argumento, sin contar el texto escrito ahí mismo.
+   Las tres maneras de imprimir un dato son la misma y tienen que juzgarse
+   igual: suelto, pegado con una suma a un texto, o metido adentro de un
+   `${}`. Se blanquea cada texto escrito —dejando el argumento del mismo
+   largo, para poder recortar después el original y no una reconstrucción—, se
+   sacan aparte las expresiones de adentro de los `${}`, y lo que queda se
+   corta por lo que pega y por lo que elige. */
+function valoresDeUnArgumento(arg) {
+  const valores = [];
+  const resto = arg.split('');
+  const blanquear = (desde, hasta) => { for (let k = desde; k < hasta; k++) resto[k] = ' '; };
+  let i = 0;
+  while (i < arg.length) {
+    const c = arg[i];
+    if (c === "'" || c === '"') {
+      let j = i + 1;
+      while (j < arg.length && !(arg[j] === c && arg.charCodeAt(j - 1) !== BARRA)) j++;
+      blanquear(i, Math.min(j + 1, arg.length)); i = j + 1; continue;
+    }
+    if (c === '`') {
+      let j = i + 1;
+      while (j < arg.length) {
+        if (arg[j] === '`' && arg.charCodeAt(j - 1) !== BARRA) break;
+        if (arg[j] === '$' && arg[j + 1] === '{' && arg.charCodeAt(j - 1) !== BARRA) {
+          let prof = 1, k = j + 2;
+          while (k < arg.length && prof > 0) {
+            if (arg[k] === '{') prof++; else if (arg[k] === '}') prof--;
+            k++;
+          }
+          const dentro = arg.slice(j + 2, k - 1).trim();
+          if (dentro) valores.push(dentro);
+          j = k; continue;
+        }
+        j++;
+      }
+      blanquear(i, Math.min(j + 1, arg.length)); i = j + 1; continue;
+    }
+    i++;
+  }
+  for (const [desde, hasta] of pedazosDe(resto)) {
+    if (!resto.slice(desde, hasta).join('').trim()) continue;
+    const pedazo = arg.slice(desde, hasta).replace(/\s+/g, ' ').trim();
+    if (pedazo.startsWith('(') && pedazo.endsWith(')')
+      && resto.slice(desde, hasta).join('').trim().startsWith('(')) {
+      valores.push(...valoresDeUnArgumento(pedazo.slice(1, -1)));
+      continue;
+    }
+    valores.push(pedazo);
+  }
+  return [...new Set(valores)];
+}
+
+/* Por dónde se corta un argumento ya blanqueado: por lo que pega —una suma
+   pega un valor a un texto— y por lo que elige —un `?:` o un `||` imprimen la
+   rama que toque, así que las dos ramas son valores—. No cortan ni el `?.` ni
+   el `??`, que no eligen entre dos cosas que se impriman. */
+function pedazosDe(resto) {
+  const pedazos = []; let prof = 0, desde = 0;
+  for (let k = 0; k < resto.length; k++) {
+    const c = resto[k];
+    if ('([{'.includes(c)) prof++;
+    if (')]}'.includes(c)) prof--;
+    if (prof !== 0) continue;
+    let largo = 0;
+    if (c === '+' || c === ':') largo = 1;
+    else if (c === '|' && resto[k + 1] === '|') largo = 2;
+    else if (c === '?' && resto[k + 1] !== '.' && resto[k + 1] !== '?' && resto[k - 1] !== '?') largo = 1;
+    if (!largo) continue;
+    pedazos.push([desde, k]); desde = k + largo; k += largo - 1;
+  }
+  pedazos.push([desde, resto.length]);
+  return pedazos;
+}
+
+/** Los registros de un texto: `[renglón, lo que imprime]` de los que no son mensaje. */
 function registrosDeUnTexto(texto, perdonados = []) {
   const salida = [];
   for (const m of texto.matchAll(REGISTRO)) {
@@ -314,10 +440,13 @@ function registrosDeUnTexto(texto, perdonados = []) {
       continue;
     }
     for (const arg of porComas(dentro)) {
-      if (TIENE_TEXTO.test(arg) || ES_ERROR.test(arg)) continue;
-      if (perdonados.includes(arg)) continue;
-      salida.push([renglon, arg.replace(/\s+/g, ' '),
-        'no es ni un mensaje ni un error, así que es un dato']);
+      if (ES_ERROR.test(arg) || perdonados.includes(arg)) continue;
+      const sobran = valoresDeUnArgumento(arg)
+        .filter((v) => !ES_ERROR.test(v) && !perdonados.includes(v));
+      if (!sobran.length) continue;
+      salida.push([renglon, sobran.join('», «'), sobran.length > 1
+        ? 'no son ni mensajes ni errores, así que son datos'
+        : 'no es ni un mensaje ni un error, así que es un dato']);
     }
   }
   return salida;
@@ -345,6 +474,12 @@ const MAL = [
    'console.log(legajo);\n'],
   ['un registro con el dato disfrazado de mensaje',
    "console.error('Legajo:', legajo);\n"],
+  ['el mismo dato, pegado adentro del mensaje con una suma',
+   "console.error('Legajo: ' + legajo);\n"],
+  ['el mismo dato, metido adentro del mensaje con un `${}`',
+   'console.error(`Legajo: ${persona.legajo}`);\n'],
+  ['el mismo dato, adentro de una de las dos ramas de un `?:`',
+   "console.error(hay ? 'Legajo: ' + legajo : 'Sin legajo');\n"],
   ['un registro que imprime la fila entera',
    "console.warn('Legajo: ' + JSON.stringify(legajo));\n"]
 ];
@@ -360,10 +495,12 @@ const BIEN = [
    "enlace.href = 'mailto:' + direccion + '?subject=' + encodeURIComponent(asunto);\n"],
   ['un registro con su mensaje y su error',
    "console.error('Panel de la Prestadora, legajos:', err);\n"],
-  ['un registro que arma el mensaje con un dato adentro',
-   "console.error('Las franjas del aviso ' + aviso.id + ':', err);\n"],
   ['un registro con el error de la biblioteca',
    "console.error('Catálogo:', error.message);\n"],
+  ['el mismo, con el error metido adentro del mensaje',
+   'console.error(`Catálogo: ${error.message}`);\n'],
+  ['un registro que sólo suma dos textos escritos',
+   "console.error('Catálogo' + ': no está cargado.');\n"],
   ['pedirle algo a un `Map`, que no es la barra de direcciones',
    "const frase = CATALOGO.get('consulta.asunto');\n"]
 ];
@@ -402,7 +539,7 @@ for (const camino of hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js'], AJEN
       'intermediario: lo que viaje ahí hay que decidirlo, no descubrirlo');
   }
 
-  const perdonados = REGISTROS_PERDONADOS.get(base)?.valores || [];
+  const perdonados = (REGISTROS_PERDONADOS.get(base) || []).flatMap((c) => c.valores);
   for (const m of texto.matchAll(REGISTRO)) { registros++; void m; }
   for (const [renglon, arg, motivo] of registrosDeUnTexto(texto, perdonados)) {
     fallas.push(`${archivo}:${renglon}  el registro imprime «${arg}», que ${motivo}. ` +
@@ -428,9 +565,9 @@ if (fallas.length > 0) {
 /* Cuántos registros quedan exentos y por cuántos motivos distintos. El
    número sale de la lista y no escrito a mano: escrito a mano se despega de
    ella sin que nadie lo note, y un cartel que miente es peor que no tenerlo. */
-const exentos = REGISTROS_PERDONADOS.size;
-const motivos = new Set(
-  [...REGISTROS_PERDONADOS.values()].map((cual) => cual.motivo)).size;
+const conMotivo = [...REGISTROS_PERDONADOS.values()].flat();
+const exentos = conMotivo.reduce((suma, cual) => suma + cual.valores.length, 0);
+const motivos = new Set(conMotivo.map((cual) => cual.motivo)).size;
 
 console.log(
   `Datos sensibles verificados: ${parametros} parámetros de la barra de direcciones, ` +
