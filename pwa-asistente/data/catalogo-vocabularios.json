@@ -10,8 +10,11 @@
       "usado_en": [
         "js/zonas.js:142",
         "js/zonas.js:215",
+        "pwa-asistente/src/pantallas/Avisos.jsx:166",
         "pwa-familia/src/pantallas/Postulaciones.jsx:112",
+        "pwa-familia/src/pantallas/Publicar.jsx:167",
         "pwa-familia/src/pantallas/Tablero.jsx:127",
+        "web/src/pantallas/Directorio.jsx:288",
         "web/src/pantallas/MockupApp.jsx:473"
       ],
       "items": [
@@ -166,7 +169,8 @@
       "cerrada": false,
       "usado_en": [
         "data/catalogo-disponibilidad.json:30",
-        "data/catalogo-disponibilidad.json:69"
+        "data/catalogo-disponibilidad.json:69",
+        "pwa-asistente/src/pantallas/Avisos.jsx:87"
       ],
       "items": [
         {
@@ -200,8 +204,10 @@
       },
       "cerrada": true,
       "usado_en": [
+        "pwa-asistente/src/pantallas/Legajo/PasoUno.jsx:68",
         "web/src/pantallas/Directorio.jsx:206",
-        "web/src/pantallas/Perfil.jsx:180"
+        "web/src/pantallas/Perfil.jsx:180",
+        "web/src/pantallas/RegistrarAsistente/PasosDeDatos.jsx:84"
       ],
       "items": [
         {
@@ -258,7 +264,8 @@
         }
       ],
       "usado_en": [
-        "web/src/pantallas/panel-prestadora/Moneda.jsx:134"
+        "web/src/pantallas/panel-prestadora/Moneda.jsx:134",
+        "web/src/pantallas/panel-prestadora/Moneda.jsx:37"
       ]
     },
     "retiro": {
@@ -268,7 +275,10 @@
         "pt-BR": "Com ou sem dormida no domicílio"
       },
       "cerrada": false,
-      "usado_en": [],
+      "usado_en": [
+        "pwa-asistente/src/pantallas/Legajo/PasoCuatro.jsx:44",
+        "web/src/pantallas/RegistrarAsistente/PasosDeLegajo.jsx:67"
+      ],
       "items": [
         {
           "en": "Living out",
@@ -292,8 +302,13 @@
       },
       "cerrada": false,
       "usado_en": [
+        "pwa-asistente/src/pantallas/Avisos.jsx:176",
+        "pwa-asistente/src/pantallas/Legajo/PasoTres.jsx:25",
+        "pwa-familia/src/pantallas/Publicar.jsx:204",
         "web/src/pantallas/Directorio.jsx:223",
-        "web/src/pantallas/Perfil.jsx:207"
+        "web/src/pantallas/Directorio.jsx:298",
+        "web/src/pantallas/Perfil.jsx:207",
+        "web/src/pantallas/RegistrarAsistente/PasosDeDatos.jsx:176"
       ],
       "items": [
         {
@@ -421,7 +436,8 @@
       "cerrada": false,
       "usado_en": [
         "data/catalogo-disponibilidad.json:31",
-        "data/catalogo-disponibilidad.json:70"
+        "data/catalogo-disponibilidad.json:70",
+        "pwa-asistente/src/pantallas/Avisos.jsx:87"
       ],
       "items": [
         {
@@ -475,7 +491,9 @@
         "pt-BR": "Frequência do serviço"
       },
       "cerrada": true,
-      "usado_en": [],
+      "usado_en": [
+        "pwa-asistente/src/pantallas/Avisos.jsx:168"
+      ],
       "items": [
         {
           "en": "Recurring (fixed days each week)",
@@ -580,6 +598,7 @@
       },
       "cerrada": true,
       "usado_en": [
+        "web/src/pantallas/Directorio.jsx:307",
         "web/src/pantallas/Directorio.jsx:390",
         "web/src/pantallas/Perfil.jsx:201"
       ],
@@ -665,7 +684,8 @@
       },
       "cerrada": false,
       "usado_en": [
-        "web/src/pantallas/panel-prestadora/Verificaciones.jsx:126"
+        "web/src/pantallas/panel-prestadora/Verificaciones.jsx:126",
+        "web/src/pantallas/panel-prestadora/Verificaciones.jsx:40"
       ],
       "items": [
         {
@@ -730,7 +750,10 @@
         "pt-BR": "Cursos acreditados que o Assistente declara"
       },
       "cerrada": false,
-      "usado_en": [],
+      "usado_en": [
+        "pwa-asistente/src/pantallas/Legajo/PasoDos.jsx:51",
+        "web/src/pantallas/RegistrarAsistente/PasosDeDatos.jsx:142"
+      ],
       "items": [
         {
           "en": "Course in gerontology for home care",
@@ -773,7 +796,9 @@
       "cerrada": false,
       "usado_en": [
         "data/catalogo-fichas.json:180",
-        "js/catalogo.js:463"
+        "js/catalogo.js:463",
+        "pwa-asistente/src/pantallas/Legajo/PasoTres.jsx:33",
+        "web/src/pantallas/RegistrarAsistente/PasosDeDatos.jsx:182"
       ],
       "items": [
         {
@@ -871,11 +896,15 @@
       "cerrada": true,
       "usado_en": [
         "data/catalogo-fichas.json:107",
+        "pwa-asistente/src/pantallas/Avisos.jsx:167",
+        "pwa-asistente/src/pantallas/Legajo/PasoDos.jsx:35",
         "pwa-familia/src/pantallas/Postulaciones.jsx:111",
         "pwa-familia/src/pantallas/Tablero.jsx:126",
         "web/src/pantallas/Directorio.jsx:194",
+        "web/src/pantallas/Directorio.jsx:293",
         "web/src/pantallas/MockupApp.jsx:472",
-        "web/src/pantallas/Perfil.jsx:187"
+        "web/src/pantallas/Perfil.jsx:187",
+        "web/src/pantallas/RegistrarAsistente/PasosDeDatos.jsx:125"
       ],
       "items": [
         {
@@ -998,7 +1027,10 @@
         "pt-BR": "Motivo pelo qual uma Família escreve"
       },
       "cerrada": true,
-      "usado_en": [],
+      "usado_en": [
+        "pwa-asistente/src/pantallas/Avisos.jsx:106",
+        "web/src/formularios/FormularioDeConsulta.jsx:66"
+      ],
       "items": [
         {
           "en": "Looking for a Caregiver",
@@ -1057,7 +1089,10 @@
         "pt-BR": "Nível de escolaridade alcançado"
       },
       "cerrada": true,
-      "usado_en": [],
+      "usado_en": [
+        "pwa-asistente/src/pantallas/Legajo/PasoDos.jsx:43",
+        "web/src/pantallas/RegistrarAsistente/PasosDeDatos.jsx:131"
+      ],
       "items": [
         {
           "en": "Secondary school completed",
@@ -1092,7 +1127,9 @@
         "pt-BR": "Situação fiscal"
       },
       "cerrada": true,
-      "usado_en": [],
+      "usado_en": [
+        "web/src/pantallas/RegistrarAsistente/PasosDeDatos.jsx:92"
+      ],
       "items": [
         {
           "en": "Monotributo social",
@@ -1127,7 +1164,9 @@
         "pt-BR": "Gênero de Assistente que a Família prefere"
       },
       "cerrada": true,
-      "usado_en": [],
+      "usado_en": [
+        "pwa-asistente/src/pantallas/Avisos.jsx:174"
+      ],
       "items": [
         {
           "en": "No preference",
@@ -1235,7 +1274,8 @@
       },
       "cerrada": true,
       "usado_en": [
-        "web/src/pantallas/panel-prestadora/Verificaciones.jsx:127"
+        "web/src/pantallas/panel-prestadora/Verificaciones.jsx:127",
+        "web/src/pantallas/panel-prestadora/Verificaciones.jsx:41"
       ],
       "items": [
         {
@@ -1315,7 +1355,11 @@
         "pt-BR": "Intensidade da contratação"
       },
       "cerrada": true,
-      "usado_en": [],
+      "usado_en": [
+        "pwa-asistente/src/pantallas/Legajo/PasoCuatro.jsx:35",
+        "pwa-familia/src/pantallas/Publicar.jsx:181",
+        "web/src/pantallas/RegistrarAsistente/PasosDeLegajo.jsx:62"
+      ],
       "items": [
         {
           "en": "By the hour",

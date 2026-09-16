@@ -3090,6 +3090,42 @@ se reconocía era la forma. Quedaron siete casos nuevos entre las dos autoprueba
 declarados, y los siete campos de archivo dicen a qué depósito van sin escribir a mano qué se
 puede elegir.
 
+### El chequeo decía en verde que ocho listas de palabras no las usa nadie
+
+Cada lista de opciones del producto —los géneros, las patologías, los tipos de Asistente— lleva
+anotado en qué pantalla y en qué renglón se la usa, y esa anotación no se escribe a mano: la
+calcula un chequeo y la reescribe. Para calcularla tenía seis formas de reconocer que una
+pantalla está nombrando una lista, y las seis eran de la época en que el producto era una pila
+de guiones sueltos.
+
+El mundo portado llega al catálogo por otro camino, y es de tres escalones. Una pantalla escribe
+el nombre de la lista al pedirle a un componente que la muestre; ese componente se lo pasa a otro
+que sabe traerla; y recién ese tercero golpea la puerta del catálogo. El nombre está escrito tres
+escalones antes de la puerta, y el chequeo miraba únicamente la puerta. Abría todos los archivos
+—ninguno le faltaba— y adentro no reconocía nada.
+
+**El daño ya estaba publicado, y era de los que invitan a la decisión equivocada.** La salida en
+verde decía que diez listas no las usa nadie, «y eso está sin decidir», que es una invitación a
+retirarlas. Ocho de esas diez se usan todos los días, y dos están en la pantalla donde un
+Asistente se registra.
+
+**No hizo falta romper nada para probarlo.** La versión anterior, corrida contra el proyecto sin
+tocarle una coma, imprime en verde ocho afirmaciones falsas. La de ahora, sobre los mismos
+archivos y en el mismo minuto, da la respuesta contraria.
+
+**El arreglo no fue agregar una séptima forma**, que es exactamente la costumbre que deja ciego a
+un chequeo. Ahora no lleva escrito quién carga el nombre hasta el catálogo: lo deduce. Arranca
+por las dos puertas del catálogo y sigue el nombre hacia atrás —de quien lo recibe a quien se lo
+entrega— hasta que no aparece ninguno nuevo. Sobre el producto de hoy descubre solo los dos
+componentes que existen y las dos maneras de escribirles el nombre, y descubrirá los de mañana
+sin que nadie lo edite. Las citas pasaron de 33 a 69, y las listas sin usar de diez a dos, que
+son las dos que de verdad no aparecen en ningún lado.
+
+**Y dejó una lección sobre las autopruebas.** La primera versión de la suya pasaba en verde con
+el buscador roto: le entregaba los tres escalones en un orden que se resuelve de una sola pasada.
+Puesta la pantalla primero hacen falta dos, y la prueba se planta si la segunda no vuelve a ver
+los mismos archivos —que era, justamente, el defecto que la primera versión no vio.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
