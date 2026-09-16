@@ -3890,6 +3890,28 @@ Ahora qué tiene una regla está escrito una sola vez, y de ese mismo renglón s
 dos cosas: lo que se copia de la base y lo que se compara contra el archivo. Un campo
 que la base no tiene se nombra y se pone rojo. No había ninguno puesto.
 
+### La copia de los vocabularios se comparaba contra la base mirando sólo el título y las opciones
+
+Las listas de opciones del producto —zona, patología, tipo de asistente— viven en la
+base. El archivo que llevan los dos programas del teléfono es una copia, y existe para
+que una pantalla pueda ofrecer una lista sin señal. Un chequeo compara las dos cosas.
+
+La comparación miraba el título, si la lista es cerrada, y después opción por opción. Las
+opciones sí se comparaban enteras; la lista en sí, no. Un vocabulario del archivo con un
+campo de más al lado del título pasaba entero, y el chequeo terminaba diciendo que los
+veintiséis vocabularios son iguales a los de la base. Se probó agregándole uno a mano a
+los tres archivos: verde, y con la frase «iguales a los de» y el nombre del servidor.
+
+Ahora qué tiene un vocabulario está escrito una sola vez, en el orden en que se escribe, y
+de ese mismo renglón salen las dos cosas: lo que se copia de la base y lo que se compara
+contra el archivo. El único campo que vive en el archivo y no en la base —el que dice en
+qué pantallas se usa esa lista, que lo calcula otro chequeo desde las pantallas— está
+nombrado ahí mismo, así que se conserva a propósito y no por descuido. Cualquier otro se
+nombra y se pone rojo. No había ninguno puesto.
+
+El guion hermano, el de las guías de cuidado, se revisó en el mismo momento y no tiene el
+defecto: compara cada guía entera, así que un campo de más no se le escapa.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

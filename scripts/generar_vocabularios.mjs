@@ -90,17 +90,29 @@ export function leerElArchivo() {
   return { texto, datos: JSON.parse(texto) };
 }
 
+/* Qué tiene un vocabulario, escrito una sola vez y en el orden en que se
+   escribe. De acá sale lo que se copia de la base y lo que se compara contra el
+   archivo: si los dos lados no salieran del mismo renglón, un campo agregado a
+   mano al archivo no lo miraría nadie, y la comprobación juraría que la copia es
+   igual a la base teniendo algo de más. */
+export const CAMPOS_DE_UN_VOCABULARIO = ['titulo', 'cerrada', 'usado_en', 'items'];
+
+/* El único que vive en el archivo y no en la base. Lo escribe
+   `verificar_usos.mjs` desde las pantallas, así que se conserva tal cual se lo
+   encuentra en vez de pedirselo a la base. */
+export const NO_SALE_DE_LA_BASE = ['usado_en'];
+
 /** Arma el contenido nuevo: lo de la base, con el `usado_en` que ya estaba. */
 export function armar(deLaBase, delArchivo) {
   const salida = {};
   for (const [clave, definicion] of Object.entries(deLaBase)) {
     const anterior = (delArchivo.vocabularios || {})[clave] || {};
-    salida[clave] = {
-      titulo: definicion.titulo,
-      cerrada: definicion.cerrada,
-      ...(anterior.usado_en ? { usado_en: anterior.usado_en } : {}),
-      items: definicion.items
-    };
+    const armado = {};
+    for (const campo of CAMPOS_DE_UN_VOCABULARIO) {
+      const valor = NO_SALE_DE_LA_BASE.includes(campo) ? anterior[campo] : definicion[campo];
+      if (valor !== undefined) armado[campo] = valor;
+    }
+    salida[clave] = armado;
   }
   return { vocabularios: salida };
 }
@@ -148,6 +160,14 @@ export function diferencias(nuevo, viejo) {
     }
     if (n.cerrada !== v.cerrada) {
       problemas.push(`«${c}» es ${n.cerrada ? 'cerrada' : 'abierta'} en la base y al revés en el archivo.`);
+    }
+    /* Y que no traiga nada de más. Un campo agregado a mano al archivo no
+       cambia el título, ni `cerrada`, ni las opciones, así que pasaba entero: el
+       archivo decía una cosa que la base no dice y esto lo daba por igual. */
+    for (const campo of Object.keys(v)) {
+      if (!CAMPOS_DE_UN_VOCABULARIO.includes(campo)) {
+        problemas.push(`El vocabulario «${c}» trae en el archivo un campo que la base no tiene: «${campo}».`);
+      }
     }
     const clavesBase = (n.items || []).map((i) => i.clave);
     const clavesArchivo = (v.items || []).map((i) => i.clave);
