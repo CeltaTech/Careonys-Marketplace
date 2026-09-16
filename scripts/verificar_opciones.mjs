@@ -28,8 +28,8 @@
    Qué mira:
    - cada `<option>` de cada pantalla, **fuera de los comentarios** —de los del
      marcado y de los de una pantalla de un programa—. Un `<option>` nombrado
-     adentro de un comentario para explicar algo no cuenta, y hay uno así en
-     `cursos.html`.
+     adentro de un comentario para explicar algo no cuenta, y hay dos así en
+     `js/catalogo.js`.
    - el valor escrito con todas las letras, venga como venga: entre comillas
      dobles, entre comillas simples o entre llaves. Las tres son la misma
      decisión escrita de tres maneras, y una pantalla de un programa usa la
@@ -63,6 +63,7 @@ import { dirname, join, relative, sep } from 'node:path';
 
 import { hayArchivos, EXTENSIONES_DE_PANTALLA } from './recorrido.mjs';
 import { comoSeEscribe, valorDe } from './atributos.mjs';
+import { enBlanco, enCodigoDePrograma } from './texto_visible.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
@@ -104,13 +105,12 @@ const HAY_PALABRA = /[A-Za-z\u00C0-\u00FF]{2,}/;
     de una pantalla de un programa. Se reemplazan por espacios y no se quitan,
     para que los renglones sigan siendo los mismos. */
 function sinComentarios(crudo) {
-  const enBlanco = (t) => t.replace(/[^\n]/g, ' ');
-  return crudo.replace(/<!--[\s\S]*?-->/g, enBlanco)
-    /* Y los dos comentarios de un guión, que explican cómo se arma el marcado y
-       para eso nombran un `<option>`. El de llaves —el de una pantalla de un
-       programa— queda adentro del primero de los dos. */
-    .replace(/\/\*[\s\S]*?\*\//g, enBlanco)
-    .replace(/^([^\n'"`]*?)\/\/[^\n]*/gm, (m, antes) => antes + enBlanco(m.slice(antes.length)));
+  /* Los dos comentarios de un guión que explican cómo se arma el marcado, y que
+     para eso nombran un `<option>`, los borra `texto_visible.mjs`, que es donde
+     está escrito una sola vez cómo se borra un comentario de un guión sin
+     llevarse por delante una dirección web. Acá estaba copiado. El de llaves
+     —el de una pantalla de un programa— queda adentro del primero de los dos. */
+  return enCodigoDePrograma(crudo.replace(/<!--[\s\S]*?-->/g, enBlanco));
 }
 
 /** Las opciones escritas a mano de una pantalla: `[renglón, valor]`. */
