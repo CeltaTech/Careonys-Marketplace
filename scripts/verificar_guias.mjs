@@ -66,6 +66,13 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { archivos, seRevisaron } from './recorrido.mjs';
+/* Dónde está escrito el catálogo de guías y dónde se copia lo contesta la
+   herramienta que lo escribe y lo copia, que es la única que lo sabe. Acá
+   estaban los tres caminos escritos a mano, y una lista a mano conoce los
+   archivos del día que se escribió: el día que la herramienta deje una copia
+   más, este chequeo sigue abriendo tres y la nueva no la mira nadie. El
+   chequeo de la copia sin conexión ya le preguntaba a ella. */
+import { ARCHIVO, COPIAS } from './generar_guias.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const aRuta = (r) => join(raiz, r);
@@ -252,8 +259,7 @@ function textosDeGuia() {
       fuentes.push({ donde: m.nombre, texto: soloTexto });
     }
   }
-  for (const copia of ['data/catalogo-guias.json',
-    'pwa-asistente/data/catalogo-guias.json', 'pwa-familia/data/catalogo-guias.json']) {
+  for (const copia of [ARCHIVO, ...COPIAS]) {
     try { fuentes.push({ donde: copia, texto: readFileSync(aRuta(copia), 'utf8') }); }
     catch { /* que falte una copia lo dice el chequeo de la copia sin conexión */ }
   }

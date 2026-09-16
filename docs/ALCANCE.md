@@ -4839,6 +4839,27 @@ con comilla común, y el renglón verde dice los mismos quince que antes. Falsif
 en los dos sentidos, y el banco de pruebas del lector —que probaba una sola de las
 tres maneras— ahora prueba las tres y la nota adentro de la lista.
 
+### Las tres copias del catálogo de guías, escritas a mano en el chequeo que las abre
+
+El catálogo de las Guías de cuidado se escribe en un archivo y se copia a las dos
+aplicaciones de teléfono para que sirvan sin conexión. Quién sabe dónde queda cada copia
+es la herramienta que las escribe, y lo tiene declarado (`scripts/generar_guias.mjs:39`).
+
+El chequeo que vigila que ninguna guía escriba un número de emergencia —el número cambia
+por país, así que es dato de la Prestadora y no del producto— abría esos mismos archivos,
+pero con los tres caminos escritos a mano adentro. Hoy coinciden con los declarados, así
+que no hay ningún número sin mirar; lo que no había era nada que los mantuviera
+coincidiendo. Se comprobó agregando una copia más a las que la herramienta declara y
+poniéndole adentro «llame al 911»: el chequeo terminaba en verde. El mismo número en uno
+de los tres archivos de la lista lo ponía rojo, así que la regla tenía dientes y lo único
+que le faltaba era el archivo.
+
+Ahora los caminos salen de la herramienta (`scripts/verificar_guias.mjs:262`), que es a
+quién ya le preguntaba el chequeo de la copia sin conexión
+(`scripts/verificar_guias_offline.mjs:55`), y la copia nueva se mira sola. Que la lista no
+pueda quedar vacía lo cuida el propio chequeo, que declara cuántos textos de guía miró
+(`scripts/verificar_guias.mjs:527`).
+
 ### El destino guardado como se escribía cuando cada pantalla era una página suelta
 
 El chequeo que garantiza que toda dirección escrita adentro del producto lleve a algún
