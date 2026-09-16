@@ -3704,7 +3704,7 @@ no cambia de noche— y los convierte a número con la fórmula de CSS Color 4, 
 el navegador. Si un token no está, o deja de estar escrito en OKLCH, el generador se planta en
 vez de inventar un color.
 
-No hizo falta ningún control nuevo: `scripts/verificar_identidad.mjs:125` ya compara los dos
+No hizo falta ningún control nuevo: `scripts/verificar_identidad.mjs:138` ya compara los dos
 manifiestos contra lo que el generador produce, así que la cadena queda entera —el token manda,
 el generador escribe, el chequeo compara— y no hay copia que se pueda despegar.
 
@@ -3782,6 +3782,35 @@ se recorre todo: nombra la carpeta que existe aunque no se pueda entrar en ella 
 está, y decir que no se la mira es cierto—, y sólo denuncia lo que no está en ningún lado. Las
 seis exenciones muertas se sacaron, y con ellas el bloque de `scripts/citas.mjs`, que no tenía
 ningún otro nombre adentro.
+
+### El chequeo de la marca no abría el esquema, ni la puerta de alta y baja, ni los dibujos
+
+`scripts/verificar_identidad.mjs` existe para que el nombre comercial, el dominio y el correo de
+contacto vivan en un solo lugar y ningún otro archivo los escriba a mano. Abría las pantallas, las
+hojas de estilo, los `.js`, los `.json`, los manifiestos y los `.txt`, y nada más
+(`scripts/verificar_identidad.mjs:56`).
+
+Quedaban afuera el esquema, la puerta de alta y baja y los dibujos —`.sql`, `.ts` y `.svg`—, que
+son tres lugares donde lo escrito termina delante de una persona: el texto que siembra una
+migración se lee en pantalla y un dibujo lleva título. Probado poniendo el dominio adentro de un
+`.sql`, de un `.ts` y de un `.svg`: el chequeo dijo ✔ con los tres puestos.
+
+Y el archivo se desmentía solo. `sinComentarios()` sabía tapar los comentarios de un `.mjs`, y el
+chequeo se eximía a sí mismo por nombre —un `.mjs`— de un recorrido que no abría ningún `.mjs`.
+Además eximía dos copias de `js/identidad.js` adentro de los programas de teléfono que ya no
+existen: dos exenciones perdonando archivos que no están, que es la misma enfermedad que
+`scripts/verificar_red.mjs` vigila, escrita en una forma que no reconoce.
+
+Qué se hizo: el recorrido abre ahora todo lo que puede terminar delante de una persona —se le
+sumaron `.mjs`, `.cjs`, `.ts`, `.sql` y `.svg`—, `sinComentarios()` aprendió los dos guiones del
+esquema y el comentario del dibujo (`scripts/verificar_identidad.mjs:72`), y las exenciones
+quedaron en una sola, la de verdad (`scripts/verificar_identidad.mjs:60`).
+
+Y las herramientas de `scripts/` pasaron a estar afuera **porque se decidió**, no porque ninguna
+de sus extensiones entrara: se declaran en `scripts/verificar_identidad.mjs:49` con su motivo
+escrito. Ahí nadie resuelve `{{producto}}` —no hay página que cargar—, así que la marca escrita en
+una herramienta no es la marca escrita a mano: es la única forma de escribirla. El recorrido pasó
+de 147 archivos a 159 y siguió en verde, así que no había daño puesto.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 

@@ -10,15 +10,22 @@
    Por qué existe: doce apariciones se vuelven treinta en tres días sin que nadie
    las agregue a propósito. Una regla que no se verifica sola no es una regla.
 
-   Qué no mira:
-   - la documentación (`docs/`, `*.md`), que habla del producto y lo nombra;
+   Qué no mira, y por qué:
+   - la documentación (`docs/`, y los `.md` de cualquier lado, que no entran por
+     extensión), que habla del producto y lo nombra;
    - los comentarios del código, que explican de dónde salen las cosas y para eso
      necesitan nombrar el sistema heredado;
-   - `js/identidad.js` y sus dos copias, que son el único lugar donde el nombre
-     vive a propósito.
+   - `js/identidad.js`, que es el único lugar donde el nombre vive a propósito;
+   - las herramientas de `scripts/`. Nadie resuelve `{{producto}}` ahí: no hay
+     página que cargar, así que la marca escrita en una herramienta no es la
+     marca escrita a mano, es la única forma de escribirla. Y encima nombran a
+     propósito la dirección publicada, el producto hermano y la palabra que el
+     glosario aprueba. Antes quedaban afuera **sin que nadie lo hubiera
+     decidido** —ninguna de sus extensiones entraba en el recorrido—, y eso se
+     notaba en que este mismo archivo se eximía a sí mismo de un recorrido que
+     no lo alcanzaba.
 
    Qué mira además del nombre:
-   - que las tres copias de `js/identidad.js` sean iguales byte a byte;
    - que los dos `manifest.json` estén al día con la identidad;
    - que el `<title>` y la `<meta name="description">` que traen
      `data-organizacion-original` —el marcador resuelto a mano para que un
@@ -38,18 +45,19 @@ const require = createRequire(import.meta.url);
 const { IDENTIDAD } = require(join(raiz, 'js', 'identidad.js'));
 
 /* Lo que no abre ningún chequeo está en `recorrido.mjs`. Esto es lo que no mira
-   este: la documentación nombra la marca a propósito y todo el tiempo. */
-const AJENAS = ['docs'];
-const EXTENSIONES = [...EXTENSIONES_DE_PANTALLA, '.js', '.css', '.json', '.webmanifest', '.txt'];
-const COPIAS_IDENTIDAD = [
-  join('js', 'identidad.js'),
-  join('pwa-asistente', 'js', 'identidad.js'),
-  join('pwa-familia', 'js', 'identidad.js')
+   este, y el encabezado dice por qué cada uno. */
+const AJENAS = ['docs', 'scripts'];
+
+/* Todo lo que puede terminar delante de una persona. Faltaban el esquema, la
+   puerta de alta y baja y los dibujos: el texto que siembra una migración se
+   lee en pantalla, y un dibujo lleva título. Faltaban también `.mjs` y `.cjs`,
+   que hoy viven todos en `scripts/` —que queda afuera a propósito— pero el día
+   que uno cuelgue de otro lado tiene que entrar solo. */
+const EXTENSIONES = [
+  ...EXTENSIONES_DE_PANTALLA,
+  '.js', '.mjs', '.cjs', '.ts', '.css', '.json', '.webmanifest', '.txt', '.sql', '.svg'
 ];
-const ARCHIVOS_EXENTOS = new Set([
-  ...COPIAS_IDENTIDAD,
-  join('scripts', 'verificar_identidad.mjs')
-]);
+const ARCHIVOS_EXENTOS = new Set([join('js', 'identidad.js')]);
 // Generados desde la identidad: se verifican aparte, no por su contenido.
 const GENERADOS = new Set([
   join('pwa-asistente', 'manifest.json'),
@@ -61,17 +69,23 @@ const PROHIBIDO = [
   IDENTIDAD.nombre, IDENTIDAD.nombreCorto, IDENTIDAD.dominio, IDENTIDAD.contacto
 ].filter((v, i, a) => v && a.indexOf(v) === i);
 
+const CON_BLOQUE = new Set(['.js', '.mjs', '.cjs', '.ts', '.css']);
+const CON_DOS_BARRAS = new Set(['.js', '.mjs', '.cjs', '.ts']);
+
 // Deja el renglón en blanco si era un comentario. Reemplaza por espacios en vez
 // de borrar para que el número de renglón siga siendo el de verdad.
 function sinComentarios(texto, extension) {
   let t = texto;
   const tapar = (m) => m.replace(/[^\r\n]/g, ' ');
-  if (esPantalla(extension)) t = t.replace(/<!--[\s\S]*?-->/g, tapar);
-  if (extension === '.js' || extension === '.mjs' || extension === '.css') {
-    t = t.replace(/\/\*[\s\S]*?\*\//g, tapar);
-  }
-  if (extension === '.js' || extension === '.mjs') {
+  if (esPantalla(extension) || extension === '.svg') t = t.replace(/<!--[\s\S]*?-->/g, tapar);
+  if (CON_BLOQUE.has(extension)) t = t.replace(/\/\*[\s\S]*?\*\//g, tapar);
+  if (CON_DOS_BARRAS.has(extension)) {
     t = t.replace(/^([^\n'"`]*?)\/\/[^\n]*/gm, (m, antes) => antes + tapar(m.slice(antes.length)));
+  }
+  /* El esquema comenta con dos guiones, y ahí adentro se explica de dónde sale
+     cada tabla, que es justo donde se nombra al producto hermano. */
+  if (extension === '.sql') {
+    t = t.replace(/^([^\n'"]*?)--[^\n]*/gm, (m, antes) => antes + tapar(m.slice(antes.length)));
   }
   return t;
 }
@@ -87,7 +101,6 @@ let revisados = 0;
 for (const ruta of hayArchivos(raiz, EXTENSIONES, AJENAS)) {
   const rel = relative(raiz, ruta);
   if (ARCHIVOS_EXENTOS.has(rel) || GENERADOS.has(rel)) continue;
-  if (rel.toLowerCase().endsWith('.md')) continue;
   revisados += 1;
   const extension = rel.slice(rel.lastIndexOf('.'));
   const texto = readFileSync(ruta, 'utf8');
