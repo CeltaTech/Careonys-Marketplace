@@ -3873,6 +3873,23 @@ nombra es un archivo de este proyecto —ese nombre lo elige el proyecto y no ll
 dígitos—, y esa excepción se reconoce por el prefijo que la delata, no por una lista de
 archivos que habría que mantener.
 
+### Las reglas del chat se comparaban contra la base mirando sólo tres campos
+
+Las reglas con las que el chat reconoce un teléfono, una dirección o una invitación a
+hablar por otro lado viven en la base. El archivo que llevan los dos programas del
+teléfono es una copia, y existe para poder avisar sin señal. Un chequeo compara las dos
+cosas, porque una copia que nadie compara vuelve a ser una segunda verdad en cuanto
+alguien edita una de las dos.
+
+La comparación miraba tres campos nombrados a mano: la expresión, las banderas y el
+aviso. Una regla del archivo con un campo de más pasaba entera, y el chequeo terminaba
+diciendo que las nueve reglas son iguales a las de la base. Se probó agregándole uno a
+mano: verde.
+
+Ahora qué tiene una regla está escrito una sola vez, y de ese mismo renglón salen las
+dos cosas: lo que se copia de la base y lo que se compara contra el archivo. Un campo
+que la base no tiene se nombra y se pone rojo. No había ninguno puesto.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

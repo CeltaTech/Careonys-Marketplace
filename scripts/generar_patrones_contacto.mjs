@@ -100,16 +100,21 @@ export function leerElArchivo() {
 
 /** Arma el contenido nuevo: las reglas de la base, con todo lo demás del
  *  archivo en el mismo lugar donde estaba. */
+/* Qué tiene una regla, escrito una sola vez. De acá sale lo que se copia de la
+   base y lo que se compara contra el archivo: si los dos lados no salieran del
+   mismo renglón, un campo agregado a mano al archivo no lo miraría nadie, y el
+   chequeo juraría que la copia es igual a la base teniendo algo de más. */
+export const CAMPOS_DE_UNA_REGLA = ['clave', 'patron', 'banderas', 'motivo'];
+
+const soloLosCampos = (regla) =>
+  Object.fromEntries(CAMPOS_DE_UNA_REGLA.map((campo) => [campo, regla[campo]]));
+
 export function armar(deLaBase, delArchivo) {
   const salida = {};
   for (const [clave, valor] of Object.entries(delArchivo)) {
-    salida[clave] = clave === 'reglas'
-      ? deLaBase.map((r) => ({ clave: r.clave, patron: r.patron, banderas: r.banderas, motivo: r.motivo }))
-      : valor;
+    salida[clave] = clave === 'reglas' ? deLaBase.map(soloLosCampos) : valor;
   }
-  if (!salida.reglas) {
-    salida.reglas = deLaBase.map((r) => ({ clave: r.clave, patron: r.patron, banderas: r.banderas, motivo: r.motivo }));
-  }
+  if (!salida.reglas) salida.reglas = deLaBase.map(soloLosCampos);
   return salida;
 }
 
@@ -167,6 +172,14 @@ export function diferencias(nuevo, viejo) {
     }
     if (!igual(n.motivo, v.motivo)) {
       problemas.push(`El motivo de «${n.clave}» no coincide entre la base y el archivo.`);
+    }
+    /* Y que no traiga nada de más. Un campo agregado a mano no cambia ninguno
+       de los tres de arriba, así que pasaba entero: el archivo decía una cosa
+       que la base no dice, y este chequeo lo daba por igual. */
+    for (const campo of Object.keys(v)) {
+      if (!CAMPOS_DE_UNA_REGLA.includes(campo)) {
+        problemas.push(`La regla «${n.clave}» trae en el archivo un campo que la base no tiene: «${campo}».`);
+      }
     }
   }
   return problemas;
