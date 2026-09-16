@@ -4396,6 +4396,39 @@ mientras abre y se devuelve en un `finally` (`js/conversacion.js:215`).
 
 De 49 archivos con botones a 54, y de 36 manejadores que esperan algo a 37.
 
+### El chequeo de citas a pendientes no abría los seis archivos sin extensión
+
+El chequeo que se planta cuando un archivo vivo nombra un pendiente ya cerrado
+armaba su corpus con una lista de extensiones escrita al lado: las de código de
+`scripts/recorrido.mjs` más `.md`, `.txt`, `.toml` y `.py`. Medido contra el
+proyecto sin tocar nada, abría 274 de los 280 archivos de texto. Los seis que
+quedaban afuera son los que no tienen extensión: `.gitattributes`, `.gitignore`,
+`.vercelignore`, `supabase/.gitignore` y los dos enganches de
+`.githooks/`. Adentro de uno de ellos había una cita en presente a un pendiente
+(`.vercelignore:26`). Ese número sigue abierto hoy, así que no había daño; lo que
+no había era nadie mirando.
+
+El proyecto ya tenía la respuesta escrita en un solo lugar: `documentosConCitas`,
+de `scripts/citas.mjs`, que es el recorrido que usan los otros dos chequeos que
+leen citas y que no filtra por extensión sino por si el archivo es texto. Las
+migraciones quedan afuera de ese recorrido por el mismo motivo por el que estaban
+excluidas acá —una migración aplicada no se edita jamás—, así que el cambio no
+pierde nada: la rama que las descartaba una por una quedó muerta y se sacó.
+
+Probado al revés: se escribió una cita a un pendiente cerrado en `.vercelignore` y
+se corrieron las dos copias. La vieja terminó sin nombrarla nunca; la nueva la
+señala con archivo y renglón.
+
+El renglón verde tenía además la forma del número engañoso: decía «254 citas en 258
+archivos», que se lee como si las citas estuvieran repartidas en 258 archivos
+cuando están en 72. Ahora dice las dos cosas, igual que su hermano.
+
+Y las tres pruebas que este chequeo tenía le hablaban todas al detector: ninguna
+al corpus. Un detector perfecto sobre un corpus recortado no encuentra nada. Se
+agregó una cuarta que le exige al recorrido traer archivos de texto sin extensión
+de código (`scripts/verificar_pendientes.mjs:213`), comprobada angostando el corpus
+en una copia: se pone en rojo.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

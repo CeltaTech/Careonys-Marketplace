@@ -37,8 +37,14 @@
    · Los archivos de `supabase/migrations/`, que **una vez aplicados no se editan
      jamás** —regla de la empresa—, así que su texto es historia por definición.
 
+   QUÉ ABRE
+   Todo archivo de texto del proyecto, sin lista de extensiones de por medio: el
+   mismo recorrido que usan los dos chequeos hermanos que leen citas, escrito una
+   sola vez en `scripts/citas.mjs`. Una cita se escribe en cualquier cosa que
+   alguien lea.
+
    CÓMO SE PRUEBA, Y POR QUÉ ASÍ
-   Tres veces, porque las tres pueden fallar:
+   Cuatro veces, porque las cuatro pueden fallar:
    1. Se planta si no logró leer ni un pendiente abierto de `docs/PENDIENTES.md`
       —el día que esa tabla cambie de forma, este chequeo diría ✔ sin haber
       mirado nada— y si no logró encontrar ni una cita en todo el proyecto.
@@ -47,13 +53,17 @@
       cerró tiene que pasar, y uno que cita un pendiente abierto tiene que pasar.
    3. Contra un número imposible: `pendiente 99999` no está abierto y no puede
       estarlo, así que si el detector no lo señala es que no está mirando.
+   4. Contra el propio corpus, que es lo único que las otras tres no tocan: se
+      exige que el recorrido traiga archivos de texto sin extensión de código.
+      Por ahí fue la ceguera que tuvo.
 =================================================== */
 
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname, join, relative, resolve, sep } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 
-import { hayArchivos, seRevisaron, EXTENSIONES_DE_CODIGO } from './recorrido.mjs';
+import { seRevisaron } from './recorrido.mjs';
+import { documentosConCitas } from './citas.mjs';
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rutaLista = join(raiz, 'docs', 'PENDIENTES.md');
@@ -111,22 +121,25 @@ const PEGADO = 60;
    también la configuración de la base y la única función que corre en el
    servidor. Tres citas colgadas vivían justamente ahí.
 
-   Ahora sale de la lista de extensiones de código de `recorrido.mjs`, que es el
-   único lugar donde este proyecto dice qué escribe, más los documentos y las dos
-   formas que no son código de la aplicación pero las escribe alguien igual: la
-   configuración de la base y los guiones sueltos de una sola tarea. */
-const EXTENSIONES = [...EXTENSIONES_DE_CODIGO, '.md', '.txt', '.toml', '.py'];
+   Después pasó a la lista de extensiones de código de `recorrido.mjs` más cuatro
+   formas escritas a mano, y seguía siendo una lista: dejaba afuera los seis
+   archivos que no tienen extensión de código y los escribe alguien igual —los dos
+   enganches del control de versiones y las cuatro listas de lo que no se sube—.
+   Adentro había una cita de verdad, en el renglón 26 de `.vercelignore`.
+
+   Ahora no hay lista de ninguna clase: el corpus es el mismo que usan los dos
+   chequeos hermanos que leen citas, y está escrito una sola vez, en `citas.mjs`.
+   Una cita se escribe en cualquier cosa que alguien lea, y eso es todo lo que no
+   sea una imagen ni un binario. Las migraciones quedan afuera de aquel recorrido
+   por el mismo motivo por el que estaban acá: una migración aplicada no se edita
+   jamás, así que una cita suya no se puede arreglar. */
 
 /* Narran un momento con fecha, o son historia que no se corrige. El motivo de
    cada uno está en el encabezado. */
-const NARRAN_UN_MOMENTO = (rel) => {
-  const r = rel.split(sep).join('/');
-  return (
-    r === 'docs/ALCANCE.md' ||
-    r.startsWith('docs/PLAN_') ||
-    r.startsWith('supabase/migrations/')
-  );
-};
+const NARRAN_UN_MOMENTO = (rel) => (
+  rel === 'docs/ALCANCE.md' ||
+  rel.startsWith('docs/PLAN_')
+);
 
 /** Devuelve las citas colgadas de un texto: cerradas y sin decir que lo están. */
 export function citasColgadas(texto, abiertos) {
@@ -190,20 +203,40 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
   }
 
   /* ── El proyecto ─────────────────────────────────────────────────────────── */
+  /* La cuarta prueba, y es del corpus y no del detector. La ceguera que este
+     chequeo tuvo no estaba en lo que sabía reconocer sino en lo que abría: su
+     lista de extensiones dejaba afuera los seis archivos de texto que no tienen
+     ninguna —los dos enganches del control de versiones y las cuatro listas de
+     lo que no se sube—, y adentro de uno había una cita viva. Si el corpus
+     vuelve a ser una lista de extensiones, esto se pone en rojo. */
+  const documentos = documentosConCitas(raiz);
+  const sinExtension = documentos.filter((rel) => !basename(rel).includes('.', 1));
+  if (!sinExtension.length) {
+    console.error(
+      'El recorrido no trajo ni un archivo de texto sin extensión de código.\n' +
+      'Este chequeo ya fue ciego así una vez: había una cita viva en un archivo\n' +
+      'que ninguna lista de extensiones abría. Si el corpus volvió a ser una\n' +
+      'lista, hay que devolverlo a `documentosConCitas`, de scripts/citas.mjs.'
+    );
+    process.exit(1);
+  }
+
   const hallazgos = [];
   let citas = 0;
   let mirados = 0;
+  let conCitas = 0;
 
-  for (const ruta of hayArchivos(raiz, EXTENSIONES)) {
-    const rel = relative(raiz, ruta);
+  for (const rel of documentos) {
     if (NARRAN_UN_MOMENTO(rel)) continue;
-    if (rel === join('scripts', 'verificar_pendientes.mjs')) continue;
+    if (rel === 'scripts/verificar_pendientes.mjs') continue;
     mirados++;
-    const { colgadas, cuantas } = citasColgadas(readFileSync(ruta, 'utf8'), abiertos);
+    const { colgadas, cuantas } = citasColgadas(
+      readFileSync(join(raiz, rel), 'utf8'), abiertos);
     citas += cuantas;
+    if (cuantas) conCitas++;
     for (const c of colgadas) {
       const cual = c.texto === `pendiente ${c.numero}` ? '' : ` → el ${c.numero}`;
-      hallazgos.push(`${rel.split(sep).join('/')}:${c.renglon}  «${c.texto}»${cual}`);
+      hallazgos.push(`${rel}:${c.renglon}  «${c.texto}»${cual}`);
     }
   }
 
@@ -222,7 +255,8 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
   }
 
   console.log(
-    `Pendientes verificados: ${citas} citas en ${mirados} archivos, ninguna hablando en presente ` +
-    `de alguno de los que ya se cerraron (${abiertos.size} abiertos hoy).`
+    `Pendientes verificados: ${citas} citas, repartidas en ${conCitas} de los ${mirados} ` +
+    `archivos del proyecto que se recorren, ninguna hablando en presente de alguno ` +
+    `de los que ya se cerraron (${abiertos.size} abiertos hoy).`
   );
 }
