@@ -88,7 +88,7 @@ En el domicilio suele verse que se repiten las mismas preguntas muchas veces en 
 5. Avisar a la Prestadora y a la Familia apenas la situación lo permita.
 6. Dejar registrado qué se observó, qué se hizo y a quién se avisó.
 
-> **De dónde sale.** Clave `alzheimer`, en `supabase/migrations/0002_siembra_ficticia.sql:533`.
+> **De dónde sale.** Clave `alzheimer`, en `supabase/migrations/0002_siembra_ficticia.sql:508`.
 
 ---
 
@@ -187,7 +187,7 @@ En el domicilio suele encontrarse un lado del cuerpo más débil o más torpe, c
 5. Despejar el ambiente y abrir el paso para que la ayuda llegue sin demora.
 6. Avisar a la Prestadora y a la Familia, y dejar registrado todo lo observado.
 
-> **De dónde sale.** Clave `acv`, en `supabase/migrations/0002_siembra_ficticia.sql:527`.
+> **De dónde sale.** Clave `acv`, en `supabase/migrations/0002_siembra_ficticia.sql:502`.
 
 ---
 
@@ -219,7 +219,7 @@ En el domicilio suele encontrarse un Paciente que hace su vida habitual y que ti
 5. Acompañar hasta que recupere el conocimiento por completo, sin dejarla sola.
 6. Avisar a la Prestadora y a la Familia, y dejar registrado qué pasó, a qué hora y cuánto duró.
 
-> **De dónde sale.** Clave `epilepsia`, en `supabase/migrations/0002_siembra_ficticia.sql:535`.
+> **De dónde sale.** Clave `epilepsia`, en `supabase/migrations/0002_siembra_ficticia.sql:510`.
 
 ---
 
@@ -252,7 +252,7 @@ En el domicilio suele haber un tratamiento ya indicado por un profesional, con c
 5. Acompañar sin dejar sola a la persona, salvo que la propia seguridad esté en riesgo; en ese caso, ir a un lugar seguro y pedir ayuda.
 6. Avisar a la Prestadora y a la Familia, y dejar registrado qué pasó y a qué hora.
 
-> **De dónde sale.** Clave `psiquiatricas`, en `supabase/migrations/0002_siembra_ficticia.sql:543`.
+> **De dónde sale.** Clave `psiquiatricas`, en `supabase/migrations/0002_siembra_ficticia.sql:518`.
 
 ---
 
@@ -317,7 +317,7 @@ En el domicilio suele encontrarse un tratamiento ya indicado por un profesional,
 5. Acompañar sin dejar sola a la persona, observando si responde y cómo respira; registrar el control de presión sólo si ya estaba indicado.
 6. Avisar a la Prestadora y a la Familia, y dejar registrado qué pasó y qué indicación se recibió.
 
-> **De dónde sale.** Clave `hipertension`, en `supabase/migrations/0002_siembra_ficticia.sql:542`.
+> **De dónde sale.** Clave `hipertension`, en `supabase/migrations/0002_siembra_ficticia.sql:517`.
 
 ---
 
@@ -350,7 +350,7 @@ En el domicilio suelen verse moretones que aparecen sin que nadie recuerde un go
 5. Avisar a la Prestadora y a la Familia, e informar que se trata de una persona anticoagulada.
 6. Dejar registrado qué pasó, a qué hora, qué se observó y qué se hizo.
 
-> **De dónde sale.** Clave `anticoagulados`, en `supabase/migrations/0002_siembra_ficticia.sql:544`.
+> **De dónde sale.** Clave `anticoagulados`, en `supabase/migrations/0002_siembra_ficticia.sql:519`.
 
 ---
 
@@ -383,7 +383,7 @@ En la convivencia diaria suele escucharse al Paciente decir que siente el coraz�
 5. Avisar a la Prestadora y a la Familia, y tener a mano la documentación del Paciente y la de su dispositivo si lo tiene.
 6. Dejar registrado qué se observó, a qué hora, cuánto duró y qué se hizo.
 
-> **De dónde sale.** Clave `arritmias`, en `supabase/migrations/0002_siembra_ficticia.sql:534`.
+> **De dónde sale.** Clave `arritmias`, en `supabase/migrations/0002_siembra_ficticia.sql:509`.
 
 ---
 
@@ -416,7 +416,7 @@ En el domicilio se observa que el Paciente mide su esfuerzo: camina despacio, se
 5. Avisar a la Prestadora y a la Familia, y preparar la documentación del Paciente para quien llegue a asistir.
 6. Dejar registrado a qué hora empezó, dónde se ubicaba el dolor, cuánto duró y qué se hizo.
 
-> **De dónde sale.** Clave `coronarias`, en `supabase/migrations/0002_siembra_ficticia.sql:538`.
+> **De dónde sale.** Clave `coronarias`, en `supabase/migrations/0002_siembra_ficticia.sql:513`.
 
 ---
 
@@ -482,7 +482,7 @@ En el domicilio suele haber un antecedente conocido: ya pasó antes, y la Famili
 5. Avisar a la Prestadora y a la Familia apenas la situación esté contenida.
 6. Dejar registrado qué pasó, qué se hizo y quién intervino.
 
-> **De dónde sale.** Clave `sincope`, en `supabase/migrations/0002_siembra_ficticia.sql:530`.
+> **De dónde sale.** Clave `sincope`, en `supabase/migrations/0002_siembra_ficticia.sql:505`.
 
 ---
 
@@ -548,7 +548,7 @@ La casa está armada como un mapa: cada objeto tiene un lugar exacto, y ese luga
 5. Despejar el paso y avisar en voz alta cada objeto que se haya corrido, para devolverlo después a su lugar.
 6. Avisar a la Prestadora y a la Familia, anotar la hora y dejar registrado qué pasó.
 
-> **De dónde sale.** Clave `ceguera`, en `supabase/migrations/0002_siembra_ficticia.sql:529`.
+> **De dónde sale.** Clave `ceguera`, en `supabase/migrations/0002_siembra_ficticia.sql:504`.
 
 ---
 
@@ -614,7 +614,7 @@ En el domicilio se encuentra una cama que es el centro de la jornada, y buena pa
 5. Avisar a la Prestadora y a la Familia apenas la situación esté contenida.
 6. Dejar registrado qué se observó, a qué hora y qué se hizo.
 
-> **De dónde sale.** Clave `postrados`, en `supabase/migrations/0002_siembra_ficticia.sql:537`.
+> **De dónde sale.** Clave `postrados`, en `supabase/migrations/0002_siembra_ficticia.sql:512`.
 
 ---
 
@@ -680,7 +680,7 @@ En el domicilio se nota que los días no son todos iguales: después de cada cic
 5. Buscar y respetar lo que el equipo tratante dejó indicado por escrito en el domicilio.
 6. Avisar a la Prestadora y a la Familia, y dejar registrado qué pasó.
 
-> **De dónde sale.** Clave `oncologico`, en `supabase/migrations/0002_siembra_ficticia.sql:539`.
+> **De dónde sale.** Clave `oncologico`, en `supabase/migrations/0002_siembra_ficticia.sql:514`.
 
 ---
 
