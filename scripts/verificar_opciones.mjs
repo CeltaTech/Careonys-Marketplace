@@ -22,9 +22,17 @@
    Esto es lo que impide que entre la quinta.
 
    Qué mira:
-   - cada `<option>` con `value` no vacío de cada pantalla, **fuera de los
-     comentarios**. Un `<option>` nombrado adentro de un `<!-- … -->` para
-     explicar algo no cuenta, y hay uno así en `cursos.html`.
+   - cada `<option>` de cada pantalla, **fuera de los comentarios** —de los del
+     marcado y de los de una pantalla de un programa—. Un `<option>` nombrado
+     adentro de un comentario para explicar algo no cuenta, y hay uno así en
+     `cursos.html`.
+   - el valor escrito con todas las letras, venga como venga: entre comillas
+     dobles, entre comillas simples o entre llaves. Las tres son la misma
+     decisión escrita de tres maneras, y una pantalla de un programa usa la
+     última todo el tiempo.
+   - y la opción que no lleva `value` ninguno y trae el texto escrito adentro.
+     Ésa también es una lista escrita a mano: lo que se guarda, cuando no hay
+     `value`, es ese mismo texto.
 
    Qué NO mira, dicho de frente:
    - El `<option value="">Elija una opción…</option>` que abre un desplegable no
@@ -68,11 +76,23 @@ const AJENAS = ['docs', 'supabase', 'scripts'];
    eximir nada. */
 const ESCRITAS_A_MANO = new Map([]);
 
-const OPCION = /<option\b[^>]*\bvalue\s*=\s*"([^"]*)"[^>]*>/gi;
+/* Las tres maneras de escribir un valor con todas las letras. Una pantalla
+   suelta usa comillas, una pantalla de un programa usa llaves, y las dos
+   admiten comillas simples: es la misma decisión escrita de tres formas, y
+   mirar una sola dejaba las otras dos sin nadie que las viera. */
+const VALOR_ESCRITO = /\bvalue\s*=\s*(?:"([^"]*)"|'([^']*)'|\{\s*(?:"([^"]*)"|'([^']*)'|`([^`]*)`)\s*\})/i;
+/* Y el valor que sale de un dato, que es justamente la forma correcta. */
+const HAY_VALUE = /\bvalue\s*=/i;
+const OPCION = /<option\b([^>]*)>([^<]*)/gi;
+const HAY_PALABRA = /[A-Za-z\u00C0-\u00FF]{2,}/;
 
-/** El texto sin los comentarios de HTML, que no son la pantalla. */
+/** El texto sin los comentarios, que no son la pantalla: los del marcado y los
+    de una pantalla de un programa. Se reemplazan por espacios y no se quitan,
+    para que los renglones sigan siendo los mismos. */
 function sinComentarios(crudo) {
-  return crudo.replace(/<!--[\s\S]*?-->/g, (t) => t.replace(/[^\n]/g, ' '));
+  const enBlanco = (t) => t.replace(/[^\n]/g, ' ');
+  return crudo.replace(/<!--[\s\S]*?-->/g, enBlanco)
+    .replace(/\{\s*\/\*[\s\S]*?\*\/\s*\}/g, enBlanco);
 }
 
 /** Las opciones escritas a mano de una pantalla: `[renglón, valor]`. */
@@ -80,8 +100,21 @@ function opcionesDeUnaPantalla(crudo) {
   const limpio = sinComentarios(crudo);
   const salida = [];
   for (const m of limpio.matchAll(OPCION)) {
-    if (m[1].trim() === '') continue;
-    salida.push([limpio.slice(0, m.index).split('\n').length, m[1]]);
+    const renglon = limpio.slice(0, m.index).split('\n').length;
+    const escrito = VALOR_ESCRITO.exec(m[1]);
+    if (escrito) {
+      const valor = (escrito[1] ?? escrito[2] ?? escrito[3] ?? escrito[4] ?? escrito[5]);
+      if (valor.trim() !== '') salida.push([renglon, valor]);
+      continue;
+    }
+    /* Sin `value` con todas las letras quedan dos casos que no son lo mismo: el
+       que lo saca de un dato, que es la forma correcta, y el que no lleva
+       ninguno y guarda el texto que tiene adentro. */
+    if (HAY_VALUE.test(m[1])) continue;
+    /* Y el texto de adentro también puede salir de un dato: lo que se pide del
+       catálogo va entre llaves, así que eso no es texto escrito a mano. */
+    const texto = m[2].replace(/\{[^}]*\}/g, ' ').trim();
+    if (HAY_PALABRA.test(texto)) salida.push([renglon, texto]);
   }
   return salida;
 }
@@ -93,6 +126,12 @@ const MAL = [
    '<select id="x">\n  <option value="turno_manana">Turno Mañana</option>\n</select>\n'],
   ['la misma, con el valor en el atributo de después',
    '<select id="x">\n  <option data-frase="x.y" value="14">14:30 hs</option>\n</select>\n'],
+  ['la misma, con el valor entre comillas simples',
+   "<select id=\"x\">\n  <option value='turno_manana'>Turno Mañana</option>\n</select>\n"],
+  ['la misma, con el valor entre llaves, como la escribe un programa',
+   '<select id="x">\n  <option value={\'turno_manana\'}>Turno Mañana</option>\n</select>\n'],
+  ['la que no lleva valor ninguno y guarda el texto que tiene adentro',
+   '<select id="x">\n  <option>Turno Mañana</option>\n</select>\n'],
 ];
 
 const BIEN = [
@@ -102,6 +141,14 @@ const BIEN = [
    '<!-- Acá había un <option value="viejo">Viejo</option> que ya no está. -->\n<select id="x"></select>\n'],
   ['un desplegable que espera a que el catálogo lo llene',
    '<select id="x" data-oferta="cursos"></select>\n'],
+  ['una opción nombrada adentro de un comentario de un programa',
+   '{/* Acá había un <option value="viejo">Viejo</option> que ya no está. */}\n<select id="x"></select>\n'],
+  ['el renglón vacío escrito como lo escribe un programa',
+   "<select id=\"x\">\n  <option value={''}>{frase(vacio)}</option>\n</select>\n"],
+  ['una opción que saca su valor de un dato',
+   '<select id="x">\n  <option key={i.clave} value={i.clave}>{texto(i)}</option>\n</select>\n'],
+  ['una opción sin valor cuyo texto sale del catálogo',
+   '<select id="x">\n  <option>{texto(i)}</option>\n</select>\n'],
 ];
 
 const noDetecta = MAL.filter(([, t]) => opcionesDeUnaPantalla(t).length === 0);

@@ -3030,6 +3030,34 @@ confundirse: un atributo cuyo nombre termina con la palabra buscada y no es ella
 
 Detrás no había nada roto: ninguna pantalla estaba escribiendo un rótulo de esa manera.
 
+### Una opción escrita a mano tenía tres maneras de pasar de largo
+
+La regla de la empresa es de un renglón: los catálogos salen de la base, y una lista de opciones
+nunca se escribe adentro de una pantalla. Lo que la sostiene no es prolijidad. Una opción escrita
+a mano es un valor que se guarda y que ningún vocabulario gobierna, y ya pasó una vez: una misma
+columna terminó juntando cuatro formas de decir lo mismo porque cada pantalla escribió la suya.
+
+El chequeo que impide que vuelva a pasar reconocía el valor de una opción de una sola manera:
+entre comillas dobles. Se escribe de tres —comillas dobles, comillas simples y llaves—, y la
+última es la que una pantalla de un programa usa todo el tiempo. Las otras dos pasaban enteras.
+
+Y faltaba un cuarto caso, que no es de forma sino de fondo: la opción que no lleva valor ninguno.
+Ésa guarda el texto que tiene adentro, así que es tan escrita a mano como las demás; por no tener
+el atributo, no llegaba siquiera a compararse. Lo que decide si una opción está escrita a mano no
+es cómo viene envuelto el valor, ni que el valor esté: es que lo que se va a guardar esté escrito
+con todas las letras adentro de la pantalla.
+
+De paso aprendió a saltear los comentarios de una pantalla de un programa. Ya salteaba los del
+marcado —un `<option>` nombrado adentro de un comentario para explicar algo no es un catálogo—, y
+la forma nueva de comentar no la conocía.
+
+**Se probó de las dos maneras**, con las tres formas nuevas metidas en una pantalla de verdad: la
+versión anterior no vio ninguna y la de ahora las denuncia de a una con su renglón. Quedaron siete
+casos nuevos en su autoprueba, tres que tienen que romper y cuatro que tienen que pasar.
+
+Detrás no había nada roto: las veintinueve opciones que hoy existen en el producto sacan su valor
+de un dato, o son el renglón vacío que abre un desplegable.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
