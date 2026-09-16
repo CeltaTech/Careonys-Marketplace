@@ -3318,6 +3318,40 @@ guion se planta y el chequeo se niega a correr. Y devolviéndole a la configurac
 frase en presente, la versión anterior la dio por buena en verde mientras la de ahora la nombra
 con su renglón.
 
+### El chequeo de las guías pedía una forma que el producto no escribe
+
+Las guías de cuidado se copian a un archivo que viaja al teléfono del Asistente, para que las
+tenga sin conexión. Hay un chequeo que cuida que esa copia no se despegue de la base y que tenga
+la forma correcta.
+
+**Una guía tiene cuatro partes y las cuatro están en los tres idiomas.** Dos de ellas son además
+**una lista por idioma**: señales que se leen de un vistazo, y pasos en el orden en que se hacen.
+Así las exige la base con sus cuatro restricciones, así las devuelve la puerta, y así las recorre
+la pantalla del Asistente, renglón por renglón.
+
+**El chequeo pedía que las cuatro fueran una cadena de texto.** Ninguna lo es.
+
+**Y esto no se habría quedado callado: habría gritado al revés.** Hoy no hay ninguna guía
+publicada —están cargadas y esperando que alguien las revise— y el archivo está vacío, así que el
+chequeo no tiene nada que juzgar y pasa en verde. El día que se publique la primera, habría
+llamado faltantes a las cuatro partes de una guía entera y bien escrita, y habría mandado a
+rehacer el archivo **con el mismo guion que acababa de escribirlo**.
+
+**Y lo que declaraba haber revisado no era lo que miraba.** Todo chequeo tiene que declarar cuánto
+revisó, y plantarse si eso es cero. Éste declaraba el largo de la lista de copias —un número
+escrito a mano en otro guion— mientras la cuenta de guías miradas era cero: imprimía «0
+vocabularios, 0 guías» y pasaba.
+
+**Ahora la forma está declarada igual que en la base**, con un banco de ocho pruebas que se planta
+si el detector deja de reconocerla, y lo que se declara revisado son los archivos que abre,
+contados a medida que los abre. El vacío tampoco queda sin vigilar: cuando la base contesta se
+compara guía por guía contra ella.
+
+**Se probó de las dos maneras.** Angostando el detector a un solo idioma, la propia prueba del
+guion se planta y el chequeo se niega a correr. Y poniendo en el archivo una guía entera y bien
+escrita, la versión anterior nombró sus cuatro partes como faltantes mientras la de ahora no dijo
+nada de la forma.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con
