@@ -29,7 +29,15 @@
    3. Que ninguna exención de `scripts/` nombre un archivo que ya no está —y
       acá se miran todos los guiones, no sólo los chequeos—. La única lista que
       nombra archivos de otro repositorio se mira al revés: los suyos no tienen
-      que aparecer nunca acá.
+      que aparecer nunca acá. Qué clave nombra un archivo sale del proyecto:
+      las extensiones que hay y las carpetas que hay. Medido el 16 de
+      septiembre de 2026, ahí adentro estaba la ceguera: la forma se escribía
+      a mano con ocho extensiones de las trece que el proyecto tiene, y pedía
+      que la clave terminara en una de ellas o en barra —con lo cual **la
+      clave que nombra una pantalla, que la regla 2 obliga a escribir sin
+      extensión, no tenía forma de archivo y esta regla no miró nunca ni una
+      sola**—. Así quedó `PANTALLAS_QUE_SE_VAN`, en `verificar_estados.mjs`,
+      eximiendo una pantalla que se había ido.
    4. Que ninguna exención nombre una columna que ya no está declarada en las
       migraciones, que es la misma enfermedad un escalón más adentro.
    5. Que la tabla `| Chequeo | Qué impide que vuelva |` del README nombre a
@@ -125,7 +133,7 @@
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 import {
   seRevisaron, hayArchivos, archivos, carpetasDelProyecto, ARMAN_SU_PROPIO_CORPUS,
   EXTENSIONES_DE_PANTALLA
@@ -221,9 +229,26 @@ export function clavesConLaExtension(texto) {
    se pueden vaciar sin la base de esta máquina —`probar_exenciones.mjs` corre
    la dueña de cada una y exige que se ponga roja—, y ésta no necesita nada.
 
-   Se miran sólo las claves que traen extensión o barra: las otras nombran una
-   tabla, una columna, una función o un color, y ahí no hay archivo que
-   encontrar.
+   Qué es tener forma de archivo sale del proyecto y no de una lista escrita
+   acá. La que había nombraba ocho extensiones y pedía que la clave terminara en
+   una de ellas o en barra, y de ahí salieron dos cegueras: el proyecto escribe
+   trece extensiones —una clave que nombrara un `.jsx`, un `.ts`, un `.svg` o un
+   `.toml` perdido se salteaba entera—, y **la regla de más arriba, en este
+   mismo archivo, obliga a que la clave que nombra una pantalla se escriba sin
+   extensión**: escrita como este chequeo manda, no tenía forma de archivo y no
+   la miraba nadie. Así quedó `PANTALLAS_QUE_SE_VAN`, en
+   `scripts/verificar_estados.mjs`, eximiendo una pantalla que ya no está.
+
+   Entonces: una clave nombra un archivo cuando trae una extensión de las que el
+   proyecto tiene, o cuando su primer tramo es una carpeta del proyecto, o
+   cuando termina en barra. Y si alguna clave de un mapa nombra un archivo, las
+   demás de ese mapa también —una lista de exenciones no mezcla clases—, que es
+   lo único que alcanza a la clave sin extensión ni carpeta.
+
+   Una clave que empieza con barra queda afuera: no nombra un archivo sino una
+   dirección del sitio, y de ésas se ocupa `verificar_rutas.mjs`. Las que no son
+   ni una cosa ni la otra nombran una tabla, una columna, una función o un
+   color, y ahí no hay archivo que encontrar.
 
    Y antes de mirarla se le saca el renglón, porque acá se cita
    `archivo.sql:160` y `archivo.mjs:12-20`. Sin sacárselo, esa clave no termina
@@ -233,7 +258,29 @@ export function clavesConLaExtension(texto) {
    llevó. Encontrado el 8 de septiembre de 2026, y es la forma exacta de la
    enfermedad que este archivo persigue: la regla estaba escrita, el resumen la
    anunciaba, y no miraba. */
-const CON_PINTA_DE_ARCHIVO = /(\/|\.(mjs|js|html|css|md|sql|json|webmanifest))$/;
+const raizDelProyecto = join(aca, '..');
+const EXTENSIONES_QUE_HAY = new Set(archivos(raizDelProyecto, [''])
+  .map((camino) => {
+    const nombre = basename(camino);
+    const punto = nombre.lastIndexOf('.');
+    return punto > 0 ? nombre.slice(punto) : '';
+  })
+  .filter(Boolean));
+const CARPETAS_QUE_HAY = carpetasDelProyecto(raizDelProyecto);
+
+const traeExtension = (clave) => {
+  const punto = clave.lastIndexOf('.');
+  return punto > 0 && EXTENSIONES_QUE_HAY.has(clave.slice(punto));
+};
+const empiezaEnUnaCarpeta = (clave) =>
+  clave.includes('/') && CARPETAS_QUE_HAY.has(clave.slice(0, clave.indexOf('/')));
+
+/** ¿Esta clave, suelta, nombra un archivo? */
+const nombraUnArchivo = (clave) => !clave.startsWith('/')
+  && (clave.endsWith('/') || traeExtension(clave) || empiezaEnUnaCarpeta(clave));
+
+/** ¿Las claves de este mapa nombran archivos? Alcanza con que una lo haga. */
+const mapaDeArchivos = (claves) => claves.some((c) => nombraUnArchivo(SIN_RENGLON(c)));
 const SIN_RENGLON = (clave) => clave.replace(/(?::\d+)+(?:-\d+)?$/, '');
 const MAPA_CON_NOMBRE = /const ([A-Z][A-Z0-9_]*) = new Map\(\[\r?\n([\s\S]*?)^\]\);/gm;
 
@@ -256,16 +303,17 @@ export function exencionesQueMienten(archivo, texto, existe) {
   const mentiras = [];
   for (const mapa of sinComentarios(texto).matchAll(MAPA_CON_NOMBRE)) {
     const noTieneQueEstar = NO_TIENEN_QUE_ESTAR.has(archivo + ' ' + mapa[1]);
-    for (const clave of mapa[2].matchAll(CLAVE)) {
-      const ruta = SIN_RENGLON(clave[1]);
-      if (!CON_PINTA_DE_ARCHIVO.test(ruta)) continue;
+    const claves = [...mapa[2].matchAll(CLAVE)].map((c) => c[1]);
+    if (!mapaDeArchivos(claves)) continue;
+    for (const clave of claves) {
+      const ruta = SIN_RENGLON(clave);
       const esta = existe(ruta);
       if (!noTieneQueEstar && !esta) {
-        mentiras.push({ lista: mapa[1], clave: clave[1], porque: 'ese archivo no est\u00e1' });
+        mentiras.push({ lista: mapa[1], clave, porque: 'ese archivo no est\u00e1' });
       }
       if (noTieneQueEstar && esta) {
         mentiras.push({
-          lista: mapa[1], clave: clave[1],
+          lista: mapa[1], clave,
           porque: 'la exenci\u00f3n dice que no tiene que estar y el archivo est\u00e1 ac\u00e1'
         });
       }
@@ -286,22 +334,23 @@ export function exencionesQueMienten(archivo, texto, existe) {
    que es donde vive la lectura de las migraciones. Una segunda copia de esa
    lectura se despega de la primera el día uno.
 
-   Se miran sólo las claves con forma `algo.algo` que no terminen en extensión
-   de archivo: `verificar_todo.mjs` tiene un punto y no es ninguna columna. */
+   Se miran sólo las claves con forma `algo.algo` de las listas que no nombran
+   archivos: `verificar_todo.mjs` tiene un punto y no es ninguna columna. */
 const CON_PINTA_DE_COLUMNA = /^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$/;
 
 /** Las claves de exención de este texto que nombran una columna que no está. */
 export function clavesSinSuColumna(texto, columnas) {
   const perdidas = [];
   for (const mapa of sinComentarios(texto).matchAll(MAPA_CON_NOMBRE)) {
-    for (const clave of mapa[2].matchAll(CLAVE)) {
-      if (CON_PINTA_DE_ARCHIVO.test(SIN_RENGLON(clave[1]))) continue;
-      if (!CON_PINTA_DE_COLUMNA.test(clave[1])) continue;
-      const [tabla, columna] = clave[1].split('.');
+    const claves = [...mapa[2].matchAll(CLAVE)].map((c) => c[1]);
+    if (mapaDeArchivos(claves)) continue;
+    for (const clave of claves) {
+      if (!CON_PINTA_DE_COLUMNA.test(clave)) continue;
+      const [tabla, columna] = clave.split('.');
       const suyas = columnas.get(tabla);
-      if (!suyas) perdidas.push({ lista: mapa[1], clave: clave[1], porque: 'esa tabla no est\u00e1' });
+      if (!suyas) perdidas.push({ lista: mapa[1], clave, porque: 'esa tabla no est\u00e1' });
       else if (!suyas.has(columna)) {
-        perdidas.push({ lista: mapa[1], clave: clave[1], porque: 'esa columna no est\u00e1' });
+        perdidas.push({ lista: mapa[1], clave, porque: 'esa columna no est\u00e1' });
       }
     }
   }
@@ -616,6 +665,32 @@ if (mienten('citas.mjs', conMapa('AJENOS', 'verificar_todo.mjs')).length === 0) 
   fallas.push('Dio por buena una exención que dice «vive afuera» sobre un archivo de acá.');
 }
 
+/* Y las tres formas que la puerta angosta de adelante no reconocía. La clave
+   que nombra una pantalla se escribe **sin extensión** —lo manda la regla de
+   más arriba en este mismo archivo—, así que suelta no tiene forma de archivo:
+   se la da la lista, porque una lista de exenciones no mezcla clases. Y al
+   revés: una lista de direcciones del sitio o de opciones de un vocabulario no
+   nombra archivos y no se toca. Sin estas tres pruebas la regla vuelve a no
+   mirar ni una sola exención de pantalla, que es exactamente lo que pasó. */
+const conDosClaves = (lista, una, otra) => [
+  `const ${lista} = new Map([`,
+  `  ['${una}', 'el motivo'],`,
+  `  ['${otra}', 'el otro motivo']`,
+  ']);'
+].join('\n');
+
+if (mienten('probar_x.mjs',
+  conDosClaves('SE_VAN', 'verificar_todo.mjs', 'pantalla-suelta')).length === 0) {
+  fallas.push('Dio por buena una clave sin extensión, en una lista que nombra archivos.');
+}
+if (mienten('probar_x.mjs', conDosClaves('COMO_SE_LLAMA', '/acceso', '/perfil')).length > 0) {
+  fallas.push('Tomó por archivos a una lista de direcciones del sitio.');
+}
+if (mienten('probar_x.mjs',
+  conDosClaves('TRADUCCION', 'modalidad_contratacion/guardia_12', 'turno/noche')).length > 0) {
+  fallas.push('Tomó por archivos a una lista de opciones de un vocabulario.');
+}
+
 /* ── 8. Que reconozca la exención que perdió su columna ────────── */
 
 /* Un esquema de mentira, para que la prueba no dependa de qué columnas haya hoy
@@ -789,8 +864,24 @@ seRevisaron(revisados, 'un solo chequeo que no esté exento');
    pruebas de adentro traen exenciones escritas a propósito, y una nombra un
    archivo que no existe justamente para que haya algo que reconocer. */
 const YO = 'verificar_red.mjs';
+
+/* Y se busca tambi\u00e9n con la extensi\u00f3n puesta, porque la regla de m\u00e1s arriba en
+   este mismo archivo **obliga** a que la clave que nombra una pantalla se
+   escriba sin ella. Escrita como esa regla manda, el archivo existe y una
+   b\u00fasqueda literal contesta que no. */
 const existeElArchivo = (clave) =>
-  existsSync(join(aca, '..', clave)) || existsSync(join(aca, clave));
+  existsSync(join(aca, '..', clave)) || existsSync(join(aca, clave)) ||
+  EXTENSIONES_DE_PANTALLA.some((ext) =>
+    existsSync(join(aca, '..', clave + ext)) || existsSync(join(aca, clave + ext)));
+
+if (!existeElArchivo('web/src/pantallas/Perfil')) {
+  fallas.push(
+    'No encontró una pantalla nombrada sin extensión, que es como este mismo ' +
+    'archivo manda escribirla.');
+}
+if (existeElArchivo('web/src/pantallas/NoExisteNinguna')) {
+  fallas.push('Encontró una pantalla que no está.');
+}
 
 const guiones = readdirSync(aca).filter((n) => n.endsWith('.mjs') && n !== YO).sort();
 seRevisaron(guiones.length, 'ningún guión en `scripts/` cuyas exenciones mirar');

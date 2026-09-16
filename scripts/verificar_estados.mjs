@@ -92,19 +92,14 @@ const EXENTOS = new Map([]);
    Se informa siempre cuáles son y por qué, abajo de todo. Una exención callada
    se lee como «acá está todo bien», que es justo lo contrario de lo que dice. */
 const PANTALLAS_QUE_SE_VAN = new Map([
-  ['mockup-app',
-   'Es un modelo estético: una vez que sirvió de modelo, no vale nada. Lo dijo el '
-   + 'Desarrollador el 26 de agosto de 2026, y el pendiente 6 ya tiene escrito que '
-   + 'se borra —«Recién entonces se borran él y `mockup-app.html`»— apenas el chat, '
-   + 'que es la capacidad que todavía vive sólo acá, esté reescrito en las PWAs. El '
-   + 'alta de una Familia ya salió: la hace `registrar-familia.html` desde el 31 de '
-   + 'agosto de 2026. Hasta entonces se lo deja como está: sus puntos de carga se arreglan en '
-   + 'las pantallas que lo reemplacen, no acá.'],
   ['web/src/pantallas/MockupApp',
-   'Es el mismo modelo estético del renglón de arriba, pasado a pantalla del '
-   + 'programa. Mientras la página suelta siga publicada conviven las dos, y las '
-   + 'dos se van juntas el día que el chat esté reescrito en los programas del '
-   + 'teléfono. Se exime por el mismo motivo y no por uno propio.']
+   'Es un modelo estético pasado a pantalla del programa: una vez que sirvió de '
+   + 'modelo, no vale nada. Lo dijo el Desarrollador el 26 de agosto de 2026, y el '
+   + 'pendiente 6 ya tiene escrito que se borra apenas el chat, que es la capacidad '
+   + 'que todavía vive sólo acá, esté reescrito en los programas del teléfono. La '
+   + 'página suelta que lo acompañaba ya se fue. Hasta entonces se lo deja como '
+   + 'está: sus puntos de carga se arreglan en las pantallas que lo reemplacen, no '
+   + 'acá.']
 ]);
 
 /* La clave se escribe **sin la extensión**, y acá se le saca a lo que se

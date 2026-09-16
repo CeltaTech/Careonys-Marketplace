@@ -3758,8 +3758,8 @@ exención que ya no exime nada no es inofensiva: sigue salteando lo que nombra, 
 chequeo sobre eso y no queda rastro.
 
 Las dos reglas leían una sola forma de escribir una exención: un mapa, `const NOMBRE = new
-Map([…])` (`scripts/verificar_red.mjs:238`), y de ahí sólo miraban las claves que tienen pinta de
-archivo (`scripts/verificar_red.mjs:236`) o de columna (`scripts/verificar_red.mjs:291`). Pero
+Map([…])` (`scripts/verificar_red.mjs:285`), y de ahí sólo miraban las claves que tienen pinta de
+archivo (`scripts/verificar_red.mjs:236`) o de columna (`scripts/verificar_red.mjs:339`). Pero
 este proyecto escribe otra exención distinta diecisiete veces: `const AJENAS = […]`, la lista de
 carpetas que un chequeo declara no mirar. Es una lista suelta y no un mapa, y sus valores no
 tienen pinta de archivo ni de columna, así que se caía por las tres redes a la vez.
@@ -3775,7 +3775,7 @@ chequeo pudiera mirar: `scripts/verificar_arranque.mjs:53`,
 `scripts/citas.mjs`. Seis renglones perdonando a un fantasma.
 
 Qué se hizo: una tercera regla, `carpetasEximidasQueNoEstan()`
-(`scripts/verificar_red.mjs:368`), que lee la lista en sus tres formas —suelta, como conjunto y
+(`scripts/verificar_red.mjs:417`), que lee la lista en sus tres formas —suelta, como conjunto y
 exportada— sin mirar adentro de los comentarios. Contra qué se compara sale de
 `carpetasDelProyecto()` (`scripts/recorrido.mjs:317`), que recorre con la misma regla con la que
 se recorre todo: nombra la carpeta que existe aunque no se pueda entrar en ella —una caja fuerte
@@ -4048,7 +4048,7 @@ tabla tenía vocabulario, y hasta ahora ninguna de `tenants` lo tenía. Al empar
 la moneda por su nombre, el defecto se destapó solo.
 
 Quien lee columnas así no es sólo ese chequeo: `columnasDeclaradas()` la usan
-también la cuarta regla de `scripts/verificar_red.mjs:801` —la que se planta cuando
+también la cuarta regla de `scripts/verificar_red.mjs:892` —la que se planta cuando
 una exención nombra una columna que ya no existe— y la lectura de las claves
 primarias. Con una columna de menos, las tres contestaban de menos.
 
@@ -4428,6 +4428,42 @@ al corpus. Un detector perfecto sobre un corpus recortado no encuentra nada. Se
 agregó una cuarta que le exige al recorrido traer archivos de texto sin extensión
 de código (`scripts/verificar_pendientes.mjs:213`), comprobada angostando el corpus
 en una copia: se pone en rojo.
+
+### La regla que vigila las exenciones no miró nunca una exención de pantalla
+
+`scripts/verificar_red.mjs` tiene una regla para que ninguna exención de `scripts/` siga
+nombrando un archivo que ya no está: mientras el renglón esté escrito, ese chequeo no mira
+lo que ahí se nombra, así que una exención que quedó huérfana apaga un chequeo sobre algo y
+nadie se entera.
+
+Antes de mirar una clave, la regla decída si tenía forma de archivo, y esa forma estaba
+escrita a mano: ocho extensiones, o una barra al final. El proyecto escribe trece
+extensiones, así que una clave que nombrara un `.jsx`, un `.ts` o un `.svg` se salteaba
+entera. Y la segunda ceguera es la que importa: la regla de más arriba **en ese mismo
+archivo** obliga a que la clave que nombra una pantalla se escriba **sin extensión**
+(`scripts/verificar_red.mjs:279`). Escrita como ese archivo manda, la clave no tenía forma
+de archivo y la regla no la miraba. Las dos reglas se contradecían, y la que callaba decía
+✔.
+
+El daño estaba puesto: `PANTALLAS_QUE_SE_VAN`, en `scripts/verificar_estados.mjs:94`,
+eximiía a `mockup-app`, una página suelta que ya se fue del proyecto. Quedó sólo la pantalla
+del programa, y el renglón de la página se sacó.
+
+Ahora qué extensiones y qué carpetas hay lo contesta el proyecto, no una lista escrita
+acá. Una clave nombra un archivo cuando trae una extensión de las que hay, cuando su primer
+tramo es una carpeta del proyecto, o cuando termina en barra. La que empieza con barra queda
+afuera: nombra una dirección del sitio, y de ésas se ocupa `scripts/verificar_rutas.mjs`. Y
+la clave que no es ni una cosa ni la otra hereda la clase de su lista
+(`scripts/verificar_red.mjs:283`), porque una lista de exenciones no mezcla clases: es lo
+único que alcanza a la clave escrita sin extensión. La búsqueda del archivo se volvió
+tolerante a esa extensión que la otra regla manda sacar
+(`scripts/verificar_red.mjs:872`), con el motivo escrito al lado.
+
+Probado en los dos sentidos, con una exención muerta inventada adentro de
+`scripts/verificar_estados.mjs`: la copia vieja de la regla no la nombró ni una vez, y la
+nueva la nombra con su archivo y su lista. Al banco de pruebas entraron tres casos: la lista
+mezclada —un archivo y una clave sin extensión—, una lista de direcciones del sitio y una de
+opciones de un vocabulario; las dos últimas no se tienen que tocar.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
