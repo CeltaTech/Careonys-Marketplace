@@ -186,7 +186,7 @@ tiene las dos cosas, el Legajo validado y el Perfil publicado
 (`supabase/migrations/0001_base_del_esquema.sql:799`).
 Publicado, el Perfil **se ve sin iniciar sesión**, porque una Familia mira antes de
 registrarse; la pantalla del directorio les pide a los buscadores que no lo indexen
-(`web/src/pantallas/Directorio.jsx:146`). Lo que se muestra ahí es lo dicho en la §4.4, y nunca su documento, su
+(`web/src/pantallas/Directorio.jsx:136`). Lo que se muestra ahí es lo dicho en la §4.4, y nunca su documento, su
 teléfono, su correo ni su domicilio, marque lo que marque
 (`data/catalogo-autorizaciones.json:27`). Apagar la publicación lo saca del directorio.
 
@@ -340,7 +340,7 @@ correo de otra persona.
 
 **8.4. Edad mínima.** Para registrarse como Asistente hay que ser mayor de 18 años, y al
 aceptar estos términos usted lo declara. El sistema le pide la fecha de nacimiento al armar el
-Legajo (`web/src/pantallas/RegistrarAsistente/PasosDeDatos.jsx:78-79`) y la guarda, pero **hoy no hace por su cuenta ninguna
+Legajo (`web/src/pantallas/RegistrarAsistente/PasosDeDatos.jsx:79-80`) y la guarda, pero **hoy no hace por su cuenta ninguna
 comprobación de la edad**: la exigencia se sostiene en lo que usted declara y en el documento
 de identidad, que es la única verificación que frena el alta del Legajo
 (`data/catalogo-verificaciones.json:14-17`). Registrarse siendo menor de edad es motivo de

@@ -107,7 +107,12 @@ export function citasRotas(texto, leer, existe, esDeAfuera = () => false) {
 /* Una prueba que no puede fallar no prueba nada. */
 const FALSO = {
   'x.js': 'const a = 1;\nfunction f() {\n  return a;\n}\n',
-  'y.html': '<div>\n  <p>Hola</p>\n</div>\n'
+  'y.html': '<div>\n  <p>Hola</p>\n</div>\n',
+  /* Y una pantalla del sitio, que es lo que le faltaba al banco. Mientras todo
+     lo que probaba acá se llamaba `.js` y `.html`, el detector podía no
+     reconocer ninguna otra forma de archivo y este banco seguía en verde: las
+     preguntas se las hacía siempre en las dos formas que sí conocía. */
+  'p.jsx': 'const P = () => (\n  <div>\n    <span />\n  </div>\n);\n'
 };
 const leerFalso = (r) => FALSO[r];
 const existeFalso = (r) => Object.prototype.hasOwnProperty.call(FALSO, r);
@@ -119,14 +124,18 @@ const MAL = [
   ['renglón que es una etiqueta de cierre', 'Ver `y.html:3`.'],
   ['renglón en blanco', 'Ver `x.js:5`.'],
   ['un tramo con el final corrido', 'Ver `x.js:2-4`.'],
-  ['la forma corta, que hereda el archivo de la de al lado', 'Ver `x.js:1` y `:5`.']
+  ['la forma corta, que hereda el archivo de la de al lado', 'Ver `x.js:1` y `:5`.'],
+  ['una pantalla del sitio con el renglón fuera del archivo', 'Ver `p.jsx:99`.'],
+  ['una pantalla del sitio con una etiqueta de cierre', 'Ver `p.jsx:4`.']
 ];
 const BIEN = [
   ['una cita que apunta a algo', 'Ver `x.js:3`.'],
   ['un tramo entero con contenido', 'Ver `x.js:2-3`.'],
   ['una ruta sin renglón no es una cita', 'Ver `x.js` y `z.js`.'],
   ['un archivo ajeno declarado', 'Ver `supabase/migrations/20260820190000_el_canal_del_asistente_se_elige_y_se_respeta.sql:11`.'],
-  ['una ruta suelta, sin acentos invertidos', 'Ver x.js:99 en el texto corrido.']
+  ['una ruta suelta, sin acentos invertidos', 'Ver x.js:99 en el texto corrido.'],
+  ['una pantalla del sitio que apunta a algo', 'Ver `p.jsx:3`.'],
+  ['una foto no se cita por renglón', 'Ver `docs/pantallas/01-inicio.png:1`.']
 ];
 
 const noDetecta = MAL.filter(([, t]) => citasRotas(t, leerFalso, existeFalso).length === 0);

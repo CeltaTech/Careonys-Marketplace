@@ -81,7 +81,7 @@ vería pasar.
 
 **Cuatro: el navegador ni siquiera está mandando quién es.** `resolverLegajo`
 (`js/apiClient.js:548`) recibe tres cosas —el legajo, el estado nuevo y una nota— y **ninguna es
-quién lo ejecuta**. La pantalla sí lo sabe: `web/src/pantallas/PanelPrestadora.jsx:176` pide el perfil y lo usa para
+quién lo ejecuta**. La pantalla sí lo sabe: `web/src/pantallas/PanelPrestadora.jsx:169` pide el perfil y lo usa para
 el control de rol. Pero esa variable es local al arranque de la pantalla y nunca baja hasta la
 función. Lo único de la identidad que llega al servidor es el testigo de sesión en el encabezado
 (`js/apiClient.js:752`). O sea: **el servidor puede saber quién fue; el navegador no lo está

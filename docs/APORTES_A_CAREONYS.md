@@ -97,9 +97,8 @@ migraciones, no supuesto:
   existen como catálogo: la complejidad es un `check ('I','II','III')` (`:2433`) y la condición
   fiscal otro `check`, con su constante espejo en
   `careonys/panel/src/lib/conceptosLiquidacion.js:30`.
-- **Otras listas viven adentro de un componente**: `EditarPacienteModal.jsx:57-61`,
-  `careonys/panel/src/pages/asistentes/AusenciasCoberturaTab.jsx:14`, `MatriculasTab.jsx:51` en esa
-  misma carpeta, `careonys/panel/src/pages/configuracion/ElCuidado.jsx:28`,
+- **Otras listas viven adentro de un componente**: `careonys/panel/src/pages/familias/EditarPacienteModal.jsx:57-61`,
+  `careonys/panel/src/pages/asistentes/AusenciasCoberturaTab.jsx:14`, `careonys/panel/src/pages/asistentes/MatriculasTab.jsx:51`, `careonys/panel/src/pages/configuracion/ElCuidado.jsx:28`,
   `careonys/panel/src/lib/modalidades.js:41-47`, y
   `careonys/backend/src/utils/catalogoVisibilidad.js:41` con su gemelo
   `careonys/backend/src/utils/catalogoAvisos.js:43`
@@ -123,9 +122,9 @@ migraciones, no supuesto:
   existe ninguna clave `tarea_*` en `translations.js`— así que
   `careonys/panel/src/pages/configuracion/TiposAsistenteTab.jsx:362` imprime la clave cruda en
   pantalla.
-- **Pantallas donde una Prestadora carga lo suyo hay tres**: `TiposAsistenteTab.jsx:406`,
+- **Pantallas donde una Prestadora carga lo suyo hay tres**: `careonys/panel/src/pages/configuracion/TiposAsistenteTab.jsx:406`,
   `careonys/panel/src/pages/configuracion/Asistentes.jsx:105` y `:155` (con su ruta en
-  `careonys/backend/src/routes/panelConfiguracion.js:596`) y `ElCuidado.jsx:273`. **Ninguna para patologías,
+  `careonys/backend/src/routes/panelConfiguracion.js:596`) y `careonys/panel/src/pages/configuracion/ElCuidado.jsx:273`. **Ninguna para patologías,
   certificaciones, cursos, géneros, niveles educativos ni modalidades.** Este producto ya tiene la suya, y es una sola
   para todas las listas: `web/src/pantallas/panel-prestadora/OpcionesPropias.jsx:51`, contra `vocabulario_items`. Careonys las tiene
   repartidas en tres pantallas y le faltan seis listas; acá el bloque es uno y sirve para
@@ -184,7 +183,7 @@ Cinco tablas, dos vistas y una función, todo en `supabase/migrations/0001_base_
   el porcentaje.
 
 Las pantallas son `web/src/pantallas/Examen.jsx`, `web/src/pantallas/Cursos.jsx` y la de capacitaciones del programa del Asistente
-(`pwa-asistente/src/pantallas/Capacitaciones.jsx:117`). El acceso desde el código está en `js/apiClient.js:831` y `:875`.
+(`pwa-asistente/src/pantallas/Capacitaciones.jsx:132`). El acceso desde el código está en `js/apiClient.js:831` y `:875`.
 
 Y el resultado no se queda ahí: el directorio suma la comprobación de curso aprobado cuando existe
 un intento aprobado (`supabase/migrations/0001_base_del_esquema.sql:773`).
@@ -235,7 +234,7 @@ de siempre: la general que trae el producto y la propia de cada Prestadora, que 
 - `guias_de` (`:1272`), abierta a quien no inició sesión (`:5514`), que devuelve sólo las
   publicadas y deja que la propia pise a la general.
 
-Se leen en la pantalla de guías del programa del Asistente (`pwa-asistente/src/pantallas/Guias.jsx:56`) y se
+Se leen en la pantalla de guías del programa del Asistente (`pwa-asistente/src/pantallas/Guias.jsx:62`) y se
 escriben en `web/src/pantallas/GuiasPrestadora.jsx`. Y hay un camino para el teléfono sin señal:
 `scripts/generar_guias.mjs` deja el archivo que la aplicación guarda.
 

@@ -14,7 +14,7 @@
 
 | Módulo | Estado |
 |---|---|
-| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `web/src/pantallas/Acceso.jsx` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `web/src/pantallas/PanelPrestadora.jsx:77` pone la guardia de sesión (`web/src/datos/useSesionRequerida.js:29`) y además comprueba el rol (`web/src/pantallas/PanelPrestadora.jsx:179`). Las políticas de `profiles` y de `caregivers` ponen el límite en la base, del lado que no se puede falsificar (`supabase/migrations/0001_base_del_esquema.sql:4953` y `:4890`). Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs`. **El alta de Asistente exige confirmar el correo, y se queda así**: decidido por el Desarrollador el 2026-08-26 (pendiente 21 cerrado) — el alta es de dos pasos, pero nadie puede darse de alta con el correo de otra persona; `supabase/config.toml` tiene `mailer_autoconfirm: false` |
+| Autenticación con Supabase Auth | Funciona, y **el acceso lo decide la sesión**. `web/src/pantallas/Acceso.jsx` es la pantalla de inicio de sesión y manda a cada rol donde le toca; `web/src/pantallas/PanelPrestadora.jsx:70` pone la guardia de sesión (`web/src/datos/useSesionRequerida.js:29`) y además comprueba el rol (`web/src/pantallas/PanelPrestadora.jsx:172`). Las políticas de `profiles` y de `caregivers` ponen el límite en la base, del lado que no se puede falsificar (`supabase/migrations/0001_base_del_esquema.sql:4953` y `:4890`). Probado con dos Prestadoras: `scripts/probar_aislamiento.mjs`. **El alta de Asistente exige confirmar el correo, y se queda así**: decidido por el Desarrollador el 2026-08-26 (pendiente 21 cerrado) — el alta es de dos pasos, pero nadie puede darse de alta con el correo de otra persona; `supabase/config.toml` tiene `mailer_autoconfirm: false` |
 | Directorio de Asistentes con filtros | Maquetado y navegable |
 | Perfil del Asistente | Maquetado |
 | Portal de registro de Asistentes | Maquetado, con el legajo funcionando: `registrar-asistente.html` guarda las cuatro fichas repetibles y el consentimiento de publicación en sus tablas —`matriculas_asistente`, `estudios_asistente`, `experiencia_laboral_asistente`, `referencias_asistente` y `autorizaciones_asistente`—, y la disponibilidad horaria en `disponibilidad_asistente` y `franjas_asistente` |
@@ -210,14 +210,14 @@ se metía adentro del marcado ahora pasan por `Texto.escapar`, en seis archivos:
   proyecto quien lee suele ser el personal de la Prestadora, o sea justo quien tiene los permisos,
   o una familia mirando los reportes de cuidado.
 - **Los dos peores casos** no estaban donde decía el pendiente. Uno era el mensaje de chat de
-  `web/src/pantallas/MockupApp.jsx:952`, que lo escribe una persona y lo lee otra. El otro era
+  `web/src/pantallas/MockupApp.jsx:938`, que lo escribe una persona y lo lee otra. El otro era
   `panel-prestadora.html`, la pantalla que el pendiente daba por arreglada: tenía el renglón de la
   tabla de Asistentes entero sin escapar —nombre, documento, teléfono, profesión y zona— y el
   único `onclick` escrito en el marcado de todo el proyecto.
 - **Escapar no alcanzaba ahí, y por eso se sacó el `onclick`.** Adentro de un atributo el
   navegador deshace el escapado antes de leer el contenido como código, así que un `&#39;` vuelve
   a ser una comilla y cierra la cadena igual. El identificador ahora viaja adentro del
-  manejador que arma el propio programa (`web/src/pantallas/PanelPrestadora.jsx:409`), que nunca vuelve a leer texto como programa.
+  manejador que arma el propio programa (`web/src/pantallas/PanelPrestadora.jsx:363`), que nunca vuelve a leer texto como programa.
 - **Un solo punto de verdad**, como pide «ningún patrón repetido sin punto único de verdad»: `js/texto.js` (77 renglones) tiene
   `Texto.escapar` y `Texto.mensajeDeError`, y lo cargan las catorce pantallas. Antes de esto el
   único archivo que cargaban todas era `js/identidad.js`; ahora son dos. La copia local de
@@ -331,7 +331,7 @@ Cerró la parte del pendiente 20 que dependía del código, el 24 de agosto de 2
   `caregivers.profession` y las claves `domiciliaria`, `enfermera`, `auxiliar` y `at`. Esas
   palabras no eran filas: eran los `<option>` y los `data-` de `directorio.html`. Se verificó
   además que ninguna pantalla escribe hoy una clave inventada en esa columna —ese día lo tomaban
-  del catálogo `web/src/pantallas/RegistrarAsistente/PasosDeDatos.jsx:124` y `fuera de uso/formulario-integral.html:354`; desde el 9 de
+  del catálogo `web/src/pantallas/RegistrarAsistente/PasosDeDatos.jsx:125` y `fuera de uso/formulario-integral.html:354`; desde el 9 de
   septiembre de 2026 la segunda salió de uso y queda sólo la primera—, y de la
   base misma no se puede afirmar nada desde acá, porque `caregivers` no se deja leer sin sesión.
 - **Los cuatro filtros salen del catálogo** (`web/src/pantallas/Directorio.jsx:298`): zona, Tipo de Asistente,
@@ -543,8 +543,8 @@ Cierra el pendiente 38, el 24 de agosto de 2026.
 Ya no queda ninguna contraseña de mentira en pantalla. La de acceso venía prellenada con seis
 dígitos para poder mostrar el producto sin tipear, y el correo que la acompañaba tampoco
 correspondía a ninguna cuenta. Los cuatro campos se vaciaron el 25 de agosto de 2026 y arrancan
-con su indicación adentro (`pwa-asistente/src/pantallas/Acceso.jsx:69` y `:72`,
-`pwa-familia/src/pantallas/Intro.jsx:68` y `:72`). Lo que falta para cerrar el pendiente 47 es la otra mitad:
+con su indicación adentro (`pwa-asistente/src/pantallas/Acceso.jsx:70` y `:73`,
+`pwa-familia/src/pantallas/Intro.jsx:57` y `:61`). Lo que falta para cerrar el pendiente 47 es la otra mitad:
 que exista una cuenta de Asistente ficticia con la que se pueda entrar, y eso depende del tope de
 correos del pendiente 45.
 
@@ -762,7 +762,7 @@ tenía el paso que la crea. Ahora manda lo mismo que el portal.
   que esa fila no entraba y la persona no se enteraba.
 - **Y el alta del teléfono creaba cuentas sin dueño.** `registrarAspirante` no escribía `user_id`,
   así que la persona quedaba con cuenta y con legajo, pero el legajo no era de nadie y no lo podía
-  abrir. Se agrega en `guardarLegajo` (`pwa-asistente/src/pantallas/Legajo.jsx:210`), que es donde ya se sabe
+  abrir. Se agrega en `guardarLegajo` (`pwa-asistente/src/pantallas/Legajo.jsx:217`), que es donde ya se sabe
   quién inició sesión.
 
 **Cómo se comprobó, el 25 de agosto de 2026.** En dos mitades, porque el servidor alojado todavía
@@ -905,7 +905,7 @@ Prestadora **y** además autorizó que se lo publique.
   publicadas, repartidas entre las dos Prestadoras ficticias. Pidiendo desde el enlace de PresDemo
   el identificador de una persona de la otra Prestadora, la pantalla no la muestra: queda vacía. Sin
   ese filtro aparecería, que es exactamente la falla que se estaba buscando.
-- **Los cuatro estados están** (`web/src/pantallas/Perfil.jsx:265`, `:272`, `:293` y `:303`): cargando, error con
+- **Los cuatro estados están** (`web/src/pantallas/Perfil.jsx:275`, `:282`, `:303` y `:313`): cargando, error con
   «Reintentar», vacío —«Este perfil no está disponible», con el porqué y la vuelta al directorio— y
   listo. Los cuatro se probaron contra el servidor de verdad, el de error cortándole la dirección al
   cliente de datos.
@@ -922,7 +922,7 @@ uno por uno con `grep` antes de borrarlos.
 no hacía falta preguntar: el consentimiento que la persona firma ya dice que sólo las Familias
 registradas pueden comunicarse con ella, y que lo hacen por la plataforma
 (`data/catalogo-autorizaciones.json`, `perfil_publicado`). En su lugar la pantalla explica eso mismo
-(`web/src/pantallas/Perfil.jsx:411`) y ofrece las dos puertas que sí existen: entrar como Familia y publicar un aviso.
+(`web/src/pantallas/Perfil.jsx:421`) y ofrece las dos puertas que sí existen: entrar como Familia y publicar un aviso.
 Lo que falta —empezar una conversación con esa persona en particular— quedó anotado como pendiente 46.
 
 **Tres traducciones que estaban por escribirse dos veces subieron a los archivos compartidos**
@@ -1477,7 +1477,7 @@ Cierra el pendiente 2, el 24 de agosto de 2026. Eran dos cosas y las dos están 
 - **La pantalla dejó de tener ocho personas escritas adentro.** `directorio.html` tenía 377
   renglones de tarjetas a mano, con nombres, puntajes, estrellas, un «98% Match» y cuatro
   insignias de verificación, ninguno de los cuales salía de ningún lado. Ahora hay un molde
-  —hoy la tarjeta que arma `web/src/pantallas/Directorio.jsx:360`— y el contenido llega de
+  —hoy la tarjeta que arma `web/src/pantallas/Directorio.jsx:349`— y el contenido llega de
   `directorio`. El archivo pasó de 534 renglones a 342.
 - **Todo lo inventado se fue con las tarjetas.** No hay sistema de puntaje, no hay estrellas y no
   hay porcentaje de coincidencia, así que no se muestran. Lo que queda es lo que el consentimiento
@@ -1594,13 +1594,13 @@ pantalla vacía.
 
 **El daño no era igual en las cuatro pantallas, y conviene decirlo así en vez de dejarlo parejo.**
 
-- **Una sola quedaba muda de verdad.** En `web/src/pantallas/PanelPrestadora.jsx:191`, una tabla sin legajos se ve
+- **Una sola quedaba muda de verdad.** En `web/src/pantallas/PanelPrestadora.jsx:184`, una tabla sin legajos se ve
   igual esté rota o esté bien: es idéntica a la de una Prestadora que todavía no cargó ninguno.
   Ahora el fallo escribe en la propia tabla «No se pudo preparar la pantalla. Conviene volver a
   cargarla», que es el estado de error que faltaba.
 - **Las otras tres caen en la pantalla de acceso**, y eso ya era la verdad: sin sesión rescatada,
   lo que corresponde mostrar es el acceso. Lo que se perdía era el rastro. Ahora
-  `web/src/pantallas/MockupApp.jsx:159` y `:176`, `pwa-asistente/src/Programa.jsx:125` y `pwa-familia/src/Programa.jsx:151`
+  `web/src/pantallas/MockupApp.jsx:159` y `:177`, `pwa-asistente/src/Programa.jsx:125` y `pwa-familia/src/Programa.jsx:151`
   dejan el detalle técnico en la consola en lugar de tirarlo.
 - **`js/auth.js:408` no avisa en pantalla, y es a propósito.** Corre en las once pantallas que
   cargan ese archivo —no en las dieciséis, y el comentario decía catorce hasta que se contaron—, y su
@@ -1823,7 +1823,7 @@ el servidor.
 para decir una sola cosa: `validado` y `validado_prestadora`. Lo que significa ya estaba escrito
 cuando se creó la columna —«Validado quiere decir "la Prestadora revisó los papeles"»—, y es lo que
 dice `validado_prestadora` con todas las letras. Los dos pasaban en todos lados, y **el corto no lo
-escribía nadie**: el único lugar que asigna un estado validado es `web/src/pantallas/panel-prestadora/ModalAuditoria.jsx:187`, y
+escribía nadie**: el único lugar que asigna un estado validado es `web/src/pantallas/panel-prestadora/ModalAuditoria.jsx:192`, y
 pone el largo. El corto sólo aparecía leído, y en una fila de ejemplo.
 
 La corrección lo saca: pasó las filas que decían `validado` a decir `validado_prestadora`, y el
@@ -1929,7 +1929,7 @@ Las ocho copias se retiraron con las páginas que las llevaban.
 
 **«Toda operación destructiva se confirma» se midió en el mismo rato y salió todavía más
 corta.** La regla pide confirmación explícita ante cada una, y la medición encontró que en este proyecto hay exactamente una:
-rechazar un legajo (`web/src/pantallas/panel-prestadora/ModalAuditoria.jsx:78`). No hay un solo `delete` contra la base en las
+rechazar un legajo (`web/src/pantallas/panel-prestadora/ModalAuditoria.jsx:86`). No hay un solo `delete` contra la base en las
 cuarenta y cuatro pantallas y guiones —lo único que se parece son dos `delete` de JavaScript sobre
 un objeto en memoria, `js/apiClient.js:506` y `js/apiClient.js:617`, que no tocan nada guardado—, y
 salir de la sesión no
@@ -2585,7 +2585,7 @@ sale de `scripts/verificar_copias.mjs`, que pasó a exportarla para no tener dos
 **La prueba de que el chequeo mira.** Se corrió **antes** de arreglar nada, y encontró las 35
 citas falsas, que es lo que pedía la condición de cierre. Después, con la lista ya calculada y
 el chequeo en verde, se metió un renglón vacío arriba del `data-catalogo="patologia"` del
-directorio de entonces —hoy ese filtro es `web/src/pantallas/Directorio.jsx:309`—, o sea, se
+directorio de entonces —hoy ese filtro es `web/src/pantallas/Directorio.jsx:298`—, o sea, se
 corrió todo lo de abajo un renglón. El chequeo se puso rojo y nombró los cinco vocabularios
 afectados, diciendo de cada uno el renglón viejo y el nuevo. Se restauró el archivo y volvió al
 verde. Un chequeo que no se prueba así puede estar mirando cero archivos y decir que sí.
@@ -4309,7 +4309,7 @@ servidor. Meterla adentro no taparía ningún agujero, pondría en rojo lo que l
 
 **La deriva de las citas.** `scripts/verificar_deriva.mjs` decía «Ninguno exento» en su encabezado
 y «sin ninguno exento» en su renglón verde. Hay una carpeta afuera desde siempre, declarada en
-`scripts/citas.mjs:114` con su motivo: la de los cambios de la base, porque un cambio aplicado no
+`scripts/citas.mjs:131` con su motivo: la de los cambios de la base, porque un cambio aplicado no
 se edita jamás y exigirle a una cita suya que se arregle sería pedir justo lo que la regla de la
 base prohíbe. El hermano ya lo decía en su renglón verde y éste no. Ahora lo dicen los dos, y el
 número sale de la lista misma.
@@ -4839,6 +4839,44 @@ con comilla común, y el renglón verde dice los mismos quince que antes. Falsif
 en los dos sentidos, y el banco de pruebas del lector —que probaba una sola de las
 tres maneras— ahora prueba las tres y la nota adentro de la lista.
 
+### Las nueve formas de archivo que podía tener una cita
+
+Los dos chequeos que vigilan las citas —uno pregunta si la cita apunta a algo y
+el otro si apunta a lo que dice— comparten un solo archivo que decide qué es una
+cita. Ahí, la forma de una cita traía escritas a mano nueve formas de archivo
+(`scripts/citas.mjs:38`). La de las pantallas del sitio no estaba entre las
+nueve, y es la que el producto usa para escribir sus pantallas desde que se pasó
+al armado actual.
+
+Lo que no casaba con esa forma no era una cita mal escrita: no era una cita, y
+no la leía nadie. Medido contra el proyecto sin tocar, ciento cincuenta y dos
+citas de verdad eran invisibles para los dos chequeos, mientras los dos
+terminaban en verde diciendo que revisaban los doscientos setenta archivos del
+proyecto sin ninguno exento. De esas ciento cincuenta y dos, treinta y una ya
+estaban rotas —apuntaban a renglones en blanco, a etiquetas de cierre y a
+archivos más cortos que el número citado— y sesenta y una más se habían corrido
+de renglón. Dos de las rotas estaban en `docs/PENDIENTES.md`, escritas al anotar
+el inventario del pendiente 153, y ningún chequeo las vio nacer.
+
+Lo llamativo es que la lección ya estaba aprendida en ese mismo archivo, tres
+renglones más arriba: el encabezado cuenta con todas las letras que ahí no hay
+lista de formas de archivo, y es cierto para decidir dónde se buscan las citas.
+Quedó sin aplicar para decidir qué se acepta como archivo citado. Y la respuesta
+compartida ya estaba importada y sin usar para esta pregunta.
+
+Ahora la forma acepta cualquier extensión y después pregunta si ese archivo se
+puede leer buscando palabras adentro (`scripts/recorrido.mjs:113`), que es la
+misma pregunta con la que ya se armaba el corpus: una foto de una pantalla no se
+cita por renglón. El chequeo que pregunta si la cita apunta a algo pasó de
+setecientas treinta y dos citas verificadas a novecientas dos, y el que pregunta
+si apunta a lo que dice, de seiscientos noventa y cuatro renglones
+reconstruidos a setecientos cincuenta. Las corridas se arreglaron solas y las
+rotas a mano, una por una, leyendo el código de verdad.
+
+Y el banco de pruebas, que le preguntaba siempre con las dos formas de archivo
+que el detector sí conocía, sumó una pantalla de mentira y una foto. Falsificado
+en los dos sentidos: con la forma vieja puesta de nuevo, el banco se rompe.
+
 ### La sexta copia del mismo recorrido, en otro chequeo
 
 El chequeo que vigila que ningún dato entre sin convertir en el marcado, y que
@@ -5180,10 +5218,10 @@ aparecía en ningún filtro del directorio.
 hoja se siga abriendo sola desde la cuarentena, y las originales quedaron donde estaban.
 
 **Lo que la reemplaza.** Los 21 enlaces «Publicar un Aviso» de ocho pantallas del portal y de la
-maqueta —y el reenvío de `web/src/pantallas/MockupApp.jsx:688`— apuntan ahora al alta de
+maqueta —y el reenvío de `web/src/pantallas/MockupApp.jsx:680`— apuntan ahora al alta de
 Familia, que a quien ya tiene sesión lo manda derecho adonde le toca
-(`web/src/pantallas/RegistrarFamilia.jsx:105-108`); a una Familia, a la aplicación de la
-Familia, donde `#form-nuevo-aviso` (`pwa-familia/src/pantallas/Publicar.jsx:136`) sí publica de
+(`web/src/pantallas/RegistrarFamilia.jsx:102-105`); a una Familia, a la aplicación de la
+Familia, donde `#form-nuevo-aviso` (`pwa-familia/src/pantallas/Publicar.jsx:140`) sí publica de
 verdad: pregunta nombre del Paciente, edad, zona, modalidad, franjas, patologías y descripción.
 
 **Lo que no se resolvió y queda para el Desarrollador.** De lo que el asistente preguntaba,
@@ -5218,7 +5256,7 @@ apareció cuatro veces y se vio que era del mecanismo y no de la pantalla.
 **Uno: el `value` de un redondel no es texto visible, y se estaba contando como tal.**
 `scripts/texto_visible.mjs` leía todos los `value` por igual. Pero el de un redondel, un
 casillero, un campo escondido o una opción de lista **no se lee en la pantalla**: es el dato que
-viaja al servidor, y `web/src/formularios/FormularioDeConsulta.jsx:88` lo compara letra por letra.
+viaja al servidor, y `web/src/formularios/FormularioDeConsulta.jsx:91` lo compara letra por letra.
 Traducirlo rompía el sí/no de novedades en los tres idiomas a la vez, en las cuatro pantallas.
 Ahora lo saca `sinValoresGuardados()` (`scripts/texto_visible.mjs:44`), que deja adentro el
 `value` de un botón porque ése sí se lee, y tiene una prueba de seis casos donde dos tienen que
@@ -5320,7 +5358,7 @@ título escrito a mano cuando el campo viene vacío. El título resultó ser de 
 
 **Dos navegadores de pasos escuchaban el mismo botón.** `registrar-asistente.html` tiene el suyo,
 escrito adentro de la pantalla, que **valida el paso antes de dejar pasar al siguiente**
-(`web/src/pantallas/RegistrarAsistente.jsx:322`). Y `js/main.js` traía otro, el del asistente por pasos de
+(`web/src/pantallas/RegistrarAsistente.jsx:329`). Y `js/main.js` traía otro, el del asistente por pasos de
 `formulario-integral.html`, que se enganchaba a `.btn-next-step` en cualquier pantalla que
 cargara el archivo —y `registrar-asistente.html` lo carga— **sin validar nada**. Los dos corrían
 en cada clic, en ese orden, así que el segundo deshacía lo que el primero acababa de decidir.
@@ -5329,7 +5367,7 @@ en cada clic, en ese orden, así que el segundo deshacía lo que el primero acab
 del paso 1 vacíos, la pantalla decía «Faltan completar campos o archivos obligatorios» **y pasaba
 al paso 2 lo mismo**. Los siete pasos quedaban así: la validación existía, se ejecutaba, avisaba,
 y no servía para nada. Lo único que la salvaba era el envío final, que revalida los siete
-(`web/src/pantallas/RegistrarAsistente.jsx:481`), así que a la base nunca llegó un alta incompleta —pero quien
+(`web/src/pantallas/RegistrarAsistente.jsx:488`), así que a la base nunca llegó un alta incompleta —pero quien
 se anotaba se enteraba de lo que le faltaba recién al final, después de siete pasos.
 
 **El arreglo de ese día fue pedir por la pantalla propia antes de enganchar nada.** Ese bloque de
@@ -5341,7 +5379,7 @@ el paso 1 vacío avisa y **no** avanza; con el paso 1 completo avanza y no avisa
 
 **El 9 de septiembre de 2026 el bloque se fue del todo**, porque la hoja de muestra que lo
 despertaba salió de uso y `wizard-care-search-form` no existe en ninguna otra pantalla. El que
-publica un aviso de verdad es `#form-nuevo-aviso` (`pwa-familia/src/pantallas/Publicar.jsx:136`).
+publica un aviso de verdad es `#form-nuevo-aviso` (`pwa-familia/src/pantallas/Publicar.jsx:140`).
 La precaución del 26 de agosto no se borró por sobrar: se cumplió, y dejó el bloque
 apagado desde el día en que la pantalla se apartó.
 
@@ -5465,7 +5503,7 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
   con su motivo en `scripts/verificar_esquema.mjs:476`, que es donde viven las funciones que llegan
   al alcance anónimo a propósito.
 - **La pantalla nueva es `screen-guias`** en la aplicación del Asistente
-  (`pwa-asistente/src/pantallas/Guias.jsx:106`), con los cuatro estados y un buscador. **Es una biblioteca de
+  (`pwa-asistente/src/pantallas/Guias.jsx:112`), con los cuatro estados y un buscador. **Es una biblioteca de
   consulta, no la guía del Paciente de hoy**, y eso es una carencia conocida: no existe todavía
   ninguna pantalla donde el Asistente vea al Paciente que va a atender, así que no hay dónde colgar
   la guía. Queda como pendiente 105.
@@ -5488,10 +5526,10 @@ de dejarlo supuesto: *«Estas guías dicen qué observar y cuándo avisar. No in
 - **La Prestadora escribe la suya desde `guias-prestadora.html`**, que es una pantalla del panel y
   pide rol `coordinador`. Elige la lista y la opción del catálogo, escribe las cuatro partes,
   guarda como borrador, corrige, publica firmando quién la revisó y cuándo, y borra. La pantalla
-  valida en castellano antes que la base —`web/src/pantallas/GuiasPrestadora.jsx:386`—, así que quien intenta
+  valida en castellano antes que la base —`web/src/pantallas/GuiasPrestadora.jsx:369`—, así que quien intenta
   publicar sin firma lee «Para publicar una guía hay que dejar escrito quién la revisó y cuándo» y
   no el texto crudo de una restricción. Borrar avisa antes qué consecuencia tiene y se puede
-  cancelar (`web/src/pantallas/GuiasPrestadora.jsx:456`).
+  cancelar (`web/src/pantallas/GuiasPrestadora.jsx:439`).
 - **Se comprobó desde la pantalla, con las dos Prestadoras ficticias.** El 30 de agosto de 2026,
   con una coordinadora en cada una —las preparaba entonces un guion local, y hoy nacen con la
   base— y contra la base de esta máquina: cada una escribió la suya, la corrigió, la publicó y la
@@ -5529,7 +5567,7 @@ se le comprobó nada. **Construida el 1 de septiembre de 2026.**
 
 **Está donde va, y el orden importa.** En el legajo que abre el panel de la Prestadora, arriba del cuadro donde se
 otorga o se rechaza el aval: primero se marca papel por papel y recién después se resuelve el legajo entero. Se
-dibuja sola al abrir el legajo y sin hacerse esperar (`web/src/pantallas/panel-prestadora/ModalAuditoria.jsx:154`),
+dibuja sola al abrir el legajo y sin hacerse esperar (`web/src/pantallas/panel-prestadora/ModalAuditoria.jsx:162`),
 porque es otro pedido y tiene su propio cartel de estado (`web/src/pantallas/panel-prestadora/Verificaciones.jsx:144`).
 Cada papel del catálogo trae su desplegable con los cinco estados, y el bloque entero lo arma `Verificaciones`
 (`web/src/pantallas/panel-prestadora/Verificaciones.jsx:37`) desde el catálogo de frases y desde los dos
@@ -5680,14 +5718,14 @@ horarios que cumple una persona es dirigir el trabajo, que es justo lo que esta 
 Las alarmas son de esos mismos dos; de ellas, lo único de la Prestadora es el tope de horas, que ya
 tiene su propio bloque en la misma pantalla. El número que sí sería suyo —cuántos contactos hubo,
 que es el hecho por el que cobra— espera a que se descongele la lógica comercial (§4). Quedan los
-dos que salen de la base, en `web/src/pantallas/PanelPrestadora.jsx:328`.
+dos que salen de la base, en `web/src/pantallas/PanelPrestadora.jsx:283`.
 
 **Y apareció un tercer número inventado que el pendiente no nombraba**: los dos recuadros que sí
 consulta la base arrancaban diciendo «1» cada uno, escrito en el marcado. Mientras la consulta
 viaja se veía un número que nadie contó, y las ramas de error no volvían a tocarlos, así que un
 fallo de la consulta —o quien mira sin ser coordinador— dejaba el «1» en pantalla como si fuera la
 cuenta. Ahora arrancan en raya, y quien la pone y la saca es `ponerNumeros()`
-(`web/src/pantallas/PanelPrestadora.jsx:108`), que llaman las tres ramas que pueden dejarlos a la vista: listo,
+(`web/src/pantallas/PanelPrestadora.jsx:101`), que llaman las tres ramas que pueden dejarlos a la vista: listo,
 vacío y error. **Sin cuenta va la raya y no el cero**, porque cero es un dato —«no hay ningún
 legajo en revisión»— y no sirve para decir «no se sabe».
 
@@ -5696,7 +5734,7 @@ Selección» no necesita pantalla propia: la entrevista ya se registra adentro d
 legajo, en la misma pantalla, y de ahí sale la resolución. «Presentismo GPS Vivo» es la fichada
 otra vez, y no la va a tener. «Avisos de Familias» y «Facturación & Liquidación» esperan cada una
 una decisión que no está tomada, y son el pendiente 145. El menú quedó en dos entradas
-(`web/src/pantallas/PanelPrestadora.jsx:307`), las dos con pantalla.
+(`web/src/armazon/MarcoDelPanel.jsx:30`), las dos con pantalla.
 
 **Y la hoja de estilos pedía cuatro columnas fijas.** Con dos recuadros quedaban apretados contra
 la izquierda y media fila vacía al lado, así que `.kpi-grid` pasó a `auto-fit`

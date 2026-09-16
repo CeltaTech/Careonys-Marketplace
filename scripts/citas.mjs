@@ -20,8 +20,22 @@ import { archivos, esTexto, seRevisaron } from './recorrido.mjs';
 
 /* Una cita: `ruta.ext:123`, `ruta.ext:123-140` o `ruta.ext:12:34`. El acento
    invertido de los dos lados es parte de la cita: sin él, `README.md:1` adentro
-   de una frase corriente no es una referencia sino una casualidad. */
-export const CITA = /`([A-Za-z0-9_./-]+\.(?:html|js|mjs|json|md|sql|css|toml|sh|yml))((?::\d+)+(?:-\d+)?)`/g;
+   de una frase corriente no es una referencia sino una casualidad.
+
+   Y la forma del archivo citado tampoco se escribe acá, por lo mismo que no se
+   escribe la del archivo que la contiene. Escritas a mano eran nueve, y no
+   estaba la de las pantallas del sitio: el día que el producto pasó a
+   escribirlas así, ciento cincuenta y dos citas de verdad dejaron de existir
+   para los dos chequeos —veintiocho de ellas ya rotas, apuntando a renglones en
+   blanco, a etiquetas de cierre y a archivos más cortos que el número citado—, y
+   los dos siguieron terminando en verde. Lo que no casa con esta forma no es una
+   cita mal escrita: es algo que no lee nadie. Eran ciento cincuenta y dos el 16
+   de septiembre de 2026.
+
+   Se acepta cualquier forma, y después se pregunta si ese archivo se puede leer
+   buscando palabras adentro, que es la misma pregunta con la que se arma el
+   corpus de más abajo. Una foto de una pantalla no se cita por renglón. */
+export const CITA = /`([A-Za-z0-9_./-]+\.([A-Za-z0-9]+))((?::\d+)+(?:-\d+)?)`/g;
 
 /* La forma corta. Cuando una frase nombra dos renglones del mismo archivo
    escribe `pantalla.html:393` y `:407`: el segundo hereda el nombre del
@@ -34,7 +48,10 @@ const CITA_CORTA = /`((?::\d+)+(?:-\d+)?)`/g;
 export function citasDe(linea) {
   const enteras = [];
   for (const m of linea.matchAll(CITA)) {
-    enteras.push({ entera: m[0], ruta: m[1], sufijo: m[2], columna: m.index, heredada: false });
+    /* Lo que no se puede abrir buscando palabras adentro no tiene renglones
+       adonde apuntar, así que nombrarlo con un número no es citarlo. */
+    if (!esTexto(basename(m[1]))) continue;
+    enteras.push({ entera: m[0], ruta: m[1], sufijo: m[3], columna: m.index, heredada: false });
   }
   const todas = [...enteras];
   for (const m of linea.matchAll(CITA_CORTA)) {
@@ -145,5 +162,10 @@ export const INVENTADOS = new Map([
   ['archivo.mjs', 'el mismo, para un tramo de renglones'],
   ['pantalla.html',
    'el nombre genérico con que se explica la forma corta, la que hereda el archivo ' +
-   'de la cita de al lado']
+   'de la cita de al lado'],
+  ['p.jsx',
+   'la pantalla de mentira contra la que se prueba que una forma de archivo nueva no '
+   + 'deja ciego al detector'],
+  ['ruta.ext', 'el nombre genérico con que se muestra acá arriba la forma de una cita'],
+  ['archivo.ext', 'el mismo, en la guía de quien escribe una']
 ]);
