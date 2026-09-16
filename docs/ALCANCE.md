@@ -4567,6 +4567,38 @@ vez. Y los roles a los que nadie llega de afuera se nombran uno por uno
 (`scripts/verificar_esquema.mjs:827`), para que un rol nuevo llegue en rojo y no en silencio. Los
 permisos de tabla juzgados pasaron de 86 a 88.
 
+### La copia que no baja de ningún original era invisible para el buscador de copias
+
+El chequeo de copias tiene dos mitades, y la segunda existe porque la primera
+falló. La primera compara cada copia declarada contra su original. La segunda
+sale a buscar las que nadie declaró, y nació el día que la oferta de la portada
+se corrigió arriba y las dos copias de los teléfonos se quedaron con el texto
+viejo sin que nada avisara.
+
+Esa segunda mitad pregunta siempre lo mismo: *este archivo que está adentro de
+un programa, ¿está también arriba?* Es una sola de las dos formas de estar
+repetido. La otra está escrita en la misma lista que el chequeo lee: las hojas
+de estilo de los dos teléfonos están repetidas entre ellas y no existen en la
+raíz (`scripts/verificar_copias.mjs:86`). Para ese par la pregunta no tiene
+respuesta —no hay gemelo arriba— y el buscador lo descartaba entero.
+
+La consecuencia es que ese grupo podía desaparecer de la lista y nadie se
+enteraba. Probado antes de tocar nada: sacando ese renglón, el chequeo terminó
+en verde, con las dos hojas ya sin que nadie las comparara.
+
+Ahora hay una segunda búsqueda, con el hermano como original
+(`scripts/verificar_copias.mjs:169`): dos archivos en el mismo lugar adentro de
+dos programas, iguales byte a byte, o están declarados en el mismo grupo o son
+una excepción escrita con su motivo. Cualquier otra cosa planta el chequeo
+nombrando los dos archivos. Se comparan 25 pares y 8 son iguales; los 8 estaban
+declarados, así que no había ningún daño en pie.
+
+Y salió una segunda cosa de la misma revisión: las dos búsquedas leían la lista
+de verdad también adentro de sus pruebas, así que sacar un renglón de la lista
+rompía la prueba en vez de hacer hablar al buscador. La lista entra ahora por
+parámetro (`scripts/verificar_copias.mjs:135`, `scripts/verificar_copias.mjs:169`)
+y cada prueba arma la suya: una prueba habla del detector, no del proyecto.
+
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
 Era el pendiente 67, y resultó peor de lo que ese renglón decía. La base tenía escrito con

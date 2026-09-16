@@ -29,6 +29,12 @@
    hasta que uno falla. Este guion compara byte a byte y falla si alguna se
    separó.
 
+   Y no todas bajan de arriba: las hojas de estilo de los teléfonos están
+   repetidas entre los dos programas y no existen en la raíz, así que a ésas se
+   las compara contra su hermana. Son dos búsquedas distintas porque son dos
+   formas distintas de estar repetido, y la que pregunta por el gemelo de arriba
+   no puede ver a las que no lo tienen.
+
    Cuando hay que cambiar uno de estos archivos: se edita el de la raíz y se
    copian los otros. El original siempre es el de arriba, y con `--arreglar` la
    copia la hace este guion.
@@ -120,10 +126,14 @@ function archivosDeLosProgramas() {
  * De los archivos de adentro de los programas, los que también están arriba y
  * nadie declaró ni como copia ni como excepción.
  *
- * `estaArriba` entra por separado para poder probar esto sin tocar el disco.
+ * `estaArriba` entra por separado para poder probar esto sin tocar el disco, y
+ * `grupos` también: una prueba que se apoya en la lista de verdad deja de hablar
+ * del buscador y pasa a hablar del proyecto, así que el día que alguien saca un
+ * renglón de la lista la prueba se rompe y tapa lo que el buscador tenía que
+ * decir.
  */
-export function copiasSinDeclarar(deLosProgramas, estaArriba) {
-  const declaradas = new Set(GRUPOS.flat());
+export function copiasSinDeclarar(deLosProgramas, estaArriba, grupos = GRUPOS) {
+  const declaradas = new Set(grupos.flat());
   const sueltas = [];
   let coinciden = 0;
   let exentos = 0;
@@ -138,6 +148,49 @@ export function copiasSinDeclarar(deLosProgramas, estaArriba) {
   return { sueltas, coinciden, exentos };
 }
 
+/**
+ * Y las copias que no tienen ningún original arriba.
+ *
+ * Un archivo puede estar repetido adentro de dos programas y no existir arriba:
+ * así están las dos hojas de estilo de los teléfonos, que son un grupo declarado
+ * y no bajan de ningún original. El buscador de más arriba no las ve, porque
+ * pregunta por el gemelo de arriba y no hay ninguno, así que ese grupo entero
+ * podía desaparecer de la lista sin que nada avisara: nadie las compararía y
+ * seguiría diciendo ✔.
+ *
+ * Acá el original es el hermano. Dos archivos en el mismo lugar adentro de dos
+ * programas, iguales byte a byte, o están declarados en el mismo grupo o son
+ * una excepción escrita. Iguales y sin declarar es una copia que nadie compara.
+ *
+ * Que dos sean iguales lo contesta `sonIguales`, que entra por separado para
+ * poder probar esto sin tocar el disco, y `grupos` por el mismo motivo que en
+ * el buscador de arriba.
+ */
+export function copiasEntreProgramas(deLosProgramas, sonIguales, grupos = GRUPOS) {
+  const porLugar = new Map();
+  for (const rel of deLosProgramas) {
+    const lugar = rel.slice(rel.indexOf('/') + 1);
+    if (!porLugar.has(lugar)) porLugar.set(lugar, []);
+    porLugar.get(lugar).push(rel);
+  }
+  const sueltas = [];
+  let pares = 0;
+  for (const [lugar, enVariosProgramas] of porLugar) {
+    for (let i = 0; i < enVariosProgramas.length; i++) {
+      for (let j = i + 1; j < enVariosProgramas.length; j++) {
+        const uno = enVariosProgramas[i];
+        const otro = enVariosProgramas[j];
+        pares++;
+        if (!sonIguales(uno, otro)) continue;
+        if (grupos.some((g) => g.includes(uno) && g.includes(otro))) continue;
+        if (NO_SON_COPIAS.has(lugar)) continue;
+        sueltas.push([uno, otro]);
+      }
+    }
+  }
+  return { sueltas, pares };
+}
+
 /* Una prueba que no puede fallar no prueba nada: antes de salir a buscar, el
    buscador se prueba contra las cuatro cosas que puede encontrarse. */
 function probarElBuscador() {
@@ -147,7 +200,8 @@ function probarElBuscador() {
     'pwa-asistente/data/catalogo-inventado.json',
     'pwa-asistente/package.json',
     'pwa-asistente/src/pantallas/Inventada.jsx'
-  ], (r) => arriba.has(r));
+  ], (r) => arriba.has(r),
+  [['data/catalogo-frases.json', 'pwa-asistente/data/catalogo-frases.json']]);
   const roto = [];
   if (sueltas.length !== 1 || sueltas[0][0] !== 'pwa-asistente/data/catalogo-inventado.json') {
     roto.push('no encuentra la copia que nadie declaró, o encuentra de más');
@@ -161,6 +215,35 @@ function probarElBuscador() {
   }
 }
 probarElBuscador();
+
+/* Y el de los hermanos contra las suyas: la declarada, la que nadie declaró, la
+   exenta y la que no es copia porque los dos archivos son distintos. */
+function probarElBuscadorDeHermanos() {
+  const iguales = new Set([
+    'pwa-asistente/css/styles-pwa.css|pwa-familia/css/styles-pwa.css',
+    'pwa-asistente/data/catalogo-inventado.json|pwa-familia/data/catalogo-inventado.json',
+    'pwa-asistente/package.json|pwa-familia/package.json'
+  ]);
+  const { sueltas, pares } = copiasEntreProgramas([
+    'pwa-asistente/css/styles-pwa.css', 'pwa-familia/css/styles-pwa.css',
+    'pwa-asistente/data/catalogo-inventado.json', 'pwa-familia/data/catalogo-inventado.json',
+    'pwa-asistente/package.json', 'pwa-familia/package.json',
+    'pwa-asistente/src/Programa.jsx', 'pwa-familia/src/Programa.jsx',
+    'web/src/Sola.jsx'
+  ], (uno, otro) => iguales.has(uno + '|' + otro),
+  [['pwa-asistente/css/styles-pwa.css', 'pwa-familia/css/styles-pwa.css']]);
+  const roto = [];
+  if (sueltas.length !== 1 || sueltas[0][0] !== 'pwa-asistente/data/catalogo-inventado.json') {
+    roto.push('no encuentra la copia entre hermanos que nadie declaró, o encuentra de más');
+  }
+  if (pares !== 4) roto.push('no cuenta bien los pares que están en el mismo lugar');
+  if (roto.length) {
+    console.error('El buscador de copias entre programas está roto, así que no verifica nada:');
+    for (const r of roto) console.error('  ' + r);
+    process.exit(1);
+  }
+}
+probarElBuscadorDeHermanos();
 
 // Devuelve la lista de problemas, vacía si está todo bien. `soloGrupo` limita la
 // revisión a un grupo, por su original: lo usa `verificar_identidad.mjs`.
@@ -201,9 +284,11 @@ export function verificarCopias(soloGrupo) {
      llama pregunta por ése y no por el estado de todo el proyecto. */
   let coinciden = 0;
   let exentos = 0;
+  let pares = 0;
   if (!soloGrupo) {
+    const deLosProgramas = archivosDeLosProgramas();
     const hallado = copiasSinDeclarar(
-      archivosDeLosProgramas(),
+      deLosProgramas,
       (arriba) => existsSync(join(raiz, arriba.split('/').join(sep))));
     coinciden = hallado.coinciden;
     exentos = hallado.exentos;
@@ -212,14 +297,25 @@ export function verificarCopias(soloGrupo) {
         + '  Mientras no esté en `GRUPOS`, nadie las compara y se separan calladas.\n'
         + '  Si no es una copia, va a `NO_SON_COPIAS` con el motivo escrito.');
     }
+    /* Y las que no tienen original arriba, que el buscador de recién no puede
+       encontrar por más que las mire: ésas se comparan contra su hermano. */
+    const deLosHermanos = copiasEntreProgramas(deLosProgramas, (uno, otro) =>
+      readFileSync(join(raiz, uno.split('/').join(sep)))
+        .equals(readFileSync(join(raiz, otro.split('/').join(sep)))));
+    pares = deLosHermanos.pares;
+    for (const [uno, otro] of deLosHermanos.sueltas) {
+      problemas.push(uno + ' y ' + otro + ' son iguales byte a byte y nadie los declaró.\n'
+        + '  Mientras no estén en el mismo grupo, nadie los compara y se separan callados.\n'
+        + '  Si ser iguales es casualidad, va a `NO_SON_COPIAS` con el motivo escrito.');
+    }
   }
-  /* Sin esto, un `soloGrupo` mal escrito descarta los diecisiete grupos y
+  /* Sin esto, un `soloGrupo` mal escrito descarta todos los grupos y
      devuelve «0 problemas», que se lee igual que «está todo bien». */
   seRevisaron(
     comparadas + problemas.length,
     soloGrupo ? `el grupo «${soloGrupo}» en la lista de copias` : 'un solo grupo de copias'
   );
-  return { problemas, comparadas, coinciden, exentos };
+  return { problemas, comparadas, coinciden, exentos, pares };
 }
 
 /* Copia cada original encima de las copias que se separaron, salvo las que son
@@ -267,12 +363,14 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
       process.exit(1);
     }
   }
-  const { problemas, comparadas, coinciden, exentos } = verificarCopias();
+  const { problemas, comparadas, coinciden, exentos, pares } = verificarCopias();
   if (problemas.length) {
     console.error('\n' + problemas.join('\n\n') + '\n');
     process.exit(1);
   }
   console.log('Copias verificadas: ' + comparadas + ' iguales byte a byte a su original, y'
     + ' ninguna sin declarar entre los ' + coinciden + ' archivos de los tres programas que'
-    + ' también están arriba (' + exentos + ' exentos, con su motivo escrito).');
+    + ' también están arriba (' + exentos + ' exentos, con su motivo escrito). Y de los '
+    + pares + ' pares que dos programas tienen en el mismo lugar, ninguno es una copia'
+    + ' igual a su hermano que nadie haya declarado.');
 }
