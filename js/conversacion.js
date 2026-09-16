@@ -209,7 +209,16 @@
         conversacion.ultimo_texto || frase('conversacion.sin_mensajes')));
       renglon.appendChild(nodo('span', 'conv-item-fecha',
         window.Texto.fechaYHora(conversacion.ultimo_el || conversacion.created_at)));
-      renglon.addEventListener('click', () => abrir(conversacion));
+      /* Se apaga mientras abre: `abrir()` espera al servidor, y dos toques
+         seguidos sobre el mismo renglón pedían el hilo dos veces. */
+      renglon.addEventListener('click', async () => {
+        renglon.disabled = true;
+        try {
+          await abrir(conversacion);
+        } finally {
+          renglon.disabled = false;
+        }
+      });
       renglones.appendChild(renglon);
     }
     mostrar(conversaciones.length ? 'listo' : 'vacio');

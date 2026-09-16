@@ -3770,7 +3770,7 @@ Probado antes de tocar nada: se metió `carpeta que no existe en ningun lado` en
 Y había daño puesto. Seis chequeos eximían a `Nueva carpeta`, que se había mudado entera a la
 cuarentena (`docs/PENDIENTES.md:66`) y por lo tanto ya no existía en ningún lado donde ningún
 chequeo pudiera mirar: `scripts/verificar_arranque.mjs:53`,
-`scripts/verificar_botones.mjs:57`, `scripts/verificar_deposito.mjs:125`,
+`scripts/verificar_botones.mjs:67`, `scripts/verificar_deposito.mjs:125`,
 `scripts/verificar_estados.mjs:79`, `scripts/verificar_sensibles.mjs:93` y un bloque entero en
 `scripts/citas.mjs`. Seis renglones perdonando a un fantasma.
 
@@ -4369,6 +4369,32 @@ se lea como la otra.
 Es la otra cara de la familia del pendiente 154. Ahí un chequeo miraba menos de lo que decía;
 acá cuenta más de lo que la pregunta pide. Las dos terminan en lo mismo: alguien decide
 mirando un número que no significa lo que parece.
+
+### El renglón de cada conversación del chat no se apagaba mientras traía el hilo
+
+En la pantalla de Mensajes de las dos aplicaciones de teléfono, cada conversación de la lista es
+un botón. Al tocarlo pedía el hilo al servidor y se quedaba encendido mientras lo traía, así que
+dos toques seguidos pedían lo mismo dos veces. La regla de la empresa dice que todo botón que
+dispara una operación se apaga mientras la operación corre, y hay un chequeo que la hace cumplir
+en todo el proyecto: `scripts/verificar_botones.mjs`. Este botón no lo había visto nunca.
+
+No fue que el detector no supiera leerlo. El chequeo sabe cuatro maneras de escribir un manejador
+de pulsación, y ésta es una de ellas. Lo que fallaba estaba antes: hay un renglón que decide si
+un archivo se abre siquiera, para no recorrer entero lo que no tiene botones, y ese renglón
+enumeraba dos de las cuatro formas. Los archivos cuyos botones estaban escritos de las otras dos
+se descartaban completos, y ningún detector llegaba a abrirlos. Eran cinco.
+
+Se comprobó antes de tocar nada, poniendo en uno de esos cinco un manejador que espera al
+servidor y no apaga ningún botón: el chequeo terminó en verde. Con la puerta arreglada, el mismo
+manejador lo deja en rojo con archivo y renglón.
+
+La puerta ya no nombra ninguna de las cuatro formas: le alcanza con que haya un manejador de
+pulsación, escrito como esté (`scripts/verificar_botones.mjs:127`). Y tiene prueba propia contra
+las cuatro (`scripts/verificar_botones.mjs:372`), porque ninguna de las pruebas que ya había la
+tocaba: todas le hablaban derecho al detector, sin pasar por ella. El botón del chat se apaga
+mientras abre y se devuelve en un `finally` (`js/conversacion.js:215`).
+
+De 49 archivos con botones a 54, y de 36 manejadores que esperan algo a 37.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 
