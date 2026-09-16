@@ -876,7 +876,8 @@ if (fallas.length > 0) {
     `${fallas.length} avisos. «Todo componente que carga datos maneja cuatro estados:\n`
     + 'cargando, error, vacío, listo», y el texto de los tres primeros sale del catálogo\n'
     + 'como cualquier otro rótulo, porque un cartel escrito a mano no existe en `en` ni\n'
-    + 'en `pt-BR`. El molde está en `directorio.html` y en `perfil.html`.\n'
+    + 'en `pt-BR`. El molde está en `web/src/pantallas/Directorio.jsx` y en\n'
+    + '`web/src/pantallas/Perfil.jsx`.\n'
     + 'Si un punto de carga no puede manejarlos por algún motivo, va a EXENTOS de este\n'
     + 'mismo archivo, con el motivo escrito al lado.');
   decirLasQueSeVan();
