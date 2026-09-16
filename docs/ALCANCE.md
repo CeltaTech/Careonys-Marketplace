@@ -2641,10 +2641,10 @@ mostraba el nombre **del producto** en el lugar donde va el de la Organización.
 cosas, cada una contra su punto único de verdad: que ningún nombre de Prestadora esté escrito en
 el marcado, los guiones ni los estilos —y la lista de Prestadoras no está escrita adentro del
 chequeo, sale de `supabase/migrations/`, de las altas y de los cambios de nombre posteriores,
-`scripts/verificar_organizacion.mjs:163`—, y
+`scripts/verificar_organizacion.mjs:176`—, y
 que la única ruta de logotipo que se escriba sea la que declara `js/identidad.js`. Si ninguna
 migración carga una Prestadora con nombre, el chequeo **falla** en vez de pasar en verde sobre una
-lista vacía (`scripts/verificar_organizacion.mjs:211`).
+lista vacía (`scripts/verificar_organizacion.mjs:224`).
 
 **Se probó que puede fallar**, que es la regla de que una prueba que no puede fallar no prueba
 nada. Se rompieron las dos reglas a propósito: se escribió el nombre de una de las Prestadoras del
@@ -2737,7 +2737,7 @@ El chequeo de organización también quedaba corto: armaba su lista de nombres p
 sólo las altas, así que el nombre nuevo de una Prestadora renombrada por una migración posterior
 —justamente el nombre con el que hoy se la ve— era el único que ninguna pantalla tenía prohibido
 escribir. Ahora lee las altas y los cambios de nombre
-(`scripts/verificar_organizacion.mjs:163`). Probado igual: escrito a mano en una pantalla, el nombre
+(`scripts/verificar_organizacion.mjs:176`). Probado igual: escrito a mano en una pantalla, el nombre
 nuevo la pone en rojo y nombra la migración que lo escribe.
 
 De paso viajaron dos comentarios de tabla que seguían nombrando `caregivers_publicos`, una vista
@@ -4127,6 +4127,39 @@ vuelta y el corpus ancho, el chequeo se pone en rojo y nombra el archivo. Con la
 puesta y el corpus angosto de antes, contesta verde —«363 nombradas en 74»—, que es la
 ceguera reproducida tal cual. Y rompiendo el detector para que no entienda los textos de
 plantilla, el banco de pruebas lo caza solo.
+
+### El chequeo de la Organización decía que no miraba las migraciones y dejaba afuera la carpeta entera
+
+Ninguna pantalla escribe el nombre de una Prestadora: escribe el marcador, y quien lo resuelve
+al cargar es `js/identidad.js`. Con el nombre escrito a mano, la pantalla queda atada a una sola
+Prestadora y la siguiente ve el nombre de otra. Para eso existe `scripts/verificar_organizacion.mjs`.
+
+Su encabezado decía, y dice bien, que lo que no mira son las migraciones, porque son justamente
+las que cargan esas filas y tienen que nombrarlas. Lo que el código dejaba afuera era otra cosa:
+la carpeta entera que las contiene (`scripts/verificar_organizacion.mjs:221`). Y esa carpeta trae
+adentro una pieza que no es una migración: la puerta que da de alta y de baja a la gente,
+`supabase/functions/alta-y-baja/index.ts`. Esa puerta la abría nadie, para esta regla.
+
+Es el peor lugar donde podía pasar. Un renglón que diga «si la Prestadora es la de pruebas,
+permitir» escrito en una pantalla deja un cartel mal puesto; escrito en esa puerta deja un permiso
+mal dado, y es exactamente lo que las reglas de la empresa prohíben por escrito. Se comprobó
+poniéndolo: con ese renglón adentro del archivo, el chequeo contestaba verde, «121 archivos sin
+nombrar a ninguna de las 3 Prestadoras del seed».
+
+El corpus ahora deja afuera las migraciones y nada más, y abre además los catálogos que viajan al
+teléfono y la puerta, que está escrita en otro idioma
+(`scripts/verificar_organizacion.mjs:221`). Pasó de 121 archivos a 151.
+
+Los dibujos siguen afuera, y la razón quedó escrita adentro del propio chequeo
+(`scripts/verificar_organizacion.mjs:48`): el logotipo de una Prestadora lleva su nombre adentro
+porque eso es un logotipo, y `assets/images/logo_cuidarnorte.svg` es el suyo. Dónde se escribe la
+ruta de un logotipo sí se mira, y es la segunda de las dos reglas de este chequeo.
+
+Se comprobó de las dos maneras. Con el renglón puesto y el corpus ancho, el chequeo se pone en
+rojo y nombra el archivo y el renglón. Con el mismo renglón puesto y el corpus angosto de antes,
+contesta verde, que es la ceguera reproducida tal cual. Y se barrió el resto: los únicos lugares
+fuera del corpus donde aparece el nombre de una Prestadora del seed son la migración que la carga
+y el logotipo que es de ella.
 
 ### Cualquiera con sesión podía vaciar las tablas de las dos Prestadoras
 

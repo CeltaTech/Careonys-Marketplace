@@ -30,7 +30,11 @@
    QUÉ MIRA ESTE CHEQUEO. Dos cosas, y las dos con su punto único de verdad:
 
      1. **Ningún nombre ni nombre corto de Prestadora aparece escrito** en el
-        marcado, en los guiones ni en los estilos. La lista de Prestadoras no
+        marcado, en los guiones, en los estilos, en los catálogos que se le
+        mandan al teléfono ni en la puerta que da de alta y de baja a la gente.
+        Esa puerta es justamente donde más caro sale: ahí un «si la Prestadora
+        es la de pruebas, permitir» no dejaría un cartel mal puesto, dejaría un
+        permiso mal dado. La lista de Prestadoras no
         está escrita acá: sale de `supabase/migrations/`, que es donde se cargan
         las de ejemplo, y se leen tanto las altas como los cambios de nombre
         posteriores. Sin lo segundo, el nombre con el que hoy se ve una
@@ -42,8 +46,17 @@
 
    QUÉ NO MIRA. Las migraciones, que son las que cargan esas filas y tienen que
    nombrarlas; los documentos de `docs/`, que cuentan lo que pasó; y esta misma
-   carpeta. Tampoco mira si el marcador está donde tiene que estar: que una
+   carpeta. Tampoco los dibujos: el logotipo de una Prestadora lleva su nombre
+   adentro porque eso es un logotipo, y prohibírselo sería prohibirle existir;
+   dónde se escribe la ruta de un logotipo sí se mira, y es la segunda regla de
+   acá arriba. Tampoco mira si el marcador está donde tiene que estar: que una
    pantalla no nombre a nadie no prueba que nombre a la Prestadora correcta.
+
+   Y una advertencia que este chequeo se comió un tiempo: decía que no miraba
+   «las migraciones» y lo que dejaba afuera era la carpeta entera que las
+   contiene, con la puerta de alta y baja adentro. Un «si la Prestadora es la de
+   pruebas» escrito ahí pasaba en verde, comprobado poniéndolo. Ahora lo que
+   queda afuera son las migraciones y nada más.
 =================================================== */
 
 import { readFileSync, readdirSync } from 'node:fs';
@@ -218,7 +231,16 @@ export function verificarOrganizacion() {
   const nombrada = [];
   const logotipos = [];
 
-  const mirados = hayArchivos(raiz, [...EXTENSIONES_DE_PANTALLA, '.js', '.css'], ['docs', 'supabase', 'scripts']);
+  /* Las migraciones y nada más: la carpeta que las contiene trae además la
+     puerta de alta y baja, que es código del producto y tiene que entrar. Y las
+     extensiones no son sólo las de una pantalla: un catálogo que viaja al
+     teléfono y la puerta, escrita en otro idioma, también pueden nombrar a
+     alguien. */
+  const mirados = hayArchivos(
+    raiz,
+    [...EXTENSIONES_DE_PANTALLA, '.js', '.css', '.json', '.ts'],
+    ['docs', 'migrations', 'scripts']
+  );
   for (const camino of mirados) {
     const relativa = camino.slice(raiz.length + 1).split(sep).join('/');
     readFileSync(camino, 'utf8').split('\n').forEach((renglon, i) => {
