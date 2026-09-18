@@ -293,63 +293,65 @@ contra datos cargados es la prueba de aislamiento con dos Prestadoras, que es lo
 
 ---
 
-## 14. Las tres trampas, y los nombres que se proponen — **ESPERA DECISIÓN**
+## 14. Las tres trampas, y los nombres de cada cosa
 
 **Qué es una trampa acá.** Una cosa de cada lado que se llama igual que la del otro y no es la
 misma. Son tres, están en los temas 7, 9 y 10, y **ninguna se puede mudar mientras las dos se
 llamen igual**: el día que las dos tablas se junten en la misma base, el nombre repetido decide
 solo, y decide mal.
 
-**Esto es una propuesta, no una decisión.** El vocabulario lo aprueba el Desarrollador, y ninguna
-palabra nueva se escribe antes de que la apruebe. Cada nombre propuesto pasó las cinco preguntas
-de la regla de la empresa: no existe ya una palabra aprobada para eso, es palabra del negocio y no
-de la tecnología, está en castellano, y la entiende alguien que no conoce el tema.
+**Cómo se sale de una trampa.** A cada una de las dos cosas se le agrega lo que aclare de cuál se
+habla. La palabra se queda como está; lo que se agrega es qué busca cada una, y ese agregado es
+parte del nombre.
 
 ### Trampa 1 — las postulaciones
 
-| Qué es | Cómo se llama hoy | Nombre propuesto |
-|---|---|---|
-| Alguien de afuera que pide entrar a la Prestadora y todavía no existe en el sistema | postulación, en Careonys | **postulación** (se queda como está) |
-| Un Asistente que ya existe y se ofrece para un pedido concreto de una Familia | postulación, en el Marketplace | **ofrecimiento** |
+Son dos postulaciones, y cada una se dice con lo que busca.
 
-**Por qué así y no al revés.** *Postular* es literalmente pedir para uno mismo, y eso es lo que
-hace quien golpea la puerta de la Prestadora: pide entrar. *Ofrecer* es poner algo delante de
-alguien, y eso es lo que hace el Asistente que ya está adentro: le pone su trabajo delante a una
-Familia que publicó lo que necesita. Además el que se queda quieto es el de Careonys, que es el que
-tiene datos guardados desde hace más tiempo.
+| Qué es | Cómo se dice |
+|---|---|
+| Alguien de afuera que pide entrar a la Prestadora | **postulación a entrar al padrón de la Prestadora** |
+| Un Asistente que ya está adentro y se ofrece para lo que una Familia publicó | **postulación a cubrir una vacante** |
 
-### Trampa 2 — la fichada
+Quien entra al padrón queda calificada por la Prestadora y disponible para trabajar, tanto en la
+prestación directa de la Prestadora como en el Marketplace.
 
-| Qué es | Cómo se llama hoy | Nombre propuesto |
-|---|---|---|
-| Marcar que se entra y que se sale de una guardia | fichada acá, check-in y check-out allá | **check-in / check-out** (se queda como está allá) |
-| El rastro de dónde estuvo el teléfono mientras duraba la guardia | fichada, en Careonys | **rastro de la guardia** |
+### El camino de quien quiere trabajar
 
-**Por qué así.** Acá no hay dos palabras peleando: hay una palabra puesta sobre dos cosas del lado
-de Careonys. Marcar entrada y salida ya tiene nombre aprobado en el glosario que comparten los dos
-productos, y además es el que está guardado del lado de Careonys desde el principio, así que no se
-toca. Lo que necesita nombre propio es lo otro: una sucesión de posiciones a lo largo de una
-guardia no es una marca, es un rastro. **Y el nombre visible no cambia por esto**: en la pantalla
-se sigue diciendo lo que se venía diciendo, porque las pantallas del Marketplace se apagan en la
-etapa 3 y su función pasa a las de Careonys.
+Es el mismo de los dos lados, y son tres estados.
 
-### Trampa 3 — el chat
+| Estado | Qué pasó |
+|---|---|
+| **Postulante** | Mandó el currículum, se presentó o llegó como fuera. Queda anotada desde ese momento, con lo que haya traído |
+| **Aspirante** | La misma anotación, ya completa, registrada en la lista de reclutamiento |
+| **Asistente** | La Prestadora revisó lo que mandó, verificó que sea cierto y decidió que reúne las condiciones. Sale de la lista de reclutamiento y pasa a la de Asistentes de la Prestadora |
 
-| Qué es | Cómo se llama hoy | Nombre propuesto |
-|---|---|---|
-| Un mensaje que el panel de la Prestadora le manda al Asistente, y el aviso que le llega al teléfono | chat, en Careonys | **aviso al Asistente** |
-| Una conversación de ida y vuelta entre una Familia y un Asistente, con el control que impide que ahí adentro pase un dato de contacto | chat, en el Marketplace | **conversación** |
+Cada Prestadora evalúa a su manera, y entrevista o no según cómo trabaje. La calificación y la
+validación son dos etapas del mismo proceso y se tratan como una sola cosa.
 
-**Por qué así.** Uno va en un solo sentido y el otro en los dos, y llamarlos igual esconde
-justamente eso. *Avisar* es hacer saber, y no espera respuesta. *Conversar* es tratar con otro, y
-no existe si el otro no contesta. Y **«chat» se cae de los dos lados**: es palabra en inglés que
-tiene equivalente claro en castellano, así que no pasa la tercera pregunta de la regla.
+### Trampa 2 — los tres hechos de la guardia
 
-### Qué hace falta para cerrar esto
+Cada hecho se dice con el verbo y con qué cosa, que es como se lo nombra en voz alta. No hay una
+palabra sola para ninguno de los tres.
 
-Que el Desarrollador diga sí a los cuatro nombres, o cambie los que no le gusten. **Recién ahí** se
-escriben: hasta entonces no entra ninguno ni al código, ni a una tabla, ni a una pantalla, ni a
-este documento como si fuera decisión tomada.
+| Qué es | Cómo se dice |
+|---|---|
+| Marcar que se empieza la guardia | **registrar entrada** |
+| Marcar que se termina la guardia | **registrar salida** |
+| Dejar constancia de dónde está el Asistente mientras dura la guardia | **registrar ubicación** |
+
+En las pantallas del Marketplace el texto visible todavía dice «fichado». Cambia en la etapa 3,
+cuando esas pantallas se rehacen.
+
+### Trampa 3 — los avisos y la conversación
+
+Son dos avisos, y cada uno se dice con quién le avisa a quién.
+
+| Qué es | Cómo se dice |
+|---|---|
+| Lo que publica una Familia cuando necesita un Asistente, donde queda publicada la vacante | **aviso de una Familia** |
+| Lo que el panel de la Prestadora le manda al Asistente, y llega a su teléfono | **aviso de la Prestadora a un Asistente** |
+| La charla de ida y vuelta entre una Familia y un Asistente, con el control que impide que ahí adentro pase un dato de contacto | **conversación** |
 
 ---
 
@@ -509,8 +511,6 @@ qué correrlas. Cada mitad tapa el agujero de la otra.
 El reparto de lo que no choca ya no falta: es el tema 15. Lo que queda abierto es corto, y es
 esto:
 
-- **Los cuatro nombres del tema 14 esperan un sí.** Hasta entonces no se escribe ninguno en
-  ningún lado.
 - **La disponibilidad horaria espera saber si allá alguien la lee.** Es lo único de los trece del
   reparto cuyo destino todavía no está.
 - **Cómo se declara la pertenencia a una Prestadora al crearse la cuenta.** Es el agujero que

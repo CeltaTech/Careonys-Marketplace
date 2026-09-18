@@ -65,14 +65,17 @@ Careonys: preguntarle el idioma al teléfono, poner
 dónde cambiarlo en los dos programas de teléfono, disparar sus comprobaciones antes de guardar
 el cambio, y correr las cuarenta y cuatro pruebas que ya tienen escritas y no llama nadie.
 
-**2.3 — ← acá estamos.** Ponerle nombre nuevo a las **tres trampas** —las postulaciones, la
-fichada y el chat—, que se llaman igual de los dos lados y son cosas distintas. **Los cuatro
-nombres están propuestos y esperan que usted diga que sí**, junto a los tres temas, en `docs/FUSION_TEMA_POR_TEMA.md`.
-Ninguno se escribe en ningún lado hasta entonces.
+**2.3 — Cerrada.** Las **tres trampas** —las postulaciones, la fichada y el chat— ya tienen
+dicho el nombre de cada cosa, y ninguna necesitó una palabra nueva: a cada una se le agregó lo
+que aclara de cuál se habla. Son dos postulaciones, una a entrar al padrón de la Prestadora y otra
+a cubrir una vacante; son dos avisos, el de una Familia y el de la Prestadora a un Asistente, y la
+charla de ida y vuelta entre una Familia y un Asistente es una conversación; y los tres hechos de
+la guardia son registrar entrada, registrar salida y registrar ubicación. Con esto **termina la
+etapa de la comparación**.
 
 ---
 
-## Etapa 3 — La misma tecnología que Careonys
+## Etapa 3 — ← acá estamos. La misma tecnología que Careonys
 
 Es el cambio más grande y el que se viene postergando. Hoy este producto no tiene nada de lo que
 tiene el otro: ni armado, ni pruebas, ni revisor de código.
