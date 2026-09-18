@@ -111,7 +111,8 @@ va, y el registro de auditoría. El resto se ordena y se cierra de a uno.
 
 ## Etapa 6 — Los tres idiomas
 
-Hoy están convertidas 17 de 56 partes. Se termina.
+Hoy están convertidas 67 de las 74 pantallas. De las siete que faltan, tres son las
+cáscaras de arranque, que esperan una decisión suya.
 
 ---
 
