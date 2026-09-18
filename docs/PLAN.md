@@ -82,6 +82,9 @@ tiene el otro: ni armado, ni pruebas, ni revisor de código.
 
 **3.1** — Descartar primero lo que no se va a portar, para no traducir trabajo que después se tira.
 
+**3.1 bis** — Nada de lo que se descarta se borra. Todo se mueve a una sola carpeta cerrada, en la
+raíz, conservando adentro la ruta que tenía, y esa carpeta no se abre sin que usted lo autorice.
+
 **3.2** — Las pantallas del panel, de la Familia y del Asistente **no se traducen: se apagan**, y
 su función pasa a habilitarse adentro de las tres aplicaciones que Careonys ya tiene.
 

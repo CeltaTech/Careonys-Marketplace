@@ -123,6 +123,14 @@ condiciones fiscales, niveles educativos, patologías, tareas de cuidado, servic
 cursos y sus evaluaciones. Cada lista de opciones que hoy esté escrita adentro de un componente
 es una tabla que alguien no creó.
 
+**Lo que se abandona no se borra: se cierra.** Todo lo que deje de usarse al pasar este producto a
+la tecnología de Careonys —pantallas, código, catálogos, lo que sea— se mueve entero a `No abrir/`,
+que cuelga de la raíz y donde cada archivo conserva la ruta que tenía. **Esa carpeta no se abre, no
+se lista y no se cita su contenido, salvo orden explícita del Desarrollador en esa misma sesión**,
+igual que las cajas fuertes. Entra al repositorio, que es lo que hace que quede guardado y no en una
+sola máquina, y ningún chequeo la recorre. No es la cuarentena: ahí va lo que se sospecha inútil, y
+acá va lo que se sabe que se reemplazó.
+
 **Ninguna pantalla se porta sin haber extraído antes su contenido.** Si el componente nuevo lee de
 una tabla que todavía no tiene filas, el contenido no migró: se perdió, y la pantalla vacía no
 avisa.
