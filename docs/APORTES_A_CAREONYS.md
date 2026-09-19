@@ -496,3 +496,35 @@ antes.
 
 **Lo que no se comprobó.** Qué sabe hacer OctoCMS hoy y qué le faltaría para servir esta tabla. No
 se abrió ese producto.
+
+---
+
+## 8. El formulario público de postulación, y la pantalla que le da las opciones
+
+**Qué es.** La pantalla por la que alguien que quiere trabajar entra sus datos **sin tener
+cuenta**: identidad, domicilio, formación, experiencia clínica, disponibilidad horaria, zonas
+donde trabaja, papeles del legajo y cierre. Va por pasos, con una barra que muestra en cuál está,
+guarda lo hecho si la persona se va y vuelve, y termina dejándola adentro del padrón de la
+Prestadora por la que entró.
+
+**Dónde está acá.** Construida y funcionando. La pantalla entera vive en
+`web/src/pantallas/RegistrarAsistente.jsx:50`, repartida en siete piezas: la presentación, los
+pasos de datos, los pasos de legajo, el paso de cierre, la barra de pasos, los navegadores y la
+caja de estado. La de al lado, donde cada Prestadora carga sus propias listas de opciones, está en
+`web/src/pantallas/panel-prestadora/OpcionesPropias.jsx:51`.
+
+**Qué tiene Careonys hoy.** Nada, y lo dice él mismo. Su plan escribe en
+`careonys/docs/PLAN_HASTA_PRODUCCION.md:85`: *«No existe el formulario público de postulación. Hay
+una ruta de motor que acepta doce campos y ninguna pantalla que la use»*. Y en el renglón 93 llama
+a esa pantalla *«lo único que falta»*, junto con la del Panel donde se cargan las opciones,
+*«porque hoy `opciones_postulacion` nace vacía y sin ella el formulario no tiene nada que
+ofrecer»*. Son exactamente las dos que acá están hechas.
+
+**Qué habría que tocar.** Que la pantalla hable con el motor de Careonys en vez de con la base
+directamente, y que los campos de las seis secciones que Careonys ya guarda coincidan con los que
+la pantalla entrega. Lo que se rompe si no se toca la segunda pantalla: un formulario cuyas listas
+de opciones nacen vacías no le ofrece nada a quien lo completa, y la postulación queda sin género,
+sin nacionalidad, sin tipo de registro fiscal y sin experiencia clínica.
+
+**Lo que no se comprobó.** Cuáles son los doce campos que acepta hoy esa ruta de Careonys, y si
+alcanzan los de las seis secciones. No se abrió el código del motor.
