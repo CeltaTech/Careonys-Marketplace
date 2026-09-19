@@ -80,13 +80,12 @@ etapa de la comparación**.
 Es el cambio más grande y el que se viene postergando. Hoy este producto no tiene nada de lo que
 tiene el otro: ni armado, ni pruebas, ni revisor de código.
 
-**3.1** — Descartar primero lo que no se va a portar, para no traducir trabajo que después se tira.
+**3.1** — **Acá no se apaga nada por decisión propia.** Primero se le pone delante a Careonys el
+inventario completo de lo que este producto tiene, pieza por pieza y dicho por lo que hace, y
+**Careonys elige lo que le sirve**. Recién sobre lo que sobre se decide algo.
 
-**3.1 bis** — Nada de lo que se descarta se borra. Todo se mueve a una sola carpeta cerrada, en la
-raíz, conservando adentro la ruta que tenía, y esa carpeta no se abre sin que usted lo autorice.
-
-**3.2** — Las pantallas del panel, de la Familia y del Asistente **no se traducen: se apagan**, y
-su función pasa a habilitarse adentro de las tres aplicaciones que Careonys ya tiene.
+**3.2** — Lo elegido viaja. Lo que nadie eligió no se borra: se mueve a una sola carpeta cerrada,
+en la raíz, entera y capaz de levantarse sola, y esa carpeta no se abre sin que usted lo autorice.
 
 **3.3** — La parte pública —donde una Familia busca un Asistente, se registra y publica lo que
 necesita— **sí se rehace acá**, con la misma tecnología, y es lo que queda siendo este producto.
