@@ -131,6 +131,14 @@ igual que las cajas fuertes. Entra al repositorio, que es lo que hace que quede 
 sola máquina, y ningún chequeo la recorre. No es la cuarentena: ahí va lo que se sospecha inútil, y
 acá va lo que se sabe que se reemplazó.
 
+**Y entra completo, no a medias.** Lo que se cierra tiene que volver a levantarse solo, así que
+adentro va todo lo que necesita para andar: las pantallas, el código que usan, los catálogos que
+leen y **los archivos que construyen su base tal como estaba el día que se cerró**, copiados ahí
+adentro. Ir a buscarlos después a la historia del repositorio no es guardar: es dejar un
+rompecabezas. Y no choca con la regla de no repetir: esa existe porque dos copias vivas se separan
+una de la otra, y acá adentro no hay nada vivo. En la puerta queda escrito qué hay adentro y cómo
+se levanta.
+
 **Ninguna pantalla se porta sin haber extraído antes su contenido.** Si el componente nuevo lee de
 una tabla que todavía no tiene filas, el contenido no migró: se perdió, y la pantalla vacía no
 avisa.
