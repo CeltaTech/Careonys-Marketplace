@@ -51,7 +51,7 @@
 Hay cuatro partes y no hacen lo mismo. Confundirlas es el origen de casi todo malentendido, así
 que se dicen primero.
 
-**1.1. La Familia.** Es usted: quien busca cuidado, publica un Aviso o mira el directorio,
+**1.1. La Familia.** Es usted: quien busca cuidado, publica un Anuncio o mira el directorio,
 compara, elige y **cierra el trato con el Asistente**. «Familia» no exige parentesco: alcanza con
 ser quien organiza el cuidado.
 
@@ -154,7 +154,7 @@ o recomienden**. Si alguien le habla «de parte del sistema», quien le habla es
 Éste es el capítulo más delicado del documento, porque son datos de salud de una persona que
 muchas veces no es quien los carga.
 
-**4.1. Qué se guarda.** Al publicar un Aviso se guardan la zona, los días y turnos que se
+**4.1. Qué se guarda.** Al publicar un Anuncio se guardan la zona, los días y turnos que se
 necesitan, las tareas, el tipo de Asistente buscado, las patologías que hay que saber atender y
 la descripción que usted escriba. Durante el servicio, el Asistente deja un **Reporte diario**
 que puede incluir presión, glucemia, la medicación que se le dio y notas del día.
@@ -168,9 +168,9 @@ por eso se lo pide dicho.
 nada más. **No cargue en una descripción, en una nota ni en un mensaje datos que no hagan falta**:
 todo lo que se escribe queda guardado y lo lee alguien.
 
-**4.4. Quién los ve, y quién no.** Lo que usted escribe en un Aviso lo ve el personal de su
+**4.4. Quién los ve, y quién no.** Lo que usted escribe en un Anuncio lo ve el personal de su
 Prestadora —es lo que usted publica en el espacio de ella— y lo ven los Asistentes de esa
-Prestadora que miran los avisos. **El Reporte diario no lo ve la Prestadora**: lo ven usted y el
+Prestadora que miran los anuncios. **El Reporte diario no lo ve la Prestadora**: lo ven usted y el
 Asistente que lo escribió, y nadie más. **No los ve otra Prestadora, no los ve otra Familia y no
 los ve un Asistente con el que usted no haya hablado.** Esa separación no depende de la pantalla:
 la sostiene la base de datos.
@@ -244,8 +244,8 @@ tener que aceptarlo aparte. **Nada de lo que usted acepta hoy lo obliga a pagar 
 sesión**. Lo que muestran es lo que cada persona autorizó a mostrar: nombre, foto, zona, qué
 atiende y lo que se le comprobó. No muestran documento, teléfono, correo ni domicilio.
 
-**7.2. Lo suyo no es público.** Su Aviso, sus datos y los del Paciente **no están en ese
-directorio ni en ningún lugar abierto**. Su Aviso lo ven el personal de su Prestadora y los
+**7.2. Lo suyo no es público.** Su Anuncio, sus datos y los del Paciente **no están en ese
+directorio ni en ningún lugar abierto**. Su Anuncio lo ven el personal de su Prestadora y los
 Asistentes de ella que pueden postularse; con el resto vale lo dicho en la §4.4.
 
 **7.3. El contacto va por adentro.** El teléfono y el correo de un Asistente no se muestran, y
@@ -263,7 +263,7 @@ cuenta como hecho por usted.
 
 **8.2. Si se la tomaron.** Avise a su Prestadora apenas lo sospeche, y cambie la clave.
 
-**8.3. Lo que escribe queda.** Lo que carga en un Aviso, en una descripción o en un mensaje queda
+**8.3. Lo que escribe queda.** Lo que carga en un Anuncio, en una descripción o en un mensaje queda
 registrado con su nombre y la fecha.
 
 **8.4. Quién puede tener cuenta.** Para tener cuenta hay que tener 18 años cumplidos y capacidad
@@ -272,7 +272,7 @@ comprueba**: se lo toma por declarado, igual que en la §4.2. Que usted organice
 nombre de otra persona no cambia esto: la cuenta es suya y usted responde por ella.
 
 **8.5. Una persona, una cuenta.** La cuenta se identifica por un correo electrónico y una clave.
-Un correo abre una sola cuenta, y no corresponde tener dos a la vez: los Avisos, los mensajes y lo
+Un correo abre una sola cuenta, y no corresponde tener dos a la vez: los Anuncios, los mensajes y lo
 que se registre del cuidado tienen que quedar en un solo lugar, o su Prestadora termina atendiendo
 dos veces a la misma persona sin saber que es la misma. Según cómo esté configurada la entrada de
 su Prestadora, puede que antes de entrar por primera vez haya que confirmar el correo abriendo el
@@ -290,7 +290,7 @@ baja:
   se la hayan prestado;
 - hostigar, amenazar, insultar o discriminar a un Asistente, a otra Familia o al personal de su
   Prestadora, en un mensaje o en cualquier texto que el software guarde;
-- escribir contenido ofensivo, o usar los mensajes y los Avisos para algo ajeno a organizar un
+- escribir contenido ofensivo, o usar los mensajes y los Anuncios para algo ajeno a organizar un
   cuidado: propaganda, ofertas de otra cosa, cadenas;
 - recorrer, bajar o juntar de forma automática las fichas del directorio, los datos que muestran o
   las fotos. **El directorio se ve sin iniciar sesión para que una Familia pueda mirar antes de
@@ -299,7 +299,7 @@ baja:
   una Prestadora de otra;
 - hacerse pasar por otra persona.
 
-**8.8. Datos de otras personas.** No escriba en un Aviso, en una nota ni en un mensaje el número
+**8.8. Datos de otras personas.** No escriba en un Anuncio, en una nota ni en un mensaje el número
 de documento ni ningún dato bancario de otra persona —ni del Asistente, ni de un familiar, ni de
 nadie—, y tampoco los publique en ningún otro lado. **En este software no hay ningún campo donde
 vayan**, que es la mejor señal de que no hacen falta para organizar un cuidado. El documento y los
@@ -322,7 +322,7 @@ responsabilidad de la Prestadora y bajo lo que la §5.4 le permite pedir.
 
 **9.4. Qué pasa después de una baja.** Perder la cuenta no borra lo que ya ocurrió —vale la
 §5.5— y tampoco corta por sí solo el cuidado: son dos cosas distintas, y qué pasa con el cuidado
-sale del trato que usted tenga con el Asistente. Si la cuenta se borra, los Avisos
+sale del trato que usted tenga con el Asistente. Si la cuenta se borra, los Anuncios
 que publicó no se borran con ella: **quedan sin dueño, y pasa a verlos sólo el personal de su
 Prestadora**. Y abrir una cuenta nueva con otro correo para volver a entrar después de una baja no
 corresponde: el software no lo detecta solo, y por eso se dice acá.
@@ -370,7 +370,7 @@ que lo acepte de nuevo.
 | 31 de agosto de 2026 | Se agregaron las cláusulas que faltaban, medidas contra lo que declaran los términos publicados por otro servicio del mismo rubro en la Argentina: la disponibilidad (§2.5), que nadie de los que aparecen acá trabaja para CeltaTech (§3.5), dónde está el detalle de los datos (§5.6), la edad mínima, una cuenta por persona, los datos ciertos, la conducta prohibida y los datos de otras personas (§8.4 a §8.8), qué pasa después de una baja y cómo se pide (§9.4 y §9.5), y el punto pendiente del tribunal competente (§12). Ninguna frase se copió: cada cláusula se redactó de cero |
 | 31 de agosto de 2026 | **El documento se declara lo que es: un modelo.** El Desarrollador precisó ese día que los documentos legales de un producto de CeltaTech viven adentro de sus términos y de sus contratos con el Cliente, y que a la Prestadora CeltaTech sólo puede entregarle **un modelo, a título de sugerencia y sin ninguna responsabilidad sobre él**. El encabezado ahora lo dice en su cara —quién lo entrega, que no es asesoramiento legal, que se entrega tal como está y que adoptarlo es decisión de la Prestadora— y **admite que el producto todavía no cumple esa forma**, porque el texto no se entrega sino que se acepta. Cambian el encabezado y la ficha de arriba |
 | 31 de agosto de 2026 | **Se separaron los dos mundos**, por decisión del Desarrollador de ese día: CeltaTech licencia el software a la Prestadora y no tiene vínculo de ninguna índole con la Familia, el Asistente ni nadie que trate con una Prestadora. El documento ponía a CeltaTech adentro de la cadena de responsabilidad hacia usted —decía que «responde por que el software funcione»— y eso era falso: lo que CeltaTech deba por el software se lo debe a la Prestadora, en el acuerdo entre las dos. Cambian la §1.5, la §3.2 y la §10.1, y **se cierra el punto pendiente del tribunal** de la §12, que preguntaba cómo se repartía una responsabilidad que no se reparte |
-| 2 de septiembre de 2026 | **El documento describía otro modelo de negocio: uno donde la Prestadora presta el cuidado, dirige el trabajo y le cobra a usted.** Este software no es eso, y así está escrito en el `CLAUDE.md` del producto, sección «Qué es este producto, y quién hace qué»: la Prestadora decide **quién entra** —audita el Legajo, valida al Aspirante, publica el Perfil— y cobra su comisión por el contacto; **el trato lo cierran la Familia y el Asistente solos**, y el software no guarda ningún contrato, ningún precio acordado, ninguna condición ni ninguna aceptación. Se reescribieron trece pasajes: quién es la Familia y quién la Prestadora (§1.1 y §1.3), qué es el software (§2.1), a quién se le habla si una pantalla no abre (§2.5), por qué responde cada uno (§3.1), a quién se le reclama qué (§3.3), quién emplea (§3.4), quién ve el Reporte diario (§4.4), quién ve la posición al fichar (§4.6), qué queda guardado (§5.5), dónde se acuerda el dinero y qué no queda guardado del acuerdo (§6.2 y §6.3), lo que ve cada uno de un Aviso (§7.2), por qué el contacto va por adentro (§7.3), de qué responde la Prestadora (§10.2) y a quién se escribe (§13). **Dos cambios no son de redacción sino de lo que hace la base**: el Reporte de cuidado y la fichada dejaron de estar al alcance del personal de la Prestadora, y lo hacen cumplir las reglas de la propia base y no la pantalla —hoy la fichada la ve el Asistente que la marcó y la Familia del vínculo que él elija, y el Reporte, el Asistente que lo escribió y la Familia del Aviso—; el documento decía lo contrario. La §6.1 no cambió: este software sigue sin cobrar nada, y la comisión de la Prestadora se cobra por fuera |
+| 2 de septiembre de 2026 | **El documento describía otro modelo de negocio: uno donde la Prestadora presta el cuidado, dirige el trabajo y le cobra a usted.** Este software no es eso, y así está escrito en el `CLAUDE.md` del producto, sección «Qué es este producto, y quién hace qué»: la Prestadora decide **quién entra** —audita el Legajo, valida al Aspirante, publica el Perfil— y cobra su comisión por el contacto; **el trato lo cierran la Familia y el Asistente solos**, y el software no guarda ningún contrato, ningún precio acordado, ninguna condición ni ninguna aceptación. Se reescribieron trece pasajes: quién es la Familia y quién la Prestadora (§1.1 y §1.3), qué es el software (§2.1), a quién se le habla si una pantalla no abre (§2.5), por qué responde cada uno (§3.1), a quién se le reclama qué (§3.3), quién emplea (§3.4), quién ve el Reporte diario (§4.4), quién ve la posición al fichar (§4.6), qué queda guardado (§5.5), dónde se acuerda el dinero y qué no queda guardado del acuerdo (§6.2 y §6.3), lo que ve cada uno de un Anuncio (§7.2), por qué el contacto va por adentro (§7.3), de qué responde la Prestadora (§10.2) y a quién se escribe (§13). **Dos cambios no son de redacción sino de lo que hace la base**: el Reporte de cuidado y la fichada dejaron de estar al alcance del personal de la Prestadora, y lo hacen cumplir las reglas de la propia base y no la pantalla —hoy la fichada la ve el Asistente que la marcó y la Familia del vínculo que él elija, y el Reporte, el Asistente que lo escribió y la Familia del Anuncio—; el documento decía lo contrario. La §6.1 no cambió: este software sigue sin cobrar nada, y la comisión de la Prestadora se cobra por fuera |
 
 ---
 

@@ -17,10 +17,10 @@ se ponen en contacto. **El trato lo cierran ellos dos afuera del producto.**
 | Quién | Qué hace adentro del producto |
 |---|---|
 | **La Prestadora** | Es la empresa que compra el producto. Decide **quién entra**: revisa la documentación del aspirante, lo valida y lo publica. También carga sus guías de cuidado y configura sus propias listas de opciones |
-| **La Familia** | Busca cuidado: mira el directorio y compara perfiles, o publica un aviso y espera postulaciones. Elige con quién hablar |
-| **El Asistente** | Ofrece su trabajo: carga su legajo, se publica en el directorio y se postula a los avisos |
+| **La Familia** | Busca cuidado: mira el directorio y compara perfiles, o publica un anuncio y espera postulaciones. Elige con quién hablar |
+| **El Asistente** | Ofrece su trabajo: carga su legajo, se publica en el directorio y se postula a los anuncios |
 
-**La Prestadora no reparte trabajo y no se mete en el uso.** No ve los avisos de las familias, no
+**La Prestadora no reparte trabajo y no se mete en el uso.** No ve los anuncios de las familias, no
 ve el chat, no ve las marcaciones de entrada y salida, y no ve los reportes de cuidado. Controla
 la puerta de entrada, no lo que pasa adentro.
 
@@ -29,7 +29,7 @@ la puerta de entrada, no lo que pasa adentro.
 **Camino uno — el directorio.** La Familia entra al directorio público, filtra por zona, por tipo
 de asistente, por patología, busca por nombre, abre un perfil y pide hablar con esa persona.
 
-**Camino dos — el aviso.** La Familia publica lo que necesita. Los asistentes lo ven en su
+**Camino dos — el anuncio.** La Familia publica lo que necesita. Los asistentes lo ven en su
 teléfono, se postulan con un mensaje de presentación, y la Familia elige a quién contesta.
 
 Los dos terminan en lo mismo: se abre un canal de mensajes entre esas dos personas.
@@ -41,7 +41,7 @@ Los dos terminan en lo mismo: se abre un canal de mensajes entre esas dos person
 ### 4.1 Portada
 
 La cara pública de la Prestadora. Explica el servicio y lleva a los tres caminos: buscar un
-asistente, publicar un aviso, o registrarse para trabajar. Tiene un formulario de consulta.
+asistente, publicar un anuncio, o registrarse para trabajar. Tiene un formulario de consulta.
 
 ![Portada](pantallas/01-inicio.png)
 
@@ -114,7 +114,7 @@ botón.
 
 ### 4.9 Solicitar un Asistente
 
-Pantalla informativa que explica el camino del aviso y lleva a la aplicación de la Familia.
+Pantalla informativa que explica el camino del anuncio y lleva a la aplicación de la Familia.
 
 ![Solicitar un Asistente](pantallas/06-solicitar-asistente.png)
 
@@ -155,7 +155,7 @@ la que trabaja, y las opciones propias de sus listas —agregar, corregir el tex
 reactivar; nunca borrar.
 
 **El panel no ve presentismo, ni ubicaciones, ni horas de nadie, ni reportes de cuidado, ni el
-chat, ni los avisos de las familias. No asigna trabajo, no ve precios ni condiciones, y no
+chat, ni los anuncios de las familias. No asigna trabajo, no ve precios ni condiciones, y no
 factura ni cobra.**
 
 ![Panel de la Prestadora](pantallas/10-panel-prestadora.png)
@@ -217,16 +217,16 @@ referencias con autorizaciones. **Se llena entero sin señal**; sólo mandarlo n
 
 ![Completar el legajo](pantallas/31-app-asistente-legajo.png)
 
-### 5.3 Avisos abiertos
+### 5.3 Anuncios abiertos
 
-Cada aviso con su descripción, motivo, zona, tipo, frecuencia, horario, género preferido, tareas,
+Cada anuncio con su descripción, motivo, zona, tipo, frecuencia, horario, género preferido, tareas,
 patologías, fecha y la grilla de días desplegable. Se puede escribir un mensaje de presentación
 —con una advertencia de no poner datos de contacto—, postularse y retirarse.
 
 **No se ve quién es la Familia, ni ningún dato de contacto, ni ningún precio. No hay nada que
 aceptar.** Quien no tiene legajo ve la pantalla vacía, y la pantalla lo dice.
 
-![Avisos abiertos](pantallas/14-app-asistente-avisos.png)
+![Anuncios abiertos](pantallas/14-app-asistente-avisos.png)
 
 ### 5.4 Mis capacitaciones
 
@@ -263,7 +263,7 @@ salen al sitio web.
 
 ![Inicio](pantallas/19-app-familia-inicio.png)
 
-### 6.2 Publicar un aviso
+### 6.2 Publicar un anuncio
 
 Nombre del paciente, edad, zona, modalidad, grilla de días y franjas, patologías y una
 descripción libre. Al enviarlo la pantalla se limpia y vuelve al inicio.
@@ -398,7 +398,7 @@ tipografías y un servidor de mapas. Si alguno está caído, la pantalla se ve p
 **Lo que no anda sin señal:**
 
 - Entrar. Iniciar sesión necesita conexión.
-- Buscar asistentes, ver avisos, abrir un legajo, mandar o recibir mensajes.
+- Buscar asistentes, ver anuncios, abrir un legajo, mandar o recibir mensajes.
 - **El reporte de la jornada no tiene cola de espera: sin señal se pierde.**
 - **Una marcación hecha con el teléfono sin señal desde el arranque no llega a guardarse**: antes
   de guardarla la pantalla le pregunta al servidor de quién es la sesión, y esa pregunta necesita
@@ -434,7 +434,7 @@ comprobaciones, las resoluciones con su motivo, su disponibilidad por día y tur
 referencia por hora con su moneda.
 
 **Del Paciente:** nombre, edad, zona, motivo de consulta, tareas, frecuencia y patologías, tal
-como los carga la Familia adentro del aviso.
+como los carga la Familia adentro del anuncio.
 
 **De la jornada:** las marcas de entrada y salida con su ubicación y la hora en que se marcaron,
 y los reportes de cuidado con presión, glucemia, medicación y novedades.
@@ -489,7 +489,7 @@ de archivos por persona, y las fotos no se comprimen: lo que se sube es lo que q
 | Marcaciones que se traen por consulta | las últimas 200 |
 | Tope de jornada abierta | configurable entre 1 y 168 horas; de fábrica, 16 |
 
-**Lo que no tiene límite:** la cantidad de asistentes, familias, avisos, mensajes y archivos por
+**Lo que no tiene límite:** la cantidad de asistentes, familias, anuncios, mensajes y archivos por
 Prestadora; la cantidad de Prestadoras; y el largo de casi todos los campos de texto —un mensaje
 o una nota del día pueden ser tan largos como se quiera—.
 
@@ -536,7 +536,7 @@ Dicho de frente, para que nadie lo venda de más:
   datos contratado.
 - **La Familia no puede** contratar, ver datos de contacto del Asistente ni siquiera por el chat,
   fichar ni corregir una marca, ver totales de horas, cargar una ficha clínica del Paciente,
-  editar o retirar un aviso ya publicado, listar sus propios avisos, deshacer un descarte,
+  editar o retirar un anuncio ya publicado, listar sus propios anuncios, deshacer un descarte,
   calificar, ni darse de alta desde el teléfono.
 - **El Asistente no puede** ver su propio historial de reportes, aceptar o rechazar trabajo, ver
   quién es la Familia, ver la ficha del Paciente, rendir el examen adentro de la aplicación,
@@ -550,7 +550,7 @@ Dicho de frente, para que nadie lo venda de más:
 Se dice acá para que no se venda como terminado:
 
 - **El reporte de cuidado escrito desde el teléfono no llega a ninguna Familia.** Se guarda sin
-  quedar atado al aviso, y la regla de acceso exige justamente ese vínculo. La pantalla de la
+  quedar atado al anuncio, y la regla de acceso exige justamente ese vínculo. La pantalla de la
   Familia lee bien y muestra bien; lo que falla es el lado que escribe.
 - **La campanita de la aplicación de la Familia no hace nada.** Es decoración que promete
   notificaciones que no existen.
@@ -564,7 +564,7 @@ Se dice acá para que no se venda como terminado:
 - **No hay pantalla para crear evaluaciones** y **no hay ninguna donde la Prestadora vea los
   resultados**, aunque la pantalla pública de cursos diga que los ve.
 - **Las consultas de acompañamiento en línea no se registran** y terminan en un correo.
-- **Los avisos de las familias vistos desde el lado de la Prestadora están sin definir.**
+- **Los anuncios de las familias vistos desde el lado de la Prestadora están sin definir.**
 - **La facturación, las comisiones y el cobro están frenados por alcance.**
 - **La demostración en teléfono mezcla partes reales con contenido de ejemplo.**
 

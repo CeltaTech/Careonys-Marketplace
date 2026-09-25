@@ -1,5 +1,5 @@
 /* ===================================================
-   LOS AVISOS ABIERTOS
+   LOS ANUNCIOS ABIERTOS
 
    Lo que las Familias de esta Prestadora están buscando, y el botón para
    ofrecerse. Postularse es exactamente eso: ofrecerse. Acá no hay «aceptar», no
@@ -14,12 +14,12 @@
    pantalla, con el catálogo ya cargado. Por eso acá tampoco se escribe ninguna
    lista de opciones.
 
-   **Los días y turnos se piden a pedido.** Son una llamada por aviso, así que
+   **Los días y turnos se piden a pedido.** Son una llamada por anuncio, así que
    pedirlos de entrada para los diez de la lista serían diez pedidos que quizá
    nadie mire. Se piden la primera vez que alguien abre el detalle, y si esa vez
    falla se deja volver a intentar cerrando y abriendo.
 
-   El texto que escribió una persona —la descripción de un aviso— entra como
+   El texto que escribió una persona —la descripción de un anuncio— entra como
    texto y nunca como marcado: lo escribió otro, y es lo último a lo que se le
    puede dar de comer marcado.
 
@@ -38,7 +38,7 @@ import { Catalogo, Texto } from '#comun/frases/lector.js';
 import { EstadoDeLaLista } from '#comun/listas/EstadoDeLaLista.jsx';
 
 /* Una clave guardada, traducida a lo que se lee. Si el vocabulario no la tiene
-   se devuelve la clave cruda: es fea, pero es el dato que el aviso sí trae, y
+   se devuelve la clave cruda: es fea, pero es el dato que el anuncio sí trae, y
    decir «sin especificar» sobre algo especificado sería mentir. */
 function avTexto(vocabulario, clave) {
   if (!clave) return '';
@@ -51,9 +51,9 @@ function avLista(valores, traducir) {
   return valores.map(traducir).filter((t) => t).join(', ');
 }
 
-/* Los días y turnos de un aviso. Tres estados adentro de la misma caja, que es
+/* Los días y turnos de un anuncio. Tres estados adentro de la misma caja, que es
    lo que hacía el detalle desplegable de antes. */
-function Franjas({ base, avisoId, frase }) {
+function Franjas({ base, anuncioId, frase }) {
   const [estado, setEstado] = useState('quieto');
   const [franjas, setFranjas] = useState([]);
   const [claveDelError, setClaveDelError] = useState('');
@@ -64,7 +64,7 @@ function Franjas({ base, avisoId, frase }) {
     pedidas.current = true;
     setEstado('cargando');
     try {
-      const traidas = await base.ClienteDatos.franjasDeAviso(avisoId);
+      const traidas = await base.ClienteDatos.franjasDeAnuncio(anuncioId);
       if (!traidas || traidas.length === 0) { setEstado('vacio'); return; }
       setFranjas(traidas);
       setEstado('listo');
@@ -92,8 +92,8 @@ function Franjas({ base, avisoId, frase }) {
   );
 }
 
-function Aviso({ aviso, base, frase, misPostulaciones, alPostularse, alRetirarse }) {
-  const [yaEsta, setYaEsta] = useState(!!aviso.ya_me_postule);
+function Anuncio({ anuncio, base, frase, misPostulaciones, alPostularse, alRetirarse }) {
+  const [yaEsta, setYaEsta] = useState(!!anuncio.ya_me_postule);
   const [mensaje, setMensaje] = useState('');
   const [postulando, setPostulando] = useState(false);
   const [retirando, setRetirando] = useState(false);
@@ -101,9 +101,9 @@ function Aviso({ aviso, base, frase, misPostulaciones, alPostularse, alRetirarse
   const [claveDelError, setError] = useState('');
   const [clavePostulado, setTextoPostulado] = useState('avisos.ya_postulado');
 
-  const idDelCampo = 'av-mensaje-' + aviso.id;
+  const idDelCampo = 'av-mensaje-' + anuncio.id;
 
-  const motivo = avTexto('motivo_consulta', aviso.motivo_consulta);
+  const motivo = avTexto('motivo_consulta', anuncio.motivo_consulta);
 
   /* Un renglón «Rótulo: valor». Un valor que no vino se dice y no se deja el
      hueco: un dato ausente y un dato que nadie miró se leen igual, y no son lo
@@ -116,9 +116,9 @@ function Aviso({ aviso, base, frase, misPostulaciones, alPostularse, alRetirarse
     setDicho('');
     setPostulando(true);
     try {
-      const fila = await base.ClienteDatos.postularse(aviso.id, mensaje);
-      if (fila && fila.id) alPostularse(aviso.id, fila.id);
-      aviso.ya_me_postule = true;
+      const fila = await base.ClienteDatos.postularse(anuncio.id, mensaje);
+      if (fila && fila.id) alPostularse(anuncio.id, fila.id);
+      anuncio.ya_me_postule = true;
       setMensaje('');
       setYaEsta(true);
       setTextoPostulado('avisos.postulado_ok');
@@ -128,7 +128,7 @@ function Aviso({ aviso, base, frase, misPostulaciones, alPostularse, alRetirarse
          todo lo demás, que sí es una falla y va a la consola entera mientras la
          pantalla recibe la versión clasificada. */
       const faltaElLegajo = err && err.message === 'postulacion_sin_legajo';
-      if (!faltaElLegajo) console.error('Postulación a un aviso:', err);
+      if (!faltaElLegajo) console.error('Postulación a un anuncio:', err);
       setError(faltaElLegajo
         ? 'avisos.sin_legajo'
         : Texto.claveDeError(err, frase('avisos.error_postular')));
@@ -138,15 +138,15 @@ function Aviso({ aviso, base, frase, misPostulaciones, alPostularse, alRetirarse
   }
 
   async function retirar() {
-    const cual = misPostulaciones[aviso.id];
+    const cual = misPostulaciones[anuncio.id];
     if (!cual) return;
     setError('');
     setDicho('');
     setRetirando(true);
     try {
       await base.ClienteDatos.retirarPostulacion(cual);
-      alRetirarse(aviso.id);
-      aviso.ya_me_postule = false;
+      alRetirarse(anuncio.id);
+      anuncio.ya_me_postule = false;
       setYaEsta(false);
       setTextoPostulado('avisos.ya_postulado');
       setDicho('avisos.retirada');
@@ -159,26 +159,26 @@ function Aviso({ aviso, base, frase, misPostulaciones, alPostularse, alRetirarse
 
   return (
     <div className="curso-tarjeta">
-      <h3>{aviso.descripcion || frase('avisos.sin_dato')}</h3>
+      <h3>{anuncio.descripcion || frase('avisos.sin_dato')}</h3>
       {motivo ? <p>{motivo}</p> : null}
 
       <div className="curso-datos">
-        <span className="curso-dato">{dato('avisos.rotulo_zona', avTexto('zona', aviso.zona))}</span>
-        <span className="curso-dato">{dato('avisos.rotulo_profesion', avTexto('tipo_asistente', aviso.profesion))}</span>
-        <span className="curso-dato">{dato('avisos.rotulo_frecuencia', avTexto('frecuencia', aviso.frecuencia))}</span>
+        <span className="curso-dato">{dato('avisos.rotulo_zona', avTexto('zona', anuncio.zona))}</span>
+        <span className="curso-dato">{dato('avisos.rotulo_profesion', avTexto('tipo_asistente', anuncio.profesion))}</span>
+        <span className="curso-dato">{dato('avisos.rotulo_frecuencia', avTexto('frecuencia', anuncio.frecuencia))}</span>
         {/* Los horarios son lo único que no pasa por un vocabulario: la columna
             guarda hoy tres formas distintas de nombrar lo mismo y todavía no
             tiene lista que la gobierne, así que se muestra lo guardado tal cual:
             inventarle acá una cuarta forma sería empeorarlo. */}
-        <span className="curso-dato">{dato('avisos.rotulo_horarios', aviso.horarios || '')}</span>
-        <span className="curso-dato">{dato('avisos.rotulo_genero', avTexto('genero_preferido', aviso.genero_preferido))}</span>
-        <span className="curso-dato">{dato('avisos.rotulo_tareas', avLista(aviso.tareas, (c) => Catalogo.etiquetaDeTarea(c)))}</span>
-        <span className="curso-dato">{dato('avisos.rotulo_patologias', avLista(aviso.patologias, (c) => avTexto('patologia', c)))}</span>
+        <span className="curso-dato">{dato('avisos.rotulo_horarios', anuncio.horarios || '')}</span>
+        <span className="curso-dato">{dato('avisos.rotulo_genero', avTexto('genero_preferido', anuncio.genero_preferido))}</span>
+        <span className="curso-dato">{dato('avisos.rotulo_tareas', avLista(anuncio.tareas, (c) => Catalogo.etiquetaDeTarea(c)))}</span>
+        <span className="curso-dato">{dato('avisos.rotulo_patologias', avLista(anuncio.patologias, (c) => avTexto('patologia', c)))}</span>
       </div>
 
-      <Franjas base={base} avisoId={aviso.id} frase={frase} />
+      <Franjas base={base} anuncioId={anuncio.id} frase={frase} />
 
-      <p className="curso-datos">{frase('avisos.publicado', { fecha: Texto.fechaCorta(aviso.created_at) })}</p>
+      <p className="curso-datos">{frase('avisos.publicado', { fecha: Texto.fechaCorta(anuncio.created_at) })}</p>
 
       {/* Cuando ya se ofreció. El botón de retirar sale sólo si se sabe con qué
           fila: ofrecer un botón que no puede hacer nada es peor que no
@@ -188,7 +188,7 @@ function Aviso({ aviso, base, frase, misPostulaciones, alPostularse, alRetirarse
         <button
           type="button"
           className="btn btn-sobre-oscuro"
-          hidden={!misPostulaciones[aviso.id]}
+          hidden={!misPostulaciones[anuncio.id]}
           disabled={retirando}
           onClick={retirar}
         >{retirando ? frase('avisos.retirando') : frase('avisos.retirar')}</button>
@@ -226,10 +226,10 @@ function Aviso({ aviso, base, frase, misPostulaciones, alPostularse, alRetirarse
   );
 }
 
-export default function Avisos({ activa, visita, base, navegar }) {
+export default function Anuncios({ activa, visita, base, navegar }) {
   const { frase } = useFrases();
   const [estado, setEstado] = useState('cargando');
-  const [avisos, setAvisos] = useState([]);
+  const [anuncios, setAnuncios] = useState([]);
   const [hayLegajo, setHayLegajo] = useState(false);
   const [misPostulaciones, setMisPostulaciones] = useState({});
   const [claveDelError, setClaveDelError] = useState('');
@@ -245,7 +245,7 @@ export default function Avisos({ activa, visita, base, navegar }) {
            nombres visibles se traducen acá. */
         await Catalogo.cargar();
 
-        /* Sin legajo la base devuelve cero avisos, que se lee igual que «no hay
+        /* Sin legajo la base devuelve cero anuncios, que se lee igual que «no hay
            ninguno». Son dos cosas distintas y se dicen distinto. */
         const legajo = await base.ClienteDatos.legajoPropio();
         if (!vigente) return;
@@ -253,7 +253,7 @@ export default function Avisos({ activa, visita, base, navegar }) {
         if (!legajo) { setEstado('listo'); return; }
 
         const [traidos, mias] = await Promise.all([
-          base.ClienteDatos.avisosAbiertos(),
+          base.ClienteDatos.anunciosAbiertos(),
           base.ClienteDatos.misPostulaciones()
         ]);
         if (!vigente) return;
@@ -265,7 +265,7 @@ export default function Avisos({ activa, visita, base, navegar }) {
         setMisPostulaciones(cruce);
 
         if (!traidos || traidos.length === 0) { setEstado('vacio'); return; }
-        setAvisos(traidos);
+        setAnuncios(traidos);
         setEstado('listo');
       } catch (err) {
         if (!vigente) return;
@@ -277,12 +277,12 @@ export default function Avisos({ activa, visita, base, navegar }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visita, base, pedido]);
 
-  const alPostularse = (avisoId, filaId) =>
-    setMisPostulaciones((antes) => ({ ...antes, [avisoId]: filaId }));
+  const alPostularse = (anuncioId, filaId) =>
+    setMisPostulaciones((antes) => ({ ...antes, [anuncioId]: filaId }));
 
-  const alRetirarse = (avisoId) => setMisPostulaciones((antes) => {
+  const alRetirarse = (anuncioId) => setMisPostulaciones((antes) => {
     const quedan = { ...antes };
-    delete quedan[avisoId];
+    delete quedan[anuncioId];
     return quedan;
   });
 
@@ -311,10 +311,10 @@ export default function Avisos({ activa, visita, base, navegar }) {
           </p>
 
           <div id="av-lista" hidden={!hayLegajo}>
-            {avisos.map((cada) => (
-              <Aviso
+            {anuncios.map((cada) => (
+              <Anuncio
                 key={cada.id}
-                aviso={cada}
+                anuncio={cada}
                 base={base}
                 frase={frase}
                 misPostulaciones={misPostulaciones}

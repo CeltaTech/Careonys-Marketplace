@@ -63,8 +63,8 @@ Antes de escribir cualquiera de las diez, y sin excepción:
 **La colisión de vocabulario que había acá se decidió.** El material heredado llamaba `avisos`
 a lo que publica una Familia, y este documento advertía que en el producto «aviso» se usaba
 para otra cosa: el aviso de que el Asistente llegó, el aviso que sale por WhatsApp o por
-correo. **El 25 de agosto de 2026 el Desarrollador eligió**: el **Aviso** es lo que la Familia
-publica y queda guardado, y la tabla se llama `avisos`. Para el otro sentido queda
+correo. **El 25 de agosto de 2026 el Desarrollador eligió**: el **Aviso** —hoy el **Anuncio**— es
+lo que la Familia publica y queda guardado, y la tabla se llama `avisos`. Para el otro sentido queda
 **notificación**, que es la palabra que el proyecto ya venía usando en `notificaciones`. Lo que
 no es ninguna de las dos cosas es **búsqueda**: buscar es el acto, y el acto no se guarda.
 
@@ -76,7 +76,7 @@ no es ninguna de las dos cosas es **búsqueda**: buscar es el acto, y el acto no
 > esta página daba por abiertas. Quedan siete. Cada una dice más abajo en qué renglón del
 > esquema está declarada.
 
-### 1. `postulaciones` — el Asistente se ofrece a un aviso — **CONSTRUIDA**
+### 1. `postulaciones` — el Asistente se ofrece a un anuncio — **CONSTRUIDA**
 
 Está declarada en `supabase/migrations/0001_base_del_esquema.sql:2966`. Era la mitad
 que faltaba: una Familia podía publicar lo que necesitaba y **nadie
@@ -107,10 +107,10 @@ Están declaradas en `supabase/migrations/0001_base_del_esquema.sql:2248` y `:27
 tanda que la anterior.
 
 **Cuál de los dos modelos quedó, y no fue una preferencia.** La pregunta era si el chat cuelga de
-un aviso, como la `messages` heredada, o del vínculo entre dos personas. La contesta el modelo:
+un anuncio, como la `messages` heredada, o del vínculo entre dos personas. La contesta el modelo:
 los caminos del mercado son **dos**, y en el del directorio la Familia contacta a un perfil
-**sin que exista ningún aviso**. Un chat colgado de un aviso no sabe representar ese camino. Así
-que cuelga del vínculo, y el aviso queda como una columna que puede estar en nulo: ahí está
+**sin que exista ningún anuncio**. Un chat colgado de un anuncio no sabe representar ese camino. Así
+que cuelga del vínculo, y el anuncio queda como una columna que puede estar en nulo: ahí está
 guardado por cuál de los dos caminos se abrió el contacto, sin ninguna lista de valores escrita a
 mano. **`messages` queda superada** y su baja es el pendiente 139, porque borrar necesita la
 palabra del Desarrollador.
@@ -156,7 +156,7 @@ se cambia de servicio, dos columnas de esta tabla quedan sin sentido.
 | | |
 |---|---|
 | **De qué lado cae** | **Compartida**, corregido el 25 de agosto de 2026 —antes decía que era de esta modalidad—. La calificación es evidencia sobre la persona y la acompaña a donde trabaje: quien recibió el cuidado puede opinar lo haya elegido o se lo hayan asignado. Lo que se queda de este lado es cuánto pesa y en qué orden ordena, módulo `orden`, no la reseña |
-| **De qué depende** | De que exista un trabajo terminado, que hoy no existe de ningún lado. **Y no puede colgar del aviso**: el aviso es de esta modalidad, y una tabla compartida que apunta a un objeto de un solo lado arrastra el lado entero con ella —es el mismo defecto que `logbook_entries.aviso_id` y `messages.aviso_id`, anotado en el pendiente 52—. Tiene que colgar del trabajo hecho, que en esta modalidad llega por un aviso y en las otras por una asignación |
+| **De qué depende** | De que exista un trabajo terminado, que hoy no existe de ningún lado. **Y no puede colgar del anuncio**: el anuncio es de esta modalidad, y una tabla compartida que apunta a un objeto de un solo lado arrastra el lado entero con ella —es el mismo defecto que `logbook_entries.aviso_id` y `messages.aviso_id`, anotado en el pendiente 52—. Tiene que colgar del trabajo hecho, que en esta modalidad llega por un anuncio y en las otras por una asignación |
 | **Qué hay que decidir antes** | **Es lógica comercial y está congelada** por `docs/ALCANCE.md` §4. Además: quién puede calificar, si el Asistente puede responder, y quién puede esconder una reseña |
 
 Columnas propuestas: Asistente, quién califica, el trabajo terminado que se califica, calificación

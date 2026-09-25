@@ -210,7 +210,7 @@ const Texto = {
    * Son dos capas distintas y por eso hay dos valores: **lo visible** puede
    * corregirse el día que la Prestadora quiera escribirlo mejor, y **lo
    * guardado** no cambia nunca, porque es lo que quedó escrito en cada legajo,
-   * en cada aviso y en cada perfil que eligió esa opción. Renombrarlo sería una
+   * en cada anuncio y en cada perfil que eligió esa opción. Renombrarlo sería una
    * migración de datos disfrazada de corrección de texto.
    *
    * Por eso también la clave se calcula una sola vez, al dar de alta: quien
@@ -327,7 +327,7 @@ const Texto = {
     // esta misma puerta.
     if (dice('alta_sin_papel')) return 'error.alta_sin_papel';
 
-    // Publicar un aviso son dos pedidos: el aviso y sus franjas. Si el
+    // Publicar un anuncio son dos pedidos: el anuncio y sus franjas. Si el
     // segundo falla, el primero ya está hecho, y decir «no se pudo publicar»
     // llevaría a publicarla dos veces.
     if (dice('aviso_sin_franjas')) return 'error.aviso_sin_franjas';

@@ -345,11 +345,12 @@ cuando esas pantallas se rehacen.
 
 ### Trampa 3 — los avisos y la conversación
 
-Son dos avisos, y cada uno se dice con quién le avisa a quién.
+Son dos avisos, y el de la Familia hoy se llama anuncio; cada uno se dice con quién le avisa a
+quién.
 
 | Qué es | Cómo se dice |
 |---|---|
-| Lo que publica una Familia cuando necesita un Asistente, donde queda publicada la vacante | **aviso de una Familia** |
+| Lo que publica una Familia cuando necesita un Asistente, donde queda publicada la vacante | **anuncio de una Familia** |
 | Lo que el panel de la Prestadora le manda al Asistente, y llega a su teléfono | **aviso de la Prestadora a un Asistente** |
 | La charla de ida y vuelta entre una Familia y un Asistente, con el control que impide que ahí adentro pase un dato de contacto | **conversación** |
 

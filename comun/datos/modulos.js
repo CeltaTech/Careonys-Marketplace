@@ -9,7 +9,7 @@
    igual: se les pide un pedazo del documento y ellos lo llenan y lo leen.
 
    Lo que cambia es **cuándo llegan**. Pedidos arriba de todo viajarían siempre,
-   incluso para quien sólo entra a mirar sus avisos; pedidos acá adentro, la
+   incluso para quien sólo entra a mirar sus anuncios; pedidos acá adentro, la
    herramienta de armado los separa en paquetes aparte que viajan la primera vez
    que alguien abre la pantalla que los usa. Es la misma idea de la puerta a la
    base, aplicada a los archivos de antes.

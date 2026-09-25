@@ -3,7 +3,7 @@
 
    Los mismos cuatro destinos de siempre, con el que se está mirando marcado.
    Está escrita una vez porque las tres pantallas que la llevan —el tablero, los
-   reportes y el aviso nuevo— la llevaban idéntica salvo cuál iba marcado: tres
+   reportes y el anuncio nuevo— la llevaban idéntica salvo cuál iba marcado: tres
    copias del mismo renglón son tres lugares donde corregir el día que cambie un
    rótulo.
 

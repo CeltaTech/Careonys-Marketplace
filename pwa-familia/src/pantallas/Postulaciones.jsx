@@ -1,7 +1,7 @@
 /* ===================================================
    QUIÉNES SE POSTULARON
 
-   El otro extremo del aviso. La Familia publicaba y no tenía dónde ver quién se
+   El otro extremo del anuncio. La Familia publicaba y no tenía dónde ver quién se
    había ofrecido; los dos caminos del mercado terminan en lo mismo —un
    contacto—, y éste es el que empieza del lado del Asistente.
 
@@ -39,7 +39,7 @@ export default function Postulaciones({ activa, pedido, navegar, irAMensajes }) 
     (async () => {
       try {
         const { ClienteDatos } = await conLaBase();
-        const traidas = await ClienteDatos.postulacionesDeMisAvisos();
+        const traidas = await ClienteDatos.postulacionesDeMisAnuncios();
         await Catalogo.cargar();
         if (!vigente) return;
         setAcceso(ClienteDatos);

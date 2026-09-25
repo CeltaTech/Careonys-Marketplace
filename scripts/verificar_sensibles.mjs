@@ -188,7 +188,7 @@ const REGISTROS_PERDONADOS = new Map([
   ['index', [LA_CLASE_DE_LA_ALARMA]],
   ['FranjaDeAlarmas', [LA_CLASE_DE_LA_ALARMA]],
   ['apiClient', [NOMBRA_UNA_PIEZA([
-    'aviso.id', 'table', "perdidas.map((c) => '«' + c + '»').join(', ')"])]],
+    'anuncio.id', 'table', "perdidas.map((c) => '«' + c + '»').join(', ')"])]],
   ['catalogo', [
     EL_ATRIBUTO_CRUDO,
     NO_SALE_DE_NINGUNA_FILA,

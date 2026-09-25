@@ -458,7 +458,7 @@ const ClienteDatos = {
 
   // El cambio no toca `tenant_id`, ni `vocabulario_id`, ni `clave`. Los tres
   // son lo guardado y lo guardado no se renombra: la clave es la que quedó
-  // escrita en cada legajo, en cada aviso y en cada perfil que eligió esa
+  // escrita en cada legajo, en cada anuncio y en cada perfil que eligió esa
   // opción, así que corregirla no corrige nada, deja huérfano todo lo anterior.
   // Lo que sí se corrige es el texto que se lee, y encenderla o apagarla.
   async actualizarOpcion(id, datos) {
@@ -606,34 +606,34 @@ const ClienteDatos = {
     }, 'caregiver_id,tipo');
   },
 
-  // --- MÓDULO 2: AVISOS Y SOLICITUDES DE FAMILIAS ---
+  // --- MÓDULO 2: ANUNCIOS Y SOLICITUDES DE FAMILIAS ---
   // Las franjas —cuándo se necesita el cuidado— no son una columna de
   // `avisos`: son filas de `franjas_aviso`, una por casillero
-  // marcado (migración 0016). Por eso se apartan antes de mandar el aviso y
-  // se guardan después, cuando el aviso ya tiene identificador.
-  async crearAvisoFamilia(avisoData) {
-    const dbData = { ...avisoData };
+  // marcado (migración 0016). Por eso se apartan antes de mandar el anuncio y
+  // se guardan después, cuando el anuncio ya tiene identificador.
+  async crearAnuncioFamilia(anuncioData) {
+    const dbData = { ...anuncioData };
     const franjas = dbData.franjas || [];
     delete dbData.franjas;
     if (this.currentTenant) {
       dbData.tenant_id = this.currentTenant.id;
     }
-    const aviso = await this._supabasePost('avisos', dbData);
-    if (aviso && aviso.id && franjas.length > 0) {
+    const anuncio = await this._supabasePost('avisos', dbData);
+    if (anuncio && anuncio.id && franjas.length > 0) {
       try {
-        await this.guardarFranjasDeAviso(aviso.id, franjas);
+        await this.guardarFranjasDeAnuncio(anuncio.id, franjas);
       } catch (err) {
-        // El aviso ya está publicado: no se puede deshacer con otro pedido
+        // El anuncio ya está publicado: no se puede deshacer con otro pedido
         // sin arriesgarse a borrar algo que sí quedó bien. Lo que se puede
         // hacer es no mentir sobre qué pasó.
-        console.error('Las franjas del aviso ' + aviso.id + ':', err);
+        console.error('Las franjas del anuncio ' + anuncio.id + ':', err);
         const falla = new Error('aviso_sin_franjas');
-        falla.aviso = aviso;
+        falla.anuncio = anuncio;
         falla.causa = err;
         throw falla;
       }
     }
-    return aviso;
+    return anuncio;
   },
 
   // Una fila por casillero marcado. `dia` y `turno` guardan claves de los
@@ -643,9 +643,9 @@ const ClienteDatos = {
   // escribía una forma distinta —pendiente 40—: la aplicación de la Familia
   // mandaba turnos sin decir de qué día, y el formulario del portal preguntaba
   // días y no mandaba nada.
-  async guardarFranjasDeAviso(avisoId, franjas) {
+  async guardarFranjasDeAnuncio(anuncioId, franjas) {
     const filas = (franjas || []).map((franja) => {
-      const fila = { aviso_id: avisoId, dia: franja.dia, turno: franja.turno };
+      const fila = { aviso_id: anuncioId, dia: franja.dia, turno: franja.turno };
       if (this.currentTenant) fila.tenant_id = this.currentTenant.id;
       return fila;
     });
@@ -655,29 +655,29 @@ const ClienteDatos = {
 
   // Alias con campos camelCase — usado por pwa-familia/index.html (screen-publicar)
   // Normaliza el vocabulario de la UI al vocabulario interno del mapper.
-  async crearAviso(avisoData) {
-    return await this.crearAvisoFamilia({
-      paciente:      avisoData.patientName  || avisoData.paciente,
-      patologias:    avisoData.pathologiesRequired || avisoData.patologias || [],
-      horarios:      avisoData.scheduleType || avisoData.horarios,
+  async crearAnuncio(anuncioData) {
+    return await this.crearAnuncioFamilia({
+      paciente:      anuncioData.patientName  || anuncioData.paciente,
+      patologias:    anuncioData.pathologiesRequired || anuncioData.patologias || [],
+      horarios:      anuncioData.scheduleType || anuncioData.horarios,
       // Cuándo se necesita el cuidado. Sale de `Franjas.recolectar()`, así que
       // llega como una lista de pares `{ dia, turno }` con claves de catálogo.
-      franjas:       avisoData.franjas || [],
-      // De quién es el aviso no se manda: lo pone la base sola. `familia_id`
+      franjas:       anuncioData.franjas || [],
+      // De quién es el anuncio no se manda: lo pone la base sola. `familia_id`
       // nace con valor por omisión `auth.uid()` (migración 0020), y es
-      // justamente eso lo que impide publicar un aviso a nombre de otro. Hasta
+      // justamente eso lo que impide publicar un anuncio a nombre de otro. Hasta
       // hoy acá viajaba `family_user_id`, una columna que no existe en ninguna
       // migración, así que el pedido entero se caía.
       // Migración 0013. Cada uno con sus dos nombres porque la pantalla del
       // teléfono escribe algunos en inglés y otros en castellano; este atajo
       // existe justamente para absorber esa mezcla.
-      zona:            avisoData.zone || avisoData.zona,
-      descripcion:     avisoData.description || avisoData.descripcion,
-      motivoConsulta:  avisoData.consultationReason || avisoData.motivoConsulta,
-      tareas:          avisoData.tasksRequired || avisoData.tareas,
-      profesion:       avisoData.professionRequired || avisoData.profesion,
-      generoPreferido: avisoData.preferredGender || avisoData.generoPreferido,
-      frecuencia:      avisoData.frequency || avisoData.frecuencia
+      zona:            anuncioData.zone || anuncioData.zona,
+      descripcion:     anuncioData.description || anuncioData.descripcion,
+      motivoConsulta:  anuncioData.consultationReason || anuncioData.motivoConsulta,
+      tareas:          anuncioData.tasksRequired || anuncioData.tareas,
+      profesion:       anuncioData.professionRequired || anuncioData.profesion,
+      generoPreferido: anuncioData.preferredGender || anuncioData.generoPreferido,
+      frecuencia:      anuncioData.frequency || anuncioData.frecuencia
     });
   },
 
@@ -748,7 +748,7 @@ const ClienteDatos = {
 
   async registrarReporte(entryData) {
     return await this._supabaseRequest('POST', 'reportes', {
-      aviso_id: entryData.avisoId,
+      aviso_id: entryData.anuncioId,
       caregiver_id: entryData.caregiverId,
       blood_pressure: entryData.presion || entryData.blood_pressure,
       glycemia: entryData.glucemia || entryData.glycemia,
@@ -757,10 +757,10 @@ const ClienteDatos = {
     });
   },
 
-  async getReportes(avisoId = null) {
+  async getReportes(anuncioId = null) {
     const queryParams = {};
-    if (avisoId) {
-      queryParams.aviso_id = `eq.${avisoId}`;
+    if (anuncioId) {
+      queryParams.aviso_id = `eq.${anuncioId}`;
     }
     queryParams.order = 'created_at.desc';
     return await this._supabaseRequest('GET', 'reportes', null, queryParams);
@@ -1011,7 +1011,7 @@ const ClienteDatos = {
   // --- EL CONTACTO: POSTULARSE, CONTACTAR Y CONVERSAR ---
   //
   // Los dos caminos del mercado terminan acá (CLAUDE.md §1): la Familia publica
-  // un aviso y los Asistentes se postulan, o la Familia mira el directorio y
+  // un anuncio y los Asistentes se postulan, o la Familia mira el directorio y
   // contacta. Lo que se guarda es el hecho del contacto y nunca el trato, que
   // lo cierran las dos partes afuera del software.
   //
@@ -1021,33 +1021,33 @@ const ClienteDatos = {
   // contactar o escribir a nombre de otro.
   //
   // Los cuatro que leen van por función y no por tabla, porque la RLS decide
-  // filas y acá hace falta decidir columnas: el aviso guarda los datos de
+  // filas y acá hace falta decidir columnas: el anuncio guarda los datos de
   // contacto de la Familia y no salen nunca (migración 0055).
 
-  // Los avisos a los que este Asistente puede postularse, con la marca de los
+  // Los anuncios a los que este Asistente puede postularse, con la marca de los
   // que ya contestó. Sin legajo propio devuelve la lista vacía, no un error:
   // no tener legajo todavía es un estado normal del alta, no una falla.
-  async avisosAbiertos() {
+  async anunciosAbiertos() {
     return await this._supabaseRequest('POST', 'rpc/avisos_abiertos', {});
   },
 
-  // Cuándo se necesita el cuidado en ese aviso. Devuelve claves de vocabulario
+  // Cuándo se necesita el cuidado en ese anuncio. Devuelve claves de vocabulario
   // —`lunes`, `manana`—, nunca etiquetas: quien traduce es la pantalla.
-  async franjasDeAviso(avisoId) {
-    if (!avisoId) return [];
-    return await this._supabaseRequest('POST', 'rpc/franjas_de_aviso', { p_aviso: avisoId });
+  async franjasDeAnuncio(anuncioId) {
+    if (!anuncioId) return [];
+    return await this._supabaseRequest('POST', 'rpc/franjas_de_aviso', { p_aviso: anuncioId });
   },
 
   // El Asistente se ofrece. El mensaje es opcional y viaja recortado: un texto
   // de espacios no es un mensaje, y guardarlo llena la lista de la Familia con
   // filas que no dicen nada.
-  async postularse(avisoId, mensaje) {
-    if (!avisoId) throw new Error('postulacion_sin_aviso');
+  async postularse(anuncioId, mensaje) {
+    if (!anuncioId) throw new Error('postulacion_sin_aviso');
     const legajo = await this.legajoPropio();
     if (!legajo) throw new Error('postulacion_sin_legajo');
     const limpio = (mensaje || '').trim();
     const fila = await this._supabaseRequest('POST', 'postulaciones', {
-      aviso_id: avisoId,
+      aviso_id: anuncioId,
       caregiver_id: legajo,
       mensaje: limpio || null
     });
@@ -1075,10 +1075,10 @@ const ClienteDatos = {
     });
   },
 
-  // Las que recibieron los avisos de esta Familia. Sin argumento, todas.
-  async postulacionesDeMisAvisos(avisoId) {
+  // Las que recibieron los anuncios de esta Familia. Sin argumento, todas.
+  async postulacionesDeMisAnuncios(anuncioId) {
     return await this._supabaseRequest('POST', 'rpc/postulaciones_de_mis_avisos', {
-      p_aviso: avisoId || null
+      p_aviso: anuncioId || null
     });
   },
 
@@ -1105,14 +1105,14 @@ const ClienteDatos = {
   // La conversación la abre la Familia, y es una sola por par: abrirla dos
   // veces no abre dos contactos, porque dos contactos serían dos cobros por lo
   // mismo. El `aviso_id` guarda por cuál de los dos caminos se llegó: con un
-  // aviso si el Asistente se postuló, en nulo si la Familia vino del
+  // anuncio si el Asistente se postuló, en nulo si la Familia vino del
   // directorio.
   //
   // Primero mira si ya existe. La base lo garantiza igual con su restricción de
   // una por par, así que esto no es la seguridad: es que abrir la que ya está
   // abierta tiene que devolverla, no fallar. Y si en el medio la abrió otra
   // pestaña, el rechazo se vuelve a mirar en vez de subir a la pantalla.
-  async abrirConversacion(caregiverId, avisoId) {
+  async abrirConversacion(caregiverId, anuncioId) {
     if (!caregiverId) throw new Error('conversacion_sin_asistente');
     const mia = (todas) => (todas || []).find(
       (c) => c.caregiver_id === caregiverId && c.soy_la_familia);
@@ -1123,7 +1123,7 @@ const ClienteDatos = {
     try {
       const fila = await this._supabaseRequest('POST', 'conversaciones', {
         caregiver_id: caregiverId,
-        aviso_id: avisoId || null
+        aviso_id: anuncioId || null
       });
       const nueva = (fila && fila[0]) || null;
       if (!nueva) throw new Error('conversacion_no_creada');
@@ -1367,7 +1367,7 @@ const ClienteDatos = {
         contacto: row.contact_info || null,
         horarios: row.schedule_type,
         // La grilla de días y turnos no está más acá: cada casillero es una
-        // fila de `franjas_aviso` y se pide con `franjasDeAviso()`. La
+        // fila de `franjas_aviso` y se pide con `franjasDeAnuncio()`. La
         // columna `grid_schedule_7x3` sigue existiendo con lo que le quedó
         // guardado, pero ninguna pantalla le escribe ni la lee (migración 0016).
         estado: row.status,
@@ -1393,7 +1393,7 @@ const ClienteDatos = {
   // 0013 el traductor descartaba en silencio todo lo que no reconocía, y una
   // pantalla podía preguntar algo durante meses sin que se guardara nunca. Así
   // se perdieron la grilla de disponibilidad, la zona y la descripción de un
-  // aviso. La falla se veía recién cuando alguien iba a buscar el dato a la
+  // anuncio. La falla se veía recién cuando alguien iba a buscar el dato a la
   // base y no estaba; ahora se ve la primera vez que se prueba la pantalla.
   _mapToDatabase(table, data) {
     const row = {};
@@ -1432,18 +1432,18 @@ const ClienteDatos = {
       llevar('estado', 'verification_status');
     } else if (table === 'avisos') {
       llevar('tenant_id', 'tenant_id');
-      // De quién es el aviso no se traduce porque no se manda: `familia_id` la
+      // De quién es el anuncio no se traduce porque no se manda: `familia_id` la
       // completa la base con `auth.uid()` (migración 0020). Acá había un
       // `llevar('family_user_id', 'family_user_id')` a una columna inexistente;
       // y como `llevar` sólo descarta `undefined`, el `null` con el que llegaba
-      // viajaba igual y la base rechazaba el aviso entero. Se saca el campo, no
+      // viajaba igual y la base rechazaba el anuncio entero. Se saca el campo, no
       // se le cambia el nombre: mandarlo, aunque fuera con el nombre correcto,
       // sería dejar publicar a nombre de otro.
       llevar('paciente', 'patient_name');
       llevar('patologias', 'pathologies_required');
       llevar('horarios', 'schedule_type');
       // `grid_schedule_7x3` no se escribe más: las franjas son filas de
-      // `franjas_aviso` y las manda `crearAvisoFamilia`. Si alguna
+      // `franjas_aviso` y las manda `crearAnuncioFamilia`. Si alguna
       // pantalla vuelve a mandar `grillaHorarios`, la advertencia del final de
       // este método lo va a decir, que es justamente lo que se quiere.
       llevar('contacto', 'contact_info');

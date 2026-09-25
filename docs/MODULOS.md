@@ -57,7 +57,7 @@ trabajo?* Si la respuesta es sí, es compartido. Si es no, se queda de este lado
 
 ### Propio de esta modalidad — se queda de este lado
 
-Los módulos de este lado son seis: **directorio**, **filtros**, **avisos**, **orden**,
+Los módulos de este lado son seis: **directorio**, **filtros**, **anuncios**, **orden**,
 **visibilidad** y **contacto**. Se llaman por lo que hacen y ninguno lleva prefijo. **El nombre de
 la modalidad no entra en el nombre de nada**, para que cambiarlo sea un trámite de treinta
 segundos; el reparto de qué cae de cada lado lo dice el cuadro de acá abajo, que es el único lugar
@@ -67,7 +67,7 @@ donde está escrito.
 |---|---|---|
 | **Directorio y perfil** | Muestra Asistentes a quien todavía no es cliente | Existe sólo porque el cliente busca y elige: a quien le asignan el trabajo no le hace falta mirar un catálogo |
 | **Filtros de búsqueda** | Deja combinar tipo, zona, patología, disponibilidad | Existe porque hay alguien buscando |
-| **Aviso y postulación** | La Familia publica lo que necesita; el Asistente se ofrece | Cuando el trabajo se asigna no hay a qué postularse |
+| **Anuncio y postulación** | La Familia publica lo que necesita; el Asistente se ofrece | Cuando el trabajo se asigna no hay a qué postularse |
 | **Orden de aparición** | Con qué criterio se ordena lo que el directorio muestra | Sin directorio no hay orden que decidir |
 | **Interruptor de visibilidad** | Si el Asistente aparece en el directorio | Sin directorio nadie aparece en ningún lado. **No incluye el teléfono**: eso no se muestra nunca, en ninguna modalidad, y por eso no es un interruptor sino una regla —ver `docs/CATALOGO.md` |
 | **Contacto y su costo** | Cómo una Familia llega a un Asistente y qué se cobra por eso | Y además: hasta que no se resuelva `docs/ALCANCE.md` §4, acá no se construye nada comercial |
@@ -148,7 +148,7 @@ No con una revisión de código: con una pregunta que se puede contestar.
 funcionando enteras. Si falta algo, ese algo estaba del lado equivocado.
 
 **Prueba al revés, que es la que más se olvida:** buscar en lo compartido cualquier palabra que
-sólo signifique algo acá —directorio, aviso, postulación, contacto, puntaje, destacado—.
+sólo signifique algo acá —directorio, anuncio, postulación, contacto, puntaje, destacado—.
 Si aparece una, se filtró.
 
 ## Lo que esta línea no resuelve

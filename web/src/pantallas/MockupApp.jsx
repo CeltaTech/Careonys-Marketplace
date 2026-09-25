@@ -402,7 +402,7 @@ export default function MockupApp() {
     const quienSoy = sesion ? sesion.user.id : 'demo-user';
 
     // Crear o recuperar conversacion para demo
-    // Se usa aviso_id del primer aviso activo, o null en modo demo
+    // Se usa aviso_id del primer anuncio activo, o null en modo demo
     let conversaciones = [];
     try {
       conversaciones = await ClienteDatos.getMensajes();

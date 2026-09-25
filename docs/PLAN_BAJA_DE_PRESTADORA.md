@@ -75,7 +75,7 @@ se vayan con ella tiene sentido y no hay nada que decidir acá.
 
 `caregivers` y `avisos`, que en el esquema inicial se llamaba `care_searches`
 (`supabase/migrations/0001_base_del_esquema.sql:4070` y `:3987`). Las dos admiten `tenant_id` nulo,
-así que al borrarse la Prestadora **el legajo de la persona y el aviso sobreviven**, sin
+así que al borrarse la Prestadora **el legajo de la persona y el anuncio sobreviven**, sin
 Prestadora. **Ninguna migración explica por qué**, y las dos vienen de un volcado anterior a las
 migraciones.
 
@@ -89,7 +89,7 @@ Se parten en dos naturalezas distintas, y esa diferencia es la que decide el pla
 | Qué describen | Tablas | De qué cuelgan además |
 |---|---|---|
 | **La Prestadora** | `puntaje_prestadora`, `ponderacion_comprobacion` | de nada más |
-| **Un aviso de la Prestadora** | `franjas_aviso` | de `avisos` |
+| **Un anuncio de la Prestadora** | `franjas_aviso` | de `avisos` |
 | **Una persona** | `autorizaciones_asistente`, `disponibilidad_asistente`, `documentos_asistente`, `estudios_asistente`, `experiencia_laboral_asistente`, `franjas_asistente`, `matriculas_asistente`, `referencias_asistente`, `verificaciones_asistente`, `zonas_asistente` | de `caregivers` |
 
 Las diez últimas cuelgan de `caregivers` con `on delete cascade` hacia el legajo, y **nada hacia
@@ -166,7 +166,7 @@ argumentar en contra más de lo que dice la sección 5.
 
 Suponiendo la **B**, que es la recomendada. Todo en una migración:
 
-1. **Las tres tablas que describen a la Prestadora o a su aviso pasan a `on delete cascade`**:
+1. **Las tres tablas que describen a la Prestadora o a su anuncio pasan a `on delete cascade`**:
    `puntaje_prestadora`, `ponderacion_comprobacion` y `franjas_aviso`. Lo que
    nace con la Prestadora se va con ella, que es el sentido de que nazca configurada.
 2. **Las diez tablas de la persona no se tocan en su clave hacia `caregivers`**, y su `tenant_id`
@@ -189,7 +189,7 @@ Una prueba nueva, `scripts/probar_la_baja_de_la_prestadora.mjs`, con dos Prestad
 cargadas y no con una vacía —una Prestadora sin uso pasa la prueba sin probar nada—:
 
 1. La Prestadora recién nacida se borra. **Hoy da rojo.**
-2. La Prestadora con un Asistente publicado y un aviso con franjas se borra. **Hoy da rojo.**
+2. La Prestadora con un Asistente publicado y un anuncio con franjas se borra. **Hoy da rojo.**
 3. Después de la baja, el legajo de esa persona **sigue existiendo** y conserva sus documentos, sus
    estudios y sus referencias.
 4. Y **su sello volvió a «sin revisar»**, así que no aparece en el directorio público.

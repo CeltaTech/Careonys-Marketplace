@@ -41,7 +41,7 @@
       "pt-BR": "Rede de Assistentes"
     },
     "nav.publicar_aviso": {
-      "es-AR": "Publicar un Aviso",
+      "es-AR": "Publicar un Anuncio",
       "en": "Post a Listing",
       "pt-BR": "Publicar um Anúncio"
     },
@@ -228,7 +228,7 @@
       "pt-BR": "A mensagem não foi enviada. Aqui não se compartilham dados de contato."
     },
     "error.aviso_sin_franjas": {
-      "es-AR": "El aviso se publicó sin los días y turnos. No lo publique de nuevo.",
+      "es-AR": "El anuncio se publicó sin los días y turnos. No lo publique de nuevo.",
       "en": "The listing was published without days and shifts. Do not publish it again.",
       "pt-BR": "O anúncio foi publicado sem os dias e turnos. Não o publique de novo."
     },
@@ -365,7 +365,7 @@
       "pt-BR": "Cadastrar-se como Família"
     },
     "alta_familia.bajada": {
-      "es-AR": "Con esta cuenta se publica el aviso y se elige el Asistente. El acuerdo se cierra directamente entre la Familia y quien se elija.",
+      "es-AR": "Con esta cuenta se publica el anuncio y se elige el Asistente. El acuerdo se cierra directamente entre la Familia y quien se elija.",
       "en": "This account is what publishes the listing and picks the Caregiver. The agreement is closed directly between the Family and whoever is chosen.",
       "pt-BR": "Com esta conta se publica o anúncio e se escolhe o Assistente. O acordo é fechado diretamente entre a Família e quem for escolhido."
     },
@@ -937,7 +937,7 @@
       "en": "There are no authorisations to confirm yet.",
       "pt-BR": "Ainda não há autorizações para confirmar."
     },
-    "___________": "── Los estados de nueva-clave.html y el aviso de solicitar-asistente.html ──",
+    "___________": "── Los estados de nueva-clave.html y el anuncio de solicitar-asistente.html ──",
     "nueva.no_se_pudo_comprobar": {
       "es-AR": "No se pudo comprobar el enlace",
       "en": "The link could not be checked",
@@ -1900,7 +1900,7 @@
       "pt-BR": "Publique e busque"
     },
     "inicio.paso_publicar_texto": {
-      "es-AR": "Publique un Aviso con las necesidades concretas que requiere su familiar.",
+      "es-AR": "Publique un Anuncio con las necesidades concretas que requiere su familiar.",
       "en": "Post a job posting with the specific needs your relative has.",
       "pt-BR": "Publique um Anúncio com as necessidades concretas do seu familiar."
     },
@@ -1910,7 +1910,7 @@
       "pt-BR": "Encontre o seu Assistente"
     },
     "inicio.paso_encontrar_texto": {
-      "es-AR": "Los Asistentes podrán postularse a su Aviso y usted podrá entrevistarlos por chat o videollamada.",
+      "es-AR": "Los Asistentes podrán postularse a su Anuncio y usted podrá entrevistarlos por chat o videollamada.",
       "en": "Caregivers can apply to your job posting, and you can interview them by chat or video call.",
       "pt-BR": "Os Assistentes poderão se candidatar ao seu Anúncio e você poderá entrevistá-los por chat ou videochamada."
     },
@@ -1990,7 +1990,7 @@
       "pt-BR": "Busque-o"
     },
     "inicio.paso_buscar_texto": {
-      "es-AR": "Publique un Aviso con sus necesidades. Los Asistentes calificados se postularán y podrá hacer una selección.",
+      "es-AR": "Publique un Anuncio con sus necesidades. Los Asistentes calificados se postularán y podrá hacer una selección.",
       "en": "Post a job posting with your needs. Qualified Caregivers will apply and you will be able to make a selection.",
       "pt-BR": "Publique um Anúncio com as suas necessidades. Os Assistentes qualificados se candidatarão e você poderá fazer uma seleção."
     },
@@ -2483,7 +2483,7 @@
     },
     "____________________": "── Pedir un Asistente ──",
     "solicitar.descripcion": {
-      "es-AR": "Encuentre al Asistente ideal para su familiar mayor. Publique su aviso y reciba postulaciones de Asistentes calificados en su zona.",
+      "es-AR": "Encuentre al Asistente ideal para su familiar mayor. Publique su anuncio y reciba postulaciones de Asistentes calificados en su zona.",
       "en": "Find the right Caregiver for your older relative. Post your listing and receive applications from qualified Caregivers in your area.",
       "pt-BR": "Encontre o Assistente ideal para o seu familiar idoso. Publique o seu anúncio e receba candidaturas de Assistentes qualificados na sua zona."
     },
@@ -2563,7 +2563,7 @@
       "pt-BR": "Duas maneiras de encontrar um Assistente"
     },
     "solicitar.caminos_bajada": {
-      "es-AR": "Mire el directorio de su Prestadora, compare perfiles y contacte a quien le sirva. O publique un aviso con lo que necesita y espere a que los Asistentes se postulen.",
+      "es-AR": "Mire el directorio de su Prestadora, compare perfiles y contacte a quien le sirva. O publique un anuncio con lo que necesita y espere a que los Asistentes se postulen.",
       "en": "Look through the directory of your Provider, compare profiles and get in touch with whoever suits you. Or post a listing with what is needed and wait for Caregivers to apply.",
       "pt-BR": "Veja o diretório da sua Prestadora, compare perfis e entre em contato com quem lhe servir. Ou publique um anúncio com o que precisa e espere que os Assistentes se candidatem."
     },
@@ -2588,17 +2588,17 @@
       "pt-BR": "O outro caminho"
     },
     "solicitar.aviso_titulo": {
-      "es-AR": "Publique un aviso",
+      "es-AR": "Publique un anuncio",
       "en": "Post a listing",
       "pt-BR": "Publique um anúncio"
     },
     "solicitar.aviso_bajada": {
-      "es-AR": "Diga qué necesita, en qué zona, qué días y en qué turnos. El aviso queda publicado para los Asistentes de su Prestadora, y quienes puedan cubrirlo se postulan.",
+      "es-AR": "Diga qué necesita, en qué zona, qué días y en qué turnos. El anuncio queda publicado para los Asistentes de su Prestadora, y quienes puedan cubrirlo se postulan.",
       "en": "State what is needed, in which area, on which days and in which shifts. The listing stays published for the Caregivers of your Provider, and those who can cover it apply.",
       "pt-BR": "Diga do que precisa, em que zona, em que dias e em que turnos. O anúncio fica publicado para os Assistentes da sua Prestadora, e quem puder atendê-lo se candidata."
     },
     "solicitar.aviso_boton": {
-      "es-AR": "PUBLICAR UN AVISO",
+      "es-AR": "PUBLICAR UN ANUNCIO",
       "en": "POST A LISTING",
       "pt-BR": "PUBLICAR UM ANÚNCIO"
     },
@@ -2613,7 +2613,7 @@
       "pt-BR": "em três passos simples."
     },
     "solicitar.mock_nuevo_aviso": {
-      "es-AR": "Nuevo Aviso",
+      "es-AR": "Nuevo Anuncio",
       "en": "New listing",
       "pt-BR": "Novo Anúncio"
     },
@@ -2648,7 +2648,7 @@
       "pt-BR": "Idoso com comprometimento…"
     },
     "solicitar.mock_confirmar": {
-      "es-AR": "CONFIRMAR AVISO",
+      "es-AR": "CONFIRMAR ANUNCIO",
       "en": "CONFIRM LISTING",
       "pt-BR": "CONFIRMAR ANÚNCIO"
     },
@@ -2668,7 +2668,7 @@
       "pt-BR": "Publique e busque"
     },
     "solicitar.paso2_bajada": {
-      "es-AR": "Publique un aviso con las necesidades concretas que requiere su familiar. Los Asistentes calificados se postularán.",
+      "es-AR": "Publique un anuncio con las necesidades concretas que requiere su familiar. Los Asistentes calificados se postularán.",
       "en": "Post a listing with the specific needs of your relative. Qualified Caregivers will apply.",
       "pt-BR": "Publique um anúncio com as necessidades concretas do seu familiar. Os Assistentes qualificados vão se candidatar."
     },
@@ -3674,14 +3674,14 @@
       "en": "The guide was deleted.",
       "pt-BR": "O guia foi excluído."
     },
-    "_4": "── Los avisos abiertos y la postulación, en la aplicación del Asistente ──",
+    "_4": "── Los anuncios abiertos y la postulación, en la aplicación del Asistente ──",
     "nav.avisos": {
-      "es-AR": "Avisos",
+      "es-AR": "Anuncios",
       "en": "Job posts",
       "pt-BR": "Anúncios"
     },
     "avisos.titulo": {
-      "es-AR": "Avisos abiertos",
+      "es-AR": "Anuncios abiertos",
       "en": "Open job posts",
       "pt-BR": "Anúncios abertos"
     },
@@ -3691,17 +3691,17 @@
       "pt-BR": "O que as Famílias desta Prestadora estão procurando. Candidatar-se é oferecer-se: o acordo é fechado entre as duas partes."
     },
     "avisos.cargando": {
-      "es-AR": "Buscando avisos...",
+      "es-AR": "Buscando anuncios...",
       "en": "Loading job posts…",
       "pt-BR": "Buscando anúncios..."
     },
     "avisos.error": {
-      "es-AR": "No se pudieron traer los avisos.",
+      "es-AR": "No se pudieron traer los anuncios.",
       "en": "The job posts could not be loaded.",
       "pt-BR": "Não foi possível carregar os anúncios."
     },
     "avisos.vacio_titulo": {
-      "es-AR": "No hay avisos abiertos",
+      "es-AR": "No hay anuncios abiertos",
       "en": "No open job posts",
       "pt-BR": "Não há anúncios abertos"
     },
@@ -3711,7 +3711,7 @@
       "pt-BR": "Quando uma Família publicar o que precisa, aparecerá aqui."
     },
     "avisos.sin_legajo": {
-      "es-AR": "Para ver los avisos hace falta tener el legajo empezado.",
+      "es-AR": "Para ver los anuncios hace falta tener el legajo empezado.",
       "en": "Seeing job posts requires a started file.",
       "pt-BR": "Para ver os anúncios é preciso ter o cadastro iniciado."
     },
@@ -3776,7 +3776,7 @@
       "pt-BR": "Enviando a candidatura..."
     },
     "avisos.ya_postulado": {
-      "es-AR": "Ya se postuló a este aviso",
+      "es-AR": "Ya se postuló a este anuncio",
       "en": "You already applied to this post",
       "pt-BR": "Você já se candidatou a este anúncio"
     },
@@ -3796,7 +3796,7 @@
       "pt-BR": "Mensagem para a Família (opcional)"
     },
     "avisos.mensaje_lugar": {
-      "es-AR": "Por qué le interesa este aviso y qué experiencia tiene.",
+      "es-AR": "Por qué le interesa este anuncio y qué experiencia tiene.",
       "en": "Why this post interests you and what experience you have.",
       "pt-BR": "Por que este anúncio lhe interessa e que experiência você tem."
     },
@@ -3837,7 +3837,7 @@
       "pt-BR": "Quem se candidatou"
     },
     "postulaciones.bajada": {
-      "es-AR": "Los Asistentes que se ofrecieron a sus avisos. Elegir con quién hablar es decisión suya.",
+      "es-AR": "Los Asistentes que se ofrecieron a sus anuncios. Elegir con quién hablar es decisión suya.",
       "en": "The assistants who offered themselves for your job posts. Choosing whom to talk to is your decision.",
       "pt-BR": "Os Assistentes que se ofereceram aos seus anúncios. Escolher com quem falar é decisão sua."
     },
@@ -3857,7 +3857,7 @@
       "pt-BR": "Ainda ninguém se candidatou"
     },
     "postulaciones.vacio_bajada": {
-      "es-AR": "Cuando un Asistente se ofrezca a alguno de sus avisos, va a aparecer acá. También puede buscar usted en la Red de Asistentes.",
+      "es-AR": "Cuando un Asistente se ofrezca a alguno de sus anuncios, va a aparecer acá. También puede buscar usted en la Red de Asistentes.",
       "en": "When an assistant applies to one of your job posts, they will show up here. You can also search the Assistant Network yourself.",
       "pt-BR": "Quando um Assistente se candidatar a um dos seus anúncios, aparecerá aqui. Você também pode procurar na Rede de Assistentes."
     },
@@ -4391,7 +4391,7 @@
       "pt-BR": "Relatórios"
     },
     "familia.nuevo_aviso": {
-      "es-AR": "Nuevo Aviso",
+      "es-AR": "Nuevo Anuncio",
       "en": "New Listing",
       "pt-BR": "Novo Anúncio"
     },
@@ -4456,12 +4456,12 @@
       "pt-BR": "Preencha os dados do cuidado de que precisa. Os assistentes que quiserem se candidatam e você escolhe."
     },
     "familia.aviso_publicar": {
-      "es-AR": "Publicar el aviso",
+      "es-AR": "Publicar el anuncio",
       "en": "Publish the listing",
       "pt-BR": "Publicar o anúncio"
     },
     "familia.aviso_publicado": {
-      "es-AR": "✓ El aviso quedó publicado. Las postulaciones que reciba se ven en esta misma aplicación.",
+      "es-AR": "✓ El anuncio quedó publicado. Las postulaciones que reciba se ven en esta misma aplicación.",
       "en": "✓ The listing has been published. Any applications received are shown in this same app.",
       "pt-BR": "✓ O anúncio foi publicado. As candidaturas recebidas aparecem neste mesmo aplicativo."
     },
@@ -4637,12 +4637,12 @@
       "pt-BR": "O documento de identidade, os antecedentes e as certificações são verificados para gerar confiança com as famílias."
     },
     "alta.paso_postularse": {
-      "es-AR": "Postúlese a avisos",
+      "es-AR": "Postúlese a anuncios",
       "en": "Apply to listings",
       "pt-BR": "Candidate-se a anúncios"
     },
     "alta.paso_postularse_texto": {
-      "es-AR": "Busque y postúlese a los avisos publicados por familias en su zona y horario preferido.",
+      "es-AR": "Busque y postúlese a los anuncios publicados por familias en su zona y horario preferido.",
       "en": "Search for and apply to the listings published by families in your area and preferred hours.",
       "pt-BR": "Procure e candidate-se aos anúncios publicados por famílias na sua área e no horário preferido."
     },

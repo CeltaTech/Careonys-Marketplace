@@ -346,7 +346,7 @@ puso la línea de comandos:
 | Prestadora | Provider | Prestadora |
 | Asistente | Caregiver | Assistente |
 | legajo | personal file | cadastro |
-| Aviso | Listing | Anúncio |
+| Anuncio | Job post | Anúncio |
 | Acompañamiento | Companionship | Acompanhamento |
 
 `Caregiver` es además el término que ya usa la base (`caregivers`), así que en inglés no hay

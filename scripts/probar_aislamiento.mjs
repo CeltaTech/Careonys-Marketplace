@@ -27,7 +27,7 @@
    La regla de la empresa la pide con estas palabras: "una prueba que devuelve una
    lista vacía no distingue 'aislado' de 'todo bloqueado'". Así que esta no
    mira listas vacías: registra cuentas ficticias, les hace escribir su legajo
-   y publicar sus avisos, y recién entonces pregunta quién ve qué.
+   y publicar sus anuncios, y recién entonces pregunta quién ve qué.
 
    Son seis cuentas y no dos. A está en una Prestadora y B en la otra, que es
    lo que separa Prestadora de Prestadora. C está en la misma Prestadora que A:
@@ -98,14 +98,14 @@
    Y sobre la barrera entre Familias de una misma Prestadora,
    que es la que faltaba entera:
 
-    29. Cada Familia publica su aviso.
-    30. Y el aviso sale a su nombre sin que ella lo haya mandado en el pedido.
+    29. Cada Familia publica su anuncio.
+    30. Y el anuncio sale a su nombre sin que ella lo haya mandado en el pedido.
     31. Mandarlo a nombre de otra no sirve: sale igual a nombre de quien escribe.
-    32. Una Familia no ve el aviso de la otra, ni pidiéndolo por su identificador.
+    32. Una Familia no ve el anuncio de la otra, ni pidiéndolo por su identificador.
     33. Ni la otra el de ella.
     34. No puede modificarlo.
     35. Ni borrarlo: sigue estando cuando su dueña lo pide.
-    36. No ve los horarios de ese aviso.
+    36. No ve los horarios de ese anuncio.
     37. Ni la conversación.
     38. No lee ningún reporte: ni presión, ni glucemia, ni medicación.
     39. La fichada sale a nombre del legajo de quien la marca.
@@ -128,10 +128,10 @@
    Y sobre las tablas donde la Familia y el Asistente se encuentran, y
    donde lo único que queda guardado es el contacto:
 
-    47. El Asistente se postula a un aviso, y otro Asistente se postula al mismo.
+    47. El Asistente se postula a un anuncio, y otro Asistente se postula al mismo.
     48. Nadie se postula con el legajo de otro.
     49. Una postulación no cruza Prestadoras.
-    50. El Asistente ve la que hizo él y ninguna del otro; la Familia del aviso
+    50. El Asistente ve la que hizo él y ninguna del otro; la Familia del anuncio
         ve las dos.
     51. Y otra Familia de la misma Prestadora no ve ninguna.
     52. La Familia marca la postulación vista y descartada —no hay «aceptada»—,
@@ -145,35 +145,35 @@
     57. El personal de la Prestadora no lee ninguna de las tres, y al lado se
         mira que las dos partes sí vean las suyas: si no, «cero» no distingue
         negado de vacío. (Sólo con --local, por lo mismo que 15 y 16.) Y
-        tampoco lee las dos que cuelgan del aviso —el
+        tampoco lee las dos que cuelgan del anuncio —el
         reporte de cuidado y `messages`—, que antes sí leía:
-        las dos preguntaban por el aviso con un `exists` que no repetía de
+        las dos preguntaban por el anuncio con un `exists` que no repetía de
         quién era, y la RLS de `avisos` le devuelve a ese personal todos
-        los avisos de su Organización. La fila del reporte se carga acá con el
-        aviso puesto, porque en toda la base no había ni una: sin cargarla, la
+        los anuncios de su Organización. La fila del reporte se carga acá con el
+        anuncio puesto, porque en toda la base no había ni una: sin cargarla, la
         comprobación habría dado verde con la política abierta.
     58. Las dos Prestadoras tienen contacto cargado de verdad, cada una ve el
         suyo y ninguna ve una sola fila de la otra, ni pidiéndola por su
         identificador. Y el contacto de la segunda se abre por el **otro**
-        camino del mercado —desde el directorio, sin aviso—, que es el que usa
+        camino del mercado —desde el directorio, sin anuncio—, que es el que usa
         `web/src/pantallas/Perfil.jsx:245` y que hasta el 2 de septiembre de 2026 no probaba
-        nada: las dos conversaciones colgaban de un aviso.
+        nada: las dos conversaciones colgaban de un anuncio.
 
    Y sobre las cuatro funciones que le dan de comer a las pantallas de ese
    encuentro. Son `security definer`, así que se saltean la
    RLS a propósito: lo que las acota es lo que preguntan adentro y las columnas
    que eligen devolver. Por eso se prueban aparte de las tablas.
 
-    59. `avisos_abiertos()` le muestra al Asistente el aviso de su Prestadora, y
-        ninguno de la otra. Devuelve `ya_me_postule` en verdadero para el aviso
+    59. `avisos_abiertos()` le muestra al Asistente el anuncio de su Prestadora, y
+        ninguno de la otra. Devuelve `ya_me_postule` en verdadero para el anuncio
         al que se postuló. Una Familia —que no tiene legajo— recibe cero, que
         es fallar cerrado. Y **ninguna fila trae `contact_info`, `familia_id`
         ni el nombre del paciente**: eso no se mira con los ojos, se mira
         preguntándole a la fila qué columnas tiene.
-    60. `franjas_de_aviso()` no devuelve la grilla de un aviso de la otra
+    60. `franjas_de_aviso()` no devuelve la grilla de un anuncio de la otra
         Prestadora, y sí la del propio: si no, «cero» no distingue negado de
         vacío.
-    61. `postulaciones_de_mis_avisos()` le devuelve a la Familia del aviso las
+    61. `postulaciones_de_mis_avisos()` le devuelve a la Familia del anuncio las
         dos postulaciones que recibió, a otra Familia de la misma Prestadora
         ninguna, y ningún teléfono ni correo de nadie.
     62. `mis_conversaciones()` se la devuelve a las dos partes y a nadie más,
@@ -194,7 +194,7 @@
         vínculo, y no se le abre a nadie por haberla dejado sin marcar.
     67. El Asistente no puede colgar una fichada de una conversación ajena. Si
         pudiera, le haría aparecer a una Familia una jornada que no es de su
-        Asistente, que es justo el aviso equivocado que esta mitad promete no
+        Asistente, que es justo el anuncio equivocado que esta mitad promete no
         dar. Lo rechaza la base, no la pantalla.
     68. El personal de la Prestadora no lee ninguna fichada, ni la atada ni la
         suelta, y al lado se mira que las dos partes sí vean la suya. (Sólo
@@ -1145,10 +1145,10 @@ console.log('Dos Familias de la misma Prestadora');
       headers: { Prefer: 'return=representation' },
       body: JSON.stringify({ patient_name: 'Paciente Ficticio ' + f.etiqueta })
     }, f.token);
-    f.avisoId = Array.isArray(r.cuerpo) && r.cuerpo[0] ? r.cuerpo[0].id : null;
+    f.anuncioId = Array.isArray(r.cuerpo) && r.cuerpo[0] ? r.cuerpo[0].id : null;
     const aNombreSuyo = Array.isArray(r.cuerpo) && r.cuerpo[0] &&
                         r.cuerpo[0].familia_id === f.userId;
-    comprobar(`${f.etiqueta}: publica su aviso y sale a su nombre sin haberlo mandado`,
+    comprobar(`${f.etiqueta}: publica su anuncio y sale a su nombre sin haberlo mandado`,
       r.estado === 201 && aNombreSuyo,
       'respuesta ' + r.estado + (aNombreSuyo ? '' : ', familia_id ajeno o vacío'));
   }
@@ -1165,8 +1165,8 @@ console.log('Dos Familias de la misma Prestadora');
     })
   }, unaFamilia.token);
   const filaSuplantada = Array.isArray(suplantar.cuerpo) ? suplantar.cuerpo[0] : null;
-  if (filaSuplantada) unaFamilia.avisoSuplantado = filaSuplantada.id;
-  comprobar('Un aviso no se puede publicar a nombre de otra Familia',
+  if (filaSuplantada) unaFamilia.anuncioSuplantado = filaSuplantada.id;
+  comprobar('Un anuncio no se puede publicar a nombre de otra Familia',
     !filaSuplantada || filaSuplantada.familia_id === unaFamilia.userId,
     filaSuplantada ? 'quedó a nombre de ' +
       (filaSuplantada.familia_id === unaFamilia.userId ? 'quien lo escribió' : 'la otra')
@@ -1174,49 +1174,49 @@ console.log('Dos Familias de la misma Prestadora');
 
   for (const [f, ajena] of [[unaFamilia, otraFamilia], [otraFamilia, unaFamilia]]) {
     const { cuerpo } = await rest(
-      '/rest/v1/avisos?select=id,familia_id&id=eq.' + ajena.avisoId, {}, f.token);
-    comprobar(`${f.etiqueta}: no ve el aviso de ${ajena.etiqueta} ni pidiéndolo por su identificador`,
+      '/rest/v1/avisos?select=id,familia_id&id=eq.' + ajena.anuncioId, {}, f.token);
+    comprobar(`${f.etiqueta}: no ve el anuncio de ${ajena.etiqueta} ni pidiéndolo por su identificador`,
       Array.isArray(cuerpo) && cuerpo.length === 0,
       Array.isArray(cuerpo) ? cuerpo.length + ' filas' : JSON.stringify(cuerpo));
   }
 
   // Ver de más es feo; escribir sobre lo ajeno es peor. Se prueban las dos.
-  const retoque = await rest('/rest/v1/avisos?id=eq.' + otraFamilia.avisoId, {
+  const retoque = await rest('/rest/v1/avisos?id=eq.' + otraFamilia.anuncioId, {
     method: 'PATCH',
     headers: { Prefer: 'return=representation' },
     body: JSON.stringify({ patient_name: 'Nombre cambiado por quien no debe' })
   }, unaFamilia.token);
-  comprobar('Una Familia no puede modificar el aviso de la otra',
+  comprobar('Una Familia no puede modificar el anuncio de la otra',
     Array.isArray(retoque.cuerpo) && retoque.cuerpo.length === 0,
     'tocó ' + (Array.isArray(retoque.cuerpo) ? retoque.cuerpo.length : '?') + ' filas');
 
-  const borrado = await rest('/rest/v1/avisos?id=eq.' + otraFamilia.avisoId, {
+  const borrado = await rest('/rest/v1/avisos?id=eq.' + otraFamilia.anuncioId, {
     method: 'DELETE',
     headers: { Prefer: 'return=representation' }
   }, unaFamilia.token);
   const { cuerpo: sigueAhi } = await rest(
-    '/rest/v1/avisos?select=id&id=eq.' + otraFamilia.avisoId, {}, otraFamilia.token);
+    '/rest/v1/avisos?select=id&id=eq.' + otraFamilia.anuncioId, {}, otraFamilia.token);
   comprobar('Ni borrarlo: sigue estando cuando su dueña lo pide',
     Array.isArray(borrado.cuerpo) && borrado.cuerpo.length === 0 &&
     Array.isArray(sigueAhi) && sigueAhi.length === 1,
     'borró ' + (Array.isArray(borrado.cuerpo) ? borrado.cuerpo.length : '?') + ' filas');
 
-  // Los horarios y la conversación cuelgan del aviso y no deciden nada por su
-  // cuenta: si el aviso no se ve, esto tampoco tiene que verse.
+  // Los horarios y la conversación cuelgan del anuncio y no deciden nada por su
+  // cuenta: si el anuncio no se ve, esto tampoco tiene que verse.
   /* El horario se escribe y se mira que haya quedado escrito, por lo mismo que
-     el mensaje de abajo: el único horario de este aviso lo carga esta línea, así
+     el mensaje de abajo: el único horario de este anuncio lo carga esta línea, así
      que si la carga fallara la lectura de al lado vería cero filas y daría bien
      con el aislamiento roto. */
   const franja = await rest('/rest/v1/franjas_aviso', {
     method: 'POST',
     headers: { Prefer: 'return=representation' },
-    body: JSON.stringify({ aviso_id: otraFamilia.avisoId, dia: 'lunes', turno: 'manana' })
+    body: JSON.stringify({ aviso_id: otraFamilia.anuncioId, dia: 'lunes', turno: 'manana' })
   }, otraFamilia.token);
   const franjaEscrita = Array.isArray(franja.cuerpo) && franja.cuerpo.length === 1;
   const { cuerpo: franjasAjenas } = await rest(
-    '/rest/v1/franjas_aviso?select=id&aviso_id=eq.' + otraFamilia.avisoId,
+    '/rest/v1/franjas_aviso?select=id&aviso_id=eq.' + otraFamilia.anuncioId,
     {}, unaFamilia.token);
-  comprobar('Tampoco ve los horarios del aviso ajeno',
+  comprobar('Tampoco ve los horarios del anuncio ajeno',
     franjaEscrita && Array.isArray(franjasAjenas) && franjasAjenas.length === 0,
     franjaEscrita
       ? (Array.isArray(franjasAjenas) ? franjasAjenas.length + ' filas'
@@ -1238,15 +1238,15 @@ console.log('Dos Familias de la misma Prestadora');
     headers: { Prefer: 'return=representation' },
     body: JSON.stringify({
       content: 'Mensaje ficticio',
-      aviso_id: otraFamilia.avisoId,
+      aviso_id: otraFamilia.anuncioId,
       author_id: otraFamilia.userId
     })
   }, otraFamilia.token);
   otraFamilia.mensajeId = Array.isArray(mensaje.cuerpo) && mensaje.cuerpo[0]
     ? mensaje.cuerpo[0].id : null;
   const { cuerpo: mensajesAjenos } = await rest(
-    '/rest/v1/messages?select=id&aviso_id=eq.' + otraFamilia.avisoId, {}, unaFamilia.token);
-  comprobar('Ni la conversación de ese aviso',
+    '/rest/v1/messages?select=id&aviso_id=eq.' + otraFamilia.anuncioId, {}, unaFamilia.token);
+  comprobar('Ni la conversación de ese anuncio',
     otraFamilia.mensajeId && Array.isArray(mensajesAjenos) && mensajesAjenos.length === 0,
     otraFamilia.mensajeId
       ? (Array.isArray(mensajesAjenos) ? mensajesAjenos.length + ' filas'
@@ -1283,7 +1283,7 @@ console.log('Dos Familias de la misma Prestadora');
 
      No hace falta limpiarla aparte: `clock_ins_caregiver_id_fkey` borra en
      cascada, así que la fichada se va con el legajo. Es al revés del mensaje,
-     que sobrevive al aviso porque el suyo borra con `set null`. */
+     que sobrevive al anuncio porque el suyo borra con `set null`. */
   const fichada = await rest('/rest/v1/clock_ins', {
     method: 'POST',
     headers: { Prefer: 'return=representation' },
@@ -1460,7 +1460,7 @@ console.log('Dos Familias de la misma Prestadora');
 // arriba no pueden hacer:
 //
 //   D: un segundo Asistente en la Prestadora de A. Sin él no hay dos
-//      postulaciones al mismo aviso, y «el Asistente ve la suya» no se
+//      postulaciones al mismo anuncio, y «el Asistente ve la suya» no se
 //      distingue de «ve todas».
 //   E: otra Familia de la MISMA Prestadora, sin legajo y sin nada en el medio.
 //      Es la que tiene que ver cero, y la única que puede mostrar que la
@@ -1512,7 +1512,7 @@ console.log('');
 console.log('Donde se encuentran: la postulación, la conversación y los mensajes');
 {
   const [segundoAsistente, familiaAjena, familiaDeLaOtra] = delEncuentro;
-  const familiaDelAviso = familias[0];   // C: publicó su aviso y no tiene legajo
+  const familiaDelAnuncio = familias[0];   // C: publicó su anuncio y no tiene legajo
   const asistenteUno    = cuentas[0];    // A: tiene legajo en la misma Prestadora
   const asistenteDeB    = cuentas[1];    // B: el legajo de la Prestadora ajena
 
@@ -1541,14 +1541,14 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
       headers: { Prefer: 'return=representation' },
       body: JSON.stringify({ patient_name: 'Paciente Ficticio ' + f.etiqueta })
     }, f.token);
-    f.avisoId = Array.isArray(r.cuerpo) && r.cuerpo[0] ? r.cuerpo[0].id : null;
+    f.anuncioId = Array.isArray(r.cuerpo) && r.cuerpo[0] ? r.cuerpo[0].id : null;
   }
 
-  const postular = (quien, aviso, extra = {}) => rest('/rest/v1/postulaciones', {
+  const postular = (quien, anuncio, extra = {}) => rest('/rest/v1/postulaciones', {
     method: 'POST',
     headers: { Prefer: 'return=representation' },
     body: JSON.stringify({
-      aviso_id: aviso,
+      aviso_id: anuncio,
       caregiver_id: quien.legajoId,
       mensaje: 'Me ofrezco para el puesto. Persona Ficticia ' + quien.etiqueta,
       ...extra
@@ -1569,28 +1569,28 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
   // ── La postulación ────────────────────────────────────────────────────────
   // Los dos que siguen son el control positivo de todo lo demás: sin estas dos
   // filas escritas, cada «no ve nada» de más abajo sería un cero de tabla vacía.
-  const suya = await postular(asistenteUno, familiaDelAviso.avisoId);
+  const suya = await postular(asistenteUno, familiaDelAnuncio.anuncioId);
   asistenteUno.postulacionId =
     Array.isArray(suya.cuerpo) && suya.cuerpo[0] ? suya.cuerpo[0].id : null;
-  comprobar('El Asistente se postula al aviso de la Familia',
+  comprobar('El Asistente se postula al anuncio de la Familia',
     suya.estado === 201 && !!asistenteUno.postulacionId, 'respuesta ' + suya.estado);
 
-  const delOtro = await postular(segundoAsistente, familiaDelAviso.avisoId);
+  const delOtro = await postular(segundoAsistente, familiaDelAnuncio.anuncioId);
   segundoAsistente.postulacionId =
     Array.isArray(delOtro.cuerpo) && delOtro.cuerpo[0] ? delOtro.cuerpo[0].id : null;
-  comprobar('Y otro Asistente se postula al mismo aviso',
+  comprobar('Y otro Asistente se postula al mismo anuncio',
     delOtro.estado === 201 && !!segundoAsistente.postulacionId, 'respuesta ' + delOtro.estado);
 
   /* `caregiver_id` no tiene valor por omisión: sale del pedido, así que acá no
      alcanza con mirar a nombre de quién quedó, como en `avisos`. Tiene
-     que ser rechazado. Y apunta al aviso de E a propósito: contra el de C, el
+     que ser rechazado. Y apunta al anuncio de E a propósito: contra el de C, el
      índice `una_postulacion_por_aviso` lo rechazaría igual por duplicado, y la
      comprobación pasaría sin haber tocado la política. */
   const conElLegajoAjeno = await rest('/rest/v1/postulaciones', {
     method: 'POST',
     headers: { Prefer: 'return=representation' },
     body: JSON.stringify({
-      aviso_id: familiaAjena.avisoId,
+      aviso_id: familiaAjena.anuncioId,
       caregiver_id: asistenteUno.legajoId,
       mensaje: 'Postulación escrita con el legajo de otro'
     })
@@ -1598,9 +1598,9 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
   comprobar('Nadie se postula con el legajo de otro',
     conElLegajoAjeno.estado >= 400, 'respuesta ' + conElLegajoAjeno.estado);
 
-  // Y el aviso de la otra Prestadora es inalcanzable: lo cierra la llave
+  // Y el anuncio de la otra Prestadora es inalcanzable: lo cierra la llave
   // compuesta (aviso_id, tenant_id) que tiene la tabla.
-  const cruzada = await postular(asistenteUno, familiaDeLaOtra.avisoId);
+  const cruzada = await postular(asistenteUno, familiaDeLaOtra.anuncioId);
   comprobar('Una postulación no cruza Prestadoras',
     cruzada.estado >= 400, 'respuesta ' + cruzada.estado);
 
@@ -1609,14 +1609,14 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
     veElAsistente.length === 1 && veElAsistente[0].id === asistenteUno.postulacionId,
     veElAsistente.length + ' filas');
 
-  const veLaFamilia = await postulacionesDe(familiaDelAviso);
-  comprobar('La Familia del aviso ve las dos postulaciones que le hicieron',
+  const veLaFamilia = await postulacionesDe(familiaDelAnuncio);
+  comprobar('La Familia del anuncio ve las dos postulaciones que le hicieron',
     veLaFamilia.length === 2, veLaFamilia.length + ' filas');
 
   const veLaAjena = await postulacionesDe(familiaAjena);
   comprobar('Otra Familia de la misma Prestadora no ve ninguna postulación',
     veLaAjena.length === 0 && veLaFamilia.length === 2,
-    veLaAjena.length + ' filas (la dueña del aviso ve ' + veLaFamilia.length + ')');
+    veLaAjena.length + ' filas (la dueña del anuncio ve ' + veLaFamilia.length + ')');
 
   // La Familia marca vista y descartada, que es todo lo que le dejaron tocar:
   // no hay «aceptada», porque aceptar sería guardar el trato.
@@ -1625,9 +1625,9 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
     method: 'PATCH',
     headers: { Prefer: 'return=representation' },
     body: JSON.stringify({ vista_el: ahora, descartada_el: ahora })
-  }, familiaDelAviso.token);
+  }, familiaDelAnuncio.token);
   const marcada = Array.isArray(marcar.cuerpo) && marcar.cuerpo[0];
-  comprobar('La Familia del aviso la marca vista y descartada',
+  comprobar('La Familia del anuncio la marca vista y descartada',
     !!marcada && !!marcada.vista_el && !!marcada.descartada_el, 'respuesta ' + marcar.estado);
 
   /* Y el mensaje del Asistente no lo puede reescribir. Esto no lo decide la
@@ -1641,7 +1641,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
     method: 'PATCH',
     headers: { Prefer: 'return=representation' },
     body: JSON.stringify({ mensaje: 'Mensaje reescrito por quien no lo escribió' })
-  }, familiaDelAviso.token);
+  }, familiaDelAnuncio.token);
   const comoQuedo = (await postulacionesDe(asistenteUno))
     .find((p) => p.id === asistenteUno.postulacionId);
   comprobar('Y no puede reescribir el mensaje del Asistente',
@@ -1650,15 +1650,15 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
     'respuesta ' + reescribir.estado);
 
   // ── La conversación ───────────────────────────────────────────────────────
-  const abrir = (quien, legajo, aviso, extra = {}) => rest('/rest/v1/conversaciones', {
+  const abrir = (quien, legajo, anuncio, extra = {}) => rest('/rest/v1/conversaciones', {
     method: 'POST',
     headers: { Prefer: 'return=representation' },
-    body: JSON.stringify({ caregiver_id: legajo, aviso_id: aviso, ...extra })
+    body: JSON.stringify({ caregiver_id: legajo, aviso_id: anuncio, ...extra })
   }, quien.token);
 
-  const canal = await abrir(familiaDelAviso, asistenteUno.legajoId, familiaDelAviso.avisoId);
+  const canal = await abrir(familiaDelAnuncio, asistenteUno.legajoId, familiaDelAnuncio.anuncioId);
   const conversacionId = Array.isArray(canal.cuerpo) && canal.cuerpo[0] ? canal.cuerpo[0].id : null;
-  familiaDelAviso.conversacionId = conversacionId;
+  familiaDelAnuncio.conversacionId = conversacionId;
   comprobar('La Familia abre la conversación con el Asistente',
     canal.estado === 201 && !!conversacionId, 'respuesta ' + canal.estado);
 
@@ -1667,11 +1667,11 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
      Asistente para no chocar contra `una_conversacion_por_par`, que rechazaría
      por duplicado y no por suplantación. */
   const aNombreDeOtra = await abrir(familiaAjena, segundoAsistente.legajoId, null,
-    { familia_id: familiaDelAviso.userId });
+    { familia_id: familiaDelAnuncio.userId });
   comprobar('Nadie contacta a nombre de otra Familia',
     aNombreDeOtra.estado >= 400, 'respuesta ' + aNombreDeOtra.estado);
 
-  const canalDeLaFamilia   = await conversacionesDe(familiaDelAviso);
+  const canalDeLaFamilia   = await conversacionesDe(familiaDelAnuncio);
   const canalDelAsistente  = await conversacionesDe(asistenteUno);
   comprobar('Las dos partes ven la conversación',
     canalDeLaFamilia.length === 1 && canalDelAsistente.length === 1 &&
@@ -1690,7 +1690,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
     body: JSON.stringify({ conversacion_id: conversacion, contenido: texto })
   }, quien.token);
 
-  const dijoLaFamilia = await escribir(familiaDelAviso, conversacionId,
+  const dijoLaFamilia = await escribir(familiaDelAnuncio, conversacionId,
     'Buenas tardes. ¿Le interesa el puesto?');
   const dijoElAsistente = await escribir(asistenteUno, conversacionId,
     'Buenas tardes. Sí, me interesa.');
@@ -1705,7 +1705,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
   comprobar('Un mensaje no se escribe en una conversación ajena',
     enCanalAjeno.estado >= 400, 'respuesta ' + enCanalAjeno.estado);
 
-  const leeLaFamilia  = await mensajesDe(familiaDelAviso);
+  const leeLaFamilia  = await mensajesDe(familiaDelAnuncio);
   const leeElAsistente = await mensajesDe(asistenteUno);
   comprobar('Las dos partes leen los dos mensajes',
     leeLaFamilia.length === 2 && leeElAsistente.length === 2,
@@ -1723,15 +1723,15 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
     method: 'PATCH',
     headers: { Prefer: 'return=representation' },
     body: JSON.stringify({ contenido: 'Contenido cambiado después' })
-  }, familiaDelAviso.token);
+  }, familiaDelAnuncio.token);
   comprobar('El mensaje no se edita, ni por quien lo escribió',
     editar.estado >= 400, 'respuesta ' + editar.estado);
 
   const borrarMensaje = await rest('/rest/v1/mensajes?id=eq.' + primerMensajeId, {
     method: 'DELETE',
     headers: { Prefer: 'return=representation' }
-  }, familiaDelAviso.token);
-  const siguenLosDos = await mensajesDe(familiaDelAviso);
+  }, familiaDelAnuncio.token);
+  const siguenLosDos = await mensajesDe(familiaDelAnuncio);
   comprobar('Ni se borra: los dos siguen estando',
     borrarMensaje.estado >= 400 && siguenLosDos.length === 2,
     'respuesta ' + borrarMensaje.estado + ', quedan ' + siguenLosDos.length);
@@ -1751,7 +1751,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
     ];
     for (const [tabla, comoSeMira] of TRES) {
       const delPersonal  = await comoSeMira(coordinador);
-      const deLaFamilia  = await comoSeMira(familiaDelAviso);
+      const deLaFamilia  = await comoSeMira(familiaDelAnuncio);
       const delAsistente = await comoSeMira(asistenteUno);
       comprobar('El personal de la Prestadora no lee ' + tabla + ', y las dos partes sí',
         delPersonal.length === 0 && deLaFamilia.length > 0 && delAsistente.length > 0,
@@ -1760,74 +1760,74 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
     }
 
     /* Y las dos que no estaban en esa lista, que son justo las que se abrieron
-       calladas. `messages` y `reportes` no cuelgan de la conversación sino del aviso, y
-       las dos preguntaban por el aviso con un `exists` que no repetía de quién
+       calladas. `messages` y `reportes` no cuelgan de la conversación sino del anuncio, y
+       las dos preguntaban por el anuncio con un `exists` que no repetía de quién
        era. La RLS de `avisos` no alcanza para filtrarlo: a este mismo
-       coordinador le devuelve **todos** los avisos de su Organización
+       coordinador le devuelve **todos** los anuncios de su Organización
        (`supabase/migrations/0001_base_del_esquema.sql:4557`), así que el
        `exists` daba verdadero para cualquier fila y el personal leía el reporte
        de cuidado y la conversación enteros. Ya está cerrado, y esto es lo que
        faltaba para que se notara: las tres tablas de arriba están en
        la lista desde el principio y estas dos no estaban en ninguna.
 
-       Las dos filas se escriben acá, con el aviso puesto, y por dos motivos.
+       Las dos filas se escriben acá, con el anuncio puesto, y por dos motivos.
        El primero es el de siempre: sin el control positivo al lado, «cero» no
        distingue negado de vacío. El segundo es más grave y es el que hacía
        invisible el agujero: `reportes` no tenía en toda la base **ni una fila
        con `aviso_id`** —nadie lo llena todavía, que es el pendiente 52—, así
        que cualquier comprobación escrita sin cargar una habría dado verde con
        la política abierta de par en par. */
-    const reporteDelAviso = await rest('/rest/v1/reportes', {
+    const reporteDelAnuncio = await rest('/rest/v1/reportes', {
       method: 'POST',
       headers: { Prefer: 'return=representation' },
       body: JSON.stringify({
         caregiver_id: asistenteUno.legajoId,
-        aviso_id: familiaDelAviso.avisoId,
+        aviso_id: familiaDelAnuncio.anuncioId,
         blood_pressure: '118/76', glycemia: '92',
-        daily_notes: 'Anotación ficticia colgada del aviso'
+        daily_notes: 'Anotación ficticia colgada del anuncio'
       })
     }, asistenteUno.token);
-    const reporteDelAvisoId = Array.isArray(reporteDelAviso.cuerpo) && reporteDelAviso.cuerpo[0]
-      ? reporteDelAviso.cuerpo[0].id : null;
-    const hayReporte = !!reporteDelAvisoId;
-    /* Las dos filas se piden por su identificador y no por el aviso: sobre ese
-       aviso hay filas que escribieron otros tramos de esta misma prueba, y
+    const reporteDelAnuncioId = Array.isArray(reporteDelAnuncio.cuerpo) && reporteDelAnuncio.cuerpo[0]
+      ? reporteDelAnuncio.cuerpo[0].id : null;
+    const hayReporte = !!reporteDelAnuncioId;
+    /* Las dos filas se piden por su identificador y no por el anuncio: sobre ese
+       anuncio hay filas que escribieron otros tramos de esta misma prueba, y
        entonces «2» no distinguiría la que se acaba de escribir de las demás. */
     const reporteLaFamilia = await rest(
-      '/rest/v1/reportes?select=id&id=eq.' + reporteDelAvisoId, {}, familiaDelAviso.token);
+      '/rest/v1/reportes?select=id&id=eq.' + reporteDelAnuncioId, {}, familiaDelAnuncio.token);
     const reporteElPersonal = await rest(
-      '/rest/v1/reportes?select=id&id=eq.' + reporteDelAvisoId, {}, coordinador.token);
+      '/rest/v1/reportes?select=id&id=eq.' + reporteDelAnuncioId, {}, coordinador.token);
     const rf = Array.isArray(reporteLaFamilia.cuerpo) ? reporteLaFamilia.cuerpo.length : -1;
     const rp = Array.isArray(reporteElPersonal.cuerpo) ? reporteElPersonal.cuerpo.length : -1;
-    comprobar('El personal de la Prestadora no lee el reporte del aviso, y la Familia sí',
+    comprobar('El personal de la Prestadora no lee el reporte del anuncio, y la Familia sí',
       hayReporte && rf === 1 && rp === 0,
       hayReporte ? ('Familia ' + rf + '   personal ' + rp)
-                 : 'no se pudo escribir el reporte con aviso (' + reporteDelAviso.estado +
+                 : 'no se pudo escribir el reporte con anuncio (' + reporteDelAnuncio.estado +
                    '), así que esto no probó nada');
 
-    const mensajeDelAviso = await rest('/rest/v1/messages', {
+    const mensajeDelAnuncio = await rest('/rest/v1/messages', {
       method: 'POST',
       headers: { Prefer: 'return=representation' },
       body: JSON.stringify({
-        content: 'Mensaje ficticio colgado del aviso',
-        aviso_id: familiaDelAviso.avisoId,
-        author_id: familiaDelAviso.userId
+        content: 'Mensaje ficticio colgado del anuncio',
+        aviso_id: familiaDelAnuncio.anuncioId,
+        author_id: familiaDelAnuncio.userId
       })
-    }, familiaDelAviso.token);
-    familiaDelAviso.mensajeId = Array.isArray(mensajeDelAviso.cuerpo) && mensajeDelAviso.cuerpo[0]
-      ? mensajeDelAviso.cuerpo[0].id : null;
+    }, familiaDelAnuncio.token);
+    familiaDelAnuncio.mensajeId = Array.isArray(mensajeDelAnuncio.cuerpo) && mensajeDelAnuncio.cuerpo[0]
+      ? mensajeDelAnuncio.cuerpo[0].id : null;
     const mensajeLaFamilia = await rest(
-      '/rest/v1/messages?select=id&id=eq.' + familiaDelAviso.mensajeId,
-      {}, familiaDelAviso.token);
+      '/rest/v1/messages?select=id&id=eq.' + familiaDelAnuncio.mensajeId,
+      {}, familiaDelAnuncio.token);
     const mensajeElPersonal = await rest(
-      '/rest/v1/messages?select=id&id=eq.' + familiaDelAviso.mensajeId,
+      '/rest/v1/messages?select=id&id=eq.' + familiaDelAnuncio.mensajeId,
       {}, coordinador.token);
     const mf = Array.isArray(mensajeLaFamilia.cuerpo) ? mensajeLaFamilia.cuerpo.length : -1;
     const mp = Array.isArray(mensajeElPersonal.cuerpo) ? mensajeElPersonal.cuerpo.length : -1;
-    comprobar('El personal de la Prestadora no lee los mensajes del aviso, y la Familia sí',
-      !!familiaDelAviso.mensajeId && mf === 1 && mp === 0,
-      familiaDelAviso.mensajeId ? ('Familia ' + mf + '   personal ' + mp)
-        : 'no se pudo escribir el mensaje con aviso (' + mensajeDelAviso.estado +
+    comprobar('El personal de la Prestadora no lee los mensajes del anuncio, y la Familia sí',
+      !!familiaDelAnuncio.mensajeId && mf === 1 && mp === 0,
+      familiaDelAnuncio.mensajeId ? ('Familia ' + mf + '   personal ' + mp)
+        : 'no se pudo escribir el mensaje con anuncio (' + mensajeDelAnuncio.estado +
           '), así que esto no probó nada');
   }
 
@@ -1836,16 +1836,16 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
   // las dos cargadas, esto falla por los dos lados: si la política perdiera lo
   // propio, una dejaría de ver lo suyo; si perdiera la Prestadora, vería lo de
   // la otra.
-  const postulacionEnB = await postular(asistenteDeB, familiaDeLaOtra.avisoId);
+  const postulacionEnB = await postular(asistenteDeB, familiaDeLaOtra.anuncioId);
 
-  /* Y este contacto se abre por el OTRO camino del mercado: sin aviso. Los dos
-     caminos son dos —la Familia publica un aviso y los Asistentes se postulan,
+  /* Y este contacto se abre por el OTRO camino del mercado: sin anuncio. Los dos
+     caminos son dos —la Familia publica un anuncio y los Asistentes se postulan,
      o la Familia mira el directorio, compara perfiles y contacta—, y hasta el 2
      de septiembre de 2026 esta prueba abría las dos conversaciones colgadas de
-     un aviso, así que el camino del directorio no lo probaba nada. Es el que
+     un anuncio, así que el camino del directorio no lo probaba nada. Es el que
      usa `web/src/pantallas/Perfil.jsx:245`, que llama a
      `abrirConversacion(idAsistente, null)`.
-     Se comprueba que la fila entre y que quede **con el aviso en nulo**: si
+     Se comprueba que la fila entre y que quede **con el anuncio en nulo**: si
      alguna vez la columna pasara a exigir valor, el contacto desde el
      directorio dejaría de poder abrirse y ninguna otra comprobación lo diría. */
   const canalEnB = await abrir(familiaDeLaOtra, asistenteDeB.legajoId, null);
@@ -1853,7 +1853,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
     ? canalEnB.cuerpo[0].id : null;
   const asiQuedo = Array.isArray(canalEnB.cuerpo) && canalEnB.cuerpo[0]
     ? canalEnB.cuerpo[0] : null;
-  comprobar('La Familia contacta desde el directorio, sin aviso, y el contacto queda',
+  comprobar('La Familia contacta desde el directorio, sin anuncio, y el contacto queda',
     canalEnB.estado === 201 && !!canalEnBId && !!asiQuedo && asiQuedo.aviso_id === null,
     'respuesta ' + canalEnB.estado + ', aviso_id ' + (asiQuedo ? asiQuedo.aviso_id : '(sin fila)'));
   if (canalEnBId) {
@@ -1870,7 +1870,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
   ];
   const enCadaLado = new Map();
   for (const [tabla, comoSeMira] of TABLAS) {
-    enCadaLado.set(tabla, [await comoSeMira(familiaDelAviso), await comoSeMira(familiaDeLaOtra)]);
+    enCadaLado.set(tabla, [await comoSeMira(familiaDelAnuncio), await comoSeMira(familiaDeLaOtra)]);
   }
 
   const sinNada = TABLAS.filter(([t]) => {
@@ -1891,16 +1891,16 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
   const cruces = [];
   for (const [tabla] of TABLAS) {
     const [enA, enB] = enCadaLado.get(tabla);
-    const cuela = enA.filter((f) => f.tenant_id !== familiaDelAviso.prestadora.id).length +
+    const cuela = enA.filter((f) => f.tenant_id !== familiaDelAnuncio.prestadora.id).length +
                   enB.filter((f) => f.tenant_id !== familiaDeLaOtra.prestadora.id).length;
     if (cuela > 0) cruces.push(tabla + ': ' + cuela);
   }
   const porSuIdentificador = await Promise.all([
     postulacionEnBId
-      ? filasDe(familiaDelAviso, 'postulaciones', 'id&id=eq.' + postulacionEnBId)
+      ? filasDe(familiaDelAnuncio, 'postulaciones', 'id&id=eq.' + postulacionEnBId)
       : null,
     canalEnBId
-      ? filasDe(familiaDelAviso, 'conversaciones', 'id&id=eq.' + canalEnBId)
+      ? filasDe(familiaDelAnuncio, 'conversaciones', 'id&id=eq.' + canalEnBId)
       : null
   ]);
   const pedidasDeMas = porSuIdentificador.filter((f) => f === null || f.length > 0).length;
@@ -1949,52 +1949,52 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
     return [...new Set(encontradas)];
   };
 
-  /* El aviso de C nace con el nombre del paciente y nada más, así que
+  /* El anuncio de C nace con el nombre del paciente y nada más, así que
      preguntarle a la respuesta si trae el contacto sería mirar una columna
      vacía: la comprobación daría verde con la función rota. Se le carga el
      contacto de verdad —inventado, como todo acá— y recién entonces se busca
      ese texto en cada fila que salga por las cuatro funciones. */
-  const CONTACTO_DEL_AVISO = 'contacto.ficticio.' + sello + '@ejemplo.invalid';
-  const NOMBRE_DEL_PACIENTE = 'Paciente Ficticio ' + familiaDelAviso.etiqueta;
+  const CONTACTO_DEL_ANUNCIO = 'contacto.ficticio.' + sello + '@ejemplo.invalid';
+  const NOMBRE_DEL_PACIENTE = 'Paciente Ficticio ' + familiaDelAnuncio.etiqueta;
   {
-    const cargado = await rest('/rest/v1/avisos?id=eq.' + familiaDelAviso.avisoId, {
+    const cargado = await rest('/rest/v1/avisos?id=eq.' + familiaDelAnuncio.anuncioId, {
       method: 'PATCH',
       headers: { Prefer: 'return=representation' },
       body: JSON.stringify({
-        contact_info: { nombre: 'Familia Ficticia C', email: CONTACTO_DEL_AVISO,
+        contact_info: { nombre: 'Familia Ficticia C', email: CONTACTO_DEL_ANUNCIO,
                         celular: '+54 9 11 0000-0000' },
         zone: 'zona_ficticia',
         status: 'activa'
       })
-    }, familiaDelAviso.token);
-    comprobar('El aviso de prueba queda con contacto cargado, para que el control pueda fallar',
+    }, familiaDelAnuncio.token);
+    comprobar('El anuncio de prueba queda con contacto cargado, para que el control pueda fallar',
       cargado.estado === 200 && Array.isArray(cargado.cuerpo) &&
-      JSON.stringify(cargado.cuerpo[0]?.contact_info || {}).includes(CONTACTO_DEL_AVISO),
+      JSON.stringify(cargado.cuerpo[0]?.contact_info || {}).includes(CONTACTO_DEL_ANUNCIO),
       'respuesta ' + cargado.estado);
   }
 
   console.log('');
   console.log('Las cuatro funciones que le dan de comer a las pantallas del encuentro');
 
-  // 59. Los avisos que el Asistente puede ver.
+  // 59. Los anuncios que el Asistente puede ver.
   {
     const delAsistente = await llamar(asistenteUno, 'avisos_abiertos');
     const idsVistos = delAsistente.filas.map((f) => f.id);
-    comprobar('El Asistente ve el aviso de su Prestadora por avisos_abiertos()',
-      delAsistente.estado === 200 && idsVistos.includes(familiaDelAviso.avisoId),
-      'respuesta ' + delAsistente.estado + ', ' + delAsistente.filas.length + ' aviso(s)');
+    comprobar('El Asistente ve el anuncio de su Prestadora por avisos_abiertos()',
+      delAsistente.estado === 200 && idsVistos.includes(familiaDelAnuncio.anuncioId),
+      'respuesta ' + delAsistente.estado + ', ' + delAsistente.filas.length + ' anuncio(s)');
 
     comprobar('Y no ve ninguno de la otra Prestadora',
-      !idsVistos.includes(familiaDeLaOtra.avisoId) && idsVistos.length > 0,
+      !idsVistos.includes(familiaDeLaOtra.anuncioId) && idsVistos.length > 0,
       idsVistos.length + ' visto(s), el ajeno ' +
-        (idsVistos.includes(familiaDeLaOtra.avisoId) ? 'SE COLÓ' : 'no está'));
+        (idsVistos.includes(familiaDeLaOtra.anuncioId) ? 'SE COLÓ' : 'no está'));
 
-    const suyo = delAsistente.filas.filter((f) => f.id === familiaDelAviso.avisoId)[0];
-    comprobar('La función le dice que ya se postuló a ese aviso',
+    const suyo = delAsistente.filas.filter((f) => f.id === familiaDelAnuncio.anuncioId)[0];
+    comprobar('La función le dice que ya se postuló a ese anuncio',
       !!suyo && suyo.ya_me_postule === true,
-      suyo ? 'ya_me_postule = ' + suyo.ya_me_postule : 'no llegó el aviso');
+      suyo ? 'ya_me_postule = ' + suyo.ya_me_postule : 'no llegó el anuncio');
 
-    const filtradas = colar(delAsistente.filas, [CONTACTO_DEL_AVISO, NOMBRE_DEL_PACIENTE]);
+    const filtradas = colar(delAsistente.filas, [CONTACTO_DEL_ANUNCIO, NOMBRE_DEL_PACIENTE]);
     comprobar('Y ninguna fila trae contacto, familia ni nombre del paciente',
       filtradas.length === 0 && delAsistente.filas.length > 0,
       filtradas.length ? filtradas.join('   ')
@@ -2003,32 +2003,32 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
     /* El control que hace que los tres de arriba signifiquen algo: la misma
        llamada, hecha por quien no tiene legajo, tiene que traer cero. Si
        trajera lo mismo, la función no está preguntando quién llama. */
-    const deLaFamilia = await llamar(familiaDelAviso, 'avisos_abiertos');
-    comprobar('Una Familia, que no tiene legajo, no recibe ningún aviso por ahí',
+    const deLaFamilia = await llamar(familiaDelAnuncio, 'avisos_abiertos');
+    comprobar('Una Familia, que no tiene legajo, no recibe ningún anuncio por ahí',
       deLaFamilia.filas.length === 0 && delAsistente.filas.length > 0,
       'la Familia ve ' + deLaFamilia.filas.length + ', el Asistente ve ' + delAsistente.filas.length);
 
     const delOtroLado = await llamar(asistenteDeB, 'avisos_abiertos');
     comprobar('El Asistente de la otra Prestadora ve el suyo y no el de ésta',
-      delOtroLado.filas.some((f) => f.id === familiaDeLaOtra.avisoId) &&
-      !delOtroLado.filas.some((f) => f.id === familiaDelAviso.avisoId),
-      delOtroLado.filas.length + ' aviso(s) del otro lado');
+      delOtroLado.filas.some((f) => f.id === familiaDeLaOtra.anuncioId) &&
+      !delOtroLado.filas.some((f) => f.id === familiaDelAnuncio.anuncioId),
+      delOtroLado.filas.length + ' anuncio(s) del otro lado');
   }
 
   // 60. La grilla de días y turnos.
   {
     await rest('/rest/v1/franjas_aviso', {
       method: 'POST',
-      body: JSON.stringify({ aviso_id: familiaDelAviso.avisoId, dia: 'lunes', turno: 'manana' })
-    }, familiaDelAviso.token);
+      body: JSON.stringify({ aviso_id: familiaDelAnuncio.anuncioId, dia: 'lunes', turno: 'manana' })
+    }, familiaDelAnuncio.token);
     await rest('/rest/v1/franjas_aviso', {
       method: 'POST',
-      body: JSON.stringify({ aviso_id: familiaDeLaOtra.avisoId, dia: 'martes', turno: 'tarde' })
+      body: JSON.stringify({ aviso_id: familiaDeLaOtra.anuncioId, dia: 'martes', turno: 'tarde' })
     }, familiaDeLaOtra.token);
 
-    const propia = await llamar(asistenteUno, 'franjas_de_aviso', { p_aviso: familiaDelAviso.avisoId });
-    const ajena  = await llamar(asistenteUno, 'franjas_de_aviso', { p_aviso: familiaDeLaOtra.avisoId });
-    comprobar('El Asistente ve la grilla del aviso de su Prestadora, y no la del ajeno',
+    const propia = await llamar(asistenteUno, 'franjas_de_aviso', { p_aviso: familiaDelAnuncio.anuncioId });
+    const ajena  = await llamar(asistenteUno, 'franjas_de_aviso', { p_aviso: familiaDeLaOtra.anuncioId });
+    comprobar('El Asistente ve la grilla del anuncio de su Prestadora, y no la del ajeno',
       propia.filas.length > 0 && ajena.filas.length === 0,
       'propia ' + propia.filas.length + ', ajena ' + ajena.filas.length);
     comprobar('Y la grilla viaja en claves de vocabulario, no en etiquetas',
@@ -2038,8 +2038,8 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
 
   // 61. Las postulaciones que recibió la Familia.
   {
-    const deLaFamilia = await llamar(familiaDelAviso, 'postulaciones_de_mis_avisos');
-    comprobar('La Familia ve por la función las dos postulaciones de su aviso',
+    const deLaFamilia = await llamar(familiaDelAnuncio, 'postulaciones_de_mis_avisos');
+    comprobar('La Familia ve por la función las dos postulaciones de su anuncio',
       deLaFamilia.estado === 200 && deLaFamilia.filas.length === 2,
       'respuesta ' + deLaFamilia.estado + ', ' + deLaFamilia.filas.length + ' fila(s)');
 
@@ -2048,7 +2048,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
       deLaAjena.filas.length === 0 && deLaFamilia.filas.length === 2,
       'la ajena ve ' + deLaAjena.filas.length + ', la dueña ve ' + deLaFamilia.filas.length);
 
-    const filtradas = colar(deLaFamilia.filas, [CONTACTO_DEL_AVISO]);
+    const filtradas = colar(deLaFamilia.filas, [CONTACTO_DEL_ANUNCIO]);
     comprobar('Y del Asistente no sale ningún dato de contacto',
       filtradas.length === 0 && deLaFamilia.filas.length > 0,
       filtradas.length ? filtradas.join('   ')
@@ -2061,7 +2061,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
 
   // 62. Las conversaciones, la misma función de los dos lados.
   {
-    const deLaFamilia   = await llamar(familiaDelAviso, 'mis_conversaciones');
+    const deLaFamilia   = await llamar(familiaDelAnuncio, 'mis_conversaciones');
     const delAsistente  = await llamar(asistenteUno, 'mis_conversaciones');
     comprobar('Las dos partes ven la conversación por mis_conversaciones()',
       deLaFamilia.filas.length === 1 && delAsistente.filas.length === 1 &&
@@ -2080,7 +2080,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
       deLaAjena.filas.length === 0 && deLaFamilia.filas.length === 1,
       'la ajena ve ' + deLaAjena.filas.length + ', las partes ven ' + deLaFamilia.filas.length);
 
-    const filtradas = colar([...deLaFamilia.filas, ...delAsistente.filas], [CONTACTO_DEL_AVISO]);
+    const filtradas = colar([...deLaFamilia.filas, ...delAsistente.filas], [CONTACTO_DEL_ANUNCIO]);
     comprobar('Y la conversación no devuelve ningún dato de contacto de ninguno de los dos',
       filtradas.length === 0 && deLaFamilia.filas.length > 0,
       filtradas.length ? filtradas.join('   ')
@@ -2091,7 +2091,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
   {
     const CUATRO = [
       ['avisos_abiertos', {}],
-      ['franjas_de_aviso', { p_aviso: familiaDelAviso.avisoId }],
+      ['franjas_de_aviso', { p_aviso: familiaDelAnuncio.anuncioId }],
       ['postulaciones_de_mis_avisos', {}],
       ['mis_conversaciones', {}]
     ];
@@ -2129,10 +2129,10 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
 
     /* Las dos que siguen son el control positivo de todo el bloque: sin ellas
        cargadas, «la Familia ajena ve cero» lo daría igual una tabla vacía. */
-    const atada = await fichar(asistenteUno, 'entrada', familiaDelAviso.conversacionId);
+    const atada = await fichar(asistenteUno, 'entrada', familiaDelAnuncio.conversacionId);
     comprobar('El Asistente marca una entrada diciendo para qué vínculo es',
       atada.estado === 201 && atada.fila &&
-      atada.fila.conversacion_id === familiaDelAviso.conversacionId,
+      atada.fila.conversacion_id === familiaDelAnuncio.conversacionId,
       'respuesta ' + atada.estado);
 
     const suelta = await fichar(asistenteUno, 'salida', null);
@@ -2142,7 +2142,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
 
     // 64. La Familia del vínculo ve la atada.
     {
-      const deLaFamilia = await fichadasDe(familiaDelAviso);
+      const deLaFamilia = await fichadasDe(familiaDelAnuncio);
       const ids = deLaFamilia.map((f) => f.id);
       comprobar('La Familia del vínculo ve la fichada que lleva su vínculo',
         ids.includes(atada.fila.id),
@@ -2157,7 +2157,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
     // 65. Otra Familia de la misma Prestadora no ve ninguna de las dos.
     {
       const deLaAjena   = await fichadasDe(familiaAjena);
-      const deLaFamilia = await fichadasDe(familiaDelAviso);
+      const deLaFamilia = await fichadasDe(familiaDelAnuncio);
       comprobar('Otra Familia de la misma Prestadora no ve ninguna fichada, y la del vínculo sí',
         deLaAjena.length === 0 && deLaFamilia.length > 0,
         'la ajena ve ' + deLaAjena.length + ', la del vínculo ve ' + deLaFamilia.length);
@@ -2174,7 +2174,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
 
     // 67. Y no puede colgar una de una conversación ajena.
     {
-      const ajena = await fichar(segundoAsistente, 'entrada', familiaDelAviso.conversacionId);
+      const ajena = await fichar(segundoAsistente, 'entrada', familiaDelAnuncio.conversacionId);
       comprobar('Un Asistente no cuelga su fichada de una conversación que no es suya',
         ajena.estado >= 400,
         'respuesta ' + ajena.estado);
@@ -2186,7 +2186,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
       console.log('              de administración, que sólo están en el entorno local.');
     } else {
       const delPersonal  = await fichadasDe(coordinador);
-      const deLaFamilia  = await fichadasDe(familiaDelAviso);
+      const deLaFamilia  = await fichadasDe(familiaDelAnuncio);
       const delAsistente = await fichadasDe(asistenteUno);
       comprobar('El personal de la Prestadora no lee ninguna fichada, y las dos partes sí',
         delPersonal.length === 0 && deLaFamilia.length > 0 && delAsistente.length > 0,
@@ -2234,7 +2234,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
           latitude: -34.6037,
           longitude: -58.3816,
           event_type: tipo,
-          conversacion_id: familiaDelAviso.conversacionId,
+          conversacion_id: familiaDelAnuncio.conversacionId,
           marcada_en: haceHoras(horas)
         })
       }, asistenteUno.token);
@@ -2252,7 +2252,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
     const clases = (filas) => filas.map((f) => f.clase).sort().join(',');
 
     // 69. La Familia ve exactamente dos, y son las dos que tienen que ser.
-    const deLaFamilia = await llamar(familiaDelAviso, 'mis_alarmas', {});
+    const deLaFamilia = await llamar(familiaDelAnuncio, 'mis_alarmas', {});
     comprobar('La Familia ve las dos alarmas, y ninguna de las otras tres marcas',
       deLaFamilia.estado === 200 &&
       clases(deLaFamilia.filas) === 'jornada_abierta,salida_sin_entrada',
@@ -2289,7 +2289,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
 
     // 72. Y no sale ningún dato de contacto por ahí.
     {
-      const filtradas = colar(deLaFamilia.filas, [CONTACTO_DEL_AVISO]);
+      const filtradas = colar(deLaFamilia.filas, [CONTACTO_DEL_ANUNCIO]);
       comprobar('La alarma no trae ningún dato de contacto de nadie',
         filtradas.length === 0 && deLaFamilia.filas.length > 0,
         filtradas.length ? filtradas.join('   ')
@@ -2317,13 +2317,13 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
       };
       const escribir = async (quien, horas) => {
         const { estado } = await rest(
-          '/rest/v1/alarmas_prestadora?tenant_id=eq.' + familiaDelAviso.prestadora.id,
+          '/rest/v1/alarmas_prestadora?tenant_id=eq.' + familiaDelAnuncio.prestadora.id,
           { method: 'PATCH', body: JSON.stringify({ horas_jornada_abierta: horas }) },
           quien.token);
         return estado;
       };
 
-      const deLaFamiliaTope   = await topesDe(familiaDelAviso);
+      const deLaFamiliaTope   = await topesDe(familiaDelAnuncio);
       const delAsistenteTope  = await topesDe(asistenteUno);
       comprobar('Ni la Familia ni el Asistente leen el tope de horas',
         deLaFamiliaTope.filas.length === 0 && delAsistenteTope.filas.length === 0,
@@ -2349,7 +2349,7 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
         /* Un PATCH que no alcanza ninguna fila contesta 204 igual que uno que
            sí: no alcanza con mirar el número. Se pregunta después si el valor
            cambió, y esa pregunta la contesta quien sí lo puede leer. */
-        await escribir(familiaDelAviso, 99);
+        await escribir(familiaDelAnuncio, 99);
         await escribir(asistenteUno, 98);
         const trasLosAjenos = await topesDe(coordinador);
         const quedoEn = trasLosAjenos.filas.length === 1
@@ -2391,19 +2391,19 @@ console.log('Donde se encuentran: la postulación, la conversación y los mensaj
 // --- Limpieza ---------------------------------------------------------------
 console.log('');
 /* Primero los mensajes: `messages.aviso_id` borra con `set null` y no en
-   cascada, así que un mensaje sobrevive al aviso que lo llevaba y se quedaría
+   cascada, así que un mensaje sobrevive al anuncio que lo llevaba y se quedaría
    en la base sin nada que lo nombre. */
 for (const f of familias) {
   if (f.mensajeId) await rest('/rest/v1/messages?id=eq.' + f.mensajeId, { method: 'DELETE' }, f.token);
 }
-/* Después los avisos, y con ellos se van en cascada las postulaciones. Las
+/* Después los anuncios, y con ellos se van en cascada las postulaciones. Las
    conversaciones y los mensajes no: `conversaciones.aviso_id` borra con
-   `set null`, así que el canal sobrevive al aviso y se va recién con el legajo
+   `set null`, así que el canal sobrevive al anuncio y se va recién con el legajo
    —`la_conversacion_es_con_un_legajo_de_la_misma_prestadora` sí borra en
    cascada—, que es lo que se borra en el bucle de abajo. */
 for (const f of [cuentas[0], familias[0], ...delEncuentro]) {
-  for (const aviso of [f.avisoId, f.avisoSuplantado]) {
-    if (aviso) await rest('/rest/v1/avisos?id=eq.' + aviso, { method: 'DELETE' }, f.token);
+  for (const anuncio of [f.anuncioId, f.anuncioSuplantado]) {
+    if (anuncio) await rest('/rest/v1/avisos?id=eq.' + anuncio, { method: 'DELETE' }, f.token);
   }
 }
 for (const c of [...cuentas, ...delEncuentro]) {
@@ -2542,7 +2542,7 @@ if (fallosDeAislamiento === 0) {
   console.log('dicho que sí y que tenga comprobados los papeles para entrar a una casa.');
   console.log('El examen lo corrige la base: la respuesta correcta nunca sale de ahí.');
   console.log('Y la separación no es sólo entre Prestadoras: dos Familias de la misma');
-  console.log('Prestadora tampoco se ven los avisos, los horarios, los mensajes ni los reportes.');
+  console.log('Prestadora tampoco se ven los anuncios, los horarios, los mensajes ni los reportes.');
   console.log('Acá el límite lo ponen las dos partes: la postulación, la conversación');
   console.log('y los mensajes no los lee nadie más, ni el personal de la Prestadora.');
 } else {

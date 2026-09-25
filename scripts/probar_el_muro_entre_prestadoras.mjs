@@ -35,13 +35,13 @@
 
    ---- Y después de los cinco intentos ----
 
-    8. Ni una ficha, ni un aviso, ni un legajo, ni una conversación de la
+    8. Ni una ficha, ni un anuncio, ni un legajo, ni una conversación de la
        Prestadora vecina. Al lado se mira que la cuenta de esa Prestadora sí
        vea lo suyo: si no, «cero» no distingue negado de vacío.
-    9. El valor que viene en el pedido no abre nada: pedir los avisos filtrando
+    9. El valor que viene en el pedido no abre nada: pedir los anuncios filtrando
        por la Prestadora vecina sigue devolviendo cero.
    10. Ni un encabezado inventado que la nombre.
-   11. Ni escribirle la Prestadora vecina al cuerpo: el aviso queda en la suya.
+   11. Ni escribirle la Prestadora vecina al cuerpo: el anuncio queda en la suya.
        Es la regla de la empresa escrita al revés —la política resuelve la
        Prestadora por la membresía verificada, nunca por un valor del pedido—,
        y probada por el único lado por el que se puede probar, que es
@@ -57,15 +57,15 @@
    13. Pedir el papel del personal al registrarse deja la ficha como Familia.
    14. Parada en la segunda, lo que publica queda en la segunda, y desde ahí
        ve lo suyo de la segunda y nada de la primera. El control positivo es
-       un aviso **propio** y no el de la cuenta vecina, porque adentro de una
-       misma Prestadora una Familia tampoco ve los avisos de otra Familia: ese
+       un anuncio **propio** y no el de la cuenta vecina, porque adentro de una
+       misma Prestadora una Familia tampoco ve los anuncios de otra Familia: ese
        cero no diría nada del muro.
    15. Vuelta a la primera, al revés. Una por vez, siempre.
    16. Y no es personal de ninguna de las dos.
 
    ---- Y las dos Prestadoras arrancan con datos cargados ----
 
-   Del lado de la vecina hay un aviso, un legajo de Asistente y una conversación
+   Del lado de la vecina hay un anuncio, un legajo de Asistente y una conversación
    abierta entre los dos. Sin eso, «no ve ninguna fila» lo cumpliría igual una
    política que niega todo, y esta prueba daría verde sin haber mirado nada.
    Cada fila se comprueba desde la sesión que sí tiene derecho a verla, que no
@@ -73,7 +73,7 @@
    directorio pide consentimiento y papeles comprobados.
 
    Todo con datos inventados, contra la base de esta máquina. Borra la
-   conversación, el legajo, los avisos y las cuentas que crea, y al final
+   conversación, el legajo, los anuncios y las cuentas que crea, y al final
    comprueba que la base quedó con el mismo total de cuentas que tenía al
    empezar.
 =================================================== */
@@ -188,7 +188,7 @@ async function cuentaFicticia(P, papel, etiqueta) {
   return { token, cuentaId, correo, nombre };
 }
 
-async function publicarAviso(token, quien, extra = {}) {
+async function publicarAnuncio(token, quien, extra = {}) {
   return await rest('/rest/v1/avisos', {
     method: 'POST',
     headers: { Prefer: 'return=representation' },
@@ -242,7 +242,7 @@ console.log('El muro entre una Prestadora y la otra, atacado a propósito');
 console.log('');
 
 const cuentasParaBorrar = [];
-const avisosParaBorrar = [];
+const anunciosParaBorrar = [];
 const legajosParaBorrar = [];
 const conversacionesParaBorrar = [];
 const cuentasAlEmpezar = await cuantasCuentas();
@@ -254,7 +254,7 @@ async function limpiar() {
   for (const id of legajosParaBorrar) {
     await conServicio('/rest/v1/caregivers?id=eq.' + id, { method: 'DELETE' });
   }
-  for (const id of avisosParaBorrar) {
+  for (const id of anunciosParaBorrar) {
     await conServicio('/rest/v1/avisos?id=eq.' + id, { method: 'DELETE' });
   }
   for (const id of cuentasParaBorrar) {
@@ -268,14 +268,14 @@ cuentasParaBorrar.push(aca.cuentaId);
 const alla = await cuentaFicticia(OTRA, 'familiar', 'alla');
 cuentasParaBorrar.push(alla.cuentaId);
 
-// Cada una publica un aviso en la suya. Son el control positivo de todo lo que
+// Cada una publica un anuncio en la suya. Son el control positivo de todo lo que
 // viene después: sin datos cargados del otro lado, no ver nada no prueba nada.
-const avisoAca = await publicarAviso(aca.token, 'Paciente Ficticio De Este Lado');
-const filaAca = Array.isArray(avisoAca.cuerpo) ? avisoAca.cuerpo[0] : null;
-if (filaAca) avisosParaBorrar.push(filaAca.id);
-const avisoAlla = await publicarAviso(alla.token, 'Paciente Ficticio Del Otro Lado');
-const filaAlla = Array.isArray(avisoAlla.cuerpo) ? avisoAlla.cuerpo[0] : null;
-if (filaAlla) avisosParaBorrar.push(filaAlla.id);
+const anuncioAca = await publicarAnuncio(aca.token, 'Paciente Ficticio De Este Lado');
+const filaAca = Array.isArray(anuncioAca.cuerpo) ? anuncioAca.cuerpo[0] : null;
+if (filaAca) anunciosParaBorrar.push(filaAca.id);
+const anuncioAlla = await publicarAnuncio(alla.token, 'Paciente Ficticio Del Otro Lado');
+const filaAlla = Array.isArray(anuncioAlla.cuerpo) ? anuncioAlla.cuerpo[0] : null;
+if (filaAlla) anunciosParaBorrar.push(filaAlla.id);
 
 /* Y del lado de la vecina hay además un Asistente con legajo y una conversación
    abierta con él. No es adorno: sin una fila cargada, «no ve ninguna» en esas
@@ -309,9 +309,9 @@ const filaCanal = Array.isArray(canal.cuerpo) ? canal.cuerpo[0] : null;
 if (filaCanal) conversacionesParaBorrar.push(filaCanal.id);
 
 console.log('Las dos Prestadoras tienen datos cargados');
-comprobar('cada cuenta publicó un aviso en la suya',
+comprobar('cada cuenta publicó un anuncio en la suya',
   !!filaAca && !!filaAlla && filaAca.tenant_id === UNA.id && filaAlla.tenant_id === OTRA.id,
-  'respuestas ' + avisoAca.estado + ',' + avisoAlla.estado);
+  'respuestas ' + anuncioAca.estado + ',' + anuncioAlla.estado);
 comprobar('y la vecina tiene además un legajo y una conversación abierta',
   !!filaLegajo && !!filaCanal,
   'respuestas ' + legajo.estado + ',' + canal.estado);
@@ -320,7 +320,7 @@ comprobar('y la vecina tiene además un legajo y una conversación abierta',
    pide consentimiento y papeles comprobados—, y la conversación la ven las dos
    partes. Preguntárselo a la sesión equivocada daría cero y haría creer que la
    fila no está. */
-comprobar('la Familia de la vecina ve su aviso y su conversación',
+comprobar('la Familia de la vecina ve su anuncio y su conversación',
   (await filasQueVe(alla.token, 'avisos')).some((f) => f.id === (filaAlla || {}).id) &&
   (await filasQueVe(alla.token, 'conversaciones')).some((f) => f.id === (filaCanal || {}).id));
 comprobar('y el Asistente de la vecina ve su legajo y esa misma conversación',
@@ -392,7 +392,7 @@ for (const tabla of ['profiles', 'avisos', 'caregivers', 'conversaciones']) {
 }
 
 const filtrado = await rest('/rest/v1/avisos?select=id,tenant_id&tenant_id=eq.' + OTRA.id, {}, aca.token);
-comprobar('pedir los avisos filtrando por la vecina sigue devolviendo cero',
+comprobar('pedir los anuncios filtrando por la vecina sigue devolviendo cero',
   Array.isArray(filtrado.cuerpo) && filtrado.cuerpo.length === 0,
   'respuesta ' + filtrado.estado);
 
@@ -404,9 +404,9 @@ const colados = Array.isArray(conEncabezado.cuerpo)
 comprobar('ni nombrándola en un encabezado inventado',
   colados.length === 0, 'respuesta ' + conEncabezado.estado);
 
-const escrito = await publicarAviso(aca.token, 'Paciente Ficticio Del Intento', { tenant_id: OTRA.id });
+const escrito = await publicarAnuncio(aca.token, 'Paciente Ficticio Del Intento', { tenant_id: OTRA.id });
 const filaEscrita = Array.isArray(escrito.cuerpo) ? escrito.cuerpo[0] : null;
-if (filaEscrita) avisosParaBorrar.push(filaEscrita.id);
+if (filaEscrita) anunciosParaBorrar.push(filaEscrita.id);
 comprobar('y escribirle la vecina al cuerpo no manda el dato para allá',
   escrito.estado >= 400 || (!!filaEscrita && filaEscrita.tenant_id === UNA.id),
   'respuesta ' + escrito.estado +
@@ -436,28 +436,28 @@ comprobar('y pedir el papel del personal no se lo da: queda como Familia',
   !!enLaOtra && enLaOtra.role === 'familiar',
   enLaOtra ? 'quedó como ' + enLaOtra.role : 'no quedó ficha');
 
-/* El control positivo tiene que ser un aviso **propio**, y no el de la cuenta
-   vecina: adentro de una misma Prestadora una Familia tampoco ve los avisos de
+/* El control positivo tiene que ser un anuncio **propio**, y no el de la cuenta
+   vecina: adentro de una misma Prestadora una Familia tampoco ve los anuncios de
    otra Familia, así que ese cero no diría nada del muro. Publica uno estando
    parada en la segunda y mira que vea ése y ninguno de la primera. */
-const avisoSegunda = await publicarAviso(aca.token, 'Paciente Ficticio De La Segunda');
-const filaSegunda = Array.isArray(avisoSegunda.cuerpo) ? avisoSegunda.cuerpo[0] : null;
-if (filaSegunda) avisosParaBorrar.push(filaSegunda.id);
+const anuncioSegunda = await publicarAnuncio(aca.token, 'Paciente Ficticio De La Segunda');
+const filaSegunda = Array.isArray(anuncioSegunda.cuerpo) ? anuncioSegunda.cuerpo[0] : null;
+if (filaSegunda) anunciosParaBorrar.push(filaSegunda.id);
 const desdeAlla = await filasQueVe(aca.token, 'avisos');
 comprobar('parada en la segunda, lo que publica queda en la segunda',
   !!filaSegunda && filaSegunda.tenant_id === OTRA.id,
-  'respuesta ' + avisoSegunda.estado);
+  'respuesta ' + anuncioSegunda.estado);
 comprobar('y desde ahí ve el suyo de la segunda y ninguno de la primera',
   desdeAlla.some((f) => f.id === (filaSegunda || {}).id) &&
   !desdeAlla.some((f) => f.tenant_id === UNA.id),
-  desdeAlla.length + ' aviso(s) a la vista');
+  desdeAlla.length + ' anuncio(s) a la vista');
 
 await pararse(aca.token, UNA.slug);
 const desdeAca = await filasQueVe(aca.token, 'avisos');
 comprobar('y vuelta a la primera, al revés: una por vez, siempre',
   desdeAca.some((f) => f.id === (filaAca || {}).id) &&
   !desdeAca.some((f) => f.tenant_id === OTRA.id),
-  desdeAca.length + ' aviso(s) a la vista');
+  desdeAca.length + ' anuncio(s) a la vista');
 
 const esPersonal = async (token) => {
   const { cuerpo } = await rest('/rest/v1/rpc/es_personal_de_prestadora', { method: 'POST' }, token);

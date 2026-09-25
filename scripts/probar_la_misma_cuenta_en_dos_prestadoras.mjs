@@ -35,13 +35,13 @@
    lo esperado, la prueba avisa que no está en condiciones de medir nada, y no
    que el producto esté sano.
 
-   El aviso de la Familia es lo que se usa para mirar, porque su política lo
+   El anuncio de la Familia es lo que se usa para mirar, porque su política lo
    deja ver a quien lo publicó y a nadie más de afuera de esa Prestadora, y
-   porque la Prestadora del aviso no se manda en el pedido: la pone la base
-   con la Prestadora del momento. Así, que el aviso caiga donde tiene que caer
+   porque la Prestadora del anuncio no se manda en el pedido: la pone la base
+   con la Prestadora del momento. Así, que el anuncio caiga donde tiene que caer
    ya es media prueba.
 
-   No deja nada atrás: borra los avisos, el legajo y las cuentas ficticias que
+   No deja nada atrás: borra los anuncios, el legajo y las cuentas ficticias que
    crea, y comprueba al final que la base quedó con la misma cantidad de
    cuentas que tenía al empezar.
    =================================================== */
@@ -183,7 +183,7 @@ async function pararse(token, slug) {
   }, token);
 }
 
-async function publicarAviso(token, quien) {
+async function publicarAnuncio(token, quien) {
   return await rest('/rest/v1/avisos', {
     method: 'POST',
     headers: { Prefer: 'return=representation' },
@@ -196,7 +196,7 @@ async function publicarAviso(token, quien) {
   }, token);
 }
 
-async function avisosQueVe(token) {
+async function anunciosQueVe(token) {
   const { cuerpo } = await rest('/rest/v1/avisos?select=id,patient_name,tenant_id', {}, token);
   return Array.isArray(cuerpo) ? cuerpo : [];
 }
@@ -223,20 +223,20 @@ console.log('La misma cuenta, adentro de dos Prestadoras');
 console.log('');
 
 const cuentasParaBorrar = [];
-const avisosParaBorrar = [];
+const anunciosParaBorrar = [];
 const cuentasAlEmpezar = await cuantasCuentas();
 
 // --- 1. Entra por el enlace de una Prestadora y queda parada ahí -----------
 const persona = await cuentaFicticia(UNA, 'familia', 'a');
 cuentasParaBorrar.push(persona.cuentaId);
 
-const avisoUna = await publicarAviso(persona.token, 'Paciente Ficticio De La Primera');
-const filaUna = Array.isArray(avisoUna.cuerpo) ? avisoUna.cuerpo[0] : null;
-if (filaUna) avisosParaBorrar.push(filaUna.id);
+const anuncioUna = await publicarAnuncio(persona.token, 'Paciente Ficticio De La Primera');
+const filaUna = Array.isArray(anuncioUna.cuerpo) ? anuncioUna.cuerpo[0] : null;
+if (filaUna) anunciosParaBorrar.push(filaUna.id);
 
-sostener('recién registrada, la Familia publica su aviso',
-  !!filaUna, 'respuesta ' + avisoUna.estado);
-comprobar('y el aviso cae en la Prestadora por cuyo enlace entró',
+sostener('recién registrada, la Familia publica su anuncio',
+  !!filaUna, 'respuesta ' + anuncioUna.estado);
+comprobar('y el anuncio cae en la Prestadora por cuyo enlace entró',
   !!filaUna && filaUna.tenant_id === UNA.id);
 
 // --- 2. La misma cuenta se registra en la segunda Prestadora ---------------
@@ -257,18 +257,18 @@ comprobar('y queda con una ficha en cada una, no con una sola',
   fichas.length + (fichas.length === 1 ? ' ficha' : ' fichas'));
 
 // --- 3. Parada en la segunda, ve lo suyo de ahí y nada de la primera -------
-const avisoOtra = await publicarAviso(persona.token, 'Paciente Ficticio De La Segunda');
-const filaOtra = Array.isArray(avisoOtra.cuerpo) ? avisoOtra.cuerpo[0] : null;
-if (filaOtra) avisosParaBorrar.push(filaOtra.id);
+const anuncioOtra = await publicarAnuncio(persona.token, 'Paciente Ficticio De La Segunda');
+const filaOtra = Array.isArray(anuncioOtra.cuerpo) ? anuncioOtra.cuerpo[0] : null;
+if (filaOtra) anunciosParaBorrar.push(filaOtra.id);
 
 comprobar('registrarse en la segunda deja la sesión parada ahí',
   !!filaOtra && filaOtra.tenant_id === OTRA.id,
-  'respuesta ' + avisoOtra.estado);
+  'respuesta ' + anuncioOtra.estado);
 
-const desdeOtra = await avisosQueVe(persona.token);
-sostener('parada en la segunda, ve el aviso que publicó ahí',
+const desdeOtra = await anunciosQueVe(persona.token);
+sostener('parada en la segunda, ve el anuncio que publicó ahí',
   desdeOtra.some((a) => a.id === (filaOtra || {}).id),
-  desdeOtra.length + (desdeOtra.length === 1 ? ' aviso a la vista' : ' avisos a la vista'));
+  desdeOtra.length + (desdeOtra.length === 1 ? ' anuncio a la vista' : ' anuncios a la vista'));
 comprobar('y no ve el que publicó en la primera',
   !desdeOtra.some((a) => a.id === (filaUna || {}).id));
 
@@ -283,10 +283,10 @@ comprobar('vuelve a pararse en la primera',
   vuelta.estado < 300 && vuelta.cuerpo === UNA.id,
   'respuesta ' + vuelta.estado);
 
-const desdeUna = await avisosQueVe(persona.token);
-sostener('parada en la primera, ve el aviso que publicó ahí',
+const desdeUna = await anunciosQueVe(persona.token);
+sostener('parada en la primera, ve el anuncio que publicó ahí',
   desdeUna.some((a) => a.id === (filaUna || {}).id),
-  desdeUna.length + (desdeUna.length === 1 ? ' aviso a la vista' : ' avisos a la vista'));
+  desdeUna.length + (desdeUna.length === 1 ? ' anuncio a la vista' : ' anuncios a la vista'));
 comprobar('y no ve el que publicó en la segunda',
   !desdeUna.some((a) => a.id === (filaOtra || {}).id));
 
@@ -304,12 +304,12 @@ comprobar('quien no tiene ficha en una Prestadora no se puede parar en ella',
   coladura.estado >= 400,
   'respuesta ' + coladura.estado);
 
-const avisoAjena = await publicarAviso(ajena.token, 'Paciente Ficticio Del Intento');
-const filaAjena = Array.isArray(avisoAjena.cuerpo) ? avisoAjena.cuerpo[0] : null;
-if (filaAjena) avisosParaBorrar.push(filaAjena.id);
+const anuncioAjena = await publicarAnuncio(ajena.token, 'Paciente Ficticio Del Intento');
+const filaAjena = Array.isArray(anuncioAjena.cuerpo) ? anuncioAjena.cuerpo[0] : null;
+if (filaAjena) anunciosParaBorrar.push(filaAjena.id);
 comprobar('y después del intento sigue parada donde estaba',
   !!filaAjena && filaAjena.tenant_id === UNA.id,
-  'respuesta ' + avisoAjena.estado);
+  'respuesta ' + anuncioAjena.estado);
 
 // --- 6. El mismo correo no crea una segunda persona adentro de la misma ----
 const repetida = await fetch(base + '/auth/v1/signup', {
@@ -375,7 +375,7 @@ console.log('');
 if (filaLegajo) {
   await conServicio('/rest/v1/caregivers?id=eq.' + filaLegajo.id, { method: 'DELETE' });
 }
-for (const id of avisosParaBorrar) {
+for (const id of anunciosParaBorrar) {
   await conServicio('/rest/v1/avisos?id=eq.' + id, { method: 'DELETE' });
 }
 for (const id of cuentasParaBorrar) await borrarCuenta(id);

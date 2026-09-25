@@ -52,7 +52,7 @@ import Inicio from './pantallas/Inicio.jsx';
 import Legajo from './pantallas/Legajo.jsx';
 import Capacitaciones from './pantallas/Capacitaciones.jsx';
 import Guias from './pantallas/Guias.jsx';
-import Avisos from './pantallas/Avisos.jsx';
+import Anuncios from './pantallas/Avisos.jsx';
 import Conversacion from './pantallas/Conversacion.jsx';
 
 export default function Programa() {
@@ -216,7 +216,7 @@ export default function Programa() {
         navegar={navegar}
       />
 
-      <Avisos
+      <Anuncios
         activa={destino.pantalla === 'avisos'}
         visita={visitaDe('avisos')}
         base={base}

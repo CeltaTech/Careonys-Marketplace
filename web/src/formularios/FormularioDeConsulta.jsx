@@ -115,7 +115,7 @@ export default function FormularioDeConsulta({
 
     try {
       if (await sePuedeGuardar()) {
-        await window.ClienteDatos.crearAvisoFamilia({
+        await window.ClienteDatos.crearAnuncioFamilia({
           paciente: datos.nombre,
           /* Un curso no es un motivo de consulta: la pantalla de cursos elige
              entre cursos y trae escrito aparte cuál es su motivo. Cuál curso

@@ -96,11 +96,11 @@ pacten. **Este documento no la define y no la reemplaza**: lo que rija su Víncu
 acuerdo que celebre con su Prestadora, no acá.
 
 **3.3. Su autonomía.** Cuando el trabajo llega por esta vía
-—usted mira los Avisos publicados y decide cuáles le sirven— el software le garantiza tres
+—usted mira los Anuncios publicados y decide cuáles le sirven— el software le garantiza tres
 cosas, y no las condiciona a nada:
 
 - **ver las condiciones antes de decidir**: qué se pide, en qué zona, qué días y en qué turnos;
-- **decidir si participa**, sin que rechazar un Aviso le cierre los siguientes;
+- **decidir si participa**, sin que rechazar un Anuncio le cierre los siguientes;
 - **manejar su propia disponibilidad**, encenderla y apagarla cuando quiera.
 
 **No hay exclusividad.** Nada de lo que acepta acá le impide trabajar para otras Prestadoras,

@@ -4,7 +4,7 @@
    Es la página entera: el marco del teléfono, el menú lateral, y las siete
    pantallas adentro. Todas están puestas desde el arranque y ninguna se saca:
    lo que cambia es cuál lleva la marca de activa, exactamente como antes. De
-   eso depende que el formulario del aviso conserve lo escrito, que la grilla de
+   eso depende que el formulario del anuncio conserve lo escrito, que la grilla de
    las franjas no se vuelva a dibujar, y que el hilo de mensajes no se vacíe al
    ir y volver.
 
@@ -226,7 +226,7 @@ export default function Programa() {
 
       {/* Las siete pantallas. Están todas puestas y sólo una lleva la marca de
           activa: sacarlas y volverlas a poner perdería lo escrito en el
-          formulario del aviso y vaciaría el hilo de mensajes. */}
+          formulario del anuncio y vaciaría el hilo de mensajes. */}
       <Intro activa={pantalla === 'intro'} ocupada={arrancando}
         avisoClave={avisoArranque}
         destinoAlta={destinoAlta} alEntrar={alEntrar} />

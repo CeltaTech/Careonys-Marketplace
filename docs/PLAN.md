@@ -68,7 +68,7 @@ el cambio, y correr las cuarenta y cuatro pruebas que ya tienen escritas y no ll
 **2.3 — Cerrada.** Las **tres trampas** —las postulaciones, la fichada y el chat— ya tienen
 dicho el nombre de cada cosa, y ninguna necesitó una palabra nueva: a cada una se le agregó lo
 que aclara de cuál se habla. Son dos postulaciones, una a entrar al padrón de la Prestadora y otra
-a cubrir una vacante; son dos avisos, el de una Familia y el de la Prestadora a un Asistente, y la
+a cubrir una vacante; son dos avisos, el de una Familia —hoy el anuncio— y el de la Prestadora a un Asistente, y la
 charla de ida y vuelta entre una Familia y un Asistente es una conversación; y los tres hechos de
 la guardia son registrar entrada, registrar salida y registrar ubicación. Con esto **termina la
 etapa de la comparación**.

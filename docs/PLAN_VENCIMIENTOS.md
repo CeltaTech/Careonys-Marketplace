@@ -228,8 +228,8 @@ Son tres, y ninguna se inventa.
 
 ### Pregunta 1 — Cómo se llama lo que el sistema manda
 
-**«Aviso» está tomado**: en este producto un Aviso es lo que una Familia publica cuando necesita un
-Asistente (`docs/GLOSARIO.md:15`). Llamar Aviso también al mensaje que dice «su matrícula vence en
+**«Aviso» está tomado**: en este producto un Aviso —hoy un Anuncio— es lo que una Familia publica
+cuando necesita un Asistente (`docs/GLOSARIO.md:15`). Llamar Aviso también al mensaje que dice «su matrícula vence en
 treinta días» pisa la palabra que sostiene la mitad del producto.
 
 No se propone ninguna acá, porque la regla es que **una palabra de negocio nueva se propone y no se

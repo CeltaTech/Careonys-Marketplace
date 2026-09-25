@@ -1,5 +1,5 @@
 /* ===================================================
-   EL AVISO NUEVO
+   EL ANUNCIO NUEVO
 
    La Familia cuenta qué cuidado necesita, y los Asistentes que quieran se
    postulan. Acá no se guarda ningún trato ni ningún precio: se guarda el pedido
@@ -61,7 +61,7 @@ export default function Publicar({ activa, navegar }) {
         await Franjas.montarTextos('franjas-cuidado', 'paso_de_franjas_aviso');
         await Franjas.montarGrilla('grilla-cuidado', 'grilla_aviso');
       } catch (err) {
-        console.error('Grilla de las franjas del aviso:', err);
+        console.error('Grilla de las franjas del anuncio:', err);
       }
     })();
   }, []);
@@ -86,13 +86,13 @@ export default function Publicar({ activa, navegar }) {
     try {
       /* Un par `{ dia, turno }` por casillero marcado, con claves de catálogo.
          Va a `franjas_aviso`, una fila cada uno. La grilla se la lee la misma
-         pieza que la dibujó, y se la espera acá adentro: si no llegó, el aviso
+         pieza que la dibujó, y se la espera acá adentro: si no llegó, el anuncio
          no se publica a medias. */
       const Franjas = await conLaDisponibilidad();
       const franjas = Franjas.recolectar('grilla-cuidado').franjas;
       const { ClienteDatos, Sesion } = await conLaBase();
       const sesion = await Sesion.getSession();
-      await ClienteDatos.crearAviso({
+      await ClienteDatos.crearAnuncio({
         patientName: nombre,
         zona,
         scheduleType: tipo,
@@ -112,7 +112,7 @@ export default function Publicar({ activa, navegar }) {
         navegar('dashboard');
       }, 4000);
     } catch (err) {
-      alert(frase(Texto.claveDeError(err, 'publicar el aviso')));
+      alert(frase(Texto.claveDeError(err, 'publicar el anuncio')));
     } finally {
       enCurso.current = false;
       setPublicando(false);

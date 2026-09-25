@@ -828,7 +828,7 @@ verificaba.
 
 **Resultado: 49 comprobaciones, todas en verde**, contra las 24 migraciones. Cubren el perfil que
 crea el registro, el legajo, los archivos de los dos depósitos, el directorio de cada Prestadora,
-el examen, y la barrera entre dos Familias de una misma Prestadora —avisos, horarios, mensajes,
+el examen, y la barrera entre dos Familias de una misma Prestadora —anuncios, horarios, mensajes,
 reportes y ponderaciones—.
 
 **Y volvió a correr ese mismo día contra el esquema entero, con el mismo resultado: 49 de 49.**
@@ -922,7 +922,7 @@ uno por uno con `grep` antes de borrarlos.
 no hacía falta preguntar: el consentimiento que la persona firma ya dice que sólo las Familias
 registradas pueden comunicarse con ella, y que lo hacen por la plataforma
 (`data/catalogo-autorizaciones.json`, `perfil_publicado`). En su lugar la pantalla explica eso mismo
-(`web/src/pantallas/Perfil.jsx:421`) y ofrece las dos puertas que sí existen: entrar como Familia y publicar un aviso.
+(`web/src/pantallas/Perfil.jsx:421`) y ofrece las dos puertas que sí existen: entrar como Familia y publicar un anuncio.
 Lo que falta —empezar una conversación con esa persona en particular— quedó anotado como pendiente 46.
 
 **Tres traducciones que estaban por escribirse dos veces subieron a los archivos compartidos**
@@ -1275,8 +1275,8 @@ no se eligió. Las cinco reglas que ninguna puede saltearse están al principio 
 **Una colisión de vocabulario que quedó anotada, y que después se decidió.** El material
 heredado llamaba `avisos` a lo que publica una Familia, y en el producto «aviso» se usaba
 para otra cosa: el aviso de que el Asistente llegó, el que sale por WhatsApp o por correo.
-Se dejó escrito sin decidir. **El 25 de agosto de 2026 el Desarrollador decidió**: el Aviso
-es lo que la Familia publica, la tabla se llama `avisos`, y para el otro sentido queda
+Se dejó escrito sin decidir. **El 25 de agosto de 2026 el Desarrollador decidió**: el Aviso —hoy
+el Anuncio— es lo que la Familia publica, la tabla se llama `avisos`, y para el otro sentido queda
 **notificación**. Ver más abajo, «Las dos tablas de esta modalidad pasaron a llamarse como lo
 que guardan».
 
@@ -1710,7 +1710,7 @@ la lista de exenciones vacía: aparecen los dos casos conocidos, cada uno en su 
 **El reparto de módulos se queda sin chequeo automático, y conviene dejar escrito por qué**, porque parecía
 la candidata más fácil: es la única que trae su propia lista de palabras. `docs/MODULOS.md`, «Cómo se comprueba que la línea está bien puesta»,
 manda «buscar en lo compartido cualquier palabra que sólo signifique algo acá —directorio,
-aviso, postulación, contacto, puntaje, destacado—». Se midió el 25 de agosto de 2026 y
+anuncio, postulación, contacto, puntaje, destacado—». Se midió el 25 de agosto de 2026 y
 la medición dice que no.
 
 - **Sobre el texto crudo de las migraciones compartidas: once apariciones, once falsas.** Todas
@@ -2065,18 +2065,18 @@ Las dos primeras separan cosas que están en tablas distintas o en carpetas dist
 tercera es más difícil justamente porque **las dos Familias están adentro de la misma
 Prestadora**: ahí el `tenant_id` de las dos vale lo mismo, así que no separa nada. Cinco tablas
 se conformaban con él, y eso quería decir que **una Familia, con sólo iniciar sesión, leía,
-modificaba y borraba los avisos de las demás, y leía la presión, la glucemia y la medicación de
+modificaba y borraba los anuncios de las demás, y leía la presión, la glucemia y la medicación de
 todos los Pacientes de la Prestadora**. Lo mismo un Asistente con sesión. Hoy las cinco políticas
 nombran además a la persona, y la base lo confirma: la de `avisos` exige `familia_id =
 auth.uid()` salvo para el personal de la Prestadora
 (`supabase/migrations/0001_base_del_esquema.sql:4557`).
 
-**Faltaba una pieza antes de poder escribir la regla: el aviso no sabía de quién era.**
+**Faltaba una pieza antes de poder escribir la regla: el anuncio no sabía de quién era.**
 `avisos` no tenía ninguna columna que lo atara a quien lo publicó, así que no había con qué
 comparar. Ahora tiene `familia_id`, y el valor **sale del valor por omisión y nunca del pedido**
 —igual que `tenant_id`, que también nace de `prestadora_actual()`—, que es lo que hace que nadie
-pueda publicar un aviso a nombre de otra persona. Los horarios y la conversación no deciden nada
-por su cuenta: cuelgan del aviso, y si el aviso no se ve, el `exists` de la política no encuentra
+pueda publicar un anuncio a nombre de otra persona. Los horarios y la conversación no deciden nada
+por su cuenta: cuelgan del anuncio, y si el anuncio no se ve, el `exists` de la política no encuentra
 nada y ellos tampoco se ven.
 
 **Y había un agujero recién hecho, propio, que se cerró en la misma pasada.** Las dos tablas de
@@ -2095,16 +2095,16 @@ escribió. La cláusula que se lo va a devolver **ya está escrita** en la polí
 encuentra ninguna fila: empieza a funcionar sola el día que un reporte cuelgue de algo, que es
 el pendiente 52 y por esto pasó a ser urgente.
 
-**Un aviso publicado antes de hoy tampoco lo ve su Familia**, porque `familia_id` le quedó
+**Un anuncio publicado antes de hoy tampoco lo ve su Familia**, porque `familia_id` le quedó
 vacío. Lo sigue viendo el personal de la Prestadora. No se rellenó a mano: no hay dato de dónde
-sacarlo, y adivinar el dueño de un aviso es exactamente lo que la migración vino a impedir.
+sacarlo, y adivinar el dueño de un anuncio es exactamente lo que la migración vino a impedir.
 
 **La prueba de aislamiento pasó de 27 comprobaciones a 39.** Las doce nuevas necesitaban una
 cuenta más: A y B están en Prestadoras distintas y entre ellas alcanza con el `tenant_id`, así
 que no probaban nada de esto. C está en la misma Prestadora que A, y es el único par que puede
-mostrar si la barrera existe. Comprueban que cada Familia publica su aviso y sale a su nombre
+mostrar si la barrera existe. Comprueban que cada Familia publica su anuncio y sale a su nombre
 sin haberlo mandado, que mandarlo a nombre de otra no sirve, que ninguna ve, modifica ni borra
-el aviso de la otra, ni sus horarios, ni su conversación, ni ningún reporte, y que los pesos del
+el anuncio de la otra, ni sus horarios, ni su conversación, ni ningún reporte, y que los pesos del
 puntaje no se leen ni se cambian desde una sesión que no es del personal. Esa última no mira una
 tabla vacía: **las filas existen porque las siembra `supabase/migrations/0002_siembra_ficticia.sql:612`**, así que ver cero ahí es la
 política y no la falta de datos. **Las doce quedaron escritas y no corridas**: el guion completo
@@ -2830,16 +2830,16 @@ resuelve el navegador, así que lo que el servidor manda todavía lo trae sin re
 ### Cada Prestadora ficticia tiene ahora sus Familias y sus Asistentes
 
 Las dos Prestadoras de ejemplo estaban desparejas y a medio llenar. PresDemo tenía seis
-Asistentes y Cuidar Norte tres; cada una tenía **un** aviso, y ese aviso tenía nueve columnas
+Asistentes y Cuidar Norte tres; cada una tenía **un** anuncio, y ese anuncio tenía nueve columnas
 vacías, entre ellas la de contacto, que es la única forma que tiene este producto de saber que
 detrás hay una Familia. Y había seis tablas con cero filas: las cuatro que guardan lo que un
 legajo muestra por dentro —estudios, matrículas, experiencia y referencias— y las dos de franjas
-horarias, la del Asistente y la del aviso.
+horarias, la del Asistente y la del anuncio.
 
 **Cero filas no es un dato menor: es una prueba que no puede fallar.** Una pantalla que lee de
 una tabla vacía se ve exactamente igual esté bien o esté rota, y la demostración muestra un
 legajo sin nada adentro sin que nada avise por qué. Lo mismo con el cruce entre lo que un
-Asistente puede y lo que un aviso necesita: con las dos tablas vacías, la consulta devuelve
+Asistente puede y lo que un anuncio necesita: con las dos tablas vacías, la consulta devuelve
 vacío siempre, y eso no distingue «no hay coincidencias» de «la consulta está mal escrita».
 
 Lo pidió el Desarrollador el 26 de agosto de 2026: cinco o seis Familias y cinco o seis
@@ -2863,7 +2863,7 @@ nadie lo miró todavía— al lado de las que están `verificado`. Un directorio
 el mismo estado no prueba que el estado se respete.
 
 **Y el cruce que motivó llenar las dos tablas de franjas ahora devuelve filas.** Hay dos
-coincidencias puestas a mano, una en cada Prestadora: el aviso de San Isidro pide martes y jueves
+coincidencias puestas a mano, una en cada Prestadora: el anuncio de San Isidro pide martes y jueves
 a la mañana y Omar Zabala Ficticio está justo ahí con esas dos franjas; el de Ramos Mejía pide
 lunes a la mañana y jueves a la tarde, y Lorena Maidana Ficticia tiene las dos. Cruzando zona y
 franja la consulta devuelve esas dos filas y ninguna otra.
@@ -2871,16 +2871,16 @@ franja la consulta devuelve esas dos filas y ninguna otra.
 **Tres cosas que la migración deliberadamente no hace, y por qué.**
 
 1. **Ninguna Familia tiene cuenta para entrar.** En este producto una Familia no tiene tabla:
-   existe porque publicó un aviso, y lo que se sabe de ella es el contacto que dejó ahí. La
+   existe porque publicó un anuncio, y lo que se sabe de ella es el contacto que dejó ahí. La
    columna que la ataría a una cuenta apunta a `auth.users`, y crear cuentas desde una migración
    significa escribir una contraseña adentro del repositorio, que es exactamente lo que prohíbe
-   la regla de credenciales de la empresa. Los avisos quedan sin cuenta, y las políticas de
+   la regla de credenciales de la empresa. Los anuncios quedan sin cuenta, y las políticas de
    `avisos` ya tenían previsto ese caso: son los que ve el personal de la Prestadora.
-2. **Los avisos nuevos no dicen `schedule_type`.** Esa columna no tiene vocabulario —es el
+2. **Los anuncios nuevos no dicen `schedule_type`.** Esa columna no tiene vocabulario —es el
    pendiente 31— y hoy cada lugar que la escribe usa una forma distinta. Escribir una quinta
    forma empeora el problema en vez de arreglarlo, así que el horario va donde sí tiene
-   vocabulario: en las franjas del aviso, con `dia_semana` y `turno`.
-3. **Ningún estado de aviso nuevo.** Todos quedan `activa`. Inventar un estado sería inventar
+   vocabulario: en las franjas del anuncio, con `dia_semana` y `turno`.
+3. **Ningún estado de anuncio nuevo.** Todos quedan `activa`. Inventar un estado sería inventar
    una palabra de negocio sin aprobarla.
 
 Todos los datos son inventados y se nota a propósito: los documentos son de la serie 90.000.000,
@@ -2895,7 +2895,7 @@ migración escriba un valor que no esté en el catálogo de vocabularios— esta
 de las dos formas de cargar filas. Reconocía `insert into tabla (columnas) values (…)`, y no
 reconocía la otra, `insert … select … from una lista de valores`, donde las columnas no se
 declaran junto a la tabla sino después de la lista. **Veintisiete filas de franjas, treinta y
-cinco de avisos y todo el contenido de los cuatro legajos pasaban sin que nadie les mirara los
+cinco de anuncios y todo el contenido de los cuatro legajos pasaban sin que nadie les mirara los
 valores.**
 
 Un chequeo que no mira no es un chequeo que pasa: es un chequeo que no existe. Pasó entonces a
@@ -5186,7 +5186,7 @@ le concede *todo* a `anon` y a `authenticated` sobre cada tabla, secuencia y fun
 `public`, así que cada tabla nacía abierta sin que ninguna migración lo pidiera.
 
 **Lo que eso abría no era teórico, y se midió.** Con una cuenta ficticia de coordinador de
-PresDemo, contra la base local, con el esquema entero aplicado: esa cuenta **veía 6 avisos** —los
+PresDemo, contra la base local, con el esquema entero aplicado: esa cuenta **veía 6 anuncios** —los
 de su Prestadora, que es lo que la política le deja ver— y con un solo `truncate` **dejó la tabla
 en 0**, borrando también los 6 de Cuidar Norte. La RLS no lo detuvo porque no puede: filtra filas,
 y vaciar la tabla no es filtrar filas. `TRUNCATE` no mira ninguna política. El pendiente decía que
@@ -5239,12 +5239,12 @@ public.profiles TO authenticated`, que es justo la línea que abre el agujero.
 tocara la prueba, y sus dos comprobaciones de sostén siguen en pie —el volcado trae tablas y
 políticas, y las seis puertas públicas siguen al alcance anónimo—. Dos: con una cuenta
 ficticia y sesión simulada contra la base local se leyeron las tablas, se llamaron las funciones
-del directorio, y se dio de alta, se modificó y se dio de baja un aviso, todo `1` fila; el
+del directorio, y se dio de alta, se modificó y se dio de baja un anuncio, todo `1` fila; el
 `truncate` que antes vaciaba la tabla ahora contesta `permission denied`; y el disparador de las
 ponderaciones **sigue rechazando** aunque su función ya no se pueda llamar desde ninguna sesión,
 porque el permiso de llamada se verifica al crear el disparador y no cada vez que se dispara.
 Tres: `scripts/probar_aislamiento.mjs --local` pasó entero con los permisos recortados —registro
-real, sesiones reales, archivos, examen, avisos y reportes—, que es la única capa que prueba que
+real, sesiones reales, archivos, examen, anuncios y reportes—, que es la única capa que prueba que
 no se rompió nada de lo que la aplicación hace de verdad; se volvió a correr después de reponer el
 permiso, sobre la base local reconstruida desde cero con todas las migraciones en orden. Y cuatro,
 que apareció después: la prueba por columna sobre `profiles`, la que encontró lo que el barrido
@@ -5356,7 +5356,7 @@ igual a cinco.
 **Lo que no se hizo, y por qué.** El consentimiento de novedades lo siguen preguntando los cinco y
 no lo recibe ninguna tabla: hoy viaja adentro del correo, que es mejor que perderse, pero no es
 guardarlo. Y `formulario-integral.html` no se borró ese día: adentro tenía lo único que publicaba
-un aviso de verdad —el paso a paso—, y ese paso a paso chocaba con exactamente la misma pared. Las
+un anuncio de verdad —el paso a paso—, y ese paso a paso chocaba con exactamente la misma pared. Las
 dos cosas quedaron en el pendiente 64. **El 9 de septiembre de 2026 la pantalla salió de uso**, y
 lo que sigue explica por qué; el consentimiento de novedades sigue sin tabla.
 
@@ -5381,12 +5381,12 @@ la reemplazó el recorrido de punta a punta del 2 de septiembre (commit `5f104ac
 formularios que replicaba están vivos cada uno en su pantalla propia, con dos de las tres copias
 muertas porque ningún guion las escuchaba.
 
-**Y lo único propio que le quedaba —el asistente de seis pasos— publicaba un Aviso defectuoso.**
+**Y lo único propio que le quedaba —el asistente de seis pasos— publicaba un Anuncio defectuoso.**
 No preguntaba zona, y el comentario de la columna `avisos.zone`
 (`supabase/migrations/0001_base_del_esquema.sql:2222`) dice que ahí nunca va texto libre porque el
 directorio filtra por esa columna; no preguntaba patologías, que las mandaba como
 lista vacía escrita a mano; mandaba `horarios` fijo en `'flexible'`; y preguntaba modalidad
-(`w-modality`) y urgencia (`w-urgent`) sin mandarlas a ninguna parte. Un aviso publicado así no
+(`w-modality`) y urgencia (`w-urgent`) sin mandarlas a ninguna parte. Un anuncio publicado así no
 aparecía en ningún filtro del directorio.
 
 **Las hojas de estilo se copiaron, no se movieron.** `css/tokens.css`, `css/styles.css` y
@@ -5555,7 +5555,7 @@ el paso 1 vacío avisa y **no** avanza; con el paso 1 completo avanza y no avisa
 
 **El 9 de septiembre de 2026 el bloque se fue del todo**, porque la hoja de muestra que lo
 despertaba salió de uso y `wizard-care-search-form` no existe en ninguna otra pantalla. El que
-publica un aviso de verdad es `#form-nuevo-aviso` (`pwa-familia/src/pantallas/Publicar.jsx:140`).
+publica un anuncio de verdad es `#form-nuevo-aviso` (`pwa-familia/src/pantallas/Publicar.jsx:140`).
 La precaución del 26 de agosto no se borró por sobrar: se cumplió, y dejó el bloque
 apagado desde el día en que la pantalla se apartó.
 
@@ -5917,11 +5917,11 @@ la izquierda y media fila vacía al lado, así que `.kpi-grid` pasó a `auto-fit
 (`css/styles.css:1911`): reparte los que haya, y se acomoda solo el día que aparezca el tercero. Es
 la única regla del proyecto que usa esa clase, comprobado antes de tocarla.
 
-### Los avisos tienen autora, y las cuentas con las que se entra hoy faltan
+### Los anuncios tienen autora, y las cuentas con las que se entra hoy faltan
 
 **El agujero que importa es el de la autora, y conviene entenderlo antes que el otro.**
-`avisos.familia_id` dice quién publicó el aviso. Cuando esa columna no señala a nadie,
-`avisos_abiertos()` no se entera —no la mira—, así que el Asistente ve los avisos y se postula sin
+`avisos.familia_id` dice quién publicó el anuncio. Cuando esa columna no señala a nadie,
+`avisos_abiertos()` no se entera —no la mira—, así que el Asistente ve los anuncios y se postula sin
 problema; pero las políticas de `postulaciones` y la función `postulaciones_de_mis_avisos()`
 piden `a.familia_id = auth.uid()`, que contra un nulo no da verdadero nunca. El Asistente se
 postula, ve «postulado», y **no hay ninguna sesión en el mundo desde la que esa postulación se
@@ -5929,11 +5929,11 @@ pueda leer**. Sin un solo mensaje de error.
 
 **Contra eso la columna quedó cerrada en el esquema, y es lo que hoy lo sostiene.**
 `avisos.familia_id` es `not null` y su valor por omisión es `auth.uid()`
-(`supabase/migrations/0001_base_del_esquema.sql:2200`), así que un aviso sin autora no se puede
+(`supabase/migrations/0001_base_del_esquema.sql:2200`), así que un anuncio sin autora no se puede
 guardar. La llave foránea va con `on delete cascade`
 (`supabase/migrations/0001_base_del_esquema.sql:4054`), la misma forma que tienen
 `conversaciones.familia_id` y `mensajes.autor_id`: borrar una cuenta de Familia se
-lleva sus conversaciones, sus mensajes y también sus avisos. Los doce avisos sembrados tienen su
+lleva sus conversaciones, sus mensajes y también sus anuncios. Los doce anuncios sembrados tienen su
 autora, y cada Familia lo es sólo de los seis de su propia Organización, nunca de los de la otra.
 
 **Lo que hoy falta son las cuentas, y falta de verdad.** La base reconstruida trae los seis
@@ -5945,7 +5945,7 @@ otras dos quedaron sin ellas sin que nadie lo decidiera. La consecuencia prácti
 producto no se entra con datos ficticios**: no hay a quién abrirle la puerta, y
 `scripts/abrir_cuentas_ficticias.mjs`, que es el guion que les pone la clave, no encuentra ninguna
 cuenta a la que ponérsela. Y el ida y vuelta que es lo único que prueba algo acá —entrar como la
-Familia y ver sus avisos, entrar como su Asistente y postularse, volver como la Familia y ver esa
+Familia y ver sus anuncios, entrar como su Asistente y postularse, volver como la Familia y ver esa
 postulación— hoy no se puede correr.
 
 **Por qué la clave no puede ir adentro de una migración**, que es lo que hace que esto no se
@@ -5958,7 +5958,7 @@ si la dirección no es la de esta máquina. Eso sigue siendo lo correcto; lo que
 sembrada.
 
 **Y las dos columnas que apuntan a una cuenta ya no están eximidas** de
-`probar_coherencia_de_la_siembra.mjs`. `avisos.familia_id` se llena en los doce avisos;
+`probar_coherencia_de_la_siembra.mjs`. `avisos.familia_id` se llena en los doce anuncios;
 `caregivers.user_id`, en los dos legajos que tienen Asistente con perfil, y queda vacío en los
 otros once. Sacar la exención fue parte del trabajo y se deja sacada: una exención que sobra vuelve
 verde para siempre una columna que después se puede vaciar sin que nadie se entere, que es

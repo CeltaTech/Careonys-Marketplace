@@ -191,7 +191,7 @@ export default function SolicitarAsistente() {
         </div>
       </section>
 
-      {/* Los dos caminos del mercado: el directorio y el aviso. */}
+      {/* Los dos caminos del mercado: el directorio y el anuncio. */}
       <section className="care-manager-section" id="caminos">
         <div className="grilla grilla-2 alinear-centro m-centrado" style={{ maxWidth: '960px', gap: '40px' }}>
           <div className="fade-in">
@@ -225,7 +225,7 @@ export default function SolicitarAsistente() {
             </Link>
           </div>
 
-          {/* El otro camino: publicar un aviso. */}
+          {/* El otro camino: publicar un anuncio. */}
           <div
             className="fade-in fondo-azul-oscuro color-sobre-color redondeo-grande sombra-alta"
             style={{ padding: '32px' }}

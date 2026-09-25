@@ -23,8 +23,8 @@ Prestadora.** Muchos que ofrecen y muchos que buscan, todos de la misma Organiza
 | Actor | Qué hace |
 |---|---|
 | **Prestadora** | La empresa cliente, dueña del espacio. Decide **quién entra**: audita el legajo, valida al Aspirante y publica su perfil. Cobra su comisión |
-| **Familia** | Busca cuidado: compara perfiles, o publica un aviso |
-| **Asistente** | Ofrece su trabajo: se publica en el directorio, o se postula a un aviso |
+| **Familia** | Busca cuidado: compara perfiles, o publica un anuncio |
+| **Asistente** | Ofrece su trabajo: se publica en el directorio, o se postula a un anuncio |
 
 **El trato lo cierran la Familia y el Asistente. La Prestadora no reparte trabajo.** Decidido por
 el Desarrollador el 23 y el 24 de agosto de 2026 —`docs/ALCANCE.md` «Los muchos que ofrecen son
@@ -32,7 +32,7 @@ los Asistentes, nunca las Prestadoras», y la definición aprobada de la modalid
 `docs/GLOSARIO.md`: la Familia **busca, compara, elige y contrata, en vez de recibir una
 asignación**.
 
-**Los dos caminos del mercado, y son los dos.** La Familia publica un aviso y los Asistentes se
+**Los dos caminos del mercado, y son los dos.** La Familia publica un anuncio y los Asistentes se
 postulan; o la Familia mira el directorio, compara perfiles y contacta. Los dos terminan en lo
 mismo: un trato entre esas dos partes.
 
@@ -192,7 +192,7 @@ antes de escribir una tabla**, no después.
 
 - La pregunta que decide cada caso: *¿esto seguiría siendo verdad independientemente de cómo llegó
   el trabajo?* Si sí, es compartido.
-- **Ninguna palabra propia de esta modalidad aparece en un módulo compartido** —directorio, aviso,
+- **Ninguna palabra propia de esta modalidad aparece en un módulo compartido** —directorio, anuncio,
   postulación, contacto, puntaje, destacado—. Si aparece una, se filtró, y con ella se filtra el
   trabajo de sacarla más tarde.
 - **Todo módulo se usa por API** —fijado por el Desarrollador el 2026-08-26, para Octo y módulos

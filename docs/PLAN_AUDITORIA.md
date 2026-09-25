@@ -47,7 +47,7 @@ construyendo acá con el reparto de `docs/MODULOS.md`»*.
 
 **Entonces se construye acá, con tres condiciones que salen de esa misma regla:**
 
-1. **Sin una sola palabra de esta modalidad adentro**: ni directorio, ni aviso, ni postulación, ni
+1. **Sin una sola palabra de esta modalidad adentro**: ni directorio, ni anuncio, ni postulación, ni
    contacto, ni puntaje, ni destacado. La tabla nombra tablas y columnas, que ya se llaman como se
    llaman; no nombra conceptos de esta modalidad.
 2. **Se agrega la fila al reparto de `docs/MODULOS.md`**, en la tabla de lo compartido, para que el
@@ -209,7 +209,7 @@ Se elige por las seis categorías que nombra la regla, no por comodidad.
   `reportes` alcanza al personal de la Prestadora: la fichada la ve quien la marca
   (`supabase/migrations/0001_base_del_esquema.sql:4592`) y la Familia del vínculo marcado
   (`:4526`); el reporte lo escribe el Asistente que cuidó (`:4769`) y lo lee la Familia de ese
-  aviso (`:4776`), con la condición del aviso repetida adentro de la subconsulta a propósito,
+  anuncio (`:4776`), con la condición del anuncio repetida adentro de la subconsulta a propósito,
   porque la RLS de `avisos` no alcanza para filtrarla. El motivo quedó escrito en el
   comentario de cada una de las dos tablas
   (`supabase/migrations/0001_base_del_esquema.sql:2448` y `:3097`): mirar a qué hora entra y sale

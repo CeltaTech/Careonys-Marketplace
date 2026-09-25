@@ -100,13 +100,13 @@ correo en `:85`, el domicilio en `:95` y los datos bancarios en `:96`.
 papeles presentados y referencias son tablas aparte, una fila por cada cosa cargada:
 `supabase/migrations/0001_base_del_esquema.sql:2680`, `:2455`, `:2507`, `:2431` y `:3056`.
 
-**3.3. De la Familia y del Paciente, cuando se publica un Aviso.** El nombre del Paciente
+**3.3. De la Familia y del Paciente, cuando se publica un Anuncio.** El nombre del Paciente
 —`supabase/migrations/0001_base_del_esquema.sql:2185`—, sus patologías —`:160`—, la zona, la
 modalidad, los días y los turnos, y cómo volver a comunicarse con quien publicó, que se guarda en
 `supabase/migrations/0001_base_del_esquema.sql:2192` y que la propia migración describe como
 «nombre, correo y teléfono» en `supabase/migrations/0001_base_del_esquema.sql:2213-2215`.
 
-**3.4. Hay un campo de texto libre, y conviene saberlo antes de escribir en él.** El Aviso tiene
+**3.4. Hay un campo de texto libre, y conviene saberlo antes de escribir en él.** El Anuncio tiene
 una descripción donde la Familia cuenta la situación con sus palabras
 —`supabase/migrations/0001_base_del_esquema.sql:157`—. La propia migración lo dice sin
 adornos: es «la única que puede traer datos de una persona sin que nadie los haya pedido»
@@ -177,7 +177,7 @@ diagnóstico, de alergias ni de tratamiento en toda la base. Lo que hay son esos
 jornada y nada más.
 
 **5.5. Quién lee el Reporte diario.** El Asistente que lo escribió
-—`supabase/migrations/0001_base_del_esquema.sql:4842-4847`— y la Familia del Aviso del
+—`supabase/migrations/0001_base_del_esquema.sql:4842-4847`— y la Familia del Anuncio del
 que cuelga, y nadie más
 —`supabase/migrations/0001_base_del_esquema.sql:4851-4853`—. **El personal de la
 Prestadora no lo lee**: ninguna regla de la tabla lo nombra, por lo mismo que la fichada de
@@ -185,7 +185,7 @@ la §4.3, y la propia tabla lo deja escrito
 —`supabase/migrations/0001_base_del_esquema.sql:3097`—.
 
 **5.6. Pero hoy la Familia todavía no lo ve, aunque la regla ya esté escrita.** La pantalla donde el
-Asistente guarda el reporte no anota de qué Aviso es
+Asistente guarda el reporte no anota de qué Anuncio es
 —`pwa-asistente/src/pantallas/Inicio/FormularioDeReporte.jsx:33`—, así que ninguna fila cumple la condición y la pantalla de
 la Familia aparece vacía. Se dice acá porque un hueco declarado es mejor que un hueco tapado.
 
@@ -247,7 +247,7 @@ Esa autorización **arranca apagada**
 —`supabase/migrations/0001_base_del_esquema.sql:449`—: no contestar nunca
 termina en un Perfil publicado.
 
-**7.5. Ningún Aviso se ve sin sesión.** Lo que una Familia publica no está en ninguna pantalla
+**7.5. Ningún Anuncio se ve sin sesión.** Lo que una Familia publica no está en ninguna pantalla
 abierta.
 
 ---
@@ -270,15 +270,15 @@ propósito.
 **8.3. Las tres barreras.** Entre Prestadoras, por la membresía. Entre Asistentes, porque cada uno
 alcanza su propio legajo y ninguno más
 —`supabase/migrations/0001_base_del_esquema.sql:1614`—. Y **entre Familias de una misma
-Prestadora**, porque cada Aviso sabe quién lo publicó y sólo lo ve quien lo publicó
+Prestadora**, porque cada Anuncio sabe quién lo publicó y sólo lo ve quien lo publicó
 —`supabase/migrations/0001_base_del_esquema.sql:4054` y
 `supabase/migrations/0001_base_del_esquema.sql:4555-4557`—. Esa tercera barrera es la
-que impide que una Familia vea los Avisos, los horarios, los mensajes, los reportes ni los
+que impide que una Familia vea los Anuncios, los horarios, los mensajes, los reportes ni los
 fichajes de otra.
 
 **8.4. Qué ve el personal de la Prestadora, que no es todo.** Ve lo que necesita para decidir
 **quién entra**: los legajos de su Organización, con sus verificaciones
-—`supabase/migrations/0001_base_del_esquema.sql:4763-4765`—, y los Avisos publicados en ella, con
+—`supabase/migrations/0001_base_del_esquema.sql:4763-4765`—, y los Anuncios publicados en ella, con
 lo que cada Familia haya contado adentro
 —`supabase/migrations/0001_base_del_esquema.sql:4555-4560`—. **No ve la fichada,
 ni el Reporte diario, ni la conversación entre la Familia y el Asistente.** Las tres reglas que se
@@ -351,7 +351,7 @@ decir quién los miró, y hoy no puede.
 
 **11.1. Darse de baja no borra nada.** Cuando una Prestadora deja de operar, lo que cambia es su
 estado —`supabase/migrations/0001_base_del_esquema.sql:3118`— y
-nada más. Legajos, Avisos, Reportes diarios, fichajes y verificaciones **quedan escritos**.
+nada más. Legajos, Anuncios, Reportes diarios, fichajes y verificaciones **quedan escritos**.
 
 **11.2. Lo que sí cambia enseguida.** Una Prestadora que no está activa **desaparece del
 directorio público** —`supabase/migrations/0001_base_del_esquema.sql:867`—.
@@ -441,7 +441,7 @@ lo acepte de nuevo.
 | 31 de agosto de 2026 | Primera redacción. Se escribió de cero, midiendo cada afirmación contra el código y contra las migraciones. Se declararon por primera vez la geolocalización al fichar, los datos de salud del Reporte diario, los datos de terceros, qué expone exactamente el directorio público, que el software no usa cookies ni rastreadores, que no hay registro de auditoría y que la baja no borra nada. Quedan marcados como huecos el organismo de control, el reparto de responsabilidad con CeltaTech, los tribunales, los plazos de conservación y el procedimiento de supresión |
 | 31 de agosto de 2026 | **El documento se declara lo que es: un modelo.** El Desarrollador precisó ese día que los documentos legales de un producto de CeltaTech viven adentro de sus términos y de sus contratos con el Cliente, y que a la Prestadora CeltaTech sólo puede entregarle **un modelo, a título de sugerencia y sin ninguna responsabilidad sobre él**. El encabezado ahora lo dice en su cara —quién lo entrega, que no es asesoramiento legal, que se entrega tal como está y que adoptarlo es decisión de la Prestadora— y **admite que el producto todavía no cumple esa forma**, porque el texto no se entrega sino que se acepta. Cambian el encabezado y la ficha de arriba |
 | 31 de agosto de 2026 | **Se separaron los dos mundos**, por decisión del Desarrollador de ese día: CeltaTech licencia el software a la Prestadora y no tiene vínculo de ninguna índole con la Familia, el Paciente, el Asistente ni nadie que trate con una Prestadora, y **la Prestadora no le traslada a CeltaTech ninguna responsabilidad por el uso que hace del software**. Cambia la §2.2, y el hueco de la §2.4 se achica: el reparto queda contestado y sigue abierta sólo la nomenclatura ante el organismo de control |
-| 2 de septiembre de 2026 | **La Prestadora dejó de mirar la jornada, y este documento lo dice.** Tres migraciones cambiaron quién ve qué, y el texto describía el mundo anterior. La fichada dejó de estar al alcance del personal de la Prestadora y pasó a verla, además del Asistente, la Familia del vínculo que él marque (`supabase/migrations/0001_base_del_esquema.sql:4597-4603`); el Reporte diario dejó de estar a su alcance por la misma razón; y la lectura del reporte colgado de un Aviso y la tabla de mensajes se cerraron del todo, porque la condición no filtraba lo que su comentario decía (`supabase/migrations/0001_base_del_esquema.sql:4774-4778` y `:4772-4774`). Cambian la §4.3, la §5.5 y la §8.4. Se agrega la §5.6, que declara que la Familia todavía no ve el reporte en la pantalla aunque la regla ya esté escrita. Y se reescribe la §4.4 y sale su hueco de la §14: la pantalla del fichado pregunta ahora, antes de tomar la posición, para quién es la jornada, y aclara quién va a ver la marca (`pwa-asistente/src/pantallas/Inicio/Fichador.jsx:219` y `:235`) |
+| 2 de septiembre de 2026 | **La Prestadora dejó de mirar la jornada, y este documento lo dice.** Tres migraciones cambiaron quién ve qué, y el texto describía el mundo anterior. La fichada dejó de estar al alcance del personal de la Prestadora y pasó a verla, además del Asistente, la Familia del vínculo que él marque (`supabase/migrations/0001_base_del_esquema.sql:4597-4603`); el Reporte diario dejó de estar a su alcance por la misma razón; y la lectura del reporte colgado de un Anuncio y la tabla de mensajes se cerraron del todo, porque la condición no filtraba lo que su comentario decía (`supabase/migrations/0001_base_del_esquema.sql:4774-4778` y `:4772-4774`). Cambian la §4.3, la §5.5 y la §8.4. Se agrega la §5.6, que declara que la Familia todavía no ve el reporte en la pantalla aunque la regla ya esté escrita. Y se reescribe la §4.4 y sale su hueco de la §14: la pantalla del fichado pregunta ahora, antes de tomar la posición, para quién es la jornada, y aclara quién va a ver la marca (`pwa-asistente/src/pantallas/Inicio/Fichador.jsx:219` y `:235`) |
 
 ---
 
